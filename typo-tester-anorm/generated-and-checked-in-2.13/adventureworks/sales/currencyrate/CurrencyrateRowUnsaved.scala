@@ -40,15 +40,15 @@ case class CurrencyrateRowUnsaved(
 ) {
   def toRow(currencyrateidDefault: => CurrencyrateId, modifieddateDefault: => TypoLocalDateTime): CurrencyrateRow =
     CurrencyrateRow(
+      currencyrateid = currencyrateid match {
+                         case Defaulted.UseDefault => currencyrateidDefault
+                         case Defaulted.Provided(value) => value
+                       },
       currencyratedate = currencyratedate,
       fromcurrencycode = fromcurrencycode,
       tocurrencycode = tocurrencycode,
       averagerate = averagerate,
       endofdayrate = endofdayrate,
-      currencyrateid = currencyrateid match {
-                         case Defaulted.UseDefault => currencyrateidDefault
-                         case Defaulted.Provided(value) => value
-                       },
       modifieddate = modifieddate match {
                        case Defaulted.UseDefault => modifieddateDefault
                        case Defaulted.Provided(value) => value

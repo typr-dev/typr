@@ -26,12 +26,12 @@ case class DepartmentRowUnsaved(
 ) {
   def toRow(departmentidDefault: => DepartmentId, modifieddateDefault: => TypoLocalDateTime): DepartmentRow =
     DepartmentRow(
-      name = name,
-      groupname = groupname,
       departmentid = departmentid match {
                        case Defaulted.UseDefault => departmentidDefault
                        case Defaulted.Provided(value) => value
                      },
+      name = name,
+      groupname = groupname,
       modifieddate = modifieddate match {
                        case Defaulted.UseDefault => modifieddateDefault
                        case Defaulted.Provided(value) => value

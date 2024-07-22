@@ -30,12 +30,12 @@ case class JobcandidateRowUnsaved(
 ) {
   def toRow(jobcandidateidDefault: => JobcandidateId, modifieddateDefault: => TypoLocalDateTime): JobcandidateRow =
     JobcandidateRow(
-      businessentityid = businessentityid,
-      resume = resume,
       jobcandidateid = jobcandidateid match {
                          case Defaulted.UseDefault => jobcandidateidDefault
                          case Defaulted.Provided(value) => value
                        },
+      businessentityid = businessentityid,
+      resume = resume,
       modifieddate = modifieddate match {
                        case Defaulted.UseDefault => modifieddateDefault
                        case Defaulted.Provided(value) => value

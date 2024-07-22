@@ -65,10 +65,6 @@ case class PurchaseorderheaderRowUnsaved(
 ) {
   def toRow(purchaseorderidDefault: => PurchaseorderheaderId, revisionnumberDefault: => TypoShort, statusDefault: => TypoShort, orderdateDefault: => TypoLocalDateTime, subtotalDefault: => BigDecimal, taxamtDefault: => BigDecimal, freightDefault: => BigDecimal, modifieddateDefault: => TypoLocalDateTime): PurchaseorderheaderRow =
     PurchaseorderheaderRow(
-      employeeid = employeeid,
-      vendorid = vendorid,
-      shipmethodid = shipmethodid,
-      shipdate = shipdate,
       purchaseorderid = purchaseorderid match {
                           case Defaulted.UseDefault => purchaseorderidDefault
                           case Defaulted.Provided(value) => value
@@ -81,10 +77,14 @@ case class PurchaseorderheaderRowUnsaved(
                  case Defaulted.UseDefault => statusDefault
                  case Defaulted.Provided(value) => value
                },
+      employeeid = employeeid,
+      vendorid = vendorid,
+      shipmethodid = shipmethodid,
       orderdate = orderdate match {
                     case Defaulted.UseDefault => orderdateDefault
                     case Defaulted.Provided(value) => value
                   },
+      shipdate = shipdate,
       subtotal = subtotal match {
                    case Defaulted.UseDefault => subtotalDefault
                    case Defaulted.Provided(value) => value

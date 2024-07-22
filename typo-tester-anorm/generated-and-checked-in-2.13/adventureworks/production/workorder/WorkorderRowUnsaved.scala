@@ -50,6 +50,10 @@ case class WorkorderRowUnsaved(
 ) {
   def toRow(workorderidDefault: => WorkorderId, modifieddateDefault: => TypoLocalDateTime): WorkorderRow =
     WorkorderRow(
+      workorderid = workorderid match {
+                      case Defaulted.UseDefault => workorderidDefault
+                      case Defaulted.Provided(value) => value
+                    },
       productid = productid,
       orderqty = orderqty,
       scrappedqty = scrappedqty,
@@ -57,10 +61,6 @@ case class WorkorderRowUnsaved(
       enddate = enddate,
       duedate = duedate,
       scrapreasonid = scrapreasonid,
-      workorderid = workorderid match {
-                      case Defaulted.UseDefault => workorderidDefault
-                      case Defaulted.Provided(value) => value
-                    },
       modifieddate = modifieddate match {
                        case Defaulted.UseDefault => modifieddateDefault
                        case Defaulted.Provided(value) => value

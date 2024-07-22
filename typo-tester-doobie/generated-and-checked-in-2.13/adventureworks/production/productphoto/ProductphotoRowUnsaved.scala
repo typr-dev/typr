@@ -30,14 +30,14 @@ case class ProductphotoRowUnsaved(
 ) {
   def toRow(productphotoidDefault: => ProductphotoId, modifieddateDefault: => TypoLocalDateTime): ProductphotoRow =
     ProductphotoRow(
-      thumbnailphoto = thumbnailphoto,
-      thumbnailphotofilename = thumbnailphotofilename,
-      largephoto = largephoto,
-      largephotofilename = largephotofilename,
       productphotoid = productphotoid match {
                          case Defaulted.UseDefault => productphotoidDefault
                          case Defaulted.Provided(value) => value
                        },
+      thumbnailphoto = thumbnailphoto,
+      thumbnailphotofilename = thumbnailphotofilename,
+      largephoto = largephoto,
+      largephotofilename = largephotofilename,
       modifieddate = modifieddate match {
                        case Defaulted.UseDefault => modifieddateDefault
                        case Defaulted.Provided(value) => value

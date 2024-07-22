@@ -42,9 +42,6 @@ case class TransactionhistoryarchiveRowUnsaved(
       transactionid = transactionid,
       productid = productid,
       referenceorderid = referenceorderid,
-      transactiontype = transactiontype,
-      quantity = quantity,
-      actualcost = actualcost,
       referenceorderlineid = referenceorderlineid match {
                                case Defaulted.UseDefault => referenceorderlineidDefault
                                case Defaulted.Provided(value) => value
@@ -53,6 +50,9 @@ case class TransactionhistoryarchiveRowUnsaved(
                           case Defaulted.UseDefault => transactiondateDefault
                           case Defaulted.Provided(value) => value
                         },
+      transactiontype = transactiontype,
+      quantity = quantity,
+      actualcost = actualcost,
       modifieddate = modifieddate match {
                        case Defaulted.UseDefault => modifieddateDefault
                        case Defaulted.Provided(value) => value

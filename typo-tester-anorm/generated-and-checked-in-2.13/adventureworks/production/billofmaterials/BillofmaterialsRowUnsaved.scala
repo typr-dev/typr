@@ -57,19 +57,19 @@ case class BillofmaterialsRowUnsaved(
 ) {
   def toRow(billofmaterialsidDefault: => Int, startdateDefault: => TypoLocalDateTime, perassemblyqtyDefault: => BigDecimal, modifieddateDefault: => TypoLocalDateTime): BillofmaterialsRow =
     BillofmaterialsRow(
-      productassemblyid = productassemblyid,
-      componentid = componentid,
-      enddate = enddate,
-      unitmeasurecode = unitmeasurecode,
-      bomlevel = bomlevel,
       billofmaterialsid = billofmaterialsid match {
                             case Defaulted.UseDefault => billofmaterialsidDefault
                             case Defaulted.Provided(value) => value
                           },
+      productassemblyid = productassemblyid,
+      componentid = componentid,
       startdate = startdate match {
                     case Defaulted.UseDefault => startdateDefault
                     case Defaulted.Provided(value) => value
                   },
+      enddate = enddate,
+      unitmeasurecode = unitmeasurecode,
+      bomlevel = bomlevel,
       perassemblyqty = perassemblyqty match {
                          case Defaulted.UseDefault => perassemblyqtyDefault
                          case Defaulted.Provided(value) => value

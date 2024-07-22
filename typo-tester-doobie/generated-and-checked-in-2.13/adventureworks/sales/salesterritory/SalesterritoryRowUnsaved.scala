@@ -49,13 +49,13 @@ case class SalesterritoryRowUnsaved(
 ) {
   def toRow(territoryidDefault: => SalesterritoryId, salesytdDefault: => BigDecimal, saleslastyearDefault: => BigDecimal, costytdDefault: => BigDecimal, costlastyearDefault: => BigDecimal, rowguidDefault: => TypoUUID, modifieddateDefault: => TypoLocalDateTime): SalesterritoryRow =
     SalesterritoryRow(
-      name = name,
-      countryregioncode = countryregioncode,
-      group = group,
       territoryid = territoryid match {
                       case Defaulted.UseDefault => territoryidDefault
                       case Defaulted.Provided(value) => value
                     },
+      name = name,
+      countryregioncode = countryregioncode,
+      group = group,
       salesytd = salesytd match {
                    case Defaulted.UseDefault => salesytdDefault
                    case Defaulted.Provided(value) => value

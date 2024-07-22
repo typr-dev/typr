@@ -505,11 +505,11 @@ class DbLibAnorm(pkg: sc.QIdent, inlineImplicits: Boolean, default: ComputedDefa
                |$mergeSql.executeUpdate()""".stripMargin
 
       case RepoMethod.InsertUnsaved(relName, cols, unsaved, unsavedParam, default, rowType) =>
-        val cases0 = unsaved.restCols.map { col =>
+        val cases0 = unsaved.normalColumns.map { col =>
           val colCast = sc.StrLit(SqlCast.toPg(col.dbCol).fold("")(_.withColons))
           code"""Some(($NamedParameter(${sc.StrLit(col.dbName.value)}, $ParameterValue(${unsavedParam.name}.${col.name}, null, ${lookupToStatementFor(col.tpe)})), $colCast))"""
         }
-        val cases1 = unsaved.defaultCols.map { case (col @ ComputedColumn(_, ident, _, dbCol), origType) =>
+        val cases1 = unsaved.defaultedCols.map { case ComputedRowUnsaved.DefaultedCol(col @ ComputedColumn(_, ident, _, dbCol), origType) =>
           val dbName = sc.StrLit(dbCol.name.value)
           val colCast = sc.StrLit(SqlCast.toPg(col.dbCol).fold("")(_.withColons))
 

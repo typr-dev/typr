@@ -2,31 +2,60 @@ package typo
 package internal
 
 object ComputedRowUnsaved {
-  def apply(source: Source, allCols: NonEmptyList[ComputedColumn], default: ComputedDefault, naming: Naming): Option[ComputedRowUnsaved] = {
-    val (alwaysGenerated, notAlwaysGenerated) = allCols.toList.partition(c => c.dbCol.maybeGenerated.exists(_.ALWAYS))
-    val (defaultCols, restCols) = notAlwaysGenerated.partition(c => c.dbCol.isDefaulted)
-    val defaultCols2 = defaultCols.map { col =>
-      (col.copy(tpe = sc.Type.TApply(default.Defaulted, List(col.tpe))), col.tpe)
+  sealed trait CategorizedColumn {
+    def col: ComputedColumn
+  }
+  case class DefaultedCol(col: ComputedColumn, originalType: sc.Type) extends CategorizedColumn
+  case class AlwaysGeneratedCol(col: ComputedColumn) extends CategorizedColumn
+  case class NormalCol(col: ComputedColumn) extends CategorizedColumn
+
+  def apply(source: Source, cols: NonEmptyList[ComputedColumn], default: ComputedDefault, naming: Naming): Option[ComputedRowUnsaved] = {
+    val categorizedColumns: NonEmptyList[CategorizedColumn] =
+      cols.map {
+        case col if col.dbCol.maybeGenerated.exists(_.ALWAYS) => AlwaysGeneratedCol(col)
+        case col if col.dbCol.isDefaulted =>
+          DefaultedCol(
+            col = col.copy(tpe = sc.Type.TApply(default.Defaulted, List(col.tpe))),
+            originalType = col.tpe
+          )
+        case col => NormalCol(col)
+      }
+
+    // note: this changes order of columns
+    val unsavedCols: List[CategorizedColumn] =
+      categorizedColumns.toList.collect { case x: NormalCol => x } ++
+        categorizedColumns.toList.collect { case x: DefaultedCol => x }
+
+    val shouldOutputUnsavedRow = categorizedColumns.toList.exists {
+      case _: NormalCol => false
+      case _            => true
     }
-    NonEmptyList.fromList(restCols ::: defaultCols2.map { case (col, _) => col }).collect {
-      case unsavedCols if defaultCols.nonEmpty || alwaysGenerated.nonEmpty =>
+
+    if (shouldOutputUnsavedRow)
+      NonEmptyList.fromList(unsavedCols).map { unsavedCols =>
         new ComputedRowUnsaved(
-          allCols,
-          defaultCols = defaultCols2,
-          restCols = restCols,
-          alwaysGeneratedCols = alwaysGenerated,
-          unsavedCols = unsavedCols,
+          categorizedUnsavedCols = unsavedCols,
+          categorizedColumnsOriginalOrder = categorizedColumns,
           tpe = sc.Type.Qualified(naming.rowUnsaved(source))
         )
-    }
+      }
+    else None
   }
 }
 
 case class ComputedRowUnsaved(
-    allCols: NonEmptyList[ComputedColumn],
-    defaultCols: List[(ComputedColumn, sc.Type)],
-    restCols: List[ComputedColumn],
-    alwaysGeneratedCols: List[ComputedColumn],
-    unsavedCols: NonEmptyList[ComputedColumn],
+    categorizedUnsavedCols: NonEmptyList[ComputedRowUnsaved.CategorizedColumn],
+    categorizedColumnsOriginalOrder: NonEmptyList[ComputedRowUnsaved.CategorizedColumn],
     tpe: sc.Type.Qualified
-)
+) {
+  // all columns which goes into an `UnsavedRow` type
+  def unsavedCols: NonEmptyList[ComputedColumn] =
+    categorizedUnsavedCols.map(_.col)
+
+  def normalColumns: List[ComputedColumn] =
+    categorizedUnsavedCols.toList.collect { case n: ComputedRowUnsaved.NormalCol => n.col }
+  def defaultedCols: List[ComputedRowUnsaved.DefaultedCol] =
+    categorizedUnsavedCols.toList.collect { case d: ComputedRowUnsaved.DefaultedCol => d }
+  def alwaysGeneratedCols: List[ComputedColumn] =
+    categorizedColumnsOriginalOrder.toList.collect { case n: ComputedRowUnsaved.AlwaysGeneratedCol => n.col }
+}

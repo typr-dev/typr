@@ -41,18 +41,18 @@ case class StateprovinceRowUnsaved(
 ) {
   def toRow(stateprovinceidDefault: => StateprovinceId, isonlystateprovinceflagDefault: => Flag, rowguidDefault: => TypoUUID, modifieddateDefault: => TypoLocalDateTime): StateprovinceRow =
     StateprovinceRow(
-      stateprovincecode = stateprovincecode,
-      countryregioncode = countryregioncode,
-      name = name,
-      territoryid = territoryid,
       stateprovinceid = stateprovinceid match {
                           case Defaulted.UseDefault => stateprovinceidDefault
                           case Defaulted.Provided(value) => value
                         },
+      stateprovincecode = stateprovincecode,
+      countryregioncode = countryregioncode,
       isonlystateprovinceflag = isonlystateprovinceflag match {
                                   case Defaulted.UseDefault => isonlystateprovinceflagDefault
                                   case Defaulted.Provided(value) => value
                                 },
+      name = name,
+      territoryid = territoryid,
       rowguid = rowguid match {
                   case Defaulted.UseDefault => rowguidDefault
                   case Defaulted.Provided(value) => value

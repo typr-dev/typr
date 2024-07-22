@@ -29,11 +29,11 @@ case class AddresstypeRowUnsaved(
 ) {
   def toRow(addresstypeidDefault: => AddresstypeId, rowguidDefault: => TypoUUID, modifieddateDefault: => TypoLocalDateTime): AddresstypeRow =
     AddresstypeRow(
-      name = name,
       addresstypeid = addresstypeid match {
                         case Defaulted.UseDefault => addresstypeidDefault
                         case Defaulted.Provided(value) => value
                       },
+      name = name,
       rowguid = rowguid match {
                   case Defaulted.UseDefault => rowguidDefault
                   case Defaulted.Provided(value) => value

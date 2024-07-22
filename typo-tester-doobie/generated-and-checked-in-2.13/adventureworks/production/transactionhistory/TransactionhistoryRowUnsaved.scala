@@ -40,15 +40,12 @@ case class TransactionhistoryRowUnsaved(
 ) {
   def toRow(transactionidDefault: => TransactionhistoryId, referenceorderlineidDefault: => Int, transactiondateDefault: => TypoLocalDateTime, modifieddateDefault: => TypoLocalDateTime): TransactionhistoryRow =
     TransactionhistoryRow(
-      productid = productid,
-      referenceorderid = referenceorderid,
-      transactiontype = transactiontype,
-      quantity = quantity,
-      actualcost = actualcost,
       transactionid = transactionid match {
                         case Defaulted.UseDefault => transactionidDefault
                         case Defaulted.Provided(value) => value
                       },
+      productid = productid,
+      referenceorderid = referenceorderid,
       referenceorderlineid = referenceorderlineid match {
                                case Defaulted.UseDefault => referenceorderlineidDefault
                                case Defaulted.Provided(value) => value
@@ -57,6 +54,9 @@ case class TransactionhistoryRowUnsaved(
                           case Defaulted.UseDefault => transactiondateDefault
                           case Defaulted.Provided(value) => value
                         },
+      transactiontype = transactiontype,
+      quantity = quantity,
+      actualcost = actualcost,
       modifieddate = modifieddate match {
                        case Defaulted.UseDefault => modifieddateDefault
                        case Defaulted.Provided(value) => value

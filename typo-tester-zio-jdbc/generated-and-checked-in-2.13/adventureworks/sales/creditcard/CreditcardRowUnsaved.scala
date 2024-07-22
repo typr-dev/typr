@@ -33,14 +33,14 @@ case class CreditcardRowUnsaved(
 ) {
   def toRow(creditcardidDefault: => /* user-picked */ CustomCreditcardId, modifieddateDefault: => TypoLocalDateTime): CreditcardRow =
     CreditcardRow(
-      cardtype = cardtype,
-      cardnumber = cardnumber,
-      expmonth = expmonth,
-      expyear = expyear,
       creditcardid = creditcardid match {
                        case Defaulted.UseDefault => creditcardidDefault
                        case Defaulted.Provided(value) => value
                      },
+      cardtype = cardtype,
+      cardnumber = cardnumber,
+      expmonth = expmonth,
+      expyear = expyear,
       modifieddate = modifieddate match {
                        case Defaulted.UseDefault => modifieddateDefault
                        case Defaulted.Provided(value) => value

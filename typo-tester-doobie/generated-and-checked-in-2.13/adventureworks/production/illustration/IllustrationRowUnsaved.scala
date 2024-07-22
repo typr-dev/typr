@@ -24,11 +24,11 @@ case class IllustrationRowUnsaved(
 ) {
   def toRow(illustrationidDefault: => IllustrationId, modifieddateDefault: => TypoLocalDateTime): IllustrationRow =
     IllustrationRow(
-      diagram = diagram,
       illustrationid = illustrationid match {
                          case Defaulted.UseDefault => illustrationidDefault
                          case Defaulted.Provided(value) => value
                        },
+      diagram = diagram,
       modifieddate = modifieddate match {
                        case Defaulted.UseDefault => modifieddateDefault
                        case Defaulted.Provided(value) => value

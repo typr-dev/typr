@@ -24,12 +24,12 @@ case class IdentityTestRowUnsaved(
 ) {
   def toRow(defaultGeneratedDefault: => Int, alwaysGeneratedDefault: => Int): IdentityTestRow =
     IdentityTestRow(
-      name = name,
+      alwaysGenerated = alwaysGeneratedDefault,
       defaultGenerated = defaultGenerated match {
                            case Defaulted.UseDefault => defaultGeneratedDefault
                            case Defaulted.Provided(value) => value
                          },
-      alwaysGenerated = alwaysGeneratedDefault
+      name = name
     )
 }
 object IdentityTestRowUnsaved {

@@ -34,16 +34,16 @@ case class ShoppingcartitemRowUnsaved(
 ) {
   def toRow(shoppingcartitemidDefault: => ShoppingcartitemId, quantityDefault: => Int, datecreatedDefault: => TypoLocalDateTime, modifieddateDefault: => TypoLocalDateTime): ShoppingcartitemRow =
     ShoppingcartitemRow(
-      shoppingcartid = shoppingcartid,
-      productid = productid,
       shoppingcartitemid = shoppingcartitemid match {
                              case Defaulted.UseDefault => shoppingcartitemidDefault
                              case Defaulted.Provided(value) => value
                            },
+      shoppingcartid = shoppingcartid,
       quantity = quantity match {
                    case Defaulted.UseDefault => quantityDefault
                    case Defaulted.Provided(value) => value
                  },
+      productid = productid,
       datecreated = datecreated match {
                       case Defaulted.UseDefault => datecreatedDefault
                       case Defaulted.Provided(value) => value

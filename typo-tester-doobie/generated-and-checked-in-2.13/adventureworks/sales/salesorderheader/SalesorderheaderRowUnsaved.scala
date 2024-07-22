@@ -106,21 +106,6 @@ case class SalesorderheaderRowUnsaved(
 ) {
   def toRow(salesorderidDefault: => SalesorderheaderId, revisionnumberDefault: => TypoShort, orderdateDefault: => TypoLocalDateTime, statusDefault: => TypoShort, onlineorderflagDefault: => Flag, subtotalDefault: => BigDecimal, taxamtDefault: => BigDecimal, freightDefault: => BigDecimal, rowguidDefault: => TypoUUID, modifieddateDefault: => TypoLocalDateTime): SalesorderheaderRow =
     SalesorderheaderRow(
-      duedate = duedate,
-      shipdate = shipdate,
-      purchaseordernumber = purchaseordernumber,
-      accountnumber = accountnumber,
-      customerid = customerid,
-      salespersonid = salespersonid,
-      territoryid = territoryid,
-      billtoaddressid = billtoaddressid,
-      shiptoaddressid = shiptoaddressid,
-      shipmethodid = shipmethodid,
-      creditcardid = creditcardid,
-      creditcardapprovalcode = creditcardapprovalcode,
-      currencyrateid = currencyrateid,
-      totaldue = totaldue,
-      comment = comment,
       salesorderid = salesorderid match {
                        case Defaulted.UseDefault => salesorderidDefault
                        case Defaulted.Provided(value) => value
@@ -133,6 +118,8 @@ case class SalesorderheaderRowUnsaved(
                     case Defaulted.UseDefault => orderdateDefault
                     case Defaulted.Provided(value) => value
                   },
+      duedate = duedate,
+      shipdate = shipdate,
       status = status match {
                  case Defaulted.UseDefault => statusDefault
                  case Defaulted.Provided(value) => value
@@ -141,6 +128,17 @@ case class SalesorderheaderRowUnsaved(
                           case Defaulted.UseDefault => onlineorderflagDefault
                           case Defaulted.Provided(value) => value
                         },
+      purchaseordernumber = purchaseordernumber,
+      accountnumber = accountnumber,
+      customerid = customerid,
+      salespersonid = salespersonid,
+      territoryid = territoryid,
+      billtoaddressid = billtoaddressid,
+      shiptoaddressid = shiptoaddressid,
+      shipmethodid = shipmethodid,
+      creditcardid = creditcardid,
+      creditcardapprovalcode = creditcardapprovalcode,
+      currencyrateid = currencyrateid,
       subtotal = subtotal match {
                    case Defaulted.UseDefault => subtotalDefault
                    case Defaulted.Provided(value) => value
@@ -153,6 +151,8 @@ case class SalesorderheaderRowUnsaved(
                   case Defaulted.UseDefault => freightDefault
                   case Defaulted.Provided(value) => value
                 },
+      totaldue = totaldue,
+      comment = comment,
       rowguid = rowguid match {
                   case Defaulted.UseDefault => rowguidDefault
                   case Defaulted.Provided(value) => value

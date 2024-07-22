@@ -45,16 +45,16 @@ case class AddressRowUnsaved(
 ) {
   def toRow(addressidDefault: => AddressId, rowguidDefault: => TypoUUID, modifieddateDefault: => TypoLocalDateTime): AddressRow =
     AddressRow(
+      addressid = addressid match {
+                    case Defaulted.UseDefault => addressidDefault
+                    case Defaulted.Provided(value) => value
+                  },
       addressline1 = addressline1,
       addressline2 = addressline2,
       city = city,
       stateprovinceid = stateprovinceid,
       postalcode = postalcode,
       spatiallocation = spatiallocation,
-      addressid = addressid match {
-                    case Defaulted.UseDefault => addressidDefault
-                    case Defaulted.Provided(value) => value
-                  },
       rowguid = rowguid match {
                   case Defaulted.UseDefault => rowguidDefault
                   case Defaulted.Provided(value) => value

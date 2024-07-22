@@ -37,12 +37,10 @@ case class FilesRelation(
           sc.Value(Nil, extractFkId.name.prepended("extract"), Nil, Nil, extractFkId.otherCompositeIdType, body).code
         },
         maybeUnsavedRow.map { case (unsaved, defaults) =>
-          val (partOfId, rest) = unsaved.defaultCols.toList.partition { case (col, _) => names.isIdColumn(col.dbName) }
-          val partOfIdParams = partOfId.map { case (col, tpe) =>
-            sc.Param(col.name, defaults.Defaulted.of(tpe), None)
-          }
-          val restParams = rest.map { case (col, tpe) =>
-            sc.Param(col.name, defaults.Defaulted.of(tpe), Some(code"${defaults.Defaulted}.${defaults.Provided}(this.${col.name})"))
+          val (partOfId, rest) = unsaved.defaultedCols.toList.partition { case ComputedRowUnsaved.DefaultedCol(col, _) => names.isIdColumn(col.dbName) }
+          val partOfIdParams = partOfId.map { case ComputedRowUnsaved.DefaultedCol(col, _) => sc.Param(col.name, col.tpe, None) }
+          val restParams = rest.map { case ComputedRowUnsaved.DefaultedCol(col, _) =>
+            sc.Param(col.name, col.tpe, Some(code"${defaults.Defaulted}.${defaults.Provided}(this.${col.name})"))
           }
           val params = partOfIdParams ++ restParams
           code"""|def toUnsavedRow(${params.map(_.code).mkCode(", ")}): ${unsaved.tpe} =

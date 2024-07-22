@@ -38,19 +38,19 @@ case class ProductreviewRowUnsaved(
 ) {
   def toRow(productreviewidDefault: => ProductreviewId, reviewdateDefault: => TypoLocalDateTime, modifieddateDefault: => TypoLocalDateTime): ProductreviewRow =
     ProductreviewRow(
-      productid = productid,
-      reviewername = reviewername,
-      emailaddress = emailaddress,
-      rating = rating,
-      comments = comments,
       productreviewid = productreviewid match {
                           case Defaulted.UseDefault => productreviewidDefault
                           case Defaulted.Provided(value) => value
                         },
+      productid = productid,
+      reviewername = reviewername,
       reviewdate = reviewdate match {
                      case Defaulted.UseDefault => reviewdateDefault
                      case Defaulted.Provided(value) => value
                    },
+      emailaddress = emailaddress,
+      rating = rating,
+      comments = comments,
       modifieddate = modifieddate match {
                        case Defaulted.UseDefault => modifieddateDefault
                        case Defaulted.Provided(value) => value

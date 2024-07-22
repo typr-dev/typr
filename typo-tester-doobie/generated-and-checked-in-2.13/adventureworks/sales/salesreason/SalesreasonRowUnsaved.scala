@@ -26,12 +26,12 @@ case class SalesreasonRowUnsaved(
 ) {
   def toRow(salesreasonidDefault: => SalesreasonId, modifieddateDefault: => TypoLocalDateTime): SalesreasonRow =
     SalesreasonRow(
-      name = name,
-      reasontype = reasontype,
       salesreasonid = salesreasonid match {
                         case Defaulted.UseDefault => salesreasonidDefault
                         case Defaulted.Provided(value) => value
                       },
+      name = name,
+      reasontype = reasontype,
       modifieddate = modifieddate match {
                        case Defaulted.UseDefault => modifieddateDefault
                        case Defaulted.Provided(value) => value

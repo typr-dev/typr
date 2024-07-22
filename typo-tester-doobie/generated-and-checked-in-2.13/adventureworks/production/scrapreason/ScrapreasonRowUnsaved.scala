@@ -24,11 +24,11 @@ case class ScrapreasonRowUnsaved(
 ) {
   def toRow(scrapreasonidDefault: => ScrapreasonId, modifieddateDefault: => TypoLocalDateTime): ScrapreasonRow =
     ScrapreasonRow(
-      name = name,
       scrapreasonid = scrapreasonid match {
                         case Defaulted.UseDefault => scrapreasonidDefault
                         case Defaulted.Provided(value) => value
                       },
+      name = name,
       modifieddate = modifieddate match {
                        case Defaulted.UseDefault => modifieddateDefault
                        case Defaulted.Provided(value) => value

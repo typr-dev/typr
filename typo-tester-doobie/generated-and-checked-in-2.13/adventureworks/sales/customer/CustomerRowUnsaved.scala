@@ -35,13 +35,13 @@ case class CustomerRowUnsaved(
 ) {
   def toRow(customeridDefault: => CustomerId, rowguidDefault: => TypoUUID, modifieddateDefault: => TypoLocalDateTime): CustomerRow =
     CustomerRow(
-      personid = personid,
-      storeid = storeid,
-      territoryid = territoryid,
       customerid = customerid match {
                      case Defaulted.UseDefault => customeridDefault
                      case Defaulted.Provided(value) => value
                    },
+      personid = personid,
+      storeid = storeid,
+      territoryid = territoryid,
       rowguid = rowguid match {
                   case Defaulted.UseDefault => rowguidDefault
                   case Defaulted.Provided(value) => value

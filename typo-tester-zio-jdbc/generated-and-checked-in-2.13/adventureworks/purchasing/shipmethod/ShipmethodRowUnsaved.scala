@@ -37,11 +37,11 @@ case class ShipmethodRowUnsaved(
 ) {
   def toRow(shipmethodidDefault: => ShipmethodId, shipbaseDefault: => BigDecimal, shiprateDefault: => BigDecimal, rowguidDefault: => TypoUUID, modifieddateDefault: => TypoLocalDateTime): ShipmethodRow =
     ShipmethodRow(
-      name = name,
       shipmethodid = shipmethodid match {
                        case Defaulted.UseDefault => shipmethodidDefault
                        case Defaulted.Provided(value) => value
                      },
+      name = name,
       shipbase = shipbase match {
                    case Defaulted.UseDefault => shipbaseDefault
                    case Defaulted.Provided(value) => value

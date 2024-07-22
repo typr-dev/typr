@@ -29,11 +29,11 @@ case class PhonenumbertypeRowUnsaved(
 ) {
   def toRow(phonenumbertypeidDefault: => PhonenumbertypeId, modifieddateDefault: => TypoLocalDateTime): PhonenumbertypeRow =
     PhonenumbertypeRow(
-      name = name,
       phonenumbertypeid = phonenumbertypeid match {
                             case Defaulted.UseDefault => phonenumbertypeidDefault
                             case Defaulted.Provided(value) => value
                           },
+      name = name,
       modifieddate = modifieddate match {
                        case Defaulted.UseDefault => modifieddateDefault
                        case Defaulted.Provided(value) => value

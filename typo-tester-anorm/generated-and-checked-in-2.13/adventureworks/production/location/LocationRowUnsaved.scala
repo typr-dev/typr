@@ -38,11 +38,11 @@ case class LocationRowUnsaved(
 ) {
   def toRow(locationidDefault: => LocationId, costrateDefault: => BigDecimal, availabilityDefault: => BigDecimal, modifieddateDefault: => TypoLocalDateTime): LocationRow =
     LocationRow(
-      name = name,
       locationid = locationid match {
                      case Defaulted.UseDefault => locationidDefault
                      case Defaulted.Provided(value) => value
                    },
+      name = name,
       costrate = costrate match {
                    case Defaulted.UseDefault => costrateDefault
                    case Defaulted.Provided(value) => value

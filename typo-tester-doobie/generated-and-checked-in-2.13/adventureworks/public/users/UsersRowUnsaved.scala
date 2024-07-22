@@ -30,11 +30,11 @@ case class UsersRowUnsaved(
       lastName = lastName,
       email = email,
       password = password,
-      verifiedOn = verifiedOn,
       createdAt = createdAt match {
                     case Defaulted.UseDefault => createdAtDefault
                     case Defaulted.Provided(value) => value
-                  }
+                  },
+      verifiedOn = verifiedOn
     )
 }
 object UsersRowUnsaved {

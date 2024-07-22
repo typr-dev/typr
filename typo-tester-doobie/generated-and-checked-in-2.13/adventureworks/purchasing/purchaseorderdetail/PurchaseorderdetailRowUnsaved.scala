@@ -45,16 +45,16 @@ case class PurchaseorderdetailRowUnsaved(
   def toRow(purchaseorderdetailidDefault: => Int, modifieddateDefault: => TypoLocalDateTime): PurchaseorderdetailRow =
     PurchaseorderdetailRow(
       purchaseorderid = purchaseorderid,
+      purchaseorderdetailid = purchaseorderdetailid match {
+                                case Defaulted.UseDefault => purchaseorderdetailidDefault
+                                case Defaulted.Provided(value) => value
+                              },
       duedate = duedate,
       orderqty = orderqty,
       productid = productid,
       unitprice = unitprice,
       receivedqty = receivedqty,
       rejectedqty = rejectedqty,
-      purchaseorderdetailid = purchaseorderdetailid match {
-                                case Defaulted.UseDefault => purchaseorderdetailidDefault
-                                case Defaulted.Provided(value) => value
-                              },
       modifieddate = modifieddate match {
                        case Defaulted.UseDefault => modifieddateDefault
                        case Defaulted.Provided(value) => value

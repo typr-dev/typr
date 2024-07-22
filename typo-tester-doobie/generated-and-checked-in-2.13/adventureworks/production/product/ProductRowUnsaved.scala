@@ -95,8 +95,20 @@ case class ProductRowUnsaved(
 ) {
   def toRow(productidDefault: => ProductId, makeflagDefault: => Flag, finishedgoodsflagDefault: => Flag, rowguidDefault: => TypoUUID, modifieddateDefault: => TypoLocalDateTime): ProductRow =
     ProductRow(
+      productid = productid match {
+                    case Defaulted.UseDefault => productidDefault
+                    case Defaulted.Provided(value) => value
+                  },
       name = name,
       productnumber = productnumber,
+      makeflag = makeflag match {
+                   case Defaulted.UseDefault => makeflagDefault
+                   case Defaulted.Provided(value) => value
+                 },
+      finishedgoodsflag = finishedgoodsflag match {
+                            case Defaulted.UseDefault => finishedgoodsflagDefault
+                            case Defaulted.Provided(value) => value
+                          },
       color = color,
       safetystocklevel = safetystocklevel,
       reorderpoint = reorderpoint,
@@ -115,18 +127,6 @@ case class ProductRowUnsaved(
       sellstartdate = sellstartdate,
       sellenddate = sellenddate,
       discontinueddate = discontinueddate,
-      productid = productid match {
-                    case Defaulted.UseDefault => productidDefault
-                    case Defaulted.Provided(value) => value
-                  },
-      makeflag = makeflag match {
-                   case Defaulted.UseDefault => makeflagDefault
-                   case Defaulted.Provided(value) => value
-                 },
-      finishedgoodsflag = finishedgoodsflag match {
-                            case Defaulted.UseDefault => finishedgoodsflagDefault
-                            case Defaulted.Provided(value) => value
-                          },
       rowguid = rowguid match {
                   case Defaulted.UseDefault => rowguidDefault
                   case Defaulted.Provided(value) => value

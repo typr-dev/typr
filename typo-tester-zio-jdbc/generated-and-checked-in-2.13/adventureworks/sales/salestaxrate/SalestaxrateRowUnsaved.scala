@@ -40,17 +40,17 @@ case class SalestaxrateRowUnsaved(
 ) {
   def toRow(salestaxrateidDefault: => SalestaxrateId, taxrateDefault: => BigDecimal, rowguidDefault: => TypoUUID, modifieddateDefault: => TypoLocalDateTime): SalestaxrateRow =
     SalestaxrateRow(
-      stateprovinceid = stateprovinceid,
-      taxtype = taxtype,
-      name = name,
       salestaxrateid = salestaxrateid match {
                          case Defaulted.UseDefault => salestaxrateidDefault
                          case Defaulted.Provided(value) => value
                        },
+      stateprovinceid = stateprovinceid,
+      taxtype = taxtype,
       taxrate = taxrate match {
                   case Defaulted.UseDefault => taxrateDefault
                   case Defaulted.Provided(value) => value
                 },
+      name = name,
       rowguid = rowguid match {
                   case Defaulted.UseDefault => rowguidDefault
                   case Defaulted.Provided(value) => value

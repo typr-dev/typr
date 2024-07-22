@@ -21,30 +21,23 @@ case class FilesTable(table: ComputedTable, fkAnalysis: FkAnalysis, options: Int
           sc.Ident(col.name.value).appended("Default")
 
         val params: List[sc.Param] =
-          unsaved.defaultCols.map { case (col, originalType) => sc.Param(mkDefaultParamName(col), sc.Type.ByName(originalType), None) } ++
+          unsaved.defaultedCols.map { case ComputedRowUnsaved.DefaultedCol(col, originalType) => sc.Param(mkDefaultParamName(col), sc.Type.ByName(originalType), None) } ++
             unsaved.alwaysGeneratedCols.map(col => sc.Param(mkDefaultParamName(col), sc.Type.ByName(col.tpe), None))
 
-        val keyValues1 =
-          unsaved.defaultCols.map { case (col, _) =>
+        val keyValues = unsaved.categorizedColumnsOriginalOrder.map {
+          case ComputedRowUnsaved.DefaultedCol(col, _) =>
             val defaultParamName = mkDefaultParamName(col)
             val impl = code"""|${col.name} match {
                    |  case ${table.default.Defaulted}.${table.default.UseDefault} => $defaultParamName
                    |  case ${table.default.Defaulted}.${table.default.Provided}(value) => value
                    |}""".stripMargin
             (col.name, impl)
-          } ++
-            unsaved.alwaysGeneratedCols.map { col =>
-              val defaultParamName = mkDefaultParamName(col)
-              (col.name, defaultParamName.code)
-            }
-
-        val keyValues2 =
-          unsaved.restCols.map { col =>
+          case ComputedRowUnsaved.AlwaysGeneratedCol(col) =>
+            val defaultParamName = mkDefaultParamName(col)
+            (col.name, defaultParamName.code)
+          case ComputedRowUnsaved.NormalCol(col) =>
             (col.name, sc.QIdent.of(col.name).code)
-          }
-
-        val keyValues: List[(sc.Ident, sc.Code)] =
-          keyValues2 ::: keyValues1.toList
+        }
 
         code"""|def toRow(${params.map(_.code).mkCode(", ")}): ${table.names.RowName} =
              |  ${table.names.RowName}(

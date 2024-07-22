@@ -55,20 +55,20 @@ case class DocumentRowUnsaved(
     DocumentRow(
       title = title,
       owner = owner,
-      filename = filename,
-      fileextension = fileextension,
-      revision = revision,
-      status = status,
-      documentsummary = documentsummary,
-      document = document,
       folderflag = folderflag match {
                      case Defaulted.UseDefault => folderflagDefault
                      case Defaulted.Provided(value) => value
                    },
+      filename = filename,
+      fileextension = fileextension,
+      revision = revision,
       changenumber = changenumber match {
                        case Defaulted.UseDefault => changenumberDefault
                        case Defaulted.Provided(value) => value
                      },
+      status = status,
+      documentsummary = documentsummary,
+      document = document,
       rowguid = rowguid match {
                   case Defaulted.UseDefault => rowguidDefault
                   case Defaulted.Provided(value) => value

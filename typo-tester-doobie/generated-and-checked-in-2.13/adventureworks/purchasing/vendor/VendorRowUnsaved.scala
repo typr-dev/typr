@@ -45,7 +45,6 @@ case class VendorRowUnsaved(
       accountnumber = accountnumber,
       name = name,
       creditrating = creditrating,
-      purchasingwebserviceurl = purchasingwebserviceurl,
       preferredvendorstatus = preferredvendorstatus match {
                                 case Defaulted.UseDefault => preferredvendorstatusDefault
                                 case Defaulted.Provided(value) => value
@@ -54,6 +53,7 @@ case class VendorRowUnsaved(
                      case Defaulted.UseDefault => activeflagDefault
                      case Defaulted.Provided(value) => value
                    },
+      purchasingwebserviceurl = purchasingwebserviceurl,
       modifieddate = modifieddate match {
                        case Defaulted.UseDefault => modifieddateDefault
                        case Defaulted.Provided(value) => value

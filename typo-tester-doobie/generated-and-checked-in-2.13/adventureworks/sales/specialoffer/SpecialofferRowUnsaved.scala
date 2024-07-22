@@ -47,24 +47,24 @@ case class SpecialofferRowUnsaved(
 ) {
   def toRow(specialofferidDefault: => SpecialofferId, discountpctDefault: => BigDecimal, minqtyDefault: => Int, rowguidDefault: => TypoUUID, modifieddateDefault: => TypoLocalDateTime): SpecialofferRow =
     SpecialofferRow(
-      description = description,
-      `type` = `type`,
-      category = category,
-      startdate = startdate,
-      enddate = enddate,
-      maxqty = maxqty,
       specialofferid = specialofferid match {
                          case Defaulted.UseDefault => specialofferidDefault
                          case Defaulted.Provided(value) => value
                        },
+      description = description,
       discountpct = discountpct match {
                       case Defaulted.UseDefault => discountpctDefault
                       case Defaulted.Provided(value) => value
                     },
+      `type` = `type`,
+      category = category,
+      startdate = startdate,
+      enddate = enddate,
       minqty = minqty match {
                  case Defaulted.UseDefault => minqtyDefault
                  case Defaulted.Provided(value) => value
                },
+      maxqty = maxqty,
       rowguid = rowguid match {
                   case Defaulted.UseDefault => rowguidDefault
                   case Defaulted.Provided(value) => value

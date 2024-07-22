@@ -20,7 +20,6 @@ case class PersonRowUnsaved(
 ) {
   def toRow(oneDefault: => Long, twoDefault: => Option[String]): PersonRow =
     PersonRow(
-      name = name,
       one = one match {
               case Defaulted.UseDefault => oneDefault
               case Defaulted.Provided(value) => value
@@ -28,7 +27,8 @@ case class PersonRowUnsaved(
       two = two match {
               case Defaulted.UseDefault => twoDefault
               case Defaulted.Provided(value) => value
-            }
+            },
+      name = name
     )
 }
 object PersonRowUnsaved {

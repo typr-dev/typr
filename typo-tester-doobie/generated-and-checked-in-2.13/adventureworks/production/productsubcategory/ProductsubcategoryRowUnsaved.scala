@@ -31,12 +31,12 @@ case class ProductsubcategoryRowUnsaved(
 ) {
   def toRow(productsubcategoryidDefault: => ProductsubcategoryId, rowguidDefault: => TypoUUID, modifieddateDefault: => TypoLocalDateTime): ProductsubcategoryRow =
     ProductsubcategoryRow(
-      productcategoryid = productcategoryid,
-      name = name,
       productsubcategoryid = productsubcategoryid match {
                                case Defaulted.UseDefault => productsubcategoryidDefault
                                case Defaulted.Provided(value) => value
                              },
+      productcategoryid = productcategoryid,
+      name = name,
       rowguid = rowguid match {
                   case Defaulted.UseDefault => rowguidDefault
                   case Defaulted.Provided(value) => value

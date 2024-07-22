@@ -31,13 +31,13 @@ case class ShiftRowUnsaved(
 ) {
   def toRow(shiftidDefault: => ShiftId, modifieddateDefault: => TypoLocalDateTime): ShiftRow =
     ShiftRow(
-      name = name,
-      starttime = starttime,
-      endtime = endtime,
       shiftid = shiftid match {
                   case Defaulted.UseDefault => shiftidDefault
                   case Defaulted.Provided(value) => value
                 },
+      name = name,
+      starttime = starttime,
+      endtime = endtime,
       modifieddate = modifieddate match {
                        case Defaulted.UseDefault => modifieddateDefault
                        case Defaulted.Provided(value) => value

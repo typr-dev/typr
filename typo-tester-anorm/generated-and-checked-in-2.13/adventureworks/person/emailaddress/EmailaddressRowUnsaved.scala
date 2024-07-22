@@ -37,11 +37,11 @@ case class EmailaddressRowUnsaved(
   def toRow(emailaddressidDefault: => Int, rowguidDefault: => TypoUUID, modifieddateDefault: => TypoLocalDateTime): EmailaddressRow =
     EmailaddressRow(
       businessentityid = businessentityid,
-      emailaddress = emailaddress,
       emailaddressid = emailaddressid match {
                          case Defaulted.UseDefault => emailaddressidDefault
                          case Defaulted.Provided(value) => value
                        },
+      emailaddress = emailaddress,
       rowguid = rowguid match {
                   case Defaulted.UseDefault => rowguidDefault
                   case Defaulted.Provided(value) => value

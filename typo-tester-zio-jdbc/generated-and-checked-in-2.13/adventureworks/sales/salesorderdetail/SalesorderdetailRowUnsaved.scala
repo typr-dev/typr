@@ -52,15 +52,15 @@ case class SalesorderdetailRowUnsaved(
   def toRow(salesorderdetailidDefault: => Int, unitpricediscountDefault: => BigDecimal, rowguidDefault: => TypoUUID, modifieddateDefault: => TypoLocalDateTime): SalesorderdetailRow =
     SalesorderdetailRow(
       salesorderid = salesorderid,
+      salesorderdetailid = salesorderdetailid match {
+                             case Defaulted.UseDefault => salesorderdetailidDefault
+                             case Defaulted.Provided(value) => value
+                           },
       carriertrackingnumber = carriertrackingnumber,
       orderqty = orderqty,
       productid = productid,
       specialofferid = specialofferid,
       unitprice = unitprice,
-      salesorderdetailid = salesorderdetailid match {
-                             case Defaulted.UseDefault => salesorderdetailidDefault
-                             case Defaulted.Provided(value) => value
-                           },
       unitpricediscount = unitpricediscount match {
                             case Defaulted.UseDefault => unitpricediscountDefault
                             case Defaulted.Provided(value) => value

@@ -61,21 +61,21 @@ case class PersonRowUnsaved(
     PersonRow(
       businessentityid = businessentityid,
       persontype = persontype,
+      namestyle = namestyle match {
+                    case Defaulted.UseDefault => namestyleDefault
+                    case Defaulted.Provided(value) => value
+                  },
       title = title,
       firstname = firstname,
       middlename = middlename,
       lastname = lastname,
       suffix = suffix,
-      additionalcontactinfo = additionalcontactinfo,
-      demographics = demographics,
-      namestyle = namestyle match {
-                    case Defaulted.UseDefault => namestyleDefault
-                    case Defaulted.Provided(value) => value
-                  },
       emailpromotion = emailpromotion match {
                          case Defaulted.UseDefault => emailpromotionDefault
                          case Defaulted.Provided(value) => value
                        },
+      additionalcontactinfo = additionalcontactinfo,
+      demographics = demographics,
       rowguid = rowguid match {
                   case Defaulted.UseDefault => rowguidDefault
                   case Defaulted.Provided(value) => value
