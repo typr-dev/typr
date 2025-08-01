@@ -2,7 +2,7 @@ package typo
 package internal
 package codegen
 
-class GenOrdering(customTypes: CustomTypes, pkg: sc.QIdent) {
+class GenOrdering(customTypes: CustomTypes, pkg: sc.QIdent, implicitOrUsing: ImplicitOrUsing) {
   val orderingName = new sc.Ident("ordering")
 
   def ordering(tpe: sc.Type, constituents0: NonEmptyList[sc.Param]): sc.Given = {
@@ -33,10 +33,10 @@ class GenOrdering(customTypes: CustomTypes, pkg: sc.QIdent) {
 
     needsImplicits match {
       case Nil =>
-        sc.Given(Nil, orderingName, Nil, ordering, impl)
+        sc.Given(Nil, orderingName, Nil, ordering, impl, implicitOrUsing)
       case nonEmpty =>
         val orderingParams = nonEmpty.map(_.tpe).distinct.zipWithIndex.map { case (colTpe, idx) => sc.Param(sc.Ident(s"O$idx"), TypesScala.Ordering.of(colTpe), None) }
-        sc.Given(Nil, orderingName, orderingParams, ordering, impl)
+        sc.Given(Nil, orderingName, orderingParams, ordering, impl, implicitOrUsing)
     }
   }
 }

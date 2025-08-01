@@ -11,7 +11,7 @@ object FileCustomType {
       case NonEmptyList(sc.Param(name, underlying, _), Nil) if options.enableDsl =>
         val bijection = {
           val thisBijection = sc.Type.dsl.Bijection.of(ct.typoType, underlying)
-          sc.Given(Nil, sc.Ident("bijection"), Nil, thisBijection, code"$thisBijection(_.$name)(${ct.typoType}.apply)")
+          sc.Given(Nil, sc.Ident("bijection"), Nil, thisBijection, code"$thisBijection(_.$name)(${ct.typoType}.apply)", options.implicitOrUsing)
         }
         Some(bijection)
       case _ => None

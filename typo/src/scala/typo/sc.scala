@@ -47,14 +47,15 @@ object sc {
     def name: sc.Ident
   }
 
-  case class Summon(tpe: Type) extends Tree
+  case class Summon(tpe: Type, implicitOrUsing: ImplicitOrUsing) extends Tree
 
   case class Given(
       tparams: List[Type.Abstract],
       name: sc.Ident,
       implicitParams: List[Param],
       tpe: sc.Type,
-      body: sc.Code
+      body: sc.Code,
+      implicitOrUsing: ImplicitOrUsing
   ) extends ClassMember
 
   case class Value(
@@ -261,13 +262,14 @@ object sc {
         def escape(str: String) = s"`$str`"
 
         if (isScalaKeyword(value) || !isValidId(value)) escape(value) else value
-      case QIdent(value)                      => value.map(renderTree).mkString(".")
-      case Param(name, tpe, Some(default))    => renderTree(name) + ": " + renderTree(tpe) + " = " + default.render
-      case Param(name, tpe, None)             => renderTree(name) + ": " + renderTree(tpe)
-      case Params(params)                     => params.map(renderTree).mkString("(", ", ", ")")
-      case StrLit(str) if str.contains(Quote) => TripleQuote + str + TripleQuote
-      case StrLit(str)                        => Quote + str + Quote
-      case Summon(tpe)                        => s"implicitly[${renderTree(tpe)}]"
+      case QIdent(value)                         => value.map(renderTree).mkString(".")
+      case Param(name, tpe, Some(default))       => renderTree(name) + ": " + renderTree(tpe) + " = " + default.render
+      case Param(name, tpe, None)                => renderTree(name) + ": " + renderTree(tpe)
+      case Params(params)                        => params.map(renderTree).mkString("(", ", ", ")")
+      case StrLit(str) if str.contains(Quote)    => TripleQuote + str + TripleQuote
+      case StrLit(str)                           => Quote + str + Quote
+      case Summon(tpe, ImplicitOrUsing.Implicit) => s"implicitly[${renderTree(tpe)}]"
+      case Summon(tpe, ImplicitOrUsing.Using)    => s"summon[${renderTree(tpe)}]"
       case tpe: Type =>
         tpe match {
           case Type.ArrayOf(value)                 => s"Array[${renderTree(value)}]"
@@ -300,17 +302,35 @@ object sc {
             }.mkString
             ret
         }
-      case Given(tparams, name, implicitParams, tpe, body) =>
+      case Given(tparams, name, implicitParams, tpe, body, implicitOrUsing) =>
         val renderedName = renderTree(name)
         val renderedTpe = renderTree(tpe)
         val renderedBody = body.render
 
-        if (tparams.isEmpty && implicitParams.isEmpty)
-          s"implicit lazy val $renderedName: $renderedTpe = $renderedBody"
-        else {
+        if (tparams.isEmpty && implicitParams.isEmpty) {
+          implicitOrUsing match {
+            case ImplicitOrUsing.Implicit => s"implicit lazy val $renderedName: $renderedTpe = $renderedBody"
+            case ImplicitOrUsing.Using    => s"given $renderedName: $renderedTpe = $renderedBody"
+          }
+
+        } else {
           val renderedTparams = if (tparams.isEmpty) "" else tparams.map(renderTree).mkString("[", ", ", "]")
-          val renderedImplicitParams = if (implicitParams.isEmpty) "" else implicitParams.map(renderTree).mkString("(implicit ", ", ", ")")
-          s"implicit def $renderedName$renderedTparams$renderedImplicitParams: $renderedTpe = $renderedBody"
+          val renderedImplicitParams =
+            if (implicitParams.isEmpty) ""
+            else {
+              implicitOrUsing match {
+                case ImplicitOrUsing.Implicit => implicitParams.map(renderTree).mkString("(implicit ", ", ", ")")
+                case ImplicitOrUsing.Using    => implicitParams.map(renderTree).mkString("(using ", ", ", ")")
+              }
+
+            }
+          implicitOrUsing match {
+            case ImplicitOrUsing.Implicit =>
+              s"implicit def $renderedName$renderedTparams$renderedImplicitParams: $renderedTpe = $renderedBody"
+            case ImplicitOrUsing.Using =>
+              s"given $renderedName$renderedTparams$renderedImplicitParams: $renderedTpe = $renderedBody"
+          }
+
         }
       case Value(tparams, name, params, implicitParams, tpe, body) =>
         val renderedName = renderTree(name)

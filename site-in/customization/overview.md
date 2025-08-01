@@ -38,6 +38,7 @@ val options = Options(
 | `keepDependencies`       | Specifies whether to generate [table dependencies](../type-safety/type-flow.md) in generated code even if you didn't select them (default is `false`).                                                        |
 | `rewriteDatabase`        | Let's you perform arbitrary rewrites of database schema snapshot. you can add/remove rows, foreign keys and so on.                                                                                            |
 | `openEnums`              | Controls if you want to tag tables ids as [open string enums](../type-safety/open-string-enums.md)                                                                                                            |
+| `implicitOrUsing`        | Controls if you want the generated code with `implicit` from scala 2 (and 3), or `using` (with `given`) which is supported in scala 3.                                                                        |
 
 ## Database Libraries
 

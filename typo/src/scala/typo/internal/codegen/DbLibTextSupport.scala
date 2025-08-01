@@ -2,7 +2,7 @@ package typo
 package internal
 package codegen
 
-class DbLibTextSupport(pkg: sc.QIdent, inlineImplicits: Boolean, externalText: Option[sc.Type.Qualified], default: ComputedDefault) {
+class DbLibTextSupport(pkg: sc.QIdent, inlineImplicits: Boolean, externalText: Option[sc.Type.Qualified], default: ComputedDefault, implicitOrUsing: ImplicitOrUsing) {
   // name of type class instance
   val textName = sc.Ident("text")
   // configurable default value used in CSV file. this must match between what the generated COPY statement and the `Text` instance says
@@ -25,8 +25,8 @@ class DbLibTextSupport(pkg: sc.QIdent, inlineImplicits: Boolean, externalText: O
         case TypesScala.Long                                               => code"$Text.longInstance"
         case TypesJava.String                                              => code"$Text.stringInstance"
         case sc.Type.ArrayOf(TypesScala.Byte)                              => code"$Text.byteArrayInstance"
-        case TypesScala.Optional(targ)                                     => code"$Text.option(${lookupTextFor(targ)})"
-        case sc.Type.TApply(default.Defaulted, List(targ))                 => code"${default.Defaulted}.$textName(${lookupTextFor(targ)})"
+        case TypesScala.Optional(targ)                                     => code"$Text.option(${implicitOrUsing.callImplicitOrUsing}${lookupTextFor(targ)})"
+        case sc.Type.TApply(default.Defaulted, List(targ))                 => code"${default.Defaulted}.$textName(${implicitOrUsing.callImplicitOrUsing}${lookupTextFor(targ)})"
         case x: sc.Type.Qualified if x.value.idents.startsWith(pkg.idents) => code"$tpe.$textName"
         case sc.Type.ArrayOf(targ: sc.Type.Qualified) if targ.value.idents.startsWith(pkg.idents) =>
           code"$Text.iterableInstance[${TypesScala.Array}, $targ](${lookupTextFor(targ)}, implicitly)"
@@ -46,7 +46,8 @@ class DbLibTextSupport(pkg: sc.QIdent, inlineImplicits: Boolean, externalText: O
                |  case (${default.Defaulted}.${default.UseDefault}, sb) =>
                |    sb.append("$DefaultValue")
                |    ()
-               |}""".stripMargin
+               |}""".stripMargin,
+      implicitOrUsing
     )
   }
 
@@ -60,10 +61,11 @@ class DbLibTextSupport(pkg: sc.QIdent, inlineImplicits: Boolean, externalText: O
         val underlyingText = lookupTextFor(underlying)
         val v = sc.Ident("v")
         code"""|new ${Text.of(wrapperType)} {
-               |  override def unsafeEncode($v: $wrapperType, sb: ${TypesJava.StringBuilder}) = $underlyingText.unsafeEncode($v.value, sb)
-               |  override def unsafeArrayEncode($v: $wrapperType, sb: ${TypesJava.StringBuilder}) = $underlyingText.unsafeArrayEncode($v.value, sb)
+               |  override def unsafeEncode($v: $wrapperType, sb: ${TypesJava.StringBuilder}): Unit = $underlyingText.unsafeEncode($v.value, sb)
+               |  override def unsafeArrayEncode($v: $wrapperType, sb: ${TypesJava.StringBuilder}): Unit = $underlyingText.unsafeArrayEncode($v.value, sb)
                |}""".stripMargin
-      }
+      },
+      implicitOrUsing
     )
 
   def rowInstance(tpe: sc.Type, cols: NonEmptyList[ComputedColumn]): sc.Given = {
@@ -76,7 +78,7 @@ class DbLibTextSupport(pkg: sc.QIdent, inlineImplicits: Boolean, externalText: O
       code"""|$Text.instance[$tpe]{ ($row, $sb) =>
              |  ${textCols.mkCode(code"\n$sb.append($Text.DELIMETER)\n")}
              |}""".stripMargin
-    sc.Given(tparams = Nil, name = textName, implicitParams = Nil, tpe = Text.of(tpe), body = body)
+    sc.Given(tparams = Nil, name = textName, implicitParams = Nil, tpe = Text.of(tpe), body = body, implicitOrUsing)
   }
 
   def customTypeInstance(ct: CustomType): sc.Given = {
@@ -89,10 +91,11 @@ class DbLibTextSupport(pkg: sc.QIdent, inlineImplicits: Boolean, externalText: O
         val underlying = lookupTextFor(ct.toText.textType)
         val v = sc.Ident("v")
         code"""|new ${Text.of(ct.typoType)} {
-               |  override def unsafeEncode($v: ${ct.typoType}, sb: ${TypesJava.StringBuilder}) = $underlying.unsafeEncode(${ct.toText.toTextType(v)}, sb)
-               |  override def unsafeArrayEncode($v: ${ct.typoType}, sb: ${TypesJava.StringBuilder}) = $underlying.unsafeArrayEncode(${ct.toText.toTextType(v)}, sb)
+               |  override def unsafeEncode($v: ${ct.typoType}, sb: ${TypesJava.StringBuilder}): Unit = $underlying.unsafeEncode(${ct.toText.toTextType(v)}, sb)
+               |  override def unsafeArrayEncode($v: ${ct.typoType}, sb: ${TypesJava.StringBuilder}): Unit = $underlying.unsafeArrayEncode(${ct.toText.toTextType(v)}, sb)
                |}""".stripMargin
-      }
+      },
+      implicitOrUsing
     )
   }
 }

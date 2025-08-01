@@ -111,7 +111,7 @@ case class FilesTable(table: ComputedTable, fkAnalysis: FkAnalysis, options: Int
           if (options.enableDsl)
             Some {
               val thisBijection = sc.Type.dsl.Bijection.of(id.tpe, id.underlying)
-              sc.Given(Nil, sc.Ident("bijection"), Nil, thisBijection, code"$thisBijection(_.$value)(${id.tpe}.apply)")
+              sc.Given(Nil, sc.Ident("bijection"), Nil, thisBijection, code"$thisBijection(_.$value)(${id.tpe}.apply)", options.implicitOrUsing)
             }
           else None
 

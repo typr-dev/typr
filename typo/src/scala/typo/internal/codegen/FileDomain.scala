@@ -16,7 +16,7 @@ object FileDomain {
       if (options.enableDsl)
         Some {
           val thisBijection = sc.Type.dsl.Bijection.of(domain.tpe, domain.underlyingType)
-          sc.Given(Nil, sc.Ident("bijection"), Nil, thisBijection, code"$thisBijection(_.$value)(${domain.tpe}.apply)")
+          sc.Given(Nil, sc.Ident("bijection"), Nil, thisBijection, code"$thisBijection(_.$value)(${domain.tpe}.apply)", options.implicitOrUsing)
         }
       else None
     val instances = List(

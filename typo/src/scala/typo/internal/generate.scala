@@ -29,9 +29,10 @@ object generate {
     val naming = publicOptions.naming(pkg)
     val options = InternalOptions(
       dbLib = publicOptions.dbLib.map {
-        case DbLibName.Anorm   => new DbLibAnorm(pkg, publicOptions.inlineImplicits, default, publicOptions.enableStreamingInserts)
-        case DbLibName.Doobie  => new DbLibDoobie(pkg, publicOptions.inlineImplicits, default, publicOptions.enableStreamingInserts, publicOptions.fixVerySlowImplicit)
-        case DbLibName.ZioJdbc => new DbLibZioJdbc(pkg, publicOptions.inlineImplicits, dslEnabled = publicOptions.enableDsl, default, publicOptions.enableStreamingInserts)
+        case DbLibName.Anorm  => new DbLibAnorm(pkg, publicOptions.inlineImplicits, default, publicOptions.enableStreamingInserts, publicOptions.implicitOrUsing)
+        case DbLibName.Doobie => new DbLibDoobie(pkg, publicOptions.inlineImplicits, default, publicOptions.enableStreamingInserts, publicOptions.fixVerySlowImplicit, publicOptions.implicitOrUsing)
+        case DbLibName.ZioJdbc =>
+          new DbLibZioJdbc(pkg, publicOptions.inlineImplicits, dslEnabled = publicOptions.enableDsl, default, publicOptions.enableStreamingInserts, publicOptions.implicitOrUsing)
       },
       debugTypes = publicOptions.debugTypes,
       enableDsl = publicOptions.enableDsl,
@@ -42,19 +43,20 @@ object generate {
       generateMockRepos = publicOptions.generateMockRepos,
       enablePrimaryKeyType = publicOptions.enablePrimaryKeyType,
       jsonLibs = publicOptions.jsonLibs.map {
-        case JsonLibName.Circe    => JsonLibCirce(pkg, default, publicOptions.inlineImplicits)
-        case JsonLibName.PlayJson => JsonLibPlay(pkg, default, publicOptions.inlineImplicits)
-        case JsonLibName.ZioJson  => JsonLibZioJson(pkg, default, publicOptions.inlineImplicits)
+        case JsonLibName.Circe    => JsonLibCirce(pkg, default, publicOptions.inlineImplicits, publicOptions.implicitOrUsing)
+        case JsonLibName.PlayJson => JsonLibPlay(pkg, default, publicOptions.inlineImplicits, publicOptions.implicitOrUsing)
+        case JsonLibName.ZioJson  => JsonLibZioJson(pkg, default, publicOptions.inlineImplicits, publicOptions.implicitOrUsing)
       },
       keepDependencies = publicOptions.keepDependencies,
       logger = publicOptions.logger,
       naming = naming,
       pkg = pkg,
       readonlyRepo = publicOptions.readonlyRepo,
-      typeOverride = publicOptions.typeOverride
+      typeOverride = publicOptions.typeOverride,
+      implicitOrUsing = publicOptions.implicitOrUsing
     )
-    val customTypes = new CustomTypes(customTypesPackage)
-    val genOrdering = new GenOrdering(customTypes, options.pkg)
+    val customTypes = new CustomTypes(customTypesPackage, publicOptions.implicitOrUsing)
+    val genOrdering = new GenOrdering(customTypes, options.pkg, publicOptions.implicitOrUsing)
     val scalaTypeMapper = TypeMapperScala(options.typeOverride, publicOptions.nullabilityOverride, naming, customTypes)
     val enums = metaDb.enums.map(ComputedStringEnum(naming))
     val domains = metaDb.domains.map(ComputedDomain(naming, scalaTypeMapper))

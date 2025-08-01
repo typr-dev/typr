@@ -19,5 +19,6 @@ case class InternalOptions(
     naming: Naming,
     pkg: sc.QIdent,
     readonlyRepo: Selector,
-    typeOverride: TypeOverride
+    typeOverride: TypeOverride,
+    implicitOrUsing: ImplicitOrUsing
 )

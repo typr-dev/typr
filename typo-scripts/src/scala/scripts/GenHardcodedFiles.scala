@@ -142,6 +142,9 @@ object GenHardcodedFiles extends BleepCodegenScript("GenHardcodedFiles") {
         else (DbLibName.Anorm, JsonLibName.PlayJson)
       val domains = Nil
 
+      val implicitOrUsing: ImplicitOrUsing =
+        if (target.project.value.contains("jvm3")) ImplicitOrUsing.Using else ImplicitOrUsing.Implicit
+
       val metaDb = MetaDb(relations = all.map(t => t.name -> Lazy(t)).toMap, enums = List(sector, number), domains = domains)
 
       val generated: List[Generated] =
@@ -158,7 +161,8 @@ object GenHardcodedFiles extends BleepCodegenScript("GenHardcodedFiles") {
             enableDsl = true,
             enableTestInserts = Selector.All,
             enableFieldValue = Selector.All,
-            silentBanner = true
+            silentBanner = true,
+            implicitOrUsing = implicitOrUsing
           ),
           metaDb,
           ProjectGraph(name = "", target.sources, None, Selector.All, scripts = Nil, Nil),
