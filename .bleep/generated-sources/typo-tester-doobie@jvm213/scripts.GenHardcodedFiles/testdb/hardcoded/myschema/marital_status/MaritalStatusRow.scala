@@ -25,7 +25,7 @@ object MaritalStatusRow {
   implicit lazy val encoder: Encoder[MaritalStatusRow] = Encoder.forProduct1[MaritalStatusRow, MaritalStatusId]("id")(x => (x.id))(MaritalStatusId.encoder)
   implicit lazy val read: Read[MaritalStatusRow] = new Read.CompositeOfInstances(Array(
     new Read.Single(MaritalStatusId.get).asInstanceOf[Read[Any]]
-  ))(using scala.reflect.ClassTag.Any).map { arr =>
+  ))(scala.reflect.ClassTag.Any).map { arr =>
     MaritalStatusRow(
       id = arr(0).asInstanceOf[MaritalStatusId]
     )

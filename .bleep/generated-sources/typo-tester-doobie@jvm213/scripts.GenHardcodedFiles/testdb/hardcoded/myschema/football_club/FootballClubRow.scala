@@ -29,7 +29,7 @@ object FootballClubRow {
   implicit lazy val read: Read[FootballClubRow] = new Read.CompositeOfInstances(Array(
     new Read.Single(FootballClubId.get).asInstanceOf[Read[Any]],
       new Read.Single(Meta.StringMeta.get).asInstanceOf[Read[Any]]
-  ))(using scala.reflect.ClassTag.Any).map { arr =>
+  ))(scala.reflect.ClassTag.Any).map { arr =>
     FootballClubRow(
       id = arr(0).asInstanceOf[FootballClubId],
           name = arr(1).asInstanceOf[/* max 100 chars */ String]

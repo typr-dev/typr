@@ -26,7 +26,7 @@ trait Text[A] { outer =>
 }
 
 object Text {
-  def apply[A](implicit ev: Text[A]): ev.type = ev
+  def apply[A](using ev: Text[A]): ev.type = ev
 
   val DELIMETER: Char = '\t'
   val NULL: String = "\\N"
@@ -34,7 +34,7 @@ object Text {
   def instance[A](f: (A, StringBuilder) => Unit): Text[A] = (sb, a) => f(sb, a)
 
   // String encoder escapes any embedded `QUOTE` characters.
-  implicit val stringInstance: Text[String] =
+  given stringInstance: Text[String] =
     new Text[String] {
       // Standard char encodings that don't differ in array context
       def stdChar(c: Char, sb: StringBuilder): StringBuilder =
@@ -61,8 +61,8 @@ object Text {
       override def unsafeArrayEncode(s: String, sb: StringBuilder): Unit = {
         sb.append('"')
         s.foreach {
-          case '\"' => sb.append("\\\\\"")
-          case '\\' => sb.append("\\\\\\\\") // srsly
+          case '\"' => sb.append("\\\\\\\"")
+          case '\\' => sb.append("\\\\\\\\\\\\\\\\") // srsly
           case c    => stdChar(c, sb)
         }
         sb.append('"')
@@ -70,15 +70,15 @@ object Text {
       }
     }
 
-  implicit val charInstance: Text[Char] = instance { (n, sb) => sb.append(n.toString); () }
-  implicit val intInstance: Text[Int] = instance { (n, sb) => sb.append(n); () }
-  implicit val shortInstance: Text[Short] = instance { (n, sb) => sb.append(n); () }
-  implicit val longInstance: Text[Long] = instance { (n, sb) => sb.append(n); () }
-  implicit val floatInstance: Text[Float] = instance { (n, sb) => sb.append(n); () }
-  implicit val doubleInstance: Text[Double] = instance { (n, sb) => sb.append(n); () }
-  implicit val bigDecimalInstance: Text[BigDecimal] = instance { (n, sb) => sb.append(n); () }
-  implicit val booleanInstance: Text[Boolean] = instance { (n, sb) => sb.append(n); () }
-  implicit val byteArrayInstance: Text[Array[Byte]] = instance { (bs, sb) =>
+  given charInstance: Text[Char] = instance { (n, sb) => sb.append(n.toString); () }
+  given intInstance: Text[Int] = instance { (n, sb) => sb.append(n); () }
+  given shortInstance: Text[Short] = instance { (n, sb) => sb.append(n); () }
+  given longInstance: Text[Long] = instance { (n, sb) => sb.append(n); () }
+  given floatInstance: Text[Float] = instance { (n, sb) => sb.append(n); () }
+  given doubleInstance: Text[Double] = instance { (n, sb) => sb.append(n); () }
+  given bigDecimalInstance: Text[BigDecimal] = instance { (n, sb) => sb.append(n); () }
+  given booleanInstance: Text[Boolean] = instance { (n, sb) => sb.append(n); () }
+  given byteArrayInstance: Text[Array[Byte]] = instance { (bs, sb) =>
     sb.append("\\\\x")
     if (bs.length > 0) {
       val hex = BigInt(1, bs).toString(16)
@@ -89,13 +89,13 @@ object Text {
     }
   }
 
-  implicit def option[A](implicit A: Text[A]): Text[Option[A]] = instance {
+  given option[A](using A: Text[A]): Text[Option[A]] = instance {
     case (Some(a), sb) => A.unsafeEncode(a, sb)
     case (None, sb) =>
       sb.append(Text.NULL)
       ()
   }
-  implicit def iterableInstance[F[_], A](implicit ev: Text[A], f: F[A] => Iterable[A]): Text[F[A]] = instance { (as, sb) =>
+  given iterableInstance[F[_], A](using ev: Text[A], f: F[A] => Iterable[A]): Text[F[A]] = instance { (as, sb) =>
     var first = true
     sb.append("{")
     f(as).foreach { a =>

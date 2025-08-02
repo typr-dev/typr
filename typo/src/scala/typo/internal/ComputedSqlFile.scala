@@ -13,7 +13,8 @@ case class ComputedSqlFile(
     naming: Naming,
     typeMapperDb: TypeMapperDb,
     scalaTypeMapper: TypeMapperScala,
-    eval: EvalMaybe[db.RelationName, HasSource]
+    eval: EvalMaybe[db.RelationName, HasSource],
+    dialect: Dialect
 ) {
   val source: Source.SqlFile = Source.SqlFile(sqlFile.relPath)
 
@@ -44,7 +45,7 @@ case class ComputedSqlFile(
           }
 
         // we let types flow through constraints down to this column, the point is to reuse id types downstream
-        val typeFromFk: Option[sc.Type] = findTypeFromFk(logger, source, col.name, pointsTo, eval)(_ => None)
+        val typeFromFk: Option[sc.Type] = findTypeFromFk(logger, source, col.name, pointsTo, eval, dialect)(_ => None)
 
         val tpe = scalaTypeMapper.sqlFile(col.parsedColumnName.overriddenType.orElse(typeFromFk), dbType, nullability)
 

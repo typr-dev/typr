@@ -2,7 +2,7 @@ package typo
 package internal
 package codegen
 
-final case class JsonLibZioJson(pkg: sc.QIdent, default: ComputedDefault, inlineImplicits: Boolean, implicitOrUsing: ImplicitOrUsing) extends JsonLib {
+final case class JsonLibZioJson(pkg: sc.QIdent, default: ComputedDefault, inlineImplicits: Boolean, dialect: Dialect) extends JsonLib {
   private val JsonDecoder = sc.Type.Qualified("zio.json.JsonDecoder")
   private val JsonEncoder = sc.Type.Qualified("zio.json.JsonEncoder")
   private val Write = sc.Type.Qualified("zio.json.internal.Write")
@@ -33,9 +33,9 @@ final case class JsonLibZioJson(pkg: sc.QIdent, default: ComputedDefault, inline
         case TypesJava.OffsetTime                                          => code"$JsonDecoder.offsetTime"
         case TypesJava.String                                              => code"$JsonDecoder.string"
         case TypesJava.UUID                                                => code"$JsonDecoder.uuid"
-        case sc.Type.ArrayOf(targ)                                         => code"$JsonDecoder.array[$targ](using ${go(targ)}, implicitly)"
-        case sc.Type.TApply(default.Defaulted, List(targ))                 => code"${default.Defaulted}.$decoderName(${implicitOrUsing.callImplicitOrUsing}${go(targ)})"
-        case TypesScala.Optional(targ)                                     => code"$JsonDecoder.option(${implicitOrUsing.callImplicitOrUsing}${go(targ)})"
+        case sc.Type.ArrayOf(targ)                                         => code"$JsonDecoder.array[$targ](${dialect.usingCall}${go(targ)}, implicitly)"
+        case sc.Type.TApply(default.Defaulted, List(targ))                 => code"${default.Defaulted}.$decoderName(${dialect.usingCall}${go(targ)})"
+        case TypesScala.Optional(targ)                                     => code"$JsonDecoder.option(${dialect.usingCall}${go(targ)})"
         case x: sc.Type.Qualified if x.value.idents.startsWith(pkg.idents) => code"$tpe.$decoderName"
         case other                                                         => code"${JsonDecoder.of(other)}"
       }
@@ -62,9 +62,9 @@ final case class JsonLibZioJson(pkg: sc.QIdent, default: ComputedDefault, inline
         case TypesJava.OffsetTime                                          => code"$JsonEncoder.offsetTime"
         case TypesJava.String                                              => code"$JsonEncoder.string"
         case TypesJava.UUID                                                => code"$JsonEncoder.uuid"
-        case sc.Type.ArrayOf(targ)                                         => code"$JsonEncoder.array[$targ](${implicitOrUsing.callImplicitOrUsing}${go(targ)}, implicitly)"
-        case sc.Type.TApply(default.Defaulted, List(targ))                 => code"${default.Defaulted}.$encoderName(${implicitOrUsing.callImplicitOrUsing}${go(targ)})"
-        case TypesScala.Optional(targ)                                     => code"$JsonEncoder.option(${implicitOrUsing.callImplicitOrUsing}${go(targ)})"
+        case sc.Type.ArrayOf(targ)                                         => code"$JsonEncoder.array[$targ](${dialect.usingCall}${go(targ)}, implicitly)"
+        case sc.Type.TApply(default.Defaulted, List(targ))                 => code"${default.Defaulted}.$encoderName(${dialect.usingCall}${go(targ)})"
+        case TypesScala.Optional(targ)                                     => code"$JsonEncoder.option(${dialect.usingCall}${go(targ)})"
         case x: sc.Type.Qualified if x.value.idents.startsWith(pkg.idents) => code"$tpe.$encoderName"
         case other                                                         => code"${JsonEncoder.of(other)}"
       }
@@ -86,8 +86,7 @@ final case class JsonLibZioJson(pkg: sc.QIdent, default: ComputedDefault, inline
                       |      case $Success("defaulted") => UseDefault
                       |      case _ => Provided(T.unsafeDecode(trace, in))
                       |    }
-                      |  }""".stripMargin,
-        implicitOrUsing
+                      |  }""".stripMargin
       ),
       sc.Given(
         tparams = List(T),
@@ -104,8 +103,7 @@ final case class JsonLibZioJson(pkg: sc.QIdent, default: ComputedDefault, inline
                  |        out.write("}")
                  |      case ${d.UseDefault} => out.write("\\"defaulted\\"")
                  |    }
-                 |}""".stripMargin,
-        implicitOrUsing
+                 |}""".stripMargin
       )
     )
   }
@@ -119,37 +117,15 @@ final case class JsonLibZioJson(pkg: sc.QIdent, default: ComputedDefault, inline
         tpe = JsonDecoder.of(wrapperType),
         body =
           if (openEnum) code"""${lookupDecoderFor(underlying)}.map($wrapperType.apply)"""
-          else code"""${lookupDecoderFor(underlying)}.mapOrFail($wrapperType.apply)""",
-        implicitOrUsing
+          else code"""${lookupDecoderFor(underlying)}.mapOrFail($wrapperType.apply)"""
       ),
-      sc.Given(
-        tparams = Nil,
-        name = encoderName,
-        implicitParams = Nil,
-        tpe = JsonEncoder.of(wrapperType),
-        body = code"${lookupEncoderFor(underlying)}.contramap(_.value)",
-        implicitOrUsing
-      )
+      sc.Given(tparams = Nil, name = encoderName, implicitParams = Nil, tpe = JsonEncoder.of(wrapperType), body = code"${lookupEncoderFor(underlying)}.contramap(_.value)")
     )
 
   override def wrapperTypeInstances(wrapperType: sc.Type.Qualified, fieldName: sc.Ident, underlying: sc.Type): List[sc.Given] =
     List(
-      sc.Given(
-        tparams = Nil,
-        name = encoderName,
-        implicitParams = Nil,
-        tpe = JsonEncoder.of(wrapperType),
-        body = code"${lookupEncoderFor(underlying)}.contramap(_.$fieldName)",
-        implicitOrUsing
-      ),
-      sc.Given(
-        tparams = Nil,
-        name = decoderName,
-        implicitParams = Nil,
-        tpe = JsonDecoder.of(wrapperType),
-        body = code"${lookupDecoderFor(underlying)}.map($wrapperType.apply)",
-        implicitOrUsing
-      )
+      sc.Given(tparams = Nil, name = encoderName, implicitParams = Nil, tpe = JsonEncoder.of(wrapperType), body = code"${lookupEncoderFor(underlying)}.contramap(_.$fieldName)"),
+      sc.Given(tparams = Nil, name = decoderName, implicitParams = Nil, tpe = JsonDecoder.of(wrapperType), body = code"${lookupDecoderFor(underlying)}.map($wrapperType.apply)")
     )
 
   override def productInstances(tpe: sc.Type, fields: NonEmptyList[JsonLib.Field]): List[sc.Given] = {
@@ -165,9 +141,9 @@ final case class JsonLibZioJson(pkg: sc.QIdent, default: ComputedDefault, inline
               f.tpe match {
                 case TypesScala.Optional(targ) =>
                   val either = TypesScala.Either.of(TypesJava.String, TypesScala.Option.of(sc.Type.base(targ)))
-                  code"""val ${f.scalaName} = jsonObj.get(${f.jsonName}).fold[$either](${TypesScala.Right}(${TypesScala.None}))(_.as(${lookupDecoderFor(f.tpe)}))"""
+                  code"""val ${f.scalaName} = jsonObj.get(${f.jsonName}).fold[$either](${TypesScala.Right}(${TypesScala.None}))(_.as(${dialect.usingCall}${lookupDecoderFor(f.tpe)}))"""
                 case _ =>
-                  code"""val ${f.scalaName} = jsonObj.get(${f.jsonName}).toRight("Missing field '${f.jsonName.str}'").flatMap(_.as(${lookupDecoderFor(f.tpe)}))"""
+                  code"""val ${f.scalaName} = jsonObj.get(${f.jsonName}).toRight("Missing field '${f.jsonName.str}'").flatMap(_.as(${dialect.usingCall}${lookupDecoderFor(f.tpe)}))"""
               }
             )
 
@@ -179,8 +155,7 @@ final case class JsonLibZioJson(pkg: sc.QIdent, default: ComputedDefault, inline
                  |    ${TypesScala.Right}($tpe(${fields.map(v => code"${v.scalaName} = ${v.scalaName}.toOption.get").mkCode(", ")}))
                  |  else ${TypesScala.Left}($list(${fields.map(f => code"${f.scalaName}").mkCode(", ")}).flatMap(_.left.toOption).mkString(", "))
                  |}""".stripMargin
-        },
-        implicitOrUsing
+        }
       )
 
     val encoder =
@@ -201,8 +176,7 @@ final case class JsonLibZioJson(pkg: sc.QIdent, default: ComputedDefault, inline
                  |    out.write("}")
                  |  }
                  |}""".stripMargin
-        },
-        implicitOrUsing
+        }
       )
 
     List(decoder, encoder)

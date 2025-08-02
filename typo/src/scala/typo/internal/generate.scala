@@ -29,10 +29,10 @@ object generate {
     val naming = publicOptions.naming(pkg)
     val options = InternalOptions(
       dbLib = publicOptions.dbLib.map {
-        case DbLibName.Anorm  => new DbLibAnorm(pkg, publicOptions.inlineImplicits, default, publicOptions.enableStreamingInserts, publicOptions.implicitOrUsing)
-        case DbLibName.Doobie => new DbLibDoobie(pkg, publicOptions.inlineImplicits, default, publicOptions.enableStreamingInserts, publicOptions.fixVerySlowImplicit, publicOptions.implicitOrUsing)
+        case DbLibName.Anorm  => new DbLibAnorm(pkg, publicOptions.inlineImplicits, default, publicOptions.enableStreamingInserts, publicOptions.dialect)
+        case DbLibName.Doobie => new DbLibDoobie(pkg, publicOptions.inlineImplicits, default, publicOptions.enableStreamingInserts, publicOptions.fixVerySlowImplicit, publicOptions.dialect)
         case DbLibName.ZioJdbc =>
-          new DbLibZioJdbc(pkg, publicOptions.inlineImplicits, dslEnabled = publicOptions.enableDsl, default, publicOptions.enableStreamingInserts, publicOptions.implicitOrUsing)
+          new DbLibZioJdbc(pkg, publicOptions.inlineImplicits, dslEnabled = publicOptions.enableDsl, default, publicOptions.enableStreamingInserts, publicOptions.dialect)
       },
       debugTypes = publicOptions.debugTypes,
       enableDsl = publicOptions.enableDsl,
@@ -43,9 +43,9 @@ object generate {
       generateMockRepos = publicOptions.generateMockRepos,
       enablePrimaryKeyType = publicOptions.enablePrimaryKeyType,
       jsonLibs = publicOptions.jsonLibs.map {
-        case JsonLibName.Circe    => JsonLibCirce(pkg, default, publicOptions.inlineImplicits, publicOptions.implicitOrUsing)
-        case JsonLibName.PlayJson => JsonLibPlay(pkg, default, publicOptions.inlineImplicits, publicOptions.implicitOrUsing)
-        case JsonLibName.ZioJson  => JsonLibZioJson(pkg, default, publicOptions.inlineImplicits, publicOptions.implicitOrUsing)
+        case JsonLibName.Circe    => JsonLibCirce(pkg, default, publicOptions.inlineImplicits, publicOptions.dialect)
+        case JsonLibName.PlayJson => JsonLibPlay(pkg, default, publicOptions.inlineImplicits, publicOptions.dialect)
+        case JsonLibName.ZioJson  => JsonLibZioJson(pkg, default, publicOptions.inlineImplicits, publicOptions.dialect)
       },
       keepDependencies = publicOptions.keepDependencies,
       logger = publicOptions.logger,
@@ -53,10 +53,10 @@ object generate {
       pkg = pkg,
       readonlyRepo = publicOptions.readonlyRepo,
       typeOverride = publicOptions.typeOverride,
-      implicitOrUsing = publicOptions.implicitOrUsing
+      dialect = publicOptions.dialect
     )
-    val customTypes = new CustomTypes(customTypesPackage, publicOptions.implicitOrUsing)
-    val genOrdering = new GenOrdering(customTypes, options.pkg, publicOptions.implicitOrUsing)
+    val customTypes = new CustomTypes(customTypesPackage, publicOptions.dialect)
+    val genOrdering = new GenOrdering(customTypes, options.pkg)
     val scalaTypeMapper = TypeMapperScala(options.typeOverride, publicOptions.nullabilityOverride, naming, customTypes)
     val enums = metaDb.enums.map(ComputedStringEnum(naming))
     val domains = metaDb.domains.map(ComputedDomain(naming, scalaTypeMapper))
@@ -72,13 +72,13 @@ object generate {
             case (_, dbTable: db.Table, eval) =>
               ComputedTable(options, default, dbTable, naming, scalaTypeMapper, eval, openEnumsByTable)
             case (_, dbView: db.View, eval) =>
-              ComputedView(options.logger, dbView, naming, metaDb.typeMapperDb, scalaTypeMapper, eval, options.enableFieldValue.include(dbView.name), options.enableDsl)
+              ComputedView(options.logger, dbView, naming, metaDb.typeMapperDb, scalaTypeMapper, eval, options.enableFieldValue.include(dbView.name), options.enableDsl, options.dialect)
           }
 
         // note, these statements will force the evaluation of some of the lazy values
         val computedSqlFiles: List[ComputedSqlFile] =
           project.scripts.map { sqlScript =>
-            ComputedSqlFile(options.logger, sqlScript, options.pkg, naming, metaDb.typeMapperDb, scalaTypeMapper, computedLazyRelations.get)
+            ComputedSqlFile(options.logger, sqlScript, options.pkg, naming, metaDb.typeMapperDb, scalaTypeMapper, computedLazyRelations.get, options.dialect)
           }
 
         computedLazyRelations.foreach { case (relName, lazyValue) =>
@@ -101,7 +101,7 @@ object generate {
         val relationFilesByName = computedRelations.flatMap {
           case viewComputed: ComputedView => FilesView(viewComputed, options).all.map(x => (viewComputed.view.name, x))
           case tableComputed: ComputedTable =>
-            val fkAnalysis = FkAnalysis(computedRelationsByName, tableComputed)
+            val fkAnalysis = FkAnalysis(computedRelationsByName, tableComputed, options.dialect)
             FilesTable(tableComputed, fkAnalysis, options, genOrdering, domainsByName).all.map(x => (tableComputed.dbTable.name, x))
           case _ => Nil
         }

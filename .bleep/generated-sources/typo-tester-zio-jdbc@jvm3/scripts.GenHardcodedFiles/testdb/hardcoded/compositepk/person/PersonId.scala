@@ -19,14 +19,14 @@ case class PersonId(
   two: Option[String]
 )
 object PersonId {
-  implicit lazy val jsonDecoder: JsonDecoder[PersonId] = JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
-    val one = jsonObj.get("one").toRight("Missing field 'one'").flatMap(_.as(JsonDecoder.long))
-    val two = jsonObj.get("two").fold[Either[String, Option[String]]](Right(None))(_.as(JsonDecoder.option(using JsonDecoder.string)))
+  given jsonDecoder: JsonDecoder[PersonId] = JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
+    val one = jsonObj.get("one").toRight("Missing field 'one'").flatMap(_.as(using JsonDecoder.long))
+    val two = jsonObj.get("two").fold[Either[String, Option[String]]](Right(None))(_.as(using JsonDecoder.option(using JsonDecoder.string)))
     if (one.isRight && two.isRight)
       Right(PersonId(one = one.toOption.get, two = two.toOption.get))
     else Left(List[Either[String, Any]](one, two).flatMap(_.left.toOption).mkString(", "))
   }
-  implicit lazy val jsonEncoder: JsonEncoder[PersonId] = new JsonEncoder[PersonId] {
+  given jsonEncoder: JsonEncoder[PersonId] = new JsonEncoder[PersonId] {
     override def unsafeEncode(a: PersonId, indent: Option[Int], out: Write): Unit = {
       out.write("{")
       out.write(""""one":""")
@@ -37,5 +37,5 @@ object PersonId {
       out.write("}")
     }
   }
-  implicit def ordering(implicit O0: Ordering[Option[String]]): Ordering[PersonId] = Ordering.by(x => (x.one, x.two))
+  given ordering(using O0: Ordering[Option[String]]): Ordering[PersonId] = Ordering.by(x => (x.one, x.two))
 }

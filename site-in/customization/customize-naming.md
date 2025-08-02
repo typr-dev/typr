@@ -26,7 +26,7 @@ val optsCustomId = Options(
 ```
 ```scala mdoc
 // this incantation demos the effect, you don't have to write this in your code
-sc.renderTree(optsCustomId.naming(sc.QIdent(optsCustomId.pkg)).field(db.ColName("id_flaff")))
+sc.renderTree(optsCustomId.naming(sc.QIdent(optsCustomId.pkg)).field(db.ColName("id_flaff")), Dialect.Scala3)
 ```
 
 ### Customize enum field names
@@ -47,6 +47,6 @@ val optsCustomEnum = Options(
 
 ```scala mdoc
 // this incantation demos the effect, you don't have to write this in your code
-sc.renderTree(optsCustomEnum.naming(sc.QIdent(optsCustomEnum.pkg)).enumValue("writes"))
+sc.renderTree(optsCustomEnum.naming(sc.QIdent(optsCustomEnum.pkg)).enumValue("writes"), Dialect.Scala3)
 ```
 

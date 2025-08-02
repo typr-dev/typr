@@ -32,24 +32,24 @@ class PersonRepoImpl extends PersonRepo {
     DeleteBuilder(""""compositepk"."person"""", PersonFields.structure)
   }
   override def deleteById(compositeId: PersonId): ConnectionIO[Boolean] = {
-    sql"""delete from "compositepk"."person" where "one" = ${fromWrite(compositeId.one)(new Write.Single(Meta.LongMeta.put))} AND "two" = ${fromWrite(compositeId.two)(new Write.SingleOpt(Meta.StringMeta.put))}""".update.run.map(_ > 0)
+    sql"""delete from "compositepk"."person" where "one" = ${fromWrite(compositeId.one)(using new Write.Single(Meta.LongMeta.put))} AND "two" = ${fromWrite(compositeId.two)(using new Write.SingleOpt(Meta.StringMeta.put))}""".update.run.map(_ > 0)
   }
   override def insert(unsaved: PersonRow): ConnectionIO[PersonRow] = {
     sql"""insert into "compositepk"."person"("one", "two", "name")
-          values (${fromWrite(unsaved.one)(new Write.Single(Meta.LongMeta.put))}::int8, ${fromWrite(unsaved.two)(new Write.SingleOpt(Meta.StringMeta.put))}, ${fromWrite(unsaved.name)(new Write.SingleOpt(Meta.StringMeta.put))})
+          values (${fromWrite(unsaved.one)(using new Write.Single(Meta.LongMeta.put))}::int8, ${fromWrite(unsaved.two)(using new Write.SingleOpt(Meta.StringMeta.put))}, ${fromWrite(unsaved.name)(using new Write.SingleOpt(Meta.StringMeta.put))})
           returning "one", "two", "name"
        """.query(using PersonRow.read).unique
   }
   override def insert(unsaved: PersonRowUnsaved): ConnectionIO[PersonRow] = {
     val fs = List(
-      Some((Fragment.const0(s""""name""""), fr"${fromWrite(unsaved.name)(new Write.SingleOpt(Meta.StringMeta.put))}")),
+      Some((Fragment.const0(s""""name""""), fr"${fromWrite(unsaved.name)(using new Write.SingleOpt(Meta.StringMeta.put))}")),
       unsaved.one match {
         case Defaulted.UseDefault => None
-        case Defaulted.Provided(value) => Some((Fragment.const0(s""""one""""), fr"${fromWrite(value: Long)(new Write.Single(Meta.LongMeta.put))}::int8"))
+        case Defaulted.Provided(value) => Some((Fragment.const0(s""""one""""), fr"${fromWrite(value: Long)(using new Write.Single(Meta.LongMeta.put))}::int8"))
       },
       unsaved.two match {
         case Defaulted.UseDefault => None
-        case Defaulted.Provided(value) => Some((Fragment.const0(s""""two""""), fr"${fromWrite(value: Option[String])(new Write.SingleOpt(Meta.StringMeta.put))}"))
+        case Defaulted.Provided(value) => Some((Fragment.const0(s""""two""""), fr"${fromWrite(value: Option[String])(using new Write.SingleOpt(Meta.StringMeta.put))}"))
       }
     ).flatten
     
@@ -83,15 +83,15 @@ class PersonRepoImpl extends PersonRepo {
   override def selectByFieldValues(fieldValues: List[PersonFieldOrIdValue[?]]): Stream[ConnectionIO, PersonRow] = {
     val where = fragments.whereAndOpt(
       fieldValues.map {
-        case PersonFieldValue.one(value) => fr""""one" = ${fromWrite(value)(new Write.Single(Meta.LongMeta.put))}"""
-        case PersonFieldValue.two(value) => fr""""two" = ${fromWrite(value)(new Write.SingleOpt(Meta.StringMeta.put))}"""
-        case PersonFieldValue.name(value) => fr""""name" = ${fromWrite(value)(new Write.SingleOpt(Meta.StringMeta.put))}"""
+        case PersonFieldValue.one(value) => fr""""one" = ${fromWrite(value)(using new Write.Single(Meta.LongMeta.put))}"""
+        case PersonFieldValue.two(value) => fr""""two" = ${fromWrite(value)(using new Write.SingleOpt(Meta.StringMeta.put))}"""
+        case PersonFieldValue.name(value) => fr""""name" = ${fromWrite(value)(using new Write.SingleOpt(Meta.StringMeta.put))}"""
       }
     )
     sql"""select "one", "two", "name" from "compositepk"."person" $where""".query(using PersonRow.read).stream
   }
   override def selectById(compositeId: PersonId): ConnectionIO[Option[PersonRow]] = {
-    sql"""select "one", "two", "name" from "compositepk"."person" where "one" = ${fromWrite(compositeId.one)(new Write.Single(Meta.LongMeta.put))} AND "two" = ${fromWrite(compositeId.two)(new Write.SingleOpt(Meta.StringMeta.put))}""".query(using PersonRow.read).option
+    sql"""select "one", "two", "name" from "compositepk"."person" where "one" = ${fromWrite(compositeId.one)(using new Write.Single(Meta.LongMeta.put))} AND "two" = ${fromWrite(compositeId.two)(using new Write.SingleOpt(Meta.StringMeta.put))}""".query(using PersonRow.read).option
   }
   override def update: UpdateBuilder[PersonFields, PersonRow] = {
     UpdateBuilder(""""compositepk"."person"""", PersonFields.structure, PersonRow.read)
@@ -99,8 +99,8 @@ class PersonRepoImpl extends PersonRepo {
   override def update(row: PersonRow): ConnectionIO[Option[PersonRow]] = {
     val compositeId = row.compositeId
     sql"""update "compositepk"."person"
-          set "name" = ${fromWrite(row.name)(new Write.SingleOpt(Meta.StringMeta.put))}
-          where "one" = ${fromWrite(compositeId.one)(new Write.Single(Meta.LongMeta.put))} AND "two" = ${fromWrite(compositeId.two)(new Write.SingleOpt(Meta.StringMeta.put))}
+          set "name" = ${fromWrite(row.name)(using new Write.SingleOpt(Meta.StringMeta.put))}
+          where "one" = ${fromWrite(compositeId.one)(using new Write.Single(Meta.LongMeta.put))} AND "two" = ${fromWrite(compositeId.two)(using new Write.SingleOpt(Meta.StringMeta.put))}
           returning "one", "two", "name"""".query(using PersonRow.read).option
   }
   override def updateFieldValues(compositeId: PersonId, fieldValues: List[PersonFieldValue[?]]): ConnectionIO[Boolean] = {
@@ -109,20 +109,20 @@ class PersonRepoImpl extends PersonRepo {
       case Some(nonEmpty) =>
         val updates = fragments.set(
           nonEmpty.map {
-            case PersonFieldValue.name(value) => fr""""name" = ${fromWrite(value)(new Write.SingleOpt(Meta.StringMeta.put))}"""
+            case PersonFieldValue.name(value) => fr""""name" = ${fromWrite(value)(using new Write.SingleOpt(Meta.StringMeta.put))}"""
           }
         )
         sql"""update "compositepk"."person"
               $updates
-              where "one" = ${fromWrite(compositeId.one)(new Write.Single(Meta.LongMeta.put))} AND "two" = ${fromWrite(compositeId.two)(new Write.SingleOpt(Meta.StringMeta.put))}""".update.run.map(_ > 0)
+              where "one" = ${fromWrite(compositeId.one)(using new Write.Single(Meta.LongMeta.put))} AND "two" = ${fromWrite(compositeId.two)(using new Write.SingleOpt(Meta.StringMeta.put))}""".update.run.map(_ > 0)
     }
   }
   override def upsert(unsaved: PersonRow): ConnectionIO[PersonRow] = {
     sql"""insert into "compositepk"."person"("one", "two", "name")
           values (
-            ${fromWrite(unsaved.one)(new Write.Single(Meta.LongMeta.put))}::int8,
-            ${fromWrite(unsaved.two)(new Write.SingleOpt(Meta.StringMeta.put))},
-            ${fromWrite(unsaved.name)(new Write.SingleOpt(Meta.StringMeta.put))}
+            ${fromWrite(unsaved.one)(using new Write.Single(Meta.LongMeta.put))}::int8,
+            ${fromWrite(unsaved.two)(using new Write.SingleOpt(Meta.StringMeta.put))},
+            ${fromWrite(unsaved.name)(using new Write.SingleOpt(Meta.StringMeta.put))}
           )
           on conflict ("one", "two")
           do update set

@@ -27,7 +27,7 @@ case class Options(
     executionContext: ExecutionContext = ExecutionContext.global,
     schemaMode: SchemaMode = SchemaMode.MultiSchema,
     openEnums: Selector = Selector.None,
-    implicitOrUsing: ImplicitOrUsing = ImplicitOrUsing.Implicit
+    dialect: Dialect = Dialect.Scala2XSource3
 )
 
 object Options {

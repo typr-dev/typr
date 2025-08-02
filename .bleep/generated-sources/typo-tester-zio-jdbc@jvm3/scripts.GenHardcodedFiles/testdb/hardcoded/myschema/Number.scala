@@ -39,13 +39,13 @@ object Number {
   val Names: String = All.map(_.value).mkString(", ")
   val ByName: Map[String, Number] = All.map(x => (x.value, x)).toMap
               
-  implicit lazy val arrayJdbcDecoder: JdbcDecoder[Array[Number]] = testdb.hardcoded.StringArrayDecoder.map(a => if (a == null) null else a.map(force))
-  implicit lazy val arrayJdbcEncoder: JdbcEncoder[Array[Number]] = JdbcEncoder.singleParamEncoder(using arraySetter)
-  implicit lazy val arraySetter: Setter[Array[Number]] = Setter.forSqlType[Array[Number]](
+  given arrayJdbcDecoder: JdbcDecoder[Array[Number]] = testdb.hardcoded.StringArrayDecoder.map(a => if (a == null) null else a.map(force))
+  given arrayJdbcEncoder: JdbcEncoder[Array[Number]] = JdbcEncoder.singleParamEncoder(using arraySetter)
+  given arraySetter: Setter[Array[Number]] = Setter.forSqlType[Array[Number]](
       (ps, i, v) => ps.setArray(i, ps.getConnection.createArrayOf("myschema.number", v.map(x => x.value))),
       java.sql.Types.ARRAY
     )
-  implicit lazy val jdbcDecoder: JdbcDecoder[Number] = JdbcDecoder.stringDecoder.flatMap { s =>
+  given jdbcDecoder: JdbcDecoder[Number] = JdbcDecoder.stringDecoder.flatMap { s =>
     new JdbcDecoder[Number] {
       override def unsafeDecode(columIndex: Int, rs: ResultSet): (Int, Number) = {
         def error(msg: String): JdbcDecoderError =
@@ -60,14 +60,14 @@ object Number {
       }
     }
   }
-  implicit lazy val jdbcEncoder: JdbcEncoder[Number] = JdbcEncoder.stringEncoder.contramap(_.value)
-  implicit lazy val jsonDecoder: JsonDecoder[Number] = JsonDecoder.string.mapOrFail(Number.apply)
-  implicit lazy val jsonEncoder: JsonEncoder[Number] = JsonEncoder.string.contramap(_.value)
-  implicit lazy val ordering: Ordering[Number] = Ordering.by(_.value)
-  implicit lazy val pgType: PGType[Number] = PGType.instance[Number]("myschema.number", Types.OTHER)
-  implicit lazy val setter: Setter[Number] = Setter.stringSetter.contramap(_.value)
-  implicit lazy val text: Text[Number] = new Text[Number] {
-    override def unsafeEncode(v: Number, sb: StringBuilder) = Text.stringInstance.unsafeEncode(v.value, sb)
-    override def unsafeArrayEncode(v: Number, sb: StringBuilder) = Text.stringInstance.unsafeArrayEncode(v.value, sb)
+  given jdbcEncoder: JdbcEncoder[Number] = JdbcEncoder.stringEncoder.contramap(_.value)
+  given jsonDecoder: JsonDecoder[Number] = JsonDecoder.string.mapOrFail(Number.apply)
+  given jsonEncoder: JsonEncoder[Number] = JsonEncoder.string.contramap(_.value)
+  given ordering: Ordering[Number] = Ordering.by(_.value)
+  given pgType: PGType[Number] = PGType.instance[Number]("myschema.number", Types.OTHER)
+  given setter: Setter[Number] = Setter.stringSetter.contramap(_.value)
+  given text: Text[Number] = new Text[Number] {
+    override def unsafeEncode(v: Number, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value, sb)
+    override def unsafeArrayEncode(v: Number, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value, sb)
   }
 }

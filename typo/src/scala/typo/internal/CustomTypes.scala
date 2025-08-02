@@ -5,7 +5,7 @@ import typo.internal.codegen.*
 
 import scala.collection.mutable
 
-class CustomTypes(pkg: sc.QIdent, implicitOrUsing: ImplicitOrUsing) {
+class CustomTypes(pkg: sc.QIdent, dialect: Dialect) {
 
   lazy val TypoBox = CustomType(
     comment = "This represents the box datatype in PostgreSQL",
@@ -395,10 +395,9 @@ class CustomTypes(pkg: sc.QIdent, implicitOrUsing: ImplicitOrUsing) {
     objBody = Some(target => {
       val numericOfTarget = TypesScala.Numeric.of(target)
 
-      val typeDef = implicitOrUsing match {
-        case ImplicitOrUsing.Implicit => code"implicit object numeric extends $numericOfTarget"
-        case ImplicitOrUsing.Using    => code"given numeric: $numericOfTarget = new $numericOfTarget"
-      }
+      val typeDef =
+        if (dialect == Dialect.Scala2XSource3) code"implicit object numeric extends $numericOfTarget"
+        else code"given numeric: $numericOfTarget = new $numericOfTarget"
 
       code"""|$typeDef {
                |    override def compare(x: $target, y: $target): ${TypesScala.Int} = ${TypesJava.Short}.compare(x.value, y.value)

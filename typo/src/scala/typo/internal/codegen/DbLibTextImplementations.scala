@@ -2,13 +2,12 @@ package typo
 package internal
 package codegen
 
-import typo.ImplicitOrUsing.{Implicit, Using}
 import typo.sc.Code
 
 /** Put implementations of `Text` and `streamingInsert` for anorm and zio-jdbc here instead of upstreaming them for now
   */
 object DbLibTextImplementations {
-  def streamingInsertAnorm(Text: sc.Type.Qualified, implicitOrUsing: ImplicitOrUsing) =
+  def streamingInsertAnorm(Text: sc.Type.Qualified, dialect: Dialect) =
     code"""|import org.postgresql.PGConnection
            |import org.postgresql.util.PSQLException
            |
@@ -16,7 +15,7 @@ object DbLibTextImplementations {
            |import scala.util.control.NonFatal
            |
            |object streamingInsert {
-           |  def apply[T](copyCommand: String, batchSize: Int, rows: Iterator[T])($implicitOrUsing text: $Text[T], c: Connection): Long = {
+           |  def apply[T](copyCommand: String, batchSize: Int, rows: Iterator[T])(${dialect.usingDefinition} text: $Text[T], c: Connection): Long = {
            |    val copyManager = c.unwrap(classOf[PGConnection]).getCopyAPI
            |
            |    val in = copyManager.copyIn(copyCommand)
@@ -44,7 +43,7 @@ object DbLibTextImplementations {
            |}
            |""".stripMargin
 
-  def streamingInsertZio(Text: sc.Type.Qualified, implicitOrUsing: ImplicitOrUsing) =
+  def streamingInsertZio(Text: sc.Type.Qualified, dialect: Dialect) =
     code"""|import org.postgresql.PGConnection
            |import org.postgresql.copy.CopyIn
            |import org.postgresql.util.PSQLException
@@ -53,7 +52,7 @@ object DbLibTextImplementations {
            |import zio.stream.{ZSink, ZStream}
            |
            |object streamingInsert {
-           |  def apply[T](copyCommand: String, batchSize: Int, rows: ZStream[ZConnection, Throwable, T])($implicitOrUsing text: $Text[T]): ZIO[ZConnection, Throwable, Long] = ZIO.scoped {
+           |  def apply[T](copyCommand: String, batchSize: Int, rows: ZStream[ZConnection, Throwable, T])(${dialect.usingDefinition} text: $Text[T]): ZIO[ZConnection, Throwable, Long] = ZIO.scoped {
            |    def startCopy(c: ZConnection): Task[CopyIn] =
            |      c.access(_.unwrap(classOf[PGConnection])).flatMap(c => ZIO.attemptBlocking(c.getCopyAPI.copyIn(copyCommand)))
            |
@@ -90,22 +89,12 @@ object DbLibTextImplementations {
            |}
            |""".stripMargin
 
-  def Text(implicitOrUsing: ImplicitOrUsing): Code = {
-    val implicitValOrGiven: String = implicitOrUsing match {
-      case Implicit => "implicit val"
-      case Using    => "given"
-    }
-    val implicitDefOrGiven: String = implicitOrUsing match {
-      case Implicit => "implicit def"
-      case Using    => "given"
-    }
+  def Text(dialect: Dialect): Code = {
+    val implicitValOrGiven: String = dialect.valDefinition
+    val implicitDefOrGiven: String = dialect.defDefinition
+    val paramUsingOrUsing: String = dialect.paramDefinition
 
-    val paramUsingOrUsing: String = implicitOrUsing match {
-      case Implicit => "implicit"
-      case Using    => "using"
-    }
-
-    raw"""|/** This is `Text` ported from doobie.
+    code"""|/** This is `Text` ported from doobie.
           |  *
           |  * It is used to encode rows in string format for the COPY command.
           |  *
@@ -123,10 +112,10 @@ object DbLibTextImplementations {
           |}
           |
           |object Text {
-          |  def apply[A]($implicitOrUsing ev: Text[A]): ev.type = ev
+          |  def apply[A](${dialect.usingDefinition} ev: Text[A]): ev.type = ev
           |
-          |  val DELIMETER: Char = '\t'
-          |  val NULL: String = "\\N"
+          |  val DELIMETER: Char = '\\t'
+          |  val NULL: String = "\\\\N"
           |
           |  def instance[A](f: (A, StringBuilder) => Unit): Text[A] = (sb, a) => f(sb, a)
           |
@@ -136,18 +125,18 @@ object DbLibTextImplementations {
           |      // Standard char encodings that don't differ in array context
           |      def stdChar(c: Char, sb: StringBuilder): StringBuilder =
           |        c match {
-          |          case '\b' => sb.append("\\b")
-          |          case '\f' => sb.append("\\f")
-          |          case '\n' => sb.append("\\n")
-          |          case '\r' => sb.append("\\r")
-          |          case '\t' => sb.append("\\t")
-          |          case 0x0b => sb.append("\\v")
+          |          case '\\b' => sb.append("\\\\b")
+          |          case '\\f' => sb.append("\\\\f")
+          |          case '\\n' => sb.append("\\\\n")
+          |          case '\\r' => sb.append("\\\\r")
+          |          case '\\t' => sb.append("\\\\t")
+          |          case 0x0b => sb.append("\\\\v")
           |          case c    => sb.append(c)
           |        }
           |
           |      def unsafeEncode(s: String, sb: StringBuilder): Unit =
           |        s.foreach {
-          |          case '\\' => sb.append("\\\\") // backslash must be doubled
+          |          case '\\\\' => sb.append("\\\\\\\\") // backslash must be doubled
           |          case c    => stdChar(c, sb)
           |        }
           |
@@ -158,8 +147,8 @@ object DbLibTextImplementations {
           |      override def unsafeArrayEncode(s: String, sb: StringBuilder): Unit = {
           |        sb.append('"')
           |        s.foreach {
-          |          case '\"' => sb.append("\\\\\"")
-          |          case '\\' => sb.append("\\\\\\\\") // srsly
+          |          case '\\"' => sb.append("\\\\\\\\\\\\\\"")
+          |          case '\\\\' => sb.append("\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\") // srsly
           |          case c    => stdChar(c, sb)
           |        }
           |        sb.append('"')
@@ -176,7 +165,7 @@ object DbLibTextImplementations {
           |  $implicitValOrGiven bigDecimalInstance: Text[BigDecimal] = instance { (n, sb) => sb.append(n); () }
           |  $implicitValOrGiven booleanInstance: Text[Boolean] = instance { (n, sb) => sb.append(n); () }
           |  $implicitValOrGiven byteArrayInstance: Text[Array[Byte]] = instance { (bs, sb) =>
-          |    sb.append("\\\\x")
+          |    sb.append("\\\\\\\\x")
           |    if (bs.length > 0) {
           |      val hex = BigInt(1, bs).toString(16)
           |      val pad = bs.length * 2 - hex.length

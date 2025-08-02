@@ -27,17 +27,17 @@ class FootballClubRepoImpl extends FootballClubRepo {
   override def delete: DeleteBuilder[FootballClubFields, FootballClubRow] = {
     DeleteBuilder(""""myschema"."football_club"""", FootballClubFields.structure)
   }
-  override def deleteById(id: FootballClubId)(implicit c: Connection): Boolean = {
+  override def deleteById(id: FootballClubId)(using c: Connection): Boolean = {
     SQL"""delete from "myschema"."football_club" where "id" = ${ParameterValue(id, null, FootballClubId.toStatement)}""".executeUpdate() > 0
   }
-  override def deleteByIds(ids: Array[FootballClubId])(implicit c: Connection): Int = {
+  override def deleteByIds(ids: Array[FootballClubId])(using c: Connection): Int = {
     SQL"""delete
           from "myschema"."football_club"
           where "id" = ANY(${ids})
        """.executeUpdate()
     
   }
-  override def insert(unsaved: FootballClubRow)(implicit c: Connection): FootballClubRow = {
+  override def insert(unsaved: FootballClubRow)(using c: Connection): FootballClubRow = {
     SQL"""insert into "myschema"."football_club"("id", "name")
           values (${ParameterValue(unsaved.id, null, FootballClubId.toStatement)}::int8, ${ParameterValue(unsaved.name, null, ToStatement.stringToStatement)})
           returning "id", "name"
@@ -45,18 +45,18 @@ class FootballClubRepoImpl extends FootballClubRepo {
       .executeInsert(FootballClubRow.rowParser(1).single)
     
   }
-  override def insertStreaming(unsaved: Iterator[FootballClubRow], batchSize: Int = 10000)(implicit c: Connection): Long = {
-    streamingInsert(s"""COPY "myschema"."football_club"("id", "name") FROM STDIN""", batchSize, unsaved)(FootballClubRow.text, c)
+  override def insertStreaming(unsaved: Iterator[FootballClubRow], batchSize: Int = 10000)(using c: Connection): Long = {
+    streamingInsert(s"""COPY "myschema"."football_club"("id", "name") FROM STDIN""", batchSize, unsaved)(using FootballClubRow.text, c)
   }
   override def select: SelectBuilder[FootballClubFields, FootballClubRow] = {
     SelectBuilderSql(""""myschema"."football_club"""", FootballClubFields.structure, FootballClubRow.rowParser)
   }
-  override def selectAll(implicit c: Connection): List[FootballClubRow] = {
+  override def selectAll(using c: Connection): List[FootballClubRow] = {
     SQL"""select "id", "name"
           from "myschema"."football_club"
        """.as(FootballClubRow.rowParser(1).*)
   }
-  override def selectByFieldValues(fieldValues: List[FootballClubFieldOrIdValue[?]])(implicit c: Connection): List[FootballClubRow] = {
+  override def selectByFieldValues(fieldValues: List[FootballClubFieldOrIdValue[?]])(using c: Connection): List[FootballClubRow] = {
     fieldValues match {
       case Nil => selectAll
       case nonEmpty =>
@@ -74,27 +74,27 @@ class FootballClubRepoImpl extends FootballClubRepo {
     }
     
   }
-  override def selectById(id: FootballClubId)(implicit c: Connection): Option[FootballClubRow] = {
+  override def selectById(id: FootballClubId)(using c: Connection): Option[FootballClubRow] = {
     SQL"""select "id", "name"
           from "myschema"."football_club"
           where "id" = ${ParameterValue(id, null, FootballClubId.toStatement)}
        """.as(FootballClubRow.rowParser(1).singleOpt)
   }
-  override def selectByIds(ids: Array[FootballClubId])(implicit c: Connection): List[FootballClubRow] = {
+  override def selectByIds(ids: Array[FootballClubId])(using c: Connection): List[FootballClubRow] = {
     SQL"""select "id", "name"
           from "myschema"."football_club"
           where "id" = ANY(${ids})
        """.as(FootballClubRow.rowParser(1).*)
     
   }
-  override def selectByIdsTracked(ids: Array[FootballClubId])(implicit c: Connection): Map[FootballClubId, FootballClubRow] = {
+  override def selectByIdsTracked(ids: Array[FootballClubId])(using c: Connection): Map[FootballClubId, FootballClubRow] = {
     val byId = selectByIds(ids).view.map(x => (x.id, x)).toMap
     ids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
   override def update: UpdateBuilder[FootballClubFields, FootballClubRow] = {
     UpdateBuilder(""""myschema"."football_club"""", FootballClubFields.structure, FootballClubRow.rowParser)
   }
-  override def update(row: FootballClubRow)(implicit c: Connection): Option[FootballClubRow] = {
+  override def update(row: FootballClubRow)(using c: Connection): Option[FootballClubRow] = {
     val id = row.id
     SQL"""update "myschema"."football_club"
           set "name" = ${ParameterValue(row.name, null, ToStatement.stringToStatement)}
@@ -102,7 +102,7 @@ class FootballClubRepoImpl extends FootballClubRepo {
           returning "id", "name"
        """.executeInsert(FootballClubRow.rowParser(1).singleOpt)
   }
-  override def updateFieldValues(id: FootballClubId, fieldValues: List[FootballClubFieldValue[?]])(implicit c: Connection): Boolean = {
+  override def updateFieldValues(id: FootballClubId, fieldValues: List[FootballClubFieldValue[?]])(using c: Connection): Boolean = {
     fieldValues match {
       case Nil => false
       case nonEmpty =>
@@ -119,7 +119,7 @@ class FootballClubRepoImpl extends FootballClubRepo {
     }
     
   }
-  override def upsert(unsaved: FootballClubRow)(implicit c: Connection): FootballClubRow = {
+  override def upsert(unsaved: FootballClubRow)(using c: Connection): FootballClubRow = {
     SQL"""insert into "myschema"."football_club"("id", "name")
           values (
             ${ParameterValue(unsaved.id, null, FootballClubId.toStatement)}::int8,
@@ -133,7 +133,7 @@ class FootballClubRepoImpl extends FootballClubRepo {
       .executeInsert(FootballClubRow.rowParser(1).single)
     
   }
-  override def upsertBatch(unsaved: Iterable[FootballClubRow])(implicit c: Connection): List[FootballClubRow] = {
+  override def upsertBatch(unsaved: Iterable[FootballClubRow])(using c: Connection): List[FootballClubRow] = {
     def toNamedParameter(row: FootballClubRow): List[NamedParameter] = List(
       NamedParameter("id", ParameterValue(row.id, null, FootballClubId.toStatement)),
       NamedParameter("name", ParameterValue(row.name, null, ToStatement.stringToStatement))
@@ -157,9 +157,9 @@ class FootballClubRepoImpl extends FootballClubRepo {
     }
   }
   /* NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  override def upsertStreaming(unsaved: Iterator[FootballClubRow], batchSize: Int = 10000)(implicit c: Connection): Int = {
+  override def upsertStreaming(unsaved: Iterator[FootballClubRow], batchSize: Int = 10000)(using c: Connection): Int = {
     SQL"""create temporary table football_club_TEMP (like "myschema"."football_club") on commit drop""".execute(): @nowarn
-    streamingInsert(s"""copy football_club_TEMP("id", "name") from stdin""", batchSize, unsaved)(FootballClubRow.text, c): @nowarn
+    streamingInsert(s"""copy football_club_TEMP("id", "name") from stdin""", batchSize, unsaved)(using FootballClubRow.text, c): @nowarn
     SQL"""insert into "myschema"."football_club"("id", "name")
           select * from football_club_TEMP
           on conflict ("id")

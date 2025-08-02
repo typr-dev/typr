@@ -28,7 +28,7 @@ object MaritalStatusId {
   implicit lazy val ordering: Ordering[MaritalStatusId] = Ordering.by(_.value)
   implicit lazy val put: Put[MaritalStatusId] = Meta.LongMeta.put.contramap(_.value)
   implicit lazy val text: Text[MaritalStatusId] = new Text[MaritalStatusId] {
-    override def unsafeEncode(v: MaritalStatusId, sb: StringBuilder) = Text.longInstance.unsafeEncode(v.value, sb)
-    override def unsafeArrayEncode(v: MaritalStatusId, sb: StringBuilder) = Text.longInstance.unsafeArrayEncode(v.value, sb)
+    override def unsafeEncode(v: MaritalStatusId, sb: StringBuilder): Unit = Text.longInstance.unsafeEncode(v.value, sb)
+    override def unsafeArrayEncode(v: MaritalStatusId, sb: StringBuilder): Unit = Text.longInstance.unsafeArrayEncode(v.value, sb)
   }
 }

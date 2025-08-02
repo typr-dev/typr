@@ -43,7 +43,7 @@ class PersonRepoImpl extends PersonRepo {
     sql"""insert into "myschema"."person"("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number")
           values (${fromWrite(unsaved.id)(new Write.Single(PersonId.put))}::int8, ${fromWrite(unsaved.favouriteFootballClubId)(new Write.Single(FootballClubId.put))}, ${fromWrite(unsaved.name)(new Write.Single(Meta.StringMeta.put))}, ${fromWrite(unsaved.nickName)(new Write.SingleOpt(Meta.StringMeta.put))}, ${fromWrite(unsaved.blogUrl)(new Write.SingleOpt(Meta.StringMeta.put))}, ${fromWrite(unsaved.email)(new Write.Single(Meta.StringMeta.put))}, ${fromWrite(unsaved.phone)(new Write.Single(Meta.StringMeta.put))}, ${fromWrite(unsaved.likesPizza)(new Write.Single(Meta.BooleanMeta.put))}, ${fromWrite(unsaved.maritalStatusId)(new Write.Single(MaritalStatusId.put))}, ${fromWrite(unsaved.workEmail)(new Write.SingleOpt(Meta.StringMeta.put))}, ${fromWrite(unsaved.favoriteNumber)(new Write.Single(Number.put))}::myschema.number)
           returning "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number"
-       """.query(using PersonRow.read).unique
+       """.query(PersonRow.read).unique
   }
   override def insert(unsaved: PersonRowUnsaved): ConnectionIO[PersonRow] = {
     val fs = List(
@@ -80,21 +80,21 @@ class PersonRepoImpl extends PersonRepo {
             returning "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number"
          """
     }
-    q.query(using PersonRow.read).unique
+    q.query(PersonRow.read).unique
     
   }
   override def insertStreaming(unsaved: Stream[ConnectionIO, PersonRow], batchSize: Int = 10000): ConnectionIO[Long] = {
-    new FragmentOps(sql"""COPY "myschema"."person"("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number") FROM STDIN""").copyIn(unsaved, batchSize)(using PersonRow.text)
+    new FragmentOps(sql"""COPY "myschema"."person"("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number") FROM STDIN""").copyIn(unsaved, batchSize)(PersonRow.text)
   }
   /* NOTE: this functionality requires PostgreSQL 16 or later! */
   override def insertUnsavedStreaming(unsaved: Stream[ConnectionIO, PersonRowUnsaved], batchSize: Int = 10000): ConnectionIO[Long] = {
-    new FragmentOps(sql"""COPY "myschema"."person"("favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "work_email", "id", "marital_status_id", "favorite_number") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(using PersonRowUnsaved.text)
+    new FragmentOps(sql"""COPY "myschema"."person"("favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "work_email", "id", "marital_status_id", "favorite_number") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(PersonRowUnsaved.text)
   }
   override def select: SelectBuilder[PersonFields, PersonRow] = {
     SelectBuilderSql(""""myschema"."person"""", PersonFields.structure, PersonRow.read)
   }
   override def selectAll: Stream[ConnectionIO, PersonRow] = {
-    sql"""select "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number" from "myschema"."person"""".query(using PersonRow.read).stream
+    sql"""select "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number" from "myschema"."person"""".query(PersonRow.read).stream
   }
   override def selectByFieldValues(fieldValues: List[PersonFieldOrIdValue[?]]): Stream[ConnectionIO, PersonRow] = {
     val where = fragments.whereAndOpt(
@@ -113,13 +113,13 @@ class PersonRepoImpl extends PersonRepo {
         case PersonFieldValue.favoriteNumber(value) => fr""""favorite_number" = ${fromWrite(value)(new Write.Single(Number.put))}"""
       }
     )
-    sql"""select "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number" from "myschema"."person" $where""".query(using PersonRow.read).stream
+    sql"""select "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number" from "myschema"."person" $where""".query(PersonRow.read).stream
   }
   override def selectById(id: PersonId): ConnectionIO[Option[PersonRow]] = {
-    sql"""select "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number" from "myschema"."person" where "id" = ${fromWrite(id)(new Write.Single(PersonId.put))}""".query(using PersonRow.read).option
+    sql"""select "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number" from "myschema"."person" where "id" = ${fromWrite(id)(new Write.Single(PersonId.put))}""".query(PersonRow.read).option
   }
   override def selectByIds(ids: Array[PersonId]): Stream[ConnectionIO, PersonRow] = {
-    sql"""select "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number" from "myschema"."person" where "id" = ANY(${ids})""".query(using PersonRow.read).stream
+    sql"""select "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number" from "myschema"."person" where "id" = ANY(${ids})""".query(PersonRow.read).stream
   }
   override def selectByIdsTracked(ids: Array[PersonId]): ConnectionIO[Map[PersonId, PersonRow]] = {
     selectByIds(ids).compile.toList.map { rows =>
@@ -144,7 +144,7 @@ class PersonRepoImpl extends PersonRepo {
               "work_email" = ${fromWrite(row.workEmail)(new Write.SingleOpt(Meta.StringMeta.put))},
               "favorite_number" = ${fromWrite(row.favoriteNumber)(new Write.Single(Number.put))}::myschema.number
           where "id" = ${fromWrite(id)(new Write.Single(PersonId.put))}
-          returning "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number"""".query(using PersonRow.read).option
+          returning "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number"""".query(PersonRow.read).option
   }
   override def updateFieldValues(id: PersonId, fieldValues: List[PersonFieldValue[?]]): ConnectionIO[Boolean] = {
     NonEmptyList.fromList(fieldValues) match {
@@ -198,7 +198,7 @@ class PersonRepoImpl extends PersonRepo {
             "work_email" = EXCLUDED."work_email",
             "favorite_number" = EXCLUDED."favorite_number"
           returning "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number"
-       """.query(using PersonRow.read).unique
+       """.query(PersonRow.read).unique
   }
   override def upsertBatch(unsaved: List[PersonRow]): Stream[ConnectionIO, PersonRow] = {
     Update[PersonRow](
@@ -217,14 +217,14 @@ class PersonRepoImpl extends PersonRepo {
             "work_email" = EXCLUDED."work_email",
             "favorite_number" = EXCLUDED."favorite_number"
           returning "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number""""
-    )(using PersonRow.write)
-    .updateManyWithGeneratedKeys[PersonRow]("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number")(unsaved)(using catsStdInstancesForList, PersonRow.read)
+    )(PersonRow.write)
+    .updateManyWithGeneratedKeys[PersonRow]("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number")(unsaved)(catsStdInstancesForList, PersonRow.read)
   }
   /* NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override def upsertStreaming(unsaved: Stream[ConnectionIO, PersonRow], batchSize: Int = 10000): ConnectionIO[Int] = {
     for {
       _ <- sql"""create temporary table person_TEMP (like "myschema"."person") on commit drop""".update.run
-      _ <- new FragmentOps(sql"""copy person_TEMP("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number") from stdin""").copyIn(unsaved, batchSize)(using PersonRow.text)
+      _ <- new FragmentOps(sql"""copy person_TEMP("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number") from stdin""").copyIn(unsaved, batchSize)(PersonRow.text)
       res <- sql"""insert into "myschema"."person"("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number")
                    select * from person_TEMP
                    on conflict ("id")

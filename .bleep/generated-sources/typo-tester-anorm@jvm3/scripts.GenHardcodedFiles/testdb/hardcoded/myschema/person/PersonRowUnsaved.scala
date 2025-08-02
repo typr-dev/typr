@@ -65,7 +65,7 @@ case class PersonRowUnsaved(
     )
 }
 object PersonRowUnsaved {
-  implicit lazy val reads: Reads[PersonRowUnsaved] = Reads[PersonRowUnsaved](json => JsResult.fromTry(
+  given reads: Reads[PersonRowUnsaved] = Reads[PersonRowUnsaved](json => JsResult.fromTry(
       Try(
         PersonRowUnsaved(
           favouriteFootballClubId = json.\("favourite_football_club_id").as(FootballClubId.reads),
@@ -76,21 +76,21 @@ object PersonRowUnsaved {
           phone = json.\("phone").as(Reads.StringReads),
           likesPizza = json.\("likes_pizza").as(Reads.BooleanReads),
           workEmail = json.\("work_email").toOption.map(_.as(Reads.StringReads)),
-          id = json.\("id").as(Defaulted.reads(PersonId.reads)),
-          maritalStatusId = json.\("marital_status_id").as(Defaulted.reads(MaritalStatusId.reads)),
-          favoriteNumber = json.\("favorite_number").as(Defaulted.reads(Number.reads))
+          id = json.\("id").as(Defaulted.reads(using PersonId.reads)),
+          maritalStatusId = json.\("marital_status_id").as(Defaulted.reads(using MaritalStatusId.reads)),
+          favoriteNumber = json.\("favorite_number").as(Defaulted.reads(using Number.reads))
         )
       )
     ),
   )
-  implicit lazy val text: Text[PersonRowUnsaved] = Text.instance[PersonRowUnsaved]{ (row, sb) =>
+  given text: Text[PersonRowUnsaved] = Text.instance[PersonRowUnsaved]{ (row, sb) =>
     FootballClubId.text.unsafeEncode(row.favouriteFootballClubId, sb)
     sb.append(Text.DELIMETER)
     Text.stringInstance.unsafeEncode(row.name, sb)
     sb.append(Text.DELIMETER)
-    Text.option(Text.stringInstance).unsafeEncode(row.nickName, sb)
+    Text.option(using Text.stringInstance).unsafeEncode(row.nickName, sb)
     sb.append(Text.DELIMETER)
-    Text.option(Text.stringInstance).unsafeEncode(row.blogUrl, sb)
+    Text.option(using Text.stringInstance).unsafeEncode(row.blogUrl, sb)
     sb.append(Text.DELIMETER)
     Text.stringInstance.unsafeEncode(row.email, sb)
     sb.append(Text.DELIMETER)
@@ -98,27 +98,27 @@ object PersonRowUnsaved {
     sb.append(Text.DELIMETER)
     Text.booleanInstance.unsafeEncode(row.likesPizza, sb)
     sb.append(Text.DELIMETER)
-    Text.option(Text.stringInstance).unsafeEncode(row.workEmail, sb)
+    Text.option(using Text.stringInstance).unsafeEncode(row.workEmail, sb)
     sb.append(Text.DELIMETER)
-    Defaulted.text(PersonId.text).unsafeEncode(row.id, sb)
+    Defaulted.text(using PersonId.text).unsafeEncode(row.id, sb)
     sb.append(Text.DELIMETER)
-    Defaulted.text(MaritalStatusId.text).unsafeEncode(row.maritalStatusId, sb)
+    Defaulted.text(using MaritalStatusId.text).unsafeEncode(row.maritalStatusId, sb)
     sb.append(Text.DELIMETER)
-    Defaulted.text(Number.text).unsafeEncode(row.favoriteNumber, sb)
+    Defaulted.text(using Number.text).unsafeEncode(row.favoriteNumber, sb)
   }
-  implicit lazy val writes: OWrites[PersonRowUnsaved] = OWrites[PersonRowUnsaved](o =>
+  given writes: OWrites[PersonRowUnsaved] = OWrites[PersonRowUnsaved](o =>
     new JsObject(ListMap[String, JsValue](
       "favourite_football_club_id" -> FootballClubId.writes.writes(o.favouriteFootballClubId),
       "name" -> Writes.StringWrites.writes(o.name),
-      "nick_name" -> Writes.OptionWrites(Writes.StringWrites).writes(o.nickName),
-      "blog_url" -> Writes.OptionWrites(Writes.StringWrites).writes(o.blogUrl),
+      "nick_name" -> Writes.OptionWrites(using Writes.StringWrites).writes(o.nickName),
+      "blog_url" -> Writes.OptionWrites(using Writes.StringWrites).writes(o.blogUrl),
       "email" -> Writes.StringWrites.writes(o.email),
       "phone" -> Writes.StringWrites.writes(o.phone),
       "likes_pizza" -> Writes.BooleanWrites.writes(o.likesPizza),
-      "work_email" -> Writes.OptionWrites(Writes.StringWrites).writes(o.workEmail),
-      "id" -> Defaulted.writes(PersonId.writes).writes(o.id),
-      "marital_status_id" -> Defaulted.writes(MaritalStatusId.writes).writes(o.maritalStatusId),
-      "favorite_number" -> Defaulted.writes(Number.writes).writes(o.favoriteNumber)
+      "work_email" -> Writes.OptionWrites(using Writes.StringWrites).writes(o.workEmail),
+      "id" -> Defaulted.writes(using PersonId.writes).writes(o.id),
+      "marital_status_id" -> Defaulted.writes(using MaritalStatusId.writes).writes(o.maritalStatusId),
+      "favorite_number" -> Defaulted.writes(using Number.writes).writes(o.favoriteNumber)
     ))
   )
 }

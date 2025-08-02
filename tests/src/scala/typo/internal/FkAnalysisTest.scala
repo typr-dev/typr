@@ -1,6 +1,6 @@
 package typo.internal
 
-import typo.{NonEmptyList, Nullability, db, sc}
+import typo.{NonEmptyList, Dialect, Nullability, db, sc}
 import typo.internal.analysis.*
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
@@ -8,6 +8,7 @@ import org.scalatest.matchers.should.Matchers
 import scala.annotation.nowarn
 
 class FkAnalysisTest extends AnyFunSuite with Matchers {
+  val dialect = Dialect.Scala3
 
   test("FK column mapping for issue #148 - different column names") {
     // Based on debug output: test_utdanningstilbud FK with different column names
@@ -49,7 +50,7 @@ class FkAnalysisTest extends AnyFunSuite with Matchers {
 
     // The key fix: should map to utdanningsmulighetKode, not organisasjonskode
     val expectedExpr = s"${colsFromFk.param.name.value}.utdanningsmulighetKode"
-    assert(expr.values.head.render.asString == expectedExpr)
+    assert(expr.values.head.render(dialect).asString == expectedExpr)
   }
 
   test("FK column mapping for both columns - different column names") {
@@ -90,8 +91,8 @@ class FkAnalysisTest extends AnyFunSuite with Matchers {
     assert(expr.size == 2): @nowarn
 
     // Both columns should map correctly
-    assert(expr(createIdent("organisasjonskodeTilbyder")).render.asString == s"${colsFromFk.param.name.value}.organisasjonskode"): @nowarn
-    assert(expr(createIdent("utdanningsmulighetKode")).render.asString == s"${colsFromFk.param.name.value}.utdanningsmulighetKode")
+    assert(expr(createIdent("organisasjonskodeTilbyder")).render(dialect).asString == s"${colsFromFk.param.name.value}.organisasjonskode"): @nowarn
+    assert(expr(createIdent("utdanningsmulighetKode")).render(dialect).asString == s"${colsFromFk.param.name.value}.utdanningsmulighetKode")
   }
 
   test("FK column mapping for identical column names") {
@@ -133,8 +134,8 @@ class FkAnalysisTest extends AnyFunSuite with Matchers {
     assert(expr.size == 2): @nowarn
 
     // Should map correctly even with identical names
-    assert(expr(createIdent("specialofferid")).render.asString == s"${colsFromFk.param.name.value}.specialofferid"): @nowarn
-    assert(expr(createIdent("productid")).render.asString == s"${colsFromFk.param.name.value}.productid")
+    assert(expr(createIdent("specialofferid")).render(dialect).asString == s"${colsFromFk.param.name.value}.specialofferid"): @nowarn
+    assert(expr(createIdent("productid")).render(dialect).asString == s"${colsFromFk.param.name.value}.productid")
   }
 
   test("FK column mapping with reordered columns") {
@@ -177,8 +178,8 @@ class FkAnalysisTest extends AnyFunSuite with Matchers {
     assert(expr.size == 2): @nowarn
 
     // Should map correctly despite reordering
-    assert(expr(createIdent("colB")).render.asString == s"${colsFromFk.param.name.value}.pkB"): @nowarn
-    assert(expr(createIdent("colA")).render.asString == s"${colsFromFk.param.name.value}.pkA")
+    assert(expr(createIdent("colB")).render(dialect).asString == s"${colsFromFk.param.name.value}.pkB"): @nowarn
+    assert(expr(createIdent("colA")).render(dialect).asString == s"${colsFromFk.param.name.value}.pkA")
   }
 
   // Helper methods for creating test objects

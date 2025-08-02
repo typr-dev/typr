@@ -142,8 +142,8 @@ object GenHardcodedFiles extends BleepCodegenScript("GenHardcodedFiles") {
         else (DbLibName.Anorm, JsonLibName.PlayJson)
       val domains = Nil
 
-      val implicitOrUsing: ImplicitOrUsing =
-        if (target.project.value.contains("jvm3")) ImplicitOrUsing.Using else ImplicitOrUsing.Implicit
+      val dialect: Dialect =
+        if (target.project.value.contains("jvm3")) Dialect.Scala3 else Dialect.Scala2XSource3
 
       val metaDb = MetaDb(relations = all.map(t => t.name -> Lazy(t)).toMap, enums = List(sector, number), domains = domains)
 
@@ -162,7 +162,7 @@ object GenHardcodedFiles extends BleepCodegenScript("GenHardcodedFiles") {
             enableTestInserts = Selector.All,
             enableFieldValue = Selector.All,
             silentBanner = true,
-            implicitOrUsing = implicitOrUsing
+            dialect = dialect
           ),
           metaDb,
           ProjectGraph(name = "", target.sources, None, Selector.All, scripts = Nil, Nil),
@@ -171,6 +171,7 @@ object GenHardcodedFiles extends BleepCodegenScript("GenHardcodedFiles") {
 
       generated.foreach(
         _.overwriteFolder(
+          dialect,
           // todo: bleep should use something better than timestamps
           softWrite = SoftWrite.No
         )

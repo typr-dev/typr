@@ -24,14 +24,14 @@ sealed trait Defaulted[+T]
 object Defaulted {
   case class Provided[T](value: T) extends Defaulted[T]
   case object UseDefault extends Defaulted[Nothing]
-  implicit def jsonDecoder[T](implicit T: JsonDecoder[T]): JsonDecoder[Defaulted[T]] = new JsonDecoder[Defaulted[T]] {
+  given jsonDecoder[T](using T: JsonDecoder[T]): JsonDecoder[Defaulted[T]] = new JsonDecoder[Defaulted[T]] {
     override def unsafeDecode(trace: List[JsonError], in: RetractReader): Defaulted[T] =
       Try(JsonDecoder.string.unsafeDecode(trace, in)) match {
         case Success("defaulted") => UseDefault
         case _ => Provided(T.unsafeDecode(trace, in))
       }
     }
-  implicit def jsonEncoder[T](implicit T: JsonEncoder[T]): JsonEncoder[Defaulted[T]] = new JsonEncoder[Defaulted[T]] {
+  given jsonEncoder[T](using T: JsonEncoder[T]): JsonEncoder[Defaulted[T]] = new JsonEncoder[Defaulted[T]] {
     override def unsafeEncode(a: Defaulted[T], indent: Option[Int], out: Write): Unit =
       a match {
         case Provided(value) =>
@@ -42,7 +42,7 @@ object Defaulted {
         case UseDefault => out.write("\"defaulted\"")
       }
   }
-  implicit def text[T](implicit t: Text[T]): Text[Defaulted[T]] = Text.instance {
+  given text[T](using t: Text[T]): Text[Defaulted[T]] = Text.instance {
     case (Defaulted.Provided(value), sb) => t.unsafeEncode(value, sb)
     case (Defaulted.UseDefault, sb) =>
       sb.append("__DEFAULT_VALUE__")

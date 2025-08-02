@@ -9,6 +9,7 @@ import adventureworks.production.unitmeasure.*
 import adventureworks.public.{Flag, Name}
 import adventureworks.{DomainInsert, SnapshotTest, TestInsert, withConnection}
 import org.scalatest.Assertion
+import typo.dsl.SqlExpr._
 
 import java.time.LocalDateTime
 import scala.annotation.nowarn

@@ -49,8 +49,8 @@ object Sector {
   implicit lazy val put: Put[Sector] = Put.Advanced.one[Sector](JdbcType.Other, NonEmptyList.one("myschema.sector"), (ps, i, a) => ps.setString(i, a.value), (rs, i, a) => rs.updateString(i, a.value))
   implicit lazy val read: Read[Sector] = new Read.Single(get)
   implicit lazy val text: Text[Sector] = new Text[Sector] {
-    override def unsafeEncode(v: Sector, sb: StringBuilder) = Text.stringInstance.unsafeEncode(v.value, sb)
-    override def unsafeArrayEncode(v: Sector, sb: StringBuilder) = Text.stringInstance.unsafeArrayEncode(v.value, sb)
+    override def unsafeEncode(v: Sector, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value, sb)
+    override def unsafeArrayEncode(v: Sector, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value, sb)
   }
   implicit lazy val write: Write[Sector] = new Write.Single(put)
 }

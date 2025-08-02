@@ -7,6 +7,7 @@ import adventureworks.person.emailaddress.EmailaddressRepoImpl
 import adventureworks.person.person.PersonRepoImpl
 import adventureworks.sales.salesperson.SalespersonRepoImpl
 import adventureworks.userdefined.FirstName
+import typo.dsl.SqlExpr._
 
 import scala.annotation.nowarn
 import scala.util.Random

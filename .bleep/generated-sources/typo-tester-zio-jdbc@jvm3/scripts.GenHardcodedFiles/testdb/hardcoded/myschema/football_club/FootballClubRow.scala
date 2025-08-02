@@ -24,7 +24,7 @@ case class FootballClubRow(
 )
 
 object FootballClubRow {
-  implicit lazy val jdbcDecoder: JdbcDecoder[FootballClubRow] = new JdbcDecoder[FootballClubRow] {
+  given jdbcDecoder: JdbcDecoder[FootballClubRow] = new JdbcDecoder[FootballClubRow] {
     override def unsafeDecode(columIndex: Int, rs: ResultSet): (Int, FootballClubRow) =
       columIndex + 1 ->
         FootballClubRow(
@@ -32,14 +32,14 @@ object FootballClubRow {
           name = JdbcDecoder.stringDecoder.unsafeDecode(columIndex + 1, rs)._2
         )
   }
-  implicit lazy val jsonDecoder: JsonDecoder[FootballClubRow] = JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
-    val id = jsonObj.get("id").toRight("Missing field 'id'").flatMap(_.as(FootballClubId.jsonDecoder))
-    val name = jsonObj.get("name").toRight("Missing field 'name'").flatMap(_.as(JsonDecoder.string))
+  given jsonDecoder: JsonDecoder[FootballClubRow] = JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
+    val id = jsonObj.get("id").toRight("Missing field 'id'").flatMap(_.as(using FootballClubId.jsonDecoder))
+    val name = jsonObj.get("name").toRight("Missing field 'name'").flatMap(_.as(using JsonDecoder.string))
     if (id.isRight && name.isRight)
       Right(FootballClubRow(id = id.toOption.get, name = name.toOption.get))
     else Left(List[Either[String, Any]](id, name).flatMap(_.left.toOption).mkString(", "))
   }
-  implicit lazy val jsonEncoder: JsonEncoder[FootballClubRow] = new JsonEncoder[FootballClubRow] {
+  given jsonEncoder: JsonEncoder[FootballClubRow] = new JsonEncoder[FootballClubRow] {
     override def unsafeEncode(a: FootballClubRow, indent: Option[Int], out: Write): Unit = {
       out.write("{")
       out.write(""""id":""")
@@ -50,7 +50,7 @@ object FootballClubRow {
       out.write("}")
     }
   }
-  implicit lazy val text: Text[FootballClubRow] = Text.instance[FootballClubRow]{ (row, sb) =>
+  given text: Text[FootballClubRow] = Text.instance[FootballClubRow]{ (row, sb) =>
     FootballClubId.text.unsafeEncode(row.id, sb)
     sb.append(Text.DELIMETER)
     Text.stringInstance.unsafeEncode(row.name, sb)

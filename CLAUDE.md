@@ -366,3 +366,6 @@ When working on Typo issues, follow this workflow:
 
 ### Development Philosophy
 - We should never generate code which relies on derivation. *we* are the deriver
+
+### Memories
+- **NEVER REPORT SUCCESS IF ITS NOT A SUCCESS.**

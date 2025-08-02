@@ -29,7 +29,7 @@ case class FootballClubRow(
 )
 
 object FootballClubRow {
-  implicit lazy val reads: Reads[FootballClubRow] = Reads[FootballClubRow](json => JsResult.fromTry(
+  given reads: Reads[FootballClubRow] = Reads[FootballClubRow](json => JsResult.fromTry(
       Try(
         FootballClubRow(
           id = json.\("id").as(FootballClubId.reads),
@@ -41,17 +41,17 @@ object FootballClubRow {
   def rowParser(idx: Int): RowParser[FootballClubRow] = RowParser[FootballClubRow] { row =>
     Success(
       FootballClubRow(
-        id = row(idx + 0)(FootballClubId.column),
-        name = row(idx + 1)(Column.columnToString)
+        id = row(idx + 0)(using FootballClubId.column),
+        name = row(idx + 1)(using Column.columnToString)
       )
     )
   }
-  implicit lazy val text: Text[FootballClubRow] = Text.instance[FootballClubRow]{ (row, sb) =>
+  given text: Text[FootballClubRow] = Text.instance[FootballClubRow]{ (row, sb) =>
     FootballClubId.text.unsafeEncode(row.id, sb)
     sb.append(Text.DELIMETER)
     Text.stringInstance.unsafeEncode(row.name, sb)
   }
-  implicit lazy val writes: OWrites[FootballClubRow] = OWrites[FootballClubRow](o =>
+  given writes: OWrites[FootballClubRow] = OWrites[FootballClubRow](o =>
     new JsObject(ListMap[String, JsValue](
       "id" -> FootballClubId.writes.writes(o.id),
       "name" -> Writes.StringWrites.writes(o.name)

@@ -24,9 +24,9 @@ case class FootballClubRow(
 )
 
 object FootballClubRow {
-  implicit lazy val decoder: Decoder[FootballClubRow] = Decoder.forProduct2[FootballClubRow, FootballClubId, /* max 100 chars */ String]("id", "name")(FootballClubRow.apply)(FootballClubId.decoder, Decoder.decodeString)
-  implicit lazy val encoder: Encoder[FootballClubRow] = Encoder.forProduct2[FootballClubRow, FootballClubId, /* max 100 chars */ String]("id", "name")(x => (x.id, x.name))(FootballClubId.encoder, Encoder.encodeString)
-  implicit lazy val read: Read[FootballClubRow] = new Read.CompositeOfInstances(Array(
+  given decoder: Decoder[FootballClubRow] = Decoder.forProduct2[FootballClubRow, FootballClubId, /* max 100 chars */ String]("id", "name")(FootballClubRow.apply)(using FootballClubId.decoder, Decoder.decodeString)
+  given encoder: Encoder[FootballClubRow] = Encoder.forProduct2[FootballClubRow, FootballClubId, /* max 100 chars */ String]("id", "name")(x => (x.id, x.name))(using FootballClubId.encoder, Encoder.encodeString)
+  given read: Read[FootballClubRow] = new Read.CompositeOfInstances(Array(
     new Read.Single(FootballClubId.get).asInstanceOf[Read[Any]],
       new Read.Single(Meta.StringMeta.get).asInstanceOf[Read[Any]]
   ))(using scala.reflect.ClassTag.Any).map { arr =>
@@ -35,12 +35,12 @@ object FootballClubRow {
           name = arr(1).asInstanceOf[/* max 100 chars */ String]
     )
   }
-  implicit lazy val text: Text[FootballClubRow] = Text.instance[FootballClubRow]{ (row, sb) =>
+  given text: Text[FootballClubRow] = Text.instance[FootballClubRow]{ (row, sb) =>
     FootballClubId.text.unsafeEncode(row.id, sb)
     sb.append(Text.DELIMETER)
     Text.stringInstance.unsafeEncode(row.name, sb)
   }
-  implicit lazy val write: Write[FootballClubRow] = new Write.Composite[FootballClubRow](
+  given write: Write[FootballClubRow] = new Write.Composite[FootballClubRow](
     List(new Write.Single(FootballClubId.put),
          new Write.Single(Meta.StringMeta.put)),
     a => List(a.id, a.name)

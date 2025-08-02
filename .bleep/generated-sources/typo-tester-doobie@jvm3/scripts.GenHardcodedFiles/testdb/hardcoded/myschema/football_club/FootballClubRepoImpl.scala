@@ -30,14 +30,14 @@ class FootballClubRepoImpl extends FootballClubRepo {
     DeleteBuilder(""""myschema"."football_club"""", FootballClubFields.structure)
   }
   override def deleteById(id: FootballClubId): ConnectionIO[Boolean] = {
-    sql"""delete from "myschema"."football_club" where "id" = ${fromWrite(id)(new Write.Single(FootballClubId.put))}""".update.run.map(_ > 0)
+    sql"""delete from "myschema"."football_club" where "id" = ${fromWrite(id)(using new Write.Single(FootballClubId.put))}""".update.run.map(_ > 0)
   }
   override def deleteByIds(ids: Array[FootballClubId]): ConnectionIO[Int] = {
     sql"""delete from "myschema"."football_club" where "id" = ANY(${ids})""".update.run
   }
   override def insert(unsaved: FootballClubRow): ConnectionIO[FootballClubRow] = {
     sql"""insert into "myschema"."football_club"("id", "name")
-          values (${fromWrite(unsaved.id)(new Write.Single(FootballClubId.put))}::int8, ${fromWrite(unsaved.name)(new Write.Single(Meta.StringMeta.put))})
+          values (${fromWrite(unsaved.id)(using new Write.Single(FootballClubId.put))}::int8, ${fromWrite(unsaved.name)(using new Write.Single(Meta.StringMeta.put))})
           returning "id", "name"
        """.query(using FootballClubRow.read).unique
   }
@@ -53,14 +53,14 @@ class FootballClubRepoImpl extends FootballClubRepo {
   override def selectByFieldValues(fieldValues: List[FootballClubFieldOrIdValue[?]]): Stream[ConnectionIO, FootballClubRow] = {
     val where = fragments.whereAndOpt(
       fieldValues.map {
-        case FootballClubFieldValue.id(value) => fr""""id" = ${fromWrite(value)(new Write.Single(FootballClubId.put))}"""
-        case FootballClubFieldValue.name(value) => fr""""name" = ${fromWrite(value)(new Write.Single(Meta.StringMeta.put))}"""
+        case FootballClubFieldValue.id(value) => fr""""id" = ${fromWrite(value)(using new Write.Single(FootballClubId.put))}"""
+        case FootballClubFieldValue.name(value) => fr""""name" = ${fromWrite(value)(using new Write.Single(Meta.StringMeta.put))}"""
       }
     )
     sql"""select "id", "name" from "myschema"."football_club" $where""".query(using FootballClubRow.read).stream
   }
   override def selectById(id: FootballClubId): ConnectionIO[Option[FootballClubRow]] = {
-    sql"""select "id", "name" from "myschema"."football_club" where "id" = ${fromWrite(id)(new Write.Single(FootballClubId.put))}""".query(using FootballClubRow.read).option
+    sql"""select "id", "name" from "myschema"."football_club" where "id" = ${fromWrite(id)(using new Write.Single(FootballClubId.put))}""".query(using FootballClubRow.read).option
   }
   override def selectByIds(ids: Array[FootballClubId]): Stream[ConnectionIO, FootballClubRow] = {
     sql"""select "id", "name" from "myschema"."football_club" where "id" = ANY(${ids})""".query(using FootballClubRow.read).stream
@@ -77,8 +77,8 @@ class FootballClubRepoImpl extends FootballClubRepo {
   override def update(row: FootballClubRow): ConnectionIO[Option[FootballClubRow]] = {
     val id = row.id
     sql"""update "myschema"."football_club"
-          set "name" = ${fromWrite(row.name)(new Write.Single(Meta.StringMeta.put))}
-          where "id" = ${fromWrite(id)(new Write.Single(FootballClubId.put))}
+          set "name" = ${fromWrite(row.name)(using new Write.Single(Meta.StringMeta.put))}
+          where "id" = ${fromWrite(id)(using new Write.Single(FootballClubId.put))}
           returning "id", "name"""".query(using FootballClubRow.read).option
   }
   override def updateFieldValues(id: FootballClubId, fieldValues: List[FootballClubFieldValue[?]]): ConnectionIO[Boolean] = {
@@ -87,19 +87,19 @@ class FootballClubRepoImpl extends FootballClubRepo {
       case Some(nonEmpty) =>
         val updates = fragments.set(
           nonEmpty.map {
-            case FootballClubFieldValue.name(value) => fr""""name" = ${fromWrite(value)(new Write.Single(Meta.StringMeta.put))}"""
+            case FootballClubFieldValue.name(value) => fr""""name" = ${fromWrite(value)(using new Write.Single(Meta.StringMeta.put))}"""
           }
         )
         sql"""update "myschema"."football_club"
               $updates
-              where "id" = ${fromWrite(id)(new Write.Single(FootballClubId.put))}""".update.run.map(_ > 0)
+              where "id" = ${fromWrite(id)(using new Write.Single(FootballClubId.put))}""".update.run.map(_ > 0)
     }
   }
   override def upsert(unsaved: FootballClubRow): ConnectionIO[FootballClubRow] = {
     sql"""insert into "myschema"."football_club"("id", "name")
           values (
-            ${fromWrite(unsaved.id)(new Write.Single(FootballClubId.put))}::int8,
-            ${fromWrite(unsaved.name)(new Write.Single(Meta.StringMeta.put))}
+            ${fromWrite(unsaved.id)(using new Write.Single(FootballClubId.put))}::int8,
+            ${fromWrite(unsaved.name)(using new Write.Single(Meta.StringMeta.put))}
           )
           on conflict ("id")
           do update set

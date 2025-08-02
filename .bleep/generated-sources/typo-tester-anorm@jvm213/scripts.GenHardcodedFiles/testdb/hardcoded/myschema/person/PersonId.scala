@@ -29,8 +29,8 @@ object PersonId {
   }
   implicit lazy val reads: Reads[PersonId] = Reads.LongReads.map(PersonId.apply)
   implicit lazy val text: Text[PersonId] = new Text[PersonId] {
-    override def unsafeEncode(v: PersonId, sb: StringBuilder) = Text.longInstance.unsafeEncode(v.value, sb)
-    override def unsafeArrayEncode(v: PersonId, sb: StringBuilder) = Text.longInstance.unsafeArrayEncode(v.value, sb)
+    override def unsafeEncode(v: PersonId, sb: StringBuilder): Unit = Text.longInstance.unsafeEncode(v.value, sb)
+    override def unsafeArrayEncode(v: PersonId, sb: StringBuilder): Unit = Text.longInstance.unsafeArrayEncode(v.value, sb)
   }
   implicit lazy val toStatement: ToStatement[PersonId] = ToStatement.longToStatement.contramap(_.value)
   implicit lazy val writes: Writes[PersonId] = Writes.LongWrites.contramap(_.value)

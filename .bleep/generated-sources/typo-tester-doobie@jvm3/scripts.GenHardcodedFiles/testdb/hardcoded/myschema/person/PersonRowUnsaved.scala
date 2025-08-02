@@ -60,16 +60,16 @@ case class PersonRowUnsaved(
     )
 }
 object PersonRowUnsaved {
-  implicit lazy val decoder: Decoder[PersonRowUnsaved] = Decoder.forProduct11[PersonRowUnsaved, FootballClubId, /* max 100 chars */ String, Option[/* max 30 chars */ String], Option[/* max 100 chars */ String], /* max 254 chars */ String, /* max 8 chars */ String, Boolean, Option[/* max 254 chars */ String], Defaulted[PersonId], Defaulted[MaritalStatusId], Defaulted[Number]]("favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "work_email", "id", "marital_status_id", "favorite_number")(PersonRowUnsaved.apply)(FootballClubId.decoder, Decoder.decodeString, Decoder.decodeOption(Decoder.decodeString), Decoder.decodeOption(Decoder.decodeString), Decoder.decodeString, Decoder.decodeString, Decoder.decodeBoolean, Decoder.decodeOption(Decoder.decodeString), Defaulted.decoder(PersonId.decoder), Defaulted.decoder(MaritalStatusId.decoder), Defaulted.decoder(Number.decoder))
-  implicit lazy val encoder: Encoder[PersonRowUnsaved] = Encoder.forProduct11[PersonRowUnsaved, FootballClubId, /* max 100 chars */ String, Option[/* max 30 chars */ String], Option[/* max 100 chars */ String], /* max 254 chars */ String, /* max 8 chars */ String, Boolean, Option[/* max 254 chars */ String], Defaulted[PersonId], Defaulted[MaritalStatusId], Defaulted[Number]]("favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "work_email", "id", "marital_status_id", "favorite_number")(x => (x.favouriteFootballClubId, x.name, x.nickName, x.blogUrl, x.email, x.phone, x.likesPizza, x.workEmail, x.id, x.maritalStatusId, x.favoriteNumber))(FootballClubId.encoder, Encoder.encodeString, Encoder.encodeOption(Encoder.encodeString), Encoder.encodeOption(Encoder.encodeString), Encoder.encodeString, Encoder.encodeString, Encoder.encodeBoolean, Encoder.encodeOption(Encoder.encodeString), Defaulted.encoder(PersonId.encoder), Defaulted.encoder(MaritalStatusId.encoder), Defaulted.encoder(Number.encoder))
-  implicit lazy val text: Text[PersonRowUnsaved] = Text.instance[PersonRowUnsaved]{ (row, sb) =>
+  given decoder: Decoder[PersonRowUnsaved] = Decoder.forProduct11[PersonRowUnsaved, FootballClubId, /* max 100 chars */ String, Option[/* max 30 chars */ String], Option[/* max 100 chars */ String], /* max 254 chars */ String, /* max 8 chars */ String, Boolean, Option[/* max 254 chars */ String], Defaulted[PersonId], Defaulted[MaritalStatusId], Defaulted[Number]]("favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "work_email", "id", "marital_status_id", "favorite_number")(PersonRowUnsaved.apply)(using FootballClubId.decoder, Decoder.decodeString, Decoder.decodeOption(using Decoder.decodeString), Decoder.decodeOption(using Decoder.decodeString), Decoder.decodeString, Decoder.decodeString, Decoder.decodeBoolean, Decoder.decodeOption(using Decoder.decodeString), Defaulted.decoder(using PersonId.decoder), Defaulted.decoder(using MaritalStatusId.decoder), Defaulted.decoder(using Number.decoder))
+  given encoder: Encoder[PersonRowUnsaved] = Encoder.forProduct11[PersonRowUnsaved, FootballClubId, /* max 100 chars */ String, Option[/* max 30 chars */ String], Option[/* max 100 chars */ String], /* max 254 chars */ String, /* max 8 chars */ String, Boolean, Option[/* max 254 chars */ String], Defaulted[PersonId], Defaulted[MaritalStatusId], Defaulted[Number]]("favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "work_email", "id", "marital_status_id", "favorite_number")(x => (x.favouriteFootballClubId, x.name, x.nickName, x.blogUrl, x.email, x.phone, x.likesPizza, x.workEmail, x.id, x.maritalStatusId, x.favoriteNumber))(using FootballClubId.encoder, Encoder.encodeString, Encoder.encodeOption(using Encoder.encodeString), Encoder.encodeOption(using Encoder.encodeString), Encoder.encodeString, Encoder.encodeString, Encoder.encodeBoolean, Encoder.encodeOption(using Encoder.encodeString), Defaulted.encoder(using PersonId.encoder), Defaulted.encoder(using MaritalStatusId.encoder), Defaulted.encoder(using Number.encoder))
+  given text: Text[PersonRowUnsaved] = Text.instance[PersonRowUnsaved]{ (row, sb) =>
     FootballClubId.text.unsafeEncode(row.favouriteFootballClubId, sb)
     sb.append(Text.DELIMETER)
     Text.stringInstance.unsafeEncode(row.name, sb)
     sb.append(Text.DELIMETER)
-    Text.option(Text.stringInstance).unsafeEncode(row.nickName, sb)
+    Text.option(using Text.stringInstance).unsafeEncode(row.nickName, sb)
     sb.append(Text.DELIMETER)
-    Text.option(Text.stringInstance).unsafeEncode(row.blogUrl, sb)
+    Text.option(using Text.stringInstance).unsafeEncode(row.blogUrl, sb)
     sb.append(Text.DELIMETER)
     Text.stringInstance.unsafeEncode(row.email, sb)
     sb.append(Text.DELIMETER)
@@ -77,12 +77,12 @@ object PersonRowUnsaved {
     sb.append(Text.DELIMETER)
     Text.booleanInstance.unsafeEncode(row.likesPizza, sb)
     sb.append(Text.DELIMETER)
-    Text.option(Text.stringInstance).unsafeEncode(row.workEmail, sb)
+    Text.option(using Text.stringInstance).unsafeEncode(row.workEmail, sb)
     sb.append(Text.DELIMETER)
-    Defaulted.text(PersonId.text).unsafeEncode(row.id, sb)
+    Defaulted.text(using PersonId.text).unsafeEncode(row.id, sb)
     sb.append(Text.DELIMETER)
-    Defaulted.text(MaritalStatusId.text).unsafeEncode(row.maritalStatusId, sb)
+    Defaulted.text(using MaritalStatusId.text).unsafeEncode(row.maritalStatusId, sb)
     sb.append(Text.DELIMETER)
-    Defaulted.text(Number.text).unsafeEncode(row.favoriteNumber, sb)
+    Defaulted.text(using Number.text).unsafeEncode(row.favoriteNumber, sb)
   }
 }

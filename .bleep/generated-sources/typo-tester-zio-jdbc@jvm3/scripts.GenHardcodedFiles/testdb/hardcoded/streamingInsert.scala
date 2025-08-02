@@ -16,7 +16,7 @@ import zio.jdbc.ZConnection
 import zio.stream.{ZSink, ZStream}
 
 object streamingInsert {
-  def apply[T](copyCommand: String, batchSize: Int, rows: ZStream[ZConnection, Throwable, T])(implicit text: Text[T]): ZIO[ZConnection, Throwable, Long] = ZIO.scoped {
+  def apply[T](copyCommand: String, batchSize: Int, rows: ZStream[ZConnection, Throwable, T])(using text: Text[T]): ZIO[ZConnection, Throwable, Long] = ZIO.scoped {
     def startCopy(c: ZConnection): Task[CopyIn] =
       c.access(_.unwrap(classOf[PGConnection])).flatMap(c => ZIO.attemptBlocking(c.getCopyAPI.copyIn(copyCommand)))
 

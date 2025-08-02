@@ -24,13 +24,13 @@ object minimize {
             case sc.Params(params) =>
               params.foreach(goTree)
             case sc.StrLit(_) => ()
-            case sc.Summon(tpe, _) =>
+            case sc.Summon(tpe) =>
               goTree(tpe)
             case sc.StringInterpolate(i, prefix, content) =>
               goTree(i)
               goTree(prefix)
               go(content)
-            case sc.Given(tparams, name, implicitParams, tpe, body, _) =>
+            case sc.Given(tparams, name, implicitParams, tpe, body) =>
               tparams.foreach(goTree)
               goTree(name)
               implicitParams.foreach(goTree)

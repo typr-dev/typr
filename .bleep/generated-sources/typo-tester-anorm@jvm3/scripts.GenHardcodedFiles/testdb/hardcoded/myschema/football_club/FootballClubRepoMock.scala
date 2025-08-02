@@ -24,13 +24,13 @@ class FootballClubRepoMock(map: scala.collection.mutable.Map[FootballClubId, Foo
   override def delete: DeleteBuilder[FootballClubFields, FootballClubRow] = {
     DeleteBuilderMock(DeleteParams.empty, FootballClubFields.structure, map)
   }
-  override def deleteById(id: FootballClubId)(implicit c: Connection): Boolean = {
+  override def deleteById(id: FootballClubId)(using c: Connection): Boolean = {
     map.remove(id).isDefined
   }
-  override def deleteByIds(ids: Array[FootballClubId])(implicit c: Connection): Int = {
+  override def deleteByIds(ids: Array[FootballClubId])(using c: Connection): Int = {
     ids.map(id => map.remove(id)).count(_.isDefined)
   }
-  override def insert(unsaved: FootballClubRow)(implicit c: Connection): FootballClubRow = {
+  override def insert(unsaved: FootballClubRow)(using c: Connection): FootballClubRow = {
     val _ = if (map.contains(unsaved.id))
       sys.error(s"id ${unsaved.id} already exists")
     else
@@ -38,7 +38,7 @@ class FootballClubRepoMock(map: scala.collection.mutable.Map[FootballClubId, Foo
     
     unsaved
   }
-  override def insertStreaming(unsaved: Iterator[FootballClubRow], batchSize: Int = 10000)(implicit c: Connection): Long = {
+  override def insertStreaming(unsaved: Iterator[FootballClubRow], batchSize: Int = 10000)(using c: Connection): Long = {
     unsaved.foreach { row =>
       map += (row.id -> row)
     }
@@ -47,35 +47,35 @@ class FootballClubRepoMock(map: scala.collection.mutable.Map[FootballClubId, Foo
   override def select: SelectBuilder[FootballClubFields, FootballClubRow] = {
     SelectBuilderMock(FootballClubFields.structure, () => map.values.toList, SelectParams.empty)
   }
-  override def selectAll(implicit c: Connection): List[FootballClubRow] = {
+  override def selectAll(using c: Connection): List[FootballClubRow] = {
     map.values.toList
   }
-  override def selectByFieldValues(fieldValues: List[FootballClubFieldOrIdValue[?]])(implicit c: Connection): List[FootballClubRow] = {
+  override def selectByFieldValues(fieldValues: List[FootballClubFieldOrIdValue[?]])(using c: Connection): List[FootballClubRow] = {
     fieldValues.foldLeft(map.values) {
       case (acc, FootballClubFieldValue.id(value)) => acc.filter(_.id == value)
       case (acc, FootballClubFieldValue.name(value)) => acc.filter(_.name == value)
     }.toList
   }
-  override def selectById(id: FootballClubId)(implicit c: Connection): Option[FootballClubRow] = {
+  override def selectById(id: FootballClubId)(using c: Connection): Option[FootballClubRow] = {
     map.get(id)
   }
-  override def selectByIds(ids: Array[FootballClubId])(implicit c: Connection): List[FootballClubRow] = {
+  override def selectByIds(ids: Array[FootballClubId])(using c: Connection): List[FootballClubRow] = {
     ids.flatMap(map.get).toList
   }
-  override def selectByIdsTracked(ids: Array[FootballClubId])(implicit c: Connection): Map[FootballClubId, FootballClubRow] = {
+  override def selectByIdsTracked(ids: Array[FootballClubId])(using c: Connection): Map[FootballClubId, FootballClubRow] = {
     val byId = selectByIds(ids).view.map(x => (x.id, x)).toMap
     ids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
   override def update: UpdateBuilder[FootballClubFields, FootballClubRow] = {
     UpdateBuilderMock(UpdateParams.empty, FootballClubFields.structure, map)
   }
-  override def update(row: FootballClubRow)(implicit c: Connection): Option[FootballClubRow] = {
+  override def update(row: FootballClubRow)(using c: Connection): Option[FootballClubRow] = {
     map.get(row.id).map { _ =>
       map.put(row.id, row): @nowarn
       row
     }
   }
-  override def updateFieldValues(id: FootballClubId, fieldValues: List[FootballClubFieldValue[?]])(implicit c: Connection): Boolean = {
+  override def updateFieldValues(id: FootballClubId, fieldValues: List[FootballClubFieldValue[?]])(using c: Connection): Boolean = {
     map.get(id) match {
       case Some(oldRow) =>
         val updatedRow = fieldValues.foldLeft(oldRow) {
@@ -90,18 +90,18 @@ class FootballClubRepoMock(map: scala.collection.mutable.Map[FootballClubId, Foo
       case None => false
     }
   }
-  override def upsert(unsaved: FootballClubRow)(implicit c: Connection): FootballClubRow = {
+  override def upsert(unsaved: FootballClubRow)(using c: Connection): FootballClubRow = {
     map.put(unsaved.id, unsaved): @nowarn
     unsaved
   }
-  override def upsertBatch(unsaved: Iterable[FootballClubRow])(implicit c: Connection): List[FootballClubRow] = {
+  override def upsertBatch(unsaved: Iterable[FootballClubRow])(using c: Connection): List[FootballClubRow] = {
     unsaved.map { row =>
       map += (row.id -> row)
       row
     }.toList
   }
   /* NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  override def upsertStreaming(unsaved: Iterator[FootballClubRow], batchSize: Int = 10000)(implicit c: Connection): Int = {
+  override def upsertStreaming(unsaved: Iterator[FootballClubRow], batchSize: Int = 10000)(using c: Connection): Int = {
     unsaved.foreach { row =>
       map += (row.id -> row)
     }

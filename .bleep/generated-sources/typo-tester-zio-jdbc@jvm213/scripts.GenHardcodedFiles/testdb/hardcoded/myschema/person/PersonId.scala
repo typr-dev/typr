@@ -31,7 +31,7 @@ object PersonId {
   implicit lazy val pgType: PGType[PersonId] = PGType.PGTypeLong.as
   implicit lazy val setter: Setter[PersonId] = Setter.longSetter.contramap(_.value)
   implicit lazy val text: Text[PersonId] = new Text[PersonId] {
-    override def unsafeEncode(v: PersonId, sb: StringBuilder) = Text.longInstance.unsafeEncode(v.value, sb)
-    override def unsafeArrayEncode(v: PersonId, sb: StringBuilder) = Text.longInstance.unsafeArrayEncode(v.value, sb)
+    override def unsafeEncode(v: PersonId, sb: StringBuilder): Unit = Text.longInstance.unsafeEncode(v.value, sb)
+    override def unsafeArrayEncode(v: PersonId, sb: StringBuilder): Unit = Text.longInstance.unsafeArrayEncode(v.value, sb)
   }
 }

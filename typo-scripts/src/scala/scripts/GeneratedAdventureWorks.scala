@@ -40,16 +40,20 @@ object GeneratedAdventureWorks {
           ),
           Duration.Inf
         )
+        val oldFilesRef = new AtomicReference(Map.empty[RelPath, sc.Code])
         val variants = List(
-          (DbLibName.Anorm, JsonLibName.PlayJson, "typo-tester-anorm", new AtomicReference(Map.empty[RelPath, sc.Code])),
-          (DbLibName.Doobie, JsonLibName.Circe, "typo-tester-doobie", new AtomicReference(Map.empty[RelPath, sc.Code])),
-          (DbLibName.ZioJdbc, JsonLibName.ZioJson, "typo-tester-zio-jdbc", new AtomicReference(Map.empty[RelPath, sc.Code]))
+          (DbLibName.Anorm, JsonLibName.PlayJson, "typo-tester-anorm", "2.13", Dialect.Scala2XSource3),
+          (DbLibName.Anorm, JsonLibName.PlayJson, "typo-tester-anorm", "3", Dialect.Scala3),
+          (DbLibName.Doobie, JsonLibName.Circe, "typo-tester-doobie", "2.13", Dialect.Scala2XSource3),
+          (DbLibName.Doobie, JsonLibName.Circe, "typo-tester-doobie", "3", Dialect.Scala3),
+          (DbLibName.ZioJdbc, JsonLibName.ZioJson, "typo-tester-zio-jdbc", "2.13", Dialect.Scala2XSource3),
+          (DbLibName.ZioJdbc, JsonLibName.ZioJson, "typo-tester-zio-jdbc", "3", Dialect.Scala3)
         )
 
         def go(): Unit = {
           val newSqlScripts = Await.result(readSqlFileDirectories(typoLogger, scriptsPath, ds), Duration.Inf)
 
-          variants.foreach { case (dbLib, jsonLib, projectPath, oldFilesRef) =>
+          variants.foreach { case (dbLib, jsonLib, projectPath, scalaVersion, dialect) =>
             val options = Options(
               pkg = "adventureworks",
               Some(dbLib),
@@ -63,9 +67,10 @@ object GeneratedAdventureWorks {
               enablePrimaryKeyType = !Selector.relationNames("billofmaterials"),
               enableTestInserts = Selector.All,
               readonlyRepo = Selector.relationNames("purchaseorderdetail"),
-              enableDsl = true
+              enableDsl = true,
+              dialect = dialect
             )
-            val targetSources = buildDir.resolve(s"$projectPath/generated-and-checked-in")
+            val targetSources = buildDir.resolve(s"$projectPath/generated-and-checked-in-$scalaVersion")
 
             val newFiles: Generated =
               generate(options, metadb, ProjectGraph(name = "", targetSources, None, selector, newSqlScripts, Nil), relationNameToOpenEnum).head
@@ -77,7 +82,7 @@ object GeneratedAdventureWorks {
             oldFilesRef.set(newFiles.files)
 
             newFiles
-              .overwriteFolder(softWrite = FileSync.SoftWrite.Yes(knownUnchanged))
+              .overwriteFolder(dialect, softWrite = FileSync.SoftWrite.Yes(knownUnchanged))
               .filter { case (_, synced) => synced != FileSync.Synced.Unchanged }
               .foreach { case (path, synced) => logger.withContext("path", path).warn(synced.toString) }
 

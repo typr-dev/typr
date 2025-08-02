@@ -47,42 +47,42 @@ case class PersonRow(
  }
 
 object PersonRow {
-  implicit lazy val jdbcDecoder: JdbcDecoder[PersonRow] = new JdbcDecoder[PersonRow] {
+  given jdbcDecoder: JdbcDecoder[PersonRow] = new JdbcDecoder[PersonRow] {
     override def unsafeDecode(columIndex: Int, rs: ResultSet): (Int, PersonRow) =
       columIndex + 11 ->
         PersonRow(
           id = PersonId.jdbcDecoder.unsafeDecode(columIndex + 0, rs)._2,
           favouriteFootballClubId = FootballClubId.jdbcDecoder.unsafeDecode(columIndex + 1, rs)._2,
           name = JdbcDecoder.stringDecoder.unsafeDecode(columIndex + 2, rs)._2,
-          nickName = JdbcDecoder.optionDecoder(JdbcDecoder.stringDecoder).unsafeDecode(columIndex + 3, rs)._2,
-          blogUrl = JdbcDecoder.optionDecoder(JdbcDecoder.stringDecoder).unsafeDecode(columIndex + 4, rs)._2,
+          nickName = JdbcDecoder.optionDecoder(using JdbcDecoder.stringDecoder).unsafeDecode(columIndex + 3, rs)._2,
+          blogUrl = JdbcDecoder.optionDecoder(using JdbcDecoder.stringDecoder).unsafeDecode(columIndex + 4, rs)._2,
           email = JdbcDecoder.stringDecoder.unsafeDecode(columIndex + 5, rs)._2,
           phone = JdbcDecoder.stringDecoder.unsafeDecode(columIndex + 6, rs)._2,
           likesPizza = JdbcDecoder.booleanDecoder.unsafeDecode(columIndex + 7, rs)._2,
           maritalStatusId = MaritalStatusId.jdbcDecoder.unsafeDecode(columIndex + 8, rs)._2,
-          workEmail = JdbcDecoder.optionDecoder(JdbcDecoder.stringDecoder).unsafeDecode(columIndex + 9, rs)._2,
+          workEmail = JdbcDecoder.optionDecoder(using JdbcDecoder.stringDecoder).unsafeDecode(columIndex + 9, rs)._2,
           sector = Sector.jdbcDecoder.unsafeDecode(columIndex + 10, rs)._2,
           favoriteNumber = Number.jdbcDecoder.unsafeDecode(columIndex + 11, rs)._2
         )
   }
-  implicit lazy val jsonDecoder: JsonDecoder[PersonRow] = JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
-    val id = jsonObj.get("id").toRight("Missing field 'id'").flatMap(_.as(PersonId.jsonDecoder))
-    val favouriteFootballClubId = jsonObj.get("favourite_football_club_id").toRight("Missing field 'favourite_football_club_id'").flatMap(_.as(FootballClubId.jsonDecoder))
-    val name = jsonObj.get("name").toRight("Missing field 'name'").flatMap(_.as(JsonDecoder.string))
-    val nickName = jsonObj.get("nick_name").fold[Either[String, Option[String]]](Right(None))(_.as(JsonDecoder.option(using JsonDecoder.string)))
-    val blogUrl = jsonObj.get("blog_url").fold[Either[String, Option[String]]](Right(None))(_.as(JsonDecoder.option(using JsonDecoder.string)))
-    val email = jsonObj.get("email").toRight("Missing field 'email'").flatMap(_.as(JsonDecoder.string))
-    val phone = jsonObj.get("phone").toRight("Missing field 'phone'").flatMap(_.as(JsonDecoder.string))
-    val likesPizza = jsonObj.get("likes_pizza").toRight("Missing field 'likes_pizza'").flatMap(_.as(JsonDecoder.boolean))
-    val maritalStatusId = jsonObj.get("marital_status_id").toRight("Missing field 'marital_status_id'").flatMap(_.as(MaritalStatusId.jsonDecoder))
-    val workEmail = jsonObj.get("work_email").fold[Either[String, Option[String]]](Right(None))(_.as(JsonDecoder.option(using JsonDecoder.string)))
-    val sector = jsonObj.get("sector").toRight("Missing field 'sector'").flatMap(_.as(Sector.jsonDecoder))
-    val favoriteNumber = jsonObj.get("favorite_number").toRight("Missing field 'favorite_number'").flatMap(_.as(Number.jsonDecoder))
+  given jsonDecoder: JsonDecoder[PersonRow] = JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
+    val id = jsonObj.get("id").toRight("Missing field 'id'").flatMap(_.as(using PersonId.jsonDecoder))
+    val favouriteFootballClubId = jsonObj.get("favourite_football_club_id").toRight("Missing field 'favourite_football_club_id'").flatMap(_.as(using FootballClubId.jsonDecoder))
+    val name = jsonObj.get("name").toRight("Missing field 'name'").flatMap(_.as(using JsonDecoder.string))
+    val nickName = jsonObj.get("nick_name").fold[Either[String, Option[String]]](Right(None))(_.as(using JsonDecoder.option(using JsonDecoder.string)))
+    val blogUrl = jsonObj.get("blog_url").fold[Either[String, Option[String]]](Right(None))(_.as(using JsonDecoder.option(using JsonDecoder.string)))
+    val email = jsonObj.get("email").toRight("Missing field 'email'").flatMap(_.as(using JsonDecoder.string))
+    val phone = jsonObj.get("phone").toRight("Missing field 'phone'").flatMap(_.as(using JsonDecoder.string))
+    val likesPizza = jsonObj.get("likes_pizza").toRight("Missing field 'likes_pizza'").flatMap(_.as(using JsonDecoder.boolean))
+    val maritalStatusId = jsonObj.get("marital_status_id").toRight("Missing field 'marital_status_id'").flatMap(_.as(using MaritalStatusId.jsonDecoder))
+    val workEmail = jsonObj.get("work_email").fold[Either[String, Option[String]]](Right(None))(_.as(using JsonDecoder.option(using JsonDecoder.string)))
+    val sector = jsonObj.get("sector").toRight("Missing field 'sector'").flatMap(_.as(using Sector.jsonDecoder))
+    val favoriteNumber = jsonObj.get("favorite_number").toRight("Missing field 'favorite_number'").flatMap(_.as(using Number.jsonDecoder))
     if (id.isRight && favouriteFootballClubId.isRight && name.isRight && nickName.isRight && blogUrl.isRight && email.isRight && phone.isRight && likesPizza.isRight && maritalStatusId.isRight && workEmail.isRight && sector.isRight && favoriteNumber.isRight)
       Right(PersonRow(id = id.toOption.get, favouriteFootballClubId = favouriteFootballClubId.toOption.get, name = name.toOption.get, nickName = nickName.toOption.get, blogUrl = blogUrl.toOption.get, email = email.toOption.get, phone = phone.toOption.get, likesPizza = likesPizza.toOption.get, maritalStatusId = maritalStatusId.toOption.get, workEmail = workEmail.toOption.get, sector = sector.toOption.get, favoriteNumber = favoriteNumber.toOption.get))
     else Left(List[Either[String, Any]](id, favouriteFootballClubId, name, nickName, blogUrl, email, phone, likesPizza, maritalStatusId, workEmail, sector, favoriteNumber).flatMap(_.left.toOption).mkString(", "))
   }
-  implicit lazy val jsonEncoder: JsonEncoder[PersonRow] = new JsonEncoder[PersonRow] {
+  given jsonEncoder: JsonEncoder[PersonRow] = new JsonEncoder[PersonRow] {
     override def unsafeEncode(a: PersonRow, indent: Option[Int], out: Write): Unit = {
       out.write("{")
       out.write(""""id":""")
@@ -123,16 +123,16 @@ object PersonRow {
       out.write("}")
     }
   }
-  implicit lazy val text: Text[PersonRow] = Text.instance[PersonRow]{ (row, sb) =>
+  given text: Text[PersonRow] = Text.instance[PersonRow]{ (row, sb) =>
     PersonId.text.unsafeEncode(row.id, sb)
     sb.append(Text.DELIMETER)
     FootballClubId.text.unsafeEncode(row.favouriteFootballClubId, sb)
     sb.append(Text.DELIMETER)
     Text.stringInstance.unsafeEncode(row.name, sb)
     sb.append(Text.DELIMETER)
-    Text.option(Text.stringInstance).unsafeEncode(row.nickName, sb)
+    Text.option(using Text.stringInstance).unsafeEncode(row.nickName, sb)
     sb.append(Text.DELIMETER)
-    Text.option(Text.stringInstance).unsafeEncode(row.blogUrl, sb)
+    Text.option(using Text.stringInstance).unsafeEncode(row.blogUrl, sb)
     sb.append(Text.DELIMETER)
     Text.stringInstance.unsafeEncode(row.email, sb)
     sb.append(Text.DELIMETER)
@@ -142,7 +142,7 @@ object PersonRow {
     sb.append(Text.DELIMETER)
     MaritalStatusId.text.unsafeEncode(row.maritalStatusId, sb)
     sb.append(Text.DELIMETER)
-    Text.option(Text.stringInstance).unsafeEncode(row.workEmail, sb)
+    Text.option(using Text.stringInstance).unsafeEncode(row.workEmail, sb)
     sb.append(Text.DELIMETER)
     Number.text.unsafeEncode(row.favoriteNumber, sb)
   }

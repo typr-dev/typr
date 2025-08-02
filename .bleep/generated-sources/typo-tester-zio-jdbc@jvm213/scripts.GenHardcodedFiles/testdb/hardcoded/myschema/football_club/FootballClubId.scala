@@ -31,7 +31,7 @@ object FootballClubId {
   implicit lazy val pgType: PGType[FootballClubId] = PGType.PGTypeLong.as
   implicit lazy val setter: Setter[FootballClubId] = Setter.longSetter.contramap(_.value)
   implicit lazy val text: Text[FootballClubId] = new Text[FootballClubId] {
-    override def unsafeEncode(v: FootballClubId, sb: StringBuilder) = Text.longInstance.unsafeEncode(v.value, sb)
-    override def unsafeArrayEncode(v: FootballClubId, sb: StringBuilder) = Text.longInstance.unsafeArrayEncode(v.value, sb)
+    override def unsafeEncode(v: FootballClubId, sb: StringBuilder): Unit = Text.longInstance.unsafeEncode(v.value, sb)
+    override def unsafeArrayEncode(v: FootballClubId, sb: StringBuilder): Unit = Text.longInstance.unsafeArrayEncode(v.value, sb)
   }
 }

@@ -49,7 +49,7 @@ object GeneratedFrontpage {
           generate(options, metadb, ProjectGraph(name = "", targetSources, None, selector, sqlScripts, Nil), relationNameToOpenEnum).head
 
         newFiles
-          .overwriteFolder(softWrite = FileSync.SoftWrite.Yes(Set.empty))
+          .overwriteFolder(options.dialect, softWrite = FileSync.SoftWrite.Yes(Set.empty))
           .filter { case (_, synced) => synced != FileSync.Synced.Unchanged }
           .foreach { case (path, synced) => logger.withContext("path", path).warn(synced.toString) }
 

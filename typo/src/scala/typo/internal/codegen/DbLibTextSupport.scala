@@ -2,7 +2,7 @@ package typo
 package internal
 package codegen
 
-class DbLibTextSupport(pkg: sc.QIdent, inlineImplicits: Boolean, externalText: Option[sc.Type.Qualified], default: ComputedDefault, implicitOrUsing: ImplicitOrUsing) {
+class DbLibTextSupport(pkg: sc.QIdent, inlineImplicits: Boolean, externalText: Option[sc.Type.Qualified], default: ComputedDefault, dialect: Dialect) {
   // name of type class instance
   val textName = sc.Ident("text")
   // configurable default value used in CSV file. this must match between what the generated COPY statement and the `Text` instance says
@@ -25,11 +25,12 @@ class DbLibTextSupport(pkg: sc.QIdent, inlineImplicits: Boolean, externalText: O
         case TypesScala.Long                                               => code"$Text.longInstance"
         case TypesJava.String                                              => code"$Text.stringInstance"
         case sc.Type.ArrayOf(TypesScala.Byte)                              => code"$Text.byteArrayInstance"
-        case TypesScala.Optional(targ)                                     => code"$Text.option(${implicitOrUsing.callImplicitOrUsing}${lookupTextFor(targ)})"
-        case sc.Type.TApply(default.Defaulted, List(targ))                 => code"${default.Defaulted}.$textName(${implicitOrUsing.callImplicitOrUsing}${lookupTextFor(targ)})"
+        case TypesScala.Optional(targ)                                     => code"$Text.option(${dialect.usingCall}${lookupTextFor(targ)})"
+        case sc.Type.TApply(default.Defaulted, List(targ))                 => code"${default.Defaulted}.$textName(${dialect.usingCall}${lookupTextFor(targ)})"
         case x: sc.Type.Qualified if x.value.idents.startsWith(pkg.idents) => code"$tpe.$textName"
         case sc.Type.ArrayOf(targ: sc.Type.Qualified) if targ.value.idents.startsWith(pkg.idents) =>
-          code"$Text.iterableInstance[${TypesScala.Array}, $targ](${lookupTextFor(targ)}, implicitly)"
+          val summoner = if (dialect == Dialect.Scala2XSource3) "implicitly" else "summon"
+          code"$Text.iterableInstance[${TypesScala.Array}, $targ](${dialect.usingCall}${lookupTextFor(targ)}, $summoner)"
         case other => code"${Text.of(other)}"
       }
 
@@ -46,8 +47,7 @@ class DbLibTextSupport(pkg: sc.QIdent, inlineImplicits: Boolean, externalText: O
                |  case (${default.Defaulted}.${default.UseDefault}, sb) =>
                |    sb.append("$DefaultValue")
                |    ()
-               |}""".stripMargin,
-      implicitOrUsing
+               |}""".stripMargin
     )
   }
 
@@ -64,8 +64,7 @@ class DbLibTextSupport(pkg: sc.QIdent, inlineImplicits: Boolean, externalText: O
                |  override def unsafeEncode($v: $wrapperType, sb: ${TypesJava.StringBuilder}): Unit = $underlyingText.unsafeEncode($v.value, sb)
                |  override def unsafeArrayEncode($v: $wrapperType, sb: ${TypesJava.StringBuilder}): Unit = $underlyingText.unsafeArrayEncode($v.value, sb)
                |}""".stripMargin
-      },
-      implicitOrUsing
+      }
     )
 
   def rowInstance(tpe: sc.Type, cols: NonEmptyList[ComputedColumn]): sc.Given = {
@@ -78,7 +77,7 @@ class DbLibTextSupport(pkg: sc.QIdent, inlineImplicits: Boolean, externalText: O
       code"""|$Text.instance[$tpe]{ ($row, $sb) =>
              |  ${textCols.mkCode(code"\n$sb.append($Text.DELIMETER)\n")}
              |}""".stripMargin
-    sc.Given(tparams = Nil, name = textName, implicitParams = Nil, tpe = Text.of(tpe), body = body, implicitOrUsing)
+    sc.Given(tparams = Nil, name = textName, implicitParams = Nil, tpe = Text.of(tpe), body = body)
   }
 
   def customTypeInstance(ct: CustomType): sc.Given = {
@@ -94,8 +93,7 @@ class DbLibTextSupport(pkg: sc.QIdent, inlineImplicits: Boolean, externalText: O
                |  override def unsafeEncode($v: ${ct.typoType}, sb: ${TypesJava.StringBuilder}): Unit = $underlying.unsafeEncode(${ct.toText.toTextType(v)}, sb)
                |  override def unsafeArrayEncode($v: ${ct.typoType}, sb: ${TypesJava.StringBuilder}): Unit = $underlying.unsafeArrayEncode(${ct.toText.toTextType(v)}, sb)
                |}""".stripMargin
-      },
-      implicitOrUsing
+      }
     )
   }
 }

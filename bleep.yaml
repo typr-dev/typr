@@ -7,7 +7,7 @@ projects:
   tests:
     dependencies: org.scalatest::scalatest:3.2.18
     dependsOn: typo
-    extends: template-nocross
+    extends: template-scala-3-stable
     isTestProject: true
   # main project
   typo:
@@ -43,7 +43,7 @@ projects:
   typo-scripts:
     dependencies: build.bleep::bleep-plugin-ci-release:${BLEEP_VERSION}
     dependsOn: typo
-    extends: template-nocross
+    extends: template-scala-3-stable
     scala:
       version: 3.5.0
     # scripts for generating docs
@@ -54,12 +54,17 @@ projects:
     dependsOn:
     - typo
     - typo-tester-anorm
-    extends: template-nocross
+    extends: template-scala-3-stable
     scala:
       version: 3.5.0
       strict: false
   # scripts generate code into the tester projects, and there are hand-written tests inside as well
   typo-tester-anorm:
+    cross:
+      jvm213:
+        sources: ./generated-and-checked-in-2.13
+      jvm3:
+        sources: ./generated-and-checked-in-3
     dependencies:
     - com.typesafe.play::play-json:2.10.6
     - org.postgresql:postgresql:42.7.3
@@ -70,34 +75,41 @@ projects:
     sourcegen:
       main: scripts.GenHardcodedFiles
       project: typo-scripts
-    sources: ./generated-and-checked-in
   typo-tester-doobie:
+    cross:
+      jvm213:
+        sources: ./generated-and-checked-in-2.13
+      jvm3:
+        sources: ./generated-and-checked-in-3
     dependencies:
     - io.circe::circe-core:0.14.7
     - org.postgresql:postgresql:42.7.3
     - org.scalatest::scalatest:3.2.18
     dependsOn: typo-dsl-doobie
-    extends: template-cross
+    extends: template-cross-scala-3-newest
     isTestProject: true
     sourcegen:
       main: scripts.GenHardcodedFiles
       project: typo-scripts
-    sources: ./generated-and-checked-in
   typo-tester-none:
-    extends: template-cross
+    extends: template-cross-scala-3-newest
     sources: ./generated-and-checked-in
   typo-tester-zio-jdbc:
+    cross:
+      jvm213:
+        sources: ./generated-and-checked-in-2.13
+      jvm3:
+        sources: ./generated-and-checked-in-3
     dependencies:
     - dev.zio::zio-json:0.7.0
     - org.postgresql:postgresql:42.7.3
     - org.scalatest::scalatest:3.2.18
     dependsOn: typo-dsl-zio-jdbc
-    extends: template-cross
+    extends: template-cross-scala-3-newest
     isTestProject: true
     sourcegen:
       main: scripts.GenHardcodedFiles
       project: typo-scripts
-    sources: ./generated-and-checked-in
 scripts:
   compile-benchmarks:
     main: scripts.CompileBenchmark
@@ -131,14 +143,28 @@ templates:
   template-cross:
     cross:
       jvm213:
-        scala:
-          options: -Xsource:3
-          version: 2.13.12
+        extends: template-scala-2
       jvm3:
-        extends: template-nocross
+        extends: template-scala-3-stable
     extends: template-common
-  template-nocross:
+  template-cross-scala-3-newest:
+    cross:
+      jvm213:
+        extends: template-scala-2
+      jvm3:
+        extends: template-scala-3-newest
+    extends: template-common
+  template-scala-3-stable:
     extends: template-common
     scala:
       options: -source 3.3
       version: 3.3.6
+  template-scala-2:
+    scala:
+      options: -Xsource:3
+      version: 2.13.12
+  template-scala-3-newest:
+    extends: template-common
+    scala:
+      options: -source 3.7
+      version: 3.7.2

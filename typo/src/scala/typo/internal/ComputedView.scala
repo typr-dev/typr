@@ -12,7 +12,8 @@ case class ComputedView(
     scalaTypeMapper: TypeMapperScala,
     eval: Eval[db.RelationName, HasSource],
     enableFieldValue: Boolean,
-    enableDsl: Boolean
+    enableDsl: Boolean,
+    dialect: Dialect
 ) extends HasSource {
   val source: Source.View = Source.View(view.name, view.isMaterialized)
 
@@ -37,7 +38,7 @@ case class ComputedView(
   def inferType(colName: db.ColName): sc.Type = {
     val (col, parsedName) = colsByName(colName)
     val typeFromFk: Option[sc.Type] =
-      findTypeFromFk(logger, source, col.name, pointsToByColName(col.name), eval.asMaybe)(otherColName => Some(inferType(otherColName)))
+      findTypeFromFk(logger, source, col.name, pointsToByColName(col.name), eval.asMaybe, dialect)(otherColName => Some(inferType(otherColName)))
     scalaTypeMapper.sqlFile(parsedName.overriddenType.orElse(typeFromFk), col.tpe, col.nullability)
   }
 

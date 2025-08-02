@@ -53,17 +53,18 @@ object CompileBenchmark extends BleepScript("CompileBenchmark") {
         val targetSources = buildDir.resolve(projectName).resolve(GeneratedAndCheckedIn)
 
         List(false, true).flatMap { inlineImplicits =>
+          val options = Options(
+            pkg = "adventureworks",
+            dbLib,
+            jsonLib,
+            enableDsl = dbLib.nonEmpty,
+            enableTestInserts = Selector.All,
+            inlineImplicits = inlineImplicits,
+            fixVerySlowImplicit = fixVerySlowImplicit,
+            enableStreamingInserts = false
+          )
           generate(
-            Options(
-              pkg = "adventureworks",
-              dbLib,
-              jsonLib,
-              enableDsl = dbLib.nonEmpty,
-              enableTestInserts = Selector.All,
-              inlineImplicits = inlineImplicits,
-              fixVerySlowImplicit = fixVerySlowImplicit,
-              enableStreamingInserts = false
-            ),
+            options,
             metadb,
             ProjectGraph(
               name = "",
@@ -74,7 +75,7 @@ object CompileBenchmark extends BleepScript("CompileBenchmark") {
               Nil
             ),
             Map.empty
-          ).foreach(_.overwriteFolder())
+          ).foreach(_.overwriteFolder(options.dialect))
 
           crossIds.map { crossId =>
             started.projectPaths(CrossProjectName(ProjectName(projectName), Some(crossId))).sourcesDirs.fromSourceLayout.foreach { p =>

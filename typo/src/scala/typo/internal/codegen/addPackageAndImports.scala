@@ -53,8 +53,8 @@ object addPackageAndImports {
         sc.Params(params.map(p => shortenNamesParam(p, f)))
       case x: sc.StrLit =>
         x
-      case sc.Summon(tpe, implicitOrUsing) =>
-        sc.Summon(shortenNamesType(tpe, f), implicitOrUsing)
+      case sc.Summon(tpe) =>
+        sc.Summon(shortenNamesType(tpe, f))
       case tpe: sc.Type =>
         shortenNamesType(tpe, f)
       case sc.StringInterpolate(i, prefix, content) =>
@@ -70,8 +70,8 @@ object addPackageAndImports {
 
   def shortenNamesClassMember(cm: sc.ClassMember, f: sc.Type.Qualified => sc.Type.Qualified): sc.ClassMember =
     cm match {
-      case sc.Given(tparams, name, implicitParams, tpe, body, implicitOrUsing) =>
-        sc.Given(tparams, name, implicitParams.map(p => shortenNamesParam(p, f)), shortenNamesType(tpe, f), body.mapTrees(t => shortenNames(t, f)), implicitOrUsing)
+      case sc.Given(tparams, name, implicitParams, tpe, body) =>
+        sc.Given(tparams, name, implicitParams.map(p => shortenNamesParam(p, f)), shortenNamesType(tpe, f), body.mapTrees(t => shortenNames(t, f)))
       case sc.Value(tparams, name, params, implicitParams, tpe, body) =>
         sc.Value(
           tparams,

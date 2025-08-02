@@ -34,24 +34,24 @@ case class PersonRow(
 object PersonRow {
   def apply(compositeId: PersonId, name: Option[String]) =
     new PersonRow(compositeId.one, compositeId.two, name)
-  implicit lazy val jdbcDecoder: JdbcDecoder[PersonRow] = new JdbcDecoder[PersonRow] {
+  given jdbcDecoder: JdbcDecoder[PersonRow] = new JdbcDecoder[PersonRow] {
     override def unsafeDecode(columIndex: Int, rs: ResultSet): (Int, PersonRow) =
       columIndex + 2 ->
         PersonRow(
           one = JdbcDecoder.longDecoder.unsafeDecode(columIndex + 0, rs)._2,
-          two = JdbcDecoder.optionDecoder(JdbcDecoder.stringDecoder).unsafeDecode(columIndex + 1, rs)._2,
-          name = JdbcDecoder.optionDecoder(JdbcDecoder.stringDecoder).unsafeDecode(columIndex + 2, rs)._2
+          two = JdbcDecoder.optionDecoder(using JdbcDecoder.stringDecoder).unsafeDecode(columIndex + 1, rs)._2,
+          name = JdbcDecoder.optionDecoder(using JdbcDecoder.stringDecoder).unsafeDecode(columIndex + 2, rs)._2
         )
   }
-  implicit lazy val jsonDecoder: JsonDecoder[PersonRow] = JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
-    val one = jsonObj.get("one").toRight("Missing field 'one'").flatMap(_.as(JsonDecoder.long))
-    val two = jsonObj.get("two").fold[Either[String, Option[String]]](Right(None))(_.as(JsonDecoder.option(using JsonDecoder.string)))
-    val name = jsonObj.get("name").fold[Either[String, Option[String]]](Right(None))(_.as(JsonDecoder.option(using JsonDecoder.string)))
+  given jsonDecoder: JsonDecoder[PersonRow] = JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
+    val one = jsonObj.get("one").toRight("Missing field 'one'").flatMap(_.as(using JsonDecoder.long))
+    val two = jsonObj.get("two").fold[Either[String, Option[String]]](Right(None))(_.as(using JsonDecoder.option(using JsonDecoder.string)))
+    val name = jsonObj.get("name").fold[Either[String, Option[String]]](Right(None))(_.as(using JsonDecoder.option(using JsonDecoder.string)))
     if (one.isRight && two.isRight && name.isRight)
       Right(PersonRow(one = one.toOption.get, two = two.toOption.get, name = name.toOption.get))
     else Left(List[Either[String, Any]](one, two, name).flatMap(_.left.toOption).mkString(", "))
   }
-  implicit lazy val jsonEncoder: JsonEncoder[PersonRow] = new JsonEncoder[PersonRow] {
+  given jsonEncoder: JsonEncoder[PersonRow] = new JsonEncoder[PersonRow] {
     override def unsafeEncode(a: PersonRow, indent: Option[Int], out: Write): Unit = {
       out.write("{")
       out.write(""""one":""")
@@ -65,11 +65,11 @@ object PersonRow {
       out.write("}")
     }
   }
-  implicit lazy val text: Text[PersonRow] = Text.instance[PersonRow]{ (row, sb) =>
+  given text: Text[PersonRow] = Text.instance[PersonRow]{ (row, sb) =>
     Text.longInstance.unsafeEncode(row.one, sb)
     sb.append(Text.DELIMETER)
-    Text.option(Text.stringInstance).unsafeEncode(row.two, sb)
+    Text.option(using Text.stringInstance).unsafeEncode(row.two, sb)
     sb.append(Text.DELIMETER)
-    Text.option(Text.stringInstance).unsafeEncode(row.name, sb)
+    Text.option(using Text.stringInstance).unsafeEncode(row.name, sb)
   }
 }

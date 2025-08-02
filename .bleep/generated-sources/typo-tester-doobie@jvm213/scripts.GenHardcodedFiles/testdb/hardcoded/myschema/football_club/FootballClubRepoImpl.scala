@@ -39,16 +39,16 @@ class FootballClubRepoImpl extends FootballClubRepo {
     sql"""insert into "myschema"."football_club"("id", "name")
           values (${fromWrite(unsaved.id)(new Write.Single(FootballClubId.put))}::int8, ${fromWrite(unsaved.name)(new Write.Single(Meta.StringMeta.put))})
           returning "id", "name"
-       """.query(using FootballClubRow.read).unique
+       """.query(FootballClubRow.read).unique
   }
   override def insertStreaming(unsaved: Stream[ConnectionIO, FootballClubRow], batchSize: Int = 10000): ConnectionIO[Long] = {
-    new FragmentOps(sql"""COPY "myschema"."football_club"("id", "name") FROM STDIN""").copyIn(unsaved, batchSize)(using FootballClubRow.text)
+    new FragmentOps(sql"""COPY "myschema"."football_club"("id", "name") FROM STDIN""").copyIn(unsaved, batchSize)(FootballClubRow.text)
   }
   override def select: SelectBuilder[FootballClubFields, FootballClubRow] = {
     SelectBuilderSql(""""myschema"."football_club"""", FootballClubFields.structure, FootballClubRow.read)
   }
   override def selectAll: Stream[ConnectionIO, FootballClubRow] = {
-    sql"""select "id", "name" from "myschema"."football_club"""".query(using FootballClubRow.read).stream
+    sql"""select "id", "name" from "myschema"."football_club"""".query(FootballClubRow.read).stream
   }
   override def selectByFieldValues(fieldValues: List[FootballClubFieldOrIdValue[?]]): Stream[ConnectionIO, FootballClubRow] = {
     val where = fragments.whereAndOpt(
@@ -57,13 +57,13 @@ class FootballClubRepoImpl extends FootballClubRepo {
         case FootballClubFieldValue.name(value) => fr""""name" = ${fromWrite(value)(new Write.Single(Meta.StringMeta.put))}"""
       }
     )
-    sql"""select "id", "name" from "myschema"."football_club" $where""".query(using FootballClubRow.read).stream
+    sql"""select "id", "name" from "myschema"."football_club" $where""".query(FootballClubRow.read).stream
   }
   override def selectById(id: FootballClubId): ConnectionIO[Option[FootballClubRow]] = {
-    sql"""select "id", "name" from "myschema"."football_club" where "id" = ${fromWrite(id)(new Write.Single(FootballClubId.put))}""".query(using FootballClubRow.read).option
+    sql"""select "id", "name" from "myschema"."football_club" where "id" = ${fromWrite(id)(new Write.Single(FootballClubId.put))}""".query(FootballClubRow.read).option
   }
   override def selectByIds(ids: Array[FootballClubId]): Stream[ConnectionIO, FootballClubRow] = {
-    sql"""select "id", "name" from "myschema"."football_club" where "id" = ANY(${ids})""".query(using FootballClubRow.read).stream
+    sql"""select "id", "name" from "myschema"."football_club" where "id" = ANY(${ids})""".query(FootballClubRow.read).stream
   }
   override def selectByIdsTracked(ids: Array[FootballClubId]): ConnectionIO[Map[FootballClubId, FootballClubRow]] = {
     selectByIds(ids).compile.toList.map { rows =>
@@ -79,7 +79,7 @@ class FootballClubRepoImpl extends FootballClubRepo {
     sql"""update "myschema"."football_club"
           set "name" = ${fromWrite(row.name)(new Write.Single(Meta.StringMeta.put))}
           where "id" = ${fromWrite(id)(new Write.Single(FootballClubId.put))}
-          returning "id", "name"""".query(using FootballClubRow.read).option
+          returning "id", "name"""".query(FootballClubRow.read).option
   }
   override def updateFieldValues(id: FootballClubId, fieldValues: List[FootballClubFieldValue[?]]): ConnectionIO[Boolean] = {
     NonEmptyList.fromList(fieldValues) match {
@@ -105,7 +105,7 @@ class FootballClubRepoImpl extends FootballClubRepo {
           do update set
             "name" = EXCLUDED."name"
           returning "id", "name"
-       """.query(using FootballClubRow.read).unique
+       """.query(FootballClubRow.read).unique
   }
   override def upsertBatch(unsaved: List[FootballClubRow]): Stream[ConnectionIO, FootballClubRow] = {
     Update[FootballClubRow](
@@ -115,14 +115,14 @@ class FootballClubRepoImpl extends FootballClubRepo {
           do update set
             "name" = EXCLUDED."name"
           returning "id", "name""""
-    )(using FootballClubRow.write)
-    .updateManyWithGeneratedKeys[FootballClubRow]("id", "name")(unsaved)(using catsStdInstancesForList, FootballClubRow.read)
+    )(FootballClubRow.write)
+    .updateManyWithGeneratedKeys[FootballClubRow]("id", "name")(unsaved)(catsStdInstancesForList, FootballClubRow.read)
   }
   /* NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override def upsertStreaming(unsaved: Stream[ConnectionIO, FootballClubRow], batchSize: Int = 10000): ConnectionIO[Int] = {
     for {
       _ <- sql"""create temporary table football_club_TEMP (like "myschema"."football_club") on commit drop""".update.run
-      _ <- new FragmentOps(sql"""copy football_club_TEMP("id", "name") from stdin""").copyIn(unsaved, batchSize)(using FootballClubRow.text)
+      _ <- new FragmentOps(sql"""copy football_club_TEMP("id", "name") from stdin""").copyIn(unsaved, batchSize)(FootballClubRow.text)
       res <- sql"""insert into "myschema"."football_club"("id", "name")
                    select * from football_club_TEMP
                    on conflict ("id")

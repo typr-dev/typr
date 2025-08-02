@@ -22,13 +22,15 @@ import java.sql.Connection
 def generate(ds: TypoDataSource): String = {
   val cwd: Path = Path.of(sys.props("user.dir"))
 
-  val generated = generateFromDb(
-    ds,
-    Options(
+  val options = Options(
       pkg = "org.mypkg",
       jsonLibs = Nil,
       dbLib = Some(DbLibName.ZioJdbc)
-    ),
+    )
+  
+  val generated = generateFromDb(
+    ds,
+    options,
     // setup a project graph. this outer-most project is the root project.
     // if multiple downstream projects need the same relation, it'll be pulled up until it's visible for all.
     // in this simple example it means `a.bicycle` will be pulled up here
@@ -66,7 +68,7 @@ def generate(ds: TypoDataSource): String = {
     )
   )
 
-  generated.foreach(_.overwriteFolder())
+  generated.foreach(_.overwriteFolder(options.dialect))
 
   import scala.sys.process.*
 

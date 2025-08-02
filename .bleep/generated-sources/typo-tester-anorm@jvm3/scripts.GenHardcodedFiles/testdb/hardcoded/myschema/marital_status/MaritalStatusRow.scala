@@ -25,7 +25,7 @@ case class MaritalStatusRow(
 )
 
 object MaritalStatusRow {
-  implicit lazy val reads: Reads[MaritalStatusRow] = Reads[MaritalStatusRow](json => JsResult.fromTry(
+  given reads: Reads[MaritalStatusRow] = Reads[MaritalStatusRow](json => JsResult.fromTry(
       Try(
         MaritalStatusRow(
           id = json.\("id").as(MaritalStatusId.reads)
@@ -36,14 +36,14 @@ object MaritalStatusRow {
   def rowParser(idx: Int): RowParser[MaritalStatusRow] = RowParser[MaritalStatusRow] { row =>
     Success(
       MaritalStatusRow(
-        id = row(idx + 0)(MaritalStatusId.column)
+        id = row(idx + 0)(using MaritalStatusId.column)
       )
     )
   }
-  implicit lazy val text: Text[MaritalStatusRow] = Text.instance[MaritalStatusRow]{ (row, sb) =>
+  given text: Text[MaritalStatusRow] = Text.instance[MaritalStatusRow]{ (row, sb) =>
     MaritalStatusId.text.unsafeEncode(row.id, sb)
   }
-  implicit lazy val writes: OWrites[MaritalStatusRow] = OWrites[MaritalStatusRow](o =>
+  given writes: OWrites[MaritalStatusRow] = OWrites[MaritalStatusRow](o =>
     new JsObject(ListMap[String, JsValue](
       "id" -> MaritalStatusId.writes.writes(o.id)
     ))

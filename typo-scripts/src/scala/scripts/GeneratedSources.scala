@@ -22,15 +22,17 @@ object GeneratedSources {
     val buildDir = Path.of(sys.props("user.dir"))
     val typoSources = buildDir.resolve("typo/generated-and-checked-in")
 
+    val options = Options(
+      pkg = "typo.generated",
+      jsonLibs = List(JsonLibName.PlayJson),
+      dbLib = Some(DbLibName.Anorm),
+      fileHeader = header,
+      debugTypes = true
+    )
+
     val files = generateFromDb(
       ds,
-      Options(
-        pkg = "typo.generated",
-        jsonLibs = List(JsonLibName.PlayJson),
-        dbLib = Some(DbLibName.Anorm),
-        fileHeader = header,
-        debugTypes = true
-      ),
+      options,
       typoSources,
       None,
       Selector.relationNames(
@@ -46,7 +48,7 @@ object GeneratedSources {
       List(buildDir.resolve("sql"))
     )
 
-    files.foreach(_.overwriteFolder())
+    files.foreach(_.overwriteFolder(options.dialect))
 
     import scala.sys.process.*
     List("git", "add", "-f", typoSources.toString).!! : @nowarn

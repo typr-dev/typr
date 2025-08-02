@@ -40,7 +40,7 @@ object PersonRow {
     new Read.Single(Meta.LongMeta.get).asInstanceOf[Read[Any]],
       new Read.SingleOpt(Meta.StringMeta.get).asInstanceOf[Read[Any]],
       new Read.SingleOpt(Meta.StringMeta.get).asInstanceOf[Read[Any]]
-  ))(using scala.reflect.ClassTag.Any).map { arr =>
+  ))(scala.reflect.ClassTag.Any).map { arr =>
     PersonRow(
       one = arr(0).asInstanceOf[Long],
           two = arr(1).asInstanceOf[Option[String]],

@@ -35,13 +35,13 @@ case class PersonRowUnsaved(
     )
 }
 object PersonRowUnsaved {
-  implicit lazy val decoder: Decoder[PersonRowUnsaved] = Decoder.forProduct3[PersonRowUnsaved, Option[String], Defaulted[Long], Defaulted[Option[String]]]("name", "one", "two")(PersonRowUnsaved.apply)(Decoder.decodeOption(Decoder.decodeString), Defaulted.decoder(Decoder.decodeLong), Defaulted.decoder(Decoder.decodeOption(Decoder.decodeString)))
-  implicit lazy val encoder: Encoder[PersonRowUnsaved] = Encoder.forProduct3[PersonRowUnsaved, Option[String], Defaulted[Long], Defaulted[Option[String]]]("name", "one", "two")(x => (x.name, x.one, x.two))(Encoder.encodeOption(Encoder.encodeString), Defaulted.encoder(Encoder.encodeLong), Defaulted.encoder(Encoder.encodeOption(Encoder.encodeString)))
-  implicit lazy val text: Text[PersonRowUnsaved] = Text.instance[PersonRowUnsaved]{ (row, sb) =>
-    Text.option(Text.stringInstance).unsafeEncode(row.name, sb)
+  given decoder: Decoder[PersonRowUnsaved] = Decoder.forProduct3[PersonRowUnsaved, Option[String], Defaulted[Long], Defaulted[Option[String]]]("name", "one", "two")(PersonRowUnsaved.apply)(using Decoder.decodeOption(using Decoder.decodeString), Defaulted.decoder(using Decoder.decodeLong), Defaulted.decoder(using Decoder.decodeOption(using Decoder.decodeString)))
+  given encoder: Encoder[PersonRowUnsaved] = Encoder.forProduct3[PersonRowUnsaved, Option[String], Defaulted[Long], Defaulted[Option[String]]]("name", "one", "two")(x => (x.name, x.one, x.two))(using Encoder.encodeOption(using Encoder.encodeString), Defaulted.encoder(using Encoder.encodeLong), Defaulted.encoder(using Encoder.encodeOption(using Encoder.encodeString)))
+  given text: Text[PersonRowUnsaved] = Text.instance[PersonRowUnsaved]{ (row, sb) =>
+    Text.option(using Text.stringInstance).unsafeEncode(row.name, sb)
     sb.append(Text.DELIMETER)
-    Defaulted.text(Text.longInstance).unsafeEncode(row.one, sb)
+    Defaulted.text(using Text.longInstance).unsafeEncode(row.one, sb)
     sb.append(Text.DELIMETER)
-    Defaulted.text(Text.option(Text.stringInstance)).unsafeEncode(row.two, sb)
+    Defaulted.text(using Text.option(using Text.stringInstance)).unsafeEncode(row.two, sb)
   }
 }

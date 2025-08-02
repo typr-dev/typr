@@ -11,7 +11,7 @@ class PaginationQueryCirce[Fields, Row](underlying: PaginationQuery[Fields, Row,
       d: Decoder[N[T]],
       asConst: SqlExpr.Const.As[T, N]
   ): PaginationQueryCirce[Fields, Row] =
-    new PaginationQueryCirce(underlying.andOn(v)(PaginationQueryCirce.abstractCodec)(asConst))
+    new PaginationQueryCirce(underlying.andOn(v)(PaginationQueryCirce.abstractCodec)(using asConst))
 
   def done(limit: Int, continueFrom: Option[ClientCursor[Json]]): Either[String, (SelectBuilder[Fields, Row], ServerCursor[Fields, Row, Json])] =
     underlying.done(limit, continueFrom)

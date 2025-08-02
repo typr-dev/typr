@@ -21,14 +21,14 @@ case class MaritalStatusRow(
 )
 
 object MaritalStatusRow {
-  implicit lazy val jdbcDecoder: JdbcDecoder[MaritalStatusRow] = MaritalStatusId.jdbcDecoder.map(v => MaritalStatusRow(id = v))
-  implicit lazy val jsonDecoder: JsonDecoder[MaritalStatusRow] = JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
-    val id = jsonObj.get("id").toRight("Missing field 'id'").flatMap(_.as(MaritalStatusId.jsonDecoder))
+  given jdbcDecoder: JdbcDecoder[MaritalStatusRow] = MaritalStatusId.jdbcDecoder.map(v => MaritalStatusRow(id = v))
+  given jsonDecoder: JsonDecoder[MaritalStatusRow] = JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
+    val id = jsonObj.get("id").toRight("Missing field 'id'").flatMap(_.as(using MaritalStatusId.jsonDecoder))
     if (id.isRight)
       Right(MaritalStatusRow(id = id.toOption.get))
     else Left(List[Either[String, Any]](id).flatMap(_.left.toOption).mkString(", "))
   }
-  implicit lazy val jsonEncoder: JsonEncoder[MaritalStatusRow] = new JsonEncoder[MaritalStatusRow] {
+  given jsonEncoder: JsonEncoder[MaritalStatusRow] = new JsonEncoder[MaritalStatusRow] {
     override def unsafeEncode(a: MaritalStatusRow, indent: Option[Int], out: Write): Unit = {
       out.write("{")
       out.write(""""id":""")
@@ -36,7 +36,7 @@ object MaritalStatusRow {
       out.write("}")
     }
   }
-  implicit lazy val text: Text[MaritalStatusRow] = Text.instance[MaritalStatusRow]{ (row, sb) =>
+  given text: Text[MaritalStatusRow] = Text.instance[MaritalStatusRow]{ (row, sb) =>
     MaritalStatusId.text.unsafeEncode(row.id, sb)
   }
 }

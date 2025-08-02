@@ -52,7 +52,7 @@ case class ComputedTable(
           lazy val underlying = scalaTypeMapper.col(dbTable.name, dbCol, None)
 
           val fromFk: Option[IdComputed.UnaryInherited] =
-            findTypeFromFk(options.logger, source, dbCol.name, pointsTo, eval.asMaybe)(_ => None).map { tpe =>
+            findTypeFromFk(options.logger, source, dbCol.name, pointsTo, eval.asMaybe, options.dialect)(_ => None).map { tpe =>
               val col = ComputedColumn(pointsTo = pointsTo, name = naming.field(dbCol.name), tpe = tpe, dbCol = dbCol)
               IdComputed.UnaryInherited(col, tpe)
             }
@@ -106,7 +106,7 @@ case class ComputedTable(
     val dbCol = dbColsByName(colName)
     // we let types flow through constraints down to this column, the point is to reuse id types downstream
     val typeFromFk: Option[sc.Type] =
-      findTypeFromFk(options.logger, source, colName, deps.getOrElse(colName, Nil), eval.asMaybe)(otherColName => Some(deriveType(otherColName)))
+      findTypeFromFk(options.logger, source, colName, deps.getOrElse(colName, Nil), eval.asMaybe, options.dialect)(otherColName => Some(deriveType(otherColName)))
 
     val typeFromId: Option[sc.Type] =
       maybeId match {

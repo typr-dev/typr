@@ -19,16 +19,16 @@ import typo.dsl.Bijection
 /** Type for the primary key of table `myschema.marital_status` */
 case class MaritalStatusId(value: Long) extends AnyVal
 object MaritalStatusId {
-  implicit lazy val arrayGet: Get[Array[MaritalStatusId]] = testdb.hardcoded.LongArrayMeta.get.map(_.map(MaritalStatusId.apply))
-  implicit lazy val arrayPut: Put[Array[MaritalStatusId]] = testdb.hardcoded.LongArrayMeta.put.contramap(_.map(_.value))
-  implicit lazy val bijection: Bijection[MaritalStatusId, Long] = Bijection[MaritalStatusId, Long](_.value)(MaritalStatusId.apply)
-  implicit lazy val decoder: Decoder[MaritalStatusId] = Decoder.decodeLong.map(MaritalStatusId.apply)
-  implicit lazy val encoder: Encoder[MaritalStatusId] = Encoder.encodeLong.contramap(_.value)
-  implicit lazy val get: Get[MaritalStatusId] = Meta.LongMeta.get.map(MaritalStatusId.apply)
-  implicit lazy val ordering: Ordering[MaritalStatusId] = Ordering.by(_.value)
-  implicit lazy val put: Put[MaritalStatusId] = Meta.LongMeta.put.contramap(_.value)
-  implicit lazy val text: Text[MaritalStatusId] = new Text[MaritalStatusId] {
-    override def unsafeEncode(v: MaritalStatusId, sb: StringBuilder) = Text.longInstance.unsafeEncode(v.value, sb)
-    override def unsafeArrayEncode(v: MaritalStatusId, sb: StringBuilder) = Text.longInstance.unsafeArrayEncode(v.value, sb)
+  given arrayGet: Get[Array[MaritalStatusId]] = testdb.hardcoded.LongArrayMeta.get.map(_.map(MaritalStatusId.apply))
+  given arrayPut: Put[Array[MaritalStatusId]] = testdb.hardcoded.LongArrayMeta.put.contramap(_.map(_.value))
+  given bijection: Bijection[MaritalStatusId, Long] = Bijection[MaritalStatusId, Long](_.value)(MaritalStatusId.apply)
+  given decoder: Decoder[MaritalStatusId] = Decoder.decodeLong.map(MaritalStatusId.apply)
+  given encoder: Encoder[MaritalStatusId] = Encoder.encodeLong.contramap(_.value)
+  given get: Get[MaritalStatusId] = Meta.LongMeta.get.map(MaritalStatusId.apply)
+  given ordering: Ordering[MaritalStatusId] = Ordering.by(_.value)
+  given put: Put[MaritalStatusId] = Meta.LongMeta.put.contramap(_.value)
+  given text: Text[MaritalStatusId] = new Text[MaritalStatusId] {
+    override def unsafeEncode(v: MaritalStatusId, sb: StringBuilder): Unit = Text.longInstance.unsafeEncode(v.value, sb)
+    override def unsafeArrayEncode(v: MaritalStatusId, sb: StringBuilder): Unit = Text.longInstance.unsafeArrayEncode(v.value, sb)
   }
 }

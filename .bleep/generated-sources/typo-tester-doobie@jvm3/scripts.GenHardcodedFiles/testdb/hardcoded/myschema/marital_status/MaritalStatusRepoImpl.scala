@@ -27,14 +27,14 @@ class MaritalStatusRepoImpl extends MaritalStatusRepo {
     DeleteBuilder(""""myschema"."marital_status"""", MaritalStatusFields.structure)
   }
   override def deleteById(id: MaritalStatusId): ConnectionIO[Boolean] = {
-    sql"""delete from "myschema"."marital_status" where "id" = ${fromWrite(id)(new Write.Single(MaritalStatusId.put))}""".update.run.map(_ > 0)
+    sql"""delete from "myschema"."marital_status" where "id" = ${fromWrite(id)(using new Write.Single(MaritalStatusId.put))}""".update.run.map(_ > 0)
   }
   override def deleteByIds(ids: Array[MaritalStatusId]): ConnectionIO[Int] = {
     sql"""delete from "myschema"."marital_status" where "id" = ANY(${ids})""".update.run
   }
   override def insert(unsaved: MaritalStatusRow): ConnectionIO[MaritalStatusRow] = {
     sql"""insert into "myschema"."marital_status"("id")
-          values (${fromWrite(unsaved.id)(new Write.Single(MaritalStatusId.put))}::int8)
+          values (${fromWrite(unsaved.id)(using new Write.Single(MaritalStatusId.put))}::int8)
           returning "id"
        """.query(using MaritalStatusRow.read).unique
   }
@@ -50,13 +50,13 @@ class MaritalStatusRepoImpl extends MaritalStatusRepo {
   override def selectByFieldValues(fieldValues: List[MaritalStatusFieldOrIdValue[?]]): Stream[ConnectionIO, MaritalStatusRow] = {
     val where = fragments.whereAndOpt(
       fieldValues.map {
-        case MaritalStatusFieldValue.id(value) => fr""""id" = ${fromWrite(value)(new Write.Single(MaritalStatusId.put))}"""
+        case MaritalStatusFieldValue.id(value) => fr""""id" = ${fromWrite(value)(using new Write.Single(MaritalStatusId.put))}"""
       }
     )
     sql"""select "id" from "myschema"."marital_status" $where""".query(using MaritalStatusRow.read).stream
   }
   override def selectById(id: MaritalStatusId): ConnectionIO[Option[MaritalStatusRow]] = {
-    sql"""select "id" from "myschema"."marital_status" where "id" = ${fromWrite(id)(new Write.Single(MaritalStatusId.put))}""".query(using MaritalStatusRow.read).option
+    sql"""select "id" from "myschema"."marital_status" where "id" = ${fromWrite(id)(using new Write.Single(MaritalStatusId.put))}""".query(using MaritalStatusRow.read).option
   }
   override def selectByIds(ids: Array[MaritalStatusId]): Stream[ConnectionIO, MaritalStatusRow] = {
     sql"""select "id" from "myschema"."marital_status" where "id" = ANY(${ids})""".query(using MaritalStatusRow.read).stream
@@ -73,7 +73,7 @@ class MaritalStatusRepoImpl extends MaritalStatusRepo {
   override def upsert(unsaved: MaritalStatusRow): ConnectionIO[MaritalStatusRow] = {
     sql"""insert into "myschema"."marital_status"("id")
           values (
-            ${fromWrite(unsaved.id)(new Write.Single(MaritalStatusId.put))}::int8
+            ${fromWrite(unsaved.id)(using new Write.Single(MaritalStatusId.put))}::int8
           )
           on conflict ("id")
           do update set "id" = EXCLUDED."id"

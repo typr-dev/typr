@@ -34,9 +34,9 @@ case class PersonRow(
 object PersonRow {
   def apply(compositeId: PersonId, name: Option[String]) =
     new PersonRow(compositeId.one, compositeId.two, name)
-  implicit lazy val decoder: Decoder[PersonRow] = Decoder.forProduct3[PersonRow, Long, Option[String], Option[String]]("one", "two", "name")(PersonRow.apply)(Decoder.decodeLong, Decoder.decodeOption(Decoder.decodeString), Decoder.decodeOption(Decoder.decodeString))
-  implicit lazy val encoder: Encoder[PersonRow] = Encoder.forProduct3[PersonRow, Long, Option[String], Option[String]]("one", "two", "name")(x => (x.one, x.two, x.name))(Encoder.encodeLong, Encoder.encodeOption(Encoder.encodeString), Encoder.encodeOption(Encoder.encodeString))
-  implicit lazy val read: Read[PersonRow] = new Read.CompositeOfInstances(Array(
+  given decoder: Decoder[PersonRow] = Decoder.forProduct3[PersonRow, Long, Option[String], Option[String]]("one", "two", "name")(PersonRow.apply)(using Decoder.decodeLong, Decoder.decodeOption(using Decoder.decodeString), Decoder.decodeOption(using Decoder.decodeString))
+  given encoder: Encoder[PersonRow] = Encoder.forProduct3[PersonRow, Long, Option[String], Option[String]]("one", "two", "name")(x => (x.one, x.two, x.name))(using Encoder.encodeLong, Encoder.encodeOption(using Encoder.encodeString), Encoder.encodeOption(using Encoder.encodeString))
+  given read: Read[PersonRow] = new Read.CompositeOfInstances(Array(
     new Read.Single(Meta.LongMeta.get).asInstanceOf[Read[Any]],
       new Read.SingleOpt(Meta.StringMeta.get).asInstanceOf[Read[Any]],
       new Read.SingleOpt(Meta.StringMeta.get).asInstanceOf[Read[Any]]
@@ -47,14 +47,14 @@ object PersonRow {
           name = arr(2).asInstanceOf[Option[String]]
     )
   }
-  implicit lazy val text: Text[PersonRow] = Text.instance[PersonRow]{ (row, sb) =>
+  given text: Text[PersonRow] = Text.instance[PersonRow]{ (row, sb) =>
     Text.longInstance.unsafeEncode(row.one, sb)
     sb.append(Text.DELIMETER)
-    Text.option(Text.stringInstance).unsafeEncode(row.two, sb)
+    Text.option(using Text.stringInstance).unsafeEncode(row.two, sb)
     sb.append(Text.DELIMETER)
-    Text.option(Text.stringInstance).unsafeEncode(row.name, sb)
+    Text.option(using Text.stringInstance).unsafeEncode(row.name, sb)
   }
-  implicit lazy val write: Write[PersonRow] = new Write.Composite[PersonRow](
+  given write: Write[PersonRow] = new Write.Composite[PersonRow](
     List(new Write.Single(Meta.LongMeta.put),
          new Write.Single(Meta.StringMeta.put).toOpt,
          new Write.Single(Meta.StringMeta.put).toOpt),

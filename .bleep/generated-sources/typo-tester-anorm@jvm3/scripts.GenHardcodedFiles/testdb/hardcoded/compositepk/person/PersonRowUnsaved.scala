@@ -40,28 +40,28 @@ case class PersonRowUnsaved(
     )
 }
 object PersonRowUnsaved {
-  implicit lazy val reads: Reads[PersonRowUnsaved] = Reads[PersonRowUnsaved](json => JsResult.fromTry(
+  given reads: Reads[PersonRowUnsaved] = Reads[PersonRowUnsaved](json => JsResult.fromTry(
       Try(
         PersonRowUnsaved(
           name = json.\("name").toOption.map(_.as(Reads.StringReads)),
-          one = json.\("one").as(Defaulted.reads(Reads.LongReads)),
-          two = json.\("two").as(Defaulted.readsOpt(Reads.StringReads))
+          one = json.\("one").as(Defaulted.reads(using Reads.LongReads)),
+          two = json.\("two").as(Defaulted.readsOpt(using Reads.StringReads))
         )
       )
     ),
   )
-  implicit lazy val text: Text[PersonRowUnsaved] = Text.instance[PersonRowUnsaved]{ (row, sb) =>
-    Text.option(Text.stringInstance).unsafeEncode(row.name, sb)
+  given text: Text[PersonRowUnsaved] = Text.instance[PersonRowUnsaved]{ (row, sb) =>
+    Text.option(using Text.stringInstance).unsafeEncode(row.name, sb)
     sb.append(Text.DELIMETER)
-    Defaulted.text(Text.longInstance).unsafeEncode(row.one, sb)
+    Defaulted.text(using Text.longInstance).unsafeEncode(row.one, sb)
     sb.append(Text.DELIMETER)
-    Defaulted.text(Text.option(Text.stringInstance)).unsafeEncode(row.two, sb)
+    Defaulted.text(using Text.option(using Text.stringInstance)).unsafeEncode(row.two, sb)
   }
-  implicit lazy val writes: OWrites[PersonRowUnsaved] = OWrites[PersonRowUnsaved](o =>
+  given writes: OWrites[PersonRowUnsaved] = OWrites[PersonRowUnsaved](o =>
     new JsObject(ListMap[String, JsValue](
-      "name" -> Writes.OptionWrites(Writes.StringWrites).writes(o.name),
-      "one" -> Defaulted.writes(Writes.LongWrites).writes(o.one),
-      "two" -> Defaulted.writes(Writes.OptionWrites(Writes.StringWrites)).writes(o.two)
+      "name" -> Writes.OptionWrites(using Writes.StringWrites).writes(o.name),
+      "one" -> Defaulted.writes(using Writes.LongWrites).writes(o.one),
+      "two" -> Defaulted.writes(using Writes.OptionWrites(using Writes.StringWrites)).writes(o.two)
     ))
   )
 }

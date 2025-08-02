@@ -2,7 +2,7 @@ package typo
 package internal
 package codegen
 
-case class JsonLibPlay(pkg: sc.QIdent, default: ComputedDefault, inlineImplicits: Boolean, implicitOrUsing: ImplicitOrUsing) extends JsonLib {
+case class JsonLibPlay(pkg: sc.QIdent, default: ComputedDefault, inlineImplicits: Boolean, dialect: Dialect) extends JsonLib {
   val Reads = sc.Type.Qualified("play.api.libs.json.Reads")
   val Writes = sc.Type.Qualified("play.api.libs.json.Writes")
   val OWrites = sc.Type.Qualified("play.api.libs.json.OWrites")
@@ -37,13 +37,12 @@ case class JsonLibPlay(pkg: sc.QIdent, default: ComputedDefault, inlineImplicits
         case TypesJava.OffsetDateTime                                           => code"$Reads.DefaultOffsetDateTimeReads"
         case TypesJava.String                                                   => code"$Reads.StringReads"
         case TypesJava.UUID                                                     => code"$Reads.uuidReads"
-        case sc.Type.ArrayOf(targ)                                              => code"$Reads.ArrayReads[$targ](using ${go(targ)}, implicitly)"
-        case sc.Type.TApply(default.Defaulted, List(TypesScala.Optional(targ))) => code"${default.Defaulted}.$readsOptName(${implicitOrUsing.callImplicitOrUsing}${go(targ)})"
-        case sc.Type.TApply(default.Defaulted, List(targ))                      => code"${default.Defaulted}.$readsName(${implicitOrUsing.callImplicitOrUsing}${go(targ)})"
+        case sc.Type.ArrayOf(targ)                                              => code"$Reads.ArrayReads[$targ](${dialect.usingCall}${go(targ)}, implicitly)"
+        case sc.Type.TApply(default.Defaulted, List(TypesScala.Optional(targ))) => code"${default.Defaulted}.$readsOptName(${dialect.usingCall}${go(targ)})"
+        case sc.Type.TApply(default.Defaulted, List(targ))                      => code"${default.Defaulted}.$readsName(${dialect.usingCall}${go(targ)})"
         case x: sc.Type.Qualified if x.value.idents.startsWith(pkg.idents)      => code"$tpe.$readsName"
-        case x if missingInstancesByType.contains(Reads.of(x)) =>
-          code"${missingInstancesByType(Reads.of(x))}"
-        case other => sc.Summon(Reads.of(other), implicitOrUsing).code
+        case x if missingInstancesByType.contains(Reads.of(x))                  => code"${missingInstancesByType(Reads.of(x))}"
+        case other                                                              => sc.Summon(Reads.of(other)).code
       }
 
     go(sc.Type.base(tpe))
@@ -67,13 +66,12 @@ case class JsonLibPlay(pkg: sc.QIdent, default: ComputedDefault, inlineImplicits
         case TypesJava.OffsetDateTime                                      => code"$Writes.DefaultOffsetDateTimeWrites"
         case TypesJava.String                                              => code"$Writes.StringWrites"
         case TypesJava.UUID                                                => code"$Writes.UuidWrites"
-        case sc.Type.ArrayOf(targ)                                         => code"$Writes.arrayWrites[$targ](${implicitOrUsing.callImplicitOrUsing}implicitly, ${go(targ)})"
-        case sc.Type.TApply(default.Defaulted, List(targ))                 => code"${default.Defaulted}.$writesName(${implicitOrUsing.callImplicitOrUsing}${go(targ)})"
-        case TypesScala.Optional(targ)                                     => code"$Writes.OptionWrites(${implicitOrUsing.callImplicitOrUsing}${go(targ)})"
+        case sc.Type.ArrayOf(targ)                                         => code"$Writes.arrayWrites[$targ](${dialect.usingCall}implicitly, ${go(targ)})"
+        case sc.Type.TApply(default.Defaulted, List(targ))                 => code"${default.Defaulted}.$writesName(${dialect.usingCall}${go(targ)})"
+        case TypesScala.Optional(targ)                                     => code"$Writes.OptionWrites(${dialect.usingCall}${go(targ)})"
         case x: sc.Type.Qualified if x.value.idents.startsWith(pkg.idents) => code"$tpe.$writesName"
-        case x if missingInstancesByType.contains(Writes.of(x)) =>
-          code"${missingInstancesByType(Writes.of(x))}"
-        case other => sc.Summon(Writes.of(other), implicitOrUsing).code
+        case x if missingInstancesByType.contains(Writes.of(x))            => code"${missingInstancesByType(Writes.of(x))}"
+        case other                                                         => sc.Summon(Writes.of(other)).code
       }
 
     go(sc.Type.base(tpe))
@@ -93,8 +91,7 @@ case class JsonLibPlay(pkg: sc.QIdent, default: ComputedDefault, inlineImplicits
                     |    $Json.fromJson[T](providedJson).map(${d.Defaulted}.${d.Provided}.apply)
                     |  case _ =>
                     |    $JsError(s"Expected `${d.Defaulted}` json object structure")
-                    |}""".stripMargin,
-      implicitOrUsing
+                    |}""".stripMargin
     )
 
     val readerOpt = sc.Given(
@@ -112,8 +109,7 @@ case class JsonLibPlay(pkg: sc.QIdent, default: ComputedDefault, inlineImplicits
                     |  case _ =>
                     |    $JsError(s"Expected `${d.Defaulted}` json object structure")
                     |}
-                    |""".stripMargin,
-      implicitOrUsing
+                    |""".stripMargin
     )
 
     val writer = sc.Given(
@@ -124,8 +120,7 @@ case class JsonLibPlay(pkg: sc.QIdent, default: ComputedDefault, inlineImplicits
       body = code"""|{
                     |  case ${d.Defaulted}.${d.Provided}(value) => $Json.obj("provided" -> $T.writes(value))
                     |  case ${d.Defaulted}.${d.UseDefault}      => $JsString("defaulted")
-                    |}""".stripMargin,
-      implicitOrUsing
+                    |}""".stripMargin
     )
 
     List(reader, readerOpt, writer)
@@ -143,16 +138,14 @@ case class JsonLibPlay(pkg: sc.QIdent, default: ComputedDefault, inlineImplicits
             code"${Reads.of(wrapperType)}{(value: $JsValue) => value.validate(${lookupReadsFor(underlying)}).map($wrapperType.apply)}"
           else
             code"${Reads.of(wrapperType)}{(value: $JsValue) => value.validate(${lookupReadsFor(underlying)}).flatMap(str => $wrapperType(str).fold($JsError.apply, $JsSuccess(_)))}"
-        },
-        implicitOrUsing
+        }
       ),
       sc.Given(
         tparams = Nil,
         name = writesName,
         implicitParams = Nil,
         tpe = Writes.of(wrapperType),
-        body = code"${Writes.of(wrapperType)}(value => ${lookupWritesFor(underlying)}.writes(value.value))",
-        implicitOrUsing
+        body = code"${Writes.of(wrapperType)}(value => ${lookupWritesFor(underlying)}.writes(value.value))"
       )
     )
 
@@ -180,8 +173,7 @@ case class JsonLibPlay(pkg: sc.QIdent, default: ComputedDefault, inlineImplicits
                  |    )
                  |  ),
                  |)""".stripMargin
-        },
-        implicitOrUsing
+        }
       ),
       sc.Given(
         tparams = Nil,
@@ -197,29 +189,14 @@ case class JsonLibPlay(pkg: sc.QIdent, default: ComputedDefault, inlineImplicits
                  |    ${newFields.mkCode(",\n")}
                  |  ))
                  |)""".stripMargin
-        },
-        implicitOrUsing
+        }
       )
     )
 
   def wrapperTypeInstances(wrapperType: sc.Type.Qualified, fieldName: sc.Ident, underlying: sc.Type): List[sc.Given] =
     List(
-      sc.Given(
-        tparams = Nil,
-        name = readsName,
-        implicitParams = Nil,
-        tpe = Reads.of(wrapperType),
-        body = code"${lookupReadsFor(underlying)}.map(${wrapperType.value.name}.apply)",
-        implicitOrUsing
-      ),
-      sc.Given(
-        tparams = Nil,
-        name = writesName,
-        implicitParams = Nil,
-        tpe = Writes.of(wrapperType),
-        body = code"${lookupWritesFor(underlying)}.contramap(_.$fieldName)",
-        implicitOrUsing
-      )
+      sc.Given(tparams = Nil, name = readsName, implicitParams = Nil, tpe = Reads.of(wrapperType), body = code"${lookupReadsFor(underlying)}.map(${wrapperType.value.name}.apply)"),
+      sc.Given(tparams = Nil, name = writesName, implicitParams = Nil, tpe = Writes.of(wrapperType), body = code"${lookupWritesFor(underlying)}.contramap(_.$fieldName)")
     )
 
   override val missingInstances: List[sc.ClassMember] =
@@ -233,16 +210,14 @@ case class JsonLibPlay(pkg: sc.QIdent, default: ComputedDefault, inlineImplicits
                       |  try $JsSuccess(${TypesJava.OffsetTime}.parse(str)) catch {
                       |    case x: ${TypesJava.DateTimeParseException} => $JsError(s"must follow $${${TypesJava.DateTimeFormatter}.ISO_OFFSET_TIME}: $${x.getMessage}")
                       |  }
-                      |}""".stripMargin,
-        implicitOrUsing
+                      |}""".stripMargin
       ),
       sc.Given(
         tparams = Nil,
         name = sc.Ident("OffsetTimeWrites"),
         implicitParams = Nil,
         tpe = Writes.of(TypesJava.OffsetTime),
-        body = code"${lookupWritesFor(TypesJava.String)}.contramap(_.toString)",
-        implicitOrUsing
+        body = code"${lookupWritesFor(TypesJava.String)}.contramap(_.toString)"
       )
     )
 

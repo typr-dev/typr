@@ -29,27 +29,27 @@ class PersonRepoImpl extends PersonRepo {
   override def delete: DeleteBuilder[PersonFields, PersonRow] = {
     DeleteBuilder(""""compositepk"."person"""", PersonFields.structure)
   }
-  override def deleteById(compositeId: PersonId)(implicit c: Connection): Boolean = {
-    SQL"""delete from "compositepk"."person" where "one" = ${ParameterValue(compositeId.one, null, ToStatement.longToStatement)} AND "two" = ${ParameterValue(compositeId.two, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}""".executeUpdate() > 0
+  override def deleteById(compositeId: PersonId)(using c: Connection): Boolean = {
+    SQL"""delete from "compositepk"."person" where "one" = ${ParameterValue(compositeId.one, null, ToStatement.longToStatement)} AND "two" = ${ParameterValue(compositeId.two, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}""".executeUpdate() > 0
   }
-  override def insert(unsaved: PersonRow)(implicit c: Connection): PersonRow = {
+  override def insert(unsaved: PersonRow)(using c: Connection): PersonRow = {
     SQL"""insert into "compositepk"."person"("one", "two", "name")
-          values (${ParameterValue(unsaved.one, null, ToStatement.longToStatement)}::int8, ${ParameterValue(unsaved.two, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}, ${ParameterValue(unsaved.name, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))})
+          values (${ParameterValue(unsaved.one, null, ToStatement.longToStatement)}::int8, ${ParameterValue(unsaved.two, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}, ${ParameterValue(unsaved.name, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))})
           returning "one", "two", "name"
        """
       .executeInsert(PersonRow.rowParser(1).single)
     
   }
-  override def insert(unsaved: PersonRowUnsaved)(implicit c: Connection): PersonRow = {
+  override def insert(unsaved: PersonRowUnsaved)(using c: Connection): PersonRow = {
     val namedParameters = List(
-      Some((NamedParameter("name", ParameterValue(unsaved.name, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))), "")),
+      Some((NamedParameter("name", ParameterValue(unsaved.name, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))), "")),
       unsaved.one match {
         case Defaulted.UseDefault => None
         case Defaulted.Provided(value) => Some((NamedParameter("one", ParameterValue(value, null, ToStatement.longToStatement)), "::int8"))
       },
       unsaved.two match {
         case Defaulted.UseDefault => None
-        case Defaulted.Provided(value) => Some((NamedParameter("two", ParameterValue(value, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))), ""))
+        case Defaulted.Provided(value) => Some((NamedParameter("two", ParameterValue(value, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))), ""))
       }
     ).flatten
     val quote = '"'.toString
@@ -68,29 +68,29 @@ class PersonRepoImpl extends PersonRepo {
     }
     
   }
-  override def insertStreaming(unsaved: Iterator[PersonRow], batchSize: Int = 10000)(implicit c: Connection): Long = {
-    streamingInsert(s"""COPY "compositepk"."person"("one", "two", "name") FROM STDIN""", batchSize, unsaved)(PersonRow.text, c)
+  override def insertStreaming(unsaved: Iterator[PersonRow], batchSize: Int = 10000)(using c: Connection): Long = {
+    streamingInsert(s"""COPY "compositepk"."person"("one", "two", "name") FROM STDIN""", batchSize, unsaved)(using PersonRow.text, c)
   }
   /* NOTE: this functionality requires PostgreSQL 16 or later! */
-  override def insertUnsavedStreaming(unsaved: Iterator[PersonRowUnsaved], batchSize: Int = 10000)(implicit c: Connection): Long = {
-    streamingInsert(s"""COPY "compositepk"."person"("name", "one", "two") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(PersonRowUnsaved.text, c)
+  override def insertUnsavedStreaming(unsaved: Iterator[PersonRowUnsaved], batchSize: Int = 10000)(using c: Connection): Long = {
+    streamingInsert(s"""COPY "compositepk"."person"("name", "one", "two") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using PersonRowUnsaved.text, c)
   }
   override def select: SelectBuilder[PersonFields, PersonRow] = {
     SelectBuilderSql(""""compositepk"."person"""", PersonFields.structure, PersonRow.rowParser)
   }
-  override def selectAll(implicit c: Connection): List[PersonRow] = {
+  override def selectAll(using c: Connection): List[PersonRow] = {
     SQL"""select "one", "two", "name"
           from "compositepk"."person"
        """.as(PersonRow.rowParser(1).*)
   }
-  override def selectByFieldValues(fieldValues: List[PersonFieldOrIdValue[?]])(implicit c: Connection): List[PersonRow] = {
+  override def selectByFieldValues(fieldValues: List[PersonFieldOrIdValue[?]])(using c: Connection): List[PersonRow] = {
     fieldValues match {
       case Nil => selectAll
       case nonEmpty =>
         val namedParameters = nonEmpty.map{
           case PersonFieldValue.one(value) => NamedParameter("one", ParameterValue(value, null, ToStatement.longToStatement))
-          case PersonFieldValue.two(value) => NamedParameter("two", ParameterValue(value, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData)))
-          case PersonFieldValue.name(value) => NamedParameter("name", ParameterValue(value, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData)))
+          case PersonFieldValue.two(value) => NamedParameter("two", ParameterValue(value, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData)))
+          case PersonFieldValue.name(value) => NamedParameter("name", ParameterValue(value, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData)))
         }
         val quote = '"'.toString
         val q = s"""select "one", "two", "name"
@@ -102,46 +102,46 @@ class PersonRepoImpl extends PersonRepo {
     }
     
   }
-  override def selectById(compositeId: PersonId)(implicit c: Connection): Option[PersonRow] = {
+  override def selectById(compositeId: PersonId)(using c: Connection): Option[PersonRow] = {
     SQL"""select "one", "two", "name"
           from "compositepk"."person"
-          where "one" = ${ParameterValue(compositeId.one, null, ToStatement.longToStatement)} AND "two" = ${ParameterValue(compositeId.two, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}
+          where "one" = ${ParameterValue(compositeId.one, null, ToStatement.longToStatement)} AND "two" = ${ParameterValue(compositeId.two, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}
        """.as(PersonRow.rowParser(1).singleOpt)
   }
   override def update: UpdateBuilder[PersonFields, PersonRow] = {
     UpdateBuilder(""""compositepk"."person"""", PersonFields.structure, PersonRow.rowParser)
   }
-  override def update(row: PersonRow)(implicit c: Connection): Option[PersonRow] = {
+  override def update(row: PersonRow)(using c: Connection): Option[PersonRow] = {
     val compositeId = row.compositeId
     SQL"""update "compositepk"."person"
-          set "name" = ${ParameterValue(row.name, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}
-          where "one" = ${ParameterValue(compositeId.one, null, ToStatement.longToStatement)} AND "two" = ${ParameterValue(compositeId.two, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}
+          set "name" = ${ParameterValue(row.name, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}
+          where "one" = ${ParameterValue(compositeId.one, null, ToStatement.longToStatement)} AND "two" = ${ParameterValue(compositeId.two, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}
           returning "one", "two", "name"
        """.executeInsert(PersonRow.rowParser(1).singleOpt)
   }
-  override def updateFieldValues(compositeId: PersonId, fieldValues: List[PersonFieldValue[?]])(implicit c: Connection): Boolean = {
+  override def updateFieldValues(compositeId: PersonId, fieldValues: List[PersonFieldValue[?]])(using c: Connection): Boolean = {
     fieldValues match {
       case Nil => false
       case nonEmpty =>
         val namedParameters = nonEmpty.map{
-          case PersonFieldValue.name(value) => NamedParameter("name", ParameterValue(value, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData)))
+          case PersonFieldValue.name(value) => NamedParameter("name", ParameterValue(value, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData)))
         }
         val quote = '"'.toString
         val q = s"""update "compositepk"."person"
                     set ${namedParameters.map(x => s"$quote${x.name}$quote = {${x.name}}").mkString(", ")}
                     where "one" = {one} AND "two" = {two}
                  """
-        SimpleSql(SQL(q), namedParameters.map(_.tupled).toMap ++ List(("one", ParameterValue(compositeId.one, null, ToStatement.longToStatement)), ("two", ParameterValue(compositeId.two, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData)))), RowParser.successful)
+        SimpleSql(SQL(q), namedParameters.map(_.tupled).toMap ++ List(("one", ParameterValue(compositeId.one, null, ToStatement.longToStatement)), ("two", ParameterValue(compositeId.two, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData)))), RowParser.successful)
           .executeUpdate() > 0
     }
     
   }
-  override def upsert(unsaved: PersonRow)(implicit c: Connection): PersonRow = {
+  override def upsert(unsaved: PersonRow)(using c: Connection): PersonRow = {
     SQL"""insert into "compositepk"."person"("one", "two", "name")
           values (
             ${ParameterValue(unsaved.one, null, ToStatement.longToStatement)}::int8,
-            ${ParameterValue(unsaved.two, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))},
-            ${ParameterValue(unsaved.name, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}
+            ${ParameterValue(unsaved.two, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))},
+            ${ParameterValue(unsaved.name, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}
           )
           on conflict ("one", "two")
           do update set
@@ -151,11 +151,11 @@ class PersonRepoImpl extends PersonRepo {
       .executeInsert(PersonRow.rowParser(1).single)
     
   }
-  override def upsertBatch(unsaved: Iterable[PersonRow])(implicit c: Connection): List[PersonRow] = {
+  override def upsertBatch(unsaved: Iterable[PersonRow])(using c: Connection): List[PersonRow] = {
     def toNamedParameter(row: PersonRow): List[NamedParameter] = List(
       NamedParameter("one", ParameterValue(row.one, null, ToStatement.longToStatement)),
-      NamedParameter("two", ParameterValue(row.two, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))),
-      NamedParameter("name", ParameterValue(row.name, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData)))
+      NamedParameter("two", ParameterValue(row.two, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))),
+      NamedParameter("name", ParameterValue(row.name, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData)))
     )
     unsaved.toList match {
       case Nil => Nil
@@ -176,9 +176,9 @@ class PersonRepoImpl extends PersonRepo {
     }
   }
   /* NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  override def upsertStreaming(unsaved: Iterator[PersonRow], batchSize: Int = 10000)(implicit c: Connection): Int = {
+  override def upsertStreaming(unsaved: Iterator[PersonRow], batchSize: Int = 10000)(using c: Connection): Int = {
     SQL"""create temporary table person_TEMP (like "compositepk"."person") on commit drop""".execute(): @nowarn
-    streamingInsert(s"""copy person_TEMP("one", "two", "name") from stdin""", batchSize, unsaved)(PersonRow.text, c): @nowarn
+    streamingInsert(s"""copy person_TEMP("one", "two", "name") from stdin""", batchSize, unsaved)(using PersonRow.text, c): @nowarn
     SQL"""insert into "compositepk"."person"("one", "two", "name")
           select * from person_TEMP
           on conflict ("one", "two")

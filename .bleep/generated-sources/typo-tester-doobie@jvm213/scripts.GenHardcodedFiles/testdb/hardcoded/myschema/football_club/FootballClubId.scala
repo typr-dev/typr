@@ -28,7 +28,7 @@ object FootballClubId {
   implicit lazy val ordering: Ordering[FootballClubId] = Ordering.by(_.value)
   implicit lazy val put: Put[FootballClubId] = Meta.LongMeta.put.contramap(_.value)
   implicit lazy val text: Text[FootballClubId] = new Text[FootballClubId] {
-    override def unsafeEncode(v: FootballClubId, sb: StringBuilder) = Text.longInstance.unsafeEncode(v.value, sb)
-    override def unsafeArrayEncode(v: FootballClubId, sb: StringBuilder) = Text.longInstance.unsafeArrayEncode(v.value, sb)
+    override def unsafeEncode(v: FootballClubId, sb: StringBuilder): Unit = Text.longInstance.unsafeEncode(v.value, sb)
+    override def unsafeArrayEncode(v: FootballClubId, sb: StringBuilder): Unit = Text.longInstance.unsafeArrayEncode(v.value, sb)
   }
 }

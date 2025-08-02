@@ -2,7 +2,7 @@ package typo
 package internal
 package codegen
 
-case class JsonLibCirce(pkg: sc.QIdent, default: ComputedDefault, inlineImplicits: Boolean, implicitOrUsing: ImplicitOrUsing) extends JsonLib {
+case class JsonLibCirce(pkg: sc.QIdent, default: ComputedDefault, inlineImplicits: Boolean, dialect: Dialect) extends JsonLib {
   val Decoder = sc.Type.Qualified("io.circe.Decoder")
   val Encoder = sc.Type.Qualified("io.circe.Encoder")
   val HCursor = sc.Type.Qualified("io.circe.HCursor")
@@ -31,9 +31,9 @@ case class JsonLibCirce(pkg: sc.QIdent, default: ComputedDefault, inlineImplicit
         case TypesJava.OffsetTime                                          => code"$Decoder.decodeOffsetTime"
         case TypesJava.String                                              => code"$Decoder.decodeString"
         case TypesJava.UUID                                                => code"$Decoder.decodeUUID"
-        case sc.Type.ArrayOf(targ)                                         => code"$Decoder.decodeArray[$targ](${implicitOrUsing.callImplicitOrUsing}${go(targ)}, implicitly)"
-        case sc.Type.TApply(default.Defaulted, List(targ))                 => code"${default.Defaulted}.$decoderName(${implicitOrUsing.callImplicitOrUsing}${go(targ)})"
-        case TypesScala.Optional(targ)                                     => code"$Decoder.decodeOption(${implicitOrUsing.callImplicitOrUsing}${go(targ)})"
+        case sc.Type.ArrayOf(targ)                                         => code"$Decoder.decodeArray[$targ](${dialect.usingCall}${go(targ)}, implicitly)"
+        case sc.Type.TApply(default.Defaulted, List(targ))                 => code"${default.Defaulted}.$decoderName(${dialect.usingCall}${go(targ)})"
+        case TypesScala.Optional(targ)                                     => code"$Decoder.decodeOption(${dialect.usingCall}${go(targ)})"
         case x: sc.Type.Qualified if x.value.idents.startsWith(pkg.idents) => code"$tpe.$decoderName"
         case other                                                         => code"${Decoder.of(other)}"
       }
@@ -60,9 +60,9 @@ case class JsonLibCirce(pkg: sc.QIdent, default: ComputedDefault, inlineImplicit
         case TypesJava.OffsetTime                                          => code"$Encoder.encodeOffsetTime"
         case TypesJava.String                                              => code"$Encoder.encodeString"
         case TypesJava.UUID                                                => code"$Encoder.encodeUUID"
-        case sc.Type.ArrayOf(targ)                                         => code"$Encoder.encodeIterable[$targ, ${TypesScala.Array}](${implicitOrUsing.callImplicitOrUsing}${go(targ)}, implicitly)"
-        case sc.Type.TApply(default.Defaulted, List(targ))                 => code"${default.Defaulted}.$encoderName(${implicitOrUsing.callImplicitOrUsing}${go(targ)})"
-        case TypesScala.Optional(targ)                                     => code"$Encoder.encodeOption(${implicitOrUsing.callImplicitOrUsing}${go(targ)})"
+        case sc.Type.ArrayOf(targ)                                         => code"$Encoder.encodeIterable[$targ, ${TypesScala.Array}](${dialect.usingCall}${go(targ)}, implicitly)"
+        case sc.Type.TApply(default.Defaulted, List(targ))                 => code"${default.Defaulted}.$encoderName(${dialect.usingCall}${go(targ)})"
+        case TypesScala.Optional(targ)                                     => code"$Encoder.encodeOption(${dialect.usingCall}${go(targ)})"
         case x: sc.Type.Qualified if x.value.idents.startsWith(pkg.idents) => code"$tpe.$encoderName"
         case other                                                         => code"${Encoder.of(other)}"
       }
@@ -72,22 +72,8 @@ case class JsonLibCirce(pkg: sc.QIdent, default: ComputedDefault, inlineImplicit
 
   def wrapperTypeInstances(wrapperType: sc.Type.Qualified, fieldName: sc.Ident, underlying: sc.Type): List[sc.Given] =
     List(
-      sc.Given(
-        tparams = Nil,
-        name = encoderName,
-        implicitParams = Nil,
-        tpe = Encoder.of(wrapperType),
-        body = code"${lookupEncoderFor(underlying)}.contramap(_.$fieldName)",
-        implicitOrUsing
-      ),
-      sc.Given(
-        tparams = Nil,
-        name = decoderName,
-        implicitParams = Nil,
-        tpe = Decoder.of(wrapperType),
-        body = code"${lookupDecoderFor(underlying)}.map($wrapperType.apply)",
-        implicitOrUsing
-      )
+      sc.Given(tparams = Nil, name = encoderName, implicitParams = Nil, tpe = Encoder.of(wrapperType), body = code"${lookupEncoderFor(underlying)}.contramap(_.$fieldName)"),
+      sc.Given(tparams = Nil, name = decoderName, implicitParams = Nil, tpe = Decoder.of(wrapperType), body = code"${lookupDecoderFor(underlying)}.map($wrapperType.apply)")
     )
 
   override def defaultedInstance(d: ComputedDefault): List[sc.Given] = {
@@ -101,8 +87,7 @@ case class JsonLibCirce(pkg: sc.QIdent, default: ComputedDefault, inlineImplicit
         body = code"""|c => c.as[${TypesJava.String}].flatMap {
                  |    case "defaulted" => ${TypesScala.Right}(${d.UseDefault})
                  |    case _           => c.downField("provided").as[$T].map(${d.Provided}.apply)
-                 |  }""".stripMargin,
-        implicitOrUsing
+                 |  }""".stripMargin
       ),
       sc.Given(
         tparams = List(T),
@@ -112,8 +97,7 @@ case class JsonLibCirce(pkg: sc.QIdent, default: ComputedDefault, inlineImplicit
         body = code"""|$Encoder.instance {
                  |  case ${d.Provided}(value) => $Json.obj("provided" -> ${Encoder.of(T)}.apply(value))
                  |  case ${d.UseDefault}      => $Json.fromString("defaulted")
-                 |}""".stripMargin,
-        implicitOrUsing
+                 |}""".stripMargin
       )
     )
   }
@@ -127,17 +111,9 @@ case class JsonLibCirce(pkg: sc.QIdent, default: ComputedDefault, inlineImplicit
         tpe = Decoder.of(wrapperType),
         body =
           if (openEnum: Boolean) code"""${lookupDecoderFor(underlying)}.map($wrapperType.apply)"""
-          else code"""${lookupDecoderFor(underlying)}.emap($wrapperType.apply)""",
-        implicitOrUsing
+          else code"""${lookupDecoderFor(underlying)}.emap($wrapperType.apply)"""
       ),
-      sc.Given(
-        tparams = Nil,
-        name = encoderName,
-        implicitParams = Nil,
-        tpe = Encoder.of(wrapperType),
-        body = code"${lookupEncoderFor(underlying)}.contramap(_.value)",
-        implicitOrUsing
-      )
+      sc.Given(tparams = Nil, name = encoderName, implicitParams = Nil, tpe = Encoder.of(wrapperType), body = code"${lookupEncoderFor(underlying)}.contramap(_.value)")
     )
 
   def productInstances(tpe: sc.Type, fields: NonEmptyList[JsonLib.Field]): List[sc.Given] = {
@@ -152,12 +128,11 @@ case class JsonLibCirce(pkg: sc.QIdent, default: ComputedDefault, inlineImplicit
             name = decoderName,
             implicitParams = Nil,
             tpe = Decoder.of(tpe),
-            body = code"""$Decoder.forProduct$n[$tpe, ${fields.map(_.tpe.code).mkCode(", ")}]($fieldNames)($tpe.apply)($instances)""",
-            implicitOrUsing
+            body = code"""$Decoder.forProduct$n[$tpe, ${fields.map(_.tpe.code).mkCode(", ")}]($fieldNames)($tpe.apply)(${dialect.usingCall}$instances)"""
           )
         case _ =>
           val cases = fields.map { f =>
-            code"""${f.scalaName} = orThrow(c.get(${f.jsonName})(${lookupDecoderFor(f.tpe)}))"""
+            code"""${f.scalaName} = orThrow(c.get(${f.jsonName})(${dialect.usingCall}${lookupDecoderFor(f.tpe)}))"""
           }
           sc.Given(
             tparams = Nil,
@@ -174,8 +149,7 @@ case class JsonLibCirce(pkg: sc.QIdent, default: ComputedDefault, inlineImplicit
                           |      ${cases.mkCode(",\n")}
                           |    )
                           |  }
-                          |)""".stripMargin,
-            implicitOrUsing
+                          |)""".stripMargin
           )
 
       }
@@ -191,8 +165,7 @@ case class JsonLibCirce(pkg: sc.QIdent, default: ComputedDefault, inlineImplicit
             name = encoderName,
             implicitParams = Nil,
             tpe = Encoder.of(tpe),
-            body = code"""$Encoder.forProduct$n[$tpe, ${fields.map(_.tpe.code).mkCode(", ")}]($fieldNames)($f)($instances)""",
-            implicitOrUsing
+            body = code"""$Encoder.forProduct$n[$tpe, ${fields.map(_.tpe.code).mkCode(", ")}]($fieldNames)($f)(${dialect.usingCall}$instances)"""
           )
 
         case _ =>
@@ -204,12 +177,11 @@ case class JsonLibCirce(pkg: sc.QIdent, default: ComputedDefault, inlineImplicit
             name = encoderName,
             implicitParams = Nil,
             tpe = Encoder.of(tpe),
-            body = code"""|${Encoder.of(tpe)}(row =>
+            body = code"""|$Encoder.instance[$tpe](row =>
                           |  $Json.obj(
                           |    ${cases.mkCode(",\n")}
                           |  )
-                          |)""".stripMargin,
-            implicitOrUsing
+                          |)""".stripMargin
           )
 
       }

@@ -50,8 +50,8 @@ object Number {
   }
   implicit lazy val reads: Reads[Number] = Reads[Number]{(value: JsValue) => value.validate(Reads.StringReads).flatMap(str => Number(str).fold(JsError.apply, JsSuccess(_)))}
   implicit lazy val text: Text[Number] = new Text[Number] {
-    override def unsafeEncode(v: Number, sb: StringBuilder) = Text.stringInstance.unsafeEncode(v.value, sb)
-    override def unsafeArrayEncode(v: Number, sb: StringBuilder) = Text.stringInstance.unsafeArrayEncode(v.value, sb)
+    override def unsafeEncode(v: Number, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value, sb)
+    override def unsafeArrayEncode(v: Number, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value, sb)
   }
   implicit lazy val toStatement: ToStatement[Number] = ToStatement.stringToStatement.contramap(_.value)
   implicit lazy val writes: Writes[Number] = Writes[Number](value => Writes.StringWrites.writes(value.value))

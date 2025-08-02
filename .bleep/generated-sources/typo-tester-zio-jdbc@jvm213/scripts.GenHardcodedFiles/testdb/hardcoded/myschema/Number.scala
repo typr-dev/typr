@@ -40,7 +40,7 @@ object Number {
   val ByName: Map[String, Number] = All.map(x => (x.value, x)).toMap
               
   implicit lazy val arrayJdbcDecoder: JdbcDecoder[Array[Number]] = testdb.hardcoded.StringArrayDecoder.map(a => if (a == null) null else a.map(force))
-  implicit lazy val arrayJdbcEncoder: JdbcEncoder[Array[Number]] = JdbcEncoder.singleParamEncoder(using arraySetter)
+  implicit lazy val arrayJdbcEncoder: JdbcEncoder[Array[Number]] = JdbcEncoder.singleParamEncoder(arraySetter)
   implicit lazy val arraySetter: Setter[Array[Number]] = Setter.forSqlType[Array[Number]](
       (ps, i, v) => ps.setArray(i, ps.getConnection.createArrayOf("myschema.number", v.map(x => x.value))),
       java.sql.Types.ARRAY
@@ -67,7 +67,7 @@ object Number {
   implicit lazy val pgType: PGType[Number] = PGType.instance[Number]("myschema.number", Types.OTHER)
   implicit lazy val setter: Setter[Number] = Setter.stringSetter.contramap(_.value)
   implicit lazy val text: Text[Number] = new Text[Number] {
-    override def unsafeEncode(v: Number, sb: StringBuilder) = Text.stringInstance.unsafeEncode(v.value, sb)
-    override def unsafeArrayEncode(v: Number, sb: StringBuilder) = Text.stringInstance.unsafeArrayEncode(v.value, sb)
+    override def unsafeEncode(v: Number, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value, sb)
+    override def unsafeArrayEncode(v: Number, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value, sb)
   }
 }

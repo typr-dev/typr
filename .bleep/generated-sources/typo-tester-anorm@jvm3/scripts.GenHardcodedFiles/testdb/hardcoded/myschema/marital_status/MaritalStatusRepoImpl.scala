@@ -26,17 +26,17 @@ class MaritalStatusRepoImpl extends MaritalStatusRepo {
   override def delete: DeleteBuilder[MaritalStatusFields, MaritalStatusRow] = {
     DeleteBuilder(""""myschema"."marital_status"""", MaritalStatusFields.structure)
   }
-  override def deleteById(id: MaritalStatusId)(implicit c: Connection): Boolean = {
+  override def deleteById(id: MaritalStatusId)(using c: Connection): Boolean = {
     SQL"""delete from "myschema"."marital_status" where "id" = ${ParameterValue(id, null, MaritalStatusId.toStatement)}""".executeUpdate() > 0
   }
-  override def deleteByIds(ids: Array[MaritalStatusId])(implicit c: Connection): Int = {
+  override def deleteByIds(ids: Array[MaritalStatusId])(using c: Connection): Int = {
     SQL"""delete
           from "myschema"."marital_status"
           where "id" = ANY(${ids})
        """.executeUpdate()
     
   }
-  override def insert(unsaved: MaritalStatusRow)(implicit c: Connection): MaritalStatusRow = {
+  override def insert(unsaved: MaritalStatusRow)(using c: Connection): MaritalStatusRow = {
     SQL"""insert into "myschema"."marital_status"("id")
           values (${ParameterValue(unsaved.id, null, MaritalStatusId.toStatement)}::int8)
           returning "id"
@@ -44,18 +44,18 @@ class MaritalStatusRepoImpl extends MaritalStatusRepo {
       .executeInsert(MaritalStatusRow.rowParser(1).single)
     
   }
-  override def insertStreaming(unsaved: Iterator[MaritalStatusRow], batchSize: Int = 10000)(implicit c: Connection): Long = {
-    streamingInsert(s"""COPY "myschema"."marital_status"("id") FROM STDIN""", batchSize, unsaved)(MaritalStatusRow.text, c)
+  override def insertStreaming(unsaved: Iterator[MaritalStatusRow], batchSize: Int = 10000)(using c: Connection): Long = {
+    streamingInsert(s"""COPY "myschema"."marital_status"("id") FROM STDIN""", batchSize, unsaved)(using MaritalStatusRow.text, c)
   }
   override def select: SelectBuilder[MaritalStatusFields, MaritalStatusRow] = {
     SelectBuilderSql(""""myschema"."marital_status"""", MaritalStatusFields.structure, MaritalStatusRow.rowParser)
   }
-  override def selectAll(implicit c: Connection): List[MaritalStatusRow] = {
+  override def selectAll(using c: Connection): List[MaritalStatusRow] = {
     SQL"""select "id"
           from "myschema"."marital_status"
        """.as(MaritalStatusRow.rowParser(1).*)
   }
-  override def selectByFieldValues(fieldValues: List[MaritalStatusFieldOrIdValue[?]])(implicit c: Connection): List[MaritalStatusRow] = {
+  override def selectByFieldValues(fieldValues: List[MaritalStatusFieldOrIdValue[?]])(using c: Connection): List[MaritalStatusRow] = {
     fieldValues match {
       case Nil => selectAll
       case nonEmpty =>
@@ -72,27 +72,27 @@ class MaritalStatusRepoImpl extends MaritalStatusRepo {
     }
     
   }
-  override def selectById(id: MaritalStatusId)(implicit c: Connection): Option[MaritalStatusRow] = {
+  override def selectById(id: MaritalStatusId)(using c: Connection): Option[MaritalStatusRow] = {
     SQL"""select "id"
           from "myschema"."marital_status"
           where "id" = ${ParameterValue(id, null, MaritalStatusId.toStatement)}
        """.as(MaritalStatusRow.rowParser(1).singleOpt)
   }
-  override def selectByIds(ids: Array[MaritalStatusId])(implicit c: Connection): List[MaritalStatusRow] = {
+  override def selectByIds(ids: Array[MaritalStatusId])(using c: Connection): List[MaritalStatusRow] = {
     SQL"""select "id"
           from "myschema"."marital_status"
           where "id" = ANY(${ids})
        """.as(MaritalStatusRow.rowParser(1).*)
     
   }
-  override def selectByIdsTracked(ids: Array[MaritalStatusId])(implicit c: Connection): Map[MaritalStatusId, MaritalStatusRow] = {
+  override def selectByIdsTracked(ids: Array[MaritalStatusId])(using c: Connection): Map[MaritalStatusId, MaritalStatusRow] = {
     val byId = selectByIds(ids).view.map(x => (x.id, x)).toMap
     ids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
   override def update: UpdateBuilder[MaritalStatusFields, MaritalStatusRow] = {
     UpdateBuilder(""""myschema"."marital_status"""", MaritalStatusFields.structure, MaritalStatusRow.rowParser)
   }
-  override def upsert(unsaved: MaritalStatusRow)(implicit c: Connection): MaritalStatusRow = {
+  override def upsert(unsaved: MaritalStatusRow)(using c: Connection): MaritalStatusRow = {
     SQL"""insert into "myschema"."marital_status"("id")
           values (
             ${ParameterValue(unsaved.id, null, MaritalStatusId.toStatement)}::int8
@@ -104,7 +104,7 @@ class MaritalStatusRepoImpl extends MaritalStatusRepo {
       .executeInsert(MaritalStatusRow.rowParser(1).single)
     
   }
-  override def upsertBatch(unsaved: Iterable[MaritalStatusRow])(implicit c: Connection): List[MaritalStatusRow] = {
+  override def upsertBatch(unsaved: Iterable[MaritalStatusRow])(using c: Connection): List[MaritalStatusRow] = {
     def toNamedParameter(row: MaritalStatusRow): List[NamedParameter] = List(
       NamedParameter("id", ParameterValue(row.id, null, MaritalStatusId.toStatement))
     )
@@ -126,9 +126,9 @@ class MaritalStatusRepoImpl extends MaritalStatusRepo {
     }
   }
   /* NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  override def upsertStreaming(unsaved: Iterator[MaritalStatusRow], batchSize: Int = 10000)(implicit c: Connection): Int = {
+  override def upsertStreaming(unsaved: Iterator[MaritalStatusRow], batchSize: Int = 10000)(using c: Connection): Int = {
     SQL"""create temporary table marital_status_TEMP (like "myschema"."marital_status") on commit drop""".execute(): @nowarn
-    streamingInsert(s"""copy marital_status_TEMP("id") from stdin""", batchSize, unsaved)(MaritalStatusRow.text, c): @nowarn
+    streamingInsert(s"""copy marital_status_TEMP("id") from stdin""", batchSize, unsaved)(using MaritalStatusRow.text, c): @nowarn
     SQL"""insert into "myschema"."marital_status"("id")
           select * from marital_status_TEMP
           on conflict ("id")

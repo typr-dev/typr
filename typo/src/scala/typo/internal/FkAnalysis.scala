@@ -4,17 +4,17 @@ package internal
 import typo.internal.codegen.*
 import typo.internal.compat.*
 
-class FkAnalysis(table: ComputedTable, candidateFks: List[FkAnalysis.CandidateFk]) {
+class FkAnalysis(table: ComputedTable, candidateFks: List[FkAnalysis.CandidateFk], dialect: Dialect) {
   lazy val createWithFkIdsRow: Option[FkAnalysis.CreateWithFkIds] =
-    FkAnalysis.CreateWithFkIds.compute(candidateFks, table.cols)
+    FkAnalysis.CreateWithFkIds.compute(candidateFks, table.cols, dialect)
   lazy val createWithFkIdsUnsavedRow: Option[FkAnalysis.CreateWithFkIds] =
-    table.maybeUnsavedRow.flatMap(unsaved => FkAnalysis.CreateWithFkIds.compute(candidateFks, unsaved.unsavedCols))
+    table.maybeUnsavedRow.flatMap(unsaved => FkAnalysis.CreateWithFkIds.compute(candidateFks, unsaved.unsavedCols, dialect))
   lazy val createWithFkIdsUnsavedRowOrRow: Option[FkAnalysis.CreateWithFkIds] =
     createWithFkIdsUnsavedRow.orElse(createWithFkIdsRow)
 
   lazy val createWithFkIdsId: Option[FkAnalysis.CreateWithFkIds] =
     table.maybeId match {
-      case Some(id: IdComputed.Composite) => FkAnalysis.CreateWithFkIds.compute(candidateFks, id.cols)
+      case Some(id: IdComputed.Composite) => FkAnalysis.CreateWithFkIds.compute(candidateFks, id.cols, dialect)
       case _                              => None
     }
 
@@ -30,8 +30,8 @@ class FkAnalysis(table: ComputedTable, candidateFks: List[FkAnalysis.CandidateFk
 }
 
 object FkAnalysis {
-  def apply(tablesByName: Map[db.RelationName, ComputedTable], table: ComputedTable): FkAnalysis =
-    new FkAnalysis(table, CandidateFk.of(tablesByName, table.dbTable))
+  def apply(tablesByName: Map[db.RelationName, ComputedTable], table: ComputedTable, dialect: Dialect): FkAnalysis =
+    new FkAnalysis(table, CandidateFk.of(tablesByName, table.dbTable), dialect)
 
   /** All columns in a table. some can be extracted from composite ID types from other tables, some need to specified
     * @param byFks
@@ -39,7 +39,7 @@ object FkAnalysis {
     * @param remainingColumns
     *   those which can not be extracted from any of the composite fk types
     */
-  case class CreateWithFkIds(byFks: NonEmptyList[ColsFromFk], remainingColumns: List[ComputedColumn], allColumns: NonEmptyList[ComputedColumn]) {
+  case class CreateWithFkIds(byFks: NonEmptyList[ColsFromFk], remainingColumns: List[ComputedColumn], allColumns: NonEmptyList[ComputedColumn], dialect: Dialect) {
 
     /** a given column may appear in more than one foreign key value extraction expression */
     lazy val exprsForColumn: Map[sc.Ident, List[sc.Code]] =
@@ -55,7 +55,7 @@ object FkAnalysis {
           case Nil        => sys.error("unexpected")
           case List(expr) => (colName, expr)
           case expr :: exprs =>
-            val requires = exprs.map(e => code"""require($expr == $e, "${expr.render.lines.mkString("\n")} != ${e.render.lines.mkString("\n")}")""")
+            val requires = exprs.map(e => code"""require($expr == $e, "${expr.render(dialect).lines.mkString("\n")} != ${e.render(dialect).lines.mkString("\n")}")""")
             val finalExpr = code"""|{
                                  |  ${requires.mkCode("\n")}
                                  |  $expr
@@ -83,7 +83,7 @@ object FkAnalysis {
   object CreateWithFkIds {
 
     /** Compute a minimal set of composite FK IDs to cover maximum number of columns in table */
-    def compute(candidateFks: List[CandidateFk], thisOriginalColumns: NonEmptyList[ComputedColumn]): Option[CreateWithFkIds] = {
+    def compute(candidateFks: List[CandidateFk], thisOriginalColumns: NonEmptyList[ComputedColumn], dialect: Dialect): Option[CreateWithFkIds] = {
       // state
       var remainingThisCols: List[ComputedColumn] = thisOriginalColumns.toList
       var byFk = List.empty[(db.ForeignKey, ColsFromFk)]
@@ -102,7 +102,7 @@ object FkAnalysis {
           }
         }
 
-      NonEmptyList.fromList(ColsFromFk.renamed(byFk)).map(x => CreateWithFkIds(x, remainingThisCols, thisOriginalColumns))
+      NonEmptyList.fromList(ColsFromFk.renamed(byFk)).map(x => CreateWithFkIds(x, remainingThisCols, thisOriginalColumns, dialect))
     }
   }
 

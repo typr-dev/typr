@@ -11,7 +11,8 @@ object findTypeFromFk {
       source: Source,
       colName: db.ColName,
       pointsTo: List[(Source.Relation, db.ColName)],
-      eval: EvalMaybe[db.RelationName, HasSource]
+      eval: EvalMaybe[db.RelationName, HasSource],
+      dialect: Dialect
   )(inSameSource: db.ColName => Option[sc.Type]): Option[sc.Type] = {
     val all: List[Either[sc.Type, sc.Type]] =
       pointsTo.flatMap { case (otherTableSource, otherColName) =>
@@ -32,7 +33,7 @@ object findTypeFromFk {
       case all =>
         val fromSelf = all.collectFirst { case Left(tpe) => tpe }
         val fromOthers = all.collectFirst { case Right(tpe) => tpe }
-        val renderedTypes = all.map { e => sc.renderTree(e.merge) }
+        val renderedTypes = all.map { e => sc.renderTree(e.merge, dialect) }
         typoLogger.warn(s"Multiple distinct types inherited for column ${colName.value} in $source: ${renderedTypes.mkString(", ")}")
         fromOthers.orElse(fromSelf)
     }

@@ -62,7 +62,7 @@ object PersonRow {
       new Read.SingleOpt(Meta.StringMeta.get).asInstanceOf[Read[Any]],
       new Read.Single(Sector.get).asInstanceOf[Read[Any]],
       new Read.Single(Number.get).asInstanceOf[Read[Any]]
-  ))(using scala.reflect.ClassTag.Any).map { arr =>
+  ))(scala.reflect.ClassTag.Any).map { arr =>
     PersonRow(
       id = arr(0).asInstanceOf[PersonId],
           favouriteFootballClubId = arr(1).asInstanceOf[FootballClubId],

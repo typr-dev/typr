@@ -13,7 +13,7 @@ class PaginationQueryZioJson[Fields, Row](underlying: PaginationQuery[Fields, Ro
       d: JsonDecoder[N[T]],
       asConst: SqlExpr.Const.As[T, N]
   ): PaginationQueryZioJson[Fields, Row] =
-    new PaginationQueryZioJson(underlying.andOn(v)(PaginationQueryZioJson.abstractCodec)(asConst))
+    new PaginationQueryZioJson(underlying.andOn(v)(PaginationQueryZioJson.abstractCodec)(using asConst))
 
   def done(limit: Int, continueFrom: Option[ClientCursor[Json]]): Either[String, (SelectBuilder[Fields, Row], ServerCursor[Fields, Row, Json])] =
     underlying.done(limit, continueFrom)

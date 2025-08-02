@@ -40,19 +40,19 @@ object Number {
   val Names: String = All.map(_.value).mkString(", ")
   val ByName: Map[String, Number] = All.map(x => (x.value, x)).toMap
               
-  implicit lazy val arrayColumn: Column[Array[Number]] = Column.columnToArray[String](Column.columnToString, implicitly).map(_.map(Number.force))
-  implicit lazy val arrayToStatement: ToStatement[Array[Number]] = ToStatement[Array[Number]]((ps, i, arr) => ps.setArray(i, ps.getConnection.createArrayOf("myschema.number", arr.map[AnyRef](_.value))))
-  implicit lazy val column: Column[Number] = Column.columnToString.mapResult(str => Number(str).left.map(SqlMappingError.apply))
-  implicit lazy val ordering: Ordering[Number] = Ordering.by(_.value)
-  implicit lazy val parameterMetadata: ParameterMetaData[Number] = new ParameterMetaData[Number] {
+  given arrayColumn: Column[Array[Number]] = Column.columnToArray[String](using Column.columnToString, implicitly).map(_.map(Number.force))
+  given arrayToStatement: ToStatement[Array[Number]] = ToStatement[Array[Number]]((ps, i, arr) => ps.setArray(i, ps.getConnection.createArrayOf("myschema.number", arr.map[AnyRef](_.value))))
+  given column: Column[Number] = Column.columnToString.mapResult(str => Number(str).left.map(SqlMappingError.apply))
+  given ordering: Ordering[Number] = Ordering.by(_.value)
+  given parameterMetadata: ParameterMetaData[Number] = new ParameterMetaData[Number] {
     override def sqlType: String = "myschema.number"
     override def jdbcType: Int = Types.OTHER
   }
-  implicit lazy val reads: Reads[Number] = Reads[Number]{(value: JsValue) => value.validate(Reads.StringReads).flatMap(str => Number(str).fold(JsError.apply, JsSuccess(_)))}
-  implicit lazy val text: Text[Number] = new Text[Number] {
-    override def unsafeEncode(v: Number, sb: StringBuilder) = Text.stringInstance.unsafeEncode(v.value, sb)
-    override def unsafeArrayEncode(v: Number, sb: StringBuilder) = Text.stringInstance.unsafeArrayEncode(v.value, sb)
+  given reads: Reads[Number] = Reads[Number]{(value: JsValue) => value.validate(Reads.StringReads).flatMap(str => Number(str).fold(JsError.apply, JsSuccess(_)))}
+  given text: Text[Number] = new Text[Number] {
+    override def unsafeEncode(v: Number, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value, sb)
+    override def unsafeArrayEncode(v: Number, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value, sb)
   }
-  implicit lazy val toStatement: ToStatement[Number] = ToStatement.stringToStatement.contramap(_.value)
-  implicit lazy val writes: Writes[Number] = Writes[Number](value => Writes.StringWrites.writes(value.value))
+  given toStatement: ToStatement[Number] = ToStatement.stringToStatement.contramap(_.value)
+  given writes: Writes[Number] = Writes[Number](value => Writes.StringWrites.writes(value.value))
 }

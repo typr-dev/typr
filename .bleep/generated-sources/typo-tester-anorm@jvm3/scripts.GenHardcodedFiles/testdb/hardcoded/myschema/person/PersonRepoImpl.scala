@@ -31,34 +31,34 @@ class PersonRepoImpl extends PersonRepo {
   override def delete: DeleteBuilder[PersonFields, PersonRow] = {
     DeleteBuilder(""""myschema"."person"""", PersonFields.structure)
   }
-  override def deleteById(id: PersonId)(implicit c: Connection): Boolean = {
+  override def deleteById(id: PersonId)(using c: Connection): Boolean = {
     SQL"""delete from "myschema"."person" where "id" = ${ParameterValue(id, null, PersonId.toStatement)}""".executeUpdate() > 0
   }
-  override def deleteByIds(ids: Array[PersonId])(implicit c: Connection): Int = {
+  override def deleteByIds(ids: Array[PersonId])(using c: Connection): Int = {
     SQL"""delete
           from "myschema"."person"
           where "id" = ANY(${ids})
        """.executeUpdate()
     
   }
-  override def insert(unsaved: PersonRow)(implicit c: Connection): PersonRow = {
+  override def insert(unsaved: PersonRow)(using c: Connection): PersonRow = {
     SQL"""insert into "myschema"."person"("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number")
-          values (${ParameterValue(unsaved.id, null, PersonId.toStatement)}::int8, ${ParameterValue(unsaved.favouriteFootballClubId, null, FootballClubId.toStatement)}, ${ParameterValue(unsaved.name, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.nickName, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}, ${ParameterValue(unsaved.blogUrl, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}, ${ParameterValue(unsaved.email, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.phone, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.likesPizza, null, ToStatement.booleanToStatement)}, ${ParameterValue(unsaved.maritalStatusId, null, MaritalStatusId.toStatement)}, ${ParameterValue(unsaved.workEmail, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}, ${ParameterValue(unsaved.favoriteNumber, null, Number.toStatement)}::myschema.number)
+          values (${ParameterValue(unsaved.id, null, PersonId.toStatement)}::int8, ${ParameterValue(unsaved.favouriteFootballClubId, null, FootballClubId.toStatement)}, ${ParameterValue(unsaved.name, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.nickName, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}, ${ParameterValue(unsaved.blogUrl, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}, ${ParameterValue(unsaved.email, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.phone, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.likesPizza, null, ToStatement.booleanToStatement)}, ${ParameterValue(unsaved.maritalStatusId, null, MaritalStatusId.toStatement)}, ${ParameterValue(unsaved.workEmail, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}, ${ParameterValue(unsaved.favoriteNumber, null, Number.toStatement)}::myschema.number)
           returning "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number"
        """
       .executeInsert(PersonRow.rowParser(1).single)
     
   }
-  override def insert(unsaved: PersonRowUnsaved)(implicit c: Connection): PersonRow = {
+  override def insert(unsaved: PersonRowUnsaved)(using c: Connection): PersonRow = {
     val namedParameters = List(
       Some((NamedParameter("favourite_football_club_id", ParameterValue(unsaved.favouriteFootballClubId, null, FootballClubId.toStatement)), "")),
       Some((NamedParameter("name", ParameterValue(unsaved.name, null, ToStatement.stringToStatement)), "")),
-      Some((NamedParameter("nick_name", ParameterValue(unsaved.nickName, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))), "")),
-      Some((NamedParameter("blog_url", ParameterValue(unsaved.blogUrl, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))), "")),
+      Some((NamedParameter("nick_name", ParameterValue(unsaved.nickName, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))), "")),
+      Some((NamedParameter("blog_url", ParameterValue(unsaved.blogUrl, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))), "")),
       Some((NamedParameter("email", ParameterValue(unsaved.email, null, ToStatement.stringToStatement)), "")),
       Some((NamedParameter("phone", ParameterValue(unsaved.phone, null, ToStatement.stringToStatement)), "")),
       Some((NamedParameter("likes_pizza", ParameterValue(unsaved.likesPizza, null, ToStatement.booleanToStatement)), "")),
-      Some((NamedParameter("work_email", ParameterValue(unsaved.workEmail, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))), "")),
+      Some((NamedParameter("work_email", ParameterValue(unsaved.workEmail, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))), "")),
       unsaved.id match {
         case Defaulted.UseDefault => None
         case Defaulted.Provided(value) => Some((NamedParameter("id", ParameterValue(value, null, PersonId.toStatement)), "::int8"))
@@ -88,22 +88,22 @@ class PersonRepoImpl extends PersonRepo {
     }
     
   }
-  override def insertStreaming(unsaved: Iterator[PersonRow], batchSize: Int = 10000)(implicit c: Connection): Long = {
-    streamingInsert(s"""COPY "myschema"."person"("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number") FROM STDIN""", batchSize, unsaved)(PersonRow.text, c)
+  override def insertStreaming(unsaved: Iterator[PersonRow], batchSize: Int = 10000)(using c: Connection): Long = {
+    streamingInsert(s"""COPY "myschema"."person"("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number") FROM STDIN""", batchSize, unsaved)(using PersonRow.text, c)
   }
   /* NOTE: this functionality requires PostgreSQL 16 or later! */
-  override def insertUnsavedStreaming(unsaved: Iterator[PersonRowUnsaved], batchSize: Int = 10000)(implicit c: Connection): Long = {
-    streamingInsert(s"""COPY "myschema"."person"("favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "work_email", "id", "marital_status_id", "favorite_number") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(PersonRowUnsaved.text, c)
+  override def insertUnsavedStreaming(unsaved: Iterator[PersonRowUnsaved], batchSize: Int = 10000)(using c: Connection): Long = {
+    streamingInsert(s"""COPY "myschema"."person"("favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "work_email", "id", "marital_status_id", "favorite_number") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using PersonRowUnsaved.text, c)
   }
   override def select: SelectBuilder[PersonFields, PersonRow] = {
     SelectBuilderSql(""""myschema"."person"""", PersonFields.structure, PersonRow.rowParser)
   }
-  override def selectAll(implicit c: Connection): List[PersonRow] = {
+  override def selectAll(using c: Connection): List[PersonRow] = {
     SQL"""select "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number"
           from "myschema"."person"
        """.as(PersonRow.rowParser(1).*)
   }
-  override def selectByFieldValues(fieldValues: List[PersonFieldOrIdValue[?]])(implicit c: Connection): List[PersonRow] = {
+  override def selectByFieldValues(fieldValues: List[PersonFieldOrIdValue[?]])(using c: Connection): List[PersonRow] = {
     fieldValues match {
       case Nil => selectAll
       case nonEmpty =>
@@ -111,13 +111,13 @@ class PersonRepoImpl extends PersonRepo {
           case PersonFieldValue.id(value) => NamedParameter("id", ParameterValue(value, null, PersonId.toStatement))
           case PersonFieldValue.favouriteFootballClubId(value) => NamedParameter("favourite_football_club_id", ParameterValue(value, null, FootballClubId.toStatement))
           case PersonFieldValue.name(value) => NamedParameter("name", ParameterValue(value, null, ToStatement.stringToStatement))
-          case PersonFieldValue.nickName(value) => NamedParameter("nick_name", ParameterValue(value, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData)))
-          case PersonFieldValue.blogUrl(value) => NamedParameter("blog_url", ParameterValue(value, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData)))
+          case PersonFieldValue.nickName(value) => NamedParameter("nick_name", ParameterValue(value, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData)))
+          case PersonFieldValue.blogUrl(value) => NamedParameter("blog_url", ParameterValue(value, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData)))
           case PersonFieldValue.email(value) => NamedParameter("email", ParameterValue(value, null, ToStatement.stringToStatement))
           case PersonFieldValue.phone(value) => NamedParameter("phone", ParameterValue(value, null, ToStatement.stringToStatement))
           case PersonFieldValue.likesPizza(value) => NamedParameter("likes_pizza", ParameterValue(value, null, ToStatement.booleanToStatement))
           case PersonFieldValue.maritalStatusId(value) => NamedParameter("marital_status_id", ParameterValue(value, null, MaritalStatusId.toStatement))
-          case PersonFieldValue.workEmail(value) => NamedParameter("work_email", ParameterValue(value, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData)))
+          case PersonFieldValue.workEmail(value) => NamedParameter("work_email", ParameterValue(value, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData)))
           case PersonFieldValue.sector(value) => NamedParameter("sector", ParameterValue(value, null, Sector.toStatement))
           case PersonFieldValue.favoriteNumber(value) => NamedParameter("favorite_number", ParameterValue(value, null, Number.toStatement))
         }
@@ -131,57 +131,57 @@ class PersonRepoImpl extends PersonRepo {
     }
     
   }
-  override def selectById(id: PersonId)(implicit c: Connection): Option[PersonRow] = {
+  override def selectById(id: PersonId)(using c: Connection): Option[PersonRow] = {
     SQL"""select "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number"
           from "myschema"."person"
           where "id" = ${ParameterValue(id, null, PersonId.toStatement)}
        """.as(PersonRow.rowParser(1).singleOpt)
   }
-  override def selectByIds(ids: Array[PersonId])(implicit c: Connection): List[PersonRow] = {
+  override def selectByIds(ids: Array[PersonId])(using c: Connection): List[PersonRow] = {
     SQL"""select "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number"
           from "myschema"."person"
           where "id" = ANY(${ids})
        """.as(PersonRow.rowParser(1).*)
     
   }
-  override def selectByIdsTracked(ids: Array[PersonId])(implicit c: Connection): Map[PersonId, PersonRow] = {
+  override def selectByIdsTracked(ids: Array[PersonId])(using c: Connection): Map[PersonId, PersonRow] = {
     val byId = selectByIds(ids).view.map(x => (x.id, x)).toMap
     ids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
   override def update: UpdateBuilder[PersonFields, PersonRow] = {
     UpdateBuilder(""""myschema"."person"""", PersonFields.structure, PersonRow.rowParser)
   }
-  override def update(row: PersonRow)(implicit c: Connection): Option[PersonRow] = {
+  override def update(row: PersonRow)(using c: Connection): Option[PersonRow] = {
     val id = row.id
     SQL"""update "myschema"."person"
           set "favourite_football_club_id" = ${ParameterValue(row.favouriteFootballClubId, null, FootballClubId.toStatement)},
               "name" = ${ParameterValue(row.name, null, ToStatement.stringToStatement)},
-              "nick_name" = ${ParameterValue(row.nickName, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))},
-              "blog_url" = ${ParameterValue(row.blogUrl, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))},
+              "nick_name" = ${ParameterValue(row.nickName, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))},
+              "blog_url" = ${ParameterValue(row.blogUrl, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))},
               "email" = ${ParameterValue(row.email, null, ToStatement.stringToStatement)},
               "phone" = ${ParameterValue(row.phone, null, ToStatement.stringToStatement)},
               "likes_pizza" = ${ParameterValue(row.likesPizza, null, ToStatement.booleanToStatement)},
               "marital_status_id" = ${ParameterValue(row.maritalStatusId, null, MaritalStatusId.toStatement)},
-              "work_email" = ${ParameterValue(row.workEmail, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))},
+              "work_email" = ${ParameterValue(row.workEmail, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))},
               "favorite_number" = ${ParameterValue(row.favoriteNumber, null, Number.toStatement)}::myschema.number
           where "id" = ${ParameterValue(id, null, PersonId.toStatement)}
           returning "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number"
        """.executeInsert(PersonRow.rowParser(1).singleOpt)
   }
-  override def updateFieldValues(id: PersonId, fieldValues: List[PersonFieldValue[?]])(implicit c: Connection): Boolean = {
+  override def updateFieldValues(id: PersonId, fieldValues: List[PersonFieldValue[?]])(using c: Connection): Boolean = {
     fieldValues match {
       case Nil => false
       case nonEmpty =>
         val namedParameters = nonEmpty.map{
           case PersonFieldValue.favouriteFootballClubId(value) => NamedParameter("favourite_football_club_id", ParameterValue(value, null, FootballClubId.toStatement))
           case PersonFieldValue.name(value) => NamedParameter("name", ParameterValue(value, null, ToStatement.stringToStatement))
-          case PersonFieldValue.nickName(value) => NamedParameter("nick_name", ParameterValue(value, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData)))
-          case PersonFieldValue.blogUrl(value) => NamedParameter("blog_url", ParameterValue(value, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData)))
+          case PersonFieldValue.nickName(value) => NamedParameter("nick_name", ParameterValue(value, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData)))
+          case PersonFieldValue.blogUrl(value) => NamedParameter("blog_url", ParameterValue(value, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData)))
           case PersonFieldValue.email(value) => NamedParameter("email", ParameterValue(value, null, ToStatement.stringToStatement))
           case PersonFieldValue.phone(value) => NamedParameter("phone", ParameterValue(value, null, ToStatement.stringToStatement))
           case PersonFieldValue.likesPizza(value) => NamedParameter("likes_pizza", ParameterValue(value, null, ToStatement.booleanToStatement))
           case PersonFieldValue.maritalStatusId(value) => NamedParameter("marital_status_id", ParameterValue(value, null, MaritalStatusId.toStatement))
-          case PersonFieldValue.workEmail(value) => NamedParameter("work_email", ParameterValue(value, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData)))
+          case PersonFieldValue.workEmail(value) => NamedParameter("work_email", ParameterValue(value, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData)))
           case PersonFieldValue.sector(value) => NamedParameter("sector", ParameterValue(value, null, Sector.toStatement))
           case PersonFieldValue.favoriteNumber(value) => NamedParameter("favorite_number", ParameterValue(value, null, Number.toStatement))
         }
@@ -195,19 +195,19 @@ class PersonRepoImpl extends PersonRepo {
     }
     
   }
-  override def upsert(unsaved: PersonRow)(implicit c: Connection): PersonRow = {
+  override def upsert(unsaved: PersonRow)(using c: Connection): PersonRow = {
     SQL"""insert into "myschema"."person"("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number")
           values (
             ${ParameterValue(unsaved.id, null, PersonId.toStatement)}::int8,
             ${ParameterValue(unsaved.favouriteFootballClubId, null, FootballClubId.toStatement)},
             ${ParameterValue(unsaved.name, null, ToStatement.stringToStatement)},
-            ${ParameterValue(unsaved.nickName, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))},
-            ${ParameterValue(unsaved.blogUrl, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))},
+            ${ParameterValue(unsaved.nickName, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))},
+            ${ParameterValue(unsaved.blogUrl, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))},
             ${ParameterValue(unsaved.email, null, ToStatement.stringToStatement)},
             ${ParameterValue(unsaved.phone, null, ToStatement.stringToStatement)},
             ${ParameterValue(unsaved.likesPizza, null, ToStatement.booleanToStatement)},
             ${ParameterValue(unsaved.maritalStatusId, null, MaritalStatusId.toStatement)},
-            ${ParameterValue(unsaved.workEmail, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))},
+            ${ParameterValue(unsaved.workEmail, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))},
             ${ParameterValue(unsaved.favoriteNumber, null, Number.toStatement)}::myschema.number
           )
           on conflict ("id")
@@ -227,18 +227,18 @@ class PersonRepoImpl extends PersonRepo {
       .executeInsert(PersonRow.rowParser(1).single)
     
   }
-  override def upsertBatch(unsaved: Iterable[PersonRow])(implicit c: Connection): List[PersonRow] = {
+  override def upsertBatch(unsaved: Iterable[PersonRow])(using c: Connection): List[PersonRow] = {
     def toNamedParameter(row: PersonRow): List[NamedParameter] = List(
       NamedParameter("id", ParameterValue(row.id, null, PersonId.toStatement)),
       NamedParameter("favourite_football_club_id", ParameterValue(row.favouriteFootballClubId, null, FootballClubId.toStatement)),
       NamedParameter("name", ParameterValue(row.name, null, ToStatement.stringToStatement)),
-      NamedParameter("nick_name", ParameterValue(row.nickName, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))),
-      NamedParameter("blog_url", ParameterValue(row.blogUrl, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))),
+      NamedParameter("nick_name", ParameterValue(row.nickName, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))),
+      NamedParameter("blog_url", ParameterValue(row.blogUrl, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))),
       NamedParameter("email", ParameterValue(row.email, null, ToStatement.stringToStatement)),
       NamedParameter("phone", ParameterValue(row.phone, null, ToStatement.stringToStatement)),
       NamedParameter("likes_pizza", ParameterValue(row.likesPizza, null, ToStatement.booleanToStatement)),
       NamedParameter("marital_status_id", ParameterValue(row.maritalStatusId, null, MaritalStatusId.toStatement)),
-      NamedParameter("work_email", ParameterValue(row.workEmail, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))),
+      NamedParameter("work_email", ParameterValue(row.workEmail, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))),
       NamedParameter("favorite_number", ParameterValue(row.favoriteNumber, null, Number.toStatement))
     )
     unsaved.toList match {
@@ -269,9 +269,9 @@ class PersonRepoImpl extends PersonRepo {
     }
   }
   /* NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  override def upsertStreaming(unsaved: Iterator[PersonRow], batchSize: Int = 10000)(implicit c: Connection): Int = {
+  override def upsertStreaming(unsaved: Iterator[PersonRow], batchSize: Int = 10000)(using c: Connection): Int = {
     SQL"""create temporary table person_TEMP (like "myschema"."person") on commit drop""".execute(): @nowarn
-    streamingInsert(s"""copy person_TEMP("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number") from stdin""", batchSize, unsaved)(PersonRow.text, c): @nowarn
+    streamingInsert(s"""copy person_TEMP("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number") from stdin""", batchSize, unsaved)(using PersonRow.text, c): @nowarn
     SQL"""insert into "myschema"."person"("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number")
           select * from person_TEMP
           on conflict ("id")

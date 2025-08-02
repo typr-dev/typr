@@ -18,20 +18,20 @@ import typo.dsl.Bijection
 /** Type for the primary key of table `myschema.person` */
 case class PersonId(value: Long) extends AnyVal
 object PersonId {
-  implicit lazy val arrayColumn: Column[Array[PersonId]] = Column.columnToArray(column, implicitly)
-  implicit lazy val arrayToStatement: ToStatement[Array[PersonId]] = testdb.hardcoded.LongArrayToStatement.contramap(_.map(_.value))
-  implicit lazy val bijection: Bijection[PersonId, Long] = Bijection[PersonId, Long](_.value)(PersonId.apply)
-  implicit lazy val column: Column[PersonId] = Column.columnToLong.map(PersonId.apply)
-  implicit lazy val ordering: Ordering[PersonId] = Ordering.by(_.value)
-  implicit lazy val parameterMetadata: ParameterMetaData[PersonId] = new ParameterMetaData[PersonId] {
+  given arrayColumn: Column[Array[PersonId]] = Column.columnToArray(using column, implicitly)
+  given arrayToStatement: ToStatement[Array[PersonId]] = testdb.hardcoded.LongArrayToStatement.contramap(_.map(_.value))
+  given bijection: Bijection[PersonId, Long] = Bijection[PersonId, Long](_.value)(PersonId.apply)
+  given column: Column[PersonId] = Column.columnToLong.map(PersonId.apply)
+  given ordering: Ordering[PersonId] = Ordering.by(_.value)
+  given parameterMetadata: ParameterMetaData[PersonId] = new ParameterMetaData[PersonId] {
     override def sqlType: String = ParameterMetaData.LongParameterMetaData.sqlType
     override def jdbcType: Int = ParameterMetaData.LongParameterMetaData.jdbcType
   }
-  implicit lazy val reads: Reads[PersonId] = Reads.LongReads.map(PersonId.apply)
-  implicit lazy val text: Text[PersonId] = new Text[PersonId] {
-    override def unsafeEncode(v: PersonId, sb: StringBuilder) = Text.longInstance.unsafeEncode(v.value, sb)
-    override def unsafeArrayEncode(v: PersonId, sb: StringBuilder) = Text.longInstance.unsafeArrayEncode(v.value, sb)
+  given reads: Reads[PersonId] = Reads.LongReads.map(PersonId.apply)
+  given text: Text[PersonId] = new Text[PersonId] {
+    override def unsafeEncode(v: PersonId, sb: StringBuilder): Unit = Text.longInstance.unsafeEncode(v.value, sb)
+    override def unsafeArrayEncode(v: PersonId, sb: StringBuilder): Unit = Text.longInstance.unsafeArrayEncode(v.value, sb)
   }
-  implicit lazy val toStatement: ToStatement[PersonId] = ToStatement.longToStatement.contramap(_.value)
-  implicit lazy val writes: Writes[PersonId] = Writes.LongWrites.contramap(_.value)
+  given toStatement: ToStatement[PersonId] = ToStatement.longToStatement.contramap(_.value)
+  given writes: Writes[PersonId] = Writes.LongWrites.contramap(_.value)
 }

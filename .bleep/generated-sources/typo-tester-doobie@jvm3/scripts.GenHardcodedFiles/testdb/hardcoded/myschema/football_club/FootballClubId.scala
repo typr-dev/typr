@@ -19,16 +19,16 @@ import typo.dsl.Bijection
 /** Type for the primary key of table `myschema.football_club` */
 case class FootballClubId(value: Long) extends AnyVal
 object FootballClubId {
-  implicit lazy val arrayGet: Get[Array[FootballClubId]] = testdb.hardcoded.LongArrayMeta.get.map(_.map(FootballClubId.apply))
-  implicit lazy val arrayPut: Put[Array[FootballClubId]] = testdb.hardcoded.LongArrayMeta.put.contramap(_.map(_.value))
-  implicit lazy val bijection: Bijection[FootballClubId, Long] = Bijection[FootballClubId, Long](_.value)(FootballClubId.apply)
-  implicit lazy val decoder: Decoder[FootballClubId] = Decoder.decodeLong.map(FootballClubId.apply)
-  implicit lazy val encoder: Encoder[FootballClubId] = Encoder.encodeLong.contramap(_.value)
-  implicit lazy val get: Get[FootballClubId] = Meta.LongMeta.get.map(FootballClubId.apply)
-  implicit lazy val ordering: Ordering[FootballClubId] = Ordering.by(_.value)
-  implicit lazy val put: Put[FootballClubId] = Meta.LongMeta.put.contramap(_.value)
-  implicit lazy val text: Text[FootballClubId] = new Text[FootballClubId] {
-    override def unsafeEncode(v: FootballClubId, sb: StringBuilder) = Text.longInstance.unsafeEncode(v.value, sb)
-    override def unsafeArrayEncode(v: FootballClubId, sb: StringBuilder) = Text.longInstance.unsafeArrayEncode(v.value, sb)
+  given arrayGet: Get[Array[FootballClubId]] = testdb.hardcoded.LongArrayMeta.get.map(_.map(FootballClubId.apply))
+  given arrayPut: Put[Array[FootballClubId]] = testdb.hardcoded.LongArrayMeta.put.contramap(_.map(_.value))
+  given bijection: Bijection[FootballClubId, Long] = Bijection[FootballClubId, Long](_.value)(FootballClubId.apply)
+  given decoder: Decoder[FootballClubId] = Decoder.decodeLong.map(FootballClubId.apply)
+  given encoder: Encoder[FootballClubId] = Encoder.encodeLong.contramap(_.value)
+  given get: Get[FootballClubId] = Meta.LongMeta.get.map(FootballClubId.apply)
+  given ordering: Ordering[FootballClubId] = Ordering.by(_.value)
+  given put: Put[FootballClubId] = Meta.LongMeta.put.contramap(_.value)
+  given text: Text[FootballClubId] = new Text[FootballClubId] {
+    override def unsafeEncode(v: FootballClubId, sb: StringBuilder): Unit = Text.longInstance.unsafeEncode(v.value, sb)
+    override def unsafeArrayEncode(v: FootballClubId, sb: StringBuilder): Unit = Text.longInstance.unsafeArrayEncode(v.value, sb)
   }
 }

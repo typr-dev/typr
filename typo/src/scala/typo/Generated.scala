@@ -9,10 +9,10 @@ case class Generated(folder: Path, scope: Scope, files: Map[RelPath, sc.Code]) {
   def mapFiles(f: Map[RelPath, sc.Code] => Map[RelPath, sc.Code]): Generated =
     copy(files = f(files))
 
-  def overwriteFolder(softWrite: SoftWrite = SoftWrite.Yes(Set.empty)): Map[Path, FileSync.Synced] =
+  def overwriteFolder(dialect: Dialect, softWrite: SoftWrite = SoftWrite.Yes(Set.empty)): Map[Path, FileSync.Synced] =
     FileSync.syncStrings(
       folder = folder,
-      fileRelMap = files.map { case (relPath, code) => (relPath, code.render.asString) },
+      fileRelMap = files.map { case (relPath, code) => (relPath, code.render(dialect).asString) },
       deleteUnknowns = FileSync.DeleteUnknowns.Yes(maxDepth = None),
       softWrite = softWrite
     )

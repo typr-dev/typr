@@ -19,19 +19,19 @@ import zio.json.JsonEncoder
 /** Type for the primary key of table `myschema.person` */
 case class PersonId(value: Long) extends AnyVal
 object PersonId {
-  implicit lazy val arrayJdbcDecoder: JdbcDecoder[Array[PersonId]] = testdb.hardcoded.LongArrayDecoder.map(_.map(PersonId.apply))
-  implicit lazy val arrayJdbcEncoder: JdbcEncoder[Array[PersonId]] = testdb.hardcoded.LongArrayEncoder.contramap(_.map(_.value))
-  implicit lazy val arraySetter: Setter[Array[PersonId]] = testdb.hardcoded.LongArraySetter.contramap(_.map(_.value))
-  implicit lazy val bijection: Bijection[PersonId, Long] = Bijection[PersonId, Long](_.value)(PersonId.apply)
-  implicit lazy val jdbcDecoder: JdbcDecoder[PersonId] = JdbcDecoder.longDecoder.map(PersonId.apply)
-  implicit lazy val jdbcEncoder: JdbcEncoder[PersonId] = JdbcEncoder.longEncoder.contramap(_.value)
-  implicit lazy val jsonDecoder: JsonDecoder[PersonId] = JsonDecoder.long.map(PersonId.apply)
-  implicit lazy val jsonEncoder: JsonEncoder[PersonId] = JsonEncoder.long.contramap(_.value)
-  implicit lazy val ordering: Ordering[PersonId] = Ordering.by(_.value)
-  implicit lazy val pgType: PGType[PersonId] = PGType.PGTypeLong.as
-  implicit lazy val setter: Setter[PersonId] = Setter.longSetter.contramap(_.value)
-  implicit lazy val text: Text[PersonId] = new Text[PersonId] {
-    override def unsafeEncode(v: PersonId, sb: StringBuilder) = Text.longInstance.unsafeEncode(v.value, sb)
-    override def unsafeArrayEncode(v: PersonId, sb: StringBuilder) = Text.longInstance.unsafeArrayEncode(v.value, sb)
+  given arrayJdbcDecoder: JdbcDecoder[Array[PersonId]] = testdb.hardcoded.LongArrayDecoder.map(_.map(PersonId.apply))
+  given arrayJdbcEncoder: JdbcEncoder[Array[PersonId]] = testdb.hardcoded.LongArrayEncoder.contramap(_.map(_.value))
+  given arraySetter: Setter[Array[PersonId]] = testdb.hardcoded.LongArraySetter.contramap(_.map(_.value))
+  given bijection: Bijection[PersonId, Long] = Bijection[PersonId, Long](_.value)(PersonId.apply)
+  given jdbcDecoder: JdbcDecoder[PersonId] = JdbcDecoder.longDecoder.map(PersonId.apply)
+  given jdbcEncoder: JdbcEncoder[PersonId] = JdbcEncoder.longEncoder.contramap(_.value)
+  given jsonDecoder: JsonDecoder[PersonId] = JsonDecoder.long.map(PersonId.apply)
+  given jsonEncoder: JsonEncoder[PersonId] = JsonEncoder.long.contramap(_.value)
+  given ordering: Ordering[PersonId] = Ordering.by(_.value)
+  given pgType: PGType[PersonId] = PGType.PGTypeLong.as
+  given setter: Setter[PersonId] = Setter.longSetter.contramap(_.value)
+  given text: Text[PersonId] = new Text[PersonId] {
+    override def unsafeEncode(v: PersonId, sb: StringBuilder): Unit = Text.longInstance.unsafeEncode(v.value, sb)
+    override def unsafeArrayEncode(v: PersonId, sb: StringBuilder): Unit = Text.longInstance.unsafeArrayEncode(v.value, sb)
   }
 }

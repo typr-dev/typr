@@ -32,7 +32,7 @@ package object hardcoded {
       }
     }
   }
-  implicit lazy val BigDecimalArrayEncoder: zio.jdbc.JdbcEncoder[Array[java.math.BigDecimal]] = zio.jdbc.JdbcEncoder.singleParamEncoder(using BigDecimalArraySetter)
+  implicit lazy val BigDecimalArrayEncoder: zio.jdbc.JdbcEncoder[Array[java.math.BigDecimal]] = zio.jdbc.JdbcEncoder.singleParamEncoder(BigDecimalArraySetter)
   implicit lazy val BigDecimalArraySetter: zio.jdbc.SqlFragment.Setter[Array[java.math.BigDecimal]] = zio.jdbc.SqlFragment.Setter.forSqlType[Array[java.math.BigDecimal]](
     (ps, i, v) => {
       ps.setArray(i, ps.getConnection.createArrayOf("numeric", v.map(x => x: scala.AnyRef)))
@@ -65,7 +65,7 @@ package object hardcoded {
       }
     }
   }
-  implicit lazy val BooleanArrayEncoder: zio.jdbc.JdbcEncoder[Array[scala.Boolean]] = zio.jdbc.JdbcEncoder.singleParamEncoder(using BooleanArraySetter)
+  implicit lazy val BooleanArrayEncoder: zio.jdbc.JdbcEncoder[Array[scala.Boolean]] = zio.jdbc.JdbcEncoder.singleParamEncoder(BooleanArraySetter)
   implicit lazy val BooleanArraySetter: zio.jdbc.SqlFragment.Setter[Array[scala.Boolean]] = zio.jdbc.SqlFragment.Setter.forSqlType[Array[scala.Boolean]](
     (ps, i, v) => {
       ps.setArray(i, ps.getConnection.createArrayOf("bool", v.map(x => boolean2Boolean(x): scala.AnyRef)))
@@ -98,7 +98,7 @@ package object hardcoded {
       }
     }
   }
-  implicit lazy val DoubleArrayEncoder: zio.jdbc.JdbcEncoder[Array[scala.Double]] = zio.jdbc.JdbcEncoder.singleParamEncoder(using DoubleArraySetter)
+  implicit lazy val DoubleArrayEncoder: zio.jdbc.JdbcEncoder[Array[scala.Double]] = zio.jdbc.JdbcEncoder.singleParamEncoder(DoubleArraySetter)
   implicit lazy val DoubleArraySetter: zio.jdbc.SqlFragment.Setter[Array[scala.Double]] = zio.jdbc.SqlFragment.Setter.forSqlType[Array[scala.Double]](
     (ps, i, v) => {
       ps.setArray(i, ps.getConnection.createArrayOf("float8", v.map(x => double2Double(x): scala.AnyRef)))
@@ -131,7 +131,7 @@ package object hardcoded {
       }
     }
   }
-  implicit lazy val FloatArrayEncoder: zio.jdbc.JdbcEncoder[Array[scala.Float]] = zio.jdbc.JdbcEncoder.singleParamEncoder(using FloatArraySetter)
+  implicit lazy val FloatArrayEncoder: zio.jdbc.JdbcEncoder[Array[scala.Float]] = zio.jdbc.JdbcEncoder.singleParamEncoder(FloatArraySetter)
   implicit lazy val FloatArraySetter: zio.jdbc.SqlFragment.Setter[Array[scala.Float]] = zio.jdbc.SqlFragment.Setter.forSqlType[Array[scala.Float]](
     (ps, i, v) => {
       ps.setArray(i, ps.getConnection.createArrayOf("float4", v.map(x => float2Float(x): scala.AnyRef)))
@@ -164,7 +164,7 @@ package object hardcoded {
       }
     }
   }
-  implicit lazy val IntArrayEncoder: zio.jdbc.JdbcEncoder[Array[scala.Int]] = zio.jdbc.JdbcEncoder.singleParamEncoder(using IntArraySetter)
+  implicit lazy val IntArrayEncoder: zio.jdbc.JdbcEncoder[Array[scala.Int]] = zio.jdbc.JdbcEncoder.singleParamEncoder(IntArraySetter)
   implicit lazy val IntArraySetter: zio.jdbc.SqlFragment.Setter[Array[scala.Int]] = zio.jdbc.SqlFragment.Setter.forSqlType[Array[scala.Int]](
     (ps, i, v) => {
       ps.setArray(i, ps.getConnection.createArrayOf("int4", v.map(x => int2Integer(x): scala.AnyRef)))
@@ -197,7 +197,7 @@ package object hardcoded {
       }
     }
   }
-  implicit lazy val LongArrayEncoder: zio.jdbc.JdbcEncoder[Array[scala.Long]] = zio.jdbc.JdbcEncoder.singleParamEncoder(using LongArraySetter)
+  implicit lazy val LongArrayEncoder: zio.jdbc.JdbcEncoder[Array[scala.Long]] = zio.jdbc.JdbcEncoder.singleParamEncoder(LongArraySetter)
   implicit lazy val LongArraySetter: zio.jdbc.SqlFragment.Setter[Array[scala.Long]] = zio.jdbc.SqlFragment.Setter.forSqlType[Array[scala.Long]](
     (ps, i, v) => {
       ps.setArray(i, ps.getConnection.createArrayOf("int8", v.map(x => long2Long(x): scala.AnyRef)))
@@ -233,7 +233,7 @@ package object hardcoded {
       }
     }
   }
-  implicit lazy val StringArrayEncoder: zio.jdbc.JdbcEncoder[Array[java.lang.String]] = zio.jdbc.JdbcEncoder.singleParamEncoder(using StringArraySetter)
+  implicit lazy val StringArrayEncoder: zio.jdbc.JdbcEncoder[Array[java.lang.String]] = zio.jdbc.JdbcEncoder.singleParamEncoder(StringArraySetter)
   implicit lazy val StringArraySetter: zio.jdbc.SqlFragment.Setter[Array[java.lang.String]] = zio.jdbc.SqlFragment.Setter.forSqlType[Array[java.lang.String]](
     (ps, i, v) => {
       ps.setArray(i, ps.getConnection.createArrayOf("varchar", v.map(x => x: scala.AnyRef)))

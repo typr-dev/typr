@@ -13,7 +13,7 @@ import resource.managed
 object ExecuteReturningSyntax {
   /* add executeReturning to anorm. it needs to be inside the package, because everything is hidden */
   implicit class Ops(batchSql: BatchSql) {
-    def executeReturning[T](parser: ResultSetParser[T])(implicit c: Connection): T =
+    def executeReturning[T](parser: ResultSetParser[T])(using c: Connection): T =
       managed(batchSql.getFilledStatement(c, getGeneratedKeys = true))(using StatementResource, statementClassTag).acquireAndGet { ps =>
         ps.executeBatch()
         Sql

@@ -40,19 +40,19 @@ object Sector {
   val Names: String = All.map(_.value).mkString(", ")
   val ByName: Map[String, Sector] = All.map(x => (x.value, x)).toMap
               
-  implicit lazy val arrayColumn: Column[Array[Sector]] = Column.columnToArray[String](Column.columnToString, implicitly).map(_.map(Sector.force))
-  implicit lazy val arrayToStatement: ToStatement[Array[Sector]] = ToStatement[Array[Sector]]((ps, i, arr) => ps.setArray(i, ps.getConnection.createArrayOf("myschema.sector", arr.map[AnyRef](_.value))))
-  implicit lazy val column: Column[Sector] = Column.columnToString.mapResult(str => Sector(str).left.map(SqlMappingError.apply))
-  implicit lazy val ordering: Ordering[Sector] = Ordering.by(_.value)
-  implicit lazy val parameterMetadata: ParameterMetaData[Sector] = new ParameterMetaData[Sector] {
+  given arrayColumn: Column[Array[Sector]] = Column.columnToArray[String](using Column.columnToString, implicitly).map(_.map(Sector.force))
+  given arrayToStatement: ToStatement[Array[Sector]] = ToStatement[Array[Sector]]((ps, i, arr) => ps.setArray(i, ps.getConnection.createArrayOf("myschema.sector", arr.map[AnyRef](_.value))))
+  given column: Column[Sector] = Column.columnToString.mapResult(str => Sector(str).left.map(SqlMappingError.apply))
+  given ordering: Ordering[Sector] = Ordering.by(_.value)
+  given parameterMetadata: ParameterMetaData[Sector] = new ParameterMetaData[Sector] {
     override def sqlType: String = "myschema.sector"
     override def jdbcType: Int = Types.OTHER
   }
-  implicit lazy val reads: Reads[Sector] = Reads[Sector]{(value: JsValue) => value.validate(Reads.StringReads).flatMap(str => Sector(str).fold(JsError.apply, JsSuccess(_)))}
-  implicit lazy val text: Text[Sector] = new Text[Sector] {
-    override def unsafeEncode(v: Sector, sb: StringBuilder) = Text.stringInstance.unsafeEncode(v.value, sb)
-    override def unsafeArrayEncode(v: Sector, sb: StringBuilder) = Text.stringInstance.unsafeArrayEncode(v.value, sb)
+  given reads: Reads[Sector] = Reads[Sector]{(value: JsValue) => value.validate(Reads.StringReads).flatMap(str => Sector(str).fold(JsError.apply, JsSuccess(_)))}
+  given text: Text[Sector] = new Text[Sector] {
+    override def unsafeEncode(v: Sector, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value, sb)
+    override def unsafeArrayEncode(v: Sector, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value, sb)
   }
-  implicit lazy val toStatement: ToStatement[Sector] = ToStatement.stringToStatement.contramap(_.value)
-  implicit lazy val writes: Writes[Sector] = Writes[Sector](value => Writes.StringWrites.writes(value.value))
+  given toStatement: ToStatement[Sector] = ToStatement.stringToStatement.contramap(_.value)
+  given writes: Writes[Sector] = Writes[Sector](value => Writes.StringWrites.writes(value.value))
 }

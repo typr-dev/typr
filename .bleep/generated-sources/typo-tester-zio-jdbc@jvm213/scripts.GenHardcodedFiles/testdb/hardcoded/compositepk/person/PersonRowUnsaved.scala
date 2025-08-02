@@ -37,9 +37,9 @@ case class PersonRowUnsaved(
 }
 object PersonRowUnsaved {
   implicit lazy val jsonDecoder: JsonDecoder[PersonRowUnsaved] = JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
-    val name = jsonObj.get("name").fold[Either[String, Option[String]]](Right(None))(_.as(JsonDecoder.option(using JsonDecoder.string)))
+    val name = jsonObj.get("name").fold[Either[String, Option[String]]](Right(None))(_.as(JsonDecoder.option(JsonDecoder.string)))
     val one = jsonObj.get("one").toRight("Missing field 'one'").flatMap(_.as(Defaulted.jsonDecoder(JsonDecoder.long)))
-    val two = jsonObj.get("two").toRight("Missing field 'two'").flatMap(_.as(Defaulted.jsonDecoder(JsonDecoder.option(using JsonDecoder.string))))
+    val two = jsonObj.get("two").toRight("Missing field 'two'").flatMap(_.as(Defaulted.jsonDecoder(JsonDecoder.option(JsonDecoder.string))))
     if (name.isRight && one.isRight && two.isRight)
       Right(PersonRowUnsaved(name = name.toOption.get, one = one.toOption.get, two = two.toOption.get))
     else Left(List[Either[String, Any]](name, one, two).flatMap(_.left.toOption).mkString(", "))
@@ -48,13 +48,13 @@ object PersonRowUnsaved {
     override def unsafeEncode(a: PersonRowUnsaved, indent: Option[Int], out: Write): Unit = {
       out.write("{")
       out.write(""""name":""")
-      JsonEncoder.option(using JsonEncoder.string).unsafeEncode(a.name, indent, out)
+      JsonEncoder.option(JsonEncoder.string).unsafeEncode(a.name, indent, out)
       out.write(",")
       out.write(""""one":""")
       Defaulted.jsonEncoder(JsonEncoder.long).unsafeEncode(a.one, indent, out)
       out.write(",")
       out.write(""""two":""")
-      Defaulted.jsonEncoder(JsonEncoder.option(using JsonEncoder.string)).unsafeEncode(a.two, indent, out)
+      Defaulted.jsonEncoder(JsonEncoder.option(JsonEncoder.string)).unsafeEncode(a.two, indent, out)
       out.write("}")
     }
   }

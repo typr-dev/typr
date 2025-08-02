@@ -39,7 +39,7 @@ case class PersonRow(
 object PersonRow {
   def apply(compositeId: PersonId, name: Option[String]) =
     new PersonRow(compositeId.one, compositeId.two, name)
-  implicit lazy val reads: Reads[PersonRow] = Reads[PersonRow](json => JsResult.fromTry(
+  given reads: Reads[PersonRow] = Reads[PersonRow](json => JsResult.fromTry(
       Try(
         PersonRow(
           one = json.\("one").as(Reads.LongReads),
@@ -52,24 +52,24 @@ object PersonRow {
   def rowParser(idx: Int): RowParser[PersonRow] = RowParser[PersonRow] { row =>
     Success(
       PersonRow(
-        one = row(idx + 0)(Column.columnToLong),
-        two = row(idx + 1)(Column.columnToOption(Column.columnToString)),
-        name = row(idx + 2)(Column.columnToOption(Column.columnToString))
+        one = row(idx + 0)(using Column.columnToLong),
+        two = row(idx + 1)(using Column.columnToOption(using Column.columnToString)),
+        name = row(idx + 2)(using Column.columnToOption(using Column.columnToString))
       )
     )
   }
-  implicit lazy val text: Text[PersonRow] = Text.instance[PersonRow]{ (row, sb) =>
+  given text: Text[PersonRow] = Text.instance[PersonRow]{ (row, sb) =>
     Text.longInstance.unsafeEncode(row.one, sb)
     sb.append(Text.DELIMETER)
-    Text.option(Text.stringInstance).unsafeEncode(row.two, sb)
+    Text.option(using Text.stringInstance).unsafeEncode(row.two, sb)
     sb.append(Text.DELIMETER)
-    Text.option(Text.stringInstance).unsafeEncode(row.name, sb)
+    Text.option(using Text.stringInstance).unsafeEncode(row.name, sb)
   }
-  implicit lazy val writes: OWrites[PersonRow] = OWrites[PersonRow](o =>
+  given writes: OWrites[PersonRow] = OWrites[PersonRow](o =>
     new JsObject(ListMap[String, JsValue](
       "one" -> Writes.LongWrites.writes(o.one),
-      "two" -> Writes.OptionWrites(Writes.StringWrites).writes(o.two),
-      "name" -> Writes.OptionWrites(Writes.StringWrites).writes(o.name)
+      "two" -> Writes.OptionWrites(using Writes.StringWrites).writes(o.two),
+      "name" -> Writes.OptionWrites(using Writes.StringWrites).writes(o.name)
     ))
   )
 }

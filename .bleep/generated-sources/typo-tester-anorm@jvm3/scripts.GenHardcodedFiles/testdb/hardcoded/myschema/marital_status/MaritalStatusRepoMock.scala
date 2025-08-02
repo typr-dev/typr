@@ -24,13 +24,13 @@ class MaritalStatusRepoMock(map: scala.collection.mutable.Map[MaritalStatusId, M
   override def delete: DeleteBuilder[MaritalStatusFields, MaritalStatusRow] = {
     DeleteBuilderMock(DeleteParams.empty, MaritalStatusFields.structure, map)
   }
-  override def deleteById(id: MaritalStatusId)(implicit c: Connection): Boolean = {
+  override def deleteById(id: MaritalStatusId)(using c: Connection): Boolean = {
     map.remove(id).isDefined
   }
-  override def deleteByIds(ids: Array[MaritalStatusId])(implicit c: Connection): Int = {
+  override def deleteByIds(ids: Array[MaritalStatusId])(using c: Connection): Int = {
     ids.map(id => map.remove(id)).count(_.isDefined)
   }
-  override def insert(unsaved: MaritalStatusRow)(implicit c: Connection): MaritalStatusRow = {
+  override def insert(unsaved: MaritalStatusRow)(using c: Connection): MaritalStatusRow = {
     val _ = if (map.contains(unsaved.id))
       sys.error(s"id ${unsaved.id} already exists")
     else
@@ -38,7 +38,7 @@ class MaritalStatusRepoMock(map: scala.collection.mutable.Map[MaritalStatusId, M
     
     unsaved
   }
-  override def insertStreaming(unsaved: Iterator[MaritalStatusRow], batchSize: Int = 10000)(implicit c: Connection): Long = {
+  override def insertStreaming(unsaved: Iterator[MaritalStatusRow], batchSize: Int = 10000)(using c: Connection): Long = {
     unsaved.foreach { row =>
       map += (row.id -> row)
     }
@@ -47,39 +47,39 @@ class MaritalStatusRepoMock(map: scala.collection.mutable.Map[MaritalStatusId, M
   override def select: SelectBuilder[MaritalStatusFields, MaritalStatusRow] = {
     SelectBuilderMock(MaritalStatusFields.structure, () => map.values.toList, SelectParams.empty)
   }
-  override def selectAll(implicit c: Connection): List[MaritalStatusRow] = {
+  override def selectAll(using c: Connection): List[MaritalStatusRow] = {
     map.values.toList
   }
-  override def selectByFieldValues(fieldValues: List[MaritalStatusFieldOrIdValue[?]])(implicit c: Connection): List[MaritalStatusRow] = {
+  override def selectByFieldValues(fieldValues: List[MaritalStatusFieldOrIdValue[?]])(using c: Connection): List[MaritalStatusRow] = {
     fieldValues.foldLeft(map.values) {
       case (acc, MaritalStatusFieldValue.id(value)) => acc.filter(_.id == value)
     }.toList
   }
-  override def selectById(id: MaritalStatusId)(implicit c: Connection): Option[MaritalStatusRow] = {
+  override def selectById(id: MaritalStatusId)(using c: Connection): Option[MaritalStatusRow] = {
     map.get(id)
   }
-  override def selectByIds(ids: Array[MaritalStatusId])(implicit c: Connection): List[MaritalStatusRow] = {
+  override def selectByIds(ids: Array[MaritalStatusId])(using c: Connection): List[MaritalStatusRow] = {
     ids.flatMap(map.get).toList
   }
-  override def selectByIdsTracked(ids: Array[MaritalStatusId])(implicit c: Connection): Map[MaritalStatusId, MaritalStatusRow] = {
+  override def selectByIdsTracked(ids: Array[MaritalStatusId])(using c: Connection): Map[MaritalStatusId, MaritalStatusRow] = {
     val byId = selectByIds(ids).view.map(x => (x.id, x)).toMap
     ids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
   override def update: UpdateBuilder[MaritalStatusFields, MaritalStatusRow] = {
     UpdateBuilderMock(UpdateParams.empty, MaritalStatusFields.structure, map)
   }
-  override def upsert(unsaved: MaritalStatusRow)(implicit c: Connection): MaritalStatusRow = {
+  override def upsert(unsaved: MaritalStatusRow)(using c: Connection): MaritalStatusRow = {
     map.put(unsaved.id, unsaved): @nowarn
     unsaved
   }
-  override def upsertBatch(unsaved: Iterable[MaritalStatusRow])(implicit c: Connection): List[MaritalStatusRow] = {
+  override def upsertBatch(unsaved: Iterable[MaritalStatusRow])(using c: Connection): List[MaritalStatusRow] = {
     unsaved.map { row =>
       map += (row.id -> row)
       row
     }.toList
   }
   /* NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  override def upsertStreaming(unsaved: Iterator[MaritalStatusRow], batchSize: Int = 10000)(implicit c: Connection): Int = {
+  override def upsertStreaming(unsaved: Iterator[MaritalStatusRow], batchSize: Int = 10000)(using c: Connection): Int = {
     unsaved.foreach { row =>
       map += (row.id -> row)
     }

@@ -21,7 +21,7 @@ case class PersonId(
 object PersonId {
   implicit lazy val jsonDecoder: JsonDecoder[PersonId] = JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
     val one = jsonObj.get("one").toRight("Missing field 'one'").flatMap(_.as(JsonDecoder.long))
-    val two = jsonObj.get("two").fold[Either[String, Option[String]]](Right(None))(_.as(JsonDecoder.option(using JsonDecoder.string)))
+    val two = jsonObj.get("two").fold[Either[String, Option[String]]](Right(None))(_.as(JsonDecoder.option(JsonDecoder.string)))
     if (one.isRight && two.isRight)
       Right(PersonId(one = one.toOption.get, two = two.toOption.get))
     else Left(List[Either[String, Any]](one, two).flatMap(_.left.toOption).mkString(", "))
@@ -33,7 +33,7 @@ object PersonId {
       JsonEncoder.long.unsafeEncode(a.one, indent, out)
       out.write(",")
       out.write(""""two":""")
-      JsonEncoder.option(using JsonEncoder.string).unsafeEncode(a.two, indent, out)
+      JsonEncoder.option(JsonEncoder.string).unsafeEncode(a.two, indent, out)
       out.write("}")
     }
   }

@@ -6,13 +6,13 @@
 package testdb
 
 package object hardcoded {
-  implicit lazy val BigDecimalMeta: doobie.util.meta.Meta[Array[scala.math.BigDecimal]] = doobie.postgres.implicits.bigDecimalMeta
-  implicit lazy val BooleanArrayMeta: doobie.util.meta.Meta[Array[scala.Boolean]] = doobie.postgres.implicits.unliftedUnboxedBooleanArrayType
-  implicit lazy val DoubleArrayMeta: doobie.util.meta.Meta[Array[scala.Double]] = doobie.postgres.implicits.unliftedUnboxedDoubleArrayType
-  implicit lazy val FloatArrayMeta: doobie.util.meta.Meta[Array[scala.Float]] = doobie.postgres.implicits.unliftedUnboxedFloatArrayType
-  implicit lazy val IntegerArrayMeta: doobie.util.meta.Meta[Array[scala.Int]] = doobie.postgres.implicits.unliftedUnboxedIntegerArrayType
-  implicit lazy val LongArrayMeta: doobie.util.meta.Meta[Array[scala.Long]] = doobie.postgres.implicits.unliftedUnboxedLongArrayType
-  implicit lazy val StringArrayMeta: doobie.util.meta.Meta[Array[java.lang.String]] = doobie.postgres.implicits.unliftedStringArrayType
-  implicit lazy val UUIDArrayMeta: doobie.util.meta.Meta[Array[java.util.UUID]] = doobie.postgres.implicits.unliftedUUIDArrayType
-  implicit lazy val UUIDMeta: doobie.util.meta.Meta[java.util.UUID] = doobie.postgres.implicits.UuidType
+  given BigDecimalMeta: doobie.util.meta.Meta[Array[scala.math.BigDecimal]] = doobie.postgres.implicits.bigDecimalMeta
+  given BooleanArrayMeta: doobie.util.meta.Meta[Array[scala.Boolean]] = doobie.postgres.implicits.unliftedUnboxedBooleanArrayType
+  given DoubleArrayMeta: doobie.util.meta.Meta[Array[scala.Double]] = doobie.postgres.implicits.unliftedUnboxedDoubleArrayType
+  given FloatArrayMeta: doobie.util.meta.Meta[Array[scala.Float]] = doobie.postgres.implicits.unliftedUnboxedFloatArrayType
+  given IntegerArrayMeta: doobie.util.meta.Meta[Array[scala.Int]] = doobie.postgres.implicits.unliftedUnboxedIntegerArrayType
+  given LongArrayMeta: doobie.util.meta.Meta[Array[scala.Long]] = doobie.postgres.implicits.unliftedUnboxedLongArrayType
+  given StringArrayMeta: doobie.util.meta.Meta[Array[java.lang.String]] = doobie.postgres.implicits.unliftedStringArrayType
+  given UUIDArrayMeta: doobie.util.meta.Meta[Array[java.util.UUID]] = doobie.postgres.implicits.unliftedUUIDArrayType
+  given UUIDMeta: doobie.util.meta.Meta[java.util.UUID] = doobie.postgres.implicits.UuidType
 }

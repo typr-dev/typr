@@ -38,7 +38,7 @@ val options = Options(
 | `keepDependencies`       | Specifies whether to generate [table dependencies](../type-safety/type-flow.md) in generated code even if you didn't select them (default is `false`).                                                        |
 | `rewriteDatabase`        | Let's you perform arbitrary rewrites of database schema snapshot. you can add/remove rows, foreign keys and so on.                                                                                            |
 | `openEnums`              | Controls if you want to tag tables ids as [open string enums](../type-safety/open-string-enums.md)                                                                                                            |
-| `implicitOrUsing`        | Controls if you want the generated code with `implicit` from scala 2 (and 3), or `using` (with `given`) which is supported in scala 3.                                                                        |
+| `dialect`                | Controls the Scala syntax for implicit parameters and instances: `Dialect.Scala2XSource3` (default) generates `implicit` for Scala 2.12/2.13 and shared Scala 3 code, while `Dialect.Scala3` generates `using`/`given` for Scala 3-only code. You must choose the appropriate dialect based on your target Scala version. |
 
 ## Database Libraries
 
@@ -48,7 +48,8 @@ Typo supports multiple Scala database libraries, each with specific optimization
 - **Doobie** (`DbLibName.Doobie`) - Functional JDBC layer for Cats Effect
 - **ZIO-JDBC** (`DbLibName.ZioJdbc`) - Type-safe JDBC wrapper for ZIO
 
-Each library generates code optimized for that specific ecosystem, including appropriate return types, error handling, and integration patterns.
+Each library generates code optimized for that specific ecosystem, including appropriate return types, error handling,
+and integration patterns.
 
 ```scala
 val options = Options(
@@ -57,6 +58,31 @@ val options = Options(
   // ... other options
 )
 ```
+
+## Scala Version Dialect
+
+Typo can generate code for different Scala versions using the `dialect` option:
+
+- **`Dialect.Scala2XSource3`** (default): Generates code using `implicit` syntax that works with Scala 2.12, 2.13, and Scala 3 (in Scala 2 compatibility mode)
+- **`Dialect.Scala3`**: Generates code using Scala 3's `using`/`given` syntax for cleaner, more modern code
+
+```scala
+// For Scala 2.12/2.13 or mixed Scala 2/3 projects
+val options = Options(
+  pkg = "myapp.db",
+  dbLib = Some(DbLibName.Anorm),
+  dialect = Dialect.Scala2XSource3  // This is the default
+)
+
+// For Scala 3-only projects
+val options = Options(
+  pkg = "myapp.db", 
+  dbLib = Some(DbLibName.Anorm),
+  dialect = Dialect.Scala3
+)
+```
+
+Choose `Dialect.Scala3` only if your entire codebase is on Scala 3 and you want to use the modern syntax. Otherwise, stick with the default `Dialect.Scala2XSource3` for maximum compatibility.
 
 ## Development options
 

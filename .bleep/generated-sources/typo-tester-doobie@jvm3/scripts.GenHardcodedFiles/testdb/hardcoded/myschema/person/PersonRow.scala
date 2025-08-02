@@ -47,9 +47,9 @@ case class PersonRow(
  }
 
 object PersonRow {
-  implicit lazy val decoder: Decoder[PersonRow] = Decoder.forProduct12[PersonRow, PersonId, FootballClubId, /* max 100 chars */ String, Option[/* max 30 chars */ String], Option[/* max 100 chars */ String], /* max 254 chars */ String, /* max 8 chars */ String, Boolean, MaritalStatusId, Option[/* max 254 chars */ String], Sector, Number]("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number")(PersonRow.apply)(PersonId.decoder, FootballClubId.decoder, Decoder.decodeString, Decoder.decodeOption(Decoder.decodeString), Decoder.decodeOption(Decoder.decodeString), Decoder.decodeString, Decoder.decodeString, Decoder.decodeBoolean, MaritalStatusId.decoder, Decoder.decodeOption(Decoder.decodeString), Sector.decoder, Number.decoder)
-  implicit lazy val encoder: Encoder[PersonRow] = Encoder.forProduct12[PersonRow, PersonId, FootballClubId, /* max 100 chars */ String, Option[/* max 30 chars */ String], Option[/* max 100 chars */ String], /* max 254 chars */ String, /* max 8 chars */ String, Boolean, MaritalStatusId, Option[/* max 254 chars */ String], Sector, Number]("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number")(x => (x.id, x.favouriteFootballClubId, x.name, x.nickName, x.blogUrl, x.email, x.phone, x.likesPizza, x.maritalStatusId, x.workEmail, x.sector, x.favoriteNumber))(PersonId.encoder, FootballClubId.encoder, Encoder.encodeString, Encoder.encodeOption(Encoder.encodeString), Encoder.encodeOption(Encoder.encodeString), Encoder.encodeString, Encoder.encodeString, Encoder.encodeBoolean, MaritalStatusId.encoder, Encoder.encodeOption(Encoder.encodeString), Sector.encoder, Number.encoder)
-  implicit lazy val read: Read[PersonRow] = new Read.CompositeOfInstances(Array(
+  given decoder: Decoder[PersonRow] = Decoder.forProduct12[PersonRow, PersonId, FootballClubId, /* max 100 chars */ String, Option[/* max 30 chars */ String], Option[/* max 100 chars */ String], /* max 254 chars */ String, /* max 8 chars */ String, Boolean, MaritalStatusId, Option[/* max 254 chars */ String], Sector, Number]("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number")(PersonRow.apply)(using PersonId.decoder, FootballClubId.decoder, Decoder.decodeString, Decoder.decodeOption(using Decoder.decodeString), Decoder.decodeOption(using Decoder.decodeString), Decoder.decodeString, Decoder.decodeString, Decoder.decodeBoolean, MaritalStatusId.decoder, Decoder.decodeOption(using Decoder.decodeString), Sector.decoder, Number.decoder)
+  given encoder: Encoder[PersonRow] = Encoder.forProduct12[PersonRow, PersonId, FootballClubId, /* max 100 chars */ String, Option[/* max 30 chars */ String], Option[/* max 100 chars */ String], /* max 254 chars */ String, /* max 8 chars */ String, Boolean, MaritalStatusId, Option[/* max 254 chars */ String], Sector, Number]("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number")(x => (x.id, x.favouriteFootballClubId, x.name, x.nickName, x.blogUrl, x.email, x.phone, x.likesPizza, x.maritalStatusId, x.workEmail, x.sector, x.favoriteNumber))(using PersonId.encoder, FootballClubId.encoder, Encoder.encodeString, Encoder.encodeOption(using Encoder.encodeString), Encoder.encodeOption(using Encoder.encodeString), Encoder.encodeString, Encoder.encodeString, Encoder.encodeBoolean, MaritalStatusId.encoder, Encoder.encodeOption(using Encoder.encodeString), Sector.encoder, Number.encoder)
+  given read: Read[PersonRow] = new Read.CompositeOfInstances(Array(
     new Read.Single(PersonId.get).asInstanceOf[Read[Any]],
       new Read.Single(FootballClubId.get).asInstanceOf[Read[Any]],
       new Read.Single(Meta.StringMeta.get).asInstanceOf[Read[Any]],
@@ -78,16 +78,16 @@ object PersonRow {
           favoriteNumber = arr(11).asInstanceOf[Number]
     )
   }
-  implicit lazy val text: Text[PersonRow] = Text.instance[PersonRow]{ (row, sb) =>
+  given text: Text[PersonRow] = Text.instance[PersonRow]{ (row, sb) =>
     PersonId.text.unsafeEncode(row.id, sb)
     sb.append(Text.DELIMETER)
     FootballClubId.text.unsafeEncode(row.favouriteFootballClubId, sb)
     sb.append(Text.DELIMETER)
     Text.stringInstance.unsafeEncode(row.name, sb)
     sb.append(Text.DELIMETER)
-    Text.option(Text.stringInstance).unsafeEncode(row.nickName, sb)
+    Text.option(using Text.stringInstance).unsafeEncode(row.nickName, sb)
     sb.append(Text.DELIMETER)
-    Text.option(Text.stringInstance).unsafeEncode(row.blogUrl, sb)
+    Text.option(using Text.stringInstance).unsafeEncode(row.blogUrl, sb)
     sb.append(Text.DELIMETER)
     Text.stringInstance.unsafeEncode(row.email, sb)
     sb.append(Text.DELIMETER)
@@ -97,11 +97,11 @@ object PersonRow {
     sb.append(Text.DELIMETER)
     MaritalStatusId.text.unsafeEncode(row.maritalStatusId, sb)
     sb.append(Text.DELIMETER)
-    Text.option(Text.stringInstance).unsafeEncode(row.workEmail, sb)
+    Text.option(using Text.stringInstance).unsafeEncode(row.workEmail, sb)
     sb.append(Text.DELIMETER)
     Number.text.unsafeEncode(row.favoriteNumber, sb)
   }
-  implicit lazy val write: Write[PersonRow] = new Write.Composite[PersonRow](
+  given write: Write[PersonRow] = new Write.Composite[PersonRow](
     List(new Write.Single(PersonId.put),
          new Write.Single(FootballClubId.put),
          new Write.Single(Meta.StringMeta.put),

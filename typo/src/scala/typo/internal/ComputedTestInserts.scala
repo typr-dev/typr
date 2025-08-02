@@ -149,7 +149,7 @@ object ComputedTestInserts {
             requiredParams ++ optionalParams
           }
 
-          FkAnalysis(allTablesByName, table).createWithFkIdsUnsavedRowOrRow match {
+          FkAnalysis(allTablesByName, table, options.dialect).createWithFkIdsUnsavedRowOrRow match {
             case Some(colsFromFks) =>
               val valuesFromFk: List[(sc.Ident, sc.Code)] =
                 colsFromFks.allColumns.toList.map { col =>

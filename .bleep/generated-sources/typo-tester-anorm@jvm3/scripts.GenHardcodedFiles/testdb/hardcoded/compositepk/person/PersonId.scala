@@ -23,8 +23,8 @@ case class PersonId(
   two: Option[String]
 )
 object PersonId {
-  implicit def ordering(implicit O0: Ordering[Option[String]]): Ordering[PersonId] = Ordering.by(x => (x.one, x.two))
-  implicit lazy val reads: Reads[PersonId] = Reads[PersonId](json => JsResult.fromTry(
+  given ordering(using O0: Ordering[Option[String]]): Ordering[PersonId] = Ordering.by(x => (x.one, x.two))
+  given reads: Reads[PersonId] = Reads[PersonId](json => JsResult.fromTry(
       Try(
         PersonId(
           one = json.\("one").as(Reads.LongReads),
@@ -33,10 +33,10 @@ object PersonId {
       )
     ),
   )
-  implicit lazy val writes: OWrites[PersonId] = OWrites[PersonId](o =>
+  given writes: OWrites[PersonId] = OWrites[PersonId](o =>
     new JsObject(ListMap[String, JsValue](
       "one" -> Writes.LongWrites.writes(o.one),
-      "two" -> Writes.OptionWrites(Writes.StringWrites).writes(o.two)
+      "two" -> Writes.OptionWrites(using Writes.StringWrites).writes(o.two)
     ))
   )
 }
