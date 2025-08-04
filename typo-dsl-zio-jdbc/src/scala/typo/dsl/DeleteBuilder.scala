@@ -17,6 +17,9 @@ trait DeleteBuilder[Fields, Row] {
 
   def sql: Option[SqlFragment]
   def execute: ZIO[ZConnection, Throwable, Long]
+
+  final def limit(v: Int): DeleteBuilder[Fields, Row] =
+    withParams(params.limit(v))
 }
 
 object DeleteBuilder {

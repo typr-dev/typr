@@ -19,6 +19,9 @@ trait DeleteBuilder[Fields, Row] {
 
   def sql: Option[Fragment]
   def execute()(implicit c: Connection): Int
+
+  final def limit(v: Int): DeleteBuilder[Fields, Row] =
+    withParams(params.limit(v))
 }
 
 object DeleteBuilder {
