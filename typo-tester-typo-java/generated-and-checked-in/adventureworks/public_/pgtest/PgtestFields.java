@@ -280,139 +280,139 @@ public interface PgtestFields {
 
   Field<TypoBox, PgtestRow> box();
 
-  Field<TypoBox[], PgtestRow> boxes();
-
   Field</* bpchar, max 3 chars */ String, PgtestRow> bpchar();
-
-  Field</* bpchar */ String[], PgtestRow> bpchares();
 
   Field<TypoBytea, PgtestRow> bytea();
 
   Field</* bpchar, max 1 chars */ String, PgtestRow> char_();
 
-  Field</* bpchar */ String[], PgtestRow> chares();
-
   Field<TypoCircle, PgtestRow> circle();
-
-  Field<TypoCircle[], PgtestRow> circlees();
 
   Field<TypoLocalDate, PgtestRow> date();
 
-  Field<TypoLocalDate[], PgtestRow> datees();
-
   Field<Float, PgtestRow> float4();
 
-  Field<Float[], PgtestRow> float4es();
-
   Field<Double, PgtestRow> float8();
-
-  Field<Double[], PgtestRow> float8es();
 
   Field<TypoHStore, PgtestRow> hstore();
 
   Field<TypoInet, PgtestRow> inet();
 
-  Field<TypoInet[], PgtestRow> inetes();
-
   Field<TypoShort, PgtestRow> int2();
-
-  Field<TypoShort[], PgtestRow> int2es();
 
   Field<TypoInt2Vector, PgtestRow> int2vector();
 
-  Field<TypoInt2Vector[], PgtestRow> int2vectores();
-
   Field<Integer, PgtestRow> int4();
-
-  Field<Integer[], PgtestRow> int4es();
 
   Field<Long, PgtestRow> int8();
 
-  Field<Long[], PgtestRow> int8es();
-
   Field<TypoInterval, PgtestRow> interval();
-
-  Field<TypoInterval[], PgtestRow> intervales();
 
   Field<TypoJson, PgtestRow> json();
 
   Field<TypoJsonb, PgtestRow> jsonb();
 
-  Field<TypoJsonb[], PgtestRow> jsonbes();
-
-  Field<TypoJson[], PgtestRow> jsones();
-
   Field<TypoLine, PgtestRow> line();
-
-  Field<TypoLine[], PgtestRow> linees();
 
   Field<TypoLineSegment, PgtestRow> lseg();
 
-  Field<TypoLineSegment[], PgtestRow> lseges();
-
   Field<TypoMoney, PgtestRow> money();
-
-  Field<TypoMoney[], PgtestRow> moneyes();
 
   Field<Mydomain, PgtestRow> mydomain();
 
-  Field<Mydomain[], PgtestRow> mydomaines();
-
   Field<Myenum, PgtestRow> myenum();
-
-  Field<Myenum[], PgtestRow> myenumes();
 
   Field<String, PgtestRow> name();
 
-  Field<String[], PgtestRow> namees();
-
   Field<BigDecimal, PgtestRow> numeric();
-
-  Field<BigDecimal[], PgtestRow> numerices();
 
   Field<TypoPath, PgtestRow> path();
 
-  Field<TypoPath[], PgtestRow> pathes();
-
   Field<TypoPoint, PgtestRow> point();
-
-  Field<TypoPoint[], PgtestRow> pointes();
 
   Field<TypoPolygon, PgtestRow> polygon();
 
-  Field<TypoPolygon[], PgtestRow> polygones();
-
   Field<String, PgtestRow> text();
-
-  Field<String[], PgtestRow> textes();
 
   Field<TypoLocalTime, PgtestRow> time();
 
-  Field<TypoLocalTime[], PgtestRow> timees();
-
   Field<TypoLocalDateTime, PgtestRow> timestamp();
-
-  Field<TypoLocalDateTime[], PgtestRow> timestampes();
 
   Field<TypoInstant, PgtestRow> timestampz();
 
-  Field<TypoInstant[], PgtestRow> timestampzes();
-
   Field<TypoOffsetTime, PgtestRow> timez();
-
-  Field<TypoOffsetTime[], PgtestRow> timezes();
 
   Field<TypoUUID, PgtestRow> uuid();
 
-  Field<TypoUUID[], PgtestRow> uuides();
-
   Field<String, PgtestRow> varchar();
-
-  Field<String[], PgtestRow> varchares();
 
   Field<TypoVector, PgtestRow> vector();
 
   Field<TypoXml, PgtestRow> xml();
+
+  Field<TypoBox[], PgtestRow> boxes();
+
+  Field</* bpchar */ String[], PgtestRow> bpchares();
+
+  Field</* bpchar */ String[], PgtestRow> chares();
+
+  Field<TypoCircle[], PgtestRow> circlees();
+
+  Field<TypoLocalDate[], PgtestRow> datees();
+
+  Field<Float[], PgtestRow> float4es();
+
+  Field<Double[], PgtestRow> float8es();
+
+  Field<TypoInet[], PgtestRow> inetes();
+
+  Field<TypoShort[], PgtestRow> int2es();
+
+  Field<TypoInt2Vector[], PgtestRow> int2vectores();
+
+  Field<Integer[], PgtestRow> int4es();
+
+  Field<Long[], PgtestRow> int8es();
+
+  Field<TypoInterval[], PgtestRow> intervales();
+
+  Field<TypoJson[], PgtestRow> jsones();
+
+  Field<TypoJsonb[], PgtestRow> jsonbes();
+
+  Field<TypoLine[], PgtestRow> linees();
+
+  Field<TypoLineSegment[], PgtestRow> lseges();
+
+  Field<TypoMoney[], PgtestRow> moneyes();
+
+  Field<Mydomain[], PgtestRow> mydomaines();
+
+  Field<Myenum[], PgtestRow> myenumes();
+
+  Field<String[], PgtestRow> namees();
+
+  Field<BigDecimal[], PgtestRow> numerices();
+
+  Field<TypoPath[], PgtestRow> pathes();
+
+  Field<TypoPoint[], PgtestRow> pointes();
+
+  Field<TypoPolygon[], PgtestRow> polygones();
+
+  Field<String[], PgtestRow> textes();
+
+  Field<TypoLocalTime[], PgtestRow> timees();
+
+  Field<TypoLocalDateTime[], PgtestRow> timestampes();
+
+  Field<TypoInstant[], PgtestRow> timestampzes();
+
+  Field<TypoOffsetTime[], PgtestRow> timezes();
+
+  Field<TypoUUID[], PgtestRow> uuides();
+
+  Field<String[], PgtestRow> varchares();
 
   Field<TypoXml[], PgtestRow> xmles();
 }

@@ -5,13 +5,14 @@
  */
 package adventureworks.purchasing.shipmethod;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `purchasing.shipmethod` */
-public record ShipmethodId(Integer value) {
+public record ShipmethodId(@JsonValue Integer value) {
   public ShipmethodId withValue(Integer value) {
     return new ShipmethodId(value);
   };

@@ -114,21 +114,25 @@ class CustomTypes(pkg: jvm.QIdent, lang: Lang) {
     objBody = target =>
       List(
         jvm.Method(
+          Nil,
           comments = jvm.Comments.Empty,
           tparams = Nil,
           name = jvm.Ident("now"),
           params = Nil,
           implicitParams = Nil,
           tpe = target,
+          throws = Nil,
           body = List(code"new $target(${TypesJava.LocalDate}.now())")
         ),
         jvm.Method(
+          Nil,
           comments = jvm.Comments.Empty,
           tparams = Nil,
           name = jvm.Ident("apply"),
           params = List(jvm.Param(jvm.Ident("str"), TypesJava.String)),
           implicitParams = Nil,
           tpe = target,
+          throws = Nil,
           body = List(code"new $target(${TypesJava.LocalDate}.parse(str))")
         )
       )
@@ -152,30 +156,36 @@ class CustomTypes(pkg: jvm.QIdent, lang: Lang) {
     objBody = target =>
       List(
         jvm.Method(
+          Nil,
           comments = jvm.Comments.Empty,
           tparams = Nil,
           name = jvm.Ident("apply"),
           params = List(jvm.Param(jvm.Ident("value"), TypesJava.LocalTime)),
           implicitParams = Nil,
           tpe = target,
+          throws = Nil,
           body = List(code"new $target(value.truncatedTo(${TypesJava.ChronoUnit}.MICROS))")
         ),
         jvm.Method(
+          Nil,
           comments = jvm.Comments.Empty,
           tparams = Nil,
           name = jvm.Ident("apply"),
           params = List(jvm.Param(jvm.Ident("str"), TypesJava.String)),
           implicitParams = Nil,
           tpe = target,
+          throws = Nil,
           body = List(target.code.invoke("apply", TypesJava.LocalTime.code.invoke("parse", code"str")))
         ),
         jvm.Method(
+          Nil,
           comments = jvm.Comments.Empty,
           tparams = Nil,
           name = jvm.Ident("now"),
           params = Nil,
           implicitParams = Nil,
           tpe = target,
+          throws = Nil,
           body = List(code"$target.apply(${TypesJava.LocalTime}.now())")
         )
       )
@@ -200,35 +210,42 @@ class CustomTypes(pkg: jvm.QIdent, lang: Lang) {
     objBody = target =>
       List(
         jvm.Value(
+          annotations = Nil,
           name = jvm.Ident("parser"),
           tpe = TypesJava.DateTimeFormatter,
           body = Some(code"""new ${TypesJava.DateTimeFormatterBuilder}().appendPattern("yyyy-MM-dd HH:mm:ss").appendFraction(${TypesJava.ChronoField}.MICRO_OF_SECOND, 0, 6, true).toFormatter()""")
         ),
         jvm.Method(
+          Nil,
           comments = jvm.Comments.Empty,
           tparams = Nil,
           name = jvm.Ident("apply"),
           params = List(jvm.Param(jvm.Ident("value"), TypesJava.LocalDateTime)),
           implicitParams = Nil,
           tpe = target,
+          throws = Nil,
           body = List(code"new $target(value.truncatedTo(${TypesJava.ChronoUnit}.MICROS))")
         ),
         jvm.Method(
+          Nil,
           comments = jvm.Comments.Empty,
           tparams = Nil,
           name = jvm.Ident("apply"),
           params = List(jvm.Param(jvm.Ident("str"), TypesJava.String)),
           implicitParams = Nil,
           tpe = target,
+          throws = Nil,
           body = List(code"$target.apply(${TypesJava.LocalDateTime}.parse(str, parser))")
         ),
         jvm.Method(
+          Nil,
           comments = jvm.Comments.Empty,
           tparams = Nil,
           name = jvm.Ident("now"),
           params = Nil,
           implicitParams = Nil,
           tpe = target,
+          throws = Nil,
           body = List(code"$target.apply(${TypesJava.LocalDateTime}.now())")
         )
       )
@@ -253,6 +270,7 @@ class CustomTypes(pkg: jvm.QIdent, lang: Lang) {
     objBody = target =>
       List(
         jvm.Value(
+          annotations = Nil,
           name = jvm.Ident("parser"),
           tpe = TypesJava.DateTimeFormatter,
           body = Some(
@@ -260,30 +278,36 @@ class CustomTypes(pkg: jvm.QIdent, lang: Lang) {
           )
         ),
         jvm.Method(
+          Nil,
           comments = jvm.Comments.Empty,
           tparams = Nil,
           name = jvm.Ident("apply"),
           params = List(jvm.Param(jvm.Ident("value"), TypesJava.Instant)),
           implicitParams = Nil,
           tpe = target,
+          throws = Nil,
           body = List(code"new $target(value.truncatedTo(${TypesJava.ChronoUnit}.MICROS))")
         ),
         jvm.Method(
+          Nil,
           comments = jvm.Comments.Empty,
           tparams = Nil,
           name = jvm.Ident("apply"),
           params = List(jvm.Param(jvm.Ident("str"), TypesJava.String)),
           implicitParams = Nil,
           tpe = target,
+          throws = Nil,
           body = List(code"$target.apply(${TypesJava.OffsetDateTime}.parse(str, parser).toInstant())")
         ),
         jvm.Method(
+          Nil,
           comments = jvm.Comments.Empty,
           tparams = Nil,
           name = jvm.Ident("now"),
           params = Nil,
           implicitParams = Nil,
           tpe = target,
+          throws = Nil,
           body = List(code"$target.apply(${TypesJava.Instant}.now())")
         )
       )
@@ -308,36 +332,43 @@ class CustomTypes(pkg: jvm.QIdent, lang: Lang) {
     objBody = target =>
       List(
         jvm.Value(
+          annotations = Nil,
           name = jvm.Ident("parser"),
           tpe = TypesJava.DateTimeFormatter,
           body =
             Some(code"""new ${TypesJava.DateTimeFormatterBuilder}().appendPattern("HH:mm:ss").appendFraction(${TypesJava.ChronoField}.MICRO_OF_SECOND, 0, 6, true).appendPattern("X").toFormatter()""")
         ),
         jvm.Method(
+          Nil,
           comments = jvm.Comments.Empty,
           tparams = Nil,
           name = jvm.Ident("apply"),
           params = List(jvm.Param(jvm.Ident("value"), TypesJava.OffsetTime)),
           implicitParams = Nil,
           tpe = target,
+          throws = Nil,
           body = List(code"new $target(value.truncatedTo(${TypesJava.ChronoUnit}.MICROS))")
         ),
         jvm.Method(
+          Nil,
           comments = jvm.Comments.Empty,
           tparams = Nil,
           name = jvm.Ident("apply"),
           params = List(jvm.Param(jvm.Ident("str"), TypesJava.String)),
           implicitParams = Nil,
           tpe = target,
+          throws = Nil,
           body = List(code"$target.apply(${TypesJava.OffsetTime}.parse(str, parser))")
         ),
         jvm.Method(
+          Nil,
           comments = jvm.Comments.Empty,
           tparams = Nil,
           name = jvm.Ident("now"),
           params = Nil,
           implicitParams = Nil,
           tpe = target,
+          throws = Nil,
           body = List(code"$target.apply(${TypesJava.OffsetTime}.now())")
         )
       )
@@ -783,21 +814,25 @@ class CustomTypes(pkg: jvm.QIdent, lang: Lang) {
     objBody = target =>
       List(
         jvm.Method(
+          Nil,
           comments = jvm.Comments.Empty,
           tparams = Nil,
           name = jvm.Ident("apply"),
           params = List(jvm.Param(jvm.Ident("str"), TypesJava.String)),
           implicitParams = Nil,
           tpe = target,
+          throws = Nil,
           body = List(code"new $target(${TypesJava.UUID}.fromString(str))")
         ),
         jvm.Method(
+          Nil,
           comments = jvm.Comments.Empty,
           tparams = Nil,
           name = jvm.Ident("randomUUID"),
           params = Nil,
           implicitParams = Nil,
           tpe = target,
+          throws = Nil,
           body = List(code"new $target(${TypesJava.UUID}.randomUUID())")
         )
       )

@@ -80,15 +80,23 @@ public interface PurchaseorderdetailFields {
     return new Impl(List.of());
   };
 
-  default SqlExpr<Boolean> compositeIdIn(List<PurchaseorderdetailId> compositeIds) {
-    return new CompositeIn(List.of(new Part<PurchaseorderheaderId, PurchaseorderdetailId, PurchaseorderdetailRow>(purchaseorderid(), PurchaseorderdetailId::purchaseorderid, PurchaseorderheaderId.pgType), new Part<Integer, PurchaseorderdetailId, PurchaseorderdetailRow>(purchaseorderdetailid(), PurchaseorderdetailId::purchaseorderdetailid, PgTypes.int4)), compositeIds);
-  };
+  IdField<PurchaseorderheaderId, PurchaseorderdetailRow> purchaseorderid();
 
-  default SqlExpr<Boolean> compositeIdIs(PurchaseorderdetailId compositeId) {
-    return SqlExpr.all(purchaseorderid().isEqual(compositeId.purchaseorderid()), purchaseorderdetailid().isEqual(compositeId.purchaseorderdetailid()));
-  };
+  IdField<Integer, PurchaseorderdetailRow> purchaseorderdetailid();
 
   Field<TypoLocalDateTime, PurchaseorderdetailRow> duedate();
+
+  Field<TypoShort, PurchaseorderdetailRow> orderqty();
+
+  Field<ProductId, PurchaseorderdetailRow> productid();
+
+  Field<BigDecimal, PurchaseorderdetailRow> unitprice();
+
+  Field<BigDecimal, PurchaseorderdetailRow> receivedqty();
+
+  Field<BigDecimal, PurchaseorderdetailRow> rejectedqty();
+
+  Field<TypoLocalDateTime, PurchaseorderdetailRow> modifieddate();
 
   default ForeignKey<ProductFields, ProductRow> fkProductionProduct() {
     return ForeignKey.<ProductFields, ProductRow>of("purchasing.FK_PurchaseOrderDetail_Product_ProductID").withColumnPair(productid(), ProductFields::productid);
@@ -98,19 +106,11 @@ public interface PurchaseorderdetailFields {
     return ForeignKey.<PurchaseorderheaderFields, PurchaseorderheaderRow>of("purchasing.FK_PurchaseOrderDetail_PurchaseOrderHeader_PurchaseOrderID").withColumnPair(purchaseorderid(), PurchaseorderheaderFields::purchaseorderid);
   };
 
-  Field<TypoLocalDateTime, PurchaseorderdetailRow> modifieddate();
+  default SqlExpr<Boolean> compositeIdIs(PurchaseorderdetailId compositeId) {
+    return SqlExpr.all(purchaseorderid().isEqual(compositeId.purchaseorderid()), purchaseorderdetailid().isEqual(compositeId.purchaseorderdetailid()));
+  };
 
-  Field<TypoShort, PurchaseorderdetailRow> orderqty();
-
-  Field<ProductId, PurchaseorderdetailRow> productid();
-
-  IdField<Integer, PurchaseorderdetailRow> purchaseorderdetailid();
-
-  IdField<PurchaseorderheaderId, PurchaseorderdetailRow> purchaseorderid();
-
-  Field<BigDecimal, PurchaseorderdetailRow> receivedqty();
-
-  Field<BigDecimal, PurchaseorderdetailRow> rejectedqty();
-
-  Field<BigDecimal, PurchaseorderdetailRow> unitprice();
+  default SqlExpr<Boolean> compositeIdIn(List<PurchaseorderdetailId> compositeIds) {
+    return new CompositeIn(List.of(new Part<PurchaseorderheaderId, PurchaseorderdetailId, PurchaseorderdetailRow>(purchaseorderid(), PurchaseorderdetailId::purchaseorderid, PurchaseorderheaderId.pgType), new Part<Integer, PurchaseorderdetailId, PurchaseorderdetailRow>(purchaseorderdetailid(), PurchaseorderdetailId::purchaseorderdetailid, PgTypes.int4)), compositeIds);
+  };
 }

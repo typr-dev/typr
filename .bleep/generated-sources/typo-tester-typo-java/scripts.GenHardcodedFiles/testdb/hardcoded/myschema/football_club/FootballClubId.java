@@ -5,13 +5,14 @@
  */
 package testdb.hardcoded.myschema.football_club;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `myschema.football_club` */
-public record FootballClubId(Long value) {
+public record FootballClubId(@JsonValue Long value) {
   public FootballClubId withValue(Long value) {
     return new FootballClubId(value);
   };

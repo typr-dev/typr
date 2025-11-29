@@ -10,7 +10,7 @@ import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-public record UmViewRepoImpl() implements UmViewRepo {
+public class UmViewRepoImpl implements UmViewRepo {
   public SelectBuilder<UmViewFields, UmViewRow> select() {
     return SelectBuilder.of("pr.um", UmViewFields.structure(), UmViewRow._rowParser);
   };

@@ -5,13 +5,14 @@
  */
 package testdb.hardcoded.myschema.person;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `myschema.person` */
-public record PersonId(Long value) {
+public record PersonId(@JsonValue Long value) {
   public PersonId withValue(Long value) {
     return new PersonId(value);
   };

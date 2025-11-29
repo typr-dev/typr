@@ -24,6 +24,10 @@ import typo.runtime.internal.RandomHelper;
 
 /** Methods to generate random data for `Ident(TestInsert)` */
 public record TestInsert(Random random) {
+  public TestInsert withRandom(Random random) {
+    return new TestInsert(random);
+  };
+
   public PersonRow compositepkPerson(
     Optional<String> name,
     Defaulted<Long> one,

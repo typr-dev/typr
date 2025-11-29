@@ -29,7 +29,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record SalesorderdetailRepoImpl() implements SalesorderdetailRepo {
+public class SalesorderdetailRepoImpl implements SalesorderdetailRepo {
   public DeleteBuilder<SalesorderdetailFields, SalesorderdetailRow> delete() {
     return DeleteBuilder.of("sales.salesorderdetail", SalesorderdetailFields.structure());
   };
@@ -58,19 +58,19 @@ public record SalesorderdetailRepoImpl() implements SalesorderdetailRepo {
     SalesorderheaderId[] salesorderid = arrayMap.map(compositeIds, SalesorderdetailId::salesorderid, SalesorderheaderId.class);;
       Integer[] salesorderdetailid = arrayMap.map(compositeIds, SalesorderdetailId::salesorderdetailid, Integer.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         delete
-         from "sales"."salesorderdetail"
-         where ("salesorderid", "salesorderdetailid")
-         in (select unnest("""),
-      SalesorderheaderId.pgTypeArray.encode(salesorderid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      PgTypes.int4Array.encode(salesorderdetailid),
-      typo.runtime.Fragment.lit("""
-      ::int4[]))
+             typo.runtime.Fragment.lit("""
+                delete
+                from "sales"."salesorderdetail"
+                where ("salesorderid", "salesorderdetailid")
+                in (select unnest("""),
+             SalesorderheaderId.pgTypeArray.encode(salesorderid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             PgTypes.int4Array.encode(salesorderdetailid),
+             typo.runtime.Fragment.lit("""
+             ::int4[]))
 
-      """)
-    ).update().runUnchecked(c);
+             """)
+           ).update().runUnchecked(c);
   };
 
   public SalesorderdetailRow insert(
@@ -259,19 +259,19 @@ public record SalesorderdetailRepoImpl() implements SalesorderdetailRepo {
     SalesorderheaderId[] salesorderid = arrayMap.map(compositeIds, SalesorderdetailId::salesorderid, SalesorderheaderId.class);;
       Integer[] salesorderdetailid = arrayMap.map(compositeIds, SalesorderdetailId::salesorderdetailid, Integer.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         select "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text
-         from "sales"."salesorderdetail"
-         where ("salesorderid", "salesorderdetailid")
-         in (select unnest("""),
-      SalesorderheaderId.pgTypeArray.encode(salesorderid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      PgTypes.int4Array.encode(salesorderdetailid),
-      typo.runtime.Fragment.lit("""
-      ::int4[]))
+             typo.runtime.Fragment.lit("""
+                select "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text
+                from "sales"."salesorderdetail"
+                where ("salesorderid", "salesorderdetailid")
+                in (select unnest("""),
+             SalesorderheaderId.pgTypeArray.encode(salesorderid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             PgTypes.int4Array.encode(salesorderdetailid),
+             typo.runtime.Fragment.lit("""
+             ::int4[]))
 
-      """)
-    ).as(SalesorderdetailRow._rowParser.all()).runUnchecked(c);
+             """)
+           ).as(SalesorderdetailRow._rowParser.all()).runUnchecked(c);
   };
 
   public Map<SalesorderdetailId, SalesorderdetailRow> selectByIdsTracked(
@@ -293,48 +293,48 @@ public record SalesorderdetailRepoImpl() implements SalesorderdetailRepo {
   ) {
     SalesorderdetailId compositeId = row.compositeId();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "sales"."salesorderdetail"
-         set "carriertrackingnumber" = """),
-      PgTypes.text.opt().encode(row.carriertrackingnumber()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "orderqty" = """),
-      TypoShort.pgType.encode(row.orderqty()),
-      typo.runtime.Fragment.lit("""
-         ::int2,
-         "productid" = """),
-      ProductId.pgType.encode(row.productid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "specialofferid" = """),
-      SpecialofferId.pgType.encode(row.specialofferid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "unitprice" = """),
-      PgTypes.numeric.encode(row.unitprice()),
-      typo.runtime.Fragment.lit("""
-         ::numeric,
-         "unitpricediscount" = """),
-      PgTypes.numeric.encode(row.unitpricediscount()),
-      typo.runtime.Fragment.lit("""
-         ::numeric,
-         "rowguid" = """),
-      TypoUUID.pgType.encode(row.rowguid()),
-      typo.runtime.Fragment.lit("""
-         ::uuid,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "salesorderid" = """),
-      SalesorderheaderId.pgType.encode(compositeId.salesorderid()),
-      typo.runtime.Fragment.lit("""
-       AND "salesorderdetailid" = 
-      """),
-      PgTypes.int4.encode(compositeId.salesorderdetailid()),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "sales"."salesorderdetail"
+                set "carriertrackingnumber" = """),
+             PgTypes.text.opt().encode(row.carriertrackingnumber()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "orderqty" = """),
+             TypoShort.pgType.encode(row.orderqty()),
+             typo.runtime.Fragment.lit("""
+                ::int2,
+                "productid" = """),
+             ProductId.pgType.encode(row.productid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "specialofferid" = """),
+             SpecialofferId.pgType.encode(row.specialofferid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "unitprice" = """),
+             PgTypes.numeric.encode(row.unitprice()),
+             typo.runtime.Fragment.lit("""
+                ::numeric,
+                "unitpricediscount" = """),
+             PgTypes.numeric.encode(row.unitpricediscount()),
+             typo.runtime.Fragment.lit("""
+                ::numeric,
+                "rowguid" = """),
+             TypoUUID.pgType.encode(row.rowguid()),
+             typo.runtime.Fragment.lit("""
+                ::uuid,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "salesorderid" = """),
+             SalesorderheaderId.pgType.encode(compositeId.salesorderid()),
+             typo.runtime.Fragment.lit("""
+              AND "salesorderdetailid" = 
+             """),
+             PgTypes.int4.encode(compositeId.salesorderdetailid()),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public SalesorderdetailRow upsert(
@@ -419,19 +419,19 @@ public record SalesorderdetailRepoImpl() implements SalesorderdetailRepo {
       copy salesorderdetail_TEMP("salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate") from stdin
       """), batchSize, unsaved, c, SalesorderdetailRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "sales"."salesorderdetail"("salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate")
-       select * from salesorderdetail_TEMP
-       on conflict ("salesorderid", "salesorderdetailid")
-       do update set
-         "carriertrackingnumber" = EXCLUDED."carriertrackingnumber",
-       "orderqty" = EXCLUDED."orderqty",
-       "productid" = EXCLUDED."productid",
-       "specialofferid" = EXCLUDED."specialofferid",
-       "unitprice" = EXCLUDED."unitprice",
-       "unitpricediscount" = EXCLUDED."unitpricediscount",
-       "rowguid" = EXCLUDED."rowguid",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table salesorderdetail_TEMP;""")).update().runUnchecked(c);
+              insert into "sales"."salesorderdetail"("salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate")
+              select * from salesorderdetail_TEMP
+              on conflict ("salesorderid", "salesorderdetailid")
+              do update set
+                "carriertrackingnumber" = EXCLUDED."carriertrackingnumber",
+              "orderqty" = EXCLUDED."orderqty",
+              "productid" = EXCLUDED."productid",
+              "specialofferid" = EXCLUDED."specialofferid",
+              "unitprice" = EXCLUDED."unitprice",
+              "unitpricediscount" = EXCLUDED."unitpricediscount",
+              "rowguid" = EXCLUDED."rowguid",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table salesorderdetail_TEMP;""")).update().runUnchecked(c);
   };
 }

@@ -23,7 +23,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record PhonenumbertypeRepoImpl() implements PhonenumbertypeRepo {
+public class PhonenumbertypeRepoImpl implements PhonenumbertypeRepo {
   public DeleteBuilder<PhonenumbertypeFields, PhonenumbertypeRow> delete() {
     return DeleteBuilder.of("person.phonenumbertype", PhonenumbertypeFields.structure());
   };
@@ -205,20 +205,20 @@ public record PhonenumbertypeRepoImpl() implements PhonenumbertypeRepo {
   ) {
     PhonenumbertypeId phonenumbertypeid = row.phonenumbertypeid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "person"."phonenumbertype"
-         set "name" = """),
-      Name.pgType.encode(row.name()),
-      typo.runtime.Fragment.lit("""
-         ::varchar,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "phonenumbertypeid" = """),
-      PhonenumbertypeId.pgType.encode(phonenumbertypeid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "person"."phonenumbertype"
+                set "name" = """),
+             Name.pgType.encode(row.name()),
+             typo.runtime.Fragment.lit("""
+                ::varchar,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "phonenumbertypeid" = """),
+             PhonenumbertypeId.pgType.encode(phonenumbertypeid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public PhonenumbertypeRow upsert(
@@ -277,13 +277,13 @@ public record PhonenumbertypeRepoImpl() implements PhonenumbertypeRepo {
       copy phonenumbertype_TEMP("phonenumbertypeid", "name", "modifieddate") from stdin
       """), batchSize, unsaved, c, PhonenumbertypeRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "person"."phonenumbertype"("phonenumbertypeid", "name", "modifieddate")
-       select * from phonenumbertype_TEMP
-       on conflict ("phonenumbertypeid")
-       do update set
-         "name" = EXCLUDED."name",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table phonenumbertype_TEMP;""")).update().runUnchecked(c);
+              insert into "person"."phonenumbertype"("phonenumbertypeid", "name", "modifieddate")
+              select * from phonenumbertype_TEMP
+              on conflict ("phonenumbertypeid")
+              do update set
+                "name" = EXCLUDED."name",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table phonenumbertype_TEMP;""")).update().runUnchecked(c);
   };
 }

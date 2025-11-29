@@ -51,9 +51,9 @@ public interface IllustrationFields {
     return new Impl(List.of());
   };
 
-  OptField<TypoXml, IllustrationRow> diagram();
-
   IdField<IllustrationId, IllustrationRow> illustrationid();
+
+  OptField<TypoXml, IllustrationRow> diagram();
 
   Field<TypoLocalDateTime, IllustrationRow> modifieddate();
 }

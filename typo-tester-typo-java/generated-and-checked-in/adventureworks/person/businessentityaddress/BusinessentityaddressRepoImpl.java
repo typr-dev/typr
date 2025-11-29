@@ -27,7 +27,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record BusinessentityaddressRepoImpl() implements BusinessentityaddressRepo {
+public class BusinessentityaddressRepoImpl implements BusinessentityaddressRepo {
   public DeleteBuilder<BusinessentityaddressFields, BusinessentityaddressRow> delete() {
     return DeleteBuilder.of("person.businessentityaddress", BusinessentityaddressFields.structure());
   };
@@ -61,21 +61,21 @@ public record BusinessentityaddressRepoImpl() implements BusinessentityaddressRe
       AddressId[] addressid = arrayMap.map(compositeIds, BusinessentityaddressId::addressid, AddressId.class);;
       AddresstypeId[] addresstypeid = arrayMap.map(compositeIds, BusinessentityaddressId::addresstypeid, AddresstypeId.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         delete
-         from "person"."businessentityaddress"
-         where ("businessentityid", "addressid", "addresstypeid")
-         in (select unnest("""),
-      BusinessentityId.pgTypeArray.encode(businessentityid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      AddressId.pgTypeArray.encode(addressid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      AddresstypeId.pgTypeArray.encode(addresstypeid),
-      typo.runtime.Fragment.lit("""
-      ::int4[]))
+             typo.runtime.Fragment.lit("""
+                delete
+                from "person"."businessentityaddress"
+                where ("businessentityid", "addressid", "addresstypeid")
+                in (select unnest("""),
+             BusinessentityId.pgTypeArray.encode(businessentityid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             AddressId.pgTypeArray.encode(addressid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             AddresstypeId.pgTypeArray.encode(addresstypeid),
+             typo.runtime.Fragment.lit("""
+             ::int4[]))
 
-      """)
-    ).update().runUnchecked(c);
+             """)
+           ).update().runUnchecked(c);
   };
 
   public BusinessentityaddressRow insert(
@@ -223,21 +223,21 @@ public record BusinessentityaddressRepoImpl() implements BusinessentityaddressRe
       AddressId[] addressid = arrayMap.map(compositeIds, BusinessentityaddressId::addressid, AddressId.class);;
       AddresstypeId[] addresstypeid = arrayMap.map(compositeIds, BusinessentityaddressId::addresstypeid, AddresstypeId.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         select "businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate"::text
-         from "person"."businessentityaddress"
-         where ("businessentityid", "addressid", "addresstypeid")
-         in (select unnest("""),
-      BusinessentityId.pgTypeArray.encode(businessentityid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      AddressId.pgTypeArray.encode(addressid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      AddresstypeId.pgTypeArray.encode(addresstypeid),
-      typo.runtime.Fragment.lit("""
-      ::int4[]))
+             typo.runtime.Fragment.lit("""
+                select "businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate"::text
+                from "person"."businessentityaddress"
+                where ("businessentityid", "addressid", "addresstypeid")
+                in (select unnest("""),
+             BusinessentityId.pgTypeArray.encode(businessentityid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             AddressId.pgTypeArray.encode(addressid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             AddresstypeId.pgTypeArray.encode(addresstypeid),
+             typo.runtime.Fragment.lit("""
+             ::int4[]))
 
-      """)
-    ).as(BusinessentityaddressRow._rowParser.all()).runUnchecked(c);
+             """)
+           ).as(BusinessentityaddressRow._rowParser.all()).runUnchecked(c);
   };
 
   public Map<BusinessentityaddressId, BusinessentityaddressRow> selectByIdsTracked(
@@ -259,28 +259,28 @@ public record BusinessentityaddressRepoImpl() implements BusinessentityaddressRe
   ) {
     BusinessentityaddressId compositeId = row.compositeId();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "person"."businessentityaddress"
-         set "rowguid" = """),
-      TypoUUID.pgType.encode(row.rowguid()),
-      typo.runtime.Fragment.lit("""
-         ::uuid,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "businessentityid" = """),
-      BusinessentityId.pgType.encode(compositeId.businessentityid()),
-      typo.runtime.Fragment.lit("""
-       AND "addressid" = 
-      """),
-      AddressId.pgType.encode(compositeId.addressid()),
-      typo.runtime.Fragment.lit("""
-       AND "addresstypeid" = 
-      """),
-      AddresstypeId.pgType.encode(compositeId.addresstypeid()),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "person"."businessentityaddress"
+                set "rowguid" = """),
+             TypoUUID.pgType.encode(row.rowguid()),
+             typo.runtime.Fragment.lit("""
+                ::uuid,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "businessentityid" = """),
+             BusinessentityId.pgType.encode(compositeId.businessentityid()),
+             typo.runtime.Fragment.lit("""
+              AND "addressid" = 
+             """),
+             AddressId.pgType.encode(compositeId.addressid()),
+             typo.runtime.Fragment.lit("""
+              AND "addresstypeid" = 
+             """),
+             AddresstypeId.pgType.encode(compositeId.addresstypeid()),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public BusinessentityaddressRow upsert(
@@ -343,13 +343,13 @@ public record BusinessentityaddressRepoImpl() implements BusinessentityaddressRe
       copy businessentityaddress_TEMP("businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate") from stdin
       """), batchSize, unsaved, c, BusinessentityaddressRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "person"."businessentityaddress"("businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate")
-       select * from businessentityaddress_TEMP
-       on conflict ("businessentityid", "addressid", "addresstypeid")
-       do update set
-         "rowguid" = EXCLUDED."rowguid",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table businessentityaddress_TEMP;""")).update().runUnchecked(c);
+              insert into "person"."businessentityaddress"("businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate")
+              select * from businessentityaddress_TEMP
+              on conflict ("businessentityid", "addressid", "addresstypeid")
+              do update set
+                "rowguid" = EXCLUDED."rowguid",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table businessentityaddress_TEMP;""")).update().runUnchecked(c);
   };
 }

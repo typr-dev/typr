@@ -45,17 +45,17 @@ object jvm {
     def unapply[T <: Type](ref: Ref[T]): Some[(Ident, T)] = Some((ref.name, ref.tpe))
   }
 
-  case class Param[+T <: Type](comments: Comments, name: Ident, tpe: T, default: Option[Code]) extends Ref[T] {}
+  case class Param[+T <: Type](annotations: List[Annotation], comments: Comments, name: Ident, tpe: T, default: Option[Code]) extends Ref[T] {}
   object Param {
     implicit class ParamOpt[T <: Type](private val p: Param[T]) {
       def narrow[TT <: T](implicit CT: ClassTag[TT]): Param[TT] =
         p.tpe match {
-          case tt: TT => Param(p.comments, p.name, tt, p.default)
+          case tt: TT => Param(p.annotations, p.comments, p.name, tt, p.default)
           case other  => sys.error(s"Unexpected $other, should have gotten a ${CT.runtimeClass.getSimpleName}")
         }
     }
 
-    def apply[T <: Type](name: Ident, tpe: T): Param[T] = Param(Comments.Empty, name, tpe, None)
+    def apply[T <: Type](name: Ident, tpe: T): Param[T] = Param(Nil, Comments.Empty, name, tpe, None)
   }
   case class IfExpr(cond: Code, thenp: Code, elsep: Code) extends Tree
 
@@ -64,6 +64,19 @@ object jvm {
   case class ClassOf(tpe: Type) extends Tree
 
   case class StrLit(str: String) extends Tree
+
+  case class Annotation(
+      tpe: Type.Qualified,
+      args: List[Annotation.Arg] = Nil
+  ) extends Tree
+
+  object Annotation {
+    sealed trait Arg
+    object Arg {
+      case class Named(name: Ident, value: Code) extends Arg
+      case class Positional(value: Code) extends Arg
+    }
+  }
 
   // we use this to abstract over calling static methods for java, and real string interplators for scala.
   // the nice thing is that it makes generating code a bit easier
@@ -79,12 +92,18 @@ object jvm {
   case class Summon(tpe: Type) extends Tree
 
   case class Given(
+      annotations: List[Annotation],
       tparams: List[Type.Abstract],
       name: Ident,
       implicitParams: List[Param[Type]],
       tpe: Type,
       body: Code
   ) extends ClassMember
+
+  object Given {
+    def apply(tparams: List[Type.Abstract], name: Ident, implicitParams: List[Param[Type]], tpe: Type, body: Code): Given =
+      Given(Nil, tparams, name, implicitParams, tpe, body)
+  }
 
   case class Comments(lines: List[String])
   object Comments {
@@ -98,6 +117,7 @@ object jvm {
   }
 
   case class Enum(
+      annotations: List[Annotation],
       comments: Comments,
       tpe: Type.Qualified,
       values: NonEmptyList[(Ident, jvm.Code)],
@@ -105,6 +125,7 @@ object jvm {
   ) extends Tree
 
   case class OpenEnum(
+      annotations: List[Annotation],
       comments: Comments,
       tpe: Type.Qualified,
       underlyingType: jvm.Type.Qualified,
@@ -174,7 +195,7 @@ object jvm {
     case class Named(name: Ident, value: Code) extends Arg
   }
 
-  case class TypeSwitch(value: Code, cases: List[TypeSwitch.Case]) extends Tree
+  case class TypeSwitch(value: Code, cases: List[TypeSwitch.Case], nullCase: Option[Code] = None, defaultCase: Option[Code] = None) extends Tree
   object TypeSwitch {
     case class Case(tpe: Type, ident: Ident, body: Code)
   }
@@ -184,6 +205,7 @@ object jvm {
   }
   object Adt {
     case class Sum(
+        annotations: List[Annotation],
         comments: Comments,
         name: Type.Qualified,
         tparams: List[Type.Abstract],
@@ -205,7 +227,9 @@ object jvm {
         b.result()
       }
     }
+
     case class Record(
+        annotations: List[Annotation],
         isWrapper: Boolean,
         comments: Comments,
         name: Type.Qualified,
@@ -217,8 +241,10 @@ object jvm {
         members: List[ClassMember],
         staticMembers: List[ClassMember]
     ) extends Adt
+
   }
   case class Class(
+      annotations: List[Annotation],
       comments: Comments,
       classType: ClassType,
       name: Type.Qualified,
@@ -243,6 +269,7 @@ object jvm {
   ) extends ClassMember
 
   case class Value(
+      annotations: List[Annotation],
       name: Ident,
       tpe: Type,
       body: Option[Code],
@@ -258,12 +285,14 @@ object jvm {
   ) extends Tree
 
   case class Method(
+      annotations: List[Annotation],
       comments: Comments,
       tparams: List[Type.Abstract],
       name: Ident,
       params: List[Param[Type]],
       implicitParams: List[Param[Type]],
       tpe: Type,
+      throws: List[Type],
       body: List[Code]
   ) extends ClassMember
 

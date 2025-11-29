@@ -67,15 +67,15 @@ public interface SmViewFields {
 
   Field<ShipmethodId, SmViewRow> id();
 
-  Field<TypoLocalDateTime, SmViewRow> modifieddate();
+  Field<ShipmethodId, SmViewRow> shipmethodid();
 
   Field<Name, SmViewRow> name();
 
-  Field<TypoUUID, SmViewRow> rowguid();
-
   Field<BigDecimal, SmViewRow> shipbase();
 
-  Field<ShipmethodId, SmViewRow> shipmethodid();
-
   Field<BigDecimal, SmViewRow> shiprate();
+
+  Field<TypoUUID, SmViewRow> rowguid();
+
+  Field<TypoLocalDateTime, SmViewRow> modifieddate();
 }

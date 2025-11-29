@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgRead;
 import typo.runtime.PgText;
@@ -14,7 +15,7 @@ import typo.runtime.PgWrite;
 import typo.runtime.internal.arrayMap;
 
 /** This is a type typo does not know how to handle yet. This falls back to casting to string and crossing fingers. Time to file an issue! :] */
-public record TypoUnknownCitext(String value) {
+public record TypoUnknownCitext(@JsonValue String value) {
   public TypoUnknownCitext withValue(String value) {
     return new TypoUnknownCitext(value);
   };

@@ -11,7 +11,7 @@ import java.sql.Connection;
 import java.util.List;
 import static typo.runtime.Fragment.interpolate;
 
-public record PersonDetailSqlRepoImpl() implements PersonDetailSqlRepo {
+public class PersonDetailSqlRepoImpl implements PersonDetailSqlRepo {
   public List<PersonDetailSqlRow> apply(
     /* user-picked */ BusinessentityId businessentityid,
     TypoLocalDateTime modifiedAfter,

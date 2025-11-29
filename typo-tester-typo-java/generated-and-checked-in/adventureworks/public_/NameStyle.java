@@ -5,6 +5,7 @@
  */
 package adventureworks.public_;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
@@ -13,7 +14,7 @@ import typo.runtime.internal.arrayMap;
 /** Domain `public.NameStyle`
   * No constraint
   */
-public record NameStyle(Boolean value) {
+public record NameStyle(@JsonValue Boolean value) {
   public NameStyle withValue(Boolean value) {
     return new NameStyle(value);
   };

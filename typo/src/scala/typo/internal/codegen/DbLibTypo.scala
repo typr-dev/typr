@@ -133,12 +133,14 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
         returnType: jvm.Type
     ) = Right(
       jvm.Method(
+        Nil,
         comments = repoMethod.comment,
         tparams = Nil,
         name = jvm.Ident(repoMethod.methodName),
         params = params,
         implicitParams = implicitParams,
         tpe = returnType,
+        throws = Nil,
         body = Nil
       )
     )
@@ -168,7 +170,7 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
         sig(params = List(unsavedParam), implicitParams = List(c), returnType = rowType)
       case RepoMethod.InsertStreaming(_, rowType, _) =>
         val unsaved = jvm.Param(jvm.Ident("unsaved"), lang.IteratorType.of(rowType))
-        val batchSize = jvm.Param(jvm.Comments.Empty, jvm.Ident("batchSize"), lang.Int, Some(code"10000"))
+        val batchSize = jvm.Param(Nil, jvm.Comments.Empty, jvm.Ident("batchSize"), lang.Int, Some(code"10000"))
         sig(params = List(unsaved, batchSize), implicitParams = List(c), returnType = lang.Long)
       case RepoMethod.Upsert(_, _, _, unsavedParam, rowType, _) =>
         sig(params = List(unsavedParam), implicitParams = List(c), returnType = rowType)
@@ -177,13 +179,13 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
         sig(params = List(unsaved), implicitParams = List(c), returnType = lang.ListType.tpe.of(rowType))
       case RepoMethod.UpsertStreaming(_, _, rowType, _) =>
         val unsaved = jvm.Param(jvm.Ident("unsaved"), lang.IteratorType.of(rowType))
-        val batchSize = jvm.Param(jvm.Comments.Empty, jvm.Ident("batchSize"), lang.Int, Some(code"10000"))
+        val batchSize = jvm.Param(Nil, jvm.Comments.Empty, jvm.Ident("batchSize"), lang.Int, Some(code"10000"))
         sig(params = List(unsaved, batchSize), implicitParams = List(c), returnType = lang.Int)
       case RepoMethod.InsertUnsaved(_, _, _, unsavedParam, _, rowType) =>
         sig(params = List(unsavedParam), implicitParams = List(c), returnType = rowType)
       case RepoMethod.InsertUnsavedStreaming(_, unsaved) =>
         val unsavedParam = jvm.Param(jvm.Ident("unsaved"), lang.IteratorType.of(unsaved.tpe))
-        val batchSize = jvm.Param(jvm.Comments.Empty, jvm.Ident("batchSize"), lang.Int, Some(code"10000"))
+        val batchSize = jvm.Param(Nil, jvm.Comments.Empty, jvm.Ident("batchSize"), lang.Int, Some(code"10000"))
         sig(params = List(unsavedParam, batchSize), implicitParams = List(c), returnType = lang.Long)
       case RepoMethod.DeleteBuilder(_, fieldsType, rowType) =>
         sig(params = Nil, implicitParams = Nil, returnType = jvm.Type.dsl.DeleteBuilder.of(fieldsType, rowType))
@@ -227,7 +229,7 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
         computedId match {
           case x: IdComputed.Composite =>
             val vals =
-              x.cols.map(col => jvm.Value(col.name, jvm.Type.ArrayOf(col.tpe), Some(lang.arrayMap(idsParam.name.code, jvm.FieldGetterRef(x.tpe, col.name).code, jvm.ClassOf(col.tpe).code))).code)
+              x.cols.map(col => jvm.Value(Nil, col.name, jvm.Type.ArrayOf(col.tpe), Some(lang.arrayMap(idsParam.name.code, jvm.FieldGetterRef(x.tpe, col.name).code, jvm.ClassOf(col.tpe).code))).code)
             // Build SQL avoiding problematic string patterns in Java text blocks
             // The issue is that Java text blocks can't have string literals containing ")
             // So we need to structure the SQL to avoid this pattern
@@ -284,7 +286,7 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
         val putCall = jvm.IgnoreResult(code"ret.put(${row.code.callNullary(x.idComputed.paramName)}, $row)")
         val forEachLambda = lang.renderTree(jvm.Lambda1(row, putCall.code), lang.Ctx.Empty)
         List(
-          jvm.Value(ret, TypesJava.Map.of(x.idComputed.tpe, x.rowType), Some(jvm.New(jvm.InferredTargs(TypesJava.HashMap), Nil))),
+          jvm.Value(Nil, ret, TypesJava.Map.of(x.idComputed.tpe, x.rowType), Some(jvm.New(jvm.InferredTargs(TypesJava.HashMap), Nil))),
           lang.ListType.forEach(selectByIdsCall, forEachLambda),
           ret
         )
@@ -317,6 +319,7 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
           val mapper = lang.renderTree(jvm.Lambda1(fv, typeSwitch.code), lang.Ctx.Empty)
           val mappedList = lang.ListType.map(fieldValueOrIdsParam.name.code, mapper)
           jvm.Value(
+            Nil,
             jvm.Ident("where"),
             Fragment,
             Some(code"""|$Fragment.whereAnd(
@@ -344,7 +347,7 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
           )
           val mapper = lang.renderTree(jvm.Lambda1(fv, typeSwitch.code), lang.Ctx.Empty)
           val mappedList = lang.ListType.map(varargsParam.name.code, mapper)
-          jvm.Value(jvm.Ident("updates"), lang.ListType.tpe.of(FragmentInterpolated), Some(mappedList))
+          jvm.Value(Nil, jvm.Ident("updates"), lang.ListType.tpe.of(FragmentInterpolated), Some(mappedList))
         }
 
         val sql = SQL {
@@ -372,7 +375,7 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
                  |where ${matchId(id)}""".stripMargin
         }
         List(
-          jvm.Value(id.paramName, id.tpe, Some(jvm.ApplyNullary(param.name, id.paramName))),
+          jvm.Value(Nil, id.paramName, id.tpe, Some(jvm.ApplyNullary(param.name, id.paramName))),
           code"$sql.update().runUnchecked(c) > 0"
         )
 
@@ -468,8 +471,8 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
         )
 
       case RepoMethod.InsertUnsaved(relName, cols, unsaved, unsavedParam, _, rowType) =>
-        val columns = jvm.Value(jvm.Ident("columns"), TypesJava.List.of(FragmentLiteral), Some(jvm.New(jvm.InferredTargs(TypesJava.ArrayList), Nil)))
-        val values = jvm.Value(jvm.Ident("values"), TypesJava.List.of(Fragment), Some(jvm.New(jvm.InferredTargs(TypesJava.ArrayList), Nil)))
+        val columns = jvm.Value(Nil, jvm.Ident("columns"), TypesJava.List.of(FragmentLiteral), Some(jvm.New(jvm.InferredTargs(TypesJava.ArrayList), Nil)))
+        val values = jvm.Value(Nil, jvm.Ident("values"), TypesJava.List.of(Fragment), Some(jvm.New(jvm.InferredTargs(TypesJava.ArrayList), Nil)))
 
         val cases0 = unsaved.normalColumns.flatMap { col =>
           val value = FR(code"${runtimeInterpolateValue(jvm.ApplyNullary(unsavedParam.name, col.name), col.tpe)}${SqlCast.toPgCode(col)}")
@@ -509,7 +512,7 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
         }
         val q = {
           val body = if (unsaved.normalColumns.isEmpty) jvm.IfExpr(jvm.ApplyNullary(columns.name, jvm.Ident("isEmpty")), sqlEmpty, sql) else sql
-          jvm.Value(jvm.Ident("q"), Fragment, Some(body))
+          jvm.Value(Nil, jvm.Ident("q"), Fragment, Some(body))
         }
 
         List[List[jvm.Code]](
@@ -540,7 +543,7 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
         computedId match {
           case x: IdComputed.Composite =>
             val vals =
-              x.cols.map(col => jvm.Value(col.name, jvm.Type.ArrayOf(col.tpe), Some(lang.arrayMap(idsParam.name.code, jvm.FieldGetterRef(x.tpe, col.name).code, jvm.ClassOf(col.tpe).code))).code)
+              x.cols.map(col => jvm.Value(Nil, col.name, jvm.Type.ArrayOf(col.tpe), Some(lang.arrayMap(idsParam.name.code, jvm.FieldGetterRef(x.tpe, col.name).code, jvm.ClassOf(col.tpe).code))).code)
             // Build SQL avoiding problematic string patterns in Java text blocks
             // The issue is that Java text blocks can't have string literals containing ")
             // So we need to structure the SQL to avoid this pattern
@@ -876,12 +879,14 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
     val newRepo = jvm.New(x.table.names.RepoImplName, Nil)
     val newRow = jvm.New(x.cls, x.values.map { case (p, expr) => jvm.Arg.Named(p, expr) })
     jvm.Method(
+      Nil,
       comments = jvm.Comments.Empty,
       tparams = Nil,
       name = x.name,
       params = x.params,
       implicitParams = List(c),
       tpe = x.table.names.RowName,
+      throws = Nil,
       body = List(jvm.Call.withImplicits(code"($newRepo).insert", List(jvm.Arg.Pos(newRow)), List(jvm.Arg.Pos(c.name))))
     )
   }
@@ -994,6 +999,7 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
   override def rowInstances(tpe: jvm.Type, cols: NonEmptyList[ComputedColumn], rowType: DbLib.RowType): List[jvm.ClassMember] = {
     def rowParser = {
       jvm.Value(
+        Nil,
         rowParserName,
         RowParser.of(tpe),
         Some {

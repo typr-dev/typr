@@ -59,13 +59,11 @@ public interface SalesorderheadersalesreasonFields {
     return new Impl(List.of());
   };
 
-  default SqlExpr<Boolean> compositeIdIn(List<SalesorderheadersalesreasonId> compositeIds) {
-    return new CompositeIn(List.of(new Part<SalesorderheaderId, SalesorderheadersalesreasonId, SalesorderheadersalesreasonRow>(salesorderid(), SalesorderheadersalesreasonId::salesorderid, SalesorderheaderId.pgType), new Part<SalesreasonId, SalesorderheadersalesreasonId, SalesorderheadersalesreasonRow>(salesreasonid(), SalesorderheadersalesreasonId::salesreasonid, SalesreasonId.pgType)), compositeIds);
-  };
+  IdField<SalesorderheaderId, SalesorderheadersalesreasonRow> salesorderid();
 
-  default SqlExpr<Boolean> compositeIdIs(SalesorderheadersalesreasonId compositeId) {
-    return SqlExpr.all(salesorderid().isEqual(compositeId.salesorderid()), salesreasonid().isEqual(compositeId.salesreasonid()));
-  };
+  IdField<SalesreasonId, SalesorderheadersalesreasonRow> salesreasonid();
+
+  Field<TypoLocalDateTime, SalesorderheadersalesreasonRow> modifieddate();
 
   default ForeignKey<SalesorderheaderFields, SalesorderheaderRow> fkSalesorderheader() {
     return ForeignKey.<SalesorderheaderFields, SalesorderheaderRow>of("sales.FK_SalesOrderHeaderSalesReason_SalesOrderHeader_SalesOrderID").withColumnPair(salesorderid(), SalesorderheaderFields::salesorderid);
@@ -75,9 +73,11 @@ public interface SalesorderheadersalesreasonFields {
     return ForeignKey.<SalesreasonFields, SalesreasonRow>of("sales.FK_SalesOrderHeaderSalesReason_SalesReason_SalesReasonID").withColumnPair(salesreasonid(), SalesreasonFields::salesreasonid);
   };
 
-  Field<TypoLocalDateTime, SalesorderheadersalesreasonRow> modifieddate();
+  default SqlExpr<Boolean> compositeIdIs(SalesorderheadersalesreasonId compositeId) {
+    return SqlExpr.all(salesorderid().isEqual(compositeId.salesorderid()), salesreasonid().isEqual(compositeId.salesreasonid()));
+  };
 
-  IdField<SalesorderheaderId, SalesorderheadersalesreasonRow> salesorderid();
-
-  IdField<SalesreasonId, SalesorderheadersalesreasonRow> salesreasonid();
+  default SqlExpr<Boolean> compositeIdIn(List<SalesorderheadersalesreasonId> compositeIds) {
+    return new CompositeIn(List.of(new Part<SalesorderheaderId, SalesorderheadersalesreasonId, SalesorderheadersalesreasonRow>(salesorderid(), SalesorderheadersalesreasonId::salesorderid, SalesorderheaderId.pgType), new Part<SalesreasonId, SalesorderheadersalesreasonId, SalesorderheadersalesreasonRow>(salesreasonid(), SalesorderheadersalesreasonId::salesreasonid, SalesreasonId.pgType)), compositeIds);
+  };
 }

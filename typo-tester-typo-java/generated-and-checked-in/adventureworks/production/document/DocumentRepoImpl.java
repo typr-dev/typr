@@ -28,7 +28,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record DocumentRepoImpl() implements DocumentRepo {
+public class DocumentRepoImpl implements DocumentRepo {
   public DeleteBuilder<DocumentFields, DocumentRow> delete() {
     return DeleteBuilder.of("production.document", DocumentFields.structure());
   };
@@ -317,60 +317,60 @@ public record DocumentRepoImpl() implements DocumentRepo {
   ) {
     DocumentId documentnode = row.documentnode();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "production"."document"
-         set "title" = """),
-      PgTypes.text.encode(row.title()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "owner" = """),
-      BusinessentityId.pgType.encode(row.owner()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "folderflag" = """),
-      Flag.pgType.encode(row.folderflag()),
-      typo.runtime.Fragment.lit("""
-         ::bool,
-         "filename" = """),
-      PgTypes.text.encode(row.filename()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "fileextension" = """),
-      PgTypes.text.opt().encode(row.fileextension()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "revision" = """),
-      PgTypes.text.encode(row.revision()),
-      typo.runtime.Fragment.lit("""
-         ::bpchar,
-         "changenumber" = """),
-      PgTypes.int4.encode(row.changenumber()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "status" = """),
-      TypoShort.pgType.encode(row.status()),
-      typo.runtime.Fragment.lit("""
-         ::int2,
-         "documentsummary" = """),
-      PgTypes.text.opt().encode(row.documentsummary()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "document" = """),
-      TypoBytea.pgType.opt().encode(row.document()),
-      typo.runtime.Fragment.lit("""
-         ::bytea,
-         "rowguid" = """),
-      TypoUUID.pgType.encode(row.rowguid()),
-      typo.runtime.Fragment.lit("""
-         ::uuid,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "documentnode" = """),
-      DocumentId.pgType.encode(documentnode),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "production"."document"
+                set "title" = """),
+             PgTypes.text.encode(row.title()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "owner" = """),
+             BusinessentityId.pgType.encode(row.owner()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "folderflag" = """),
+             Flag.pgType.encode(row.folderflag()),
+             typo.runtime.Fragment.lit("""
+                ::bool,
+                "filename" = """),
+             PgTypes.text.encode(row.filename()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "fileextension" = """),
+             PgTypes.text.opt().encode(row.fileextension()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "revision" = """),
+             PgTypes.text.encode(row.revision()),
+             typo.runtime.Fragment.lit("""
+                ::bpchar,
+                "changenumber" = """),
+             PgTypes.int4.encode(row.changenumber()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "status" = """),
+             TypoShort.pgType.encode(row.status()),
+             typo.runtime.Fragment.lit("""
+                ::int2,
+                "documentsummary" = """),
+             PgTypes.text.opt().encode(row.documentsummary()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "document" = """),
+             TypoBytea.pgType.opt().encode(row.document()),
+             typo.runtime.Fragment.lit("""
+                ::bytea,
+                "rowguid" = """),
+             TypoUUID.pgType.encode(row.rowguid()),
+             typo.runtime.Fragment.lit("""
+                ::uuid,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "documentnode" = """),
+             DocumentId.pgType.encode(documentnode),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public DocumentRow upsert(
@@ -469,23 +469,23 @@ public record DocumentRepoImpl() implements DocumentRepo {
       copy document_TEMP("title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode") from stdin
       """), batchSize, unsaved, c, DocumentRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "production"."document"("title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode")
-       select * from document_TEMP
-       on conflict ("documentnode")
-       do update set
-         "title" = EXCLUDED."title",
-       "owner" = EXCLUDED."owner",
-       "folderflag" = EXCLUDED."folderflag",
-       "filename" = EXCLUDED."filename",
-       "fileextension" = EXCLUDED."fileextension",
-       "revision" = EXCLUDED."revision",
-       "changenumber" = EXCLUDED."changenumber",
-       "status" = EXCLUDED."status",
-       "documentsummary" = EXCLUDED."documentsummary",
-       "document" = EXCLUDED."document",
-       "rowguid" = EXCLUDED."rowguid",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table document_TEMP;""")).update().runUnchecked(c);
+              insert into "production"."document"("title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode")
+              select * from document_TEMP
+              on conflict ("documentnode")
+              do update set
+                "title" = EXCLUDED."title",
+              "owner" = EXCLUDED."owner",
+              "folderflag" = EXCLUDED."folderflag",
+              "filename" = EXCLUDED."filename",
+              "fileextension" = EXCLUDED."fileextension",
+              "revision" = EXCLUDED."revision",
+              "changenumber" = EXCLUDED."changenumber",
+              "status" = EXCLUDED."status",
+              "documentsummary" = EXCLUDED."documentsummary",
+              "document" = EXCLUDED."document",
+              "rowguid" = EXCLUDED."rowguid",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table document_TEMP;""")).update().runUnchecked(c);
   };
 }

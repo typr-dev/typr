@@ -63,17 +63,17 @@ public interface SciViewFields {
     return new Impl(List.of());
   };
 
-  Field<TypoLocalDateTime, SciViewRow> datecreated();
-
   Field<ShoppingcartitemId, SciViewRow> id();
 
-  Field<TypoLocalDateTime, SciViewRow> modifieddate();
-
-  Field<ProductId, SciViewRow> productid();
-
-  Field<Integer, SciViewRow> quantity();
+  Field<ShoppingcartitemId, SciViewRow> shoppingcartitemid();
 
   Field</* max 50 chars */ String, SciViewRow> shoppingcartid();
 
-  Field<ShoppingcartitemId, SciViewRow> shoppingcartitemid();
+  Field<Integer, SciViewRow> quantity();
+
+  Field<ProductId, SciViewRow> productid();
+
+  Field<TypoLocalDateTime, SciViewRow> datecreated();
+
+  Field<TypoLocalDateTime, SciViewRow> modifieddate();
 }

@@ -50,9 +50,9 @@ public interface UnitmeasureFields {
     return new Impl(List.of());
   };
 
-  Field<TypoLocalDateTime, UnitmeasureRow> modifieddate();
+  IdField<UnitmeasureId, UnitmeasureRow> unitmeasurecode();
 
   Field<Name, UnitmeasureRow> name();
 
-  IdField<UnitmeasureId, UnitmeasureRow> unitmeasurecode();
+  Field<TypoLocalDateTime, UnitmeasureRow> modifieddate();
 }

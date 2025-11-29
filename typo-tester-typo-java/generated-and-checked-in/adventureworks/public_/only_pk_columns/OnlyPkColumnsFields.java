@@ -48,15 +48,15 @@ public interface OnlyPkColumnsFields {
     return new Impl(List.of());
   };
 
-  default SqlExpr<Boolean> compositeIdIn(List<OnlyPkColumnsId> compositeIds) {
-    return new CompositeIn(List.of(new Part<String, OnlyPkColumnsId, OnlyPkColumnsRow>(keyColumn1(), OnlyPkColumnsId::keyColumn1, PgTypes.text), new Part<Integer, OnlyPkColumnsId, OnlyPkColumnsRow>(keyColumn2(), OnlyPkColumnsId::keyColumn2, PgTypes.int4)), compositeIds);
-  };
+  IdField<String, OnlyPkColumnsRow> keyColumn1();
+
+  IdField<Integer, OnlyPkColumnsRow> keyColumn2();
 
   default SqlExpr<Boolean> compositeIdIs(OnlyPkColumnsId compositeId) {
     return SqlExpr.all(keyColumn1().isEqual(compositeId.keyColumn1()), keyColumn2().isEqual(compositeId.keyColumn2()));
   };
 
-  IdField<String, OnlyPkColumnsRow> keyColumn1();
-
-  IdField<Integer, OnlyPkColumnsRow> keyColumn2();
+  default SqlExpr<Boolean> compositeIdIn(List<OnlyPkColumnsId> compositeIds) {
+    return new CompositeIn(List.of(new Part<String, OnlyPkColumnsId, OnlyPkColumnsRow>(keyColumn1(), OnlyPkColumnsId::keyColumn1, PgTypes.text), new Part<Integer, OnlyPkColumnsId, OnlyPkColumnsRow>(keyColumn2(), OnlyPkColumnsId::keyColumn2, PgTypes.int4)), compositeIds);
+  };
 }

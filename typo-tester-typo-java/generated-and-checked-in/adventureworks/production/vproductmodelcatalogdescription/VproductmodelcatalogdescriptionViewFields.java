@@ -119,53 +119,53 @@ public interface VproductmodelcatalogdescriptionViewFields {
     return new Impl(List.of());
   };
 
-  OptField<String, VproductmodelcatalogdescriptionViewRow> bikeframe();
-
-  OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> color();
-
-  OptField</* max 30 chars */ String, VproductmodelcatalogdescriptionViewRow> copyright();
-
-  OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> crankset();
-
-  OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> maintenancedescription();
-
-  OptField<String, VproductmodelcatalogdescriptionViewRow> manufacturer();
-
-  OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> material();
-
-  Field<TypoLocalDateTime, VproductmodelcatalogdescriptionViewRow> modifieddate();
+  Field<ProductmodelId, VproductmodelcatalogdescriptionViewRow> productmodelid();
 
   Field<Name, VproductmodelcatalogdescriptionViewRow> name();
 
+  OptField<String, VproductmodelcatalogdescriptionViewRow> summary();
+
+  OptField<String, VproductmodelcatalogdescriptionViewRow> manufacturer();
+
+  OptField</* max 30 chars */ String, VproductmodelcatalogdescriptionViewRow> copyright();
+
+  OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> producturl();
+
+  OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> warrantyperiod();
+
+  OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> warrantydescription();
+
   OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> noofyears();
 
+  OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> maintenancedescription();
+
+  OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> wheel();
+
+  OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> saddle();
+
   OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> pedal();
+
+  OptField<String, VproductmodelcatalogdescriptionViewRow> bikeframe();
+
+  OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> crankset();
 
   OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> pictureangle();
 
   OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> picturesize();
 
-  OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> productline();
-
-  Field<ProductmodelId, VproductmodelcatalogdescriptionViewRow> productmodelid();
-
   OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> productphotoid();
 
-  OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> producturl();
+  OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> material();
+
+  OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> color();
+
+  OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> productline();
+
+  OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> style();
 
   OptField</* max 1024 chars */ String, VproductmodelcatalogdescriptionViewRow> riderexperience();
 
   Field<TypoUUID, VproductmodelcatalogdescriptionViewRow> rowguid();
 
-  OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> saddle();
-
-  OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> style();
-
-  OptField<String, VproductmodelcatalogdescriptionViewRow> summary();
-
-  OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> warrantydescription();
-
-  OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> warrantyperiod();
-
-  OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> wheel();
+  Field<TypoLocalDateTime, VproductmodelcatalogdescriptionViewRow> modifieddate();
 }

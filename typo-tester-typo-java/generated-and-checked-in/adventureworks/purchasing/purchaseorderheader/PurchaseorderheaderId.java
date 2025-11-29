@@ -5,13 +5,14 @@
  */
 package adventureworks.purchasing.purchaseorderheader;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `purchasing.purchaseorderheader` */
-public record PurchaseorderheaderId(Integer value) {
+public record PurchaseorderheaderId(@JsonValue Integer value) {
   public PurchaseorderheaderId withValue(Integer value) {
     return new PurchaseorderheaderId(value);
   };

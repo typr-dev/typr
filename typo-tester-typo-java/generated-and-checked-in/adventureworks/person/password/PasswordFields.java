@@ -63,15 +63,15 @@ public interface PasswordFields {
 
   IdField<BusinessentityId, PasswordRow> businessentityid();
 
-  default ForeignKey<PersonFields, PersonRow> fkPerson() {
-    return ForeignKey.<PersonFields, PersonRow>of("person.FK_Password_Person_BusinessEntityID").withColumnPair(businessentityid(), PersonFields::businessentityid);
-  };
-
-  Field<TypoLocalDateTime, PasswordRow> modifieddate();
-
   Field</* max 128 chars */ String, PasswordRow> passwordhash();
 
   Field</* max 10 chars */ String, PasswordRow> passwordsalt();
 
   Field<TypoUUID, PasswordRow> rowguid();
+
+  Field<TypoLocalDateTime, PasswordRow> modifieddate();
+
+  default ForeignKey<PersonFields, PersonRow> fkPerson() {
+    return ForeignKey.<PersonFields, PersonRow>of("person.FK_Password_Person_BusinessEntityID").withColumnPair(businessentityid(), PersonFields::businessentityid);
+  };
 }

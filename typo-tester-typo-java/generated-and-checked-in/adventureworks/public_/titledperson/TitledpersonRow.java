@@ -7,6 +7,7 @@ package adventureworks.public_.titledperson;
 
 import adventureworks.public_.title.TitleId;
 import adventureworks.public_.title_domain.TitleDomainId;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
@@ -16,7 +17,7 @@ import typo.runtime.RowParsers.Tuple3;
 /** Table: public.titledperson */
 public record TitledpersonRow(
   /** Points to {@link adventureworks.public_.title_domain.TitleDomainRow#code()} */
-  TitleDomainId titleShort,
+  @JsonProperty("title_short") TitleDomainId titleShort,
   /** Points to {@link adventureworks.public_.title.TitleRow#code()} */
   TitleId title,
   String name

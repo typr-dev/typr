@@ -23,7 +23,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record UnitmeasureRepoImpl() implements UnitmeasureRepo {
+public class UnitmeasureRepoImpl implements UnitmeasureRepo {
   public DeleteBuilder<UnitmeasureFields, UnitmeasureRow> delete() {
     return DeleteBuilder.of("production.unitmeasure", UnitmeasureFields.structure());
   };
@@ -200,20 +200,20 @@ public record UnitmeasureRepoImpl() implements UnitmeasureRepo {
   ) {
     UnitmeasureId unitmeasurecode = row.unitmeasurecode();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "production"."unitmeasure"
-         set "name" = """),
-      Name.pgType.encode(row.name()),
-      typo.runtime.Fragment.lit("""
-         ::varchar,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "unitmeasurecode" = """),
-      UnitmeasureId.pgType.encode(unitmeasurecode),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "production"."unitmeasure"
+                set "name" = """),
+             Name.pgType.encode(row.name()),
+             typo.runtime.Fragment.lit("""
+                ::varchar,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "unitmeasurecode" = """),
+             UnitmeasureId.pgType.encode(unitmeasurecode),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public UnitmeasureRow upsert(
@@ -272,13 +272,13 @@ public record UnitmeasureRepoImpl() implements UnitmeasureRepo {
       copy unitmeasure_TEMP("unitmeasurecode", "name", "modifieddate") from stdin
       """), batchSize, unsaved, c, UnitmeasureRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "production"."unitmeasure"("unitmeasurecode", "name", "modifieddate")
-       select * from unitmeasure_TEMP
-       on conflict ("unitmeasurecode")
-       do update set
-         "name" = EXCLUDED."name",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table unitmeasure_TEMP;""")).update().runUnchecked(c);
+              insert into "production"."unitmeasure"("unitmeasurecode", "name", "modifieddate")
+              select * from unitmeasure_TEMP
+              on conflict ("unitmeasurecode")
+              do update set
+                "name" = EXCLUDED."name",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table unitmeasure_TEMP;""")).update().runUnchecked(c);
   };
 }

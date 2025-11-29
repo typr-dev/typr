@@ -81,29 +81,29 @@ public interface VjobcandidateeducationViewFields {
     return new Impl(List.of());
   };
 
-  OptField</* max 50 chars */ String, VjobcandidateeducationViewRow> eduDegree();
-
-  OptField<TypoLocalDate, VjobcandidateeducationViewRow> eduEndDate();
-
-  OptField</* max 5 chars */ String, VjobcandidateeducationViewRow> eduGPA();
-
-  OptField</* max 5 chars */ String, VjobcandidateeducationViewRow> eduGPAScale();
+  Field<JobcandidateId, VjobcandidateeducationViewRow> jobcandidateid();
 
   OptField</* max 50 chars */ String, VjobcandidateeducationViewRow> eduLevel();
 
-  OptField</* max 100 chars */ String, VjobcandidateeducationViewRow> eduLocCity();
+  OptField<TypoLocalDate, VjobcandidateeducationViewRow> eduStartDate();
 
-  OptField</* max 100 chars */ String, VjobcandidateeducationViewRow> eduLocCountryRegion();
+  OptField<TypoLocalDate, VjobcandidateeducationViewRow> eduEndDate();
 
-  OptField</* max 100 chars */ String, VjobcandidateeducationViewRow> eduLocState();
+  OptField</* max 50 chars */ String, VjobcandidateeducationViewRow> eduDegree();
 
   OptField</* max 50 chars */ String, VjobcandidateeducationViewRow> eduMajor();
 
   OptField</* max 50 chars */ String, VjobcandidateeducationViewRow> eduMinor();
 
+  OptField</* max 5 chars */ String, VjobcandidateeducationViewRow> eduGPA();
+
+  OptField</* max 5 chars */ String, VjobcandidateeducationViewRow> eduGPAScale();
+
   OptField</* max 100 chars */ String, VjobcandidateeducationViewRow> eduSchool();
 
-  OptField<TypoLocalDate, VjobcandidateeducationViewRow> eduStartDate();
+  OptField</* max 100 chars */ String, VjobcandidateeducationViewRow> eduLocCountryRegion();
 
-  Field<JobcandidateId, VjobcandidateeducationViewRow> jobcandidateid();
+  OptField</* max 100 chars */ String, VjobcandidateeducationViewRow> eduLocState();
+
+  OptField</* max 100 chars */ String, VjobcandidateeducationViewRow> eduLocCity();
 }

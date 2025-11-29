@@ -78,11 +78,23 @@ public interface SalespersonFields {
     return new Impl(List.of());
   };
 
-  Field<BigDecimal, SalespersonRow> bonus();
-
   IdField<BusinessentityId, SalespersonRow> businessentityid();
 
+  OptField<SalesterritoryId, SalespersonRow> territoryid();
+
+  OptField<BigDecimal, SalespersonRow> salesquota();
+
+  Field<BigDecimal, SalespersonRow> bonus();
+
   Field<BigDecimal, SalespersonRow> commissionpct();
+
+  Field<BigDecimal, SalespersonRow> salesytd();
+
+  Field<BigDecimal, SalespersonRow> saleslastyear();
+
+  Field<TypoUUID, SalespersonRow> rowguid();
+
+  Field<TypoLocalDateTime, SalespersonRow> modifieddate();
 
   default ForeignKey<EmployeeFields, EmployeeRow> fkHumanresourcesEmployee() {
     return ForeignKey.<EmployeeFields, EmployeeRow>of("sales.FK_SalesPerson_Employee_BusinessEntityID").withColumnPair(businessentityid(), EmployeeFields::businessentityid);
@@ -91,16 +103,4 @@ public interface SalespersonFields {
   default ForeignKey<SalesterritoryFields, SalesterritoryRow> fkSalesterritory() {
     return ForeignKey.<SalesterritoryFields, SalesterritoryRow>of("sales.FK_SalesPerson_SalesTerritory_TerritoryID").withColumnPair(territoryid(), SalesterritoryFields::territoryid);
   };
-
-  Field<TypoLocalDateTime, SalespersonRow> modifieddate();
-
-  Field<TypoUUID, SalespersonRow> rowguid();
-
-  Field<BigDecimal, SalespersonRow> saleslastyear();
-
-  OptField<BigDecimal, SalespersonRow> salesquota();
-
-  Field<BigDecimal, SalespersonRow> salesytd();
-
-  OptField<SalesterritoryId, SalespersonRow> territoryid();
 }

@@ -12,7 +12,7 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import static typo.runtime.Fragment.interpolate;
 
-public record UpdatePersonReturningSqlRepoImpl() implements UpdatePersonReturningSqlRepo {
+public class UpdatePersonReturningSqlRepoImpl implements UpdatePersonReturningSqlRepo {
   public List<UpdatePersonReturningSqlRow> apply(
     /* nullability unknown */ Optional<String> suffix,
     /* nullability unknown */ Optional<TypoLocalDateTime> cutoff,

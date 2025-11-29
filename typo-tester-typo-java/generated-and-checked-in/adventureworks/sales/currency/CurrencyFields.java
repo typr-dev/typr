@@ -52,7 +52,7 @@ public interface CurrencyFields {
 
   IdField<CurrencyId, CurrencyRow> currencycode();
 
-  Field<TypoLocalDateTime, CurrencyRow> modifieddate();
-
   Field<Name, CurrencyRow> name();
+
+  Field<TypoLocalDateTime, CurrencyRow> modifieddate();
 }

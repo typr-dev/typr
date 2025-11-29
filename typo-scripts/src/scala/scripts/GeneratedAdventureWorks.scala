@@ -47,7 +47,7 @@ object GeneratedAdventureWorks {
           (LangScala(Dialect.Scala3, TypeSupportScala), DbLibName.Doobie, Some(JsonLibName.Circe), "typo-tester-doobie", "-3"),
           (LangScala(Dialect.Scala2XSource3, TypeSupportScala), DbLibName.ZioJdbc, Some(JsonLibName.ZioJson), "typo-tester-zio-jdbc", "-2.13"),
           (LangScala(Dialect.Scala3, TypeSupportScala), DbLibName.ZioJdbc, Some(JsonLibName.ZioJson), "typo-tester-zio-jdbc", "-3"),
-          (LangJava, DbLibName.Typo, None, "typo-tester-typo-java", ""),
+          (LangJava, DbLibName.Typo, Some(JsonLibName.Jackson), "typo-tester-typo-java", ""),
           (LangScala(Dialect.Scala3, TypeSupportJava), DbLibName.Typo, None, "typo-tester-typo-scala", "")
         )
 

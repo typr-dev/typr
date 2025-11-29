@@ -128,55 +128,55 @@ public interface PViewFields {
     return new Impl(List.of());
   };
 
-  OptField</* bpchar, max 2 chars */ String, PViewRow> class_();
-
-  OptField</* max 15 chars */ String, PViewRow> color();
-
-  Field<Integer, PViewRow> daystomanufacture();
-
-  OptField<TypoLocalDateTime, PViewRow> discontinueddate();
-
-  Field<Flag, PViewRow> finishedgoodsflag();
-
   Field<ProductId, PViewRow> id();
-
-  Field<BigDecimal, PViewRow> listprice();
-
-  Field<Flag, PViewRow> makeflag();
-
-  Field<TypoLocalDateTime, PViewRow> modifieddate();
-
-  Field<Name, PViewRow> name();
 
   Field<ProductId, PViewRow> productid();
 
-  OptField</* bpchar, max 2 chars */ String, PViewRow> productline();
-
-  OptField<ProductmodelId, PViewRow> productmodelid();
+  Field<Name, PViewRow> name();
 
   Field</* max 25 chars */ String, PViewRow> productnumber();
 
-  OptField<ProductsubcategoryId, PViewRow> productsubcategoryid();
+  Field<Flag, PViewRow> makeflag();
 
-  Field<TypoShort, PViewRow> reorderpoint();
+  Field<Flag, PViewRow> finishedgoodsflag();
 
-  Field<TypoUUID, PViewRow> rowguid();
+  OptField</* max 15 chars */ String, PViewRow> color();
 
   Field<TypoShort, PViewRow> safetystocklevel();
 
-  OptField<TypoLocalDateTime, PViewRow> sellenddate();
+  Field<TypoShort, PViewRow> reorderpoint();
 
-  Field<TypoLocalDateTime, PViewRow> sellstartdate();
+  Field<BigDecimal, PViewRow> standardcost();
+
+  Field<BigDecimal, PViewRow> listprice();
 
   OptField</* max 5 chars */ String, PViewRow> size();
 
   OptField<UnitmeasureId, PViewRow> sizeunitmeasurecode();
 
-  Field<BigDecimal, PViewRow> standardcost();
-
-  OptField</* bpchar, max 2 chars */ String, PViewRow> style();
+  OptField<UnitmeasureId, PViewRow> weightunitmeasurecode();
 
   OptField<BigDecimal, PViewRow> weight();
 
-  OptField<UnitmeasureId, PViewRow> weightunitmeasurecode();
+  Field<Integer, PViewRow> daystomanufacture();
+
+  OptField</* bpchar, max 2 chars */ String, PViewRow> productline();
+
+  OptField</* bpchar, max 2 chars */ String, PViewRow> class_();
+
+  OptField</* bpchar, max 2 chars */ String, PViewRow> style();
+
+  OptField<ProductsubcategoryId, PViewRow> productsubcategoryid();
+
+  OptField<ProductmodelId, PViewRow> productmodelid();
+
+  Field<TypoLocalDateTime, PViewRow> sellstartdate();
+
+  OptField<TypoLocalDateTime, PViewRow> sellenddate();
+
+  OptField<TypoLocalDateTime, PViewRow> discontinueddate();
+
+  Field<TypoUUID, PViewRow> rowguid();
+
+  Field<TypoLocalDateTime, PViewRow> modifieddate();
 }

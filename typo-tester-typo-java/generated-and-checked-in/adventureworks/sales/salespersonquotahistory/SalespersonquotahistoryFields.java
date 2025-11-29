@@ -67,23 +67,23 @@ public interface SalespersonquotahistoryFields {
 
   IdField<BusinessentityId, SalespersonquotahistoryRow> businessentityid();
 
-  default SqlExpr<Boolean> compositeIdIn(List<SalespersonquotahistoryId> compositeIds) {
-    return new CompositeIn(List.of(new Part<BusinessentityId, SalespersonquotahistoryId, SalespersonquotahistoryRow>(businessentityid(), SalespersonquotahistoryId::businessentityid, BusinessentityId.pgType), new Part<TypoLocalDateTime, SalespersonquotahistoryId, SalespersonquotahistoryRow>(quotadate(), SalespersonquotahistoryId::quotadate, TypoLocalDateTime.pgType)), compositeIds);
+  IdField<TypoLocalDateTime, SalespersonquotahistoryRow> quotadate();
+
+  Field<BigDecimal, SalespersonquotahistoryRow> salesquota();
+
+  Field<TypoUUID, SalespersonquotahistoryRow> rowguid();
+
+  Field<TypoLocalDateTime, SalespersonquotahistoryRow> modifieddate();
+
+  default ForeignKey<SalespersonFields, SalespersonRow> fkSalesperson() {
+    return ForeignKey.<SalespersonFields, SalespersonRow>of("sales.FK_SalesPersonQuotaHistory_SalesPerson_BusinessEntityID").withColumnPair(businessentityid(), SalespersonFields::businessentityid);
   };
 
   default SqlExpr<Boolean> compositeIdIs(SalespersonquotahistoryId compositeId) {
     return SqlExpr.all(businessentityid().isEqual(compositeId.businessentityid()), quotadate().isEqual(compositeId.quotadate()));
   };
 
-  default ForeignKey<SalespersonFields, SalespersonRow> fkSalesperson() {
-    return ForeignKey.<SalespersonFields, SalespersonRow>of("sales.FK_SalesPersonQuotaHistory_SalesPerson_BusinessEntityID").withColumnPair(businessentityid(), SalespersonFields::businessentityid);
+  default SqlExpr<Boolean> compositeIdIn(List<SalespersonquotahistoryId> compositeIds) {
+    return new CompositeIn(List.of(new Part<BusinessentityId, SalespersonquotahistoryId, SalespersonquotahistoryRow>(businessentityid(), SalespersonquotahistoryId::businessentityid, BusinessentityId.pgType), new Part<TypoLocalDateTime, SalespersonquotahistoryId, SalespersonquotahistoryRow>(quotadate(), SalespersonquotahistoryId::quotadate, TypoLocalDateTime.pgType)), compositeIds);
   };
-
-  Field<TypoLocalDateTime, SalespersonquotahistoryRow> modifieddate();
-
-  IdField<TypoLocalDateTime, SalespersonquotahistoryRow> quotadate();
-
-  Field<TypoUUID, SalespersonquotahistoryRow> rowguid();
-
-  Field<BigDecimal, SalespersonquotahistoryRow> salesquota();
 }

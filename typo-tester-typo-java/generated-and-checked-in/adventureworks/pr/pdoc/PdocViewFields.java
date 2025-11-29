@@ -53,11 +53,11 @@ public interface PdocViewFields {
     return new Impl(List.of());
   };
 
-  Field<DocumentId, PdocViewRow> documentnode();
-
   Field<ProductId, PdocViewRow> id();
+
+  Field<ProductId, PdocViewRow> productid();
 
   Field<TypoLocalDateTime, PdocViewRow> modifieddate();
 
-  Field<ProductId, PdocViewRow> productid();
+  Field<DocumentId, PdocViewRow> documentnode();
 }

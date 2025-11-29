@@ -55,6 +55,12 @@ public interface TitledpersonFields {
     return new Impl(List.of());
   };
 
+  Field<TitleDomainId, TitledpersonRow> titleShort();
+
+  Field<TitleId, TitledpersonRow> title();
+
+  Field<String, TitledpersonRow> name();
+
   default ForeignKey<TitleFields, TitleRow> fkTitle() {
     return ForeignKey.<TitleFields, TitleRow>of("public.titledperson_title_fkey").withColumnPair(title(), TitleFields::code);
   };
@@ -62,10 +68,4 @@ public interface TitledpersonFields {
   default ForeignKey<TitleDomainFields, TitleDomainRow> fkTitleDomain() {
     return ForeignKey.<TitleDomainFields, TitleDomainRow>of("public.titledperson_title_short_fkey").withColumnPair(titleShort(), TitleDomainFields::code);
   };
-
-  Field<String, TitledpersonRow> name();
-
-  Field<TitleId, TitledpersonRow> title();
-
-  Field<TitleDomainId, TitledpersonRow> titleShort();
 }

@@ -18,7 +18,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record TestOrganisasjonRepoImpl() implements TestOrganisasjonRepo {
+public class TestOrganisasjonRepoImpl implements TestOrganisasjonRepo {
   public DeleteBuilder<TestOrganisasjonFields, TestOrganisasjonRow> delete() {
     return DeleteBuilder.of("public.test_organisasjon", TestOrganisasjonFields.structure());
   };
@@ -179,11 +179,11 @@ public record TestOrganisasjonRepoImpl() implements TestOrganisasjonRepo {
       copy test_organisasjon_TEMP("organisasjonskode") from stdin
       """), batchSize, unsaved, c, TestOrganisasjonRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "public"."test_organisasjon"("organisasjonskode")
-       select * from test_organisasjon_TEMP
-       on conflict ("organisasjonskode")
-       do nothing
-       ;
-       drop table test_organisasjon_TEMP;""")).update().runUnchecked(c);
+              insert into "public"."test_organisasjon"("organisasjonskode")
+              select * from test_organisasjon_TEMP
+              on conflict ("organisasjonskode")
+              do nothing
+              ;
+              drop table test_organisasjon_TEMP;""")).update().runUnchecked(c);
   };
 }

@@ -332,9 +332,9 @@ import zio.ZIO
 import zio.jdbc.ZConnection
 
 /** Methods to generate random data for `Ident(TestInsert)` */
-class TestInsert(
-  val random: Random,
-  val domainInsert: TestDomainInsert
+case class TestInsert(
+  random: Random,
+  domainInsert: TestDomainInsert
 ) {
   def humanresourcesDepartment(
     name: Name = domainInsert.publicName(random),

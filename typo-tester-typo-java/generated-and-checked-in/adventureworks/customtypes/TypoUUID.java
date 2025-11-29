@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.UUID;
 import typo.dsl.Bijection;
 import typo.runtime.PgRead;
@@ -15,7 +16,7 @@ import typo.runtime.PgWrite;
 import typo.runtime.internal.arrayMap;
 
 /** UUID */
-public record TypoUUID(UUID value) {
+public record TypoUUID(@JsonValue UUID value) {
   public TypoUUID withValue(UUID value) {
     return new TypoUUID(value);
   };

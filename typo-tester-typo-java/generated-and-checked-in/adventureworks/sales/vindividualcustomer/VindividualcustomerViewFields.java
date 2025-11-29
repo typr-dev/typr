@@ -99,39 +99,39 @@ public interface VindividualcustomerViewFields {
     return new Impl(List.of());
   };
 
-  Field</* max 60 chars */ String, VindividualcustomerViewRow> addressline1();
-
-  OptField</* max 60 chars */ String, VindividualcustomerViewRow> addressline2();
-
-  Field<Name, VindividualcustomerViewRow> addresstype();
-
   Field<BusinessentityId, VindividualcustomerViewRow> businessentityid();
 
-  Field</* max 30 chars */ String, VindividualcustomerViewRow> city();
-
-  Field<Name, VindividualcustomerViewRow> countryregionname();
-
-  OptField<TypoXml, VindividualcustomerViewRow> demographics();
-
-  OptField</* max 50 chars */ String, VindividualcustomerViewRow> emailaddress();
-
-  Field<Integer, VindividualcustomerViewRow> emailpromotion();
+  OptField</* max 8 chars */ String, VindividualcustomerViewRow> title();
 
   Field</* user-picked */ FirstName, VindividualcustomerViewRow> firstname();
 
+  OptField<Name, VindividualcustomerViewRow> middlename();
+
   Field<Name, VindividualcustomerViewRow> lastname();
 
-  OptField<Name, VindividualcustomerViewRow> middlename();
+  OptField</* max 10 chars */ String, VindividualcustomerViewRow> suffix();
 
   OptField<Phone, VindividualcustomerViewRow> phonenumber();
 
   OptField<Name, VindividualcustomerViewRow> phonenumbertype();
 
-  Field</* max 15 chars */ String, VindividualcustomerViewRow> postalcode();
+  OptField</* max 50 chars */ String, VindividualcustomerViewRow> emailaddress();
+
+  Field<Integer, VindividualcustomerViewRow> emailpromotion();
+
+  Field<Name, VindividualcustomerViewRow> addresstype();
+
+  Field</* max 60 chars */ String, VindividualcustomerViewRow> addressline1();
+
+  OptField</* max 60 chars */ String, VindividualcustomerViewRow> addressline2();
+
+  Field</* max 30 chars */ String, VindividualcustomerViewRow> city();
 
   Field<Name, VindividualcustomerViewRow> stateprovincename();
 
-  OptField</* max 10 chars */ String, VindividualcustomerViewRow> suffix();
+  Field</* max 15 chars */ String, VindividualcustomerViewRow> postalcode();
 
-  OptField</* max 8 chars */ String, VindividualcustomerViewRow> title();
+  Field<Name, VindividualcustomerViewRow> countryregionname();
+
+  OptField<TypoXml, VindividualcustomerViewRow> demographics();
 }

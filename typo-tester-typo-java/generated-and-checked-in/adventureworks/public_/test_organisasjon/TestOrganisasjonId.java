@@ -5,13 +5,14 @@
  */
 package adventureworks.public_.test_organisasjon;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `public.test_organisasjon` */
-public record TestOrganisasjonId(String value) {
+public record TestOrganisasjonId(@JsonValue String value) {
   public TestOrganisasjonId withValue(String value) {
     return new TestOrganisasjonId(value);
   };

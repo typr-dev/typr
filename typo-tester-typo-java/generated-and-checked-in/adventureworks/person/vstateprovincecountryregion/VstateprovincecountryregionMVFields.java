@@ -65,17 +65,17 @@ public interface VstateprovincecountryregionMVFields {
     return new Impl(List.of());
   };
 
-  Field<CountryregionId, VstateprovincecountryregionMVRow> countryregioncode();
-
-  Field<Name, VstateprovincecountryregionMVRow> countryregionname();
-
-  Field<Flag, VstateprovincecountryregionMVRow> isonlystateprovinceflag();
+  Field<StateprovinceId, VstateprovincecountryregionMVRow> stateprovinceid();
 
   Field</* bpchar, max 3 chars */ String, VstateprovincecountryregionMVRow> stateprovincecode();
 
-  Field<StateprovinceId, VstateprovincecountryregionMVRow> stateprovinceid();
+  Field<Flag, VstateprovincecountryregionMVRow> isonlystateprovinceflag();
 
   Field<Name, VstateprovincecountryregionMVRow> stateprovincename();
 
   Field<SalesterritoryId, VstateprovincecountryregionMVRow> territoryid();
+
+  Field<CountryregionId, VstateprovincecountryregionMVRow> countryregioncode();
+
+  Field<Name, VstateprovincecountryregionMVRow> countryregionname();
 }

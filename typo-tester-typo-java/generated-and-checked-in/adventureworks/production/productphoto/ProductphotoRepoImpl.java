@@ -24,7 +24,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record ProductphotoRepoImpl() implements ProductphotoRepo {
+public class ProductphotoRepoImpl implements ProductphotoRepo {
   public DeleteBuilder<ProductphotoFields, ProductphotoRow> delete() {
     return DeleteBuilder.of("production.productphoto", ProductphotoFields.structure());
   };
@@ -229,32 +229,32 @@ public record ProductphotoRepoImpl() implements ProductphotoRepo {
   ) {
     ProductphotoId productphotoid = row.productphotoid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "production"."productphoto"
-         set "thumbnailphoto" = """),
-      TypoBytea.pgType.opt().encode(row.thumbnailphoto()),
-      typo.runtime.Fragment.lit("""
-         ::bytea,
-         "thumbnailphotofilename" = """),
-      PgTypes.text.opt().encode(row.thumbnailphotofilename()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "largephoto" = """),
-      TypoBytea.pgType.opt().encode(row.largephoto()),
-      typo.runtime.Fragment.lit("""
-         ::bytea,
-         "largephotofilename" = """),
-      PgTypes.text.opt().encode(row.largephotofilename()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "productphotoid" = """),
-      ProductphotoId.pgType.encode(productphotoid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "production"."productphoto"
+                set "thumbnailphoto" = """),
+             TypoBytea.pgType.opt().encode(row.thumbnailphoto()),
+             typo.runtime.Fragment.lit("""
+                ::bytea,
+                "thumbnailphotofilename" = """),
+             PgTypes.text.opt().encode(row.thumbnailphotofilename()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "largephoto" = """),
+             TypoBytea.pgType.opt().encode(row.largephoto()),
+             typo.runtime.Fragment.lit("""
+                ::bytea,
+                "largephotofilename" = """),
+             PgTypes.text.opt().encode(row.largephotofilename()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "productphotoid" = """),
+             ProductphotoId.pgType.encode(productphotoid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public ProductphotoRow upsert(
@@ -325,16 +325,16 @@ public record ProductphotoRepoImpl() implements ProductphotoRepo {
       copy productphoto_TEMP("productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate") from stdin
       """), batchSize, unsaved, c, ProductphotoRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "production"."productphoto"("productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate")
-       select * from productphoto_TEMP
-       on conflict ("productphotoid")
-       do update set
-         "thumbnailphoto" = EXCLUDED."thumbnailphoto",
-       "thumbnailphotofilename" = EXCLUDED."thumbnailphotofilename",
-       "largephoto" = EXCLUDED."largephoto",
-       "largephotofilename" = EXCLUDED."largephotofilename",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table productphoto_TEMP;""")).update().runUnchecked(c);
+              insert into "production"."productphoto"("productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate")
+              select * from productphoto_TEMP
+              on conflict ("productphotoid")
+              do update set
+                "thumbnailphoto" = EXCLUDED."thumbnailphoto",
+              "thumbnailphotofilename" = EXCLUDED."thumbnailphotofilename",
+              "largephoto" = EXCLUDED."largephoto",
+              "largephotofilename" = EXCLUDED."largephotofilename",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table productphoto_TEMP;""")).update().runUnchecked(c);
   };
 }

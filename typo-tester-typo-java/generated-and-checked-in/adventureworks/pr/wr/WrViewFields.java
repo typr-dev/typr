@@ -84,29 +84,29 @@ public interface WrViewFields {
     return new Impl(List.of());
   };
 
-  OptField<BigDecimal, WrViewRow> actualcost();
+  Field<WorkorderId, WrViewRow> id();
+
+  Field<WorkorderId, WrViewRow> workorderid();
+
+  Field<Integer, WrViewRow> productid();
+
+  Field<TypoShort, WrViewRow> operationsequence();
+
+  Field<LocationId, WrViewRow> locationid();
+
+  Field<TypoLocalDateTime, WrViewRow> scheduledstartdate();
+
+  Field<TypoLocalDateTime, WrViewRow> scheduledenddate();
+
+  OptField<TypoLocalDateTime, WrViewRow> actualstartdate();
 
   OptField<TypoLocalDateTime, WrViewRow> actualenddate();
 
   OptField<BigDecimal, WrViewRow> actualresourcehrs();
 
-  OptField<TypoLocalDateTime, WrViewRow> actualstartdate();
-
-  Field<WorkorderId, WrViewRow> id();
-
-  Field<LocationId, WrViewRow> locationid();
-
-  Field<TypoLocalDateTime, WrViewRow> modifieddate();
-
-  Field<TypoShort, WrViewRow> operationsequence();
-
   Field<BigDecimal, WrViewRow> plannedcost();
 
-  Field<Integer, WrViewRow> productid();
+  OptField<BigDecimal, WrViewRow> actualcost();
 
-  Field<TypoLocalDateTime, WrViewRow> scheduledenddate();
-
-  Field<TypoLocalDateTime, WrViewRow> scheduledstartdate();
-
-  Field<WorkorderId, WrViewRow> workorderid();
+  Field<TypoLocalDateTime, WrViewRow> modifieddate();
 }

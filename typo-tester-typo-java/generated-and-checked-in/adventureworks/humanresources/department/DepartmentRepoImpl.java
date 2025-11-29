@@ -23,7 +23,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record DepartmentRepoImpl() implements DepartmentRepo {
+public class DepartmentRepoImpl implements DepartmentRepo {
   public DeleteBuilder<DepartmentFields, DepartmentRow> delete() {
     return DeleteBuilder.of("humanresources.department", DepartmentFields.structure());
   };
@@ -212,24 +212,24 @@ public record DepartmentRepoImpl() implements DepartmentRepo {
   ) {
     DepartmentId departmentid = row.departmentid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "humanresources"."department"
-         set "name" = """),
-      Name.pgType.encode(row.name()),
-      typo.runtime.Fragment.lit("""
-         ::varchar,
-         "groupname" = """),
-      Name.pgType.encode(row.groupname()),
-      typo.runtime.Fragment.lit("""
-         ::varchar,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "departmentid" = """),
-      DepartmentId.pgType.encode(departmentid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "humanresources"."department"
+                set "name" = """),
+             Name.pgType.encode(row.name()),
+             typo.runtime.Fragment.lit("""
+                ::varchar,
+                "groupname" = """),
+             Name.pgType.encode(row.groupname()),
+             typo.runtime.Fragment.lit("""
+                ::varchar,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "departmentid" = """),
+             DepartmentId.pgType.encode(departmentid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public DepartmentRow upsert(
@@ -292,14 +292,14 @@ public record DepartmentRepoImpl() implements DepartmentRepo {
       copy department_TEMP("departmentid", "name", "groupname", "modifieddate") from stdin
       """), batchSize, unsaved, c, DepartmentRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "humanresources"."department"("departmentid", "name", "groupname", "modifieddate")
-       select * from department_TEMP
-       on conflict ("departmentid")
-       do update set
-         "name" = EXCLUDED."name",
-       "groupname" = EXCLUDED."groupname",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table department_TEMP;""")).update().runUnchecked(c);
+              insert into "humanresources"."department"("departmentid", "name", "groupname", "modifieddate")
+              select * from department_TEMP
+              on conflict ("departmentid")
+              do update set
+                "name" = EXCLUDED."name",
+              "groupname" = EXCLUDED."groupname",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table department_TEMP;""")).update().runUnchecked(c);
   };
 }

@@ -91,35 +91,35 @@ public interface VjobcandidateViewFields {
     return new Impl(List.of());
   };
 
-  OptField</* max 100 chars */ String, VjobcandidateViewRow> addrLocCity();
-
-  OptField</* max 100 chars */ String, VjobcandidateViewRow> addrLocCountryRegion();
-
-  OptField</* max 100 chars */ String, VjobcandidateViewRow> addrLocState();
-
-  OptField</* max 20 chars */ String, VjobcandidateViewRow> addrPostalCode();
-
-  OptField</* max 30 chars */ String, VjobcandidateViewRow> addrType();
+  Field<JobcandidateId, VjobcandidateViewRow> jobcandidateid();
 
   OptField<BusinessentityId, VjobcandidateViewRow> businessentityid();
 
-  OptField<String, VjobcandidateViewRow> eMail();
-
-  Field<JobcandidateId, VjobcandidateViewRow> jobcandidateid();
-
-  Field<TypoLocalDateTime, VjobcandidateViewRow> modifieddate();
+  OptField</* max 30 chars */ String, VjobcandidateViewRow> namePrefix();
 
   OptField</* max 30 chars */ String, VjobcandidateViewRow> nameFirst();
 
-  OptField</* max 30 chars */ String, VjobcandidateViewRow> nameLast();
-
   OptField</* max 30 chars */ String, VjobcandidateViewRow> nameMiddle();
 
-  OptField</* max 30 chars */ String, VjobcandidateViewRow> namePrefix();
+  OptField</* max 30 chars */ String, VjobcandidateViewRow> nameLast();
 
   OptField</* max 30 chars */ String, VjobcandidateViewRow> nameSuffix();
 
   OptField<String, VjobcandidateViewRow> skills();
 
+  OptField</* max 30 chars */ String, VjobcandidateViewRow> addrType();
+
+  OptField</* max 100 chars */ String, VjobcandidateViewRow> addrLocCountryRegion();
+
+  OptField</* max 100 chars */ String, VjobcandidateViewRow> addrLocState();
+
+  OptField</* max 100 chars */ String, VjobcandidateViewRow> addrLocCity();
+
+  OptField</* max 20 chars */ String, VjobcandidateViewRow> addrPostalCode();
+
+  OptField<String, VjobcandidateViewRow> eMail();
+
   OptField<String, VjobcandidateViewRow> webSite();
+
+  Field<TypoLocalDateTime, VjobcandidateViewRow> modifieddate();
 }

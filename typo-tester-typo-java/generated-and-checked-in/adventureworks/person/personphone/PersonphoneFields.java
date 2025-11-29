@@ -65,13 +65,11 @@ public interface PersonphoneFields {
 
   IdField<BusinessentityId, PersonphoneRow> businessentityid();
 
-  default SqlExpr<Boolean> compositeIdIn(List<PersonphoneId> compositeIds) {
-    return new CompositeIn(List.of(new Part<BusinessentityId, PersonphoneId, PersonphoneRow>(businessentityid(), PersonphoneId::businessentityid, BusinessentityId.pgType), new Part<Phone, PersonphoneId, PersonphoneRow>(phonenumber(), PersonphoneId::phonenumber, Phone.pgType), new Part<PhonenumbertypeId, PersonphoneId, PersonphoneRow>(phonenumbertypeid(), PersonphoneId::phonenumbertypeid, PhonenumbertypeId.pgType)), compositeIds);
-  };
+  IdField<Phone, PersonphoneRow> phonenumber();
 
-  default SqlExpr<Boolean> compositeIdIs(PersonphoneId compositeId) {
-    return SqlExpr.all(businessentityid().isEqual(compositeId.businessentityid()), phonenumber().isEqual(compositeId.phonenumber()), phonenumbertypeid().isEqual(compositeId.phonenumbertypeid()));
-  };
+  IdField<PhonenumbertypeId, PersonphoneRow> phonenumbertypeid();
+
+  Field<TypoLocalDateTime, PersonphoneRow> modifieddate();
 
   default ForeignKey<PersonFields, PersonRow> fkPerson() {
     return ForeignKey.<PersonFields, PersonRow>of("person.FK_PersonPhone_Person_BusinessEntityID").withColumnPair(businessentityid(), PersonFields::businessentityid);
@@ -81,9 +79,11 @@ public interface PersonphoneFields {
     return ForeignKey.<PhonenumbertypeFields, PhonenumbertypeRow>of("person.FK_PersonPhone_PhoneNumberType_PhoneNumberTypeID").withColumnPair(phonenumbertypeid(), PhonenumbertypeFields::phonenumbertypeid);
   };
 
-  Field<TypoLocalDateTime, PersonphoneRow> modifieddate();
+  default SqlExpr<Boolean> compositeIdIs(PersonphoneId compositeId) {
+    return SqlExpr.all(businessentityid().isEqual(compositeId.businessentityid()), phonenumber().isEqual(compositeId.phonenumber()), phonenumbertypeid().isEqual(compositeId.phonenumbertypeid()));
+  };
 
-  IdField<Phone, PersonphoneRow> phonenumber();
-
-  IdField<PhonenumbertypeId, PersonphoneRow> phonenumbertypeid();
+  default SqlExpr<Boolean> compositeIdIn(List<PersonphoneId> compositeIds) {
+    return new CompositeIn(List.of(new Part<BusinessentityId, PersonphoneId, PersonphoneRow>(businessentityid(), PersonphoneId::businessentityid, BusinessentityId.pgType), new Part<Phone, PersonphoneId, PersonphoneRow>(phonenumber(), PersonphoneId::phonenumber, Phone.pgType), new Part<PhonenumbertypeId, PersonphoneId, PersonphoneRow>(phonenumbertypeid(), PersonphoneId::phonenumbertypeid, PhonenumbertypeId.pgType)), compositeIds);
+  };
 }

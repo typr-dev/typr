@@ -6,11 +6,12 @@
 package adventureworks.public_.test_sak_soknadsalternativ;
 
 import adventureworks.public_.test_utdanningstilbud.TestUtdanningstilbudId;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /** Type for the composite primary key of table `public.test_sak_soknadsalternativ` */
 public record TestSakSoknadsalternativId(
-  String organisasjonskodeSaksbehandler,
-  String utdanningsmulighetKode
+  @JsonProperty("organisasjonskode_saksbehandler") String organisasjonskodeSaksbehandler,
+  @JsonProperty("utdanningsmulighet_kode") String utdanningsmulighetKode
 ) {
   public TestSakSoknadsalternativId withOrganisasjonskodeSaksbehandler(String organisasjonskodeSaksbehandler) {
     return new TestSakSoknadsalternativId(organisasjonskodeSaksbehandler, utdanningsmulighetKode);

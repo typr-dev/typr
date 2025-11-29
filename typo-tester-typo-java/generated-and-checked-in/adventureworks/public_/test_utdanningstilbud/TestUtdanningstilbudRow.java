@@ -6,6 +6,7 @@
 package adventureworks.public_.test_utdanningstilbud;
 
 import adventureworks.public_.test_organisasjon.TestOrganisasjonId;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
@@ -18,7 +19,7 @@ import typo.runtime.RowParsers.Tuple2;
 public record TestUtdanningstilbudRow(
   /** Points to {@link adventureworks.public_.test_organisasjon.TestOrganisasjonRow#organisasjonskode()} */
   TestOrganisasjonId organisasjonskode,
-  String utdanningsmulighetKode
+  @JsonProperty("utdanningsmulighet_kode") String utdanningsmulighetKode
 ) {
   /** Points to {@link adventureworks.public_.test_organisasjon.TestOrganisasjonRow#organisasjonskode()} */
   public TestUtdanningstilbudRow withOrganisasjonskode(TestOrganisasjonId organisasjonskode) {

@@ -82,25 +82,25 @@ public interface VvendorwithcontactsViewFields {
 
   Field<BusinessentityId, VvendorwithcontactsViewRow> businessentityid();
 
+  Field<Name, VvendorwithcontactsViewRow> name();
+
   Field<Name, VvendorwithcontactsViewRow> contacttype();
 
-  OptField</* max 50 chars */ String, VvendorwithcontactsViewRow> emailaddress();
-
-  Field<Integer, VvendorwithcontactsViewRow> emailpromotion();
+  OptField</* max 8 chars */ String, VvendorwithcontactsViewRow> title();
 
   Field</* user-picked */ FirstName, VvendorwithcontactsViewRow> firstname();
 
-  Field<Name, VvendorwithcontactsViewRow> lastname();
-
   OptField<Name, VvendorwithcontactsViewRow> middlename();
 
-  Field<Name, VvendorwithcontactsViewRow> name();
+  Field<Name, VvendorwithcontactsViewRow> lastname();
+
+  OptField</* max 10 chars */ String, VvendorwithcontactsViewRow> suffix();
 
   OptField<Phone, VvendorwithcontactsViewRow> phonenumber();
 
   OptField<Name, VvendorwithcontactsViewRow> phonenumbertype();
 
-  OptField</* max 10 chars */ String, VvendorwithcontactsViewRow> suffix();
+  OptField</* max 50 chars */ String, VvendorwithcontactsViewRow> emailaddress();
 
-  OptField</* max 8 chars */ String, VvendorwithcontactsViewRow> title();
+  Field<Integer, VvendorwithcontactsViewRow> emailpromotion();
 }

@@ -9,23 +9,24 @@ import adventureworks.customtypes.Defaulted;
 import adventureworks.customtypes.Defaulted.UseDefault;
 import adventureworks.customtypes.TypoInstant;
 import adventureworks.customtypes.TypoUnknownCitext;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
 import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 
 /** This class corresponds to a row in table `public.users` which has not been persisted yet */
 public record UsersRowUnsaved(
-  UsersId userId,
+  @JsonProperty("user_id") UsersId userId,
   String name,
-  Optional<String> lastName,
+  @JsonProperty("last_name") Optional<String> lastName,
   TypoUnknownCitext email,
   String password,
-  Optional<TypoInstant> verifiedOn,
+  @JsonProperty("verified_on") Optional<TypoInstant> verifiedOn,
   /** Default: now() */
-  Defaulted<TypoInstant> createdAt
+  @JsonProperty("created_at") Defaulted<TypoInstant> createdAt
 ) {
   public UsersRowUnsaved(
-    UsersId userId,
+    @JsonProperty("user_id") UsersId userId,
     String name,
     TypoUnknownCitext email,
     String password

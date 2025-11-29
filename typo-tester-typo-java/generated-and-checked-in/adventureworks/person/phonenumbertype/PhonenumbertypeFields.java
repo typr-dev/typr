@@ -50,9 +50,9 @@ public interface PhonenumbertypeFields {
     return new Impl(List.of());
   };
 
-  Field<TypoLocalDateTime, PhonenumbertypeRow> modifieddate();
+  IdField<PhonenumbertypeId, PhonenumbertypeRow> phonenumbertypeid();
 
   Field<Name, PhonenumbertypeRow> name();
 
-  IdField<PhonenumbertypeId, PhonenumbertypeRow> phonenumbertypeid();
+  Field<TypoLocalDateTime, PhonenumbertypeRow> modifieddate();
 }

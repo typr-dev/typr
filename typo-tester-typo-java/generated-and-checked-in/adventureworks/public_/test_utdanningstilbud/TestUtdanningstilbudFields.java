@@ -52,19 +52,19 @@ public interface TestUtdanningstilbudFields {
     return new Impl(List.of());
   };
 
-  default SqlExpr<Boolean> compositeIdIn(List<TestUtdanningstilbudId> compositeIds) {
-    return new CompositeIn(List.of(new Part<TestOrganisasjonId, TestUtdanningstilbudId, TestUtdanningstilbudRow>(organisasjonskode(), TestUtdanningstilbudId::organisasjonskode, TestOrganisasjonId.pgType), new Part<String, TestUtdanningstilbudId, TestUtdanningstilbudRow>(utdanningsmulighetKode(), TestUtdanningstilbudId::utdanningsmulighetKode, PgTypes.text)), compositeIds);
+  IdField<TestOrganisasjonId, TestUtdanningstilbudRow> organisasjonskode();
+
+  IdField<String, TestUtdanningstilbudRow> utdanningsmulighetKode();
+
+  default ForeignKey<TestOrganisasjonFields, TestOrganisasjonRow> fkTestOrganisasjon() {
+    return ForeignKey.<TestOrganisasjonFields, TestOrganisasjonRow>of("public.test_utdanningstilbud_organisasjonskode_fkey").withColumnPair(organisasjonskode(), TestOrganisasjonFields::organisasjonskode);
   };
 
   default SqlExpr<Boolean> compositeIdIs(TestUtdanningstilbudId compositeId) {
     return SqlExpr.all(organisasjonskode().isEqual(compositeId.organisasjonskode()), utdanningsmulighetKode().isEqual(compositeId.utdanningsmulighetKode()));
   };
 
-  default ForeignKey<TestOrganisasjonFields, TestOrganisasjonRow> fkTestOrganisasjon() {
-    return ForeignKey.<TestOrganisasjonFields, TestOrganisasjonRow>of("public.test_utdanningstilbud_organisasjonskode_fkey").withColumnPair(organisasjonskode(), TestOrganisasjonFields::organisasjonskode);
+  default SqlExpr<Boolean> compositeIdIn(List<TestUtdanningstilbudId> compositeIds) {
+    return new CompositeIn(List.of(new Part<TestOrganisasjonId, TestUtdanningstilbudId, TestUtdanningstilbudRow>(organisasjonskode(), TestUtdanningstilbudId::organisasjonskode, TestOrganisasjonId.pgType), new Part<String, TestUtdanningstilbudId, TestUtdanningstilbudRow>(utdanningsmulighetKode(), TestUtdanningstilbudId::utdanningsmulighetKode, PgTypes.text)), compositeIds);
   };
-
-  IdField<TestOrganisasjonId, TestUtdanningstilbudRow> organisasjonskode();
-
-  IdField<String, TestUtdanningstilbudRow> utdanningsmulighetKode();
 }

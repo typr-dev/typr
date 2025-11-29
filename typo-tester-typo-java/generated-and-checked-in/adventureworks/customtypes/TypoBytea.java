@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.ByteArrays;
 import typo.runtime.PgText;
@@ -12,7 +13,7 @@ import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 
 /** This represents the bytea datatype in PostgreSQL */
-public record TypoBytea(Byte[] value) {
+public record TypoBytea(@JsonValue Byte[] value) {
   public TypoBytea withValue(Byte[] value) {
     return new TypoBytea(value);
   };

@@ -26,7 +26,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record PurchaseorderheaderRepoImpl() implements PurchaseorderheaderRepo {
+public class PurchaseorderheaderRepoImpl implements PurchaseorderheaderRepo {
   public DeleteBuilder<PurchaseorderheaderFields, PurchaseorderheaderRow> delete() {
     return DeleteBuilder.of("purchasing.purchaseorderheader", PurchaseorderheaderFields.structure());
   };
@@ -301,56 +301,56 @@ public record PurchaseorderheaderRepoImpl() implements PurchaseorderheaderRepo {
   ) {
     PurchaseorderheaderId purchaseorderid = row.purchaseorderid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "purchasing"."purchaseorderheader"
-         set "revisionnumber" = """),
-      TypoShort.pgType.encode(row.revisionnumber()),
-      typo.runtime.Fragment.lit("""
-         ::int2,
-         "status" = """),
-      TypoShort.pgType.encode(row.status()),
-      typo.runtime.Fragment.lit("""
-         ::int2,
-         "employeeid" = """),
-      BusinessentityId.pgType.encode(row.employeeid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "vendorid" = """),
-      BusinessentityId.pgType.encode(row.vendorid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "shipmethodid" = """),
-      ShipmethodId.pgType.encode(row.shipmethodid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "orderdate" = """),
-      TypoLocalDateTime.pgType.encode(row.orderdate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp,
-         "shipdate" = """),
-      TypoLocalDateTime.pgType.opt().encode(row.shipdate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp,
-         "subtotal" = """),
-      PgTypes.numeric.encode(row.subtotal()),
-      typo.runtime.Fragment.lit("""
-         ::numeric,
-         "taxamt" = """),
-      PgTypes.numeric.encode(row.taxamt()),
-      typo.runtime.Fragment.lit("""
-         ::numeric,
-         "freight" = """),
-      PgTypes.numeric.encode(row.freight()),
-      typo.runtime.Fragment.lit("""
-         ::numeric,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "purchaseorderid" = """),
-      PurchaseorderheaderId.pgType.encode(purchaseorderid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "purchasing"."purchaseorderheader"
+                set "revisionnumber" = """),
+             TypoShort.pgType.encode(row.revisionnumber()),
+             typo.runtime.Fragment.lit("""
+                ::int2,
+                "status" = """),
+             TypoShort.pgType.encode(row.status()),
+             typo.runtime.Fragment.lit("""
+                ::int2,
+                "employeeid" = """),
+             BusinessentityId.pgType.encode(row.employeeid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "vendorid" = """),
+             BusinessentityId.pgType.encode(row.vendorid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "shipmethodid" = """),
+             ShipmethodId.pgType.encode(row.shipmethodid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "orderdate" = """),
+             TypoLocalDateTime.pgType.encode(row.orderdate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp,
+                "shipdate" = """),
+             TypoLocalDateTime.pgType.opt().encode(row.shipdate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp,
+                "subtotal" = """),
+             PgTypes.numeric.encode(row.subtotal()),
+             typo.runtime.Fragment.lit("""
+                ::numeric,
+                "taxamt" = """),
+             PgTypes.numeric.encode(row.taxamt()),
+             typo.runtime.Fragment.lit("""
+                ::numeric,
+                "freight" = """),
+             PgTypes.numeric.encode(row.freight()),
+             typo.runtime.Fragment.lit("""
+                ::numeric,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "purchaseorderid" = """),
+             PurchaseorderheaderId.pgType.encode(purchaseorderid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public PurchaseorderheaderRow upsert(
@@ -445,22 +445,22 @@ public record PurchaseorderheaderRepoImpl() implements PurchaseorderheaderRepo {
       copy purchaseorderheader_TEMP("purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate", "shipdate", "subtotal", "taxamt", "freight", "modifieddate") from stdin
       """), batchSize, unsaved, c, PurchaseorderheaderRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "purchasing"."purchaseorderheader"("purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate", "shipdate", "subtotal", "taxamt", "freight", "modifieddate")
-       select * from purchaseorderheader_TEMP
-       on conflict ("purchaseorderid")
-       do update set
-         "revisionnumber" = EXCLUDED."revisionnumber",
-       "status" = EXCLUDED."status",
-       "employeeid" = EXCLUDED."employeeid",
-       "vendorid" = EXCLUDED."vendorid",
-       "shipmethodid" = EXCLUDED."shipmethodid",
-       "orderdate" = EXCLUDED."orderdate",
-       "shipdate" = EXCLUDED."shipdate",
-       "subtotal" = EXCLUDED."subtotal",
-       "taxamt" = EXCLUDED."taxamt",
-       "freight" = EXCLUDED."freight",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table purchaseorderheader_TEMP;""")).update().runUnchecked(c);
+              insert into "purchasing"."purchaseorderheader"("purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate", "shipdate", "subtotal", "taxamt", "freight", "modifieddate")
+              select * from purchaseorderheader_TEMP
+              on conflict ("purchaseorderid")
+              do update set
+                "revisionnumber" = EXCLUDED."revisionnumber",
+              "status" = EXCLUDED."status",
+              "employeeid" = EXCLUDED."employeeid",
+              "vendorid" = EXCLUDED."vendorid",
+              "shipmethodid" = EXCLUDED."shipmethodid",
+              "orderdate" = EXCLUDED."orderdate",
+              "shipdate" = EXCLUDED."shipdate",
+              "subtotal" = EXCLUDED."subtotal",
+              "taxamt" = EXCLUDED."taxamt",
+              "freight" = EXCLUDED."freight",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table purchaseorderheader_TEMP;""")).update().runUnchecked(c);
   };
 }

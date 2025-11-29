@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import org.postgresql.jdbc.PgArray;
@@ -15,7 +16,7 @@ import typo.runtime.PgType;
 import typo.runtime.PgWrite;
 
 /** extension: https://github.com/pgvector/pgvector */
-public record TypoVector(Float[] value) {
+public record TypoVector(@JsonValue Float[] value) {
   public TypoVector withValue(Float[] value) {
     return new TypoVector(value);
   };

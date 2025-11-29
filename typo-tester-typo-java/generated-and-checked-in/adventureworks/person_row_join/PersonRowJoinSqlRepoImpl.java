@@ -9,7 +9,7 @@ import java.sql.Connection;
 import java.util.List;
 import static typo.runtime.Fragment.interpolate;
 
-public record PersonRowJoinSqlRepoImpl() implements PersonRowJoinSqlRepo {
+public class PersonRowJoinSqlRepoImpl implements PersonRowJoinSqlRepo {
   public List<PersonRowJoinSqlRow> apply(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        SELECT s.businessentityid,

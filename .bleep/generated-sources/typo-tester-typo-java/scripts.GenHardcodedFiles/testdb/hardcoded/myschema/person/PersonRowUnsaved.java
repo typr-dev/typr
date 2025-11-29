@@ -5,6 +5,7 @@
  */
 package testdb.hardcoded.myschema.person;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
 import testdb.hardcoded.customtypes.Defaulted;
 import testdb.hardcoded.customtypes.Defaulted.UseDefault;
@@ -18,30 +19,30 @@ import typo.runtime.PgTypes;
 /** This class corresponds to a row in table `myschema.person` which has not been persisted yet */
 public record PersonRowUnsaved(
   /** Points to {@link testdb.hardcoded.myschema.football_club.FootballClubRow#id()} */
-  FootballClubId favouriteFootballClubId,
+  @JsonProperty("favourite_football_club_id") FootballClubId favouriteFootballClubId,
   /* max 100 chars */ String name,
-  Optional</* max 30 chars */ String> nickName,
-  Optional</* max 100 chars */ String> blogUrl,
+  @JsonProperty("nick_name") Optional</* max 30 chars */ String> nickName,
+  @JsonProperty("blog_url") Optional</* max 100 chars */ String> blogUrl,
   /* max 254 chars */ String email,
   /* max 8 chars */ String phone,
-  Boolean likesPizza,
-  Optional</* max 254 chars */ String> workEmail,
+  @JsonProperty("likes_pizza") Boolean likesPizza,
+  @JsonProperty("work_email") Optional</* max 254 chars */ String> workEmail,
   /** Default: auto-increment */
   Defaulted<PersonId> id,
   /** Default: some-value
     * Points to {@link testdb.hardcoded.myschema.marital_status.MaritalStatusRow#id()}
     */
-  Defaulted<MaritalStatusId> maritalStatusId,
+  @JsonProperty("marital_status_id") Defaulted<MaritalStatusId> maritalStatusId,
   /** Default: one */
-  Defaulted<Number> favoriteNumber
+  @JsonProperty("favorite_number") Defaulted<Number> favoriteNumber
 ) {
   public PersonRowUnsaved(
     /** Points to {@link testdb.hardcoded.myschema.football_club.FootballClubRow#id()} */
-    FootballClubId favouriteFootballClubId,
+    @JsonProperty("favourite_football_club_id") FootballClubId favouriteFootballClubId,
     /* max 100 chars */ String name,
     /* max 254 chars */ String email,
     /* max 8 chars */ String phone,
-    Boolean likesPizza
+    @JsonProperty("likes_pizza") Boolean likesPizza
   ) {
     this(favouriteFootballClubId, name, Optional.empty(), Optional.empty(), email, phone, likesPizza, Optional.empty(), new UseDefault<>(), new UseDefault<>(), new UseDefault<>());
   };

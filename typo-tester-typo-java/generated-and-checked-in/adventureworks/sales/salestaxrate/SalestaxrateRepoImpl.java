@@ -27,7 +27,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record SalestaxrateRepoImpl() implements SalestaxrateRepo {
+public class SalestaxrateRepoImpl implements SalestaxrateRepo {
   public DeleteBuilder<SalestaxrateFields, SalestaxrateRow> delete() {
     return DeleteBuilder.of("sales.salestaxrate", SalestaxrateFields.structure());
   };
@@ -247,36 +247,36 @@ public record SalestaxrateRepoImpl() implements SalestaxrateRepo {
   ) {
     SalestaxrateId salestaxrateid = row.salestaxrateid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "sales"."salestaxrate"
-         set "stateprovinceid" = """),
-      StateprovinceId.pgType.encode(row.stateprovinceid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "taxtype" = """),
-      TypoShort.pgType.encode(row.taxtype()),
-      typo.runtime.Fragment.lit("""
-         ::int2,
-         "taxrate" = """),
-      PgTypes.numeric.encode(row.taxrate()),
-      typo.runtime.Fragment.lit("""
-         ::numeric,
-         "name" = """),
-      Name.pgType.encode(row.name()),
-      typo.runtime.Fragment.lit("""
-         ::varchar,
-         "rowguid" = """),
-      TypoUUID.pgType.encode(row.rowguid()),
-      typo.runtime.Fragment.lit("""
-         ::uuid,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "salestaxrateid" = """),
-      SalestaxrateId.pgType.encode(salestaxrateid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "sales"."salestaxrate"
+                set "stateprovinceid" = """),
+             StateprovinceId.pgType.encode(row.stateprovinceid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "taxtype" = """),
+             TypoShort.pgType.encode(row.taxtype()),
+             typo.runtime.Fragment.lit("""
+                ::int2,
+                "taxrate" = """),
+             PgTypes.numeric.encode(row.taxrate()),
+             typo.runtime.Fragment.lit("""
+                ::numeric,
+                "name" = """),
+             Name.pgType.encode(row.name()),
+             typo.runtime.Fragment.lit("""
+                ::varchar,
+                "rowguid" = """),
+             TypoUUID.pgType.encode(row.rowguid()),
+             typo.runtime.Fragment.lit("""
+                ::uuid,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "salestaxrateid" = """),
+             SalestaxrateId.pgType.encode(salestaxrateid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public SalestaxrateRow upsert(
@@ -351,17 +351,17 @@ public record SalestaxrateRepoImpl() implements SalestaxrateRepo {
       copy salestaxrate_TEMP("salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate") from stdin
       """), batchSize, unsaved, c, SalestaxrateRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "sales"."salestaxrate"("salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate")
-       select * from salestaxrate_TEMP
-       on conflict ("salestaxrateid")
-       do update set
-         "stateprovinceid" = EXCLUDED."stateprovinceid",
-       "taxtype" = EXCLUDED."taxtype",
-       "taxrate" = EXCLUDED."taxrate",
-       "name" = EXCLUDED."name",
-       "rowguid" = EXCLUDED."rowguid",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table salestaxrate_TEMP;""")).update().runUnchecked(c);
+              insert into "sales"."salestaxrate"("salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate")
+              select * from salestaxrate_TEMP
+              on conflict ("salestaxrateid")
+              do update set
+                "stateprovinceid" = EXCLUDED."stateprovinceid",
+              "taxtype" = EXCLUDED."taxtype",
+              "taxrate" = EXCLUDED."taxrate",
+              "name" = EXCLUDED."name",
+              "rowguid" = EXCLUDED."rowguid",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table salestaxrate_TEMP;""")).update().runUnchecked(c);
   };
 }

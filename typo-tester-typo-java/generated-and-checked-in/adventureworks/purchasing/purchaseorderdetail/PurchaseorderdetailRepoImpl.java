@@ -16,7 +16,7 @@ import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 import static typo.runtime.Fragment.interpolate;
 
-public record PurchaseorderdetailRepoImpl() implements PurchaseorderdetailRepo {
+public class PurchaseorderdetailRepoImpl implements PurchaseorderdetailRepo {
   public SelectBuilder<PurchaseorderdetailFields, PurchaseorderdetailRow> select() {
     return SelectBuilder.of("purchasing.purchaseorderdetail", PurchaseorderdetailFields.structure(), PurchaseorderdetailRow._rowParser);
   };
@@ -53,19 +53,19 @@ public record PurchaseorderdetailRepoImpl() implements PurchaseorderdetailRepo {
     PurchaseorderheaderId[] purchaseorderid = arrayMap.map(compositeIds, PurchaseorderdetailId::purchaseorderid, PurchaseorderheaderId.class);;
       Integer[] purchaseorderdetailid = arrayMap.map(compositeIds, PurchaseorderdetailId::purchaseorderdetailid, Integer.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         select "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text
-         from "purchasing"."purchaseorderdetail"
-         where ("purchaseorderid", "purchaseorderdetailid")
-         in (select unnest("""),
-      PurchaseorderheaderId.pgTypeArray.encode(purchaseorderid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      PgTypes.int4Array.encode(purchaseorderdetailid),
-      typo.runtime.Fragment.lit("""
-      ::int4[]))
+             typo.runtime.Fragment.lit("""
+                select "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text
+                from "purchasing"."purchaseorderdetail"
+                where ("purchaseorderid", "purchaseorderdetailid")
+                in (select unnest("""),
+             PurchaseorderheaderId.pgTypeArray.encode(purchaseorderid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             PgTypes.int4Array.encode(purchaseorderdetailid),
+             typo.runtime.Fragment.lit("""
+             ::int4[]))
 
-      """)
-    ).as(PurchaseorderdetailRow._rowParser.all()).runUnchecked(c);
+             """)
+           ).as(PurchaseorderdetailRow._rowParser.all()).runUnchecked(c);
   };
 
   public Map<PurchaseorderdetailId, PurchaseorderdetailRow> selectByIdsTracked(

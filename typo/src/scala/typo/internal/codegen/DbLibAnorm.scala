@@ -211,12 +211,14 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
         returnType: jvm.Type
     ) = Right(
       jvm.Method(
+        Nil,
         comments = repoMethod.comment,
         tparams = Nil,
         name = jvm.Ident(repoMethod.methodName),
         params = params,
         implicitParams = implicitParams,
         tpe = returnType,
+        throws = Nil,
         body = Nil
       )
     )
@@ -246,7 +248,7 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
         sig(params = List(unsavedParam), implicitParams = List(c), returnType = rowType)
       case RepoMethod.InsertStreaming(_, rowType, _) =>
         val unsaved = jvm.Param(jvm.Ident("unsaved"), TypesScala.Iterator.of(rowType))
-        val batchSize = jvm.Param(jvm.Comments.Empty, jvm.Ident("batchSize"), TypesScala.Int, Some(code"10000"))
+        val batchSize = jvm.Param(Nil, jvm.Comments.Empty, jvm.Ident("batchSize"), TypesScala.Int, Some(code"10000"))
         sig(params = List(unsaved, batchSize), implicitParams = List(c), returnType = TypesScala.Long)
       case RepoMethod.Upsert(_, _, _, unsavedParam, rowType, _) =>
         sig(params = List(unsavedParam), implicitParams = List(c), returnType = rowType)
@@ -255,13 +257,13 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
         sig(params = List(unsaved), implicitParams = List(c), returnType = TypesScala.List.of(rowType))
       case RepoMethod.UpsertStreaming(_, _, rowType, _) =>
         val unsaved = jvm.Param(jvm.Ident("unsaved"), TypesScala.Iterator.of(rowType))
-        val batchSize = jvm.Param(jvm.Comments.Empty, jvm.Ident("batchSize"), TypesScala.Int, Some(code"10000"))
+        val batchSize = jvm.Param(Nil, jvm.Comments.Empty, jvm.Ident("batchSize"), TypesScala.Int, Some(code"10000"))
         sig(params = List(unsaved, batchSize), implicitParams = List(c), returnType = TypesScala.Int)
       case RepoMethod.InsertUnsaved(_, _, _, unsavedParam, _, rowType) =>
         sig(params = List(unsavedParam), implicitParams = List(c), returnType = rowType)
       case RepoMethod.InsertUnsavedStreaming(_, unsaved) =>
         val unsavedParam = jvm.Param(jvm.Ident("unsaved"), TypesScala.Iterator.of(unsaved.tpe))
-        val batchSize = jvm.Param(jvm.Comments.Empty, jvm.Ident("batchSize"), TypesScala.Int, Some(code"10000"))
+        val batchSize = jvm.Param(Nil, jvm.Comments.Empty, jvm.Ident("batchSize"), TypesScala.Int, Some(code"10000"))
         sig(params = List(unsavedParam, batchSize), implicitParams = List(c), returnType = TypesScala.Long)
       case RepoMethod.DeleteBuilder(_, fieldsType, rowType) =>
         sig(params = Nil, implicitParams = Nil, returnType = jvm.Type.dsl.DeleteBuilder.of(fieldsType, rowType))
@@ -735,12 +737,14 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
   }
   override def testInsertMethod(x: ComputedTestInserts.InsertMethod): jvm.Method =
     jvm.Method(
+      Nil,
       comments = jvm.Comments.Empty,
       tparams = Nil,
       name = x.name,
       params = x.params,
       implicitParams = List(c),
       tpe = x.table.names.RowName,
+      throws = Nil,
       body = List(code"(new ${x.table.names.RepoImplName}).insert(new ${x.cls}(${x.values.map { case (p, expr) => code"$p = $expr" }.mkCode(", ")}))")
     )
 
@@ -921,12 +925,14 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
         }
       }
       jvm.Method(
+        Nil,
         comments = jvm.Comments.Empty,
         Nil,
         rowParserName,
         params = List(jvm.Param(jvm.Ident("idx"), TypesScala.Int)),
         Nil,
         RowParser.of(tpe),
+        Nil,
         List {
           code"""|${RowParser.of(tpe)} { row =>
                  |  $Success(

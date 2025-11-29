@@ -63,17 +63,17 @@ public interface CcViewFields {
     return new Impl(List.of());
   };
 
-  Field</* max 25 chars */ String, CcViewRow> cardnumber();
+  Field</* user-picked */ CustomCreditcardId, CcViewRow> id();
+
+  Field</* user-picked */ CustomCreditcardId, CcViewRow> creditcardid();
 
   Field</* max 50 chars */ String, CcViewRow> cardtype();
 
-  Field</* user-picked */ CustomCreditcardId, CcViewRow> creditcardid();
+  Field</* max 25 chars */ String, CcViewRow> cardnumber();
 
   Field<TypoShort, CcViewRow> expmonth();
 
   Field<TypoShort, CcViewRow> expyear();
-
-  Field</* user-picked */ CustomCreditcardId, CcViewRow> id();
 
   Field<TypoLocalDateTime, CcViewRow> modifieddate();
 }

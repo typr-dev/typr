@@ -23,18 +23,30 @@ object FileDomain {
           jvm.Given(Nil, jvm.Ident("bijection"), Nil, thisBijection, expr)
         }
       else None
+
+    val jsonInstances = options.jsonLibs.map(_.wrapperTypeInstances(wrapperType = domain.tpe, fieldName = value, underlying = domain.underlyingType))
     val instances = List(
       bijection.toList,
-      options.jsonLibs.flatMap(_.wrapperTypeInstances(wrapperType = domain.tpe, fieldName = value, underlying = domain.underlyingType)),
+      jsonInstances.flatMap(_.givens),
       options.dbLib.toList.flatMap(_.wrapperTypeInstances(wrapperType = domain.tpe, underlying = domain.underlyingType, overrideDbType = Some(domain.underlying.name.quotedValue)))
     ).flatten
+    val fieldAnnotations = JsonLib.mergeFieldAnnotations(jsonInstances.flatMap(_.fieldAnnotations.toList))
+    val typeAnnotations = jsonInstances.flatMap(_.typeAnnotations)
+
+    val paramsWithAnnotations = List(jvm.Param(value, domain.underlyingType)).map { p =>
+      fieldAnnotations.get(p.name) match {
+        case Some(anns) => p.copy(annotations = p.annotations ++ anns)
+        case None       => p
+      }
+    }
 
     val cls = jvm.Adt.Record(
+      annotations = typeAnnotations,
       isWrapper = false,
       comments = comments,
       name = domain.tpe,
       tparams = Nil,
-      params = List(jvm.Param(value, domain.underlyingType)),
+      params = paramsWithAnnotations,
       implicitParams = Nil,
       `extends` = None,
       implements = Nil,

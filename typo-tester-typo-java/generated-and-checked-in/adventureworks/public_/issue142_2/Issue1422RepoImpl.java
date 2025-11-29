@@ -19,7 +19,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record Issue1422RepoImpl() implements Issue1422Repo {
+public class Issue1422RepoImpl implements Issue1422Repo {
   public DeleteBuilder<Issue1422Fields, Issue1422Row> delete() {
     return DeleteBuilder.of("public.issue142_2", Issue1422Fields.structure());
   };
@@ -180,11 +180,11 @@ public record Issue1422RepoImpl() implements Issue1422Repo {
       copy issue142_2_TEMP("tabellkode") from stdin
       """), batchSize, unsaved, c, Issue1422Row.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "public"."issue142_2"("tabellkode")
-       select * from issue142_2_TEMP
-       on conflict ("tabellkode")
-       do nothing
-       ;
-       drop table issue142_2_TEMP;""")).update().runUnchecked(c);
+              insert into "public"."issue142_2"("tabellkode")
+              select * from issue142_2_TEMP
+              on conflict ("tabellkode")
+              do nothing
+              ;
+              drop table issue142_2_TEMP;""")).update().runUnchecked(c);
   };
 }

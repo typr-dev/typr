@@ -72,15 +72,15 @@ public interface SalesterritoryhistoryFields {
 
   IdField<BusinessentityId, SalesterritoryhistoryRow> businessentityid();
 
-  default SqlExpr<Boolean> compositeIdIn(List<SalesterritoryhistoryId> compositeIds) {
-    return new CompositeIn(List.of(new Part<BusinessentityId, SalesterritoryhistoryId, SalesterritoryhistoryRow>(businessentityid(), SalesterritoryhistoryId::businessentityid, BusinessentityId.pgType), new Part<TypoLocalDateTime, SalesterritoryhistoryId, SalesterritoryhistoryRow>(startdate(), SalesterritoryhistoryId::startdate, TypoLocalDateTime.pgType), new Part<SalesterritoryId, SalesterritoryhistoryId, SalesterritoryhistoryRow>(territoryid(), SalesterritoryhistoryId::territoryid, SalesterritoryId.pgType)), compositeIds);
-  };
+  IdField<SalesterritoryId, SalesterritoryhistoryRow> territoryid();
 
-  default SqlExpr<Boolean> compositeIdIs(SalesterritoryhistoryId compositeId) {
-    return SqlExpr.all(businessentityid().isEqual(compositeId.businessentityid()), startdate().isEqual(compositeId.startdate()), territoryid().isEqual(compositeId.territoryid()));
-  };
+  IdField<TypoLocalDateTime, SalesterritoryhistoryRow> startdate();
 
   OptField<TypoLocalDateTime, SalesterritoryhistoryRow> enddate();
+
+  Field<TypoUUID, SalesterritoryhistoryRow> rowguid();
+
+  Field<TypoLocalDateTime, SalesterritoryhistoryRow> modifieddate();
 
   default ForeignKey<SalespersonFields, SalespersonRow> fkSalesperson() {
     return ForeignKey.<SalespersonFields, SalespersonRow>of("sales.FK_SalesTerritoryHistory_SalesPerson_BusinessEntityID").withColumnPair(businessentityid(), SalespersonFields::businessentityid);
@@ -90,11 +90,11 @@ public interface SalesterritoryhistoryFields {
     return ForeignKey.<SalesterritoryFields, SalesterritoryRow>of("sales.FK_SalesTerritoryHistory_SalesTerritory_TerritoryID").withColumnPair(territoryid(), SalesterritoryFields::territoryid);
   };
 
-  Field<TypoLocalDateTime, SalesterritoryhistoryRow> modifieddate();
+  default SqlExpr<Boolean> compositeIdIs(SalesterritoryhistoryId compositeId) {
+    return SqlExpr.all(businessentityid().isEqual(compositeId.businessentityid()), startdate().isEqual(compositeId.startdate()), territoryid().isEqual(compositeId.territoryid()));
+  };
 
-  Field<TypoUUID, SalesterritoryhistoryRow> rowguid();
-
-  IdField<TypoLocalDateTime, SalesterritoryhistoryRow> startdate();
-
-  IdField<SalesterritoryId, SalesterritoryhistoryRow> territoryid();
+  default SqlExpr<Boolean> compositeIdIn(List<SalesterritoryhistoryId> compositeIds) {
+    return new CompositeIn(List.of(new Part<BusinessentityId, SalesterritoryhistoryId, SalesterritoryhistoryRow>(businessentityid(), SalesterritoryhistoryId::businessentityid, BusinessentityId.pgType), new Part<TypoLocalDateTime, SalesterritoryhistoryId, SalesterritoryhistoryRow>(startdate(), SalesterritoryhistoryId::startdate, TypoLocalDateTime.pgType), new Part<SalesterritoryId, SalesterritoryhistoryId, SalesterritoryhistoryRow>(territoryid(), SalesterritoryhistoryId::territoryid, SalesterritoryId.pgType)), compositeIds);
+  };
 }

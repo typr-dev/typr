@@ -21,7 +21,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record TableWithGeneratedColumnsRepoImpl() implements TableWithGeneratedColumnsRepo {
+public class TableWithGeneratedColumnsRepoImpl implements TableWithGeneratedColumnsRepo {
   public DeleteBuilder<TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow> delete() {
     return DeleteBuilder.of("public.table-with-generated-columns", TableWithGeneratedColumnsFields.structure());
   };
@@ -222,11 +222,11 @@ public record TableWithGeneratedColumnsRepoImpl() implements TableWithGeneratedC
       copy table-with-generated-columns_TEMP("name") from stdin
       """), batchSize, unsaved, c, TableWithGeneratedColumnsRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "public"."table-with-generated-columns"("name")
-       select * from table-with-generated-columns_TEMP
-       on conflict ("name")
-       do nothing
-       ;
-       drop table table-with-generated-columns_TEMP;""")).update().runUnchecked(c);
+              insert into "public"."table-with-generated-columns"("name")
+              select * from table-with-generated-columns_TEMP
+              on conflict ("name")
+              do nothing
+              ;
+              drop table table-with-generated-columns_TEMP;""")).update().runUnchecked(c);
   };
 }

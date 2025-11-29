@@ -11,7 +11,7 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import static typo.runtime.Fragment.interpolate;
 
-public record PersonDynamicSqlRepoImpl() implements PersonDynamicSqlRepo {
+public class PersonDynamicSqlRepoImpl implements PersonDynamicSqlRepo {
   public List<PersonDynamicSqlRow> apply(
     Optional<String> firstName,
     Connection c

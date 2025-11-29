@@ -280,139 +280,139 @@ public interface PgtestnullFields {
 
   OptField<TypoBox, PgtestnullRow> box();
 
-  OptField<TypoBox[], PgtestnullRow> boxes();
-
   OptField</* bpchar, max 3 chars */ String, PgtestnullRow> bpchar();
-
-  OptField</* bpchar */ String[], PgtestnullRow> bpchares();
 
   OptField<TypoBytea, PgtestnullRow> bytea();
 
   OptField</* bpchar, max 1 chars */ String, PgtestnullRow> char_();
 
-  OptField</* bpchar */ String[], PgtestnullRow> chares();
-
   OptField<TypoCircle, PgtestnullRow> circle();
-
-  OptField<TypoCircle[], PgtestnullRow> circlees();
 
   OptField<TypoLocalDate, PgtestnullRow> date();
 
-  OptField<TypoLocalDate[], PgtestnullRow> datees();
-
   OptField<Float, PgtestnullRow> float4();
 
-  OptField<Float[], PgtestnullRow> float4es();
-
   OptField<Double, PgtestnullRow> float8();
-
-  OptField<Double[], PgtestnullRow> float8es();
 
   OptField<TypoHStore, PgtestnullRow> hstore();
 
   OptField<TypoInet, PgtestnullRow> inet();
 
-  OptField<TypoInet[], PgtestnullRow> inetes();
-
   OptField<TypoShort, PgtestnullRow> int2();
-
-  OptField<TypoShort[], PgtestnullRow> int2es();
 
   OptField<TypoInt2Vector, PgtestnullRow> int2vector();
 
-  OptField<TypoInt2Vector[], PgtestnullRow> int2vectores();
-
   OptField<Integer, PgtestnullRow> int4();
-
-  OptField<Integer[], PgtestnullRow> int4es();
 
   OptField<Long, PgtestnullRow> int8();
 
-  OptField<Long[], PgtestnullRow> int8es();
-
   OptField<TypoInterval, PgtestnullRow> interval();
-
-  OptField<TypoInterval[], PgtestnullRow> intervales();
 
   OptField<TypoJson, PgtestnullRow> json();
 
   OptField<TypoJsonb, PgtestnullRow> jsonb();
 
-  OptField<TypoJsonb[], PgtestnullRow> jsonbes();
-
-  OptField<TypoJson[], PgtestnullRow> jsones();
-
   OptField<TypoLine, PgtestnullRow> line();
-
-  OptField<TypoLine[], PgtestnullRow> linees();
 
   OptField<TypoLineSegment, PgtestnullRow> lseg();
 
-  OptField<TypoLineSegment[], PgtestnullRow> lseges();
-
   OptField<TypoMoney, PgtestnullRow> money();
-
-  OptField<TypoMoney[], PgtestnullRow> moneyes();
 
   OptField<Mydomain, PgtestnullRow> mydomain();
 
-  OptField<Mydomain[], PgtestnullRow> mydomaines();
-
   OptField<Myenum, PgtestnullRow> myenum();
-
-  OptField<Myenum[], PgtestnullRow> myenumes();
 
   OptField<String, PgtestnullRow> name();
 
-  OptField<String[], PgtestnullRow> namees();
-
   OptField<BigDecimal, PgtestnullRow> numeric();
-
-  OptField<BigDecimal[], PgtestnullRow> numerices();
 
   OptField<TypoPath, PgtestnullRow> path();
 
-  OptField<TypoPath[], PgtestnullRow> pathes();
-
   OptField<TypoPoint, PgtestnullRow> point();
-
-  OptField<TypoPoint[], PgtestnullRow> pointes();
 
   OptField<TypoPolygon, PgtestnullRow> polygon();
 
-  OptField<TypoPolygon[], PgtestnullRow> polygones();
-
   OptField<String, PgtestnullRow> text();
-
-  OptField<String[], PgtestnullRow> textes();
 
   OptField<TypoLocalTime, PgtestnullRow> time();
 
-  OptField<TypoLocalTime[], PgtestnullRow> timees();
-
   OptField<TypoLocalDateTime, PgtestnullRow> timestamp();
-
-  OptField<TypoLocalDateTime[], PgtestnullRow> timestampes();
 
   OptField<TypoInstant, PgtestnullRow> timestampz();
 
-  OptField<TypoInstant[], PgtestnullRow> timestampzes();
-
   OptField<TypoOffsetTime, PgtestnullRow> timez();
-
-  OptField<TypoOffsetTime[], PgtestnullRow> timezes();
 
   OptField<TypoUUID, PgtestnullRow> uuid();
 
-  OptField<TypoUUID[], PgtestnullRow> uuides();
-
   OptField<String, PgtestnullRow> varchar();
-
-  OptField<String[], PgtestnullRow> varchares();
 
   OptField<TypoVector, PgtestnullRow> vector();
 
   OptField<TypoXml, PgtestnullRow> xml();
+
+  OptField<TypoBox[], PgtestnullRow> boxes();
+
+  OptField</* bpchar */ String[], PgtestnullRow> bpchares();
+
+  OptField</* bpchar */ String[], PgtestnullRow> chares();
+
+  OptField<TypoCircle[], PgtestnullRow> circlees();
+
+  OptField<TypoLocalDate[], PgtestnullRow> datees();
+
+  OptField<Float[], PgtestnullRow> float4es();
+
+  OptField<Double[], PgtestnullRow> float8es();
+
+  OptField<TypoInet[], PgtestnullRow> inetes();
+
+  OptField<TypoShort[], PgtestnullRow> int2es();
+
+  OptField<TypoInt2Vector[], PgtestnullRow> int2vectores();
+
+  OptField<Integer[], PgtestnullRow> int4es();
+
+  OptField<Long[], PgtestnullRow> int8es();
+
+  OptField<TypoInterval[], PgtestnullRow> intervales();
+
+  OptField<TypoJson[], PgtestnullRow> jsones();
+
+  OptField<TypoJsonb[], PgtestnullRow> jsonbes();
+
+  OptField<TypoLine[], PgtestnullRow> linees();
+
+  OptField<TypoLineSegment[], PgtestnullRow> lseges();
+
+  OptField<TypoMoney[], PgtestnullRow> moneyes();
+
+  OptField<Mydomain[], PgtestnullRow> mydomaines();
+
+  OptField<Myenum[], PgtestnullRow> myenumes();
+
+  OptField<String[], PgtestnullRow> namees();
+
+  OptField<BigDecimal[], PgtestnullRow> numerices();
+
+  OptField<TypoPath[], PgtestnullRow> pathes();
+
+  OptField<TypoPoint[], PgtestnullRow> pointes();
+
+  OptField<TypoPolygon[], PgtestnullRow> polygones();
+
+  OptField<String[], PgtestnullRow> textes();
+
+  OptField<TypoLocalTime[], PgtestnullRow> timees();
+
+  OptField<TypoLocalDateTime[], PgtestnullRow> timestampes();
+
+  OptField<TypoInstant[], PgtestnullRow> timestampzes();
+
+  OptField<TypoOffsetTime[], PgtestnullRow> timezes();
+
+  OptField<TypoUUID[], PgtestnullRow> uuides();
+
+  OptField<String[], PgtestnullRow> varchares();
 
   OptField<TypoXml[], PgtestnullRow> xmles();
 }

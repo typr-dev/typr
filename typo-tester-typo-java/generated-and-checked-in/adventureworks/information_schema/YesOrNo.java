@@ -5,6 +5,7 @@
  */
 package adventureworks.information_schema;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
@@ -13,7 +14,7 @@ import typo.runtime.internal.arrayMap;
 /** Domain `information_schema.yes_or_no`
   * Constraint: CHECK (((VALUE)::text = ANY ((ARRAY['YES'::character varying, 'NO'::character varying])::text[])))
   */
-public record YesOrNo(String value) {
+public record YesOrNo(@JsonValue String value) {
   public YesOrNo withValue(String value) {
     return new YesOrNo(value);
   };

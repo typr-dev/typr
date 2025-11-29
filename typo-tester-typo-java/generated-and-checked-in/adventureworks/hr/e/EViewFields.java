@@ -94,35 +94,35 @@ public interface EViewFields {
     return new Impl(List.of());
   };
 
-  Field<TypoLocalDate, EViewRow> birthdate();
+  Field<BusinessentityId, EViewRow> id();
 
   Field<BusinessentityId, EViewRow> businessentityid();
 
-  Field<Flag, EViewRow> currentflag();
+  Field</* max 15 chars */ String, EViewRow> nationalidnumber();
+
+  Field</* max 256 chars */ String, EViewRow> loginid();
+
+  Field</* max 50 chars */ String, EViewRow> jobtitle();
+
+  Field<TypoLocalDate, EViewRow> birthdate();
+
+  Field</* bpchar, max 1 chars */ String, EViewRow> maritalstatus();
 
   Field</* bpchar, max 1 chars */ String, EViewRow> gender();
 
   Field<TypoLocalDate, EViewRow> hiredate();
 
-  Field<BusinessentityId, EViewRow> id();
-
-  Field</* max 50 chars */ String, EViewRow> jobtitle();
-
-  Field</* max 256 chars */ String, EViewRow> loginid();
-
-  Field</* bpchar, max 1 chars */ String, EViewRow> maritalstatus();
-
-  Field<TypoLocalDateTime, EViewRow> modifieddate();
-
-  Field</* max 15 chars */ String, EViewRow> nationalidnumber();
-
-  OptField<String, EViewRow> organizationnode();
-
-  Field<TypoUUID, EViewRow> rowguid();
-
   Field<Flag, EViewRow> salariedflag();
+
+  Field<TypoShort, EViewRow> vacationhours();
 
   Field<TypoShort, EViewRow> sickleavehours();
 
-  Field<TypoShort, EViewRow> vacationhours();
+  Field<Flag, EViewRow> currentflag();
+
+  Field<TypoUUID, EViewRow> rowguid();
+
+  Field<TypoLocalDateTime, EViewRow> modifieddate();
+
+  OptField<String, EViewRow> organizationnode();
 }

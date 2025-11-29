@@ -3,9 +3,13 @@ package internal
 package codegen
 
 case class FileDefault(default: ComputedDefault, jsonLibs: List[JsonLib], dbLib: Option[DbLib], lang: Lang) {
+  private val jsonInstances = jsonLibs.map(_.defaultedInstance)
+  val additionalFiles: List[jvm.File] = jsonInstances.flatMap(_.additionalFiles)
+
   val cls = {
+    val typeAnnotations = jsonInstances.flatMap(_.typeAnnotations)
     val instances: List[jvm.Given] =
-      jsonLibs.flatMap(_.defaultedInstance(default)) ++
+      jsonInstances.flatMap(_.givens) ++
         dbLib.toList.flatMap(_.defaultedInstance)
 
     val T = jvm.Type.Abstract(jvm.Ident("T"))
@@ -16,6 +20,7 @@ case class FileDefault(default: ComputedDefault, jsonLibs: List[JsonLib], dbLib:
     val foldOnProvidedParam = jvm.Param(onProvidedName, jvm.Type.Function1(T, U))
     val foldAbstract =
       jvm.Method(
+        Nil,
         comments = jvm.Comments.Empty,
         name = jvm.Ident("fold"),
         tparams = List(U),
@@ -25,6 +30,7 @@ case class FileDefault(default: ComputedDefault, jsonLibs: List[JsonLib], dbLib:
         ),
         implicitParams = Nil,
         tpe = U,
+        throws = Nil,
         body = Nil
       )
 
@@ -32,29 +38,34 @@ case class FileDefault(default: ComputedDefault, jsonLibs: List[JsonLib], dbLib:
     val visitOnProvidedParam = jvm.Param(onProvidedName, jvm.Type.Function1(T, jvm.Type.Void))
     val visitAbstract =
       jvm.Method(
+        Nil,
         comments = jvm.Comments.Empty,
         name = jvm.Ident("visit"),
         tparams = Nil,
         params = List(visitOnDefaultParam, visitOnProvidedParam),
         implicitParams = Nil,
         tpe = jvm.Type.Void,
+        throws = Nil,
         body = Nil
       )
 
     val getOrElseParam = jvm.Param(onDefaultName, jvm.Type.Function0(T))
     val getOrElseAbstract =
       jvm.Method(
+        Nil,
         comments = jvm.Comments.Empty,
         name = jvm.Ident("getOrElse"),
         tparams = Nil,
         params = List(getOrElseParam),
         implicitParams = Nil,
         tpe = T,
+        throws = Nil,
         body = Nil
       )
     val valueParam = jvm.Param(jvm.Ident("value"), T)
 
     jvm.Adt.Sum(
+      annotations = typeAnnotations,
       comments = jvm.Comments(List("This signals a value where if you don't provide it, postgres will generate it for you")),
       name = default.Defaulted,
       tparams = List(T),
@@ -62,6 +73,7 @@ case class FileDefault(default: ComputedDefault, jsonLibs: List[JsonLib], dbLib:
       implements = Nil,
       subtypes = List(
         jvm.Adt.Record(
+          annotations = Nil,
           isWrapper = false,
           comments = jvm.Comments.Empty,
           name = jvm.Type.Qualified(default.Provided),
@@ -78,6 +90,7 @@ case class FileDefault(default: ComputedDefault, jsonLibs: List[JsonLib], dbLib:
           staticMembers = Nil
         ),
         jvm.Adt.Record(
+          annotations = Nil,
           isWrapper = false,
           comments = jvm.Comments.Empty,
           name = jvm.Type.Qualified(default.UseDefault),

@@ -20,7 +20,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record OnlyPkColumnsRepoImpl() implements OnlyPkColumnsRepo {
+public class OnlyPkColumnsRepoImpl implements OnlyPkColumnsRepo {
   public DeleteBuilder<OnlyPkColumnsFields, OnlyPkColumnsRow> delete() {
     return DeleteBuilder.of("public.only_pk_columns", OnlyPkColumnsFields.structure());
   };
@@ -49,19 +49,19 @@ public record OnlyPkColumnsRepoImpl() implements OnlyPkColumnsRepo {
     String[] keyColumn1 = arrayMap.map(compositeIds, OnlyPkColumnsId::keyColumn1, String.class);;
       Integer[] keyColumn2 = arrayMap.map(compositeIds, OnlyPkColumnsId::keyColumn2, Integer.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         delete
-         from "public"."only_pk_columns"
-         where ("key_column_1", "key_column_2")
-         in (select unnest("""),
-      PgTypes.textArray.encode(keyColumn1),
-      typo.runtime.Fragment.lit("::text[]), unnest("),
-      PgTypes.int4Array.encode(keyColumn2),
-      typo.runtime.Fragment.lit("""
-      ::int4[]))
+             typo.runtime.Fragment.lit("""
+                delete
+                from "public"."only_pk_columns"
+                where ("key_column_1", "key_column_2")
+                in (select unnest("""),
+             PgTypes.textArray.encode(keyColumn1),
+             typo.runtime.Fragment.lit("::text[]), unnest("),
+             PgTypes.int4Array.encode(keyColumn2),
+             typo.runtime.Fragment.lit("""
+             ::int4[]))
 
-      """)
-    ).update().runUnchecked(c);
+             """)
+           ).update().runUnchecked(c);
   };
 
   public OnlyPkColumnsRow insert(
@@ -129,19 +129,19 @@ public record OnlyPkColumnsRepoImpl() implements OnlyPkColumnsRepo {
     String[] keyColumn1 = arrayMap.map(compositeIds, OnlyPkColumnsId::keyColumn1, String.class);;
       Integer[] keyColumn2 = arrayMap.map(compositeIds, OnlyPkColumnsId::keyColumn2, Integer.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         select "key_column_1", "key_column_2"
-         from "public"."only_pk_columns"
-         where ("key_column_1", "key_column_2")
-         in (select unnest("""),
-      PgTypes.textArray.encode(keyColumn1),
-      typo.runtime.Fragment.lit("::text[]), unnest("),
-      PgTypes.int4Array.encode(keyColumn2),
-      typo.runtime.Fragment.lit("""
-      ::int4[]))
+             typo.runtime.Fragment.lit("""
+                select "key_column_1", "key_column_2"
+                from "public"."only_pk_columns"
+                where ("key_column_1", "key_column_2")
+                in (select unnest("""),
+             PgTypes.textArray.encode(keyColumn1),
+             typo.runtime.Fragment.lit("::text[]), unnest("),
+             PgTypes.int4Array.encode(keyColumn2),
+             typo.runtime.Fragment.lit("""
+             ::int4[]))
 
-      """)
-    ).as(OnlyPkColumnsRow._rowParser.all()).runUnchecked(c);
+             """)
+           ).as(OnlyPkColumnsRow._rowParser.all()).runUnchecked(c);
   };
 
   public Map<OnlyPkColumnsId, OnlyPkColumnsRow> selectByIdsTracked(
@@ -207,11 +207,11 @@ public record OnlyPkColumnsRepoImpl() implements OnlyPkColumnsRepo {
       copy only_pk_columns_TEMP("key_column_1", "key_column_2") from stdin
       """), batchSize, unsaved, c, OnlyPkColumnsRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "public"."only_pk_columns"("key_column_1", "key_column_2")
-       select * from only_pk_columns_TEMP
-       on conflict ("key_column_1", "key_column_2")
-       do nothing
-       ;
-       drop table only_pk_columns_TEMP;""")).update().runUnchecked(c);
+              insert into "public"."only_pk_columns"("key_column_1", "key_column_2")
+              select * from only_pk_columns_TEMP
+              on conflict ("key_column_1", "key_column_2")
+              do nothing
+              ;
+              drop table only_pk_columns_TEMP;""")).update().runUnchecked(c);
   };
 }

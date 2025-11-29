@@ -86,13 +86,29 @@ public interface PersonFields {
     return new Impl(List.of());
   };
 
+  IdField<PersonId, PersonRow> id();
+
+  Field<FootballClubId, PersonRow> favouriteFootballClubId();
+
+  Field</* max 100 chars */ String, PersonRow> name();
+
+  OptField</* max 30 chars */ String, PersonRow> nickName();
+
   OptField</* max 100 chars */ String, PersonRow> blogUrl();
 
   Field</* max 254 chars */ String, PersonRow> email();
 
-  Field<Number, PersonRow> favoriteNumber();
+  Field</* max 8 chars */ String, PersonRow> phone();
 
-  Field<FootballClubId, PersonRow> favouriteFootballClubId();
+  Field<Boolean, PersonRow> likesPizza();
+
+  Field<MaritalStatusId, PersonRow> maritalStatusId();
+
+  OptField</* max 254 chars */ String, PersonRow> workEmail();
+
+  Field<Sector, PersonRow> sector();
+
+  Field<Number, PersonRow> favoriteNumber();
 
   default ForeignKey<FootballClubFields, FootballClubRow> fkFootballClub() {
     return ForeignKey.<FootballClubFields, FootballClubRow>of("myschema.person_favourite_football_club_id_fkey").withColumnPair(favouriteFootballClubId(), FootballClubFields::id);
@@ -101,20 +117,4 @@ public interface PersonFields {
   default ForeignKey<MaritalStatusFields, MaritalStatusRow> fkMaritalStatus() {
     return ForeignKey.<MaritalStatusFields, MaritalStatusRow>of("myschema.person_marital_status_id_fkey").withColumnPair(maritalStatusId(), MaritalStatusFields::id);
   };
-
-  IdField<PersonId, PersonRow> id();
-
-  Field<Boolean, PersonRow> likesPizza();
-
-  Field<MaritalStatusId, PersonRow> maritalStatusId();
-
-  Field</* max 100 chars */ String, PersonRow> name();
-
-  OptField</* max 30 chars */ String, PersonRow> nickName();
-
-  Field</* max 8 chars */ String, PersonRow> phone();
-
-  Field<Sector, PersonRow> sector();
-
-  OptField</* max 254 chars */ String, PersonRow> workEmail();
 }

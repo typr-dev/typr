@@ -333,9 +333,9 @@ import java.util.Random
 import typo.runtime.internal.RandomHelper
 
 /** Methods to generate random data for `Ident(TestInsert)` */
-class TestInsert(
-  val random: Random,
-  val domainInsert: TestDomainInsert
+case class TestInsert(
+  random: Random,
+  domainInsert: TestDomainInsert
 ) {
   def humanresourcesDepartment(
     name: Name = domainInsert.publicName(random),

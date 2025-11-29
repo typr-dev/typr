@@ -70,21 +70,21 @@ public interface SalestaxrateFields {
     return new Impl(List.of());
   };
 
-  default ForeignKey<StateprovinceFields, StateprovinceRow> fkPersonStateprovince() {
-    return ForeignKey.<StateprovinceFields, StateprovinceRow>of("sales.FK_SalesTaxRate_StateProvince_StateProvinceID").withColumnPair(stateprovinceid(), StateprovinceFields::stateprovinceid);
-  };
+  IdField<SalestaxrateId, SalestaxrateRow> salestaxrateid();
 
-  Field<TypoLocalDateTime, SalestaxrateRow> modifieddate();
+  Field<StateprovinceId, SalestaxrateRow> stateprovinceid();
+
+  Field<TypoShort, SalestaxrateRow> taxtype();
+
+  Field<BigDecimal, SalestaxrateRow> taxrate();
 
   Field<Name, SalestaxrateRow> name();
 
   Field<TypoUUID, SalestaxrateRow> rowguid();
 
-  IdField<SalestaxrateId, SalestaxrateRow> salestaxrateid();
+  Field<TypoLocalDateTime, SalestaxrateRow> modifieddate();
 
-  Field<StateprovinceId, SalestaxrateRow> stateprovinceid();
-
-  Field<BigDecimal, SalestaxrateRow> taxrate();
-
-  Field<TypoShort, SalestaxrateRow> taxtype();
+  default ForeignKey<StateprovinceFields, StateprovinceRow> fkPersonStateprovince() {
+    return ForeignKey.<StateprovinceFields, StateprovinceRow>of("sales.FK_SalesTaxRate_StateProvince_StateProvinceID").withColumnPair(stateprovinceid(), StateprovinceFields::stateprovinceid);
+  };
 }

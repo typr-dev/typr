@@ -74,23 +74,23 @@ public interface PodViewFields {
     return new Impl(List.of());
   };
 
-  Field<TypoLocalDateTime, PodViewRow> duedate();
-
   Field<Integer, PodViewRow> id();
 
-  Field<TypoLocalDateTime, PodViewRow> modifieddate();
+  Field<PurchaseorderheaderId, PodViewRow> purchaseorderid();
+
+  Field<Integer, PodViewRow> purchaseorderdetailid();
+
+  Field<TypoLocalDateTime, PodViewRow> duedate();
 
   Field<TypoShort, PodViewRow> orderqty();
 
   Field<ProductId, PodViewRow> productid();
 
-  Field<Integer, PodViewRow> purchaseorderdetailid();
-
-  Field<PurchaseorderheaderId, PodViewRow> purchaseorderid();
+  Field<BigDecimal, PodViewRow> unitprice();
 
   Field<BigDecimal, PodViewRow> receivedqty();
 
   Field<BigDecimal, PodViewRow> rejectedqty();
 
-  Field<BigDecimal, PodViewRow> unitprice();
+  Field<TypoLocalDateTime, PodViewRow> modifieddate();
 }

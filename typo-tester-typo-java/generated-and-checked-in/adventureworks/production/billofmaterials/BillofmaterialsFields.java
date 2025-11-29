@@ -80,11 +80,21 @@ public interface BillofmaterialsFields {
 
   IdField<Integer, BillofmaterialsRow> billofmaterialsid();
 
-  Field<TypoShort, BillofmaterialsRow> bomlevel();
+  OptField<ProductId, BillofmaterialsRow> productassemblyid();
 
   Field<ProductId, BillofmaterialsRow> componentid();
 
+  Field<TypoLocalDateTime, BillofmaterialsRow> startdate();
+
   OptField<TypoLocalDateTime, BillofmaterialsRow> enddate();
+
+  Field<UnitmeasureId, BillofmaterialsRow> unitmeasurecode();
+
+  Field<TypoShort, BillofmaterialsRow> bomlevel();
+
+  Field<BigDecimal, BillofmaterialsRow> perassemblyqty();
+
+  Field<TypoLocalDateTime, BillofmaterialsRow> modifieddate();
 
   default ForeignKey<ProductFields, ProductRow> fkProductComponentid() {
     return ForeignKey.<ProductFields, ProductRow>of("production.FK_BillOfMaterials_Product_ComponentID").withColumnPair(componentid(), ProductFields::productid);
@@ -97,14 +107,4 @@ public interface BillofmaterialsFields {
   default ForeignKey<UnitmeasureFields, UnitmeasureRow> fkUnitmeasure() {
     return ForeignKey.<UnitmeasureFields, UnitmeasureRow>of("production.FK_BillOfMaterials_UnitMeasure_UnitMeasureCode").withColumnPair(unitmeasurecode(), UnitmeasureFields::unitmeasurecode);
   };
-
-  Field<TypoLocalDateTime, BillofmaterialsRow> modifieddate();
-
-  Field<BigDecimal, BillofmaterialsRow> perassemblyqty();
-
-  OptField<ProductId, BillofmaterialsRow> productassemblyid();
-
-  Field<TypoLocalDateTime, BillofmaterialsRow> startdate();
-
-  Field<UnitmeasureId, BillofmaterialsRow> unitmeasurecode();
 }

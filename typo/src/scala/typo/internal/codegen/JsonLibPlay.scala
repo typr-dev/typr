@@ -78,20 +78,20 @@ case class JsonLibPlay(pkg: jvm.QIdent, default: ComputedDefault, inlineImplicit
     go(jvm.Type.base(tpe))
   }
 
-  override def defaultedInstance(d: ComputedDefault): List[jvm.Given] = {
+  override def defaultedInstance: JsonLib.Instances = JsonLib.Instances.fromGivens {
     val T = jvm.Type.Abstract(jvm.Ident("T"))
     val reader = jvm.Given(
       tparams = List(T),
       name = readsName,
       implicitParams = List(jvm.Param(jvm.Ident("T"), Reads.of(T))),
-      tpe = Reads.of(d.Defaulted.of(T)),
+      tpe = Reads.of(default.Defaulted.of(T)),
       body = code"""|{
                     |  case $JsString("defaulted") =>
-                    |    $JsSuccess(${d.Defaulted}.${d.UseDefault}())
+                    |    $JsSuccess(${default.Defaulted}.${default.UseDefault}())
                     |  case $JsObject(Seq(("provided", providedJson: $JsValue))) =>
-                    |    $Json.fromJson[T](providedJson).map(${d.Defaulted}.${d.Provided}.apply)
+                    |    $Json.fromJson[T](providedJson).map(${default.Defaulted}.${default.Provided}.apply)
                     |  case _ =>
-                    |    $JsError(s"Expected `${d.Defaulted}` json object structure")
+                    |    $JsError(s"Expected `${default.Defaulted}` json object structure")
                     |}""".stripMargin
     )
 
@@ -99,16 +99,16 @@ case class JsonLibPlay(pkg: jvm.QIdent, default: ComputedDefault, inlineImplicit
       tparams = List(T),
       name = readsOptName,
       implicitParams = List(jvm.Param(jvm.Ident("T"), Reads.of(T))),
-      tpe = Reads.of(d.Defaulted.of(TypesScala.Option.of(T))),
+      tpe = Reads.of(default.Defaulted.of(TypesScala.Option.of(T))),
       body = code"""|{
                     |  case $JsString("defaulted") =>
-                    |    $JsSuccess(${d.Defaulted}.${d.UseDefault}())
+                    |    $JsSuccess(${default.Defaulted}.${default.UseDefault}())
                     |  case $JsObject(Seq(("provided", $JsNull))) =>
-                    |    $JsSuccess(${d.Defaulted}.${d.Provided}(${TypesScala.None}))
+                    |    $JsSuccess(${default.Defaulted}.${default.Provided}(${TypesScala.None}))
                     |  case $JsObject(Seq(("provided", providedJson: $JsValue))) =>
-                    |    $Json.fromJson[T](providedJson).map(x => ${d.Defaulted}.${d.Provided}(${TypesScala.Some}(x)))
+                    |    $Json.fromJson[T](providedJson).map(x => ${default.Defaulted}.${default.Provided}(${TypesScala.Some}(x)))
                     |  case _ =>
-                    |    $JsError(s"Expected `${d.Defaulted}` json object structure")
+                    |    $JsError(s"Expected `${default.Defaulted}` json object structure")
                     |}
                     |""".stripMargin
     )
@@ -117,56 +117,59 @@ case class JsonLibPlay(pkg: jvm.QIdent, default: ComputedDefault, inlineImplicit
       tparams = List(T),
       name = writesName,
       implicitParams = List(jvm.Param(jvm.Ident("T"), Writes.of(T))),
-      tpe = Writes.of(d.Defaulted.of(T)),
+      tpe = Writes.of(default.Defaulted.of(T)),
       body = code"""|{
-                    |  case ${d.Defaulted}.${d.Provided}(value) => $Json.obj("provided" -> $T.writes(value))
-                    |  case ${d.Defaulted}.${d.UseDefault}()    => $JsString("defaulted")
+                    |  case ${default.Defaulted}.${default.Provided}(value) => $Json.obj("provided" -> $T.writes(value))
+                    |  case ${default.Defaulted}.${default.UseDefault}()    => $JsString("defaulted")
                     |}""".stripMargin
     )
 
     List(reader, readerOpt, writer)
   }
 
-  override def stringEnumInstances(wrapperType: jvm.Type, underlying: jvm.Type, openEnum: Boolean): List[jvm.Given] =
-    List(
-      jvm.Given(
-        tparams = Nil,
-        name = readsName,
-        implicitParams = Nil,
-        tpe = Reads.of(wrapperType),
-        body = {
-          if (openEnum)
-            code"${Reads.of(wrapperType)}{(value: $JsValue) => value.validate(${lookupReadsFor(underlying)}).map($wrapperType.apply)}"
-          else
-            code"${Reads.of(wrapperType)}{(value: $JsValue) => value.validate(${lookupReadsFor(underlying)}).flatMap(str => $wrapperType(str).fold($JsError.apply, $JsSuccess(_)))}"
-        }
-      ),
-      jvm.Given(
-        tparams = Nil,
-        name = writesName,
-        implicitParams = Nil,
-        tpe = Writes.of(wrapperType),
-        body = code"${Writes.of(wrapperType)}(value => ${lookupWritesFor(underlying)}.writes(value.value))"
+  override def stringEnumInstances(wrapperType: jvm.Type, underlying: jvm.Type, openEnum: Boolean): JsonLib.Instances =
+    JsonLib.Instances.fromGivens(
+      List(
+        jvm.Given(
+          tparams = Nil,
+          name = readsName,
+          implicitParams = Nil,
+          tpe = Reads.of(wrapperType),
+          body = {
+            if (openEnum)
+              code"${Reads.of(wrapperType)}{(value: $JsValue) => value.validate(${lookupReadsFor(underlying)}).map($wrapperType.apply)}"
+            else
+              code"${Reads.of(wrapperType)}{(value: $JsValue) => value.validate(${lookupReadsFor(underlying)}).flatMap(str => $wrapperType(str).fold($JsError.apply, $JsSuccess(_)))}"
+          }
+        ),
+        jvm.Given(
+          tparams = Nil,
+          name = writesName,
+          implicitParams = Nil,
+          tpe = Writes.of(wrapperType),
+          body = code"${Writes.of(wrapperType)}(value => ${lookupWritesFor(underlying)}.writes(value.value))"
+        )
       )
     )
 
-  override def productInstances(tpe: jvm.Type, fields: NonEmptyList[JsonLib.Field]): List[jvm.Given] =
-    List(
-      jvm.Given(
-        tparams = Nil,
-        name = readsName,
-        implicitParams = Nil,
-        tpe = Reads.of(tpe),
-        body = {
-          val newFields = fields.map { f =>
-            val value = f.tpe match {
-              case lang.Optional(of) => code"""json.\\(${f.jsonName}).toOption.map(_.as(${lookupReadsFor(of)}))"""
-              case _                 => code"""json.\\(${f.jsonName}).as(${lookupReadsFor(f.tpe)})"""
-            }
+  override def productInstances(tpe: jvm.Type, fields: NonEmptyList[JsonLib.Field]): JsonLib.Instances =
+    JsonLib.Instances.fromGivens(
+      List(
+        jvm.Given(
+          tparams = Nil,
+          name = readsName,
+          implicitParams = Nil,
+          tpe = Reads.of(tpe),
+          body = {
+            val newFields = fields.map { f =>
+              val value = f.tpe match {
+                case lang.Optional(of) => code"""json.\\(${f.jsonName}).toOption.map(_.as(${lookupReadsFor(of)}))"""
+                case _                 => code"""json.\\(${f.jsonName}).as(${lookupReadsFor(f.tpe)})"""
+              }
 
-            code"""${f.scalaName} = $value"""
-          }
-          code"""|${Reads.of(tpe)}(json => $JsResult.fromTry(
+              code"""${f.scalaName} = $value"""
+            }
+            code"""|${Reads.of(tpe)}(json => $JsResult.fromTry(
                  |    ${TypesScala.Try}(
                  |      $tpe(
                  |        ${newFields.mkCode(",\n")}
@@ -174,30 +177,33 @@ case class JsonLibPlay(pkg: jvm.QIdent, default: ComputedDefault, inlineImplicit
                  |    )
                  |  ),
                  |)""".stripMargin
-        }
-      ),
-      jvm.Given(
-        tparams = Nil,
-        name = writesName,
-        implicitParams = Nil,
-        tpe = OWrites.of(tpe),
-        body = {
-          val newFields = fields.map { f =>
-            code"""${f.jsonName} -> ${lookupWritesFor(f.tpe)}.writes(o.${f.scalaName})"""
           }
-          code"""|${OWrites.of(tpe)}(o =>
+        ),
+        jvm.Given(
+          tparams = Nil,
+          name = writesName,
+          implicitParams = Nil,
+          tpe = OWrites.of(tpe),
+          body = {
+            val newFields = fields.map { f =>
+              code"""${f.jsonName} -> ${lookupWritesFor(f.tpe)}.writes(o.${f.scalaName})"""
+            }
+            code"""|${OWrites.of(tpe)}(o =>
                  |  new $JsObject(${TypesScala.ListMap.of(TypesJava.String, JsValue)}(
                  |    ${newFields.mkCode(",\n")}
                  |  ))
                  |)""".stripMargin
-        }
+          }
+        )
       )
     )
 
-  def wrapperTypeInstances(wrapperType: jvm.Type.Qualified, fieldName: jvm.Ident, underlying: jvm.Type): List[jvm.Given] =
-    List(
-      jvm.Given(tparams = Nil, name = readsName, implicitParams = Nil, tpe = Reads.of(wrapperType), body = code"${lookupReadsFor(underlying)}.map(${wrapperType.value.name}.apply)"),
-      jvm.Given(tparams = Nil, name = writesName, implicitParams = Nil, tpe = Writes.of(wrapperType), body = code"${lookupWritesFor(underlying)}.contramap(_.$fieldName)")
+  def wrapperTypeInstances(wrapperType: jvm.Type.Qualified, fieldName: jvm.Ident, underlying: jvm.Type): JsonLib.Instances =
+    JsonLib.Instances.fromGivens(
+      List(
+        jvm.Given(tparams = Nil, name = readsName, implicitParams = Nil, tpe = Reads.of(wrapperType), body = code"${lookupReadsFor(underlying)}.map(${wrapperType.value.name}.apply)"),
+        jvm.Given(tparams = Nil, name = writesName, implicitParams = Nil, tpe = Writes.of(wrapperType), body = code"${lookupWritesFor(underlying)}.contramap(_.$fieldName)")
+      )
     )
 
   override val missingInstances: List[jvm.ClassMember] =

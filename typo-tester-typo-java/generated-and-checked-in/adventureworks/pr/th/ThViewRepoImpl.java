@@ -10,7 +10,7 @@ import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-public record ThViewRepoImpl() implements ThViewRepo {
+public class ThViewRepoImpl implements ThViewRepo {
   public SelectBuilder<ThViewFields, ThViewRow> select() {
     return SelectBuilder.of("pr.th", ThViewFields.structure(), ThViewRow._rowParser);
   };

@@ -133,55 +133,55 @@ public interface SohViewFields {
     return new Impl(List.of());
   };
 
-  OptField<AccountNumber, SohViewRow> accountnumber();
-
-  Field<AddressId, SohViewRow> billtoaddressid();
-
-  OptField</* max 128 chars */ String, SohViewRow> comment();
-
-  OptField</* max 15 chars */ String, SohViewRow> creditcardapprovalcode();
-
-  OptField</* user-picked */ CustomCreditcardId, SohViewRow> creditcardid();
-
-  OptField<CurrencyrateId, SohViewRow> currencyrateid();
-
-  Field<CustomerId, SohViewRow> customerid();
-
-  Field<TypoLocalDateTime, SohViewRow> duedate();
-
-  Field<BigDecimal, SohViewRow> freight();
-
   Field<SalesorderheaderId, SohViewRow> id();
-
-  Field<TypoLocalDateTime, SohViewRow> modifieddate();
-
-  Field<Flag, SohViewRow> onlineorderflag();
-
-  Field<TypoLocalDateTime, SohViewRow> orderdate();
-
-  OptField<OrderNumber, SohViewRow> purchaseordernumber();
-
-  Field<TypoShort, SohViewRow> revisionnumber();
-
-  Field<TypoUUID, SohViewRow> rowguid();
 
   Field<SalesorderheaderId, SohViewRow> salesorderid();
 
-  OptField<BusinessentityId, SohViewRow> salespersonid();
+  Field<TypoShort, SohViewRow> revisionnumber();
+
+  Field<TypoLocalDateTime, SohViewRow> orderdate();
+
+  Field<TypoLocalDateTime, SohViewRow> duedate();
 
   OptField<TypoLocalDateTime, SohViewRow> shipdate();
 
-  Field<ShipmethodId, SohViewRow> shipmethodid();
+  Field<TypoShort, SohViewRow> status();
+
+  Field<Flag, SohViewRow> onlineorderflag();
+
+  OptField<OrderNumber, SohViewRow> purchaseordernumber();
+
+  OptField<AccountNumber, SohViewRow> accountnumber();
+
+  Field<CustomerId, SohViewRow> customerid();
+
+  OptField<BusinessentityId, SohViewRow> salespersonid();
+
+  OptField<SalesterritoryId, SohViewRow> territoryid();
+
+  Field<AddressId, SohViewRow> billtoaddressid();
 
   Field<AddressId, SohViewRow> shiptoaddressid();
 
-  Field<TypoShort, SohViewRow> status();
+  Field<ShipmethodId, SohViewRow> shipmethodid();
+
+  OptField</* user-picked */ CustomCreditcardId, SohViewRow> creditcardid();
+
+  OptField</* max 15 chars */ String, SohViewRow> creditcardapprovalcode();
+
+  OptField<CurrencyrateId, SohViewRow> currencyrateid();
 
   Field<BigDecimal, SohViewRow> subtotal();
 
   Field<BigDecimal, SohViewRow> taxamt();
 
-  OptField<SalesterritoryId, SohViewRow> territoryid();
+  Field<BigDecimal, SohViewRow> freight();
 
   OptField<BigDecimal, SohViewRow> totaldue();
+
+  OptField</* max 128 chars */ String, SohViewRow> comment();
+
+  Field<TypoUUID, SohViewRow> rowguid();
+
+  Field<TypoLocalDateTime, SohViewRow> modifieddate();
 }

@@ -75,23 +75,23 @@ public interface BomViewFields {
     return new Impl(List.of());
   };
 
-  Field<Integer, BomViewRow> billofmaterialsid();
-
-  Field<TypoShort, BomViewRow> bomlevel();
-
-  Field<ProductId, BomViewRow> componentid();
-
-  OptField<TypoLocalDateTime, BomViewRow> enddate();
-
   Field<Integer, BomViewRow> id();
 
-  Field<TypoLocalDateTime, BomViewRow> modifieddate();
-
-  Field<BigDecimal, BomViewRow> perassemblyqty();
+  Field<Integer, BomViewRow> billofmaterialsid();
 
   OptField<ProductId, BomViewRow> productassemblyid();
 
+  Field<ProductId, BomViewRow> componentid();
+
   Field<TypoLocalDateTime, BomViewRow> startdate();
 
+  OptField<TypoLocalDateTime, BomViewRow> enddate();
+
   Field<UnitmeasureId, BomViewRow> unitmeasurecode();
+
+  Field<TypoShort, BomViewRow> bomlevel();
+
+  Field<BigDecimal, BomViewRow> perassemblyqty();
+
+  Field<TypoLocalDateTime, BomViewRow> modifieddate();
 }

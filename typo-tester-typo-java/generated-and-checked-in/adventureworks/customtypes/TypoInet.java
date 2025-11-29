@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import org.postgresql.util.PGobject;
 import typo.dsl.Bijection;
 import typo.runtime.PgRead;
@@ -15,7 +16,7 @@ import typo.runtime.internal.TypoPGObjectHelper;
 import typo.runtime.internal.arrayMap;
 
 /** inet (via PGObject) */
-public record TypoInet(String value) {
+public record TypoInet(@JsonValue String value) {
   public TypoInet withValue(String value) {
     return new TypoInet(value);
   };

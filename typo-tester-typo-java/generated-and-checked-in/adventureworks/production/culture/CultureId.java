@@ -5,13 +5,14 @@
  */
 package adventureworks.production.culture;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `production.culture` */
-public record CultureId(/* bpchar, max 6 chars */ String value) {
+public record CultureId(@JsonValue /* bpchar, max 6 chars */ String value) {
   public CultureId withValue(/* bpchar, max 6 chars */ String value) {
     return new CultureId(value);
   };

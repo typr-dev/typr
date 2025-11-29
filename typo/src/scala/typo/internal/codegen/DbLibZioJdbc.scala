@@ -191,17 +191,19 @@ class DbLibZioJdbc(pkg: jvm.QIdent, inlineImplicits: Boolean, dslEnabled: Boolea
         code"${jvm.Type.dsl.ConstAsAs}[$tpe](${dialect.usingCall}${lookupJdbcEncoder(tpe)}, ${lookupPgTypeFor(tpe)})"
     }
 
-  val batchSize = jvm.Param(jvm.Comments.Empty, jvm.Ident("batchSize"), TypesScala.Int, Some(code"10000"))
+  val batchSize = jvm.Param(Nil, jvm.Comments.Empty, jvm.Ident("batchSize"), TypesScala.Int, Some(code"10000"))
 
   override def repoSig(repoMethod: RepoMethod): Either[DbLib.NotImplementedFor, jvm.Method] = {
     def sig(params: List[jvm.Param[jvm.Type]], returnType: jvm.Type) = Right(
       jvm.Method(
+        Nil,
         comments = repoMethod.comment,
         tparams = Nil,
         name = jvm.Ident(repoMethod.methodName),
         params = params,
         implicitParams = Nil,
         tpe = returnType,
+        throws = Nil,
         body = Nil
       )
     )
@@ -656,12 +658,14 @@ class DbLibZioJdbc(pkg: jvm.QIdent, inlineImplicits: Boolean, dslEnabled: Boolea
 
   override def testInsertMethod(x: ComputedTestInserts.InsertMethod): jvm.Method =
     jvm.Method(
+      Nil,
       comments = jvm.Comments.Empty,
       Nil,
       x.name,
       x.params,
       Nil,
       ZIO.of(ZConnection, Throwable, x.table.names.RowName),
+      Nil,
       List(code"(new ${x.table.names.RepoImplName}).insert(new ${x.cls}(${x.values.map { case (p, expr) => code"$p = $expr" }.mkCode(", ")}))")
     )
 

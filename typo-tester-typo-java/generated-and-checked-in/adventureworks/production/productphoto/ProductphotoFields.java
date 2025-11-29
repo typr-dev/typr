@@ -61,15 +61,15 @@ public interface ProductphotoFields {
     return new Impl(List.of());
   };
 
-  OptField<TypoBytea, ProductphotoRow> largephoto();
-
-  OptField</* max 50 chars */ String, ProductphotoRow> largephotofilename();
-
-  Field<TypoLocalDateTime, ProductphotoRow> modifieddate();
-
   IdField<ProductphotoId, ProductphotoRow> productphotoid();
 
   OptField<TypoBytea, ProductphotoRow> thumbnailphoto();
 
   OptField</* max 50 chars */ String, ProductphotoRow> thumbnailphotofilename();
+
+  OptField<TypoBytea, ProductphotoRow> largephoto();
+
+  OptField</* max 50 chars */ String, ProductphotoRow> largephotofilename();
+
+  Field<TypoLocalDateTime, ProductphotoRow> modifieddate();
 }

@@ -57,13 +57,13 @@ public interface ShiftFields {
     return new Impl(List.of());
   };
 
-  Field<TypoLocalTime, ShiftRow> endtime();
-
-  Field<TypoLocalDateTime, ShiftRow> modifieddate();
+  IdField<ShiftId, ShiftRow> shiftid();
 
   Field<Name, ShiftRow> name();
 
-  IdField<ShiftId, ShiftRow> shiftid();
-
   Field<TypoLocalTime, ShiftRow> starttime();
+
+  Field<TypoLocalTime, ShiftRow> endtime();
+
+  Field<TypoLocalDateTime, ShiftRow> modifieddate();
 }

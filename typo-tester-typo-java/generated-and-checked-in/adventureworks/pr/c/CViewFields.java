@@ -53,11 +53,11 @@ public interface CViewFields {
     return new Impl(List.of());
   };
 
-  Field<CultureId, CViewRow> cultureid();
-
   Field<CultureId, CViewRow> id();
 
-  Field<TypoLocalDateTime, CViewRow> modifieddate();
+  Field<CultureId, CViewRow> cultureid();
 
   Field<Name, CViewRow> name();
+
+  Field<TypoLocalDateTime, CViewRow> modifieddate();
 }

@@ -59,13 +59,11 @@ public interface ProductmodelillustrationFields {
     return new Impl(List.of());
   };
 
-  default SqlExpr<Boolean> compositeIdIn(List<ProductmodelillustrationId> compositeIds) {
-    return new CompositeIn(List.of(new Part<ProductmodelId, ProductmodelillustrationId, ProductmodelillustrationRow>(productmodelid(), ProductmodelillustrationId::productmodelid, ProductmodelId.pgType), new Part<IllustrationId, ProductmodelillustrationId, ProductmodelillustrationRow>(illustrationid(), ProductmodelillustrationId::illustrationid, IllustrationId.pgType)), compositeIds);
-  };
+  IdField<ProductmodelId, ProductmodelillustrationRow> productmodelid();
 
-  default SqlExpr<Boolean> compositeIdIs(ProductmodelillustrationId compositeId) {
-    return SqlExpr.all(productmodelid().isEqual(compositeId.productmodelid()), illustrationid().isEqual(compositeId.illustrationid()));
-  };
+  IdField<IllustrationId, ProductmodelillustrationRow> illustrationid();
+
+  Field<TypoLocalDateTime, ProductmodelillustrationRow> modifieddate();
 
   default ForeignKey<IllustrationFields, IllustrationRow> fkIllustration() {
     return ForeignKey.<IllustrationFields, IllustrationRow>of("production.FK_ProductModelIllustration_Illustration_IllustrationID").withColumnPair(illustrationid(), IllustrationFields::illustrationid);
@@ -75,9 +73,11 @@ public interface ProductmodelillustrationFields {
     return ForeignKey.<ProductmodelFields, ProductmodelRow>of("production.FK_ProductModelIllustration_ProductModel_ProductModelID").withColumnPair(productmodelid(), ProductmodelFields::productmodelid);
   };
 
-  IdField<IllustrationId, ProductmodelillustrationRow> illustrationid();
+  default SqlExpr<Boolean> compositeIdIs(ProductmodelillustrationId compositeId) {
+    return SqlExpr.all(productmodelid().isEqual(compositeId.productmodelid()), illustrationid().isEqual(compositeId.illustrationid()));
+  };
 
-  Field<TypoLocalDateTime, ProductmodelillustrationRow> modifieddate();
-
-  IdField<ProductmodelId, ProductmodelillustrationRow> productmodelid();
+  default SqlExpr<Boolean> compositeIdIn(List<ProductmodelillustrationId> compositeIds) {
+    return new CompositeIn(List.of(new Part<ProductmodelId, ProductmodelillustrationId, ProductmodelillustrationRow>(productmodelid(), ProductmodelillustrationId::productmodelid, ProductmodelId.pgType), new Part<IllustrationId, ProductmodelillustrationId, ProductmodelillustrationRow>(illustrationid(), ProductmodelillustrationId::illustrationid, IllustrationId.pgType)), compositeIds);
+  };
 }

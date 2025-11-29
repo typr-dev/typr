@@ -22,7 +22,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record IdentityTestRepoImpl() implements IdentityTestRepo {
+public class IdentityTestRepoImpl implements IdentityTestRepo {
   public DeleteBuilder<IdentityTestFields, IdentityTestRow> delete() {
     return DeleteBuilder.of("public.identity-test", IdentityTestFields.structure());
   };
@@ -193,16 +193,16 @@ public record IdentityTestRepoImpl() implements IdentityTestRepo {
   ) {
     IdentityTestId name = row.name();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "public"."identity-test"
-         set "default_generated" = """),
-      PgTypes.int4.encode(row.defaultGenerated()),
-      typo.runtime.Fragment.lit("""
-         ::int4
-         where "name" = """),
-      IdentityTestId.pgType.encode(name),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "public"."identity-test"
+                set "default_generated" = """),
+             PgTypes.int4.encode(row.defaultGenerated()),
+             typo.runtime.Fragment.lit("""
+                ::int4
+                where "name" = """),
+             IdentityTestId.pgType.encode(name),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public IdentityTestRow upsert(
@@ -257,12 +257,12 @@ public record IdentityTestRepoImpl() implements IdentityTestRepo {
       copy identity-test_TEMP("default_generated", "name") from stdin
       """), batchSize, unsaved, c, IdentityTestRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "public"."identity-test"("default_generated", "name")
-       select * from identity-test_TEMP
-       on conflict ("name")
-       do update set
-         "default_generated" = EXCLUDED."default_generated"
-       ;
-       drop table identity-test_TEMP;""")).update().runUnchecked(c);
+              insert into "public"."identity-test"("default_generated", "name")
+              select * from identity-test_TEMP
+              on conflict ("name")
+              do update set
+                "default_generated" = EXCLUDED."default_generated"
+              ;
+              drop table identity-test_TEMP;""")).update().runUnchecked(c);
   };
 }

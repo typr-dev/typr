@@ -58,13 +58,13 @@ public interface LocationFields {
     return new Impl(List.of());
   };
 
-  Field<BigDecimal, LocationRow> availability();
+  IdField<LocationId, LocationRow> locationid();
+
+  Field<Name, LocationRow> name();
 
   Field<BigDecimal, LocationRow> costrate();
 
-  IdField<LocationId, LocationRow> locationid();
+  Field<BigDecimal, LocationRow> availability();
 
   Field<TypoLocalDateTime, LocationRow> modifieddate();
-
-  Field<Name, LocationRow> name();
 }

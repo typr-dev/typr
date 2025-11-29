@@ -30,7 +30,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record ProductRepoImpl() implements ProductRepo {
+public class ProductRepoImpl implements ProductRepo {
   public DeleteBuilder<ProductFields, ProductRow> delete() {
     return DeleteBuilder.of("production.product", ProductFields.structure());
   };
@@ -384,108 +384,108 @@ public record ProductRepoImpl() implements ProductRepo {
   ) {
     ProductId productid = row.productid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "production"."product"
-         set "name" = """),
-      Name.pgType.encode(row.name()),
-      typo.runtime.Fragment.lit("""
-         ::varchar,
-         "productnumber" = """),
-      PgTypes.text.encode(row.productnumber()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "makeflag" = """),
-      Flag.pgType.encode(row.makeflag()),
-      typo.runtime.Fragment.lit("""
-         ::bool,
-         "finishedgoodsflag" = """),
-      Flag.pgType.encode(row.finishedgoodsflag()),
-      typo.runtime.Fragment.lit("""
-         ::bool,
-         "color" = """),
-      PgTypes.text.opt().encode(row.color()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "safetystocklevel" = """),
-      TypoShort.pgType.encode(row.safetystocklevel()),
-      typo.runtime.Fragment.lit("""
-         ::int2,
-         "reorderpoint" = """),
-      TypoShort.pgType.encode(row.reorderpoint()),
-      typo.runtime.Fragment.lit("""
-         ::int2,
-         "standardcost" = """),
-      PgTypes.numeric.encode(row.standardcost()),
-      typo.runtime.Fragment.lit("""
-         ::numeric,
-         "listprice" = """),
-      PgTypes.numeric.encode(row.listprice()),
-      typo.runtime.Fragment.lit("""
-         ::numeric,
-         "size" = """),
-      PgTypes.text.opt().encode(row.size()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "sizeunitmeasurecode" = """),
-      UnitmeasureId.pgType.opt().encode(row.sizeunitmeasurecode()),
-      typo.runtime.Fragment.lit("""
-         ::bpchar,
-         "weightunitmeasurecode" = """),
-      UnitmeasureId.pgType.opt().encode(row.weightunitmeasurecode()),
-      typo.runtime.Fragment.lit("""
-         ::bpchar,
-         "weight" = """),
-      PgTypes.numeric.opt().encode(row.weight()),
-      typo.runtime.Fragment.lit("""
-         ::numeric,
-         "daystomanufacture" = """),
-      PgTypes.int4.encode(row.daystomanufacture()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "productline" = """),
-      PgTypes.text.opt().encode(row.productline()),
-      typo.runtime.Fragment.lit("""
-         ::bpchar,
-         "class" = """),
-      PgTypes.text.opt().encode(row.class_()),
-      typo.runtime.Fragment.lit("""
-         ::bpchar,
-         "style" = """),
-      PgTypes.text.opt().encode(row.style()),
-      typo.runtime.Fragment.lit("""
-         ::bpchar,
-         "productsubcategoryid" = """),
-      ProductsubcategoryId.pgType.opt().encode(row.productsubcategoryid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "productmodelid" = """),
-      ProductmodelId.pgType.opt().encode(row.productmodelid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "sellstartdate" = """),
-      TypoLocalDateTime.pgType.encode(row.sellstartdate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp,
-         "sellenddate" = """),
-      TypoLocalDateTime.pgType.opt().encode(row.sellenddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp,
-         "discontinueddate" = """),
-      TypoLocalDateTime.pgType.opt().encode(row.discontinueddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp,
-         "rowguid" = """),
-      TypoUUID.pgType.encode(row.rowguid()),
-      typo.runtime.Fragment.lit("""
-         ::uuid,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "productid" = """),
-      ProductId.pgType.encode(productid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "production"."product"
+                set "name" = """),
+             Name.pgType.encode(row.name()),
+             typo.runtime.Fragment.lit("""
+                ::varchar,
+                "productnumber" = """),
+             PgTypes.text.encode(row.productnumber()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "makeflag" = """),
+             Flag.pgType.encode(row.makeflag()),
+             typo.runtime.Fragment.lit("""
+                ::bool,
+                "finishedgoodsflag" = """),
+             Flag.pgType.encode(row.finishedgoodsflag()),
+             typo.runtime.Fragment.lit("""
+                ::bool,
+                "color" = """),
+             PgTypes.text.opt().encode(row.color()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "safetystocklevel" = """),
+             TypoShort.pgType.encode(row.safetystocklevel()),
+             typo.runtime.Fragment.lit("""
+                ::int2,
+                "reorderpoint" = """),
+             TypoShort.pgType.encode(row.reorderpoint()),
+             typo.runtime.Fragment.lit("""
+                ::int2,
+                "standardcost" = """),
+             PgTypes.numeric.encode(row.standardcost()),
+             typo.runtime.Fragment.lit("""
+                ::numeric,
+                "listprice" = """),
+             PgTypes.numeric.encode(row.listprice()),
+             typo.runtime.Fragment.lit("""
+                ::numeric,
+                "size" = """),
+             PgTypes.text.opt().encode(row.size()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "sizeunitmeasurecode" = """),
+             UnitmeasureId.pgType.opt().encode(row.sizeunitmeasurecode()),
+             typo.runtime.Fragment.lit("""
+                ::bpchar,
+                "weightunitmeasurecode" = """),
+             UnitmeasureId.pgType.opt().encode(row.weightunitmeasurecode()),
+             typo.runtime.Fragment.lit("""
+                ::bpchar,
+                "weight" = """),
+             PgTypes.numeric.opt().encode(row.weight()),
+             typo.runtime.Fragment.lit("""
+                ::numeric,
+                "daystomanufacture" = """),
+             PgTypes.int4.encode(row.daystomanufacture()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "productline" = """),
+             PgTypes.text.opt().encode(row.productline()),
+             typo.runtime.Fragment.lit("""
+                ::bpchar,
+                "class" = """),
+             PgTypes.text.opt().encode(row.class_()),
+             typo.runtime.Fragment.lit("""
+                ::bpchar,
+                "style" = """),
+             PgTypes.text.opt().encode(row.style()),
+             typo.runtime.Fragment.lit("""
+                ::bpchar,
+                "productsubcategoryid" = """),
+             ProductsubcategoryId.pgType.opt().encode(row.productsubcategoryid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "productmodelid" = """),
+             ProductmodelId.pgType.opt().encode(row.productmodelid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "sellstartdate" = """),
+             TypoLocalDateTime.pgType.encode(row.sellstartdate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp,
+                "sellenddate" = """),
+             TypoLocalDateTime.pgType.opt().encode(row.sellenddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp,
+                "discontinueddate" = """),
+             TypoLocalDateTime.pgType.opt().encode(row.discontinueddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp,
+                "rowguid" = """),
+             TypoUUID.pgType.encode(row.rowguid()),
+             typo.runtime.Fragment.lit("""
+                ::uuid,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "productid" = """),
+             ProductId.pgType.encode(productid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public ProductRow upsert(
@@ -632,35 +632,35 @@ public record ProductRepoImpl() implements ProductRepo {
       copy product_TEMP("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate") from stdin
       """), batchSize, unsaved, c, ProductRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "production"."product"("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate")
-       select * from product_TEMP
-       on conflict ("productid")
-       do update set
-         "name" = EXCLUDED."name",
-       "productnumber" = EXCLUDED."productnumber",
-       "makeflag" = EXCLUDED."makeflag",
-       "finishedgoodsflag" = EXCLUDED."finishedgoodsflag",
-       "color" = EXCLUDED."color",
-       "safetystocklevel" = EXCLUDED."safetystocklevel",
-       "reorderpoint" = EXCLUDED."reorderpoint",
-       "standardcost" = EXCLUDED."standardcost",
-       "listprice" = EXCLUDED."listprice",
-       "size" = EXCLUDED."size",
-       "sizeunitmeasurecode" = EXCLUDED."sizeunitmeasurecode",
-       "weightunitmeasurecode" = EXCLUDED."weightunitmeasurecode",
-       "weight" = EXCLUDED."weight",
-       "daystomanufacture" = EXCLUDED."daystomanufacture",
-       "productline" = EXCLUDED."productline",
-       "class" = EXCLUDED."class",
-       "style" = EXCLUDED."style",
-       "productsubcategoryid" = EXCLUDED."productsubcategoryid",
-       "productmodelid" = EXCLUDED."productmodelid",
-       "sellstartdate" = EXCLUDED."sellstartdate",
-       "sellenddate" = EXCLUDED."sellenddate",
-       "discontinueddate" = EXCLUDED."discontinueddate",
-       "rowguid" = EXCLUDED."rowguid",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table product_TEMP;""")).update().runUnchecked(c);
+              insert into "production"."product"("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate")
+              select * from product_TEMP
+              on conflict ("productid")
+              do update set
+                "name" = EXCLUDED."name",
+              "productnumber" = EXCLUDED."productnumber",
+              "makeflag" = EXCLUDED."makeflag",
+              "finishedgoodsflag" = EXCLUDED."finishedgoodsflag",
+              "color" = EXCLUDED."color",
+              "safetystocklevel" = EXCLUDED."safetystocklevel",
+              "reorderpoint" = EXCLUDED."reorderpoint",
+              "standardcost" = EXCLUDED."standardcost",
+              "listprice" = EXCLUDED."listprice",
+              "size" = EXCLUDED."size",
+              "sizeunitmeasurecode" = EXCLUDED."sizeunitmeasurecode",
+              "weightunitmeasurecode" = EXCLUDED."weightunitmeasurecode",
+              "weight" = EXCLUDED."weight",
+              "daystomanufacture" = EXCLUDED."daystomanufacture",
+              "productline" = EXCLUDED."productline",
+              "class" = EXCLUDED."class",
+              "style" = EXCLUDED."style",
+              "productsubcategoryid" = EXCLUDED."productsubcategoryid",
+              "productmodelid" = EXCLUDED."productmodelid",
+              "sellstartdate" = EXCLUDED."sellstartdate",
+              "sellenddate" = EXCLUDED."sellenddate",
+              "discontinueddate" = EXCLUDED."discontinueddate",
+              "rowguid" = EXCLUDED."rowguid",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table product_TEMP;""")).update().runUnchecked(c);
   };
 }

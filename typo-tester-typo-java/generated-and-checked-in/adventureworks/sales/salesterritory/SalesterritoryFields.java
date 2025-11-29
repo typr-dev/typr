@@ -78,27 +78,27 @@ public interface SalesterritoryFields {
     return new Impl(List.of());
   };
 
-  Field<BigDecimal, SalesterritoryRow> costlastyear();
+  IdField<SalesterritoryId, SalesterritoryRow> territoryid();
+
+  Field<Name, SalesterritoryRow> name();
+
+  Field<CountryregionId, SalesterritoryRow> countryregioncode();
+
+  Field</* max 50 chars */ String, SalesterritoryRow> group();
+
+  Field<BigDecimal, SalesterritoryRow> salesytd();
+
+  Field<BigDecimal, SalesterritoryRow> saleslastyear();
 
   Field<BigDecimal, SalesterritoryRow> costytd();
 
-  Field<CountryregionId, SalesterritoryRow> countryregioncode();
+  Field<BigDecimal, SalesterritoryRow> costlastyear();
+
+  Field<TypoUUID, SalesterritoryRow> rowguid();
+
+  Field<TypoLocalDateTime, SalesterritoryRow> modifieddate();
 
   default ForeignKey<CountryregionFields, CountryregionRow> fkPersonCountryregion() {
     return ForeignKey.<CountryregionFields, CountryregionRow>of("sales.FK_SalesTerritory_CountryRegion_CountryRegionCode").withColumnPair(countryregioncode(), CountryregionFields::countryregioncode);
   };
-
-  Field</* max 50 chars */ String, SalesterritoryRow> group();
-
-  Field<TypoLocalDateTime, SalesterritoryRow> modifieddate();
-
-  Field<Name, SalesterritoryRow> name();
-
-  Field<TypoUUID, SalesterritoryRow> rowguid();
-
-  Field<BigDecimal, SalesterritoryRow> saleslastyear();
-
-  Field<BigDecimal, SalesterritoryRow> salesytd();
-
-  IdField<SalesterritoryId, SalesterritoryRow> territoryid();
 }

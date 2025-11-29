@@ -5,6 +5,7 @@
  */
 package adventureworks.public_.table_with_generated_columns;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
@@ -22,7 +23,7 @@ public record TableWithGeneratedColumnsRow(
       WHEN (name = 'a'::text) THEN 'a-name'::text
       ELSE 'some-name'::text
   END */
-  String nameTypeAlways
+  @JsonProperty("name-type-always") String nameTypeAlways
 ) {
   public TableWithGeneratedColumnsRow withName(TableWithGeneratedColumnsId name) {
     return new TableWithGeneratedColumnsRow(name, nameTypeAlways);

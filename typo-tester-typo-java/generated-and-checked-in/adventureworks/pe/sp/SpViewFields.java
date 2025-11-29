@@ -73,21 +73,21 @@ public interface SpViewFields {
     return new Impl(List.of());
   };
 
-  Field<CountryregionId, SpViewRow> countryregioncode();
-
   Field<StateprovinceId, SpViewRow> id();
-
-  Field<Flag, SpViewRow> isonlystateprovinceflag();
-
-  Field<TypoLocalDateTime, SpViewRow> modifieddate();
-
-  Field<Name, SpViewRow> name();
-
-  Field<TypoUUID, SpViewRow> rowguid();
-
-  Field</* bpchar, max 3 chars */ String, SpViewRow> stateprovincecode();
 
   Field<StateprovinceId, SpViewRow> stateprovinceid();
 
+  Field</* bpchar, max 3 chars */ String, SpViewRow> stateprovincecode();
+
+  Field<CountryregionId, SpViewRow> countryregioncode();
+
+  Field<Flag, SpViewRow> isonlystateprovinceflag();
+
+  Field<Name, SpViewRow> name();
+
   Field<SalesterritoryId, SpViewRow> territoryid();
+
+  Field<TypoUUID, SpViewRow> rowguid();
+
+  Field<TypoLocalDateTime, SpViewRow> modifieddate();
 }

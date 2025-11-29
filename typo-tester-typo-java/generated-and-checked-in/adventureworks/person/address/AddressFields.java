@@ -83,17 +83,17 @@ public interface AddressFields {
 
   Field</* max 30 chars */ String, AddressRow> city();
 
-  default ForeignKey<StateprovinceFields, StateprovinceRow> fkStateprovince() {
-    return ForeignKey.<StateprovinceFields, StateprovinceRow>of("person.FK_Address_StateProvince_StateProvinceID").withColumnPair(stateprovinceid(), StateprovinceFields::stateprovinceid);
-  };
-
-  Field<TypoLocalDateTime, AddressRow> modifieddate();
+  Field<StateprovinceId, AddressRow> stateprovinceid();
 
   Field</* max 15 chars */ String, AddressRow> postalcode();
 
-  Field<TypoUUID, AddressRow> rowguid();
-
   OptField<TypoBytea, AddressRow> spatiallocation();
 
-  Field<StateprovinceId, AddressRow> stateprovinceid();
+  Field<TypoUUID, AddressRow> rowguid();
+
+  Field<TypoLocalDateTime, AddressRow> modifieddate();
+
+  default ForeignKey<StateprovinceFields, StateprovinceRow> fkStateprovince() {
+    return ForeignKey.<StateprovinceFields, StateprovinceRow>of("person.FK_Address_StateProvince_StateProvinceID").withColumnPair(stateprovinceid(), StateprovinceFields::stateprovinceid);
+  };
 }

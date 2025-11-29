@@ -331,9 +331,9 @@ import java.time.ZoneOffset
 import scala.util.Random
 
 /** Methods to generate random data for `Ident(TestInsert)` */
-class TestInsert(
-  val random: Random,
-  val domainInsert: TestDomainInsert
+case class TestInsert(
+  random: Random,
+  domainInsert: TestDomainInsert
 ) {
   def humanresourcesDepartment(
     name: Name = domainInsert.publicName(random),

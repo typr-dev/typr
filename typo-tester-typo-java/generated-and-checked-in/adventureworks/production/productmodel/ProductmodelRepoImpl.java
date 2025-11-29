@@ -25,7 +25,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record ProductmodelRepoImpl() implements ProductmodelRepo {
+public class ProductmodelRepoImpl implements ProductmodelRepo {
   public DeleteBuilder<ProductmodelFields, ProductmodelRow> delete() {
     return DeleteBuilder.of("production.productmodel", ProductmodelFields.structure());
   };
@@ -233,32 +233,32 @@ public record ProductmodelRepoImpl() implements ProductmodelRepo {
   ) {
     ProductmodelId productmodelid = row.productmodelid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "production"."productmodel"
-         set "name" = """),
-      Name.pgType.encode(row.name()),
-      typo.runtime.Fragment.lit("""
-         ::varchar,
-         "catalogdescription" = """),
-      TypoXml.pgType.opt().encode(row.catalogdescription()),
-      typo.runtime.Fragment.lit("""
-         ::xml,
-         "instructions" = """),
-      TypoXml.pgType.opt().encode(row.instructions()),
-      typo.runtime.Fragment.lit("""
-         ::xml,
-         "rowguid" = """),
-      TypoUUID.pgType.encode(row.rowguid()),
-      typo.runtime.Fragment.lit("""
-         ::uuid,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "productmodelid" = """),
-      ProductmodelId.pgType.encode(productmodelid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "production"."productmodel"
+                set "name" = """),
+             Name.pgType.encode(row.name()),
+             typo.runtime.Fragment.lit("""
+                ::varchar,
+                "catalogdescription" = """),
+             TypoXml.pgType.opt().encode(row.catalogdescription()),
+             typo.runtime.Fragment.lit("""
+                ::xml,
+                "instructions" = """),
+             TypoXml.pgType.opt().encode(row.instructions()),
+             typo.runtime.Fragment.lit("""
+                ::xml,
+                "rowguid" = """),
+             TypoUUID.pgType.encode(row.rowguid()),
+             typo.runtime.Fragment.lit("""
+                ::uuid,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "productmodelid" = """),
+             ProductmodelId.pgType.encode(productmodelid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public ProductmodelRow upsert(
@@ -329,16 +329,16 @@ public record ProductmodelRepoImpl() implements ProductmodelRepo {
       copy productmodel_TEMP("productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate") from stdin
       """), batchSize, unsaved, c, ProductmodelRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "production"."productmodel"("productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate")
-       select * from productmodel_TEMP
-       on conflict ("productmodelid")
-       do update set
-         "name" = EXCLUDED."name",
-       "catalogdescription" = EXCLUDED."catalogdescription",
-       "instructions" = EXCLUDED."instructions",
-       "rowguid" = EXCLUDED."rowguid",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table productmodel_TEMP;""")).update().runUnchecked(c);
+              insert into "production"."productmodel"("productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate")
+              select * from productmodel_TEMP
+              on conflict ("productmodelid")
+              do update set
+                "name" = EXCLUDED."name",
+              "catalogdescription" = EXCLUDED."catalogdescription",
+              "instructions" = EXCLUDED."instructions",
+              "rowguid" = EXCLUDED."rowguid",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table productmodel_TEMP;""")).update().runUnchecked(c);
   };
 }

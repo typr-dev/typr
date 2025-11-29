@@ -339,6 +339,14 @@ public record TestInsert(
   Random random,
   TestDomainInsert domainInsert
 ) {
+  public TestInsert withRandom(Random random) {
+    return new TestInsert(random, domainInsert);
+  };
+
+  public TestInsert withDomainInsert(TestDomainInsert domainInsert) {
+    return new TestInsert(random, domainInsert);
+  };
+
   public DepartmentRow humanresourcesDepartment(
     Name name,
     Name groupname,

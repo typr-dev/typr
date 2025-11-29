@@ -6,11 +6,12 @@
 package adventureworks.public_.test_utdanningstilbud;
 
 import adventureworks.public_.test_organisasjon.TestOrganisasjonId;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /** Type for the composite primary key of table `public.test_utdanningstilbud` */
 public record TestUtdanningstilbudId(
   TestOrganisasjonId organisasjonskode,
-  String utdanningsmulighetKode
+  @JsonProperty("utdanningsmulighet_kode") String utdanningsmulighetKode
 ) {
   public TestUtdanningstilbudId withOrganisasjonskode(TestOrganisasjonId organisasjonskode) {
     return new TestUtdanningstilbudId(organisasjonskode, utdanningsmulighetKode);

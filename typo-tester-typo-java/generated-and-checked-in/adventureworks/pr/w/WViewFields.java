@@ -75,23 +75,23 @@ public interface WViewFields {
     return new Impl(List.of());
   };
 
-  Field<TypoLocalDateTime, WViewRow> duedate();
-
-  OptField<TypoLocalDateTime, WViewRow> enddate();
-
   Field<WorkorderId, WViewRow> id();
 
-  Field<TypoLocalDateTime, WViewRow> modifieddate();
-
-  Field<Integer, WViewRow> orderqty();
+  Field<WorkorderId, WViewRow> workorderid();
 
   Field<ProductId, WViewRow> productid();
 
-  Field<TypoShort, WViewRow> scrappedqty();
+  Field<Integer, WViewRow> orderqty();
 
-  OptField<ScrapreasonId, WViewRow> scrapreasonid();
+  Field<TypoShort, WViewRow> scrappedqty();
 
   Field<TypoLocalDateTime, WViewRow> startdate();
 
-  Field<WorkorderId, WViewRow> workorderid();
+  OptField<TypoLocalDateTime, WViewRow> enddate();
+
+  Field<TypoLocalDateTime, WViewRow> duedate();
+
+  OptField<ScrapreasonId, WViewRow> scrapreasonid();
+
+  Field<TypoLocalDateTime, WViewRow> modifieddate();
 }

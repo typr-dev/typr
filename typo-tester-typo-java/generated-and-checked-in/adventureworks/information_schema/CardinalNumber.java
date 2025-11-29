@@ -5,6 +5,7 @@
  */
 package adventureworks.information_schema;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
@@ -13,7 +14,7 @@ import typo.runtime.internal.arrayMap;
 /** Domain `information_schema.cardinal_number`
   * Constraint: CHECK ((VALUE >= 0))
   */
-public record CardinalNumber(Integer value) {
+public record CardinalNumber(@JsonValue Integer value) {
   public CardinalNumber withValue(Integer value) {
     return new CardinalNumber(value);
   };

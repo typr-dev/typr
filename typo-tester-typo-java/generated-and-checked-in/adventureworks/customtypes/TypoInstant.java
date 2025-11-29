@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -20,7 +21,7 @@ import typo.runtime.PgWrite;
 import typo.runtime.internal.arrayMap;
 
 /** This is `java.time.TypoInstant`, but with microsecond precision and transferred to and from postgres as strings. The reason is that postgres driver and db libs are broken */
-public record TypoInstant(Instant value) {
+public record TypoInstant(@JsonValue Instant value) {
   public TypoInstant withValue(Instant value) {
     return new TypoInstant(value);
   };

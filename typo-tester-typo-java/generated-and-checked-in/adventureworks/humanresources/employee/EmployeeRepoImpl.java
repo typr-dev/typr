@@ -28,7 +28,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record EmployeeRepoImpl() implements EmployeeRepo {
+public class EmployeeRepoImpl implements EmployeeRepo {
   public DeleteBuilder<EmployeeFields, EmployeeRow> delete() {
     return DeleteBuilder.of("humanresources.employee", EmployeeFields.structure());
   };
@@ -323,68 +323,68 @@ public record EmployeeRepoImpl() implements EmployeeRepo {
   ) {
     BusinessentityId businessentityid = row.businessentityid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "humanresources"."employee"
-         set "nationalidnumber" = """),
-      PgTypes.text.encode(row.nationalidnumber()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "loginid" = """),
-      PgTypes.text.encode(row.loginid()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "jobtitle" = """),
-      PgTypes.text.encode(row.jobtitle()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "birthdate" = """),
-      TypoLocalDate.pgType.encode(row.birthdate()),
-      typo.runtime.Fragment.lit("""
-         ::date,
-         "maritalstatus" = """),
-      PgTypes.text.encode(row.maritalstatus()),
-      typo.runtime.Fragment.lit("""
-         ::bpchar,
-         "gender" = """),
-      PgTypes.text.encode(row.gender()),
-      typo.runtime.Fragment.lit("""
-         ::bpchar,
-         "hiredate" = """),
-      TypoLocalDate.pgType.encode(row.hiredate()),
-      typo.runtime.Fragment.lit("""
-         ::date,
-         "salariedflag" = """),
-      Flag.pgType.encode(row.salariedflag()),
-      typo.runtime.Fragment.lit("""
-         ::bool,
-         "vacationhours" = """),
-      TypoShort.pgType.encode(row.vacationhours()),
-      typo.runtime.Fragment.lit("""
-         ::int2,
-         "sickleavehours" = """),
-      TypoShort.pgType.encode(row.sickleavehours()),
-      typo.runtime.Fragment.lit("""
-         ::int2,
-         "currentflag" = """),
-      Flag.pgType.encode(row.currentflag()),
-      typo.runtime.Fragment.lit("""
-         ::bool,
-         "rowguid" = """),
-      TypoUUID.pgType.encode(row.rowguid()),
-      typo.runtime.Fragment.lit("""
-         ::uuid,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp,
-         "organizationnode" = """),
-      PgTypes.text.opt().encode(row.organizationnode()),
-      typo.runtime.Fragment.lit("""
+             typo.runtime.Fragment.lit("""
+                update "humanresources"."employee"
+                set "nationalidnumber" = """),
+             PgTypes.text.encode(row.nationalidnumber()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "loginid" = """),
+             PgTypes.text.encode(row.loginid()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "jobtitle" = """),
+             PgTypes.text.encode(row.jobtitle()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "birthdate" = """),
+             TypoLocalDate.pgType.encode(row.birthdate()),
+             typo.runtime.Fragment.lit("""
+                ::date,
+                "maritalstatus" = """),
+             PgTypes.text.encode(row.maritalstatus()),
+             typo.runtime.Fragment.lit("""
+                ::bpchar,
+                "gender" = """),
+             PgTypes.text.encode(row.gender()),
+             typo.runtime.Fragment.lit("""
+                ::bpchar,
+                "hiredate" = """),
+             TypoLocalDate.pgType.encode(row.hiredate()),
+             typo.runtime.Fragment.lit("""
+                ::date,
+                "salariedflag" = """),
+             Flag.pgType.encode(row.salariedflag()),
+             typo.runtime.Fragment.lit("""
+                ::bool,
+                "vacationhours" = """),
+             TypoShort.pgType.encode(row.vacationhours()),
+             typo.runtime.Fragment.lit("""
+                ::int2,
+                "sickleavehours" = """),
+             TypoShort.pgType.encode(row.sickleavehours()),
+             typo.runtime.Fragment.lit("""
+                ::int2,
+                "currentflag" = """),
+             Flag.pgType.encode(row.currentflag()),
+             typo.runtime.Fragment.lit("""
+                ::bool,
+                "rowguid" = """),
+             TypoUUID.pgType.encode(row.rowguid()),
+             typo.runtime.Fragment.lit("""
+                ::uuid,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp,
+                "organizationnode" = """),
+             PgTypes.text.opt().encode(row.organizationnode()),
+             typo.runtime.Fragment.lit("""
    
-         where "businessentityid" = """),
-      BusinessentityId.pgType.encode(businessentityid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+                where "businessentityid" = """),
+             BusinessentityId.pgType.encode(businessentityid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public EmployeeRow upsert(
@@ -491,25 +491,25 @@ public record EmployeeRepoImpl() implements EmployeeRepo {
       copy employee_TEMP("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode") from stdin
       """), batchSize, unsaved, c, EmployeeRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
-       select * from employee_TEMP
-       on conflict ("businessentityid")
-       do update set
-         "nationalidnumber" = EXCLUDED."nationalidnumber",
-       "loginid" = EXCLUDED."loginid",
-       "jobtitle" = EXCLUDED."jobtitle",
-       "birthdate" = EXCLUDED."birthdate",
-       "maritalstatus" = EXCLUDED."maritalstatus",
-       "gender" = EXCLUDED."gender",
-       "hiredate" = EXCLUDED."hiredate",
-       "salariedflag" = EXCLUDED."salariedflag",
-       "vacationhours" = EXCLUDED."vacationhours",
-       "sickleavehours" = EXCLUDED."sickleavehours",
-       "currentflag" = EXCLUDED."currentflag",
-       "rowguid" = EXCLUDED."rowguid",
-       "modifieddate" = EXCLUDED."modifieddate",
-       "organizationnode" = EXCLUDED."organizationnode"
-       ;
-       drop table employee_TEMP;""")).update().runUnchecked(c);
+              insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
+              select * from employee_TEMP
+              on conflict ("businessentityid")
+              do update set
+                "nationalidnumber" = EXCLUDED."nationalidnumber",
+              "loginid" = EXCLUDED."loginid",
+              "jobtitle" = EXCLUDED."jobtitle",
+              "birthdate" = EXCLUDED."birthdate",
+              "maritalstatus" = EXCLUDED."maritalstatus",
+              "gender" = EXCLUDED."gender",
+              "hiredate" = EXCLUDED."hiredate",
+              "salariedflag" = EXCLUDED."salariedflag",
+              "vacationhours" = EXCLUDED."vacationhours",
+              "sickleavehours" = EXCLUDED."sickleavehours",
+              "currentflag" = EXCLUDED."currentflag",
+              "rowguid" = EXCLUDED."rowguid",
+              "modifieddate" = EXCLUDED."modifieddate",
+              "organizationnode" = EXCLUDED."organizationnode"
+              ;
+              drop table employee_TEMP;""")).update().runUnchecked(c);
   };
 }

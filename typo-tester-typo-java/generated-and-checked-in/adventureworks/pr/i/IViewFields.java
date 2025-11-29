@@ -54,11 +54,11 @@ public interface IViewFields {
     return new Impl(List.of());
   };
 
-  OptField<TypoXml, IViewRow> diagram();
-
   Field<IllustrationId, IViewRow> id();
 
   Field<IllustrationId, IViewRow> illustrationid();
+
+  OptField<TypoXml, IViewRow> diagram();
 
   Field<TypoLocalDateTime, IViewRow> modifieddate();
 }

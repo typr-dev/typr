@@ -24,7 +24,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record SpecialofferRepoImpl() implements SpecialofferRepo {
+public class SpecialofferRepoImpl implements SpecialofferRepo {
   public DeleteBuilder<SpecialofferFields, SpecialofferRow> delete() {
     return DeleteBuilder.of("sales.specialoffer", SpecialofferFields.structure());
   };
@@ -280,52 +280,52 @@ public record SpecialofferRepoImpl() implements SpecialofferRepo {
   ) {
     SpecialofferId specialofferid = row.specialofferid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "sales"."specialoffer"
-         set "description" = """),
-      PgTypes.text.encode(row.description()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "discountpct" = """),
-      PgTypes.numeric.encode(row.discountpct()),
-      typo.runtime.Fragment.lit("""
-         ::numeric,
-         "type" = """),
-      PgTypes.text.encode(row.type()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "category" = """),
-      PgTypes.text.encode(row.category()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "startdate" = """),
-      TypoLocalDateTime.pgType.encode(row.startdate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp,
-         "enddate" = """),
-      TypoLocalDateTime.pgType.encode(row.enddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp,
-         "minqty" = """),
-      PgTypes.int4.encode(row.minqty()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "maxqty" = """),
-      PgTypes.int4.opt().encode(row.maxqty()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "rowguid" = """),
-      TypoUUID.pgType.encode(row.rowguid()),
-      typo.runtime.Fragment.lit("""
-         ::uuid,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "specialofferid" = """),
-      SpecialofferId.pgType.encode(specialofferid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "sales"."specialoffer"
+                set "description" = """),
+             PgTypes.text.encode(row.description()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "discountpct" = """),
+             PgTypes.numeric.encode(row.discountpct()),
+             typo.runtime.Fragment.lit("""
+                ::numeric,
+                "type" = """),
+             PgTypes.text.encode(row.type()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "category" = """),
+             PgTypes.text.encode(row.category()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "startdate" = """),
+             TypoLocalDateTime.pgType.encode(row.startdate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp,
+                "enddate" = """),
+             TypoLocalDateTime.pgType.encode(row.enddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp,
+                "minqty" = """),
+             PgTypes.int4.encode(row.minqty()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "maxqty" = """),
+             PgTypes.int4.opt().encode(row.maxqty()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "rowguid" = """),
+             TypoUUID.pgType.encode(row.rowguid()),
+             typo.runtime.Fragment.lit("""
+                ::uuid,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "specialofferid" = """),
+             SpecialofferId.pgType.encode(specialofferid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public SpecialofferRow upsert(
@@ -416,21 +416,21 @@ public record SpecialofferRepoImpl() implements SpecialofferRepo {
       copy specialoffer_TEMP("specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate") from stdin
       """), batchSize, unsaved, c, SpecialofferRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "sales"."specialoffer"("specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate")
-       select * from specialoffer_TEMP
-       on conflict ("specialofferid")
-       do update set
-         "description" = EXCLUDED."description",
-       "discountpct" = EXCLUDED."discountpct",
-       "type" = EXCLUDED."type",
-       "category" = EXCLUDED."category",
-       "startdate" = EXCLUDED."startdate",
-       "enddate" = EXCLUDED."enddate",
-       "minqty" = EXCLUDED."minqty",
-       "maxqty" = EXCLUDED."maxqty",
-       "rowguid" = EXCLUDED."rowguid",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table specialoffer_TEMP;""")).update().runUnchecked(c);
+              insert into "sales"."specialoffer"("specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate")
+              select * from specialoffer_TEMP
+              on conflict ("specialofferid")
+              do update set
+                "description" = EXCLUDED."description",
+              "discountpct" = EXCLUDED."discountpct",
+              "type" = EXCLUDED."type",
+              "category" = EXCLUDED."category",
+              "startdate" = EXCLUDED."startdate",
+              "enddate" = EXCLUDED."enddate",
+              "minqty" = EXCLUDED."minqty",
+              "maxqty" = EXCLUDED."maxqty",
+              "rowguid" = EXCLUDED."rowguid",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table specialoffer_TEMP;""")).update().runUnchecked(c);
   };
 }

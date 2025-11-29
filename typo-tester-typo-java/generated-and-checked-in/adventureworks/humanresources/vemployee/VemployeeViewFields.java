@@ -99,39 +99,39 @@ public interface VemployeeViewFields {
     return new Impl(List.of());
   };
 
-  OptField<TypoXml, VemployeeViewRow> additionalcontactinfo();
-
-  Field</* max 60 chars */ String, VemployeeViewRow> addressline1();
-
-  OptField</* max 60 chars */ String, VemployeeViewRow> addressline2();
-
   Field<BusinessentityId, VemployeeViewRow> businessentityid();
 
-  Field</* max 30 chars */ String, VemployeeViewRow> city();
-
-  Field<Name, VemployeeViewRow> countryregionname();
-
-  OptField</* max 50 chars */ String, VemployeeViewRow> emailaddress();
-
-  Field<Integer, VemployeeViewRow> emailpromotion();
+  OptField</* max 8 chars */ String, VemployeeViewRow> title();
 
   Field</* user-picked */ FirstName, VemployeeViewRow> firstname();
 
-  Field</* max 50 chars */ String, VemployeeViewRow> jobtitle();
+  OptField<Name, VemployeeViewRow> middlename();
 
   Field<Name, VemployeeViewRow> lastname();
 
-  OptField<Name, VemployeeViewRow> middlename();
+  OptField</* max 10 chars */ String, VemployeeViewRow> suffix();
+
+  Field</* max 50 chars */ String, VemployeeViewRow> jobtitle();
 
   OptField<Phone, VemployeeViewRow> phonenumber();
 
   OptField<Name, VemployeeViewRow> phonenumbertype();
 
-  Field</* max 15 chars */ String, VemployeeViewRow> postalcode();
+  OptField</* max 50 chars */ String, VemployeeViewRow> emailaddress();
+
+  Field<Integer, VemployeeViewRow> emailpromotion();
+
+  Field</* max 60 chars */ String, VemployeeViewRow> addressline1();
+
+  OptField</* max 60 chars */ String, VemployeeViewRow> addressline2();
+
+  Field</* max 30 chars */ String, VemployeeViewRow> city();
 
   Field<Name, VemployeeViewRow> stateprovincename();
 
-  OptField</* max 10 chars */ String, VemployeeViewRow> suffix();
+  Field</* max 15 chars */ String, VemployeeViewRow> postalcode();
 
-  OptField</* max 8 chars */ String, VemployeeViewRow> title();
+  Field<Name, VemployeeViewRow> countryregionname();
+
+  OptField<TypoXml, VemployeeViewRow> additionalcontactinfo();
 }

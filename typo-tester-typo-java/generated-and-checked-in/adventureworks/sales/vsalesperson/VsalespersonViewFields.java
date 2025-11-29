@@ -111,47 +111,47 @@ public interface VsalespersonViewFields {
     return new Impl(List.of());
   };
 
-  Field</* max 60 chars */ String, VsalespersonViewRow> addressline1();
-
-  OptField</* max 60 chars */ String, VsalespersonViewRow> addressline2();
-
   Field<BusinessentityId, VsalespersonViewRow> businessentityid();
 
-  Field</* max 30 chars */ String, VsalespersonViewRow> city();
-
-  Field<Name, VsalespersonViewRow> countryregionname();
-
-  OptField</* max 50 chars */ String, VsalespersonViewRow> emailaddress();
-
-  Field<Integer, VsalespersonViewRow> emailpromotion();
+  OptField</* max 8 chars */ String, VsalespersonViewRow> title();
 
   Field</* user-picked */ FirstName, VsalespersonViewRow> firstname();
 
-  Field</* max 50 chars */ String, VsalespersonViewRow> jobtitle();
+  OptField<Name, VsalespersonViewRow> middlename();
 
   Field<Name, VsalespersonViewRow> lastname();
 
-  OptField<Name, VsalespersonViewRow> middlename();
+  OptField</* max 10 chars */ String, VsalespersonViewRow> suffix();
+
+  Field</* max 50 chars */ String, VsalespersonViewRow> jobtitle();
 
   OptField<Phone, VsalespersonViewRow> phonenumber();
 
   OptField<Name, VsalespersonViewRow> phonenumbertype();
 
+  OptField</* max 50 chars */ String, VsalespersonViewRow> emailaddress();
+
+  Field<Integer, VsalespersonViewRow> emailpromotion();
+
+  Field</* max 60 chars */ String, VsalespersonViewRow> addressline1();
+
+  OptField</* max 60 chars */ String, VsalespersonViewRow> addressline2();
+
+  Field</* max 30 chars */ String, VsalespersonViewRow> city();
+
+  Field<Name, VsalespersonViewRow> stateprovincename();
+
   Field</* max 15 chars */ String, VsalespersonViewRow> postalcode();
 
-  Field<BigDecimal, VsalespersonViewRow> saleslastyear();
+  Field<Name, VsalespersonViewRow> countryregionname();
+
+  OptField<Name, VsalespersonViewRow> territoryname();
+
+  OptField</* max 50 chars */ String, VsalespersonViewRow> territorygroup();
 
   OptField<BigDecimal, VsalespersonViewRow> salesquota();
 
   Field<BigDecimal, VsalespersonViewRow> salesytd();
 
-  Field<Name, VsalespersonViewRow> stateprovincename();
-
-  OptField</* max 10 chars */ String, VsalespersonViewRow> suffix();
-
-  OptField</* max 50 chars */ String, VsalespersonViewRow> territorygroup();
-
-  OptField<Name, VsalespersonViewRow> territoryname();
-
-  OptField</* max 8 chars */ String, VsalespersonViewRow> title();
+  Field<BigDecimal, VsalespersonViewRow> saleslastyear();
 }

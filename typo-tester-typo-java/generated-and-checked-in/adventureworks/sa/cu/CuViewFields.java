@@ -53,11 +53,11 @@ public interface CuViewFields {
     return new Impl(List.of());
   };
 
-  Field<CurrencyId, CuViewRow> currencycode();
-
   Field<CurrencyId, CuViewRow> id();
 
-  Field<TypoLocalDateTime, CuViewRow> modifieddate();
+  Field<CurrencyId, CuViewRow> currencycode();
 
   Field<Name, CuViewRow> name();
+
+  Field<TypoLocalDateTime, CuViewRow> modifieddate();
 }

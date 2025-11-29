@@ -27,7 +27,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record ProductvendorRepoImpl() implements ProductvendorRepo {
+public class ProductvendorRepoImpl implements ProductvendorRepo {
   public DeleteBuilder<ProductvendorFields, ProductvendorRow> delete() {
     return DeleteBuilder.of("purchasing.productvendor", ProductvendorFields.structure());
   };
@@ -56,19 +56,19 @@ public record ProductvendorRepoImpl() implements ProductvendorRepo {
     ProductId[] productid = arrayMap.map(compositeIds, ProductvendorId::productid, ProductId.class);;
       BusinessentityId[] businessentityid = arrayMap.map(compositeIds, ProductvendorId::businessentityid, BusinessentityId.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         delete
-         from "purchasing"."productvendor"
-         where ("productid", "businessentityid")
-         in (select unnest("""),
-      ProductId.pgTypeArray.encode(productid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      BusinessentityId.pgTypeArray.encode(businessentityid),
-      typo.runtime.Fragment.lit("""
-      ::int4[]))
+             typo.runtime.Fragment.lit("""
+                delete
+                from "purchasing"."productvendor"
+                where ("productid", "businessentityid")
+                in (select unnest("""),
+             ProductId.pgTypeArray.encode(productid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             BusinessentityId.pgTypeArray.encode(businessentityid),
+             typo.runtime.Fragment.lit("""
+             ::int4[]))
 
-      """)
-    ).update().runUnchecked(c);
+             """)
+           ).update().runUnchecked(c);
   };
 
   public ProductvendorRow insert(
@@ -248,19 +248,19 @@ public record ProductvendorRepoImpl() implements ProductvendorRepo {
     ProductId[] productid = arrayMap.map(compositeIds, ProductvendorId::productid, ProductId.class);;
       BusinessentityId[] businessentityid = arrayMap.map(compositeIds, ProductvendorId::businessentityid, BusinessentityId.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         select "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text
-         from "purchasing"."productvendor"
-         where ("productid", "businessentityid")
-         in (select unnest("""),
-      ProductId.pgTypeArray.encode(productid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      BusinessentityId.pgTypeArray.encode(businessentityid),
-      typo.runtime.Fragment.lit("""
-      ::int4[]))
+             typo.runtime.Fragment.lit("""
+                select "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text
+                from "purchasing"."productvendor"
+                where ("productid", "businessentityid")
+                in (select unnest("""),
+             ProductId.pgTypeArray.encode(productid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             BusinessentityId.pgTypeArray.encode(businessentityid),
+             typo.runtime.Fragment.lit("""
+             ::int4[]))
 
-      """)
-    ).as(ProductvendorRow._rowParser.all()).runUnchecked(c);
+             """)
+           ).as(ProductvendorRow._rowParser.all()).runUnchecked(c);
   };
 
   public Map<ProductvendorId, ProductvendorRow> selectByIdsTracked(
@@ -282,52 +282,52 @@ public record ProductvendorRepoImpl() implements ProductvendorRepo {
   ) {
     ProductvendorId compositeId = row.compositeId();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "purchasing"."productvendor"
-         set "averageleadtime" = """),
-      PgTypes.int4.encode(row.averageleadtime()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "standardprice" = """),
-      PgTypes.numeric.encode(row.standardprice()),
-      typo.runtime.Fragment.lit("""
-         ::numeric,
-         "lastreceiptcost" = """),
-      PgTypes.numeric.opt().encode(row.lastreceiptcost()),
-      typo.runtime.Fragment.lit("""
-         ::numeric,
-         "lastreceiptdate" = """),
-      TypoLocalDateTime.pgType.opt().encode(row.lastreceiptdate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp,
-         "minorderqty" = """),
-      PgTypes.int4.encode(row.minorderqty()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "maxorderqty" = """),
-      PgTypes.int4.encode(row.maxorderqty()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "onorderqty" = """),
-      PgTypes.int4.opt().encode(row.onorderqty()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "unitmeasurecode" = """),
-      UnitmeasureId.pgType.encode(row.unitmeasurecode()),
-      typo.runtime.Fragment.lit("""
-         ::bpchar,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "productid" = """),
-      ProductId.pgType.encode(compositeId.productid()),
-      typo.runtime.Fragment.lit("""
-       AND "businessentityid" = 
-      """),
-      BusinessentityId.pgType.encode(compositeId.businessentityid()),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "purchasing"."productvendor"
+                set "averageleadtime" = """),
+             PgTypes.int4.encode(row.averageleadtime()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "standardprice" = """),
+             PgTypes.numeric.encode(row.standardprice()),
+             typo.runtime.Fragment.lit("""
+                ::numeric,
+                "lastreceiptcost" = """),
+             PgTypes.numeric.opt().encode(row.lastreceiptcost()),
+             typo.runtime.Fragment.lit("""
+                ::numeric,
+                "lastreceiptdate" = """),
+             TypoLocalDateTime.pgType.opt().encode(row.lastreceiptdate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp,
+                "minorderqty" = """),
+             PgTypes.int4.encode(row.minorderqty()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "maxorderqty" = """),
+             PgTypes.int4.encode(row.maxorderqty()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "onorderqty" = """),
+             PgTypes.int4.opt().encode(row.onorderqty()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "unitmeasurecode" = """),
+             UnitmeasureId.pgType.encode(row.unitmeasurecode()),
+             typo.runtime.Fragment.lit("""
+                ::bpchar,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "productid" = """),
+             ProductId.pgType.encode(compositeId.productid()),
+             typo.runtime.Fragment.lit("""
+              AND "businessentityid" = 
+             """),
+             BusinessentityId.pgType.encode(compositeId.businessentityid()),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public ProductvendorRow upsert(
@@ -416,20 +416,20 @@ public record ProductvendorRepoImpl() implements ProductvendorRepo {
       copy productvendor_TEMP("productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate") from stdin
       """), batchSize, unsaved, c, ProductvendorRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "purchasing"."productvendor"("productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate")
-       select * from productvendor_TEMP
-       on conflict ("productid", "businessentityid")
-       do update set
-         "averageleadtime" = EXCLUDED."averageleadtime",
-       "standardprice" = EXCLUDED."standardprice",
-       "lastreceiptcost" = EXCLUDED."lastreceiptcost",
-       "lastreceiptdate" = EXCLUDED."lastreceiptdate",
-       "minorderqty" = EXCLUDED."minorderqty",
-       "maxorderqty" = EXCLUDED."maxorderqty",
-       "onorderqty" = EXCLUDED."onorderqty",
-       "unitmeasurecode" = EXCLUDED."unitmeasurecode",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table productvendor_TEMP;""")).update().runUnchecked(c);
+              insert into "purchasing"."productvendor"("productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate")
+              select * from productvendor_TEMP
+              on conflict ("productid", "businessentityid")
+              do update set
+                "averageleadtime" = EXCLUDED."averageleadtime",
+              "standardprice" = EXCLUDED."standardprice",
+              "lastreceiptcost" = EXCLUDED."lastreceiptcost",
+              "lastreceiptdate" = EXCLUDED."lastreceiptdate",
+              "minorderqty" = EXCLUDED."minorderqty",
+              "maxorderqty" = EXCLUDED."maxorderqty",
+              "onorderqty" = EXCLUDED."onorderqty",
+              "unitmeasurecode" = EXCLUDED."unitmeasurecode",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table productvendor_TEMP;""")).update().runUnchecked(c);
   };
 }

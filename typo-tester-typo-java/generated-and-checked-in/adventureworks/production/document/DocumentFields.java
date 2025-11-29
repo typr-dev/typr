@@ -89,33 +89,33 @@ public interface DocumentFields {
     return new Impl(List.of());
   };
 
-  Field<Integer, DocumentRow> changenumber();
+  Field</* max 50 chars */ String, DocumentRow> title();
 
-  OptField<TypoBytea, DocumentRow> document();
+  Field<BusinessentityId, DocumentRow> owner();
 
-  IdField<DocumentId, DocumentRow> documentnode();
+  Field<Flag, DocumentRow> folderflag();
 
-  OptField<String, DocumentRow> documentsummary();
+  Field</* max 400 chars */ String, DocumentRow> filename();
 
   OptField</* max 8 chars */ String, DocumentRow> fileextension();
 
-  Field</* max 400 chars */ String, DocumentRow> filename();
+  Field</* bpchar, max 5 chars */ String, DocumentRow> revision();
+
+  Field<Integer, DocumentRow> changenumber();
+
+  Field<TypoShort, DocumentRow> status();
+
+  OptField<String, DocumentRow> documentsummary();
+
+  OptField<TypoBytea, DocumentRow> document();
+
+  Field<TypoUUID, DocumentRow> rowguid();
+
+  Field<TypoLocalDateTime, DocumentRow> modifieddate();
+
+  IdField<DocumentId, DocumentRow> documentnode();
 
   default ForeignKey<EmployeeFields, EmployeeRow> fkHumanresourcesEmployee() {
     return ForeignKey.<EmployeeFields, EmployeeRow>of("production.FK_Document_Employee_Owner").withColumnPair(owner(), EmployeeFields::businessentityid);
   };
-
-  Field<Flag, DocumentRow> folderflag();
-
-  Field<TypoLocalDateTime, DocumentRow> modifieddate();
-
-  Field<BusinessentityId, DocumentRow> owner();
-
-  Field</* bpchar, max 5 chars */ String, DocumentRow> revision();
-
-  Field<TypoUUID, DocumentRow> rowguid();
-
-  Field<TypoShort, DocumentRow> status();
-
-  Field</* max 50 chars */ String, DocumentRow> title();
 }

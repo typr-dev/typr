@@ -10,7 +10,7 @@ import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-public record EdhViewRepoImpl() implements EdhViewRepo {
+public class EdhViewRepoImpl implements EdhViewRepo {
   public SelectBuilder<EdhViewFields, EdhViewRow> select() {
     return SelectBuilder.of("hr.edh", EdhViewFields.structure(), EdhViewRow._rowParser);
   };

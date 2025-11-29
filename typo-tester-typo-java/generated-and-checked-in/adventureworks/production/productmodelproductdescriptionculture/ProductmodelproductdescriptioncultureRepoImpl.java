@@ -26,7 +26,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record ProductmodelproductdescriptioncultureRepoImpl() implements ProductmodelproductdescriptioncultureRepo {
+public class ProductmodelproductdescriptioncultureRepoImpl implements ProductmodelproductdescriptioncultureRepo {
   public DeleteBuilder<ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow> delete() {
     return DeleteBuilder.of("production.productmodelproductdescriptionculture", ProductmodelproductdescriptioncultureFields.structure());
   };
@@ -60,21 +60,21 @@ public record ProductmodelproductdescriptioncultureRepoImpl() implements Product
       ProductdescriptionId[] productdescriptionid = arrayMap.map(compositeIds, ProductmodelproductdescriptioncultureId::productdescriptionid, ProductdescriptionId.class);;
       CultureId[] cultureid = arrayMap.map(compositeIds, ProductmodelproductdescriptioncultureId::cultureid, CultureId.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         delete
-         from "production"."productmodelproductdescriptionculture"
-         where ("productmodelid", "productdescriptionid", "cultureid")
-         in (select unnest("""),
-      ProductmodelId.pgTypeArray.encode(productmodelid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      ProductdescriptionId.pgTypeArray.encode(productdescriptionid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      CultureId.pgTypeArray.encode(cultureid),
-      typo.runtime.Fragment.lit("""
-      ::bpchar[]))
+             typo.runtime.Fragment.lit("""
+                delete
+                from "production"."productmodelproductdescriptionculture"
+                where ("productmodelid", "productdescriptionid", "cultureid")
+                in (select unnest("""),
+             ProductmodelId.pgTypeArray.encode(productmodelid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             ProductdescriptionId.pgTypeArray.encode(productdescriptionid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             CultureId.pgTypeArray.encode(cultureid),
+             typo.runtime.Fragment.lit("""
+             ::bpchar[]))
 
-      """)
-    ).update().runUnchecked(c);
+             """)
+           ).update().runUnchecked(c);
   };
 
   public ProductmodelproductdescriptioncultureRow insert(
@@ -210,21 +210,21 @@ public record ProductmodelproductdescriptioncultureRepoImpl() implements Product
       ProductdescriptionId[] productdescriptionid = arrayMap.map(compositeIds, ProductmodelproductdescriptioncultureId::productdescriptionid, ProductdescriptionId.class);;
       CultureId[] cultureid = arrayMap.map(compositeIds, ProductmodelproductdescriptioncultureId::cultureid, CultureId.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         select "productmodelid", "productdescriptionid", "cultureid", "modifieddate"::text
-         from "production"."productmodelproductdescriptionculture"
-         where ("productmodelid", "productdescriptionid", "cultureid")
-         in (select unnest("""),
-      ProductmodelId.pgTypeArray.encode(productmodelid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      ProductdescriptionId.pgTypeArray.encode(productdescriptionid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      CultureId.pgTypeArray.encode(cultureid),
-      typo.runtime.Fragment.lit("""
-      ::bpchar[]))
+             typo.runtime.Fragment.lit("""
+                select "productmodelid", "productdescriptionid", "cultureid", "modifieddate"::text
+                from "production"."productmodelproductdescriptionculture"
+                where ("productmodelid", "productdescriptionid", "cultureid")
+                in (select unnest("""),
+             ProductmodelId.pgTypeArray.encode(productmodelid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             ProductdescriptionId.pgTypeArray.encode(productdescriptionid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             CultureId.pgTypeArray.encode(cultureid),
+             typo.runtime.Fragment.lit("""
+             ::bpchar[]))
 
-      """)
-    ).as(ProductmodelproductdescriptioncultureRow._rowParser.all()).runUnchecked(c);
+             """)
+           ).as(ProductmodelproductdescriptioncultureRow._rowParser.all()).runUnchecked(c);
   };
 
   public Map<ProductmodelproductdescriptioncultureId, ProductmodelproductdescriptioncultureRow> selectByIdsTracked(
@@ -246,24 +246,24 @@ public record ProductmodelproductdescriptioncultureRepoImpl() implements Product
   ) {
     ProductmodelproductdescriptioncultureId compositeId = row.compositeId();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "production"."productmodelproductdescriptionculture"
-         set "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "productmodelid" = """),
-      ProductmodelId.pgType.encode(compositeId.productmodelid()),
-      typo.runtime.Fragment.lit("""
-       AND "productdescriptionid" = 
-      """),
-      ProductdescriptionId.pgType.encode(compositeId.productdescriptionid()),
-      typo.runtime.Fragment.lit("""
-       AND "cultureid" = 
-      """),
-      CultureId.pgType.encode(compositeId.cultureid()),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "production"."productmodelproductdescriptionculture"
+                set "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "productmodelid" = """),
+             ProductmodelId.pgType.encode(compositeId.productmodelid()),
+             typo.runtime.Fragment.lit("""
+              AND "productdescriptionid" = 
+             """),
+             ProductdescriptionId.pgType.encode(compositeId.productdescriptionid()),
+             typo.runtime.Fragment.lit("""
+              AND "cultureid" = 
+             """),
+             CultureId.pgType.encode(compositeId.cultureid()),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public ProductmodelproductdescriptioncultureRow upsert(
@@ -322,12 +322,12 @@ public record ProductmodelproductdescriptioncultureRepoImpl() implements Product
       copy productmodelproductdescriptionculture_TEMP("productmodelid", "productdescriptionid", "cultureid", "modifieddate") from stdin
       """), batchSize, unsaved, c, ProductmodelproductdescriptioncultureRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "production"."productmodelproductdescriptionculture"("productmodelid", "productdescriptionid", "cultureid", "modifieddate")
-       select * from productmodelproductdescriptionculture_TEMP
-       on conflict ("productmodelid", "productdescriptionid", "cultureid")
-       do update set
-         "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table productmodelproductdescriptionculture_TEMP;""")).update().runUnchecked(c);
+              insert into "production"."productmodelproductdescriptionculture"("productmodelid", "productdescriptionid", "cultureid", "modifieddate")
+              select * from productmodelproductdescriptionculture_TEMP
+              on conflict ("productmodelid", "productdescriptionid", "cultureid")
+              do update set
+                "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table productmodelproductdescriptionculture_TEMP;""")).update().runUnchecked(c);
   };
 }

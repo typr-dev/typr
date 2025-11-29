@@ -20,7 +20,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record PersonRepoImpl() implements PersonRepo {
+public class PersonRepoImpl implements PersonRepo {
   public DeleteBuilder<PersonFields, PersonRow> delete() {
     return DeleteBuilder.of("compositepk.person", PersonFields.structure());
   };
@@ -173,20 +173,20 @@ public record PersonRepoImpl() implements PersonRepo {
   ) {
     PersonId compositeId = row.compositeId();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "compositepk"."person"
-         set "name" = """),
-      PgTypes.text.opt().encode(row.name()),
-      typo.runtime.Fragment.lit("""
+             typo.runtime.Fragment.lit("""
+                update "compositepk"."person"
+                set "name" = """),
+             PgTypes.text.opt().encode(row.name()),
+             typo.runtime.Fragment.lit("""
    
-         where "one" = """),
-      PgTypes.int8.encode(compositeId.one()),
-      typo.runtime.Fragment.lit("""
-       AND "two" = 
-      """),
-      PgTypes.text.opt().encode(compositeId.two()),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+                where "one" = """),
+             PgTypes.int8.encode(compositeId.one()),
+             typo.runtime.Fragment.lit("""
+              AND "two" = 
+             """),
+             PgTypes.text.opt().encode(compositeId.two()),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public PersonRow upsert(
@@ -243,12 +243,12 @@ public record PersonRepoImpl() implements PersonRepo {
       copy person_TEMP("one", "two", "name") from stdin
       """), batchSize, unsaved, c, PersonRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "compositepk"."person"("one", "two", "name")
-       select * from person_TEMP
-       on conflict ("one", "two")
-       do update set
-         "name" = EXCLUDED."name"
-       ;
-       drop table person_TEMP;""")).update().runUnchecked(c);
+              insert into "compositepk"."person"("one", "two", "name")
+              select * from person_TEMP
+              on conflict ("one", "two")
+              do update set
+                "name" = EXCLUDED."name"
+              ;
+              drop table person_TEMP;""")).update().runUnchecked(c);
   };
 }

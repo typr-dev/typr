@@ -52,7 +52,7 @@ public interface CultureFields {
 
   IdField<CultureId, CultureRow> cultureid();
 
-  Field<TypoLocalDateTime, CultureRow> modifieddate();
-
   Field<Name, CultureRow> name();
+
+  Field<TypoLocalDateTime, CultureRow> modifieddate();
 }

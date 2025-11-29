@@ -64,17 +64,17 @@ public interface UsersFields {
     return new Impl(List.of());
   };
 
-  Field<TypoInstant, UsersRow> createdAt();
-
-  Field<TypoUnknownCitext, UsersRow> email();
-
-  OptField<String, UsersRow> lastName();
+  IdField<UsersId, UsersRow> userId();
 
   Field<String, UsersRow> name();
 
+  OptField<String, UsersRow> lastName();
+
+  Field<TypoUnknownCitext, UsersRow> email();
+
   Field<String, UsersRow> password();
 
-  IdField<UsersId, UsersRow> userId();
+  Field<TypoInstant, UsersRow> createdAt();
 
   OptField<TypoInstant, UsersRow> verifiedOn();
 }

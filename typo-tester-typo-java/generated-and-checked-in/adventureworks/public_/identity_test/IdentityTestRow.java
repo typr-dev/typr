@@ -6,6 +6,7 @@
 package adventureworks.public_.identity_test;
 
 import adventureworks.customtypes.Defaulted;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
@@ -17,9 +18,9 @@ import typo.runtime.RowParsers.Tuple3;
   */
 public record IdentityTestRow(
   /** Identity ALWAYS, identityStart: 1, identityIncrement: 1, identityMaximum: 2147483647, identityMinimum: 1 */
-  Integer alwaysGenerated,
+  @JsonProperty("always_generated") Integer alwaysGenerated,
   /** Identity BY DEFAULT, identityStart: 1, identityIncrement: 1, identityMaximum: 2147483647, identityMinimum: 1 */
-  Integer defaultGenerated,
+  @JsonProperty("default_generated") Integer defaultGenerated,
   IdentityTestId name
 ) {
   /** Identity ALWAYS, identityStart: 1, identityIncrement: 1, identityMaximum: 2147483647, identityMinimum: 1 */

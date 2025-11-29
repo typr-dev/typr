@@ -13,13 +13,15 @@ object minimize {
           tree match {
             case jvm.IgnoreResult(expr) =>
               go(expr)
-            case jvm.TypeSwitch(value, cases) =>
+            case jvm.TypeSwitch(value, cases, nullCase, defaultCase) =>
               go(value)
               cases.foreach { c =>
                 goTree(c.tpe)
                 goTree(c.ident)
                 go(c.body)
               }
+              nullCase.foreach(go)
+              defaultCase.foreach(go)
             case jvm.IfExpr(pred, thenp, elsep) =>
               go(pred)
               go(thenp)
@@ -80,7 +82,7 @@ object minimize {
               go(value)
             case jvm.Arg.Named(_, value) =>
               go(value)
-            case jvm.Param(_, _, tpe, maybeCode) =>
+            case jvm.Param(_, _, _, tpe, maybeCode) =>
               goTree(tpe)
               maybeCode.foreach(go)
             case jvm.StrLit(_) => ()
@@ -97,27 +99,28 @@ object minimize {
               goTree(i)
               goTree(prefix)
               go(content)
-            case jvm.Given(tparams, name, implicitParams, tpe, body) =>
+            case jvm.Given(_, tparams, name, implicitParams, tpe, body) =>
               tparams.foreach(goTree)
               goTree(name)
               implicitParams.foreach(goTree)
               goTree(tpe)
               go(body)
-            case jvm.Value(name, tpe, body, _, _) =>
+            case jvm.Value(_, name, tpe, body, _, _) =>
               goTree(name)
               goTree(tpe)
               body.foreach(go)
-            case jvm.Method(_, tparams, name, params, implicitParams, tpe, body) =>
+            case jvm.Method(_, _, tparams, name, params, implicitParams, tpe, throws, body) =>
               tparams.foreach(goTree)
               goTree(name)
               params.foreach(goTree)
               implicitParams.foreach(goTree)
               goTree(tpe)
+              throws.foreach(goTree)
               body.foreach(go)
-            case jvm.Enum(_, tpe, _, instances) =>
+            case jvm.Enum(_, _, tpe, _, instances) =>
               goTree(tpe)
               instances.foreach(goTree)
-            case jvm.Class(_, _, _, tparams, params, implicitParams, extends_, implements, members, staticMembers) =>
+            case jvm.Class(_, _, _, _, tparams, params, implicitParams, extends_, implements, members, staticMembers) =>
               tparams.foreach(goTree)
               params.foreach(goTree)
               implicitParams.foreach(goTree)
@@ -130,7 +133,7 @@ object minimize {
               extends_.foreach(goTree)
               superArgs.foreach(goTree)
               members.foreach(goTree)
-            case jvm.Adt.Record(_, _, _, tparams, params, implicitParams, extends_, implements, members, staticMembers) =>
+            case jvm.Adt.Record(_, _, _, _, tparams, params, implicitParams, extends_, implements, members, staticMembers) =>
               tparams.foreach(goTree)
               params.foreach(goTree)
               implicitParams.foreach(goTree)
@@ -138,7 +141,8 @@ object minimize {
               implements.foreach(goTree)
               members.foreach(goTree)
               staticMembers.foreach(goTree)
-            case jvm.Adt.Sum(_, _, tparams, members, implements, subtypes, staticMembers) =>
+            case jvm.Adt.Sum(annotations, _, _, tparams, members, implements, subtypes, staticMembers) =>
+              annotations.foreach(goTree)
               tparams.foreach(goTree)
               members.foreach(goTree)
               implements.foreach(goTree)
@@ -179,7 +183,7 @@ object minimize {
               goTree(tpe1)
               goTree(tpe2)
               goTree(ret)
-            case jvm.OpenEnum(_, tpe, underlyingType, values, staticMembers) => {
+            case jvm.OpenEnum(_, _, tpe, underlyingType, values, staticMembers) => {
               goTree(tpe)
               goTree(underlyingType)
               values.toList.foreach { case (_, expr) => go(expr) }
@@ -187,6 +191,12 @@ object minimize {
             }
             case jvm.RuntimeInterpolation(value) =>
               go(value)
+            case jvm.Annotation(tpe, args) =>
+              goTree(tpe)
+              args.foreach {
+                case jvm.Annotation.Arg.Named(_, value)   => go(value)
+                case jvm.Annotation.Arg.Positional(value) => go(value)
+              }
           }
         }
 

@@ -75,6 +75,8 @@ public interface AViewFields {
     return new Impl(List.of());
   };
 
+  Field<AddressId, AViewRow> id();
+
   Field<AddressId, AViewRow> addressid();
 
   Field</* max 60 chars */ String, AViewRow> addressline1();
@@ -83,15 +85,13 @@ public interface AViewFields {
 
   Field</* max 30 chars */ String, AViewRow> city();
 
-  Field<AddressId, AViewRow> id();
-
-  Field<TypoLocalDateTime, AViewRow> modifieddate();
+  Field<StateprovinceId, AViewRow> stateprovinceid();
 
   Field</* max 15 chars */ String, AViewRow> postalcode();
 
-  Field<TypoUUID, AViewRow> rowguid();
-
   OptField<TypoBytea, AViewRow> spatiallocation();
 
-  Field<StateprovinceId, AViewRow> stateprovinceid();
+  Field<TypoUUID, AViewRow> rowguid();
+
+  Field<TypoLocalDateTime, AViewRow> modifieddate();
 }

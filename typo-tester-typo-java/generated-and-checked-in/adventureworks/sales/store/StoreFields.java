@@ -70,7 +70,15 @@ public interface StoreFields {
 
   IdField<BusinessentityId, StoreRow> businessentityid();
 
+  Field<Name, StoreRow> name();
+
+  OptField<BusinessentityId, StoreRow> salespersonid();
+
   OptField<TypoXml, StoreRow> demographics();
+
+  Field<TypoUUID, StoreRow> rowguid();
+
+  Field<TypoLocalDateTime, StoreRow> modifieddate();
 
   default ForeignKey<BusinessentityFields, BusinessentityRow> fkPersonBusinessentity() {
     return ForeignKey.<BusinessentityFields, BusinessentityRow>of("sales.FK_Store_BusinessEntity_BusinessEntityID").withColumnPair(businessentityid(), BusinessentityFields::businessentityid);
@@ -79,12 +87,4 @@ public interface StoreFields {
   default ForeignKey<SalespersonFields, SalespersonRow> fkSalesperson() {
     return ForeignKey.<SalespersonFields, SalespersonRow>of("sales.FK_Store_SalesPerson_SalesPersonID").withColumnPair(salespersonid(), SalespersonFields::businessentityid);
   };
-
-  Field<TypoLocalDateTime, StoreRow> modifieddate();
-
-  Field<Name, StoreRow> name();
-
-  Field<TypoUUID, StoreRow> rowguid();
-
-  OptField<BusinessentityId, StoreRow> salespersonid();
 }

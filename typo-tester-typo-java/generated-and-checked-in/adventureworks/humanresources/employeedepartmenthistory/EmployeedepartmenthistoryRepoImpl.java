@@ -27,7 +27,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record EmployeedepartmenthistoryRepoImpl() implements EmployeedepartmenthistoryRepo {
+public class EmployeedepartmenthistoryRepoImpl implements EmployeedepartmenthistoryRepo {
   public DeleteBuilder<EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow> delete() {
     return DeleteBuilder.of("humanresources.employeedepartmenthistory", EmployeedepartmenthistoryFields.structure());
   };
@@ -66,23 +66,23 @@ public record EmployeedepartmenthistoryRepoImpl() implements Employeedepartmenth
       DepartmentId[] departmentid = arrayMap.map(compositeIds, EmployeedepartmenthistoryId::departmentid, DepartmentId.class);;
       ShiftId[] shiftid = arrayMap.map(compositeIds, EmployeedepartmenthistoryId::shiftid, ShiftId.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         delete
-         from "humanresources"."employeedepartmenthistory"
-         where ("businessentityid", "startdate", "departmentid", "shiftid")
-         in (select unnest("""),
-      BusinessentityId.pgTypeArray.encode(businessentityid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      TypoLocalDate.pgTypeArray.encode(startdate),
-      typo.runtime.Fragment.lit("::date[]), unnest("),
-      DepartmentId.pgTypeArray.encode(departmentid),
-      typo.runtime.Fragment.lit("::int2[]), unnest("),
-      ShiftId.pgTypeArray.encode(shiftid),
-      typo.runtime.Fragment.lit("""
-      ::int2[]))
+             typo.runtime.Fragment.lit("""
+                delete
+                from "humanresources"."employeedepartmenthistory"
+                where ("businessentityid", "startdate", "departmentid", "shiftid")
+                in (select unnest("""),
+             BusinessentityId.pgTypeArray.encode(businessentityid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             TypoLocalDate.pgTypeArray.encode(startdate),
+             typo.runtime.Fragment.lit("::date[]), unnest("),
+             DepartmentId.pgTypeArray.encode(departmentid),
+             typo.runtime.Fragment.lit("::int2[]), unnest("),
+             ShiftId.pgTypeArray.encode(shiftid),
+             typo.runtime.Fragment.lit("""
+             ::int2[]))
 
-      """)
-    ).update().runUnchecked(c);
+             """)
+           ).update().runUnchecked(c);
   };
 
   public EmployeedepartmenthistoryRow insert(
@@ -237,23 +237,23 @@ public record EmployeedepartmenthistoryRepoImpl() implements Employeedepartmenth
       DepartmentId[] departmentid = arrayMap.map(compositeIds, EmployeedepartmenthistoryId::departmentid, DepartmentId.class);;
       ShiftId[] shiftid = arrayMap.map(compositeIds, EmployeedepartmenthistoryId::shiftid, ShiftId.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         select "businessentityid", "departmentid", "shiftid", "startdate"::text, "enddate"::text, "modifieddate"::text
-         from "humanresources"."employeedepartmenthistory"
-         where ("businessentityid", "startdate", "departmentid", "shiftid")
-         in (select unnest("""),
-      BusinessentityId.pgTypeArray.encode(businessentityid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      TypoLocalDate.pgTypeArray.encode(startdate),
-      typo.runtime.Fragment.lit("::date[]), unnest("),
-      DepartmentId.pgTypeArray.encode(departmentid),
-      typo.runtime.Fragment.lit("::int2[]), unnest("),
-      ShiftId.pgTypeArray.encode(shiftid),
-      typo.runtime.Fragment.lit("""
-      ::int2[]))
+             typo.runtime.Fragment.lit("""
+                select "businessentityid", "departmentid", "shiftid", "startdate"::text, "enddate"::text, "modifieddate"::text
+                from "humanresources"."employeedepartmenthistory"
+                where ("businessentityid", "startdate", "departmentid", "shiftid")
+                in (select unnest("""),
+             BusinessentityId.pgTypeArray.encode(businessentityid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             TypoLocalDate.pgTypeArray.encode(startdate),
+             typo.runtime.Fragment.lit("::date[]), unnest("),
+             DepartmentId.pgTypeArray.encode(departmentid),
+             typo.runtime.Fragment.lit("::int2[]), unnest("),
+             ShiftId.pgTypeArray.encode(shiftid),
+             typo.runtime.Fragment.lit("""
+             ::int2[]))
 
-      """)
-    ).as(EmployeedepartmenthistoryRow._rowParser.all()).runUnchecked(c);
+             """)
+           ).as(EmployeedepartmenthistoryRow._rowParser.all()).runUnchecked(c);
   };
 
   public Map<EmployeedepartmenthistoryId, EmployeedepartmenthistoryRow> selectByIdsTracked(
@@ -275,32 +275,32 @@ public record EmployeedepartmenthistoryRepoImpl() implements Employeedepartmenth
   ) {
     EmployeedepartmenthistoryId compositeId = row.compositeId();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "humanresources"."employeedepartmenthistory"
-         set "enddate" = """),
-      TypoLocalDate.pgType.opt().encode(row.enddate()),
-      typo.runtime.Fragment.lit("""
-         ::date,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "businessentityid" = """),
-      BusinessentityId.pgType.encode(compositeId.businessentityid()),
-      typo.runtime.Fragment.lit("""
-       AND "startdate" = 
-      """),
-      TypoLocalDate.pgType.encode(compositeId.startdate()),
-      typo.runtime.Fragment.lit("""
-       AND "departmentid" = 
-      """),
-      DepartmentId.pgType.encode(compositeId.departmentid()),
-      typo.runtime.Fragment.lit("""
-       AND "shiftid" = 
-      """),
-      ShiftId.pgType.encode(compositeId.shiftid()),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "humanresources"."employeedepartmenthistory"
+                set "enddate" = """),
+             TypoLocalDate.pgType.opt().encode(row.enddate()),
+             typo.runtime.Fragment.lit("""
+                ::date,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "businessentityid" = """),
+             BusinessentityId.pgType.encode(compositeId.businessentityid()),
+             typo.runtime.Fragment.lit("""
+              AND "startdate" = 
+             """),
+             TypoLocalDate.pgType.encode(compositeId.startdate()),
+             typo.runtime.Fragment.lit("""
+              AND "departmentid" = 
+             """),
+             DepartmentId.pgType.encode(compositeId.departmentid()),
+             typo.runtime.Fragment.lit("""
+              AND "shiftid" = 
+             """),
+             ShiftId.pgType.encode(compositeId.shiftid()),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public EmployeedepartmenthistoryRow upsert(
@@ -365,13 +365,13 @@ public record EmployeedepartmenthistoryRepoImpl() implements Employeedepartmenth
       copy employeedepartmenthistory_TEMP("businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate") from stdin
       """), batchSize, unsaved, c, EmployeedepartmenthistoryRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "humanresources"."employeedepartmenthistory"("businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate")
-       select * from employeedepartmenthistory_TEMP
-       on conflict ("businessentityid", "startdate", "departmentid", "shiftid")
-       do update set
-         "enddate" = EXCLUDED."enddate",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table employeedepartmenthistory_TEMP;""")).update().runUnchecked(c);
+              insert into "humanresources"."employeedepartmenthistory"("businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate")
+              select * from employeedepartmenthistory_TEMP
+              on conflict ("businessentityid", "startdate", "departmentid", "shiftid")
+              do update set
+                "enddate" = EXCLUDED."enddate",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table employeedepartmenthistory_TEMP;""")).update().runUnchecked(c);
   };
 }

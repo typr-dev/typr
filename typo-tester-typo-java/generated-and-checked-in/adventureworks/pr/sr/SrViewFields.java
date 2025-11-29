@@ -55,9 +55,9 @@ public interface SrViewFields {
 
   Field<ScrapreasonId, SrViewRow> id();
 
-  Field<TypoLocalDateTime, SrViewRow> modifieddate();
+  Field<ScrapreasonId, SrViewRow> scrapreasonid();
 
   Field<Name, SrViewRow> name();
 
-  Field<ScrapreasonId, SrViewRow> scrapreasonid();
+  Field<TypoLocalDateTime, SrViewRow> modifieddate();
 }

@@ -58,15 +58,15 @@ public interface JobcandidateFields {
     return new Impl(List.of());
   };
 
+  IdField<JobcandidateId, JobcandidateRow> jobcandidateid();
+
   OptField<BusinessentityId, JobcandidateRow> businessentityid();
+
+  OptField<TypoXml, JobcandidateRow> resume();
+
+  Field<TypoLocalDateTime, JobcandidateRow> modifieddate();
 
   default ForeignKey<EmployeeFields, EmployeeRow> fkEmployee() {
     return ForeignKey.<EmployeeFields, EmployeeRow>of("humanresources.FK_JobCandidate_Employee_BusinessEntityID").withColumnPair(businessentityid(), EmployeeFields::businessentityid);
   };
-
-  IdField<JobcandidateId, JobcandidateRow> jobcandidateid();
-
-  Field<TypoLocalDateTime, JobcandidateRow> modifieddate();
-
-  OptField<TypoXml, JobcandidateRow> resume();
 }

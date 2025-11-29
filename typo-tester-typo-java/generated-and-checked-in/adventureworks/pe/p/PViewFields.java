@@ -89,31 +89,31 @@ public interface PViewFields {
     return new Impl(List.of());
   };
 
-  OptField<TypoXml, PViewRow> additionalcontactinfo();
+  Field<BusinessentityId, PViewRow> id();
 
   Field<BusinessentityId, PViewRow> businessentityid();
 
-  OptField<TypoXml, PViewRow> demographics();
-
-  Field<Integer, PViewRow> emailpromotion();
-
-  Field</* user-picked */ FirstName, PViewRow> firstname();
-
-  Field<BusinessentityId, PViewRow> id();
-
-  Field<Name, PViewRow> lastname();
-
-  OptField<Name, PViewRow> middlename();
-
-  Field<TypoLocalDateTime, PViewRow> modifieddate();
+  Field</* bpchar, max 2 chars */ String, PViewRow> persontype();
 
   Field<NameStyle, PViewRow> namestyle();
 
-  Field</* bpchar, max 2 chars */ String, PViewRow> persontype();
+  OptField</* max 8 chars */ String, PViewRow> title();
 
-  Field<TypoUUID, PViewRow> rowguid();
+  Field</* user-picked */ FirstName, PViewRow> firstname();
+
+  OptField<Name, PViewRow> middlename();
+
+  Field<Name, PViewRow> lastname();
 
   OptField</* max 10 chars */ String, PViewRow> suffix();
 
-  OptField</* max 8 chars */ String, PViewRow> title();
+  Field<Integer, PViewRow> emailpromotion();
+
+  OptField<TypoXml, PViewRow> additionalcontactinfo();
+
+  OptField<TypoXml, PViewRow> demographics();
+
+  Field<TypoUUID, PViewRow> rowguid();
+
+  Field<TypoLocalDateTime, PViewRow> modifieddate();
 }

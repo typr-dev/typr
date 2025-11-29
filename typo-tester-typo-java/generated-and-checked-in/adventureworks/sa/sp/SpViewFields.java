@@ -75,23 +75,23 @@ public interface SpViewFields {
     return new Impl(List.of());
   };
 
-  Field<BigDecimal, SpViewRow> bonus();
+  Field<BusinessentityId, SpViewRow> id();
 
   Field<BusinessentityId, SpViewRow> businessentityid();
 
-  Field<BigDecimal, SpViewRow> commissionpct();
-
-  Field<BusinessentityId, SpViewRow> id();
-
-  Field<TypoLocalDateTime, SpViewRow> modifieddate();
-
-  Field<TypoUUID, SpViewRow> rowguid();
-
-  Field<BigDecimal, SpViewRow> saleslastyear();
+  OptField<SalesterritoryId, SpViewRow> territoryid();
 
   OptField<BigDecimal, SpViewRow> salesquota();
 
+  Field<BigDecimal, SpViewRow> bonus();
+
+  Field<BigDecimal, SpViewRow> commissionpct();
+
   Field<BigDecimal, SpViewRow> salesytd();
 
-  OptField<SalesterritoryId, SpViewRow> territoryid();
+  Field<BigDecimal, SpViewRow> saleslastyear();
+
+  Field<TypoUUID, SpViewRow> rowguid();
+
+  Field<TypoLocalDateTime, SpViewRow> modifieddate();
 }

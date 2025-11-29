@@ -5,13 +5,14 @@
  */
 package adventureworks.person.businessentity;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `person.businessentity` */
-public record BusinessentityId(Integer value) {
+public record BusinessentityId(@JsonValue Integer value) {
   public BusinessentityId withValue(Integer value) {
     return new BusinessentityId(value);
   };

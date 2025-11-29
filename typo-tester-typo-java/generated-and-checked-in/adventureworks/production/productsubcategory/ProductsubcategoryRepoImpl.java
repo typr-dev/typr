@@ -25,7 +25,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record ProductsubcategoryRepoImpl() implements ProductsubcategoryRepo {
+public class ProductsubcategoryRepoImpl implements ProductsubcategoryRepo {
   public DeleteBuilder<ProductsubcategoryFields, ProductsubcategoryRow> delete() {
     return DeleteBuilder.of("production.productsubcategory", ProductsubcategoryFields.structure());
   };
@@ -226,28 +226,28 @@ public record ProductsubcategoryRepoImpl() implements ProductsubcategoryRepo {
   ) {
     ProductsubcategoryId productsubcategoryid = row.productsubcategoryid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "production"."productsubcategory"
-         set "productcategoryid" = """),
-      ProductcategoryId.pgType.encode(row.productcategoryid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "name" = """),
-      Name.pgType.encode(row.name()),
-      typo.runtime.Fragment.lit("""
-         ::varchar,
-         "rowguid" = """),
-      TypoUUID.pgType.encode(row.rowguid()),
-      typo.runtime.Fragment.lit("""
-         ::uuid,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "productsubcategoryid" = """),
-      ProductsubcategoryId.pgType.encode(productsubcategoryid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "production"."productsubcategory"
+                set "productcategoryid" = """),
+             ProductcategoryId.pgType.encode(row.productcategoryid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "name" = """),
+             Name.pgType.encode(row.name()),
+             typo.runtime.Fragment.lit("""
+                ::varchar,
+                "rowguid" = """),
+             TypoUUID.pgType.encode(row.rowguid()),
+             typo.runtime.Fragment.lit("""
+                ::uuid,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "productsubcategoryid" = """),
+             ProductsubcategoryId.pgType.encode(productsubcategoryid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public ProductsubcategoryRow upsert(
@@ -314,15 +314,15 @@ public record ProductsubcategoryRepoImpl() implements ProductsubcategoryRepo {
       copy productsubcategory_TEMP("productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate") from stdin
       """), batchSize, unsaved, c, ProductsubcategoryRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "production"."productsubcategory"("productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate")
-       select * from productsubcategory_TEMP
-       on conflict ("productsubcategoryid")
-       do update set
-         "productcategoryid" = EXCLUDED."productcategoryid",
-       "name" = EXCLUDED."name",
-       "rowguid" = EXCLUDED."rowguid",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table productsubcategory_TEMP;""")).update().runUnchecked(c);
+              insert into "production"."productsubcategory"("productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate")
+              select * from productsubcategory_TEMP
+              on conflict ("productsubcategoryid")
+              do update set
+                "productcategoryid" = EXCLUDED."productcategoryid",
+              "name" = EXCLUDED."name",
+              "rowguid" = EXCLUDED."rowguid",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table productsubcategory_TEMP;""")).update().runUnchecked(c);
   };
 }

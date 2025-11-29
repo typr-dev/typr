@@ -67,23 +67,23 @@ public interface EmployeepayhistoryFields {
 
   IdField<BusinessentityId, EmployeepayhistoryRow> businessentityid();
 
-  default SqlExpr<Boolean> compositeIdIn(List<EmployeepayhistoryId> compositeIds) {
-    return new CompositeIn(List.of(new Part<BusinessentityId, EmployeepayhistoryId, EmployeepayhistoryRow>(businessentityid(), EmployeepayhistoryId::businessentityid, BusinessentityId.pgType), new Part<TypoLocalDateTime, EmployeepayhistoryId, EmployeepayhistoryRow>(ratechangedate(), EmployeepayhistoryId::ratechangedate, TypoLocalDateTime.pgType)), compositeIds);
+  IdField<TypoLocalDateTime, EmployeepayhistoryRow> ratechangedate();
+
+  Field<BigDecimal, EmployeepayhistoryRow> rate();
+
+  Field<TypoShort, EmployeepayhistoryRow> payfrequency();
+
+  Field<TypoLocalDateTime, EmployeepayhistoryRow> modifieddate();
+
+  default ForeignKey<EmployeeFields, EmployeeRow> fkEmployee() {
+    return ForeignKey.<EmployeeFields, EmployeeRow>of("humanresources.FK_EmployeePayHistory_Employee_BusinessEntityID").withColumnPair(businessentityid(), EmployeeFields::businessentityid);
   };
 
   default SqlExpr<Boolean> compositeIdIs(EmployeepayhistoryId compositeId) {
     return SqlExpr.all(businessentityid().isEqual(compositeId.businessentityid()), ratechangedate().isEqual(compositeId.ratechangedate()));
   };
 
-  default ForeignKey<EmployeeFields, EmployeeRow> fkEmployee() {
-    return ForeignKey.<EmployeeFields, EmployeeRow>of("humanresources.FK_EmployeePayHistory_Employee_BusinessEntityID").withColumnPair(businessentityid(), EmployeeFields::businessentityid);
+  default SqlExpr<Boolean> compositeIdIn(List<EmployeepayhistoryId> compositeIds) {
+    return new CompositeIn(List.of(new Part<BusinessentityId, EmployeepayhistoryId, EmployeepayhistoryRow>(businessentityid(), EmployeepayhistoryId::businessentityid, BusinessentityId.pgType), new Part<TypoLocalDateTime, EmployeepayhistoryId, EmployeepayhistoryRow>(ratechangedate(), EmployeepayhistoryId::ratechangedate, TypoLocalDateTime.pgType)), compositeIds);
   };
-
-  Field<TypoLocalDateTime, EmployeepayhistoryRow> modifieddate();
-
-  Field<TypoShort, EmployeepayhistoryRow> payfrequency();
-
-  Field<BigDecimal, EmployeepayhistoryRow> rate();
-
-  IdField<TypoLocalDateTime, EmployeepayhistoryRow> ratechangedate();
 }

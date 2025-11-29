@@ -18,7 +18,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record MaritalStatusRepoImpl() implements MaritalStatusRepo {
+public class MaritalStatusRepoImpl implements MaritalStatusRepo {
   public DeleteBuilder<MaritalStatusFields, MaritalStatusRow> delete() {
     return DeleteBuilder.of("myschema.marital_status", MaritalStatusFields.structure());
   };
@@ -179,11 +179,11 @@ public record MaritalStatusRepoImpl() implements MaritalStatusRepo {
       copy marital_status_TEMP("id") from stdin
       """), batchSize, unsaved, c, MaritalStatusRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "myschema"."marital_status"("id")
-       select * from marital_status_TEMP
-       on conflict ("id")
-       do nothing
-       ;
-       drop table marital_status_TEMP;""")).update().runUnchecked(c);
+              insert into "myschema"."marital_status"("id")
+              select * from marital_status_TEMP
+              on conflict ("id")
+              do nothing
+              ;
+              drop table marital_status_TEMP;""")).update().runUnchecked(c);
   };
 }

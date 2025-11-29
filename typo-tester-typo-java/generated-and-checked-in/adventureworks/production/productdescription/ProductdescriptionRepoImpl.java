@@ -24,7 +24,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record ProductdescriptionRepoImpl() implements ProductdescriptionRepo {
+public class ProductdescriptionRepoImpl implements ProductdescriptionRepo {
   public DeleteBuilder<ProductdescriptionFields, ProductdescriptionRow> delete() {
     return DeleteBuilder.of("production.productdescription", ProductdescriptionFields.structure());
   };
@@ -219,24 +219,24 @@ public record ProductdescriptionRepoImpl() implements ProductdescriptionRepo {
   ) {
     ProductdescriptionId productdescriptionid = row.productdescriptionid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "production"."productdescription"
-         set "description" = """),
-      PgTypes.text.encode(row.description()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "rowguid" = """),
-      TypoUUID.pgType.encode(row.rowguid()),
-      typo.runtime.Fragment.lit("""
-         ::uuid,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "productdescriptionid" = """),
-      ProductdescriptionId.pgType.encode(productdescriptionid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "production"."productdescription"
+                set "description" = """),
+             PgTypes.text.encode(row.description()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "rowguid" = """),
+             TypoUUID.pgType.encode(row.rowguid()),
+             typo.runtime.Fragment.lit("""
+                ::uuid,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "productdescriptionid" = """),
+             ProductdescriptionId.pgType.encode(productdescriptionid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public ProductdescriptionRow upsert(
@@ -299,14 +299,14 @@ public record ProductdescriptionRepoImpl() implements ProductdescriptionRepo {
       copy productdescription_TEMP("productdescriptionid", "description", "rowguid", "modifieddate") from stdin
       """), batchSize, unsaved, c, ProductdescriptionRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "production"."productdescription"("productdescriptionid", "description", "rowguid", "modifieddate")
-       select * from productdescription_TEMP
-       on conflict ("productdescriptionid")
-       do update set
-         "description" = EXCLUDED."description",
-       "rowguid" = EXCLUDED."rowguid",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table productdescription_TEMP;""")).update().runUnchecked(c);
+              insert into "production"."productdescription"("productdescriptionid", "description", "rowguid", "modifieddate")
+              select * from productdescription_TEMP
+              on conflict ("productdescriptionid")
+              do update set
+                "description" = EXCLUDED."description",
+              "rowguid" = EXCLUDED."rowguid",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table productdescription_TEMP;""")).update().runUnchecked(c);
   };
 }

@@ -23,7 +23,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record CountryregionRepoImpl() implements CountryregionRepo {
+public class CountryregionRepoImpl implements CountryregionRepo {
   public DeleteBuilder<CountryregionFields, CountryregionRow> delete() {
     return DeleteBuilder.of("person.countryregion", CountryregionFields.structure());
   };
@@ -201,20 +201,20 @@ public record CountryregionRepoImpl() implements CountryregionRepo {
   ) {
     CountryregionId countryregioncode = row.countryregioncode();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "person"."countryregion"
-         set "name" = """),
-      Name.pgType.encode(row.name()),
-      typo.runtime.Fragment.lit("""
-         ::varchar,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "countryregioncode" = """),
-      CountryregionId.pgType.encode(countryregioncode),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "person"."countryregion"
+                set "name" = """),
+             Name.pgType.encode(row.name()),
+             typo.runtime.Fragment.lit("""
+                ::varchar,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "countryregioncode" = """),
+             CountryregionId.pgType.encode(countryregioncode),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public CountryregionRow upsert(
@@ -273,13 +273,13 @@ public record CountryregionRepoImpl() implements CountryregionRepo {
       copy countryregion_TEMP("countryregioncode", "name", "modifieddate") from stdin
       """), batchSize, unsaved, c, CountryregionRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "person"."countryregion"("countryregioncode", "name", "modifieddate")
-       select * from countryregion_TEMP
-       on conflict ("countryregioncode")
-       do update set
-         "name" = EXCLUDED."name",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table countryregion_TEMP;""")).update().runUnchecked(c);
+              insert into "person"."countryregion"("countryregioncode", "name", "modifieddate")
+              select * from countryregion_TEMP
+              on conflict ("countryregioncode")
+              do update set
+                "name" = EXCLUDED."name",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table countryregion_TEMP;""")).update().runUnchecked(c);
   };
 }

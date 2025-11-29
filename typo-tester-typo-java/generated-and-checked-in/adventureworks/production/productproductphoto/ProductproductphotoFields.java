@@ -63,27 +63,27 @@ public interface ProductproductphotoFields {
     return new Impl(List.of());
   };
 
-  default SqlExpr<Boolean> compositeIdIn(List<ProductproductphotoId> compositeIds) {
-    return new CompositeIn(List.of(new Part<ProductId, ProductproductphotoId, ProductproductphotoRow>(productid(), ProductproductphotoId::productid, ProductId.pgType), new Part<ProductphotoId, ProductproductphotoId, ProductproductphotoRow>(productphotoid(), ProductproductphotoId::productphotoid, ProductphotoId.pgType)), compositeIds);
-  };
+  IdField<ProductId, ProductproductphotoRow> productid();
 
-  default SqlExpr<Boolean> compositeIdIs(ProductproductphotoId compositeId) {
-    return SqlExpr.all(productid().isEqual(compositeId.productid()), productphotoid().isEqual(compositeId.productphotoid()));
+  IdField<ProductphotoId, ProductproductphotoRow> productphotoid();
+
+  Field<Flag, ProductproductphotoRow> primary();
+
+  Field<TypoLocalDateTime, ProductproductphotoRow> modifieddate();
+
+  default ForeignKey<ProductphotoFields, ProductphotoRow> fkProductphoto() {
+    return ForeignKey.<ProductphotoFields, ProductphotoRow>of("production.FK_ProductProductPhoto_ProductPhoto_ProductPhotoID").withColumnPair(productphotoid(), ProductphotoFields::productphotoid);
   };
 
   default ForeignKey<ProductFields, ProductRow> fkProduct() {
     return ForeignKey.<ProductFields, ProductRow>of("production.FK_ProductProductPhoto_Product_ProductID").withColumnPair(productid(), ProductFields::productid);
   };
 
-  default ForeignKey<ProductphotoFields, ProductphotoRow> fkProductphoto() {
-    return ForeignKey.<ProductphotoFields, ProductphotoRow>of("production.FK_ProductProductPhoto_ProductPhoto_ProductPhotoID").withColumnPair(productphotoid(), ProductphotoFields::productphotoid);
+  default SqlExpr<Boolean> compositeIdIs(ProductproductphotoId compositeId) {
+    return SqlExpr.all(productid().isEqual(compositeId.productid()), productphotoid().isEqual(compositeId.productphotoid()));
   };
 
-  Field<TypoLocalDateTime, ProductproductphotoRow> modifieddate();
-
-  Field<Flag, ProductproductphotoRow> primary();
-
-  IdField<ProductId, ProductproductphotoRow> productid();
-
-  IdField<ProductphotoId, ProductproductphotoRow> productphotoid();
+  default SqlExpr<Boolean> compositeIdIn(List<ProductproductphotoId> compositeIds) {
+    return new CompositeIn(List.of(new Part<ProductId, ProductproductphotoId, ProductproductphotoRow>(productid(), ProductproductphotoId::productid, ProductId.pgType), new Part<ProductphotoId, ProductproductphotoId, ProductproductphotoRow>(productphotoid(), ProductproductphotoId::productphotoid, ProductphotoId.pgType)), compositeIds);
+  };
 }

@@ -9,6 +9,7 @@ import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.customtypes.TypoUUID;
 import adventureworks.production.productmodel.ProductmodelId;
 import adventureworks.public_.Name;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.util.Optional;
 import typo.runtime.PgTypes;
@@ -23,12 +24,12 @@ public record VproductmodelinstructionsViewRow(
   /** Points to {@link adventureworks.production.productmodel.ProductmodelRow#name()} */
   Name name,
   /* nullability unknown */ Optional<String> instructions,
-  /* nullability unknown */ Optional<Integer> locationID,
-  /* nullability unknown */ Optional<BigDecimal> setupHours,
-  /* nullability unknown */ Optional<BigDecimal> machineHours,
-  /* nullability unknown */ Optional<BigDecimal> laborHours,
-  /* nullability unknown */ Optional<Integer> lotSize,
-  /* nullability unknown */ Optional</* max 1024 chars */ String> step,
+  @JsonProperty("LocationID") /* nullability unknown */ Optional<Integer> locationID,
+  @JsonProperty("SetupHours") /* nullability unknown */ Optional<BigDecimal> setupHours,
+  @JsonProperty("MachineHours") /* nullability unknown */ Optional<BigDecimal> machineHours,
+  @JsonProperty("LaborHours") /* nullability unknown */ Optional<BigDecimal> laborHours,
+  @JsonProperty("LotSize") /* nullability unknown */ Optional<Integer> lotSize,
+  @JsonProperty("Step") /* nullability unknown */ Optional</* max 1024 chars */ String> step,
   /** Points to {@link adventureworks.production.productmodel.ProductmodelRow#rowguid()} */
   TypoUUID rowguid,
   /** Points to {@link adventureworks.production.productmodel.ProductmodelRow#modifieddate()} */

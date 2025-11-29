@@ -21,7 +21,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record TestUtdanningstilbudRepoImpl() implements TestUtdanningstilbudRepo {
+public class TestUtdanningstilbudRepoImpl implements TestUtdanningstilbudRepo {
   public DeleteBuilder<TestUtdanningstilbudFields, TestUtdanningstilbudRow> delete() {
     return DeleteBuilder.of("public.test_utdanningstilbud", TestUtdanningstilbudFields.structure());
   };
@@ -50,19 +50,19 @@ public record TestUtdanningstilbudRepoImpl() implements TestUtdanningstilbudRepo
     TestOrganisasjonId[] organisasjonskode = arrayMap.map(compositeIds, TestUtdanningstilbudId::organisasjonskode, TestOrganisasjonId.class);;
       String[] utdanningsmulighetKode = arrayMap.map(compositeIds, TestUtdanningstilbudId::utdanningsmulighetKode, String.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         delete
-         from "public"."test_utdanningstilbud"
-         where ("organisasjonskode", "utdanningsmulighet_kode")
-         in (select unnest("""),
-      TestOrganisasjonId.pgTypeArray.encode(organisasjonskode),
-      typo.runtime.Fragment.lit("::text[]), unnest("),
-      PgTypes.textArray.encode(utdanningsmulighetKode),
-      typo.runtime.Fragment.lit("""
-      ::text[]))
+             typo.runtime.Fragment.lit("""
+                delete
+                from "public"."test_utdanningstilbud"
+                where ("organisasjonskode", "utdanningsmulighet_kode")
+                in (select unnest("""),
+             TestOrganisasjonId.pgTypeArray.encode(organisasjonskode),
+             typo.runtime.Fragment.lit("::text[]), unnest("),
+             PgTypes.textArray.encode(utdanningsmulighetKode),
+             typo.runtime.Fragment.lit("""
+             ::text[]))
 
-      """)
-    ).update().runUnchecked(c);
+             """)
+           ).update().runUnchecked(c);
   };
 
   public TestUtdanningstilbudRow insert(
@@ -130,19 +130,19 @@ public record TestUtdanningstilbudRepoImpl() implements TestUtdanningstilbudRepo
     TestOrganisasjonId[] organisasjonskode = arrayMap.map(compositeIds, TestUtdanningstilbudId::organisasjonskode, TestOrganisasjonId.class);;
       String[] utdanningsmulighetKode = arrayMap.map(compositeIds, TestUtdanningstilbudId::utdanningsmulighetKode, String.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         select "organisasjonskode", "utdanningsmulighet_kode"
-         from "public"."test_utdanningstilbud"
-         where ("organisasjonskode", "utdanningsmulighet_kode")
-         in (select unnest("""),
-      TestOrganisasjonId.pgTypeArray.encode(organisasjonskode),
-      typo.runtime.Fragment.lit("::text[]), unnest("),
-      PgTypes.textArray.encode(utdanningsmulighetKode),
-      typo.runtime.Fragment.lit("""
-      ::text[]))
+             typo.runtime.Fragment.lit("""
+                select "organisasjonskode", "utdanningsmulighet_kode"
+                from "public"."test_utdanningstilbud"
+                where ("organisasjonskode", "utdanningsmulighet_kode")
+                in (select unnest("""),
+             TestOrganisasjonId.pgTypeArray.encode(organisasjonskode),
+             typo.runtime.Fragment.lit("::text[]), unnest("),
+             PgTypes.textArray.encode(utdanningsmulighetKode),
+             typo.runtime.Fragment.lit("""
+             ::text[]))
 
-      """)
-    ).as(TestUtdanningstilbudRow._rowParser.all()).runUnchecked(c);
+             """)
+           ).as(TestUtdanningstilbudRow._rowParser.all()).runUnchecked(c);
   };
 
   public Map<TestUtdanningstilbudId, TestUtdanningstilbudRow> selectByIdsTracked(
@@ -208,11 +208,11 @@ public record TestUtdanningstilbudRepoImpl() implements TestUtdanningstilbudRepo
       copy test_utdanningstilbud_TEMP("organisasjonskode", "utdanningsmulighet_kode") from stdin
       """), batchSize, unsaved, c, TestUtdanningstilbudRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "public"."test_utdanningstilbud"("organisasjonskode", "utdanningsmulighet_kode")
-       select * from test_utdanningstilbud_TEMP
-       on conflict ("organisasjonskode", "utdanningsmulighet_kode")
-       do nothing
-       ;
-       drop table test_utdanningstilbud_TEMP;""")).update().runUnchecked(c);
+              insert into "public"."test_utdanningstilbud"("organisasjonskode", "utdanningsmulighet_kode")
+              select * from test_utdanningstilbud_TEMP
+              on conflict ("organisasjonskode", "utdanningsmulighet_kode")
+              do nothing
+              ;
+              drop table test_utdanningstilbud_TEMP;""")).update().runUnchecked(c);
   };
 }

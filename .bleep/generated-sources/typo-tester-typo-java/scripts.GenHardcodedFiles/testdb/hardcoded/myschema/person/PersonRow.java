@@ -5,6 +5,7 @@
  */
 package testdb.hardcoded.myschema.person;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
 import testdb.hardcoded.customtypes.Defaulted;
 import testdb.hardcoded.myschema.Number;
@@ -25,24 +26,24 @@ public record PersonRow(
   /** Default: auto-increment */
   PersonId id,
   /** Points to {@link testdb.hardcoded.myschema.football_club.FootballClubRow#id()} */
-  FootballClubId favouriteFootballClubId,
+  @JsonProperty("favourite_football_club_id") FootballClubId favouriteFootballClubId,
   /* max 100 chars */ String name,
-  Optional</* max 30 chars */ String> nickName,
-  Optional</* max 100 chars */ String> blogUrl,
+  @JsonProperty("nick_name") Optional</* max 30 chars */ String> nickName,
+  @JsonProperty("blog_url") Optional</* max 100 chars */ String> blogUrl,
   /* max 254 chars */ String email,
   /* max 8 chars */ String phone,
-  Boolean likesPizza,
+  @JsonProperty("likes_pizza") Boolean likesPizza,
   /** Default: some-value
     * Points to {@link testdb.hardcoded.myschema.marital_status.MaritalStatusRow#id()}
     */
-  MaritalStatusId maritalStatusId,
-  Optional</* max 254 chars */ String> workEmail,
+  @JsonProperty("marital_status_id") MaritalStatusId maritalStatusId,
+  @JsonProperty("work_email") Optional</* max 254 chars */ String> workEmail,
   /** Default: PUBLIC
     * Identity ALWAYS
     */
   Sector sector,
   /** Default: one */
-  Number favoriteNumber
+  @JsonProperty("favorite_number") Number favoriteNumber
 ) {
   /** Default: auto-increment */
   public PersonRow withId(PersonId id) {

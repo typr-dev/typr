@@ -75,17 +75,15 @@ public interface EmployeedepartmenthistoryFields {
 
   IdField<BusinessentityId, EmployeedepartmenthistoryRow> businessentityid();
 
-  default SqlExpr<Boolean> compositeIdIn(List<EmployeedepartmenthistoryId> compositeIds) {
-    return new CompositeIn(List.of(new Part<BusinessentityId, EmployeedepartmenthistoryId, EmployeedepartmenthistoryRow>(businessentityid(), EmployeedepartmenthistoryId::businessentityid, BusinessentityId.pgType), new Part<TypoLocalDate, EmployeedepartmenthistoryId, EmployeedepartmenthistoryRow>(startdate(), EmployeedepartmenthistoryId::startdate, TypoLocalDate.pgType), new Part<DepartmentId, EmployeedepartmenthistoryId, EmployeedepartmenthistoryRow>(departmentid(), EmployeedepartmenthistoryId::departmentid, DepartmentId.pgType), new Part<ShiftId, EmployeedepartmenthistoryId, EmployeedepartmenthistoryRow>(shiftid(), EmployeedepartmenthistoryId::shiftid, ShiftId.pgType)), compositeIds);
-  };
-
-  default SqlExpr<Boolean> compositeIdIs(EmployeedepartmenthistoryId compositeId) {
-    return SqlExpr.all(businessentityid().isEqual(compositeId.businessentityid()), startdate().isEqual(compositeId.startdate()), departmentid().isEqual(compositeId.departmentid()), shiftid().isEqual(compositeId.shiftid()));
-  };
-
   IdField<DepartmentId, EmployeedepartmenthistoryRow> departmentid();
 
+  IdField<ShiftId, EmployeedepartmenthistoryRow> shiftid();
+
+  IdField<TypoLocalDate, EmployeedepartmenthistoryRow> startdate();
+
   OptField<TypoLocalDate, EmployeedepartmenthistoryRow> enddate();
+
+  Field<TypoLocalDateTime, EmployeedepartmenthistoryRow> modifieddate();
 
   default ForeignKey<DepartmentFields, DepartmentRow> fkDepartment() {
     return ForeignKey.<DepartmentFields, DepartmentRow>of("humanresources.FK_EmployeeDepartmentHistory_Department_DepartmentID").withColumnPair(departmentid(), DepartmentFields::departmentid);
@@ -99,9 +97,11 @@ public interface EmployeedepartmenthistoryFields {
     return ForeignKey.<ShiftFields, ShiftRow>of("humanresources.FK_EmployeeDepartmentHistory_Shift_ShiftID").withColumnPair(shiftid(), ShiftFields::shiftid);
   };
 
-  Field<TypoLocalDateTime, EmployeedepartmenthistoryRow> modifieddate();
+  default SqlExpr<Boolean> compositeIdIs(EmployeedepartmenthistoryId compositeId) {
+    return SqlExpr.all(businessentityid().isEqual(compositeId.businessentityid()), startdate().isEqual(compositeId.startdate()), departmentid().isEqual(compositeId.departmentid()), shiftid().isEqual(compositeId.shiftid()));
+  };
 
-  IdField<ShiftId, EmployeedepartmenthistoryRow> shiftid();
-
-  IdField<TypoLocalDate, EmployeedepartmenthistoryRow> startdate();
+  default SqlExpr<Boolean> compositeIdIn(List<EmployeedepartmenthistoryId> compositeIds) {
+    return new CompositeIn(List.of(new Part<BusinessentityId, EmployeedepartmenthistoryId, EmployeedepartmenthistoryRow>(businessentityid(), EmployeedepartmenthistoryId::businessentityid, BusinessentityId.pgType), new Part<TypoLocalDate, EmployeedepartmenthistoryId, EmployeedepartmenthistoryRow>(startdate(), EmployeedepartmenthistoryId::startdate, TypoLocalDate.pgType), new Part<DepartmentId, EmployeedepartmenthistoryId, EmployeedepartmenthistoryRow>(departmentid(), EmployeedepartmenthistoryId::departmentid, DepartmentId.pgType), new Part<ShiftId, EmployeedepartmenthistoryId, EmployeedepartmenthistoryRow>(shiftid(), EmployeedepartmenthistoryId::shiftid, ShiftId.pgType)), compositeIds);
+  };
 }

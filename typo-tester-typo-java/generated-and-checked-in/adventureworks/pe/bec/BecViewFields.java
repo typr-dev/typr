@@ -60,15 +60,15 @@ public interface BecViewFields {
     return new Impl(List.of());
   };
 
-  Field<BusinessentityId, BecViewRow> businessentityid();
-
-  Field<ContacttypeId, BecViewRow> contacttypeid();
-
   Field<BusinessentityId, BecViewRow> id();
 
-  Field<TypoLocalDateTime, BecViewRow> modifieddate();
+  Field<BusinessentityId, BecViewRow> businessentityid();
 
   Field<BusinessentityId, BecViewRow> personid();
 
+  Field<ContacttypeId, BecViewRow> contacttypeid();
+
   Field<TypoUUID, BecViewRow> rowguid();
+
+  Field<TypoLocalDateTime, BecViewRow> modifieddate();
 }

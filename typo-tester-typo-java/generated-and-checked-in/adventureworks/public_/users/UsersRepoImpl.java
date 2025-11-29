@@ -24,7 +24,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record UsersRepoImpl() implements UsersRepo {
+public class UsersRepoImpl implements UsersRepo {
   public DeleteBuilder<UsersFields, UsersRow> delete() {
     return DeleteBuilder.of("public.users", UsersFields.structure());
   };
@@ -249,36 +249,36 @@ public record UsersRepoImpl() implements UsersRepo {
   ) {
     UsersId userId = row.userId();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "public"."users"
-         set "name" = """),
-      PgTypes.text.encode(row.name()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "last_name" = """),
-      PgTypes.text.opt().encode(row.lastName()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "email" = """),
-      TypoUnknownCitext.pgType.encode(row.email()),
-      typo.runtime.Fragment.lit("""
-         ::citext,
-         "password" = """),
-      PgTypes.text.encode(row.password()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "created_at" = """),
-      TypoInstant.pgType.encode(row.createdAt()),
-      typo.runtime.Fragment.lit("""
-         ::timestamptz,
-         "verified_on" = """),
-      TypoInstant.pgType.opt().encode(row.verifiedOn()),
-      typo.runtime.Fragment.lit("""
-         ::timestamptz
-         where "user_id" = """),
-      UsersId.pgType.encode(userId),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "public"."users"
+                set "name" = """),
+             PgTypes.text.encode(row.name()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "last_name" = """),
+             PgTypes.text.opt().encode(row.lastName()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "email" = """),
+             TypoUnknownCitext.pgType.encode(row.email()),
+             typo.runtime.Fragment.lit("""
+                ::citext,
+                "password" = """),
+             PgTypes.text.encode(row.password()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "created_at" = """),
+             TypoInstant.pgType.encode(row.createdAt()),
+             typo.runtime.Fragment.lit("""
+                ::timestamptz,
+                "verified_on" = """),
+             TypoInstant.pgType.opt().encode(row.verifiedOn()),
+             typo.runtime.Fragment.lit("""
+                ::timestamptz
+                where "user_id" = """),
+             UsersId.pgType.encode(userId),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public UsersRow upsert(
@@ -353,17 +353,17 @@ public record UsersRepoImpl() implements UsersRepo {
       copy users_TEMP("user_id", "name", "last_name", "email", "password", "created_at", "verified_on") from stdin
       """), batchSize, unsaved, c, UsersRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on")
-       select * from users_TEMP
-       on conflict ("user_id")
-       do update set
-         "name" = EXCLUDED."name",
-       "last_name" = EXCLUDED."last_name",
-       "email" = EXCLUDED."email",
-       "password" = EXCLUDED."password",
-       "created_at" = EXCLUDED."created_at",
-       "verified_on" = EXCLUDED."verified_on"
-       ;
-       drop table users_TEMP;""")).update().runUnchecked(c);
+              insert into "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on")
+              select * from users_TEMP
+              on conflict ("user_id")
+              do update set
+                "name" = EXCLUDED."name",
+              "last_name" = EXCLUDED."last_name",
+              "email" = EXCLUDED."email",
+              "password" = EXCLUDED."password",
+              "created_at" = EXCLUDED."created_at",
+              "verified_on" = EXCLUDED."verified_on"
+              ;
+              drop table users_TEMP;""")).update().runUnchecked(c);
   };
 }

@@ -25,7 +25,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record ProductmodelillustrationRepoImpl() implements ProductmodelillustrationRepo {
+public class ProductmodelillustrationRepoImpl implements ProductmodelillustrationRepo {
   public DeleteBuilder<ProductmodelillustrationFields, ProductmodelillustrationRow> delete() {
     return DeleteBuilder.of("production.productmodelillustration", ProductmodelillustrationFields.structure());
   };
@@ -54,19 +54,19 @@ public record ProductmodelillustrationRepoImpl() implements Productmodelillustra
     ProductmodelId[] productmodelid = arrayMap.map(compositeIds, ProductmodelillustrationId::productmodelid, ProductmodelId.class);;
       IllustrationId[] illustrationid = arrayMap.map(compositeIds, ProductmodelillustrationId::illustrationid, IllustrationId.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         delete
-         from "production"."productmodelillustration"
-         where ("productmodelid", "illustrationid")
-         in (select unnest("""),
-      ProductmodelId.pgTypeArray.encode(productmodelid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      IllustrationId.pgTypeArray.encode(illustrationid),
-      typo.runtime.Fragment.lit("""
-      ::int4[]))
+             typo.runtime.Fragment.lit("""
+                delete
+                from "production"."productmodelillustration"
+                where ("productmodelid", "illustrationid")
+                in (select unnest("""),
+             ProductmodelId.pgTypeArray.encode(productmodelid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             IllustrationId.pgTypeArray.encode(illustrationid),
+             typo.runtime.Fragment.lit("""
+             ::int4[]))
 
-      """)
-    ).update().runUnchecked(c);
+             """)
+           ).update().runUnchecked(c);
   };
 
   public ProductmodelillustrationRow insert(
@@ -190,19 +190,19 @@ public record ProductmodelillustrationRepoImpl() implements Productmodelillustra
     ProductmodelId[] productmodelid = arrayMap.map(compositeIds, ProductmodelillustrationId::productmodelid, ProductmodelId.class);;
       IllustrationId[] illustrationid = arrayMap.map(compositeIds, ProductmodelillustrationId::illustrationid, IllustrationId.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         select "productmodelid", "illustrationid", "modifieddate"::text
-         from "production"."productmodelillustration"
-         where ("productmodelid", "illustrationid")
-         in (select unnest("""),
-      ProductmodelId.pgTypeArray.encode(productmodelid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      IllustrationId.pgTypeArray.encode(illustrationid),
-      typo.runtime.Fragment.lit("""
-      ::int4[]))
+             typo.runtime.Fragment.lit("""
+                select "productmodelid", "illustrationid", "modifieddate"::text
+                from "production"."productmodelillustration"
+                where ("productmodelid", "illustrationid")
+                in (select unnest("""),
+             ProductmodelId.pgTypeArray.encode(productmodelid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             IllustrationId.pgTypeArray.encode(illustrationid),
+             typo.runtime.Fragment.lit("""
+             ::int4[]))
 
-      """)
-    ).as(ProductmodelillustrationRow._rowParser.all()).runUnchecked(c);
+             """)
+           ).as(ProductmodelillustrationRow._rowParser.all()).runUnchecked(c);
   };
 
   public Map<ProductmodelillustrationId, ProductmodelillustrationRow> selectByIdsTracked(
@@ -224,20 +224,20 @@ public record ProductmodelillustrationRepoImpl() implements Productmodelillustra
   ) {
     ProductmodelillustrationId compositeId = row.compositeId();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "production"."productmodelillustration"
-         set "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "productmodelid" = """),
-      ProductmodelId.pgType.encode(compositeId.productmodelid()),
-      typo.runtime.Fragment.lit("""
-       AND "illustrationid" = 
-      """),
-      IllustrationId.pgType.encode(compositeId.illustrationid()),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "production"."productmodelillustration"
+                set "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "productmodelid" = """),
+             ProductmodelId.pgType.encode(compositeId.productmodelid()),
+             typo.runtime.Fragment.lit("""
+              AND "illustrationid" = 
+             """),
+             IllustrationId.pgType.encode(compositeId.illustrationid()),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public ProductmodelillustrationRow upsert(
@@ -294,12 +294,12 @@ public record ProductmodelillustrationRepoImpl() implements Productmodelillustra
       copy productmodelillustration_TEMP("productmodelid", "illustrationid", "modifieddate") from stdin
       """), batchSize, unsaved, c, ProductmodelillustrationRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "production"."productmodelillustration"("productmodelid", "illustrationid", "modifieddate")
-       select * from productmodelillustration_TEMP
-       on conflict ("productmodelid", "illustrationid")
-       do update set
-         "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table productmodelillustration_TEMP;""")).update().runUnchecked(c);
+              insert into "production"."productmodelillustration"("productmodelid", "illustrationid", "modifieddate")
+              select * from productmodelillustration_TEMP
+              on conflict ("productmodelid", "illustrationid")
+              do update set
+                "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table productmodelillustration_TEMP;""")).update().runUnchecked(c);
   };
 }

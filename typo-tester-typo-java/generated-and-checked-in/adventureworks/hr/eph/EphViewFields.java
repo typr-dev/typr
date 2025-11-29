@@ -61,15 +61,15 @@ public interface EphViewFields {
     return new Impl(List.of());
   };
 
-  Field<BusinessentityId, EphViewRow> businessentityid();
-
   Field<BusinessentityId, EphViewRow> id();
 
-  Field<TypoLocalDateTime, EphViewRow> modifieddate();
+  Field<BusinessentityId, EphViewRow> businessentityid();
 
-  Field<TypoShort, EphViewRow> payfrequency();
+  Field<TypoLocalDateTime, EphViewRow> ratechangedate();
 
   Field<BigDecimal, EphViewRow> rate();
 
-  Field<TypoLocalDateTime, EphViewRow> ratechangedate();
+  Field<TypoShort, EphViewRow> payfrequency();
+
+  Field<TypoLocalDateTime, EphViewRow> modifieddate();
 }

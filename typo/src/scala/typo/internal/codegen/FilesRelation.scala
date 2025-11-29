@@ -20,26 +20,28 @@ case class FilesRelation(
       val members = List[Iterable[jvm.ClassMember]](
         names.maybeId.collect { case x: IdComputed.Composite =>
           val body = jvm.New(x.tpe, x.cols.toList.map(x => jvm.Arg.Pos(x.name.code)))
-          jvm.Method(jvm.Comments.Empty, Nil, x.paramName, Nil, Nil, x.tpe, List(body))
+          jvm.Method(Nil, jvm.Comments.Empty, Nil, x.paramName, Nil, Nil, x.tpe, Nil, List(body))
         },
         // id member which points to either `compositeId` val defined above or id column
         if (maybeCols.exists(_.exists(_.name.value == "id"))) None
         else
           names.maybeId.collect {
             case id: IdComputed.Unary =>
-              jvm.Method(jvm.Comments.Empty, Nil, jvm.Ident("id"), Nil, Nil, id.tpe, List(id.col.name.code))
+              jvm.Method(Nil, jvm.Comments.Empty, Nil, jvm.Ident("id"), Nil, Nil, id.tpe, Nil, List(id.col.name.code))
             case id: IdComputed.Composite =>
-              jvm.Method(jvm.Comments.Empty, Nil, jvm.Ident("id"), Nil, Nil, id.tpe, List(jvm.ApplyNullary(code"this", id.paramName)))
+              jvm.Method(Nil, jvm.Comments.Empty, Nil, jvm.Ident("id"), Nil, Nil, id.tpe, Nil, List(jvm.ApplyNullary(code"this", id.paramName)))
           },
         maybeFkAnalysis.toList.flatMap(_.extractFksIdsFromRowNotId).map { extractFkId =>
           val args = extractFkId.colPairs.map { case (inComposite, inId) => jvm.Arg.Named(inComposite.name, inId.name.code) }
           jvm.Method(
+            annotations = Nil,
             jvm.Comments.Empty,
             Nil,
             extractFkId.name.prepended("extract"),
             Nil,
             Nil,
             extractFkId.otherCompositeIdType,
+            Nil,
             List(jvm.New(extractFkId.otherCompositeIdType, args))
           )
         },
@@ -51,16 +53,22 @@ case class FilesRelation(
           }
           val params = partOfIdParams ++ restParams
           jvm.Method(
+            Nil,
             comments = jvm.Comments.Empty,
             tparams = Nil,
             name = jvm.Ident("toUnsavedRow"),
             params = params,
             implicitParams = Nil,
             tpe = unsaved.tpe,
+            throws = Nil,
             body = List(jvm.New(unsaved.tpe, unsaved.unsavedCols.toList.map(col => jvm.Arg.Pos(col.name))))
           )
         }
       ).flatten
+
+      val jsonInstances = options.jsonLibs.map(_.instances(names.RowName, cols))
+      val fieldAnnotations = JsonLib.mergeFieldAnnotations(jsonInstances.flatMap(_.fieldAnnotations.toList))
+      val typeAnnotations = jsonInstances.flatMap(_.typeAnnotations)
 
       val commentedParams: NonEmptyList[jvm.Param[jvm.Type]] =
         cols.map { col =>
@@ -75,11 +83,12 @@ case class FilesRelation(
             else None
           ).flatten
 
-          col.param.copy(comments = jvm.Comments(commentPieces))
+          val annotations = fieldAnnotations.getOrElse(col.name, Nil)
+          col.param.copy(annotations = annotations, comments = jvm.Comments(commentPieces))
         }
 
       val instances: List[jvm.ClassMember] =
-        options.jsonLibs.flatMap(_.instances(names.RowName, cols)) ++
+        jsonInstances.flatMap(_.givens) ++
           options.dbLib.toList.flatMap(_.rowInstances(names.RowName, cols, rowType = rowType))
 
       val classComment = {
@@ -105,12 +114,13 @@ case class FilesRelation(
           val nonKeyColumns = cols.toList.filter(col => !names.isIdColumn(col.dbCol.name))
           val params = jvm.Param(id.paramName, id.tpe) :: nonKeyColumns.map(col => jvm.Param(col.name, col.tpe))
           val args = cols.map(col => jvm.Arg.Pos(if (names.isIdColumn(col.dbCol.name)) jvm.ApplyNullary(id.paramName, col.name) else col.name.code))
-          jvm.Method(comments = jvm.Comments.Empty, Nil, jvm.Ident("apply"), params, Nil, names.RowName, List(jvm.New(names.RowName, args.toList)))
+          jvm.Method(Nil, comments = jvm.Comments.Empty, Nil, jvm.Ident("apply"), params, Nil, names.RowName, Nil, List(jvm.New(names.RowName, args.toList)))
         }
 
       jvm.File(
         names.RowName,
         jvm.Adt.Record(
+          annotations = typeAnnotations,
           isWrapper = false,
           comments = classComment,
           name = names.RowName,
@@ -134,12 +144,13 @@ case class FilesRelation(
     } yield {
       val T = jvm.Type.Abstract(jvm.Ident("T"))
       val abstractMembers = List(
-        jvm.Method(jvm.Comments.Empty, Nil, jvm.Ident("name"), Nil, Nil, TypesJava.String, Nil),
-        jvm.Method(jvm.Comments.Empty, Nil, jvm.Ident("value"), Nil, Nil, T, Nil)
+        jvm.Method(Nil, jvm.Comments.Empty, Nil, jvm.Ident("name"), Nil, Nil, TypesJava.String, Nil, Nil),
+        jvm.Method(Nil, jvm.Comments.Empty, Nil, jvm.Ident("value"), Nil, Nil, T, Nil, Nil)
       )
 
       val colRecords = cols.toList.map { col =>
         jvm.Adt.Record(
+          annotations = Nil,
           isWrapper = false,
           comments = jvm.Comments.Empty,
           name = jvm.Type.Qualified(col.name),
@@ -150,12 +161,14 @@ case class FilesRelation(
           implements = List(fieldValueName.of(col.tpe)),
           members = List(
             jvm.Method(
+              Nil,
               comments = jvm.Comments.Empty,
               tparams = Nil,
               name = jvm.Ident("name"),
               params = Nil,
               implicitParams = Nil,
               tpe = TypesJava.String,
+              throws = Nil,
               body = List(jvm.StrLit(col.dbName.value))
             )
           ),
@@ -164,6 +177,7 @@ case class FilesRelation(
       }
 
       val fieldOrIdValue = jvm.Adt.Sum(
+        annotations = Nil,
         comments = jvm.Comments.Empty,
         name = fieldValueName,
         tparams = List(T),
@@ -196,7 +210,7 @@ case class FilesRelation(
             case lang.Optional(underlying) => (jvm.Type.dsl.OptField, underlying)
             case _                         => (jvm.Type.dsl.Field, col.tpe)
           }
-      jvm.Method(jvm.Comments.Empty, Nil, col.name, Nil, Nil, cls.of(tpe, names.RowName), Nil)
+      jvm.Method(Nil, jvm.Comments.Empty, Nil, col.name, Nil, Nil, cls.of(tpe, names.RowName), Nil, Nil)
     }
 
     // Foreign key methods
@@ -229,7 +243,7 @@ case class FilesRelation(
               )
 
               val fkExpr = code"$fkConstruction${columnPairs.mkCode("\n")}"
-              (fkName, jvm.Method(jvm.Comments.Empty, Nil, fkName, Nil, Nil, fkType, List(fkExpr)))
+              (fkName, jvm.Method(Nil, jvm.Comments.Empty, Nil, fkName, Nil, Nil, fkType, Nil, List(fkExpr)))
             }
             .distinctByCompat(_._1)
             .map(_._2)
@@ -251,12 +265,14 @@ case class FilesRelation(
             code"$thisField.isEqual($otherField)"
           }
           jvm.Method(
+            Nil,
             jvm.Comments.Empty,
             Nil,
             jvm.Ident(s"extract${x.name}Is"),
             List(idParam),
             Nil,
             predicateType,
+            Nil,
             List(dbLib.booleanAndChain(NonEmptyList(equalityExprsList.head, equalityExprsList.tail)))
           )
         }
@@ -268,7 +284,7 @@ case class FilesRelation(
             dbLib.compositeInPart(thisCol.tpe, x.otherCompositeIdType, names.RowName, fieldExpr, otherCol.name, pgType)
           }
           val body = code"new ${jvm.Type.dsl.CompositeIn}(${lang.ListType.create(parts.toList)}, ${idsParam.name})"
-          jvm.Method(jvm.Comments.Empty, Nil, jvm.Ident(s"extract${x.name}In"), List(idsParam), Nil, predicateType, List(body))
+          jvm.Method(Nil, jvm.Comments.Empty, Nil, jvm.Ident(s"extract${x.name}In"), List(idsParam), Nil, predicateType, Nil, List(body))
         }
 
         List(isMethod, inMethod)
@@ -291,7 +307,7 @@ case class FilesRelation(
                 code"$thisField.isEqual($paramField)"
               }
               val expr = dbLib.booleanAndChain(equalityExprs)
-              jvm.Method(jvm.Comments.Empty, Nil, jvm.Ident("compositeIdIs"), List(idParam), Nil, predicateType, List(expr))
+              jvm.Method(Nil, jvm.Comments.Empty, Nil, jvm.Ident("compositeIdIs"), List(idParam), Nil, predicateType, Nil, List(expr))
             }
 
             val inMethod = {
@@ -301,7 +317,7 @@ case class FilesRelation(
                 dbLib.compositeInPart(col.tpe, x.tpe, names.RowName, fieldExpr, col.name, pgType)
               }
               val body = code"new ${jvm.Type.dsl.CompositeIn}(${lang.ListType.create(parts.toList)}, ${idsParam.name})"
-              jvm.Method(jvm.Comments.Empty, Nil, jvm.Ident("compositeIdIn"), List(idsParam), Nil, predicateType, List(body))
+              jvm.Method(Nil, jvm.Comments.Empty, Nil, jvm.Ident("compositeIdIn"), List(idsParam), Nil, predicateType, Nil, List(body))
             }
 
             List(isMethod, inMethod)
@@ -348,7 +364,7 @@ case class FilesRelation(
           jvm.Arg.Pos(pgType)
         )
       )
-      jvm.Method(jvm.Comments.Empty, Nil, col.name, Nil, Nil, fieldType, List(body))
+      jvm.Method(Nil, jvm.Comments.Empty, Nil, col.name, Nil, Nil, fieldType, Nil, List(body))
     }
 
     // For columns access: Scala uses fields.name, Java uses fields().name()
@@ -360,6 +376,7 @@ case class FilesRelation(
 
     // fields: lazy override val (Scala) / @Override public Type fields() (Java)
     val fieldsValue = jvm.Value(
+      Nil,
       jvm.Ident("fields"),
       fieldsName,
       Some(jvm.NewWithBody(fieldsName, fieldImplMethods).code),
@@ -369,6 +386,7 @@ case class FilesRelation(
 
     // columns: lazy override val (Scala) / @Override public Type columns() (Java)
     val columnsValue = jvm.Value(
+      Nil,
       jvm.Ident("columns"),
       columnsList,
       Some(columnsExpr),
@@ -379,12 +397,14 @@ case class FilesRelation(
     // copy method
     val copyPathParam = jvm.Param(jvm.Ident("path"), pathList)
     val copyMethod = jvm.Method(
+      Nil,
       jvm.Comments.Empty,
       Nil,
       jvm.Ident("copy"),
       List(copyPathParam),
       Nil,
       jvm.Type.Qualified(ImplName),
+      Nil,
       List(jvm.New(jvm.Type.Qualified(ImplName), List(jvm.Arg.Pos(copyPathParam.name.code))))
     )
 
@@ -401,6 +421,7 @@ case class FilesRelation(
 
     // Static structure field
     val structureField = jvm.Value(
+      Nil,
       jvm.Ident("structure"),
       jvm.Type.dsl.StructureRelation.of(fieldsName, names.RowName),
       Some(jvm.New(jvm.Type.Qualified(ImplName), List(jvm.Arg.Pos(lang.ListType.create(Nil)))).code),
@@ -412,6 +433,7 @@ case class FilesRelation(
 
     // Build the interface/trait using jvm.Class
     val fieldsClass = jvm.Class(
+      annotations = Nil,
       comments = jvm.Comments.Empty,
       classType = jvm.ClassType.Interface,
       name = fieldsName,
@@ -578,6 +600,7 @@ case class FilesRelation(
     val maybeSignatures = repoMethods.toList.map(dbLib.repoSig)
 
     val cls = jvm.Class(
+      annotations = Nil,
       comments = jvm.Comments(maybeSignatures.collect { case Left(DbLib.NotImplementedFor(repoMethod, lib)) =>
         s"${repoMethod.methodName}: Not implementable for $lib"
       }),
@@ -599,13 +622,14 @@ case class FilesRelation(
     val methods: List[jvm.Method] =
       repoMethods.toList.flatMap { repoMethod =>
         dbLib.repoSig(repoMethod) match {
-          case Right(sig @ jvm.Method(_, _, _, _, _, _, Nil)) =>
+          case Right(sig @ jvm.Method(_, _, _, _, _, _, _, _, Nil)) =>
             Some(sig.copy(body = dbLib.repoImpl(repoMethod)))
           case _ =>
             None
         }
       }
     val cls = jvm.Class(
+      annotations = Nil,
       comments = jvm.Comments.Empty,
       classType = jvm.ClassType.Class,
       name = names.RepoImplName,
@@ -631,7 +655,7 @@ case class FilesRelation(
     val methods: List[jvm.Method] =
       repoMethods.toList.flatMap { repoMethod =>
         dbLib.repoSig(repoMethod) match {
-          case Right(sig @ jvm.Method(_, _, _, _, _, _, Nil)) =>
+          case Right(sig @ jvm.Method(_, _, _, _, _, _, _, _, Nil)) =>
             Some(sig.copy(body = dbLib.mockRepoImpl(idComputed, repoMethod, maybeToRowParam)))
           case _ =>
             None
@@ -642,6 +666,7 @@ case class FilesRelation(
       maybeToRowParam,
       Some(
         jvm.Param(
+          Nil,
           jvm.Comments.Empty,
           jvm.Ident("map"),
           dbLib.lang.MapOps.mutableImpl.of(idComputed.tpe, names.RowName),
@@ -651,6 +676,8 @@ case class FilesRelation(
     ).flatten
 
     val cls = jvm.Adt.Record(
+      annotations = Nil,
+      isWrapper = false,
       comments = jvm.Comments.Empty,
       name = names.RepoMockName,
       tparams = Nil,
@@ -659,8 +686,7 @@ case class FilesRelation(
       `extends` = None,
       implements = List(names.RepoName),
       members = methods,
-      staticMembers = Nil,
-      isWrapper = false
+      staticMembers = Nil
     )
     jvm.File(names.RepoMockName, cls, secondaryTypes = Nil, scope = Scope.Test)
   }

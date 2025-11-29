@@ -61,15 +61,15 @@ public interface PchViewFields {
     return new Impl(List.of());
   };
 
-  OptField<TypoLocalDateTime, PchViewRow> enddate();
-
   Field<ProductId, PchViewRow> id();
-
-  Field<TypoLocalDateTime, PchViewRow> modifieddate();
 
   Field<ProductId, PchViewRow> productid();
 
+  Field<TypoLocalDateTime, PchViewRow> startdate();
+
+  OptField<TypoLocalDateTime, PchViewRow> enddate();
+
   Field<BigDecimal, PchViewRow> standardcost();
 
-  Field<TypoLocalDateTime, PchViewRow> startdate();
+  Field<TypoLocalDateTime, PchViewRow> modifieddate();
 }

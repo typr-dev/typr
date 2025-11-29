@@ -6,12 +6,13 @@
 package adventureworks.public_.users;
 
 import adventureworks.customtypes.TypoUUID;
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `public.users` */
-public record UsersId(TypoUUID value) {
+public record UsersId(@JsonValue TypoUUID value) {
   public UsersId withValue(TypoUUID value) {
     return new UsersId(value);
   };

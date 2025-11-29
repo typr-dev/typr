@@ -82,25 +82,25 @@ public interface VstorewithcontactsViewFields {
 
   Field<BusinessentityId, VstorewithcontactsViewRow> businessentityid();
 
+  Field<Name, VstorewithcontactsViewRow> name();
+
   Field<Name, VstorewithcontactsViewRow> contacttype();
 
-  OptField</* max 50 chars */ String, VstorewithcontactsViewRow> emailaddress();
-
-  Field<Integer, VstorewithcontactsViewRow> emailpromotion();
+  OptField</* max 8 chars */ String, VstorewithcontactsViewRow> title();
 
   Field</* user-picked */ FirstName, VstorewithcontactsViewRow> firstname();
 
-  Field<Name, VstorewithcontactsViewRow> lastname();
-
   OptField<Name, VstorewithcontactsViewRow> middlename();
 
-  Field<Name, VstorewithcontactsViewRow> name();
+  Field<Name, VstorewithcontactsViewRow> lastname();
+
+  OptField</* max 10 chars */ String, VstorewithcontactsViewRow> suffix();
 
   OptField<Phone, VstorewithcontactsViewRow> phonenumber();
 
   OptField<Name, VstorewithcontactsViewRow> phonenumbertype();
 
-  OptField</* max 10 chars */ String, VstorewithcontactsViewRow> suffix();
+  OptField</* max 50 chars */ String, VstorewithcontactsViewRow> emailaddress();
 
-  OptField</* max 8 chars */ String, VstorewithcontactsViewRow> title();
+  Field<Integer, VstorewithcontactsViewRow> emailpromotion();
 }

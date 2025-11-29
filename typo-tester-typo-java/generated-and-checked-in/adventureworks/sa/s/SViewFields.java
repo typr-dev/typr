@@ -65,17 +65,17 @@ public interface SViewFields {
     return new Impl(List.of());
   };
 
-  Field<BusinessentityId, SViewRow> businessentityid();
-
-  OptField<TypoXml, SViewRow> demographics();
-
   Field<BusinessentityId, SViewRow> id();
 
-  Field<TypoLocalDateTime, SViewRow> modifieddate();
+  Field<BusinessentityId, SViewRow> businessentityid();
 
   Field<Name, SViewRow> name();
 
+  OptField<BusinessentityId, SViewRow> salespersonid();
+
+  OptField<TypoXml, SViewRow> demographics();
+
   Field<TypoUUID, SViewRow> rowguid();
 
-  OptField<BusinessentityId, SViewRow> salespersonid();
+  Field<TypoLocalDateTime, SViewRow> modifieddate();
 }

@@ -73,15 +73,11 @@ public interface ThViewFields {
     return new Impl(List.of());
   };
 
-  Field<BigDecimal, ThViewRow> actualcost();
-
   Field<TransactionhistoryId, ThViewRow> id();
 
-  Field<TypoLocalDateTime, ThViewRow> modifieddate();
+  Field<TransactionhistoryId, ThViewRow> transactionid();
 
   Field<ProductId, ThViewRow> productid();
-
-  Field<Integer, ThViewRow> quantity();
 
   Field<Integer, ThViewRow> referenceorderid();
 
@@ -89,7 +85,11 @@ public interface ThViewFields {
 
   Field<TypoLocalDateTime, ThViewRow> transactiondate();
 
-  Field<TransactionhistoryId, ThViewRow> transactionid();
-
   Field</* bpchar, max 1 chars */ String, ThViewRow> transactiontype();
+
+  Field<Integer, ThViewRow> quantity();
+
+  Field<BigDecimal, ThViewRow> actualcost();
+
+  Field<TypoLocalDateTime, ThViewRow> modifieddate();
 }

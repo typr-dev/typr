@@ -54,11 +54,11 @@ public interface ProductcategoryFields {
     return new Impl(List.of());
   };
 
-  Field<TypoLocalDateTime, ProductcategoryRow> modifieddate();
+  IdField<ProductcategoryId, ProductcategoryRow> productcategoryid();
 
   Field<Name, ProductcategoryRow> name();
 
-  IdField<ProductcategoryId, ProductcategoryRow> productcategoryid();
-
   Field<TypoUUID, ProductcategoryRow> rowguid();
+
+  Field<TypoLocalDateTime, ProductcategoryRow> modifieddate();
 }

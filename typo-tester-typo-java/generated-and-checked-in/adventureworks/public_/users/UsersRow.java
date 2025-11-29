@@ -8,6 +8,7 @@ package adventureworks.public_.users;
 import adventureworks.customtypes.Defaulted;
 import adventureworks.customtypes.TypoInstant;
 import adventureworks.customtypes.TypoUnknownCitext;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
 import typo.runtime.PgText;
 import typo.runtime.PgTypes;
@@ -19,14 +20,14 @@ import typo.runtime.RowParsers.Tuple7;
   * Primary key: user_id
   */
 public record UsersRow(
-  UsersId userId,
+  @JsonProperty("user_id") UsersId userId,
   String name,
-  Optional<String> lastName,
+  @JsonProperty("last_name") Optional<String> lastName,
   TypoUnknownCitext email,
   String password,
   /** Default: now() */
-  TypoInstant createdAt,
-  Optional<TypoInstant> verifiedOn
+  @JsonProperty("created_at") TypoInstant createdAt,
+  @JsonProperty("verified_on") Optional<TypoInstant> verifiedOn
 ) {
   public UsersRow withUserId(UsersId userId) {
     return new UsersRow(userId, name, lastName, email, password, createdAt, verifiedOn);

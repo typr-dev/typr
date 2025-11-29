@@ -38,18 +38,25 @@ case class FilesTable(lang: Lang, table: ComputedTable, fkAnalysis: FkAnalysis, 
         }
 
         jvm.Method(
+          Nil,
           comments = jvm.Comments.Empty,
           tparams = Nil,
           name = jvm.Ident("toRow"),
           params = params,
           implicitParams = Nil,
           tpe = table.names.RowName,
+          throws = Nil,
           body = List(jvm.New(table.names.RowName, keyValues.toList))
         )
       }
 
+      val jsonInstances = options.jsonLibs.map(_.instances(unsaved.tpe, unsaved.unsavedCols))
+      val fieldAnnotations = JsonLib.mergeFieldAnnotations(jsonInstances.flatMap(_.fieldAnnotations.toList))
+      val typeAnnotations = jsonInstances.flatMap(_.typeAnnotations)
+
       val colParams = unsaved.unsavedCols.map { col =>
         col.param.copy(
+          annotations = fieldAnnotations.getOrElse(col.name, Nil),
           comments = scaladoc(
             List[Iterable[String]](
               col.dbCol.columnDefault.map(x => s"Default: $x"),
@@ -70,10 +77,11 @@ case class FilesTable(lang: Lang, table: ComputedTable, fkAnalysis: FkAnalysis, 
       }
 
       val instances =
-        options.jsonLibs.flatMap(_.instances(unsaved.tpe, unsaved.unsavedCols)) ++
+        jsonInstances.flatMap(_.givens) ++
           options.dbLib.toList.flatMap(_.rowInstances(unsaved.tpe, unsaved.unsavedCols, rowType = DbLib.RowType.Writable))
 
       val cls = jvm.Adt.Record(
+        annotations = typeAnnotations,
         isWrapper = false,
         comments = comments,
         name = unsaved.tpe,
@@ -113,32 +121,47 @@ case class FilesTable(lang: Lang, table: ComputedTable, fkAnalysis: FkAnalysis, 
                   case None    => jvm.Ident("apply")
                 }
                 jvm.Method(
+                  Nil,
                   comments = jvm.Comments.Empty,
                   tparams = Nil,
                   name = name,
                   params = List(jvm.Param(value, domain.underlyingType)),
                   implicitParams = Nil,
                   tpe = id.tpe,
+                  throws = Nil,
                   body = List(jvm.New(id.tpe, List(jvm.Arg.Pos(jvm.New(domain.tpe, List(jvm.Arg.Pos(value)))))))
                 )
               }
             case _ => None
           }
 
+        val jsonInstances = options.jsonLibs.map(_.wrapperTypeInstances(wrapperType = id.tpe, fieldName = value, underlying = id.underlying))
+        val fieldAnnotations = JsonLib.mergeFieldAnnotations(jsonInstances.flatMap(_.fieldAnnotations.toList))
+        val typeAnnotations = jsonInstances.flatMap(_.typeAnnotations)
+
         val instances = List(
           bijection.toList,
-          options.jsonLibs.flatMap(_.wrapperTypeInstances(wrapperType = id.tpe, fieldName = value, underlying = id.underlying)),
+          jsonInstances.flatMap(_.givens),
           options.dbLib.toList.flatMap(_.wrapperTypeInstances(wrapperType = id.tpe, underlying = id.underlying, overrideDbType = None))
         ).flatten
+
+        val paramsWithAnnotations = List(jvm.Param(value, id.underlying)).map { p =>
+          fieldAnnotations.get(p.name) match {
+            case Some(anns) => p.copy(annotations = p.annotations ++ anns)
+            case None       => p
+          }
+        }
+
         Some(
           jvm.File(
             id.tpe,
             jvm.Adt.Record(
+              annotations = typeAnnotations,
               isWrapper = true,
               comments = comments,
               name = id.tpe,
               tparams = Nil,
-              params = List(jvm.Param(value, id.underlying)),
+              params = paramsWithAnnotations,
               implicitParams = Nil,
               `extends` = None,
               implements = Nil,
@@ -177,7 +200,7 @@ case class FilesTable(lang: Lang, table: ComputedTable, fkAnalysis: FkAnalysis, 
 
         val instances = List(
           options.dbLib.toList.flatMap(_.stringEnumInstances(x.tpe, x.underlying, sqlType, openEnum = true)),
-          options.jsonLibs.flatMap(_.stringEnumInstances(x.tpe, x.underlying, openEnum = true))
+          options.jsonLibs.flatMap(_.stringEnumInstances(x.tpe, x.underlying, openEnum = true).givens)
         ).flatten
 
         // shortcut for id files wrapping a domain
@@ -192,18 +215,20 @@ case class FilesTable(lang: Lang, table: ComputedTable, fkAnalysis: FkAnalysis, 
                 }
                 val value = jvm.Ident("value")
                 jvm.Method(
+                  Nil,
                   jvm.Comments.Empty,
                   Nil,
                   name,
                   List(jvm.Param(value, domain.underlyingType)),
                   Nil,
                   x.tpe,
+                  Nil,
                   List(code"apply(${jvm.New(x.underlying, List(jvm.Arg.Pos(value)))})")
                 )
               }
           }
 
-        val xx = jvm.OpenEnum(comments, x.tpe, underlyingType, values, instances ++ maybeFromString.toList)
+        val xx = jvm.OpenEnum(Nil, comments, x.tpe, underlyingType, values, instances ++ maybeFromString.toList)
         Some(jvm.File(x.tpe, xx, secondaryTypes = Nil, scope = Scope.Main))
 
       case _: IdComputed.UnaryUserSpecified | _: IdComputed.UnaryNoIdType | _: IdComputed.UnaryInherited =>
@@ -212,41 +237,51 @@ case class FilesTable(lang: Lang, table: ComputedTable, fkAnalysis: FkAnalysis, 
         val constructorMethod: Option[jvm.Method] =
           fkAnalysis.createWithFkIdsId.map { colsFromFks =>
             jvm.Method(
+              Nil,
               comments = jvm.Comments.Empty,
               tparams = Nil,
               name = jvm.Ident("from"),
               params = colsFromFks.allParams,
               implicitParams = Nil,
               tpe = tpe,
-              List(jvm.New(tpe, colsFromFks.allExpr.map { case (colName, expr) => jvm.Arg.Named(colName, expr) }))
+              throws = Nil,
+              body = List(jvm.New(tpe, colsFromFks.allExpr.map { case (colName, expr) => jvm.Arg.Named(colName, expr) }))
             )
           }
 
         val instanceMethods: List[jvm.Method] =
           fkAnalysis.extractFksIdsFromId.map { colsToFk =>
             jvm.Method(
+              Nil,
               comments = jvm.Comments.Empty,
               tparams = Nil,
               name = colsToFk.name.prepended("extract"),
               params = Nil,
               implicitParams = Nil,
               tpe = colsToFk.otherCompositeIdType,
+              throws = Nil,
               body = List(jvm.New(colsToFk.otherCompositeIdType, colsToFk.colPairs.map { case (inComposite, inId) => jvm.Arg.Named(inComposite.name, inId.name) }))
             )
           }
 
-        val instances: List[jvm.Given] =
-          options.jsonLibs.flatMap(_.instances(tpe = id.tpe, cols = cols))
+        val jsonInstances = options.jsonLibs.map(_.instances(tpe = id.tpe, cols = cols))
+        val fieldAnnotations = JsonLib.mergeFieldAnnotations(jsonInstances.flatMap(_.fieldAnnotations.toList))
+        val typeAnnotations = jsonInstances.flatMap(_.typeAnnotations)
+        val instances: List[jvm.Given] = jsonInstances.flatMap(_.givens)
 
         Some(
           jvm.File(
             id.tpe,
             jvm.Adt.Record(
+              annotations = typeAnnotations,
               isWrapper = false,
               comments = scaladoc(List(s"Type for the composite primary key of table `${table.dbTable.name.value}`")),
               name = tpe,
               tparams = Nil,
-              params = cols.map(_.param).toList,
+              params = cols.map { col =>
+                val annotations = fieldAnnotations.getOrElse(col.name, Nil)
+                col.param.copy(annotations = annotations)
+              }.toList,
               implicitParams = Nil,
               `extends` = None,
               implements = Nil,

@@ -5,13 +5,14 @@
  */
 package adventureworks.production.productcategory;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `production.productcategory` */
-public record ProductcategoryId(Integer value) {
+public record ProductcategoryId(@JsonValue Integer value) {
   public ProductcategoryId withValue(Integer value) {
     return new ProductcategoryId(value);
   };

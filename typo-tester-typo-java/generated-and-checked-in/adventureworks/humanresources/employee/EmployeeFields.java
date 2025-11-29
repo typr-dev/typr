@@ -95,37 +95,37 @@ public interface EmployeeFields {
     return new Impl(List.of());
   };
 
-  Field<TypoLocalDate, EmployeeRow> birthdate();
-
   IdField<BusinessentityId, EmployeeRow> businessentityid();
 
-  Field<Flag, EmployeeRow> currentflag();
+  Field</* max 15 chars */ String, EmployeeRow> nationalidnumber();
 
-  default ForeignKey<PersonFields, PersonRow> fkPersonPerson() {
-    return ForeignKey.<PersonFields, PersonRow>of("humanresources.FK_Employee_Person_BusinessEntityID").withColumnPair(businessentityid(), PersonFields::businessentityid);
-  };
+  Field</* max 256 chars */ String, EmployeeRow> loginid();
+
+  Field</* max 50 chars */ String, EmployeeRow> jobtitle();
+
+  Field<TypoLocalDate, EmployeeRow> birthdate();
+
+  Field</* bpchar, max 1 chars */ String, EmployeeRow> maritalstatus();
 
   Field</* bpchar, max 1 chars */ String, EmployeeRow> gender();
 
   Field<TypoLocalDate, EmployeeRow> hiredate();
 
-  Field</* max 50 chars */ String, EmployeeRow> jobtitle();
-
-  Field</* max 256 chars */ String, EmployeeRow> loginid();
-
-  Field</* bpchar, max 1 chars */ String, EmployeeRow> maritalstatus();
-
-  Field<TypoLocalDateTime, EmployeeRow> modifieddate();
-
-  Field</* max 15 chars */ String, EmployeeRow> nationalidnumber();
-
-  OptField<String, EmployeeRow> organizationnode();
-
-  Field<TypoUUID, EmployeeRow> rowguid();
-
   Field<Flag, EmployeeRow> salariedflag();
+
+  Field<TypoShort, EmployeeRow> vacationhours();
 
   Field<TypoShort, EmployeeRow> sickleavehours();
 
-  Field<TypoShort, EmployeeRow> vacationhours();
+  Field<Flag, EmployeeRow> currentflag();
+
+  Field<TypoUUID, EmployeeRow> rowguid();
+
+  Field<TypoLocalDateTime, EmployeeRow> modifieddate();
+
+  OptField<String, EmployeeRow> organizationnode();
+
+  default ForeignKey<PersonFields, PersonRow> fkPersonPerson() {
+    return ForeignKey.<PersonFields, PersonRow>of("humanresources.FK_Employee_Person_BusinessEntityID").withColumnPair(businessentityid(), PersonFields::businessentityid);
+  };
 }

@@ -61,15 +61,15 @@ public interface PlphViewFields {
     return new Impl(List.of());
   };
 
-  OptField<TypoLocalDateTime, PlphViewRow> enddate();
-
   Field<ProductId, PlphViewRow> id();
-
-  Field<BigDecimal, PlphViewRow> listprice();
-
-  Field<TypoLocalDateTime, PlphViewRow> modifieddate();
 
   Field<ProductId, PlphViewRow> productid();
 
   Field<TypoLocalDateTime, PlphViewRow> startdate();
+
+  OptField<TypoLocalDateTime, PlphViewRow> enddate();
+
+  Field<BigDecimal, PlphViewRow> listprice();
+
+  Field<TypoLocalDateTime, PlphViewRow> modifieddate();
 }

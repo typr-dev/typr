@@ -63,19 +63,19 @@ public interface ShoppingcartitemFields {
     return new Impl(List.of());
   };
 
+  IdField<ShoppingcartitemId, ShoppingcartitemRow> shoppingcartitemid();
+
+  Field</* max 50 chars */ String, ShoppingcartitemRow> shoppingcartid();
+
+  Field<Integer, ShoppingcartitemRow> quantity();
+
+  Field<ProductId, ShoppingcartitemRow> productid();
+
   Field<TypoLocalDateTime, ShoppingcartitemRow> datecreated();
+
+  Field<TypoLocalDateTime, ShoppingcartitemRow> modifieddate();
 
   default ForeignKey<ProductFields, ProductRow> fkProductionProduct() {
     return ForeignKey.<ProductFields, ProductRow>of("sales.FK_ShoppingCartItem_Product_ProductID").withColumnPair(productid(), ProductFields::productid);
   };
-
-  Field<TypoLocalDateTime, ShoppingcartitemRow> modifieddate();
-
-  Field<ProductId, ShoppingcartitemRow> productid();
-
-  Field<Integer, ShoppingcartitemRow> quantity();
-
-  Field</* max 50 chars */ String, ShoppingcartitemRow> shoppingcartid();
-
-  IdField<ShoppingcartitemId, ShoppingcartitemRow> shoppingcartitemid();
 }

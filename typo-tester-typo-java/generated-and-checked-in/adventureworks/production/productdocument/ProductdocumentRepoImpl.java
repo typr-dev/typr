@@ -25,7 +25,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record ProductdocumentRepoImpl() implements ProductdocumentRepo {
+public class ProductdocumentRepoImpl implements ProductdocumentRepo {
   public DeleteBuilder<ProductdocumentFields, ProductdocumentRow> delete() {
     return DeleteBuilder.of("production.productdocument", ProductdocumentFields.structure());
   };
@@ -54,19 +54,19 @@ public record ProductdocumentRepoImpl() implements ProductdocumentRepo {
     ProductId[] productid = arrayMap.map(compositeIds, ProductdocumentId::productid, ProductId.class);;
       DocumentId[] documentnode = arrayMap.map(compositeIds, ProductdocumentId::documentnode, DocumentId.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         delete
-         from "production"."productdocument"
-         where ("productid", "documentnode")
-         in (select unnest("""),
-      ProductId.pgTypeArray.encode(productid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      DocumentId.pgTypeArray.encode(documentnode),
-      typo.runtime.Fragment.lit("""
-      ::varchar[]))
+             typo.runtime.Fragment.lit("""
+                delete
+                from "production"."productdocument"
+                where ("productid", "documentnode")
+                in (select unnest("""),
+             ProductId.pgTypeArray.encode(productid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             DocumentId.pgTypeArray.encode(documentnode),
+             typo.runtime.Fragment.lit("""
+             ::varchar[]))
 
-      """)
-    ).update().runUnchecked(c);
+             """)
+           ).update().runUnchecked(c);
   };
 
   public ProductdocumentRow insert(
@@ -196,19 +196,19 @@ public record ProductdocumentRepoImpl() implements ProductdocumentRepo {
     ProductId[] productid = arrayMap.map(compositeIds, ProductdocumentId::productid, ProductId.class);;
       DocumentId[] documentnode = arrayMap.map(compositeIds, ProductdocumentId::documentnode, DocumentId.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         select "productid", "modifieddate"::text, "documentnode"
-         from "production"."productdocument"
-         where ("productid", "documentnode")
-         in (select unnest("""),
-      ProductId.pgTypeArray.encode(productid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      DocumentId.pgTypeArray.encode(documentnode),
-      typo.runtime.Fragment.lit("""
-      ::varchar[]))
+             typo.runtime.Fragment.lit("""
+                select "productid", "modifieddate"::text, "documentnode"
+                from "production"."productdocument"
+                where ("productid", "documentnode")
+                in (select unnest("""),
+             ProductId.pgTypeArray.encode(productid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             DocumentId.pgTypeArray.encode(documentnode),
+             typo.runtime.Fragment.lit("""
+             ::varchar[]))
 
-      """)
-    ).as(ProductdocumentRow._rowParser.all()).runUnchecked(c);
+             """)
+           ).as(ProductdocumentRow._rowParser.all()).runUnchecked(c);
   };
 
   public Map<ProductdocumentId, ProductdocumentRow> selectByIdsTracked(
@@ -230,20 +230,20 @@ public record ProductdocumentRepoImpl() implements ProductdocumentRepo {
   ) {
     ProductdocumentId compositeId = row.compositeId();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "production"."productdocument"
-         set "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "productid" = """),
-      ProductId.pgType.encode(compositeId.productid()),
-      typo.runtime.Fragment.lit("""
-       AND "documentnode" = 
-      """),
-      DocumentId.pgType.encode(compositeId.documentnode()),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "production"."productdocument"
+                set "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "productid" = """),
+             ProductId.pgType.encode(compositeId.productid()),
+             typo.runtime.Fragment.lit("""
+              AND "documentnode" = 
+             """),
+             DocumentId.pgType.encode(compositeId.documentnode()),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public ProductdocumentRow upsert(
@@ -300,12 +300,12 @@ public record ProductdocumentRepoImpl() implements ProductdocumentRepo {
       copy productdocument_TEMP("productid", "modifieddate", "documentnode") from stdin
       """), batchSize, unsaved, c, ProductdocumentRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "production"."productdocument"("productid", "modifieddate", "documentnode")
-       select * from productdocument_TEMP
-       on conflict ("productid", "documentnode")
-       do update set
-         "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table productdocument_TEMP;""")).update().runUnchecked(c);
+              insert into "production"."productdocument"("productid", "modifieddate", "documentnode")
+              select * from productdocument_TEMP
+              on conflict ("productid", "documentnode")
+              do update set
+                "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table productdocument_TEMP;""")).update().runUnchecked(c);
   };
 }

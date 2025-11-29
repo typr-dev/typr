@@ -5,6 +5,7 @@
  */
 package adventureworks.sales.vsalespersonsalesbyfiscalyears;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.util.Optional;
 import typo.runtime.PgTypes;
@@ -14,10 +15,10 @@ import typo.runtime.RowParsers.Tuple7;
 
 /** View: sales.vsalespersonsalesbyfiscalyears */
 public record VsalespersonsalesbyfiscalyearsViewRow(
-  /* nullability unknown */ Optional<Integer> salesPersonID,
-  /* nullability unknown */ Optional<String> fullName,
-  /* nullability unknown */ Optional<String> jobTitle,
-  /* nullability unknown */ Optional<String> salesTerritory,
+  @JsonProperty("SalesPersonID") /* nullability unknown */ Optional<Integer> salesPersonID,
+  @JsonProperty("FullName") /* nullability unknown */ Optional<String> fullName,
+  @JsonProperty("JobTitle") /* nullability unknown */ Optional<String> jobTitle,
+  @JsonProperty("SalesTerritory") /* nullability unknown */ Optional<String> salesTerritory,
   /* nullability unknown */ Optional<BigDecimal> _2012,
   /* nullability unknown */ Optional<BigDecimal> _2013,
   /* nullability unknown */ Optional<BigDecimal> _2014

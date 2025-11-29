@@ -75,25 +75,25 @@ public interface VjobcandidateemploymentViewFields {
     return new Impl(List.of());
   };
 
+  Field<JobcandidateId, VjobcandidateemploymentViewRow> jobcandidateid();
+
+  OptField<TypoLocalDate, VjobcandidateemploymentViewRow> empStartDate();
+
   OptField<TypoLocalDate, VjobcandidateemploymentViewRow> empEndDate();
+
+  OptField</* max 100 chars */ String, VjobcandidateemploymentViewRow> empOrgName();
+
+  OptField</* max 100 chars */ String, VjobcandidateemploymentViewRow> empJobTitle();
+
+  OptField<String, VjobcandidateemploymentViewRow> empResponsibility();
 
   OptField<String, VjobcandidateemploymentViewRow> empFunctionCategory();
 
   OptField<String, VjobcandidateemploymentViewRow> empIndustryCategory();
 
-  OptField</* max 100 chars */ String, VjobcandidateemploymentViewRow> empJobTitle();
-
-  OptField<String, VjobcandidateemploymentViewRow> empLocCity();
-
   OptField<String, VjobcandidateemploymentViewRow> empLocCountryRegion();
 
   OptField<String, VjobcandidateemploymentViewRow> empLocState();
 
-  OptField</* max 100 chars */ String, VjobcandidateemploymentViewRow> empOrgName();
-
-  OptField<String, VjobcandidateemploymentViewRow> empResponsibility();
-
-  OptField<TypoLocalDate, VjobcandidateemploymentViewRow> empStartDate();
-
-  Field<JobcandidateId, VjobcandidateemploymentViewRow> jobcandidateid();
+  OptField<String, VjobcandidateemploymentViewRow> empLocCity();
 }

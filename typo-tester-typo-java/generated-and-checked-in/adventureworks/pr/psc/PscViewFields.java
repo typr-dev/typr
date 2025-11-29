@@ -63,13 +63,13 @@ public interface PscViewFields {
 
   Field<ProductsubcategoryId, PscViewRow> id();
 
-  Field<TypoLocalDateTime, PscViewRow> modifieddate();
-
-  Field<Name, PscViewRow> name();
+  Field<ProductsubcategoryId, PscViewRow> productsubcategoryid();
 
   Field<ProductcategoryId, PscViewRow> productcategoryid();
 
-  Field<ProductsubcategoryId, PscViewRow> productsubcategoryid();
+  Field<Name, PscViewRow> name();
 
   Field<TypoUUID, PscViewRow> rowguid();
+
+  Field<TypoLocalDateTime, PscViewRow> modifieddate();
 }

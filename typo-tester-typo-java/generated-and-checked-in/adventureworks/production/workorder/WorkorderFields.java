@@ -77,9 +77,23 @@ public interface WorkorderFields {
     return new Impl(List.of());
   };
 
-  Field<TypoLocalDateTime, WorkorderRow> duedate();
+  IdField<WorkorderId, WorkorderRow> workorderid();
+
+  Field<ProductId, WorkorderRow> productid();
+
+  Field<Integer, WorkorderRow> orderqty();
+
+  Field<TypoShort, WorkorderRow> scrappedqty();
+
+  Field<TypoLocalDateTime, WorkorderRow> startdate();
 
   OptField<TypoLocalDateTime, WorkorderRow> enddate();
+
+  Field<TypoLocalDateTime, WorkorderRow> duedate();
+
+  OptField<ScrapreasonId, WorkorderRow> scrapreasonid();
+
+  Field<TypoLocalDateTime, WorkorderRow> modifieddate();
 
   default ForeignKey<ProductFields, ProductRow> fkProduct() {
     return ForeignKey.<ProductFields, ProductRow>of("production.FK_WorkOrder_Product_ProductID").withColumnPair(productid(), ProductFields::productid);
@@ -88,18 +102,4 @@ public interface WorkorderFields {
   default ForeignKey<ScrapreasonFields, ScrapreasonRow> fkScrapreason() {
     return ForeignKey.<ScrapreasonFields, ScrapreasonRow>of("production.FK_WorkOrder_ScrapReason_ScrapReasonID").withColumnPair(scrapreasonid(), ScrapreasonFields::scrapreasonid);
   };
-
-  Field<TypoLocalDateTime, WorkorderRow> modifieddate();
-
-  Field<Integer, WorkorderRow> orderqty();
-
-  Field<ProductId, WorkorderRow> productid();
-
-  Field<TypoShort, WorkorderRow> scrappedqty();
-
-  OptField<ScrapreasonId, WorkorderRow> scrapreasonid();
-
-  Field<TypoLocalDateTime, WorkorderRow> startdate();
-
-  IdField<WorkorderId, WorkorderRow> workorderid();
 }

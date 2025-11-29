@@ -50,9 +50,9 @@ public interface PmiViewFields {
     return new Impl(List.of());
   };
 
+  Field<ProductmodelId, PmiViewRow> productmodelid();
+
   Field<IllustrationId, PmiViewRow> illustrationid();
 
   Field<TypoLocalDateTime, PmiViewRow> modifieddate();
-
-  Field<ProductmodelId, PmiViewRow> productmodelid();
 }

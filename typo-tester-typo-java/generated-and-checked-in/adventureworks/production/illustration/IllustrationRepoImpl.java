@@ -23,7 +23,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record IllustrationRepoImpl() implements IllustrationRepo {
+public class IllustrationRepoImpl implements IllustrationRepo {
   public DeleteBuilder<IllustrationFields, IllustrationRow> delete() {
     return DeleteBuilder.of("production.illustration", IllustrationFields.structure());
   };
@@ -205,20 +205,20 @@ public record IllustrationRepoImpl() implements IllustrationRepo {
   ) {
     IllustrationId illustrationid = row.illustrationid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "production"."illustration"
-         set "diagram" = """),
-      TypoXml.pgType.opt().encode(row.diagram()),
-      typo.runtime.Fragment.lit("""
-         ::xml,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "illustrationid" = """),
-      IllustrationId.pgType.encode(illustrationid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "production"."illustration"
+                set "diagram" = """),
+             TypoXml.pgType.opt().encode(row.diagram()),
+             typo.runtime.Fragment.lit("""
+                ::xml,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "illustrationid" = """),
+             IllustrationId.pgType.encode(illustrationid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public IllustrationRow upsert(
@@ -277,13 +277,13 @@ public record IllustrationRepoImpl() implements IllustrationRepo {
       copy illustration_TEMP("illustrationid", "diagram", "modifieddate") from stdin
       """), batchSize, unsaved, c, IllustrationRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "production"."illustration"("illustrationid", "diagram", "modifieddate")
-       select * from illustration_TEMP
-       on conflict ("illustrationid")
-       do update set
-         "diagram" = EXCLUDED."diagram",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table illustration_TEMP;""")).update().runUnchecked(c);
+              insert into "production"."illustration"("illustrationid", "diagram", "modifieddate")
+              select * from illustration_TEMP
+              on conflict ("illustrationid")
+              do update set
+                "diagram" = EXCLUDED."diagram",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table illustration_TEMP;""")).update().runUnchecked(c);
   };
 }

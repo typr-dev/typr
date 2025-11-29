@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import typo.dsl.Bijection;
@@ -16,7 +17,7 @@ import typo.runtime.PgWrite;
 import typo.runtime.internal.arrayMap;
 
 /** This is `java.time.LocalTime`, but with microsecond precision and transferred to and from postgres as strings. The reason is that postgres driver and db libs are broken */
-public record TypoLocalTime(LocalTime value) {
+public record TypoLocalTime(@JsonValue LocalTime value) {
   public TypoLocalTime withValue(LocalTime value) {
     return new TypoLocalTime(value);
   };

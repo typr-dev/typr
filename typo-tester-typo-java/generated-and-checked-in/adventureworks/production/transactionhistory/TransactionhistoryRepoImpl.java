@@ -24,7 +24,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record TransactionhistoryRepoImpl() implements TransactionhistoryRepo {
+public class TransactionhistoryRepoImpl implements TransactionhistoryRepo {
   public DeleteBuilder<TransactionhistoryFields, TransactionhistoryRow> delete() {
     return DeleteBuilder.of("production.transactionhistory", TransactionhistoryFields.structure());
   };
@@ -258,44 +258,44 @@ public record TransactionhistoryRepoImpl() implements TransactionhistoryRepo {
   ) {
     TransactionhistoryId transactionid = row.transactionid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "production"."transactionhistory"
-         set "productid" = """),
-      ProductId.pgType.encode(row.productid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "referenceorderid" = """),
-      PgTypes.int4.encode(row.referenceorderid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "referenceorderlineid" = """),
-      PgTypes.int4.encode(row.referenceorderlineid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "transactiondate" = """),
-      TypoLocalDateTime.pgType.encode(row.transactiondate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp,
-         "transactiontype" = """),
-      PgTypes.text.encode(row.transactiontype()),
-      typo.runtime.Fragment.lit("""
-         ::bpchar,
-         "quantity" = """),
-      PgTypes.int4.encode(row.quantity()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "actualcost" = """),
-      PgTypes.numeric.encode(row.actualcost()),
-      typo.runtime.Fragment.lit("""
-         ::numeric,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "transactionid" = """),
-      TransactionhistoryId.pgType.encode(transactionid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "production"."transactionhistory"
+                set "productid" = """),
+             ProductId.pgType.encode(row.productid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "referenceorderid" = """),
+             PgTypes.int4.encode(row.referenceorderid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "referenceorderlineid" = """),
+             PgTypes.int4.encode(row.referenceorderlineid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "transactiondate" = """),
+             TypoLocalDateTime.pgType.encode(row.transactiondate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp,
+                "transactiontype" = """),
+             PgTypes.text.encode(row.transactiontype()),
+             typo.runtime.Fragment.lit("""
+                ::bpchar,
+                "quantity" = """),
+             PgTypes.int4.encode(row.quantity()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "actualcost" = """),
+             PgTypes.numeric.encode(row.actualcost()),
+             typo.runtime.Fragment.lit("""
+                ::numeric,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "transactionid" = """),
+             TransactionhistoryId.pgType.encode(transactionid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public TransactionhistoryRow upsert(
@@ -378,19 +378,19 @@ public record TransactionhistoryRepoImpl() implements TransactionhistoryRepo {
       copy transactionhistory_TEMP("transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate") from stdin
       """), batchSize, unsaved, c, TransactionhistoryRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "production"."transactionhistory"("transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate")
-       select * from transactionhistory_TEMP
-       on conflict ("transactionid")
-       do update set
-         "productid" = EXCLUDED."productid",
-       "referenceorderid" = EXCLUDED."referenceorderid",
-       "referenceorderlineid" = EXCLUDED."referenceorderlineid",
-       "transactiondate" = EXCLUDED."transactiondate",
-       "transactiontype" = EXCLUDED."transactiontype",
-       "quantity" = EXCLUDED."quantity",
-       "actualcost" = EXCLUDED."actualcost",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table transactionhistory_TEMP;""")).update().runUnchecked(c);
+              insert into "production"."transactionhistory"("transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate")
+              select * from transactionhistory_TEMP
+              on conflict ("transactionid")
+              do update set
+                "productid" = EXCLUDED."productid",
+              "referenceorderid" = EXCLUDED."referenceorderid",
+              "referenceorderlineid" = EXCLUDED."referenceorderlineid",
+              "transactiondate" = EXCLUDED."transactiondate",
+              "transactiontype" = EXCLUDED."transactiontype",
+              "quantity" = EXCLUDED."quantity",
+              "actualcost" = EXCLUDED."actualcost",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table transactionhistory_TEMP;""")).update().runUnchecked(c);
   };
 }

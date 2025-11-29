@@ -53,11 +53,11 @@ public interface SalesreasonFields {
     return new Impl(List.of());
   };
 
-  Field<TypoLocalDateTime, SalesreasonRow> modifieddate();
+  IdField<SalesreasonId, SalesreasonRow> salesreasonid();
 
   Field<Name, SalesreasonRow> name();
 
   Field<Name, SalesreasonRow> reasontype();
 
-  IdField<SalesreasonId, SalesreasonRow> salesreasonid();
+  Field<TypoLocalDateTime, SalesreasonRow> modifieddate();
 }

@@ -5,13 +5,14 @@
  */
 package adventureworks.sales.salesorderheader;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `sales.salesorderheader` */
-public record SalesorderheaderId(Integer value) {
+public record SalesorderheaderId(@JsonValue Integer value) {
   public SalesorderheaderId withValue(Integer value) {
     return new SalesorderheaderId(value);
   };

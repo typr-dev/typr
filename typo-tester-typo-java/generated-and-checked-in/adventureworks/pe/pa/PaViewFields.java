@@ -60,15 +60,15 @@ public interface PaViewFields {
     return new Impl(List.of());
   };
 
-  Field<BusinessentityId, PaViewRow> businessentityid();
-
   Field<BusinessentityId, PaViewRow> id();
 
-  Field<TypoLocalDateTime, PaViewRow> modifieddate();
+  Field<BusinessentityId, PaViewRow> businessentityid();
 
   Field</* max 128 chars */ String, PaViewRow> passwordhash();
 
   Field</* max 10 chars */ String, PaViewRow> passwordsalt();
 
   Field<TypoUUID, PaViewRow> rowguid();
+
+  Field<TypoLocalDateTime, PaViewRow> modifieddate();
 }

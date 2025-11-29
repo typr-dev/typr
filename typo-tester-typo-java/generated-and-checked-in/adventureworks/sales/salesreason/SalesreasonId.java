@@ -5,13 +5,14 @@
  */
 package adventureworks.sales.salesreason;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `sales.salesreason` */
-public record SalesreasonId(Integer value) {
+public record SalesreasonId(@JsonValue Integer value) {
   public SalesreasonId withValue(Integer value) {
     return new SalesreasonId(value);
   };

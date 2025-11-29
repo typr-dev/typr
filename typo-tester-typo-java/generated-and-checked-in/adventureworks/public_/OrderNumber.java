@@ -5,6 +5,7 @@
  */
 package adventureworks.public_;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
@@ -13,7 +14,7 @@ import typo.runtime.internal.arrayMap;
 /** Domain `public.OrderNumber`
   * No constraint
   */
-public record OrderNumber(String value) {
+public record OrderNumber(@JsonValue String value) {
   public OrderNumber withValue(String value) {
     return new OrderNumber(value);
   };

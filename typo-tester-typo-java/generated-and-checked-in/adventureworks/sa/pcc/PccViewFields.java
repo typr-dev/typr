@@ -53,11 +53,11 @@ public interface PccViewFields {
     return new Impl(List.of());
   };
 
+  Field<BusinessentityId, PccViewRow> id();
+
   Field<BusinessentityId, PccViewRow> businessentityid();
 
   Field</* user-picked */ CustomCreditcardId, PccViewRow> creditcardid();
-
-  Field<BusinessentityId, PccViewRow> id();
 
   Field<TypoLocalDateTime, PccViewRow> modifieddate();
 }

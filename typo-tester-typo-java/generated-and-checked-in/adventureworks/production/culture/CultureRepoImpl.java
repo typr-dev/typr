@@ -23,7 +23,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record CultureRepoImpl() implements CultureRepo {
+public class CultureRepoImpl implements CultureRepo {
   public DeleteBuilder<CultureFields, CultureRow> delete() {
     return DeleteBuilder.of("production.culture", CultureFields.structure());
   };
@@ -200,20 +200,20 @@ public record CultureRepoImpl() implements CultureRepo {
   ) {
     CultureId cultureid = row.cultureid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "production"."culture"
-         set "name" = """),
-      Name.pgType.encode(row.name()),
-      typo.runtime.Fragment.lit("""
-         ::varchar,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "cultureid" = """),
-      CultureId.pgType.encode(cultureid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "production"."culture"
+                set "name" = """),
+             Name.pgType.encode(row.name()),
+             typo.runtime.Fragment.lit("""
+                ::varchar,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "cultureid" = """),
+             CultureId.pgType.encode(cultureid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public CultureRow upsert(
@@ -272,13 +272,13 @@ public record CultureRepoImpl() implements CultureRepo {
       copy culture_TEMP("cultureid", "name", "modifieddate") from stdin
       """), batchSize, unsaved, c, CultureRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "production"."culture"("cultureid", "name", "modifieddate")
-       select * from culture_TEMP
-       on conflict ("cultureid")
-       do update set
-         "name" = EXCLUDED."name",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table culture_TEMP;""")).update().runUnchecked(c);
+              insert into "production"."culture"("cultureid", "name", "modifieddate")
+              select * from culture_TEMP
+              on conflict ("cultureid")
+              do update set
+                "name" = EXCLUDED."name",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table culture_TEMP;""")).update().runUnchecked(c);
   };
 }

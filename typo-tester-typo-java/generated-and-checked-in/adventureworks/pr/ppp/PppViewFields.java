@@ -54,11 +54,11 @@ public interface PppViewFields {
     return new Impl(List.of());
   };
 
-  Field<TypoLocalDateTime, PppViewRow> modifieddate();
-
-  Field<Flag, PppViewRow> primary();
-
   Field<ProductId, PppViewRow> productid();
 
   Field<ProductphotoId, PppViewRow> productphotoid();
+
+  Field<Flag, PppViewRow> primary();
+
+  Field<TypoLocalDateTime, PppViewRow> modifieddate();
 }

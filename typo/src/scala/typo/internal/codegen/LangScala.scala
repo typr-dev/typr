@@ -121,9 +121,13 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
       case jvm.Type.Wildcard                                                  => code"?"
       case p: jvm.Param[jvm.Type]                                             => renderParam(p, false)
       case jvm.RuntimeInterpolation(value)                                    => code"$${$value"
-      case jvm.TypeSwitch(value, cases) =>
+      case jvm.TypeSwitch(value, cases, nullCase, defaultCase) =>
+        val nullCaseCode = nullCase.map(body => code"case null => $body").toList
+        val typeCases = cases.map { case jvm.TypeSwitch.Case(pat, ident, body) => code"case $ident: $pat => $body" }
+        val defaultCaseCode = defaultCase.map(body => code"case _ => $body").toList
+        val allCases = nullCaseCode ++ typeCases ++ defaultCaseCode
         code"""|$value match {
-               |  ${cases.map { case jvm.TypeSwitch.Case(pat, ident, body) => code"case $ident: $pat => $body" }.mkCode("\n")}
+               |  ${allCases.mkCode("\n")}
                |}""".stripMargin
       case jvm.New(target, args) =>
         if (args.length > breakAfter)
@@ -169,20 +173,25 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
         } else {
           code"$prefix$Quote$stringContent$Quote"
         }
-      case jvm.Given(tparams, name, implicitParams, tpe, body) =>
+      case jvm.Given(annotations, tparams, name, implicitParams, tpe, body) =>
+        val annotationsCode = renderAnnotations(annotations)
         if (tparams.isEmpty && implicitParams.isEmpty)
-          withBody(code"${dialect.valDefinition} $name: $tpe", List(body))
+          withBody(code"$annotationsCode${dialect.valDefinition} $name: $tpe", List(body))
         else {
-          withBody(code"${dialect.defDefinition} $name${renderTparams(tparams, ctx)}${renderImplicitParams(implicitParams, ctx)}: $tpe", List(body))
+          withBody(code"$annotationsCode${dialect.defDefinition} $name${renderTparams(tparams, ctx)}${renderImplicitParams(implicitParams, ctx)}: $tpe", List(body))
         }
-      case jvm.Value(name, tpe, body, isLazy, isOverride) =>
+      case jvm.Value(annotations, name, tpe, body, isLazy, isOverride) =>
+        val annotationsCode = renderAnnotations(annotations)
         val overrideMod = if (isOverride) "override " else ""
         val lazyMod = if (isLazy) "lazy " else ""
-        withBody(code"${overrideMod}${lazyMod}val $name: $tpe", body.toList)
-      case jvm.Method(comments, tparams, name, params, implicitParams, tpe, body) =>
+        withBody(code"$annotationsCode${overrideMod}${lazyMod}val $name: $tpe", body.toList)
+      case jvm.Method(annotations, comments, tparams, name, params, implicitParams, tpe, throws, body) =>
+        val annotationsCode = renderAnnotations(annotations)
+        val throwsCode = throws.map(th => code"@throws[$th]\n").mkCode("")
+
         withBody(
           renderWithParams(
-            prefix = code"${renderComments(comments).getOrElse(jvm.Code.Empty)}def $name${renderTparams(tparams, ctx)}",
+            prefix = code"$throwsCode$annotationsCode${renderComments(comments).getOrElse(jvm.Code.Empty)}def $name${renderTparams(tparams, ctx)}",
             params = params,
             implicitParams = implicitParams,
             isVal = false,
@@ -194,7 +203,8 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
       case enm: jvm.Enum =>
         val members = enm.values.map { case (name, expr) => name -> code"case object $name extends ${enm.tpe.name}($expr)" }
         val str = jvm.Ident("str")
-        code"""|${renderComments(enm.comments).getOrElse(jvm.Code.Empty)}
+        val annotationsCode = renderAnnotations(enm.annotations)
+        code"""|$annotationsCode${renderComments(enm.comments).getOrElse(jvm.Code.Empty)}
                |sealed abstract class ${enm.tpe.name}(val value: ${TypesJava.String})
                |
                |object ${enm.tpe.value} {
@@ -216,7 +226,8 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
         val members = enm.values.map { case (name, expr) => (name, code"case object $name extends ${enm.tpe.name}($expr)") }
 
         val underlying = jvm.Ident("underlying")
-        code"""${renderComments(enm.comments).getOrElse(jvm.Code.Empty)}
+        val annotationsCode = renderAnnotations(enm.annotations)
+        code"""$annotationsCode${renderComments(enm.comments).getOrElse(jvm.Code.Empty)}
               |sealed abstract class ${enm.tpe.name}(val value: ${enm.underlyingType})
               |
               |object ${enm.tpe.name} {
@@ -230,7 +241,9 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
               |}""".stripMargin
 
       case sum: jvm.Adt.Sum =>
+        val annotationsCode = if (sum.annotations.isEmpty) None else Some(renderAnnotations(sum.annotations))
         List[Option[jvm.Code]](
+          annotationsCode,
           renderComments(sum.comments),
           Some(code"sealed trait "),
           Some(sum.name.name.value),
@@ -267,7 +280,9 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
           case (true, types) => (Some(TypesScala.AnyVal), types)
           case (_, types)    => (types.headOption, types.drop(1))
         }
+        val annotationsCode = if (cls.annotations.isEmpty) None else Some(renderAnnotations(cls.annotations))
         val prefix = List[Option[jvm.Code]](
+          annotationsCode,
           renderComments(cls.comments),
           Some(code"case class "),
           Some(cls.name.name.value),
@@ -320,7 +335,9 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
           (types.headOption, types.drop(1))
         }
 
+        val annotationsCode = if (cls.annotations.isEmpty) None else Some(renderAnnotations(cls.annotations))
         val prefix = List[Option[jvm.Code]](
+          annotationsCode,
           renderComments(cls.comments),
           cls.classType match {
             case jvm.ClassType.Class     => Some(code"class ")
@@ -370,6 +387,7 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
                           |}""".stripMargin)
           }
         ).flatten.mkCode("")
+      case ann: jvm.Annotation => renderAnnotation(ann)
 
       // Anonymous class: new Trait { members }
       case jvm.NewWithBody(tpe, members) =>
@@ -407,8 +425,34 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
     if (isKeyword(value1) || !isValidId(value1)) escape(value1) else value1
   }
 
+  def renderAnnotation(ann: jvm.Annotation): jvm.Code = {
+    val argsCode = ann.args match {
+      case Nil => code""
+      case args =>
+        val rendered = args
+          .map {
+            case jvm.Annotation.Arg.Named(name, value) => code"$name = $value"
+            case jvm.Annotation.Arg.Positional(value)  => value
+          }
+          .mkCode(", ")
+        code"($rendered)"
+    }
+    code"@${ann.tpe}$argsCode"
+  }
+
+  def renderAnnotations(annotations: List[jvm.Annotation]): jvm.Code = {
+    if (annotations.isEmpty) jvm.Code.Empty
+    else annotations.map(renderAnnotation).mkCode("\n") ++ code"\n"
+  }
+
+  def renderAnnotationsInline(annotations: List[jvm.Annotation]): jvm.Code = {
+    if (annotations.isEmpty) jvm.Code.Empty
+    else annotations.map(renderAnnotation).mkCode(" ") ++ code" "
+  }
+
   def renderParam(p: jvm.Param[jvm.Type], isVal: Boolean): jvm.Code = {
     val prefix = if (isVal) "val " else ""
+    val annotationsPrefix = renderAnnotationsInline(p.annotations)
     val renderedDefault = p.default match {
       case Some(default) => " = " + default.render(this)
       case None          => ""
@@ -418,9 +462,9 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
         // Wrap comment in Indented so smartIndent applies to continuation lines
         // Comment already includes trailing newline, just add 2-space indentation
         // This matches the indentation used in renderWithParams: (\n  and ,\n
-        code"${jvm.Code.Indented(comment)}  $prefix${p.name}: ${p.tpe}$renderedDefault"
+        code"${jvm.Code.Indented(comment)}  $annotationsPrefix$prefix${p.name}: ${p.tpe}$renderedDefault"
       case None =>
-        code"$prefix${p.name}: ${p.tpe}$renderedDefault"
+        code"$annotationsPrefix$prefix${p.name}: ${p.tpe}$renderedDefault"
     }
   }
 

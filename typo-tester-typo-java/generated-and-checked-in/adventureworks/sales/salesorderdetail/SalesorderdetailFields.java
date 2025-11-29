@@ -87,23 +87,25 @@ public interface SalesorderdetailFields {
     return new Impl(List.of());
   };
 
+  IdField<SalesorderheaderId, SalesorderdetailRow> salesorderid();
+
+  IdField<Integer, SalesorderdetailRow> salesorderdetailid();
+
   OptField</* max 25 chars */ String, SalesorderdetailRow> carriertrackingnumber();
 
-  default SqlExpr<Boolean> compositeIdIn(List<SalesorderdetailId> compositeIds) {
-    return new CompositeIn(List.of(new Part<SalesorderheaderId, SalesorderdetailId, SalesorderdetailRow>(salesorderid(), SalesorderdetailId::salesorderid, SalesorderheaderId.pgType), new Part<Integer, SalesorderdetailId, SalesorderdetailRow>(salesorderdetailid(), SalesorderdetailId::salesorderdetailid, PgTypes.int4)), compositeIds);
-  };
+  Field<TypoShort, SalesorderdetailRow> orderqty();
 
-  default SqlExpr<Boolean> compositeIdIs(SalesorderdetailId compositeId) {
-    return SqlExpr.all(salesorderid().isEqual(compositeId.salesorderid()), salesorderdetailid().isEqual(compositeId.salesorderdetailid()));
-  };
+  Field<ProductId, SalesorderdetailRow> productid();
 
-  default SqlExpr<Boolean> extractIdentSpecialofferproductIdIn(List<SpecialofferproductId> ids) {
-    return new CompositeIn(List.of(new Part<SpecialofferId, SpecialofferproductId, SalesorderdetailRow>(specialofferid(), SpecialofferproductId::specialofferid, SpecialofferId.pgType), new Part<ProductId, SpecialofferproductId, SalesorderdetailRow>(productid(), SpecialofferproductId::productid, ProductId.pgType)), ids);
-  };
+  Field<SpecialofferId, SalesorderdetailRow> specialofferid();
 
-  default SqlExpr<Boolean> extractIdentSpecialofferproductIdIs(SpecialofferproductId id) {
-    return SqlExpr.all(specialofferid().isEqual(id.specialofferid()), productid().isEqual(id.productid()));
-  };
+  Field<BigDecimal, SalesorderdetailRow> unitprice();
+
+  Field<BigDecimal, SalesorderdetailRow> unitpricediscount();
+
+  Field<TypoUUID, SalesorderdetailRow> rowguid();
+
+  Field<TypoLocalDateTime, SalesorderdetailRow> modifieddate();
 
   default ForeignKey<SalesorderheaderFields, SalesorderheaderRow> fkSalesorderheader() {
     return ForeignKey.<SalesorderheaderFields, SalesorderheaderRow>of("sales.FK_SalesOrderDetail_SalesOrderHeader_SalesOrderID").withColumnPair(salesorderid(), SalesorderheaderFields::salesorderid);
@@ -114,21 +116,19 @@ public interface SalesorderdetailFields {
     .withColumnPair(productid(), SpecialofferproductFields::productid);
   };
 
-  Field<TypoLocalDateTime, SalesorderdetailRow> modifieddate();
+  default SqlExpr<Boolean> extractIdentSpecialofferproductIdIs(SpecialofferproductId id) {
+    return SqlExpr.all(specialofferid().isEqual(id.specialofferid()), productid().isEqual(id.productid()));
+  };
 
-  Field<TypoShort, SalesorderdetailRow> orderqty();
+  default SqlExpr<Boolean> extractIdentSpecialofferproductIdIn(List<SpecialofferproductId> ids) {
+    return new CompositeIn(List.of(new Part<SpecialofferId, SpecialofferproductId, SalesorderdetailRow>(specialofferid(), SpecialofferproductId::specialofferid, SpecialofferId.pgType), new Part<ProductId, SpecialofferproductId, SalesorderdetailRow>(productid(), SpecialofferproductId::productid, ProductId.pgType)), ids);
+  };
 
-  Field<ProductId, SalesorderdetailRow> productid();
+  default SqlExpr<Boolean> compositeIdIs(SalesorderdetailId compositeId) {
+    return SqlExpr.all(salesorderid().isEqual(compositeId.salesorderid()), salesorderdetailid().isEqual(compositeId.salesorderdetailid()));
+  };
 
-  Field<TypoUUID, SalesorderdetailRow> rowguid();
-
-  IdField<Integer, SalesorderdetailRow> salesorderdetailid();
-
-  IdField<SalesorderheaderId, SalesorderdetailRow> salesorderid();
-
-  Field<SpecialofferId, SalesorderdetailRow> specialofferid();
-
-  Field<BigDecimal, SalesorderdetailRow> unitprice();
-
-  Field<BigDecimal, SalesorderdetailRow> unitpricediscount();
+  default SqlExpr<Boolean> compositeIdIn(List<SalesorderdetailId> compositeIds) {
+    return new CompositeIn(List.of(new Part<SalesorderheaderId, SalesorderdetailId, SalesorderdetailRow>(salesorderid(), SalesorderdetailId::salesorderid, SalesorderheaderId.pgType), new Part<Integer, SalesorderdetailId, SalesorderdetailRow>(salesorderdetailid(), SalesorderdetailId::salesorderdetailid, PgTypes.int4)), compositeIds);
+  };
 }

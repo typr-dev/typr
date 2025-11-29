@@ -60,15 +60,15 @@ public interface SViewFields {
     return new Impl(List.of());
   };
 
-  Field<TypoLocalTime, SViewRow> endtime();
-
   Field<ShiftId, SViewRow> id();
-
-  Field<TypoLocalDateTime, SViewRow> modifieddate();
-
-  Field<Name, SViewRow> name();
 
   Field<ShiftId, SViewRow> shiftid();
 
+  Field<Name, SViewRow> name();
+
   Field<TypoLocalTime, SViewRow> starttime();
+
+  Field<TypoLocalTime, SViewRow> endtime();
+
+  Field<TypoLocalDateTime, SViewRow> modifieddate();
 }

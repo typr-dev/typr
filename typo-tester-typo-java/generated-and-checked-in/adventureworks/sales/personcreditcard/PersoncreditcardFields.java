@@ -61,15 +61,9 @@ public interface PersoncreditcardFields {
 
   IdField<BusinessentityId, PersoncreditcardRow> businessentityid();
 
-  default SqlExpr<Boolean> compositeIdIn(List<PersoncreditcardId> compositeIds) {
-    return new CompositeIn(List.of(new Part<BusinessentityId, PersoncreditcardId, PersoncreditcardRow>(businessentityid(), PersoncreditcardId::businessentityid, BusinessentityId.pgType), new Part</* user-picked */ CustomCreditcardId, PersoncreditcardId, PersoncreditcardRow>(creditcardid(), PersoncreditcardId::creditcardid, /* user-picked */ CustomCreditcardId.pgType)), compositeIds);
-  };
-
-  default SqlExpr<Boolean> compositeIdIs(PersoncreditcardId compositeId) {
-    return SqlExpr.all(businessentityid().isEqual(compositeId.businessentityid()), creditcardid().isEqual(compositeId.creditcardid()));
-  };
-
   IdField</* user-picked */ CustomCreditcardId, PersoncreditcardRow> creditcardid();
+
+  Field<TypoLocalDateTime, PersoncreditcardRow> modifieddate();
 
   default ForeignKey<CreditcardFields, CreditcardRow> fkCreditcard() {
     return ForeignKey.<CreditcardFields, CreditcardRow>of("sales.FK_PersonCreditCard_CreditCard_CreditCardID").withColumnPair(creditcardid(), CreditcardFields::creditcardid);
@@ -79,5 +73,11 @@ public interface PersoncreditcardFields {
     return ForeignKey.<PersonFields, PersonRow>of("sales.FK_PersonCreditCard_Person_BusinessEntityID").withColumnPair(businessentityid(), PersonFields::businessentityid);
   };
 
-  Field<TypoLocalDateTime, PersoncreditcardRow> modifieddate();
+  default SqlExpr<Boolean> compositeIdIs(PersoncreditcardId compositeId) {
+    return SqlExpr.all(businessentityid().isEqual(compositeId.businessentityid()), creditcardid().isEqual(compositeId.creditcardid()));
+  };
+
+  default SqlExpr<Boolean> compositeIdIn(List<PersoncreditcardId> compositeIds) {
+    return new CompositeIn(List.of(new Part<BusinessentityId, PersoncreditcardId, PersoncreditcardRow>(businessentityid(), PersoncreditcardId::businessentityid, BusinessentityId.pgType), new Part</* user-picked */ CustomCreditcardId, PersoncreditcardId, PersoncreditcardRow>(creditcardid(), PersoncreditcardId::creditcardid, /* user-picked */ CustomCreditcardId.pgType)), compositeIds);
+  };
 }

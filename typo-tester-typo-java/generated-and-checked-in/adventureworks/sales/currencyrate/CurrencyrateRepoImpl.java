@@ -24,7 +24,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record CurrencyrateRepoImpl() implements CurrencyrateRepo {
+public class CurrencyrateRepoImpl implements CurrencyrateRepo {
   public DeleteBuilder<CurrencyrateFields, CurrencyrateRow> delete() {
     return DeleteBuilder.of("sales.currencyrate", CurrencyrateFields.structure());
   };
@@ -234,36 +234,36 @@ public record CurrencyrateRepoImpl() implements CurrencyrateRepo {
   ) {
     CurrencyrateId currencyrateid = row.currencyrateid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "sales"."currencyrate"
-         set "currencyratedate" = """),
-      TypoLocalDateTime.pgType.encode(row.currencyratedate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp,
-         "fromcurrencycode" = """),
-      CurrencyId.pgType.encode(row.fromcurrencycode()),
-      typo.runtime.Fragment.lit("""
-         ::bpchar,
-         "tocurrencycode" = """),
-      CurrencyId.pgType.encode(row.tocurrencycode()),
-      typo.runtime.Fragment.lit("""
-         ::bpchar,
-         "averagerate" = """),
-      PgTypes.numeric.encode(row.averagerate()),
-      typo.runtime.Fragment.lit("""
-         ::numeric,
-         "endofdayrate" = """),
-      PgTypes.numeric.encode(row.endofdayrate()),
-      typo.runtime.Fragment.lit("""
-         ::numeric,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "currencyrateid" = """),
-      CurrencyrateId.pgType.encode(currencyrateid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "sales"."currencyrate"
+                set "currencyratedate" = """),
+             TypoLocalDateTime.pgType.encode(row.currencyratedate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp,
+                "fromcurrencycode" = """),
+             CurrencyId.pgType.encode(row.fromcurrencycode()),
+             typo.runtime.Fragment.lit("""
+                ::bpchar,
+                "tocurrencycode" = """),
+             CurrencyId.pgType.encode(row.tocurrencycode()),
+             typo.runtime.Fragment.lit("""
+                ::bpchar,
+                "averagerate" = """),
+             PgTypes.numeric.encode(row.averagerate()),
+             typo.runtime.Fragment.lit("""
+                ::numeric,
+                "endofdayrate" = """),
+             PgTypes.numeric.encode(row.endofdayrate()),
+             typo.runtime.Fragment.lit("""
+                ::numeric,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "currencyrateid" = """),
+             CurrencyrateId.pgType.encode(currencyrateid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public CurrencyrateRow upsert(
@@ -338,17 +338,17 @@ public record CurrencyrateRepoImpl() implements CurrencyrateRepo {
       copy currencyrate_TEMP("currencyrateid", "currencyratedate", "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate") from stdin
       """), batchSize, unsaved, c, CurrencyrateRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "sales"."currencyrate"("currencyrateid", "currencyratedate", "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate")
-       select * from currencyrate_TEMP
-       on conflict ("currencyrateid")
-       do update set
-         "currencyratedate" = EXCLUDED."currencyratedate",
-       "fromcurrencycode" = EXCLUDED."fromcurrencycode",
-       "tocurrencycode" = EXCLUDED."tocurrencycode",
-       "averagerate" = EXCLUDED."averagerate",
-       "endofdayrate" = EXCLUDED."endofdayrate",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table currencyrate_TEMP;""")).update().runUnchecked(c);
+              insert into "sales"."currencyrate"("currencyrateid", "currencyratedate", "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate")
+              select * from currencyrate_TEMP
+              on conflict ("currencyrateid")
+              do update set
+                "currencyratedate" = EXCLUDED."currencyratedate",
+              "fromcurrencycode" = EXCLUDED."fromcurrencycode",
+              "tocurrencycode" = EXCLUDED."tocurrencycode",
+              "averagerate" = EXCLUDED."averagerate",
+              "endofdayrate" = EXCLUDED."endofdayrate",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table currencyrate_TEMP;""")).update().runUnchecked(c);
   };
 }

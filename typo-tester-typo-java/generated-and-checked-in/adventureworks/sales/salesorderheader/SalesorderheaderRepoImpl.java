@@ -35,7 +35,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record SalesorderheaderRepoImpl() implements SalesorderheaderRepo {
+public class SalesorderheaderRepoImpl implements SalesorderheaderRepo {
   public DeleteBuilder<SalesorderheaderFields, SalesorderheaderRow> delete() {
     return DeleteBuilder.of("sales.salesorderheader", SalesorderheaderFields.structure());
   };
@@ -413,108 +413,108 @@ public record SalesorderheaderRepoImpl() implements SalesorderheaderRepo {
   ) {
     SalesorderheaderId salesorderid = row.salesorderid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "sales"."salesorderheader"
-         set "revisionnumber" = """),
-      TypoShort.pgType.encode(row.revisionnumber()),
-      typo.runtime.Fragment.lit("""
-         ::int2,
-         "orderdate" = """),
-      TypoLocalDateTime.pgType.encode(row.orderdate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp,
-         "duedate" = """),
-      TypoLocalDateTime.pgType.encode(row.duedate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp,
-         "shipdate" = """),
-      TypoLocalDateTime.pgType.opt().encode(row.shipdate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp,
-         "status" = """),
-      TypoShort.pgType.encode(row.status()),
-      typo.runtime.Fragment.lit("""
-         ::int2,
-         "onlineorderflag" = """),
-      Flag.pgType.encode(row.onlineorderflag()),
-      typo.runtime.Fragment.lit("""
-         ::bool,
-         "purchaseordernumber" = """),
-      OrderNumber.pgType.opt().encode(row.purchaseordernumber()),
-      typo.runtime.Fragment.lit("""
-         ::varchar,
-         "accountnumber" = """),
-      AccountNumber.pgType.opt().encode(row.accountnumber()),
-      typo.runtime.Fragment.lit("""
-         ::varchar,
-         "customerid" = """),
-      CustomerId.pgType.encode(row.customerid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "salespersonid" = """),
-      BusinessentityId.pgType.opt().encode(row.salespersonid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "territoryid" = """),
-      SalesterritoryId.pgType.opt().encode(row.territoryid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "billtoaddressid" = """),
-      AddressId.pgType.encode(row.billtoaddressid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "shiptoaddressid" = """),
-      AddressId.pgType.encode(row.shiptoaddressid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "shipmethodid" = """),
-      ShipmethodId.pgType.encode(row.shipmethodid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "creditcardid" = """),
-      CustomCreditcardId.pgType.opt().encode(row.creditcardid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "creditcardapprovalcode" = """),
-      PgTypes.text.opt().encode(row.creditcardapprovalcode()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "currencyrateid" = """),
-      CurrencyrateId.pgType.opt().encode(row.currencyrateid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "subtotal" = """),
-      PgTypes.numeric.encode(row.subtotal()),
-      typo.runtime.Fragment.lit("""
-         ::numeric,
-         "taxamt" = """),
-      PgTypes.numeric.encode(row.taxamt()),
-      typo.runtime.Fragment.lit("""
-         ::numeric,
-         "freight" = """),
-      PgTypes.numeric.encode(row.freight()),
-      typo.runtime.Fragment.lit("""
-         ::numeric,
-         "totaldue" = """),
-      PgTypes.numeric.opt().encode(row.totaldue()),
-      typo.runtime.Fragment.lit("""
-         ::numeric,
-         "comment" = """),
-      PgTypes.text.opt().encode(row.comment()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "rowguid" = """),
-      TypoUUID.pgType.encode(row.rowguid()),
-      typo.runtime.Fragment.lit("""
-         ::uuid,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "salesorderid" = """),
-      SalesorderheaderId.pgType.encode(salesorderid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "sales"."salesorderheader"
+                set "revisionnumber" = """),
+             TypoShort.pgType.encode(row.revisionnumber()),
+             typo.runtime.Fragment.lit("""
+                ::int2,
+                "orderdate" = """),
+             TypoLocalDateTime.pgType.encode(row.orderdate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp,
+                "duedate" = """),
+             TypoLocalDateTime.pgType.encode(row.duedate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp,
+                "shipdate" = """),
+             TypoLocalDateTime.pgType.opt().encode(row.shipdate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp,
+                "status" = """),
+             TypoShort.pgType.encode(row.status()),
+             typo.runtime.Fragment.lit("""
+                ::int2,
+                "onlineorderflag" = """),
+             Flag.pgType.encode(row.onlineorderflag()),
+             typo.runtime.Fragment.lit("""
+                ::bool,
+                "purchaseordernumber" = """),
+             OrderNumber.pgType.opt().encode(row.purchaseordernumber()),
+             typo.runtime.Fragment.lit("""
+                ::varchar,
+                "accountnumber" = """),
+             AccountNumber.pgType.opt().encode(row.accountnumber()),
+             typo.runtime.Fragment.lit("""
+                ::varchar,
+                "customerid" = """),
+             CustomerId.pgType.encode(row.customerid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "salespersonid" = """),
+             BusinessentityId.pgType.opt().encode(row.salespersonid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "territoryid" = """),
+             SalesterritoryId.pgType.opt().encode(row.territoryid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "billtoaddressid" = """),
+             AddressId.pgType.encode(row.billtoaddressid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "shiptoaddressid" = """),
+             AddressId.pgType.encode(row.shiptoaddressid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "shipmethodid" = """),
+             ShipmethodId.pgType.encode(row.shipmethodid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "creditcardid" = """),
+             CustomCreditcardId.pgType.opt().encode(row.creditcardid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "creditcardapprovalcode" = """),
+             PgTypes.text.opt().encode(row.creditcardapprovalcode()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "currencyrateid" = """),
+             CurrencyrateId.pgType.opt().encode(row.currencyrateid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "subtotal" = """),
+             PgTypes.numeric.encode(row.subtotal()),
+             typo.runtime.Fragment.lit("""
+                ::numeric,
+                "taxamt" = """),
+             PgTypes.numeric.encode(row.taxamt()),
+             typo.runtime.Fragment.lit("""
+                ::numeric,
+                "freight" = """),
+             PgTypes.numeric.encode(row.freight()),
+             typo.runtime.Fragment.lit("""
+                ::numeric,
+                "totaldue" = """),
+             PgTypes.numeric.opt().encode(row.totaldue()),
+             typo.runtime.Fragment.lit("""
+                ::numeric,
+                "comment" = """),
+             PgTypes.text.opt().encode(row.comment()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "rowguid" = """),
+             TypoUUID.pgType.encode(row.rowguid()),
+             typo.runtime.Fragment.lit("""
+                ::uuid,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "salesorderid" = """),
+             SalesorderheaderId.pgType.encode(salesorderid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public SalesorderheaderRow upsert(
@@ -661,35 +661,35 @@ public record SalesorderheaderRepoImpl() implements SalesorderheaderRepo {
       copy salesorderheader_TEMP("salesorderid", "revisionnumber", "orderdate", "duedate", "shipdate", "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate") from stdin
       """), batchSize, unsaved, c, SalesorderheaderRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "sales"."salesorderheader"("salesorderid", "revisionnumber", "orderdate", "duedate", "shipdate", "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate")
-       select * from salesorderheader_TEMP
-       on conflict ("salesorderid")
-       do update set
-         "revisionnumber" = EXCLUDED."revisionnumber",
-       "orderdate" = EXCLUDED."orderdate",
-       "duedate" = EXCLUDED."duedate",
-       "shipdate" = EXCLUDED."shipdate",
-       "status" = EXCLUDED."status",
-       "onlineorderflag" = EXCLUDED."onlineorderflag",
-       "purchaseordernumber" = EXCLUDED."purchaseordernumber",
-       "accountnumber" = EXCLUDED."accountnumber",
-       "customerid" = EXCLUDED."customerid",
-       "salespersonid" = EXCLUDED."salespersonid",
-       "territoryid" = EXCLUDED."territoryid",
-       "billtoaddressid" = EXCLUDED."billtoaddressid",
-       "shiptoaddressid" = EXCLUDED."shiptoaddressid",
-       "shipmethodid" = EXCLUDED."shipmethodid",
-       "creditcardid" = EXCLUDED."creditcardid",
-       "creditcardapprovalcode" = EXCLUDED."creditcardapprovalcode",
-       "currencyrateid" = EXCLUDED."currencyrateid",
-       "subtotal" = EXCLUDED."subtotal",
-       "taxamt" = EXCLUDED."taxamt",
-       "freight" = EXCLUDED."freight",
-       "totaldue" = EXCLUDED."totaldue",
-       "comment" = EXCLUDED."comment",
-       "rowguid" = EXCLUDED."rowguid",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table salesorderheader_TEMP;""")).update().runUnchecked(c);
+              insert into "sales"."salesorderheader"("salesorderid", "revisionnumber", "orderdate", "duedate", "shipdate", "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate")
+              select * from salesorderheader_TEMP
+              on conflict ("salesorderid")
+              do update set
+                "revisionnumber" = EXCLUDED."revisionnumber",
+              "orderdate" = EXCLUDED."orderdate",
+              "duedate" = EXCLUDED."duedate",
+              "shipdate" = EXCLUDED."shipdate",
+              "status" = EXCLUDED."status",
+              "onlineorderflag" = EXCLUDED."onlineorderflag",
+              "purchaseordernumber" = EXCLUDED."purchaseordernumber",
+              "accountnumber" = EXCLUDED."accountnumber",
+              "customerid" = EXCLUDED."customerid",
+              "salespersonid" = EXCLUDED."salespersonid",
+              "territoryid" = EXCLUDED."territoryid",
+              "billtoaddressid" = EXCLUDED."billtoaddressid",
+              "shiptoaddressid" = EXCLUDED."shiptoaddressid",
+              "shipmethodid" = EXCLUDED."shipmethodid",
+              "creditcardid" = EXCLUDED."creditcardid",
+              "creditcardapprovalcode" = EXCLUDED."creditcardapprovalcode",
+              "currencyrateid" = EXCLUDED."currencyrateid",
+              "subtotal" = EXCLUDED."subtotal",
+              "taxamt" = EXCLUDED."taxamt",
+              "freight" = EXCLUDED."freight",
+              "totaldue" = EXCLUDED."totaldue",
+              "comment" = EXCLUDED."comment",
+              "rowguid" = EXCLUDED."rowguid",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table salesorderheader_TEMP;""")).update().runUnchecked(c);
   };
 }

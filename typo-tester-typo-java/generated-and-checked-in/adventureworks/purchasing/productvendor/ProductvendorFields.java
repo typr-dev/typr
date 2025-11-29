@@ -89,17 +89,27 @@ public interface ProductvendorFields {
     return new Impl(List.of());
   };
 
-  Field<Integer, ProductvendorRow> averageleadtime();
+  IdField<ProductId, ProductvendorRow> productid();
 
   IdField<BusinessentityId, ProductvendorRow> businessentityid();
 
-  default SqlExpr<Boolean> compositeIdIn(List<ProductvendorId> compositeIds) {
-    return new CompositeIn(List.of(new Part<ProductId, ProductvendorId, ProductvendorRow>(productid(), ProductvendorId::productid, ProductId.pgType), new Part<BusinessentityId, ProductvendorId, ProductvendorRow>(businessentityid(), ProductvendorId::businessentityid, BusinessentityId.pgType)), compositeIds);
-  };
+  Field<Integer, ProductvendorRow> averageleadtime();
 
-  default SqlExpr<Boolean> compositeIdIs(ProductvendorId compositeId) {
-    return SqlExpr.all(productid().isEqual(compositeId.productid()), businessentityid().isEqual(compositeId.businessentityid()));
-  };
+  Field<BigDecimal, ProductvendorRow> standardprice();
+
+  OptField<BigDecimal, ProductvendorRow> lastreceiptcost();
+
+  OptField<TypoLocalDateTime, ProductvendorRow> lastreceiptdate();
+
+  Field<Integer, ProductvendorRow> minorderqty();
+
+  Field<Integer, ProductvendorRow> maxorderqty();
+
+  OptField<Integer, ProductvendorRow> onorderqty();
+
+  Field<UnitmeasureId, ProductvendorRow> unitmeasurecode();
+
+  Field<TypoLocalDateTime, ProductvendorRow> modifieddate();
 
   default ForeignKey<ProductFields, ProductRow> fkProductionProduct() {
     return ForeignKey.<ProductFields, ProductRow>of("purchasing.FK_ProductVendor_Product_ProductID").withColumnPair(productid(), ProductFields::productid);
@@ -113,21 +123,11 @@ public interface ProductvendorFields {
     return ForeignKey.<VendorFields, VendorRow>of("purchasing.FK_ProductVendor_Vendor_BusinessEntityID").withColumnPair(businessentityid(), VendorFields::businessentityid);
   };
 
-  OptField<BigDecimal, ProductvendorRow> lastreceiptcost();
+  default SqlExpr<Boolean> compositeIdIs(ProductvendorId compositeId) {
+    return SqlExpr.all(productid().isEqual(compositeId.productid()), businessentityid().isEqual(compositeId.businessentityid()));
+  };
 
-  OptField<TypoLocalDateTime, ProductvendorRow> lastreceiptdate();
-
-  Field<Integer, ProductvendorRow> maxorderqty();
-
-  Field<Integer, ProductvendorRow> minorderqty();
-
-  Field<TypoLocalDateTime, ProductvendorRow> modifieddate();
-
-  OptField<Integer, ProductvendorRow> onorderqty();
-
-  IdField<ProductId, ProductvendorRow> productid();
-
-  Field<BigDecimal, ProductvendorRow> standardprice();
-
-  Field<UnitmeasureId, ProductvendorRow> unitmeasurecode();
+  default SqlExpr<Boolean> compositeIdIn(List<ProductvendorId> compositeIds) {
+    return new CompositeIn(List.of(new Part<ProductId, ProductvendorId, ProductvendorRow>(productid(), ProductvendorId::productid, ProductId.pgType), new Part<BusinessentityId, ProductvendorId, ProductvendorRow>(businessentityid(), ProductvendorId::businessentityid, BusinessentityId.pgType)), compositeIds);
+  };
 }

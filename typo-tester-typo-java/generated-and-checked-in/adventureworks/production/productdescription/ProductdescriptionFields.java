@@ -54,11 +54,11 @@ public interface ProductdescriptionFields {
     return new Impl(List.of());
   };
 
-  Field</* max 400 chars */ String, ProductdescriptionRow> description();
-
-  Field<TypoLocalDateTime, ProductdescriptionRow> modifieddate();
-
   IdField<ProductdescriptionId, ProductdescriptionRow> productdescriptionid();
 
+  Field</* max 400 chars */ String, ProductdescriptionRow> description();
+
   Field<TypoUUID, ProductdescriptionRow> rowguid();
+
+  Field<TypoLocalDateTime, ProductdescriptionRow> modifieddate();
 }

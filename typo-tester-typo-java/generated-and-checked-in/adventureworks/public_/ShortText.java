@@ -5,6 +5,7 @@
  */
 package adventureworks.public_;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
@@ -13,7 +14,7 @@ import typo.runtime.internal.arrayMap;
 /** Domain `public.short_text`
   * Constraint: CHECK ((length(VALUE) <= 55))
   */
-public record ShortText(String value) {
+public record ShortText(@JsonValue String value) {
   public ShortText withValue(String value) {
     return new ShortText(value);
   };

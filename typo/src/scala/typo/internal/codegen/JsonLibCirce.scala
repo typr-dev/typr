@@ -71,53 +71,57 @@ case class JsonLibCirce(pkg: jvm.QIdent, default: ComputedDefault, inlineImplici
     if (inlineImplicits) go(jvm.Type.base(tpe)) else Encoder.of(tpe).code
   }
 
-  def wrapperTypeInstances(wrapperType: jvm.Type.Qualified, fieldName: jvm.Ident, underlying: jvm.Type): List[jvm.Given] =
-    List(
-      jvm.Given(tparams = Nil, name = encoderName, implicitParams = Nil, tpe = Encoder.of(wrapperType), body = code"${lookupEncoderFor(underlying)}.contramap(_.$fieldName)"),
-      jvm.Given(tparams = Nil, name = decoderName, implicitParams = Nil, tpe = Decoder.of(wrapperType), body = code"${lookupDecoderFor(underlying)}.map($wrapperType.apply)")
+  def wrapperTypeInstances(wrapperType: jvm.Type.Qualified, fieldName: jvm.Ident, underlying: jvm.Type): JsonLib.Instances =
+    JsonLib.Instances.fromGivens(
+      List(
+        jvm.Given(tparams = Nil, name = encoderName, implicitParams = Nil, tpe = Encoder.of(wrapperType), body = code"${lookupEncoderFor(underlying)}.contramap(_.$fieldName)"),
+        jvm.Given(tparams = Nil, name = decoderName, implicitParams = Nil, tpe = Decoder.of(wrapperType), body = code"${lookupDecoderFor(underlying)}.map($wrapperType.apply)")
+      )
     )
 
-  override def defaultedInstance(d: ComputedDefault): List[jvm.Given] = {
+  override def defaultedInstance: JsonLib.Instances = JsonLib.Instances.fromGivens {
     val T = jvm.Type.Abstract(jvm.Ident("T"))
     List(
       jvm.Given(
         tparams = List(T),
         name = decoderName,
         implicitParams = List(jvm.Param(jvm.Ident("T"), Decoder.of(T))),
-        tpe = Decoder.of(d.Defaulted.of(T)),
+        tpe = Decoder.of(default.Defaulted.of(T)),
         body = code"""|c => c.as[${TypesJava.String}].flatMap {
-                 |    case "defaulted" => ${TypesScala.Right}(${d.UseDefault}())
-                 |    case _           => c.downField("provided").as[$T].map(${d.Provided}.apply)
+                 |    case "defaulted" => ${TypesScala.Right}(${default.UseDefault}())
+                 |    case _           => c.downField("provided").as[$T].map(${default.Provided}.apply)
                  |  }""".stripMargin
       ),
       jvm.Given(
         tparams = List(T),
         name = encoderName,
         implicitParams = List(jvm.Param(jvm.Ident("T"), Encoder.of(T))),
-        tpe = Encoder.of(d.Defaulted.of(T)),
+        tpe = Encoder.of(default.Defaulted.of(T)),
         body = code"""|$Encoder.instance {
-                 |  case ${d.Provided}(value) => $Json.obj("provided" -> ${Encoder.of(T)}.apply(value))
-                 |  case ${d.UseDefault}()      => $Json.fromString("defaulted")
+                 |  case ${default.Provided}(value) => $Json.obj("provided" -> ${Encoder.of(T)}.apply(value))
+                 |  case ${default.UseDefault}()      => $Json.fromString("defaulted")
                  |}""".stripMargin
       )
     )
   }
 
-  override def stringEnumInstances(wrapperType: jvm.Type, underlying: jvm.Type, openEnum: Boolean): List[jvm.Given] =
-    List(
-      jvm.Given(
-        tparams = Nil,
-        name = decoderName,
-        implicitParams = Nil,
-        tpe = Decoder.of(wrapperType),
-        body =
-          if (openEnum: Boolean) code"""${lookupDecoderFor(underlying)}.map($wrapperType.apply)"""
-          else code"""${lookupDecoderFor(underlying)}.emap($wrapperType.apply)"""
-      ),
-      jvm.Given(tparams = Nil, name = encoderName, implicitParams = Nil, tpe = Encoder.of(wrapperType), body = code"${lookupEncoderFor(underlying)}.contramap(_.value)")
+  override def stringEnumInstances(wrapperType: jvm.Type, underlying: jvm.Type, openEnum: Boolean): JsonLib.Instances =
+    JsonLib.Instances.fromGivens(
+      List(
+        jvm.Given(
+          tparams = Nil,
+          name = decoderName,
+          implicitParams = Nil,
+          tpe = Decoder.of(wrapperType),
+          body =
+            if (openEnum: Boolean) code"""${lookupDecoderFor(underlying)}.map($wrapperType.apply)"""
+            else code"""${lookupDecoderFor(underlying)}.emap($wrapperType.apply)"""
+        ),
+        jvm.Given(tparams = Nil, name = encoderName, implicitParams = Nil, tpe = Encoder.of(wrapperType), body = code"${lookupEncoderFor(underlying)}.contramap(_.value)")
+      )
     )
 
-  def productInstances(tpe: jvm.Type, fields: NonEmptyList[JsonLib.Field]): List[jvm.Given] = {
+  def productInstances(tpe: jvm.Type, fields: NonEmptyList[JsonLib.Field]): JsonLib.Instances = JsonLib.Instances.fromGivens {
     val decoder =
       fields.length match {
         case n if n < 23 =>

@@ -95,14 +95,15 @@ object addPackageAndImports {
           arg1.mapTrees(t => shortenNames(t, typeImport, staticImport)),
           arg2.mapTrees(t => shortenNames(t, typeImport, staticImport))
         )
-      case jvm.Select(target, name)                    => jvm.Select(target.mapTrees(t => shortenNames(t, typeImport, staticImport)), name)
-      case jvm.ArrayIndex(target, num)                 => jvm.ArrayIndex(target.mapTrees(t => shortenNames(t, typeImport, staticImport)), num)
-      case jvm.ApplyNullary(target, name)              => jvm.ApplyNullary(target.mapTrees(t => shortenNames(t, typeImport, staticImport)), name)
-      case jvm.Arg.Named(name, value)                  => jvm.Arg.Named(name, value.mapTrees(t => shortenNames(t, typeImport, staticImport)))
-      case jvm.Arg.Pos(value)                          => jvm.Arg.Pos(value.mapTrees(t => shortenNames(t, typeImport, staticImport)))
-      case jvm.Enum(comments, tpe, members, instances) => jvm.Enum(comments, typeImport(tpe), members, instances.map(shortenNamesClassMember(_, typeImport, staticImport)))
-      case jvm.OpenEnum(comments, tpe, underlyingType, values, staticMembers) =>
+      case jvm.Select(target, name)                          => jvm.Select(target.mapTrees(t => shortenNames(t, typeImport, staticImport)), name)
+      case jvm.ArrayIndex(target, num)                       => jvm.ArrayIndex(target.mapTrees(t => shortenNames(t, typeImport, staticImport)), num)
+      case jvm.ApplyNullary(target, name)                    => jvm.ApplyNullary(target.mapTrees(t => shortenNames(t, typeImport, staticImport)), name)
+      case jvm.Arg.Named(name, value)                        => jvm.Arg.Named(name, value.mapTrees(t => shortenNames(t, typeImport, staticImport)))
+      case jvm.Arg.Pos(value)                                => jvm.Arg.Pos(value.mapTrees(t => shortenNames(t, typeImport, staticImport)))
+      case jvm.Enum(anns, comments, tpe, members, instances) => jvm.Enum(anns, comments, typeImport(tpe), members, instances.map(shortenNamesClassMember(_, typeImport, staticImport)))
+      case jvm.OpenEnum(anns, comments, tpe, underlyingType, values, staticMembers) =>
         jvm.OpenEnum(
+          annotations = anns,
           comments = comments,
           tpe = typeImport(tpe),
           underlyingType = typeImport(underlyingType),
@@ -142,19 +143,39 @@ object addPackageAndImports {
       case x: jvm.Summon                             => jvm.Summon(shortenNamesType(x.tpe, typeImport))
       case jvm.LocalVar(name, tpe, value) =>
         jvm.LocalVar(name, tpe.map(shortenNamesType(_, typeImport)), value.mapTrees(t => shortenNames(t, typeImport, staticImport)))
-      case jvm.TypeSwitch(value, cases) =>
+      case jvm.TypeSwitch(value, cases, nullCase, defaultCase) =>
         jvm.TypeSwitch(
           value.mapTrees(t => shortenNames(t, typeImport, staticImport)),
-          cases.map { c => jvm.TypeSwitch.Case(shortenNamesType(c.tpe, typeImport), c.ident, c.body.mapTrees(t => shortenNames(t, typeImport, staticImport))) }
+          cases.map { c => jvm.TypeSwitch.Case(shortenNamesType(c.tpe, typeImport), c.ident, c.body.mapTrees(t => shortenNames(t, typeImport, staticImport))) },
+          nullCase.map(_.mapTrees(t => shortenNames(t, typeImport, staticImport))),
+          defaultCase.map(_.mapTrees(t => shortenNames(t, typeImport, staticImport)))
+        )
+      case jvm.Annotation(tpe, args) =>
+        jvm.Annotation(
+          typeImport(tpe),
+          args.map {
+            case jvm.Annotation.Arg.Named(name, value) => jvm.Annotation.Arg.Named(name, value.mapTrees(t => shortenNames(t, typeImport, staticImport)))
+            case jvm.Annotation.Arg.Positional(value)  => jvm.Annotation.Arg.Positional(value.mapTrees(t => shortenNames(t, typeImport, staticImport)))
+          }
         )
     }
 
   def shortenNamesParam(param: jvm.Param[jvm.Type], typeImport: jvm.Type.Qualified => jvm.Type.Qualified, staticImport: jvm.Type.Qualified => jvm.Type.Qualified): jvm.Param[jvm.Type] =
     jvm.Param(
+      param.annotations.map(shortenNamesAnnotation(_, typeImport, staticImport)),
       param.comments,
       param.name,
       shortenNamesType(param.tpe, typeImport),
       param.default.map(code => code.mapTrees(t => shortenNames(t, typeImport, staticImport)))
+    )
+
+  def shortenNamesAnnotation(ann: jvm.Annotation, typeImport: jvm.Type.Qualified => jvm.Type.Qualified, staticImport: jvm.Type.Qualified => jvm.Type.Qualified): jvm.Annotation =
+    jvm.Annotation(
+      typeImport(ann.tpe),
+      ann.args.map {
+        case jvm.Annotation.Arg.Named(name, value) => jvm.Annotation.Arg.Named(name, value.mapTrees(t => shortenNames(t, typeImport, staticImport)))
+        case jvm.Annotation.Arg.Positional(value)  => jvm.Annotation.Arg.Positional(value.mapTrees(t => shortenNames(t, typeImport, staticImport)))
+      }
     )
 
   def shortenNamesArg(arg: jvm.Arg, typeImport: jvm.Type.Qualified => jvm.Type.Qualified, staticImport: jvm.Type.Qualified => jvm.Type.Qualified): jvm.Arg =
@@ -165,6 +186,7 @@ object addPackageAndImports {
 
   def shortenNamesClass(cls: jvm.Class, typeImport: jvm.Type.Qualified => jvm.Type.Qualified, staticImport: jvm.Type.Qualified => jvm.Type.Qualified): jvm.Class =
     jvm.Class(
+      annotations = cls.annotations.map(shortenNamesAnnotation(_, typeImport, staticImport)),
       comments = cls.comments,
       classType = cls.classType,
       name = cls.name,
@@ -185,6 +207,7 @@ object addPackageAndImports {
 
   def shortenNamesAdtRecord(x: jvm.Adt.Record, typeImport: jvm.Type.Qualified => jvm.Type.Qualified, staticImport: jvm.Type.Qualified => jvm.Type.Qualified): jvm.Adt.Record =
     jvm.Adt.Record(
+      annotations = x.annotations.map(shortenNamesAnnotation(_, typeImport, staticImport)),
       isWrapper = x.isWrapper,
       comments = x.comments,
       name = x.name,
@@ -199,6 +222,7 @@ object addPackageAndImports {
 
   def shortenNamesAdtSum(x: jvm.Adt.Sum, typeImport: jvm.Type.Qualified => jvm.Type.Qualified, staticImport: jvm.Type.Qualified => jvm.Type.Qualified): jvm.Adt.Sum =
     jvm.Adt.Sum(
+      annotations = x.annotations.map(shortenNamesAnnotation(_, typeImport, staticImport)),
       comments = x.comments,
       name = x.name,
       tparams = x.tparams,
@@ -210,16 +234,18 @@ object addPackageAndImports {
 
   def shortenNamesClassMember(cm: jvm.ClassMember, typeImport: jvm.Type.Qualified => jvm.Type.Qualified, staticImport: jvm.Type.Qualified => jvm.Type.Qualified): jvm.ClassMember =
     cm match {
-      case jvm.Given(tparams, name, implicitParams, tpe, body) =>
+      case jvm.Given(_, tparams, name, implicitParams, tpe, body) =>
         jvm.Given(
+          Nil,
           tparams,
           name,
           implicitParams.map(p => shortenNamesParam(p, typeImport, staticImport)),
           shortenNamesType(tpe, typeImport),
           body.mapTrees(t => shortenNames(t, typeImport, staticImport))
         )
-      case jvm.Value(name, tpe, body, isLazy, isOverride) =>
+      case jvm.Value(anns, name, tpe, body, isLazy, isOverride) =>
         jvm.Value(
+          anns,
           name,
           shortenNamesType(tpe, typeImport),
           body.map(_.mapTrees(t => shortenNames(t, typeImport, staticImport))),
@@ -248,12 +274,14 @@ object addPackageAndImports {
 
   def shortenNamesMethod(x: jvm.Method, typeImport: jvm.Type.Qualified => jvm.Type.Qualified, staticImport: jvm.Type.Qualified => jvm.Type.Qualified): jvm.Method =
     jvm.Method(
+      Nil,
       x.comments,
       x.tparams,
       x.name,
       x.params.map(p => shortenNamesParam(p, typeImport, staticImport)),
       x.implicitParams.map(p => shortenNamesParam(p, typeImport, staticImport)),
       shortenNamesType(x.tpe, typeImport),
+      x.throws.map(t => shortenNamesType(t, typeImport)),
       x.body.map(_.mapTrees(t => shortenNames(t, typeImport, staticImport)))
     )
 

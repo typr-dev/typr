@@ -59,13 +59,9 @@ public interface ProductdocumentFields {
     return new Impl(List.of());
   };
 
-  default SqlExpr<Boolean> compositeIdIn(List<ProductdocumentId> compositeIds) {
-    return new CompositeIn(List.of(new Part<ProductId, ProductdocumentId, ProductdocumentRow>(productid(), ProductdocumentId::productid, ProductId.pgType), new Part<DocumentId, ProductdocumentId, ProductdocumentRow>(documentnode(), ProductdocumentId::documentnode, DocumentId.pgType)), compositeIds);
-  };
+  IdField<ProductId, ProductdocumentRow> productid();
 
-  default SqlExpr<Boolean> compositeIdIs(ProductdocumentId compositeId) {
-    return SqlExpr.all(productid().isEqual(compositeId.productid()), documentnode().isEqual(compositeId.documentnode()));
-  };
+  Field<TypoLocalDateTime, ProductdocumentRow> modifieddate();
 
   IdField<DocumentId, ProductdocumentRow> documentnode();
 
@@ -77,7 +73,11 @@ public interface ProductdocumentFields {
     return ForeignKey.<ProductFields, ProductRow>of("production.FK_ProductDocument_Product_ProductID").withColumnPair(productid(), ProductFields::productid);
   };
 
-  Field<TypoLocalDateTime, ProductdocumentRow> modifieddate();
+  default SqlExpr<Boolean> compositeIdIs(ProductdocumentId compositeId) {
+    return SqlExpr.all(productid().isEqual(compositeId.productid()), documentnode().isEqual(compositeId.documentnode()));
+  };
 
-  IdField<ProductId, ProductdocumentRow> productid();
+  default SqlExpr<Boolean> compositeIdIn(List<ProductdocumentId> compositeIds) {
+    return new CompositeIn(List.of(new Part<ProductId, ProductdocumentId, ProductdocumentRow>(productid(), ProductdocumentId::productid, ProductId.pgType), new Part<DocumentId, ProductdocumentId, ProductdocumentRow>(documentnode(), ProductdocumentId::documentnode, DocumentId.pgType)), compositeIds);
+  };
 }

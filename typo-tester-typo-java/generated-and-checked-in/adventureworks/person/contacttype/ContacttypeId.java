@@ -5,13 +5,14 @@
  */
 package adventureworks.person.contacttype;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `person.contacttype` */
-public record ContacttypeId(Integer value) {
+public record ContacttypeId(@JsonValue Integer value) {
   public ContacttypeId withValue(Integer value) {
     return new ContacttypeId(value);
   };

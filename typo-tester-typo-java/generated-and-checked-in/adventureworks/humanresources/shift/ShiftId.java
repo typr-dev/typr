@@ -5,13 +5,14 @@
  */
 package adventureworks.humanresources.shift;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `humanresources.shift` */
-public record ShiftId(Integer value) {
+public record ShiftId(@JsonValue Integer value) {
   public ShiftId withValue(Integer value) {
     return new ShiftId(value);
   };

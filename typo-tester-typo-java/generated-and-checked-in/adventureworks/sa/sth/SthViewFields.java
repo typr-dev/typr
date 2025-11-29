@@ -64,17 +64,17 @@ public interface SthViewFields {
     return new Impl(List.of());
   };
 
-  Field<BusinessentityId, SthViewRow> businessentityid();
-
-  OptField<TypoLocalDateTime, SthViewRow> enddate();
-
   Field<SalesterritoryId, SthViewRow> id();
 
-  Field<TypoLocalDateTime, SthViewRow> modifieddate();
+  Field<BusinessentityId, SthViewRow> businessentityid();
 
-  Field<TypoUUID, SthViewRow> rowguid();
+  Field<SalesterritoryId, SthViewRow> territoryid();
 
   Field<TypoLocalDateTime, SthViewRow> startdate();
 
-  Field<SalesterritoryId, SthViewRow> territoryid();
+  OptField<TypoLocalDateTime, SthViewRow> enddate();
+
+  Field<TypoUUID, SthViewRow> rowguid();
+
+  Field<TypoLocalDateTime, SthViewRow> modifieddate();
 }

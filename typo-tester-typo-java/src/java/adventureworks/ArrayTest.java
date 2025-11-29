@@ -9,14 +9,12 @@ import adventureworks.public_.pgtestnull.PgtestnullRepoImpl;
 import adventureworks.public_.pgtestnull.PgtestnullRow;
 import org.junit.Test;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.RecordComponent;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static adventureworks.JsonEquals.assertJsonEquals;
 import static org.junit.Assert.*;
 
 /**
@@ -25,91 +23,6 @@ import static org.junit.Assert.*;
 public class ArrayTest {
     private final PgtestnullRepoImpl pgtestnullRepo = new PgtestnullRepoImpl();
     private final PgtestRepoImpl pgtestRepo = new PgtestRepoImpl();
-
-    /**
-     * Deep equals comparison that handles arrays inside records properly.
-     * Java records use reference equality for array fields, so we need this helper.
-     */
-    static String deepEqualsDetail(Object a, Object b, String path) {
-        if (a == b) return null;
-        if (a == null || b == null) return path + ": one is null";
-
-        // Handle Lists first (before class check) - different List implementations should be comparable
-        if (a instanceof List<?> listA && b instanceof List<?> listB) {
-            if (listA.size() != listB.size()) return path + ": list size " + listA.size() + " vs " + listB.size();
-            for (int i = 0; i < listA.size(); i++) {
-                String detail = deepEqualsDetail(listA.get(i), listB.get(i), path + "[" + i + "]");
-                if (detail != null) return detail;
-            }
-            return null;
-        }
-
-        // Handle Maps first (before class check) - different Map implementations should be comparable
-        if (a instanceof Map<?, ?> mapA && b instanceof Map<?, ?> mapB) {
-            if (mapA.size() != mapB.size()) return path + ": map size " + mapA.size() + " vs " + mapB.size();
-            for (var entry : mapA.entrySet()) {
-                if (!mapB.containsKey(entry.getKey())) return path + ": missing key " + entry.getKey();
-                String detail = deepEqualsDetail(entry.getValue(), mapB.get(entry.getKey()), path + "[" + entry.getKey() + "]");
-                if (detail != null) return detail;
-            }
-            return null;
-        }
-
-        if (!a.getClass().equals(b.getClass())) return path + ": class mismatch " + a.getClass() + " vs " + b.getClass();
-
-        // Handle arrays
-        if (a.getClass().isArray()) {
-            int lenA = Array.getLength(a);
-            int lenB = Array.getLength(b);
-            if (lenA != lenB) return path + ": array length " + lenA + " vs " + lenB;
-            for (int i = 0; i < lenA; i++) {
-                String detail = deepEqualsDetail(Array.get(a, i), Array.get(b, i), path + "[" + i + "]");
-                if (detail != null) return detail;
-            }
-            return null;
-        }
-
-        // Handle Optional
-        if (a instanceof Optional<?> optA && b instanceof Optional<?> optB) {
-            if (optA.isEmpty() && optB.isEmpty()) return null;
-            if (optA.isEmpty() || optB.isEmpty()) return path + ": Optional presence mismatch";
-            return deepEqualsDetail(optA.get(), optB.get(), path + ".get()");
-        }
-
-        // Handle Records
-        if (a.getClass().isRecord()) {
-            RecordComponent[] components = a.getClass().getRecordComponents();
-            for (RecordComponent component : components) {
-                try {
-                    Object valA = component.getAccessor().invoke(a);
-                    Object valB = component.getAccessor().invoke(b);
-                    String detail = deepEqualsDetail(valA, valB, path + "." + component.getName());
-                    if (detail != null) return detail;
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            return null;
-        }
-
-        // Default to equals
-        if (a.equals(b)) return null;
-        return path + ": " + a + " != " + b;
-    }
-
-    static void assertDeepEquals(Object expected, Object actual) {
-        String detail = deepEqualsDetail(expected, actual, "root");
-        if (detail != null) {
-            fail("Deep equality failed at: " + detail);
-        }
-    }
-
-    static void assertDeepEquals(String message, Object expected, Object actual) {
-        String detail = deepEqualsDetail(expected, actual, "root");
-        if (detail != null) {
-            fail(message + " - Deep equality failed at: " + detail);
-        }
-    }
 
     static PgtestRow pgTestRow() {
         return new PgtestRow(
@@ -285,7 +198,7 @@ public class ArrayTest {
         WithConnection.run(c -> {
             var before = pgTestRow();
             var after = pgtestRepo.insert(before, c);
-            assertDeepEquals(before, after);
+            assertJsonEquals(before, after);
         });
     }
 
@@ -295,7 +208,7 @@ public class ArrayTest {
             var before = List.of(pgTestRow());
             pgtestRepo.insertStreaming(before.iterator(), 1, c);
             var after = pgtestRepo.selectAll(c);
-            assertDeepEquals(before, after);
+            assertJsonEquals(before, after);
         });
     }
 
@@ -304,7 +217,7 @@ public class ArrayTest {
         WithConnection.run(c -> {
             var before = pgtestnullRow();
             var after = pgtestnullRepo.insert(before, c);
-            assertDeepEquals(before, after);
+            assertJsonEquals(before, after);
         });
     }
 
@@ -313,7 +226,7 @@ public class ArrayTest {
         WithConnection.run(c -> {
             var before = pgtestnullRowWithValues();
             var after = pgtestnullRepo.insert(before, c);
-            assertDeepEquals(before, after);
+            assertJsonEquals(before, after);
         });
     }
 
@@ -323,7 +236,7 @@ public class ArrayTest {
             var before = List.of(pgtestnullRow(), pgtestnullRowWithValues());
             pgtestnullRepo.insertStreaming(before.iterator(), 1, c);
             var after = pgtestnullRepo.selectAll(c);
-            assertDeepEquals(before, after);
+            assertJsonEquals(before, after);
         });
     }
 
@@ -336,7 +249,7 @@ public class ArrayTest {
             assertEquals(row.bool(), pgtestnullRepo.select().where(p -> p.bool().isEqual(row.bool().orElse(null))).toList(c).get(0).bool());
             assertEquals(row.box(), pgtestnullRepo.select().where(p -> p.box().isEqual(row.box().orElse(null))).toList(c).get(0).box());
             assertEquals(row.bpchar(), pgtestnullRepo.select().where(p -> p.bpchar().isEqual(row.bpchar().orElse(null))).toList(c).get(0).bpchar());
-            assertDeepEquals(row.bytea(), pgtestnullRepo.select().where(p -> p.bytea().isEqual(row.bytea().orElse(null))).toList(c).get(0).bytea());
+            assertJsonEquals(row.bytea(), pgtestnullRepo.select().where(p -> p.bytea().isEqual(row.bytea().orElse(null))).toList(c).get(0).bytea());
             assertEquals(row.char_(), pgtestnullRepo.select().where(p -> p.char_().isEqual(row.char_().orElse(null))).toList(c).get(0).char_());
             assertEquals(row.circle(), pgtestnullRepo.select().where(p -> p.circle().isEqual(row.circle().orElse(null))).toList(c).get(0).circle());
             assertEquals(row.date(), pgtestnullRepo.select().where(p -> p.date().isEqual(row.date().orElse(null))).toList(c).get(0).date());
@@ -367,7 +280,7 @@ public class ArrayTest {
             assertEquals(row.timez(), pgtestnullRepo.select().where(p -> p.timez().isEqual(row.timez().orElse(null))).toList(c).get(0).timez());
             assertEquals(row.uuid(), pgtestnullRepo.select().where(p -> p.uuid().isEqual(row.uuid().orElse(null))).toList(c).get(0).uuid());
             assertEquals(row.varchar(), pgtestnullRepo.select().where(p -> p.varchar().isEqual(row.varchar().orElse(null))).toList(c).get(0).varchar());
-            assertDeepEquals(row.vector(), pgtestnullRepo.select().where(p -> p.vector().isEqual(row.vector().orElse(null))).toList(c).get(0).vector());
+            assertJsonEquals(row.vector(), pgtestnullRepo.select().where(p -> p.vector().isEqual(row.vector().orElse(null))).toList(c).get(0).vector());
             // xml requires special handling
 
             // Array types

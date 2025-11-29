@@ -5,13 +5,14 @@
  */
 package testdb.hardcoded.myschema.marital_status;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `myschema.marital_status` */
-public record MaritalStatusId(Long value) {
+public record MaritalStatusId(@JsonValue Long value) {
   public MaritalStatusId withValue(Long value) {
     return new MaritalStatusId(value);
   };

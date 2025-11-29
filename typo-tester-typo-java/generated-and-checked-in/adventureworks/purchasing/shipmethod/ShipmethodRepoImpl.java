@@ -25,7 +25,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record ShipmethodRepoImpl() implements ShipmethodRepo {
+public class ShipmethodRepoImpl implements ShipmethodRepo {
   public DeleteBuilder<ShipmethodFields, ShipmethodRow> delete() {
     return DeleteBuilder.of("purchasing.shipmethod", ShipmethodFields.structure());
   };
@@ -243,32 +243,32 @@ public record ShipmethodRepoImpl() implements ShipmethodRepo {
   ) {
     ShipmethodId shipmethodid = row.shipmethodid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "purchasing"."shipmethod"
-         set "name" = """),
-      Name.pgType.encode(row.name()),
-      typo.runtime.Fragment.lit("""
-         ::varchar,
-         "shipbase" = """),
-      PgTypes.numeric.encode(row.shipbase()),
-      typo.runtime.Fragment.lit("""
-         ::numeric,
-         "shiprate" = """),
-      PgTypes.numeric.encode(row.shiprate()),
-      typo.runtime.Fragment.lit("""
-         ::numeric,
-         "rowguid" = """),
-      TypoUUID.pgType.encode(row.rowguid()),
-      typo.runtime.Fragment.lit("""
-         ::uuid,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "shipmethodid" = """),
-      ShipmethodId.pgType.encode(shipmethodid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "purchasing"."shipmethod"
+                set "name" = """),
+             Name.pgType.encode(row.name()),
+             typo.runtime.Fragment.lit("""
+                ::varchar,
+                "shipbase" = """),
+             PgTypes.numeric.encode(row.shipbase()),
+             typo.runtime.Fragment.lit("""
+                ::numeric,
+                "shiprate" = """),
+             PgTypes.numeric.encode(row.shiprate()),
+             typo.runtime.Fragment.lit("""
+                ::numeric,
+                "rowguid" = """),
+             TypoUUID.pgType.encode(row.rowguid()),
+             typo.runtime.Fragment.lit("""
+                ::uuid,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "shipmethodid" = """),
+             ShipmethodId.pgType.encode(shipmethodid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public ShipmethodRow upsert(
@@ -339,16 +339,16 @@ public record ShipmethodRepoImpl() implements ShipmethodRepo {
       copy shipmethod_TEMP("shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate") from stdin
       """), batchSize, unsaved, c, ShipmethodRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "purchasing"."shipmethod"("shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate")
-       select * from shipmethod_TEMP
-       on conflict ("shipmethodid")
-       do update set
-         "name" = EXCLUDED."name",
-       "shipbase" = EXCLUDED."shipbase",
-       "shiprate" = EXCLUDED."shiprate",
-       "rowguid" = EXCLUDED."rowguid",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table shipmethod_TEMP;""")).update().runUnchecked(c);
+              insert into "purchasing"."shipmethod"("shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate")
+              select * from shipmethod_TEMP
+              on conflict ("shipmethodid")
+              do update set
+                "name" = EXCLUDED."name",
+              "shipbase" = EXCLUDED."shipbase",
+              "shiprate" = EXCLUDED."shiprate",
+              "rowguid" = EXCLUDED."rowguid",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table shipmethod_TEMP;""")).update().runUnchecked(c);
   };
 }

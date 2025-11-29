@@ -10,7 +10,7 @@ import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-public record CcViewRepoImpl() implements CcViewRepo {
+public class CcViewRepoImpl implements CcViewRepo {
   public SelectBuilder<CcViewFields, CcViewRow> select() {
     return SelectBuilder.of("sa.cc", CcViewFields.structure(), CcViewRow._rowParser);
   };

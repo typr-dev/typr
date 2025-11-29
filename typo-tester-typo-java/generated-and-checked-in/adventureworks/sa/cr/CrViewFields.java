@@ -64,17 +64,17 @@ public interface CrViewFields {
     return new Impl(List.of());
   };
 
-  Field<BigDecimal, CrViewRow> averagerate();
+  Field<CurrencyrateId, CrViewRow> currencyrateid();
 
   Field<TypoLocalDateTime, CrViewRow> currencyratedate();
 
-  Field<CurrencyrateId, CrViewRow> currencyrateid();
+  Field<CurrencyId, CrViewRow> fromcurrencycode();
+
+  Field<CurrencyId, CrViewRow> tocurrencycode();
+
+  Field<BigDecimal, CrViewRow> averagerate();
 
   Field<BigDecimal, CrViewRow> endofdayrate();
 
-  Field<CurrencyId, CrViewRow> fromcurrencycode();
-
   Field<TypoLocalDateTime, CrViewRow> modifieddate();
-
-  Field<CurrencyId, CrViewRow> tocurrencycode();
 }

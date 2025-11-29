@@ -71,21 +71,21 @@ public interface PrViewFields {
     return new Impl(List.of());
   };
 
-  OptField</* max 3850 chars */ String, PrViewRow> comments();
-
-  Field</* max 50 chars */ String, PrViewRow> emailaddress();
-
   Field<ProductreviewId, PrViewRow> id();
-
-  Field<TypoLocalDateTime, PrViewRow> modifieddate();
-
-  Field<ProductId, PrViewRow> productid();
 
   Field<ProductreviewId, PrViewRow> productreviewid();
 
-  Field<Integer, PrViewRow> rating();
+  Field<ProductId, PrViewRow> productid();
+
+  Field<Name, PrViewRow> reviewername();
 
   Field<TypoLocalDateTime, PrViewRow> reviewdate();
 
-  Field<Name, PrViewRow> reviewername();
+  Field</* max 50 chars */ String, PrViewRow> emailaddress();
+
+  Field<Integer, PrViewRow> rating();
+
+  OptField</* max 3850 chars */ String, PrViewRow> comments();
+
+  Field<TypoLocalDateTime, PrViewRow> modifieddate();
 }

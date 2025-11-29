@@ -55,9 +55,9 @@ public interface PntViewFields {
 
   Field<PhonenumbertypeId, PntViewRow> id();
 
-  Field<TypoLocalDateTime, PntViewRow> modifieddate();
+  Field<PhonenumbertypeId, PntViewRow> phonenumbertypeid();
 
   Field<Name, PntViewRow> name();
 
-  Field<PhonenumbertypeId, PntViewRow> phonenumbertypeid();
+  Field<TypoLocalDateTime, PntViewRow> modifieddate();
 }

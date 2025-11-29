@@ -58,13 +58,13 @@ public interface JcViewFields {
     return new Impl(List.of());
   };
 
-  OptField<BusinessentityId, JcViewRow> businessentityid();
-
   Field<JobcandidateId, JcViewRow> id();
 
   Field<JobcandidateId, JcViewRow> jobcandidateid();
 
-  Field<TypoLocalDateTime, JcViewRow> modifieddate();
+  OptField<BusinessentityId, JcViewRow> businessentityid();
 
   OptField<TypoXml, JcViewRow> resume();
+
+  Field<TypoLocalDateTime, JcViewRow> modifieddate();
 }

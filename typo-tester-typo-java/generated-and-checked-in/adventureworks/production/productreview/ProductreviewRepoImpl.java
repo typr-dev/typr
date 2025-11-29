@@ -25,7 +25,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record ProductreviewRepoImpl() implements ProductreviewRepo {
+public class ProductreviewRepoImpl implements ProductreviewRepo {
   public DeleteBuilder<ProductreviewFields, ProductreviewRow> delete() {
     return DeleteBuilder.of("production.productreview", ProductreviewFields.structure());
   };
@@ -249,40 +249,40 @@ public record ProductreviewRepoImpl() implements ProductreviewRepo {
   ) {
     ProductreviewId productreviewid = row.productreviewid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "production"."productreview"
-         set "productid" = """),
-      ProductId.pgType.encode(row.productid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "reviewername" = """),
-      Name.pgType.encode(row.reviewername()),
-      typo.runtime.Fragment.lit("""
-         ::varchar,
-         "reviewdate" = """),
-      TypoLocalDateTime.pgType.encode(row.reviewdate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp,
-         "emailaddress" = """),
-      PgTypes.text.encode(row.emailaddress()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "rating" = """),
-      PgTypes.int4.encode(row.rating()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "comments" = """),
-      PgTypes.text.opt().encode(row.comments()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "productreviewid" = """),
-      ProductreviewId.pgType.encode(productreviewid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "production"."productreview"
+                set "productid" = """),
+             ProductId.pgType.encode(row.productid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "reviewername" = """),
+             Name.pgType.encode(row.reviewername()),
+             typo.runtime.Fragment.lit("""
+                ::varchar,
+                "reviewdate" = """),
+             TypoLocalDateTime.pgType.encode(row.reviewdate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp,
+                "emailaddress" = """),
+             PgTypes.text.encode(row.emailaddress()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "rating" = """),
+             PgTypes.int4.encode(row.rating()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "comments" = """),
+             PgTypes.text.opt().encode(row.comments()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "productreviewid" = """),
+             ProductreviewId.pgType.encode(productreviewid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public ProductreviewRow upsert(
@@ -361,18 +361,18 @@ public record ProductreviewRepoImpl() implements ProductreviewRepo {
       copy productreview_TEMP("productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate") from stdin
       """), batchSize, unsaved, c, ProductreviewRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "production"."productreview"("productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate")
-       select * from productreview_TEMP
-       on conflict ("productreviewid")
-       do update set
-         "productid" = EXCLUDED."productid",
-       "reviewername" = EXCLUDED."reviewername",
-       "reviewdate" = EXCLUDED."reviewdate",
-       "emailaddress" = EXCLUDED."emailaddress",
-       "rating" = EXCLUDED."rating",
-       "comments" = EXCLUDED."comments",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table productreview_TEMP;""")).update().runUnchecked(c);
+              insert into "production"."productreview"("productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate")
+              select * from productreview_TEMP
+              on conflict ("productreviewid")
+              do update set
+                "productid" = EXCLUDED."productid",
+              "reviewername" = EXCLUDED."reviewername",
+              "reviewdate" = EXCLUDED."reviewdate",
+              "emailaddress" = EXCLUDED."emailaddress",
+              "rating" = EXCLUDED."rating",
+              "comments" = EXCLUDED."comments",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table productreview_TEMP;""")).update().runUnchecked(c);
   };
 }

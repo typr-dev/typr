@@ -69,21 +69,21 @@ public interface VvendorwithaddressesViewFields {
     return new Impl(List.of());
   };
 
+  Field<BusinessentityId, VvendorwithaddressesViewRow> businessentityid();
+
+  Field<Name, VvendorwithaddressesViewRow> name();
+
+  Field<Name, VvendorwithaddressesViewRow> addresstype();
+
   Field</* max 60 chars */ String, VvendorwithaddressesViewRow> addressline1();
 
   OptField</* max 60 chars */ String, VvendorwithaddressesViewRow> addressline2();
 
-  Field<Name, VvendorwithaddressesViewRow> addresstype();
-
-  Field<BusinessentityId, VvendorwithaddressesViewRow> businessentityid();
-
   Field</* max 30 chars */ String, VvendorwithaddressesViewRow> city();
 
-  Field<Name, VvendorwithaddressesViewRow> countryregionname();
-
-  Field<Name, VvendorwithaddressesViewRow> name();
+  Field<Name, VvendorwithaddressesViewRow> stateprovincename();
 
   Field</* max 15 chars */ String, VvendorwithaddressesViewRow> postalcode();
 
-  Field<Name, VvendorwithaddressesViewRow> stateprovincename();
+  Field<Name, VvendorwithaddressesViewRow> countryregionname();
 }

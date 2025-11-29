@@ -61,11 +61,11 @@ public interface CreditcardFields {
     return new Impl(List.of());
   };
 
-  Field</* max 25 chars */ String, CreditcardRow> cardnumber();
+  IdField</* user-picked */ CustomCreditcardId, CreditcardRow> creditcardid();
 
   Field</* max 50 chars */ String, CreditcardRow> cardtype();
 
-  IdField</* user-picked */ CustomCreditcardId, CreditcardRow> creditcardid();
+  Field</* max 25 chars */ String, CreditcardRow> cardnumber();
 
   Field<TypoShort, CreditcardRow> expmonth();
 

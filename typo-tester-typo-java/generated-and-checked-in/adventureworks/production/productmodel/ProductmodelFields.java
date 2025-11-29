@@ -62,15 +62,15 @@ public interface ProductmodelFields {
     return new Impl(List.of());
   };
 
+  IdField<ProductmodelId, ProductmodelRow> productmodelid();
+
+  Field<Name, ProductmodelRow> name();
+
   OptField<TypoXml, ProductmodelRow> catalogdescription();
 
   OptField<TypoXml, ProductmodelRow> instructions();
 
-  Field<TypoLocalDateTime, ProductmodelRow> modifieddate();
-
-  Field<Name, ProductmodelRow> name();
-
-  IdField<ProductmodelId, ProductmodelRow> productmodelid();
-
   Field<TypoUUID, ProductmodelRow> rowguid();
+
+  Field<TypoLocalDateTime, ProductmodelRow> modifieddate();
 }

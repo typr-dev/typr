@@ -49,9 +49,9 @@ public interface PersonFields {
     return new Impl(List.of());
   };
 
-  OptField<String, PersonRow> name();
-
   IdField<Long, PersonRow> one();
 
   IdField<Optional<String>, PersonRow> two();
+
+  OptField<String, PersonRow> name();
 }

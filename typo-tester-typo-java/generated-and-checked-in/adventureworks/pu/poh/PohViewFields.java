@@ -85,29 +85,29 @@ public interface PohViewFields {
     return new Impl(List.of());
   };
 
-  Field<BusinessentityId, PohViewRow> employeeid();
-
-  Field<BigDecimal, PohViewRow> freight();
-
   Field<PurchaseorderheaderId, PohViewRow> id();
-
-  Field<TypoLocalDateTime, PohViewRow> modifieddate();
-
-  Field<TypoLocalDateTime, PohViewRow> orderdate();
 
   Field<PurchaseorderheaderId, PohViewRow> purchaseorderid();
 
   Field<TypoShort, PohViewRow> revisionnumber();
 
-  OptField<TypoLocalDateTime, PohViewRow> shipdate();
+  Field<TypoShort, PohViewRow> status();
+
+  Field<BusinessentityId, PohViewRow> employeeid();
+
+  Field<BusinessentityId, PohViewRow> vendorid();
 
   Field<ShipmethodId, PohViewRow> shipmethodid();
 
-  Field<TypoShort, PohViewRow> status();
+  Field<TypoLocalDateTime, PohViewRow> orderdate();
+
+  OptField<TypoLocalDateTime, PohViewRow> shipdate();
 
   Field<BigDecimal, PohViewRow> subtotal();
 
   Field<BigDecimal, PohViewRow> taxamt();
 
-  Field<BusinessentityId, PohViewRow> vendorid();
+  Field<BigDecimal, PohViewRow> freight();
+
+  Field<TypoLocalDateTime, PohViewRow> modifieddate();
 }

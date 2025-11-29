@@ -50,9 +50,9 @@ public interface ScrapreasonFields {
     return new Impl(List.of());
   };
 
-  Field<TypoLocalDateTime, ScrapreasonRow> modifieddate();
+  IdField<ScrapreasonId, ScrapreasonRow> scrapreasonid();
 
   Field<Name, ScrapreasonRow> name();
 
-  IdField<ScrapreasonId, ScrapreasonRow> scrapreasonid();
+  Field<TypoLocalDateTime, ScrapreasonRow> modifieddate();
 }

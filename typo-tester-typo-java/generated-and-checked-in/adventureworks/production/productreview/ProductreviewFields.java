@@ -71,23 +71,23 @@ public interface ProductreviewFields {
     return new Impl(List.of());
   };
 
-  OptField</* max 3850 chars */ String, ProductreviewRow> comments();
+  IdField<ProductreviewId, ProductreviewRow> productreviewid();
+
+  Field<ProductId, ProductreviewRow> productid();
+
+  Field<Name, ProductreviewRow> reviewername();
+
+  Field<TypoLocalDateTime, ProductreviewRow> reviewdate();
 
   Field</* max 50 chars */ String, ProductreviewRow> emailaddress();
+
+  Field<Integer, ProductreviewRow> rating();
+
+  OptField</* max 3850 chars */ String, ProductreviewRow> comments();
+
+  Field<TypoLocalDateTime, ProductreviewRow> modifieddate();
 
   default ForeignKey<ProductFields, ProductRow> fkProduct() {
     return ForeignKey.<ProductFields, ProductRow>of("production.FK_ProductReview_Product_ProductID").withColumnPair(productid(), ProductFields::productid);
   };
-
-  Field<TypoLocalDateTime, ProductreviewRow> modifieddate();
-
-  Field<ProductId, ProductreviewRow> productid();
-
-  IdField<ProductreviewId, ProductreviewRow> productreviewid();
-
-  Field<Integer, ProductreviewRow> rating();
-
-  Field<TypoLocalDateTime, ProductreviewRow> reviewdate();
-
-  Field<Name, ProductreviewRow> reviewername();
 }

@@ -23,7 +23,7 @@ import testdb.hardcoded.myschema.person.PersonId
 import typo.runtime.internal.RandomHelper
 
 /** Methods to generate random data for `Ident(TestInsert)` */
-class TestInsert(val random: Random) {
+case class TestInsert(random: Random) {
   def compositepkPerson(
     name: Optional[String] = if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 20)),
     one: Defaulted[java.lang.Long] = Defaulted.UseDefault(),

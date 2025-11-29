@@ -61,15 +61,15 @@ public interface SpqhViewFields {
     return new Impl(List.of());
   };
 
-  Field<BusinessentityId, SpqhViewRow> businessentityid();
-
   Field<BusinessentityId, SpqhViewRow> id();
 
-  Field<TypoLocalDateTime, SpqhViewRow> modifieddate();
+  Field<BusinessentityId, SpqhViewRow> businessentityid();
 
   Field<TypoLocalDateTime, SpqhViewRow> quotadate();
 
+  Field<BigDecimal, SpqhViewRow> salesquota();
+
   Field<TypoUUID, SpqhViewRow> rowguid();
 
-  Field<BigDecimal, SpqhViewRow> salesquota();
+  Field<TypoLocalDateTime, SpqhViewRow> modifieddate();
 }

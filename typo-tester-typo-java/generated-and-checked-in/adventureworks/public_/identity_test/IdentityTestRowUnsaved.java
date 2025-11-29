@@ -7,6 +7,7 @@ package adventureworks.public_.identity_test;
 
 import adventureworks.customtypes.Defaulted;
 import adventureworks.customtypes.Defaulted.UseDefault;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 
@@ -14,7 +15,7 @@ import typo.runtime.PgTypes;
 public record IdentityTestRowUnsaved(
   IdentityTestId name,
   /** Identity BY DEFAULT, identityStart: 1, identityIncrement: 1, identityMaximum: 2147483647, identityMinimum: 1 */
-  Defaulted<Integer> defaultGenerated
+  @JsonProperty("default_generated") Defaulted<Integer> defaultGenerated
 ) {
   public IdentityTestRowUnsaved(IdentityTestId name) {
     this(name, new UseDefault<>());

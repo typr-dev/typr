@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import org.postgresql.util.PGobject;
 import typo.dsl.Bijection;
 import typo.runtime.PgRead;
@@ -15,7 +16,7 @@ import typo.runtime.internal.TypoPGObjectHelper;
 import typo.runtime.internal.arrayMap;
 
 /** int2vector (via PGObject). Valid syntax: `TypoInt2Vector("1 2 3") */
-public record TypoInt2Vector(String value) {
+public record TypoInt2Vector(@JsonValue String value) {
   public TypoInt2Vector withValue(String value) {
     return new TypoInt2Vector(value);
   };

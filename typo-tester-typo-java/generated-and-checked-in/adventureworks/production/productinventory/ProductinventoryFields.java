@@ -74,15 +74,19 @@ public interface ProductinventoryFields {
     return new Impl(List.of());
   };
 
+  IdField<ProductId, ProductinventoryRow> productid();
+
+  IdField<LocationId, ProductinventoryRow> locationid();
+
+  Field</* max 10 chars */ String, ProductinventoryRow> shelf();
+
   Field<TypoShort, ProductinventoryRow> bin();
 
-  default SqlExpr<Boolean> compositeIdIn(List<ProductinventoryId> compositeIds) {
-    return new CompositeIn(List.of(new Part<ProductId, ProductinventoryId, ProductinventoryRow>(productid(), ProductinventoryId::productid, ProductId.pgType), new Part<LocationId, ProductinventoryId, ProductinventoryRow>(locationid(), ProductinventoryId::locationid, LocationId.pgType)), compositeIds);
-  };
+  Field<TypoShort, ProductinventoryRow> quantity();
 
-  default SqlExpr<Boolean> compositeIdIs(ProductinventoryId compositeId) {
-    return SqlExpr.all(productid().isEqual(compositeId.productid()), locationid().isEqual(compositeId.locationid()));
-  };
+  Field<TypoUUID, ProductinventoryRow> rowguid();
+
+  Field<TypoLocalDateTime, ProductinventoryRow> modifieddate();
 
   default ForeignKey<LocationFields, LocationRow> fkLocation() {
     return ForeignKey.<LocationFields, LocationRow>of("production.FK_ProductInventory_Location_LocationID").withColumnPair(locationid(), LocationFields::locationid);
@@ -92,15 +96,11 @@ public interface ProductinventoryFields {
     return ForeignKey.<ProductFields, ProductRow>of("production.FK_ProductInventory_Product_ProductID").withColumnPair(productid(), ProductFields::productid);
   };
 
-  IdField<LocationId, ProductinventoryRow> locationid();
+  default SqlExpr<Boolean> compositeIdIs(ProductinventoryId compositeId) {
+    return SqlExpr.all(productid().isEqual(compositeId.productid()), locationid().isEqual(compositeId.locationid()));
+  };
 
-  Field<TypoLocalDateTime, ProductinventoryRow> modifieddate();
-
-  IdField<ProductId, ProductinventoryRow> productid();
-
-  Field<TypoShort, ProductinventoryRow> quantity();
-
-  Field<TypoUUID, ProductinventoryRow> rowguid();
-
-  Field</* max 10 chars */ String, ProductinventoryRow> shelf();
+  default SqlExpr<Boolean> compositeIdIn(List<ProductinventoryId> compositeIds) {
+    return new CompositeIn(List.of(new Part<ProductId, ProductinventoryId, ProductinventoryRow>(productid(), ProductinventoryId::productid, ProductId.pgType), new Part<LocationId, ProductinventoryId, ProductinventoryRow>(locationid(), ProductinventoryId::locationid, LocationId.pgType)), compositeIds);
+  };
 }

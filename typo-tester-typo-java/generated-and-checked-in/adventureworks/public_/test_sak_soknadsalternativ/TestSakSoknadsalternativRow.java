@@ -7,6 +7,7 @@ package adventureworks.public_.test_sak_soknadsalternativ;
 
 import adventureworks.public_.test_organisasjon.TestOrganisasjonId;
 import adventureworks.public_.test_utdanningstilbud.TestUtdanningstilbudId;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
@@ -17,11 +18,11 @@ import typo.runtime.RowParsers.Tuple3;
   * Composite primary key: organisasjonskode_saksbehandler, utdanningsmulighet_kode
   */
 public record TestSakSoknadsalternativRow(
-  String organisasjonskodeSaksbehandler,
+  @JsonProperty("organisasjonskode_saksbehandler") String organisasjonskodeSaksbehandler,
   /** Points to {@link adventureworks.public_.test_utdanningstilbud.TestUtdanningstilbudRow#utdanningsmulighetKode()} */
-  String utdanningsmulighetKode,
+  @JsonProperty("utdanningsmulighet_kode") String utdanningsmulighetKode,
   /** Points to {@link adventureworks.public_.test_utdanningstilbud.TestUtdanningstilbudRow#organisasjonskode()} */
-  TestOrganisasjonId organisasjonskodeTilbyder
+  @JsonProperty("organisasjonskode_tilbyder") TestOrganisasjonId organisasjonskodeTilbyder
 ) {
   public TestSakSoknadsalternativRow withOrganisasjonskodeSaksbehandler(String organisasjonskodeSaksbehandler) {
     return new TestSakSoknadsalternativRow(organisasjonskodeSaksbehandler, utdanningsmulighetKode, organisasjonskodeTilbyder);

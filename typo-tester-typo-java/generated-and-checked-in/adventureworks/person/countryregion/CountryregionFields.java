@@ -52,7 +52,7 @@ public interface CountryregionFields {
 
   IdField<CountryregionId, CountryregionRow> countryregioncode();
 
-  Field<TypoLocalDateTime, CountryregionRow> modifieddate();
-
   Field<Name, CountryregionRow> name();
+
+  Field<TypoLocalDateTime, CountryregionRow> modifieddate();
 }

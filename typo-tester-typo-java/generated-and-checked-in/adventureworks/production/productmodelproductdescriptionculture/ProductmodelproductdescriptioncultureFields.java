@@ -65,15 +65,13 @@ public interface ProductmodelproductdescriptioncultureFields {
     return new Impl(List.of());
   };
 
-  default SqlExpr<Boolean> compositeIdIn(List<ProductmodelproductdescriptioncultureId> compositeIds) {
-    return new CompositeIn(List.of(new Part<ProductmodelId, ProductmodelproductdescriptioncultureId, ProductmodelproductdescriptioncultureRow>(productmodelid(), ProductmodelproductdescriptioncultureId::productmodelid, ProductmodelId.pgType), new Part<ProductdescriptionId, ProductmodelproductdescriptioncultureId, ProductmodelproductdescriptioncultureRow>(productdescriptionid(), ProductmodelproductdescriptioncultureId::productdescriptionid, ProductdescriptionId.pgType), new Part<CultureId, ProductmodelproductdescriptioncultureId, ProductmodelproductdescriptioncultureRow>(cultureid(), ProductmodelproductdescriptioncultureId::cultureid, CultureId.pgType)), compositeIds);
-  };
+  IdField<ProductmodelId, ProductmodelproductdescriptioncultureRow> productmodelid();
 
-  default SqlExpr<Boolean> compositeIdIs(ProductmodelproductdescriptioncultureId compositeId) {
-    return SqlExpr.all(productmodelid().isEqual(compositeId.productmodelid()), productdescriptionid().isEqual(compositeId.productdescriptionid()), cultureid().isEqual(compositeId.cultureid()));
-  };
+  IdField<ProductdescriptionId, ProductmodelproductdescriptioncultureRow> productdescriptionid();
 
   IdField<CultureId, ProductmodelproductdescriptioncultureRow> cultureid();
+
+  Field<TypoLocalDateTime, ProductmodelproductdescriptioncultureRow> modifieddate();
 
   default ForeignKey<CultureFields, CultureRow> fkCulture() {
     return ForeignKey.<CultureFields, CultureRow>of("production.FK_ProductModelProductDescriptionCulture_Culture_CultureID").withColumnPair(cultureid(), CultureFields::cultureid);
@@ -87,9 +85,11 @@ public interface ProductmodelproductdescriptioncultureFields {
     return ForeignKey.<ProductmodelFields, ProductmodelRow>of("production.FK_ProductModelProductDescriptionCulture_ProductModel_ProductMo").withColumnPair(productmodelid(), ProductmodelFields::productmodelid);
   };
 
-  Field<TypoLocalDateTime, ProductmodelproductdescriptioncultureRow> modifieddate();
+  default SqlExpr<Boolean> compositeIdIs(ProductmodelproductdescriptioncultureId compositeId) {
+    return SqlExpr.all(productmodelid().isEqual(compositeId.productmodelid()), productdescriptionid().isEqual(compositeId.productdescriptionid()), cultureid().isEqual(compositeId.cultureid()));
+  };
 
-  IdField<ProductdescriptionId, ProductmodelproductdescriptioncultureRow> productdescriptionid();
-
-  IdField<ProductmodelId, ProductmodelproductdescriptioncultureRow> productmodelid();
+  default SqlExpr<Boolean> compositeIdIn(List<ProductmodelproductdescriptioncultureId> compositeIds) {
+    return new CompositeIn(List.of(new Part<ProductmodelId, ProductmodelproductdescriptioncultureId, ProductmodelproductdescriptioncultureRow>(productmodelid(), ProductmodelproductdescriptioncultureId::productmodelid, ProductmodelId.pgType), new Part<ProductdescriptionId, ProductmodelproductdescriptioncultureId, ProductmodelproductdescriptioncultureRow>(productdescriptionid(), ProductmodelproductdescriptioncultureId::productdescriptionid, ProductdescriptionId.pgType), new Part<CultureId, ProductmodelproductdescriptioncultureId, ProductmodelproductdescriptioncultureRow>(cultureid(), ProductmodelproductdescriptioncultureId::cultureid, CultureId.pgType)), compositeIds);
+  };
 }

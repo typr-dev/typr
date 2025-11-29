@@ -99,9 +99,27 @@ public interface VadditionalcontactinfoViewFields {
 
   Field<BusinessentityId, VadditionalcontactinfoViewRow> businessentityid();
 
+  Field</* user-picked */ FirstName, VadditionalcontactinfoViewRow> firstname();
+
+  OptField<Name, VadditionalcontactinfoViewRow> middlename();
+
+  Field<Name, VadditionalcontactinfoViewRow> lastname();
+
+  OptField<TypoXml, VadditionalcontactinfoViewRow> telephonenumber();
+
+  OptField<String, VadditionalcontactinfoViewRow> telephonespecialinstructions();
+
+  OptField<TypoXml, VadditionalcontactinfoViewRow> street();
+
   OptField<TypoXml, VadditionalcontactinfoViewRow> city();
 
+  OptField<TypoXml, VadditionalcontactinfoViewRow> stateprovince();
+
+  OptField<TypoXml, VadditionalcontactinfoViewRow> postalcode();
+
   OptField<TypoXml, VadditionalcontactinfoViewRow> countryregion();
+
+  OptField<TypoXml, VadditionalcontactinfoViewRow> homeaddressspecialinstructions();
 
   OptField<TypoXml, VadditionalcontactinfoViewRow> emailaddress();
 
@@ -109,25 +127,7 @@ public interface VadditionalcontactinfoViewFields {
 
   OptField<TypoXml, VadditionalcontactinfoViewRow> emailtelephonenumber();
 
-  Field</* user-picked */ FirstName, VadditionalcontactinfoViewRow> firstname();
-
-  OptField<TypoXml, VadditionalcontactinfoViewRow> homeaddressspecialinstructions();
-
-  Field<Name, VadditionalcontactinfoViewRow> lastname();
-
-  OptField<Name, VadditionalcontactinfoViewRow> middlename();
-
-  Field<TypoLocalDateTime, VadditionalcontactinfoViewRow> modifieddate();
-
-  OptField<TypoXml, VadditionalcontactinfoViewRow> postalcode();
-
   Field<TypoUUID, VadditionalcontactinfoViewRow> rowguid();
 
-  OptField<TypoXml, VadditionalcontactinfoViewRow> stateprovince();
-
-  OptField<TypoXml, VadditionalcontactinfoViewRow> street();
-
-  OptField<TypoXml, VadditionalcontactinfoViewRow> telephonenumber();
-
-  OptField<String, VadditionalcontactinfoViewRow> telephonespecialinstructions();
+  Field<TypoLocalDateTime, VadditionalcontactinfoViewRow> modifieddate();
 }

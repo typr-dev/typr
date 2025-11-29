@@ -5,6 +5,7 @@
  */
 package adventureworks.information_schema;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
@@ -13,7 +14,7 @@ import typo.runtime.internal.arrayMap;
 /** Domain `information_schema.sql_identifier`
   * No constraint
   */
-public record SqlIdentifier(String value) {
+public record SqlIdentifier(@JsonValue String value) {
   public SqlIdentifier withValue(String value) {
     return new SqlIdentifier(value);
   };

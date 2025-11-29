@@ -19,7 +19,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record FootballClubRepoImpl() implements FootballClubRepo {
+public class FootballClubRepoImpl implements FootballClubRepo {
   public DeleteBuilder<FootballClubFields, FootballClubRow> delete() {
     return DeleteBuilder.of("myschema.football_club", FootballClubFields.structure());
   };
@@ -140,16 +140,16 @@ public record FootballClubRepoImpl() implements FootballClubRepo {
   ) {
     FootballClubId id = row.id();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "myschema"."football_club"
-         set "name" = """),
-      PgTypes.text.encode(row.name()),
-      typo.runtime.Fragment.lit("""
+             typo.runtime.Fragment.lit("""
+                update "myschema"."football_club"
+                set "name" = """),
+             PgTypes.text.encode(row.name()),
+             typo.runtime.Fragment.lit("""
    
-         where "id" = """),
-      FootballClubId.pgType.encode(id),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+                where "id" = """),
+             FootballClubId.pgType.encode(id),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public FootballClubRow upsert(
@@ -204,12 +204,12 @@ public record FootballClubRepoImpl() implements FootballClubRepo {
       copy football_club_TEMP("id", "name") from stdin
       """), batchSize, unsaved, c, FootballClubRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "myschema"."football_club"("id", "name")
-       select * from football_club_TEMP
-       on conflict ("id")
-       do update set
-         "name" = EXCLUDED."name"
-       ;
-       drop table football_club_TEMP;""")).update().runUnchecked(c);
+              insert into "myschema"."football_club"("id", "name")
+              select * from football_club_TEMP
+              on conflict ("id")
+              do update set
+                "name" = EXCLUDED."name"
+              ;
+              drop table football_club_TEMP;""")).update().runUnchecked(c);
   };
 }

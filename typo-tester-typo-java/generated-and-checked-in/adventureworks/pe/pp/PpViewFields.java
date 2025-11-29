@@ -57,13 +57,13 @@ public interface PpViewFields {
     return new Impl(List.of());
   };
 
-  Field<BusinessentityId, PpViewRow> businessentityid();
-
   Field<BusinessentityId, PpViewRow> id();
 
-  Field<TypoLocalDateTime, PpViewRow> modifieddate();
+  Field<BusinessentityId, PpViewRow> businessentityid();
 
   Field<Phone, PpViewRow> phonenumber();
 
   Field<PhonenumbertypeId, PpViewRow> phonenumbertypeid();
+
+  Field<TypoLocalDateTime, PpViewRow> modifieddate();
 }

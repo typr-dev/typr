@@ -5,6 +5,7 @@
  */
 package adventureworks.public_.only_pk_columns;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
@@ -15,8 +16,8 @@ import typo.runtime.RowParsers.Tuple2;
   * Composite primary key: key_column_1, key_column_2
   */
 public record OnlyPkColumnsRow(
-  String keyColumn1,
-  Integer keyColumn2
+  @JsonProperty("key_column_1") String keyColumn1,
+  @JsonProperty("key_column_2") Integer keyColumn2
 ) {
   public OnlyPkColumnsRow withKeyColumn1(String keyColumn1) {
     return new OnlyPkColumnsRow(keyColumn1, keyColumn2);

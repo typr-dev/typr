@@ -18,7 +18,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record TitleRepoImpl() implements TitleRepo {
+public class TitleRepoImpl implements TitleRepo {
   public DeleteBuilder<TitleFields, TitleRow> delete() {
     return DeleteBuilder.of("public.title", TitleFields.structure());
   };
@@ -179,11 +179,11 @@ public record TitleRepoImpl() implements TitleRepo {
       copy title_TEMP("code") from stdin
       """), batchSize, unsaved, c, TitleRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "public"."title"("code")
-       select * from title_TEMP
-       on conflict ("code")
-       do nothing
-       ;
-       drop table title_TEMP;""")).update().runUnchecked(c);
+              insert into "public"."title"("code")
+              select * from title_TEMP
+              on conflict ("code")
+              do nothing
+              ;
+              drop table title_TEMP;""")).update().runUnchecked(c);
   };
 }

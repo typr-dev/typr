@@ -9,9 +9,10 @@ object FileTestInserts {
       x.maybeDomainMethods.map(x => jvm.Param(ComputedTestInserts.domainInsert, x.tpe))
     ).flatten
 
-    val cls = jvm.Class(
+    val cls = jvm.Adt.Record(
+      annotations = Nil,
+      isWrapper = false,
       comments = scaladoc(List(s"Methods to generate random data for `${x.tpe.name}`")),
-      classType = jvm.ClassType.Class,
       name = x.tpe,
       tparams = Nil,
       params = params,
@@ -33,17 +34,20 @@ object FileTestInserts {
             }
           }
           jvm.Method(
+            Nil,
             comments = comments,
             tparams = Nil,
             name = method.name,
             params = List(jvm.Param(ComputedTestInserts.random, lang.Random.tpe)),
             implicitParams = Nil,
             tpe = method.dom.tpe,
+            throws = Nil,
             body = Nil
           )
         }
 
         val cls = jvm.Class(
+          annotations = Nil,
           comments = scaladoc(List(s"Methods to generate random data for domain types")),
           classType = jvm.ClassType.Interface,
           name = x.tpe,

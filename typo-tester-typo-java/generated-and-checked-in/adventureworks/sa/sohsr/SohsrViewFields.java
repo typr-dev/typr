@@ -50,9 +50,9 @@ public interface SohsrViewFields {
     return new Impl(List.of());
   };
 
-  Field<TypoLocalDateTime, SohsrViewRow> modifieddate();
-
   Field<SalesorderheaderId, SohsrViewRow> salesorderid();
 
   Field<SalesreasonId, SohsrViewRow> salesreasonid();
+
+  Field<TypoLocalDateTime, SohsrViewRow> modifieddate();
 }

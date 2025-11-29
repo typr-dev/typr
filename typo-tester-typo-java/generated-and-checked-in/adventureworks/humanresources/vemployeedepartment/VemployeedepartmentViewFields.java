@@ -76,21 +76,21 @@ public interface VemployeedepartmentViewFields {
 
   Field<BusinessentityId, VemployeedepartmentViewRow> businessentityid();
 
-  Field<Name, VemployeedepartmentViewRow> department();
+  OptField</* max 8 chars */ String, VemployeedepartmentViewRow> title();
 
   Field</* user-picked */ FirstName, VemployeedepartmentViewRow> firstname();
 
-  Field<Name, VemployeedepartmentViewRow> groupname();
-
-  Field</* max 50 chars */ String, VemployeedepartmentViewRow> jobtitle();
+  OptField<Name, VemployeedepartmentViewRow> middlename();
 
   Field<Name, VemployeedepartmentViewRow> lastname();
 
-  OptField<Name, VemployeedepartmentViewRow> middlename();
-
-  Field<TypoLocalDate, VemployeedepartmentViewRow> startdate();
-
   OptField</* max 10 chars */ String, VemployeedepartmentViewRow> suffix();
 
-  OptField</* max 8 chars */ String, VemployeedepartmentViewRow> title();
+  Field</* max 50 chars */ String, VemployeedepartmentViewRow> jobtitle();
+
+  Field<Name, VemployeedepartmentViewRow> department();
+
+  Field<Name, VemployeedepartmentViewRow> groupname();
+
+  Field<TypoLocalDate, VemployeedepartmentViewRow> startdate();
 }

@@ -122,6 +122,10 @@ projects:
     dependencies:
     - junit:junit:4.13.2
     - com.novocode:junit-interface:0.11
+    - com.fasterxml.jackson.core:jackson-annotations:2.17.2
+    - com.fasterxml.jackson.core:jackson-databind:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2
     dependsOn: typo-dsl-java
     isTestProject: true
     java:

@@ -56,13 +56,13 @@ public interface DViewFields {
     return new Impl(List.of());
   };
 
+  Field<DepartmentId, DViewRow> id();
+
   Field<DepartmentId, DViewRow> departmentid();
+
+  Field<Name, DViewRow> name();
 
   Field<Name, DViewRow> groupname();
 
-  Field<DepartmentId, DViewRow> id();
-
   Field<TypoLocalDateTime, DViewRow> modifieddate();
-
-  Field<Name, DViewRow> name();
 }

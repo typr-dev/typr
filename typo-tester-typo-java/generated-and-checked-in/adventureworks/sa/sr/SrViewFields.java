@@ -58,11 +58,11 @@ public interface SrViewFields {
 
   Field<SalesreasonId, SrViewRow> id();
 
-  Field<TypoLocalDateTime, SrViewRow> modifieddate();
+  Field<SalesreasonId, SrViewRow> salesreasonid();
 
   Field<Name, SrViewRow> name();
 
   Field<Name, SrViewRow> reasontype();
 
-  Field<SalesreasonId, SrViewRow> salesreasonid();
+  Field<TypoLocalDateTime, SrViewRow> modifieddate();
 }

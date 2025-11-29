@@ -61,17 +61,17 @@ public interface VsalespersonsalesbyfiscalyearsViewFields {
     return new Impl(List.of());
   };
 
-  OptField<BigDecimal, VsalespersonsalesbyfiscalyearsViewRow> _2012();
-
-  OptField<BigDecimal, VsalespersonsalesbyfiscalyearsViewRow> _2013();
-
-  OptField<BigDecimal, VsalespersonsalesbyfiscalyearsViewRow> _2014();
+  OptField<Integer, VsalespersonsalesbyfiscalyearsViewRow> salesPersonID();
 
   OptField<String, VsalespersonsalesbyfiscalyearsViewRow> fullName();
 
   OptField<String, VsalespersonsalesbyfiscalyearsViewRow> jobTitle();
 
-  OptField<Integer, VsalespersonsalesbyfiscalyearsViewRow> salesPersonID();
-
   OptField<String, VsalespersonsalesbyfiscalyearsViewRow> salesTerritory();
+
+  OptField<BigDecimal, VsalespersonsalesbyfiscalyearsViewRow> _2012();
+
+  OptField<BigDecimal, VsalespersonsalesbyfiscalyearsViewRow> _2013();
+
+  OptField<BigDecimal, VsalespersonsalesbyfiscalyearsViewRow> _2014();
 }

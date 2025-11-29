@@ -82,29 +82,29 @@ public interface VpersondemographicsViewFields {
     return new Impl(List.of());
   };
 
-  OptField<TypoLocalDate, VpersondemographicsViewRow> birthdate();
-
   Field<BusinessentityId, VpersondemographicsViewRow> businessentityid();
-
-  OptField<TypoLocalDate, VpersondemographicsViewRow> datefirstpurchase();
-
-  OptField</* max 30 chars */ String, VpersondemographicsViewRow> education();
-
-  OptField</* max 1 chars */ String, VpersondemographicsViewRow> gender();
-
-  OptField<Boolean, VpersondemographicsViewRow> homeownerflag();
-
-  OptField</* max 1 chars */ String, VpersondemographicsViewRow> maritalstatus();
-
-  OptField<Integer, VpersondemographicsViewRow> numbercarsowned();
-
-  OptField<Integer, VpersondemographicsViewRow> numberchildrenathome();
-
-  OptField</* max 30 chars */ String, VpersondemographicsViewRow> occupation();
-
-  OptField<Integer, VpersondemographicsViewRow> totalchildren();
 
   OptField<TypoMoney, VpersondemographicsViewRow> totalpurchaseytd();
 
+  OptField<TypoLocalDate, VpersondemographicsViewRow> datefirstpurchase();
+
+  OptField<TypoLocalDate, VpersondemographicsViewRow> birthdate();
+
+  OptField</* max 1 chars */ String, VpersondemographicsViewRow> maritalstatus();
+
   OptField</* max 30 chars */ String, VpersondemographicsViewRow> yearlyincome();
+
+  OptField</* max 1 chars */ String, VpersondemographicsViewRow> gender();
+
+  OptField<Integer, VpersondemographicsViewRow> totalchildren();
+
+  OptField<Integer, VpersondemographicsViewRow> numberchildrenathome();
+
+  OptField</* max 30 chars */ String, VpersondemographicsViewRow> education();
+
+  OptField</* max 30 chars */ String, VpersondemographicsViewRow> occupation();
+
+  OptField<Boolean, VpersondemographicsViewRow> homeownerflag();
+
+  OptField<Integer, VpersondemographicsViewRow> numbercarsowned();
 }

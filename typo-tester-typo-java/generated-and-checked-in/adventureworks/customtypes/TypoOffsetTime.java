@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.time.OffsetTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -19,7 +20,7 @@ import typo.runtime.PgWrite;
 import typo.runtime.internal.arrayMap;
 
 /** This is `java.time.OffsetTime`, but with microsecond precision and transferred to and from postgres as strings. The reason is that postgres driver and db libs are broken */
-public record TypoOffsetTime(OffsetTime value) {
+public record TypoOffsetTime(@JsonValue OffsetTime value) {
   public TypoOffsetTime withValue(OffsetTime value) {
     return new TypoOffsetTime(value);
   };

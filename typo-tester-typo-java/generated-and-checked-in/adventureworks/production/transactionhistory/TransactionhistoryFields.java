@@ -73,17 +73,9 @@ public interface TransactionhistoryFields {
     return new Impl(List.of());
   };
 
-  Field<BigDecimal, TransactionhistoryRow> actualcost();
-
-  default ForeignKey<ProductFields, ProductRow> fkProduct() {
-    return ForeignKey.<ProductFields, ProductRow>of("production.FK_TransactionHistory_Product_ProductID").withColumnPair(productid(), ProductFields::productid);
-  };
-
-  Field<TypoLocalDateTime, TransactionhistoryRow> modifieddate();
+  IdField<TransactionhistoryId, TransactionhistoryRow> transactionid();
 
   Field<ProductId, TransactionhistoryRow> productid();
-
-  Field<Integer, TransactionhistoryRow> quantity();
 
   Field<Integer, TransactionhistoryRow> referenceorderid();
 
@@ -91,7 +83,15 @@ public interface TransactionhistoryFields {
 
   Field<TypoLocalDateTime, TransactionhistoryRow> transactiondate();
 
-  IdField<TransactionhistoryId, TransactionhistoryRow> transactionid();
-
   Field</* bpchar, max 1 chars */ String, TransactionhistoryRow> transactiontype();
+
+  Field<Integer, TransactionhistoryRow> quantity();
+
+  Field<BigDecimal, TransactionhistoryRow> actualcost();
+
+  Field<TypoLocalDateTime, TransactionhistoryRow> modifieddate();
+
+  default ForeignKey<ProductFields, ProductRow> fkProduct() {
+    return ForeignKey.<ProductFields, ProductRow>of("production.FK_TransactionHistory_Product_ProductID").withColumnPair(productid(), ProductFields::productid);
+  };
 }

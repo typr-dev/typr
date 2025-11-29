@@ -25,7 +25,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record PersoncreditcardRepoImpl() implements PersoncreditcardRepo {
+public class PersoncreditcardRepoImpl implements PersoncreditcardRepo {
   public DeleteBuilder<PersoncreditcardFields, PersoncreditcardRow> delete() {
     return DeleteBuilder.of("sales.personcreditcard", PersoncreditcardFields.structure());
   };
@@ -54,19 +54,19 @@ public record PersoncreditcardRepoImpl() implements PersoncreditcardRepo {
     BusinessentityId[] businessentityid = arrayMap.map(compositeIds, PersoncreditcardId::businessentityid, BusinessentityId.class);;
       /* user-picked */ CustomCreditcardId[] creditcardid = arrayMap.map(compositeIds, PersoncreditcardId::creditcardid, /* user-picked */ CustomCreditcardId.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         delete
-         from "sales"."personcreditcard"
-         where ("businessentityid", "creditcardid")
-         in (select unnest("""),
-      BusinessentityId.pgTypeArray.encode(businessentityid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      CustomCreditcardId.pgTypeArray.encode(creditcardid),
-      typo.runtime.Fragment.lit("""
-      ::int4[]))
+             typo.runtime.Fragment.lit("""
+                delete
+                from "sales"."personcreditcard"
+                where ("businessentityid", "creditcardid")
+                in (select unnest("""),
+             BusinessentityId.pgTypeArray.encode(businessentityid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             CustomCreditcardId.pgTypeArray.encode(creditcardid),
+             typo.runtime.Fragment.lit("""
+             ::int4[]))
 
-      """)
-    ).update().runUnchecked(c);
+             """)
+           ).update().runUnchecked(c);
   };
 
   public PersoncreditcardRow insert(
@@ -190,19 +190,19 @@ public record PersoncreditcardRepoImpl() implements PersoncreditcardRepo {
     BusinessentityId[] businessentityid = arrayMap.map(compositeIds, PersoncreditcardId::businessentityid, BusinessentityId.class);;
       /* user-picked */ CustomCreditcardId[] creditcardid = arrayMap.map(compositeIds, PersoncreditcardId::creditcardid, /* user-picked */ CustomCreditcardId.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         select "businessentityid", "creditcardid", "modifieddate"::text
-         from "sales"."personcreditcard"
-         where ("businessentityid", "creditcardid")
-         in (select unnest("""),
-      BusinessentityId.pgTypeArray.encode(businessentityid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      CustomCreditcardId.pgTypeArray.encode(creditcardid),
-      typo.runtime.Fragment.lit("""
-      ::int4[]))
+             typo.runtime.Fragment.lit("""
+                select "businessentityid", "creditcardid", "modifieddate"::text
+                from "sales"."personcreditcard"
+                where ("businessentityid", "creditcardid")
+                in (select unnest("""),
+             BusinessentityId.pgTypeArray.encode(businessentityid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             CustomCreditcardId.pgTypeArray.encode(creditcardid),
+             typo.runtime.Fragment.lit("""
+             ::int4[]))
 
-      """)
-    ).as(PersoncreditcardRow._rowParser.all()).runUnchecked(c);
+             """)
+           ).as(PersoncreditcardRow._rowParser.all()).runUnchecked(c);
   };
 
   public Map<PersoncreditcardId, PersoncreditcardRow> selectByIdsTracked(
@@ -224,20 +224,20 @@ public record PersoncreditcardRepoImpl() implements PersoncreditcardRepo {
   ) {
     PersoncreditcardId compositeId = row.compositeId();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "sales"."personcreditcard"
-         set "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "businessentityid" = """),
-      BusinessentityId.pgType.encode(compositeId.businessentityid()),
-      typo.runtime.Fragment.lit("""
-       AND "creditcardid" = 
-      """),
-      /* user-picked */ CustomCreditcardId.pgType.encode(compositeId.creditcardid()),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "sales"."personcreditcard"
+                set "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "businessentityid" = """),
+             BusinessentityId.pgType.encode(compositeId.businessentityid()),
+             typo.runtime.Fragment.lit("""
+              AND "creditcardid" = 
+             """),
+             /* user-picked */ CustomCreditcardId.pgType.encode(compositeId.creditcardid()),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public PersoncreditcardRow upsert(
@@ -294,12 +294,12 @@ public record PersoncreditcardRepoImpl() implements PersoncreditcardRepo {
       copy personcreditcard_TEMP("businessentityid", "creditcardid", "modifieddate") from stdin
       """), batchSize, unsaved, c, PersoncreditcardRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "sales"."personcreditcard"("businessentityid", "creditcardid", "modifieddate")
-       select * from personcreditcard_TEMP
-       on conflict ("businessentityid", "creditcardid")
-       do update set
-         "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table personcreditcard_TEMP;""")).update().runUnchecked(c);
+              insert into "sales"."personcreditcard"("businessentityid", "creditcardid", "modifieddate")
+              select * from personcreditcard_TEMP
+              on conflict ("businessentityid", "creditcardid")
+              do update set
+                "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table personcreditcard_TEMP;""")).update().runUnchecked(c);
   };
 }

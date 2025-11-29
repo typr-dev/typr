@@ -26,7 +26,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record PersonphoneRepoImpl() implements PersonphoneRepo {
+public class PersonphoneRepoImpl implements PersonphoneRepo {
   public DeleteBuilder<PersonphoneFields, PersonphoneRow> delete() {
     return DeleteBuilder.of("person.personphone", PersonphoneFields.structure());
   };
@@ -60,21 +60,21 @@ public record PersonphoneRepoImpl() implements PersonphoneRepo {
       Phone[] phonenumber = arrayMap.map(compositeIds, PersonphoneId::phonenumber, Phone.class);;
       PhonenumbertypeId[] phonenumbertypeid = arrayMap.map(compositeIds, PersonphoneId::phonenumbertypeid, PhonenumbertypeId.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         delete
-         from "person"."personphone"
-         where ("businessentityid", "phonenumber", "phonenumbertypeid")
-         in (select unnest("""),
-      BusinessentityId.pgTypeArray.encode(businessentityid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      Phone.pgTypeArray.encode(phonenumber),
-      typo.runtime.Fragment.lit("::varchar[]), unnest("),
-      PhonenumbertypeId.pgTypeArray.encode(phonenumbertypeid),
-      typo.runtime.Fragment.lit("""
-      ::int4[]))
+             typo.runtime.Fragment.lit("""
+                delete
+                from "person"."personphone"
+                where ("businessentityid", "phonenumber", "phonenumbertypeid")
+                in (select unnest("""),
+             BusinessentityId.pgTypeArray.encode(businessentityid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             Phone.pgTypeArray.encode(phonenumber),
+             typo.runtime.Fragment.lit("::varchar[]), unnest("),
+             PhonenumbertypeId.pgTypeArray.encode(phonenumbertypeid),
+             typo.runtime.Fragment.lit("""
+             ::int4[]))
 
-      """)
-    ).update().runUnchecked(c);
+             """)
+           ).update().runUnchecked(c);
   };
 
   public PersonphoneRow insert(
@@ -210,21 +210,21 @@ public record PersonphoneRepoImpl() implements PersonphoneRepo {
       Phone[] phonenumber = arrayMap.map(compositeIds, PersonphoneId::phonenumber, Phone.class);;
       PhonenumbertypeId[] phonenumbertypeid = arrayMap.map(compositeIds, PersonphoneId::phonenumbertypeid, PhonenumbertypeId.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         select "businessentityid", "phonenumber", "phonenumbertypeid", "modifieddate"::text
-         from "person"."personphone"
-         where ("businessentityid", "phonenumber", "phonenumbertypeid")
-         in (select unnest("""),
-      BusinessentityId.pgTypeArray.encode(businessentityid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      Phone.pgTypeArray.encode(phonenumber),
-      typo.runtime.Fragment.lit("::varchar[]), unnest("),
-      PhonenumbertypeId.pgTypeArray.encode(phonenumbertypeid),
-      typo.runtime.Fragment.lit("""
-      ::int4[]))
+             typo.runtime.Fragment.lit("""
+                select "businessentityid", "phonenumber", "phonenumbertypeid", "modifieddate"::text
+                from "person"."personphone"
+                where ("businessentityid", "phonenumber", "phonenumbertypeid")
+                in (select unnest("""),
+             BusinessentityId.pgTypeArray.encode(businessentityid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             Phone.pgTypeArray.encode(phonenumber),
+             typo.runtime.Fragment.lit("::varchar[]), unnest("),
+             PhonenumbertypeId.pgTypeArray.encode(phonenumbertypeid),
+             typo.runtime.Fragment.lit("""
+             ::int4[]))
 
-      """)
-    ).as(PersonphoneRow._rowParser.all()).runUnchecked(c);
+             """)
+           ).as(PersonphoneRow._rowParser.all()).runUnchecked(c);
   };
 
   public Map<PersonphoneId, PersonphoneRow> selectByIdsTracked(
@@ -246,24 +246,24 @@ public record PersonphoneRepoImpl() implements PersonphoneRepo {
   ) {
     PersonphoneId compositeId = row.compositeId();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "person"."personphone"
-         set "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "businessentityid" = """),
-      BusinessentityId.pgType.encode(compositeId.businessentityid()),
-      typo.runtime.Fragment.lit("""
-       AND "phonenumber" = 
-      """),
-      Phone.pgType.encode(compositeId.phonenumber()),
-      typo.runtime.Fragment.lit("""
-       AND "phonenumbertypeid" = 
-      """),
-      PhonenumbertypeId.pgType.encode(compositeId.phonenumbertypeid()),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "person"."personphone"
+                set "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "businessentityid" = """),
+             BusinessentityId.pgType.encode(compositeId.businessentityid()),
+             typo.runtime.Fragment.lit("""
+              AND "phonenumber" = 
+             """),
+             Phone.pgType.encode(compositeId.phonenumber()),
+             typo.runtime.Fragment.lit("""
+              AND "phonenumbertypeid" = 
+             """),
+             PhonenumbertypeId.pgType.encode(compositeId.phonenumbertypeid()),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public PersonphoneRow upsert(
@@ -322,12 +322,12 @@ public record PersonphoneRepoImpl() implements PersonphoneRepo {
       copy personphone_TEMP("businessentityid", "phonenumber", "phonenumbertypeid", "modifieddate") from stdin
       """), batchSize, unsaved, c, PersonphoneRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "person"."personphone"("businessentityid", "phonenumber", "phonenumbertypeid", "modifieddate")
-       select * from personphone_TEMP
-       on conflict ("businessentityid", "phonenumber", "phonenumbertypeid")
-       do update set
-         "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table personphone_TEMP;""")).update().runUnchecked(c);
+              insert into "person"."personphone"("businessentityid", "phonenumber", "phonenumbertypeid", "modifieddate")
+              select * from personphone_TEMP
+              on conflict ("businessentityid", "phonenumber", "phonenumbertypeid")
+              do update set
+                "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table personphone_TEMP;""")).update().runUnchecked(c);
   };
 }

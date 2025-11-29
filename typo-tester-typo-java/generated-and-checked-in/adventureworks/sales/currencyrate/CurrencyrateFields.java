@@ -67,13 +67,19 @@ public interface CurrencyrateFields {
     return new Impl(List.of());
   };
 
-  Field<BigDecimal, CurrencyrateRow> averagerate();
+  IdField<CurrencyrateId, CurrencyrateRow> currencyrateid();
 
   Field<TypoLocalDateTime, CurrencyrateRow> currencyratedate();
 
-  IdField<CurrencyrateId, CurrencyrateRow> currencyrateid();
+  Field<CurrencyId, CurrencyrateRow> fromcurrencycode();
+
+  Field<CurrencyId, CurrencyrateRow> tocurrencycode();
+
+  Field<BigDecimal, CurrencyrateRow> averagerate();
 
   Field<BigDecimal, CurrencyrateRow> endofdayrate();
+
+  Field<TypoLocalDateTime, CurrencyrateRow> modifieddate();
 
   default ForeignKey<CurrencyFields, CurrencyRow> fkCurrencyFromcurrencycode() {
     return ForeignKey.<CurrencyFields, CurrencyRow>of("sales.FK_CurrencyRate_Currency_FromCurrencyCode").withColumnPair(fromcurrencycode(), CurrencyFields::currencycode);
@@ -82,10 +88,4 @@ public interface CurrencyrateFields {
   default ForeignKey<CurrencyFields, CurrencyRow> fkCurrencyTocurrencycode() {
     return ForeignKey.<CurrencyFields, CurrencyRow>of("sales.FK_CurrencyRate_Currency_ToCurrencyCode").withColumnPair(tocurrencycode(), CurrencyFields::currencycode);
   };
-
-  Field<CurrencyId, CurrencyrateRow> fromcurrencycode();
-
-  Field<TypoLocalDateTime, CurrencyrateRow> modifieddate();
-
-  Field<CurrencyId, CurrencyrateRow> tocurrencycode();
 }

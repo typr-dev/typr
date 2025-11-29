@@ -77,25 +77,25 @@ public interface SpecialofferFields {
     return new Impl(List.of());
   };
 
-  Field</* max 50 chars */ String, SpecialofferRow> category();
+  IdField<SpecialofferId, SpecialofferRow> specialofferid();
 
   Field</* max 255 chars */ String, SpecialofferRow> description();
 
   Field<BigDecimal, SpecialofferRow> discountpct();
 
-  Field<TypoLocalDateTime, SpecialofferRow> enddate();
+  Field</* max 50 chars */ String, SpecialofferRow> type();
 
-  OptField<Integer, SpecialofferRow> maxqty();
-
-  Field<Integer, SpecialofferRow> minqty();
-
-  Field<TypoLocalDateTime, SpecialofferRow> modifieddate();
-
-  Field<TypoUUID, SpecialofferRow> rowguid();
-
-  IdField<SpecialofferId, SpecialofferRow> specialofferid();
+  Field</* max 50 chars */ String, SpecialofferRow> category();
 
   Field<TypoLocalDateTime, SpecialofferRow> startdate();
 
-  Field</* max 50 chars */ String, SpecialofferRow> type();
+  Field<TypoLocalDateTime, SpecialofferRow> enddate();
+
+  Field<Integer, SpecialofferRow> minqty();
+
+  OptField<Integer, SpecialofferRow> maxqty();
+
+  Field<TypoUUID, SpecialofferRow> rowguid();
+
+  Field<TypoLocalDateTime, SpecialofferRow> modifieddate();
 }

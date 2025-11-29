@@ -53,11 +53,11 @@ public interface BeViewFields {
     return new Impl(List.of());
   };
 
-  Field<BusinessentityId, BeViewRow> businessentityid();
-
   Field<BusinessentityId, BeViewRow> id();
 
-  Field<TypoLocalDateTime, BeViewRow> modifieddate();
+  Field<BusinessentityId, BeViewRow> businessentityid();
 
   Field<TypoUUID, BeViewRow> rowguid();
+
+  Field<TypoLocalDateTime, BeViewRow> modifieddate();
 }

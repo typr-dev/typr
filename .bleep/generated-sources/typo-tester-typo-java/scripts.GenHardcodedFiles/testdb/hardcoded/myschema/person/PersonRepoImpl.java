@@ -25,7 +25,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record PersonRepoImpl() implements PersonRepo {
+public class PersonRepoImpl implements PersonRepo {
   public DeleteBuilder<PersonFields, PersonRow> delete() {
     return DeleteBuilder.of("myschema.person", PersonFields.structure());
   };
@@ -277,52 +277,52 @@ public record PersonRepoImpl() implements PersonRepo {
   ) {
     PersonId id = row.id();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "myschema"."person"
-         set "favourite_football_club_id" = """),
-      FootballClubId.pgType.encode(row.favouriteFootballClubId()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "name" = """),
-      PgTypes.text.encode(row.name()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "nick_name" = """),
-      PgTypes.text.opt().encode(row.nickName()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "blog_url" = """),
-      PgTypes.text.opt().encode(row.blogUrl()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "email" = """),
-      PgTypes.text.encode(row.email()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "phone" = """),
-      PgTypes.text.encode(row.phone()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "likes_pizza" = """),
-      PgTypes.bool.encode(row.likesPizza()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "marital_status_id" = """),
-      MaritalStatusId.pgType.encode(row.maritalStatusId()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "work_email" = """),
-      PgTypes.text.opt().encode(row.workEmail()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "favorite_number" = """),
-      Number.pgType.encode(row.favoriteNumber()),
-      typo.runtime.Fragment.lit("""
-         ::myschema.number
-         where "id" = """),
-      PersonId.pgType.encode(id),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "myschema"."person"
+                set "favourite_football_club_id" = """),
+             FootballClubId.pgType.encode(row.favouriteFootballClubId()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "name" = """),
+             PgTypes.text.encode(row.name()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "nick_name" = """),
+             PgTypes.text.opt().encode(row.nickName()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "blog_url" = """),
+             PgTypes.text.opt().encode(row.blogUrl()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "email" = """),
+             PgTypes.text.encode(row.email()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "phone" = """),
+             PgTypes.text.encode(row.phone()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "likes_pizza" = """),
+             PgTypes.bool.encode(row.likesPizza()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "marital_status_id" = """),
+             MaritalStatusId.pgType.encode(row.maritalStatusId()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "work_email" = """),
+             PgTypes.text.opt().encode(row.workEmail()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "favorite_number" = """),
+             Number.pgType.encode(row.favoriteNumber()),
+             typo.runtime.Fragment.lit("""
+                ::myschema.number
+                where "id" = """),
+             PersonId.pgType.encode(id),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public PersonRow upsert(
@@ -413,21 +413,21 @@ public record PersonRepoImpl() implements PersonRepo {
       copy person_TEMP("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number") from stdin
       """), batchSize, unsaved, c, PersonRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "myschema"."person"("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number")
-       select * from person_TEMP
-       on conflict ("id")
-       do update set
-         "favourite_football_club_id" = EXCLUDED."favourite_football_club_id",
-       "name" = EXCLUDED."name",
-       "nick_name" = EXCLUDED."nick_name",
-       "blog_url" = EXCLUDED."blog_url",
-       "email" = EXCLUDED."email",
-       "phone" = EXCLUDED."phone",
-       "likes_pizza" = EXCLUDED."likes_pizza",
-       "marital_status_id" = EXCLUDED."marital_status_id",
-       "work_email" = EXCLUDED."work_email",
-       "favorite_number" = EXCLUDED."favorite_number"
-       ;
-       drop table person_TEMP;""")).update().runUnchecked(c);
+              insert into "myschema"."person"("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number")
+              select * from person_TEMP
+              on conflict ("id")
+              do update set
+                "favourite_football_club_id" = EXCLUDED."favourite_football_club_id",
+              "name" = EXCLUDED."name",
+              "nick_name" = EXCLUDED."nick_name",
+              "blog_url" = EXCLUDED."blog_url",
+              "email" = EXCLUDED."email",
+              "phone" = EXCLUDED."phone",
+              "likes_pizza" = EXCLUDED."likes_pizza",
+              "marital_status_id" = EXCLUDED."marital_status_id",
+              "work_email" = EXCLUDED."work_email",
+              "favorite_number" = EXCLUDED."favorite_number"
+              ;
+              drop table person_TEMP;""")).update().runUnchecked(c);
   };
 }

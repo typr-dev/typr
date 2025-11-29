@@ -28,7 +28,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record StateprovinceRepoImpl() implements StateprovinceRepo {
+public class StateprovinceRepoImpl implements StateprovinceRepo {
   public DeleteBuilder<StateprovinceFields, StateprovinceRow> delete() {
     return DeleteBuilder.of("person.stateprovince", StateprovinceFields.structure());
   };
@@ -256,40 +256,40 @@ public record StateprovinceRepoImpl() implements StateprovinceRepo {
   ) {
     StateprovinceId stateprovinceid = row.stateprovinceid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "person"."stateprovince"
-         set "stateprovincecode" = """),
-      PgTypes.text.encode(row.stateprovincecode()),
-      typo.runtime.Fragment.lit("""
-         ::bpchar,
-         "countryregioncode" = """),
-      CountryregionId.pgType.encode(row.countryregioncode()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "isonlystateprovinceflag" = """),
-      Flag.pgType.encode(row.isonlystateprovinceflag()),
-      typo.runtime.Fragment.lit("""
-         ::bool,
-         "name" = """),
-      Name.pgType.encode(row.name()),
-      typo.runtime.Fragment.lit("""
-         ::varchar,
-         "territoryid" = """),
-      SalesterritoryId.pgType.encode(row.territoryid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "rowguid" = """),
-      TypoUUID.pgType.encode(row.rowguid()),
-      typo.runtime.Fragment.lit("""
-         ::uuid,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "stateprovinceid" = """),
-      StateprovinceId.pgType.encode(stateprovinceid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "person"."stateprovince"
+                set "stateprovincecode" = """),
+             PgTypes.text.encode(row.stateprovincecode()),
+             typo.runtime.Fragment.lit("""
+                ::bpchar,
+                "countryregioncode" = """),
+             CountryregionId.pgType.encode(row.countryregioncode()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "isonlystateprovinceflag" = """),
+             Flag.pgType.encode(row.isonlystateprovinceflag()),
+             typo.runtime.Fragment.lit("""
+                ::bool,
+                "name" = """),
+             Name.pgType.encode(row.name()),
+             typo.runtime.Fragment.lit("""
+                ::varchar,
+                "territoryid" = """),
+             SalesterritoryId.pgType.encode(row.territoryid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "rowguid" = """),
+             TypoUUID.pgType.encode(row.rowguid()),
+             typo.runtime.Fragment.lit("""
+                ::uuid,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "stateprovinceid" = """),
+             StateprovinceId.pgType.encode(stateprovinceid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public StateprovinceRow upsert(
@@ -368,18 +368,18 @@ public record StateprovinceRepoImpl() implements StateprovinceRepo {
       copy stateprovince_TEMP("stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate") from stdin
       """), batchSize, unsaved, c, StateprovinceRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "person"."stateprovince"("stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate")
-       select * from stateprovince_TEMP
-       on conflict ("stateprovinceid")
-       do update set
-         "stateprovincecode" = EXCLUDED."stateprovincecode",
-       "countryregioncode" = EXCLUDED."countryregioncode",
-       "isonlystateprovinceflag" = EXCLUDED."isonlystateprovinceflag",
-       "name" = EXCLUDED."name",
-       "territoryid" = EXCLUDED."territoryid",
-       "rowguid" = EXCLUDED."rowguid",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table stateprovince_TEMP;""")).update().runUnchecked(c);
+              insert into "person"."stateprovince"("stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate")
+              select * from stateprovince_TEMP
+              on conflict ("stateprovinceid")
+              do update set
+                "stateprovincecode" = EXCLUDED."stateprovincecode",
+              "countryregioncode" = EXCLUDED."countryregioncode",
+              "isonlystateprovinceflag" = EXCLUDED."isonlystateprovinceflag",
+              "name" = EXCLUDED."name",
+              "territoryid" = EXCLUDED."territoryid",
+              "rowguid" = EXCLUDED."rowguid",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table stateprovince_TEMP;""")).update().runUnchecked(c);
   };
 }

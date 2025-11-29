@@ -27,7 +27,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record WorkorderroutingRepoImpl() implements WorkorderroutingRepo {
+public class WorkorderroutingRepoImpl implements WorkorderroutingRepo {
   public DeleteBuilder<WorkorderroutingFields, WorkorderroutingRow> delete() {
     return DeleteBuilder.of("production.workorderrouting", WorkorderroutingFields.structure());
   };
@@ -61,21 +61,21 @@ public record WorkorderroutingRepoImpl() implements WorkorderroutingRepo {
       Integer[] productid = arrayMap.map(compositeIds, WorkorderroutingId::productid, Integer.class);;
       TypoShort[] operationsequence = arrayMap.map(compositeIds, WorkorderroutingId::operationsequence, TypoShort.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         delete
-         from "production"."workorderrouting"
-         where ("workorderid", "productid", "operationsequence")
-         in (select unnest("""),
-      WorkorderId.pgTypeArray.encode(workorderid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      PgTypes.int4Array.encode(productid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      TypoShort.pgTypeArray.encode(operationsequence),
-      typo.runtime.Fragment.lit("""
-      ::int2[]))
+             typo.runtime.Fragment.lit("""
+                delete
+                from "production"."workorderrouting"
+                where ("workorderid", "productid", "operationsequence")
+                in (select unnest("""),
+             WorkorderId.pgTypeArray.encode(workorderid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             PgTypes.int4Array.encode(productid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             TypoShort.pgTypeArray.encode(operationsequence),
+             typo.runtime.Fragment.lit("""
+             ::int2[]))
 
-      """)
-    ).update().runUnchecked(c);
+             """)
+           ).update().runUnchecked(c);
   };
 
   public WorkorderroutingRow insert(
@@ -267,21 +267,21 @@ public record WorkorderroutingRepoImpl() implements WorkorderroutingRepo {
       Integer[] productid = arrayMap.map(compositeIds, WorkorderroutingId::productid, Integer.class);;
       TypoShort[] operationsequence = arrayMap.map(compositeIds, WorkorderroutingId::operationsequence, TypoShort.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         select "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text
-         from "production"."workorderrouting"
-         where ("workorderid", "productid", "operationsequence")
-         in (select unnest("""),
-      WorkorderId.pgTypeArray.encode(workorderid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      PgTypes.int4Array.encode(productid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      TypoShort.pgTypeArray.encode(operationsequence),
-      typo.runtime.Fragment.lit("""
-      ::int2[]))
+             typo.runtime.Fragment.lit("""
+                select "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text
+                from "production"."workorderrouting"
+                where ("workorderid", "productid", "operationsequence")
+                in (select unnest("""),
+             WorkorderId.pgTypeArray.encode(workorderid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             PgTypes.int4Array.encode(productid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             TypoShort.pgTypeArray.encode(operationsequence),
+             typo.runtime.Fragment.lit("""
+             ::int2[]))
 
-      """)
-    ).as(WorkorderroutingRow._rowParser.all()).runUnchecked(c);
+             """)
+           ).as(WorkorderroutingRow._rowParser.all()).runUnchecked(c);
   };
 
   public Map<WorkorderroutingId, WorkorderroutingRow> selectByIdsTracked(
@@ -303,56 +303,56 @@ public record WorkorderroutingRepoImpl() implements WorkorderroutingRepo {
   ) {
     WorkorderroutingId compositeId = row.compositeId();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "production"."workorderrouting"
-         set "locationid" = """),
-      LocationId.pgType.encode(row.locationid()),
-      typo.runtime.Fragment.lit("""
-         ::int2,
-         "scheduledstartdate" = """),
-      TypoLocalDateTime.pgType.encode(row.scheduledstartdate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp,
-         "scheduledenddate" = """),
-      TypoLocalDateTime.pgType.encode(row.scheduledenddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp,
-         "actualstartdate" = """),
-      TypoLocalDateTime.pgType.opt().encode(row.actualstartdate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp,
-         "actualenddate" = """),
-      TypoLocalDateTime.pgType.opt().encode(row.actualenddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp,
-         "actualresourcehrs" = """),
-      PgTypes.numeric.opt().encode(row.actualresourcehrs()),
-      typo.runtime.Fragment.lit("""
-         ::numeric,
-         "plannedcost" = """),
-      PgTypes.numeric.encode(row.plannedcost()),
-      typo.runtime.Fragment.lit("""
-         ::numeric,
-         "actualcost" = """),
-      PgTypes.numeric.opt().encode(row.actualcost()),
-      typo.runtime.Fragment.lit("""
-         ::numeric,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "workorderid" = """),
-      WorkorderId.pgType.encode(compositeId.workorderid()),
-      typo.runtime.Fragment.lit("""
-       AND "productid" = 
-      """),
-      PgTypes.int4.encode(compositeId.productid()),
-      typo.runtime.Fragment.lit("""
-       AND "operationsequence" = 
-      """),
-      TypoShort.pgType.encode(compositeId.operationsequence()),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "production"."workorderrouting"
+                set "locationid" = """),
+             LocationId.pgType.encode(row.locationid()),
+             typo.runtime.Fragment.lit("""
+                ::int2,
+                "scheduledstartdate" = """),
+             TypoLocalDateTime.pgType.encode(row.scheduledstartdate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp,
+                "scheduledenddate" = """),
+             TypoLocalDateTime.pgType.encode(row.scheduledenddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp,
+                "actualstartdate" = """),
+             TypoLocalDateTime.pgType.opt().encode(row.actualstartdate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp,
+                "actualenddate" = """),
+             TypoLocalDateTime.pgType.opt().encode(row.actualenddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp,
+                "actualresourcehrs" = """),
+             PgTypes.numeric.opt().encode(row.actualresourcehrs()),
+             typo.runtime.Fragment.lit("""
+                ::numeric,
+                "plannedcost" = """),
+             PgTypes.numeric.encode(row.plannedcost()),
+             typo.runtime.Fragment.lit("""
+                ::numeric,
+                "actualcost" = """),
+             PgTypes.numeric.opt().encode(row.actualcost()),
+             typo.runtime.Fragment.lit("""
+                ::numeric,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "workorderid" = """),
+             WorkorderId.pgType.encode(compositeId.workorderid()),
+             typo.runtime.Fragment.lit("""
+              AND "productid" = 
+             """),
+             PgTypes.int4.encode(compositeId.productid()),
+             typo.runtime.Fragment.lit("""
+              AND "operationsequence" = 
+             """),
+             TypoShort.pgType.encode(compositeId.operationsequence()),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public WorkorderroutingRow upsert(
@@ -443,20 +443,20 @@ public record WorkorderroutingRepoImpl() implements WorkorderroutingRepo {
       copy workorderrouting_TEMP("workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate") from stdin
       """), batchSize, unsaved, c, WorkorderroutingRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "production"."workorderrouting"("workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate")
-       select * from workorderrouting_TEMP
-       on conflict ("workorderid", "productid", "operationsequence")
-       do update set
-         "locationid" = EXCLUDED."locationid",
-       "scheduledstartdate" = EXCLUDED."scheduledstartdate",
-       "scheduledenddate" = EXCLUDED."scheduledenddate",
-       "actualstartdate" = EXCLUDED."actualstartdate",
-       "actualenddate" = EXCLUDED."actualenddate",
-       "actualresourcehrs" = EXCLUDED."actualresourcehrs",
-       "plannedcost" = EXCLUDED."plannedcost",
-       "actualcost" = EXCLUDED."actualcost",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table workorderrouting_TEMP;""")).update().runUnchecked(c);
+              insert into "production"."workorderrouting"("workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate")
+              select * from workorderrouting_TEMP
+              on conflict ("workorderid", "productid", "operationsequence")
+              do update set
+                "locationid" = EXCLUDED."locationid",
+              "scheduledstartdate" = EXCLUDED."scheduledstartdate",
+              "scheduledenddate" = EXCLUDED."scheduledenddate",
+              "actualstartdate" = EXCLUDED."actualstartdate",
+              "actualenddate" = EXCLUDED."actualenddate",
+              "actualresourcehrs" = EXCLUDED."actualresourcehrs",
+              "plannedcost" = EXCLUDED."plannedcost",
+              "actualcost" = EXCLUDED."actualcost",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table workorderrouting_TEMP;""")).update().runUnchecked(c);
   };
 }

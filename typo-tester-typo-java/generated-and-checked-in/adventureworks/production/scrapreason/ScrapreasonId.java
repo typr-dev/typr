@@ -5,13 +5,14 @@
  */
 package adventureworks.production.scrapreason;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `production.scrapreason` */
-public record ScrapreasonId(Integer value) {
+public record ScrapreasonId(@JsonValue Integer value) {
   public ScrapreasonId withValue(Integer value) {
     return new ScrapreasonId(value);
   };

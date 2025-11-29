@@ -66,15 +66,15 @@ public interface PpViewFields {
 
   Field<ProductphotoId, PpViewRow> id();
 
-  OptField<TypoBytea, PpViewRow> largephoto();
-
-  OptField</* max 50 chars */ String, PpViewRow> largephotofilename();
-
-  Field<TypoLocalDateTime, PpViewRow> modifieddate();
-
   Field<ProductphotoId, PpViewRow> productphotoid();
 
   OptField<TypoBytea, PpViewRow> thumbnailphoto();
 
   OptField</* max 50 chars */ String, PpViewRow> thumbnailphotofilename();
+
+  OptField<TypoBytea, PpViewRow> largephoto();
+
+  OptField</* max 50 chars */ String, PpViewRow> largephotofilename();
+
+  Field<TypoLocalDateTime, PpViewRow> modifieddate();
 }

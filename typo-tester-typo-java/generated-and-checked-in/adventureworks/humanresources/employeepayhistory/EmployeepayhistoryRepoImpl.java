@@ -26,7 +26,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record EmployeepayhistoryRepoImpl() implements EmployeepayhistoryRepo {
+public class EmployeepayhistoryRepoImpl implements EmployeepayhistoryRepo {
   public DeleteBuilder<EmployeepayhistoryFields, EmployeepayhistoryRow> delete() {
     return DeleteBuilder.of("humanresources.employeepayhistory", EmployeepayhistoryFields.structure());
   };
@@ -55,19 +55,19 @@ public record EmployeepayhistoryRepoImpl() implements EmployeepayhistoryRepo {
     BusinessentityId[] businessentityid = arrayMap.map(compositeIds, EmployeepayhistoryId::businessentityid, BusinessentityId.class);;
       TypoLocalDateTime[] ratechangedate = arrayMap.map(compositeIds, EmployeepayhistoryId::ratechangedate, TypoLocalDateTime.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         delete
-         from "humanresources"."employeepayhistory"
-         where ("businessentityid", "ratechangedate")
-         in (select unnest("""),
-      BusinessentityId.pgTypeArray.encode(businessentityid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      TypoLocalDateTime.pgTypeArray.encode(ratechangedate),
-      typo.runtime.Fragment.lit("""
-      ::timestamp[]))
+             typo.runtime.Fragment.lit("""
+                delete
+                from "humanresources"."employeepayhistory"
+                where ("businessentityid", "ratechangedate")
+                in (select unnest("""),
+             BusinessentityId.pgTypeArray.encode(businessentityid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             TypoLocalDateTime.pgTypeArray.encode(ratechangedate),
+             typo.runtime.Fragment.lit("""
+             ::timestamp[]))
 
-      """)
-    ).update().runUnchecked(c);
+             """)
+           ).update().runUnchecked(c);
   };
 
   public EmployeepayhistoryRow insert(
@@ -205,19 +205,19 @@ public record EmployeepayhistoryRepoImpl() implements EmployeepayhistoryRepo {
     BusinessentityId[] businessentityid = arrayMap.map(compositeIds, EmployeepayhistoryId::businessentityid, BusinessentityId.class);;
       TypoLocalDateTime[] ratechangedate = arrayMap.map(compositeIds, EmployeepayhistoryId::ratechangedate, TypoLocalDateTime.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         select "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text
-         from "humanresources"."employeepayhistory"
-         where ("businessentityid", "ratechangedate")
-         in (select unnest("""),
-      BusinessentityId.pgTypeArray.encode(businessentityid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      TypoLocalDateTime.pgTypeArray.encode(ratechangedate),
-      typo.runtime.Fragment.lit("""
-      ::timestamp[]))
+             typo.runtime.Fragment.lit("""
+                select "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text
+                from "humanresources"."employeepayhistory"
+                where ("businessentityid", "ratechangedate")
+                in (select unnest("""),
+             BusinessentityId.pgTypeArray.encode(businessentityid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             TypoLocalDateTime.pgTypeArray.encode(ratechangedate),
+             typo.runtime.Fragment.lit("""
+             ::timestamp[]))
 
-      """)
-    ).as(EmployeepayhistoryRow._rowParser.all()).runUnchecked(c);
+             """)
+           ).as(EmployeepayhistoryRow._rowParser.all()).runUnchecked(c);
   };
 
   public Map<EmployeepayhistoryId, EmployeepayhistoryRow> selectByIdsTracked(
@@ -239,28 +239,28 @@ public record EmployeepayhistoryRepoImpl() implements EmployeepayhistoryRepo {
   ) {
     EmployeepayhistoryId compositeId = row.compositeId();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "humanresources"."employeepayhistory"
-         set "rate" = """),
-      PgTypes.numeric.encode(row.rate()),
-      typo.runtime.Fragment.lit("""
-         ::numeric,
-         "payfrequency" = """),
-      TypoShort.pgType.encode(row.payfrequency()),
-      typo.runtime.Fragment.lit("""
-         ::int2,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "businessentityid" = """),
-      BusinessentityId.pgType.encode(compositeId.businessentityid()),
-      typo.runtime.Fragment.lit("""
-       AND "ratechangedate" = 
-      """),
-      TypoLocalDateTime.pgType.encode(compositeId.ratechangedate()),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "humanresources"."employeepayhistory"
+                set "rate" = """),
+             PgTypes.numeric.encode(row.rate()),
+             typo.runtime.Fragment.lit("""
+                ::numeric,
+                "payfrequency" = """),
+             TypoShort.pgType.encode(row.payfrequency()),
+             typo.runtime.Fragment.lit("""
+                ::int2,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "businessentityid" = """),
+             BusinessentityId.pgType.encode(compositeId.businessentityid()),
+             typo.runtime.Fragment.lit("""
+              AND "ratechangedate" = 
+             """),
+             TypoLocalDateTime.pgType.encode(compositeId.ratechangedate()),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public EmployeepayhistoryRow upsert(
@@ -325,14 +325,14 @@ public record EmployeepayhistoryRepoImpl() implements EmployeepayhistoryRepo {
       copy employeepayhistory_TEMP("businessentityid", "ratechangedate", "rate", "payfrequency", "modifieddate") from stdin
       """), batchSize, unsaved, c, EmployeepayhistoryRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "humanresources"."employeepayhistory"("businessentityid", "ratechangedate", "rate", "payfrequency", "modifieddate")
-       select * from employeepayhistory_TEMP
-       on conflict ("businessentityid", "ratechangedate")
-       do update set
-         "rate" = EXCLUDED."rate",
-       "payfrequency" = EXCLUDED."payfrequency",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table employeepayhistory_TEMP;""")).update().runUnchecked(c);
+              insert into "humanresources"."employeepayhistory"("businessentityid", "ratechangedate", "rate", "payfrequency", "modifieddate")
+              select * from employeepayhistory_TEMP
+              on conflict ("businessentityid", "ratechangedate")
+              do update set
+                "rate" = EXCLUDED."rate",
+              "payfrequency" = EXCLUDED."payfrequency",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table employeepayhistory_TEMP;""")).update().runUnchecked(c);
   };
 }

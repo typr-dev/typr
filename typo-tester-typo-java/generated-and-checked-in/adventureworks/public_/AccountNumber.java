@@ -5,6 +5,7 @@
  */
 package adventureworks.public_;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
@@ -13,7 +14,7 @@ import typo.runtime.internal.arrayMap;
 /** Domain `public.AccountNumber`
   * No constraint
   */
-public record AccountNumber(String value) {
+public record AccountNumber(@JsonValue String value) {
   public AccountNumber withValue(String value) {
     return new AccountNumber(value);
   };

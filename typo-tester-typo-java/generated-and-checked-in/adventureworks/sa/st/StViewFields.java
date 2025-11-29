@@ -78,25 +78,25 @@ public interface StViewFields {
     return new Impl(List.of());
   };
 
-  Field<BigDecimal, StViewRow> costlastyear();
+  Field<SalesterritoryId, StViewRow> id();
 
-  Field<BigDecimal, StViewRow> costytd();
+  Field<SalesterritoryId, StViewRow> territoryid();
+
+  Field<Name, StViewRow> name();
 
   Field<CountryregionId, StViewRow> countryregioncode();
 
   Field</* max 50 chars */ String, StViewRow> group();
 
-  Field<SalesterritoryId, StViewRow> id();
-
-  Field<TypoLocalDateTime, StViewRow> modifieddate();
-
-  Field<Name, StViewRow> name();
-
-  Field<TypoUUID, StViewRow> rowguid();
+  Field<BigDecimal, StViewRow> salesytd();
 
   Field<BigDecimal, StViewRow> saleslastyear();
 
-  Field<BigDecimal, StViewRow> salesytd();
+  Field<BigDecimal, StViewRow> costytd();
 
-  Field<SalesterritoryId, StViewRow> territoryid();
+  Field<BigDecimal, StViewRow> costlastyear();
+
+  Field<TypoUUID, StViewRow> rowguid();
+
+  Field<TypoLocalDateTime, StViewRow> modifieddate();
 }

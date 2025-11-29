@@ -9,6 +9,7 @@ import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.customtypes.TypoUUID;
 import adventureworks.production.productmodel.ProductmodelId;
 import adventureworks.public_.Name;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
@@ -21,7 +22,7 @@ public record VproductmodelcatalogdescriptionViewRow(
   ProductmodelId productmodelid,
   /** Points to {@link adventureworks.production.productmodel.ProductmodelRow#name()} */
   Name name,
-  /* nullability unknown */ Optional<String> summary,
+  @JsonProperty("Summary") /* nullability unknown */ Optional<String> summary,
   /* nullability unknown */ Optional<String> manufacturer,
   /* nullability unknown */ Optional</* max 30 chars */ String> copyright,
   /* nullability unknown */ Optional</* max 256 chars */ String> producturl,

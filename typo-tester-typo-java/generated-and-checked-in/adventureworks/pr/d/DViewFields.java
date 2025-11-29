@@ -86,29 +86,29 @@ public interface DViewFields {
     return new Impl(List.of());
   };
 
-  Field<Integer, DViewRow> changenumber();
-
-  OptField<TypoBytea, DViewRow> document();
-
-  Field<DocumentId, DViewRow> documentnode();
-
-  OptField<String, DViewRow> documentsummary();
-
-  OptField</* max 8 chars */ String, DViewRow> fileextension();
-
-  Field</* max 400 chars */ String, DViewRow> filename();
-
-  Field<Flag, DViewRow> folderflag();
-
-  Field<TypoLocalDateTime, DViewRow> modifieddate();
+  Field</* max 50 chars */ String, DViewRow> title();
 
   Field<BusinessentityId, DViewRow> owner();
 
+  Field<Flag, DViewRow> folderflag();
+
+  Field</* max 400 chars */ String, DViewRow> filename();
+
+  OptField</* max 8 chars */ String, DViewRow> fileextension();
+
   Field</* bpchar, max 5 chars */ String, DViewRow> revision();
 
-  Field<TypoUUID, DViewRow> rowguid();
+  Field<Integer, DViewRow> changenumber();
 
   Field<TypoShort, DViewRow> status();
 
-  Field</* max 50 chars */ String, DViewRow> title();
+  OptField<String, DViewRow> documentsummary();
+
+  OptField<TypoBytea, DViewRow> document();
+
+  Field<TypoUUID, DViewRow> rowguid();
+
+  Field<TypoLocalDateTime, DViewRow> modifieddate();
+
+  Field<DocumentId, DViewRow> documentnode();
 }

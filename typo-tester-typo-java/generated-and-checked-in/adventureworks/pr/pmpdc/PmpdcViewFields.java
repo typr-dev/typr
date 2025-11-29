@@ -54,11 +54,11 @@ public interface PmpdcViewFields {
     return new Impl(List.of());
   };
 
-  Field<CultureId, PmpdcViewRow> cultureid();
-
-  Field<TypoLocalDateTime, PmpdcViewRow> modifieddate();
+  Field<ProductmodelId, PmpdcViewRow> productmodelid();
 
   Field<ProductdescriptionId, PmpdcViewRow> productdescriptionid();
 
-  Field<ProductmodelId, PmpdcViewRow> productmodelid();
+  Field<CultureId, PmpdcViewRow> cultureid();
+
+  Field<TypoLocalDateTime, PmpdcViewRow> modifieddate();
 }

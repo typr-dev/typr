@@ -70,15 +70,13 @@ public interface BusinessentitycontactFields {
 
   IdField<BusinessentityId, BusinessentitycontactRow> businessentityid();
 
-  default SqlExpr<Boolean> compositeIdIn(List<BusinessentitycontactId> compositeIds) {
-    return new CompositeIn(List.of(new Part<BusinessentityId, BusinessentitycontactId, BusinessentitycontactRow>(businessentityid(), BusinessentitycontactId::businessentityid, BusinessentityId.pgType), new Part<BusinessentityId, BusinessentitycontactId, BusinessentitycontactRow>(personid(), BusinessentitycontactId::personid, BusinessentityId.pgType), new Part<ContacttypeId, BusinessentitycontactId, BusinessentitycontactRow>(contacttypeid(), BusinessentitycontactId::contacttypeid, ContacttypeId.pgType)), compositeIds);
-  };
-
-  default SqlExpr<Boolean> compositeIdIs(BusinessentitycontactId compositeId) {
-    return SqlExpr.all(businessentityid().isEqual(compositeId.businessentityid()), personid().isEqual(compositeId.personid()), contacttypeid().isEqual(compositeId.contacttypeid()));
-  };
+  IdField<BusinessentityId, BusinessentitycontactRow> personid();
 
   IdField<ContacttypeId, BusinessentitycontactRow> contacttypeid();
+
+  Field<TypoUUID, BusinessentitycontactRow> rowguid();
+
+  Field<TypoLocalDateTime, BusinessentitycontactRow> modifieddate();
 
   default ForeignKey<BusinessentityFields, BusinessentityRow> fkBusinessentity() {
     return ForeignKey.<BusinessentityFields, BusinessentityRow>of("person.FK_BusinessEntityContact_BusinessEntity_BusinessEntityID").withColumnPair(businessentityid(), BusinessentityFields::businessentityid);
@@ -92,9 +90,11 @@ public interface BusinessentitycontactFields {
     return ForeignKey.<PersonFields, PersonRow>of("person.FK_BusinessEntityContact_Person_PersonID").withColumnPair(personid(), PersonFields::businessentityid);
   };
 
-  Field<TypoLocalDateTime, BusinessentitycontactRow> modifieddate();
+  default SqlExpr<Boolean> compositeIdIs(BusinessentitycontactId compositeId) {
+    return SqlExpr.all(businessentityid().isEqual(compositeId.businessentityid()), personid().isEqual(compositeId.personid()), contacttypeid().isEqual(compositeId.contacttypeid()));
+  };
 
-  IdField<BusinessentityId, BusinessentitycontactRow> personid();
-
-  Field<TypoUUID, BusinessentitycontactRow> rowguid();
+  default SqlExpr<Boolean> compositeIdIn(List<BusinessentitycontactId> compositeIds) {
+    return new CompositeIn(List.of(new Part<BusinessentityId, BusinessentitycontactId, BusinessentitycontactRow>(businessentityid(), BusinessentitycontactId::businessentityid, BusinessentityId.pgType), new Part<BusinessentityId, BusinessentitycontactId, BusinessentitycontactRow>(personid(), BusinessentitycontactId::personid, BusinessentityId.pgType), new Part<ContacttypeId, BusinessentitycontactId, BusinessentitycontactRow>(contacttypeid(), BusinessentitycontactId::contacttypeid, ContacttypeId.pgType)), compositeIds);
+  };
 }

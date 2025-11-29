@@ -25,7 +25,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record CountryregioncurrencyRepoImpl() implements CountryregioncurrencyRepo {
+public class CountryregioncurrencyRepoImpl implements CountryregioncurrencyRepo {
   public DeleteBuilder<CountryregioncurrencyFields, CountryregioncurrencyRow> delete() {
     return DeleteBuilder.of("sales.countryregioncurrency", CountryregioncurrencyFields.structure());
   };
@@ -54,19 +54,19 @@ public record CountryregioncurrencyRepoImpl() implements CountryregioncurrencyRe
     CountryregionId[] countryregioncode = arrayMap.map(compositeIds, CountryregioncurrencyId::countryregioncode, CountryregionId.class);;
       CurrencyId[] currencycode = arrayMap.map(compositeIds, CountryregioncurrencyId::currencycode, CurrencyId.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         delete
-         from "sales"."countryregioncurrency"
-         where ("countryregioncode", "currencycode")
-         in (select unnest("""),
-      CountryregionId.pgTypeArray.encode(countryregioncode),
-      typo.runtime.Fragment.lit("::varchar[]), unnest("),
-      CurrencyId.pgTypeArray.encode(currencycode),
-      typo.runtime.Fragment.lit("""
-      ::bpchar[]))
+             typo.runtime.Fragment.lit("""
+                delete
+                from "sales"."countryregioncurrency"
+                where ("countryregioncode", "currencycode")
+                in (select unnest("""),
+             CountryregionId.pgTypeArray.encode(countryregioncode),
+             typo.runtime.Fragment.lit("::varchar[]), unnest("),
+             CurrencyId.pgTypeArray.encode(currencycode),
+             typo.runtime.Fragment.lit("""
+             ::bpchar[]))
 
-      """)
-    ).update().runUnchecked(c);
+             """)
+           ).update().runUnchecked(c);
   };
 
   public CountryregioncurrencyRow insert(
@@ -191,19 +191,19 @@ public record CountryregioncurrencyRepoImpl() implements CountryregioncurrencyRe
     CountryregionId[] countryregioncode = arrayMap.map(compositeIds, CountryregioncurrencyId::countryregioncode, CountryregionId.class);;
       CurrencyId[] currencycode = arrayMap.map(compositeIds, CountryregioncurrencyId::currencycode, CurrencyId.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         select "countryregioncode", "currencycode", "modifieddate"::text
-         from "sales"."countryregioncurrency"
-         where ("countryregioncode", "currencycode")
-         in (select unnest("""),
-      CountryregionId.pgTypeArray.encode(countryregioncode),
-      typo.runtime.Fragment.lit("::varchar[]), unnest("),
-      CurrencyId.pgTypeArray.encode(currencycode),
-      typo.runtime.Fragment.lit("""
-      ::bpchar[]))
+             typo.runtime.Fragment.lit("""
+                select "countryregioncode", "currencycode", "modifieddate"::text
+                from "sales"."countryregioncurrency"
+                where ("countryregioncode", "currencycode")
+                in (select unnest("""),
+             CountryregionId.pgTypeArray.encode(countryregioncode),
+             typo.runtime.Fragment.lit("::varchar[]), unnest("),
+             CurrencyId.pgTypeArray.encode(currencycode),
+             typo.runtime.Fragment.lit("""
+             ::bpchar[]))
 
-      """)
-    ).as(CountryregioncurrencyRow._rowParser.all()).runUnchecked(c);
+             """)
+           ).as(CountryregioncurrencyRow._rowParser.all()).runUnchecked(c);
   };
 
   public Map<CountryregioncurrencyId, CountryregioncurrencyRow> selectByIdsTracked(
@@ -225,20 +225,20 @@ public record CountryregioncurrencyRepoImpl() implements CountryregioncurrencyRe
   ) {
     CountryregioncurrencyId compositeId = row.compositeId();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "sales"."countryregioncurrency"
-         set "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "countryregioncode" = """),
-      CountryregionId.pgType.encode(compositeId.countryregioncode()),
-      typo.runtime.Fragment.lit("""
-       AND "currencycode" = 
-      """),
-      CurrencyId.pgType.encode(compositeId.currencycode()),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "sales"."countryregioncurrency"
+                set "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "countryregioncode" = """),
+             CountryregionId.pgType.encode(compositeId.countryregioncode()),
+             typo.runtime.Fragment.lit("""
+              AND "currencycode" = 
+             """),
+             CurrencyId.pgType.encode(compositeId.currencycode()),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public CountryregioncurrencyRow upsert(
@@ -295,12 +295,12 @@ public record CountryregioncurrencyRepoImpl() implements CountryregioncurrencyRe
       copy countryregioncurrency_TEMP("countryregioncode", "currencycode", "modifieddate") from stdin
       """), batchSize, unsaved, c, CountryregioncurrencyRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "sales"."countryregioncurrency"("countryregioncode", "currencycode", "modifieddate")
-       select * from countryregioncurrency_TEMP
-       on conflict ("countryregioncode", "currencycode")
-       do update set
-         "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table countryregioncurrency_TEMP;""")).update().runUnchecked(c);
+              insert into "sales"."countryregioncurrency"("countryregioncode", "currencycode", "modifieddate")
+              select * from countryregioncurrency_TEMP
+              on conflict ("countryregioncode", "currencycode")
+              do update set
+                "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table countryregioncurrency_TEMP;""")).update().runUnchecked(c);
   };
 }

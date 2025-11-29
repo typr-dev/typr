@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.HashMap;
 import java.util.Map;
 import typo.dsl.Bijection;
@@ -14,7 +15,7 @@ import typo.runtime.PgType;
 import typo.runtime.PgWrite;
 
 /** The text representation of an hstore, used for input and output, includes zero or more key => value pairs separated by commas */
-public record TypoHStore(Map<String, String> value) {
+public record TypoHStore(@JsonValue Map<String, String> value) {
   public TypoHStore withValue(Map<String, String> value) {
     return new TypoHStore(value);
   };

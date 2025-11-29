@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.math.BigDecimal;
 import typo.dsl.Bijection;
 import typo.runtime.PgRead;
@@ -15,7 +16,7 @@ import typo.runtime.PgWrite;
 import typo.runtime.internal.arrayMap;
 
 /** Money and cash types in PostgreSQL */
-public record TypoMoney(BigDecimal value) {
+public record TypoMoney(@JsonValue BigDecimal value) {
   public TypoMoney withValue(BigDecimal value) {
     return new TypoMoney(value);
   };

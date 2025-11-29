@@ -73,21 +73,21 @@ public interface VViewFields {
     return new Impl(List.of());
   };
 
-  Field<AccountNumber, VViewRow> accountnumber();
-
-  Field<Flag, VViewRow> activeflag();
+  Field<BusinessentityId, VViewRow> id();
 
   Field<BusinessentityId, VViewRow> businessentityid();
 
-  Field<TypoShort, VViewRow> creditrating();
-
-  Field<BusinessentityId, VViewRow> id();
-
-  Field<TypoLocalDateTime, VViewRow> modifieddate();
+  Field<AccountNumber, VViewRow> accountnumber();
 
   Field<Name, VViewRow> name();
 
+  Field<TypoShort, VViewRow> creditrating();
+
   Field<Flag, VViewRow> preferredvendorstatus();
 
+  Field<Flag, VViewRow> activeflag();
+
   OptField</* max 1024 chars */ String, VViewRow> purchasingwebserviceurl();
+
+  Field<TypoLocalDateTime, VViewRow> modifieddate();
 }

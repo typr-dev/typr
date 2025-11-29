@@ -55,9 +55,9 @@ public interface UmViewFields {
 
   Field<UnitmeasureId, UmViewRow> id();
 
-  Field<TypoLocalDateTime, UmViewRow> modifieddate();
+  Field<UnitmeasureId, UmViewRow> unitmeasurecode();
 
   Field<Name, UmViewRow> name();
 
-  Field<UnitmeasureId, UmViewRow> unitmeasurecode();
+  Field<TypoLocalDateTime, UmViewRow> modifieddate();
 }

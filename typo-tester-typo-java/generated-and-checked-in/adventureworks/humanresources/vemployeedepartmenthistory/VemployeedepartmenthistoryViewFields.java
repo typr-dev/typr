@@ -79,23 +79,23 @@ public interface VemployeedepartmenthistoryViewFields {
 
   Field<BusinessentityId, VemployeedepartmenthistoryViewRow> businessentityid();
 
-  Field<Name, VemployeedepartmenthistoryViewRow> department();
-
-  OptField<TypoLocalDate, VemployeedepartmenthistoryViewRow> enddate();
+  OptField</* max 8 chars */ String, VemployeedepartmenthistoryViewRow> title();
 
   Field</* user-picked */ FirstName, VemployeedepartmenthistoryViewRow> firstname();
 
-  Field<Name, VemployeedepartmenthistoryViewRow> groupname();
+  OptField<Name, VemployeedepartmenthistoryViewRow> middlename();
 
   Field<Name, VemployeedepartmenthistoryViewRow> lastname();
 
-  OptField<Name, VemployeedepartmenthistoryViewRow> middlename();
+  OptField</* max 10 chars */ String, VemployeedepartmenthistoryViewRow> suffix();
 
   Field<Name, VemployeedepartmenthistoryViewRow> shift();
 
+  Field<Name, VemployeedepartmenthistoryViewRow> department();
+
+  Field<Name, VemployeedepartmenthistoryViewRow> groupname();
+
   Field<TypoLocalDate, VemployeedepartmenthistoryViewRow> startdate();
 
-  OptField</* max 10 chars */ String, VemployeedepartmenthistoryViewRow> suffix();
-
-  OptField</* max 8 chars */ String, VemployeedepartmenthistoryViewRow> title();
+  OptField<TypoLocalDate, VemployeedepartmenthistoryViewRow> enddate();
 }

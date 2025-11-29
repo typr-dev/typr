@@ -45,9 +45,9 @@ public interface Issue1422Fields {
     return new Impl(List.of());
   };
 
+  IdField<Issue142Id, Issue1422Row> tabellkode();
+
   default ForeignKey<Issue142Fields, Issue142Row> fkIssue142() {
     return ForeignKey.<Issue142Fields, Issue142Row>of("public.tabell2_tabell_fk").withColumnPair(tabellkode(), Issue142Fields::tabellkode);
   };
-
-  IdField<Issue142Id, Issue1422Row> tabellkode();
 }

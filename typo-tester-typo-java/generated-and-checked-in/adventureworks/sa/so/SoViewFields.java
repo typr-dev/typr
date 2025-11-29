@@ -80,27 +80,27 @@ public interface SoViewFields {
     return new Impl(List.of());
   };
 
-  Field</* max 50 chars */ String, SoViewRow> category();
+  Field<SpecialofferId, SoViewRow> id();
+
+  Field<SpecialofferId, SoViewRow> specialofferid();
 
   Field</* max 255 chars */ String, SoViewRow> description();
 
   Field<BigDecimal, SoViewRow> discountpct();
 
-  Field<TypoLocalDateTime, SoViewRow> enddate();
+  Field</* max 50 chars */ String, SoViewRow> type();
 
-  Field<SpecialofferId, SoViewRow> id();
-
-  OptField<Integer, SoViewRow> maxqty();
-
-  Field<Integer, SoViewRow> minqty();
-
-  Field<TypoLocalDateTime, SoViewRow> modifieddate();
-
-  Field<TypoUUID, SoViewRow> rowguid();
-
-  Field<SpecialofferId, SoViewRow> specialofferid();
+  Field</* max 50 chars */ String, SoViewRow> category();
 
   Field<TypoLocalDateTime, SoViewRow> startdate();
 
-  Field</* max 50 chars */ String, SoViewRow> type();
+  Field<TypoLocalDateTime, SoViewRow> enddate();
+
+  Field<Integer, SoViewRow> minqty();
+
+  OptField<Integer, SoViewRow> maxqty();
+
+  Field<TypoUUID, SoViewRow> rowguid();
+
+  Field<TypoLocalDateTime, SoViewRow> modifieddate();
 }

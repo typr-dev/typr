@@ -26,7 +26,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record WorkorderRepoImpl() implements WorkorderRepo {
+public class WorkorderRepoImpl implements WorkorderRepo {
   public DeleteBuilder<WorkorderFields, WorkorderRow> delete() {
     return DeleteBuilder.of("production.workorder", WorkorderFields.structure());
   };
@@ -250,44 +250,44 @@ public record WorkorderRepoImpl() implements WorkorderRepo {
   ) {
     WorkorderId workorderid = row.workorderid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "production"."workorder"
-         set "productid" = """),
-      ProductId.pgType.encode(row.productid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "orderqty" = """),
-      PgTypes.int4.encode(row.orderqty()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "scrappedqty" = """),
-      TypoShort.pgType.encode(row.scrappedqty()),
-      typo.runtime.Fragment.lit("""
-         ::int2,
-         "startdate" = """),
-      TypoLocalDateTime.pgType.encode(row.startdate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp,
-         "enddate" = """),
-      TypoLocalDateTime.pgType.opt().encode(row.enddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp,
-         "duedate" = """),
-      TypoLocalDateTime.pgType.encode(row.duedate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp,
-         "scrapreasonid" = """),
-      ScrapreasonId.pgType.opt().encode(row.scrapreasonid()),
-      typo.runtime.Fragment.lit("""
-         ::int2,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "workorderid" = """),
-      WorkorderId.pgType.encode(workorderid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "production"."workorder"
+                set "productid" = """),
+             ProductId.pgType.encode(row.productid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "orderqty" = """),
+             PgTypes.int4.encode(row.orderqty()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "scrappedqty" = """),
+             TypoShort.pgType.encode(row.scrappedqty()),
+             typo.runtime.Fragment.lit("""
+                ::int2,
+                "startdate" = """),
+             TypoLocalDateTime.pgType.encode(row.startdate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp,
+                "enddate" = """),
+             TypoLocalDateTime.pgType.opt().encode(row.enddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp,
+                "duedate" = """),
+             TypoLocalDateTime.pgType.encode(row.duedate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp,
+                "scrapreasonid" = """),
+             ScrapreasonId.pgType.opt().encode(row.scrapreasonid()),
+             typo.runtime.Fragment.lit("""
+                ::int2,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "workorderid" = """),
+             WorkorderId.pgType.encode(workorderid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public WorkorderRow upsert(
@@ -370,19 +370,19 @@ public record WorkorderRepoImpl() implements WorkorderRepo {
       copy workorder_TEMP("workorderid", "productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "modifieddate") from stdin
       """), batchSize, unsaved, c, WorkorderRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "production"."workorder"("workorderid", "productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "modifieddate")
-       select * from workorder_TEMP
-       on conflict ("workorderid")
-       do update set
-         "productid" = EXCLUDED."productid",
-       "orderqty" = EXCLUDED."orderqty",
-       "scrappedqty" = EXCLUDED."scrappedqty",
-       "startdate" = EXCLUDED."startdate",
-       "enddate" = EXCLUDED."enddate",
-       "duedate" = EXCLUDED."duedate",
-       "scrapreasonid" = EXCLUDED."scrapreasonid",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table workorder_TEMP;""")).update().runUnchecked(c);
+              insert into "production"."workorder"("workorderid", "productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "modifieddate")
+              select * from workorder_TEMP
+              on conflict ("workorderid")
+              do update set
+                "productid" = EXCLUDED."productid",
+              "orderqty" = EXCLUDED."orderqty",
+              "scrappedqty" = EXCLUDED."scrappedqty",
+              "startdate" = EXCLUDED."startdate",
+              "enddate" = EXCLUDED."enddate",
+              "duedate" = EXCLUDED."duedate",
+              "scrapreasonid" = EXCLUDED."scrapreasonid",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table workorder_TEMP;""")).update().runUnchecked(c);
   };
 }

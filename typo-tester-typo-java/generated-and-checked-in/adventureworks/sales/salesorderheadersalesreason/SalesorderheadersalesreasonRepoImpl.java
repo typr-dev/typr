@@ -25,7 +25,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record SalesorderheadersalesreasonRepoImpl() implements SalesorderheadersalesreasonRepo {
+public class SalesorderheadersalesreasonRepoImpl implements SalesorderheadersalesreasonRepo {
   public DeleteBuilder<SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow> delete() {
     return DeleteBuilder.of("sales.salesorderheadersalesreason", SalesorderheadersalesreasonFields.structure());
   };
@@ -54,19 +54,19 @@ public record SalesorderheadersalesreasonRepoImpl() implements Salesorderheaders
     SalesorderheaderId[] salesorderid = arrayMap.map(compositeIds, SalesorderheadersalesreasonId::salesorderid, SalesorderheaderId.class);;
       SalesreasonId[] salesreasonid = arrayMap.map(compositeIds, SalesorderheadersalesreasonId::salesreasonid, SalesreasonId.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         delete
-         from "sales"."salesorderheadersalesreason"
-         where ("salesorderid", "salesreasonid")
-         in (select unnest("""),
-      SalesorderheaderId.pgTypeArray.encode(salesorderid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      SalesreasonId.pgTypeArray.encode(salesreasonid),
-      typo.runtime.Fragment.lit("""
-      ::int4[]))
+             typo.runtime.Fragment.lit("""
+                delete
+                from "sales"."salesorderheadersalesreason"
+                where ("salesorderid", "salesreasonid")
+                in (select unnest("""),
+             SalesorderheaderId.pgTypeArray.encode(salesorderid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             SalesreasonId.pgTypeArray.encode(salesreasonid),
+             typo.runtime.Fragment.lit("""
+             ::int4[]))
 
-      """)
-    ).update().runUnchecked(c);
+             """)
+           ).update().runUnchecked(c);
   };
 
   public SalesorderheadersalesreasonRow insert(
@@ -190,19 +190,19 @@ public record SalesorderheadersalesreasonRepoImpl() implements Salesorderheaders
     SalesorderheaderId[] salesorderid = arrayMap.map(compositeIds, SalesorderheadersalesreasonId::salesorderid, SalesorderheaderId.class);;
       SalesreasonId[] salesreasonid = arrayMap.map(compositeIds, SalesorderheadersalesreasonId::salesreasonid, SalesreasonId.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         select "salesorderid", "salesreasonid", "modifieddate"::text
-         from "sales"."salesorderheadersalesreason"
-         where ("salesorderid", "salesreasonid")
-         in (select unnest("""),
-      SalesorderheaderId.pgTypeArray.encode(salesorderid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      SalesreasonId.pgTypeArray.encode(salesreasonid),
-      typo.runtime.Fragment.lit("""
-      ::int4[]))
+             typo.runtime.Fragment.lit("""
+                select "salesorderid", "salesreasonid", "modifieddate"::text
+                from "sales"."salesorderheadersalesreason"
+                where ("salesorderid", "salesreasonid")
+                in (select unnest("""),
+             SalesorderheaderId.pgTypeArray.encode(salesorderid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             SalesreasonId.pgTypeArray.encode(salesreasonid),
+             typo.runtime.Fragment.lit("""
+             ::int4[]))
 
-      """)
-    ).as(SalesorderheadersalesreasonRow._rowParser.all()).runUnchecked(c);
+             """)
+           ).as(SalesorderheadersalesreasonRow._rowParser.all()).runUnchecked(c);
   };
 
   public Map<SalesorderheadersalesreasonId, SalesorderheadersalesreasonRow> selectByIdsTracked(
@@ -224,20 +224,20 @@ public record SalesorderheadersalesreasonRepoImpl() implements Salesorderheaders
   ) {
     SalesorderheadersalesreasonId compositeId = row.compositeId();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "sales"."salesorderheadersalesreason"
-         set "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "salesorderid" = """),
-      SalesorderheaderId.pgType.encode(compositeId.salesorderid()),
-      typo.runtime.Fragment.lit("""
-       AND "salesreasonid" = 
-      """),
-      SalesreasonId.pgType.encode(compositeId.salesreasonid()),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "sales"."salesorderheadersalesreason"
+                set "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "salesorderid" = """),
+             SalesorderheaderId.pgType.encode(compositeId.salesorderid()),
+             typo.runtime.Fragment.lit("""
+              AND "salesreasonid" = 
+             """),
+             SalesreasonId.pgType.encode(compositeId.salesreasonid()),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public SalesorderheadersalesreasonRow upsert(
@@ -294,12 +294,12 @@ public record SalesorderheadersalesreasonRepoImpl() implements Salesorderheaders
       copy salesorderheadersalesreason_TEMP("salesorderid", "salesreasonid", "modifieddate") from stdin
       """), batchSize, unsaved, c, SalesorderheadersalesreasonRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "sales"."salesorderheadersalesreason"("salesorderid", "salesreasonid", "modifieddate")
-       select * from salesorderheadersalesreason_TEMP
-       on conflict ("salesorderid", "salesreasonid")
-       do update set
-         "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table salesorderheadersalesreason_TEMP;""")).update().runUnchecked(c);
+              insert into "sales"."salesorderheadersalesreason"("salesorderid", "salesreasonid", "modifieddate")
+              select * from salesorderheadersalesreason_TEMP
+              on conflict ("salesorderid", "salesreasonid")
+              do update set
+                "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table salesorderheadersalesreason_TEMP;""")).update().runUnchecked(c);
   };
 }

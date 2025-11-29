@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import org.postgresql.jdbc.PgSQLXML;
 import org.postgresql.util.PGobject;
 import typo.dsl.Bijection;
@@ -16,7 +17,7 @@ import typo.runtime.internal.TypoPGObjectHelper;
 import typo.runtime.internal.arrayMap;
 
 /** XML */
-public record TypoXml(String value) {
+public record TypoXml(@JsonValue String value) {
   public TypoXml withValue(String value) {
     return new TypoXml(value);
   };

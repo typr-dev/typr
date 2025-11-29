@@ -75,7 +75,21 @@ public interface StateprovinceFields {
     return new Impl(List.of());
   };
 
+  IdField<StateprovinceId, StateprovinceRow> stateprovinceid();
+
+  Field</* bpchar, max 3 chars */ String, StateprovinceRow> stateprovincecode();
+
   Field<CountryregionId, StateprovinceRow> countryregioncode();
+
+  Field<Flag, StateprovinceRow> isonlystateprovinceflag();
+
+  Field<Name, StateprovinceRow> name();
+
+  Field<SalesterritoryId, StateprovinceRow> territoryid();
+
+  Field<TypoUUID, StateprovinceRow> rowguid();
+
+  Field<TypoLocalDateTime, StateprovinceRow> modifieddate();
 
   default ForeignKey<CountryregionFields, CountryregionRow> fkCountryregion() {
     return ForeignKey.<CountryregionFields, CountryregionRow>of("person.FK_StateProvince_CountryRegion_CountryRegionCode").withColumnPair(countryregioncode(), CountryregionFields::countryregioncode);
@@ -84,18 +98,4 @@ public interface StateprovinceFields {
   default ForeignKey<SalesterritoryFields, SalesterritoryRow> fkSalesSalesterritory() {
     return ForeignKey.<SalesterritoryFields, SalesterritoryRow>of("person.FK_StateProvince_SalesTerritory_TerritoryID").withColumnPair(territoryid(), SalesterritoryFields::territoryid);
   };
-
-  Field<Flag, StateprovinceRow> isonlystateprovinceflag();
-
-  Field<TypoLocalDateTime, StateprovinceRow> modifieddate();
-
-  Field<Name, StateprovinceRow> name();
-
-  Field<TypoUUID, StateprovinceRow> rowguid();
-
-  Field</* bpchar, max 3 chars */ String, StateprovinceRow> stateprovincecode();
-
-  IdField<StateprovinceId, StateprovinceRow> stateprovinceid();
-
-  Field<SalesterritoryId, StateprovinceRow> territoryid();
 }

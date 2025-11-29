@@ -81,27 +81,27 @@ public interface PvViewFields {
     return new Impl(List.of());
   };
 
-  Field<Integer, PvViewRow> averageleadtime();
+  Field<ProductId, PvViewRow> id();
+
+  Field<ProductId, PvViewRow> productid();
 
   Field<BusinessentityId, PvViewRow> businessentityid();
 
-  Field<ProductId, PvViewRow> id();
+  Field<Integer, PvViewRow> averageleadtime();
+
+  Field<BigDecimal, PvViewRow> standardprice();
 
   OptField<BigDecimal, PvViewRow> lastreceiptcost();
 
   OptField<TypoLocalDateTime, PvViewRow> lastreceiptdate();
 
-  Field<Integer, PvViewRow> maxorderqty();
-
   Field<Integer, PvViewRow> minorderqty();
 
-  Field<TypoLocalDateTime, PvViewRow> modifieddate();
+  Field<Integer, PvViewRow> maxorderqty();
 
   OptField<Integer, PvViewRow> onorderqty();
 
-  Field<ProductId, PvViewRow> productid();
-
-  Field<BigDecimal, PvViewRow> standardprice();
-
   Field<UnitmeasureId, PvViewRow> unitmeasurecode();
+
+  Field<TypoLocalDateTime, PvViewRow> modifieddate();
 }

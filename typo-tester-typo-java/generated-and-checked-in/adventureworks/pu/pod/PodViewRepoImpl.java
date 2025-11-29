@@ -10,7 +10,7 @@ import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-public record PodViewRepoImpl() implements PodViewRepo {
+public class PodViewRepoImpl implements PodViewRepo {
   public SelectBuilder<PodViewFields, PodViewRow> select() {
     return SelectBuilder.of("pu.pod", PodViewFields.structure(), PodViewRow._rowParser);
   };

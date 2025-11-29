@@ -62,15 +62,15 @@ public interface ShipmethodFields {
     return new Impl(List.of());
   };
 
-  Field<TypoLocalDateTime, ShipmethodRow> modifieddate();
+  IdField<ShipmethodId, ShipmethodRow> shipmethodid();
 
   Field<Name, ShipmethodRow> name();
 
-  Field<TypoUUID, ShipmethodRow> rowguid();
-
   Field<BigDecimal, ShipmethodRow> shipbase();
 
-  IdField<ShipmethodId, ShipmethodRow> shipmethodid();
-
   Field<BigDecimal, ShipmethodRow> shiprate();
+
+  Field<TypoUUID, ShipmethodRow> rowguid();
+
+  Field<TypoLocalDateTime, ShipmethodRow> modifieddate();
 }

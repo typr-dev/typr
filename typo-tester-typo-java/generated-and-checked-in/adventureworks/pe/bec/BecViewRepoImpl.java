@@ -10,7 +10,7 @@ import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-public record BecViewRepoImpl() implements BecViewRepo {
+public class BecViewRepoImpl implements BecViewRepo {
   public SelectBuilder<BecViewFields, BecViewRow> select() {
     return SelectBuilder.of("pe.bec", BecViewFields.structure(), BecViewRow._rowParser);
   };

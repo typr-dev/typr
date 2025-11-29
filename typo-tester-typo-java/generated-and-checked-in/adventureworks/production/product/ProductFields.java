@@ -132,15 +132,55 @@ public interface ProductFields {
     return new Impl(List.of());
   };
 
-  OptField</* bpchar, max 2 chars */ String, ProductRow> class_();
+  IdField<ProductId, ProductRow> productid();
+
+  Field<Name, ProductRow> name();
+
+  Field</* max 25 chars */ String, ProductRow> productnumber();
+
+  Field<Flag, ProductRow> makeflag();
+
+  Field<Flag, ProductRow> finishedgoodsflag();
 
   OptField</* max 15 chars */ String, ProductRow> color();
 
+  Field<TypoShort, ProductRow> safetystocklevel();
+
+  Field<TypoShort, ProductRow> reorderpoint();
+
+  Field<BigDecimal, ProductRow> standardcost();
+
+  Field<BigDecimal, ProductRow> listprice();
+
+  OptField</* max 5 chars */ String, ProductRow> size();
+
+  OptField<UnitmeasureId, ProductRow> sizeunitmeasurecode();
+
+  OptField<UnitmeasureId, ProductRow> weightunitmeasurecode();
+
+  OptField<BigDecimal, ProductRow> weight();
+
   Field<Integer, ProductRow> daystomanufacture();
+
+  OptField</* bpchar, max 2 chars */ String, ProductRow> productline();
+
+  OptField</* bpchar, max 2 chars */ String, ProductRow> class_();
+
+  OptField</* bpchar, max 2 chars */ String, ProductRow> style();
+
+  OptField<ProductsubcategoryId, ProductRow> productsubcategoryid();
+
+  OptField<ProductmodelId, ProductRow> productmodelid();
+
+  Field<TypoLocalDateTime, ProductRow> sellstartdate();
+
+  OptField<TypoLocalDateTime, ProductRow> sellenddate();
 
   OptField<TypoLocalDateTime, ProductRow> discontinueddate();
 
-  Field<Flag, ProductRow> finishedgoodsflag();
+  Field<TypoUUID, ProductRow> rowguid();
+
+  Field<TypoLocalDateTime, ProductRow> modifieddate();
 
   default ForeignKey<ProductmodelFields, ProductmodelRow> fkProductmodel() {
     return ForeignKey.<ProductmodelFields, ProductmodelRow>of("production.FK_Product_ProductModel_ProductModelID").withColumnPair(productmodelid(), ProductmodelFields::productmodelid);
@@ -157,44 +197,4 @@ public interface ProductFields {
   default ForeignKey<UnitmeasureFields, UnitmeasureRow> fkUnitmeasureWeightunitmeasurecode() {
     return ForeignKey.<UnitmeasureFields, UnitmeasureRow>of("production.FK_Product_UnitMeasure_WeightUnitMeasureCode").withColumnPair(weightunitmeasurecode(), UnitmeasureFields::unitmeasurecode);
   };
-
-  Field<BigDecimal, ProductRow> listprice();
-
-  Field<Flag, ProductRow> makeflag();
-
-  Field<TypoLocalDateTime, ProductRow> modifieddate();
-
-  Field<Name, ProductRow> name();
-
-  IdField<ProductId, ProductRow> productid();
-
-  OptField</* bpchar, max 2 chars */ String, ProductRow> productline();
-
-  OptField<ProductmodelId, ProductRow> productmodelid();
-
-  Field</* max 25 chars */ String, ProductRow> productnumber();
-
-  OptField<ProductsubcategoryId, ProductRow> productsubcategoryid();
-
-  Field<TypoShort, ProductRow> reorderpoint();
-
-  Field<TypoUUID, ProductRow> rowguid();
-
-  Field<TypoShort, ProductRow> safetystocklevel();
-
-  OptField<TypoLocalDateTime, ProductRow> sellenddate();
-
-  Field<TypoLocalDateTime, ProductRow> sellstartdate();
-
-  OptField</* max 5 chars */ String, ProductRow> size();
-
-  OptField<UnitmeasureId, ProductRow> sizeunitmeasurecode();
-
-  Field<BigDecimal, ProductRow> standardcost();
-
-  OptField</* bpchar, max 2 chars */ String, ProductRow> style();
-
-  OptField<BigDecimal, ProductRow> weight();
-
-  OptField<UnitmeasureId, ProductRow> weightunitmeasurecode();
 }

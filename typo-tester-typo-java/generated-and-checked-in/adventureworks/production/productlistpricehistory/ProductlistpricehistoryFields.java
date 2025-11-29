@@ -65,25 +65,25 @@ public interface ProductlistpricehistoryFields {
     return new Impl(List.of());
   };
 
-  default SqlExpr<Boolean> compositeIdIn(List<ProductlistpricehistoryId> compositeIds) {
-    return new CompositeIn(List.of(new Part<ProductId, ProductlistpricehistoryId, ProductlistpricehistoryRow>(productid(), ProductlistpricehistoryId::productid, ProductId.pgType), new Part<TypoLocalDateTime, ProductlistpricehistoryId, ProductlistpricehistoryRow>(startdate(), ProductlistpricehistoryId::startdate, TypoLocalDateTime.pgType)), compositeIds);
+  IdField<ProductId, ProductlistpricehistoryRow> productid();
+
+  IdField<TypoLocalDateTime, ProductlistpricehistoryRow> startdate();
+
+  OptField<TypoLocalDateTime, ProductlistpricehistoryRow> enddate();
+
+  Field<BigDecimal, ProductlistpricehistoryRow> listprice();
+
+  Field<TypoLocalDateTime, ProductlistpricehistoryRow> modifieddate();
+
+  default ForeignKey<ProductFields, ProductRow> fkProduct() {
+    return ForeignKey.<ProductFields, ProductRow>of("production.FK_ProductListPriceHistory_Product_ProductID").withColumnPair(productid(), ProductFields::productid);
   };
 
   default SqlExpr<Boolean> compositeIdIs(ProductlistpricehistoryId compositeId) {
     return SqlExpr.all(productid().isEqual(compositeId.productid()), startdate().isEqual(compositeId.startdate()));
   };
 
-  OptField<TypoLocalDateTime, ProductlistpricehistoryRow> enddate();
-
-  default ForeignKey<ProductFields, ProductRow> fkProduct() {
-    return ForeignKey.<ProductFields, ProductRow>of("production.FK_ProductListPriceHistory_Product_ProductID").withColumnPair(productid(), ProductFields::productid);
+  default SqlExpr<Boolean> compositeIdIn(List<ProductlistpricehistoryId> compositeIds) {
+    return new CompositeIn(List.of(new Part<ProductId, ProductlistpricehistoryId, ProductlistpricehistoryRow>(productid(), ProductlistpricehistoryId::productid, ProductId.pgType), new Part<TypoLocalDateTime, ProductlistpricehistoryId, ProductlistpricehistoryRow>(startdate(), ProductlistpricehistoryId::startdate, TypoLocalDateTime.pgType)), compositeIds);
   };
-
-  Field<BigDecimal, ProductlistpricehistoryRow> listprice();
-
-  Field<TypoLocalDateTime, ProductlistpricehistoryRow> modifieddate();
-
-  IdField<ProductId, ProductlistpricehistoryRow> productid();
-
-  IdField<TypoLocalDateTime, ProductlistpricehistoryRow> startdate();
 }

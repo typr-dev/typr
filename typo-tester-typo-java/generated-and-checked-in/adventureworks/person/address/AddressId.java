@@ -5,13 +5,14 @@
  */
 package adventureworks.person.address;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `person.address` */
-public record AddressId(Integer value) {
+public record AddressId(@JsonValue Integer value) {
   public AddressId withValue(Integer value) {
     return new AddressId(value);
   };

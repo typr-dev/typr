@@ -5,13 +5,14 @@
  */
 package adventureworks.person.countryregion;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `person.countryregion` */
-public record CountryregionId(/* max 3 chars */ String value) {
+public record CountryregionId(@JsonValue /* max 3 chars */ String value) {
   public CountryregionId withValue(/* max 3 chars */ String value) {
     return new CountryregionId(value);
   };

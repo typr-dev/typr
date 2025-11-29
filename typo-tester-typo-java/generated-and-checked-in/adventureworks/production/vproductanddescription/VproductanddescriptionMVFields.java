@@ -57,13 +57,13 @@ public interface VproductanddescriptionMVFields {
     return new Impl(List.of());
   };
 
-  Field<CultureId, VproductanddescriptionMVRow> cultureid();
-
-  Field</* max 400 chars */ String, VproductanddescriptionMVRow> description();
+  Field<ProductId, VproductanddescriptionMVRow> productid();
 
   Field<Name, VproductanddescriptionMVRow> name();
 
-  Field<ProductId, VproductanddescriptionMVRow> productid();
-
   Field<Name, VproductanddescriptionMVRow> productmodel();
+
+  Field<CultureId, VproductanddescriptionMVRow> cultureid();
+
+  Field</* max 400 chars */ String, VproductanddescriptionMVRow> description();
 }

@@ -59,25 +59,25 @@ public interface CountryregioncurrencyFields {
     return new Impl(List.of());
   };
 
-  default SqlExpr<Boolean> compositeIdIn(List<CountryregioncurrencyId> compositeIds) {
-    return new CompositeIn(List.of(new Part<CountryregionId, CountryregioncurrencyId, CountryregioncurrencyRow>(countryregioncode(), CountryregioncurrencyId::countryregioncode, CountryregionId.pgType), new Part<CurrencyId, CountryregioncurrencyId, CountryregioncurrencyRow>(currencycode(), CountryregioncurrencyId::currencycode, CurrencyId.pgType)), compositeIds);
+  IdField<CountryregionId, CountryregioncurrencyRow> countryregioncode();
+
+  IdField<CurrencyId, CountryregioncurrencyRow> currencycode();
+
+  Field<TypoLocalDateTime, CountryregioncurrencyRow> modifieddate();
+
+  default ForeignKey<CountryregionFields, CountryregionRow> fkPersonCountryregion() {
+    return ForeignKey.<CountryregionFields, CountryregionRow>of("sales.FK_CountryRegionCurrency_CountryRegion_CountryRegionCode").withColumnPair(countryregioncode(), CountryregionFields::countryregioncode);
+  };
+
+  default ForeignKey<CurrencyFields, CurrencyRow> fkCurrency() {
+    return ForeignKey.<CurrencyFields, CurrencyRow>of("sales.FK_CountryRegionCurrency_Currency_CurrencyCode").withColumnPair(currencycode(), CurrencyFields::currencycode);
   };
 
   default SqlExpr<Boolean> compositeIdIs(CountryregioncurrencyId compositeId) {
     return SqlExpr.all(countryregioncode().isEqual(compositeId.countryregioncode()), currencycode().isEqual(compositeId.currencycode()));
   };
 
-  IdField<CountryregionId, CountryregioncurrencyRow> countryregioncode();
-
-  IdField<CurrencyId, CountryregioncurrencyRow> currencycode();
-
-  default ForeignKey<CurrencyFields, CurrencyRow> fkCurrency() {
-    return ForeignKey.<CurrencyFields, CurrencyRow>of("sales.FK_CountryRegionCurrency_Currency_CurrencyCode").withColumnPair(currencycode(), CurrencyFields::currencycode);
+  default SqlExpr<Boolean> compositeIdIn(List<CountryregioncurrencyId> compositeIds) {
+    return new CompositeIn(List.of(new Part<CountryregionId, CountryregioncurrencyId, CountryregioncurrencyRow>(countryregioncode(), CountryregioncurrencyId::countryregioncode, CountryregionId.pgType), new Part<CurrencyId, CountryregioncurrencyId, CountryregioncurrencyRow>(currencycode(), CountryregioncurrencyId::currencycode, CurrencyId.pgType)), compositeIds);
   };
-
-  default ForeignKey<CountryregionFields, CountryregionRow> fkPersonCountryregion() {
-    return ForeignKey.<CountryregionFields, CountryregionRow>of("sales.FK_CountryRegionCurrency_CountryRegion_CountryRegionCode").withColumnPair(countryregioncode(), CountryregionFields::countryregioncode);
-  };
-
-  Field<TypoLocalDateTime, CountryregioncurrencyRow> modifieddate();
 }

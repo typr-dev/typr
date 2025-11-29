@@ -61,17 +61,17 @@ public interface ProductsubcategoryFields {
     return new Impl(List.of());
   };
 
-  default ForeignKey<ProductcategoryFields, ProductcategoryRow> fkProductcategory() {
-    return ForeignKey.<ProductcategoryFields, ProductcategoryRow>of("production.FK_ProductSubcategory_ProductCategory_ProductCategoryID").withColumnPair(productcategoryid(), ProductcategoryFields::productcategoryid);
-  };
-
-  Field<TypoLocalDateTime, ProductsubcategoryRow> modifieddate();
-
-  Field<Name, ProductsubcategoryRow> name();
+  IdField<ProductsubcategoryId, ProductsubcategoryRow> productsubcategoryid();
 
   Field<ProductcategoryId, ProductsubcategoryRow> productcategoryid();
 
-  IdField<ProductsubcategoryId, ProductsubcategoryRow> productsubcategoryid();
+  Field<Name, ProductsubcategoryRow> name();
 
   Field<TypoUUID, ProductsubcategoryRow> rowguid();
+
+  Field<TypoLocalDateTime, ProductsubcategoryRow> modifieddate();
+
+  default ForeignKey<ProductcategoryFields, ProductcategoryRow> fkProductcategory() {
+    return ForeignKey.<ProductcategoryFields, ProductcategoryRow>of("production.FK_ProductSubcategory_ProductCategory_ProductCategoryID").withColumnPair(productcategoryid(), ProductcategoryFields::productcategoryid);
+  };
 }

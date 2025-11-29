@@ -56,9 +56,9 @@ public interface AddresstypeFields {
 
   IdField<AddresstypeId, AddresstypeRow> addresstypeid();
 
-  Field<TypoLocalDateTime, AddresstypeRow> modifieddate();
-
   Field<Name, AddresstypeRow> name();
 
   Field<TypoUUID, AddresstypeRow> rowguid();
+
+  Field<TypoLocalDateTime, AddresstypeRow> modifieddate();
 }

@@ -60,17 +60,15 @@ public interface FlaffFields {
     return new Impl(List.of());
   };
 
-  IdField</* max 20 chars */ String, FlaffRow> anotherCode();
-
   IdField<ShortText, FlaffRow> code();
 
-  default SqlExpr<Boolean> compositeIdIn(List<FlaffId> compositeIds) {
-    return new CompositeIn(List.of(new Part<ShortText, FlaffId, FlaffRow>(code(), FlaffId::code, ShortText.pgType), new Part</* max 20 chars */ String, FlaffId, FlaffRow>(anotherCode(), FlaffId::anotherCode, PgTypes.text), new Part<Integer, FlaffId, FlaffRow>(someNumber(), FlaffId::someNumber, PgTypes.int4), new Part<ShortText, FlaffId, FlaffRow>(specifier(), FlaffId::specifier, ShortText.pgType)), compositeIds);
-  };
+  IdField</* max 20 chars */ String, FlaffRow> anotherCode();
 
-  default SqlExpr<Boolean> compositeIdIs(FlaffId compositeId) {
-    return SqlExpr.all(code().isEqual(compositeId.code()), anotherCode().isEqual(compositeId.anotherCode()), someNumber().isEqual(compositeId.someNumber()), specifier().isEqual(compositeId.specifier()));
-  };
+  IdField<Integer, FlaffRow> someNumber();
+
+  IdField<ShortText, FlaffRow> specifier();
+
+  OptField<ShortText, FlaffRow> parentspecifier();
 
   default ForeignKey<FlaffFields, FlaffRow> fkFlaff() {
     return ForeignKey.<FlaffFields, FlaffRow>of("public.flaff_parent_fk").withColumnPair(code(), FlaffFields::code)
@@ -79,9 +77,11 @@ public interface FlaffFields {
     .withColumnPair(parentspecifier(), FlaffFields::specifier);
   };
 
-  OptField<ShortText, FlaffRow> parentspecifier();
+  default SqlExpr<Boolean> compositeIdIs(FlaffId compositeId) {
+    return SqlExpr.all(code().isEqual(compositeId.code()), anotherCode().isEqual(compositeId.anotherCode()), someNumber().isEqual(compositeId.someNumber()), specifier().isEqual(compositeId.specifier()));
+  };
 
-  IdField<Integer, FlaffRow> someNumber();
-
-  IdField<ShortText, FlaffRow> specifier();
+  default SqlExpr<Boolean> compositeIdIn(List<FlaffId> compositeIds) {
+    return new CompositeIn(List.of(new Part<ShortText, FlaffId, FlaffRow>(code(), FlaffId::code, ShortText.pgType), new Part</* max 20 chars */ String, FlaffId, FlaffRow>(anotherCode(), FlaffId::anotherCode, PgTypes.text), new Part<Integer, FlaffId, FlaffRow>(someNumber(), FlaffId::someNumber, PgTypes.int4), new Part<ShortText, FlaffId, FlaffRow>(specifier(), FlaffId::specifier, ShortText.pgType)), compositeIds);
+  };
 }

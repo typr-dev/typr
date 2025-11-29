@@ -5,13 +5,14 @@
  */
 package adventureworks.production.location;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `production.location` */
-public record LocationId(Integer value) {
+public record LocationId(@JsonValue Integer value) {
   public LocationId withValue(Integer value) {
     return new LocationId(value);
   };

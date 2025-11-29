@@ -5,13 +5,14 @@
  */
 package adventureworks.sales.currency;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `sales.currency` */
-public record CurrencyId(/* bpchar, max 3 chars */ String value) {
+public record CurrencyId(@JsonValue /* bpchar, max 3 chars */ String value) {
   public CurrencyId withValue(/* bpchar, max 3 chars */ String value) {
     return new CurrencyId(value);
   };

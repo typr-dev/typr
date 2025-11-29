@@ -5,13 +5,14 @@
  */
 package adventureworks.person.phonenumbertype;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `person.phonenumbertype` */
-public record PhonenumbertypeId(Integer value) {
+public record PhonenumbertypeId(@JsonValue Integer value) {
   public PhonenumbertypeId withValue(Integer value) {
     return new PhonenumbertypeId(value);
   };

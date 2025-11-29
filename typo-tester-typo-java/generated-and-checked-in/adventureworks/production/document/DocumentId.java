@@ -5,13 +5,14 @@
  */
 package adventureworks.production.document;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `production.document` */
-public record DocumentId(String value) {
+public record DocumentId(@JsonValue String value) {
   public DocumentId withValue(String value) {
     return new DocumentId(value);
   };

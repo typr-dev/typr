@@ -5,13 +5,14 @@
  */
 package adventureworks.person.stateprovince;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `person.stateprovince` */
-public record StateprovinceId(Integer value) {
+public record StateprovinceId(@JsonValue Integer value) {
   public StateprovinceId withValue(Integer value) {
     return new StateprovinceId(value);
   };

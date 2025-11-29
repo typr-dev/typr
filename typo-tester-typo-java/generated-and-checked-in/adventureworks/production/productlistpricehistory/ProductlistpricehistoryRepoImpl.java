@@ -25,7 +25,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record ProductlistpricehistoryRepoImpl() implements ProductlistpricehistoryRepo {
+public class ProductlistpricehistoryRepoImpl implements ProductlistpricehistoryRepo {
   public DeleteBuilder<ProductlistpricehistoryFields, ProductlistpricehistoryRow> delete() {
     return DeleteBuilder.of("production.productlistpricehistory", ProductlistpricehistoryFields.structure());
   };
@@ -54,19 +54,19 @@ public record ProductlistpricehistoryRepoImpl() implements Productlistpricehisto
     ProductId[] productid = arrayMap.map(compositeIds, ProductlistpricehistoryId::productid, ProductId.class);;
       TypoLocalDateTime[] startdate = arrayMap.map(compositeIds, ProductlistpricehistoryId::startdate, TypoLocalDateTime.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         delete
-         from "production"."productlistpricehistory"
-         where ("productid", "startdate")
-         in (select unnest("""),
-      ProductId.pgTypeArray.encode(productid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      TypoLocalDateTime.pgTypeArray.encode(startdate),
-      typo.runtime.Fragment.lit("""
-      ::timestamp[]))
+             typo.runtime.Fragment.lit("""
+                delete
+                from "production"."productlistpricehistory"
+                where ("productid", "startdate")
+                in (select unnest("""),
+             ProductId.pgTypeArray.encode(productid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             TypoLocalDateTime.pgTypeArray.encode(startdate),
+             typo.runtime.Fragment.lit("""
+             ::timestamp[]))
 
-      """)
-    ).update().runUnchecked(c);
+             """)
+           ).update().runUnchecked(c);
   };
 
   public ProductlistpricehistoryRow insert(
@@ -204,19 +204,19 @@ public record ProductlistpricehistoryRepoImpl() implements Productlistpricehisto
     ProductId[] productid = arrayMap.map(compositeIds, ProductlistpricehistoryId::productid, ProductId.class);;
       TypoLocalDateTime[] startdate = arrayMap.map(compositeIds, ProductlistpricehistoryId::startdate, TypoLocalDateTime.class);;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         select "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text
-         from "production"."productlistpricehistory"
-         where ("productid", "startdate")
-         in (select unnest("""),
-      ProductId.pgTypeArray.encode(productid),
-      typo.runtime.Fragment.lit("::int4[]), unnest("),
-      TypoLocalDateTime.pgTypeArray.encode(startdate),
-      typo.runtime.Fragment.lit("""
-      ::timestamp[]))
+             typo.runtime.Fragment.lit("""
+                select "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text
+                from "production"."productlistpricehistory"
+                where ("productid", "startdate")
+                in (select unnest("""),
+             ProductId.pgTypeArray.encode(productid),
+             typo.runtime.Fragment.lit("::int4[]), unnest("),
+             TypoLocalDateTime.pgTypeArray.encode(startdate),
+             typo.runtime.Fragment.lit("""
+             ::timestamp[]))
 
-      """)
-    ).as(ProductlistpricehistoryRow._rowParser.all()).runUnchecked(c);
+             """)
+           ).as(ProductlistpricehistoryRow._rowParser.all()).runUnchecked(c);
   };
 
   public Map<ProductlistpricehistoryId, ProductlistpricehistoryRow> selectByIdsTracked(
@@ -238,28 +238,28 @@ public record ProductlistpricehistoryRepoImpl() implements Productlistpricehisto
   ) {
     ProductlistpricehistoryId compositeId = row.compositeId();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "production"."productlistpricehistory"
-         set "enddate" = """),
-      TypoLocalDateTime.pgType.opt().encode(row.enddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp,
-         "listprice" = """),
-      PgTypes.numeric.encode(row.listprice()),
-      typo.runtime.Fragment.lit("""
-         ::numeric,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "productid" = """),
-      ProductId.pgType.encode(compositeId.productid()),
-      typo.runtime.Fragment.lit("""
-       AND "startdate" = 
-      """),
-      TypoLocalDateTime.pgType.encode(compositeId.startdate()),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "production"."productlistpricehistory"
+                set "enddate" = """),
+             TypoLocalDateTime.pgType.opt().encode(row.enddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp,
+                "listprice" = """),
+             PgTypes.numeric.encode(row.listprice()),
+             typo.runtime.Fragment.lit("""
+                ::numeric,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "productid" = """),
+             ProductId.pgType.encode(compositeId.productid()),
+             typo.runtime.Fragment.lit("""
+              AND "startdate" = 
+             """),
+             TypoLocalDateTime.pgType.encode(compositeId.startdate()),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public ProductlistpricehistoryRow upsert(
@@ -324,14 +324,14 @@ public record ProductlistpricehistoryRepoImpl() implements Productlistpricehisto
       copy productlistpricehistory_TEMP("productid", "startdate", "enddate", "listprice", "modifieddate") from stdin
       """), batchSize, unsaved, c, ProductlistpricehistoryRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "production"."productlistpricehistory"("productid", "startdate", "enddate", "listprice", "modifieddate")
-       select * from productlistpricehistory_TEMP
-       on conflict ("productid", "startdate")
-       do update set
-         "enddate" = EXCLUDED."enddate",
-       "listprice" = EXCLUDED."listprice",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table productlistpricehistory_TEMP;""")).update().runUnchecked(c);
+              insert into "production"."productlistpricehistory"("productid", "startdate", "enddate", "listprice", "modifieddate")
+              select * from productlistpricehistory_TEMP
+              on conflict ("productid", "startdate")
+              do update set
+                "enddate" = EXCLUDED."enddate",
+              "listprice" = EXCLUDED."listprice",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table productlistpricehistory_TEMP;""")).update().runUnchecked(c);
   };
 }

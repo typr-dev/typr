@@ -23,7 +23,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record ScrapreasonRepoImpl() implements ScrapreasonRepo {
+public class ScrapreasonRepoImpl implements ScrapreasonRepo {
   public DeleteBuilder<ScrapreasonFields, ScrapreasonRow> delete() {
     return DeleteBuilder.of("production.scrapreason", ScrapreasonFields.structure());
   };
@@ -205,20 +205,20 @@ public record ScrapreasonRepoImpl() implements ScrapreasonRepo {
   ) {
     ScrapreasonId scrapreasonid = row.scrapreasonid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "production"."scrapreason"
-         set "name" = """),
-      Name.pgType.encode(row.name()),
-      typo.runtime.Fragment.lit("""
-         ::varchar,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "scrapreasonid" = """),
-      ScrapreasonId.pgType.encode(scrapreasonid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "production"."scrapreason"
+                set "name" = """),
+             Name.pgType.encode(row.name()),
+             typo.runtime.Fragment.lit("""
+                ::varchar,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "scrapreasonid" = """),
+             ScrapreasonId.pgType.encode(scrapreasonid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public ScrapreasonRow upsert(
@@ -277,13 +277,13 @@ public record ScrapreasonRepoImpl() implements ScrapreasonRepo {
       copy scrapreason_TEMP("scrapreasonid", "name", "modifieddate") from stdin
       """), batchSize, unsaved, c, ScrapreasonRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "production"."scrapreason"("scrapreasonid", "name", "modifieddate")
-       select * from scrapreason_TEMP
-       on conflict ("scrapreasonid")
-       do update set
-         "name" = EXCLUDED."name",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table scrapreason_TEMP;""")).update().runUnchecked(c);
+              insert into "production"."scrapreason"("scrapreasonid", "name", "modifieddate")
+              select * from scrapreason_TEMP
+              on conflict ("scrapreasonid")
+              do update set
+                "name" = EXCLUDED."name",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table scrapreason_TEMP;""")).update().runUnchecked(c);
   };
 }

@@ -6,6 +6,7 @@
 package adventureworks.public_.flaff;
 
 import adventureworks.public_.ShortText;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
 import typo.runtime.PgText;
 import typo.runtime.PgTypes;
@@ -20,9 +21,9 @@ public record FlaffRow(
   /** Points to {@link adventureworks.public_.flaff.FlaffRow#code()} */
   ShortText code,
   /** Points to {@link adventureworks.public_.flaff.FlaffRow#anotherCode()} */
-  /* max 20 chars */ String anotherCode,
+  @JsonProperty("another_code") /* max 20 chars */ String anotherCode,
   /** Points to {@link adventureworks.public_.flaff.FlaffRow#someNumber()} */
-  Integer someNumber,
+  @JsonProperty("some_number") Integer someNumber,
   ShortText specifier,
   /** Points to {@link adventureworks.public_.flaff.FlaffRow#specifier()} */
   Optional<ShortText> parentspecifier

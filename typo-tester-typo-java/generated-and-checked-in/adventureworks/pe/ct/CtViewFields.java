@@ -53,11 +53,11 @@ public interface CtViewFields {
     return new Impl(List.of());
   };
 
-  Field<ContacttypeId, CtViewRow> contacttypeid();
-
   Field<ContacttypeId, CtViewRow> id();
 
-  Field<TypoLocalDateTime, CtViewRow> modifieddate();
+  Field<ContacttypeId, CtViewRow> contacttypeid();
 
   Field<Name, CtViewRow> name();
+
+  Field<TypoLocalDateTime, CtViewRow> modifieddate();
 }

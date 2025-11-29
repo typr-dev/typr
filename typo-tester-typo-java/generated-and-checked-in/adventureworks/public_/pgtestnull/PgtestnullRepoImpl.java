@@ -42,7 +42,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record PgtestnullRepoImpl() implements PgtestnullRepo {
+public class PgtestnullRepoImpl implements PgtestnullRepo {
   public DeleteBuilder<PgtestnullFields, PgtestnullRow> delete() {
     return DeleteBuilder.of("public.pgtestnull", PgtestnullFields.structure());
   };

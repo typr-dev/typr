@@ -61,15 +61,15 @@ public interface EViewFields {
     return new Impl(List.of());
   };
 
-  Field<BusinessentityId, EViewRow> businessentityid();
+  Field<Integer, EViewRow> id();
 
-  OptField</* max 50 chars */ String, EViewRow> emailaddress();
+  Field<BusinessentityId, EViewRow> businessentityid();
 
   Field<Integer, EViewRow> emailaddressid();
 
-  Field<Integer, EViewRow> id();
-
-  Field<TypoLocalDateTime, EViewRow> modifieddate();
+  OptField</* max 50 chars */ String, EViewRow> emailaddress();
 
   Field<TypoUUID, EViewRow> rowguid();
+
+  Field<TypoLocalDateTime, EViewRow> modifieddate();
 }

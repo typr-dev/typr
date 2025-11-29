@@ -25,7 +25,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record CustomerRepoImpl() implements CustomerRepo {
+public class CustomerRepoImpl implements CustomerRepo {
   public DeleteBuilder<CustomerFields, CustomerRow> delete() {
     return DeleteBuilder.of("sales.customer", CustomerFields.structure());
   };
@@ -233,32 +233,32 @@ public record CustomerRepoImpl() implements CustomerRepo {
   ) {
     CustomerId customerid = row.customerid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "sales"."customer"
-         set "personid" = """),
-      BusinessentityId.pgType.opt().encode(row.personid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "storeid" = """),
-      BusinessentityId.pgType.opt().encode(row.storeid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "territoryid" = """),
-      SalesterritoryId.pgType.opt().encode(row.territoryid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "rowguid" = """),
-      TypoUUID.pgType.encode(row.rowguid()),
-      typo.runtime.Fragment.lit("""
-         ::uuid,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "customerid" = """),
-      CustomerId.pgType.encode(customerid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "sales"."customer"
+                set "personid" = """),
+             BusinessentityId.pgType.opt().encode(row.personid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "storeid" = """),
+             BusinessentityId.pgType.opt().encode(row.storeid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "territoryid" = """),
+             SalesterritoryId.pgType.opt().encode(row.territoryid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "rowguid" = """),
+             TypoUUID.pgType.encode(row.rowguid()),
+             typo.runtime.Fragment.lit("""
+                ::uuid,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "customerid" = """),
+             CustomerId.pgType.encode(customerid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public CustomerRow upsert(
@@ -329,16 +329,16 @@ public record CustomerRepoImpl() implements CustomerRepo {
       copy customer_TEMP("customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate") from stdin
       """), batchSize, unsaved, c, CustomerRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "sales"."customer"("customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate")
-       select * from customer_TEMP
-       on conflict ("customerid")
-       do update set
-         "personid" = EXCLUDED."personid",
-       "storeid" = EXCLUDED."storeid",
-       "territoryid" = EXCLUDED."territoryid",
-       "rowguid" = EXCLUDED."rowguid",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table customer_TEMP;""")).update().runUnchecked(c);
+              insert into "sales"."customer"("customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate")
+              select * from customer_TEMP
+              on conflict ("customerid")
+              do update set
+                "personid" = EXCLUDED."personid",
+              "storeid" = EXCLUDED."storeid",
+              "territoryid" = EXCLUDED."territoryid",
+              "rowguid" = EXCLUDED."rowguid",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table customer_TEMP;""")).update().runUnchecked(c);
   };
 }

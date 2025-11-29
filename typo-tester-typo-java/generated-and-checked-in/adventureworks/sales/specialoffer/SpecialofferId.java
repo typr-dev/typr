@@ -5,13 +5,14 @@
  */
 package adventureworks.sales.specialoffer;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `sales.specialoffer` */
-public record SpecialofferId(Integer value) {
+public record SpecialofferId(@JsonValue Integer value) {
   public SpecialofferId withValue(Integer value) {
     return new SpecialofferId(value);
   };

@@ -57,13 +57,13 @@ public interface AtViewFields {
     return new Impl(List.of());
   };
 
-  Field<AddresstypeId, AtViewRow> addresstypeid();
-
   Field<AddresstypeId, AtViewRow> id();
 
-  Field<TypoLocalDateTime, AtViewRow> modifieddate();
+  Field<AddresstypeId, AtViewRow> addresstypeid();
 
   Field<Name, AtViewRow> name();
 
   Field<TypoUUID, AtViewRow> rowguid();
+
+  Field<TypoLocalDateTime, AtViewRow> modifieddate();
 }

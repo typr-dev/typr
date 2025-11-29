@@ -57,30 +57,30 @@ public interface TestSakSoknadsalternativFields {
     return new Impl(List.of());
   };
 
-  default SqlExpr<Boolean> compositeIdIn(List<TestSakSoknadsalternativId> compositeIds) {
-    return new CompositeIn(List.of(new Part<String, TestSakSoknadsalternativId, TestSakSoknadsalternativRow>(organisasjonskodeSaksbehandler(), TestSakSoknadsalternativId::organisasjonskodeSaksbehandler, PgTypes.text), new Part<String, TestSakSoknadsalternativId, TestSakSoknadsalternativRow>(utdanningsmulighetKode(), TestSakSoknadsalternativId::utdanningsmulighetKode, PgTypes.text)), compositeIds);
-  };
+  IdField<String, TestSakSoknadsalternativRow> organisasjonskodeSaksbehandler();
 
-  default SqlExpr<Boolean> compositeIdIs(TestSakSoknadsalternativId compositeId) {
-    return SqlExpr.all(organisasjonskodeSaksbehandler().isEqual(compositeId.organisasjonskodeSaksbehandler()), utdanningsmulighetKode().isEqual(compositeId.utdanningsmulighetKode()));
-  };
+  IdField<String, TestSakSoknadsalternativRow> utdanningsmulighetKode();
 
-  default SqlExpr<Boolean> extractIdentTestUtdanningstilbudIdIn(List<TestUtdanningstilbudId> ids) {
-    return new CompositeIn(List.of(new Part<TestOrganisasjonId, TestUtdanningstilbudId, TestSakSoknadsalternativRow>(organisasjonskodeTilbyder(), TestUtdanningstilbudId::organisasjonskode, TestOrganisasjonId.pgType), new Part<String, TestUtdanningstilbudId, TestSakSoknadsalternativRow>(utdanningsmulighetKode(), TestUtdanningstilbudId::utdanningsmulighetKode, PgTypes.text)), ids);
-  };
-
-  default SqlExpr<Boolean> extractIdentTestUtdanningstilbudIdIs(TestUtdanningstilbudId id) {
-    return SqlExpr.all(organisasjonskodeTilbyder().isEqual(id.organisasjonskode()), utdanningsmulighetKode().isEqual(id.utdanningsmulighetKode()));
-  };
+  Field<TestOrganisasjonId, TestSakSoknadsalternativRow> organisasjonskodeTilbyder();
 
   default ForeignKey<TestUtdanningstilbudFields, TestUtdanningstilbudRow> fkTestUtdanningstilbud() {
     return ForeignKey.<TestUtdanningstilbudFields, TestUtdanningstilbudRow>of("public.test_sak_soknadsalternativ_organisasjonskode_tilbyder_utda_fkey").withColumnPair(organisasjonskodeTilbyder(), TestUtdanningstilbudFields::organisasjonskode)
     .withColumnPair(utdanningsmulighetKode(), TestUtdanningstilbudFields::utdanningsmulighetKode);
   };
 
-  IdField<String, TestSakSoknadsalternativRow> organisasjonskodeSaksbehandler();
+  default SqlExpr<Boolean> extractIdentTestUtdanningstilbudIdIs(TestUtdanningstilbudId id) {
+    return SqlExpr.all(organisasjonskodeTilbyder().isEqual(id.organisasjonskode()), utdanningsmulighetKode().isEqual(id.utdanningsmulighetKode()));
+  };
 
-  Field<TestOrganisasjonId, TestSakSoknadsalternativRow> organisasjonskodeTilbyder();
+  default SqlExpr<Boolean> extractIdentTestUtdanningstilbudIdIn(List<TestUtdanningstilbudId> ids) {
+    return new CompositeIn(List.of(new Part<TestOrganisasjonId, TestUtdanningstilbudId, TestSakSoknadsalternativRow>(organisasjonskodeTilbyder(), TestUtdanningstilbudId::organisasjonskode, TestOrganisasjonId.pgType), new Part<String, TestUtdanningstilbudId, TestSakSoknadsalternativRow>(utdanningsmulighetKode(), TestUtdanningstilbudId::utdanningsmulighetKode, PgTypes.text)), ids);
+  };
 
-  IdField<String, TestSakSoknadsalternativRow> utdanningsmulighetKode();
+  default SqlExpr<Boolean> compositeIdIs(TestSakSoknadsalternativId compositeId) {
+    return SqlExpr.all(organisasjonskodeSaksbehandler().isEqual(compositeId.organisasjonskodeSaksbehandler()), utdanningsmulighetKode().isEqual(compositeId.utdanningsmulighetKode()));
+  };
+
+  default SqlExpr<Boolean> compositeIdIn(List<TestSakSoknadsalternativId> compositeIds) {
+    return new CompositeIn(List.of(new Part<String, TestSakSoknadsalternativId, TestSakSoknadsalternativRow>(organisasjonskodeSaksbehandler(), TestSakSoknadsalternativId::organisasjonskodeSaksbehandler, PgTypes.text), new Part<String, TestSakSoknadsalternativId, TestSakSoknadsalternativRow>(utdanningsmulighetKode(), TestSakSoknadsalternativId::utdanningsmulighetKode, PgTypes.text)), compositeIds);
+  };
 }

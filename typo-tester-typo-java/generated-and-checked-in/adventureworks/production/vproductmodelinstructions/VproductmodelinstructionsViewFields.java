@@ -78,25 +78,25 @@ public interface VproductmodelinstructionsViewFields {
     return new Impl(List.of());
   };
 
-  OptField<String, VproductmodelinstructionsViewRow> instructions();
-
-  OptField<BigDecimal, VproductmodelinstructionsViewRow> laborHours();
-
-  OptField<Integer, VproductmodelinstructionsViewRow> locationID();
-
-  OptField<Integer, VproductmodelinstructionsViewRow> lotSize();
-
-  OptField<BigDecimal, VproductmodelinstructionsViewRow> machineHours();
-
-  Field<TypoLocalDateTime, VproductmodelinstructionsViewRow> modifieddate();
+  Field<ProductmodelId, VproductmodelinstructionsViewRow> productmodelid();
 
   Field<Name, VproductmodelinstructionsViewRow> name();
 
-  Field<ProductmodelId, VproductmodelinstructionsViewRow> productmodelid();
+  OptField<String, VproductmodelinstructionsViewRow> instructions();
 
-  Field<TypoUUID, VproductmodelinstructionsViewRow> rowguid();
+  OptField<Integer, VproductmodelinstructionsViewRow> locationID();
 
   OptField<BigDecimal, VproductmodelinstructionsViewRow> setupHours();
 
+  OptField<BigDecimal, VproductmodelinstructionsViewRow> machineHours();
+
+  OptField<BigDecimal, VproductmodelinstructionsViewRow> laborHours();
+
+  OptField<Integer, VproductmodelinstructionsViewRow> lotSize();
+
   OptField</* max 1024 chars */ String, VproductmodelinstructionsViewRow> step();
+
+  Field<TypoUUID, VproductmodelinstructionsViewRow> rowguid();
+
+  Field<TypoLocalDateTime, VproductmodelinstructionsViewRow> modifieddate();
 }

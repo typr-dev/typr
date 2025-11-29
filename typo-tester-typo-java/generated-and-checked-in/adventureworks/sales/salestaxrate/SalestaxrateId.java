@@ -5,13 +5,14 @@
  */
 package adventureworks.sales.salestaxrate;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `sales.salestaxrate` */
-public record SalestaxrateId(Integer value) {
+public record SalestaxrateId(@JsonValue Integer value) {
   public SalestaxrateId withValue(Integer value) {
     return new SalestaxrateId(value);
   };

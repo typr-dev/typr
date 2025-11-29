@@ -90,33 +90,33 @@ public interface PersonFields {
     return new Impl(List.of());
   };
 
-  OptField<TypoXml, PersonRow> additionalcontactinfo();
-
   IdField<BusinessentityId, PersonRow> businessentityid();
 
-  OptField<TypoXml, PersonRow> demographics();
+  Field</* bpchar, max 2 chars */ String, PersonRow> persontype();
+
+  Field<NameStyle, PersonRow> namestyle();
+
+  OptField</* max 8 chars */ String, PersonRow> title();
+
+  Field</* user-picked */ FirstName, PersonRow> firstname();
+
+  OptField<Name, PersonRow> middlename();
+
+  Field<Name, PersonRow> lastname();
+
+  OptField</* max 10 chars */ String, PersonRow> suffix();
 
   Field<Integer, PersonRow> emailpromotion();
 
-  Field</* user-picked */ FirstName, PersonRow> firstname();
+  OptField<TypoXml, PersonRow> additionalcontactinfo();
+
+  OptField<TypoXml, PersonRow> demographics();
+
+  Field<TypoUUID, PersonRow> rowguid();
+
+  Field<TypoLocalDateTime, PersonRow> modifieddate();
 
   default ForeignKey<BusinessentityFields, BusinessentityRow> fkBusinessentity() {
     return ForeignKey.<BusinessentityFields, BusinessentityRow>of("person.FK_Person_BusinessEntity_BusinessEntityID").withColumnPair(businessentityid(), BusinessentityFields::businessentityid);
   };
-
-  Field<Name, PersonRow> lastname();
-
-  OptField<Name, PersonRow> middlename();
-
-  Field<TypoLocalDateTime, PersonRow> modifieddate();
-
-  Field<NameStyle, PersonRow> namestyle();
-
-  Field</* bpchar, max 2 chars */ String, PersonRow> persontype();
-
-  Field<TypoUUID, PersonRow> rowguid();
-
-  OptField</* max 10 chars */ String, PersonRow> suffix();
-
-  OptField</* max 8 chars */ String, PersonRow> title();
 }

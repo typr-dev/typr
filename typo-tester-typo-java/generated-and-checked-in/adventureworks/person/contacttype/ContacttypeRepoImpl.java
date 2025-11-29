@@ -23,7 +23,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record ContacttypeRepoImpl() implements ContacttypeRepo {
+public class ContacttypeRepoImpl implements ContacttypeRepo {
   public DeleteBuilder<ContacttypeFields, ContacttypeRow> delete() {
     return DeleteBuilder.of("person.contacttype", ContacttypeFields.structure());
   };
@@ -205,20 +205,20 @@ public record ContacttypeRepoImpl() implements ContacttypeRepo {
   ) {
     ContacttypeId contacttypeid = row.contacttypeid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "person"."contacttype"
-         set "name" = """),
-      Name.pgType.encode(row.name()),
-      typo.runtime.Fragment.lit("""
-         ::varchar,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "contacttypeid" = """),
-      ContacttypeId.pgType.encode(contacttypeid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "person"."contacttype"
+                set "name" = """),
+             Name.pgType.encode(row.name()),
+             typo.runtime.Fragment.lit("""
+                ::varchar,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "contacttypeid" = """),
+             ContacttypeId.pgType.encode(contacttypeid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public ContacttypeRow upsert(
@@ -277,13 +277,13 @@ public record ContacttypeRepoImpl() implements ContacttypeRepo {
       copy contacttype_TEMP("contacttypeid", "name", "modifieddate") from stdin
       """), batchSize, unsaved, c, ContacttypeRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "person"."contacttype"("contacttypeid", "name", "modifieddate")
-       select * from contacttype_TEMP
-       on conflict ("contacttypeid")
-       do update set
-         "name" = EXCLUDED."name",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table contacttype_TEMP;""")).update().runUnchecked(c);
+              insert into "person"."contacttype"("contacttypeid", "name", "modifieddate")
+              select * from contacttype_TEMP
+              on conflict ("contacttypeid")
+              do update set
+                "name" = EXCLUDED."name",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table contacttype_TEMP;""")).update().runUnchecked(c);
   };
 }

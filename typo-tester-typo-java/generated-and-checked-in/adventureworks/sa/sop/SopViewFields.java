@@ -59,11 +59,11 @@ public interface SopViewFields {
 
   Field<SpecialofferId, SopViewRow> id();
 
-  Field<TypoLocalDateTime, SopViewRow> modifieddate();
+  Field<SpecialofferId, SopViewRow> specialofferid();
 
   Field<ProductId, SopViewRow> productid();
 
   Field<TypoUUID, SopViewRow> rowguid();
 
-  Field<SpecialofferId, SopViewRow> specialofferid();
+  Field<TypoLocalDateTime, SopViewRow> modifieddate();
 }

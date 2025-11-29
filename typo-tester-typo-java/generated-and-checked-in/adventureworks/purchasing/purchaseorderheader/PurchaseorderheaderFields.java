@@ -89,7 +89,29 @@ public interface PurchaseorderheaderFields {
     return new Impl(List.of());
   };
 
+  IdField<PurchaseorderheaderId, PurchaseorderheaderRow> purchaseorderid();
+
+  Field<TypoShort, PurchaseorderheaderRow> revisionnumber();
+
+  Field<TypoShort, PurchaseorderheaderRow> status();
+
   Field<BusinessentityId, PurchaseorderheaderRow> employeeid();
+
+  Field<BusinessentityId, PurchaseorderheaderRow> vendorid();
+
+  Field<ShipmethodId, PurchaseorderheaderRow> shipmethodid();
+
+  Field<TypoLocalDateTime, PurchaseorderheaderRow> orderdate();
+
+  OptField<TypoLocalDateTime, PurchaseorderheaderRow> shipdate();
+
+  Field<BigDecimal, PurchaseorderheaderRow> subtotal();
+
+  Field<BigDecimal, PurchaseorderheaderRow> taxamt();
+
+  Field<BigDecimal, PurchaseorderheaderRow> freight();
+
+  Field<TypoLocalDateTime, PurchaseorderheaderRow> modifieddate();
 
   default ForeignKey<EmployeeFields, EmployeeRow> fkHumanresourcesEmployee() {
     return ForeignKey.<EmployeeFields, EmployeeRow>of("purchasing.FK_PurchaseOrderHeader_Employee_EmployeeID").withColumnPair(employeeid(), EmployeeFields::businessentityid);
@@ -102,26 +124,4 @@ public interface PurchaseorderheaderFields {
   default ForeignKey<VendorFields, VendorRow> fkVendor() {
     return ForeignKey.<VendorFields, VendorRow>of("purchasing.FK_PurchaseOrderHeader_Vendor_VendorID").withColumnPair(vendorid(), VendorFields::businessentityid);
   };
-
-  Field<BigDecimal, PurchaseorderheaderRow> freight();
-
-  Field<TypoLocalDateTime, PurchaseorderheaderRow> modifieddate();
-
-  Field<TypoLocalDateTime, PurchaseorderheaderRow> orderdate();
-
-  IdField<PurchaseorderheaderId, PurchaseorderheaderRow> purchaseorderid();
-
-  Field<TypoShort, PurchaseorderheaderRow> revisionnumber();
-
-  OptField<TypoLocalDateTime, PurchaseorderheaderRow> shipdate();
-
-  Field<ShipmethodId, PurchaseorderheaderRow> shipmethodid();
-
-  Field<TypoShort, PurchaseorderheaderRow> status();
-
-  Field<BigDecimal, PurchaseorderheaderRow> subtotal();
-
-  Field<BigDecimal, PurchaseorderheaderRow> taxamt();
-
-  Field<BusinessentityId, PurchaseorderheaderRow> vendorid();
 }

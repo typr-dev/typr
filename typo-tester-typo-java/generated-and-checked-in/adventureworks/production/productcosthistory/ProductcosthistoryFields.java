@@ -65,25 +65,25 @@ public interface ProductcosthistoryFields {
     return new Impl(List.of());
   };
 
-  default SqlExpr<Boolean> compositeIdIn(List<ProductcosthistoryId> compositeIds) {
-    return new CompositeIn(List.of(new Part<ProductId, ProductcosthistoryId, ProductcosthistoryRow>(productid(), ProductcosthistoryId::productid, ProductId.pgType), new Part<TypoLocalDateTime, ProductcosthistoryId, ProductcosthistoryRow>(startdate(), ProductcosthistoryId::startdate, TypoLocalDateTime.pgType)), compositeIds);
+  IdField<ProductId, ProductcosthistoryRow> productid();
+
+  IdField<TypoLocalDateTime, ProductcosthistoryRow> startdate();
+
+  OptField<TypoLocalDateTime, ProductcosthistoryRow> enddate();
+
+  Field<BigDecimal, ProductcosthistoryRow> standardcost();
+
+  Field<TypoLocalDateTime, ProductcosthistoryRow> modifieddate();
+
+  default ForeignKey<ProductFields, ProductRow> fkProduct() {
+    return ForeignKey.<ProductFields, ProductRow>of("production.FK_ProductCostHistory_Product_ProductID").withColumnPair(productid(), ProductFields::productid);
   };
 
   default SqlExpr<Boolean> compositeIdIs(ProductcosthistoryId compositeId) {
     return SqlExpr.all(productid().isEqual(compositeId.productid()), startdate().isEqual(compositeId.startdate()));
   };
 
-  OptField<TypoLocalDateTime, ProductcosthistoryRow> enddate();
-
-  default ForeignKey<ProductFields, ProductRow> fkProduct() {
-    return ForeignKey.<ProductFields, ProductRow>of("production.FK_ProductCostHistory_Product_ProductID").withColumnPair(productid(), ProductFields::productid);
+  default SqlExpr<Boolean> compositeIdIn(List<ProductcosthistoryId> compositeIds) {
+    return new CompositeIn(List.of(new Part<ProductId, ProductcosthistoryId, ProductcosthistoryRow>(productid(), ProductcosthistoryId::productid, ProductId.pgType), new Part<TypoLocalDateTime, ProductcosthistoryId, ProductcosthistoryRow>(startdate(), ProductcosthistoryId::startdate, TypoLocalDateTime.pgType)), compositeIds);
   };
-
-  Field<TypoLocalDateTime, ProductcosthistoryRow> modifieddate();
-
-  IdField<ProductId, ProductcosthistoryRow> productid();
-
-  Field<BigDecimal, ProductcosthistoryRow> standardcost();
-
-  IdField<TypoLocalDateTime, ProductcosthistoryRow> startdate();
 }

@@ -5,13 +5,14 @@
  */
 package adventureworks.production.unitmeasure;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `production.unitmeasure` */
-public record UnitmeasureId(/* bpchar, max 3 chars */ String value) {
+public record UnitmeasureId(@JsonValue /* bpchar, max 3 chars */ String value) {
   public UnitmeasureId withValue(/* bpchar, max 3 chars */ String value) {
     return new UnitmeasureId(value);
   };

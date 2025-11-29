@@ -67,23 +67,23 @@ public interface EmailaddressFields {
 
   IdField<BusinessentityId, EmailaddressRow> businessentityid();
 
-  default SqlExpr<Boolean> compositeIdIn(List<EmailaddressId> compositeIds) {
-    return new CompositeIn(List.of(new Part<BusinessentityId, EmailaddressId, EmailaddressRow>(businessentityid(), EmailaddressId::businessentityid, BusinessentityId.pgType), new Part<Integer, EmailaddressId, EmailaddressRow>(emailaddressid(), EmailaddressId::emailaddressid, PgTypes.int4)), compositeIds);
+  IdField<Integer, EmailaddressRow> emailaddressid();
+
+  OptField</* max 50 chars */ String, EmailaddressRow> emailaddress();
+
+  Field<TypoUUID, EmailaddressRow> rowguid();
+
+  Field<TypoLocalDateTime, EmailaddressRow> modifieddate();
+
+  default ForeignKey<PersonFields, PersonRow> fkPerson() {
+    return ForeignKey.<PersonFields, PersonRow>of("person.FK_EmailAddress_Person_BusinessEntityID").withColumnPair(businessentityid(), PersonFields::businessentityid);
   };
 
   default SqlExpr<Boolean> compositeIdIs(EmailaddressId compositeId) {
     return SqlExpr.all(businessentityid().isEqual(compositeId.businessentityid()), emailaddressid().isEqual(compositeId.emailaddressid()));
   };
 
-  OptField</* max 50 chars */ String, EmailaddressRow> emailaddress();
-
-  IdField<Integer, EmailaddressRow> emailaddressid();
-
-  default ForeignKey<PersonFields, PersonRow> fkPerson() {
-    return ForeignKey.<PersonFields, PersonRow>of("person.FK_EmailAddress_Person_BusinessEntityID").withColumnPair(businessentityid(), PersonFields::businessentityid);
+  default SqlExpr<Boolean> compositeIdIn(List<EmailaddressId> compositeIds) {
+    return new CompositeIn(List.of(new Part<BusinessentityId, EmailaddressId, EmailaddressRow>(businessentityid(), EmailaddressId::businessentityid, BusinessentityId.pgType), new Part<Integer, EmailaddressId, EmailaddressRow>(emailaddressid(), EmailaddressId::emailaddressid, PgTypes.int4)), compositeIds);
   };
-
-  Field<TypoLocalDateTime, EmailaddressRow> modifieddate();
-
-  Field<TypoUUID, EmailaddressRow> rowguid();
 }

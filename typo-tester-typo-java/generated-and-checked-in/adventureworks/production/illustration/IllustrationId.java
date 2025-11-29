@@ -5,13 +5,14 @@
  */
 package adventureworks.production.illustration;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `production.illustration` */
-public record IllustrationId(Integer value) {
+public record IllustrationId(@JsonValue Integer value) {
   public IllustrationId withValue(Integer value) {
     return new IllustrationId(value);
   };

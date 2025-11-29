@@ -80,25 +80,25 @@ public interface SodViewFields {
     return new Impl(List.of());
   };
 
-  OptField</* max 25 chars */ String, SodViewRow> carriertrackingnumber();
-
   Field<Integer, SodViewRow> id();
 
-  Field<TypoLocalDateTime, SodViewRow> modifieddate();
+  Field<SalesorderheaderId, SodViewRow> salesorderid();
+
+  Field<Integer, SodViewRow> salesorderdetailid();
+
+  OptField</* max 25 chars */ String, SodViewRow> carriertrackingnumber();
 
   Field<TypoShort, SodViewRow> orderqty();
 
   Field<ProductId, SodViewRow> productid();
-
-  Field<TypoUUID, SodViewRow> rowguid();
-
-  Field<Integer, SodViewRow> salesorderdetailid();
-
-  Field<SalesorderheaderId, SodViewRow> salesorderid();
 
   Field<SpecialofferId, SodViewRow> specialofferid();
 
   Field<BigDecimal, SodViewRow> unitprice();
 
   Field<BigDecimal, SodViewRow> unitpricediscount();
+
+  Field<TypoUUID, SodViewRow> rowguid();
+
+  Field<TypoLocalDateTime, SodViewRow> modifieddate();
 }

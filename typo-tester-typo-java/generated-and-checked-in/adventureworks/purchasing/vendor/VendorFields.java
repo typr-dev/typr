@@ -74,23 +74,23 @@ public interface VendorFields {
     return new Impl(List.of());
   };
 
+  IdField<BusinessentityId, VendorRow> businessentityid();
+
   Field<AccountNumber, VendorRow> accountnumber();
+
+  Field<Name, VendorRow> name();
+
+  Field<TypoShort, VendorRow> creditrating();
+
+  Field<Flag, VendorRow> preferredvendorstatus();
 
   Field<Flag, VendorRow> activeflag();
 
-  IdField<BusinessentityId, VendorRow> businessentityid();
+  OptField</* max 1024 chars */ String, VendorRow> purchasingwebserviceurl();
 
-  Field<TypoShort, VendorRow> creditrating();
+  Field<TypoLocalDateTime, VendorRow> modifieddate();
 
   default ForeignKey<BusinessentityFields, BusinessentityRow> fkPersonBusinessentity() {
     return ForeignKey.<BusinessentityFields, BusinessentityRow>of("purchasing.FK_Vendor_BusinessEntity_BusinessEntityID").withColumnPair(businessentityid(), BusinessentityFields::businessentityid);
   };
-
-  Field<TypoLocalDateTime, VendorRow> modifieddate();
-
-  Field<Name, VendorRow> name();
-
-  Field<Flag, VendorRow> preferredvendorstatus();
-
-  OptField</* max 1024 chars */ String, VendorRow> purchasingwebserviceurl();
 }

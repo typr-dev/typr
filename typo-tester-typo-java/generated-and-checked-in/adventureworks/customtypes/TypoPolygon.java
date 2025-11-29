@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,7 +20,7 @@ import typo.runtime.internal.arrayMap;
 import static typo.runtime.internal.stringInterpolator.str;
 
 /** Polygon datatype in PostgreSQL */
-public record TypoPolygon(List<TypoPoint> points) {
+public record TypoPolygon(@JsonValue List<TypoPoint> points) {
   public TypoPolygon withPoints(List<TypoPoint> points) {
     return new TypoPolygon(points);
   };

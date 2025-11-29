@@ -61,15 +61,15 @@ public interface VsalespersonsalesbyfiscalyearsdataViewFields {
     return new Impl(List.of());
   };
 
-  OptField<BigDecimal, VsalespersonsalesbyfiscalyearsdataViewRow> fiscalyear();
+  OptField<BusinessentityId, VsalespersonsalesbyfiscalyearsdataViewRow> salespersonid();
 
   OptField<String, VsalespersonsalesbyfiscalyearsdataViewRow> fullname();
 
   Field</* max 50 chars */ String, VsalespersonsalesbyfiscalyearsdataViewRow> jobtitle();
 
-  OptField<BusinessentityId, VsalespersonsalesbyfiscalyearsdataViewRow> salespersonid();
-
   Field<Name, VsalespersonsalesbyfiscalyearsdataViewRow> salesterritory();
 
   OptField<BigDecimal, VsalespersonsalesbyfiscalyearsdataViewRow> salestotal();
+
+  OptField<BigDecimal, VsalespersonsalesbyfiscalyearsdataViewRow> fiscalyear();
 }

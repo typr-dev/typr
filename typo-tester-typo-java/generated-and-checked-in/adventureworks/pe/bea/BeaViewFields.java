@@ -61,15 +61,15 @@ public interface BeaViewFields {
     return new Impl(List.of());
   };
 
+  Field<BusinessentityId, BeaViewRow> id();
+
+  Field<BusinessentityId, BeaViewRow> businessentityid();
+
   Field<AddressId, BeaViewRow> addressid();
 
   Field<AddresstypeId, BeaViewRow> addresstypeid();
 
-  Field<BusinessentityId, BeaViewRow> businessentityid();
-
-  Field<BusinessentityId, BeaViewRow> id();
+  Field<TypoUUID, BeaViewRow> rowguid();
 
   Field<TypoLocalDateTime, BeaViewRow> modifieddate();
-
-  Field<TypoUUID, BeaViewRow> rowguid();
 }

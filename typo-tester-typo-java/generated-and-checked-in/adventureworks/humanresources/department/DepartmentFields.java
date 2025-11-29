@@ -55,9 +55,9 @@ public interface DepartmentFields {
 
   IdField<DepartmentId, DepartmentRow> departmentid();
 
+  Field<Name, DepartmentRow> name();
+
   Field<Name, DepartmentRow> groupname();
 
   Field<TypoLocalDateTime, DepartmentRow> modifieddate();
-
-  Field<Name, DepartmentRow> name();
 }

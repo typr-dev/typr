@@ -72,17 +72,17 @@ public interface TrViewFields {
 
   Field<SalestaxrateId, TrViewRow> id();
 
-  Field<TypoLocalDateTime, TrViewRow> modifieddate();
+  Field<SalestaxrateId, TrViewRow> salestaxrateid();
+
+  Field<StateprovinceId, TrViewRow> stateprovinceid();
+
+  Field<TypoShort, TrViewRow> taxtype();
+
+  Field<BigDecimal, TrViewRow> taxrate();
 
   Field<Name, TrViewRow> name();
 
   Field<TypoUUID, TrViewRow> rowguid();
 
-  Field<SalestaxrateId, TrViewRow> salestaxrateid();
-
-  Field<StateprovinceId, TrViewRow> stateprovinceid();
-
-  Field<BigDecimal, TrViewRow> taxrate();
-
-  Field<TypoShort, TrViewRow> taxtype();
+  Field<TypoLocalDateTime, TrViewRow> modifieddate();
 }

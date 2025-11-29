@@ -57,13 +57,13 @@ public interface PdViewFields {
     return new Impl(List.of());
   };
 
-  Field</* max 400 chars */ String, PdViewRow> description();
-
   Field<ProductdescriptionId, PdViewRow> id();
-
-  Field<TypoLocalDateTime, PdViewRow> modifieddate();
 
   Field<ProductdescriptionId, PdViewRow> productdescriptionid();
 
+  Field</* max 400 chars */ String, PdViewRow> description();
+
   Field<TypoUUID, PdViewRow> rowguid();
+
+  Field<TypoLocalDateTime, PdViewRow> modifieddate();
 }

@@ -5,6 +5,7 @@
  */
 package adventureworks.public_;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
@@ -13,7 +14,7 @@ import typo.runtime.internal.arrayMap;
 /** Domain `public.mydomain`
   * No constraint
   */
-public record Mydomain(String value) {
+public record Mydomain(@JsonValue String value) {
   public Mydomain withValue(String value) {
     return new Mydomain(value);
   };

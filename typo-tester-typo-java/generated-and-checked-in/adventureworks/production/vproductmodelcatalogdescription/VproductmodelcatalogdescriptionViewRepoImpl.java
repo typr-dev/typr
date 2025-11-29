@@ -10,7 +10,7 @@ import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-public record VproductmodelcatalogdescriptionViewRepoImpl() implements VproductmodelcatalogdescriptionViewRepo {
+public class VproductmodelcatalogdescriptionViewRepoImpl implements VproductmodelcatalogdescriptionViewRepo {
   public SelectBuilder<VproductmodelcatalogdescriptionViewFields, VproductmodelcatalogdescriptionViewRow> select() {
     return SelectBuilder.of("production.vproductmodelcatalogdescription", VproductmodelcatalogdescriptionViewFields.structure(), VproductmodelcatalogdescriptionViewRow._rowParser);
   };

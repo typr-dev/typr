@@ -24,7 +24,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record JobcandidateRepoImpl() implements JobcandidateRepo {
+public class JobcandidateRepoImpl implements JobcandidateRepo {
   public DeleteBuilder<JobcandidateFields, JobcandidateRow> delete() {
     return DeleteBuilder.of("humanresources.jobcandidate", JobcandidateFields.structure());
   };
@@ -213,24 +213,24 @@ public record JobcandidateRepoImpl() implements JobcandidateRepo {
   ) {
     JobcandidateId jobcandidateid = row.jobcandidateid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "humanresources"."jobcandidate"
-         set "businessentityid" = """),
-      BusinessentityId.pgType.opt().encode(row.businessentityid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "resume" = """),
-      TypoXml.pgType.opt().encode(row.resume()),
-      typo.runtime.Fragment.lit("""
-         ::xml,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "jobcandidateid" = """),
-      JobcandidateId.pgType.encode(jobcandidateid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "humanresources"."jobcandidate"
+                set "businessentityid" = """),
+             BusinessentityId.pgType.opt().encode(row.businessentityid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "resume" = """),
+             TypoXml.pgType.opt().encode(row.resume()),
+             typo.runtime.Fragment.lit("""
+                ::xml,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "jobcandidateid" = """),
+             JobcandidateId.pgType.encode(jobcandidateid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public JobcandidateRow upsert(
@@ -293,14 +293,14 @@ public record JobcandidateRepoImpl() implements JobcandidateRepo {
       copy jobcandidate_TEMP("jobcandidateid", "businessentityid", "resume", "modifieddate") from stdin
       """), batchSize, unsaved, c, JobcandidateRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "humanresources"."jobcandidate"("jobcandidateid", "businessentityid", "resume", "modifieddate")
-       select * from jobcandidate_TEMP
-       on conflict ("jobcandidateid")
-       do update set
-         "businessentityid" = EXCLUDED."businessentityid",
-       "resume" = EXCLUDED."resume",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table jobcandidate_TEMP;""")).update().runUnchecked(c);
+              insert into "humanresources"."jobcandidate"("jobcandidateid", "businessentityid", "resume", "modifieddate")
+              select * from jobcandidate_TEMP
+              on conflict ("jobcandidateid")
+              do update set
+                "businessentityid" = EXCLUDED."businessentityid",
+              "resume" = EXCLUDED."resume",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table jobcandidate_TEMP;""")).update().runUnchecked(c);
   };
 }

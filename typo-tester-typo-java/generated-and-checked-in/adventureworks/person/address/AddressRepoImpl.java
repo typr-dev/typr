@@ -26,7 +26,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record AddressRepoImpl() implements AddressRepo {
+public class AddressRepoImpl implements AddressRepo {
   public DeleteBuilder<AddressFields, AddressRow> delete() {
     return DeleteBuilder.of("person.address", AddressFields.structure());
   };
@@ -259,44 +259,44 @@ public record AddressRepoImpl() implements AddressRepo {
   ) {
     AddressId addressid = row.addressid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "person"."address"
-         set "addressline1" = """),
-      PgTypes.text.encode(row.addressline1()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "addressline2" = """),
-      PgTypes.text.opt().encode(row.addressline2()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "city" = """),
-      PgTypes.text.encode(row.city()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "stateprovinceid" = """),
-      StateprovinceId.pgType.encode(row.stateprovinceid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "postalcode" = """),
-      PgTypes.text.encode(row.postalcode()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "spatiallocation" = """),
-      TypoBytea.pgType.opt().encode(row.spatiallocation()),
-      typo.runtime.Fragment.lit("""
-         ::bytea,
-         "rowguid" = """),
-      TypoUUID.pgType.encode(row.rowguid()),
-      typo.runtime.Fragment.lit("""
-         ::uuid,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "addressid" = """),
-      AddressId.pgType.encode(addressid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "person"."address"
+                set "addressline1" = """),
+             PgTypes.text.encode(row.addressline1()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "addressline2" = """),
+             PgTypes.text.opt().encode(row.addressline2()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "city" = """),
+             PgTypes.text.encode(row.city()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "stateprovinceid" = """),
+             StateprovinceId.pgType.encode(row.stateprovinceid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "postalcode" = """),
+             PgTypes.text.encode(row.postalcode()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "spatiallocation" = """),
+             TypoBytea.pgType.opt().encode(row.spatiallocation()),
+             typo.runtime.Fragment.lit("""
+                ::bytea,
+                "rowguid" = """),
+             TypoUUID.pgType.encode(row.rowguid()),
+             typo.runtime.Fragment.lit("""
+                ::uuid,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "addressid" = """),
+             AddressId.pgType.encode(addressid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public AddressRow upsert(
@@ -379,19 +379,19 @@ public record AddressRepoImpl() implements AddressRepo {
       copy address_TEMP("addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate") from stdin
       """), batchSize, unsaved, c, AddressRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "person"."address"("addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate")
-       select * from address_TEMP
-       on conflict ("addressid")
-       do update set
-         "addressline1" = EXCLUDED."addressline1",
-       "addressline2" = EXCLUDED."addressline2",
-       "city" = EXCLUDED."city",
-       "stateprovinceid" = EXCLUDED."stateprovinceid",
-       "postalcode" = EXCLUDED."postalcode",
-       "spatiallocation" = EXCLUDED."spatiallocation",
-       "rowguid" = EXCLUDED."rowguid",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table address_TEMP;""")).update().runUnchecked(c);
+              insert into "person"."address"("addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate")
+              select * from address_TEMP
+              on conflict ("addressid")
+              do update set
+                "addressline1" = EXCLUDED."addressline1",
+              "addressline2" = EXCLUDED."addressline2",
+              "city" = EXCLUDED."city",
+              "stateprovinceid" = EXCLUDED."stateprovinceid",
+              "postalcode" = EXCLUDED."postalcode",
+              "spatiallocation" = EXCLUDED."spatiallocation",
+              "rowguid" = EXCLUDED."rowguid",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table address_TEMP;""")).update().runUnchecked(c);
   };
 }

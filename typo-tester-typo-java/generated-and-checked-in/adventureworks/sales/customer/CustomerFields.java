@@ -71,6 +71,16 @@ public interface CustomerFields {
 
   IdField<CustomerId, CustomerRow> customerid();
 
+  OptField<BusinessentityId, CustomerRow> personid();
+
+  OptField<BusinessentityId, CustomerRow> storeid();
+
+  OptField<SalesterritoryId, CustomerRow> territoryid();
+
+  Field<TypoUUID, CustomerRow> rowguid();
+
+  Field<TypoLocalDateTime, CustomerRow> modifieddate();
+
   default ForeignKey<PersonFields, PersonRow> fkPersonPerson() {
     return ForeignKey.<PersonFields, PersonRow>of("sales.FK_Customer_Person_PersonID").withColumnPair(personid(), PersonFields::businessentityid);
   };
@@ -82,14 +92,4 @@ public interface CustomerFields {
   default ForeignKey<StoreFields, StoreRow> fkStore() {
     return ForeignKey.<StoreFields, StoreRow>of("sales.FK_Customer_Store_StoreID").withColumnPair(storeid(), StoreFields::businessentityid);
   };
-
-  Field<TypoLocalDateTime, CustomerRow> modifieddate();
-
-  OptField<BusinessentityId, CustomerRow> personid();
-
-  Field<TypoUUID, CustomerRow> rowguid();
-
-  OptField<BusinessentityId, CustomerRow> storeid();
-
-  OptField<SalesterritoryId, CustomerRow> territoryid();
 }

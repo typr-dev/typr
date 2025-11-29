@@ -65,17 +65,17 @@ public interface EdhViewFields {
     return new Impl(List.of());
   };
 
+  Field<BusinessentityId, EdhViewRow> id();
+
   Field<BusinessentityId, EdhViewRow> businessentityid();
 
   Field<DepartmentId, EdhViewRow> departmentid();
 
-  OptField<TypoLocalDate, EdhViewRow> enddate();
-
-  Field<BusinessentityId, EdhViewRow> id();
-
-  Field<TypoLocalDateTime, EdhViewRow> modifieddate();
-
   Field<ShiftId, EdhViewRow> shiftid();
 
   Field<TypoLocalDate, EdhViewRow> startdate();
+
+  OptField<TypoLocalDate, EdhViewRow> enddate();
+
+  Field<TypoLocalDateTime, EdhViewRow> modifieddate();
 }

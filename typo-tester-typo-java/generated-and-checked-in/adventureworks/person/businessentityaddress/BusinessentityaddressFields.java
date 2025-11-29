@@ -69,33 +69,33 @@ public interface BusinessentityaddressFields {
     return new Impl(List.of());
   };
 
+  IdField<BusinessentityId, BusinessentityaddressRow> businessentityid();
+
   IdField<AddressId, BusinessentityaddressRow> addressid();
 
   IdField<AddresstypeId, BusinessentityaddressRow> addresstypeid();
 
-  IdField<BusinessentityId, BusinessentityaddressRow> businessentityid();
+  Field<TypoUUID, BusinessentityaddressRow> rowguid();
 
-  default SqlExpr<Boolean> compositeIdIn(List<BusinessentityaddressId> compositeIds) {
-    return new CompositeIn(List.of(new Part<BusinessentityId, BusinessentityaddressId, BusinessentityaddressRow>(businessentityid(), BusinessentityaddressId::businessentityid, BusinessentityId.pgType), new Part<AddressId, BusinessentityaddressId, BusinessentityaddressRow>(addressid(), BusinessentityaddressId::addressid, AddressId.pgType), new Part<AddresstypeId, BusinessentityaddressId, BusinessentityaddressRow>(addresstypeid(), BusinessentityaddressId::addresstypeid, AddresstypeId.pgType)), compositeIds);
-  };
+  Field<TypoLocalDateTime, BusinessentityaddressRow> modifieddate();
 
-  default SqlExpr<Boolean> compositeIdIs(BusinessentityaddressId compositeId) {
-    return SqlExpr.all(businessentityid().isEqual(compositeId.businessentityid()), addressid().isEqual(compositeId.addressid()), addresstypeid().isEqual(compositeId.addresstypeid()));
+  default ForeignKey<AddresstypeFields, AddresstypeRow> fkAddresstype() {
+    return ForeignKey.<AddresstypeFields, AddresstypeRow>of("person.FK_BusinessEntityAddress_AddressType_AddressTypeID").withColumnPair(addresstypeid(), AddresstypeFields::addresstypeid);
   };
 
   default ForeignKey<AddressFields, AddressRow> fkAddress() {
     return ForeignKey.<AddressFields, AddressRow>of("person.FK_BusinessEntityAddress_Address_AddressID").withColumnPair(addressid(), AddressFields::addressid);
   };
 
-  default ForeignKey<AddresstypeFields, AddresstypeRow> fkAddresstype() {
-    return ForeignKey.<AddresstypeFields, AddresstypeRow>of("person.FK_BusinessEntityAddress_AddressType_AddressTypeID").withColumnPair(addresstypeid(), AddresstypeFields::addresstypeid);
-  };
-
   default ForeignKey<BusinessentityFields, BusinessentityRow> fkBusinessentity() {
     return ForeignKey.<BusinessentityFields, BusinessentityRow>of("person.FK_BusinessEntityAddress_BusinessEntity_BusinessEntityID").withColumnPair(businessentityid(), BusinessentityFields::businessentityid);
   };
 
-  Field<TypoLocalDateTime, BusinessentityaddressRow> modifieddate();
+  default SqlExpr<Boolean> compositeIdIs(BusinessentityaddressId compositeId) {
+    return SqlExpr.all(businessentityid().isEqual(compositeId.businessentityid()), addressid().isEqual(compositeId.addressid()), addresstypeid().isEqual(compositeId.addresstypeid()));
+  };
 
-  Field<TypoUUID, BusinessentityaddressRow> rowguid();
+  default SqlExpr<Boolean> compositeIdIn(List<BusinessentityaddressId> compositeIds) {
+    return new CompositeIn(List.of(new Part<BusinessentityId, BusinessentityaddressId, BusinessentityaddressRow>(businessentityid(), BusinessentityaddressId::businessentityid, BusinessentityId.pgType), new Part<AddressId, BusinessentityaddressId, BusinessentityaddressRow>(addressid(), BusinessentityaddressId::addressid, AddressId.pgType), new Part<AddresstypeId, BusinessentityaddressId, BusinessentityaddressRow>(addresstypeid(), BusinessentityaddressId::addresstypeid, AddresstypeId.pgType)), compositeIds);
+  };
 }

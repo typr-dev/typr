@@ -145,21 +145,63 @@ public interface SalesorderheaderFields {
     return new Impl(List.of());
   };
 
+  IdField<SalesorderheaderId, SalesorderheaderRow> salesorderid();
+
+  Field<TypoShort, SalesorderheaderRow> revisionnumber();
+
+  Field<TypoLocalDateTime, SalesorderheaderRow> orderdate();
+
+  Field<TypoLocalDateTime, SalesorderheaderRow> duedate();
+
+  OptField<TypoLocalDateTime, SalesorderheaderRow> shipdate();
+
+  Field<TypoShort, SalesorderheaderRow> status();
+
+  Field<Flag, SalesorderheaderRow> onlineorderflag();
+
+  OptField<OrderNumber, SalesorderheaderRow> purchaseordernumber();
+
   OptField<AccountNumber, SalesorderheaderRow> accountnumber();
-
-  Field<AddressId, SalesorderheaderRow> billtoaddressid();
-
-  OptField</* max 128 chars */ String, SalesorderheaderRow> comment();
-
-  OptField</* max 15 chars */ String, SalesorderheaderRow> creditcardapprovalcode();
-
-  OptField</* user-picked */ CustomCreditcardId, SalesorderheaderRow> creditcardid();
-
-  OptField<CurrencyrateId, SalesorderheaderRow> currencyrateid();
 
   Field<CustomerId, SalesorderheaderRow> customerid();
 
-  Field<TypoLocalDateTime, SalesorderheaderRow> duedate();
+  OptField<BusinessentityId, SalesorderheaderRow> salespersonid();
+
+  OptField<SalesterritoryId, SalesorderheaderRow> territoryid();
+
+  Field<AddressId, SalesorderheaderRow> billtoaddressid();
+
+  Field<AddressId, SalesorderheaderRow> shiptoaddressid();
+
+  Field<ShipmethodId, SalesorderheaderRow> shipmethodid();
+
+  OptField</* user-picked */ CustomCreditcardId, SalesorderheaderRow> creditcardid();
+
+  OptField</* max 15 chars */ String, SalesorderheaderRow> creditcardapprovalcode();
+
+  OptField<CurrencyrateId, SalesorderheaderRow> currencyrateid();
+
+  Field<BigDecimal, SalesorderheaderRow> subtotal();
+
+  Field<BigDecimal, SalesorderheaderRow> taxamt();
+
+  Field<BigDecimal, SalesorderheaderRow> freight();
+
+  OptField<BigDecimal, SalesorderheaderRow> totaldue();
+
+  OptField</* max 128 chars */ String, SalesorderheaderRow> comment();
+
+  Field<TypoUUID, SalesorderheaderRow> rowguid();
+
+  Field<TypoLocalDateTime, SalesorderheaderRow> modifieddate();
+
+  default ForeignKey<AddressFields, AddressRow> fkPersonAddressBilltoaddressid() {
+    return ForeignKey.<AddressFields, AddressRow>of("sales.FK_SalesOrderHeader_Address_BillToAddressID").withColumnPair(billtoaddressid(), AddressFields::addressid);
+  };
+
+  default ForeignKey<AddressFields, AddressRow> fkPersonAddressShiptoaddressid() {
+    return ForeignKey.<AddressFields, AddressRow>of("sales.FK_SalesOrderHeader_Address_ShipToAddressID").withColumnPair(shiptoaddressid(), AddressFields::addressid);
+  };
 
   default ForeignKey<CreditcardFields, CreditcardRow> fkCreditcard() {
     return ForeignKey.<CreditcardFields, CreditcardRow>of("sales.FK_SalesOrderHeader_CreditCard_CreditCardID").withColumnPair(creditcardid(), CreditcardFields::creditcardid);
@@ -173,18 +215,6 @@ public interface SalesorderheaderFields {
     return ForeignKey.<CustomerFields, CustomerRow>of("sales.FK_SalesOrderHeader_Customer_CustomerID").withColumnPair(customerid(), CustomerFields::customerid);
   };
 
-  default ForeignKey<AddressFields, AddressRow> fkPersonAddressBilltoaddressid() {
-    return ForeignKey.<AddressFields, AddressRow>of("sales.FK_SalesOrderHeader_Address_BillToAddressID").withColumnPair(billtoaddressid(), AddressFields::addressid);
-  };
-
-  default ForeignKey<AddressFields, AddressRow> fkPersonAddressShiptoaddressid() {
-    return ForeignKey.<AddressFields, AddressRow>of("sales.FK_SalesOrderHeader_Address_ShipToAddressID").withColumnPair(shiptoaddressid(), AddressFields::addressid);
-  };
-
-  default ForeignKey<ShipmethodFields, ShipmethodRow> fkPurchasingShipmethod() {
-    return ForeignKey.<ShipmethodFields, ShipmethodRow>of("sales.FK_SalesOrderHeader_ShipMethod_ShipMethodID").withColumnPair(shipmethodid(), ShipmethodFields::shipmethodid);
-  };
-
   default ForeignKey<SalespersonFields, SalespersonRow> fkSalesperson() {
     return ForeignKey.<SalespersonFields, SalespersonRow>of("sales.FK_SalesOrderHeader_SalesPerson_SalesPersonID").withColumnPair(salespersonid(), SalespersonFields::businessentityid);
   };
@@ -193,37 +223,7 @@ public interface SalesorderheaderFields {
     return ForeignKey.<SalesterritoryFields, SalesterritoryRow>of("sales.FK_SalesOrderHeader_SalesTerritory_TerritoryID").withColumnPair(territoryid(), SalesterritoryFields::territoryid);
   };
 
-  Field<BigDecimal, SalesorderheaderRow> freight();
-
-  Field<TypoLocalDateTime, SalesorderheaderRow> modifieddate();
-
-  Field<Flag, SalesorderheaderRow> onlineorderflag();
-
-  Field<TypoLocalDateTime, SalesorderheaderRow> orderdate();
-
-  OptField<OrderNumber, SalesorderheaderRow> purchaseordernumber();
-
-  Field<TypoShort, SalesorderheaderRow> revisionnumber();
-
-  Field<TypoUUID, SalesorderheaderRow> rowguid();
-
-  IdField<SalesorderheaderId, SalesorderheaderRow> salesorderid();
-
-  OptField<BusinessentityId, SalesorderheaderRow> salespersonid();
-
-  OptField<TypoLocalDateTime, SalesorderheaderRow> shipdate();
-
-  Field<ShipmethodId, SalesorderheaderRow> shipmethodid();
-
-  Field<AddressId, SalesorderheaderRow> shiptoaddressid();
-
-  Field<TypoShort, SalesorderheaderRow> status();
-
-  Field<BigDecimal, SalesorderheaderRow> subtotal();
-
-  Field<BigDecimal, SalesorderheaderRow> taxamt();
-
-  OptField<SalesterritoryId, SalesorderheaderRow> territoryid();
-
-  OptField<BigDecimal, SalesorderheaderRow> totaldue();
+  default ForeignKey<ShipmethodFields, ShipmethodRow> fkPurchasingShipmethod() {
+    return ForeignKey.<ShipmethodFields, ShipmethodRow>of("sales.FK_SalesOrderHeader_ShipMethod_ShipMethodID").withColumnPair(shipmethodid(), ShipmethodFields::shipmethodid);
+  };
 }

@@ -8,6 +8,7 @@ package adventureworks.humanresources.vjobcandidate;
 import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.humanresources.jobcandidate.JobcandidateId;
 import adventureworks.person.businessentity.BusinessentityId;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
@@ -20,19 +21,19 @@ public record VjobcandidateViewRow(
   JobcandidateId jobcandidateid,
   /** Points to {@link adventureworks.humanresources.jobcandidate.JobcandidateRow#businessentityid()} */
   Optional<BusinessentityId> businessentityid,
-  /* nullability unknown */ Optional</* max 30 chars */ String> namePrefix,
-  /* nullability unknown */ Optional</* max 30 chars */ String> nameFirst,
-  /* nullability unknown */ Optional</* max 30 chars */ String> nameMiddle,
-  /* nullability unknown */ Optional</* max 30 chars */ String> nameLast,
-  /* nullability unknown */ Optional</* max 30 chars */ String> nameSuffix,
-  /* nullability unknown */ Optional<String> skills,
-  /* nullability unknown */ Optional</* max 30 chars */ String> addrType,
-  /* nullability unknown */ Optional</* max 100 chars */ String> addrLocCountryRegion,
-  /* nullability unknown */ Optional</* max 100 chars */ String> addrLocState,
-  /* nullability unknown */ Optional</* max 100 chars */ String> addrLocCity,
-  /* nullability unknown */ Optional</* max 20 chars */ String> addrPostalCode,
-  /* nullability unknown */ Optional<String> eMail,
-  /* nullability unknown */ Optional<String> webSite,
+  @JsonProperty("Name.Prefix") /* nullability unknown */ Optional</* max 30 chars */ String> namePrefix,
+  @JsonProperty("Name.First") /* nullability unknown */ Optional</* max 30 chars */ String> nameFirst,
+  @JsonProperty("Name.Middle") /* nullability unknown */ Optional</* max 30 chars */ String> nameMiddle,
+  @JsonProperty("Name.Last") /* nullability unknown */ Optional</* max 30 chars */ String> nameLast,
+  @JsonProperty("Name.Suffix") /* nullability unknown */ Optional</* max 30 chars */ String> nameSuffix,
+  @JsonProperty("Skills") /* nullability unknown */ Optional<String> skills,
+  @JsonProperty("Addr.Type") /* nullability unknown */ Optional</* max 30 chars */ String> addrType,
+  @JsonProperty("Addr.Loc.CountryRegion") /* nullability unknown */ Optional</* max 100 chars */ String> addrLocCountryRegion,
+  @JsonProperty("Addr.Loc.State") /* nullability unknown */ Optional</* max 100 chars */ String> addrLocState,
+  @JsonProperty("Addr.Loc.City") /* nullability unknown */ Optional</* max 100 chars */ String> addrLocCity,
+  @JsonProperty("Addr.PostalCode") /* nullability unknown */ Optional</* max 20 chars */ String> addrPostalCode,
+  @JsonProperty("EMail") /* nullability unknown */ Optional<String> eMail,
+  @JsonProperty("WebSite") /* nullability unknown */ Optional<String> webSite,
   /** Points to {@link adventureworks.humanresources.jobcandidate.JobcandidateRow#modifieddate()} */
   TypoLocalDateTime modifieddate
 ) {

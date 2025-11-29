@@ -5,13 +5,14 @@
  */
 package adventureworks.production.workorder;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `production.workorder` */
-public record WorkorderId(Integer value) {
+public record WorkorderId(@JsonValue Integer value) {
   public WorkorderId withValue(Integer value) {
     return new WorkorderId(value);
   };

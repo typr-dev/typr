@@ -5,6 +5,7 @@
  */
 package adventureworks.public_;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
@@ -13,7 +14,7 @@ import typo.runtime.internal.arrayMap;
 /** Domain `public.Flag`
   * No constraint
   */
-public record Flag(Boolean value) {
+public record Flag(@JsonValue Boolean value) {
   public Flag withValue(Boolean value) {
     return new Flag(value);
   };

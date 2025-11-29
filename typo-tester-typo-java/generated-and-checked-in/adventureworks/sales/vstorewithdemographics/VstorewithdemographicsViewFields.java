@@ -79,27 +79,27 @@ public interface VstorewithdemographicsViewFields {
     return new Impl(List.of());
   };
 
-  OptField<TypoMoney, VstorewithdemographicsViewRow> annualRevenue();
-
-  OptField<TypoMoney, VstorewithdemographicsViewRow> annualSales();
-
-  OptField</* max 50 chars */ String, VstorewithdemographicsViewRow> bankName();
-
-  OptField</* max 30 chars */ String, VstorewithdemographicsViewRow> brands();
-
-  OptField</* max 5 chars */ String, VstorewithdemographicsViewRow> businessType();
-
   Field<BusinessentityId, VstorewithdemographicsViewRow> businessentityid();
-
-  OptField</* max 30 chars */ String, VstorewithdemographicsViewRow> internet();
 
   Field<Name, VstorewithdemographicsViewRow> name();
 
-  OptField<Integer, VstorewithdemographicsViewRow> numberEmployees();
+  OptField<TypoMoney, VstorewithdemographicsViewRow> annualSales();
+
+  OptField<TypoMoney, VstorewithdemographicsViewRow> annualRevenue();
+
+  OptField</* max 50 chars */ String, VstorewithdemographicsViewRow> bankName();
+
+  OptField</* max 5 chars */ String, VstorewithdemographicsViewRow> businessType();
+
+  OptField<Integer, VstorewithdemographicsViewRow> yearOpened();
 
   OptField</* max 50 chars */ String, VstorewithdemographicsViewRow> specialty();
 
   OptField<Integer, VstorewithdemographicsViewRow> squareFeet();
 
-  OptField<Integer, VstorewithdemographicsViewRow> yearOpened();
+  OptField</* max 30 chars */ String, VstorewithdemographicsViewRow> brands();
+
+  OptField</* max 30 chars */ String, VstorewithdemographicsViewRow> internet();
+
+  OptField<Integer, VstorewithdemographicsViewRow> numberEmployees();
 }

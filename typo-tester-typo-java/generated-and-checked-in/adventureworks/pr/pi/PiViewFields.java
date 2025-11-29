@@ -68,19 +68,19 @@ public interface PiViewFields {
     return new Impl(List.of());
   };
 
-  Field<TypoShort, PiViewRow> bin();
-
   Field<ProductId, PiViewRow> id();
+
+  Field<ProductId, PiViewRow> productid();
 
   Field<LocationId, PiViewRow> locationid();
 
-  Field<TypoLocalDateTime, PiViewRow> modifieddate();
+  Field</* max 10 chars */ String, PiViewRow> shelf();
 
-  Field<ProductId, PiViewRow> productid();
+  Field<TypoShort, PiViewRow> bin();
 
   Field<TypoShort, PiViewRow> quantity();
 
   Field<TypoUUID, PiViewRow> rowguid();
 
-  Field</* max 10 chars */ String, PiViewRow> shelf();
+  Field<TypoLocalDateTime, PiViewRow> modifieddate();
 }

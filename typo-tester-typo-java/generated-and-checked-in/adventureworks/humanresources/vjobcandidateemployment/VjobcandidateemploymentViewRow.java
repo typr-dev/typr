@@ -7,6 +7,7 @@ package adventureworks.humanresources.vjobcandidateemployment;
 
 import adventureworks.customtypes.TypoLocalDate;
 import adventureworks.humanresources.jobcandidate.JobcandidateId;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
@@ -17,16 +18,16 @@ import typo.runtime.RowParsers.Tuple11;
 public record VjobcandidateemploymentViewRow(
   /** Points to {@link adventureworks.humanresources.jobcandidate.JobcandidateRow#jobcandidateid()} */
   JobcandidateId jobcandidateid,
-  /* nullability unknown */ Optional<TypoLocalDate> empStartDate,
-  /* nullability unknown */ Optional<TypoLocalDate> empEndDate,
-  /* nullability unknown */ Optional</* max 100 chars */ String> empOrgName,
-  /* nullability unknown */ Optional</* max 100 chars */ String> empJobTitle,
-  /* nullability unknown */ Optional<String> empResponsibility,
-  /* nullability unknown */ Optional<String> empFunctionCategory,
-  /* nullability unknown */ Optional<String> empIndustryCategory,
-  /* nullability unknown */ Optional<String> empLocCountryRegion,
-  /* nullability unknown */ Optional<String> empLocState,
-  /* nullability unknown */ Optional<String> empLocCity
+  @JsonProperty("Emp.StartDate") /* nullability unknown */ Optional<TypoLocalDate> empStartDate,
+  @JsonProperty("Emp.EndDate") /* nullability unknown */ Optional<TypoLocalDate> empEndDate,
+  @JsonProperty("Emp.OrgName") /* nullability unknown */ Optional</* max 100 chars */ String> empOrgName,
+  @JsonProperty("Emp.JobTitle") /* nullability unknown */ Optional</* max 100 chars */ String> empJobTitle,
+  @JsonProperty("Emp.Responsibility") /* nullability unknown */ Optional<String> empResponsibility,
+  @JsonProperty("Emp.FunctionCategory") /* nullability unknown */ Optional<String> empFunctionCategory,
+  @JsonProperty("Emp.IndustryCategory") /* nullability unknown */ Optional<String> empIndustryCategory,
+  @JsonProperty("Emp.Loc.CountryRegion") /* nullability unknown */ Optional<String> empLocCountryRegion,
+  @JsonProperty("Emp.Loc.State") /* nullability unknown */ Optional<String> empLocState,
+  @JsonProperty("Emp.Loc.City") /* nullability unknown */ Optional<String> empLocCity
 ) {
   /** Points to {@link adventureworks.humanresources.jobcandidate.JobcandidateRow#jobcandidateid()} */
   public VjobcandidateemploymentViewRow withJobcandidateid(JobcandidateId jobcandidateid) {

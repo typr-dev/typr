@@ -23,7 +23,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record CurrencyRepoImpl() implements CurrencyRepo {
+public class CurrencyRepoImpl implements CurrencyRepo {
   public DeleteBuilder<CurrencyFields, CurrencyRow> delete() {
     return DeleteBuilder.of("sales.currency", CurrencyFields.structure());
   };
@@ -200,20 +200,20 @@ public record CurrencyRepoImpl() implements CurrencyRepo {
   ) {
     CurrencyId currencycode = row.currencycode();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "sales"."currency"
-         set "name" = """),
-      Name.pgType.encode(row.name()),
-      typo.runtime.Fragment.lit("""
-         ::varchar,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "currencycode" = """),
-      CurrencyId.pgType.encode(currencycode),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "sales"."currency"
+                set "name" = """),
+             Name.pgType.encode(row.name()),
+             typo.runtime.Fragment.lit("""
+                ::varchar,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "currencycode" = """),
+             CurrencyId.pgType.encode(currencycode),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public CurrencyRow upsert(
@@ -272,13 +272,13 @@ public record CurrencyRepoImpl() implements CurrencyRepo {
       copy currency_TEMP("currencycode", "name", "modifieddate") from stdin
       """), batchSize, unsaved, c, CurrencyRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "sales"."currency"("currencycode", "name", "modifieddate")
-       select * from currency_TEMP
-       on conflict ("currencycode")
-       do update set
-         "name" = EXCLUDED."name",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table currency_TEMP;""")).update().runUnchecked(c);
+              insert into "sales"."currency"("currencycode", "name", "modifieddate")
+              select * from currency_TEMP
+              on conflict ("currencycode")
+              do update set
+                "name" = EXCLUDED."name",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table currency_TEMP;""")).update().runUnchecked(c);
   };
 }

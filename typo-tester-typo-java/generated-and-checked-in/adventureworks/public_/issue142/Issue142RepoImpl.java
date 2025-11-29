@@ -18,7 +18,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record Issue142RepoImpl() implements Issue142Repo {
+public class Issue142RepoImpl implements Issue142Repo {
   public DeleteBuilder<Issue142Fields, Issue142Row> delete() {
     return DeleteBuilder.of("public.issue142", Issue142Fields.structure());
   };
@@ -179,11 +179,11 @@ public record Issue142RepoImpl() implements Issue142Repo {
       copy issue142_TEMP("tabellkode") from stdin
       """), batchSize, unsaved, c, Issue142Row.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "public"."issue142"("tabellkode")
-       select * from issue142_TEMP
-       on conflict ("tabellkode")
-       do nothing
-       ;
-       drop table issue142_TEMP;""")).update().runUnchecked(c);
+              insert into "public"."issue142"("tabellkode")
+              select * from issue142_TEMP
+              on conflict ("tabellkode")
+              do nothing
+              ;
+              drop table issue142_TEMP;""")).update().runUnchecked(c);
   };
 }

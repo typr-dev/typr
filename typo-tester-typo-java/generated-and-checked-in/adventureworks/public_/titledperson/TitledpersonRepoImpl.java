@@ -18,7 +18,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record TitledpersonRepoImpl() implements TitledpersonRepo {
+public class TitledpersonRepoImpl implements TitledpersonRepo {
   public DeleteBuilder<TitledpersonFields, TitledpersonRow> delete() {
     return DeleteBuilder.of("public.titledperson", TitledpersonFields.structure());
   };

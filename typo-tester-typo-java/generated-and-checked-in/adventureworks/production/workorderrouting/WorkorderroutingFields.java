@@ -90,21 +90,29 @@ public interface WorkorderroutingFields {
     return new Impl(List.of());
   };
 
-  OptField<BigDecimal, WorkorderroutingRow> actualcost();
+  IdField<WorkorderId, WorkorderroutingRow> workorderid();
+
+  IdField<Integer, WorkorderroutingRow> productid();
+
+  IdField<TypoShort, WorkorderroutingRow> operationsequence();
+
+  Field<LocationId, WorkorderroutingRow> locationid();
+
+  Field<TypoLocalDateTime, WorkorderroutingRow> scheduledstartdate();
+
+  Field<TypoLocalDateTime, WorkorderroutingRow> scheduledenddate();
+
+  OptField<TypoLocalDateTime, WorkorderroutingRow> actualstartdate();
 
   OptField<TypoLocalDateTime, WorkorderroutingRow> actualenddate();
 
   OptField<BigDecimal, WorkorderroutingRow> actualresourcehrs();
 
-  OptField<TypoLocalDateTime, WorkorderroutingRow> actualstartdate();
+  Field<BigDecimal, WorkorderroutingRow> plannedcost();
 
-  default SqlExpr<Boolean> compositeIdIn(List<WorkorderroutingId> compositeIds) {
-    return new CompositeIn(List.of(new Part<WorkorderId, WorkorderroutingId, WorkorderroutingRow>(workorderid(), WorkorderroutingId::workorderid, WorkorderId.pgType), new Part<Integer, WorkorderroutingId, WorkorderroutingRow>(productid(), WorkorderroutingId::productid, PgTypes.int4), new Part<TypoShort, WorkorderroutingId, WorkorderroutingRow>(operationsequence(), WorkorderroutingId::operationsequence, TypoShort.pgType)), compositeIds);
-  };
+  OptField<BigDecimal, WorkorderroutingRow> actualcost();
 
-  default SqlExpr<Boolean> compositeIdIs(WorkorderroutingId compositeId) {
-    return SqlExpr.all(workorderid().isEqual(compositeId.workorderid()), productid().isEqual(compositeId.productid()), operationsequence().isEqual(compositeId.operationsequence()));
-  };
+  Field<TypoLocalDateTime, WorkorderroutingRow> modifieddate();
 
   default ForeignKey<LocationFields, LocationRow> fkLocation() {
     return ForeignKey.<LocationFields, LocationRow>of("production.FK_WorkOrderRouting_Location_LocationID").withColumnPair(locationid(), LocationFields::locationid);
@@ -114,19 +122,11 @@ public interface WorkorderroutingFields {
     return ForeignKey.<WorkorderFields, WorkorderRow>of("production.FK_WorkOrderRouting_WorkOrder_WorkOrderID").withColumnPair(workorderid(), WorkorderFields::workorderid);
   };
 
-  Field<LocationId, WorkorderroutingRow> locationid();
+  default SqlExpr<Boolean> compositeIdIs(WorkorderroutingId compositeId) {
+    return SqlExpr.all(workorderid().isEqual(compositeId.workorderid()), productid().isEqual(compositeId.productid()), operationsequence().isEqual(compositeId.operationsequence()));
+  };
 
-  Field<TypoLocalDateTime, WorkorderroutingRow> modifieddate();
-
-  IdField<TypoShort, WorkorderroutingRow> operationsequence();
-
-  Field<BigDecimal, WorkorderroutingRow> plannedcost();
-
-  IdField<Integer, WorkorderroutingRow> productid();
-
-  Field<TypoLocalDateTime, WorkorderroutingRow> scheduledenddate();
-
-  Field<TypoLocalDateTime, WorkorderroutingRow> scheduledstartdate();
-
-  IdField<WorkorderId, WorkorderroutingRow> workorderid();
+  default SqlExpr<Boolean> compositeIdIn(List<WorkorderroutingId> compositeIds) {
+    return new CompositeIn(List.of(new Part<WorkorderId, WorkorderroutingId, WorkorderroutingRow>(workorderid(), WorkorderroutingId::workorderid, WorkorderId.pgType), new Part<Integer, WorkorderroutingId, WorkorderroutingRow>(productid(), WorkorderroutingId::productid, PgTypes.int4), new Part<TypoShort, WorkorderroutingId, WorkorderroutingRow>(operationsequence(), WorkorderroutingId::operationsequence, TypoShort.pgType)), compositeIds);
+  };
 }

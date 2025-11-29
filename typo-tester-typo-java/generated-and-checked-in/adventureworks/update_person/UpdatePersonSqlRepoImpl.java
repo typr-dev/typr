@@ -11,7 +11,7 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import static typo.runtime.Fragment.interpolate;
 
-public record UpdatePersonSqlRepoImpl() implements UpdatePersonSqlRepo {
+public class UpdatePersonSqlRepoImpl implements UpdatePersonSqlRepo {
   public Integer apply(
     String suffix,
     Optional<TypoLocalDateTime> cutoff,

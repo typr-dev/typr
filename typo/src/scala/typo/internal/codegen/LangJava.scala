@@ -2,8 +2,8 @@ package typo
 package internal
 package codegen
 
-import typo.jvm.Type
 import typo.jvm.Code.TreeOps
+import typo.jvm.Type
 
 case object LangJava extends Lang {
   override val `;` : jvm.Code = code";"
@@ -116,7 +116,7 @@ case object LangJava extends Lang {
         // Java: Type.<T1, T2>of(args)
         val typeArgStr = if (typeArgs.isEmpty) jvm.Code.Empty else code"<${typeArgs.map(t => renderTree(t, ctx)).mkCode(", ")}>"
         code"$tpe.$typeArgStr${jvm.Ident("of")}(${args.map(a => renderTree(a, ctx)).mkCode(", ")})"
-      case jvm.Param(cs, name, tpe, _)                     => code"${renderComments(cs).getOrElse(jvm.Code.Empty)}$tpe $name"
+      case jvm.Param(anns, cs, name, tpe, _)               => code"${renderComments(cs).getOrElse(jvm.Code.Empty)}${renderAnnotationsInline(anns)}$tpe $name"
       case jvm.QIdent(value)                               => value.map(i => renderTree(i, ctx)).mkCode(".")
       case jvm.StrLit(str) if str.contains(Quote)          => Quote + str.replace(Quote, "\\\"") + Quote
       case jvm.StrLit(str)                                 => Quote + str + Quote
@@ -140,9 +140,18 @@ case object LangJava extends Lang {
         code"""|$pred
                |  ? $thenp
                |  : $elsep""".stripMargin
-      case jvm.TypeSwitch(value, cases) =>
+      case jvm.TypeSwitch(value, cases, nullCase, defaultCase) =>
+        // In Java switch expressions: blocks don't need semicolon, expressions do
+        def needsSemicolon(body: jvm.Code): String = {
+          val rendered = body.render(LangJava).asString.trim
+          if (rendered.endsWith("}")) "" else ";"
+        }
+        val nullCaseCode = nullCase.map(body => code"case null -> $body${needsSemicolon(body)}").toList
+        val typeCases = cases.map { case jvm.TypeSwitch.Case(pat, ident, body) => code"case $pat $ident -> $body${needsSemicolon(body)}" }
+        val defaultCaseCode = defaultCase.map(body => code"default -> $body${needsSemicolon(body)}").toList
+        val allCases = nullCaseCode ++ typeCases ++ defaultCaseCode
         code"""|switch ($value) {
-               |  ${cases.map { case jvm.TypeSwitch.Case(pat, ident, body) => code"case $pat $ident -> $body;" }.mkCode("\n")}
+               |  ${allCases.mkCode("\n")}
                |}""".stripMargin
       case jvm.StringInterpolate(_, prefix, content) =>
         // For Java, determine if we need Fragment.lit() wrapping
@@ -192,19 +201,21 @@ case object LangJava extends Lang {
         else
           jvm.Call(prefix, List(jvm.Call.ArgGroup(finalParts.map(jvm.Arg.Pos.apply), isImplicit = false)))
 
-      case jvm.Given(tparams, name, implicitParams, tpe, body) =>
+      case jvm.Given(annotations, tparams, name, implicitParams, tpe, body) =>
+        val annotationsCode = renderAnnotations(annotations)
         if (tparams.isEmpty && implicitParams.isEmpty)
-          code"""|${ctx.public}$tpe $name =
+          code"""|$annotationsCode${ctx.public}$tpe $name =
                  |  $body""".stripMargin
         else {
           val paramsCode = renderParams(implicitParams, ctx)
-          code"${ctx.public}${renderTparams(tparams)} $tpe $name" ++ paramsCode ++ code"""| {
+          code"$annotationsCode${ctx.public}${renderTparams(tparams)} $tpe $name" ++ paramsCode ++ code"""| {
                 |  return $body;
                 |}""".stripMargin
         }
-      case jvm.Value(name, tpe, None, _, _) =>
-        code"$tpe $name;"
-      case jvm.Value(name, tpe, Some(body), isLazy, isOverride) =>
+      case jvm.Value(annotations, name, tpe, None, _, _) =>
+        val annotationsCode = renderAnnotations(annotations)
+        code"$annotationsCode$tpe $name;"
+      case jvm.Value(annotations, name, tpe, Some(body), isLazy, isOverride) =>
         val overrideAnnotation = if (isOverride) "@Override\n" else ""
         if (isLazy) {
           // In Java, lazy vals become methods
@@ -212,47 +223,44 @@ case object LangJava extends Lang {
                  |  return $body;
                  |}""".stripMargin
         } else {
-          code"$tpe $name = $body;"
+          val annotationsCode = renderAnnotations(annotations)
+          code"$annotationsCode$tpe $name = $body;"
         }
-      case jvm.Method(comments, tparams, name, params, implicitParams, tpe, body) =>
+      case jvm.Method(annotations, comments, tparams, name, params, implicitParams, tpe, throws, body) =>
+        val annotationsCode = renderAnnotations(annotations)
         val commentCode = renderComments(comments).getOrElse(jvm.Code.Empty)
         val allParams = params ++ implicitParams
         val paramsCode = renderParams(allParams, ctx)
+        val throwsCode = if (throws.isEmpty) jvm.Code.Empty else code" throws ${throws.map(t => renderTree(t, ctx)).mkCode(", ")}"
         // In interfaces, methods with bodies need 'default' keyword
         val defaultKeyword = if (ctx.inInterface && body.nonEmpty) "default " else ""
-        val signature = commentCode ++ code"$defaultKeyword${ctx.public}${renderTparams(tparams)}$tpe $name" ++ paramsCode
-
-        // Helper to check if code is a throw statement (throw is a statement, not an expression in Java)
-        def isThrowStatement(c: jvm.Code): Boolean =
-          c.render(LangJava).asString.trim.startsWith("throw ")
-
-        // Helper to render a statement with or without return
-        def maybeReturn(c: jvm.Code): jvm.Code =
-          if (tpe == jvm.Type.Void || isThrowStatement(c)) code"$c;"
-          else code"return $c;"
+        val signature = annotationsCode ++ commentCode ++ code"$defaultKeyword${ctx.public}${renderTparams(tparams)}$tpe $name" ++ paramsCode ++ throwsCode
 
         (body: @unchecked) match {
           case Nil =>
             signature
           case List(one) =>
+            val bodyCode = if (tpe == jvm.Type.Void) code"$one;" else code"return $one;"
             signature ++ code"""| {
-                  |  ${maybeReturn(one)}
+                  |  $bodyCode
                   |}""".stripMargin
 
           case all @ init :+ last =>
             val returnBody =
               if (tpe == jvm.Type.Void)
                 all.map(x => code"$x;").mkCode("\n")
-              else code"""|${init.map(x => code"$x;").mkCode("\n")}
-                          |${maybeReturn(last)}""".stripMargin
+              else
+                code"""|${init.map(x => code"$x;").mkCode("\n")}
+                     |return $last;""".stripMargin
 
             signature ++ code"""| {
                   |  $returnBody
                   |}""".stripMargin
         }
       case enm: jvm.Enum =>
+        val annotationsCode = renderAnnotations(enm.annotations)
         val enumMap = TypesJava.Map.of(TypesJava.String, enm.tpe)
-        code"""|public enum ${enm.tpe.name} {
+        code"""|${annotationsCode}public enum ${enm.tpe.name} {
                |    ${enm.values.map { case (name, expr) => code"$name($expr)" }.mkCode(",\n")};
                |    final ${TypesJava.String} value;
                |
@@ -279,7 +287,8 @@ case object LangJava extends Lang {
                |}
                |""".stripMargin
       case enm: jvm.OpenEnum =>
-        code"""|public sealed interface ${enm.tpe.name} permits ${enm.tpe.name}.Unknown, ${enm.tpe.name}.Known {
+        val annotationsCode = renderAnnotations(enm.annotations)
+        code"""|${annotationsCode}public sealed interface ${enm.tpe.name} permits ${enm.tpe.name}.Unknown, ${enm.tpe.name}.Known {
                |    ${enm.underlyingType} value();
                |
                |    record Unknown(${enm.underlyingType} value) implements ${enm.tpe.name} {
@@ -330,8 +339,8 @@ case object LangJava extends Lang {
             val target: jvm.Code = if (cls.tparams.nonEmpty) jvm.InferredTargs(clsTypeBase) else clsTypeBase
             val body = jvm.New(target, cls.params.map { p => jvm.Arg.Pos(p.name) })
             // Move param comment to method level, clear param comment
-            val paramWithoutComment = param.copy(comments = jvm.Comments.Empty)
-            renderTree(jvm.Method(param.comments, Nil, name, List(paramWithoutComment), Nil, clsType, List(body)), memberCtx)
+            val paramWithoutComment = param.copy(annotations = Nil, comments = jvm.Comments.Empty)
+            renderTree(jvm.Method(Nil, param.comments, Nil, name, List(paramWithoutComment), Nil, clsType, Nil, List(body)), memberCtx)
           }
 
         // Params with defaults can be omitted from the short constructor
@@ -351,7 +360,10 @@ case object LangJava extends Lang {
                         |}""".stripMargin)
           } else None
 
+        val annotationsCode = if (cls.annotations.isEmpty) None else Some(renderAnnotations(cls.annotations))
+
         List[Option[jvm.Code]](
+          annotationsCode,
           renderComments(cls.comments),
           Some(code"${ctx.public}record "),
           Some(cls.name.name.value),
@@ -360,7 +372,6 @@ case object LangJava extends Lang {
             case nonEmpty => Some(renderTparams(nonEmpty))
           },
           Some(renderParams(cls.params, ctx)),
-          cls.`extends`.map(x => code" extends $x"),
           cls.implements match {
             case Nil      => None
             case nonEmpty => Some(nonEmpty.map(x => code" implements $x").mkCode(" "))
@@ -379,7 +390,9 @@ case object LangJava extends Lang {
             sum.members.sortBy(_.name).map(m => renderTree(m, memberCtx))
           ).flatten
 
+        val annotationsCode = if (sum.annotations.isEmpty) None else Some(renderAnnotations(sum.annotations))
         List[Option[jvm.Code]](
+          annotationsCode,
           renderComments(sum.comments),
           Some(code"${ctx.public}sealed interface "),
           Some(sum.name.name.value),
@@ -398,14 +411,37 @@ case object LangJava extends Lang {
       case cls: jvm.Class =>
         // Inside an interface, public is implied for members and methods with body need 'default'
         val memberCtx = if (cls.classType == jvm.ClassType.Interface) ctx.withInterface else ctx
+        // Sort fields before methods for proper Java class structure
+        val sortedMembers = cls.members.sortBy {
+          case _: jvm.Value => 0
+          case _            => 1
+        }
         val body: List[jvm.Code] =
-          cls.staticMembers.sortBy(_.name).map(x => code"static ${renderTree(x, memberCtx)}") ++ cls.members.sortBy(_.name).map(m => renderTree(m, memberCtx))
+          cls.staticMembers.sortBy(_.name).map(x => code"static ${renderTree(x, memberCtx)}") ++ sortedMembers.map(m => renderTree(m, memberCtx))
 
+        // Generate fields and constructor from params if present
+        val (fieldsCode, constructorCode) = cls.params match {
+          case Nil => (Nil, Nil)
+          case params =>
+            val fields = params.map { param =>
+              code"${param.tpe} ${param.name};"
+            }
+            val constructorAssignments = params.map { param =>
+              code"this.${param.name} = ${param.name};"
+            }
+            val constructor = code"${memberCtx.public}${cls.name.name.value}" ++ renderParams(params, memberCtx) ++ code"""| {
+                        |  ${constructorAssignments.mkCode("\n")}
+                        |}""".stripMargin
+            (fields, List(constructor))
+        }
+
+        val annotationsCode = if (cls.annotations.isEmpty) None else Some(renderAnnotations(cls.annotations))
         List[Option[jvm.Code]](
+          annotationsCode,
           renderComments(cls.comments),
           Some(code"${ctx.public}"),
           cls.classType match {
-            case jvm.ClassType.Class     => Some(code"record ")
+            case jvm.ClassType.Class     => Some(code"class ")
             case jvm.ClassType.Interface => Some(code"interface ")
           },
           Some(cls.name.name.value),
@@ -413,19 +449,19 @@ case object LangJava extends Lang {
             case Nil      => None
             case nonEmpty => Some(renderTparams(nonEmpty))
           },
-          cls.classType match {
-            case jvm.ClassType.Class     => Some(renderParams(cls.params, ctx))
-            case jvm.ClassType.Interface => None
-          },
           cls.`extends`.map(x => code" extends $x"),
           cls.implements match {
             case Nil      => None
             case nonEmpty => Some(nonEmpty.map(x => code" implements $x").mkCode(" "))
           },
-          Some(code"""| {
-                      |  ${body.map(_ ++ code";").mkCode("\n\n")}
-                      |}""".stripMargin)
+          Some {
+            val allBody = fieldsCode ++ constructorCode ++ body
+            code"""| {
+                   |  ${allBody.map(c => c ++ code";").mkCode("\n\n")}
+                   |}""".stripMargin
+          }
         ).flatten.mkCode("")
+      case ann: jvm.Annotation => renderAnnotation(ann)
 
       // Anonymous class: new Interface() { members }
       case jvm.NewWithBody(tpe, members) =>
@@ -493,6 +529,32 @@ case object LangJava extends Lang {
               |${rest.flatMap(_.linesIterator).map(line => s"  * $line").mkString("\n")}
               |  */\n""".stripMargin)
     }
+  }
+
+  def renderAnnotation(ann: jvm.Annotation): jvm.Code = {
+    val argsCode = ann.args match {
+      case Nil                                        => code""
+      case List(jvm.Annotation.Arg.Positional(value)) => code"($value)"
+      case args =>
+        val rendered = args
+          .map {
+            case jvm.Annotation.Arg.Named(name, value) => code"$name = $value"
+            case jvm.Annotation.Arg.Positional(value)  => value
+          }
+          .mkCode(", ")
+        code"($rendered)"
+    }
+    code"@${ann.tpe}$argsCode"
+  }
+
+  def renderAnnotations(annotations: List[jvm.Annotation]): jvm.Code = {
+    if (annotations.isEmpty) jvm.Code.Empty
+    else annotations.map(renderAnnotation).mkCode("\n") ++ code"\n"
+  }
+
+  def renderAnnotationsInline(annotations: List[jvm.Annotation]): jvm.Code = {
+    if (annotations.isEmpty) jvm.Code.Empty
+    else annotations.map(renderAnnotation).mkCode(" ") ++ code" "
   }
 
   // Java: Bijection.of(getter, constructor)

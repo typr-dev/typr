@@ -22,7 +22,7 @@ import zio.ZIO
 import zio.jdbc.ZConnection
 
 /** Methods to generate random data for `Ident(TestInsert)` */
-class TestInsert(val random: Random) {
+case class TestInsert(random: Random) {
   def compositepkPerson(
     name: Option[String] = if (random.nextBoolean()) None else Some(random.alphanumeric.take(20).mkString),
     one: Defaulted[Long] = Defaulted.UseDefault(),

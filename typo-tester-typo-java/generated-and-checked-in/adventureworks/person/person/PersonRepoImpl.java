@@ -29,7 +29,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record PersonRepoImpl() implements PersonRepo {
+public class PersonRepoImpl implements PersonRepo {
   public DeleteBuilder<PersonFields, PersonRow> delete() {
     return DeleteBuilder.of("person.person", PersonFields.structure());
   };
@@ -293,60 +293,60 @@ public record PersonRepoImpl() implements PersonRepo {
   ) {
     BusinessentityId businessentityid = row.businessentityid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "person"."person"
-         set "persontype" = """),
-      PgTypes.text.encode(row.persontype()),
-      typo.runtime.Fragment.lit("""
-         ::bpchar,
-         "namestyle" = """),
-      NameStyle.pgType.encode(row.namestyle()),
-      typo.runtime.Fragment.lit("""
-         ::bool,
-         "title" = """),
-      PgTypes.text.opt().encode(row.title()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "firstname" = """),
-      /* user-picked */ FirstName.pgType.encode(row.firstname()),
-      typo.runtime.Fragment.lit("""
-         ::varchar,
-         "middlename" = """),
-      Name.pgType.opt().encode(row.middlename()),
-      typo.runtime.Fragment.lit("""
-         ::varchar,
-         "lastname" = """),
-      Name.pgType.encode(row.lastname()),
-      typo.runtime.Fragment.lit("""
-         ::varchar,
-         "suffix" = """),
-      PgTypes.text.opt().encode(row.suffix()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "emailpromotion" = """),
-      PgTypes.int4.encode(row.emailpromotion()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "additionalcontactinfo" = """),
-      TypoXml.pgType.opt().encode(row.additionalcontactinfo()),
-      typo.runtime.Fragment.lit("""
-         ::xml,
-         "demographics" = """),
-      TypoXml.pgType.opt().encode(row.demographics()),
-      typo.runtime.Fragment.lit("""
-         ::xml,
-         "rowguid" = """),
-      TypoUUID.pgType.encode(row.rowguid()),
-      typo.runtime.Fragment.lit("""
-         ::uuid,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "businessentityid" = """),
-      BusinessentityId.pgType.encode(businessentityid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "person"."person"
+                set "persontype" = """),
+             PgTypes.text.encode(row.persontype()),
+             typo.runtime.Fragment.lit("""
+                ::bpchar,
+                "namestyle" = """),
+             NameStyle.pgType.encode(row.namestyle()),
+             typo.runtime.Fragment.lit("""
+                ::bool,
+                "title" = """),
+             PgTypes.text.opt().encode(row.title()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "firstname" = """),
+             /* user-picked */ FirstName.pgType.encode(row.firstname()),
+             typo.runtime.Fragment.lit("""
+                ::varchar,
+                "middlename" = """),
+             Name.pgType.opt().encode(row.middlename()),
+             typo.runtime.Fragment.lit("""
+                ::varchar,
+                "lastname" = """),
+             Name.pgType.encode(row.lastname()),
+             typo.runtime.Fragment.lit("""
+                ::varchar,
+                "suffix" = """),
+             PgTypes.text.opt().encode(row.suffix()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "emailpromotion" = """),
+             PgTypes.int4.encode(row.emailpromotion()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "additionalcontactinfo" = """),
+             TypoXml.pgType.opt().encode(row.additionalcontactinfo()),
+             typo.runtime.Fragment.lit("""
+                ::xml,
+                "demographics" = """),
+             TypoXml.pgType.opt().encode(row.demographics()),
+             typo.runtime.Fragment.lit("""
+                ::xml,
+                "rowguid" = """),
+             TypoUUID.pgType.encode(row.rowguid()),
+             typo.runtime.Fragment.lit("""
+                ::uuid,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "businessentityid" = """),
+             BusinessentityId.pgType.encode(businessentityid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public PersonRow upsert(
@@ -445,23 +445,23 @@ public record PersonRepoImpl() implements PersonRepo {
       copy person_TEMP("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate") from stdin
       """), batchSize, unsaved, c, PersonRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "person"."person"("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate")
-       select * from person_TEMP
-       on conflict ("businessentityid")
-       do update set
-         "persontype" = EXCLUDED."persontype",
-       "namestyle" = EXCLUDED."namestyle",
-       "title" = EXCLUDED."title",
-       "firstname" = EXCLUDED."firstname",
-       "middlename" = EXCLUDED."middlename",
-       "lastname" = EXCLUDED."lastname",
-       "suffix" = EXCLUDED."suffix",
-       "emailpromotion" = EXCLUDED."emailpromotion",
-       "additionalcontactinfo" = EXCLUDED."additionalcontactinfo",
-       "demographics" = EXCLUDED."demographics",
-       "rowguid" = EXCLUDED."rowguid",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table person_TEMP;""")).update().runUnchecked(c);
+              insert into "person"."person"("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate")
+              select * from person_TEMP
+              on conflict ("businessentityid")
+              do update set
+                "persontype" = EXCLUDED."persontype",
+              "namestyle" = EXCLUDED."namestyle",
+              "title" = EXCLUDED."title",
+              "firstname" = EXCLUDED."firstname",
+              "middlename" = EXCLUDED."middlename",
+              "lastname" = EXCLUDED."lastname",
+              "suffix" = EXCLUDED."suffix",
+              "emailpromotion" = EXCLUDED."emailpromotion",
+              "additionalcontactinfo" = EXCLUDED."additionalcontactinfo",
+              "demographics" = EXCLUDED."demographics",
+              "rowguid" = EXCLUDED."rowguid",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table person_TEMP;""")).update().runUnchecked(c);
   };
 }

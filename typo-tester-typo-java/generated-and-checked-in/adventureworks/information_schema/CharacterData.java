@@ -5,6 +5,7 @@
  */
 package adventureworks.information_schema;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
@@ -13,7 +14,7 @@ import typo.runtime.internal.arrayMap;
 /** Domain `information_schema.character_data`
   * No constraint
   */
-public record CharacterData(String value) {
+public record CharacterData(@JsonValue String value) {
   public CharacterData withValue(String value) {
     return new CharacterData(value);
   };

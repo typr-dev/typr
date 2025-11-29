@@ -7,6 +7,7 @@ package adventureworks.humanresources.vjobcandidateeducation;
 
 import adventureworks.customtypes.TypoLocalDate;
 import adventureworks.humanresources.jobcandidate.JobcandidateId;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
@@ -17,18 +18,18 @@ import typo.runtime.RowParsers.Tuple13;
 public record VjobcandidateeducationViewRow(
   /** Points to {@link adventureworks.humanresources.jobcandidate.JobcandidateRow#jobcandidateid()} */
   JobcandidateId jobcandidateid,
-  /* nullability unknown */ Optional</* max 50 chars */ String> eduLevel,
-  /* nullability unknown */ Optional<TypoLocalDate> eduStartDate,
-  /* nullability unknown */ Optional<TypoLocalDate> eduEndDate,
-  /* nullability unknown */ Optional</* max 50 chars */ String> eduDegree,
-  /* nullability unknown */ Optional</* max 50 chars */ String> eduMajor,
-  /* nullability unknown */ Optional</* max 50 chars */ String> eduMinor,
-  /* nullability unknown */ Optional</* max 5 chars */ String> eduGPA,
-  /* nullability unknown */ Optional</* max 5 chars */ String> eduGPAScale,
-  /* nullability unknown */ Optional</* max 100 chars */ String> eduSchool,
-  /* nullability unknown */ Optional</* max 100 chars */ String> eduLocCountryRegion,
-  /* nullability unknown */ Optional</* max 100 chars */ String> eduLocState,
-  /* nullability unknown */ Optional</* max 100 chars */ String> eduLocCity
+  @JsonProperty("Edu.Level") /* nullability unknown */ Optional</* max 50 chars */ String> eduLevel,
+  @JsonProperty("Edu.StartDate") /* nullability unknown */ Optional<TypoLocalDate> eduStartDate,
+  @JsonProperty("Edu.EndDate") /* nullability unknown */ Optional<TypoLocalDate> eduEndDate,
+  @JsonProperty("Edu.Degree") /* nullability unknown */ Optional</* max 50 chars */ String> eduDegree,
+  @JsonProperty("Edu.Major") /* nullability unknown */ Optional</* max 50 chars */ String> eduMajor,
+  @JsonProperty("Edu.Minor") /* nullability unknown */ Optional</* max 50 chars */ String> eduMinor,
+  @JsonProperty("Edu.GPA") /* nullability unknown */ Optional</* max 5 chars */ String> eduGPA,
+  @JsonProperty("Edu.GPAScale") /* nullability unknown */ Optional</* max 5 chars */ String> eduGPAScale,
+  @JsonProperty("Edu.School") /* nullability unknown */ Optional</* max 100 chars */ String> eduSchool,
+  @JsonProperty("Edu.Loc.CountryRegion") /* nullability unknown */ Optional</* max 100 chars */ String> eduLocCountryRegion,
+  @JsonProperty("Edu.Loc.State") /* nullability unknown */ Optional</* max 100 chars */ String> eduLocState,
+  @JsonProperty("Edu.Loc.City") /* nullability unknown */ Optional</* max 100 chars */ String> eduLocCity
 ) {
   /** Points to {@link adventureworks.humanresources.jobcandidate.JobcandidateRow#jobcandidateid()} */
   public VjobcandidateeducationViewRow withJobcandidateid(JobcandidateId jobcandidateid) {

@@ -5,13 +5,14 @@
  */
 package adventureworks.sales.shoppingcartitem;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `sales.shoppingcartitem` */
-public record ShoppingcartitemId(Integer value) {
+public record ShoppingcartitemId(@JsonValue Integer value) {
   public ShoppingcartitemId withValue(Integer value) {
     return new ShoppingcartitemId(value);
   };

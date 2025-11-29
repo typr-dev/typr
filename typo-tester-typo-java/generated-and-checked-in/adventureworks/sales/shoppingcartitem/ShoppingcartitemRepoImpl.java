@@ -24,7 +24,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record ShoppingcartitemRepoImpl() implements ShoppingcartitemRepo {
+public class ShoppingcartitemRepoImpl implements ShoppingcartitemRepo {
   public DeleteBuilder<ShoppingcartitemFields, ShoppingcartitemRow> delete() {
     return DeleteBuilder.of("sales.shoppingcartitem", ShoppingcartitemFields.structure());
   };
@@ -238,32 +238,32 @@ public record ShoppingcartitemRepoImpl() implements ShoppingcartitemRepo {
   ) {
     ShoppingcartitemId shoppingcartitemid = row.shoppingcartitemid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "sales"."shoppingcartitem"
-         set "shoppingcartid" = """),
-      PgTypes.text.encode(row.shoppingcartid()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "quantity" = """),
-      PgTypes.int4.encode(row.quantity()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "productid" = """),
-      ProductId.pgType.encode(row.productid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "datecreated" = """),
-      TypoLocalDateTime.pgType.encode(row.datecreated()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "shoppingcartitemid" = """),
-      ShoppingcartitemId.pgType.encode(shoppingcartitemid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "sales"."shoppingcartitem"
+                set "shoppingcartid" = """),
+             PgTypes.text.encode(row.shoppingcartid()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "quantity" = """),
+             PgTypes.int4.encode(row.quantity()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "productid" = """),
+             ProductId.pgType.encode(row.productid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "datecreated" = """),
+             TypoLocalDateTime.pgType.encode(row.datecreated()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "shoppingcartitemid" = """),
+             ShoppingcartitemId.pgType.encode(shoppingcartitemid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public ShoppingcartitemRow upsert(
@@ -334,16 +334,16 @@ public record ShoppingcartitemRepoImpl() implements ShoppingcartitemRepo {
       copy shoppingcartitem_TEMP("shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate") from stdin
       """), batchSize, unsaved, c, ShoppingcartitemRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "sales"."shoppingcartitem"("shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate")
-       select * from shoppingcartitem_TEMP
-       on conflict ("shoppingcartitemid")
-       do update set
-         "shoppingcartid" = EXCLUDED."shoppingcartid",
-       "quantity" = EXCLUDED."quantity",
-       "productid" = EXCLUDED."productid",
-       "datecreated" = EXCLUDED."datecreated",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table shoppingcartitem_TEMP;""")).update().runUnchecked(c);
+              insert into "sales"."shoppingcartitem"("shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate")
+              select * from shoppingcartitem_TEMP
+              on conflict ("shoppingcartitemid")
+              do update set
+                "shoppingcartid" = EXCLUDED."shoppingcartid",
+              "quantity" = EXCLUDED."quantity",
+              "productid" = EXCLUDED."productid",
+              "datecreated" = EXCLUDED."datecreated",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table shoppingcartitem_TEMP;""")).update().runUnchecked(c);
   };
 }

@@ -73,19 +73,19 @@ final case class JsonLibZioJson(pkg: jvm.QIdent, default: ComputedDefault, inlin
     if (inlineImplicits) go(jvm.Type.base(tpe)) else JsonEncoder.of(tpe).code
   }
 
-  override def defaultedInstance(d: ComputedDefault): List[jvm.Given] = {
+  override def defaultedInstance: JsonLib.Instances = JsonLib.Instances.fromGivens {
     val T = jvm.Type.Abstract(jvm.Ident("T"))
     List(
       jvm.Given(
         tparams = List(T),
         name = decoderName,
         implicitParams = List(jvm.Param(jvm.Ident("T"), JsonDecoder.of(T))),
-        tpe = JsonDecoder.of(d.Defaulted.of(T)),
-        body = code"""|new ${JsonDecoder.of(d.Defaulted.of(T))} {
-                      |  override def unsafeDecode(trace: ${TypesScala.List.of(JsonError)}, in: $RetractReader): ${d.Defaulted.of(T)} =
+        tpe = JsonDecoder.of(default.Defaulted.of(T)),
+        body = code"""|new ${JsonDecoder.of(default.Defaulted.of(T))} {
+                      |  override def unsafeDecode(trace: ${TypesScala.List.of(JsonError)}, in: $RetractReader): ${default.Defaulted.of(T)} =
                       |    ${TypesScala.Try}($JsonDecoder.string.unsafeDecode(trace, in)) match {
-                      |      case $Success("defaulted") => ${d.UseDefault}()
-                      |      case _ => ${d.Provided}(T.unsafeDecode(trace, in))
+                      |      case $Success("defaulted") => ${default.UseDefault}()
+                      |      case _ => ${default.Provided}(T.unsafeDecode(trace, in))
                       |    }
                       |  }""".stripMargin
       ),
@@ -93,43 +93,47 @@ final case class JsonLibZioJson(pkg: jvm.QIdent, default: ComputedDefault, inlin
         tparams = List(T),
         name = encoderName,
         implicitParams = List(jvm.Param(jvm.Ident("T"), JsonEncoder.of(T))),
-        tpe = JsonEncoder.of(d.Defaulted.of(T)),
-        body = code"""|new ${JsonEncoder.of(d.Defaulted.of(T))} {
-                 |  override def unsafeEncode(a: ${d.Defaulted.of(T)}, indent: ${TypesScala.Option.of(TypesScala.Int)}, out: $Write): Unit =
+        tpe = JsonEncoder.of(default.Defaulted.of(T)),
+        body = code"""|new ${JsonEncoder.of(default.Defaulted.of(T))} {
+                 |  override def unsafeEncode(a: ${default.Defaulted.of(T)}, indent: ${TypesScala.Option.of(TypesScala.Int)}, out: $Write): Unit =
                  |    a match {
-                 |      case ${d.Provided}(value) =>
+                 |      case ${default.Provided}(value) =>
                  |        out.write("{")
                  |        out.write("\\"provided\\":")
                  |        ${jvm.Ident("T")}.unsafeEncode(value, None, out)
                  |        out.write("}")
-                 |      case ${d.UseDefault}() => out.write("\\"defaulted\\"")
+                 |      case ${default.UseDefault}() => out.write("\\"defaulted\\"")
                  |    }
                  |}""".stripMargin
       )
     )
   }
 
-  override def stringEnumInstances(wrapperType: jvm.Type, underlying: jvm.Type, openEnum: Boolean): List[jvm.Given] =
-    List(
-      jvm.Given(
-        tparams = Nil,
-        name = decoderName,
-        implicitParams = Nil,
-        tpe = JsonDecoder.of(wrapperType),
-        body =
-          if (openEnum) code"""${lookupDecoderFor(underlying)}.map($wrapperType.apply)"""
-          else code"""${lookupDecoderFor(underlying)}.mapOrFail($wrapperType.apply)"""
-      ),
-      jvm.Given(tparams = Nil, name = encoderName, implicitParams = Nil, tpe = JsonEncoder.of(wrapperType), body = code"${lookupEncoderFor(underlying)}.contramap(_.value)")
+  override def stringEnumInstances(wrapperType: jvm.Type, underlying: jvm.Type, openEnum: Boolean): JsonLib.Instances =
+    JsonLib.Instances.fromGivens(
+      List(
+        jvm.Given(
+          tparams = Nil,
+          name = decoderName,
+          implicitParams = Nil,
+          tpe = JsonDecoder.of(wrapperType),
+          body =
+            if (openEnum) code"""${lookupDecoderFor(underlying)}.map($wrapperType.apply)"""
+            else code"""${lookupDecoderFor(underlying)}.mapOrFail($wrapperType.apply)"""
+        ),
+        jvm.Given(tparams = Nil, name = encoderName, implicitParams = Nil, tpe = JsonEncoder.of(wrapperType), body = code"${lookupEncoderFor(underlying)}.contramap(_.value)")
+      )
     )
 
-  override def wrapperTypeInstances(wrapperType: jvm.Type.Qualified, fieldName: jvm.Ident, underlying: jvm.Type): List[jvm.Given] =
-    List(
-      jvm.Given(tparams = Nil, name = encoderName, implicitParams = Nil, tpe = JsonEncoder.of(wrapperType), body = code"${lookupEncoderFor(underlying)}.contramap(_.$fieldName)"),
-      jvm.Given(tparams = Nil, name = decoderName, implicitParams = Nil, tpe = JsonDecoder.of(wrapperType), body = code"${lookupDecoderFor(underlying)}.map($wrapperType.apply)")
+  override def wrapperTypeInstances(wrapperType: jvm.Type.Qualified, fieldName: jvm.Ident, underlying: jvm.Type): JsonLib.Instances =
+    JsonLib.Instances.fromGivens(
+      List(
+        jvm.Given(tparams = Nil, name = encoderName, implicitParams = Nil, tpe = JsonEncoder.of(wrapperType), body = code"${lookupEncoderFor(underlying)}.contramap(_.$fieldName)"),
+        jvm.Given(tparams = Nil, name = decoderName, implicitParams = Nil, tpe = JsonDecoder.of(wrapperType), body = code"${lookupDecoderFor(underlying)}.map($wrapperType.apply)")
+      )
     )
 
-  override def productInstances(tpe: jvm.Type, fields: NonEmptyList[JsonLib.Field]): List[jvm.Given] = {
+  override def productInstances(tpe: jvm.Type, fields: NonEmptyList[JsonLib.Field]): JsonLib.Instances = {
     val decoder =
       jvm.Given(
         tparams = Nil,
@@ -180,7 +184,7 @@ final case class JsonLibZioJson(pkg: jvm.QIdent, default: ComputedDefault, inlin
         }
       )
 
-    List(decoder, encoder)
+    JsonLib.Instances.fromGivens(List(decoder, encoder))
   }
 
   override def missingInstances: List[jvm.ClassMember] = List.empty

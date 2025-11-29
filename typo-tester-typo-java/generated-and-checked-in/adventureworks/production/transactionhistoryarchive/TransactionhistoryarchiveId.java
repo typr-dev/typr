@@ -5,13 +5,14 @@
  */
 package adventureworks.production.transactionhistoryarchive;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `production.transactionhistoryarchive` */
-public record TransactionhistoryarchiveId(Integer value) {
+public record TransactionhistoryarchiveId(@JsonValue Integer value) {
   public TransactionhistoryarchiveId withValue(Integer value) {
     return new TransactionhistoryarchiveId(value);
   };

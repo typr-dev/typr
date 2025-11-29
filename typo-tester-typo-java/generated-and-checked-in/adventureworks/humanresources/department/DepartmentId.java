@@ -5,13 +5,14 @@
  */
 package adventureworks.humanresources.department;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `humanresources.department` */
-public record DepartmentId(Integer value) {
+public record DepartmentId(@JsonValue Integer value) {
   public DepartmentId withValue(Integer value) {
     return new DepartmentId(value);
   };

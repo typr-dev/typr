@@ -23,7 +23,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record SalesreasonRepoImpl() implements SalesreasonRepo {
+public class SalesreasonRepoImpl implements SalesreasonRepo {
   public DeleteBuilder<SalesreasonFields, SalesreasonRow> delete() {
     return DeleteBuilder.of("sales.salesreason", SalesreasonFields.structure());
   };
@@ -212,24 +212,24 @@ public record SalesreasonRepoImpl() implements SalesreasonRepo {
   ) {
     SalesreasonId salesreasonid = row.salesreasonid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "sales"."salesreason"
-         set "name" = """),
-      Name.pgType.encode(row.name()),
-      typo.runtime.Fragment.lit("""
-         ::varchar,
-         "reasontype" = """),
-      Name.pgType.encode(row.reasontype()),
-      typo.runtime.Fragment.lit("""
-         ::varchar,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "salesreasonid" = """),
-      SalesreasonId.pgType.encode(salesreasonid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "sales"."salesreason"
+                set "name" = """),
+             Name.pgType.encode(row.name()),
+             typo.runtime.Fragment.lit("""
+                ::varchar,
+                "reasontype" = """),
+             Name.pgType.encode(row.reasontype()),
+             typo.runtime.Fragment.lit("""
+                ::varchar,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "salesreasonid" = """),
+             SalesreasonId.pgType.encode(salesreasonid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public SalesreasonRow upsert(
@@ -292,14 +292,14 @@ public record SalesreasonRepoImpl() implements SalesreasonRepo {
       copy salesreason_TEMP("salesreasonid", "name", "reasontype", "modifieddate") from stdin
       """), batchSize, unsaved, c, SalesreasonRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "sales"."salesreason"("salesreasonid", "name", "reasontype", "modifieddate")
-       select * from salesreason_TEMP
-       on conflict ("salesreasonid")
-       do update set
-         "name" = EXCLUDED."name",
-       "reasontype" = EXCLUDED."reasontype",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table salesreason_TEMP;""")).update().runUnchecked(c);
+              insert into "sales"."salesreason"("salesreasonid", "name", "reasontype", "modifieddate")
+              select * from salesreason_TEMP
+              on conflict ("salesreasonid")
+              do update set
+                "name" = EXCLUDED."name",
+              "reasontype" = EXCLUDED."reasontype",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table salesreason_TEMP;""")).update().runUnchecked(c);
   };
 }

@@ -65,17 +65,17 @@ public interface CViewFields {
     return new Impl(List.of());
   };
 
-  Field<CustomerId, CViewRow> customerid();
-
   Field<CustomerId, CViewRow> id();
 
-  Field<TypoLocalDateTime, CViewRow> modifieddate();
+  Field<CustomerId, CViewRow> customerid();
 
   OptField<BusinessentityId, CViewRow> personid();
-
-  Field<TypoUUID, CViewRow> rowguid();
 
   OptField<BusinessentityId, CViewRow> storeid();
 
   OptField<SalesterritoryId, CViewRow> territoryid();
+
+  Field<TypoUUID, CViewRow> rowguid();
+
+  Field<TypoLocalDateTime, CViewRow> modifieddate();
 }

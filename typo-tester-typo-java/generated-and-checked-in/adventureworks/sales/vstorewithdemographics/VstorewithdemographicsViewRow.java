@@ -8,6 +8,7 @@ package adventureworks.sales.vstorewithdemographics;
 import adventureworks.customtypes.TypoMoney;
 import adventureworks.person.businessentity.BusinessentityId;
 import adventureworks.public_.Name;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
@@ -20,16 +21,16 @@ public record VstorewithdemographicsViewRow(
   BusinessentityId businessentityid,
   /** Points to {@link adventureworks.sales.store.StoreRow#name()} */
   Name name,
-  /* nullability unknown */ Optional<TypoMoney> annualSales,
-  /* nullability unknown */ Optional<TypoMoney> annualRevenue,
-  /* nullability unknown */ Optional</* max 50 chars */ String> bankName,
-  /* nullability unknown */ Optional</* max 5 chars */ String> businessType,
-  /* nullability unknown */ Optional<Integer> yearOpened,
-  /* nullability unknown */ Optional</* max 50 chars */ String> specialty,
-  /* nullability unknown */ Optional<Integer> squareFeet,
-  /* nullability unknown */ Optional</* max 30 chars */ String> brands,
-  /* nullability unknown */ Optional</* max 30 chars */ String> internet,
-  /* nullability unknown */ Optional<Integer> numberEmployees
+  @JsonProperty("AnnualSales") /* nullability unknown */ Optional<TypoMoney> annualSales,
+  @JsonProperty("AnnualRevenue") /* nullability unknown */ Optional<TypoMoney> annualRevenue,
+  @JsonProperty("BankName") /* nullability unknown */ Optional</* max 50 chars */ String> bankName,
+  @JsonProperty("BusinessType") /* nullability unknown */ Optional</* max 5 chars */ String> businessType,
+  @JsonProperty("YearOpened") /* nullability unknown */ Optional<Integer> yearOpened,
+  @JsonProperty("Specialty") /* nullability unknown */ Optional</* max 50 chars */ String> specialty,
+  @JsonProperty("SquareFeet") /* nullability unknown */ Optional<Integer> squareFeet,
+  @JsonProperty("Brands") /* nullability unknown */ Optional</* max 30 chars */ String> brands,
+  @JsonProperty("Internet") /* nullability unknown */ Optional</* max 30 chars */ String> internet,
+  @JsonProperty("NumberEmployees") /* nullability unknown */ Optional<Integer> numberEmployees
 ) {
   /** Points to {@link adventureworks.sales.store.StoreRow#businessentityid()} */
   public VstorewithdemographicsViewRow withBusinessentityid(BusinessentityId businessentityid) {

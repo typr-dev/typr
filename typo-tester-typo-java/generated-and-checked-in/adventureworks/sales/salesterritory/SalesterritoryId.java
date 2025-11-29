@@ -5,13 +5,14 @@
  */
 package adventureworks.sales.salesterritory;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `sales.salesterritory` */
-public record SalesterritoryId(Integer value) {
+public record SalesterritoryId(@JsonValue Integer value) {
   public SalesterritoryId withValue(Integer value) {
     return new SalesterritoryId(value);
   };

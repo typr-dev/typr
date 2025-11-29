@@ -23,7 +23,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record BusinessentityRepoImpl() implements BusinessentityRepo {
+public class BusinessentityRepoImpl implements BusinessentityRepo {
   public DeleteBuilder<BusinessentityFields, BusinessentityRow> delete() {
     return DeleteBuilder.of("person.businessentity", BusinessentityFields.structure());
   };
@@ -215,20 +215,20 @@ public record BusinessentityRepoImpl() implements BusinessentityRepo {
   ) {
     BusinessentityId businessentityid = row.businessentityid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "person"."businessentity"
-         set "rowguid" = """),
-      TypoUUID.pgType.encode(row.rowguid()),
-      typo.runtime.Fragment.lit("""
-         ::uuid,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "businessentityid" = """),
-      BusinessentityId.pgType.encode(businessentityid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "person"."businessentity"
+                set "rowguid" = """),
+             TypoUUID.pgType.encode(row.rowguid()),
+             typo.runtime.Fragment.lit("""
+                ::uuid,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "businessentityid" = """),
+             BusinessentityId.pgType.encode(businessentityid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public BusinessentityRow upsert(
@@ -287,13 +287,13 @@ public record BusinessentityRepoImpl() implements BusinessentityRepo {
       copy businessentity_TEMP("businessentityid", "rowguid", "modifieddate") from stdin
       """), batchSize, unsaved, c, BusinessentityRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "person"."businessentity"("businessentityid", "rowguid", "modifieddate")
-       select * from businessentity_TEMP
-       on conflict ("businessentityid")
-       do update set
-         "rowguid" = EXCLUDED."rowguid",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table businessentity_TEMP;""")).update().runUnchecked(c);
+              insert into "person"."businessentity"("businessentityid", "rowguid", "modifieddate")
+              select * from businessentity_TEMP
+              on conflict ("businessentityid")
+              do update set
+                "rowguid" = EXCLUDED."rowguid",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table businessentity_TEMP;""")).update().runUnchecked(c);
   };
 }

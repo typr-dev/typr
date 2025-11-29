@@ -34,6 +34,7 @@ object TypesScala {
   val Unit = jvm.Type.Qualified("scala.Unit")
   val mutableMap = jvm.Type.Qualified("scala.collection.mutable.Map")
   val nowarn = jvm.Type.Qualified("scala.annotation.nowarn")
+  val CollectionConverters = jvm.Type.Qualified("scala.jdk.CollectionConverters")
 
   def boxedType(tpe: jvm.Type): Option[jvm.Type.Qualified] =
     tpe match {

@@ -58,6 +58,7 @@ object generate {
         case JsonLibName.Circe    => JsonLibCirce(pkg, default, publicOptions.inlineImplicits, requireScala("circe"))
         case JsonLibName.PlayJson => JsonLibPlay(pkg, default, publicOptions.inlineImplicits, requireScala("play-json"))
         case JsonLibName.ZioJson  => JsonLibZioJson(pkg, default, publicOptions.inlineImplicits, requireScala("zio-json"))
+        case JsonLibName.Jackson  => JsonLibJackson(pkg, default, language)
       },
       keepDependencies = publicOptions.keepDependencies,
       logger = publicOptions.logger,
@@ -118,10 +119,11 @@ object generate {
 
         val domainFiles = domains.map(d => FileDomain(d, options, language))
 
+        val defaultFile = FileDefault(default, options.jsonLibs, options.dbLib, language)
         val mostFiles: List[jvm.File] =
           List(
             options.dbLib.toList.flatMap(_.additionalFiles),
-            List(FileDefault(default, options.jsonLibs, options.dbLib, language).file),
+            defaultFile.file :: defaultFile.additionalFiles,
             enums.map(enm => FileStringEnum(options, enm)),
             domainFiles,
             customTypes.All.values.map(FileCustomType(options, language)),

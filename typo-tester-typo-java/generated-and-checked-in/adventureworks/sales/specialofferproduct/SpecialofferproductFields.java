@@ -63,13 +63,13 @@ public interface SpecialofferproductFields {
     return new Impl(List.of());
   };
 
-  default SqlExpr<Boolean> compositeIdIn(List<SpecialofferproductId> compositeIds) {
-    return new CompositeIn(List.of(new Part<SpecialofferId, SpecialofferproductId, SpecialofferproductRow>(specialofferid(), SpecialofferproductId::specialofferid, SpecialofferId.pgType), new Part<ProductId, SpecialofferproductId, SpecialofferproductRow>(productid(), SpecialofferproductId::productid, ProductId.pgType)), compositeIds);
-  };
+  IdField<SpecialofferId, SpecialofferproductRow> specialofferid();
 
-  default SqlExpr<Boolean> compositeIdIs(SpecialofferproductId compositeId) {
-    return SqlExpr.all(specialofferid().isEqual(compositeId.specialofferid()), productid().isEqual(compositeId.productid()));
-  };
+  IdField<ProductId, SpecialofferproductRow> productid();
+
+  Field<TypoUUID, SpecialofferproductRow> rowguid();
+
+  Field<TypoLocalDateTime, SpecialofferproductRow> modifieddate();
 
   default ForeignKey<ProductFields, ProductRow> fkProductionProduct() {
     return ForeignKey.<ProductFields, ProductRow>of("sales.FK_SpecialOfferProduct_Product_ProductID").withColumnPair(productid(), ProductFields::productid);
@@ -79,11 +79,11 @@ public interface SpecialofferproductFields {
     return ForeignKey.<SpecialofferFields, SpecialofferRow>of("sales.FK_SpecialOfferProduct_SpecialOffer_SpecialOfferID").withColumnPair(specialofferid(), SpecialofferFields::specialofferid);
   };
 
-  Field<TypoLocalDateTime, SpecialofferproductRow> modifieddate();
+  default SqlExpr<Boolean> compositeIdIs(SpecialofferproductId compositeId) {
+    return SqlExpr.all(specialofferid().isEqual(compositeId.specialofferid()), productid().isEqual(compositeId.productid()));
+  };
 
-  IdField<ProductId, SpecialofferproductRow> productid();
-
-  Field<TypoUUID, SpecialofferproductRow> rowguid();
-
-  IdField<SpecialofferId, SpecialofferproductRow> specialofferid();
+  default SqlExpr<Boolean> compositeIdIn(List<SpecialofferproductId> compositeIds) {
+    return new CompositeIn(List.of(new Part<SpecialofferId, SpecialofferproductId, SpecialofferproductRow>(specialofferid(), SpecialofferproductId::specialofferid, SpecialofferId.pgType), new Part<ProductId, SpecialofferproductId, SpecialofferproductRow>(productid(), SpecialofferproductId::productid, ProductId.pgType)), compositeIds);
+  };
 }

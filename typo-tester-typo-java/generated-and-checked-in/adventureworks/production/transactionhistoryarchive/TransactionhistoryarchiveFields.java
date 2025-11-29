@@ -69,13 +69,9 @@ public interface TransactionhistoryarchiveFields {
     return new Impl(List.of());
   };
 
-  Field<BigDecimal, TransactionhistoryarchiveRow> actualcost();
-
-  Field<TypoLocalDateTime, TransactionhistoryarchiveRow> modifieddate();
+  IdField<TransactionhistoryarchiveId, TransactionhistoryarchiveRow> transactionid();
 
   Field<Integer, TransactionhistoryarchiveRow> productid();
-
-  Field<Integer, TransactionhistoryarchiveRow> quantity();
 
   Field<Integer, TransactionhistoryarchiveRow> referenceorderid();
 
@@ -83,7 +79,11 @@ public interface TransactionhistoryarchiveFields {
 
   Field<TypoLocalDateTime, TransactionhistoryarchiveRow> transactiondate();
 
-  IdField<TransactionhistoryarchiveId, TransactionhistoryarchiveRow> transactionid();
-
   Field</* bpchar, max 1 chars */ String, TransactionhistoryarchiveRow> transactiontype();
+
+  Field<Integer, TransactionhistoryarchiveRow> quantity();
+
+  Field<BigDecimal, TransactionhistoryarchiveRow> actualcost();
+
+  Field<TypoLocalDateTime, TransactionhistoryarchiveRow> modifieddate();
 }

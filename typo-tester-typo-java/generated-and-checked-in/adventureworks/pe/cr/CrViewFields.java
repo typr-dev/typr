@@ -52,7 +52,7 @@ public interface CrViewFields {
 
   Field<CountryregionId, CrViewRow> countryregioncode();
 
-  Field<TypoLocalDateTime, CrViewRow> modifieddate();
-
   Field<Name, CrViewRow> name();
+
+  Field<TypoLocalDateTime, CrViewRow> modifieddate();
 }

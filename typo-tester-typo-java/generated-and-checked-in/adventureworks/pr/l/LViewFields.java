@@ -61,15 +61,15 @@ public interface LViewFields {
     return new Impl(List.of());
   };
 
-  Field<BigDecimal, LViewRow> availability();
-
-  Field<BigDecimal, LViewRow> costrate();
-
   Field<LocationId, LViewRow> id();
 
   Field<LocationId, LViewRow> locationid();
 
-  Field<TypoLocalDateTime, LViewRow> modifieddate();
-
   Field<Name, LViewRow> name();
+
+  Field<BigDecimal, LViewRow> costrate();
+
+  Field<BigDecimal, LViewRow> availability();
+
+  Field<TypoLocalDateTime, LViewRow> modifieddate();
 }

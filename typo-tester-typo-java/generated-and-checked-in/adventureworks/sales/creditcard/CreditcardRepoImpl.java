@@ -25,7 +25,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record CreditcardRepoImpl() implements CreditcardRepo {
+public class CreditcardRepoImpl implements CreditcardRepo {
   public DeleteBuilder<CreditcardFields, CreditcardRow> delete() {
     return DeleteBuilder.of("sales.creditcard", CreditcardFields.structure());
   };
@@ -230,32 +230,32 @@ public record CreditcardRepoImpl() implements CreditcardRepo {
   ) {
     /* user-picked */ CustomCreditcardId creditcardid = row.creditcardid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "sales"."creditcard"
-         set "cardtype" = """),
-      PgTypes.text.encode(row.cardtype()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "cardnumber" = """),
-      PgTypes.text.encode(row.cardnumber()),
-      typo.runtime.Fragment.lit("""
-         ,
-         "expmonth" = """),
-      TypoShort.pgType.encode(row.expmonth()),
-      typo.runtime.Fragment.lit("""
-         ::int2,
-         "expyear" = """),
-      TypoShort.pgType.encode(row.expyear()),
-      typo.runtime.Fragment.lit("""
-         ::int2,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "creditcardid" = """),
-      /* user-picked */ CustomCreditcardId.pgType.encode(creditcardid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "sales"."creditcard"
+                set "cardtype" = """),
+             PgTypes.text.encode(row.cardtype()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "cardnumber" = """),
+             PgTypes.text.encode(row.cardnumber()),
+             typo.runtime.Fragment.lit("""
+                ,
+                "expmonth" = """),
+             TypoShort.pgType.encode(row.expmonth()),
+             typo.runtime.Fragment.lit("""
+                ::int2,
+                "expyear" = """),
+             TypoShort.pgType.encode(row.expyear()),
+             typo.runtime.Fragment.lit("""
+                ::int2,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "creditcardid" = """),
+             /* user-picked */ CustomCreditcardId.pgType.encode(creditcardid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public CreditcardRow upsert(
@@ -326,16 +326,16 @@ public record CreditcardRepoImpl() implements CreditcardRepo {
       copy creditcard_TEMP("creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate") from stdin
       """), batchSize, unsaved, c, CreditcardRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "sales"."creditcard"("creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate")
-       select * from creditcard_TEMP
-       on conflict ("creditcardid")
-       do update set
-         "cardtype" = EXCLUDED."cardtype",
-       "cardnumber" = EXCLUDED."cardnumber",
-       "expmonth" = EXCLUDED."expmonth",
-       "expyear" = EXCLUDED."expyear",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table creditcard_TEMP;""")).update().runUnchecked(c);
+              insert into "sales"."creditcard"("creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate")
+              select * from creditcard_TEMP
+              on conflict ("creditcardid")
+              do update set
+                "cardtype" = EXCLUDED."cardtype",
+              "cardnumber" = EXCLUDED."cardnumber",
+              "expmonth" = EXCLUDED."expmonth",
+              "expyear" = EXCLUDED."expyear",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table creditcard_TEMP;""")).update().runUnchecked(c);
   };
 }

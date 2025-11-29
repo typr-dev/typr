@@ -5,13 +5,14 @@
  */
 package adventureworks.public_.table_with_generated_columns;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `public.table-with-generated-columns` */
-public record TableWithGeneratedColumnsId(String value) {
+public record TableWithGeneratedColumnsId(@JsonValue String value) {
   public TableWithGeneratedColumnsId withValue(String value) {
     return new TableWithGeneratedColumnsId(value);
   };

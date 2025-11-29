@@ -69,21 +69,21 @@ public interface VstorewithaddressesViewFields {
     return new Impl(List.of());
   };
 
+  Field<BusinessentityId, VstorewithaddressesViewRow> businessentityid();
+
+  Field<Name, VstorewithaddressesViewRow> name();
+
+  Field<Name, VstorewithaddressesViewRow> addresstype();
+
   Field</* max 60 chars */ String, VstorewithaddressesViewRow> addressline1();
 
   OptField</* max 60 chars */ String, VstorewithaddressesViewRow> addressline2();
 
-  Field<Name, VstorewithaddressesViewRow> addresstype();
-
-  Field<BusinessentityId, VstorewithaddressesViewRow> businessentityid();
-
   Field</* max 30 chars */ String, VstorewithaddressesViewRow> city();
 
-  Field<Name, VstorewithaddressesViewRow> countryregionname();
-
-  Field<Name, VstorewithaddressesViewRow> name();
+  Field<Name, VstorewithaddressesViewRow> stateprovincename();
 
   Field</* max 15 chars */ String, VstorewithaddressesViewRow> postalcode();
 
-  Field<Name, VstorewithaddressesViewRow> stateprovincename();
+  Field<Name, VstorewithaddressesViewRow> countryregionname();
 }

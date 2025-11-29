@@ -52,7 +52,7 @@ public interface ContacttypeFields {
 
   IdField<ContacttypeId, ContacttypeRow> contacttypeid();
 
-  Field<TypoLocalDateTime, ContacttypeRow> modifieddate();
-
   Field<Name, ContacttypeRow> name();
+
+  Field<TypoLocalDateTime, ContacttypeRow> modifieddate();
 }

@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgRead;
 import typo.runtime.PgText;
@@ -14,7 +15,7 @@ import typo.runtime.PgWrite;
 import typo.runtime.internal.arrayMap;
 
 /** Short primitive */
-public record TypoShort(Short value) {
+public record TypoShort(@JsonValue Short value) {
   public TypoShort withValue(Short value) {
     return new TypoShort(value);
   };

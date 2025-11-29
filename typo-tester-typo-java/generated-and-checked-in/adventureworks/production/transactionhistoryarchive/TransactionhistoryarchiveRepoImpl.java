@@ -23,7 +23,7 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-public record TransactionhistoryarchiveRepoImpl() implements TransactionhistoryarchiveRepo {
+public class TransactionhistoryarchiveRepoImpl implements TransactionhistoryarchiveRepo {
   public DeleteBuilder<TransactionhistoryarchiveFields, TransactionhistoryarchiveRow> delete() {
     return DeleteBuilder.of("production.transactionhistoryarchive", TransactionhistoryarchiveFields.structure());
   };
@@ -252,44 +252,44 @@ public record TransactionhistoryarchiveRepoImpl() implements Transactionhistorya
   ) {
     TransactionhistoryarchiveId transactionid = row.transactionid();;
     return interpolate(
-      typo.runtime.Fragment.lit("""
-         update "production"."transactionhistoryarchive"
-         set "productid" = """),
-      PgTypes.int4.encode(row.productid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "referenceorderid" = """),
-      PgTypes.int4.encode(row.referenceorderid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "referenceorderlineid" = """),
-      PgTypes.int4.encode(row.referenceorderlineid()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "transactiondate" = """),
-      TypoLocalDateTime.pgType.encode(row.transactiondate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp,
-         "transactiontype" = """),
-      PgTypes.text.encode(row.transactiontype()),
-      typo.runtime.Fragment.lit("""
-         ::bpchar,
-         "quantity" = """),
-      PgTypes.int4.encode(row.quantity()),
-      typo.runtime.Fragment.lit("""
-         ::int4,
-         "actualcost" = """),
-      PgTypes.numeric.encode(row.actualcost()),
-      typo.runtime.Fragment.lit("""
-         ::numeric,
-         "modifieddate" = """),
-      TypoLocalDateTime.pgType.encode(row.modifieddate()),
-      typo.runtime.Fragment.lit("""
-         ::timestamp
-         where "transactionid" = """),
-      TransactionhistoryarchiveId.pgType.encode(transactionid),
-      typo.runtime.Fragment.lit("")
-    ).update().runUnchecked(c) > 0;
+             typo.runtime.Fragment.lit("""
+                update "production"."transactionhistoryarchive"
+                set "productid" = """),
+             PgTypes.int4.encode(row.productid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "referenceorderid" = """),
+             PgTypes.int4.encode(row.referenceorderid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "referenceorderlineid" = """),
+             PgTypes.int4.encode(row.referenceorderlineid()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "transactiondate" = """),
+             TypoLocalDateTime.pgType.encode(row.transactiondate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp,
+                "transactiontype" = """),
+             PgTypes.text.encode(row.transactiontype()),
+             typo.runtime.Fragment.lit("""
+                ::bpchar,
+                "quantity" = """),
+             PgTypes.int4.encode(row.quantity()),
+             typo.runtime.Fragment.lit("""
+                ::int4,
+                "actualcost" = """),
+             PgTypes.numeric.encode(row.actualcost()),
+             typo.runtime.Fragment.lit("""
+                ::numeric,
+                "modifieddate" = """),
+             TypoLocalDateTime.pgType.encode(row.modifieddate()),
+             typo.runtime.Fragment.lit("""
+                ::timestamp
+                where "transactionid" = """),
+             TransactionhistoryarchiveId.pgType.encode(transactionid),
+             typo.runtime.Fragment.lit("")
+           ).update().runUnchecked(c) > 0;
   };
 
   public TransactionhistoryarchiveRow upsert(
@@ -372,19 +372,19 @@ public record TransactionhistoryarchiveRepoImpl() implements Transactionhistorya
       copy transactionhistoryarchive_TEMP("transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate") from stdin
       """), batchSize, unsaved, c, TransactionhistoryarchiveRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-       insert into "production"."transactionhistoryarchive"("transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate")
-       select * from transactionhistoryarchive_TEMP
-       on conflict ("transactionid")
-       do update set
-         "productid" = EXCLUDED."productid",
-       "referenceorderid" = EXCLUDED."referenceorderid",
-       "referenceorderlineid" = EXCLUDED."referenceorderlineid",
-       "transactiondate" = EXCLUDED."transactiondate",
-       "transactiontype" = EXCLUDED."transactiontype",
-       "quantity" = EXCLUDED."quantity",
-       "actualcost" = EXCLUDED."actualcost",
-       "modifieddate" = EXCLUDED."modifieddate"
-       ;
-       drop table transactionhistoryarchive_TEMP;""")).update().runUnchecked(c);
+              insert into "production"."transactionhistoryarchive"("transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate")
+              select * from transactionhistoryarchive_TEMP
+              on conflict ("transactionid")
+              do update set
+                "productid" = EXCLUDED."productid",
+              "referenceorderid" = EXCLUDED."referenceorderid",
+              "referenceorderlineid" = EXCLUDED."referenceorderlineid",
+              "transactiondate" = EXCLUDED."transactiondate",
+              "transactiontype" = EXCLUDED."transactiontype",
+              "quantity" = EXCLUDED."quantity",
+              "actualcost" = EXCLUDED."actualcost",
+              "modifieddate" = EXCLUDED."modifieddate"
+              ;
+              drop table transactionhistoryarchive_TEMP;""")).update().runUnchecked(c);
   };
 }

@@ -52,7 +52,7 @@ public interface BusinessentityFields {
 
   IdField<BusinessentityId, BusinessentityRow> businessentityid();
 
-  Field<TypoLocalDateTime, BusinessentityRow> modifieddate();
-
   Field<TypoUUID, BusinessentityRow> rowguid();
+
+  Field<TypoLocalDateTime, BusinessentityRow> modifieddate();
 }

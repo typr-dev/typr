@@ -73,17 +73,19 @@ class DbLibDoobie(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDe
     }
   }
 
-  val batchSize = jvm.Param(jvm.Comments.Empty, jvm.Ident("batchSize"), TypesScala.Int, Some(code"10000"))
+  val batchSize = jvm.Param(Nil, jvm.Comments.Empty, jvm.Ident("batchSize"), TypesScala.Int, Some(code"10000"))
 
   override def repoSig(repoMethod: RepoMethod): Right[Nothing, jvm.Method] = {
     def sig(params: List[jvm.Param[jvm.Type]], returnType: jvm.Type) = Right(
       jvm.Method(
+        Nil,
         comments = repoMethod.comment,
         tparams = Nil,
         name = jvm.Ident(repoMethod.methodName),
         params = params,
         implicitParams = Nil,
         tpe = returnType,
+        throws = Nil,
         body = Nil
       )
     )
@@ -595,12 +597,14 @@ class DbLibDoobie(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDe
 
   override def testInsertMethod(x: ComputedTestInserts.InsertMethod): jvm.Method =
     jvm.Method(
+      Nil,
       comments = jvm.Comments.Empty,
       Nil,
       x.name,
       x.params,
       Nil,
       ConnectionIO.of(x.table.names.RowName),
+      Nil,
       List(code"(new ${x.table.names.RepoImplName}).insert(new ${x.cls}(${x.values.map { case (p, expr) => code"$p = $expr" }.mkCode(", ")}))")
     )
 

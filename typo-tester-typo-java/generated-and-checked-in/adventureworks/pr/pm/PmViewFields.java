@@ -65,17 +65,17 @@ public interface PmViewFields {
     return new Impl(List.of());
   };
 
-  OptField<TypoXml, PmViewRow> catalogdescription();
-
   Field<ProductmodelId, PmViewRow> id();
-
-  OptField<TypoXml, PmViewRow> instructions();
-
-  Field<TypoLocalDateTime, PmViewRow> modifieddate();
-
-  Field<Name, PmViewRow> name();
 
   Field<ProductmodelId, PmViewRow> productmodelid();
 
+  Field<Name, PmViewRow> name();
+
+  OptField<TypoXml, PmViewRow> catalogdescription();
+
+  OptField<TypoXml, PmViewRow> instructions();
+
   Field<TypoUUID, PmViewRow> rowguid();
+
+  Field<TypoLocalDateTime, PmViewRow> modifieddate();
 }

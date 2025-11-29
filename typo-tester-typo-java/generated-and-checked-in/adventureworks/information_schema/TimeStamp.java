@@ -6,6 +6,7 @@
 package adventureworks.information_schema;
 
 import adventureworks.customtypes.TypoInstant;
+import com.fasterxml.jackson.annotation.JsonValue;
 import typo.dsl.Bijection;
 import typo.runtime.PgType;
 import typo.runtime.internal.arrayMap;
@@ -13,7 +14,7 @@ import typo.runtime.internal.arrayMap;
 /** Domain `information_schema.time_stamp`
   * No constraint
   */
-public record TimeStamp(TypoInstant value) {
+public record TimeStamp(@JsonValue TypoInstant value) {
   public TimeStamp withValue(TypoInstant value) {
     return new TimeStamp(value);
   };

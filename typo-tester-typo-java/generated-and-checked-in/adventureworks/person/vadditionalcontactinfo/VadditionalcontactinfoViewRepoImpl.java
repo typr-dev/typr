@@ -10,7 +10,7 @@ import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-public record VadditionalcontactinfoViewRepoImpl() implements VadditionalcontactinfoViewRepo {
+public class VadditionalcontactinfoViewRepoImpl implements VadditionalcontactinfoViewRepo {
   public SelectBuilder<VadditionalcontactinfoViewFields, VadditionalcontactinfoViewRow> select() {
     return SelectBuilder.of("person.vadditionalcontactinfo", VadditionalcontactinfoViewFields.structure(), VadditionalcontactinfoViewRow._rowParser);
   };

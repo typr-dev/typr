@@ -59,11 +59,11 @@ public interface PcViewFields {
 
   Field<ProductcategoryId, PcViewRow> id();
 
-  Field<TypoLocalDateTime, PcViewRow> modifieddate();
+  Field<ProductcategoryId, PcViewRow> productcategoryid();
 
   Field<Name, PcViewRow> name();
 
-  Field<ProductcategoryId, PcViewRow> productcategoryid();
-
   Field<TypoUUID, PcViewRow> rowguid();
+
+  Field<TypoLocalDateTime, PcViewRow> modifieddate();
 }

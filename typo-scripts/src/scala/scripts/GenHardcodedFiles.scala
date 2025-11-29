@@ -145,7 +145,7 @@ object GenHardcodedFiles extends BleepCodegenScript("GenHardcodedFiles") {
         else if (target.project.value.contains("zio-jdbc"))
           (LangScala(dialect, TypeSupportScala), Some(DbLibName.ZioJdbc), Some(JsonLibName.ZioJson), true)
         else if (target.project.value.contains("typo-java"))
-          (LangJava, Some(DbLibName.Typo), None, true)
+          (LangJava, Some(DbLibName.Typo), Some(JsonLibName.Jackson), true)
         else if (isTypoScala)
           (LangScala(Dialect.Scala3, TypeSupportJava), Some(DbLibName.Typo), None, true)
         else (LangScala(dialect, TypeSupportScala), Some(DbLibName.Anorm), Some(JsonLibName.PlayJson), true)
