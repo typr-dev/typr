@@ -67,6 +67,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     if: "!contains(github.event.head_commit.message, 'ci skip')"
+    strategy:
+      fail-fast: false
+      matrix:
+        scala-version: [213, 3]
+        postgres-version: [12, 16]
     steps:
       - uses: actions/checkout@v4
       - uses: bleep-build/bleep-setup-action@0.0.1
@@ -74,7 +79,14 @@ jobs:
         with:
           extraFiles: bleep.yaml
 
-      - name: Compile for Java
+      - name: Start up Postgres
+        env:
+          PG_MAJOR: ${{ matrix.postgres-version }}
+        run: docker compose up -d
+
+      - name: Run tests
+        env:
+          CI: true
         run: bleep test typo-tester-typo-java
 
   build-docs:
