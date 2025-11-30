@@ -214,15 +214,42 @@ object ApiExtractor {
             (content.headOption.map(_._1), None)
         }
 
+        // Extract response headers
+        val headers = extractResponseHeaders(response)
+
         ApiResponse(
           statusCode = status,
           description = Option(response.getDescription),
           typeInfo = typeInfo,
-          contentType = contentType
+          contentType = contentType,
+          headers = headers
         )
       }
       .toList
       .sortBy(r => responseStatusOrder(r.statusCode))
+  }
+
+  private def extractResponseHeaders(response: io.swagger.v3.oas.models.responses.ApiResponse): List[ResponseHeader] = {
+    Option(response.getHeaders)
+      .map(_.asScala.toMap)
+      .getOrElse(Map.empty)
+      .map { case (name, header) =>
+        val schema = header.getSchema
+        val typeInfo = if (schema != null) {
+          TypeResolver.resolve(schema, Option(header.getRequired).contains(java.lang.Boolean.TRUE))
+        } else {
+          TypeInfo.Primitive(PrimitiveType.String)
+        }
+
+        ResponseHeader(
+          name = name,
+          description = Option(header.getDescription),
+          typeInfo = typeInfo,
+          required = Option(header.getRequired).contains(java.lang.Boolean.TRUE)
+        )
+      }
+      .toList
+      .sortBy(_.name)
   }
 
   /** Extract response variants when there are ≥2 response types with content */

@@ -89,7 +89,16 @@ case class ApiResponse(
     statusCode: ResponseStatus,
     description: Option[String],
     typeInfo: Option[TypeInfo], // None for empty responses
-    contentType: Option[String]
+    contentType: Option[String],
+    headers: List[ResponseHeader]
+)
+
+/** Response header specification */
+case class ResponseHeader(
+    name: String,
+    description: Option[String],
+    typeInfo: TypeInfo,
+    required: Boolean
 )
 
 /** Response status codes and patterns */

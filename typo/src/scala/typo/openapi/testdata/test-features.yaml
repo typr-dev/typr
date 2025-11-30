@@ -34,6 +34,21 @@ paths:
       responses:
         '200':
           description: A list of pets
+          headers:
+            X-Total-Count:
+              description: Total number of pets available
+              schema:
+                type: integer
+                format: int32
+            X-Page:
+              description: Current page number
+              schema:
+                type: integer
+            X-Request-Id:
+              description: Unique request identifier
+              schema:
+                type: string
+                format: uuid
           content:
             application/json:
               schema:
