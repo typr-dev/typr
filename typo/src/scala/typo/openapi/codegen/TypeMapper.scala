@@ -55,8 +55,9 @@ class TypeMapper(
   }
 }
 
-/** Common JVM types used in OpenAPI code generation */
+/** Common JVM types used in OpenAPI code generation - Java edition */
 object Types {
+  // These are Java types - for Scala use ScalaTypes
   val String = jvm.Type.Qualified("java.lang.String")
   val Int = jvm.Type.Qualified("java.lang.Integer")
   val Long = jvm.Type.Qualified("java.lang.Long")
@@ -117,5 +118,79 @@ object Types {
     val Consumes = jvm.Type.Qualified("jakarta.ws.rs.Consumes")
     val Produces = jvm.Type.Qualified("jakarta.ws.rs.Produces")
     val MediaType = jvm.Type.Qualified("jakarta.ws.rs.core.MediaType")
+  }
+}
+
+/** Scala types for OpenAPI code generation */
+object ScalaTypes {
+  val String = jvm.Type.Qualified("java.lang.String") // String is the same
+  val Int = jvm.Type.Qualified("scala.Int")
+  val Long = jvm.Type.Qualified("scala.Long")
+  val Float = jvm.Type.Qualified("scala.Float")
+  val Double = jvm.Type.Qualified("scala.Double")
+  val Boolean = jvm.Type.Qualified("scala.Boolean")
+  val LocalDate = jvm.Type.Qualified("java.time.LocalDate")
+  val OffsetDateTime = jvm.Type.Qualified("java.time.OffsetDateTime")
+  val LocalTime = jvm.Type.Qualified("java.time.LocalTime")
+  val UUID = jvm.Type.Qualified("java.util.UUID")
+  val URI = jvm.Type.Qualified("java.net.URI")
+  val BigDecimal = jvm.Type.Qualified("scala.math.BigDecimal")
+  val ByteArray = jvm.Type.ArrayOf(jvm.Type.Qualified("scala.Byte"))
+  val Option = jvm.Type.Qualified("scala.Option")
+  val List = jvm.Type.Qualified("scala.List")
+  val Map = jvm.Type.Qualified("scala.collection.immutable.Map")
+  val JsonNode = jvm.Type.Qualified("io.circe.Json") // For Scala, use Circe's Json type
+  val Void = jvm.Type.Qualified("scala.Unit")
+}
+
+/** Scala-specific TypeMapper */
+class ScalaTypeMapper(
+    modelPkg: jvm.QIdent,
+    typeOverrides: Map[String, jvm.Type.Qualified],
+    lang: typo.Lang
+) extends TypeMapper(modelPkg, typeOverrides, lang) {
+
+  /** Map a TypeInfo to a jvm.Type */
+  override def map(typeInfo: TypeInfo): jvm.Type = typeInfo match {
+    case TypeInfo.Primitive(primitiveType) =>
+      mapPrimitive(primitiveType)
+
+    case TypeInfo.ListOf(itemType) =>
+      ScalaTypes.List.of(map(itemType))
+
+    case TypeInfo.Optional(underlying) =>
+      ScalaTypes.Option.of(map(underlying))
+
+    case TypeInfo.MapOf(keyType, valueType) =>
+      ScalaTypes.Map.of(map(keyType), map(valueType))
+
+    case TypeInfo.Ref(name) =>
+      typeOverrides.getOrElse(name, jvm.Type.Qualified(modelPkg / jvm.Ident(name)))
+
+    case TypeInfo.Any =>
+      ScalaTypes.JsonNode
+
+    case TypeInfo.InlineEnum(_) =>
+      // Inline enums should have been extracted during parsing - fallback to String
+      ScalaTypes.String
+  }
+
+  /** Map a primitive type to jvm.Type */
+  override def mapPrimitive(primitiveType: PrimitiveType): jvm.Type = primitiveType match {
+    case PrimitiveType.String     => ScalaTypes.String
+    case PrimitiveType.Int32      => ScalaTypes.Int
+    case PrimitiveType.Int64      => ScalaTypes.Long
+    case PrimitiveType.Float      => ScalaTypes.Float
+    case PrimitiveType.Double     => ScalaTypes.Double
+    case PrimitiveType.Boolean    => ScalaTypes.Boolean
+    case PrimitiveType.Date       => ScalaTypes.LocalDate
+    case PrimitiveType.DateTime   => ScalaTypes.OffsetDateTime
+    case PrimitiveType.Time       => ScalaTypes.LocalTime
+    case PrimitiveType.UUID       => ScalaTypes.UUID
+    case PrimitiveType.URI        => ScalaTypes.URI
+    case PrimitiveType.Email      => ScalaTypes.String
+    case PrimitiveType.Binary     => ScalaTypes.ByteArray
+    case PrimitiveType.Byte       => ScalaTypes.String
+    case PrimitiveType.BigDecimal => ScalaTypes.BigDecimal
   }
 }

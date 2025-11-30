@@ -23,6 +23,15 @@ trait JsonLibSupport {
   def sumTypeAnnotations(sumType: SumType): List[jvm.Annotation]
 }
 
+/** No JSON annotations - for manual codec derivation */
+object NoJsonLibSupport extends JsonLibSupport {
+  override def modelAnnotations: List[jvm.Annotation] = Nil
+  override def propertyAnnotations(originalName: String): List[jvm.Annotation] = Nil
+  override def valueAnnotations: List[jvm.Annotation] = Nil
+  override def wrapperAnnotations(tpe: jvm.Type.Qualified): List[jvm.Annotation] = Nil
+  override def sumTypeAnnotations(sumType: SumType): List[jvm.Annotation] = Nil
+}
+
 /** Jackson annotations for OpenAPI code generation */
 object JacksonSupport extends JsonLibSupport {
 

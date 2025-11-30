@@ -1,6 +1,7 @@
 package typo.openapi
 
 import typo.{jvm, Lang}
+import typo.internal.codegen.LangScala
 import typo.openapi.codegen.{
   ApiCodegen,
   FrameworkSupport,
@@ -10,7 +11,9 @@ import typo.openapi.codegen.{
   JsonLibSupport,
   ModelCodegen,
   NoFrameworkSupport,
+  NoJsonLibSupport,
   NoValidationSupport,
+  ScalaTypeMapper,
   TypeMapper,
   ValidationSupport
 }
@@ -77,9 +80,12 @@ object OpenApiCodegen {
     val modelPkg = options.pkg / jvm.Ident(options.modelPackage)
     val apiPkg = options.pkg / jvm.Ident(options.apiPackage)
 
-    val jsonLib: JsonLibSupport = options.jsonLib match {
-      case OpenApiJsonLib.Jackson => JacksonSupport
-      case _                      => JacksonSupport // Default to Jackson for now
+    val isScala = lang.isInstanceOf[LangScala]
+
+    val jsonLib: JsonLibSupport = (isScala, options.jsonLib) match {
+      case (true, _)                       => NoJsonLibSupport // Scala uses derivation
+      case (false, OpenApiJsonLib.Jackson) => JacksonSupport
+      case (false, _)                      => JacksonSupport // Default to Jackson for Java
     }
 
     val frameworkSupport: FrameworkSupport = options.framework match {
@@ -88,14 +94,19 @@ object OpenApiCodegen {
       case _                      => NoFrameworkSupport // TODO: implement Http4s, Tapir
     }
 
+    // Scala doesn't use JSR-380 annotations - validation is done differently
     val validationSupport: ValidationSupport =
-      if (options.generateValidation) Jsr380ValidationSupport
+      if (options.generateValidation && !isScala) Jsr380ValidationSupport
       else NoValidationSupport
 
     // Collect sum type names for nested sum type detection
     val sumTypeNames = spec.sumTypes.map(_.name).toSet
 
-    val typeMapper = new TypeMapper(modelPkg, options.typeOverrides, lang)
+    val typeMapper: TypeMapper = if (isScala) {
+      new ScalaTypeMapper(modelPkg, options.typeOverrides, lang)
+    } else {
+      new TypeMapper(modelPkg, options.typeOverrides, lang)
+    }
     val modelCodegen = new ModelCodegen(modelPkg, typeMapper, lang, jsonLib, validationSupport)
     val apiCodegen = new ApiCodegen(apiPkg, typeMapper, lang, jsonLib, frameworkSupport, sumTypeNames)
 

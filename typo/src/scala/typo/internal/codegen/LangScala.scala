@@ -229,7 +229,7 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
         code"""|$annotationsCode${renderComments(enm.comments).getOrElse(jvm.Code.Empty)}
                |sealed abstract class ${enm.tpe.name}(val value: ${TypesJava.String})
                |
-               |object ${enm.tpe.value} {
+               |object ${enm.tpe.name} {
                |  ${enm.staticMembers.map(_.code).mkCode("\n\n")}
                |  def apply($str: ${TypesJava.String}): ${TypesScala.Either.of(TypesJava.String, enm.tpe)} =
                |    ByName.get($str).toRight(s"'$$str' does not match any of the following legal values: $$Names")
