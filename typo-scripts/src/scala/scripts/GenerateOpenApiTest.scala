@@ -12,8 +12,8 @@ object GenerateOpenApiTest {
 
   def main(args: Array[String]): Unit = {
     val specPath = buildDir.resolve("typo/src/scala/typo/openapi/testdata/test-features.yaml")
-    val javaJaxRsOutputDir = buildDir.resolve("openapi-test-output")
-    val javaSpringOutputDir = buildDir.resolve("openapi-test-output-spring")
+    val javaJaxRsOutputDir = buildDir.resolve("openapi-test-output-java-jaxrs")
+    val javaSpringOutputDir = buildDir.resolve("openapi-test-output-java-spring")
     val scalaOutputDir = buildDir.resolve("openapi-test-output-scala")
 
     println(s"Generating code from: $specPath")
