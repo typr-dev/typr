@@ -495,3 +495,47 @@ object MicroProfileRestClientSupport extends FrameworkSupport {
   override def clientExceptionType: jvm.Type.Qualified = JaxRsSupport.clientExceptionType
   override def getResponseFromException(exception: jvm.Code): jvm.Code = JaxRsSupport.getResponseFromException(exception)
 }
+
+/** HTTP4s framework support for Scala - generates clean traits without annotations. HTTP4s uses a DSL-based approach rather than annotations, so this generates plain Scala traits that can be wired to
+  * HTTP4s routes/client.
+  */
+object Http4sSupport extends FrameworkSupport {
+
+  // HTTP4s doesn't use annotations - it uses a DSL approach
+  override def interfaceAnnotations(basePath: Option[String], securitySchemes: Map[String, SecurityScheme]): List[jvm.Annotation] = Nil
+
+  override def methodAnnotations(method: ApiMethod): List[jvm.Annotation] = Nil
+
+  override def securityAnnotations(security: List[SecurityRequirement]): List[jvm.Annotation] = Nil
+
+  override def parameterAnnotations(param: ApiParameter): List[jvm.Annotation] = Nil
+
+  override def bodyAnnotations(body: RequestBody): List[jvm.Annotation] = Nil
+
+  override def fileUploadType: jvm.Type = Types.InputStream
+
+  override def formFieldAnnotations(field: FormField): List[jvm.Annotation] = Nil
+
+  // For HTTP4s, Response[F] is the response type (we use Response[IO] for simplicity)
+  override def responseType: jvm.Type.Qualified = Types.Http4s.Response
+
+  override def buildOkResponse(value: jvm.Code): jvm.Code =
+    code"${Types.Http4s.Response}.apply(${Types.Http4s.Status}.Ok).withEntity($value)"
+
+  override def buildStatusResponse(statusCode: jvm.Code, value: jvm.Code): jvm.Code =
+    code"${Types.Http4s.Response}.apply(${Types.Http4s.Status}.fromInt($statusCode).getOrElse(${Types.Http4s.Status}.InternalServerError)).withEntity($value)"
+
+  // Client-side: get status from Response
+  override def getStatusCode(response: jvm.Code): jvm.Code = code"$response.status.code"
+
+  // Client-side: read entity - this is async in http4s, returns F[A]
+  // For sync context this would need to be handled differently
+  override def readEntity(response: jvm.Code, entityType: jvm.Type): jvm.Code =
+    code"$response.as[$entityType]"
+
+  // HTTP4s client throws UnexpectedStatus for non-2xx responses
+  override def clientExceptionType: jvm.Type.Qualified = Types.Http4s.UnexpectedStatus
+
+  // UnexpectedStatus contains the response
+  override def getResponseFromException(exception: jvm.Code): jvm.Code = code"$exception.response"
+}

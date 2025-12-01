@@ -5,6 +5,7 @@ import typo.internal.codegen.LangScala
 import typo.openapi.codegen.{
   ApiCodegen,
   FrameworkSupport,
+  Http4sSupport,
   JacksonSupport,
   JaxRsSupport,
   Jsr380ValidationSupport,
@@ -99,7 +100,7 @@ object OpenApiCodegen {
       case OpenApiServerLib.SpringMvc       => SpringBootSupport
       case OpenApiServerLib.JaxRsAsync      => JaxRsSupport
       case OpenApiServerLib.JaxRsSync       => JaxRsSupport
-      case OpenApiServerLib.Http4s          => NoFrameworkSupport // TODO: implement
+      case OpenApiServerLib.Http4s          => Http4sSupport
       case OpenApiServerLib.ZioHttp         => NoFrameworkSupport // TODO: implement
     }
 
@@ -110,7 +111,7 @@ object OpenApiCodegen {
       case OpenApiClientLib.SpringWebClient      => SpringBootSupport // TODO: implement
       case OpenApiClientLib.SpringRestTemplate   => SpringBootSupport // TODO: implement
       case OpenApiClientLib.VertxMutiny          => MicroProfileRestClientSupport // Similar to MicroProfile
-      case OpenApiClientLib.Http4s               => NoFrameworkSupport // TODO: implement
+      case OpenApiClientLib.Http4s               => Http4sSupport
       case OpenApiClientLib.Sttp                 => NoFrameworkSupport // TODO: implement
       case OpenApiClientLib.ZioHttp              => NoFrameworkSupport // TODO: implement
     }

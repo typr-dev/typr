@@ -174,6 +174,34 @@ object Types {
 
   // File types
   val InputStream = jvm.Type.Qualified("java.io.InputStream")
+
+  // HTTP4s types
+  object Http4s {
+    val Response = jvm.Type.Qualified("org.http4s.Response")
+    val Request = jvm.Type.Qualified("org.http4s.Request")
+    val Status = jvm.Type.Qualified("org.http4s.Status")
+    val Uri = jvm.Type.Qualified("org.http4s.Uri")
+    val Method = jvm.Type.Qualified("org.http4s.Method")
+    val HttpRoutes = jvm.Type.Qualified("org.http4s.HttpRoutes")
+    val Client = jvm.Type.Qualified("org.http4s.client.Client")
+    val EntityDecoder = jvm.Type.Qualified("org.http4s.EntityDecoder")
+    val EntityEncoder = jvm.Type.Qualified("org.http4s.EntityEncoder")
+    val UnexpectedStatus = jvm.Type.Qualified("org.http4s.client.UnexpectedStatus")
+  }
+
+  // Cats Effect types
+  object Cats {
+    val IO = jvm.Type.Qualified("cats.effect.IO")
+    val Async = jvm.Type.Qualified("cats.effect.Async")
+    val Concurrent = jvm.Type.Qualified("cats.effect.Concurrent")
+  }
+
+  // Circe types for JSON
+  object Circe {
+    val Json = jvm.Type.Qualified("io.circe.Json")
+    val Encoder = jvm.Type.Qualified("io.circe.Encoder")
+    val Decoder = jvm.Type.Qualified("io.circe.Decoder")
+  }
 }
 
 /** Scala types for OpenAPI code generation */

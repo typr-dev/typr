@@ -71,6 +71,17 @@ object GenerateOpenApiTest {
       generateValidation = false
     )
 
+    // Scala with HTTP4s server + client
+    generateCode(
+      specPath = specPath,
+      language = "scala",
+      serverLib = Some(OpenApiServerLib.Http4s),
+      clientLib = Some(OpenApiClientLib.Http4s),
+      lang = langScala,
+      extension = ".scala",
+      generateValidation = false
+    )
+
     println("Done!")
   }
 
