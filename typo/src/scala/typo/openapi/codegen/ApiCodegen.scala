@@ -37,14 +37,17 @@ class ApiCodegen(
 
     // Generate base trait (no framework annotations on methods)
     val baseMethods = api.methods.map(m => generateBaseMethod(m))
-    val baseInterface = jvm.Adt.Sum(
+    val baseInterface = jvm.Class(
       annotations = Nil,
       comments = comments,
+      classType = jvm.ClassType.Interface,
       name = baseTpe,
       tparams = Nil,
-      members = baseMethods,
+      params = Nil,
+      implicitParams = Nil,
+      `extends` = None,
       implements = Nil,
-      subtypes = Nil,
+      members = baseMethods,
       staticMembers = Nil
     )
     val baseGeneratedCode = lang.renderTree(baseInterface, lang.Ctx.Empty)
@@ -96,14 +99,17 @@ class ApiCodegen(
       }
     }
 
-    val serverInterface = jvm.Adt.Sum(
+    val serverInterface = jvm.Class(
       annotations = interfaceAnnotations,
       comments = jvm.Comments.Empty,
+      classType = jvm.ClassType.Interface,
       name = serverTpe,
       tparams = Nil,
+      params = Nil,
+      implicitParams = Nil,
+      `extends` = Some(baseTpe),
+      implements = Nil,
       members = methods,
-      implements = List(baseTpe),
-      subtypes = Nil,
       staticMembers = Nil
     )
 
@@ -140,14 +146,17 @@ class ApiCodegen(
       }
     }
 
-    val clientInterface = jvm.Adt.Sum(
+    val clientInterface = jvm.Class(
       annotations = interfaceAnnotations,
       comments = jvm.Comments.Empty,
+      classType = jvm.ClassType.Interface,
       name = clientTpe,
       tparams = Nil,
+      params = Nil,
+      implicitParams = Nil,
+      `extends` = Some(baseTpe),
+      implements = Nil,
       members = methods,
-      implements = List(baseTpe),
-      subtypes = Nil,
       staticMembers = Nil
     )
 
@@ -1153,14 +1162,17 @@ class ApiCodegen(
     // Generate handler methods for each webhook operation
     val methods = webhook.methods.map(m => generateBaseMethod(m))
 
-    val webhookInterface = jvm.Adt.Sum(
+    val webhookInterface = jvm.Class(
       annotations = Nil,
       comments = comments,
+      classType = jvm.ClassType.Interface,
       name = webhookTpe,
       tparams = Nil,
-      members = methods,
+      params = Nil,
+      implicitParams = Nil,
+      `extends` = None,
       implements = Nil,
-      subtypes = Nil,
+      members = methods,
       staticMembers = Nil
     )
 
@@ -1188,14 +1200,17 @@ class ApiCodegen(
     // Generate handler methods for each callback operation
     val methods = callback.methods.map(m => generateBaseMethod(m))
 
-    val callbackInterface = jvm.Adt.Sum(
+    val callbackInterface = jvm.Class(
       annotations = Nil,
       comments = comments,
+      classType = jvm.ClassType.Interface,
       name = callbackTpe,
       tparams = Nil,
-      members = methods,
+      params = Nil,
+      implicitParams = Nil,
+      `extends` = None,
       implements = Nil,
-      subtypes = Nil,
+      members = methods,
       staticMembers = Nil
     )
 

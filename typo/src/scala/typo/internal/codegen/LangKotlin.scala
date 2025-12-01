@@ -682,12 +682,18 @@ case object LangKotlin extends Lang {
           case jvm.ClassType.Interface                   => "interface "
         }
 
-        // In Kotlin, extends comes first with () for constructor call, then implements
+        // In Kotlin, extends comes first with () for constructor call (for classes), then implements
+        // Interfaces don't need () when extending other interfaces
+        val isInterface = cls.classType == jvm.ClassType.Interface
         val extendsAndImplements: Option[jvm.Code] = (cls.`extends`, cls.implements) match {
-          case (None, Nil)        => None
-          case (Some(ext), Nil)   => Some(code" : $ext()")
-          case (None, impls)      => Some(impls.map(x => code" : $x").mkCode(", "))
-          case (Some(ext), impls) => Some(code" : $ext(), " ++ impls.map(x => code"$x").mkCode(", "))
+          case (None, Nil) => None
+          case (Some(ext), Nil) =>
+            if (isInterface) Some(code" : $ext")
+            else Some(code" : $ext()")
+          case (None, impls) => Some(impls.map(x => code" : $x").mkCode(", "))
+          case (Some(ext), impls) =>
+            if (isInterface) Some(code" : $ext, " ++ impls.map(x => code"$x").mkCode(", "))
+            else Some(code" : $ext(), " ++ impls.map(x => code"$x").mkCode(", "))
         }
 
         List[Option[jvm.Code]](

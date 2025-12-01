@@ -25,7 +25,8 @@ object ModelExtractor {
     val sumTypes = List.newBuilder[SumType]
 
     schemas.foreach { case (name, schema) =>
-      extractSchema(name, schema, schemas) match {
+      val sanitizedName = TypeResolver.sanitizeClassName(name)
+      extractSchema(sanitizedName, schema, schemas) match {
         case Left(model)   => models += model
         case Right(sumTyp) => sumTypes += sumTyp
       }
@@ -116,7 +117,7 @@ object ModelExtractor {
         return ModelClass.AliasType(
           name = name,
           description = description,
-          underlying = TypeInfo.Ref(TypeResolver.extractRefName(ref))
+          underlying = TypeInfo.Ref(TypeResolver.extractRefClassName(ref))
         )
       }
     }
@@ -196,14 +197,14 @@ object ModelExtractor {
       .map(_.asScala.toMap)
       .getOrElse(Map.empty[String, String])
 
-    // Invert mapping: type name -> discriminator value
+    // Invert mapping: type name -> discriminator value (use sanitized class names)
     val invertedMapping = mapping.map { case (value, ref) =>
-      TypeResolver.extractRefName(ref) -> value
+      TypeResolver.extractRefClassName(ref) -> value
     }
 
     val subtypeNames = oneOf.map { subSchema =>
       if (subSchema.get$ref() != null) {
-        TypeResolver.extractRefName(subSchema.get$ref())
+        TypeResolver.extractRefClassName(subSchema.get$ref())
       } else {
         // Inline schema - would need to generate a name
         s"${name}Subtype"

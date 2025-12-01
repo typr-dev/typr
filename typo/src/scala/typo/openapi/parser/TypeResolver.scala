@@ -31,7 +31,7 @@ object TypeResolver {
     // Handle $ref first
     val ref = schema.get$ref()
     if (ref != null && ref.nonEmpty) {
-      return TypeInfo.Ref(extractRefName(ref))
+      return TypeInfo.Ref(extractRefClassName(ref))
     }
 
     // Handle enum
@@ -130,7 +130,8 @@ object TypeResolver {
     }
   }
 
-  /** Extract the type name from a $ref path like "#/components/schemas/TypeName" */
+  /** Extract the raw type name from a $ref path like "#/components/schemas/TypeName". Returns the unsanitized name for schema lookups.
+    */
   def extractRefName(ref: String): String = {
     if (ref.startsWith("#/components/schemas/")) {
       ref.substring("#/components/schemas/".length)
@@ -139,5 +140,21 @@ object TypeResolver {
     } else {
       ref
     }
+  }
+
+  /** Extract the sanitized class name from a $ref path. Use this when creating TypeInfo.Ref for code generation.
+    */
+  def extractRefClassName(ref: String): String = {
+    sanitizeClassName(extractRefName(ref))
+  }
+
+  /** Convert a raw OpenAPI schema name to a valid JVM class name. Handles names like "tax.transaction_line_item" -> "TaxTransactionLineItem"
+    */
+  def sanitizeClassName(name: String): String = {
+    name
+      .split("[^a-zA-Z0-9]")
+      .filter(_.nonEmpty)
+      .map(_.capitalize)
+      .mkString
   }
 }
