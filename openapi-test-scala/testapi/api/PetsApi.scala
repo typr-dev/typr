@@ -1,7 +1,6 @@
 package testapi.api
 
 import io.circe.Json
-import java.io.InputStream
 import java.lang.Void
 import testapi.model.Pet
 import testapi.model.PetCreate
@@ -43,6 +42,6 @@ sealed trait PetsApi {
     /** Optional caption for the photo */
     caption: String,
     /** The photo file to upload */
-    file: InputStream
+    file: Array[Byte]
   ): Json
 }

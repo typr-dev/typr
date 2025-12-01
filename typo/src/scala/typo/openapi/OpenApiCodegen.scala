@@ -9,10 +9,12 @@ import typo.openapi.codegen.{
   JaxRsSupport,
   Jsr380ValidationSupport,
   JsonLibSupport,
+  MicroProfileRestClientSupport,
   ModelCodegen,
   NoFrameworkSupport,
   NoJsonLibSupport,
   NoValidationSupport,
+  QuarkusReactiveServerSupport,
   ScalaTypeMapper,
   SpringBootSupport,
   TypeMapper,
@@ -89,11 +91,28 @@ object OpenApiCodegen {
       case (false, _)                      => JacksonSupport // Default to Jackson for Java
     }
 
-    val frameworkSupport: FrameworkSupport = options.framework match {
-      case OpenApiFramework.JaxRs  => JaxRsSupport
-      case OpenApiFramework.Spring => SpringBootSupport
-      case OpenApiFramework.None   => NoFrameworkSupport
-      case _                       => NoFrameworkSupport // TODO: implement Http4s, Tapir
+    // Determine server framework support based on serverLib
+    val serverFrameworkSupport: Option[FrameworkSupport] = options.serverLib.map {
+      case OpenApiServerLib.QuarkusReactive => QuarkusReactiveServerSupport
+      case OpenApiServerLib.QuarkusBlocking => JaxRsSupport
+      case OpenApiServerLib.SpringWebFlux   => SpringBootSupport // TODO: reactive version
+      case OpenApiServerLib.SpringMvc       => SpringBootSupport
+      case OpenApiServerLib.JaxRsAsync      => JaxRsSupport
+      case OpenApiServerLib.JaxRsSync       => JaxRsSupport
+      case OpenApiServerLib.Http4s          => NoFrameworkSupport // TODO: implement
+      case OpenApiServerLib.ZioHttp         => NoFrameworkSupport // TODO: implement
+    }
+
+    // Determine client framework support based on clientLib
+    val clientFrameworkSupport: Option[FrameworkSupport] = options.clientLib.map {
+      case OpenApiClientLib.MicroProfileReactive => MicroProfileRestClientSupport
+      case OpenApiClientLib.MicroProfileBlocking => MicroProfileRestClientSupport
+      case OpenApiClientLib.SpringWebClient      => SpringBootSupport // TODO: implement
+      case OpenApiClientLib.SpringRestTemplate   => SpringBootSupport // TODO: implement
+      case OpenApiClientLib.VertxMutiny          => MicroProfileRestClientSupport // Similar to MicroProfile
+      case OpenApiClientLib.Http4s               => NoFrameworkSupport // TODO: implement
+      case OpenApiClientLib.Sttp                 => NoFrameworkSupport // TODO: implement
+      case OpenApiClientLib.ZioHttp              => NoFrameworkSupport // TODO: implement
     }
 
     // Scala doesn't use JSR-380 annotations - validation is done differently
@@ -104,13 +123,36 @@ object OpenApiCodegen {
     // Collect sum type names for nested sum type detection
     val sumTypeNames = spec.sumTypes.map(_.name).toSet
 
+    // Get effect type and ops from server or client lib
+    val effectTypeWithOps: Option[(jvm.Type.Qualified, EffectTypeOps)] = {
+      def extractEffectTypeWithOps(effectType: OpenApiEffectType): Option[(jvm.Type.Qualified, EffectTypeOps)] =
+        for {
+          tpe <- effectType.effectType
+          ops <- effectType.ops
+        } yield (tpe, ops)
+
+      options.serverLib
+        .flatMap(lib => extractEffectTypeWithOps(lib.effectType))
+        .orElse(options.clientLib.flatMap(lib => extractEffectTypeWithOps(lib.effectType)))
+    }
+
     val typeMapper: TypeMapper = if (isScala) {
       new ScalaTypeMapper(modelPkg, options.typeOverrides, lang)
     } else {
       new TypeMapper(modelPkg, options.typeOverrides, lang)
     }
     val modelCodegen = new ModelCodegen(modelPkg, typeMapper, lang, jsonLib, validationSupport)
-    val apiCodegen = new ApiCodegen(apiPkg, typeMapper, lang, jsonLib, frameworkSupport, sumTypeNames, spec.securitySchemes)
+    val apiCodegen = new ApiCodegen(
+      apiPkg,
+      typeMapper,
+      lang,
+      jsonLib,
+      serverFrameworkSupport,
+      clientFrameworkSupport,
+      sumTypeNames,
+      spec.securitySchemes,
+      effectTypeWithOps
+    )
 
     val files = List.newBuilder[jvm.File]
 
@@ -124,7 +166,7 @@ object OpenApiCodegen {
       files += modelCodegen.generateSumType(sumType)
     }
 
-    // Generate API interfaces (and response sum types)
+    // Generate API interfaces (base, server, client, and response sum types)
     if (options.generateApiInterfaces) {
       spec.apis.foreach { api =>
         files ++= apiCodegen.generate(api)

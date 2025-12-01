@@ -1,6 +1,6 @@
 package scripts
 
-import typo.openapi.{OpenApiCodegen, OpenApiFramework, OpenApiOptions}
+import typo.openapi.{OpenApiCodegen, OpenApiClientLib, OpenApiOptions, OpenApiServerLib}
 import typo.jvm
 import typo.internal.codegen.{addPackageAndImports, LangJava, LangScala}
 import typo.{Dialect, Lang, TypeSupportScala}
@@ -12,33 +12,117 @@ object GenerateOpenApiTest {
 
   def main(args: Array[String]): Unit = {
     val specPath = buildDir.resolve("typo/src/scala/typo/openapi/testdata/test-features.yaml")
-    val javaJaxRsOutputDir = buildDir.resolve("openapi-test-output-java-jaxrs")
-    val javaSpringOutputDir = buildDir.resolve("openapi-test-output-java-spring")
-    val scalaOutputDir = buildDir.resolve("openapi-test-output-scala")
 
     println(s"Generating code from: $specPath")
 
-    // Generate Java code with JAX-RS
-    generateCode(specPath, javaJaxRsOutputDir, LangJava, ".java", OpenApiFramework.JaxRs, generateValidation = true)
+    // Java with JAX-RS server only (blocking)
+    generateCode(
+      specPath = specPath,
+      language = "java",
+      serverLib = Some(OpenApiServerLib.JaxRsSync),
+      clientLib = None,
+      lang = LangJava,
+      extension = ".java",
+      generateValidation = true
+    )
 
-    // Generate Java code with Spring Boot
-    generateCode(specPath, javaSpringOutputDir, LangJava, ".java", OpenApiFramework.Spring, generateValidation = true)
+    // Java with Spring server only (blocking)
+    generateCode(
+      specPath = specPath,
+      language = "java",
+      serverLib = Some(OpenApiServerLib.SpringMvc),
+      clientLib = None,
+      lang = LangJava,
+      extension = ".java",
+      generateValidation = true
+    )
 
-    // Generate Scala code
+    // Java with Quarkus server + MicroProfile client (reactive)
+    generateCode(
+      specPath = specPath,
+      language = "java",
+      serverLib = Some(OpenApiServerLib.QuarkusReactive),
+      clientLib = Some(OpenApiClientLib.MicroProfileReactive),
+      lang = LangJava,
+      extension = ".java",
+      generateValidation = true
+    )
+
+    // Java with MicroProfile client only (blocking)
+    generateCode(
+      specPath = specPath,
+      language = "java",
+      serverLib = None,
+      clientLib = Some(OpenApiClientLib.MicroProfileBlocking),
+      lang = LangJava,
+      extension = ".java",
+      generateValidation = true
+    )
+
+    // Scala base only (no server or client)
     val langScala = LangScala(Dialect.Scala3, TypeSupportScala)
-    generateCode(specPath, scalaOutputDir, langScala, ".scala", OpenApiFramework.None, generateValidation = false)
+    generateCode(
+      specPath = specPath,
+      language = "scala",
+      serverLib = None,
+      clientLib = None,
+      lang = langScala,
+      extension = ".scala",
+      generateValidation = false
+    )
 
     println("Done!")
   }
 
+  /** Build output directory name based on language and optional server/client */
+  private def buildOutputDirName(language: String, serverLib: Option[OpenApiServerLib], clientLib: Option[OpenApiClientLib]): String = {
+    val parts = List.newBuilder[String]
+    parts += "openapi-test"
+    parts += language
+
+    serverLib.foreach { server =>
+      val name = server match {
+        case OpenApiServerLib.QuarkusReactive => "quarkus-reactive"
+        case OpenApiServerLib.QuarkusBlocking => "quarkus"
+        case OpenApiServerLib.SpringWebFlux   => "spring-webflux"
+        case OpenApiServerLib.SpringMvc       => "spring"
+        case OpenApiServerLib.JaxRsAsync      => "jaxrs-async"
+        case OpenApiServerLib.JaxRsSync       => "jaxrs"
+        case OpenApiServerLib.Http4s          => "http4s"
+        case OpenApiServerLib.ZioHttp         => "zio-http"
+      }
+      parts += s"server-$name"
+    }
+
+    clientLib.foreach { client =>
+      val name = client match {
+        case OpenApiClientLib.MicroProfileReactive => "mp-reactive"
+        case OpenApiClientLib.MicroProfileBlocking => "mp"
+        case OpenApiClientLib.SpringWebClient      => "spring-webclient"
+        case OpenApiClientLib.SpringRestTemplate   => "spring-rest"
+        case OpenApiClientLib.VertxMutiny          => "vertx"
+        case OpenApiClientLib.Http4s               => "http4s"
+        case OpenApiClientLib.Sttp                 => "sttp"
+        case OpenApiClientLib.ZioHttp              => "zio-http"
+      }
+      parts += s"client-$name"
+    }
+
+    parts.result().mkString("-")
+  }
+
   private def generateCode(
       specPath: Path,
-      outputDir: Path,
+      language: String,
+      serverLib: Option[OpenApiServerLib],
+      clientLib: Option[OpenApiClientLib],
       lang: Lang,
       extension: String,
-      framework: OpenApiFramework,
       generateValidation: Boolean
   ): Unit = {
+    val outputDirName = buildOutputDirName(language, serverLib, clientLib)
+    val outputDir = buildDir.resolve(outputDirName)
+
     println(s"Output directory: $outputDir")
 
     // Clean output directory
@@ -50,7 +134,8 @@ object GenerateOpenApiTest {
     val options = OpenApiOptions
       .default(jvm.QIdent(List(jvm.Ident("testapi"))))
       .copy(
-        framework = framework,
+        serverLib = serverLib,
+        clientLib = clientLib,
         generateValidation = generateValidation
       )
 

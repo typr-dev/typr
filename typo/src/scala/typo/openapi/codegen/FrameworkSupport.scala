@@ -30,6 +30,15 @@ trait FrameworkSupport {
 
   /** Annotations to add to form field parameters (for multipart requests) */
   def formFieldAnnotations(field: FormField): List[jvm.Annotation]
+
+  /** The response type to use for endpoint wrapper methods (e.g., jakarta.ws.rs.core.Response, ResponseEntity) */
+  def responseType: jvm.Type.Qualified
+
+  /** Build a success response with status code 200 */
+  def buildOkResponse(value: jvm.Code): jvm.Code
+
+  /** Build a response with a specific status code */
+  def buildStatusResponse(statusCode: jvm.Code, value: jvm.Code): jvm.Code
 }
 
 /** No framework annotations - just generate plain interfaces */
@@ -41,6 +50,9 @@ object NoFrameworkSupport extends FrameworkSupport {
   override def bodyAnnotations(body: RequestBody): List[jvm.Annotation] = Nil
   override def fileUploadType: jvm.Type = Types.InputStream
   override def formFieldAnnotations(field: FormField): List[jvm.Annotation] = Nil
+  override def responseType: jvm.Type.Qualified = Types.JaxRs.Response // Default to JAX-RS Response
+  override def buildOkResponse(value: jvm.Code): jvm.Code = code"${Types.JaxRs.Response}.ok($value).build()"
+  override def buildStatusResponse(statusCode: jvm.Code, value: jvm.Code): jvm.Code = code"${Types.JaxRs.Response}.status($statusCode).entity($value).build()"
 }
 
 /** JAX-RS (Jakarta EE) framework support */
@@ -236,6 +248,10 @@ object JaxRsSupport extends FrameworkSupport {
       case other                               => jvm.StrLit(other).code
     }
   }
+
+  override def responseType: jvm.Type.Qualified = Types.JaxRs.Response
+  override def buildOkResponse(value: jvm.Code): jvm.Code = code"${Types.JaxRs.Response}.ok($value).build()"
+  override def buildStatusResponse(statusCode: jvm.Code, value: jvm.Code): jvm.Code = code"${Types.JaxRs.Response}.status($statusCode).entity($value).build()"
 }
 
 /** Spring Boot / Spring MVC framework support */
@@ -364,4 +380,83 @@ object SpringBootSupport extends FrameworkSupport {
       case other                               => jvm.StrLit(other).code
     }
   }
+
+  override def responseType: jvm.Type.Qualified = Types.Spring.ResponseEntity
+  override def buildOkResponse(value: jvm.Code): jvm.Code = code"${Types.Spring.ResponseEntity}.ok($value)"
+  override def buildStatusResponse(statusCode: jvm.Code, value: jvm.Code): jvm.Code = code"${Types.Spring.ResponseEntity}.status($statusCode).body($value)"
+}
+
+/** Quarkus with RESTEasy Reactive - uses JAX-RS annotations with Mutiny Uni return types. The effect type wrapping (Uni<T>) is handled by ApiCodegen via the effectType parameter.
+  */
+object QuarkusReactiveServerSupport extends FrameworkSupport {
+
+  // Delegate to JAX-RS support since Quarkus uses the same annotations
+  override def interfaceAnnotations(basePath: Option[String], securitySchemes: Map[String, SecurityScheme]): List[jvm.Annotation] =
+    JaxRsSupport.interfaceAnnotations(basePath, securitySchemes)
+
+  override def methodAnnotations(method: ApiMethod): List[jvm.Annotation] =
+    JaxRsSupport.methodAnnotations(method)
+
+  override def securityAnnotations(security: List[SecurityRequirement]): List[jvm.Annotation] =
+    JaxRsSupport.securityAnnotations(security)
+
+  override def parameterAnnotations(param: ApiParameter): List[jvm.Annotation] =
+    JaxRsSupport.parameterAnnotations(param)
+
+  override def bodyAnnotations(body: RequestBody): List[jvm.Annotation] =
+    JaxRsSupport.bodyAnnotations(body)
+
+  override def fileUploadType: jvm.Type = Types.InputStream
+
+  override def formFieldAnnotations(field: FormField): List[jvm.Annotation] =
+    JaxRsSupport.formFieldAnnotations(field)
+
+  override def responseType: jvm.Type.Qualified = JaxRsSupport.responseType
+  override def buildOkResponse(value: jvm.Code): jvm.Code = JaxRsSupport.buildOkResponse(value)
+  override def buildStatusResponse(statusCode: jvm.Code, value: jvm.Code): jvm.Code = JaxRsSupport.buildStatusResponse(statusCode, value)
+}
+
+/** MicroProfile Rest Client - generates client interface with JAX-RS annotations that can be used with the MicroProfile Rest Client to make HTTP calls.
+  */
+object MicroProfileRestClientSupport extends FrameworkSupport {
+
+  override def interfaceAnnotations(basePath: Option[String], securitySchemes: Map[String, SecurityScheme]): List[jvm.Annotation] = {
+    // @RegisterRestClient annotation
+    val registerRestClient = jvm.Annotation(
+      Types.MicroProfile.RegisterRestClient,
+      Nil
+    )
+
+    // Add @Path if there's a base path
+    val pathAnnotation = basePath.map { path =>
+      jvm.Annotation(
+        Types.JaxRs.Path,
+        List(jvm.Annotation.Arg.Positional(jvm.StrLit(path).code))
+      )
+    }.toList
+
+    List(registerRestClient) ++ pathAnnotation
+  }
+
+  // Use JAX-RS annotations for methods and parameters
+  override def methodAnnotations(method: ApiMethod): List[jvm.Annotation] =
+    JaxRsSupport.methodAnnotations(method)
+
+  override def securityAnnotations(security: List[SecurityRequirement]): List[jvm.Annotation] =
+    JaxRsSupport.securityAnnotations(security)
+
+  override def parameterAnnotations(param: ApiParameter): List[jvm.Annotation] =
+    JaxRsSupport.parameterAnnotations(param)
+
+  override def bodyAnnotations(body: RequestBody): List[jvm.Annotation] =
+    JaxRsSupport.bodyAnnotations(body)
+
+  override def fileUploadType: jvm.Type = Types.InputStream
+
+  override def formFieldAnnotations(field: FormField): List[jvm.Annotation] =
+    JaxRsSupport.formFieldAnnotations(field)
+
+  override def responseType: jvm.Type.Qualified = JaxRsSupport.responseType
+  override def buildOkResponse(value: jvm.Code): jvm.Code = JaxRsSupport.buildOkResponse(value)
+  override def buildStatusResponse(statusCode: jvm.Code, value: jvm.Code): jvm.Code = JaxRsSupport.buildStatusResponse(statusCode, value)
 }

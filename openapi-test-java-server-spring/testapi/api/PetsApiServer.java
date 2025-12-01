@@ -9,6 +9,7 @@ import java.lang.Void;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +19,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
+import testapi.api.CreatePetResponse.Status201;
+import testapi.api.CreatePetResponse.Status400;
+import testapi.api.GetPetResponse.Status200;
+import testapi.api.GetPetResponse.Status404;
 import testapi.model.Pet;
 import testapi.model.PetCreate;
 
@@ -28,12 +32,21 @@ import testapi.model.PetCreate;
 @SecurityScheme(name = "apiKeyHeader", type = SecuritySchemeType.APIKEY, in = SecuritySchemeIn.HEADER, paramName = "X-API-Key")
 @SecurityScheme(name = "apiKeyQuery", type = SecuritySchemeType.APIKEY, in = SecuritySchemeIn.QUERY, paramName = "api_key")
 @SecurityScheme(name = "oauth2", type = SecuritySchemeType.OAUTH2)
-public sealed interface PetsApi {
+public sealed interface PetsApiServer extends PetsApi {
+  /** Create a pet */
+  CreatePetResponse createPet(PetCreate body);
+
   @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   @SecurityRequirement(name = "oauth2", scopes = { "write:pets" })
   @SecurityRequirement(name = "apiKeyHeader")
-  /** Create a pet */
-  CreatePetResponse createPet(@RequestBody PetCreate body);
+  /** Endpoint wrapper for createPet - handles response status codes */
+  default ResponseEntity createPetEndpoint(@RequestBody PetCreate body) {
+    return switch (createPet(body)) {
+      case Status201 r -> ResponseEntity.ok(r.value());
+      case Status400 r -> ResponseEntity.status(400).body(r.value());
+      default -> throw new IllegalStateException("Unexpected response type");
+    };
+  };
 
   @DeleteMapping(value = "/{petId}")
   /** Delete a pet */
@@ -43,13 +56,26 @@ public sealed interface PetsApi {
     @PathVariable("petId") String petId
   );
 
-  @GetMapping(value = "/{petId}", produces = MediaType.APPLICATION_JSON_VALUE)
   /** Get a pet by ID */
   GetPetResponse getPet(
   
     /** The pet ID */
-    @PathVariable("petId") String petId
+    String petId
   );
+
+  @GetMapping(value = "/{petId}", produces = MediaType.APPLICATION_JSON_VALUE)
+  /** Endpoint wrapper for getPet - handles response status codes */
+  default ResponseEntity getPetEndpoint(
+  
+    /** The pet ID */
+    @PathVariable("petId") String petId
+  ) {
+    return switch (getPet(petId)) {
+      case Status200 r -> ResponseEntity.ok(r.value());
+      case Status404 r -> ResponseEntity.status(404).body(r.value());
+      default -> throw new IllegalStateException("Unexpected response type");
+    };
+  };
 
   @GetMapping(value = "/{petId}/photo", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
   /** Get pet photo */
@@ -76,6 +102,6 @@ public sealed interface PetsApi {
     /** Optional caption for the photo */
     @RequestPart(name = "caption", required = false) String caption,
     /** The photo file to upload */
-    @RequestPart(name = "file") MultipartFile file
+    @RequestPart(name = "file") Byte[] file
   );
 }

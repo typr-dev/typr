@@ -118,6 +118,7 @@ object Types {
     val Consumes = jvm.Type.Qualified("jakarta.ws.rs.Consumes")
     val Produces = jvm.Type.Qualified("jakarta.ws.rs.Produces")
     val MediaType = jvm.Type.Qualified("jakarta.ws.rs.core.MediaType")
+    val Response = jvm.Type.Qualified("jakarta.ws.rs.core.Response")
   }
 
   // Spring Boot / Spring MVC annotations
@@ -140,6 +141,7 @@ object Types {
     val HttpStatus = jvm.Type.Qualified("org.springframework.http.HttpStatus")
     val MediaType = jvm.Type.Qualified("org.springframework.http.MediaType")
     val MultipartFile = jvm.Type.Qualified("org.springframework.web.multipart.MultipartFile")
+    val ResponseEntity = jvm.Type.Qualified("org.springframework.http.ResponseEntity")
   }
 
   // Swagger/OpenAPI annotations for security documentation
@@ -159,6 +161,12 @@ object Types {
   object JaxRsMultipart {
     val FormDataParam = jvm.Type.Qualified("org.glassfish.jersey.media.multipart.FormDataParam")
     val FormDataContentDisposition = jvm.Type.Qualified("org.glassfish.jersey.media.multipart.FormDataContentDisposition")
+  }
+
+  // MicroProfile Rest Client
+  object MicroProfile {
+    val RegisterRestClient = jvm.Type.Qualified("org.eclipse.microprofile.rest.client.inject.RegisterRestClient")
+    val RestClient = jvm.Type.Qualified("org.eclipse.microprofile.rest.client.inject.RestClient")
   }
 
   // File types
