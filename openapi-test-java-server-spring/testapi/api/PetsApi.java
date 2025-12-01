@@ -12,7 +12,7 @@ public sealed interface PetsApi {
   CreatePetResponse createPet(PetCreate body);
 
   /** Delete a pet */
-  Void deletePet(
+  DeletePetResponse deletePet(
   
     /** The pet ID */
     String petId

@@ -291,10 +291,13 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
 
       case sum: jvm.Adt.Sum =>
         val annotationsCode = if (sum.annotations.isEmpty) None else Some(renderAnnotations(sum.annotations))
+        // Only use 'sealed' if subtypes are defined in the same file (non-empty subtypes list)
+        // If subtypes is empty, the trait might be extended from other files
+        val traitKeyword = if (sum.subtypes.nonEmpty) code"sealed trait " else code"trait "
         List[Option[jvm.Code]](
           annotationsCode,
           renderComments(sum.comments),
-          Some(code"sealed trait "),
+          Some(traitKeyword),
           Some(sum.name.name.value),
           sum.tparams match {
             case Nil      => None

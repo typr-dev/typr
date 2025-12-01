@@ -7,15 +7,15 @@ import org.http4s.Response
 import testapi.model.Pet
 import testapi.model.PetCreate
 
-sealed trait PetsApiServer extends PetsApi {
+trait PetsApiServer extends PetsApi {
   /** Create a pet */
   def createPet(body: PetCreate): IO[CreatePetResponse]
 
   /** Endpoint wrapper for createPet - handles response status codes */
   def createPetEndpoint(body: PetCreate): IO[Response] = {
     createPet(body).map((response: testapi.api.CreatePetResponse) => response match {
-      case r: testapi.api.CreatePetResponse.Status201 => org.http4s.Response.apply(org.http4s.Status.Ok).withEntity(r.value())
-      case r: testapi.api.CreatePetResponse.Status400 => org.http4s.Response.apply(org.http4s.Status.fromInt(400).getOrElse(org.http4s.Status.InternalServerError)).withEntity(r.value())
+      case r: testapi.api.CreatePetResponse.Status201 => org.http4s.Response.apply(org.http4s.Status.Ok).withEntity(r.value)
+      case r: testapi.api.CreatePetResponse.Status400 => org.http4s.Response.apply(org.http4s.Status.fromInt(400).getOrElse(org.http4s.Status.InternalServerError)).withEntity(r.value)
       case _ => throw new IllegalStateException("Unexpected response type: " + response.getClass())
     })
   }
@@ -24,7 +24,19 @@ sealed trait PetsApiServer extends PetsApi {
   def deletePet(
     /** The pet ID */
     petId: String
-  ): IO[Void]
+  ): IO[DeletePetResponse]
+
+  /** Endpoint wrapper for deletePet - handles response status codes */
+  def deletePetEndpoint(
+    /** The pet ID */
+    petId: String
+  ): IO[Response] = {
+    deletePet(petId).map((response: testapi.api.DeletePetResponse) => response match {
+      case r: testapi.api.DeletePetResponse.Status404 => org.http4s.Response.apply(org.http4s.Status.fromInt(404).getOrElse(org.http4s.Status.InternalServerError)).withEntity(r.value)
+      case r: testapi.api.DeletePetResponse.StatusDefault => org.http4s.Response.apply(org.http4s.Status.fromInt(r.statusCode).getOrElse(org.http4s.Status.InternalServerError)).withEntity(r.value)
+      case _ => throw new IllegalStateException("Unexpected response type: " + response.getClass())
+    })
+  }
 
   /** Get a pet by ID */
   def getPet(
@@ -38,8 +50,8 @@ sealed trait PetsApiServer extends PetsApi {
     petId: String
   ): IO[Response] = {
     getPet(petId).map((response: testapi.api.GetPetResponse) => response match {
-      case r: testapi.api.GetPetResponse.Status200 => org.http4s.Response.apply(org.http4s.Status.Ok).withEntity(r.value())
-      case r: testapi.api.GetPetResponse.Status404 => org.http4s.Response.apply(org.http4s.Status.fromInt(404).getOrElse(org.http4s.Status.InternalServerError)).withEntity(r.value())
+      case r: testapi.api.GetPetResponse.Status200 => org.http4s.Response.apply(org.http4s.Status.Ok).withEntity(r.value)
+      case r: testapi.api.GetPetResponse.Status404 => org.http4s.Response.apply(org.http4s.Status.fromInt(404).getOrElse(org.http4s.Status.InternalServerError)).withEntity(r.value)
       case _ => throw new IllegalStateException("Unexpected response type: " + response.getClass())
     })
   }

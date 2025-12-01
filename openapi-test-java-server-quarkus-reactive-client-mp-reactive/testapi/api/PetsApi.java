@@ -13,7 +13,7 @@ public sealed interface PetsApi {
   Uni<CreatePetResponse> createPet(PetCreate body);
 
   /** Delete a pet */
-  Uni<Void> deletePet(
+  Uni<DeletePetResponse> deletePet(
   
     /** The pet ID */
     String petId

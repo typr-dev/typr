@@ -1,9 +1,20 @@
 package testapi.api
 
 import cats.effect.IO
-import testapi.model.Animal
+import org.http4s.Response
 
-sealed trait AnimalsApiClient extends AnimalsApi {
+trait AnimalsApiClient extends AnimalsApi {
   /** List all animals (polymorphic) */
-  def listAnimals: IO[List[Animal]]
+  def listAnimalsRaw: IO[Response]
+
+  /** List all animals (polymorphic) - handles response status codes */
+  def listAnimals: IO[ListAnimalsResponse] = {
+    listAnimalsRaw().flatMap { response => {
+      val statusCode = response.status.code
+      if (statusCode == 200) response.as[scala.List[testapi.model.Animal]].map(v => testapi.api.ListAnimalsResponse.Status200(v))
+    else if (statusCode >= 400 && statusCode < 500) response.as[testapi.model.Error].map(v => testapi.api.ListAnimalsResponse.Status4XX(statusCode, v))
+    else if (statusCode >= 500 && statusCode < 600) response.as[testapi.model.Error].map(v => testapi.api.ListAnimalsResponse.Status5XX(statusCode, v))
+    else cats.effect.IO.raiseError(new IllegalStateException(s"Unexpected status code: $statusCode"))
+    } }
+  }
 }

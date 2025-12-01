@@ -3,11 +3,13 @@ package testapi.api;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import testapi.api.CreatePetResponse.Status201;
+import testapi.api.CreatePetResponse.Status400;
 import testapi.model.Error;
 import testapi.model.Pet;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "status")
-@JsonSubTypes({ @JsonSubTypes.Type(value = CreatePetResponse.Status201.class, name = "201"), @JsonSubTypes.Type(value = CreatePetResponse.Status400.class, name = "400") })
+@JsonSubTypes({ @JsonSubTypes.Type(value = Status201.class, name = "201"), @JsonSubTypes.Type(value = Status400.class, name = "400") })
 public sealed interface CreatePetResponse {
   /** Pet created */
   record Status201(@JsonProperty("value") Pet value) implements CreatePetResponse {

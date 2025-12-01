@@ -53,6 +53,14 @@ trait FrameworkSupport {
 
   /** Extract response from the exception */
   def getResponseFromException(exception: jvm.Code): jvm.Code
+
+  /** Whether readEntity returns an effect type (e.g., IO[T]) rather than T directly. When true, client wrapper generation uses flatMap and effect chaining instead of synchronous value extraction.
+    */
+  def isAsyncEntityRead: Boolean = false
+
+  /** Raise an error in the effect type (e.g., IO.raiseError). Only used when isAsyncEntityRead is true.
+    */
+  def raiseError(exception: jvm.Code): jvm.Code = code"throw $exception"
 }
 
 /** No framework annotations - just generate plain interfaces */
@@ -528,8 +536,7 @@ object Http4sSupport extends FrameworkSupport {
   // Client-side: get status from Response
   override def getStatusCode(response: jvm.Code): jvm.Code = code"$response.status.code"
 
-  // Client-side: read entity - this is async in http4s, returns F[A]
-  // For sync context this would need to be handled differently
+  // Client-side: read entity - this is async in http4s, returns IO[A]
   override def readEntity(response: jvm.Code, entityType: jvm.Type): jvm.Code =
     code"$response.as[$entityType]"
 
@@ -538,4 +545,10 @@ object Http4sSupport extends FrameworkSupport {
 
   // UnexpectedStatus contains the response
   override def getResponseFromException(exception: jvm.Code): jvm.Code = code"$exception.response"
+
+  // HTTP4s/Cats Effect: entity reading is async (returns IO[T])
+  override def isAsyncEntityRead: Boolean = true
+
+  // Cats Effect uses IO.raiseError for error handling
+  override def raiseError(exception: jvm.Code): jvm.Code = code"${Types.Cats.IO}.raiseError($exception)"
 }

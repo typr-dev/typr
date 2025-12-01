@@ -21,8 +21,9 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import testapi.api.CreatePetResponse.Status201;
 import testapi.api.CreatePetResponse.Status400;
+import testapi.api.DeletePetResponse.Status404;
+import testapi.api.DeletePetResponse.StatusDefault;
 import testapi.api.GetPetResponse.Status200;
-import testapi.api.GetPetResponse.Status404;
 import testapi.model.Pet;
 import testapi.model.PetCreate;
 
@@ -48,13 +49,26 @@ public sealed interface PetsApiServer extends PetsApi {
     };
   };
 
-  @DeleteMapping(value = "/{petId}")
   /** Delete a pet */
-  Void deletePet(
+  DeletePetResponse deletePet(
+  
+    /** The pet ID */
+    String petId
+  );
+
+  @DeleteMapping(value = "/{petId}")
+  /** Endpoint wrapper for deletePet - handles response status codes */
+  default ResponseEntity deletePetEndpoint(
   
     /** The pet ID */
     @PathVariable("petId") String petId
-  );
+  ) {
+    return switch (deletePet(petId)) {
+      case Status404 r -> ResponseEntity.status(404).body(r.value());
+      case StatusDefault r -> ResponseEntity.status(r.statusCode()).body(r.value());
+      default -> throw new IllegalStateException("Unexpected response type");
+    };
+  };
 
   /** Get a pet by ID */
   GetPetResponse getPet(
@@ -72,7 +86,7 @@ public sealed interface PetsApiServer extends PetsApi {
   ) {
     return switch (getPet(petId)) {
       case Status200 r -> ResponseEntity.ok(r.value());
-      case Status404 r -> ResponseEntity.status(404).body(r.value());
+      case testapi.api.GetPetResponse.Status404 r -> ResponseEntity.status(404).body(r.value());
       default -> throw new IllegalStateException("Unexpected response type");
     };
   };

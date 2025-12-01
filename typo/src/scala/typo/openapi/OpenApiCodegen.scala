@@ -174,6 +174,24 @@ object OpenApiCodegen {
       }
     }
 
+    // Generate webhook handler interfaces (OpenAPI 3.1+)
+    if (options.generateWebhooks) {
+      spec.webhooks.foreach { webhook =>
+        files ++= apiCodegen.generateWebhook(webhook)
+      }
+    }
+
+    // Generate callback handler interfaces for methods that have callbacks
+    if (options.generateCallbacks) {
+      spec.apis.foreach { api =>
+        api.methods.foreach { method =>
+          method.callbacks.foreach { callback =>
+            files ++= apiCodegen.generateCallback(method, callback)
+          }
+        }
+      }
+    }
+
     Result(files.result(), Nil)
   }
 }

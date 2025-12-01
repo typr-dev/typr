@@ -1,9 +1,19 @@
 package testapi.api
 
 import cats.effect.IO
-import testapi.model.Animal
+import org.http4s.Response
 
-sealed trait AnimalsApiServer extends AnimalsApi {
+trait AnimalsApiServer extends AnimalsApi {
   /** List all animals (polymorphic) */
-  def listAnimals: IO[List[Animal]]
+  def listAnimals: IO[ListAnimalsResponse]
+
+  /** Endpoint wrapper for listAnimals - handles response status codes */
+  def listAnimalsEndpoint: IO[Response] = {
+    listAnimals().map((response: testapi.api.ListAnimalsResponse) => response match {
+      case r: testapi.api.ListAnimalsResponse.Status200 => org.http4s.Response.apply(org.http4s.Status.Ok).withEntity(r.value)
+      case r: testapi.api.ListAnimalsResponse.Status4XX => org.http4s.Response.apply(org.http4s.Status.fromInt(r.statusCode).getOrElse(org.http4s.Status.InternalServerError)).withEntity(r.value)
+      case r: testapi.api.ListAnimalsResponse.Status5XX => org.http4s.Response.apply(org.http4s.Status.fromInt(r.statusCode).getOrElse(org.http4s.Status.InternalServerError)).withEntity(r.value)
+      case _ => throw new IllegalStateException("Unexpected response type: " + response.getClass())
+    })
+  }
 }

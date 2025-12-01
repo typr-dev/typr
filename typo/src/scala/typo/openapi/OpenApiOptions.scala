@@ -27,7 +27,11 @@ case class OpenApiOptions(
     /** Whether to add validation annotations (JSR-380) */
     generateValidation: Boolean,
     /** Whether to generate API interface files */
-    generateApiInterfaces: Boolean
+    generateApiInterfaces: Boolean,
+    /** Whether to generate webhook handler interfaces (OpenAPI 3.1+) */
+    generateWebhooks: Boolean,
+    /** Whether to generate callback handler interfaces */
+    generateCallbacks: Boolean
 )
 
 object OpenApiOptions {
@@ -44,7 +48,9 @@ object OpenApiOptions {
       useOptionalForNullable = false,
       includeDeprecated = true,
       generateValidation = false,
-      generateApiInterfaces = true
+      generateApiInterfaces = true,
+      generateWebhooks = true,
+      generateCallbacks = true
     )
 }
 

@@ -5,7 +5,7 @@ import java.lang.Void
 import testapi.model.Pet
 import testapi.model.PetCreate
 
-sealed trait PetsApi {
+trait PetsApi {
   /** Create a pet */
   def createPet(body: PetCreate): CreatePetResponse
 
@@ -13,7 +13,7 @@ sealed trait PetsApi {
   def deletePet(
     /** The pet ID */
     petId: String
-  ): Void
+  ): DeletePetResponse
 
   /** Get a pet by ID */
   def getPet(

@@ -20,14 +20,17 @@ case class ApiMethod(
     security: List[SecurityRequirement],
     tags: List[String],
     /** Non-empty when there are ≥2 response variants with different types */
-    responseVariants: Option[List[ResponseVariant]]
+    responseVariants: Option[List[ResponseVariant]],
+    /** Callbacks defined for this operation */
+    callbacks: List[Callback]
 )
 
 /** Response variant for multi-status response sum types */
 case class ResponseVariant(
     statusCode: String,
     typeInfo: TypeInfo,
-    description: Option[String]
+    description: Option[String],
+    headers: List[ResponseHeader]
 )
 
 /** HTTP methods */
@@ -123,5 +126,14 @@ case class SecurityRequirement(
 case class Webhook(
     name: String,
     description: Option[String],
+    methods: List[ApiMethod]
+)
+
+/** Callback definition - an endpoint the API will call back to after an operation */
+case class Callback(
+    name: String,
+    /** Runtime expression defining the callback URL (e.g., "{$request.body#/callbackUrl}") */
+    expression: String,
+    /** The operations that will be called on the callback URL */
     methods: List[ApiMethod]
 )

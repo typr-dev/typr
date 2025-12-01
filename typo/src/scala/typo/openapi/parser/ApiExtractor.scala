@@ -97,6 +97,9 @@ object ApiExtractor {
     // Extract response variants for multi-status response sum types
     val responseVariants = extractResponseVariants(operation)
 
+    // Extract callbacks
+    val callbacks = extractCallbacks(operation)
+
     ApiMethod(
       name = sanitizeMethodName(operationId),
       description = Option(operation.getSummary).orElse(Option(operation.getDescription)),
@@ -108,7 +111,8 @@ object ApiExtractor {
       deprecated = Option(operation.getDeprecated).contains(java.lang.Boolean.TRUE),
       security = extractSecurity(operation),
       tags = Option(operation.getTags).map(_.asScala.toList).getOrElse(Nil),
-      responseVariants = responseVariants
+      responseVariants = responseVariants,
+      callbacks = callbacks
     )
   }
 
@@ -286,7 +290,8 @@ object ApiExtractor {
             ResponseVariant(
               statusCode = statusCode,
               typeInfo = TypeResolver.resolveBase(schema),
-              description = Option(response.getDescription)
+              description = Option(response.getDescription),
+              headers = extractResponseHeaders(response)
             )
           }
         }
@@ -332,6 +337,23 @@ object ApiExtractor {
     case ResponseStatus.ClientError4XX => 400
     case ResponseStatus.ServerError5XX => 500
     case ResponseStatus.Default        => 1000
+  }
+
+  /** Extract callbacks from an operation */
+  private def extractCallbacks(operation: Operation): List[Callback] = {
+    val callbacks = Option(operation.getCallbacks).map(_.asScala.toMap).getOrElse(Map.empty)
+
+    callbacks.flatMap { case (callbackName, callback) =>
+      // A Callback extends LinkedHashMap<String, PathItem> where keys are runtime expressions
+      callback.asScala.map { case (expression, pathItem) =>
+        val methods = extractPathMethods(expression, pathItem)
+        Callback(
+          name = sanitizeClassName(callbackName),
+          expression = expression,
+          methods = methods
+        )
+      }
+    }.toList.sortBy(_.name)
   }
 
   private def extractSecurity(operation: Operation): List[SecurityRequirement] = {

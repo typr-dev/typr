@@ -114,6 +114,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      # Callback to notify when pet status changes
+      callbacks:
+        onPetCreated:
+          '{$request.body#/callbackUrl}':
+            post:
+              operationId: onPetCreatedCallback
+              summary: Called when pet is created
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      $ref: '#/components/schemas/Pet'
+              responses:
+                '200':
+                  description: Callback received
 
   /pets/{petId}/photo:
     parameters:
@@ -194,12 +210,31 @@ paths:
       responses:
         '200':
           description: Pet found
+          headers:
+            X-Request-Id:
+              description: Unique request identifier for tracing
+              required: true
+              schema:
+                type: string
+                format: uuid
+            X-Cache-Status:
+              description: Whether the response was served from cache
+              schema:
+                type: string
+                enum: [HIT, MISS, BYPASS]
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Pet'
         '404':
           description: Pet not found
+          headers:
+            X-Request-Id:
+              description: Unique request identifier for tracing
+              required: true
+              schema:
+                type: string
+                format: uuid
           content:
             application/json:
               schema:
@@ -214,6 +249,12 @@ paths:
           description: Pet deleted
         '404':
           description: Pet not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
           content:
             application/json:
               schema:
@@ -234,6 +275,18 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Animal'
+        '4XX':
+          description: Client error (any 4xx status)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '5XX':
+          description: Server error (any 5xx status)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 components:
   schemas:

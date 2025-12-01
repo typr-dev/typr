@@ -6,6 +6,7 @@ case class ParsedSpec(
     models: List[ModelClass],
     sumTypes: List[SumType],
     apis: List[ApiInterface],
+    webhooks: List[Webhook],
     securitySchemes: Map[String, SecurityScheme],
     warnings: List[OpenApiError]
 )

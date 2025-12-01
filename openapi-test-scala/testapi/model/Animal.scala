@@ -2,6 +2,6 @@ package testapi.model
 
 
 
-sealed trait Animal {
+trait Animal {
   def animal_type: String
 }

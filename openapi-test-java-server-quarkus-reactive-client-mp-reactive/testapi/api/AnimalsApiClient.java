@@ -4,17 +4,34 @@ import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import java.util.List;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
+import testapi.api.ListAnimalsResponse.Status200;
+import testapi.api.ListAnimalsResponse.Status4XX;
+import testapi.api.ListAnimalsResponse.Status5XX;
 import testapi.model.Animal;
+import testapi.model.Error;
 
 @RegisterRestClient
 @Path("/animals")
 public sealed interface AnimalsApiClient extends AnimalsApi {
+  /** List all animals (polymorphic) - handles response status codes */
+  default Uni<ListAnimalsResponse> listAnimals() {
+    return listAnimalsRaw().map((Response response) -> if (response.getStatus() == 200) { return new Status200(response.readEntity(List<Animal>.class)); }
+    else if (response.getStatus() >= 400 && response.getStatus() < 500) { return new Status4XX(response.getStatus(), response.readEntity(Error.class)); }
+    else if (response.getStatus() >= 500 && response.getStatus() < 600) { return new Status5XX(response.getStatus(), response.readEntity(Error.class)); }
+    else { throw new IllegalStateException("Unexpected status code: " + response.getStatus()); }).onFailure(WebApplicationException.class).recoverWithItem((WebApplicationException e) -> if (e.getResponse().getStatus() == 200) { return new Status200(e.getResponse().readEntity(List<Animal>.class)); }
+    else if (e.getResponse().getStatus() >= 400 && e.getResponse().getStatus() < 500) { return new Status4XX(e.getResponse().getStatus(), e.getResponse().readEntity(Error.class)); }
+    else if (e.getResponse().getStatus() >= 500 && e.getResponse().getStatus() < 600) { return new Status5XX(e.getResponse().getStatus(), e.getResponse().readEntity(Error.class)); }
+    else { throw new IllegalStateException("Unexpected status code: " + e.getResponse().getStatus()); });
+  };
+
   @GET
   @Path("/")
   @Produces(MediaType.APPLICATION_JSON)
   /** List all animals (polymorphic) */
-  Uni<List<Animal>> listAnimals();
+  Uni<Response> listAnimalsRaw();
 }

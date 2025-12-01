@@ -21,8 +21,9 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import testapi.api.CreatePetResponse.Status201;
 import testapi.api.CreatePetResponse.Status400;
+import testapi.api.DeletePetResponse.Status404;
+import testapi.api.DeletePetResponse.StatusDefault;
 import testapi.api.GetPetResponse.Status200;
-import testapi.api.GetPetResponse.Status404;
 import testapi.model.Error;
 import testapi.model.Pet;
 import testapi.model.PetCreate;
@@ -54,10 +55,27 @@ public sealed interface PetsApiClient extends PetsApi {
   /** Create a pet */
   Response createPetRaw(PetCreate body);
 
+  /** Delete a pet - handles response status codes */
+  default DeletePetResponse deletePet(
+  
+    /** The pet ID */
+    String petId
+  ) {
+    try {
+        Response response = deletePetRaw(petId);
+        if (response.getStatus() == 404) { return new Status404(response.readEntity(Error.class)); }
+        else { return new StatusDefault(response.getStatus(), response.readEntity(Error.class)); }
+      } catch (WebApplicationException e) {
+        if (e.getResponse().getStatus() == 404) { return new Status404(e.getResponse().readEntity(Error.class)); }
+        else { return new StatusDefault(e.getResponse().getStatus(), e.getResponse().readEntity(Error.class)); }
+      } ;
+    return null;
+  };
+
   @DELETE
   @Path("/{petId}")
   /** Delete a pet */
-  Void deletePet(
+  Response deletePetRaw(
   
     /** The pet ID */
     @PathParam("petId") String petId
@@ -72,11 +90,11 @@ public sealed interface PetsApiClient extends PetsApi {
     try {
         Response response = getPetRaw(petId);
         if (response.getStatus() == 200) { return new Status200(response.readEntity(Pet.class)); }
-        else if (response.getStatus() == 404) { return new Status404(response.readEntity(Error.class)); }
+        else if (response.getStatus() == 404) { return new testapi.api.GetPetResponse.Status404(response.readEntity(Error.class)); }
         else { throw new IllegalStateException("Unexpected status code: " + response.getStatus()); }
       } catch (WebApplicationException e) {
         if (e.getResponse().getStatus() == 200) { return new Status200(e.getResponse().readEntity(Pet.class)); }
-        else if (e.getResponse().getStatus() == 404) { return new Status404(e.getResponse().readEntity(Error.class)); }
+        else if (e.getResponse().getStatus() == 404) { return new testapi.api.GetPetResponse.Status404(e.getResponse().readEntity(Error.class)); }
         else { throw new IllegalStateException("Unexpected status code: " + e.getResponse().getStatus()); }
       } ;
     return null;

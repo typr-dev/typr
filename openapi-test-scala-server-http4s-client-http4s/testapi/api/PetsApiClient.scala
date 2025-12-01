@@ -7,24 +7,37 @@ import org.http4s.Response
 import testapi.model.Pet
 import testapi.model.PetCreate
 
-sealed trait PetsApiClient extends PetsApi {
+trait PetsApiClient extends PetsApi {
   /** Create a pet */
   def createPetRaw(body: PetCreate): IO[Response]
 
   /** Create a pet - handles response status codes */
   def createPet(body: PetCreate): IO[CreatePetResponse] = {
-    createPetRaw(body).map((response: org.http4s.Response) => if (response.status.code == 201) return new testapi.api.CreatePetResponse.Status201(response.as[testapi.model.Pet]);
-    else if (response.status.code == 400) return new testapi.api.CreatePetResponse.Status400(response.as[testapi.model.Error]);
-    else throw new IllegalStateException("Unexpected status code: " + response.status.code);).onFailure(org.http4s.client.UnexpectedStatus.class).recoverWithItem((e: org.http4s.client.UnexpectedStatus) => if (e.response.status.code == 201) return new testapi.api.CreatePetResponse.Status201(e.response.as[testapi.model.Pet]);
-    else if (e.response.status.code == 400) return new testapi.api.CreatePetResponse.Status400(e.response.as[testapi.model.Error]);
-    else throw new IllegalStateException("Unexpected status code: " + e.response.status.code);)
+    createPetRaw(body).flatMap { response => {
+      val statusCode = response.status.code
+      if (statusCode == 201) response.as[testapi.model.Pet].map(v => testapi.api.CreatePetResponse.Status201(v))
+    else if (statusCode == 400) response.as[testapi.model.Error].map(v => testapi.api.CreatePetResponse.Status400(v))
+    else cats.effect.IO.raiseError(new IllegalStateException(s"Unexpected status code: $statusCode"))
+    } }
   }
 
   /** Delete a pet */
+  def deletePetRaw(
+    /** The pet ID */
+    petId: String
+  ): IO[Response]
+
+  /** Delete a pet - handles response status codes */
   def deletePet(
     /** The pet ID */
     petId: String
-  ): IO[Void]
+  ): IO[DeletePetResponse] = {
+    deletePetRaw(petId).flatMap { response => {
+      val statusCode = response.status.code
+      if (statusCode == 404) response.as[testapi.model.Error].map(v => testapi.api.DeletePetResponse.Status404(v))
+    else response.as[testapi.model.Error].map(v => testapi.api.DeletePetResponse.StatusDefault(statusCode, v))
+    } }
+  }
 
   /** Get a pet by ID */
   def getPetRaw(
@@ -37,11 +50,12 @@ sealed trait PetsApiClient extends PetsApi {
     /** The pet ID */
     petId: String
   ): IO[GetPetResponse] = {
-    getPetRaw(petId).map((response: org.http4s.Response) => if (response.status.code == 200) return new testapi.api.GetPetResponse.Status200(response.as[testapi.model.Pet]);
-    else if (response.status.code == 404) return new testapi.api.GetPetResponse.Status404(response.as[testapi.model.Error]);
-    else throw new IllegalStateException("Unexpected status code: " + response.status.code);).onFailure(org.http4s.client.UnexpectedStatus.class).recoverWithItem((e: org.http4s.client.UnexpectedStatus) => if (e.response.status.code == 200) return new testapi.api.GetPetResponse.Status200(e.response.as[testapi.model.Pet]);
-    else if (e.response.status.code == 404) return new testapi.api.GetPetResponse.Status404(e.response.as[testapi.model.Error]);
-    else throw new IllegalStateException("Unexpected status code: " + e.response.status.code);)
+    getPetRaw(petId).flatMap { response => {
+      val statusCode = response.status.code
+      if (statusCode == 200) response.as[testapi.model.Pet].map(v => testapi.api.GetPetResponse.Status200(v))
+    else if (statusCode == 404) response.as[testapi.model.Error].map(v => testapi.api.GetPetResponse.Status404(v))
+    else cats.effect.IO.raiseError(new IllegalStateException(s"Unexpected status code: $statusCode"))
+    } }
   }
 
   /** Get pet photo */

@@ -219,6 +219,20 @@ class ApiCodegen(
         case _                                 => false
       }
 
+      // Generate header parameters for this response variant
+      // Note: TypeResolver.resolve already wraps non-required types in Optional,
+      // so we don't need to wrap again here - the optionality is encoded in typeInfo
+      val headerParams = variant.headers.map { header =>
+        val headerType = typeMapper.map(header.typeInfo)
+        jvm.Param[jvm.Type](
+          annotations = jsonLib.propertyAnnotations(header.name),
+          comments = header.description.map(d => jvm.Comments(List(d))).getOrElse(jvm.Comments.Empty),
+          name = jvm.Ident(sanitizeHeaderName(header.name)),
+          tpe = headerType,
+          default = None
+        )
+      }
+
       val params = if (isRangeStatus) {
         val statusCodeParam = jvm.Param[jvm.Type](
           annotations = jsonLib.propertyAnnotations("statusCode"),
@@ -227,9 +241,9 @@ class ApiCodegen(
           tpe = Types.Int,
           default = None
         )
-        List(statusCodeParam, valueParam)
+        List(statusCodeParam, valueParam) ++ headerParams
       } else {
-        List(valueParam)
+        List(valueParam) ++ headerParams
       }
 
       // Override status() method to return the status code string
@@ -272,7 +286,11 @@ class ApiCodegen(
     )
 
     // Jackson annotations for polymorphic deserialization
-    val jacksonAnnotations = generateResponseSumTypeAnnotations(tpe, variants)
+    // Only generate Jackson annotations for Java - Scala uses Circe derivation
+    val jacksonAnnotations = lang match {
+      case _: LangScala => Nil
+      case _            => generateResponseSumTypeAnnotations(tpe, variants)
+    }
 
     val sumAdt = jvm.Adt.Sum(
       annotations = jacksonAnnotations,
@@ -301,7 +319,9 @@ class ApiCodegen(
 
     val subTypesArgs = variants.map { variant =>
       val statusName = "Status" + normalizeStatusCode(variant.statusCode)
-      code"@${Types.Jackson.JsonSubTypes}.Type(value = $tpe.$statusName.class, name = ${jvm.StrLit(variant.statusCode)})"
+      val subtypeTpe = jvm.Type.Qualified(tpe.value / jvm.Ident(statusName))
+      val classLit = lang.classLiteral(subtypeTpe)
+      code"@${Types.Jackson.JsonSubTypes}.Type(value = $classLit, name = ${jvm.StrLit(variant.statusCode)})"
     }
 
     val subTypesAnnotation = jvm.Annotation(
@@ -325,6 +345,15 @@ class ApiCodegen(
 
   private def capitalize(s: String): String =
     if (s.isEmpty) s else s.head.toUpper.toString + s.tail
+
+  /** Convert header name like "X-Total-Count" to camelCase field name "xTotalCount" */
+  private def sanitizeHeaderName(name: String): String = {
+    val parts = name.split("-").toList
+    parts match {
+      case Nil          => ""
+      case head :: tail => head.toLowerCase + tail.map(s => if (s.isEmpty) "" else s"${s.head.toUpper}${s.tail.toLowerCase}").mkString
+    }
+  }
 
   /** Generate base method (no framework annotations, just return type and params) */
   private def generateBaseMethod(method: ApiMethod): jvm.Method = {
@@ -494,6 +523,113 @@ class ApiCodegen(
     val responseIdent = jvm.Ident("response")
     val responseName = capitalize(method.name) + "Response"
 
+    // For async entity reading (e.g., Cats Effect/HTTP4s), generate flatMap-based code
+    if (clientSupport.isAsyncEntityRead) {
+      generateAsyncClientWrapperBody(rawMethodCall, responseIdent, responseName, variants, clientSupport)
+    } else {
+      generateSyncOrMutinyClientWrapperBody(rawMethodCall, responseIdent, responseName, variants, clientSupport)
+    }
+  }
+
+  /** Generate client wrapper body for async entity reading (Cats Effect/HTTP4s style) */
+  private def generateAsyncClientWrapperBody(
+      rawMethodCall: jvm.Code,
+      responseIdent: jvm.Ident,
+      responseName: String,
+      variants: List[ResponseVariant],
+      clientSupport: FrameworkSupport
+  ): List[jvm.Code] = {
+    // Generate flatMap-based handling:
+    // rawMethodCall.flatMap { response =>
+    //   val statusCode = response.status.code
+    //   if (statusCode == 200) response.as[Pet].map(v => GetPetResponse.Status200(v))
+    //   else if (statusCode == 404) response.as[Error].map(v => GetPetResponse.Status404(v))
+    //   else IO.raiseError(new IllegalStateException(s"Unexpected status code: $statusCode"))
+    // }
+
+    val statusCodeIdent = jvm.Ident("statusCode")
+    val statusCodeExpr = clientSupport.getStatusCode(responseIdent.code)
+    val statusCodeDecl = code"val ${statusCodeIdent.code} = $statusCodeExpr"
+
+    // Build if-else chain for each variant, using response.as[T].map for entity reading
+    val ifElseCases = variants.map { variant =>
+      val statusName = "Status" + normalizeStatusCode(variant.statusCode)
+      val subtypeTpe = jvm.Type.Qualified(apiPkg / jvm.Ident(responseName) / jvm.Ident(statusName))
+      val bodyType = typeMapper.map(variant.typeInfo)
+      val readEntityCode = clientSupport.readEntity(responseIdent.code, bodyType)
+
+      // Check if this is a range status code (has statusCode field)
+      val isRangeStatus = variant.statusCode.toLowerCase match {
+        case "4xx" | "5xx" | "default" | "2xx" => true
+        case _                                 => false
+      }
+
+      val condition = variant.statusCode.toLowerCase match {
+        case "2xx"     => code"${statusCodeIdent.code} >= 200 && ${statusCodeIdent.code} < 300"
+        case "4xx"     => code"${statusCodeIdent.code} >= 400 && ${statusCodeIdent.code} < 500"
+        case "5xx"     => code"${statusCodeIdent.code} >= 500 && ${statusCodeIdent.code} < 600"
+        case "default" => code"true" // default case matches everything
+        case s =>
+          val statusInt = scala.util.Try(s.toInt).getOrElse(500)
+          code"${statusCodeIdent.code} == $statusInt"
+      }
+
+      // For async: response.as[T].map(v => ResponseType(v)) or response.as[T].map(v => ResponseType(statusCode, v))
+      val valueIdent = jvm.Ident("v")
+      val constructorCall = if (isRangeStatus) {
+        code"$subtypeTpe(${statusCodeIdent.code}, ${valueIdent.code})"
+      } else {
+        code"$subtypeTpe(${valueIdent.code})"
+      }
+      val result = code"$readEntityCode.map(${valueIdent.code} => $constructorCall)"
+
+      (condition, result, variant.statusCode.toLowerCase == "default")
+    }
+
+    // Generate if-else chain, putting default case last
+    val (defaultCases, specificCases) = ifElseCases.partition(_._3)
+
+    val ifElseCode = if (specificCases.isEmpty && defaultCases.nonEmpty) {
+      // Only default case
+      defaultCases.head._2
+    } else if (specificCases.isEmpty) {
+      // No cases - raise error
+      val errorExpr = code"new IllegalStateException(${jvm.StrLit("No response handler for status code")})"
+      clientSupport.raiseError(errorExpr)
+    } else {
+      // Build if-else expression
+      val ifCases = specificCases.zipWithIndex.map { case ((cond, body, _), idx) =>
+        if (idx == 0) code"if ($cond) $body"
+        else code"else if ($cond) $body"
+      }
+      val elseCase = defaultCases.headOption
+        .map(_._2)
+        .getOrElse {
+          val errorExpr = code"new IllegalStateException(s${jvm.StrLit("Unexpected status code: $statusCode")})"
+          clientSupport.raiseError(errorExpr)
+        }
+      val elseCode = code"else $elseCase"
+      (ifCases :+ elseCode).mkCode("\n")
+    }
+
+    // Generate flatMap body with braces
+    val flatMapBody = code"""{
+  $statusCodeDecl
+  $ifElseCode
+}"""
+    val flatMapCall = code"$rawMethodCall.flatMap { ${responseIdent.code} => $flatMapBody }"
+
+    List(flatMapCall)
+  }
+
+  /** Generate client wrapper body for sync or Mutiny-style async */
+  private def generateSyncOrMutinyClientWrapperBody(
+      rawMethodCall: jvm.Code,
+      responseIdent: jvm.Ident,
+      responseName: String,
+      variants: List[ResponseVariant],
+      clientSupport: FrameworkSupport
+  ): List[jvm.Code] = {
     // Generate status code handling - an if-else chain matching on status codes
     val statusCodeHandlingCode = generateStatusCodeHandling(responseIdent, responseName, variants, clientSupport)
 
@@ -863,15 +999,19 @@ class ApiCodegen(
         case _                                 => false
       }
 
+      // Use lang.recordFieldAccess for proper field access syntax (Java: .value(), Scala: .value)
+      val valueAccess = lang.recordFieldAccess(bindingIdent.code, jvm.Ident("value"))
+      val statusCodeAccess = lang.recordFieldAccess(bindingIdent.code, jvm.Ident("statusCode"))
+
       val body = if (isRangeStatus) {
         // Use the user-provided statusCode field
-        serverSupport.buildStatusResponse(code"$bindingIdent.statusCode()", code"$bindingIdent.value()")
+        serverSupport.buildStatusResponse(statusCodeAccess, valueAccess)
       } else if (defaultStatusCode >= 200 && defaultStatusCode < 300) {
         // Fixed success response
-        serverSupport.buildOkResponse(code"$bindingIdent.value()")
+        serverSupport.buildOkResponse(valueAccess)
       } else {
         // Fixed error response
-        serverSupport.buildStatusResponse(code"$defaultStatusCode", code"$bindingIdent.value()")
+        serverSupport.buildStatusResponse(code"$defaultStatusCode", valueAccess)
       }
 
       jvm.TypeSwitch.Case(subtypeTpe, bindingIdent, body)
@@ -904,6 +1044,76 @@ class ApiCodegen(
       case "5xx"     => 500
       case s         => scala.util.Try(s.toInt).getOrElse(500)
     }
+  }
+
+  /** Generate webhook handler interface. Webhooks are callbacks that the API server will call to notify you of events. The generated interface should be implemented by the webhook receiver.
+    */
+  def generateWebhook(webhook: Webhook): List[jvm.File] = {
+    val webhookName = webhook.name + "Webhook"
+    val webhookTpe = jvm.Type.Qualified(apiPkg / jvm.Ident(webhookName))
+    val comments = webhook.description.map(d => jvm.Comments(List(d))).getOrElse(jvm.Comments.Empty)
+
+    // Generate response sum types for methods with multiple response variants
+    val responseSumTypeFiles = webhook.methods.flatMap { method =>
+      method.responseVariants.map { variants =>
+        generateResponseSumType(method.name, variants)
+      }
+    }
+
+    // Generate handler methods for each webhook operation
+    val methods = webhook.methods.map(m => generateBaseMethod(m))
+
+    val webhookInterface = jvm.Adt.Sum(
+      annotations = Nil,
+      comments = comments,
+      name = webhookTpe,
+      tparams = Nil,
+      members = methods,
+      implements = Nil,
+      subtypes = Nil,
+      staticMembers = Nil
+    )
+
+    val generatedCode = lang.renderTree(webhookInterface, lang.Ctx.Empty)
+    val baseFile = jvm.File(webhookTpe, generatedCode, secondaryTypes = Nil, scope = Scope.Main)
+
+    baseFile :: responseSumTypeFiles
+  }
+
+  /** Generate callback handler interface. Callbacks are endpoints the API will call back to after certain operations.
+    * For example, after createPet, the API might call back to a URL provided in the request body with the created pet data.
+    * The callback name is derived from the operation name and callback name (e.g., CreatePetOnPetCreatedCallback).
+    */
+  def generateCallback(method: ApiMethod, callback: Callback): List[jvm.File] = {
+    val callbackName = capitalize(method.name) + callback.name + "Callback"
+    val callbackTpe = jvm.Type.Qualified(apiPkg / jvm.Ident(callbackName))
+    val comments = jvm.Comments(List(s"Callback handler for ${method.name} - ${callback.name}", s"Runtime expression: ${callback.expression}"))
+
+    // Generate response sum types for callback methods with multiple response variants
+    val responseSumTypeFiles = callback.methods.flatMap { m =>
+      m.responseVariants.map { variants =>
+        generateResponseSumType(m.name, variants)
+      }
+    }
+
+    // Generate handler methods for each callback operation
+    val methods = callback.methods.map(m => generateBaseMethod(m))
+
+    val callbackInterface = jvm.Adt.Sum(
+      annotations = Nil,
+      comments = comments,
+      name = callbackTpe,
+      tparams = Nil,
+      members = methods,
+      implements = Nil,
+      subtypes = Nil,
+      staticMembers = Nil
+    )
+
+    val generatedCode = lang.renderTree(callbackInterface, lang.Ctx.Empty)
+    val baseFile = jvm.File(callbackTpe, generatedCode, secondaryTypes = Nil, scope = Scope.Main)
+
+    baseFile :: responseSumTypeFiles
   }
 }
 

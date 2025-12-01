@@ -80,6 +80,7 @@ object OpenApiParser {
     val info = extractInfo(openApi)
     val extracted = ModelExtractor.extract(openApi)
     val apis = ApiExtractor.extract(openApi)
+    val webhooks = ApiExtractor.extractWebhooks(openApi)
     val securitySchemes = extractSecuritySchemes(openApi)
 
     // Run validation if enabled
@@ -97,6 +98,7 @@ object OpenApiParser {
       models = linkedModels,
       sumTypes = extracted.sumTypes,
       apis = apis,
+      webhooks = webhooks,
       securitySchemes = securitySchemes,
       warnings = warnings
     )
