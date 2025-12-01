@@ -33,6 +33,7 @@ object FileCustomType {
 
     val cls = jvm.Adt.Record(
       annotations = typeAnnotations,
+      constructorAnnotations = Nil,
       isWrapper = false,
       comments = scaladoc(List(ct.comment)),
       name = ct.typoType,

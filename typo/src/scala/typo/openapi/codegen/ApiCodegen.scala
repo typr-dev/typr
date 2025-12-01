@@ -1,6 +1,7 @@
 package typo.openapi.codegen
 
 import typo.{jvm, Lang, Scope}
+import typo.jvm.Code.TypeOps
 import typo.internal.codegen._
 import typo.openapi._
 
@@ -83,8 +84,8 @@ class ApiCodegen(
     val methods = api.methods.flatMap { m =>
       m.responseVariants match {
         case Some(variants) =>
-          // Abstract method without annotations (just the contract from base)
-          val abstractMethod = generateBaseMethod(m)
+          // Abstract method without annotations (just the contract from base) - override since server extends base
+          val abstractMethod = generateBaseMethod(m, isOverride = true)
           // Wrapper endpoint method with annotations that returns Response (or Effect<Response> for async)
           val wrapperMethod = generateServerEndpointWrapperMethod(m, basePath, serverSupport, variants)
           List(abstractMethod, wrapperMethod)
@@ -238,7 +239,7 @@ class ApiCodegen(
           annotations = jsonLib.propertyAnnotations("statusCode"),
           comments = jvm.Comments(List("HTTP status code to return")),
           name = jvm.Ident("statusCode"),
-          tpe = Types.Int,
+          tpe = lang.Int,
           default = None
         )
         List(statusCodeParam, valueParam) ++ headerParams
@@ -259,6 +260,7 @@ class ApiCodegen(
 
       jvm.Adt.Record(
         annotations = Nil,
+        constructorAnnotations = Nil,
         isWrapper = false,
         comments = variant.description.map(d => jvm.Comments(List(d))).getOrElse(jvm.Comments.Empty),
         name = subtypeTpe,
@@ -282,7 +284,9 @@ class ApiCodegen(
       implicitParams = Nil,
       tpe = Types.String,
       throws = Nil,
-      body = Nil
+      body = jvm.Body.Abstract,
+      isOverride = false,
+      isDefault = false
     )
 
     // Jackson annotations for polymorphic deserialization
@@ -317,16 +321,23 @@ class ApiCodegen(
       )
     )
 
+    // Build nested annotations using proper AST - AnnotationArray renders as [ ] in Kotlin, { } in Java
+    // Use ClassOf for annotation arguments - Kotlin auto-converts ::class (KClass) to Java Class for annotations
     val subTypesArgs = variants.map { variant =>
       val statusName = "Status" + normalizeStatusCode(variant.statusCode)
       val subtypeTpe = jvm.Type.Qualified(tpe.value / jvm.Ident(statusName))
-      val classLit = lang.classLiteral(subtypeTpe)
-      code"@${Types.Jackson.JsonSubTypes}.Type(value = $classLit, name = ${jvm.StrLit(variant.statusCode)})"
+      jvm.Annotation(
+        Types.Jackson.JsonSubTypesType,
+        List(
+          jvm.Annotation.Arg.Named(jvm.Ident("value"), jvm.ClassOf(subtypeTpe).code),
+          jvm.Annotation.Arg.Named(jvm.Ident("name"), jvm.StrLit(variant.statusCode).code)
+        )
+      )
     }
 
     val subTypesAnnotation = jvm.Annotation(
       Types.Jackson.JsonSubTypes,
-      List(jvm.Annotation.Arg.Positional(code"{ ${jvm.Code.Combined(subTypesArgs.flatMap(c => List(c, code", ")).dropRight(1))} }"))
+      List(jvm.Annotation.Arg.Named(jvm.Ident("value"), jvm.AnnotationArray(subTypesArgs.map(_.code)).code))
     )
 
     List(typeInfoAnnotation, subTypesAnnotation)
@@ -355,8 +366,67 @@ class ApiCodegen(
     }
   }
 
+  /** Generate code to extract a header from response and convert to the target type.
+    * @param responseExpr
+    *   The response expression
+    * @param headerName
+    *   The HTTP header name (e.g., "X-Request-Id")
+    * @param targetType
+    *   The target type for the header value (already mapped from typeInfo)
+    * @param clientSupport
+    *   Framework support for header extraction
+    * @return
+    *   Code that extracts and converts the header value
+    */
+  private def extractHeaderValue(
+      responseExpr: jvm.Code,
+      headerName: String,
+      targetType: jvm.Type,
+      clientSupport: FrameworkSupport
+  ): jvm.Code = {
+    val rawHeaderExpr = clientSupport.getHeaderString(responseExpr, headerName)
+
+    // Check if the target type is Optional<X>
+    targetType match {
+      case jvm.Type.TApply(outer: jvm.Type.Qualified, List(innerType)) if outer.dotName == "java.util.Optional" =>
+        // Optional type: wrap in Optional.ofNullable and map to convert inner type
+        innerType match {
+          case t if t == Types.String =>
+            // Optional<String>: just wrap
+            code"${Types.Java.Optional}.ofNullable($rawHeaderExpr)"
+          case t if t == Types.UUID =>
+            // Optional<UUID>: wrap and map to UUID.fromString
+            code"${Types.Java.Optional}.ofNullable($rawHeaderExpr).map(${Types.UUID}::fromString)"
+          case t if t == lang.Int || t == Types.Java.Integer =>
+            // Optional<Integer>: wrap and map to Integer.parseInt
+            code"${Types.Java.Optional}.ofNullable($rawHeaderExpr).map(${Types.Java.Integer}::parseInt)"
+          case t if t == lang.Long || t == Types.Java.Long =>
+            // Optional<Long>: wrap and map to Long.parseLong
+            code"${Types.Java.Optional}.ofNullable($rawHeaderExpr).map(${Types.Java.Long}::parseLong)"
+          case _ =>
+            // Unknown type, just wrap as-is (likely a String-compatible type)
+            code"${Types.Java.Optional}.ofNullable($rawHeaderExpr)"
+        }
+      case t if t == Types.String =>
+        // Required String: use directly
+        rawHeaderExpr
+      case t if t == Types.UUID =>
+        // Required UUID: convert from String
+        code"${Types.UUID}.fromString($rawHeaderExpr)"
+      case t if t == lang.Int || t == Types.Java.Integer =>
+        // Required Integer: parse
+        code"${Types.Java.Integer}.parseInt($rawHeaderExpr)"
+      case t if t == lang.Long || t == Types.Java.Long =>
+        // Required Long: parse
+        code"${Types.Java.Long}.parseLong($rawHeaderExpr)"
+      case _ =>
+        // Unknown type, use as-is (may need casting in some cases)
+        rawHeaderExpr
+    }
+  }
+
   /** Generate base method (no framework annotations, just return type and params) */
-  private def generateBaseMethod(method: ApiMethod): jvm.Method = {
+  private def generateBaseMethod(method: ApiMethod, isOverride: Boolean = false): jvm.Method = {
     val comments = method.description.map(d => jvm.Comments(List(d))).getOrElse(jvm.Comments.Empty)
 
     // Generate parameters without framework annotations
@@ -381,7 +451,9 @@ class ApiCodegen(
       implicitParams = Nil,
       tpe = returnType,
       throws = Nil,
-      body = Nil // Interface method - no body
+      body = jvm.Body.Abstract, // Interface method - no body
+      isOverride = isOverride,
+      isDefault = false
     )
   }
 
@@ -420,7 +492,9 @@ class ApiCodegen(
       implicitParams = Nil,
       tpe = returnType,
       throws = Nil,
-      body = Nil // Interface method - no body
+      body = jvm.Body.Abstract, // Interface method - no body
+      isOverride = true, // Server interface extends base interface, so methods are overrides
+      isDefault = false
     )
   }
 
@@ -462,7 +536,9 @@ class ApiCodegen(
       implicitParams = Nil,
       tpe = returnType,
       throws = Nil,
-      body = Nil // Interface method - no body
+      body = jvm.Body.Abstract, // Interface method - no body
+      isOverride = false,
+      isDefault = false
     )
   }
 
@@ -497,7 +573,9 @@ class ApiCodegen(
       implicitParams = Nil,
       tpe = returnType,
       throws = Nil,
-      body = body
+      body = jvm.Body(body),
+      isOverride = true, // Client interface extends base interface, so this overrides the base method
+      isDefault = true
     )
   }
 
@@ -594,7 +672,7 @@ class ApiCodegen(
       defaultCases.head._2
     } else if (specificCases.isEmpty) {
       // No cases - raise error
-      val errorExpr = code"new IllegalStateException(${jvm.StrLit("No response handler for status code")})"
+      val errorExpr = Types.IllegalStateException.construct(jvm.StrLit("No response handler for status code").code)
       clientSupport.raiseError(errorExpr)
     } else {
       // Build if-else expression
@@ -605,7 +683,7 @@ class ApiCodegen(
       val elseCase = defaultCases.headOption
         .map(_._2)
         .getOrElse {
-          val errorExpr = code"new IllegalStateException(s${jvm.StrLit("Unexpected status code: $statusCode")})"
+          val errorExpr = Types.IllegalStateException.construct(lang.s(code"Unexpected status code: ${statusCodeIdent.code}").code)
           clientSupport.raiseError(errorExpr)
         }
       val elseCode = code"else $elseCase"
@@ -635,26 +713,27 @@ class ApiCodegen(
 
     effectOps match {
       case Some(ops) =>
-        // Async: we need to handle the effect and recover from errors
-        // Pattern: rawMethodCall.onFailure().recoverWithItem(e -> handleException(e)).map(response -> handleResponse(response))
-        // For simplicity, we'll use a try-catch pattern inside a map
+        // Async: recover from WebApplicationException first, then map once
+        // Pattern: rawMethodCall.onFailure(ExceptionType.class).recoverWithItem(e -> ((ExceptionType) e).getResponse()).map(response -> handleStatus(response))
         val exceptionIdent = jvm.Ident("e")
         val exceptionType = clientSupport.clientExceptionType
 
-        // Build the exception handling code
-        val exceptionResponseCode = clientSupport.getResponseFromException(exceptionIdent.code)
-        val exceptionHandlingCode = generateStatusCodeHandlingFromResponse(exceptionResponseCode, responseName, variants, clientSupport)
+        // Build the recover lambda: e -> ((ExceptionType) e).getResponse()
+        // Note: Mutiny's API always uses Function<Throwable, T>, so we need to cast
+        val castException = jvm.Cast(exceptionType, exceptionIdent.code)
+        val exceptionResponseCode = clientSupport.getResponseFromException(castException.code)
+        val recoverLambda = jvm.SamLambda(
+          Types.Java.Function(Types.Throwable, clientSupport.responseType),
+          jvm.Lambda(List(jvm.LambdaParam.typed(exceptionIdent, Types.Throwable)), jvm.Body.Expr(exceptionResponseCode))
+        )
+        val exceptionClassLiteral = jvm.JavaClassOf(exceptionType).code
+        val recoveredCall = code"$rawMethodCall.onFailure($exceptionClassLiteral).recoverWithItem(${recoverLambda.code})"
 
-        // For async, we map the response and use onFailure to recover
-        // Generate: rawMethodCall.map(response -> handleResponse(response)).onFailure(ExceptionType.class).recoverWithItem(e -> handleException(e))
-        val mapLambda = jvm.TypedLambda1(clientSupport.responseType, responseIdent, statusCodeHandlingCode)
-        val mappedCall = ops.map(rawMethodCall, mapLambda.code)
+        // Now map the recovered Uni<Response> to handle status codes
+        val mapLambda = jvm.Lambda(List(jvm.LambdaParam.typed(responseIdent, clientSupport.responseType)), jvm.Body.Expr(statusCodeHandlingCode))
+        val mappedCall = ops.map(recoveredCall, mapLambda.code)
 
-        // For Mutiny, we use: .onFailure(ExceptionType.class).recoverWithItem(e -> ...)
-        val recoverLambda = jvm.TypedLambda1(exceptionType, exceptionIdent, exceptionHandlingCode)
-        val recoveredCall = code"$mappedCall.onFailure($exceptionType.class).recoverWithItem($recoverLambda)"
-
-        List(recoveredCall)
+        List(mappedCall)
 
       case None =>
         // Sync: wrap in try-catch
@@ -724,11 +803,21 @@ class ApiCodegen(
           code"$statusCodeExpr == $statusInt"
       }
 
-      val constructorCall = if (isRangeStatus) {
-        code"return new $subtypeTpe($statusCodeExpr, $readEntityCode);"
-      } else {
-        code"return new $subtypeTpe($readEntityCode);"
+      // Extract header values for this variant
+      val headerValues = variant.headers.map { header =>
+        val headerType = typeMapper.map(header.typeInfo)
+        extractHeaderValue(responseExpr, header.name, headerType, clientSupport)
       }
+
+      // Use AST construct method for cross-language compatibility (no `new` in Kotlin)
+      // Don't include `return` - in Kotlin lambdas, the last expression is the return value
+      // Constructor order: [statusCode], value, headers...
+      val allArgs = if (isRangeStatus) {
+        List(statusCodeExpr, readEntityCode) ++ headerValues
+      } else {
+        List(readEntityCode) ++ headerValues
+      }
+      val constructorCall = subtypeTpe.construct(allArgs: _*)
 
       (condition, constructorCall, variant.statusCode.toLowerCase == "default")
     }
@@ -741,7 +830,7 @@ class ApiCodegen(
       defaultCases.head._2
     } else if (specificCases.isEmpty) {
       // No cases - throw error
-      code"throw new IllegalStateException(${jvm.StrLit("No response handler for status code")});"
+      jvm.Throw(Types.IllegalStateException.construct(jvm.StrLit("No response handler for status code").code)).code
     } else {
       // Build if-else chain
       val ifElse = jvm.IfElseChain(
@@ -749,7 +838,7 @@ class ApiCodegen(
         elseCase = defaultCases.headOption
           .map(_._2)
           .getOrElse(
-            code"throw new IllegalStateException(${jvm.StrLit("Unexpected status code: ").code} + $statusCodeExpr);"
+            jvm.Throw(Types.IllegalStateException.construct(code"${jvm.StrLit("Unexpected status code: ").code} + $statusCodeExpr")).code
           )
       )
       ifElse.code
@@ -957,7 +1046,9 @@ class ApiCodegen(
       implicitParams = Nil,
       tpe = returnType,
       throws = Nil,
-      body = body
+      body = jvm.Body(body),
+      isOverride = false,
+      isDefault = true
     )
   }
 
@@ -999,9 +1090,9 @@ class ApiCodegen(
         case _                                 => false
       }
 
-      // Use lang.recordFieldAccess for proper field access syntax (Java: .value(), Scala: .value)
-      val valueAccess = lang.recordFieldAccess(bindingIdent.code, jvm.Ident("value"))
-      val statusCodeAccess = lang.recordFieldAccess(bindingIdent.code, jvm.Ident("statusCode"))
+      // Use lang.prop for proper field access syntax (Java: .value(), Scala: .value)
+      val valueAccess = lang.prop(bindingIdent.code, jvm.Ident("value"))
+      val statusCodeAccess = lang.prop(bindingIdent.code, jvm.Ident("statusCode"))
 
       val body = if (isRangeStatus) {
         // Use the user-provided statusCode field
@@ -1020,16 +1111,15 @@ class ApiCodegen(
     effectOps match {
       case Some(ops) =>
         // Async: wrap in lambda and use map operation
-        val fallbackCase = Some(code"throw new IllegalStateException(${jvm.StrLit("Unexpected response type: ").code} + $responseIdent.getClass())")
+        val fallbackCase = Some(jvm.Throw(Types.IllegalStateException.construct(jvm.StrLit("Unexpected response type").code)).code)
         val typeSwitch = jvm.TypeSwitch(responseIdent.code, switchCases, nullCase = None, defaultCase = fallbackCase)
-        val lambda = jvm.TypedLambda1(responseTpe, responseIdent, typeSwitch.code)
+        val lambda = jvm.Lambda(List(jvm.LambdaParam.typed(responseIdent, responseTpe)), jvm.Body.Expr(typeSwitch.code))
         val mappedCall = ops.map(methodCall, lambda.code)
         List(mappedCall)
 
       case None =>
         // Sync: directly switch on the result and return
-        // For default case, use a generic error message since we don't have a named variable
-        val fallbackCase = Some(code"throw new IllegalStateException(${jvm.StrLit("Unexpected response type")})")
+        val fallbackCase = Some(jvm.Throw(Types.IllegalStateException.construct(jvm.StrLit("Unexpected response type").code)).code)
         val switchOnResult = jvm.TypeSwitch(methodCall, switchCases, nullCase = None, defaultCase = fallbackCase)
         List(switchOnResult.code)
     }
@@ -1080,9 +1170,8 @@ class ApiCodegen(
     baseFile :: responseSumTypeFiles
   }
 
-  /** Generate callback handler interface. Callbacks are endpoints the API will call back to after certain operations.
-    * For example, after createPet, the API might call back to a URL provided in the request body with the created pet data.
-    * The callback name is derived from the operation name and callback name (e.g., CreatePetOnPetCreatedCallback).
+  /** Generate callback handler interface. Callbacks are endpoints the API will call back to after certain operations. For example, after createPet, the API might call back to a URL provided in the
+    * request body with the created pet data. The callback name is derived from the operation name and callback name (e.g., CreatePetOnPetCreatedCallback).
     */
   def generateCallback(method: ApiMethod, callback: Callback): List[jvm.File] = {
     val callbackName = capitalize(method.name) + callback.name + "Callback"

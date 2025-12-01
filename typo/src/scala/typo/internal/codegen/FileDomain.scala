@@ -42,6 +42,7 @@ object FileDomain {
 
     val cls = jvm.Adt.Record(
       annotations = typeAnnotations,
+      constructorAnnotations = Nil,
       isWrapper = false,
       comments = comments,
       name = domain.tpe,

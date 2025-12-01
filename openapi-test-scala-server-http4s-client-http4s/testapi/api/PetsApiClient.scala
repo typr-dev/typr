@@ -12,12 +12,12 @@ trait PetsApiClient extends PetsApi {
   def createPetRaw(body: PetCreate): IO[Response]
 
   /** Create a pet - handles response status codes */
-  def createPet(body: PetCreate): IO[CreatePetResponse] = {
+  override def createPet(body: PetCreate): IO[CreatePetResponse] = {
     createPetRaw(body).flatMap { response => {
       val statusCode = response.status.code
       if (statusCode == 201) response.as[testapi.model.Pet].map(v => testapi.api.CreatePetResponse.Status201(v))
     else if (statusCode == 400) response.as[testapi.model.Error].map(v => testapi.api.CreatePetResponse.Status400(v))
-    else cats.effect.IO.raiseError(new IllegalStateException(s"Unexpected status code: $statusCode"))
+    else cats.effect.IO.raiseError(new java.lang.IllegalStateException(s"Unexpected status code: statusCode"))
     } }
   }
 
@@ -28,7 +28,7 @@ trait PetsApiClient extends PetsApi {
   ): IO[Response]
 
   /** Delete a pet - handles response status codes */
-  def deletePet(
+  override def deletePet(
     /** The pet ID */
     petId: String
   ): IO[DeletePetResponse] = {
@@ -46,7 +46,7 @@ trait PetsApiClient extends PetsApi {
   ): IO[Response]
 
   /** Get a pet by ID - handles response status codes */
-  def getPet(
+  override def getPet(
     /** The pet ID */
     petId: String
   ): IO[GetPetResponse] = {
@@ -54,18 +54,18 @@ trait PetsApiClient extends PetsApi {
       val statusCode = response.status.code
       if (statusCode == 200) response.as[testapi.model.Pet].map(v => testapi.api.GetPetResponse.Status200(v))
     else if (statusCode == 404) response.as[testapi.model.Error].map(v => testapi.api.GetPetResponse.Status404(v))
-    else cats.effect.IO.raiseError(new IllegalStateException(s"Unexpected status code: $statusCode"))
+    else cats.effect.IO.raiseError(new java.lang.IllegalStateException(s"Unexpected status code: statusCode"))
     } }
   }
 
   /** Get pet photo */
-  def getPetPhoto(
+  override def getPetPhoto(
     /** The pet ID */
     petId: String
   ): IO[Void]
 
   /** List all pets */
-  def listPets(
+  override def listPets(
     /** Maximum number of pets to return */
     limit: Option[Int],
     /** Filter by status */
@@ -73,7 +73,7 @@ trait PetsApiClient extends PetsApi {
   ): IO[List[Pet]]
 
   /** Upload a pet photo */
-  def uploadPetPhoto(
+  override def uploadPetPhoto(
     /** The pet ID */
     petId: String,
     /** Optional caption for the photo */

@@ -38,10 +38,30 @@ object addPackageAndImports {
     }
 
     // Filter out scala.* imports for Kotlin - they're not valid in Kotlin
+    // Also filter out Java boxed types that map to Kotlin built-ins (Integer -> Int, etc.)
     def filterImports(imports: scala.collection.mutable.Map[jvm.Ident, jvm.Type.Qualified]): List[jvm.Type.Qualified] =
       language match {
-        case LangKotlin => imports.values.filter(!_.dotName.startsWith("scala.")).toList.sorted
-        case _          => imports.values.toList.sorted
+        case LangKotlin =>
+          // These Java types get mapped to Kotlin built-ins in renderTree, so they shouldn't be imported
+          val javaToKotlinBuiltins = Set(
+            "java.lang.String",
+            "java.lang.Integer",
+            "java.lang.Long",
+            "java.lang.Short",
+            "java.lang.Byte",
+            "java.lang.Float",
+            "java.lang.Double",
+            "java.lang.Boolean",
+            "java.lang.Character",
+            "java.lang.Object",
+            "java.lang.Throwable" // kotlin.Throwable is auto-imported and maps to java.lang.Throwable
+          )
+          imports.values
+            .filter(!_.dotName.startsWith("scala."))
+            .filter(t => !javaToKotlinBuiltins.contains(t.dotName))
+            .toList
+            .sorted
+        case _ => imports.values.toList.sorted
       }
 
     val renderedImports = filterImports(newImports).map { i =>
@@ -82,6 +102,7 @@ object addPackageAndImports {
         )
       case jvm.ConstructorMethodRef(tpe) => jvm.ConstructorMethodRef(shortenNamesType(tpe, typeImport))
       case jvm.ClassOf(tpe)              => jvm.ClassOf(shortenNamesType(tpe, typeImport))
+      case jvm.JavaClassOf(tpe)          => jvm.JavaClassOf(shortenNamesType(tpe, typeImport))
       case adt: jvm.Adt                  => shortenNamesAdt(adt, typeImport, staticImport)
       case cls: jvm.Class                => shortenNamesClass(cls, typeImport, staticImport)
       case jvm.Call(target, argGroups) =>
@@ -134,6 +155,12 @@ object addPackageAndImports {
       case jvm.Lambda(params, body) =>
         val newParams = params.map(p => jvm.LambdaParam(p.name, p.tpe.map(shortenNamesType(_, typeImport))))
         jvm.Lambda(newParams, shortenNamesBody(body, typeImport, staticImport))
+      case jvm.SamLambda(samType, lambda) =>
+        val newSamType = shortenNamesType(samType, typeImport)
+        val newLambda = shortenNames(lambda, typeImport, staticImport).asInstanceOf[jvm.Lambda]
+        jvm.SamLambda(newSamType, newLambda)
+      case jvm.Cast(targetType, expr) =>
+        jvm.Cast(shortenNamesType(targetType, typeImport), expr.mapTrees(t => shortenNames(t, typeImport, staticImport)))
       case jvm.ByName(body)                 => jvm.ByName(shortenNamesBody(body, typeImport, staticImport))
       case jvm.FieldGetterRef(rowType, fld) => jvm.FieldGetterRef(shortenNamesType(rowType, typeImport), fld)
       case jvm.SelfNullary(name)            => jvm.SelfNullary(name)
@@ -176,14 +203,17 @@ object addPackageAndImports {
           },
           elseCase.mapTrees(t => shortenNames(t, typeImport, staticImport))
         )
-      case jvm.Annotation(tpe, args) =>
+      case jvm.Annotation(tpe, args, useTarget) =>
         jvm.Annotation(
           typeImport(tpe),
           args.map {
             case jvm.Annotation.Arg.Named(name, value) => jvm.Annotation.Arg.Named(name, value.mapTrees(t => shortenNames(t, typeImport, staticImport)))
             case jvm.Annotation.Arg.Positional(value)  => jvm.Annotation.Arg.Positional(value.mapTrees(t => shortenNames(t, typeImport, staticImport)))
-          }
+          },
+          useTarget
         )
+      case jvm.AnnotationArray(elements) =>
+        jvm.AnnotationArray(elements.map(_.mapTrees(t => shortenNames(t, typeImport, staticImport))))
     }
 
   def shortenNamesParam(param: jvm.Param[jvm.Type], typeImport: jvm.Type.Qualified => jvm.Type.Qualified, staticImport: jvm.Type.Qualified => jvm.Type.Qualified): jvm.Param[jvm.Type] =
@@ -241,6 +271,7 @@ object addPackageAndImports {
   def shortenNamesAdtRecord(x: jvm.Adt.Record, typeImport: jvm.Type.Qualified => jvm.Type.Qualified, staticImport: jvm.Type.Qualified => jvm.Type.Qualified): jvm.Adt.Record =
     jvm.Adt.Record(
       annotations = x.annotations.map(shortenNamesAnnotation(_, typeImport, staticImport)),
+      constructorAnnotations = x.constructorAnnotations.map(shortenNamesAnnotation(_, typeImport, staticImport)),
       isWrapper = x.isWrapper,
       comments = x.comments,
       name = x.name,

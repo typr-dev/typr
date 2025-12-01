@@ -343,17 +343,20 @@ object ApiExtractor {
   private def extractCallbacks(operation: Operation): List[Callback] = {
     val callbacks = Option(operation.getCallbacks).map(_.asScala.toMap).getOrElse(Map.empty)
 
-    callbacks.flatMap { case (callbackName, callback) =>
-      // A Callback extends LinkedHashMap<String, PathItem> where keys are runtime expressions
-      callback.asScala.map { case (expression, pathItem) =>
-        val methods = extractPathMethods(expression, pathItem)
-        Callback(
-          name = sanitizeClassName(callbackName),
-          expression = expression,
-          methods = methods
-        )
+    callbacks
+      .flatMap { case (callbackName, callback) =>
+        // A Callback extends LinkedHashMap<String, PathItem> where keys are runtime expressions
+        callback.asScala.map { case (expression, pathItem) =>
+          val methods = extractPathMethods(expression, pathItem)
+          Callback(
+            name = sanitizeClassName(callbackName),
+            expression = expression,
+            methods = methods
+          )
+        }
       }
-    }.toList.sortBy(_.name)
+      .toList
+      .sortBy(_.name)
   }
 
   private def extractSecurity(operation: Operation): List[SecurityRequirement] = {

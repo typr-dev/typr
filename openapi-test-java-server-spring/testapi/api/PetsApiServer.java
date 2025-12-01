@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import java.lang.IllegalStateException;
 import java.lang.Void;
 import java.util.List;
 import java.util.Optional;
@@ -35,13 +36,14 @@ import testapi.model.PetCreate;
 @SecurityScheme(name = "oauth2", type = SecuritySchemeType.OAUTH2)
 public sealed interface PetsApiServer extends PetsApi {
   /** Create a pet */
+  @Override
   CreatePetResponse createPet(PetCreate body);
 
-  @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  /** Endpoint wrapper for createPet - handles response status codes */
+  @PostMapping(value = { "/" }, consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
   @SecurityRequirement(name = "oauth2", scopes = { "write:pets" })
   @SecurityRequirement(name = "apiKeyHeader")
-  /** Endpoint wrapper for createPet - handles response status codes */
-  default ResponseEntity createPetEndpoint(@RequestBody PetCreate body) {
+  default ResponseEntity<?> createPetEndpoint(@RequestBody PetCreate body) {
     return switch (createPet(body)) {
       case Status201 r -> ResponseEntity.ok(r.value());
       case Status400 r -> ResponseEntity.status(400).body(r.value());
@@ -50,15 +52,16 @@ public sealed interface PetsApiServer extends PetsApi {
   };
 
   /** Delete a pet */
+  @Override
   DeletePetResponse deletePet(
   
     /** The pet ID */
     String petId
   );
 
-  @DeleteMapping(value = "/{petId}")
   /** Endpoint wrapper for deletePet - handles response status codes */
-  default ResponseEntity deletePetEndpoint(
+  @DeleteMapping(value = { "/{petId}" })
+  default ResponseEntity<?> deletePetEndpoint(
   
     /** The pet ID */
     @PathVariable("petId") String petId
@@ -71,15 +74,16 @@ public sealed interface PetsApiServer extends PetsApi {
   };
 
   /** Get a pet by ID */
+  @Override
   GetPetResponse getPet(
   
     /** The pet ID */
     String petId
   );
 
-  @GetMapping(value = "/{petId}", produces = MediaType.APPLICATION_JSON_VALUE)
   /** Endpoint wrapper for getPet - handles response status codes */
-  default ResponseEntity getPetEndpoint(
+  @GetMapping(value = { "/{petId}" }, produces = { MediaType.APPLICATION_JSON_VALUE })
+  default ResponseEntity<?> getPetEndpoint(
   
     /** The pet ID */
     @PathVariable("petId") String petId
@@ -91,16 +95,18 @@ public sealed interface PetsApiServer extends PetsApi {
     };
   };
 
-  @GetMapping(value = "/{petId}/photo", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
   /** Get pet photo */
+  @Override
+  @GetMapping(value = { "/{petId}/photo" }, produces = { MediaType.APPLICATION_OCTET_STREAM_VALUE })
   Void getPetPhoto(
   
     /** The pet ID */
     @PathVariable("petId") String petId
   );
 
-  @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
   /** List all pets */
+  @Override
+  @GetMapping(value = { "/" }, produces = { MediaType.APPLICATION_JSON_VALUE })
   List<Pet> listPets(
     /** Maximum number of pets to return */
     @RequestParam(name = "limit", required = false, defaultValue = "20") Optional<Integer> limit,
@@ -108,8 +114,9 @@ public sealed interface PetsApiServer extends PetsApi {
     @RequestParam(name = "status", required = false, defaultValue = "available") Optional<String> status
   );
 
-  @PostMapping(value = "/{petId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   /** Upload a pet photo */
+  @Override
+  @PostMapping(value = { "/{petId}/photo" }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
   JsonNode uploadPetPhoto(
     /** The pet ID */
     @PathVariable("petId") String petId,

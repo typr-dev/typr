@@ -80,6 +80,7 @@ case class FileDefault(default: ComputedDefault, jsonLibs: List[JsonLib], dbLib:
       subtypes = List(
         jvm.Adt.Record(
           annotations = Nil,
+          constructorAnnotations = Nil,
           isWrapper = false,
           comments = jvm.Comments.Empty,
           name = jvm.Type.Qualified(default.Provided),
@@ -97,6 +98,7 @@ case class FileDefault(default: ComputedDefault, jsonLibs: List[JsonLib], dbLib:
         ),
         jvm.Adt.Record(
           annotations = Nil,
+          constructorAnnotations = Nil,
           isWrapper = false,
           comments = jvm.Comments.Empty,
           name = jvm.Type.Qualified(default.UseDefault),

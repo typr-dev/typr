@@ -17,6 +17,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.lang.IllegalStateException;
 import java.lang.Void;
 import java.util.List;
 import java.util.Optional;
@@ -36,33 +37,35 @@ import testapi.model.PetCreate;
 @SecurityScheme(name = "oauth2", type = SecuritySchemeType.OAUTH2)
 public sealed interface PetsApiServer extends PetsApi {
   /** Create a pet */
+  @Override
   Uni<CreatePetResponse> createPet(PetCreate body);
 
+  /** Endpoint wrapper for createPet - handles response status codes */
   @POST
   @Path("/")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @SecurityRequirement(name = "oauth2", scopes = { "write:pets" })
   @SecurityRequirement(name = "apiKeyHeader")
-  /** Endpoint wrapper for createPet - handles response status codes */
   default Uni<Response> createPetEndpoint(PetCreate body) {
     return createPet(body).map((CreatePetResponse response) -> switch (response) {
       case Status201 r -> Response.ok(r.value()).build();
       case Status400 r -> Response.status(400).entity(r.value()).build();
-      default -> throw new IllegalStateException("Unexpected response type: " + response.getClass());
+      default -> throw new IllegalStateException("Unexpected response type");
     });
   };
 
   /** Delete a pet */
+  @Override
   Uni<DeletePetResponse> deletePet(
   
     /** The pet ID */
     String petId
   );
 
+  /** Endpoint wrapper for deletePet - handles response status codes */
   @DELETE
   @Path("/{petId}")
-  /** Endpoint wrapper for deletePet - handles response status codes */
   default Uni<Response> deletePetEndpoint(
   
     /** The pet ID */
@@ -71,21 +74,22 @@ public sealed interface PetsApiServer extends PetsApi {
     return deletePet(petId).map((DeletePetResponse response) -> switch (response) {
       case Status404 r -> Response.status(404).entity(r.value()).build();
       case StatusDefault r -> Response.status(r.statusCode()).entity(r.value()).build();
-      default -> throw new IllegalStateException("Unexpected response type: " + response.getClass());
+      default -> throw new IllegalStateException("Unexpected response type");
     });
   };
 
   /** Get a pet by ID */
+  @Override
   Uni<GetPetResponse> getPet(
   
     /** The pet ID */
     String petId
   );
 
+  /** Endpoint wrapper for getPet - handles response status codes */
   @GET
   @Path("/{petId}")
   @Produces(MediaType.APPLICATION_JSON)
-  /** Endpoint wrapper for getPet - handles response status codes */
   default Uni<Response> getPetEndpoint(
   
     /** The pet ID */
@@ -94,24 +98,26 @@ public sealed interface PetsApiServer extends PetsApi {
     return getPet(petId).map((GetPetResponse response) -> switch (response) {
       case Status200 r -> Response.ok(r.value()).build();
       case testapi.api.GetPetResponse.Status404 r -> Response.status(404).entity(r.value()).build();
-      default -> throw new IllegalStateException("Unexpected response type: " + response.getClass());
+      default -> throw new IllegalStateException("Unexpected response type");
     });
   };
 
+  /** Get pet photo */
+  @Override
   @GET
   @Path("/{petId}/photo")
   @Produces(MediaType.APPLICATION_OCTET_STREAM)
-  /** Get pet photo */
   Uni<Void> getPetPhoto(
   
     /** The pet ID */
     @PathParam("petId") String petId
   );
 
+  /** List all pets */
+  @Override
   @GET
   @Path("/")
   @Produces(MediaType.APPLICATION_JSON)
-  /** List all pets */
   Uni<List<Pet>> listPets(
     /** Maximum number of pets to return */
     @QueryParam("limit") @DefaultValue("20") Optional<Integer> limit,
@@ -119,11 +125,12 @@ public sealed interface PetsApiServer extends PetsApi {
     @QueryParam("status") @DefaultValue("available") Optional<String> status
   );
 
+  /** Upload a pet photo */
+  @Override
   @POST
   @Path("/{petId}/photo")
   @Consumes(MediaType.MULTIPART_FORM_DATA)
   @Produces(MediaType.APPLICATION_JSON)
-  /** Upload a pet photo */
   Uni<JsonNode> uploadPetPhoto(
     /** The pet ID */
     @PathParam("petId") String petId,

@@ -76,6 +76,13 @@ case object LangJava extends Lang {
           case other                          => other
         }
         code"${stripTypeParams(tpe)}.class"
+      case jvm.JavaClassOf(tpe) =>
+        // Same as ClassOf for Java
+        def stripTypeParams(t: jvm.Type): jvm.Type = t match {
+          case jvm.Type.TApply(underlying, _) => stripTypeParams(underlying)
+          case other                          => other
+        }
+        code"${stripTypeParams(tpe)}.class"
       case jvm.Call(target, argGroups) =>
         val allArgs = argGroups.flatMap(_.args)
         code"$target(${allArgs.map(_.value).mkCode(", ")})"
@@ -111,6 +118,12 @@ case object LangJava extends Lang {
           case _                                      => code"(${params.map(p => p.tpe.fold(code"${p.name}")(t => code"$t ${p.name}")).mkCode(", ")})"
         }
         code"$paramsCode -> ${renderBody(body)}"
+      case jvm.SamLambda(_, lambda) =>
+        // Java: SAM conversion is automatic, just render the lambda
+        renderTree(lambda, ctx)
+      case jvm.Cast(targetType, expr) =>
+        // Java cast: (Type) expr
+        code"(($targetType) $expr)"
       case jvm.ByName(body) =>
         // Java: by-name becomes Supplier/Runnable
         code"() -> ${renderBody(body)}"
@@ -276,7 +289,6 @@ case object LangJava extends Lang {
             // TryCatch has internal returns, so don't add outer return
             val bodyCode =
               if (tpe == jvm.Type.Void) code"$expr;"
-              else if (isTryCatch(one)) code"$one"
               else code"return $expr;"
             signature ++ code"""| {
                   |  $bodyCode
@@ -494,6 +506,10 @@ case object LangJava extends Lang {
           }
         ).flatten.mkCode("")
       case ann: jvm.Annotation => renderAnnotation(ann)
+
+      // Annotation array: Java uses { a, b }
+      case jvm.AnnotationArray(elements) =>
+        code"{ ${elements.mkCode(", ")} }"
 
       // Anonymous class: new Interface() { members }
       case jvm.NewWithBody(tpe, members) =>

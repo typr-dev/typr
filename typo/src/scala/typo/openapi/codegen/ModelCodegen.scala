@@ -57,6 +57,7 @@ class ModelCodegen(
 
     val record = jvm.Adt.Record(
       annotations = jsonLib.modelAnnotations,
+      constructorAnnotations = Nil,
       isWrapper = false,
       comments = comments,
       name = tpe,
@@ -110,6 +111,7 @@ class ModelCodegen(
 
     val record = jvm.Adt.Record(
       annotations = jsonLib.wrapperAnnotations(tpe),
+      constructorAnnotations = jsonLib.constructorAnnotations,
       isWrapper = true,
       comments = comments,
       name = tpe,
@@ -143,6 +145,7 @@ class ModelCodegen(
 
     val record = jvm.Adt.Record(
       annotations = Nil,
+      constructorAnnotations = Nil,
       isWrapper = true,
       comments = comments,
       name = tpe,
@@ -175,7 +178,9 @@ class ModelCodegen(
         implicitParams = Nil,
         tpe = propType,
         throws = Nil,
-        body = Nil
+        body = jvm.Body.Abstract,
+        isOverride = false,
+        isDefault = false
       )
     }
 
@@ -189,7 +194,9 @@ class ModelCodegen(
       implicitParams = Nil,
       tpe = Types.String,
       throws = Nil,
-      body = Nil
+      body = jvm.Body.Abstract,
+      isOverride = false,
+      isDefault = false
     )
 
     val sumAdt = jvm.Adt.Sum(

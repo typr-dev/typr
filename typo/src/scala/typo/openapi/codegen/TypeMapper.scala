@@ -73,6 +73,8 @@ object Types {
   val ByteArray = jvm.Type.ArrayOf(jvm.Type.Qualified("java.lang.Byte"))
   val JsonNode = jvm.Type.Qualified("com.fasterxml.jackson.databind.JsonNode")
   val Void = jvm.Type.Qualified("java.lang.Void")
+  val Throwable = jvm.Type.Qualified("java.lang.Throwable")
+  val IllegalStateException = jvm.Type.Qualified("java.lang.IllegalStateException")
 
   // Jackson annotations
   object Jackson {
@@ -81,6 +83,7 @@ object Types {
     val JsonCreator = jvm.Type.Qualified("com.fasterxml.jackson.annotation.JsonCreator")
     val JsonTypeInfo = jvm.Type.Qualified("com.fasterxml.jackson.annotation.JsonTypeInfo")
     val JsonSubTypes = jvm.Type.Qualified("com.fasterxml.jackson.annotation.JsonSubTypes")
+    val JsonSubTypesType = jvm.Type.Qualified("com.fasterxml.jackson.annotation.JsonSubTypes.Type")
     val JsonDeserialize = jvm.Type.Qualified("com.fasterxml.jackson.databind.annotation.JsonDeserialize")
     val JsonSerialize = jvm.Type.Qualified("com.fasterxml.jackson.databind.annotation.JsonSerialize")
   }
@@ -98,6 +101,15 @@ object Types {
     val DecimalMax = jvm.Type.Qualified("jakarta.validation.constraints.DecimalMax")
     val Email = jvm.Type.Qualified("jakarta.validation.constraints.Email")
     val Valid = jvm.Type.Qualified("jakarta.validation.Valid")
+  }
+
+  // Java standard library types
+  object Java {
+    val Optional = jvm.Type.Qualified("java.util.Optional")
+    val Integer = jvm.Type.Qualified("java.lang.Integer")
+    val Long = jvm.Type.Qualified("java.lang.Long")
+    def Function(inputType: jvm.Type, outputType: jvm.Type): jvm.Type =
+      jvm.Type.TApply(jvm.Type.Qualified("java.util.function.Function"), List(inputType, outputType))
   }
 
   // JAX-RS annotations (Jakarta EE / javax.ws.rs)
@@ -119,6 +131,7 @@ object Types {
     val Produces = jvm.Type.Qualified("jakarta.ws.rs.Produces")
     val MediaType = jvm.Type.Qualified("jakarta.ws.rs.core.MediaType")
     val Response = jvm.Type.Qualified("jakarta.ws.rs.core.Response")
+    val GenericType = jvm.Type.Qualified("jakarta.ws.rs.core.GenericType")
     val WebApplicationException = jvm.Type.Qualified("jakarta.ws.rs.WebApplicationException")
   }
 
@@ -187,6 +200,7 @@ object Types {
     val EntityDecoder = jvm.Type.Qualified("org.http4s.EntityDecoder")
     val EntityEncoder = jvm.Type.Qualified("org.http4s.EntityEncoder")
     val UnexpectedStatus = jvm.Type.Qualified("org.http4s.client.UnexpectedStatus")
+    val CIString = jvm.Type.Qualified("org.typelevel.ci.CIString")
   }
 
   // Cats Effect types

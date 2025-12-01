@@ -90,6 +90,7 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
       case jvm.NotNull(expr)              => expr // Scala doesn't need not-null assertions
       case jvm.ConstructorMethodRef(tpe)  => code"$tpe.apply"
       case jvm.ClassOf(tpe)               => code"classOf[$tpe]"
+      case jvm.JavaClassOf(tpe)           => code"classOf[$tpe]" // Same as ClassOf for Scala
       case jvm.Call(target, argGroups) =>
         val renderedGroups = argGroups.map { group =>
           val argsStr = group.args.map(_.value).mkCode(", ")
@@ -182,6 +183,12 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
           case _                                      => code"(${params.map(p => p.tpe.fold(code"${p.name}")(t => code"${p.name}: $t")).mkCode(", ")}) => "
         }
         code"$paramsCode${renderBody(body)}"
+      case jvm.SamLambda(_, lambda) =>
+        // Scala: SAM conversion is automatic, just render the lambda
+        renderTree(lambda, ctx)
+      case jvm.Cast(targetType, expr) =>
+        // Scala cast: expr.asInstanceOf[Type]
+        code"$expr.asInstanceOf[$targetType]"
       case jvm.ByName(body)                          => renderBody(body) // Scala: by-name is just the body expression
       case jvm.FieldGetterRef(_, field)              => code"_.$field" // Scala uses underscore syntax
       case jvm.SelfNullary(name)                     => name.code // Scala: just the identifier (nullary methods don't need parens)
@@ -440,6 +447,10 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
           }
         ).flatten.mkCode("")
       case ann: jvm.Annotation => renderAnnotation(ann)
+
+      // Annotation array: Scala uses Array(a, b)
+      case jvm.AnnotationArray(elements) =>
+        code"Array(${elements.mkCode(", ")})"
 
       // Anonymous class: new Trait { members }
       case jvm.NewWithBody(tpe, members) =>

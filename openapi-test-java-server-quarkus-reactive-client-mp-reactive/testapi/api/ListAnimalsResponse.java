@@ -2,6 +2,7 @@ package testapi.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.util.List;
 import testapi.api.ListAnimalsResponse.Status200;
@@ -11,7 +12,7 @@ import testapi.model.Animal;
 import testapi.model.Error;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "status")
-@JsonSubTypes({ @JsonSubTypes.Type(value = Status200.class, name = "200"), @JsonSubTypes.Type(value = Status4XX.class, name = "4XX"), @JsonSubTypes.Type(value = Status5XX.class, name = "5XX") })
+@JsonSubTypes(value = { @Type(value = Status200.class, name = "200"), @Type(value = Status4XX.class, name = "4XX"), @Type(value = Status5XX.class, name = "5XX") })
 public sealed interface ListAnimalsResponse {
   /** A list of animals */
   record Status200(@JsonProperty("value") List<Animal> value) implements ListAnimalsResponse {

@@ -9,6 +9,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.lang.IllegalStateException;
 import testapi.api.ListAnimalsResponse.Status200;
 import testapi.api.ListAnimalsResponse.Status4XX;
 import testapi.api.ListAnimalsResponse.Status5XX;
@@ -20,18 +21,19 @@ import testapi.api.ListAnimalsResponse.Status5XX;
 @SecurityScheme(name = "oauth2", type = SecuritySchemeType.OAUTH2)
 public sealed interface AnimalsApiServer extends AnimalsApi {
   /** List all animals (polymorphic) */
+  @Override
   Uni<ListAnimalsResponse> listAnimals();
 
+  /** Endpoint wrapper for listAnimals - handles response status codes */
   @GET
   @Path("/")
   @Produces(MediaType.APPLICATION_JSON)
-  /** Endpoint wrapper for listAnimals - handles response status codes */
   default Uni<Response> listAnimalsEndpoint() {
     return listAnimals().map((ListAnimalsResponse response) -> switch (response) {
       case Status200 r -> Response.ok(r.value()).build();
       case Status4XX r -> Response.status(r.statusCode()).entity(r.value()).build();
       case Status5XX r -> Response.status(r.statusCode()).entity(r.value()).build();
-      default -> throw new IllegalStateException("Unexpected response type: " + response.getClass());
+      default -> throw new IllegalStateException("Unexpected response type");
     });
   };
 }

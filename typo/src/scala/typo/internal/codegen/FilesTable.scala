@@ -84,6 +84,7 @@ case class FilesTable(lang: Lang, table: ComputedTable, fkAnalysis: FkAnalysis, 
 
       val cls = jvm.Adt.Record(
         annotations = typeAnnotations,
+        constructorAnnotations = Nil,
         isWrapper = false,
         comments = comments,
         name = unsaved.tpe,
@@ -161,6 +162,7 @@ case class FilesTable(lang: Lang, table: ComputedTable, fkAnalysis: FkAnalysis, 
             id.tpe,
             jvm.Adt.Record(
               annotations = typeAnnotations,
+              constructorAnnotations = Nil,
               isWrapper = true,
               comments = comments,
               name = id.tpe,
@@ -287,6 +289,7 @@ case class FilesTable(lang: Lang, table: ComputedTable, fkAnalysis: FkAnalysis, 
             id.tpe,
             jvm.Adt.Record(
               annotations = typeAnnotations,
+              constructorAnnotations = Nil,
               isWrapper = false,
               comments = scaladoc(List(s"Type for the composite primary key of table `${table.dbTable.name.value}`")),
               name = tpe,

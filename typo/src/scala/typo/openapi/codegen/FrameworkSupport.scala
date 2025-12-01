@@ -32,7 +32,7 @@ trait FrameworkSupport {
   def formFieldAnnotations(field: FormField): List[jvm.Annotation]
 
   /** The response type to use for endpoint wrapper methods (e.g., jakarta.ws.rs.core.Response, ResponseEntity) */
-  def responseType: jvm.Type.Qualified
+  def responseType: jvm.Type
 
   /** Build a success response with status code 200 */
   def buildOkResponse(value: jvm.Code): jvm.Code
@@ -47,6 +47,9 @@ trait FrameworkSupport {
 
   /** Read entity from response with the given type */
   def readEntity(response: jvm.Code, entityType: jvm.Type): jvm.Code
+
+  /** Get a response header as a string (returns nullable/Optional) */
+  def getHeaderString(response: jvm.Code, headerName: String): jvm.Code
 
   /** The exception type thrown when HTTP request fails (e.g., WebApplicationException) */
   def clientExceptionType: jvm.Type.Qualified
@@ -76,7 +79,10 @@ object NoFrameworkSupport extends FrameworkSupport {
   override def buildOkResponse(value: jvm.Code): jvm.Code = code"${Types.JaxRs.Response}.ok($value).build()"
   override def buildStatusResponse(statusCode: jvm.Code, value: jvm.Code): jvm.Code = code"${Types.JaxRs.Response}.status($statusCode).entity($value).build()"
   override def getStatusCode(response: jvm.Code): jvm.Code = code"$response.getStatus()"
-  override def readEntity(response: jvm.Code, entityType: jvm.Type): jvm.Code = code"$response.readEntity($entityType.class)"
+  // For generic types (e.g., List<Animal>), use GenericType to preserve type params at runtime
+  // For simple types, use JavaClassOf for cross-language .class syntax
+  override def readEntity(response: jvm.Code, entityType: jvm.Type): jvm.Code = JaxRsSupport.readEntity(response, entityType)
+  override def getHeaderString(response: jvm.Code, headerName: String): jvm.Code = JaxRsSupport.getHeaderString(response, headerName)
   override def clientExceptionType: jvm.Type.Qualified = Types.JaxRs.WebApplicationException
   override def getResponseFromException(exception: jvm.Code): jvm.Code = code"$exception.getResponse()"
 }
@@ -164,8 +170,9 @@ object JaxRsSupport extends FrameworkSupport {
         val args = List.newBuilder[jvm.Annotation.Arg]
         args += jvm.Annotation.Arg.Named(jvm.Ident("name"), jvm.StrLit(req.schemeName).code)
         if (req.scopes.nonEmpty) {
-          val scopesCode = code"{ ${jvm.Code.Combined(req.scopes.map(s => jvm.StrLit(s).code).flatMap(c => List(c, code", ")).dropRight(1))} }"
-          args += jvm.Annotation.Arg.Named(jvm.Ident("scopes"), scopesCode)
+          // Use AnnotationArray for proper rendering in both Java ({}) and Kotlin ([])
+          val scopesArray = jvm.AnnotationArray(req.scopes.map(s => jvm.StrLit(s).code))
+          args += jvm.Annotation.Arg.Named(jvm.Ident("scopes"), scopesArray.code)
         }
         jvm.Annotation(Types.OpenApiAnnotations.SecurityRequirement, args.result())
       }
@@ -279,7 +286,22 @@ object JaxRsSupport extends FrameworkSupport {
   override def buildOkResponse(value: jvm.Code): jvm.Code = code"${Types.JaxRs.Response}.ok($value).build()"
   override def buildStatusResponse(statusCode: jvm.Code, value: jvm.Code): jvm.Code = code"${Types.JaxRs.Response}.status($statusCode).entity($value).build()"
   override def getStatusCode(response: jvm.Code): jvm.Code = code"$response.getStatus()"
-  override def readEntity(response: jvm.Code, entityType: jvm.Type): jvm.Code = code"$response.readEntity($entityType.class)"
+  // For generic types (e.g., List<Animal>), use GenericType to preserve type params at runtime
+  // For simple types, use JavaClassOf for cross-language .class syntax
+  override def readEntity(response: jvm.Code, entityType: jvm.Type): jvm.Code = entityType match {
+    case jvm.Type.TApply(_, _) =>
+      // Generic type: use GenericType anonymous class to preserve type parameters
+      // Java: new GenericType<List<Animal>>() {}
+      // Kotlin: object : GenericType<List<Animal>>() {}
+      val genericTypeTpe = jvm.Type.TApply(Types.JaxRs.GenericType, List(entityType))
+      val genericTypeExpr = jvm.NewWithBody(genericTypeTpe, Nil).code
+      code"$response.readEntity($genericTypeExpr)"
+    case _ =>
+      val classLiteral = jvm.JavaClassOf(entityType).code
+      code"$response.readEntity($classLiteral)"
+  }
+  override def getHeaderString(response: jvm.Code, headerName: String): jvm.Code =
+    code"$response.getHeaderString(${jvm.StrLit(headerName).code})"
   override def clientExceptionType: jvm.Type.Qualified = Types.JaxRs.WebApplicationException
   override def getResponseFromException(exception: jvm.Code): jvm.Code = code"$exception.getResponse()"
 }
@@ -383,17 +405,20 @@ object SpringBootSupport extends FrameworkSupport {
 
     val args = List.newBuilder[jvm.Annotation.Arg]
 
-    // Path (using "value" for the path)
-    args += jvm.Annotation.Arg.Named(jvm.Ident("value"), jvm.StrLit(path).code)
+    // Path (using "value" for the path) - Spring expects an array type
+    val valueArray = jvm.AnnotationArray(List(jvm.StrLit(path).code))
+    args += jvm.Annotation.Arg.Named(jvm.Ident("value"), valueArray.code)
 
-    // Consumes
+    // Consumes - Spring expects an array type
     requestBody.foreach { body =>
-      args += jvm.Annotation.Arg.Named(jvm.Ident("consumes"), springMediaTypeConstant(body.contentType))
+      val consumesArray = jvm.AnnotationArray(List(springMediaTypeConstant(body.contentType)))
+      args += jvm.Annotation.Arg.Named(jvm.Ident("consumes"), consumesArray.code)
     }
 
-    // Produces
+    // Produces - Spring expects an array type
     responseContentType.foreach { contentType =>
-      args += jvm.Annotation.Arg.Named(jvm.Ident("produces"), springMediaTypeConstant(contentType))
+      val producesArray = jvm.AnnotationArray(List(springMediaTypeConstant(contentType)))
+      args += jvm.Annotation.Arg.Named(jvm.Ident("produces"), producesArray.code)
     }
 
     jvm.Annotation(mappingType, args.result())
@@ -411,12 +436,15 @@ object SpringBootSupport extends FrameworkSupport {
     }
   }
 
-  override def responseType: jvm.Type.Qualified = Types.Spring.ResponseEntity
+  override def responseType: jvm.Type = jvm.Type.TApply(Types.Spring.ResponseEntity, List(jvm.Type.Wildcard))
   override def buildOkResponse(value: jvm.Code): jvm.Code = code"${Types.Spring.ResponseEntity}.ok($value)"
   override def buildStatusResponse(statusCode: jvm.Code, value: jvm.Code): jvm.Code = code"${Types.Spring.ResponseEntity}.status($statusCode).body($value)"
   // For Spring, use HttpStatusCodeException (RestTemplate) - getStatusCode() returns HttpStatusCode
   override def getStatusCode(response: jvm.Code): jvm.Code = code"$response.getStatusCode().value()"
   override def readEntity(response: jvm.Code, entityType: jvm.Type): jvm.Code = code"$response.getBody()"
+  // For client exceptions, headers are in getResponseHeaders()
+  override def getHeaderString(response: jvm.Code, headerName: String): jvm.Code =
+    code"$response.getResponseHeaders().getFirst(${jvm.StrLit(headerName).code})"
   override def clientExceptionType: jvm.Type.Qualified = Types.Spring.HttpStatusCodeException
   override def getResponseFromException(exception: jvm.Code): jvm.Code = code"$exception" // Exception itself has the response data
 }
@@ -451,6 +479,7 @@ object QuarkusReactiveServerSupport extends FrameworkSupport {
   override def buildStatusResponse(statusCode: jvm.Code, value: jvm.Code): jvm.Code = JaxRsSupport.buildStatusResponse(statusCode, value)
   override def getStatusCode(response: jvm.Code): jvm.Code = JaxRsSupport.getStatusCode(response)
   override def readEntity(response: jvm.Code, entityType: jvm.Type): jvm.Code = JaxRsSupport.readEntity(response, entityType)
+  override def getHeaderString(response: jvm.Code, headerName: String): jvm.Code = JaxRsSupport.getHeaderString(response, headerName)
   override def clientExceptionType: jvm.Type.Qualified = JaxRsSupport.clientExceptionType
   override def getResponseFromException(exception: jvm.Code): jvm.Code = JaxRsSupport.getResponseFromException(exception)
 }
@@ -500,6 +529,7 @@ object MicroProfileRestClientSupport extends FrameworkSupport {
   override def buildStatusResponse(statusCode: jvm.Code, value: jvm.Code): jvm.Code = JaxRsSupport.buildStatusResponse(statusCode, value)
   override def getStatusCode(response: jvm.Code): jvm.Code = JaxRsSupport.getStatusCode(response)
   override def readEntity(response: jvm.Code, entityType: jvm.Type): jvm.Code = JaxRsSupport.readEntity(response, entityType)
+  override def getHeaderString(response: jvm.Code, headerName: String): jvm.Code = JaxRsSupport.getHeaderString(response, headerName)
   override def clientExceptionType: jvm.Type.Qualified = JaxRsSupport.clientExceptionType
   override def getResponseFromException(exception: jvm.Code): jvm.Code = JaxRsSupport.getResponseFromException(exception)
 }
@@ -545,6 +575,10 @@ object Http4sSupport extends FrameworkSupport {
 
   // UnexpectedStatus contains the response
   override def getResponseFromException(exception: jvm.Code): jvm.Code = code"$exception.response"
+
+  // HTTP4s headers are accessed via Headers API - returns Option[Header.Raw].map(_.value)
+  override def getHeaderString(response: jvm.Code, headerName: String): jvm.Code =
+    code"$response.headers.get(${Types.Http4s.CIString}(${jvm.StrLit(headerName).code})).map(_.head.value).orNull"
 
   // HTTP4s/Cats Effect: entity reading is async (returns IO[T])
   override def isAsyncEntityRead: Boolean = true

@@ -15,6 +15,8 @@ import jakarta.ws.rs.core.Response
 import java.lang.IllegalStateException
 import java.lang.Void
 import java.util.Optional
+import java.util.UUID
+import java.util.function.Function
 import kotlin.collections.List
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient
 import testapi.api.CreatePetResponse.Status201
@@ -30,11 +32,9 @@ import testapi.model.PetCreate
 @Path("/pets")
 sealed interface PetsApiClient : PetsApi {
   /** Create a pet - handles response status codes */
-  override fun createPet(body: PetCreate): Uni<CreatePetResponse> = createPetRaw(body).map({ response: Response -> if (response.getStatus() == 201) { Status201(response.readEntity(Pet::class.java)) }
+  override fun createPet(body: PetCreate): Uni<CreatePetResponse> = createPetRaw(body).onFailure(WebApplicationException::class.java).recoverWithItem(object : Function<Throwable, Response> { override fun apply(e: Throwable): Response = (e as WebApplicationException).getResponse() }).map({ response: Response -> if (response.getStatus() == 201) { Status201(response.readEntity(Pet::class.java)) }
   else if (response.getStatus() == 400) { Status400(response.readEntity(Error::class.java)) }
-  else { throw IllegalStateException("Unexpected status code: " + response.getStatus()) } }).onFailure(WebApplicationException::class.java).recoverWithItem({ e: WebApplicationException -> if (e.getResponse().getStatus() == 201) { Status201(e.getResponse().readEntity(Pet::class.java)) }
-  else if (e.getResponse().getStatus() == 400) { Status400(e.getResponse().readEntity(Error::class.java)) }
-  else { throw IllegalStateException("Unexpected status code: " + e.getResponse().getStatus()) } })
+  else { throw IllegalStateException("Unexpected status code: " + response.getStatus()) } })
 
   /** Create a pet */
   @POST
@@ -49,9 +49,8 @@ sealed interface PetsApiClient : PetsApi {
   override fun deletePet(
     /** The pet ID */
     petId: String
-  ): Uni<DeletePetResponse> = deletePetRaw(petId).map({ response: Response -> if (response.getStatus() == 404) { Status404(response.readEntity(Error::class.java)) }
-  else { StatusDefault(response.getStatus(), response.readEntity(Error::class.java)) } }).onFailure(WebApplicationException::class.java).recoverWithItem({ e: WebApplicationException -> if (e.getResponse().getStatus() == 404) { Status404(e.getResponse().readEntity(Error::class.java)) }
-  else { StatusDefault(e.getResponse().getStatus(), e.getResponse().readEntity(Error::class.java)) } })
+  ): Uni<DeletePetResponse> = deletePetRaw(petId).onFailure(WebApplicationException::class.java).recoverWithItem(object : Function<Throwable, Response> { override fun apply(e: Throwable): Response = (e as WebApplicationException).getResponse() }).map({ response: Response -> if (response.getStatus() == 404) { Status404(response.readEntity(Error::class.java)) }
+  else { StatusDefault(response.getStatus(), response.readEntity(Error::class.java)) } })
 
   /** Delete a pet */
   @DELETE
@@ -65,11 +64,9 @@ sealed interface PetsApiClient : PetsApi {
   override fun getPet(
     /** The pet ID */
     petId: String
-  ): Uni<GetPetResponse> = getPetRaw(petId).map({ response: Response -> if (response.getStatus() == 200) { Status200(response.readEntity(Pet::class.java)) }
-  else if (response.getStatus() == 404) { testapi.api.GetPetResponse.Status404(response.readEntity(Error::class.java)) }
-  else { throw IllegalStateException("Unexpected status code: " + response.getStatus()) } }).onFailure(WebApplicationException::class.java).recoverWithItem({ e: WebApplicationException -> if (e.getResponse().getStatus() == 200) { Status200(e.getResponse().readEntity(Pet::class.java)) }
-  else if (e.getResponse().getStatus() == 404) { testapi.api.GetPetResponse.Status404(e.getResponse().readEntity(Error::class.java)) }
-  else { throw IllegalStateException("Unexpected status code: " + e.getResponse().getStatus()) } })
+  ): Uni<GetPetResponse> = getPetRaw(petId).onFailure(WebApplicationException::class.java).recoverWithItem(object : Function<Throwable, Response> { override fun apply(e: Throwable): Response = (e as WebApplicationException).getResponse() }).map({ response: Response -> if (response.getStatus() == 200) { Status200(response.readEntity(Pet::class.java), Optional.ofNullable(response.getHeaderString("X-Cache-Status")), UUID.fromString(response.getHeaderString("X-Request-Id"))) }
+  else if (response.getStatus() == 404) { testapi.api.GetPetResponse.Status404(response.readEntity(Error::class.java), UUID.fromString(response.getHeaderString("X-Request-Id"))) }
+  else { throw IllegalStateException("Unexpected status code: " + response.getStatus()) } })
 
   /** Get pet photo */
   @GET

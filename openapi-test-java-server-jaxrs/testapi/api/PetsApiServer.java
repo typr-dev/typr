@@ -16,6 +16,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.lang.IllegalStateException;
 import java.lang.Void;
 import java.util.List;
 import java.util.Optional;
@@ -35,15 +36,16 @@ import testapi.model.PetCreate;
 @SecurityScheme(name = "oauth2", type = SecuritySchemeType.OAUTH2)
 public sealed interface PetsApiServer extends PetsApi {
   /** Create a pet */
+  @Override
   CreatePetResponse createPet(PetCreate body);
 
+  /** Endpoint wrapper for createPet - handles response status codes */
   @POST
   @Path("/")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @SecurityRequirement(name = "oauth2", scopes = { "write:pets" })
   @SecurityRequirement(name = "apiKeyHeader")
-  /** Endpoint wrapper for createPet - handles response status codes */
   default Response createPetEndpoint(PetCreate body) {
     return switch (createPet(body)) {
       case Status201 r -> Response.ok(r.value()).build();
@@ -53,15 +55,16 @@ public sealed interface PetsApiServer extends PetsApi {
   };
 
   /** Delete a pet */
+  @Override
   DeletePetResponse deletePet(
   
     /** The pet ID */
     String petId
   );
 
+  /** Endpoint wrapper for deletePet - handles response status codes */
   @DELETE
   @Path("/{petId}")
-  /** Endpoint wrapper for deletePet - handles response status codes */
   default Response deletePetEndpoint(
   
     /** The pet ID */
@@ -75,16 +78,17 @@ public sealed interface PetsApiServer extends PetsApi {
   };
 
   /** Get a pet by ID */
+  @Override
   GetPetResponse getPet(
   
     /** The pet ID */
     String petId
   );
 
+  /** Endpoint wrapper for getPet - handles response status codes */
   @GET
   @Path("/{petId}")
   @Produces(MediaType.APPLICATION_JSON)
-  /** Endpoint wrapper for getPet - handles response status codes */
   default Response getPetEndpoint(
   
     /** The pet ID */
@@ -97,20 +101,22 @@ public sealed interface PetsApiServer extends PetsApi {
     };
   };
 
+  /** Get pet photo */
+  @Override
   @GET
   @Path("/{petId}/photo")
   @Produces(MediaType.APPLICATION_OCTET_STREAM)
-  /** Get pet photo */
   Void getPetPhoto(
   
     /** The pet ID */
     @PathParam("petId") String petId
   );
 
+  /** List all pets */
+  @Override
   @GET
   @Path("/")
   @Produces(MediaType.APPLICATION_JSON)
-  /** List all pets */
   List<Pet> listPets(
     /** Maximum number of pets to return */
     @QueryParam("limit") @DefaultValue("20") Optional<Integer> limit,
@@ -118,11 +124,12 @@ public sealed interface PetsApiServer extends PetsApi {
     @QueryParam("status") @DefaultValue("available") Optional<String> status
   );
 
+  /** Upload a pet photo */
+  @Override
   @POST
   @Path("/{petId}/photo")
   @Consumes(MediaType.MULTIPART_FORM_DATA)
   @Produces(MediaType.APPLICATION_JSON)
-  /** Upload a pet photo */
   JsonNode uploadPetPhoto(
     /** The pet ID */
     @PathParam("petId") String petId,

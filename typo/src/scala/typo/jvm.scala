@@ -63,6 +63,9 @@ object jvm {
   case class ConstructorMethodRef(tpe: Type) extends Tree
   case class ClassOf(tpe: Type) extends Tree
 
+  /** Java Class literal - for Kotlin renders as `tpe::class.java`, for Java/Scala renders same as ClassOf */
+  case class JavaClassOf(tpe: Type) extends Tree
+
   /** Not-null assertion: Kotlin renders as `expr!!`, other languages ignore */
   case class NotNull(expr: Code) extends Tree
 
@@ -70,7 +73,9 @@ object jvm {
 
   case class Annotation(
       tpe: Type.Qualified,
-      args: List[Annotation.Arg] = Nil
+      args: List[Annotation.Arg] = Nil,
+      /** Use-site target for Kotlin: @get:, @field:, @param: etc. None for other languages. */
+      useTarget: Option[Annotation.UseTarget] = None
   ) extends Tree
 
   object Annotation {
@@ -79,7 +84,24 @@ object jvm {
       case class Named(name: Ident, value: Code) extends Arg
       case class Positional(value: Code) extends Arg
     }
+
+    /** Use-site targets for Kotlin annotations on data class parameters */
+    sealed abstract class UseTarget(val name: String)
+    object UseTarget {
+      case object Get extends UseTarget("get")
+      case object Set extends UseTarget("set")
+      case object Field extends UseTarget("field")
+      case object Param extends UseTarget("param")
+      case object SetParam extends UseTarget("setparam")
+      case object Delegate extends UseTarget("delegate")
+      case object File extends UseTarget("file")
+      case object Property extends UseTarget("property")
+      case object Receiver extends UseTarget("receiver")
+    }
   }
+
+  /** Annotation array literal: Java `{ a, b }`, Kotlin `[ a, b ]` */
+  case class AnnotationArray(elements: List[Code]) extends Tree
 
   // we use this to abstract over calling static methods for java, and real string interplators for scala.
   // the nice thing is that it makes generating code a bit easier
@@ -215,6 +237,15 @@ object jvm {
     def apply(p1: String, p2: String, expr: Code): Lambda = Lambda(List(LambdaParam(p1), LambdaParam(p2)), Body.Expr(expr))
   }
 
+  /** SAM-typed lambda for explicit SAM conversion. Needed in Kotlin when SAM type can't be inferred. Java: just renders as lambda (automatic SAM conversion) Kotlin: `TypeName { params -> body }`
+    * (explicit SAM conversion) Scala: just renders as lambda (automatic SAM conversion)
+    */
+  case class SamLambda(samType: Type, lambda: Lambda) extends Tree
+
+  /** Type cast expression. Java: `(Type) expr` Kotlin: `expr as Type` Scala: `expr.asInstanceOf[Type]`
+    */
+  case class Cast(targetType: Type, expr: Code) extends Tree
+
   /** By-name argument for method calls. Scala: `body` (by-name parameter), Java: `() -> body` (Supplier/Runnable) */
   case class ByName(body: Body) extends Tree
 
@@ -283,6 +314,7 @@ object jvm {
 
     case class Record(
         annotations: List[Annotation],
+        constructorAnnotations: List[Annotation],
         isWrapper: Boolean,
         comments: Comments,
         name: Type.Qualified,

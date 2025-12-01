@@ -16,7 +16,7 @@ object ListAnimalsResponse {
   /** Client error (any 4xx status) */
   case class Status4XX(
     /** HTTP status code to return */
-    statusCode: Integer,
+    statusCode: Int,
     value: Error
   ) extends ListAnimalsResponse {
     override lazy val status: String = "4XX"
@@ -25,7 +25,7 @@ object ListAnimalsResponse {
   /** Server error (any 5xx status) */
   case class Status5XX(
     /** HTTP status code to return */
-    statusCode: Integer,
+    statusCode: Int,
     value: Error
   ) extends ListAnimalsResponse {
     override lazy val status: String = "5XX"

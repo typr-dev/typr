@@ -11,6 +11,7 @@ object FileTestInserts {
 
     val cls = jvm.Adt.Record(
       annotations = Nil,
+      constructorAnnotations = Nil,
       isWrapper = false,
       comments = scaladoc(List(s"Methods to generate random data for `${x.tpe.name}`")),
       name = x.tpe,

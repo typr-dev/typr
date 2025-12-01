@@ -150,6 +150,7 @@ case class FilesRelation(
         names.RowName,
         jvm.Adt.Record(
           annotations = typeAnnotations,
+          constructorAnnotations = Nil,
           isWrapper = false,
           comments = classComment,
           name = names.RowName,
@@ -180,6 +181,7 @@ case class FilesRelation(
       val colRecords = cols.toList.map { col =>
         jvm.Adt.Record(
           annotations = Nil,
+          constructorAnnotations = Nil,
           isWrapper = false,
           comments = jvm.Comments.Empty,
           name = jvm.Type.Qualified(col.name),
@@ -767,6 +769,7 @@ case class FilesRelation(
 
     val cls = jvm.Adt.Record(
       annotations = Nil,
+      constructorAnnotations = Nil,
       isWrapper = false,
       comments = jvm.Comments.Empty,
       name = names.RepoMockName,

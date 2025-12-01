@@ -5,7 +5,7 @@ import org.http4s.Response
 
 trait AnimalsApiServer extends AnimalsApi {
   /** List all animals (polymorphic) */
-  def listAnimals: IO[ListAnimalsResponse]
+  override def listAnimals: IO[ListAnimalsResponse]
 
   /** Endpoint wrapper for listAnimals - handles response status codes */
   def listAnimalsEndpoint: IO[Response] = {
@@ -13,7 +13,6 @@ trait AnimalsApiServer extends AnimalsApi {
       case r: testapi.api.ListAnimalsResponse.Status200 => org.http4s.Response.apply(org.http4s.Status.Ok).withEntity(r.value)
       case r: testapi.api.ListAnimalsResponse.Status4XX => org.http4s.Response.apply(org.http4s.Status.fromInt(r.statusCode).getOrElse(org.http4s.Status.InternalServerError)).withEntity(r.value)
       case r: testapi.api.ListAnimalsResponse.Status5XX => org.http4s.Response.apply(org.http4s.Status.fromInt(r.statusCode).getOrElse(org.http4s.Status.InternalServerError)).withEntity(r.value)
-      case _ => throw new IllegalStateException("Unexpected response type: " + response.getClass())
     })
   }
 }

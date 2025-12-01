@@ -3,6 +3,7 @@ package testapi.api;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import java.lang.IllegalStateException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,11 +21,12 @@ import testapi.api.ListAnimalsResponse.Status5XX;
 @SecurityScheme(name = "oauth2", type = SecuritySchemeType.OAUTH2)
 public sealed interface AnimalsApiServer extends AnimalsApi {
   /** List all animals (polymorphic) */
+  @Override
   ListAnimalsResponse listAnimals();
 
-  @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
   /** Endpoint wrapper for listAnimals - handles response status codes */
-  default ResponseEntity listAnimalsEndpoint() {
+  @GetMapping(value = { "/" }, produces = { MediaType.APPLICATION_JSON_VALUE })
+  default ResponseEntity<?> listAnimalsEndpoint() {
     return switch (listAnimals()) {
       case Status200 r -> ResponseEntity.ok(r.value());
       case Status4XX r -> ResponseEntity.status(r.statusCode()).body(r.value());

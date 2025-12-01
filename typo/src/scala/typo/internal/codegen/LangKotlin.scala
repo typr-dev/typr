@@ -282,6 +282,31 @@ case object LangKotlin extends Lang {
           case _                                      => code"${params.map(p => p.tpe.fold(code"${p.name}")(t => code"${p.name}: $t")).mkCode(", ")} -> "
         }
         code"{ $paramsCode${renderBody(body)} }"
+      case jvm.SamLambda(samType, lambda) =>
+        // Kotlin SAM conversion can be unreliable with Java SAM interfaces due to overload resolution.
+        // Use anonymous object implementation instead for better compatibility.
+        // object : FunctionType { override fun apply(param): ReturnType = body }
+        // Type may be shortened (e.g., java.util.function.Function -> Function), so check the simple name
+        val (methodName, returnType) = samType match {
+          case jvm.Type.TApply(jvm.Type.Qualified(base), _ :: ret :: Nil) if base.name.value == "Function" =>
+            ("apply", ret)
+          case jvm.Type.TApply(jvm.Type.Qualified(base), ret :: Nil) if base.name.value == "Supplier" =>
+            ("get", ret)
+          case _ =>
+            // Fallback to SAM conversion syntax for unknown types
+            val baseType = samType match {
+              case jvm.Type.TApply(underlying, _) => underlying
+              case other                          => other
+            }
+            val lambdaCode = renderTree(lambda, ctx)
+            return code"$baseType $lambdaCode"
+        }
+        val params = lambda.params.map(p => code"${p.name}: ${p.tpe.getOrElse(sys.error("SamLambda param must have type"))}").mkCode(", ")
+        val bodyCode = renderBody(lambda.body)
+        code"object : $samType { override fun $methodName($params): $returnType = $bodyCode }"
+      case jvm.Cast(targetType, expr) =>
+        // Kotlin cast: expr as Type
+        code"($expr as $targetType)"
       case jvm.FieldGetterRef(rowType, field)              => code"$rowType::$field"
       case jvm.Param(_, cs, name, tpe, _)                  => code"${renderComments(cs).getOrElse(jvm.Code.Empty)}$name: $tpe"
       case jvm.QIdent(value)                               => value.map(i => renderTree(i, ctx)).mkCode(".")

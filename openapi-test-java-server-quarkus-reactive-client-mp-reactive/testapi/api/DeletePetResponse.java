@@ -2,13 +2,14 @@ package testapi.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import testapi.api.DeletePetResponse.Status404;
 import testapi.api.DeletePetResponse.StatusDefault;
 import testapi.model.Error;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "status")
-@JsonSubTypes({ @JsonSubTypes.Type(value = Status404.class, name = "404"), @JsonSubTypes.Type(value = StatusDefault.class, name = "default") })
+@JsonSubTypes(value = { @Type(value = Status404.class, name = "404"), @Type(value = StatusDefault.class, name = "default") })
 public sealed interface DeletePetResponse {
   /** Pet not found */
   record Status404(@JsonProperty("value") Error value) implements DeletePetResponse {

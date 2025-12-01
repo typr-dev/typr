@@ -15,7 +15,7 @@ object DeletePetResponse {
   /** Unexpected error */
   case class StatusDefault(
     /** HTTP status code to return */
-    statusCode: Integer,
+    statusCode: Int,
     value: Error
   ) extends DeletePetResponse {
     override lazy val status: String = "default"
