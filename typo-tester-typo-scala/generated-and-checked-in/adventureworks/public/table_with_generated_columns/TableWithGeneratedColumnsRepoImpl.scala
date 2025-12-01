@@ -18,11 +18,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class TableWithGeneratedColumnsRepoImpl extends TableWithGeneratedColumnsRepo {
-  def delete: DeleteBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = DeleteBuilder.of("public.table-with-generated-columns", TableWithGeneratedColumnsFields.structure)
+  override def delete: DeleteBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = DeleteBuilder.of("public.table-with-generated-columns", TableWithGeneratedColumnsFields.structure)
 
-  def deleteById(name: TableWithGeneratedColumnsId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."table-with-generated-columns" where "name" = ${TableWithGeneratedColumnsId.pgType.encode(name)}""".update().runUnchecked(c) > 0
+  override def deleteById(name: TableWithGeneratedColumnsId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."table-with-generated-columns" where "name" = ${TableWithGeneratedColumnsId.pgType.encode(name)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(names: Array[TableWithGeneratedColumnsId])(using c: Connection): Integer = {
+  override def deleteByIds(names: Array[TableWithGeneratedColumnsId])(using c: Connection): Integer = {
     interpolate"""delete
     from "public"."table-with-generated-columns"
     where "name" = ANY(${TableWithGeneratedColumnsId.pgTypeArray.encode(names)})"""
@@ -30,7 +30,7 @@ class TableWithGeneratedColumnsRepoImpl extends TableWithGeneratedColumnsRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: TableWithGeneratedColumnsRow)(using c: Connection): TableWithGeneratedColumnsRow = {
+  override def insert(unsaved: TableWithGeneratedColumnsRow)(using c: Connection): TableWithGeneratedColumnsRow = {
   interpolate"""insert into "public"."table-with-generated-columns"("name")
     values (${TableWithGeneratedColumnsId.pgType.encode(unsaved.name)})
     returning "name", "name-type-always"
@@ -38,9 +38,9 @@ class TableWithGeneratedColumnsRepoImpl extends TableWithGeneratedColumnsRepo {
     .updateReturning(TableWithGeneratedColumnsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: TableWithGeneratedColumnsRowUnsaved)(using c: Connection): TableWithGeneratedColumnsRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: TableWithGeneratedColumnsRowUnsaved)(using c: Connection): TableWithGeneratedColumnsRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
     values.add(interpolate"${TableWithGeneratedColumnsId.pgType.encode(unsaved.name)}"): @scala.annotation.nowarn
     val q: Fragment = {
@@ -49,49 +49,49 @@ class TableWithGeneratedColumnsRepoImpl extends TableWithGeneratedColumnsRepo {
       returning "name", "name-type-always"
       """
     }
-    q.updateReturning(TableWithGeneratedColumnsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(TableWithGeneratedColumnsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[TableWithGeneratedColumnsRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."table-with-generated-columns"("name") FROM STDIN""", batchSize, unsaved, c, TableWithGeneratedColumnsRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[TableWithGeneratedColumnsRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."table-with-generated-columns"("name") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, TableWithGeneratedColumnsRowUnsaved.pgText)
 
-  def select: SelectBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = SelectBuilder.of("public.table-with-generated-columns", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow.`_rowParser`)
+  override def select: SelectBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = SelectBuilder.of("public.table-with-generated-columns", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[TableWithGeneratedColumnsRow] = {
+  override def selectAll(using c: Connection): java.util.List[TableWithGeneratedColumnsRow] = {
     interpolate"""select "name", "name-type-always"
     from "public"."table-with-generated-columns"
-    """.as(TableWithGeneratedColumnsRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(TableWithGeneratedColumnsRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(name: TableWithGeneratedColumnsId)(using c: Connection): Optional[TableWithGeneratedColumnsRow] = {
+  override def selectById(name: TableWithGeneratedColumnsId)(using c: Connection): Optional[TableWithGeneratedColumnsRow] = {
     interpolate"""select "name", "name-type-always"
     from "public"."table-with-generated-columns"
-    where "name" = ${TableWithGeneratedColumnsId.pgType.encode(name)}""".as(TableWithGeneratedColumnsRow.`_rowParser`.first()).runUnchecked(c)
+    where "name" = ${TableWithGeneratedColumnsId.pgType.encode(name)}""".query(TableWithGeneratedColumnsRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(names: Array[TableWithGeneratedColumnsId])(using c: Connection): java.util.List[TableWithGeneratedColumnsRow] = {
+  override def selectByIds(names: Array[TableWithGeneratedColumnsId])(using c: Connection): java.util.List[TableWithGeneratedColumnsRow] = {
     interpolate"""select "name", "name-type-always"
     from "public"."table-with-generated-columns"
-    where "name" = ANY(${TableWithGeneratedColumnsId.pgTypeArray.encode(names)})""".as(TableWithGeneratedColumnsRow.`_rowParser`.all()).runUnchecked(c)
+    where "name" = ANY(${TableWithGeneratedColumnsId.pgTypeArray.encode(names)})""".query(TableWithGeneratedColumnsRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(names: Array[TableWithGeneratedColumnsId])(using c: Connection): java.util.Map[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow] = {
-    val ret: java.util.Map[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow] = new HashMap()
+  override def selectByIdsTracked(names: Array[TableWithGeneratedColumnsId])(using c: Connection): java.util.Map[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow] = {
+    val ret: HashMap[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow] = new HashMap[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow]()
     selectByIds(names)(using c).forEach(row => ret.put(row.name, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = UpdateBuilder.of("public.table-with-generated-columns", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow.`_rowParser`.all())
+  override def update: UpdateBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = UpdateBuilder.of("public.table-with-generated-columns", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow.`_rowParser`.all())
 
-  def upsert(unsaved: TableWithGeneratedColumnsRow)(using c: Connection): TableWithGeneratedColumnsRow = {
+  override def upsert(unsaved: TableWithGeneratedColumnsRow)(using c: Connection): TableWithGeneratedColumnsRow = {
   interpolate"""insert into "public"."table-with-generated-columns"("name")
     values (${TableWithGeneratedColumnsId.pgType.encode(unsaved.name)})
     on conflict ("name")
@@ -102,7 +102,7 @@ class TableWithGeneratedColumnsRepoImpl extends TableWithGeneratedColumnsRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[TableWithGeneratedColumnsRow])(using c: Connection): java.util.List[TableWithGeneratedColumnsRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[TableWithGeneratedColumnsRow])(using c: Connection): java.util.List[TableWithGeneratedColumnsRow] = {
     interpolate"""insert into "public"."table-with-generated-columns"("name")
     values (?)
     on conflict ("name")
@@ -114,13 +114,13 @@ class TableWithGeneratedColumnsRepoImpl extends TableWithGeneratedColumnsRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[TableWithGeneratedColumnsRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table table-with-generated-columns_TEMP (like "public"."table-with-generated-columns") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy table-with-generated-columns_TEMP("name") from stdin""", batchSize, unsaved, c, TableWithGeneratedColumnsRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "public"."table-with-generated-columns"("name")
+    return interpolate"""insert into "public"."table-with-generated-columns"("name")
     select * from table-with-generated-columns_TEMP
     on conflict ("name")
     do nothing

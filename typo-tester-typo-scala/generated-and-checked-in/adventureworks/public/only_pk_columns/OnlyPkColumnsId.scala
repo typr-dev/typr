@@ -5,10 +5,10 @@
  */
 package adventureworks.public.only_pk_columns
 
-
+import com.fasterxml.jackson.annotation.JsonProperty
 
 /** Type for the composite primary key of table `public.only_pk_columns` */
 case class OnlyPkColumnsId(
-  keyColumn1: String,
-  keyColumn2: Integer
+  @JsonProperty("key_column_1") keyColumn1: String,
+  @JsonProperty("key_column_2") keyColumn2: Integer
 )

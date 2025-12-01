@@ -40,15 +40,5 @@ case class AddresstypeRowUnsaved(
 }
 
 object AddresstypeRowUnsaved {
-  given pgText: PgText[AddresstypeRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      Name.pgType.pgText.unsafeEncode(row.name, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using AddresstypeId.pgType.pgText).unsafeEncode(row.addresstypeid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[AddresstypeRowUnsaved] = PgText.instance((row, sb) => { Name.pgType.pgText.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using AddresstypeId.pgType.pgText).unsafeEncode(row.addresstypeid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

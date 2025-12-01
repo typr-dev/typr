@@ -20,7 +20,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface FlaffFields {
-  static final class Impl extends Relation<FlaffFields, FlaffRow> {
+  final class Impl extends Relation<FlaffFields, FlaffRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -28,18 +28,23 @@ public interface FlaffFields {
     @Override
     public FlaffFields fields() {
       return new FlaffFields() {
+               @Override
                public IdField<ShortText, FlaffRow> code() {
                  return new IdField<ShortText, FlaffRow>(_path, "code", FlaffRow::code, Optional.empty(), Optional.of("text"), (row, value) -> row.withCode(value), ShortText.pgType);
                };
+               @Override
                public IdField</* max 20 chars */ String, FlaffRow> anotherCode() {
                  return new IdField</* max 20 chars */ String, FlaffRow>(_path, "another_code", FlaffRow::anotherCode, Optional.empty(), Optional.empty(), (row, value) -> row.withAnotherCode(value), PgTypes.text);
                };
+               @Override
                public IdField<Integer, FlaffRow> someNumber() {
                  return new IdField<Integer, FlaffRow>(_path, "some_number", FlaffRow::someNumber, Optional.empty(), Optional.of("int4"), (row, value) -> row.withSomeNumber(value), PgTypes.int4);
                };
+               @Override
                public IdField<ShortText, FlaffRow> specifier() {
                  return new IdField<ShortText, FlaffRow>(_path, "specifier", FlaffRow::specifier, Optional.empty(), Optional.of("text"), (row, value) -> row.withSpecifier(value), ShortText.pgType);
                };
+               @Override
                public OptField<ShortText, FlaffRow> parentspecifier() {
                  return new OptField<ShortText, FlaffRow>(_path, "parentspecifier", FlaffRow::parentspecifier, Optional.empty(), Optional.of("text"), (row, value) -> row.withParentspecifier(value), ShortText.pgType);
                };
@@ -51,6 +56,7 @@ public interface FlaffFields {
       return List.of(this.fields().code(), this.fields().anotherCode(), this.fields().someNumber(), this.fields().specifier(), this.fields().parentspecifier());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

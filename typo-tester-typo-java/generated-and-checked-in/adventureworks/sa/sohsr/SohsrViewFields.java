@@ -16,7 +16,7 @@ import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 
 public interface SohsrViewFields {
-  static final class Impl extends Relation<SohsrViewFields, SohsrViewRow> {
+  final class Impl extends Relation<SohsrViewFields, SohsrViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -24,12 +24,15 @@ public interface SohsrViewFields {
     @Override
     public SohsrViewFields fields() {
       return new SohsrViewFields() {
+               @Override
                public Field<SalesorderheaderId, SohsrViewRow> salesorderid() {
                  return new Field<SalesorderheaderId, SohsrViewRow>(_path, "salesorderid", SohsrViewRow::salesorderid, Optional.empty(), Optional.empty(), (row, value) -> row.withSalesorderid(value), SalesorderheaderId.pgType);
                };
+               @Override
                public Field<SalesreasonId, SohsrViewRow> salesreasonid() {
                  return new Field<SalesreasonId, SohsrViewRow>(_path, "salesreasonid", SohsrViewRow::salesreasonid, Optional.empty(), Optional.empty(), (row, value) -> row.withSalesreasonid(value), SalesreasonId.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, SohsrViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, SohsrViewRow>(_path, "modifieddate", SohsrViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -41,6 +44,7 @@ public interface SohsrViewFields {
       return List.of(this.fields().salesorderid(), this.fields().salesreasonid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

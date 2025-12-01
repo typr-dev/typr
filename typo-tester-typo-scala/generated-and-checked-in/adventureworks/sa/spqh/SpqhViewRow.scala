@@ -11,7 +11,6 @@ import adventureworks.person.businessentity.BusinessentityId
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple6
 
 /** View: sa.spqh */
 case class SpqhViewRow(
@@ -30,14 +29,5 @@ case class SpqhViewRow(
 )
 
 object SpqhViewRow {
-  val `_rowParser`: RowParser[SpqhViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, TypoLocalDateTime.pgType, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SpqhViewRow.apply, row => new Tuple6(
-      row.id,
-      row.businessentityid,
-      row.quotadate,
-      row.salesquota,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[SpqhViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, TypoLocalDateTime.pgType, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SpqhViewRow.apply, row => Array(row.id, row.businessentityid, row.quotadate, row.salesquota, row.rowguid, row.modifieddate))
 }

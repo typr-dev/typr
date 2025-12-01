@@ -25,13 +25,13 @@ case class TransactionhistoryarchiveRepoMock(
   toRow: TransactionhistoryarchiveRowUnsaved => TransactionhistoryarchiveRow,
   map: scala.collection.mutable.Map[TransactionhistoryarchiveId, TransactionhistoryarchiveRow] = scala.collection.mutable.Map.empty[TransactionhistoryarchiveId, TransactionhistoryarchiveRow]
 ) extends TransactionhistoryarchiveRepo {
-  def delete: DeleteBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = DeleteBuilderMock(DeleteParams.empty, TransactionhistoryarchiveFields.structure, map)
+  override def delete: DeleteBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = DeleteBuilderMock(DeleteParams.empty, TransactionhistoryarchiveFields.structure, map)
 
-  def deleteById(transactionid: TransactionhistoryarchiveId): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(transactionid).isDefined)
+  override def deleteById(transactionid: TransactionhistoryarchiveId): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(transactionid).isDefined)
 
-  def deleteByIds(transactionids: Array[TransactionhistoryarchiveId]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(transactionids.map(id => map.remove(id)).count(_.isDefined).toLong)
+  override def deleteByIds(transactionids: Array[TransactionhistoryarchiveId]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(transactionids.map(id => map.remove(id)).count(_.isDefined).toLong)
 
-  def insert(unsaved: TransactionhistoryarchiveRow): ZIO[ZConnection, Throwable, TransactionhistoryarchiveRow] = {
+  override def insert(unsaved: TransactionhistoryarchiveRow): ZIO[ZConnection, Throwable, TransactionhistoryarchiveRow] = {
   ZIO.succeed {
     val _ =
       if (map.contains(unsaved.transactionid))
@@ -43,9 +43,9 @@ case class TransactionhistoryarchiveRepoMock(
   }
   }
 
-  def insert(unsaved: TransactionhistoryarchiveRowUnsaved): ZIO[ZConnection, Throwable, TransactionhistoryarchiveRow] = insert(toRow(unsaved))
+  override def insert(unsaved: TransactionhistoryarchiveRowUnsaved): ZIO[ZConnection, Throwable, TransactionhistoryarchiveRow] = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, TransactionhistoryarchiveRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {
@@ -58,7 +58,7 @@ case class TransactionhistoryarchiveRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, TransactionhistoryarchiveRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {
@@ -71,24 +71,24 @@ case class TransactionhistoryarchiveRepoMock(
     }.runLast.map(_.getOrElse(0L))
   }
 
-  def select: SelectBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = SelectBuilderMock(TransactionhistoryarchiveFields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
+  override def select: SelectBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = SelectBuilderMock(TransactionhistoryarchiveFields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
 
-  def selectAll: ZStream[ZConnection, Throwable, TransactionhistoryarchiveRow] = ZStream.fromIterable(map.values)
+  override def selectAll: ZStream[ZConnection, Throwable, TransactionhistoryarchiveRow] = ZStream.fromIterable(map.values)
 
-  def selectById(transactionid: TransactionhistoryarchiveId): ZIO[ZConnection, Throwable, Option[TransactionhistoryarchiveRow]] = ZIO.succeed(map.get(transactionid))
+  override def selectById(transactionid: TransactionhistoryarchiveId): ZIO[ZConnection, Throwable, Option[TransactionhistoryarchiveRow]] = ZIO.succeed(map.get(transactionid))
 
-  def selectByIds(transactionids: Array[TransactionhistoryarchiveId]): ZStream[ZConnection, Throwable, TransactionhistoryarchiveRow] = ZStream.fromIterable(transactionids.flatMap(map.get))
+  override def selectByIds(transactionids: Array[TransactionhistoryarchiveId]): ZStream[ZConnection, Throwable, TransactionhistoryarchiveRow] = ZStream.fromIterable(transactionids.flatMap(map.get))
 
-  def selectByIdsTracked(transactionids: Array[TransactionhistoryarchiveId]): ZIO[ZConnection, Throwable, Map[TransactionhistoryarchiveId, TransactionhistoryarchiveRow]] = {
+  override def selectByIdsTracked(transactionids: Array[TransactionhistoryarchiveId]): ZIO[ZConnection, Throwable, Map[TransactionhistoryarchiveId, TransactionhistoryarchiveRow]] = {
     selectByIds(transactionids).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.transactionid, x)).toMap
       transactionids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = UpdateBuilderMock(UpdateParams.empty, TransactionhistoryarchiveFields.structure, map)
+  override def update: UpdateBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = UpdateBuilderMock(UpdateParams.empty, TransactionhistoryarchiveFields.structure, map)
 
-  def update(row: TransactionhistoryarchiveRow): ZIO[ZConnection, Throwable, Option[TransactionhistoryarchiveRow]] = {
+  override def update(row: TransactionhistoryarchiveRow): ZIO[ZConnection, Throwable, Option[TransactionhistoryarchiveRow]] = {
     ZIO.succeed {
       map.get(row.transactionid).map { _ =>
         map.put(row.transactionid, row): @nowarn
@@ -97,7 +97,7 @@ case class TransactionhistoryarchiveRepoMock(
     }
   }
 
-  def upsert(unsaved: TransactionhistoryarchiveRow): ZIO[ZConnection, Throwable, UpdateResult[TransactionhistoryarchiveRow]] = {
+  override def upsert(unsaved: TransactionhistoryarchiveRow): ZIO[ZConnection, Throwable, UpdateResult[TransactionhistoryarchiveRow]] = {
     ZIO.succeed {
       map.put(unsaved.transactionid, unsaved): @nowarn
       UpdateResult(1, Chunk.single(unsaved))
@@ -105,7 +105,7 @@ case class TransactionhistoryarchiveRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, TransactionhistoryarchiveRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

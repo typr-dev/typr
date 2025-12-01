@@ -10,11 +10,11 @@ import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class UmViewRepoImpl extends UmViewRepo {
-  def select: SelectBuilder[UmViewFields, UmViewRow] = SelectBuilder.of("pr.um", UmViewFields.structure, UmViewRow.`_rowParser`)
+  override def select: SelectBuilder[UmViewFields, UmViewRow] = SelectBuilder.of("pr.um", UmViewFields.structure, UmViewRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[UmViewRow] = {
+  override def selectAll(using c: Connection): java.util.List[UmViewRow] = {
     interpolate"""select "id", "unitmeasurecode", "name", "modifieddate"::text
     from "pr"."um"
-    """.as(UmViewRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(UmViewRow.`_rowParser`.all()).runUnchecked(c)
   }
 }

@@ -22,11 +22,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ShipmethodRepoImpl extends ShipmethodRepo {
-  def delete: DeleteBuilder[ShipmethodFields, ShipmethodRow] = DeleteBuilder.of("purchasing.shipmethod", ShipmethodFields.structure)
+  override def delete: DeleteBuilder[ShipmethodFields, ShipmethodRow] = DeleteBuilder.of("purchasing.shipmethod", ShipmethodFields.structure)
 
-  def deleteById(shipmethodid: ShipmethodId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "purchasing"."shipmethod" where "shipmethodid" = ${ShipmethodId.pgType.encode(shipmethodid)}""".update().runUnchecked(c) > 0
+  override def deleteById(shipmethodid: ShipmethodId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "purchasing"."shipmethod" where "shipmethodid" = ${ShipmethodId.pgType.encode(shipmethodid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(shipmethodids: Array[ShipmethodId])(using c: Connection): Integer = {
+  override def deleteByIds(shipmethodids: Array[ShipmethodId])(using c: Connection): Integer = {
     interpolate"""delete
     from "purchasing"."shipmethod"
     where "shipmethodid" = ANY(${ShipmethodId.pgTypeArray.encode(shipmethodids)})"""
@@ -34,7 +34,7 @@ class ShipmethodRepoImpl extends ShipmethodRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: ShipmethodRow)(using c: Connection): ShipmethodRow = {
+  override def insert(unsaved: ShipmethodRow)(using c: Connection): ShipmethodRow = {
   interpolate"""insert into "purchasing"."shipmethod"("shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate")
     values (${ShipmethodId.pgType.encode(unsaved.shipmethodid)}::int4, ${Name.pgType.encode(unsaved.name)}::varchar, ${PgTypes.numeric.encode(unsaved.shipbase)}::numeric, ${PgTypes.numeric.encode(unsaved.shiprate)}::numeric, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text
@@ -42,45 +42,30 @@ class ShipmethodRepoImpl extends ShipmethodRepo {
     .updateReturning(ShipmethodRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: ShipmethodRowUnsaved)(using c: Connection): ShipmethodRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: ShipmethodRowUnsaved)(using c: Connection): ShipmethodRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
     values.add(interpolate"${Name.pgType.encode(unsaved.name)}::varchar"): @scala.annotation.nowarn
     unsaved.shipmethodid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""shipmethodid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${ShipmethodId.pgType.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""shipmethodid"""")): @scala.annotation.nowarn; values.add(interpolate"${ShipmethodId.pgType.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.shipbase.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""shipbase"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""shipbase"""")): @scala.annotation.nowarn; values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn }
     );
     unsaved.shiprate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""shiprate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""shiprate"""")): @scala.annotation.nowarn; values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "purchasing"."shipmethod"(${Fragment.comma(columns)})
@@ -88,51 +73,51 @@ class ShipmethodRepoImpl extends ShipmethodRepo {
       returning "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text
       """
     }
-    q.updateReturning(ShipmethodRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(ShipmethodRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[ShipmethodRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "purchasing"."shipmethod"("shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, c, ShipmethodRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[ShipmethodRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "purchasing"."shipmethod"("name", "shipmethodid", "shipbase", "shiprate", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ShipmethodRowUnsaved.pgText)
 
-  def select: SelectBuilder[ShipmethodFields, ShipmethodRow] = SelectBuilder.of("purchasing.shipmethod", ShipmethodFields.structure, ShipmethodRow.`_rowParser`)
+  override def select: SelectBuilder[ShipmethodFields, ShipmethodRow] = SelectBuilder.of("purchasing.shipmethod", ShipmethodFields.structure, ShipmethodRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[ShipmethodRow] = {
+  override def selectAll(using c: Connection): java.util.List[ShipmethodRow] = {
     interpolate"""select "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text
     from "purchasing"."shipmethod"
-    """.as(ShipmethodRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(ShipmethodRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(shipmethodid: ShipmethodId)(using c: Connection): Optional[ShipmethodRow] = {
+  override def selectById(shipmethodid: ShipmethodId)(using c: Connection): Optional[ShipmethodRow] = {
     interpolate"""select "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text
     from "purchasing"."shipmethod"
-    where "shipmethodid" = ${ShipmethodId.pgType.encode(shipmethodid)}""".as(ShipmethodRow.`_rowParser`.first()).runUnchecked(c)
+    where "shipmethodid" = ${ShipmethodId.pgType.encode(shipmethodid)}""".query(ShipmethodRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(shipmethodids: Array[ShipmethodId])(using c: Connection): java.util.List[ShipmethodRow] = {
+  override def selectByIds(shipmethodids: Array[ShipmethodId])(using c: Connection): java.util.List[ShipmethodRow] = {
     interpolate"""select "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text
     from "purchasing"."shipmethod"
-    where "shipmethodid" = ANY(${ShipmethodId.pgTypeArray.encode(shipmethodids)})""".as(ShipmethodRow.`_rowParser`.all()).runUnchecked(c)
+    where "shipmethodid" = ANY(${ShipmethodId.pgTypeArray.encode(shipmethodids)})""".query(ShipmethodRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(shipmethodids: Array[ShipmethodId])(using c: Connection): java.util.Map[ShipmethodId, ShipmethodRow] = {
-    val ret: java.util.Map[ShipmethodId, ShipmethodRow] = new HashMap()
+  override def selectByIdsTracked(shipmethodids: Array[ShipmethodId])(using c: Connection): java.util.Map[ShipmethodId, ShipmethodRow] = {
+    val ret: HashMap[ShipmethodId, ShipmethodRow] = new HashMap[ShipmethodId, ShipmethodRow]()
     selectByIds(shipmethodids)(using c).forEach(row => ret.put(row.shipmethodid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[ShipmethodFields, ShipmethodRow] = UpdateBuilder.of("purchasing.shipmethod", ShipmethodFields.structure, ShipmethodRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ShipmethodFields, ShipmethodRow] = UpdateBuilder.of("purchasing.shipmethod", ShipmethodFields.structure, ShipmethodRow.`_rowParser`.all())
 
-  def update(row: ShipmethodRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: ShipmethodRow)(using c: Connection): java.lang.Boolean = {
     val shipmethodid: ShipmethodId = row.shipmethodid
-    interpolate"""update "purchasing"."shipmethod"
+    return interpolate"""update "purchasing"."shipmethod"
     set "name" = ${Name.pgType.encode(row.name)}::varchar,
     "shipbase" = ${PgTypes.numeric.encode(row.shipbase)}::numeric,
     "shiprate" = ${PgTypes.numeric.encode(row.shiprate)}::numeric,
@@ -141,7 +126,7 @@ class ShipmethodRepoImpl extends ShipmethodRepo {
     where "shipmethodid" = ${ShipmethodId.pgType.encode(shipmethodid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: ShipmethodRow)(using c: Connection): ShipmethodRow = {
+  override def upsert(unsaved: ShipmethodRow)(using c: Connection): ShipmethodRow = {
   interpolate"""insert into "purchasing"."shipmethod"("shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate")
     values (${ShipmethodId.pgType.encode(unsaved.shipmethodid)}::int4, ${Name.pgType.encode(unsaved.name)}::varchar, ${PgTypes.numeric.encode(unsaved.shipbase)}::numeric, ${PgTypes.numeric.encode(unsaved.shiprate)}::numeric, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("shipmethodid")
@@ -157,7 +142,7 @@ class ShipmethodRepoImpl extends ShipmethodRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[ShipmethodRow])(using c: Connection): java.util.List[ShipmethodRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[ShipmethodRow])(using c: Connection): java.util.List[ShipmethodRow] = {
     interpolate"""insert into "purchasing"."shipmethod"("shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate")
     values (?::int4, ?::varchar, ?::numeric, ?::numeric, ?::uuid, ?::timestamp)
     on conflict ("shipmethodid")
@@ -174,13 +159,13 @@ class ShipmethodRepoImpl extends ShipmethodRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[ShipmethodRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table shipmethod_TEMP (like "purchasing"."shipmethod") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy shipmethod_TEMP("shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, c, ShipmethodRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "purchasing"."shipmethod"("shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate")
+    return interpolate"""insert into "purchasing"."shipmethod"("shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate")
     select * from shipmethod_TEMP
     on conflict ("shipmethodid")
     do update set

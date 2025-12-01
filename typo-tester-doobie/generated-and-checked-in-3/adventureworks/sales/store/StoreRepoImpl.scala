@@ -19,28 +19,26 @@ import doobie.util.Write
 import doobie.util.fragment.Fragment
 import doobie.util.update.Update
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.DeleteBuilder
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class StoreRepoImpl extends StoreRepo {
-  def delete: DeleteBuilder[StoreFields, StoreRow] = DeleteBuilder.of(""""sales"."store"""", StoreFields.structure, StoreRow.read)
+  override def delete: DeleteBuilder[StoreFields, StoreRow] = DeleteBuilder.of(""""sales"."store"""", StoreFields.structure, StoreRow.read)
 
-  def deleteById(businessentityid: BusinessentityId): ConnectionIO[Boolean] = sql"""delete from "sales"."store" where "businessentityid" = ${fromWrite(businessentityid)(using new Write.Single(BusinessentityId.put))}""".update.run.map(_ > 0)
+  override def deleteById(businessentityid: BusinessentityId): ConnectionIO[Boolean] = sql"""delete from "sales"."store" where "businessentityid" = ${fromWrite(businessentityid)(using new Write.Single(BusinessentityId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(businessentityids: Array[BusinessentityId]): ConnectionIO[Int] = sql"""delete from "sales"."store" where "businessentityid" = ANY(${fromWrite(businessentityids)(using new Write.Single(BusinessentityId.arrayPut))})""".update.run
+  override def deleteByIds(businessentityids: Array[BusinessentityId]): ConnectionIO[Int] = sql"""delete from "sales"."store" where "businessentityid" = ANY(${fromWrite(businessentityids)(using new Write.Single(BusinessentityId.arrayPut))})""".update.run
 
-  def insert(unsaved: StoreRow): ConnectionIO[StoreRow] = {
+  override def insert(unsaved: StoreRow): ConnectionIO[StoreRow] = {
     sql"""insert into "sales"."store"("businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate")
     values (${fromWrite(unsaved.businessentityid)(using new Write.Single(BusinessentityId.put))}::int4, ${fromWrite(unsaved.name)(using new Write.Single(Name.put))}::varchar, ${fromWrite(unsaved.salespersonid)(using new Write.SingleOpt(BusinessentityId.put))}::int4, ${fromWrite(unsaved.demographics)(using new Write.SingleOpt(TypoXml.put))}::xml, ${fromWrite(unsaved.rowguid)(using new Write.Single(TypoUUID.put))}::uuid, ${fromWrite(unsaved.modifieddate)(using new Write.Single(TypoLocalDateTime.put))}::timestamp)
     returning "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"::text
     """.query(using StoreRow.read).unique
   }
 
-  def insert(unsaved: StoreRowUnsaved): ConnectionIO[StoreRow] = {
+  override def insert(unsaved: StoreRowUnsaved): ConnectionIO[StoreRow] = {
     val fs = List(
       Some((Fragment.const0(s""""businessentityid""""), fr"${fromWrite(unsaved.businessentityid)(using new Write.Single(BusinessentityId.put))}::int4")),
       Some((Fragment.const0(s""""name""""), fr"${fromWrite(unsaved.name)(using new Write.Single(Name.put))}::varchar")),
@@ -69,35 +67,35 @@ class StoreRepoImpl extends StoreRepo {
     q.query(using StoreRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, StoreRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "sales"."store"("businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate") FROM STDIN""").copyIn(unsaved, batchSize)(using StoreRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, StoreRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "sales"."store"("businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(using StoreRowUnsaved.pgText)
 
-  def select: SelectBuilder[StoreFields, StoreRow] = SelectBuilder.of(""""sales"."store"""", StoreFields.structure, StoreRow.read)
+  override def select: SelectBuilder[StoreFields, StoreRow] = SelectBuilder.of(""""sales"."store"""", StoreFields.structure, StoreRow.read)
 
-  def selectAll: Stream[ConnectionIO, StoreRow] = sql"""select "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"::text from "sales"."store"""".query(using StoreRow.read).stream
+  override def selectAll: Stream[ConnectionIO, StoreRow] = sql"""select "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"::text from "sales"."store"""".query(using StoreRow.read).stream
 
-  def selectById(businessentityid: BusinessentityId): ConnectionIO[Option[StoreRow]] = sql"""select "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"::text from "sales"."store" where "businessentityid" = ${fromWrite(businessentityid)(using new Write.Single(BusinessentityId.put))}""".query(using StoreRow.read).option
+  override def selectById(businessentityid: BusinessentityId): ConnectionIO[Option[StoreRow]] = sql"""select "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"::text from "sales"."store" where "businessentityid" = ${fromWrite(businessentityid)(using new Write.Single(BusinessentityId.put))}""".query(using StoreRow.read).option
 
-  def selectByIds(businessentityids: Array[BusinessentityId]): Stream[ConnectionIO, StoreRow] = sql"""select "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"::text from "sales"."store" where "businessentityid" = ANY(${fromWrite(businessentityids)(using new Write.Single(BusinessentityId.arrayPut))})""".query(using StoreRow.read).stream
+  override def selectByIds(businessentityids: Array[BusinessentityId]): Stream[ConnectionIO, StoreRow] = sql"""select "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"::text from "sales"."store" where "businessentityid" = ANY(${fromWrite(businessentityids)(using new Write.Single(BusinessentityId.arrayPut))})""".query(using StoreRow.read).stream
 
-  def selectByIdsTracked(businessentityids: Array[BusinessentityId]): ConnectionIO[Map[BusinessentityId, StoreRow]] = {
+  override def selectByIdsTracked(businessentityids: Array[BusinessentityId]): ConnectionIO[Map[BusinessentityId, StoreRow]] = {
     selectByIds(businessentityids).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.businessentityid, x)).toMap
       businessentityids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[StoreFields, StoreRow] = UpdateBuilder.of(""""sales"."store"""", StoreFields.structure, StoreRow.read)
+  override def update: UpdateBuilder[StoreFields, StoreRow] = UpdateBuilder.of(""""sales"."store"""", StoreFields.structure, StoreRow.read)
 
-  def update(row: StoreRow): ConnectionIO[Option[StoreRow]] = {
+  override def update(row: StoreRow): ConnectionIO[Option[StoreRow]] = {
     val businessentityid = row.businessentityid
     sql"""update "sales"."store"
     set "name" = ${fromWrite(row.name)(using new Write.Single(Name.put))}::varchar,
@@ -109,7 +107,7 @@ class StoreRepoImpl extends StoreRepo {
     returning "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"::text""".query(using StoreRow.read).option
   }
 
-  def upsert(unsaved: StoreRow): ConnectionIO[StoreRow] = {
+  override def upsert(unsaved: StoreRow): ConnectionIO[StoreRow] = {
     sql"""insert into "sales"."store"("businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate")
     values (
       ${fromWrite(unsaved.businessentityid)(using new Write.Single(BusinessentityId.put))}::int4,
@@ -130,7 +128,7 @@ class StoreRepoImpl extends StoreRepo {
     """.query(using StoreRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[StoreRow]): Stream[ConnectionIO, StoreRow] = {
+  override def upsertBatch(unsaved: List[StoreRow]): Stream[ConnectionIO, StoreRow] = {
     Update[StoreRow](
       s"""insert into "sales"."store"("businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate")
       values (?::int4,?::varchar,?::int4,?::xml,?::uuid,?::timestamp)
@@ -147,7 +145,7 @@ class StoreRepoImpl extends StoreRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, StoreRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

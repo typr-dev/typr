@@ -5,6 +5,7 @@
  */
 package adventureworks.public.title
 
+import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
@@ -22,7 +23,7 @@ import typo.dsl.UpdateBuilder.UpdateBuilderMock
 import typo.dsl.UpdateParams
 
 case class TitleRepoMock(map: HashMap[TitleId, TitleRow] = new HashMap[TitleId, TitleRow]()) extends TitleRepo {
-  def delete: DeleteBuilder[TitleFields, TitleRow] = {
+  override def delete: DeleteBuilder[TitleFields, TitleRow] = {
     new DeleteBuilderMock(
       TitleFields.structure,
       () => new ArrayList(map.values()),
@@ -32,25 +33,25 @@ case class TitleRepoMock(map: HashMap[TitleId, TitleRow] = new HashMap[TitleId, 
     )
   }
 
-  def deleteById(code: TitleId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(code)).isPresent()
+  override def deleteById(code: TitleId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(code)).isPresent()
 
-  def deleteByIds(codes: Array[TitleId])(using c: Connection): Integer = {
+  override def deleteByIds(codes: Array[TitleId])(using c: Connection): Integer = {
     var count = 0
     codes.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
-    count
+    return count
   }
 
-  def insert(unsaved: TitleRow)(using c: Connection): TitleRow = {
+  override def insert(unsaved: TitleRow)(using c: Connection): TitleRow = {
     if (map.containsKey(unsaved.code)) {
       throw new RuntimeException(s"id $unsaved.code already exists")
     }
     map.put(unsaved.code, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[TitleRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -60,25 +61,25 @@ case class TitleRepoMock(map: HashMap[TitleId, TitleRow] = new HashMap[TitleId, 
       map.put(row.code, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
-  def select: SelectBuilder[TitleFields, TitleRow] = new SelectBuilderMock(TitleFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
+  override def select: SelectBuilder[TitleFields, TitleRow] = new SelectBuilderMock(TitleFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  def selectAll(using c: Connection): java.util.List[TitleRow] = new ArrayList(map.values())
+  override def selectAll(using c: Connection): java.util.List[TitleRow] = new ArrayList(map.values())
 
-  def selectById(code: TitleId)(using c: Connection): Optional[TitleRow] = Optional.ofNullable(map.get(code))
+  override def selectById(code: TitleId)(using c: Connection): Optional[TitleRow] = Optional.ofNullable(map.get(code))
 
-  def selectByIds(codes: Array[TitleId])(using c: Connection): java.util.List[TitleRow] = {
+  override def selectByIds(codes: Array[TitleId])(using c: Connection): java.util.List[TitleRow] = {
     val result = new ArrayList[TitleRow]()
     codes.foreach { id => val opt = Optional.ofNullable(map.get(id))
     if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
-    result
+    return result
   }
 
-  def selectByIdsTracked(codes: Array[TitleId])(using c: Connection): java.util.Map[TitleId, TitleRow] = selectByIds(codes)(using c).stream().collect(Collectors.toMap((row: adventureworks.public.title.TitleRow) => row.code, Function.identity()))
+  override def selectByIdsTracked(codes: Array[TitleId])(using c: Connection): java.util.Map[TitleId, TitleRow] = selectByIds(codes)(using c).stream().collect(Collectors.toMap((row: TitleRow) => row.code, Function.identity()))
 
-  def update: UpdateBuilder[TitleFields, TitleRow] = {
+  override def update: UpdateBuilder[TitleFields, TitleRow] = {
     new UpdateBuilderMock(
       TitleFields.structure,
       () => new ArrayList(map.values()),
@@ -87,23 +88,23 @@ case class TitleRepoMock(map: HashMap[TitleId, TitleRow] = new HashMap[TitleId, 
     )
   }
 
-  def upsert(unsaved: TitleRow)(using c: Connection): TitleRow = {
+  override def upsert(unsaved: TitleRow)(using c: Connection): TitleRow = {
     map.put(unsaved.code, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[TitleRow])(using c: Connection): java.util.List[TitleRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[TitleRow])(using c: Connection): java.util.List[TitleRow] = {
     val result = new ArrayList[TitleRow]()
     while (unsaved.hasNext()) {
       val row = unsaved.next()
       map.put(row.code, row): @scala.annotation.nowarn
       result.add(row): @scala.annotation.nowarn
     }
-    result
+    return result
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[TitleRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
@@ -113,6 +114,6 @@ case class TitleRepoMock(map: HashMap[TitleId, TitleRow] = new HashMap[TitleId, 
       map.put(row.code, row): @scala.annotation.nowarn
       count = count + 1
     }
-    count
+    return count
   }
 }

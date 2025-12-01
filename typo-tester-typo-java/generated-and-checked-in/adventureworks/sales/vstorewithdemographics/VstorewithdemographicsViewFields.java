@@ -18,7 +18,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface VstorewithdemographicsViewFields {
-  static final class Impl extends Relation<VstorewithdemographicsViewFields, VstorewithdemographicsViewRow> {
+  final class Impl extends Relation<VstorewithdemographicsViewFields, VstorewithdemographicsViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -26,39 +26,51 @@ public interface VstorewithdemographicsViewFields {
     @Override
     public VstorewithdemographicsViewFields fields() {
       return new VstorewithdemographicsViewFields() {
+               @Override
                public Field<BusinessentityId, VstorewithdemographicsViewRow> businessentityid() {
                  return new Field<BusinessentityId, VstorewithdemographicsViewRow>(_path, "businessentityid", VstorewithdemographicsViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public Field<Name, VstorewithdemographicsViewRow> name() {
                  return new Field<Name, VstorewithdemographicsViewRow>(_path, "name", VstorewithdemographicsViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public OptField<TypoMoney, VstorewithdemographicsViewRow> annualSales() {
                  return new OptField<TypoMoney, VstorewithdemographicsViewRow>(_path, "AnnualSales", VstorewithdemographicsViewRow::annualSales, Optional.of("numeric"), Optional.empty(), (row, value) -> row.withAnnualSales(value), TypoMoney.pgType);
                };
+               @Override
                public OptField<TypoMoney, VstorewithdemographicsViewRow> annualRevenue() {
                  return new OptField<TypoMoney, VstorewithdemographicsViewRow>(_path, "AnnualRevenue", VstorewithdemographicsViewRow::annualRevenue, Optional.of("numeric"), Optional.empty(), (row, value) -> row.withAnnualRevenue(value), TypoMoney.pgType);
                };
+               @Override
                public OptField</* max 50 chars */ String, VstorewithdemographicsViewRow> bankName() {
                  return new OptField</* max 50 chars */ String, VstorewithdemographicsViewRow>(_path, "BankName", VstorewithdemographicsViewRow::bankName, Optional.empty(), Optional.empty(), (row, value) -> row.withBankName(value), PgTypes.text);
                };
+               @Override
                public OptField</* max 5 chars */ String, VstorewithdemographicsViewRow> businessType() {
                  return new OptField</* max 5 chars */ String, VstorewithdemographicsViewRow>(_path, "BusinessType", VstorewithdemographicsViewRow::businessType, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessType(value), PgTypes.text);
                };
+               @Override
                public OptField<Integer, VstorewithdemographicsViewRow> yearOpened() {
                  return new OptField<Integer, VstorewithdemographicsViewRow>(_path, "YearOpened", VstorewithdemographicsViewRow::yearOpened, Optional.empty(), Optional.empty(), (row, value) -> row.withYearOpened(value), PgTypes.int4);
                };
+               @Override
                public OptField</* max 50 chars */ String, VstorewithdemographicsViewRow> specialty() {
                  return new OptField</* max 50 chars */ String, VstorewithdemographicsViewRow>(_path, "Specialty", VstorewithdemographicsViewRow::specialty, Optional.empty(), Optional.empty(), (row, value) -> row.withSpecialty(value), PgTypes.text);
                };
+               @Override
                public OptField<Integer, VstorewithdemographicsViewRow> squareFeet() {
                  return new OptField<Integer, VstorewithdemographicsViewRow>(_path, "SquareFeet", VstorewithdemographicsViewRow::squareFeet, Optional.empty(), Optional.empty(), (row, value) -> row.withSquareFeet(value), PgTypes.int4);
                };
+               @Override
                public OptField</* max 30 chars */ String, VstorewithdemographicsViewRow> brands() {
                  return new OptField</* max 30 chars */ String, VstorewithdemographicsViewRow>(_path, "Brands", VstorewithdemographicsViewRow::brands, Optional.empty(), Optional.empty(), (row, value) -> row.withBrands(value), PgTypes.text);
                };
+               @Override
                public OptField</* max 30 chars */ String, VstorewithdemographicsViewRow> internet() {
                  return new OptField</* max 30 chars */ String, VstorewithdemographicsViewRow>(_path, "Internet", VstorewithdemographicsViewRow::internet, Optional.empty(), Optional.empty(), (row, value) -> row.withInternet(value), PgTypes.text);
                };
+               @Override
                public OptField<Integer, VstorewithdemographicsViewRow> numberEmployees() {
                  return new OptField<Integer, VstorewithdemographicsViewRow>(_path, "NumberEmployees", VstorewithdemographicsViewRow::numberEmployees, Optional.empty(), Optional.empty(), (row, value) -> row.withNumberEmployees(value), PgTypes.int4);
                };
@@ -70,6 +82,7 @@ public interface VstorewithdemographicsViewFields {
       return List.of(this.fields().businessentityid(), this.fields().name(), this.fields().annualSales(), this.fields().annualRevenue(), this.fields().bankName(), this.fields().businessType(), this.fields().yearOpened(), this.fields().specialty(), this.fields().squareFeet(), this.fields().brands(), this.fields().internet(), this.fields().numberEmployees());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

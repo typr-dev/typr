@@ -28,7 +28,7 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 
 public interface BusinessentitycontactFields {
-  static final class Impl extends Relation<BusinessentitycontactFields, BusinessentitycontactRow> {
+  final class Impl extends Relation<BusinessentitycontactFields, BusinessentitycontactRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -36,18 +36,23 @@ public interface BusinessentitycontactFields {
     @Override
     public BusinessentitycontactFields fields() {
       return new BusinessentitycontactFields() {
+               @Override
                public IdField<BusinessentityId, BusinessentitycontactRow> businessentityid() {
                  return new IdField<BusinessentityId, BusinessentitycontactRow>(_path, "businessentityid", BusinessentitycontactRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public IdField<BusinessentityId, BusinessentitycontactRow> personid() {
                  return new IdField<BusinessentityId, BusinessentitycontactRow>(_path, "personid", BusinessentitycontactRow::personid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withPersonid(value), BusinessentityId.pgType);
                };
+               @Override
                public IdField<ContacttypeId, BusinessentitycontactRow> contacttypeid() {
                  return new IdField<ContacttypeId, BusinessentitycontactRow>(_path, "contacttypeid", BusinessentitycontactRow::contacttypeid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withContacttypeid(value), ContacttypeId.pgType);
                };
+               @Override
                public Field<TypoUUID, BusinessentitycontactRow> rowguid() {
                  return new Field<TypoUUID, BusinessentitycontactRow>(_path, "rowguid", BusinessentitycontactRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, BusinessentitycontactRow> modifieddate() {
                  return new Field<TypoLocalDateTime, BusinessentitycontactRow>(_path, "modifieddate", BusinessentitycontactRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -59,6 +64,7 @@ public interface BusinessentitycontactFields {
       return List.of(this.fields().businessentityid(), this.fields().personid(), this.fields().contacttypeid(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

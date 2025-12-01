@@ -10,7 +10,6 @@ import adventureworks.sales.salesorderheader.SalesorderheaderId
 import adventureworks.sales.salesreason.SalesreasonId
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple3
 
 /** View: sa.sohsr */
 case class SohsrViewRow(
@@ -23,5 +22,5 @@ case class SohsrViewRow(
 )
 
 object SohsrViewRow {
-  val `_rowParser`: RowParser[SohsrViewRow] = RowParsers.of(SalesorderheaderId.pgType, SalesreasonId.pgType, TypoLocalDateTime.pgType, SohsrViewRow.apply, row => new Tuple3(row.salesorderid, row.salesreasonid, row.modifieddate))
+  val `_rowParser`: RowParser[SohsrViewRow] = RowParsers.of(SalesorderheaderId.pgType, SalesreasonId.pgType, TypoLocalDateTime.pgType, SohsrViewRow.apply, row => Array(row.salesorderid, row.salesreasonid, row.modifieddate))
 }

@@ -219,7 +219,9 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
         implicitParams = implicitParams,
         tpe = returnType,
         throws = Nil,
-        body = Nil
+        body = jvm.Body.Abstract,
+        isOverride = false,
+        isDefault = false
       )
     )
 
@@ -281,17 +283,17 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
     }
   }
 
-  override def repoImpl(repoMethod: RepoMethod): List[jvm.Code] =
+  override def repoImpl(repoMethod: RepoMethod): jvm.Body =
     repoMethod match {
       case RepoMethod.SelectBuilder(relName, fieldsType, rowType) =>
-        List(code"""${jvm.Type.dsl.SelectBuilder}.of(${jvm.StrLit(relName.quotedValue)}, $fieldsType.structure, $rowType.rowParser)""")
+        jvm.Body.Expr(code"""${jvm.Type.dsl.SelectBuilder}.of(${jvm.StrLit(relName.quotedValue)}, $fieldsType.structure, $rowType.rowParser)""")
       case RepoMethod.SelectAll(relName, cols, rowType) =>
         val sql = SQL {
           code"""|select ${dbNames(cols, isRead = true)}
                  |from $relName
                  |""".stripMargin
         }
-        List(code"""$sql.as(${rowParserFor(rowType)}.*)""")
+        jvm.Body.Expr(code"""$sql.as(${rowParserFor(rowType)}.*)""")
 
       case RepoMethod.SelectById(relName, cols, id, rowType) =>
         val sql = SQL {
@@ -300,7 +302,7 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
                  |where ${matchId(id)}
                  |""".stripMargin
         }
-        List(code"""$sql.as(${rowParserFor(rowType)}.singleOpt)""")
+        jvm.Body.Expr(code"""$sql.as(${rowParserFor(rowType)}.singleOpt)""")
 
       case RepoMethod.SelectByIds(relName, cols, computedId, idsParam, rowType) =>
         val joinedColNames = dbNames(cols, isRead = true)
@@ -314,7 +316,7 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
                      |in (select ${x.cols.map(col => code"unnest(${runtimeInterpolateValue(col.name, jvm.Type.ArrayOf(col.tpe))})").mkCode(", ")})
                      |""".stripMargin
             }
-            vals.toList ++ List(code"$sql.as(${rowParserFor(rowType)}.*)")
+            jvm.Body.Stmts(vals.toList ++ List(code"$sql.as(${rowParserFor(rowType)}.*)"))
 
           case x: IdComputed.Unary =>
             val sql = SQL {
@@ -324,17 +326,19 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
                      |""".stripMargin
             }
 
-            List(code"$sql.as(${rowParserFor(rowType)}.*)")
+            jvm.Body.Expr(code"$sql.as(${rowParserFor(rowType)}.*)")
 
         }
       case RepoMethod.SelectByIdsTracked(x) =>
-        List(
-          code"val byId = ${x.methodName}(${x.idsParam.name}).view.map(x => (x.${x.idComputed.paramName}, x)).toMap",
-          code"${x.idsParam.name}.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap"
+        jvm.Body.Stmts(
+          List(
+            code"val byId = ${x.methodName}(${x.idsParam.name}).view.map(x => (x.${x.idComputed.paramName}, x)).toMap",
+            code"${x.idsParam.name}.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap"
+          )
         )
 
       case RepoMethod.UpdateBuilder(relName, fieldsType, rowType) =>
-        List(code"${jvm.Type.dsl.UpdateBuilder}.of(${jvm.StrLit(relName.quotedValue)}, $fieldsType.structure, $rowType.rowParser(1).*)")
+        jvm.Body.Expr(code"${jvm.Type.dsl.UpdateBuilder}.of(${jvm.StrLit(relName.quotedValue)}, $fieldsType.structure, $rowType.rowParser(1).*)")
 
       case RepoMethod.SelectByUnique(relName, keyColumns, allCols, rowType) =>
         val sql = SQL {
@@ -343,7 +347,7 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
                  |where ${keyColumns.map(c => code"${c.dbName.code} = ${runtimeInterpolateValue(c.name, c.tpe)}").mkCode(" AND ")}
                  |""".stripMargin
         }
-        List(code"$sql.as(${rowParserFor(rowType)}.singleOpt)")
+        jvm.Body.Expr(code"$sql.as(${rowParserFor(rowType)}.singleOpt)")
 
       case RepoMethod.SelectByFieldValues(relName, cols, fieldValue, fieldValueOrIdsParam, rowType) =>
         val cases: NonEmptyList[jvm.Code] =
@@ -358,7 +362,7 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
                  |""".stripMargin
         }
         // the weird block and wildcard import is to avoid warnings in scala 2 and 3, and to get the implicit `on` in scala 3
-        List(
+        jvm.Body.Expr(
           code"""|${fieldValueOrIdsParam.name} match {
                  |  case Nil => selectAll
                  |  case nonEmpty =>
@@ -398,7 +402,7 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
         }
 
         // the weird block and wildcard import is to avoid warnings in scala 2 and 3, and to get the implicit `on` in scala 3
-        List(
+        jvm.Body.Expr(
           code"""|${varargs.name} match {
                  |  case Nil => false
                  |  case nonEmpty =>
@@ -422,9 +426,11 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
                  |returning ${dbNames(cols, isRead = true)}
                  |""".stripMargin
         }
-        List(
-          code"val ${id.paramName} = ${param.name}.${id.paramName}",
-          code"$sql.executeInsert(${rowParserFor(param.tpe)}.singleOpt)"
+        jvm.Body.Stmts(
+          List(
+            code"val ${id.paramName} = ${param.name}.${id.paramName}",
+            code"$sql.executeInsert(${rowParserFor(param.tpe)}.singleOpt)"
+          )
         )
 
       case RepoMethod.Insert(relName, cols, unsavedParam, rowType, writeableColumnsWithId) =>
@@ -437,7 +443,7 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
                  |returning ${dbNames(cols, isRead = true)}
                  |""".stripMargin
         }
-        List(
+        jvm.Body.Expr(
           code"""|$sql
                  |  .executeInsert(${rowParserFor(rowType)}.single)"""
         )
@@ -467,7 +473,7 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
                  |returning ${dbNames(cols, isRead = true)}
                  |""".stripMargin
         }
-        List(
+        jvm.Body.Expr(
           code"""|$sql
                  |  .executeInsert(${rowParserFor(rowType)}.single)"""
         )
@@ -489,22 +495,24 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
                  |returning ${dbNames(cols, isRead = true)}
                  |""".stripMargin
         }
-        List(
+        val toNamedParam =
           code"""|def toNamedParameter(row: $rowType): ${TypesScala.List.of(NamedParameter)} = ${TypesScala.List}(
-               |  ${writeableColumnsWithId.map(c => code"$NamedParameter(${jvm.StrLit(c.dbName.value)}, $ParameterValue(row.${c.name}, null, ${lookupToStatementFor(c.tpe)}))").mkCode(",\n")}
-               |)
-               |unsaved.toList match {
-               |  case Nil => ${TypesScala.Nil}
-               |  case head :: rest =>
-               |    new $ExecuteReturningSyntax.Ops(
-               |      $BatchSql(
-               |        $sql,
-               |        toNamedParameter(head),
-               |        rest.map(toNamedParameter)*
-               |      )
-               |    ).executeReturning(${rowParserFor(rowType)}.*)
-               |}""".stripMargin
-        )
+                 |  ${writeableColumnsWithId.map(c => code"$NamedParameter(${jvm.StrLit(c.dbName.value)}, $ParameterValue(row.${c.name}, null, ${lookupToStatementFor(c.tpe)}))").mkCode(",\n")}
+                 |)
+                 |""".stripMargin
+        val ret =
+          code"""|unsaved.toList match {
+                 |  case Nil => ${TypesScala.Nil}
+                 |  case head :: rest =>
+                 |    new $ExecuteReturningSyntax.Ops(
+                 |      $BatchSql(
+                 |        $sql,
+                 |        toNamedParameter(head),
+                 |        rest.map(toNamedParameter)*
+                 |      )
+                 |    ).executeReturning(${rowParserFor(rowType)}.*)
+                 |}""".stripMargin
+        jvm.Body.Stmts(List(toNamedParam, ret))
       case RepoMethod.UpsertStreaming(relName, id, rowType, writeableColumnsWithId) =>
         val writeableColumnsNotId = writeableColumnsWithId.toList.filterNot(c => id.cols.exists(_.name == c.name))
 
@@ -526,10 +534,12 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
                  |;
                  |drop table $tempTablename;""".stripMargin
         }
-        List(
-          code"${SQL(code"create temporary table $tempTablename (like $relName) on commit drop")}.execute(): @${TypesScala.nowarn}",
-          code"${textSupport.get.streamingInsert}($copySql, batchSize, unsaved)(${dialect.usingCall}${textSupport.get.lookupTextFor(rowType)}, c): @${TypesScala.nowarn}",
-          code"$mergeSql.executeUpdate()"
+        jvm.Body.Stmts(
+          List(
+            code"${SQL(code"create temporary table $tempTablename (like $relName) on commit drop")}.execute(): @${TypesScala.nowarn}",
+            code"${textSupport.get.streamingInsert}($copySql, batchSize, unsaved)(${dialect.usingCall}${textSupport.get.lookupTextFor(rowType)}, c): @${TypesScala.nowarn}",
+            code"$mergeSql.executeUpdate()"
+          )
         )
 
       case RepoMethod.InsertUnsaved(relName, cols, unsaved, unsavedParam, default, rowType) =>
@@ -560,8 +570,9 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
         }
 
         // the weird block and wildcard import is to avoid warnings in scala 2 and 3, and to get the implicit `on` in scala 3
-        List(
-          code"""|val namedParameters = List(
+        jvm.Body.Stmts(
+          List(
+            code"""|val namedParameters = List(
                  |  ${(cases0 ++ cases1.toList).mkCode(",\n")}
                  |).flatten
                  |val quote = '"'.toString
@@ -574,21 +585,22 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
                  |    .executeInsert(${rowParserFor(rowType)}.single)
                  |}
                  |""".stripMargin
+          )
         )
       case RepoMethod.InsertStreaming(relName, rowType, writeableColumnsWithId) =>
         val sql = lang.s(code"COPY $relName(${dbNames(writeableColumnsWithId, isRead = false)}) FROM STDIN")
-        List(code"${textSupport.get.streamingInsert}($sql, batchSize, unsaved)(${dialect.usingCall}${textSupport.get.lookupTextFor(rowType)}, c)")
+        jvm.Body.Expr(code"${textSupport.get.streamingInsert}($sql, batchSize, unsaved)(${dialect.usingCall}${textSupport.get.lookupTextFor(rowType)}, c)")
       case RepoMethod.InsertUnsavedStreaming(relName, unsaved) =>
         val sql = lang.s(code"COPY $relName(${dbNames(unsaved.unsavedCols, isRead = false)}) FROM STDIN (DEFAULT '${DbLibTextSupport.DefaultValue}')")
-        List(code"${textSupport.get.streamingInsert}($sql, batchSize, unsaved)(${dialect.usingCall}${textSupport.get.lookupTextFor(unsaved.tpe)}, c)")
+        jvm.Body.Expr(code"${textSupport.get.streamingInsert}($sql, batchSize, unsaved)(${dialect.usingCall}${textSupport.get.lookupTextFor(unsaved.tpe)}, c)")
 
       case RepoMethod.DeleteBuilder(relName, fieldsType, rowType) =>
-        List(code"${jvm.Type.dsl.DeleteBuilder}.of(${jvm.StrLit(relName.quotedValue)}, $fieldsType.structure, $rowType.rowParser(1).*)")
+        jvm.Body.Expr(code"${jvm.Type.dsl.DeleteBuilder}.of(${jvm.StrLit(relName.quotedValue)}, $fieldsType.structure, $rowType.rowParser(1).*)")
       case RepoMethod.Delete(relName, id) =>
         val sql = SQL {
           code"""delete from $relName where ${matchId(id)}"""
         }
-        List(code"$sql.executeUpdate() > 0")
+        jvm.Body.Expr(code"$sql.executeUpdate() > 0")
       case RepoMethod.DeleteByIds(relName, computedId, idsParam) =>
         computedId match {
           case x: IdComputed.Composite =>
@@ -600,7 +612,7 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
                      |in (select ${x.cols.map(col => code"unnest(${runtimeInterpolateValue(col.name, jvm.Type.ArrayOf(col.tpe))})").mkCode(", ")})
                      |""".stripMargin
             }
-            vals.toList ++ List(code"$sql.executeUpdate()")
+            jvm.Body.Stmts(vals.toList ++ List(code"$sql.executeUpdate()"))
 
           case x: IdComputed.Unary =>
             val sql = SQL {
@@ -609,7 +621,7 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
                      |where ${x.col.dbName.code} = ANY(${runtimeInterpolateValue(idsParam.name, jvm.Type.ArrayOf(x.tpe))})
                      |""".stripMargin
             }
-            List(code"$sql.executeUpdate()")
+            jvm.Body.Expr(code"$sql.executeUpdate()")
         }
 
       case RepoMethod.SqlFile(sqlScript) =>
@@ -636,34 +648,40 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
                        |from $row""".stripMargin
             }
 
-          code"""|val sql =
+          jvm.Body.Stmts(
+            List(
+              code"""|val sql =
                  |  ${SQL(renderedWithCasts)}
                  |sql.as(${rowParserFor(rowName)}.*)""".stripMargin
+            )
+          )
         }
-        List(ret.getOrElse(code"${SQL(renderedScript)}.executeUpdate()"))
+        (ret.getOrElse(jvm.Body.Expr(code"${SQL(renderedScript)}.executeUpdate()")))
     }
 
-  override def mockRepoImpl(id: IdComputed, repoMethod: RepoMethod, maybeToRow: Option[jvm.Param[jvm.Type.Function1]]): List[jvm.Code] = {
+  override def mockRepoImpl(id: IdComputed, repoMethod: RepoMethod, maybeToRow: Option[jvm.Param[jvm.Type.Function1]]): jvm.Body =
     repoMethod match {
       case RepoMethod.SelectBuilder(_, fieldsType, _) =>
-        List(code"${jvm.Type.dsl.SelectBuilderMock}($fieldsType.structure, () => map.values.toList, ${jvm.Type.dsl.SelectParams}.empty)")
+        jvm.Body.Expr(code"${jvm.Type.dsl.SelectBuilderMock}($fieldsType.structure, () => map.values.toList, ${jvm.Type.dsl.SelectParams}.empty)")
       case RepoMethod.SelectAll(_, _, _) =>
-        List(code"map.values.toList")
+        jvm.Body.Expr(code"map.values.toList")
       case RepoMethod.SelectById(_, _, id, _) =>
-        List(code"map.get(${id.paramName})")
+        jvm.Body.Expr(code"map.get(${id.paramName})")
       case RepoMethod.SelectByIds(_, _, _, idsParam, _) =>
-        List(code"${idsParam.name}.flatMap(map.get).toList")
+        jvm.Body.Expr(code"${idsParam.name}.flatMap(map.get).toList")
       case RepoMethod.SelectByIdsTracked(x) =>
-        List(code"""|val byId = ${x.methodName}(${x.idsParam.name}).view.map(x => (x.${x.idComputed.paramName}, x)).toMap
+        jvm.Body.Stmts(
+          List(code"""|val byId = ${x.methodName}(${x.idsParam.name}).view.map(x => (x.${x.idComputed.paramName}, x)).toMap
                |${x.idsParam.name}.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap""".stripMargin)
+        )
       case RepoMethod.SelectByUnique(_, keyColumns, _, _) =>
-        List(code"map.values.find(v => ${keyColumns.map(c => code"${c.name} == v.${c.name}").mkCode(" && ")})")
+        jvm.Body.Expr(code"map.values.find(v => ${keyColumns.map(c => code"${c.name} == v.${c.name}").mkCode(" && ")})")
 
       case RepoMethod.SelectByFieldValues(_, cols, fieldValue, fieldValueOrIdsParam, _) =>
         val cases = cols.map { col =>
           code"case (acc, $fieldValue.${col.name}(value)) => acc.filter(_.${col.name} == value)"
         }
-        List(code"""${fieldValueOrIdsParam.name}.foldLeft(map.values) {
+        jvm.Body.Expr(code"""${fieldValueOrIdsParam.name}.foldLeft(map.values) {
               |  ${cases.mkCode("\n")}
               |}.toList""".stripMargin)
       case RepoMethod.UpdateFieldValues(_, _, varargs, fieldValue, cases0, _) =>
@@ -671,7 +689,7 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
           code"case (acc, $fieldValue.${col.name}(value)) => acc.copy(${col.name} = value)"
         }
 
-        List(code"""|map.get(${id.paramName}) match {
+        jvm.Body.Expr(code"""|map.get(${id.paramName}) match {
                |  case ${TypesScala.Some}(oldRow) =>
                |    val updatedRow = ${varargs.name}.foldLeft(oldRow) {
                |      ${cases.mkCode("\n")}
@@ -685,56 +703,68 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
                |  case ${TypesScala.None} => false
                |}""".stripMargin)
       case RepoMethod.UpdateBuilder(_, fieldsType, _) =>
-        List(code"${jvm.Type.dsl.UpdateBuilderMock}(${jvm.Type.dsl.UpdateParams}.empty, $fieldsType.structure, map)")
+        jvm.Body.Expr(code"${jvm.Type.dsl.UpdateBuilderMock}(${jvm.Type.dsl.UpdateParams}.empty, $fieldsType.structure, map)")
       case RepoMethod.Update(_, _, _, param, _) =>
-        List(code"""|map.get(${param.name}.${id.paramName}).map { _ =>
+        jvm.Body.Expr(code"""|map.get(${param.name}.${id.paramName}).map { _ =>
                |  map.put(${param.name}.${id.paramName}, ${param.name}): @${TypesScala.nowarn}
                |  ${param.name}
                |}""".stripMargin)
       case RepoMethod.Insert(_, _, unsavedParam, _, _) =>
-        List(code"""|val _ = if (map.contains(${unsavedParam.name}.${id.paramName}))
+        jvm.Body.Stmts(
+          List(
+            code"""|val _ = if (map.contains(${unsavedParam.name}.${id.paramName}))
                |  sys.error(s"id $${${unsavedParam.name}.${id.paramName}} already exists")
                |else
                |  map.put(${unsavedParam.name}.${id.paramName}, ${unsavedParam.name})
                |
-               |${unsavedParam.name}""".stripMargin)
+               |${unsavedParam.name}""".stripMargin
+          )
+        )
       case RepoMethod.Upsert(_, _, _, unsavedParam, _, _) =>
-        List(code"""|map.put(${unsavedParam.name}.${id.paramName}, ${unsavedParam.name}): @${TypesScala.nowarn}
-               |${unsavedParam.name}""".stripMargin)
+        jvm.Body.Expr(
+          code"""|map.put(${unsavedParam.name}.${id.paramName}, ${unsavedParam.name}): @${TypesScala.nowarn}
+               |${unsavedParam.name}""".stripMargin
+        )
       case RepoMethod.UpsertStreaming(_, id, _, _) =>
-        List(code"""|unsaved.foreach { row =>
+        jvm.Body.Stmts(
+          List(
+            code"""|unsaved.foreach { row =>
                |  map += (row.${id.paramName} -> row)
                |}
-               |unsaved.size""".stripMargin)
+               |unsaved.size""".stripMargin
+          )
+        )
       case RepoMethod.UpsertBatch(_, _, id, _, _) =>
-        List(code"""|unsaved.map { row =>
+        jvm.Body.Expr(code"""|unsaved.map { row =>
                |  map += (row.${id.paramName} -> row)
                |  row
                |}.toList""".stripMargin)
       case RepoMethod.InsertUnsaved(_, _, _, unsavedParam, _, _) =>
-        List(code"insert(${maybeToRow.get.name}(${unsavedParam.name}))")
+        jvm.Body.Expr(code"insert(${maybeToRow.get.name}(${unsavedParam.name}))")
       case RepoMethod.InsertStreaming(_, _, _) =>
-        List(code"""|unsaved.foreach { row =>
+        jvm.Body.Expr(code"""|unsaved.foreach { row =>
                |  map += (row.${id.paramName} -> row)
                |}
                |unsaved.size.toLong""".stripMargin)
       case RepoMethod.InsertUnsavedStreaming(_, _) =>
-        List(code"""|unsaved.foreach { unsavedRow =>
+        jvm.Body.Stmts(
+          List(code"""|unsaved.foreach { unsavedRow =>
                |  val row = ${maybeToRow.get.name}(unsavedRow)
                |  map += (row.${id.paramName} -> row)
                |}
                |unsaved.size.toLong""".stripMargin)
+        )
       case RepoMethod.DeleteBuilder(_, fieldsType, _) =>
-        List(code"${jvm.Type.dsl.DeleteBuilderMock}(${jvm.Type.dsl.DeleteParams}.empty, $fieldsType.structure, map)")
+        jvm.Body.Expr(code"${jvm.Type.dsl.DeleteBuilderMock}(${jvm.Type.dsl.DeleteParams}.empty, $fieldsType.structure, map)")
       case RepoMethod.Delete(_, id) =>
-        List(code"map.remove(${id.paramName}).isDefined")
+        jvm.Body.Expr(code"map.remove(${id.paramName}).isDefined")
       case RepoMethod.DeleteByIds(_, _, idsParam) =>
-        List(code"${idsParam.name}.map(id => map.remove(id)).count(_.isDefined)")
+        jvm.Body.Expr(code"${idsParam.name}.map(id => map.remove(id)).count(_.isDefined)")
       case RepoMethod.SqlFile(_) =>
         // should not happen (tm)
-        List(code"???")
+        jvm.Body.Expr(code"???")
     }
-  }
+
   override def testInsertMethod(x: ComputedTestInserts.InsertMethod): jvm.Method =
     jvm.Method(
       Nil,
@@ -745,7 +775,9 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
       implicitParams = List(c),
       tpe = x.table.names.RowName,
       throws = Nil,
-      body = List(code"(new ${x.table.names.RepoImplName}).insert(new ${x.cls}(${x.values.map { case (p, expr) => code"$p = $expr" }.mkCode(", ")}))")
+      body = jvm.Body.Expr(code"(new ${x.table.names.RepoImplName}).insert(new ${x.cls}(${x.values.map { case (p, expr) => code"$p = $expr" }.mkCode(", ")}))"),
+      isOverride = false,
+      isDefault = false
     )
 
   override val defaultedInstance: List[jvm.Given] =
@@ -933,7 +965,7 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
         Nil,
         RowParser.of(tpe),
         Nil,
-        List {
+        jvm.Body.Expr {
           code"""|${RowParser.of(tpe)} { row =>
                  |  $Success(
                  |    $tpe(
@@ -941,7 +973,9 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
                  |    )
                  |  )
                  |}""".stripMargin
-        }
+        },
+        isOverride = false,
+        isDefault = false
       )
     }
     rowType match {

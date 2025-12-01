@@ -31,7 +31,7 @@ public sealed interface Fragment {
         return new Append(this, other);
     }
 
-    default <T> Operation.Query<T> as(ResultSetParser<T> parser) {
+    default <T> Operation.Query<T> query(ResultSetParser<T> parser) {
         return new Operation.Query<>(this, parser);
     }
 

@@ -15,7 +15,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface IdentityTestFields {
-  static final class Impl extends Relation<IdentityTestFields, IdentityTestRow> {
+  final class Impl extends Relation<IdentityTestFields, IdentityTestRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -23,12 +23,15 @@ public interface IdentityTestFields {
     @Override
     public IdentityTestFields fields() {
       return new IdentityTestFields() {
+               @Override
                public Field<Integer, IdentityTestRow> alwaysGenerated() {
                  return new Field<Integer, IdentityTestRow>(_path, "always_generated", IdentityTestRow::alwaysGenerated, Optional.empty(), Optional.of("int4"), (row, value) -> row.withAlwaysGenerated(value), PgTypes.int4);
                };
+               @Override
                public Field<Integer, IdentityTestRow> defaultGenerated() {
                  return new Field<Integer, IdentityTestRow>(_path, "default_generated", IdentityTestRow::defaultGenerated, Optional.empty(), Optional.of("int4"), (row, value) -> row.withDefaultGenerated(value), PgTypes.int4);
                };
+               @Override
                public IdField<IdentityTestId, IdentityTestRow> name() {
                  return new IdField<IdentityTestId, IdentityTestRow>(_path, "name", IdentityTestRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), IdentityTestId.pgType);
                };
@@ -40,6 +43,7 @@ public interface IdentityTestFields {
       return List.of(this.fields().alwaysGenerated(), this.fields().defaultGenerated(), this.fields().name());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

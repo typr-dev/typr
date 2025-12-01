@@ -20,11 +20,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class DepartmentRepoImpl extends DepartmentRepo {
-  def delete: DeleteBuilder[DepartmentFields, DepartmentRow] = DeleteBuilder.of("humanresources.department", DepartmentFields.structure)
+  override def delete: DeleteBuilder[DepartmentFields, DepartmentRow] = DeleteBuilder.of("humanresources.department", DepartmentFields.structure)
 
-  def deleteById(departmentid: DepartmentId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "humanresources"."department" where "departmentid" = ${DepartmentId.pgType.encode(departmentid)}""".update().runUnchecked(c) > 0
+  override def deleteById(departmentid: DepartmentId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "humanresources"."department" where "departmentid" = ${DepartmentId.pgType.encode(departmentid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(departmentids: Array[DepartmentId])(using c: Connection): Integer = {
+  override def deleteByIds(departmentids: Array[DepartmentId])(using c: Connection): Integer = {
     interpolate"""delete
     from "humanresources"."department"
     where "departmentid" = ANY(${DepartmentId.pgTypeArray.encode(departmentids)})"""
@@ -32,7 +32,7 @@ class DepartmentRepoImpl extends DepartmentRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: DepartmentRow)(using c: Connection): DepartmentRow = {
+  override def insert(unsaved: DepartmentRow)(using c: Connection): DepartmentRow = {
   interpolate"""insert into "humanresources"."department"("departmentid", "name", "groupname", "modifieddate")
     values (${DepartmentId.pgType.encode(unsaved.departmentid)}::int4, ${Name.pgType.encode(unsaved.name)}::varchar, ${Name.pgType.encode(unsaved.groupname)}::varchar, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "departmentid", "name", "groupname", "modifieddate"::text
@@ -40,26 +40,20 @@ class DepartmentRepoImpl extends DepartmentRepo {
     .updateReturning(DepartmentRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: DepartmentRowUnsaved)(using c: Connection): DepartmentRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: DepartmentRowUnsaved)(using c: Connection): DepartmentRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
     values.add(interpolate"${Name.pgType.encode(unsaved.name)}::varchar"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""groupname"""")): @scala.annotation.nowarn
     values.add(interpolate"${Name.pgType.encode(unsaved.groupname)}::varchar"): @scala.annotation.nowarn
     unsaved.departmentid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""departmentid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${DepartmentId.pgType.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""departmentid"""")): @scala.annotation.nowarn; values.add(interpolate"${DepartmentId.pgType.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "humanresources"."department"(${Fragment.comma(columns)})
@@ -67,58 +61,58 @@ class DepartmentRepoImpl extends DepartmentRepo {
       returning "departmentid", "name", "groupname", "modifieddate"::text
       """
     }
-    q.updateReturning(DepartmentRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(DepartmentRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[DepartmentRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "humanresources"."department"("departmentid", "name", "groupname", "modifieddate") FROM STDIN""", batchSize, unsaved, c, DepartmentRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[DepartmentRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "humanresources"."department"("name", "groupname", "departmentid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, DepartmentRowUnsaved.pgText)
 
-  def select: SelectBuilder[DepartmentFields, DepartmentRow] = SelectBuilder.of("humanresources.department", DepartmentFields.structure, DepartmentRow.`_rowParser`)
+  override def select: SelectBuilder[DepartmentFields, DepartmentRow] = SelectBuilder.of("humanresources.department", DepartmentFields.structure, DepartmentRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[DepartmentRow] = {
+  override def selectAll(using c: Connection): java.util.List[DepartmentRow] = {
     interpolate"""select "departmentid", "name", "groupname", "modifieddate"::text
     from "humanresources"."department"
-    """.as(DepartmentRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(DepartmentRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(departmentid: DepartmentId)(using c: Connection): Optional[DepartmentRow] = {
+  override def selectById(departmentid: DepartmentId)(using c: Connection): Optional[DepartmentRow] = {
     interpolate"""select "departmentid", "name", "groupname", "modifieddate"::text
     from "humanresources"."department"
-    where "departmentid" = ${DepartmentId.pgType.encode(departmentid)}""".as(DepartmentRow.`_rowParser`.first()).runUnchecked(c)
+    where "departmentid" = ${DepartmentId.pgType.encode(departmentid)}""".query(DepartmentRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(departmentids: Array[DepartmentId])(using c: Connection): java.util.List[DepartmentRow] = {
+  override def selectByIds(departmentids: Array[DepartmentId])(using c: Connection): java.util.List[DepartmentRow] = {
     interpolate"""select "departmentid", "name", "groupname", "modifieddate"::text
     from "humanresources"."department"
-    where "departmentid" = ANY(${DepartmentId.pgTypeArray.encode(departmentids)})""".as(DepartmentRow.`_rowParser`.all()).runUnchecked(c)
+    where "departmentid" = ANY(${DepartmentId.pgTypeArray.encode(departmentids)})""".query(DepartmentRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(departmentids: Array[DepartmentId])(using c: Connection): java.util.Map[DepartmentId, DepartmentRow] = {
-    val ret: java.util.Map[DepartmentId, DepartmentRow] = new HashMap()
+  override def selectByIdsTracked(departmentids: Array[DepartmentId])(using c: Connection): java.util.Map[DepartmentId, DepartmentRow] = {
+    val ret: HashMap[DepartmentId, DepartmentRow] = new HashMap[DepartmentId, DepartmentRow]()
     selectByIds(departmentids)(using c).forEach(row => ret.put(row.departmentid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[DepartmentFields, DepartmentRow] = UpdateBuilder.of("humanresources.department", DepartmentFields.structure, DepartmentRow.`_rowParser`.all())
+  override def update: UpdateBuilder[DepartmentFields, DepartmentRow] = UpdateBuilder.of("humanresources.department", DepartmentFields.structure, DepartmentRow.`_rowParser`.all())
 
-  def update(row: DepartmentRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: DepartmentRow)(using c: Connection): java.lang.Boolean = {
     val departmentid: DepartmentId = row.departmentid
-    interpolate"""update "humanresources"."department"
+    return interpolate"""update "humanresources"."department"
     set "name" = ${Name.pgType.encode(row.name)}::varchar,
     "groupname" = ${Name.pgType.encode(row.groupname)}::varchar,
     "modifieddate" = ${TypoLocalDateTime.pgType.encode(row.modifieddate)}::timestamp
     where "departmentid" = ${DepartmentId.pgType.encode(departmentid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: DepartmentRow)(using c: Connection): DepartmentRow = {
+  override def upsert(unsaved: DepartmentRow)(using c: Connection): DepartmentRow = {
   interpolate"""insert into "humanresources"."department"("departmentid", "name", "groupname", "modifieddate")
     values (${DepartmentId.pgType.encode(unsaved.departmentid)}::int4, ${Name.pgType.encode(unsaved.name)}::varchar, ${Name.pgType.encode(unsaved.groupname)}::varchar, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("departmentid")
@@ -132,7 +126,7 @@ class DepartmentRepoImpl extends DepartmentRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[DepartmentRow])(using c: Connection): java.util.List[DepartmentRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[DepartmentRow])(using c: Connection): java.util.List[DepartmentRow] = {
     interpolate"""insert into "humanresources"."department"("departmentid", "name", "groupname", "modifieddate")
     values (?::int4, ?::varchar, ?::varchar, ?::timestamp)
     on conflict ("departmentid")
@@ -147,13 +141,13 @@ class DepartmentRepoImpl extends DepartmentRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[DepartmentRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table department_TEMP (like "humanresources"."department") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy department_TEMP("departmentid", "name", "groupname", "modifieddate") from stdin""", batchSize, unsaved, c, DepartmentRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "humanresources"."department"("departmentid", "name", "groupname", "modifieddate")
+    return interpolate"""insert into "humanresources"."department"("departmentid", "name", "groupname", "modifieddate")
     select * from department_TEMP
     on conflict ("departmentid")
     do update set

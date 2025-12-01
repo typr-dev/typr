@@ -7,13 +7,11 @@ package adventureworks.sa.cr
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class CrViewRepoImpl extends CrViewRepo {
-  def select: SelectBuilder[CrViewFields, CrViewRow] = SelectBuilder.of(""""sa"."cr"""", CrViewFields.structure, CrViewRow.read)
+  override def select: SelectBuilder[CrViewFields, CrViewRow] = SelectBuilder.of(""""sa"."cr"""", CrViewFields.structure, CrViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, CrViewRow] = sql"""select "currencyrateid", "currencyratedate"::text, "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"::text from "sa"."cr"""".query(using CrViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, CrViewRow] = sql"""select "currencyrateid", "currencyratedate"::text, "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"::text from "sa"."cr"""".query(using CrViewRow.read).stream
 }

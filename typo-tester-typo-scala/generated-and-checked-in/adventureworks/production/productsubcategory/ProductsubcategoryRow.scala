@@ -13,7 +13,6 @@ import adventureworks.public.Name
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple5
 
 /** Table: production.productsubcategory
  * Product subcategories. See ProductCategory table.
@@ -53,15 +52,7 @@ case class ProductsubcategoryRow(
 }
 
 object ProductsubcategoryRow {
-  val `_rowParser`: RowParser[ProductsubcategoryRow] = {
-    RowParsers.of(ProductsubcategoryId.pgType, ProductcategoryId.pgType, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, ProductsubcategoryRow.apply, row => new Tuple5(
-      row.productsubcategoryid,
-      row.productcategoryid,
-      row.name,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[ProductsubcategoryRow] = RowParsers.of(ProductsubcategoryId.pgType, ProductcategoryId.pgType, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, ProductsubcategoryRow.apply, row => Array(row.productsubcategoryid, row.productcategoryid, row.name, row.rowguid, row.modifieddate))
 
   given pgText: PgText[ProductsubcategoryRow] = PgText.from(`_rowParser`)
 }

@@ -5,7 +5,6 @@
  */
 package adventureworks.public_.title;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -19,12 +18,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class TitleRepoImpl implements TitleRepo {
+  @Override
   public DeleteBuilder<TitleFields, TitleRow> delete() {
     return DeleteBuilder.of("public.title", TitleFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     TitleId code,
     Connection c
@@ -38,6 +38,7 @@ public class TitleRepoImpl implements TitleRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     TitleId[] codes,
     Connection c
@@ -54,6 +55,7 @@ public class TitleRepoImpl implements TitleRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public TitleRow insert(
     TitleRow unsaved,
     Connection c
@@ -71,6 +73,7 @@ public class TitleRepoImpl implements TitleRepo {
       .updateReturning(TitleRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<TitleRow> unsaved,
     Integer batchSize,
@@ -81,17 +84,20 @@ public class TitleRepoImpl implements TitleRepo {
     """), batchSize, unsaved, c, TitleRow.pgText);
   };
 
+  @Override
   public SelectBuilder<TitleFields, TitleRow> select() {
     return SelectBuilder.of("public.title", TitleFields.structure(), TitleRow._rowParser);
   };
 
+  @Override
   public List<TitleRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "code"
        from "public"."title"
-    """)).as(TitleRow._rowParser.all()).runUnchecked(c);
+    """)).query(TitleRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<TitleRow> selectById(
     TitleId code,
     Connection c
@@ -103,9 +109,10 @@ public class TitleRepoImpl implements TitleRepo {
          where "code" = """),
       TitleId.pgType.encode(code),
       typo.runtime.Fragment.lit("")
-    ).as(TitleRow._rowParser.first()).runUnchecked(c);
+    ).query(TitleRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<TitleRow> selectByIds(
     TitleId[] codes,
     Connection c
@@ -117,22 +124,25 @@ public class TitleRepoImpl implements TitleRepo {
          where "code" = ANY("""),
       TitleId.pgTypeArray.encode(codes),
       typo.runtime.Fragment.lit(")")
-    ).as(TitleRow._rowParser.all()).runUnchecked(c);
+    ).query(TitleRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<TitleId, TitleRow> selectByIdsTracked(
     TitleId[] codes,
     Connection c
   ) {
-    Map<TitleId, TitleRow> ret = new HashMap<>();;
-      selectByIds(codes, c).forEach(row -> ret.put(row.code(), row));
+    HashMap<TitleId, TitleRow> ret = new HashMap<TitleId, TitleRow>();
+    selectByIds(codes, c).forEach(row -> ret.put(row.code(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<TitleFields, TitleRow> update() {
     return UpdateBuilder.of("public.title", TitleFields.structure(), TitleRow._rowParser.all());
   };
 
+  @Override
   public TitleRow upsert(
     TitleRow unsaved,
     Connection c
@@ -153,6 +163,7 @@ public class TitleRepoImpl implements TitleRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<TitleRow> upsertBatch(
     Iterator<TitleRow> unsaved,
     Connection c
@@ -169,23 +180,24 @@ public class TitleRepoImpl implements TitleRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<TitleRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table title_TEMP (like "public"."title") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy title_TEMP("code") from stdin
-      """), batchSize, unsaved, c, TitleRow.pgText);
+    create temporary table title_TEMP (like "public"."title") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy title_TEMP("code") from stdin
+    """), batchSize, unsaved, c, TitleRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "public"."title"("code")
-              select * from title_TEMP
-              on conflict ("code")
-              do nothing
-              ;
-              drop table title_TEMP;""")).update().runUnchecked(c);
+       insert into "public"."title"("code")
+       select * from title_TEMP
+       on conflict ("code")
+       do nothing
+       ;
+       drop table title_TEMP;""")).update().runUnchecked(c);
   };
 }

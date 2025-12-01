@@ -17,7 +17,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface SciViewFields {
-  static final class Impl extends Relation<SciViewFields, SciViewRow> {
+  final class Impl extends Relation<SciViewFields, SciViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -25,24 +25,31 @@ public interface SciViewFields {
     @Override
     public SciViewFields fields() {
       return new SciViewFields() {
+               @Override
                public Field<ShoppingcartitemId, SciViewRow> id() {
                  return new Field<ShoppingcartitemId, SciViewRow>(_path, "id", SciViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ShoppingcartitemId.pgType);
                };
+               @Override
                public Field<ShoppingcartitemId, SciViewRow> shoppingcartitemid() {
                  return new Field<ShoppingcartitemId, SciViewRow>(_path, "shoppingcartitemid", SciViewRow::shoppingcartitemid, Optional.empty(), Optional.empty(), (row, value) -> row.withShoppingcartitemid(value), ShoppingcartitemId.pgType);
                };
+               @Override
                public Field</* max 50 chars */ String, SciViewRow> shoppingcartid() {
                  return new Field</* max 50 chars */ String, SciViewRow>(_path, "shoppingcartid", SciViewRow::shoppingcartid, Optional.empty(), Optional.empty(), (row, value) -> row.withShoppingcartid(value), PgTypes.text);
                };
+               @Override
                public Field<Integer, SciViewRow> quantity() {
                  return new Field<Integer, SciViewRow>(_path, "quantity", SciViewRow::quantity, Optional.empty(), Optional.empty(), (row, value) -> row.withQuantity(value), PgTypes.int4);
                };
+               @Override
                public Field<ProductId, SciViewRow> productid() {
                  return new Field<ProductId, SciViewRow>(_path, "productid", SciViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, SciViewRow> datecreated() {
                  return new Field<TypoLocalDateTime, SciViewRow>(_path, "datecreated", SciViewRow::datecreated, Optional.of("text"), Optional.empty(), (row, value) -> row.withDatecreated(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, SciViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, SciViewRow>(_path, "modifieddate", SciViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -54,6 +61,7 @@ public interface SciViewFields {
       return List.of(this.fields().id(), this.fields().shoppingcartitemid(), this.fields().shoppingcartid(), this.fields().quantity(), this.fields().productid(), this.fields().datecreated(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

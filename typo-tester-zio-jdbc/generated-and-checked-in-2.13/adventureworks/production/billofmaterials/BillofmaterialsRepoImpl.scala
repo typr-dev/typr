@@ -24,20 +24,20 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class BillofmaterialsRepoImpl extends BillofmaterialsRepo {
-  def delete: DeleteBuilder[BillofmaterialsFields, BillofmaterialsRow] = DeleteBuilder.of(""""production"."billofmaterials"""", BillofmaterialsFields.structure, BillofmaterialsRow.jdbcDecoder)
+  override def delete: DeleteBuilder[BillofmaterialsFields, BillofmaterialsRow] = DeleteBuilder.of(""""production"."billofmaterials"""", BillofmaterialsFields.structure, BillofmaterialsRow.jdbcDecoder)
 
-  def deleteById(billofmaterialsid: Int): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "production"."billofmaterials" where "billofmaterialsid" = ${Segment.paramSegment(billofmaterialsid)(Setter.intSetter)}""".delete.map(_ > 0)
+  override def deleteById(billofmaterialsid: Int): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "production"."billofmaterials" where "billofmaterialsid" = ${Segment.paramSegment(billofmaterialsid)(Setter.intSetter)}""".delete.map(_ > 0)
 
-  def deleteByIds(billofmaterialsids: Array[Int]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "production"."billofmaterials" where "billofmaterialsid" = ANY(${Segment.paramSegment(billofmaterialsids)(adventureworks.IntArraySetter)})""".delete
+  override def deleteByIds(billofmaterialsids: Array[Int]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "production"."billofmaterials" where "billofmaterialsid" = ANY(${Segment.paramSegment(billofmaterialsids)(adventureworks.IntArraySetter)})""".delete
 
-  def insert(unsaved: BillofmaterialsRow): ZIO[ZConnection, Throwable, BillofmaterialsRow] = {
+  override def insert(unsaved: BillofmaterialsRow): ZIO[ZConnection, Throwable, BillofmaterialsRow] = {
     sql"""insert into "production"."billofmaterials"("billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate")
     values (${Segment.paramSegment(unsaved.billofmaterialsid)(Setter.intSetter)}::int4, ${Segment.paramSegment(unsaved.productassemblyid)(Setter.optionParamSetter(ProductId.setter))}::int4, ${Segment.paramSegment(unsaved.componentid)(ProductId.setter)}::int4, ${Segment.paramSegment(unsaved.startdate)(TypoLocalDateTime.setter)}::timestamp, ${Segment.paramSegment(unsaved.enddate)(Setter.optionParamSetter(TypoLocalDateTime.setter))}::timestamp, ${Segment.paramSegment(unsaved.unitmeasurecode)(UnitmeasureId.setter)}::bpchar, ${Segment.paramSegment(unsaved.bomlevel)(TypoShort.setter)}::int2, ${Segment.paramSegment(unsaved.perassemblyqty)(Setter.bigDecimalScalaSetter)}::numeric, ${Segment.paramSegment(unsaved.modifieddate)(TypoLocalDateTime.setter)}::timestamp)
     returning "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text
     """.insertReturning(BillofmaterialsRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insert(unsaved: BillofmaterialsRowUnsaved): ZIO[ZConnection, Throwable, BillofmaterialsRow] = {
+  override def insert(unsaved: BillofmaterialsRowUnsaved): ZIO[ZConnection, Throwable, BillofmaterialsRow] = {
     val fs = List(
       Some((sql""""productassemblyid"""", sql"${Segment.paramSegment(unsaved.productassemblyid)(Setter.optionParamSetter(ProductId.setter))}::int4")),
       Some((sql""""componentid"""", sql"${Segment.paramSegment(unsaved.componentid)(ProductId.setter)}::int4")),
@@ -73,35 +73,35 @@ class BillofmaterialsRepoImpl extends BillofmaterialsRepo {
     q.insertReturning(BillofmaterialsRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, BillofmaterialsRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "production"."billofmaterials"("billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate") FROM STDIN""", batchSize, unsaved)(BillofmaterialsRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, BillofmaterialsRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "production"."billofmaterials"("productassemblyid", "componentid", "enddate", "unitmeasurecode", "bomlevel", "billofmaterialsid", "startdate", "perassemblyqty", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(BillofmaterialsRowUnsaved.pgText)
 
-  def select: SelectBuilder[BillofmaterialsFields, BillofmaterialsRow] = SelectBuilder.of(""""production"."billofmaterials"""", BillofmaterialsFields.structure, BillofmaterialsRow.jdbcDecoder)
+  override def select: SelectBuilder[BillofmaterialsFields, BillofmaterialsRow] = SelectBuilder.of(""""production"."billofmaterials"""", BillofmaterialsFields.structure, BillofmaterialsRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, BillofmaterialsRow] = sql"""select "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text from "production"."billofmaterials"""".query(BillofmaterialsRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, BillofmaterialsRow] = sql"""select "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text from "production"."billofmaterials"""".query(BillofmaterialsRow.jdbcDecoder).selectStream()
 
-  def selectById(billofmaterialsid: Int): ZIO[ZConnection, Throwable, Option[BillofmaterialsRow]] = sql"""select "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text from "production"."billofmaterials" where "billofmaterialsid" = ${Segment.paramSegment(billofmaterialsid)(Setter.intSetter)}""".query(BillofmaterialsRow.jdbcDecoder).selectOne
+  override def selectById(billofmaterialsid: Int): ZIO[ZConnection, Throwable, Option[BillofmaterialsRow]] = sql"""select "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text from "production"."billofmaterials" where "billofmaterialsid" = ${Segment.paramSegment(billofmaterialsid)(Setter.intSetter)}""".query(BillofmaterialsRow.jdbcDecoder).selectOne
 
-  def selectByIds(billofmaterialsids: Array[Int]): ZStream[ZConnection, Throwable, BillofmaterialsRow] = sql"""select "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text from "production"."billofmaterials" where "billofmaterialsid" = ANY(${Segment.paramSegment(billofmaterialsids)(adventureworks.IntArraySetter)})""".query(BillofmaterialsRow.jdbcDecoder).selectStream()
+  override def selectByIds(billofmaterialsids: Array[Int]): ZStream[ZConnection, Throwable, BillofmaterialsRow] = sql"""select "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text from "production"."billofmaterials" where "billofmaterialsid" = ANY(${Segment.paramSegment(billofmaterialsids)(adventureworks.IntArraySetter)})""".query(BillofmaterialsRow.jdbcDecoder).selectStream()
 
-  def selectByIdsTracked(billofmaterialsids: Array[Int]): ZIO[ZConnection, Throwable, Map[Int, BillofmaterialsRow]] = {
+  override def selectByIdsTracked(billofmaterialsids: Array[Int]): ZIO[ZConnection, Throwable, Map[Int, BillofmaterialsRow]] = {
     selectByIds(billofmaterialsids).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.billofmaterialsid, x)).toMap
       billofmaterialsids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[BillofmaterialsFields, BillofmaterialsRow] = UpdateBuilder.of(""""production"."billofmaterials"""", BillofmaterialsFields.structure, BillofmaterialsRow.jdbcDecoder)
+  override def update: UpdateBuilder[BillofmaterialsFields, BillofmaterialsRow] = UpdateBuilder.of(""""production"."billofmaterials"""", BillofmaterialsFields.structure, BillofmaterialsRow.jdbcDecoder)
 
-  def update(row: BillofmaterialsRow): ZIO[ZConnection, Throwable, Option[BillofmaterialsRow]] = {
+  override def update(row: BillofmaterialsRow): ZIO[ZConnection, Throwable, Option[BillofmaterialsRow]] = {
     val billofmaterialsid = row.billofmaterialsid
     sql"""update "production"."billofmaterials"
     set "productassemblyid" = ${Segment.paramSegment(row.productassemblyid)(Setter.optionParamSetter(ProductId.setter))}::int4,
@@ -118,7 +118,7 @@ class BillofmaterialsRepoImpl extends BillofmaterialsRepo {
       .selectOne
   }
 
-  def upsert(unsaved: BillofmaterialsRow): ZIO[ZConnection, Throwable, UpdateResult[BillofmaterialsRow]] = {
+  override def upsert(unsaved: BillofmaterialsRow): ZIO[ZConnection, Throwable, UpdateResult[BillofmaterialsRow]] = {
     sql"""insert into "production"."billofmaterials"("billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate")
     values (
       ${Segment.paramSegment(unsaved.billofmaterialsid)(Setter.intSetter)}::int4,
@@ -145,7 +145,7 @@ class BillofmaterialsRepoImpl extends BillofmaterialsRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, BillofmaterialsRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

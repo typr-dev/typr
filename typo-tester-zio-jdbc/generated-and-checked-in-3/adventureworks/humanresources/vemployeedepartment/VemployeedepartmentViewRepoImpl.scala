@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class VemployeedepartmentViewRepoImpl extends VemployeedepartmentViewRepo {
-  def select: SelectBuilder[VemployeedepartmentViewFields, VemployeedepartmentViewRow] = SelectBuilder.of(""""humanresources"."vemployeedepartment"""", VemployeedepartmentViewFields.structure, VemployeedepartmentViewRow.jdbcDecoder)
+  override def select: SelectBuilder[VemployeedepartmentViewFields, VemployeedepartmentViewRow] = SelectBuilder.of(""""humanresources"."vemployeedepartment"""", VemployeedepartmentViewFields.structure, VemployeedepartmentViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, VemployeedepartmentViewRow] = sql"""select "businessentityid", "title", "firstname", "middlename", "lastname", "suffix", "jobtitle", "department", "groupname", "startdate"::text from "humanresources"."vemployeedepartment"""".query(using VemployeedepartmentViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, VemployeedepartmentViewRow] = sql"""select "businessentityid", "title", "firstname", "middlename", "lastname", "suffix", "jobtitle", "department", "groupname", "startdate"::text from "humanresources"."vemployeedepartment"""".query(using VemployeedepartmentViewRow.jdbcDecoder).selectStream()
 }

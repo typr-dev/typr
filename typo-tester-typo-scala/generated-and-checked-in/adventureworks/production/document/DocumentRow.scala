@@ -17,7 +17,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple13
 
 /** Table: production.document
  * Product maintenance documents.
@@ -91,23 +90,7 @@ case class DocumentRow(
 }
 
 object DocumentRow {
-  val `_rowParser`: RowParser[DocumentRow] = {
-    RowParsers.of(PgTypes.text, BusinessentityId.pgType, Flag.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text, PgTypes.int4, TypoShort.pgType, PgTypes.text.opt(), TypoBytea.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, DocumentId.pgType, DocumentRow.apply, row => new Tuple13(
-      row.title,
-      row.owner,
-      row.folderflag,
-      row.filename,
-      row.fileextension,
-      row.revision,
-      row.changenumber,
-      row.status,
-      row.documentsummary,
-      row.document,
-      row.rowguid,
-      row.modifieddate,
-      row.documentnode
-    ))
-  }
+  val `_rowParser`: RowParser[DocumentRow] = RowParsers.of(PgTypes.text, BusinessentityId.pgType, Flag.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text, PgTypes.int4, TypoShort.pgType, PgTypes.text.opt(), TypoBytea.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, DocumentId.pgType, DocumentRow.apply, row => Array(row.title, row.owner, row.folderflag, row.filename, row.fileextension, row.revision, row.changenumber, row.status, row.documentsummary, row.document, row.rowguid, row.modifieddate, row.documentnode))
 
   given pgText: PgText[DocumentRow] = PgText.from(`_rowParser`)
 }

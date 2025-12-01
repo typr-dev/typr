@@ -29,7 +29,7 @@ object PccViewFields {
 
     override lazy val fields: PccViewFields = {
       new PccViewFields {
-        def id: Field[BusinessentityId, PccViewRow] = {
+        override def id: Field[BusinessentityId, PccViewRow] = {
           new Field[BusinessentityId, PccViewRow](
             _path,
             "id",
@@ -40,7 +40,7 @@ object PccViewFields {
             BusinessentityId.pgType
           )
         }
-        def businessentityid: Field[BusinessentityId, PccViewRow] = {
+        override def businessentityid: Field[BusinessentityId, PccViewRow] = {
           new Field[BusinessentityId, PccViewRow](
             _path,
             "businessentityid",
@@ -51,7 +51,7 @@ object PccViewFields {
             BusinessentityId.pgType
           )
         }
-        def creditcardid: Field[/* user-picked */ CustomCreditcardId, PccViewRow] = {
+        override def creditcardid: Field[/* user-picked */ CustomCreditcardId, PccViewRow] = {
           new Field[/* user-picked */ CustomCreditcardId, PccViewRow](
             _path,
             "creditcardid",
@@ -62,7 +62,7 @@ object PccViewFields {
             /* user-picked */ CustomCreditcardId.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, PccViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, PccViewRow] = {
           new Field[TypoLocalDateTime, PccViewRow](
             _path,
             "modifieddate",
@@ -78,7 +78,7 @@ object PccViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, PccViewRow]] = java.util.List.of(this.fields.id, this.fields.businessentityid, this.fields.creditcardid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[PccViewFields, PccViewRow] = new Impl(java.util.List.of())

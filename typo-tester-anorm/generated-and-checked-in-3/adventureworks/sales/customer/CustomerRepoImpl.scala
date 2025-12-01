@@ -26,18 +26,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class CustomerRepoImpl extends CustomerRepo {
-  def delete: DeleteBuilder[CustomerFields, CustomerRow] = DeleteBuilder.of(""""sales"."customer"""", CustomerFields.structure, CustomerRow.rowParser(1).*)
+  override def delete: DeleteBuilder[CustomerFields, CustomerRow] = DeleteBuilder.of(""""sales"."customer"""", CustomerFields.structure, CustomerRow.rowParser(1).*)
 
-  def deleteById(customerid: CustomerId)(using c: Connection): Boolean = SQL"""delete from "sales"."customer" where "customerid" = ${ParameterValue(customerid, null, CustomerId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(customerid: CustomerId)(using c: Connection): Boolean = SQL"""delete from "sales"."customer" where "customerid" = ${ParameterValue(customerid, null, CustomerId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(customerids: Array[CustomerId])(using c: Connection): Int = {
+  override def deleteByIds(customerids: Array[CustomerId])(using c: Connection): Int = {
     SQL"""delete
     from "sales"."customer"
     where "customerid" = ANY(${ParameterValue(customerids, null, CustomerId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: CustomerRow)(using c: Connection): CustomerRow = {
+  override def insert(unsaved: CustomerRow)(using c: Connection): CustomerRow = {
   SQL"""insert into "sales"."customer"("customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate")
     values (${ParameterValue(unsaved.customerid, null, CustomerId.toStatement)}::int4, ${ParameterValue(unsaved.personid, null, ToStatement.optionToStatement(using BusinessentityId.toStatement, BusinessentityId.parameterMetadata))}::int4, ${ParameterValue(unsaved.storeid, null, ToStatement.optionToStatement(using BusinessentityId.toStatement, BusinessentityId.parameterMetadata))}::int4, ${ParameterValue(unsaved.territoryid, null, ToStatement.optionToStatement(using SalesterritoryId.toStatement, SalesterritoryId.parameterMetadata))}::int4, ${ParameterValue(unsaved.rowguid, null, TypoUUID.toStatement)}::uuid, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text
@@ -45,7 +45,7 @@ class CustomerRepoImpl extends CustomerRepo {
     .executeInsert(CustomerRow.rowParser(1).single)
   }
 
-  def insert(unsaved: CustomerRowUnsaved)(using c: Connection): CustomerRow = {
+  override def insert(unsaved: CustomerRowUnsaved)(using c: Connection): CustomerRow = {
     val namedParameters = List(
       Some((NamedParameter("personid", ParameterValue(unsaved.personid, null, ToStatement.optionToStatement(using BusinessentityId.toStatement, BusinessentityId.parameterMetadata))), "::int4")),
       Some((NamedParameter("storeid", ParameterValue(unsaved.storeid, null, ToStatement.optionToStatement(using BusinessentityId.toStatement, BusinessentityId.parameterMetadata))), "::int4")),
@@ -79,47 +79,47 @@ class CustomerRepoImpl extends CustomerRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[CustomerRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "sales"."customer"("customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved)(using CustomerRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[CustomerRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "sales"."customer"("personid", "storeid", "territoryid", "customerid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using CustomerRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[CustomerFields, CustomerRow] = SelectBuilder.of(""""sales"."customer"""", CustomerFields.structure, CustomerRow.rowParser)
+  override def select: SelectBuilder[CustomerFields, CustomerRow] = SelectBuilder.of(""""sales"."customer"""", CustomerFields.structure, CustomerRow.rowParser)
 
-  def selectAll(using c: Connection): List[CustomerRow] = {
+  override def selectAll(using c: Connection): List[CustomerRow] = {
     SQL"""select "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text
     from "sales"."customer"
     """.as(CustomerRow.rowParser(1).*)
   }
 
-  def selectById(customerid: CustomerId)(using c: Connection): Option[CustomerRow] = {
+  override def selectById(customerid: CustomerId)(using c: Connection): Option[CustomerRow] = {
     SQL"""select "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text
     from "sales"."customer"
     where "customerid" = ${ParameterValue(customerid, null, CustomerId.toStatement)}
     """.as(CustomerRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(customerids: Array[CustomerId])(using c: Connection): List[CustomerRow] = {
+  override def selectByIds(customerids: Array[CustomerId])(using c: Connection): List[CustomerRow] = {
     SQL"""select "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text
     from "sales"."customer"
     where "customerid" = ANY(${ParameterValue(customerids, null, CustomerId.arrayToStatement)})
     """.as(CustomerRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(customerids: Array[CustomerId])(using c: Connection): Map[CustomerId, CustomerRow] = {
+  override def selectByIdsTracked(customerids: Array[CustomerId])(using c: Connection): Map[CustomerId, CustomerRow] = {
     val byId = selectByIds(customerids).view.map(x => (x.customerid, x)).toMap
     customerids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[CustomerFields, CustomerRow] = UpdateBuilder.of(""""sales"."customer"""", CustomerFields.structure, CustomerRow.rowParser(1).*)
+  override def update: UpdateBuilder[CustomerFields, CustomerRow] = UpdateBuilder.of(""""sales"."customer"""", CustomerFields.structure, CustomerRow.rowParser(1).*)
 
-  def update(row: CustomerRow)(using c: Connection): Option[CustomerRow] = {
+  override def update(row: CustomerRow)(using c: Connection): Option[CustomerRow] = {
     val customerid = row.customerid
     SQL"""update "sales"."customer"
     set "personid" = ${ParameterValue(row.personid, null, ToStatement.optionToStatement(using BusinessentityId.toStatement, BusinessentityId.parameterMetadata))}::int4,
@@ -132,7 +132,7 @@ class CustomerRepoImpl extends CustomerRepo {
     """.executeInsert(CustomerRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: CustomerRow)(using c: Connection): CustomerRow = {
+  override def upsert(unsaved: CustomerRow)(using c: Connection): CustomerRow = {
   SQL"""insert into "sales"."customer"("customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate")
     values (
       ${ParameterValue(unsaved.customerid, null, CustomerId.toStatement)}::int4,
@@ -154,7 +154,7 @@ class CustomerRepoImpl extends CustomerRepo {
     .executeInsert(CustomerRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[CustomerRow])(using c: Connection): List[CustomerRow] = {
+  override def upsertBatch(unsaved: Iterable[CustomerRow])(using c: Connection): List[CustomerRow] = {
     def toNamedParameter(row: CustomerRow): List[NamedParameter] = List(
       NamedParameter("customerid", ParameterValue(row.customerid, null, CustomerId.toStatement)),
       NamedParameter("personid", ParameterValue(row.personid, null, ToStatement.optionToStatement(using BusinessentityId.toStatement, BusinessentityId.parameterMetadata))),
@@ -163,6 +163,7 @@ class CustomerRepoImpl extends CustomerRepo {
       NamedParameter("rowguid", ParameterValue(row.rowguid, null, TypoUUID.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -187,7 +188,7 @@ class CustomerRepoImpl extends CustomerRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[CustomerRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

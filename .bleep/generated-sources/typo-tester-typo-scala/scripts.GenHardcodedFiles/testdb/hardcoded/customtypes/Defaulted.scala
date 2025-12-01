@@ -23,31 +23,31 @@ sealed trait Defaulted[T] {
 }
 
 object Defaulted {
-  given pgText[T](using t: PgText[T]): PgText[Defaulted[T]] = PgText.instance((ot, sb) => ot.visit({ sb.append("__DEFAULT_VALUE__"): @scala.annotation.nowarn; }, value => t.unsafeEncode(value, sb)))
+  given pgText[T](using t: PgText[T]): PgText[Defaulted[T]] = PgText.instance((ot, sb) => ot.visit({ sb.append("__DEFAULT_VALUE__"): @scala.annotation.nowarn }, value => t.unsafeEncode(value, sb)))
 
   case class Provided[T](value: T) extends Defaulted[T] {
-    def fold[U](
+    override def fold[U](
       onDefault: => U,
       onProvided: T => U
     ): U = onProvided(value)
 
-    def getOrElse(onDefault: => T): T = value
+    override def getOrElse(onDefault: => T): T = value
 
-    def visit(
+    override def visit(
       onDefault: => Unit,
       onProvided: T => Unit
     ): Unit = onProvided(value)
   }
 
   case class UseDefault[T]() extends Defaulted[T] {
-    def fold[U](
+    override def fold[U](
       onDefault: => U,
       onProvided: T => U
     ): U = onDefault
 
-    def getOrElse(onDefault: => T): T = onDefault
+    override def getOrElse(onDefault: => T): T = onDefault
 
-    def visit(
+    override def visit(
       onDefault: => Unit,
       onProvided: T => Unit
     ): Unit = onDefault

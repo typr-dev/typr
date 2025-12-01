@@ -14,22 +14,22 @@ case class TypeMapperJvmNew(
       case db.Type.Bytea    => jvm.Type.ArrayOf(lang.Byte)
       case db.Type.Bpchar(maybeN) =>
         maybeN match {
-          case Some(n) if n != 2147483647 => TypesJava.String.withComment(s"bpchar, max $n chars")
-          case _                          => TypesJava.String.withComment(s"bpchar")
+          case Some(n) if n != 2147483647 => lang.String.withComment(s"bpchar, max $n chars")
+          case _                          => lang.String.withComment(s"bpchar")
         }
-      case db.Type.Char                  => TypesJava.String
+      case db.Type.Char                  => lang.String
       case db.Type.Date                  => TypesJava.LocalDate
       case db.Type.DomainRef(name, _, _) => jvm.Type.Qualified(naming.domainName(name))
       case db.Type.Float4                => lang.Float
       case db.Type.Float8                => lang.Double
-      case db.Type.Hstore                => jvm.Type.TApply(TypesJava.Map, List(TypesJava.String, TypesJava.String))
+      case db.Type.Hstore                => jvm.Type.TApply(TypesJava.Map, List(lang.String, lang.String))
       case db.Type.Inet                  => TypesJava.runtime.Inet
       case db.Type.Int2                  => lang.Short
       case db.Type.Int4                  => lang.Int
       case db.Type.Int8                  => lang.Long
       case db.Type.Json                  => TypesJava.runtime.Json
       case db.Type.Jsonb                 => TypesJava.runtime.Jsonb
-      case db.Type.Name                  => TypesJava.String
+      case db.Type.Name                  => lang.String
       case db.Type.Numeric               => lang.BigDecimal
       case db.Type.Oid                   => lang.Long.withComment("oid")
       case db.Type.PGInterval            => TypesJava.PGInterval
@@ -60,7 +60,7 @@ case class TypeMapperJvmNew(
       case db.Type.regtype               => TypesJava.runtime.Regtype
       case db.Type.xid                   => TypesJava.runtime.Xid
       case db.Type.EnumRef(enm)          => jvm.Type.Qualified(naming.enumName(enm.name))
-      case db.Type.Text                  => TypesJava.String
+      case db.Type.Text                  => lang.String
       case db.Type.Time                  => TypesJava.LocalTime
       case db.Type.TimeTz                => TypesJava.OffsetTime
       case db.Type.Timestamp             => TypesJava.LocalDateTime
@@ -69,8 +69,8 @@ case class TypeMapperJvmNew(
       case db.Type.Xml                   => TypesJava.runtime.Xml
       case db.Type.VarChar(maybeN) =>
         maybeN match {
-          case Some(n) if n != 2147483647 => TypesJava.String.withComment(s"max $n chars")
-          case _                          => TypesJava.String
+          case Some(n) if n != 2147483647 => lang.String.withComment(s"max $n chars")
+          case _                          => lang.String
         }
       case db.Type.Vector     => TypesJava.runtime.Vector
       case db.Type.Unknown(_) => TypesJava.runtime.Unknown

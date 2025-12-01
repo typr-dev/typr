@@ -15,7 +15,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface VsalespersonsalesbyfiscalyearsViewFields {
-  static final class Impl extends Relation<VsalespersonsalesbyfiscalyearsViewFields, VsalespersonsalesbyfiscalyearsViewRow> {
+  final class Impl extends Relation<VsalespersonsalesbyfiscalyearsViewFields, VsalespersonsalesbyfiscalyearsViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -23,24 +23,31 @@ public interface VsalespersonsalesbyfiscalyearsViewFields {
     @Override
     public VsalespersonsalesbyfiscalyearsViewFields fields() {
       return new VsalespersonsalesbyfiscalyearsViewFields() {
+               @Override
                public OptField<Integer, VsalespersonsalesbyfiscalyearsViewRow> salesPersonID() {
                  return new OptField<Integer, VsalespersonsalesbyfiscalyearsViewRow>(_path, "SalesPersonID", VsalespersonsalesbyfiscalyearsViewRow::salesPersonID, Optional.empty(), Optional.empty(), (row, value) -> row.withSalesPersonID(value), PgTypes.int4);
                };
+               @Override
                public OptField<String, VsalespersonsalesbyfiscalyearsViewRow> fullName() {
                  return new OptField<String, VsalespersonsalesbyfiscalyearsViewRow>(_path, "FullName", VsalespersonsalesbyfiscalyearsViewRow::fullName, Optional.empty(), Optional.empty(), (row, value) -> row.withFullName(value), PgTypes.text);
                };
+               @Override
                public OptField<String, VsalespersonsalesbyfiscalyearsViewRow> jobTitle() {
                  return new OptField<String, VsalespersonsalesbyfiscalyearsViewRow>(_path, "JobTitle", VsalespersonsalesbyfiscalyearsViewRow::jobTitle, Optional.empty(), Optional.empty(), (row, value) -> row.withJobTitle(value), PgTypes.text);
                };
+               @Override
                public OptField<String, VsalespersonsalesbyfiscalyearsViewRow> salesTerritory() {
                  return new OptField<String, VsalespersonsalesbyfiscalyearsViewRow>(_path, "SalesTerritory", VsalespersonsalesbyfiscalyearsViewRow::salesTerritory, Optional.empty(), Optional.empty(), (row, value) -> row.withSalesTerritory(value), PgTypes.text);
                };
+               @Override
                public OptField<BigDecimal, VsalespersonsalesbyfiscalyearsViewRow> _2012() {
                  return new OptField<BigDecimal, VsalespersonsalesbyfiscalyearsViewRow>(_path, "2012", VsalespersonsalesbyfiscalyearsViewRow::_2012, Optional.empty(), Optional.empty(), (row, value) -> row.with2012(value), PgTypes.numeric);
                };
+               @Override
                public OptField<BigDecimal, VsalespersonsalesbyfiscalyearsViewRow> _2013() {
                  return new OptField<BigDecimal, VsalespersonsalesbyfiscalyearsViewRow>(_path, "2013", VsalespersonsalesbyfiscalyearsViewRow::_2013, Optional.empty(), Optional.empty(), (row, value) -> row.with2013(value), PgTypes.numeric);
                };
+               @Override
                public OptField<BigDecimal, VsalespersonsalesbyfiscalyearsViewRow> _2014() {
                  return new OptField<BigDecimal, VsalespersonsalesbyfiscalyearsViewRow>(_path, "2014", VsalespersonsalesbyfiscalyearsViewRow::_2014, Optional.empty(), Optional.empty(), (row, value) -> row.with2014(value), PgTypes.numeric);
                };
@@ -52,6 +59,7 @@ public interface VsalespersonsalesbyfiscalyearsViewFields {
       return List.of(this.fields().salesPersonID(), this.fields().fullName(), this.fields().jobTitle(), this.fields().salesTerritory(), this.fields()._2012(), this.fields()._2013(), this.fields()._2014());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

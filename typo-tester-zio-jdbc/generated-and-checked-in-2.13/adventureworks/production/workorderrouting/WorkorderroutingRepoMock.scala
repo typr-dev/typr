@@ -25,13 +25,13 @@ case class WorkorderroutingRepoMock(
   toRow: WorkorderroutingRowUnsaved => WorkorderroutingRow,
   map: scala.collection.mutable.Map[WorkorderroutingId, WorkorderroutingRow] = scala.collection.mutable.Map.empty[WorkorderroutingId, WorkorderroutingRow]
 ) extends WorkorderroutingRepo {
-  def delete: DeleteBuilder[WorkorderroutingFields, WorkorderroutingRow] = DeleteBuilderMock(DeleteParams.empty, WorkorderroutingFields.structure, map)
+  override def delete: DeleteBuilder[WorkorderroutingFields, WorkorderroutingRow] = DeleteBuilderMock(DeleteParams.empty, WorkorderroutingFields.structure, map)
 
-  def deleteById(compositeId: WorkorderroutingId): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(compositeId).isDefined)
+  override def deleteById(compositeId: WorkorderroutingId): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(compositeId).isDefined)
 
-  def deleteByIds(compositeIds: Array[WorkorderroutingId]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(compositeIds.map(id => map.remove(id)).count(_.isDefined).toLong)
+  override def deleteByIds(compositeIds: Array[WorkorderroutingId]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(compositeIds.map(id => map.remove(id)).count(_.isDefined).toLong)
 
-  def insert(unsaved: WorkorderroutingRow): ZIO[ZConnection, Throwable, WorkorderroutingRow] = {
+  override def insert(unsaved: WorkorderroutingRow): ZIO[ZConnection, Throwable, WorkorderroutingRow] = {
   ZIO.succeed {
     val _ =
       if (map.contains(unsaved.compositeId))
@@ -43,9 +43,9 @@ case class WorkorderroutingRepoMock(
   }
   }
 
-  def insert(unsaved: WorkorderroutingRowUnsaved): ZIO[ZConnection, Throwable, WorkorderroutingRow] = insert(toRow(unsaved))
+  override def insert(unsaved: WorkorderroutingRowUnsaved): ZIO[ZConnection, Throwable, WorkorderroutingRow] = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, WorkorderroutingRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {
@@ -58,7 +58,7 @@ case class WorkorderroutingRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, WorkorderroutingRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {
@@ -71,24 +71,24 @@ case class WorkorderroutingRepoMock(
     }.runLast.map(_.getOrElse(0L))
   }
 
-  def select: SelectBuilder[WorkorderroutingFields, WorkorderroutingRow] = SelectBuilderMock(WorkorderroutingFields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
+  override def select: SelectBuilder[WorkorderroutingFields, WorkorderroutingRow] = SelectBuilderMock(WorkorderroutingFields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
 
-  def selectAll: ZStream[ZConnection, Throwable, WorkorderroutingRow] = ZStream.fromIterable(map.values)
+  override def selectAll: ZStream[ZConnection, Throwable, WorkorderroutingRow] = ZStream.fromIterable(map.values)
 
-  def selectById(compositeId: WorkorderroutingId): ZIO[ZConnection, Throwable, Option[WorkorderroutingRow]] = ZIO.succeed(map.get(compositeId))
+  override def selectById(compositeId: WorkorderroutingId): ZIO[ZConnection, Throwable, Option[WorkorderroutingRow]] = ZIO.succeed(map.get(compositeId))
 
-  def selectByIds(compositeIds: Array[WorkorderroutingId]): ZStream[ZConnection, Throwable, WorkorderroutingRow] = ZStream.fromIterable(compositeIds.flatMap(map.get))
+  override def selectByIds(compositeIds: Array[WorkorderroutingId]): ZStream[ZConnection, Throwable, WorkorderroutingRow] = ZStream.fromIterable(compositeIds.flatMap(map.get))
 
-  def selectByIdsTracked(compositeIds: Array[WorkorderroutingId]): ZIO[ZConnection, Throwable, Map[WorkorderroutingId, WorkorderroutingRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[WorkorderroutingId]): ZIO[ZConnection, Throwable, Map[WorkorderroutingId, WorkorderroutingRow]] = {
     selectByIds(compositeIds).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[WorkorderroutingFields, WorkorderroutingRow] = UpdateBuilderMock(UpdateParams.empty, WorkorderroutingFields.structure, map)
+  override def update: UpdateBuilder[WorkorderroutingFields, WorkorderroutingRow] = UpdateBuilderMock(UpdateParams.empty, WorkorderroutingFields.structure, map)
 
-  def update(row: WorkorderroutingRow): ZIO[ZConnection, Throwable, Option[WorkorderroutingRow]] = {
+  override def update(row: WorkorderroutingRow): ZIO[ZConnection, Throwable, Option[WorkorderroutingRow]] = {
     ZIO.succeed {
       map.get(row.compositeId).map { _ =>
         map.put(row.compositeId, row): @nowarn
@@ -97,7 +97,7 @@ case class WorkorderroutingRepoMock(
     }
   }
 
-  def upsert(unsaved: WorkorderroutingRow): ZIO[ZConnection, Throwable, UpdateResult[WorkorderroutingRow]] = {
+  override def upsert(unsaved: WorkorderroutingRow): ZIO[ZConnection, Throwable, UpdateResult[WorkorderroutingRow]] = {
     ZIO.succeed {
       map.put(unsaved.compositeId, unsaved): @nowarn
       UpdateResult(1, Chunk.single(unsaved))
@@ -105,7 +105,7 @@ case class WorkorderroutingRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, WorkorderroutingRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

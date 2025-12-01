@@ -18,7 +18,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface LViewFields {
-  static final class Impl extends Relation<LViewFields, LViewRow> {
+  final class Impl extends Relation<LViewFields, LViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -26,21 +26,27 @@ public interface LViewFields {
     @Override
     public LViewFields fields() {
       return new LViewFields() {
+               @Override
                public Field<LocationId, LViewRow> id() {
                  return new Field<LocationId, LViewRow>(_path, "id", LViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), LocationId.pgType);
                };
+               @Override
                public Field<LocationId, LViewRow> locationid() {
                  return new Field<LocationId, LViewRow>(_path, "locationid", LViewRow::locationid, Optional.empty(), Optional.empty(), (row, value) -> row.withLocationid(value), LocationId.pgType);
                };
+               @Override
                public Field<Name, LViewRow> name() {
                  return new Field<Name, LViewRow>(_path, "name", LViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<BigDecimal, LViewRow> costrate() {
                  return new Field<BigDecimal, LViewRow>(_path, "costrate", LViewRow::costrate, Optional.empty(), Optional.empty(), (row, value) -> row.withCostrate(value), PgTypes.numeric);
                };
+               @Override
                public Field<BigDecimal, LViewRow> availability() {
                  return new Field<BigDecimal, LViewRow>(_path, "availability", LViewRow::availability, Optional.empty(), Optional.empty(), (row, value) -> row.withAvailability(value), PgTypes.numeric);
                };
+               @Override
                public Field<TypoLocalDateTime, LViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, LViewRow>(_path, "modifieddate", LViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -52,6 +58,7 @@ public interface LViewFields {
       return List.of(this.fields().id(), this.fields().locationid(), this.fields().name(), this.fields().costrate(), this.fields().availability(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

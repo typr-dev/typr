@@ -32,10 +32,10 @@ public record TypoUUID(@JsonValue UUID value) {
     PgText.textString.contramap(v -> v.value().toString());
 
   static public PgType<TypoUUID> pgType =
-    PgTypes.uuid.bimap(v -> new TypoUUID(v), v -> v.value()).renamed("uuid");
+    PgTypes.uuid.bimap((UUID v) -> new TypoUUID(v), (TypoUUID v) -> v.value()).renamed("uuid");
 
   static public PgType<TypoUUID[]> pgTypeArray =
-    TypoUUID.pgType.array(PgRead.massageJdbcArrayTo(UUID[].class).map(xs -> arrayMap.map(xs, v -> new TypoUUID(v), TypoUUID.class)), PgWrite.<UUID>passObjectToJdbc().array(TypoUUID.pgType.typename().<UUID>as()).contramap(xs -> arrayMap.map(xs, (TypoUUID v) -> v.value(), UUID.class)));
+    TypoUUID.pgType.array(PgRead.massageJdbcArrayTo(UUID[].class).map((UUID[] xs) -> arrayMap.map(xs, (UUID v) -> new TypoUUID(v), TypoUUID.class)), PgWrite.<UUID>passObjectToJdbc().array(TypoUUID.pgType.typename().<UUID>as()).contramap((TypoUUID[] xs) -> arrayMap.map(xs, (TypoUUID v) -> v.value(), UUID.class)));
 
   static public TypoUUID randomUUID() {
     return new TypoUUID(UUID.randomUUID());

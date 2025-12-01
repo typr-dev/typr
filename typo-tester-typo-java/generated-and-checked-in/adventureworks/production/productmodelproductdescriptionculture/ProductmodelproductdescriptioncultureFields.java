@@ -28,7 +28,7 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 
 public interface ProductmodelproductdescriptioncultureFields {
-  static final class Impl extends Relation<ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow> {
+  final class Impl extends Relation<ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -36,15 +36,19 @@ public interface ProductmodelproductdescriptioncultureFields {
     @Override
     public ProductmodelproductdescriptioncultureFields fields() {
       return new ProductmodelproductdescriptioncultureFields() {
+               @Override
                public IdField<ProductmodelId, ProductmodelproductdescriptioncultureRow> productmodelid() {
                  return new IdField<ProductmodelId, ProductmodelproductdescriptioncultureRow>(_path, "productmodelid", ProductmodelproductdescriptioncultureRow::productmodelid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductmodelid(value), ProductmodelId.pgType);
                };
+               @Override
                public IdField<ProductdescriptionId, ProductmodelproductdescriptioncultureRow> productdescriptionid() {
                  return new IdField<ProductdescriptionId, ProductmodelproductdescriptioncultureRow>(_path, "productdescriptionid", ProductmodelproductdescriptioncultureRow::productdescriptionid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductdescriptionid(value), ProductdescriptionId.pgType);
                };
+               @Override
                public IdField<CultureId, ProductmodelproductdescriptioncultureRow> cultureid() {
                  return new IdField<CultureId, ProductmodelproductdescriptioncultureRow>(_path, "cultureid", ProductmodelproductdescriptioncultureRow::cultureid, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withCultureid(value), CultureId.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, ProductmodelproductdescriptioncultureRow> modifieddate() {
                  return new Field<TypoLocalDateTime, ProductmodelproductdescriptioncultureRow>(_path, "modifieddate", ProductmodelproductdescriptioncultureRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -56,6 +60,7 @@ public interface ProductmodelproductdescriptioncultureFields {
       return List.of(this.fields().productmodelid(), this.fields().productdescriptionid(), this.fields().cultureid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

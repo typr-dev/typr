@@ -22,7 +22,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface PViewFields {
-  static final class Impl extends Relation<PViewFields, PViewRow> {
+  final class Impl extends Relation<PViewFields, PViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -30,45 +30,59 @@ public interface PViewFields {
     @Override
     public PViewFields fields() {
       return new PViewFields() {
+               @Override
                public Field<BusinessentityId, PViewRow> id() {
                  return new Field<BusinessentityId, PViewRow>(_path, "id", PViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
                };
+               @Override
                public Field<BusinessentityId, PViewRow> businessentityid() {
                  return new Field<BusinessentityId, PViewRow>(_path, "businessentityid", PViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public Field</* bpchar, max 2 chars */ String, PViewRow> persontype() {
                  return new Field</* bpchar, max 2 chars */ String, PViewRow>(_path, "persontype", PViewRow::persontype, Optional.empty(), Optional.empty(), (row, value) -> row.withPersontype(value), PgTypes.text);
                };
+               @Override
                public Field<NameStyle, PViewRow> namestyle() {
                  return new Field<NameStyle, PViewRow>(_path, "namestyle", PViewRow::namestyle, Optional.empty(), Optional.empty(), (row, value) -> row.withNamestyle(value), NameStyle.pgType);
                };
+               @Override
                public OptField</* max 8 chars */ String, PViewRow> title() {
                  return new OptField</* max 8 chars */ String, PViewRow>(_path, "title", PViewRow::title, Optional.empty(), Optional.empty(), (row, value) -> row.withTitle(value), PgTypes.text);
                };
+               @Override
                public Field</* user-picked */ FirstName, PViewRow> firstname() {
                  return new Field</* user-picked */ FirstName, PViewRow>(_path, "firstname", PViewRow::firstname, Optional.empty(), Optional.empty(), (row, value) -> row.withFirstname(value), /* user-picked */ FirstName.pgType);
                };
+               @Override
                public OptField<Name, PViewRow> middlename() {
                  return new OptField<Name, PViewRow>(_path, "middlename", PViewRow::middlename, Optional.empty(), Optional.empty(), (row, value) -> row.withMiddlename(value), Name.pgType);
                };
+               @Override
                public Field<Name, PViewRow> lastname() {
                  return new Field<Name, PViewRow>(_path, "lastname", PViewRow::lastname, Optional.empty(), Optional.empty(), (row, value) -> row.withLastname(value), Name.pgType);
                };
+               @Override
                public OptField</* max 10 chars */ String, PViewRow> suffix() {
                  return new OptField</* max 10 chars */ String, PViewRow>(_path, "suffix", PViewRow::suffix, Optional.empty(), Optional.empty(), (row, value) -> row.withSuffix(value), PgTypes.text);
                };
+               @Override
                public Field<Integer, PViewRow> emailpromotion() {
                  return new Field<Integer, PViewRow>(_path, "emailpromotion", PViewRow::emailpromotion, Optional.empty(), Optional.empty(), (row, value) -> row.withEmailpromotion(value), PgTypes.int4);
                };
+               @Override
                public OptField<TypoXml, PViewRow> additionalcontactinfo() {
                  return new OptField<TypoXml, PViewRow>(_path, "additionalcontactinfo", PViewRow::additionalcontactinfo, Optional.empty(), Optional.empty(), (row, value) -> row.withAdditionalcontactinfo(value), TypoXml.pgType);
                };
+               @Override
                public OptField<TypoXml, PViewRow> demographics() {
                  return new OptField<TypoXml, PViewRow>(_path, "demographics", PViewRow::demographics, Optional.empty(), Optional.empty(), (row, value) -> row.withDemographics(value), TypoXml.pgType);
                };
+               @Override
                public Field<TypoUUID, PViewRow> rowguid() {
                  return new Field<TypoUUID, PViewRow>(_path, "rowguid", PViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, PViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, PViewRow>(_path, "modifieddate", PViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -80,6 +94,7 @@ public interface PViewFields {
       return List.of(this.fields().id(), this.fields().businessentityid(), this.fields().persontype(), this.fields().namestyle(), this.fields().title(), this.fields().firstname(), this.fields().middlename(), this.fields().lastname(), this.fields().suffix(), this.fields().emailpromotion(), this.fields().additionalcontactinfo(), this.fields().demographics(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

@@ -17,7 +17,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface VproductanddescriptionMVFields {
-  static final class Impl extends Relation<VproductanddescriptionMVFields, VproductanddescriptionMVRow> {
+  final class Impl extends Relation<VproductanddescriptionMVFields, VproductanddescriptionMVRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -25,18 +25,23 @@ public interface VproductanddescriptionMVFields {
     @Override
     public VproductanddescriptionMVFields fields() {
       return new VproductanddescriptionMVFields() {
+               @Override
                public Field<ProductId, VproductanddescriptionMVRow> productid() {
                  return new Field<ProductId, VproductanddescriptionMVRow>(_path, "productid", VproductanddescriptionMVRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
                };
+               @Override
                public Field<Name, VproductanddescriptionMVRow> name() {
                  return new Field<Name, VproductanddescriptionMVRow>(_path, "name", VproductanddescriptionMVRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<Name, VproductanddescriptionMVRow> productmodel() {
                  return new Field<Name, VproductanddescriptionMVRow>(_path, "productmodel", VproductanddescriptionMVRow::productmodel, Optional.empty(), Optional.empty(), (row, value) -> row.withProductmodel(value), Name.pgType);
                };
+               @Override
                public Field<CultureId, VproductanddescriptionMVRow> cultureid() {
                  return new Field<CultureId, VproductanddescriptionMVRow>(_path, "cultureid", VproductanddescriptionMVRow::cultureid, Optional.empty(), Optional.empty(), (row, value) -> row.withCultureid(value), CultureId.pgType);
                };
+               @Override
                public Field</* max 400 chars */ String, VproductanddescriptionMVRow> description() {
                  return new Field</* max 400 chars */ String, VproductanddescriptionMVRow>(_path, "description", VproductanddescriptionMVRow::description, Optional.empty(), Optional.empty(), (row, value) -> row.withDescription(value), PgTypes.text);
                };
@@ -48,6 +53,7 @@ public interface VproductanddescriptionMVFields {
       return List.of(this.fields().productid(), this.fields().name(), this.fields().productmodel(), this.fields().cultureid(), this.fields().description());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

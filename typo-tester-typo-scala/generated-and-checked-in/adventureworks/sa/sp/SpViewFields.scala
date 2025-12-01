@@ -44,7 +44,7 @@ object SpViewFields {
 
     override lazy val fields: SpViewFields = {
       new SpViewFields {
-        def id: Field[BusinessentityId, SpViewRow] = {
+        override def id: Field[BusinessentityId, SpViewRow] = {
           new Field[BusinessentityId, SpViewRow](
             _path,
             "id",
@@ -55,7 +55,7 @@ object SpViewFields {
             BusinessentityId.pgType
           )
         }
-        def businessentityid: Field[BusinessentityId, SpViewRow] = {
+        override def businessentityid: Field[BusinessentityId, SpViewRow] = {
           new Field[BusinessentityId, SpViewRow](
             _path,
             "businessentityid",
@@ -66,7 +66,7 @@ object SpViewFields {
             BusinessentityId.pgType
           )
         }
-        def territoryid: OptField[SalesterritoryId, SpViewRow] = {
+        override def territoryid: OptField[SalesterritoryId, SpViewRow] = {
           new OptField[SalesterritoryId, SpViewRow](
             _path,
             "territoryid",
@@ -77,7 +77,7 @@ object SpViewFields {
             SalesterritoryId.pgType
           )
         }
-        def salesquota: OptField[java.math.BigDecimal, SpViewRow] = {
+        override def salesquota: OptField[java.math.BigDecimal, SpViewRow] = {
           new OptField[java.math.BigDecimal, SpViewRow](
             _path,
             "salesquota",
@@ -88,7 +88,7 @@ object SpViewFields {
             PgTypes.numeric
           )
         }
-        def bonus: Field[java.math.BigDecimal, SpViewRow] = {
+        override def bonus: Field[java.math.BigDecimal, SpViewRow] = {
           new Field[java.math.BigDecimal, SpViewRow](
             _path,
             "bonus",
@@ -99,7 +99,7 @@ object SpViewFields {
             PgTypes.numeric
           )
         }
-        def commissionpct: Field[java.math.BigDecimal, SpViewRow] = {
+        override def commissionpct: Field[java.math.BigDecimal, SpViewRow] = {
           new Field[java.math.BigDecimal, SpViewRow](
             _path,
             "commissionpct",
@@ -110,7 +110,7 @@ object SpViewFields {
             PgTypes.numeric
           )
         }
-        def salesytd: Field[java.math.BigDecimal, SpViewRow] = {
+        override def salesytd: Field[java.math.BigDecimal, SpViewRow] = {
           new Field[java.math.BigDecimal, SpViewRow](
             _path,
             "salesytd",
@@ -121,7 +121,7 @@ object SpViewFields {
             PgTypes.numeric
           )
         }
-        def saleslastyear: Field[java.math.BigDecimal, SpViewRow] = {
+        override def saleslastyear: Field[java.math.BigDecimal, SpViewRow] = {
           new Field[java.math.BigDecimal, SpViewRow](
             _path,
             "saleslastyear",
@@ -132,7 +132,7 @@ object SpViewFields {
             PgTypes.numeric
           )
         }
-        def rowguid: Field[TypoUUID, SpViewRow] = {
+        override def rowguid: Field[TypoUUID, SpViewRow] = {
           new Field[TypoUUID, SpViewRow](
             _path,
             "rowguid",
@@ -143,7 +143,7 @@ object SpViewFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, SpViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, SpViewRow] = {
           new Field[TypoLocalDateTime, SpViewRow](
             _path,
             "modifieddate",
@@ -159,7 +159,7 @@ object SpViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, SpViewRow]] = java.util.List.of(this.fields.id, this.fields.businessentityid, this.fields.territoryid, this.fields.salesquota, this.fields.bonus, this.fields.commissionpct, this.fields.salesytd, this.fields.saleslastyear, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[SpViewFields, SpViewRow] = new Impl(java.util.List.of())

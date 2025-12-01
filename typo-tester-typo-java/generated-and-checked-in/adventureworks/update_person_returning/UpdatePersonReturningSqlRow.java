@@ -9,7 +9,6 @@ import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.userdefined.FirstName;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple2;
 
 /** SQL file: update_person_returning.sql */
 public record UpdatePersonReturningSqlRow(
@@ -28,5 +27,5 @@ public record UpdatePersonReturningSqlRow(
     return new UpdatePersonReturningSqlRow(firstname, modifieddate);
   };
 
-  static RowParser<UpdatePersonReturningSqlRow> _rowParser = RowParsers.of(/* user-picked */ FirstName.pgType, TypoLocalDateTime.pgType, UpdatePersonReturningSqlRow::new, row -> new Tuple2<>(row.firstname(), row.modifieddate()));;
+  static RowParser<UpdatePersonReturningSqlRow> _rowParser = RowParsers.of(/* user-picked */ FirstName.pgType, TypoLocalDateTime.pgType, UpdatePersonReturningSqlRow::new, row -> new Object[]{row.firstname(), row.modifieddate()});;
 }

@@ -5,22 +5,22 @@
  */
 package adventureworks.pe.at;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class AtViewRepoImpl implements AtViewRepo {
+  @Override
   public SelectBuilder<AtViewFields, AtViewRow> select() {
     return SelectBuilder.of("pe.at", AtViewFields.structure(), AtViewRow._rowParser);
   };
 
+  @Override
   public List<AtViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "addresstypeid", "name", "rowguid", "modifieddate"::text
        from "pe"."at"
-    """)).as(AtViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(AtViewRow._rowParser.all()).runUnchecked(c);
   };
 }

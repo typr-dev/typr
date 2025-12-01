@@ -21,13 +21,13 @@ case class UnitmeasureRepoMock(
   toRow: UnitmeasureRowUnsaved => UnitmeasureRow,
   map: scala.collection.mutable.Map[UnitmeasureId, UnitmeasureRow] = scala.collection.mutable.Map.empty[UnitmeasureId, UnitmeasureRow]
 ) extends UnitmeasureRepo {
-  def delete: DeleteBuilder[UnitmeasureFields, UnitmeasureRow] = DeleteBuilderMock(DeleteParams.empty, UnitmeasureFields.structure, map)
+  override def delete: DeleteBuilder[UnitmeasureFields, UnitmeasureRow] = DeleteBuilderMock(DeleteParams.empty, UnitmeasureFields.structure, map)
 
-  def deleteById(unitmeasurecode: UnitmeasureId)(using c: Connection): Boolean = map.remove(unitmeasurecode).isDefined
+  override def deleteById(unitmeasurecode: UnitmeasureId)(using c: Connection): Boolean = map.remove(unitmeasurecode).isDefined
 
-  def deleteByIds(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): Int = unitmeasurecodes.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): Int = unitmeasurecodes.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: UnitmeasureRow)(using c: Connection): UnitmeasureRow = {
+  override def insert(unsaved: UnitmeasureRow)(using c: Connection): UnitmeasureRow = {
     val _ = if (map.contains(unsaved.unitmeasurecode))
       sys.error(s"id ${unsaved.unitmeasurecode} already exists")
     else
@@ -36,9 +36,9 @@ case class UnitmeasureRepoMock(
     unsaved
   }
 
-  def insert(unsaved: UnitmeasureRowUnsaved)(using c: Connection): UnitmeasureRow = insert(toRow(unsaved))
+  override def insert(unsaved: UnitmeasureRowUnsaved)(using c: Connection): UnitmeasureRow = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[UnitmeasureRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -49,7 +49,7 @@ case class UnitmeasureRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[UnitmeasureRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -60,34 +60,34 @@ case class UnitmeasureRepoMock(
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[UnitmeasureFields, UnitmeasureRow] = SelectBuilderMock(UnitmeasureFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[UnitmeasureFields, UnitmeasureRow] = SelectBuilderMock(UnitmeasureFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(using c: Connection): List[UnitmeasureRow] = map.values.toList
+  override def selectAll(using c: Connection): List[UnitmeasureRow] = map.values.toList
 
-  def selectById(unitmeasurecode: UnitmeasureId)(using c: Connection): Option[UnitmeasureRow] = map.get(unitmeasurecode)
+  override def selectById(unitmeasurecode: UnitmeasureId)(using c: Connection): Option[UnitmeasureRow] = map.get(unitmeasurecode)
 
-  def selectByIds(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): List[UnitmeasureRow] = unitmeasurecodes.flatMap(map.get).toList
+  override def selectByIds(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): List[UnitmeasureRow] = unitmeasurecodes.flatMap(map.get).toList
 
-  def selectByIdsTracked(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): Map[UnitmeasureId, UnitmeasureRow] = {
+  override def selectByIdsTracked(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): Map[UnitmeasureId, UnitmeasureRow] = {
     val byId = selectByIds(unitmeasurecodes).view.map(x => (x.unitmeasurecode, x)).toMap
     unitmeasurecodes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[UnitmeasureFields, UnitmeasureRow] = UpdateBuilderMock(UpdateParams.empty, UnitmeasureFields.structure, map)
+  override def update: UpdateBuilder[UnitmeasureFields, UnitmeasureRow] = UpdateBuilderMock(UpdateParams.empty, UnitmeasureFields.structure, map)
 
-  def update(row: UnitmeasureRow)(using c: Connection): Option[UnitmeasureRow] = {
+  override def update(row: UnitmeasureRow)(using c: Connection): Option[UnitmeasureRow] = {
     map.get(row.unitmeasurecode).map { _ =>
       map.put(row.unitmeasurecode, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: UnitmeasureRow)(using c: Connection): UnitmeasureRow = {
+  override def upsert(unsaved: UnitmeasureRow)(using c: Connection): UnitmeasureRow = {
     map.put(unsaved.unitmeasurecode, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[UnitmeasureRow])(using c: Connection): List[UnitmeasureRow] = {
+  override def upsertBatch(unsaved: Iterable[UnitmeasureRow])(using c: Connection): List[UnitmeasureRow] = {
     unsaved.map { row =>
       map += (row.unitmeasurecode -> row)
       row
@@ -95,7 +95,7 @@ case class UnitmeasureRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[UnitmeasureRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

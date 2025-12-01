@@ -22,7 +22,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface DViewFields {
-  static final class Impl extends Relation<DViewFields, DViewRow> {
+  final class Impl extends Relation<DViewFields, DViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -30,42 +30,55 @@ public interface DViewFields {
     @Override
     public DViewFields fields() {
       return new DViewFields() {
+               @Override
                public Field</* max 50 chars */ String, DViewRow> title() {
                  return new Field</* max 50 chars */ String, DViewRow>(_path, "title", DViewRow::title, Optional.empty(), Optional.empty(), (row, value) -> row.withTitle(value), PgTypes.text);
                };
+               @Override
                public Field<BusinessentityId, DViewRow> owner() {
                  return new Field<BusinessentityId, DViewRow>(_path, "owner", DViewRow::owner, Optional.empty(), Optional.empty(), (row, value) -> row.withOwner(value), BusinessentityId.pgType);
                };
+               @Override
                public Field<Flag, DViewRow> folderflag() {
                  return new Field<Flag, DViewRow>(_path, "folderflag", DViewRow::folderflag, Optional.empty(), Optional.empty(), (row, value) -> row.withFolderflag(value), Flag.pgType);
                };
+               @Override
                public Field</* max 400 chars */ String, DViewRow> filename() {
                  return new Field</* max 400 chars */ String, DViewRow>(_path, "filename", DViewRow::filename, Optional.empty(), Optional.empty(), (row, value) -> row.withFilename(value), PgTypes.text);
                };
+               @Override
                public OptField</* max 8 chars */ String, DViewRow> fileextension() {
                  return new OptField</* max 8 chars */ String, DViewRow>(_path, "fileextension", DViewRow::fileextension, Optional.empty(), Optional.empty(), (row, value) -> row.withFileextension(value), PgTypes.text);
                };
+               @Override
                public Field</* bpchar, max 5 chars */ String, DViewRow> revision() {
                  return new Field</* bpchar, max 5 chars */ String, DViewRow>(_path, "revision", DViewRow::revision, Optional.empty(), Optional.empty(), (row, value) -> row.withRevision(value), PgTypes.text);
                };
+               @Override
                public Field<Integer, DViewRow> changenumber() {
                  return new Field<Integer, DViewRow>(_path, "changenumber", DViewRow::changenumber, Optional.empty(), Optional.empty(), (row, value) -> row.withChangenumber(value), PgTypes.int4);
                };
+               @Override
                public Field<TypoShort, DViewRow> status() {
                  return new Field<TypoShort, DViewRow>(_path, "status", DViewRow::status, Optional.empty(), Optional.empty(), (row, value) -> row.withStatus(value), TypoShort.pgType);
                };
+               @Override
                public OptField<String, DViewRow> documentsummary() {
                  return new OptField<String, DViewRow>(_path, "documentsummary", DViewRow::documentsummary, Optional.empty(), Optional.empty(), (row, value) -> row.withDocumentsummary(value), PgTypes.text);
                };
+               @Override
                public OptField<TypoBytea, DViewRow> document() {
                  return new OptField<TypoBytea, DViewRow>(_path, "document", DViewRow::document, Optional.empty(), Optional.empty(), (row, value) -> row.withDocument(value), TypoBytea.pgType);
                };
+               @Override
                public Field<TypoUUID, DViewRow> rowguid() {
                  return new Field<TypoUUID, DViewRow>(_path, "rowguid", DViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, DViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, DViewRow>(_path, "modifieddate", DViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public Field<DocumentId, DViewRow> documentnode() {
                  return new Field<DocumentId, DViewRow>(_path, "documentnode", DViewRow::documentnode, Optional.empty(), Optional.empty(), (row, value) -> row.withDocumentnode(value), DocumentId.pgType);
                };
@@ -77,6 +90,7 @@ public interface DViewFields {
       return List.of(this.fields().title(), this.fields().owner(), this.fields().folderflag(), this.fields().filename(), this.fields().fileextension(), this.fields().revision(), this.fields().changenumber(), this.fields().status(), this.fields().documentsummary(), this.fields().document(), this.fields().rowguid(), this.fields().modifieddate(), this.fields().documentnode());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

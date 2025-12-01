@@ -12,7 +12,6 @@ import adventureworks.public.Name
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple5
 
 /** Table: humanresources.shift
  * Work shift lookup table.
@@ -49,15 +48,7 @@ case class ShiftRow(
 }
 
 object ShiftRow {
-  val `_rowParser`: RowParser[ShiftRow] = {
-    RowParsers.of(ShiftId.pgType, Name.pgType, TypoLocalTime.pgType, TypoLocalTime.pgType, TypoLocalDateTime.pgType, ShiftRow.apply, row => new Tuple5(
-      row.shiftid,
-      row.name,
-      row.starttime,
-      row.endtime,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[ShiftRow] = RowParsers.of(ShiftId.pgType, Name.pgType, TypoLocalTime.pgType, TypoLocalTime.pgType, TypoLocalDateTime.pgType, ShiftRow.apply, row => Array(row.shiftid, row.name, row.starttime, row.endtime, row.modifieddate))
 
   given pgText: PgText[ShiftRow] = PgText.from(`_rowParser`)
 }

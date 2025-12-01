@@ -10,9 +10,9 @@ import typo.dsl.SelectBuilder
 import anorm.SqlStringInterpolation
 
 class PccViewRepoImpl extends PccViewRepo {
-  def select: SelectBuilder[PccViewFields, PccViewRow] = SelectBuilder.of(""""sa"."pcc"""", PccViewFields.structure, PccViewRow.rowParser)
+  override def select: SelectBuilder[PccViewFields, PccViewRow] = SelectBuilder.of(""""sa"."pcc"""", PccViewFields.structure, PccViewRow.rowParser)
 
-  def selectAll(using c: Connection): List[PccViewRow] = {
+  override def selectAll(using c: Connection): List[PccViewRow] = {
     SQL"""select "id", "businessentityid", "creditcardid", "modifieddate"::text
     from "sa"."pcc"
     """.as(PccViewRow.rowParser(1).*)

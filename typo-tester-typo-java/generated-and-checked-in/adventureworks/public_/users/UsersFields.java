@@ -18,7 +18,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface UsersFields {
-  static final class Impl extends Relation<UsersFields, UsersRow> {
+  final class Impl extends Relation<UsersFields, UsersRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -26,24 +26,31 @@ public interface UsersFields {
     @Override
     public UsersFields fields() {
       return new UsersFields() {
+               @Override
                public IdField<UsersId, UsersRow> userId() {
                  return new IdField<UsersId, UsersRow>(_path, "user_id", UsersRow::userId, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withUserId(value), UsersId.pgType);
                };
+               @Override
                public Field<String, UsersRow> name() {
                  return new Field<String, UsersRow>(_path, "name", UsersRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), PgTypes.text);
                };
+               @Override
                public OptField<String, UsersRow> lastName() {
                  return new OptField<String, UsersRow>(_path, "last_name", UsersRow::lastName, Optional.empty(), Optional.empty(), (row, value) -> row.withLastName(value), PgTypes.text);
                };
+               @Override
                public Field<TypoUnknownCitext, UsersRow> email() {
                  return new Field<TypoUnknownCitext, UsersRow>(_path, "email", UsersRow::email, Optional.of("text"), Optional.of("citext"), (row, value) -> row.withEmail(value), TypoUnknownCitext.pgType);
                };
+               @Override
                public Field<String, UsersRow> password() {
                  return new Field<String, UsersRow>(_path, "password", UsersRow::password, Optional.empty(), Optional.empty(), (row, value) -> row.withPassword(value), PgTypes.text);
                };
+               @Override
                public Field<TypoInstant, UsersRow> createdAt() {
                  return new Field<TypoInstant, UsersRow>(_path, "created_at", UsersRow::createdAt, Optional.of("text"), Optional.of("timestamptz"), (row, value) -> row.withCreatedAt(value), TypoInstant.pgType);
                };
+               @Override
                public OptField<TypoInstant, UsersRow> verifiedOn() {
                  return new OptField<TypoInstant, UsersRow>(_path, "verified_on", UsersRow::verifiedOn, Optional.of("text"), Optional.of("timestamptz"), (row, value) -> row.withVerifiedOn(value), TypoInstant.pgType);
                };
@@ -55,6 +62,7 @@ public interface UsersFields {
       return List.of(this.fields().userId(), this.fields().name(), this.fields().lastName(), this.fields().email(), this.fields().password(), this.fields().createdAt(), this.fields().verifiedOn());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

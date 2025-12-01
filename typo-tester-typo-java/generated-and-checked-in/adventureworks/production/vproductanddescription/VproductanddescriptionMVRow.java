@@ -11,7 +11,6 @@ import adventureworks.public_.Name;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple5;
 
 /** Materialized View: production.vproductanddescription */
 public record VproductanddescriptionMVRow(
@@ -51,5 +50,5 @@ public record VproductanddescriptionMVRow(
     return new VproductanddescriptionMVRow(productid, name, productmodel, cultureid, description);
   };
 
-  static RowParser<VproductanddescriptionMVRow> _rowParser = RowParsers.of(ProductId.pgType, Name.pgType, Name.pgType, CultureId.pgType, PgTypes.text, VproductanddescriptionMVRow::new, row -> new Tuple5<>(row.productid(), row.name(), row.productmodel(), row.cultureid(), row.description()));;
+  static RowParser<VproductanddescriptionMVRow> _rowParser = RowParsers.of(ProductId.pgType, Name.pgType, Name.pgType, CultureId.pgType, PgTypes.text, VproductanddescriptionMVRow::new, row -> new Object[]{row.productid(), row.name(), row.productmodel(), row.cultureid(), row.description()});;
 }

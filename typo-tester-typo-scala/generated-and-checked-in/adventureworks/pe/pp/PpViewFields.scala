@@ -32,7 +32,7 @@ object PpViewFields {
 
     override lazy val fields: PpViewFields = {
       new PpViewFields {
-        def id: Field[BusinessentityId, PpViewRow] = {
+        override def id: Field[BusinessentityId, PpViewRow] = {
           new Field[BusinessentityId, PpViewRow](
             _path,
             "id",
@@ -43,7 +43,7 @@ object PpViewFields {
             BusinessentityId.pgType
           )
         }
-        def businessentityid: Field[BusinessentityId, PpViewRow] = {
+        override def businessentityid: Field[BusinessentityId, PpViewRow] = {
           new Field[BusinessentityId, PpViewRow](
             _path,
             "businessentityid",
@@ -54,7 +54,7 @@ object PpViewFields {
             BusinessentityId.pgType
           )
         }
-        def phonenumber: Field[Phone, PpViewRow] = {
+        override def phonenumber: Field[Phone, PpViewRow] = {
           new Field[Phone, PpViewRow](
             _path,
             "phonenumber",
@@ -65,7 +65,7 @@ object PpViewFields {
             Phone.pgType
           )
         }
-        def phonenumbertypeid: Field[PhonenumbertypeId, PpViewRow] = {
+        override def phonenumbertypeid: Field[PhonenumbertypeId, PpViewRow] = {
           new Field[PhonenumbertypeId, PpViewRow](
             _path,
             "phonenumbertypeid",
@@ -76,7 +76,7 @@ object PpViewFields {
             PhonenumbertypeId.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, PpViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, PpViewRow] = {
           new Field[TypoLocalDateTime, PpViewRow](
             _path,
             "modifieddate",
@@ -92,7 +92,7 @@ object PpViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, PpViewRow]] = java.util.List.of(this.fields.id, this.fields.businessentityid, this.fields.phonenumber, this.fields.phonenumbertypeid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[PpViewFields, PpViewRow] = new Impl(java.util.List.of())

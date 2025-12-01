@@ -13,7 +13,7 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 
 public interface TestOrganisasjonFields {
-  static final class Impl extends Relation<TestOrganisasjonFields, TestOrganisasjonRow> {
+  final class Impl extends Relation<TestOrganisasjonFields, TestOrganisasjonRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -21,6 +21,7 @@ public interface TestOrganisasjonFields {
     @Override
     public TestOrganisasjonFields fields() {
       return new TestOrganisasjonFields() {
+               @Override
                public IdField<TestOrganisasjonId, TestOrganisasjonRow> organisasjonskode() {
                  return new IdField<TestOrganisasjonId, TestOrganisasjonRow>(_path, "organisasjonskode", TestOrganisasjonRow::organisasjonskode, Optional.empty(), Optional.empty(), (row, value) -> row.withOrganisasjonskode(value), TestOrganisasjonId.pgType);
                };
@@ -32,6 +33,7 @@ public interface TestOrganisasjonFields {
       return List.of(this.fields().organisasjonskode());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

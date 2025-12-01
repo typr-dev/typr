@@ -5,6 +5,7 @@
  */
 package adventureworks.production.culture
 
+import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
@@ -25,7 +26,7 @@ case class CultureRepoMock(
   toRow: CultureRowUnsaved => CultureRow,
   map: HashMap[CultureId, CultureRow] = new HashMap[CultureId, CultureRow]()
 ) extends CultureRepo {
-  def delete: DeleteBuilder[CultureFields, CultureRow] = {
+  override def delete: DeleteBuilder[CultureFields, CultureRow] = {
     new DeleteBuilderMock(
       CultureFields.structure,
       () => new ArrayList(map.values()),
@@ -35,27 +36,27 @@ case class CultureRepoMock(
     )
   }
 
-  def deleteById(cultureid: CultureId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(cultureid)).isPresent()
+  override def deleteById(cultureid: CultureId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(cultureid)).isPresent()
 
-  def deleteByIds(cultureids: Array[CultureId])(using c: Connection): Integer = {
+  override def deleteByIds(cultureids: Array[CultureId])(using c: Connection): Integer = {
     var count = 0
     cultureids.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
-    count
+    return count
   }
 
-  def insert(unsaved: CultureRow)(using c: Connection): CultureRow = {
+  override def insert(unsaved: CultureRow)(using c: Connection): CultureRow = {
     if (map.containsKey(unsaved.cultureid)) {
       throw new RuntimeException(s"id $unsaved.cultureid already exists")
     }
     map.put(unsaved.cultureid, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def insert(unsaved: CultureRowUnsaved)(using c: Connection): CultureRow = insert(toRow(unsaved))(using c)
+  override def insert(unsaved: CultureRowUnsaved)(using c: Connection): CultureRow = insert(toRow(unsaved))(using c)
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[CultureRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -65,11 +66,11 @@ case class CultureRepoMock(
       map.put(row.cultureid, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[CultureRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -80,25 +81,25 @@ case class CultureRepoMock(
       map.put(row.cultureid, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
-  def select: SelectBuilder[CultureFields, CultureRow] = new SelectBuilderMock(CultureFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
+  override def select: SelectBuilder[CultureFields, CultureRow] = new SelectBuilderMock(CultureFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  def selectAll(using c: Connection): java.util.List[CultureRow] = new ArrayList(map.values())
+  override def selectAll(using c: Connection): java.util.List[CultureRow] = new ArrayList(map.values())
 
-  def selectById(cultureid: CultureId)(using c: Connection): Optional[CultureRow] = Optional.ofNullable(map.get(cultureid))
+  override def selectById(cultureid: CultureId)(using c: Connection): Optional[CultureRow] = Optional.ofNullable(map.get(cultureid))
 
-  def selectByIds(cultureids: Array[CultureId])(using c: Connection): java.util.List[CultureRow] = {
+  override def selectByIds(cultureids: Array[CultureId])(using c: Connection): java.util.List[CultureRow] = {
     val result = new ArrayList[CultureRow]()
     cultureids.foreach { id => val opt = Optional.ofNullable(map.get(id))
     if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
-    result
+    return result
   }
 
-  def selectByIdsTracked(cultureids: Array[CultureId])(using c: Connection): java.util.Map[CultureId, CultureRow] = selectByIds(cultureids)(using c).stream().collect(Collectors.toMap((row: adventureworks.production.culture.CultureRow) => row.cultureid, Function.identity()))
+  override def selectByIdsTracked(cultureids: Array[CultureId])(using c: Connection): java.util.Map[CultureId, CultureRow] = selectByIds(cultureids)(using c).stream().collect(Collectors.toMap((row: CultureRow) => row.cultureid, Function.identity()))
 
-  def update: UpdateBuilder[CultureFields, CultureRow] = {
+  override def update: UpdateBuilder[CultureFields, CultureRow] = {
     new UpdateBuilderMock(
       CultureFields.structure,
       () => new ArrayList(map.values()),
@@ -107,31 +108,31 @@ case class CultureRepoMock(
     )
   }
 
-  def update(row: CultureRow)(using c: Connection): java.lang.Boolean = {
-    val shouldUpdate = Optional.ofNullable(map.get(row.cultureid)).filter(oldRow => !oldRow.equals(row)).isPresent()
+  override def update(row: CultureRow)(using c: Connection): java.lang.Boolean = {
+    val shouldUpdate = Optional.ofNullable(map.get(row.cultureid)).filter(oldRow => (oldRow != row)).isPresent()
     if (shouldUpdate) {
       map.put(row.cultureid, row): @scala.annotation.nowarn
     }
-    shouldUpdate
+    return shouldUpdate
   }
 
-  def upsert(unsaved: CultureRow)(using c: Connection): CultureRow = {
+  override def upsert(unsaved: CultureRow)(using c: Connection): CultureRow = {
     map.put(unsaved.cultureid, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[CultureRow])(using c: Connection): java.util.List[CultureRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[CultureRow])(using c: Connection): java.util.List[CultureRow] = {
     val result = new ArrayList[CultureRow]()
     while (unsaved.hasNext()) {
       val row = unsaved.next()
       map.put(row.cultureid, row): @scala.annotation.nowarn
       result.add(row): @scala.annotation.nowarn
     }
-    result
+    return result
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[CultureRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
@@ -141,6 +142,6 @@ case class CultureRepoMock(
       map.put(row.cultureid, row): @scala.annotation.nowarn
       count = count + 1
     }
-    count
+    return count
   }
 }

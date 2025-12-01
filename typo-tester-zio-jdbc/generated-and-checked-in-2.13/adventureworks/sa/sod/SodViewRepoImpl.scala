@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class SodViewRepoImpl extends SodViewRepo {
-  def select: SelectBuilder[SodViewFields, SodViewRow] = SelectBuilder.of(""""sa"."sod"""", SodViewFields.structure, SodViewRow.jdbcDecoder)
+  override def select: SelectBuilder[SodViewFields, SodViewRow] = SelectBuilder.of(""""sa"."sod"""", SodViewFields.structure, SodViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, SodViewRow] = sql"""select "id", "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text from "sa"."sod"""".query(SodViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, SodViewRow] = sql"""select "id", "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text from "sa"."sod"""".query(SodViewRow.jdbcDecoder).selectStream()
 }

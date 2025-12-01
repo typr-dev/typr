@@ -27,11 +27,11 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
-  def delete: DeleteBuilder[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow] = DeleteBuilder.of(""""humanresources"."employeedepartmenthistory"""", EmployeedepartmenthistoryFields.structure, EmployeedepartmenthistoryRow.rowParser(1).*)
+  override def delete: DeleteBuilder[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow] = DeleteBuilder.of(""""humanresources"."employeedepartmenthistory"""", EmployeedepartmenthistoryFields.structure, EmployeedepartmenthistoryRow.rowParser(1).*)
 
-  def deleteById(compositeId: EmployeedepartmenthistoryId)(using c: Connection): Boolean = SQL"""delete from "humanresources"."employeedepartmenthistory" where "businessentityid" = ${ParameterValue(compositeId.businessentityid, null, BusinessentityId.toStatement)} AND "startdate" = ${ParameterValue(compositeId.startdate, null, TypoLocalDate.toStatement)} AND "departmentid" = ${ParameterValue(compositeId.departmentid, null, DepartmentId.toStatement)} AND "shiftid" = ${ParameterValue(compositeId.shiftid, null, ShiftId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(compositeId: EmployeedepartmenthistoryId)(using c: Connection): Boolean = SQL"""delete from "humanresources"."employeedepartmenthistory" where "businessentityid" = ${ParameterValue(compositeId.businessentityid, null, BusinessentityId.toStatement)} AND "startdate" = ${ParameterValue(compositeId.startdate, null, TypoLocalDate.toStatement)} AND "departmentid" = ${ParameterValue(compositeId.departmentid, null, DepartmentId.toStatement)} AND "shiftid" = ${ParameterValue(compositeId.shiftid, null, ShiftId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(compositeIds: Array[EmployeedepartmenthistoryId])(using c: Connection): Int = {
+  override def deleteByIds(compositeIds: Array[EmployeedepartmenthistoryId])(using c: Connection): Int = {
     val businessentityid = compositeIds.map(_.businessentityid)
     val startdate = compositeIds.map(_.startdate)
     val departmentid = compositeIds.map(_.departmentid)
@@ -43,7 +43,7 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
     """.executeUpdate()
   }
 
-  def insert(unsaved: EmployeedepartmenthistoryRow)(using c: Connection): EmployeedepartmenthistoryRow = {
+  override def insert(unsaved: EmployeedepartmenthistoryRow)(using c: Connection): EmployeedepartmenthistoryRow = {
   SQL"""insert into "humanresources"."employeedepartmenthistory"("businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate")
     values (${ParameterValue(unsaved.businessentityid, null, BusinessentityId.toStatement)}::int4, ${ParameterValue(unsaved.departmentid, null, DepartmentId.toStatement)}::int2, ${ParameterValue(unsaved.shiftid, null, ShiftId.toStatement)}::int2, ${ParameterValue(unsaved.startdate, null, TypoLocalDate.toStatement)}::date, ${ParameterValue(unsaved.enddate, null, ToStatement.optionToStatement(using TypoLocalDate.toStatement, TypoLocalDate.parameterMetadata))}::date, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "businessentityid", "departmentid", "shiftid", "startdate"::text, "enddate"::text, "modifieddate"::text
@@ -51,7 +51,7 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
     .executeInsert(EmployeedepartmenthistoryRow.rowParser(1).single)
   }
 
-  def insert(unsaved: EmployeedepartmenthistoryRowUnsaved)(using c: Connection): EmployeedepartmenthistoryRow = {
+  override def insert(unsaved: EmployeedepartmenthistoryRowUnsaved)(using c: Connection): EmployeedepartmenthistoryRow = {
     val namedParameters = List(
       Some((NamedParameter("businessentityid", ParameterValue(unsaved.businessentityid, null, BusinessentityId.toStatement)), "::int4")),
       Some((NamedParameter("departmentid", ParameterValue(unsaved.departmentid, null, DepartmentId.toStatement)), "::int2")),
@@ -79,33 +79,33 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[EmployeedepartmenthistoryRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "humanresources"."employeedepartmenthistory"("businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate") FROM STDIN""", batchSize, unsaved)(using EmployeedepartmenthistoryRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[EmployeedepartmenthistoryRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "humanresources"."employeedepartmenthistory"("businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using EmployeedepartmenthistoryRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow] = SelectBuilder.of(""""humanresources"."employeedepartmenthistory"""", EmployeedepartmenthistoryFields.structure, EmployeedepartmenthistoryRow.rowParser)
+  override def select: SelectBuilder[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow] = SelectBuilder.of(""""humanresources"."employeedepartmenthistory"""", EmployeedepartmenthistoryFields.structure, EmployeedepartmenthistoryRow.rowParser)
 
-  def selectAll(using c: Connection): List[EmployeedepartmenthistoryRow] = {
+  override def selectAll(using c: Connection): List[EmployeedepartmenthistoryRow] = {
     SQL"""select "businessentityid", "departmentid", "shiftid", "startdate"::text, "enddate"::text, "modifieddate"::text
     from "humanresources"."employeedepartmenthistory"
     """.as(EmployeedepartmenthistoryRow.rowParser(1).*)
   }
 
-  def selectById(compositeId: EmployeedepartmenthistoryId)(using c: Connection): Option[EmployeedepartmenthistoryRow] = {
+  override def selectById(compositeId: EmployeedepartmenthistoryId)(using c: Connection): Option[EmployeedepartmenthistoryRow] = {
     SQL"""select "businessentityid", "departmentid", "shiftid", "startdate"::text, "enddate"::text, "modifieddate"::text
     from "humanresources"."employeedepartmenthistory"
     where "businessentityid" = ${ParameterValue(compositeId.businessentityid, null, BusinessentityId.toStatement)} AND "startdate" = ${ParameterValue(compositeId.startdate, null, TypoLocalDate.toStatement)} AND "departmentid" = ${ParameterValue(compositeId.departmentid, null, DepartmentId.toStatement)} AND "shiftid" = ${ParameterValue(compositeId.shiftid, null, ShiftId.toStatement)}
     """.as(EmployeedepartmenthistoryRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(compositeIds: Array[EmployeedepartmenthistoryId])(using c: Connection): List[EmployeedepartmenthistoryRow] = {
+  override def selectByIds(compositeIds: Array[EmployeedepartmenthistoryId])(using c: Connection): List[EmployeedepartmenthistoryRow] = {
     val businessentityid = compositeIds.map(_.businessentityid)
     val startdate = compositeIds.map(_.startdate)
     val departmentid = compositeIds.map(_.departmentid)
@@ -117,14 +117,14 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
     """.as(EmployeedepartmenthistoryRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(compositeIds: Array[EmployeedepartmenthistoryId])(using c: Connection): Map[EmployeedepartmenthistoryId, EmployeedepartmenthistoryRow] = {
+  override def selectByIdsTracked(compositeIds: Array[EmployeedepartmenthistoryId])(using c: Connection): Map[EmployeedepartmenthistoryId, EmployeedepartmenthistoryRow] = {
     val byId = selectByIds(compositeIds).view.map(x => (x.compositeId, x)).toMap
     compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow] = UpdateBuilder.of(""""humanresources"."employeedepartmenthistory"""", EmployeedepartmenthistoryFields.structure, EmployeedepartmenthistoryRow.rowParser(1).*)
+  override def update: UpdateBuilder[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow] = UpdateBuilder.of(""""humanresources"."employeedepartmenthistory"""", EmployeedepartmenthistoryFields.structure, EmployeedepartmenthistoryRow.rowParser(1).*)
 
-  def update(row: EmployeedepartmenthistoryRow)(using c: Connection): Option[EmployeedepartmenthistoryRow] = {
+  override def update(row: EmployeedepartmenthistoryRow)(using c: Connection): Option[EmployeedepartmenthistoryRow] = {
     val compositeId = row.compositeId
     SQL"""update "humanresources"."employeedepartmenthistory"
     set "enddate" = ${ParameterValue(row.enddate, null, ToStatement.optionToStatement(using TypoLocalDate.toStatement, TypoLocalDate.parameterMetadata))}::date,
@@ -134,7 +134,7 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
     """.executeInsert(EmployeedepartmenthistoryRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: EmployeedepartmenthistoryRow)(using c: Connection): EmployeedepartmenthistoryRow = {
+  override def upsert(unsaved: EmployeedepartmenthistoryRow)(using c: Connection): EmployeedepartmenthistoryRow = {
   SQL"""insert into "humanresources"."employeedepartmenthistory"("businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate")
     values (
       ${ParameterValue(unsaved.businessentityid, null, BusinessentityId.toStatement)}::int4,
@@ -153,7 +153,7 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
     .executeInsert(EmployeedepartmenthistoryRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[EmployeedepartmenthistoryRow])(using c: Connection): List[EmployeedepartmenthistoryRow] = {
+  override def upsertBatch(unsaved: Iterable[EmployeedepartmenthistoryRow])(using c: Connection): List[EmployeedepartmenthistoryRow] = {
     def toNamedParameter(row: EmployeedepartmenthistoryRow): List[NamedParameter] = List(
       NamedParameter("businessentityid", ParameterValue(row.businessentityid, null, BusinessentityId.toStatement)),
       NamedParameter("departmentid", ParameterValue(row.departmentid, null, DepartmentId.toStatement)),
@@ -162,6 +162,7 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
       NamedParameter("enddate", ParameterValue(row.enddate, null, ToStatement.optionToStatement(using TypoLocalDate.toStatement, TypoLocalDate.parameterMetadata))),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -183,7 +184,7 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[EmployeedepartmenthistoryRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

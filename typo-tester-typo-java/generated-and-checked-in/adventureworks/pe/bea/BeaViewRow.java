@@ -12,7 +12,6 @@ import adventureworks.person.addresstype.AddresstypeId;
 import adventureworks.person.businessentity.BusinessentityId;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple6;
 
 /** View: pe.bea */
 public record BeaViewRow(
@@ -59,5 +58,5 @@ public record BeaViewRow(
     return new BeaViewRow(id, businessentityid, addressid, addresstypeid, rowguid, modifieddate);
   };
 
-  static RowParser<BeaViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, AddressId.pgType, AddresstypeId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BeaViewRow::new, row -> new Tuple6<>(row.id(), row.businessentityid(), row.addressid(), row.addresstypeid(), row.rowguid(), row.modifieddate()));;
+  static RowParser<BeaViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, AddressId.pgType, AddresstypeId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BeaViewRow::new, row -> new Object[]{row.id(), row.businessentityid(), row.addressid(), row.addresstypeid(), row.rowguid(), row.modifieddate()});;
 }

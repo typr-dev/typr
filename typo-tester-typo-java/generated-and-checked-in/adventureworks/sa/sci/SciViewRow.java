@@ -11,7 +11,6 @@ import adventureworks.sales.shoppingcartitem.ShoppingcartitemId;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple7;
 
 /** View: sa.sci */
 public record SciViewRow(
@@ -65,5 +64,5 @@ public record SciViewRow(
     return new SciViewRow(id, shoppingcartitemid, shoppingcartid, quantity, productid, datecreated, modifieddate);
   };
 
-  static RowParser<SciViewRow> _rowParser = RowParsers.of(ShoppingcartitemId.pgType, ShoppingcartitemId.pgType, PgTypes.text, PgTypes.int4, ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, SciViewRow::new, row -> new Tuple7<>(row.id(), row.shoppingcartitemid(), row.shoppingcartid(), row.quantity(), row.productid(), row.datecreated(), row.modifieddate()));;
+  static RowParser<SciViewRow> _rowParser = RowParsers.of(ShoppingcartitemId.pgType, ShoppingcartitemId.pgType, PgTypes.text, PgTypes.int4, ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, SciViewRow::new, row -> new Object[]{row.id(), row.shoppingcartitemid(), row.shoppingcartid(), row.quantity(), row.productid(), row.datecreated(), row.modifieddate()});;
 }

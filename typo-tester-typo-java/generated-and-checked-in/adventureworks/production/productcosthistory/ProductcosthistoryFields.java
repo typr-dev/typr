@@ -25,7 +25,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface ProductcosthistoryFields {
-  static final class Impl extends Relation<ProductcosthistoryFields, ProductcosthistoryRow> {
+  final class Impl extends Relation<ProductcosthistoryFields, ProductcosthistoryRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -33,18 +33,23 @@ public interface ProductcosthistoryFields {
     @Override
     public ProductcosthistoryFields fields() {
       return new ProductcosthistoryFields() {
+               @Override
                public IdField<ProductId, ProductcosthistoryRow> productid() {
                  return new IdField<ProductId, ProductcosthistoryRow>(_path, "productid", ProductcosthistoryRow::productid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductid(value), ProductId.pgType);
                };
+               @Override
                public IdField<TypoLocalDateTime, ProductcosthistoryRow> startdate() {
                  return new IdField<TypoLocalDateTime, ProductcosthistoryRow>(_path, "startdate", ProductcosthistoryRow::startdate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withStartdate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public OptField<TypoLocalDateTime, ProductcosthistoryRow> enddate() {
                  return new OptField<TypoLocalDateTime, ProductcosthistoryRow>(_path, "enddate", ProductcosthistoryRow::enddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withEnddate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public Field<BigDecimal, ProductcosthistoryRow> standardcost() {
                  return new Field<BigDecimal, ProductcosthistoryRow>(_path, "standardcost", ProductcosthistoryRow::standardcost, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withStandardcost(value), PgTypes.numeric);
                };
+               @Override
                public Field<TypoLocalDateTime, ProductcosthistoryRow> modifieddate() {
                  return new Field<TypoLocalDateTime, ProductcosthistoryRow>(_path, "modifieddate", ProductcosthistoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -56,6 +61,7 @@ public interface ProductcosthistoryFields {
       return List.of(this.fields().productid(), this.fields().startdate(), this.fields().enddate(), this.fields().standardcost(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

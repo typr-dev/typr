@@ -10,7 +10,6 @@ import adventureworks.public.Name
 import adventureworks.sales.salesreason.SalesreasonId
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple5
 
 /** View: sa.sr */
 case class SrViewRow(
@@ -27,13 +26,5 @@ case class SrViewRow(
 )
 
 object SrViewRow {
-  val `_rowParser`: RowParser[SrViewRow] = {
-    RowParsers.of(SalesreasonId.pgType, SalesreasonId.pgType, Name.pgType, Name.pgType, TypoLocalDateTime.pgType, SrViewRow.apply, row => new Tuple5(
-      row.id,
-      row.salesreasonid,
-      row.name,
-      row.reasontype,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[SrViewRow] = RowParsers.of(SalesreasonId.pgType, SalesreasonId.pgType, Name.pgType, Name.pgType, TypoLocalDateTime.pgType, SrViewRow.apply, row => Array(row.id, row.salesreasonid, row.name, row.reasontype, row.modifieddate))
 }

@@ -5,22 +5,22 @@
  */
 package adventureworks.production.vproductmodelcatalogdescription;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class VproductmodelcatalogdescriptionViewRepoImpl implements VproductmodelcatalogdescriptionViewRepo {
+  @Override
   public SelectBuilder<VproductmodelcatalogdescriptionViewFields, VproductmodelcatalogdescriptionViewRow> select() {
     return SelectBuilder.of("production.vproductmodelcatalogdescription", VproductmodelcatalogdescriptionViewFields.structure(), VproductmodelcatalogdescriptionViewRow._rowParser);
   };
 
+  @Override
   public List<VproductmodelcatalogdescriptionViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "productmodelid", "name", "Summary", "manufacturer", "copyright", "producturl", "warrantyperiod", "warrantydescription", "noofyears", "maintenancedescription", "wheel", "saddle", "pedal", "bikeframe", "crankset", "pictureangle", "picturesize", "productphotoid", "material", "color", "productline", "style", "riderexperience", "rowguid", "modifieddate"::text
        from "production"."vproductmodelcatalogdescription"
-    """)).as(VproductmodelcatalogdescriptionViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(VproductmodelcatalogdescriptionViewRow._rowParser.all()).runUnchecked(c);
   };
 }

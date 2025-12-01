@@ -29,13 +29,5 @@ case class SalesorderheadersalesreasonRowUnsaved(
 }
 
 object SalesorderheadersalesreasonRowUnsaved {
-  given pgText: PgText[SalesorderheadersalesreasonRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      SalesorderheaderId.pgType.pgText.unsafeEncode(row.salesorderid, sb);
-      sb.append(PgText.DELIMETER);
-      SalesreasonId.pgType.pgText.unsafeEncode(row.salesreasonid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[SalesorderheadersalesreasonRowUnsaved] = PgText.instance((row, sb) => { SalesorderheaderId.pgType.pgText.unsafeEncode(row.salesorderid, sb); sb.append(PgText.DELIMETER); SalesreasonId.pgType.pgText.unsafeEncode(row.salesreasonid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

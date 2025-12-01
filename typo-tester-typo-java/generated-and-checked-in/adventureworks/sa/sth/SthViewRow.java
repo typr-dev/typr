@@ -12,7 +12,6 @@ import adventureworks.sales.salesterritory.SalesterritoryId;
 import java.util.Optional;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple7;
 
 /** View: sa.sth */
 public record SthViewRow(
@@ -66,5 +65,5 @@ public record SthViewRow(
     return new SthViewRow(id, businessentityid, territoryid, startdate, enddate, rowguid, modifieddate);
   };
 
-  static RowParser<SthViewRow> _rowParser = RowParsers.of(SalesterritoryId.pgType, BusinessentityId.pgType, SalesterritoryId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SthViewRow::new, row -> new Tuple7<>(row.id(), row.businessentityid(), row.territoryid(), row.startdate(), row.enddate(), row.rowguid(), row.modifieddate()));;
+  static RowParser<SthViewRow> _rowParser = RowParsers.of(SalesterritoryId.pgType, BusinessentityId.pgType, SalesterritoryId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SthViewRow::new, row -> new Object[]{row.id(), row.businessentityid(), row.territoryid(), row.startdate(), row.enddate(), row.rowguid(), row.modifieddate()});;
 }

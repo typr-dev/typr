@@ -13,7 +13,7 @@ import doobie.util.meta.Meta
 import doobie.syntax.string.toSqlInterpolator
 
 class UpdatePersonSqlRepoImpl extends UpdatePersonSqlRepo {
-  def apply(
+  override def apply(
     suffix: String,
     cutoff: Option[TypoLocalDateTime]
   ): ConnectionIO[Int] = {

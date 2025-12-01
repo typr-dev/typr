@@ -12,7 +12,6 @@ import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple6
 
 /** View: pe.e */
 case class EViewRow(
@@ -31,14 +30,5 @@ case class EViewRow(
 )
 
 object EViewRow {
-  val `_rowParser`: RowParser[EViewRow] = {
-    RowParsers.of(PgTypes.int4, BusinessentityId.pgType, PgTypes.int4, PgTypes.text.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, EViewRow.apply, row => new Tuple6(
-      row.id,
-      row.businessentityid,
-      row.emailaddressid,
-      row.emailaddress,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[EViewRow] = RowParsers.of(PgTypes.int4, BusinessentityId.pgType, PgTypes.int4, PgTypes.text.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, EViewRow.apply, row => Array(row.id, row.businessentityid, row.emailaddressid, row.emailaddress, row.rowguid, row.modifieddate))
 }

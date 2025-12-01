@@ -7,7 +7,6 @@ package adventureworks.person.businessentity;
 
 import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.customtypes.TypoUUID;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,12 +23,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class BusinessentityRepoImpl implements BusinessentityRepo {
+  @Override
   public DeleteBuilder<BusinessentityFields, BusinessentityRow> delete() {
     return DeleteBuilder.of("person.businessentity", BusinessentityFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     BusinessentityId businessentityid,
     Connection c
@@ -43,6 +43,7 @@ public class BusinessentityRepoImpl implements BusinessentityRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     BusinessentityId[] businessentityids,
     Connection c
@@ -59,6 +60,7 @@ public class BusinessentityRepoImpl implements BusinessentityRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public BusinessentityRow insert(
     BusinessentityRow unsaved,
     Connection c
@@ -80,64 +82,72 @@ public class BusinessentityRepoImpl implements BusinessentityRepo {
       .updateReturning(BusinessentityRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public BusinessentityRow insert(
     BusinessentityRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      unsaved.businessentityid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"businessentityid\""));
-          values.add(interpolate(
-            BusinessentityId.pgType.encode(value),
-            typo.runtime.Fragment.lit("::int4")
-          ));
-        }
-      );;
-      unsaved.rowguid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"rowguid\""));
-          values.add(interpolate(
-            TypoUUID.pgType.encode(value),
-            typo.runtime.Fragment.lit("::uuid")
-          ));
-        }
-      );;
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = columns.isEmpty()
-        ? interpolate(typo.runtime.Fragment.lit("""
-             insert into "person"."businessentity" default values
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    unsaved.businessentityid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"businessentityid\""));
+        values.add(interpolate(
+        BusinessentityId.pgType.encode(value),
+        typo.runtime.Fragment.lit("::int4")
+      ));
+      }
+    );;
+    unsaved.rowguid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"rowguid\""));
+        values.add(interpolate(
+        TypoUUID.pgType.encode(value),
+        typo.runtime.Fragment.lit("::uuid")
+      ));
+      }
+    );;
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
+      ));
+      }
+    );;
+    Fragment q = columns.isEmpty()
+      ? interpolate(typo.runtime.Fragment.lit("""
+           insert into "person"."businessentity" default values
+           returning "businessentityid", "rowguid", "modifieddate"::text
+        """))
+      : interpolate(
+          typo.runtime.Fragment.lit("""
+          insert into "person"."businessentity"(
+          """),
+          Fragment.comma(columns),
+          typo.runtime.Fragment.lit("""
+             )
+             values ("""),
+          Fragment.comma(values),
+          typo.runtime.Fragment.lit("""
+             )
              returning "businessentityid", "rowguid", "modifieddate"::text
-          """))
-        : interpolate(
-            typo.runtime.Fragment.lit("""
-            insert into "person"."businessentity"(
-            """),
-            Fragment.comma(columns),
-            typo.runtime.Fragment.lit("""
-               )
-               values ("""),
-            Fragment.comma(values),
-            typo.runtime.Fragment.lit("""
-               )
-               returning "businessentityid", "rowguid", "modifieddate"::text
-            """)
-          );;
+          """)
+        );;
     return q.updateReturning(BusinessentityRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<BusinessentityRow> unsaved,
     Integer batchSize,
@@ -149,6 +159,7 @@ public class BusinessentityRepoImpl implements BusinessentityRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<BusinessentityRowUnsaved> unsaved,
     Integer batchSize,
@@ -159,17 +170,20 @@ public class BusinessentityRepoImpl implements BusinessentityRepo {
     """), batchSize, unsaved, c, BusinessentityRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<BusinessentityFields, BusinessentityRow> select() {
     return SelectBuilder.of("person.businessentity", BusinessentityFields.structure(), BusinessentityRow._rowParser);
   };
 
+  @Override
   public List<BusinessentityRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "businessentityid", "rowguid", "modifieddate"::text
        from "person"."businessentity"
-    """)).as(BusinessentityRow._rowParser.all()).runUnchecked(c);
+    """)).query(BusinessentityRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<BusinessentityRow> selectById(
     BusinessentityId businessentityid,
     Connection c
@@ -181,9 +195,10 @@ public class BusinessentityRepoImpl implements BusinessentityRepo {
          where "businessentityid" = """),
       BusinessentityId.pgType.encode(businessentityid),
       typo.runtime.Fragment.lit("")
-    ).as(BusinessentityRow._rowParser.first()).runUnchecked(c);
+    ).query(BusinessentityRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<BusinessentityRow> selectByIds(
     BusinessentityId[] businessentityids,
     Connection c
@@ -195,44 +210,48 @@ public class BusinessentityRepoImpl implements BusinessentityRepo {
          where "businessentityid" = ANY("""),
       BusinessentityId.pgTypeArray.encode(businessentityids),
       typo.runtime.Fragment.lit(")")
-    ).as(BusinessentityRow._rowParser.all()).runUnchecked(c);
+    ).query(BusinessentityRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<BusinessentityId, BusinessentityRow> selectByIdsTracked(
     BusinessentityId[] businessentityids,
     Connection c
   ) {
-    Map<BusinessentityId, BusinessentityRow> ret = new HashMap<>();;
-      selectByIds(businessentityids, c).forEach(row -> ret.put(row.businessentityid(), row));
+    HashMap<BusinessentityId, BusinessentityRow> ret = new HashMap<BusinessentityId, BusinessentityRow>();
+    selectByIds(businessentityids, c).forEach(row -> ret.put(row.businessentityid(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<BusinessentityFields, BusinessentityRow> update() {
     return UpdateBuilder.of("person.businessentity", BusinessentityFields.structure(), BusinessentityRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     BusinessentityRow row,
     Connection c
   ) {
     BusinessentityId businessentityid = row.businessentityid();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "person"."businessentity"
-                set "rowguid" = """),
-             TypoUUID.pgType.encode(row.rowguid()),
-             typo.runtime.Fragment.lit("""
-                ::uuid,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "businessentityid" = """),
-             BusinessentityId.pgType.encode(businessentityid),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "person"."businessentity"
+         set "rowguid" = """),
+      TypoUUID.pgType.encode(row.rowguid()),
+      typo.runtime.Fragment.lit("""
+         ::uuid,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "businessentityid" = """),
+      BusinessentityId.pgType.encode(businessentityid),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public BusinessentityRow upsert(
     BusinessentityRow unsaved,
     Connection c
@@ -259,6 +278,7 @@ public class BusinessentityRepoImpl implements BusinessentityRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<BusinessentityRow> upsertBatch(
     Iterator<BusinessentityRow> unsaved,
     Connection c
@@ -277,25 +297,26 @@ public class BusinessentityRepoImpl implements BusinessentityRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<BusinessentityRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table businessentity_TEMP (like "person"."businessentity") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy businessentity_TEMP("businessentityid", "rowguid", "modifieddate") from stdin
-      """), batchSize, unsaved, c, BusinessentityRow.pgText);
+    create temporary table businessentity_TEMP (like "person"."businessentity") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy businessentity_TEMP("businessentityid", "rowguid", "modifieddate") from stdin
+    """), batchSize, unsaved, c, BusinessentityRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "person"."businessentity"("businessentityid", "rowguid", "modifieddate")
-              select * from businessentity_TEMP
-              on conflict ("businessentityid")
-              do update set
-                "rowguid" = EXCLUDED."rowguid",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table businessentity_TEMP;""")).update().runUnchecked(c);
+       insert into "person"."businessentity"("businessentityid", "rowguid", "modifieddate")
+       select * from businessentity_TEMP
+       on conflict ("businessentityid")
+       do update set
+         "rowguid" = EXCLUDED."rowguid",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table businessentity_TEMP;""")).update().runUnchecked(c);
   };
 }

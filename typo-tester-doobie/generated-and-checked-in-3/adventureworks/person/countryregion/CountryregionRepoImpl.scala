@@ -16,28 +16,26 @@ import doobie.util.Write
 import doobie.util.fragment.Fragment
 import doobie.util.update.Update
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.DeleteBuilder
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class CountryregionRepoImpl extends CountryregionRepo {
-  def delete: DeleteBuilder[CountryregionFields, CountryregionRow] = DeleteBuilder.of(""""person"."countryregion"""", CountryregionFields.structure, CountryregionRow.read)
+  override def delete: DeleteBuilder[CountryregionFields, CountryregionRow] = DeleteBuilder.of(""""person"."countryregion"""", CountryregionFields.structure, CountryregionRow.read)
 
-  def deleteById(countryregioncode: CountryregionId): ConnectionIO[Boolean] = sql"""delete from "person"."countryregion" where "countryregioncode" = ${fromWrite(countryregioncode)(using new Write.Single(CountryregionId.put))}""".update.run.map(_ > 0)
+  override def deleteById(countryregioncode: CountryregionId): ConnectionIO[Boolean] = sql"""delete from "person"."countryregion" where "countryregioncode" = ${fromWrite(countryregioncode)(using new Write.Single(CountryregionId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(countryregioncodes: Array[CountryregionId]): ConnectionIO[Int] = sql"""delete from "person"."countryregion" where "countryregioncode" = ANY(${fromWrite(countryregioncodes)(using new Write.Single(CountryregionId.arrayPut))})""".update.run
+  override def deleteByIds(countryregioncodes: Array[CountryregionId]): ConnectionIO[Int] = sql"""delete from "person"."countryregion" where "countryregioncode" = ANY(${fromWrite(countryregioncodes)(using new Write.Single(CountryregionId.arrayPut))})""".update.run
 
-  def insert(unsaved: CountryregionRow): ConnectionIO[CountryregionRow] = {
+  override def insert(unsaved: CountryregionRow): ConnectionIO[CountryregionRow] = {
     sql"""insert into "person"."countryregion"("countryregioncode", "name", "modifieddate")
     values (${fromWrite(unsaved.countryregioncode)(using new Write.Single(CountryregionId.put))}, ${fromWrite(unsaved.name)(using new Write.Single(Name.put))}::varchar, ${fromWrite(unsaved.modifieddate)(using new Write.Single(TypoLocalDateTime.put))}::timestamp)
     returning "countryregioncode", "name", "modifieddate"::text
     """.query(using CountryregionRow.read).unique
   }
 
-  def insert(unsaved: CountryregionRowUnsaved): ConnectionIO[CountryregionRow] = {
+  override def insert(unsaved: CountryregionRowUnsaved): ConnectionIO[CountryregionRow] = {
     val fs = List(
       Some((Fragment.const0(s""""countryregioncode""""), fr"${fromWrite(unsaved.countryregioncode)(using new Write.Single(CountryregionId.put))}")),
       Some((Fragment.const0(s""""name""""), fr"${fromWrite(unsaved.name)(using new Write.Single(Name.put))}::varchar")),
@@ -60,35 +58,35 @@ class CountryregionRepoImpl extends CountryregionRepo {
     q.query(using CountryregionRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, CountryregionRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "person"."countryregion"("countryregioncode", "name", "modifieddate") FROM STDIN""").copyIn(unsaved, batchSize)(using CountryregionRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, CountryregionRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "person"."countryregion"("countryregioncode", "name", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(using CountryregionRowUnsaved.pgText)
 
-  def select: SelectBuilder[CountryregionFields, CountryregionRow] = SelectBuilder.of(""""person"."countryregion"""", CountryregionFields.structure, CountryregionRow.read)
+  override def select: SelectBuilder[CountryregionFields, CountryregionRow] = SelectBuilder.of(""""person"."countryregion"""", CountryregionFields.structure, CountryregionRow.read)
 
-  def selectAll: Stream[ConnectionIO, CountryregionRow] = sql"""select "countryregioncode", "name", "modifieddate"::text from "person"."countryregion"""".query(using CountryregionRow.read).stream
+  override def selectAll: Stream[ConnectionIO, CountryregionRow] = sql"""select "countryregioncode", "name", "modifieddate"::text from "person"."countryregion"""".query(using CountryregionRow.read).stream
 
-  def selectById(countryregioncode: CountryregionId): ConnectionIO[Option[CountryregionRow]] = sql"""select "countryregioncode", "name", "modifieddate"::text from "person"."countryregion" where "countryregioncode" = ${fromWrite(countryregioncode)(using new Write.Single(CountryregionId.put))}""".query(using CountryregionRow.read).option
+  override def selectById(countryregioncode: CountryregionId): ConnectionIO[Option[CountryregionRow]] = sql"""select "countryregioncode", "name", "modifieddate"::text from "person"."countryregion" where "countryregioncode" = ${fromWrite(countryregioncode)(using new Write.Single(CountryregionId.put))}""".query(using CountryregionRow.read).option
 
-  def selectByIds(countryregioncodes: Array[CountryregionId]): Stream[ConnectionIO, CountryregionRow] = sql"""select "countryregioncode", "name", "modifieddate"::text from "person"."countryregion" where "countryregioncode" = ANY(${fromWrite(countryregioncodes)(using new Write.Single(CountryregionId.arrayPut))})""".query(using CountryregionRow.read).stream
+  override def selectByIds(countryregioncodes: Array[CountryregionId]): Stream[ConnectionIO, CountryregionRow] = sql"""select "countryregioncode", "name", "modifieddate"::text from "person"."countryregion" where "countryregioncode" = ANY(${fromWrite(countryregioncodes)(using new Write.Single(CountryregionId.arrayPut))})""".query(using CountryregionRow.read).stream
 
-  def selectByIdsTracked(countryregioncodes: Array[CountryregionId]): ConnectionIO[Map[CountryregionId, CountryregionRow]] = {
+  override def selectByIdsTracked(countryregioncodes: Array[CountryregionId]): ConnectionIO[Map[CountryregionId, CountryregionRow]] = {
     selectByIds(countryregioncodes).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.countryregioncode, x)).toMap
       countryregioncodes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[CountryregionFields, CountryregionRow] = UpdateBuilder.of(""""person"."countryregion"""", CountryregionFields.structure, CountryregionRow.read)
+  override def update: UpdateBuilder[CountryregionFields, CountryregionRow] = UpdateBuilder.of(""""person"."countryregion"""", CountryregionFields.structure, CountryregionRow.read)
 
-  def update(row: CountryregionRow): ConnectionIO[Option[CountryregionRow]] = {
+  override def update(row: CountryregionRow): ConnectionIO[Option[CountryregionRow]] = {
     val countryregioncode = row.countryregioncode
     sql"""update "person"."countryregion"
     set "name" = ${fromWrite(row.name)(using new Write.Single(Name.put))}::varchar,
@@ -97,7 +95,7 @@ class CountryregionRepoImpl extends CountryregionRepo {
     returning "countryregioncode", "name", "modifieddate"::text""".query(using CountryregionRow.read).option
   }
 
-  def upsert(unsaved: CountryregionRow): ConnectionIO[CountryregionRow] = {
+  override def upsert(unsaved: CountryregionRow): ConnectionIO[CountryregionRow] = {
     sql"""insert into "person"."countryregion"("countryregioncode", "name", "modifieddate")
     values (
       ${fromWrite(unsaved.countryregioncode)(using new Write.Single(CountryregionId.put))},
@@ -112,7 +110,7 @@ class CountryregionRepoImpl extends CountryregionRepo {
     """.query(using CountryregionRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[CountryregionRow]): Stream[ConnectionIO, CountryregionRow] = {
+  override def upsertBatch(unsaved: List[CountryregionRow]): Stream[ConnectionIO, CountryregionRow] = {
     Update[CountryregionRow](
       s"""insert into "person"."countryregion"("countryregioncode", "name", "modifieddate")
       values (?,?::varchar,?::timestamp)
@@ -126,7 +124,7 @@ class CountryregionRepoImpl extends CountryregionRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, CountryregionRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

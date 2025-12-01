@@ -5,6 +5,7 @@
  */
 package adventureworks.humanresources.department;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record DepartmentRepoMock(
     return new DepartmentRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<DepartmentFields, DepartmentRow> delete() {
     return new DeleteBuilderMock<>(DepartmentFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.departmentid(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     DepartmentId departmentid,
     Connection c
@@ -52,28 +55,31 @@ public record DepartmentRepoMock(
     return Optional.ofNullable(map.remove(departmentid)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     DepartmentId[] departmentids,
     Connection c
   ) {
     var count = 0;
-      for (var id : departmentids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : departmentids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public DepartmentRow insert(
     DepartmentRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.departmentid())) {
-        throw new RuntimeException(str("id $unsaved.departmentid() already exists"));
-      };
-      map.put(unsaved.departmentid(), unsaved);
+      throw new RuntimeException(str("id $unsaved.departmentid() already exists"));
+    };
+    map.put(unsaved.departmentid(), unsaved);
     return unsaved;
   };
 
+  @Override
   public DepartmentRow insert(
     DepartmentRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record DepartmentRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<DepartmentRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.departmentid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.departmentid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<DepartmentRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.departmentid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.departmentid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<DepartmentFields, DepartmentRow> select() {
     return new SelectBuilderMock<>(DepartmentFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<DepartmentRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<DepartmentRow> selectById(
     DepartmentId departmentid,
     Connection c
@@ -126,38 +137,43 @@ public record DepartmentRepoMock(
     return Optional.ofNullable(map.get(departmentid));
   };
 
+  @Override
   public List<DepartmentRow> selectByIds(
     DepartmentId[] departmentids,
     Connection c
   ) {
     var result = new ArrayList<DepartmentRow>();
-      for (var id : departmentids) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : departmentids) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<DepartmentId, DepartmentRow> selectByIdsTracked(
     DepartmentId[] departmentids,
     Connection c
   ) {
-    return selectByIds(departmentids, c).stream().collect(Collectors.toMap((adventureworks.humanresources.department.DepartmentRow row) -> row.departmentid(), Function.identity()));
+    return selectByIds(departmentids, c).stream().collect(Collectors.toMap((DepartmentRow row) -> row.departmentid(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<DepartmentFields, DepartmentRow> update() {
     return new UpdateBuilderMock<>(DepartmentFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     DepartmentRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.departmentid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.departmentid(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.departmentid(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public DepartmentRow upsert(
     DepartmentRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record DepartmentRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<DepartmentRow> upsertBatch(
     Iterator<DepartmentRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<DepartmentRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.departmentid(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.departmentid(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<DepartmentRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.departmentid(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.departmentid(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

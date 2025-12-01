@@ -55,7 +55,7 @@ object PViewFields {
 
     override lazy val fields: PViewFields = {
       new PViewFields {
-        def id: Field[BusinessentityId, PViewRow] = {
+        override def id: Field[BusinessentityId, PViewRow] = {
           new Field[BusinessentityId, PViewRow](
             _path,
             "id",
@@ -66,7 +66,7 @@ object PViewFields {
             BusinessentityId.pgType
           )
         }
-        def businessentityid: Field[BusinessentityId, PViewRow] = {
+        override def businessentityid: Field[BusinessentityId, PViewRow] = {
           new Field[BusinessentityId, PViewRow](
             _path,
             "businessentityid",
@@ -77,7 +77,7 @@ object PViewFields {
             BusinessentityId.pgType
           )
         }
-        def persontype: Field[/* bpchar, max 2 chars */ String, PViewRow] = {
+        override def persontype: Field[/* bpchar, max 2 chars */ String, PViewRow] = {
           new Field[/* bpchar, max 2 chars */ String, PViewRow](
             _path,
             "persontype",
@@ -88,7 +88,7 @@ object PViewFields {
             PgTypes.text
           )
         }
-        def namestyle: Field[NameStyle, PViewRow] = {
+        override def namestyle: Field[NameStyle, PViewRow] = {
           new Field[NameStyle, PViewRow](
             _path,
             "namestyle",
@@ -99,7 +99,7 @@ object PViewFields {
             NameStyle.pgType
           )
         }
-        def title: OptField[/* max 8 chars */ String, PViewRow] = {
+        override def title: OptField[/* max 8 chars */ String, PViewRow] = {
           new OptField[/* max 8 chars */ String, PViewRow](
             _path,
             "title",
@@ -110,7 +110,7 @@ object PViewFields {
             PgTypes.text
           )
         }
-        def firstname: Field[/* user-picked */ FirstName, PViewRow] = {
+        override def firstname: Field[/* user-picked */ FirstName, PViewRow] = {
           new Field[/* user-picked */ FirstName, PViewRow](
             _path,
             "firstname",
@@ -121,7 +121,7 @@ object PViewFields {
             /* user-picked */ FirstName.pgType
           )
         }
-        def middlename: OptField[Name, PViewRow] = {
+        override def middlename: OptField[Name, PViewRow] = {
           new OptField[Name, PViewRow](
             _path,
             "middlename",
@@ -132,7 +132,7 @@ object PViewFields {
             Name.pgType
           )
         }
-        def lastname: Field[Name, PViewRow] = {
+        override def lastname: Field[Name, PViewRow] = {
           new Field[Name, PViewRow](
             _path,
             "lastname",
@@ -143,7 +143,7 @@ object PViewFields {
             Name.pgType
           )
         }
-        def suffix: OptField[/* max 10 chars */ String, PViewRow] = {
+        override def suffix: OptField[/* max 10 chars */ String, PViewRow] = {
           new OptField[/* max 10 chars */ String, PViewRow](
             _path,
             "suffix",
@@ -154,7 +154,7 @@ object PViewFields {
             PgTypes.text
           )
         }
-        def emailpromotion: Field[Integer, PViewRow] = {
+        override def emailpromotion: Field[Integer, PViewRow] = {
           new Field[Integer, PViewRow](
             _path,
             "emailpromotion",
@@ -165,7 +165,7 @@ object PViewFields {
             PgTypes.int4
           )
         }
-        def additionalcontactinfo: OptField[TypoXml, PViewRow] = {
+        override def additionalcontactinfo: OptField[TypoXml, PViewRow] = {
           new OptField[TypoXml, PViewRow](
             _path,
             "additionalcontactinfo",
@@ -176,7 +176,7 @@ object PViewFields {
             TypoXml.pgType
           )
         }
-        def demographics: OptField[TypoXml, PViewRow] = {
+        override def demographics: OptField[TypoXml, PViewRow] = {
           new OptField[TypoXml, PViewRow](
             _path,
             "demographics",
@@ -187,7 +187,7 @@ object PViewFields {
             TypoXml.pgType
           )
         }
-        def rowguid: Field[TypoUUID, PViewRow] = {
+        override def rowguid: Field[TypoUUID, PViewRow] = {
           new Field[TypoUUID, PViewRow](
             _path,
             "rowguid",
@@ -198,7 +198,7 @@ object PViewFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, PViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, PViewRow] = {
           new Field[TypoLocalDateTime, PViewRow](
             _path,
             "modifieddate",
@@ -214,7 +214,7 @@ object PViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, PViewRow]] = java.util.List.of(this.fields.id, this.fields.businessentityid, this.fields.persontype, this.fields.namestyle, this.fields.title, this.fields.firstname, this.fields.middlename, this.fields.lastname, this.fields.suffix, this.fields.emailpromotion, this.fields.additionalcontactinfo, this.fields.demographics, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[PViewFields, PViewRow] = new Impl(java.util.List.of())

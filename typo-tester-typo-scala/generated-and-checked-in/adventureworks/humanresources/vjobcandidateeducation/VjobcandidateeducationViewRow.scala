@@ -7,46 +7,30 @@ package adventureworks.humanresources.vjobcandidateeducation
 
 import adventureworks.customtypes.TypoLocalDate
 import adventureworks.humanresources.jobcandidate.JobcandidateId
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple13
 
 /** View: humanresources.vjobcandidateeducation */
 case class VjobcandidateeducationViewRow(
   /** Points to [[adventureworks.humanresources.jobcandidate.JobcandidateRow.jobcandidateid]] */
   jobcandidateid: JobcandidateId,
-  eduLevel: /* nullability unknown */ Optional[/* max 50 chars */ String],
-  eduStartDate: /* nullability unknown */ Optional[TypoLocalDate],
-  eduEndDate: /* nullability unknown */ Optional[TypoLocalDate],
-  eduDegree: /* nullability unknown */ Optional[/* max 50 chars */ String],
-  eduMajor: /* nullability unknown */ Optional[/* max 50 chars */ String],
-  eduMinor: /* nullability unknown */ Optional[/* max 50 chars */ String],
-  eduGPA: /* nullability unknown */ Optional[/* max 5 chars */ String],
-  eduGPAScale: /* nullability unknown */ Optional[/* max 5 chars */ String],
-  eduSchool: /* nullability unknown */ Optional[/* max 100 chars */ String],
-  eduLocCountryRegion: /* nullability unknown */ Optional[/* max 100 chars */ String],
-  eduLocState: /* nullability unknown */ Optional[/* max 100 chars */ String],
-  eduLocCity: /* nullability unknown */ Optional[/* max 100 chars */ String]
+  @JsonProperty("Edu.Level") eduLevel: /* nullability unknown */ Optional[/* max 50 chars */ String],
+  @JsonProperty("Edu.StartDate") eduStartDate: /* nullability unknown */ Optional[TypoLocalDate],
+  @JsonProperty("Edu.EndDate") eduEndDate: /* nullability unknown */ Optional[TypoLocalDate],
+  @JsonProperty("Edu.Degree") eduDegree: /* nullability unknown */ Optional[/* max 50 chars */ String],
+  @JsonProperty("Edu.Major") eduMajor: /* nullability unknown */ Optional[/* max 50 chars */ String],
+  @JsonProperty("Edu.Minor") eduMinor: /* nullability unknown */ Optional[/* max 50 chars */ String],
+  @JsonProperty("Edu.GPA") eduGPA: /* nullability unknown */ Optional[/* max 5 chars */ String],
+  @JsonProperty("Edu.GPAScale") eduGPAScale: /* nullability unknown */ Optional[/* max 5 chars */ String],
+  @JsonProperty("Edu.School") eduSchool: /* nullability unknown */ Optional[/* max 100 chars */ String],
+  @JsonProperty("Edu.Loc.CountryRegion") eduLocCountryRegion: /* nullability unknown */ Optional[/* max 100 chars */ String],
+  @JsonProperty("Edu.Loc.State") eduLocState: /* nullability unknown */ Optional[/* max 100 chars */ String],
+  @JsonProperty("Edu.Loc.City") eduLocCity: /* nullability unknown */ Optional[/* max 100 chars */ String]
 )
 
 object VjobcandidateeducationViewRow {
-  val `_rowParser`: RowParser[VjobcandidateeducationViewRow] = {
-    RowParsers.of(JobcandidateId.pgType, PgTypes.text.opt(), TypoLocalDate.pgType.opt(), TypoLocalDate.pgType.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), VjobcandidateeducationViewRow.apply, row => new Tuple13(
-      row.jobcandidateid,
-      row.eduLevel,
-      row.eduStartDate,
-      row.eduEndDate,
-      row.eduDegree,
-      row.eduMajor,
-      row.eduMinor,
-      row.eduGPA,
-      row.eduGPAScale,
-      row.eduSchool,
-      row.eduLocCountryRegion,
-      row.eduLocState,
-      row.eduLocCity
-    ))
-  }
+  val `_rowParser`: RowParser[VjobcandidateeducationViewRow] = RowParsers.of(JobcandidateId.pgType, PgTypes.text.opt(), TypoLocalDate.pgType.opt(), TypoLocalDate.pgType.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), VjobcandidateeducationViewRow.apply, row => Array(row.jobcandidateid, row.eduLevel, row.eduStartDate, row.eduEndDate, row.eduDegree, row.eduMajor, row.eduMinor, row.eduGPA, row.eduGPAScale, row.eduSchool, row.eduLocCountryRegion, row.eduLocState, row.eduLocCity))
 }

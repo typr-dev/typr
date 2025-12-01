@@ -25,13 +25,13 @@ case class ShoppingcartitemRepoMock(
   toRow: ShoppingcartitemRowUnsaved => ShoppingcartitemRow,
   map: scala.collection.mutable.Map[ShoppingcartitemId, ShoppingcartitemRow] = scala.collection.mutable.Map.empty[ShoppingcartitemId, ShoppingcartitemRow]
 ) extends ShoppingcartitemRepo {
-  def delete: DeleteBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = DeleteBuilderMock(DeleteParams.empty, ShoppingcartitemFields.structure, map)
+  override def delete: DeleteBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = DeleteBuilderMock(DeleteParams.empty, ShoppingcartitemFields.structure, map)
 
-  def deleteById(shoppingcartitemid: ShoppingcartitemId): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(shoppingcartitemid).isDefined)
+  override def deleteById(shoppingcartitemid: ShoppingcartitemId): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(shoppingcartitemid).isDefined)
 
-  def deleteByIds(shoppingcartitemids: Array[ShoppingcartitemId]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(shoppingcartitemids.map(id => map.remove(id)).count(_.isDefined).toLong)
+  override def deleteByIds(shoppingcartitemids: Array[ShoppingcartitemId]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(shoppingcartitemids.map(id => map.remove(id)).count(_.isDefined).toLong)
 
-  def insert(unsaved: ShoppingcartitemRow): ZIO[ZConnection, Throwable, ShoppingcartitemRow] = {
+  override def insert(unsaved: ShoppingcartitemRow): ZIO[ZConnection, Throwable, ShoppingcartitemRow] = {
   ZIO.succeed {
     val _ =
       if (map.contains(unsaved.shoppingcartitemid))
@@ -43,9 +43,9 @@ case class ShoppingcartitemRepoMock(
   }
   }
 
-  def insert(unsaved: ShoppingcartitemRowUnsaved): ZIO[ZConnection, Throwable, ShoppingcartitemRow] = insert(toRow(unsaved))
+  override def insert(unsaved: ShoppingcartitemRowUnsaved): ZIO[ZConnection, Throwable, ShoppingcartitemRow] = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, ShoppingcartitemRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {
@@ -58,7 +58,7 @@ case class ShoppingcartitemRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, ShoppingcartitemRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {
@@ -71,24 +71,24 @@ case class ShoppingcartitemRepoMock(
     }.runLast.map(_.getOrElse(0L))
   }
 
-  def select: SelectBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = SelectBuilderMock(ShoppingcartitemFields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
+  override def select: SelectBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = SelectBuilderMock(ShoppingcartitemFields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
 
-  def selectAll: ZStream[ZConnection, Throwable, ShoppingcartitemRow] = ZStream.fromIterable(map.values)
+  override def selectAll: ZStream[ZConnection, Throwable, ShoppingcartitemRow] = ZStream.fromIterable(map.values)
 
-  def selectById(shoppingcartitemid: ShoppingcartitemId): ZIO[ZConnection, Throwable, Option[ShoppingcartitemRow]] = ZIO.succeed(map.get(shoppingcartitemid))
+  override def selectById(shoppingcartitemid: ShoppingcartitemId): ZIO[ZConnection, Throwable, Option[ShoppingcartitemRow]] = ZIO.succeed(map.get(shoppingcartitemid))
 
-  def selectByIds(shoppingcartitemids: Array[ShoppingcartitemId]): ZStream[ZConnection, Throwable, ShoppingcartitemRow] = ZStream.fromIterable(shoppingcartitemids.flatMap(map.get))
+  override def selectByIds(shoppingcartitemids: Array[ShoppingcartitemId]): ZStream[ZConnection, Throwable, ShoppingcartitemRow] = ZStream.fromIterable(shoppingcartitemids.flatMap(map.get))
 
-  def selectByIdsTracked(shoppingcartitemids: Array[ShoppingcartitemId]): ZIO[ZConnection, Throwable, Map[ShoppingcartitemId, ShoppingcartitemRow]] = {
+  override def selectByIdsTracked(shoppingcartitemids: Array[ShoppingcartitemId]): ZIO[ZConnection, Throwable, Map[ShoppingcartitemId, ShoppingcartitemRow]] = {
     selectByIds(shoppingcartitemids).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.shoppingcartitemid, x)).toMap
       shoppingcartitemids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = UpdateBuilderMock(UpdateParams.empty, ShoppingcartitemFields.structure, map)
+  override def update: UpdateBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = UpdateBuilderMock(UpdateParams.empty, ShoppingcartitemFields.structure, map)
 
-  def update(row: ShoppingcartitemRow): ZIO[ZConnection, Throwable, Option[ShoppingcartitemRow]] = {
+  override def update(row: ShoppingcartitemRow): ZIO[ZConnection, Throwable, Option[ShoppingcartitemRow]] = {
     ZIO.succeed {
       map.get(row.shoppingcartitemid).map { _ =>
         map.put(row.shoppingcartitemid, row): @nowarn
@@ -97,7 +97,7 @@ case class ShoppingcartitemRepoMock(
     }
   }
 
-  def upsert(unsaved: ShoppingcartitemRow): ZIO[ZConnection, Throwable, UpdateResult[ShoppingcartitemRow]] = {
+  override def upsert(unsaved: ShoppingcartitemRow): ZIO[ZConnection, Throwable, UpdateResult[ShoppingcartitemRow]] = {
     ZIO.succeed {
       map.put(unsaved.shoppingcartitemid, unsaved): @nowarn
       UpdateResult(1, Chunk.single(unsaved))
@@ -105,7 +105,7 @@ case class ShoppingcartitemRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, ShoppingcartitemRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

@@ -5,22 +5,22 @@
  */
 package adventureworks.sales.vindividualcustomer;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class VindividualcustomerViewRepoImpl implements VindividualcustomerViewRepo {
+  @Override
   public SelectBuilder<VindividualcustomerViewFields, VindividualcustomerViewRow> select() {
     return SelectBuilder.of("sales.vindividualcustomer", VindividualcustomerViewFields.structure(), VindividualcustomerViewRow._rowParser);
   };
 
+  @Override
   public List<VindividualcustomerViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "businessentityid", "title", "firstname", "middlename", "lastname", "suffix", "phonenumber", "phonenumbertype", "emailaddress", "emailpromotion", "addresstype", "addressline1", "addressline2", "city", "stateprovincename", "postalcode", "countryregionname", "demographics"
        from "sales"."vindividualcustomer"
-    """)).as(VindividualcustomerViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(VindividualcustomerViewRow._rowParser.all()).runUnchecked(c);
   };
 }

@@ -45,7 +45,7 @@ object AViewFields {
 
     override lazy val fields: AViewFields = {
       new AViewFields {
-        def id: Field[AddressId, AViewRow] = {
+        override def id: Field[AddressId, AViewRow] = {
           new Field[AddressId, AViewRow](
             _path,
             "id",
@@ -56,7 +56,7 @@ object AViewFields {
             AddressId.pgType
           )
         }
-        def addressid: Field[AddressId, AViewRow] = {
+        override def addressid: Field[AddressId, AViewRow] = {
           new Field[AddressId, AViewRow](
             _path,
             "addressid",
@@ -67,7 +67,7 @@ object AViewFields {
             AddressId.pgType
           )
         }
-        def addressline1: Field[/* max 60 chars */ String, AViewRow] = {
+        override def addressline1: Field[/* max 60 chars */ String, AViewRow] = {
           new Field[/* max 60 chars */ String, AViewRow](
             _path,
             "addressline1",
@@ -78,7 +78,7 @@ object AViewFields {
             PgTypes.text
           )
         }
-        def addressline2: OptField[/* max 60 chars */ String, AViewRow] = {
+        override def addressline2: OptField[/* max 60 chars */ String, AViewRow] = {
           new OptField[/* max 60 chars */ String, AViewRow](
             _path,
             "addressline2",
@@ -89,7 +89,7 @@ object AViewFields {
             PgTypes.text
           )
         }
-        def city: Field[/* max 30 chars */ String, AViewRow] = {
+        override def city: Field[/* max 30 chars */ String, AViewRow] = {
           new Field[/* max 30 chars */ String, AViewRow](
             _path,
             "city",
@@ -100,7 +100,7 @@ object AViewFields {
             PgTypes.text
           )
         }
-        def stateprovinceid: Field[StateprovinceId, AViewRow] = {
+        override def stateprovinceid: Field[StateprovinceId, AViewRow] = {
           new Field[StateprovinceId, AViewRow](
             _path,
             "stateprovinceid",
@@ -111,7 +111,7 @@ object AViewFields {
             StateprovinceId.pgType
           )
         }
-        def postalcode: Field[/* max 15 chars */ String, AViewRow] = {
+        override def postalcode: Field[/* max 15 chars */ String, AViewRow] = {
           new Field[/* max 15 chars */ String, AViewRow](
             _path,
             "postalcode",
@@ -122,7 +122,7 @@ object AViewFields {
             PgTypes.text
           )
         }
-        def spatiallocation: OptField[TypoBytea, AViewRow] = {
+        override def spatiallocation: OptField[TypoBytea, AViewRow] = {
           new OptField[TypoBytea, AViewRow](
             _path,
             "spatiallocation",
@@ -133,7 +133,7 @@ object AViewFields {
             TypoBytea.pgType
           )
         }
-        def rowguid: Field[TypoUUID, AViewRow] = {
+        override def rowguid: Field[TypoUUID, AViewRow] = {
           new Field[TypoUUID, AViewRow](
             _path,
             "rowguid",
@@ -144,7 +144,7 @@ object AViewFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, AViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, AViewRow] = {
           new Field[TypoLocalDateTime, AViewRow](
             _path,
             "modifieddate",
@@ -160,7 +160,7 @@ object AViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, AViewRow]] = java.util.List.of(this.fields.id, this.fields.addressid, this.fields.addressline1, this.fields.addressline2, this.fields.city, this.fields.stateprovinceid, this.fields.postalcode, this.fields.spatiallocation, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[AViewFields, AViewRow] = new Impl(java.util.List.of())

@@ -14,7 +14,6 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple25;
 
 /** View: production.vproductmodelcatalogdescription */
 public record VproductmodelcatalogdescriptionViewRow(
@@ -152,5 +151,5 @@ public record VproductmodelcatalogdescriptionViewRow(
     return new VproductmodelcatalogdescriptionViewRow(productmodelid, name, summary, manufacturer, copyright, producturl, warrantyperiod, warrantydescription, noofyears, maintenancedescription, wheel, saddle, pedal, bikeframe, crankset, pictureangle, picturesize, productphotoid, material, color, productline, style, riderexperience, rowguid, modifieddate);
   };
 
-  static RowParser<VproductmodelcatalogdescriptionViewRow> _rowParser = RowParsers.of(ProductmodelId.pgType, Name.pgType, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, VproductmodelcatalogdescriptionViewRow::new, row -> new Tuple25<>(row.productmodelid(), row.name(), row.summary(), row.manufacturer(), row.copyright(), row.producturl(), row.warrantyperiod(), row.warrantydescription(), row.noofyears(), row.maintenancedescription(), row.wheel(), row.saddle(), row.pedal(), row.bikeframe(), row.crankset(), row.pictureangle(), row.picturesize(), row.productphotoid(), row.material(), row.color(), row.productline(), row.style(), row.riderexperience(), row.rowguid(), row.modifieddate()));;
+  static RowParser<VproductmodelcatalogdescriptionViewRow> _rowParser = RowParsers.of(ProductmodelId.pgType, Name.pgType, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, VproductmodelcatalogdescriptionViewRow::new, row -> new Object[]{row.productmodelid(), row.name(), row.summary(), row.manufacturer(), row.copyright(), row.producturl(), row.warrantyperiod(), row.warrantydescription(), row.noofyears(), row.maintenancedescription(), row.wheel(), row.saddle(), row.pedal(), row.bikeframe(), row.crankset(), row.pictureangle(), row.picturesize(), row.productphotoid(), row.material(), row.color(), row.productline(), row.style(), row.riderexperience(), row.rowguid(), row.modifieddate()});;
 }

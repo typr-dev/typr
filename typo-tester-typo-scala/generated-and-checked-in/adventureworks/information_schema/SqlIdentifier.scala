@@ -5,6 +5,7 @@
  */
 package adventureworks.information_schema
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
@@ -12,7 +13,7 @@ import typo.runtime.PgTypes
 /** Domain `information_schema.sql_identifier`
  * No constraint
  */
-case class SqlIdentifier(value: String)
+case class SqlIdentifier(@JsonValue value: String)
 
 object SqlIdentifier {
   given bijection: Bijection[SqlIdentifier, String] = Bijection.apply[SqlIdentifier, String](_.value)(SqlIdentifier.apply)

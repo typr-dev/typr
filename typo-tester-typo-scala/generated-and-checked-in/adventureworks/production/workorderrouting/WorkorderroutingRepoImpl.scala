@@ -23,22 +23,22 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
-  def delete: DeleteBuilder[WorkorderroutingFields, WorkorderroutingRow] = DeleteBuilder.of("production.workorderrouting", WorkorderroutingFields.structure)
+  override def delete: DeleteBuilder[WorkorderroutingFields, WorkorderroutingRow] = DeleteBuilder.of("production.workorderrouting", WorkorderroutingFields.structure)
 
-  def deleteById(compositeId: WorkorderroutingId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."workorderrouting" where "workorderid" = ${WorkorderId.pgType.encode(compositeId.workorderid)} AND "productid" = ${PgTypes.int4.encode(compositeId.productid)} AND "operationsequence" = ${TypoShort.pgType.encode(compositeId.operationsequence)}""".update().runUnchecked(c) > 0
+  override def deleteById(compositeId: WorkorderroutingId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."workorderrouting" where "workorderid" = ${WorkorderId.pgType.encode(compositeId.workorderid)} AND "productid" = ${PgTypes.int4.encode(compositeId.productid)} AND "operationsequence" = ${TypoShort.pgType.encode(compositeId.operationsequence)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(compositeIds: Array[WorkorderroutingId])(using c: Connection): Integer = {
+  override def deleteByIds(compositeIds: Array[WorkorderroutingId])(using c: Connection): Integer = {
     val workorderid: Array[WorkorderId] = compositeIds.map(_.workorderid)
     val productid: Array[Integer] = compositeIds.map(_.productid)
     val operationsequence: Array[TypoShort] = compositeIds.map(_.operationsequence)
-    interpolate"""delete
+    return interpolate"""delete
     from "production"."workorderrouting"
     where ("workorderid", "productid", "operationsequence")
     in (select unnest(${WorkorderId.pgTypeArray.encode(workorderid)}::int4[]), unnest(${PgTypes.int4Array.encode(productid)}::int4[]), unnest(${TypoShort.pgTypeArray.encode(operationsequence)}::int2[]))
     """.update().runUnchecked(c)
   }
 
-  def insert(unsaved: WorkorderroutingRow)(using c: Connection): WorkorderroutingRow = {
+  override def insert(unsaved: WorkorderroutingRow)(using c: Connection): WorkorderroutingRow = {
   interpolate"""insert into "production"."workorderrouting"("workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate")
     values (${WorkorderId.pgType.encode(unsaved.workorderid)}::int4, ${PgTypes.int4.encode(unsaved.productid)}::int4, ${TypoShort.pgType.encode(unsaved.operationsequence)}::int2, ${LocationId.pgType.encode(unsaved.locationid)}::int2, ${TypoLocalDateTime.pgType.encode(unsaved.scheduledstartdate)}::timestamp, ${TypoLocalDateTime.pgType.encode(unsaved.scheduledenddate)}::timestamp, ${TypoLocalDateTime.pgType.opt().encode(unsaved.actualstartdate)}::timestamp, ${TypoLocalDateTime.pgType.opt().encode(unsaved.actualenddate)}::timestamp, ${PgTypes.numeric.opt().encode(unsaved.actualresourcehrs)}::numeric, ${PgTypes.numeric.encode(unsaved.plannedcost)}::numeric, ${PgTypes.numeric.opt().encode(unsaved.actualcost)}::numeric, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text
@@ -46,9 +46,9 @@ class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
     .updateReturning(WorkorderroutingRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: WorkorderroutingRowUnsaved)(using c: Connection): WorkorderroutingRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: WorkorderroutingRowUnsaved)(using c: Connection): WorkorderroutingRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""workorderid"""")): @scala.annotation.nowarn
     values.add(interpolate"${WorkorderId.pgType.encode(unsaved.workorderid)}::int4"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""productid"""")): @scala.annotation.nowarn
@@ -72,11 +72,8 @@ class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
     columns.add(Fragment.lit(""""actualcost"""")): @scala.annotation.nowarn
     values.add(interpolate"${PgTypes.numeric.opt().encode(unsaved.actualcost)}::numeric"): @scala.annotation.nowarn
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "production"."workorderrouting"(${Fragment.comma(columns)})
@@ -84,56 +81,56 @@ class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
       returning "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text
       """
     }
-    q.updateReturning(WorkorderroutingRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(WorkorderroutingRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[WorkorderroutingRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."workorderrouting"("workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate") FROM STDIN""", batchSize, unsaved, c, WorkorderroutingRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[WorkorderroutingRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."workorderrouting"("workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, WorkorderroutingRowUnsaved.pgText)
 
-  def select: SelectBuilder[WorkorderroutingFields, WorkorderroutingRow] = SelectBuilder.of("production.workorderrouting", WorkorderroutingFields.structure, WorkorderroutingRow.`_rowParser`)
+  override def select: SelectBuilder[WorkorderroutingFields, WorkorderroutingRow] = SelectBuilder.of("production.workorderrouting", WorkorderroutingFields.structure, WorkorderroutingRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[WorkorderroutingRow] = {
+  override def selectAll(using c: Connection): java.util.List[WorkorderroutingRow] = {
     interpolate"""select "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text
     from "production"."workorderrouting"
-    """.as(WorkorderroutingRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(WorkorderroutingRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(compositeId: WorkorderroutingId)(using c: Connection): Optional[WorkorderroutingRow] = {
+  override def selectById(compositeId: WorkorderroutingId)(using c: Connection): Optional[WorkorderroutingRow] = {
     interpolate"""select "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text
     from "production"."workorderrouting"
-    where "workorderid" = ${WorkorderId.pgType.encode(compositeId.workorderid)} AND "productid" = ${PgTypes.int4.encode(compositeId.productid)} AND "operationsequence" = ${TypoShort.pgType.encode(compositeId.operationsequence)}""".as(WorkorderroutingRow.`_rowParser`.first()).runUnchecked(c)
+    where "workorderid" = ${WorkorderId.pgType.encode(compositeId.workorderid)} AND "productid" = ${PgTypes.int4.encode(compositeId.productid)} AND "operationsequence" = ${TypoShort.pgType.encode(compositeId.operationsequence)}""".query(WorkorderroutingRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(compositeIds: Array[WorkorderroutingId])(using c: Connection): java.util.List[WorkorderroutingRow] = {
+  override def selectByIds(compositeIds: Array[WorkorderroutingId])(using c: Connection): java.util.List[WorkorderroutingRow] = {
     val workorderid: Array[WorkorderId] = compositeIds.map(_.workorderid)
     val productid: Array[Integer] = compositeIds.map(_.productid)
     val operationsequence: Array[TypoShort] = compositeIds.map(_.operationsequence)
-    interpolate"""select "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text
+    return interpolate"""select "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text
     from "production"."workorderrouting"
     where ("workorderid", "productid", "operationsequence")
     in (select unnest(${WorkorderId.pgTypeArray.encode(workorderid)}::int4[]), unnest(${PgTypes.int4Array.encode(productid)}::int4[]), unnest(${TypoShort.pgTypeArray.encode(operationsequence)}::int2[]))
-    """.as(WorkorderroutingRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(WorkorderroutingRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(compositeIds: Array[WorkorderroutingId])(using c: Connection): java.util.Map[WorkorderroutingId, WorkorderroutingRow] = {
-    val ret: java.util.Map[WorkorderroutingId, WorkorderroutingRow] = new HashMap()
+  override def selectByIdsTracked(compositeIds: Array[WorkorderroutingId])(using c: Connection): java.util.Map[WorkorderroutingId, WorkorderroutingRow] = {
+    val ret: HashMap[WorkorderroutingId, WorkorderroutingRow] = new HashMap[WorkorderroutingId, WorkorderroutingRow]()
     selectByIds(compositeIds)(using c).forEach(row => ret.put(row.compositeId, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[WorkorderroutingFields, WorkorderroutingRow] = UpdateBuilder.of("production.workorderrouting", WorkorderroutingFields.structure, WorkorderroutingRow.`_rowParser`.all())
+  override def update: UpdateBuilder[WorkorderroutingFields, WorkorderroutingRow] = UpdateBuilder.of("production.workorderrouting", WorkorderroutingFields.structure, WorkorderroutingRow.`_rowParser`.all())
 
-  def update(row: WorkorderroutingRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: WorkorderroutingRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: WorkorderroutingId = row.compositeId
-    interpolate"""update "production"."workorderrouting"
+    return interpolate"""update "production"."workorderrouting"
     set "locationid" = ${LocationId.pgType.encode(row.locationid)}::int2,
     "scheduledstartdate" = ${TypoLocalDateTime.pgType.encode(row.scheduledstartdate)}::timestamp,
     "scheduledenddate" = ${TypoLocalDateTime.pgType.encode(row.scheduledenddate)}::timestamp,
@@ -146,7 +143,7 @@ class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
     where "workorderid" = ${WorkorderId.pgType.encode(compositeId.workorderid)} AND "productid" = ${PgTypes.int4.encode(compositeId.productid)} AND "operationsequence" = ${TypoShort.pgType.encode(compositeId.operationsequence)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: WorkorderroutingRow)(using c: Connection): WorkorderroutingRow = {
+  override def upsert(unsaved: WorkorderroutingRow)(using c: Connection): WorkorderroutingRow = {
   interpolate"""insert into "production"."workorderrouting"("workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate")
     values (${WorkorderId.pgType.encode(unsaved.workorderid)}::int4, ${PgTypes.int4.encode(unsaved.productid)}::int4, ${TypoShort.pgType.encode(unsaved.operationsequence)}::int2, ${LocationId.pgType.encode(unsaved.locationid)}::int2, ${TypoLocalDateTime.pgType.encode(unsaved.scheduledstartdate)}::timestamp, ${TypoLocalDateTime.pgType.encode(unsaved.scheduledenddate)}::timestamp, ${TypoLocalDateTime.pgType.opt().encode(unsaved.actualstartdate)}::timestamp, ${TypoLocalDateTime.pgType.opt().encode(unsaved.actualenddate)}::timestamp, ${PgTypes.numeric.opt().encode(unsaved.actualresourcehrs)}::numeric, ${PgTypes.numeric.encode(unsaved.plannedcost)}::numeric, ${PgTypes.numeric.opt().encode(unsaved.actualcost)}::numeric, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("workorderid", "productid", "operationsequence")
@@ -166,7 +163,7 @@ class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[WorkorderroutingRow])(using c: Connection): java.util.List[WorkorderroutingRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[WorkorderroutingRow])(using c: Connection): java.util.List[WorkorderroutingRow] = {
     interpolate"""insert into "production"."workorderrouting"("workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate")
     values (?::int4, ?::int4, ?::int2, ?::int2, ?::timestamp, ?::timestamp, ?::timestamp, ?::timestamp, ?::numeric, ?::numeric, ?::numeric, ?::timestamp)
     on conflict ("workorderid", "productid", "operationsequence")
@@ -187,13 +184,13 @@ class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[WorkorderroutingRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table workorderrouting_TEMP (like "production"."workorderrouting") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy workorderrouting_TEMP("workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate") from stdin""", batchSize, unsaved, c, WorkorderroutingRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "production"."workorderrouting"("workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate")
+    return interpolate"""insert into "production"."workorderrouting"("workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate")
     select * from workorderrouting_TEMP
     on conflict ("workorderid", "productid", "operationsequence")
     do update set

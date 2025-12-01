@@ -14,12 +14,14 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
 import java.io.IOException;
 import java.lang.Class;
+import java.lang.Object;
+import java.lang.RuntimeException;
 import testdb.hardcoded.customtypes.Defaulted;
 import testdb.hardcoded.customtypes.Defaulted.Provided;
 import testdb.hardcoded.customtypes.Defaulted.UseDefault;
 
 /** Jackson deserializer for Defaulted types */
-public class DefaultedDeserializer extends JsonDeserializer<Defaulted> implements ContextualDeserializer {
+public class DefaultedDeserializer extends JsonDeserializer<Defaulted<?>> implements ContextualDeserializer {
   JavaType valueType;;
 
   Class<?> defaultedClass;;
@@ -32,41 +34,43 @@ public class DefaultedDeserializer extends JsonDeserializer<Defaulted> implement
     this.defaultedClass = defaultedClass;
   };
 
+  @Override
   public JsonDeserializer<?> createContextual(
     DeserializationContext ctxt,
     BeanProperty property
   ) {
-    JavaType type = ctxt.getContextualType();
-      if (type == null && property != null) {
-        type = property.getType();
-      }
-      if (type != null && type.containedTypeCount() > 0) {
-        return new DefaultedDeserializer(type.containedType(0), type.getRawClass());
-      };
-    return this;
+    JavaType contextType = ctxt.getContextualType();
+    JavaType type = contextType == null && property != null
+      ? property.getType()
+      : contextType;
+    if (type != null && type.containedTypeCount() > 0) {
+      return new DefaultedDeserializer(type.containedType(0), type.getRawClass());
+    };
+    throw new RuntimeException("unexpected");
   };
 
-  public Defaulted deserialize(
+  @Override
+  public Defaulted<?> deserialize(
     JsonParser p,
     DeserializationContext ctxt
   ) throws IOException {
     if (p.currentToken() == JsonToken.VALUE_STRING) {
-        String text = p.getText();
-        if ("defaulted".equals(text)) {
-          return new UseDefault<>();
-        }
-        throw new IOException("Expected 'defaulted' but got: " + text);
+      String text = p.getText();
+      if ("defaulted".equals(text)) {
+        return new UseDefault<Object>();
       }
-      if (p.currentToken() == JsonToken.START_OBJECT) {
+      throw new IOException("Expected 'defaulted' but got: " + text);
+    }
+    if (p.currentToken() == JsonToken.START_OBJECT) {
+      p.nextToken();
+      if (p.currentToken() == JsonToken.FIELD_NAME && "provided".equals(p.currentName())) {
         p.nextToken();
-        if (p.currentToken() == JsonToken.FIELD_NAME && "provided".equals(p.currentName())) {
-          p.nextToken();
-          Object value = ctxt.readValue(p, valueType);
-          p.nextToken();
-          return new Provided<>(value);
-        }
-        throw new IOException("Expected 'provided' field but got: " + p.currentName());
-      };
-    return (Defaulted) null;
+        Object value = ctxt.readValue(p, valueType);
+        p.nextToken();
+        return new Provided<Object>(value);
+      }
+
+    };
+    throw new IOException("Expected 'provided' field but got: " + p.currentName());
   };
 }

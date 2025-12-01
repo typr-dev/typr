@@ -5,12 +5,13 @@
  */
 package adventureworks.production.location
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
 
 /** Type for the primary key of table `production.location` */
-case class LocationId(value: Integer) extends scala.AnyVal
+case class LocationId(@JsonValue value: Integer) extends scala.AnyVal
 
 object LocationId {
   given bijection: Bijection[LocationId, Integer] = Bijection.apply[LocationId, Integer](_.value)(LocationId.apply)

@@ -59,21 +59,5 @@ case class SalestaxrateRowUnsaved(
 }
 
 object SalestaxrateRowUnsaved {
-  given pgText: PgText[SalestaxrateRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      StateprovinceId.pgType.pgText.unsafeEncode(row.stateprovinceid, sb);
-      sb.append(PgText.DELIMETER);
-      TypoShort.pgType.pgText.unsafeEncode(row.taxtype, sb);
-      sb.append(PgText.DELIMETER);
-      Name.pgType.pgText.unsafeEncode(row.name, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using SalestaxrateId.pgType.pgText).unsafeEncode(row.salestaxrateid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using PgTypes.numeric.pgText).unsafeEncode(row.taxrate, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[SalestaxrateRowUnsaved] = PgText.instance((row, sb) => { StateprovinceId.pgType.pgText.unsafeEncode(row.stateprovinceid, sb); sb.append(PgText.DELIMETER); TypoShort.pgType.pgText.unsafeEncode(row.taxtype, sb); sb.append(PgText.DELIMETER); Name.pgType.pgText.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using SalestaxrateId.pgType.pgText).unsafeEncode(row.salestaxrateid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.numeric.pgText).unsafeEncode(row.taxrate, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

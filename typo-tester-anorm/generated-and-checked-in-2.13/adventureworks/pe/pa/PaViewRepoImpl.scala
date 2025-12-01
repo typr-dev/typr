@@ -10,9 +10,9 @@ import typo.dsl.SelectBuilder
 import anorm.SqlStringInterpolation
 
 class PaViewRepoImpl extends PaViewRepo {
-  def select: SelectBuilder[PaViewFields, PaViewRow] = SelectBuilder.of(""""pe"."pa"""", PaViewFields.structure, PaViewRow.rowParser)
+  override def select: SelectBuilder[PaViewFields, PaViewRow] = SelectBuilder.of(""""pe"."pa"""", PaViewFields.structure, PaViewRow.rowParser)
 
-  def selectAll(implicit c: Connection): List[PaViewRow] = {
+  override def selectAll(implicit c: Connection): List[PaViewRow] = {
     SQL"""select "id", "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"::text
     from "pe"."pa"
     """.as(PaViewRow.rowParser(1).*)

@@ -12,7 +12,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple7
 
 /** Table: sales.currencyrate
  * Currency exchange rates.
@@ -59,17 +58,7 @@ case class CurrencyrateRow(
 }
 
 object CurrencyrateRow {
-  val `_rowParser`: RowParser[CurrencyrateRow] = {
-    RowParsers.of(CurrencyrateId.pgType, TypoLocalDateTime.pgType, CurrencyId.pgType, CurrencyId.pgType, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, CurrencyrateRow.apply, row => new Tuple7(
-      row.currencyrateid,
-      row.currencyratedate,
-      row.fromcurrencycode,
-      row.tocurrencycode,
-      row.averagerate,
-      row.endofdayrate,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[CurrencyrateRow] = RowParsers.of(CurrencyrateId.pgType, TypoLocalDateTime.pgType, CurrencyId.pgType, CurrencyId.pgType, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, CurrencyrateRow.apply, row => Array(row.currencyrateid, row.currencyratedate, row.fromcurrencycode, row.tocurrencycode, row.averagerate, row.endofdayrate, row.modifieddate))
 
   given pgText: PgText[CurrencyrateRow] = PgText.from(`_rowParser`)
 }

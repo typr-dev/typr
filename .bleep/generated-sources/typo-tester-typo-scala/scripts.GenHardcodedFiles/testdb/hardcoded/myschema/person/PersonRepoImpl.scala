@@ -35,11 +35,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PersonRepoImpl extends PersonRepo {
-  def delete: DeleteBuilder[PersonFields, PersonRow] = DeleteBuilder.of("myschema.person", PersonFields.structure)
+  override def delete: DeleteBuilder[PersonFields, PersonRow] = DeleteBuilder.of("myschema.person", PersonFields.structure)
 
-  def deleteById(id: PersonId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "myschema"."person" where "id" = ${PersonId.pgType.encode(id)}""".update().runUnchecked(c) > 0
+  override def deleteById(id: PersonId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "myschema"."person" where "id" = ${PersonId.pgType.encode(id)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(ids: Array[PersonId])(using c: Connection): Integer = {
+  override def deleteByIds(ids: Array[PersonId])(using c: Connection): Integer = {
     interpolate"""delete
     from "myschema"."person"
     where "id" = ANY(${PersonId.pgTypeArray.encode(ids)})"""
@@ -47,7 +47,7 @@ class PersonRepoImpl extends PersonRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: PersonRow)(using c: Connection): PersonRow = {
+  override def insert(unsaved: PersonRow)(using c: Connection): PersonRow = {
   interpolate"""insert into "myschema"."person"("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number")
     values (${PersonId.pgType.encode(unsaved.id)}::int8, ${FootballClubId.pgType.encode(unsaved.favouriteFootballClubId)}, ${PgTypes.text.encode(unsaved.name)}, ${PgTypes.text.opt().encode(unsaved.nickName)}, ${PgTypes.text.opt().encode(unsaved.blogUrl)}, ${PgTypes.text.encode(unsaved.email)}, ${PgTypes.text.encode(unsaved.phone)}, ${PgTypes.bool.encode(unsaved.likesPizza)}, ${MaritalStatusId.pgType.encode(unsaved.maritalStatusId)}, ${PgTypes.text.opt().encode(unsaved.workEmail)}, ${Number.pgType.encode(unsaved.favoriteNumber)}::myschema.number)
     returning "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number"
@@ -55,9 +55,9 @@ class PersonRepoImpl extends PersonRepo {
     .updateReturning(PersonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: PersonRowUnsaved)(using c: Connection): PersonRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: PersonRowUnsaved)(using c: Connection): PersonRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""favourite_football_club_id"""")): @scala.annotation.nowarn
     values.add(interpolate"${FootballClubId.pgType.encode(unsaved.favouriteFootballClubId)}"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
@@ -75,25 +75,16 @@ class PersonRepoImpl extends PersonRepo {
     columns.add(Fragment.lit(""""work_email"""")): @scala.annotation.nowarn
     values.add(interpolate"${PgTypes.text.opt().encode(unsaved.workEmail)}"): @scala.annotation.nowarn
     unsaved.id.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""id"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PersonId.pgType.encode(value)}::int8"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""id"""")): @scala.annotation.nowarn; values.add(interpolate"${PersonId.pgType.encode(value)}::int8"): @scala.annotation.nowarn }
     );
     unsaved.maritalStatusId.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""marital_status_id"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${MaritalStatusId.pgType.encode(value)}"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""marital_status_id"""")): @scala.annotation.nowarn; values.add(interpolate"${MaritalStatusId.pgType.encode(value)}"): @scala.annotation.nowarn }
     );
     unsaved.favoriteNumber.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""favorite_number"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${Number.pgType.encode(value)}::myschema.number"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""favorite_number"""")): @scala.annotation.nowarn; values.add(interpolate"${Number.pgType.encode(value)}::myschema.number"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "myschema"."person"(${Fragment.comma(columns)})
@@ -101,29 +92,29 @@ class PersonRepoImpl extends PersonRepo {
       returning "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number"
       """
     }
-    q.updateReturning(PersonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(PersonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[PersonRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "myschema"."person"("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number") FROM STDIN""", batchSize, unsaved, c, PersonRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[PersonRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "myschema"."person"("favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "work_email", "id", "marital_status_id", "favorite_number") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, PersonRowUnsaved.pgText)
 
-  def select: SelectBuilder[PersonFields, PersonRow] = SelectBuilder.of("myschema.person", PersonFields.structure, PersonRow.`_rowParser`)
+  override def select: SelectBuilder[PersonFields, PersonRow] = SelectBuilder.of("myschema.person", PersonFields.structure, PersonRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[PersonRow] = {
+  override def selectAll(using c: Connection): java.util.List[PersonRow] = {
     interpolate"""select "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number"
     from "myschema"."person"
-    """.as(PersonRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(PersonRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByFieldValues(fieldValues: java.util.List[PersonFieldValue[?]])(using c: Connection): java.util.List[PersonRow] = {
+  override def selectByFieldValues(fieldValues: java.util.List[PersonFieldValue[?]])(using c: Connection): java.util.List[PersonRow] = {
     val where: Fragment = {
       Fragment.whereAnd(
         fieldValues.stream().map(fv => fv match {
@@ -142,32 +133,32 @@ class PersonRepoImpl extends PersonRepo {
         }).toList()
       )
     }
-    interpolate"""select "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number" from "myschema"."person" ${where}""".as(PersonRow.`_rowParser`.all()).runUnchecked(c)
+    return interpolate"""select "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number" from "myschema"."person" ${where}""".query(PersonRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(id: PersonId)(using c: Connection): Optional[PersonRow] = {
+  override def selectById(id: PersonId)(using c: Connection): Optional[PersonRow] = {
     interpolate"""select "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number"
     from "myschema"."person"
-    where "id" = ${PersonId.pgType.encode(id)}""".as(PersonRow.`_rowParser`.first()).runUnchecked(c)
+    where "id" = ${PersonId.pgType.encode(id)}""".query(PersonRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(ids: Array[PersonId])(using c: Connection): java.util.List[PersonRow] = {
+  override def selectByIds(ids: Array[PersonId])(using c: Connection): java.util.List[PersonRow] = {
     interpolate"""select "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number"
     from "myschema"."person"
-    where "id" = ANY(${PersonId.pgTypeArray.encode(ids)})""".as(PersonRow.`_rowParser`.all()).runUnchecked(c)
+    where "id" = ANY(${PersonId.pgTypeArray.encode(ids)})""".query(PersonRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(ids: Array[PersonId])(using c: Connection): java.util.Map[PersonId, PersonRow] = {
-    val ret: java.util.Map[PersonId, PersonRow] = new HashMap()
+  override def selectByIdsTracked(ids: Array[PersonId])(using c: Connection): java.util.Map[PersonId, PersonRow] = {
+    val ret: HashMap[PersonId, PersonRow] = new HashMap[PersonId, PersonRow]()
     selectByIds(ids)(using c).forEach(row => ret.put(row.id, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[PersonFields, PersonRow] = UpdateBuilder.of("myschema.person", PersonFields.structure, PersonRow.`_rowParser`.all())
+  override def update: UpdateBuilder[PersonFields, PersonRow] = UpdateBuilder.of("myschema.person", PersonFields.structure, PersonRow.`_rowParser`.all())
 
-  def update(row: PersonRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: PersonRow)(using c: Connection): java.lang.Boolean = {
     val id: PersonId = row.id
-    interpolate"""update "myschema"."person"
+    return interpolate"""update "myschema"."person"
     set "favourite_football_club_id" = ${FootballClubId.pgType.encode(row.favouriteFootballClubId)},
     "name" = ${PgTypes.text.encode(row.name)},
     "nick_name" = ${PgTypes.text.opt().encode(row.nickName)},
@@ -181,7 +172,7 @@ class PersonRepoImpl extends PersonRepo {
     where "id" = ${PersonId.pgType.encode(id)}""".update().runUnchecked(c) > 0
   }
 
-  def updateFieldValues(
+  override def updateFieldValues(
     id: PersonId,
     fieldValues: java.util.List[PersonFieldValue[?]]
   )(using c: Connection): java.lang.Boolean = {
@@ -201,13 +192,13 @@ class PersonRepoImpl extends PersonRepo {
         case x: favoriteNumber => interpolate""""favorite_number" = ${Number.pgType.encode(x.value)}"""
       }).toList()
     }
-    if (updates.isEmpty) false else interpolate"""update "myschema"."person"
-                                    ${Fragment.set(updates)}
-                                    where "id" = ${PersonId.pgType.encode(id)}"""
+    return if (updates.isEmpty) false else interpolate"""update "myschema"."person"
+                                           ${Fragment.set(updates)}
+                                           where "id" = ${PersonId.pgType.encode(id)}"""
       .update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: PersonRow)(using c: Connection): PersonRow = {
+  override def upsert(unsaved: PersonRow)(using c: Connection): PersonRow = {
   interpolate"""insert into "myschema"."person"("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number")
     values (${PersonId.pgType.encode(unsaved.id)}::int8, ${FootballClubId.pgType.encode(unsaved.favouriteFootballClubId)}, ${PgTypes.text.encode(unsaved.name)}, ${PgTypes.text.opt().encode(unsaved.nickName)}, ${PgTypes.text.opt().encode(unsaved.blogUrl)}, ${PgTypes.text.encode(unsaved.email)}, ${PgTypes.text.encode(unsaved.phone)}, ${PgTypes.bool.encode(unsaved.likesPizza)}, ${MaritalStatusId.pgType.encode(unsaved.maritalStatusId)}, ${PgTypes.text.opt().encode(unsaved.workEmail)}, ${Number.pgType.encode(unsaved.favoriteNumber)}::myschema.number)
     on conflict ("id")
@@ -228,7 +219,7 @@ class PersonRepoImpl extends PersonRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[PersonRow])(using c: Connection): java.util.List[PersonRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[PersonRow])(using c: Connection): java.util.List[PersonRow] = {
     interpolate"""insert into "myschema"."person"("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number")
     values (?::int8, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?::myschema.number)
     on conflict ("id")
@@ -250,13 +241,13 @@ class PersonRepoImpl extends PersonRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[PersonRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table person_TEMP (like "myschema"."person") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy person_TEMP("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number") from stdin""", batchSize, unsaved, c, PersonRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "myschema"."person"("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number")
+    return interpolate"""insert into "myschema"."person"("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number")
     select * from person_TEMP
     on conflict ("id")
     do update set

@@ -11,7 +11,7 @@ import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class EdhViewRepoImpl extends EdhViewRepo {
-  def select: SelectBuilder[EdhViewFields, EdhViewRow] = SelectBuilder.of(""""hr"."edh"""", EdhViewFields.structure, EdhViewRow.read)
+  override def select: SelectBuilder[EdhViewFields, EdhViewRow] = SelectBuilder.of(""""hr"."edh"""", EdhViewFields.structure, EdhViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, EdhViewRow] = sql"""select "id", "businessentityid", "departmentid", "shiftid", "startdate"::text, "enddate"::text, "modifieddate"::text from "hr"."edh"""".query(EdhViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, EdhViewRow] = sql"""select "id", "businessentityid", "departmentid", "shiftid", "startdate"::text, "enddate"::text, "modifieddate"::text from "hr"."edh"""".query(EdhViewRow.read).stream
 }

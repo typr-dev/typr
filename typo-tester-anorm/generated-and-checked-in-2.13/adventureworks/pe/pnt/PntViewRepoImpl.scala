@@ -10,9 +10,9 @@ import typo.dsl.SelectBuilder
 import anorm.SqlStringInterpolation
 
 class PntViewRepoImpl extends PntViewRepo {
-  def select: SelectBuilder[PntViewFields, PntViewRow] = SelectBuilder.of(""""pe"."pnt"""", PntViewFields.structure, PntViewRow.rowParser)
+  override def select: SelectBuilder[PntViewFields, PntViewRow] = SelectBuilder.of(""""pe"."pnt"""", PntViewFields.structure, PntViewRow.rowParser)
 
-  def selectAll(implicit c: Connection): List[PntViewRow] = {
+  override def selectAll(implicit c: Connection): List[PntViewRow] = {
     SQL"""select "id", "phonenumbertypeid", "name", "modifieddate"::text
     from "pe"."pnt"
     """.as(PntViewRow.rowParser(1).*)

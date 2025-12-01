@@ -12,7 +12,6 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple13;
 
 /** View: humanresources.vjobcandidateeducation */
 public record VjobcandidateeducationViewRow(
@@ -84,5 +83,5 @@ public record VjobcandidateeducationViewRow(
     return new VjobcandidateeducationViewRow(jobcandidateid, eduLevel, eduStartDate, eduEndDate, eduDegree, eduMajor, eduMinor, eduGPA, eduGPAScale, eduSchool, eduLocCountryRegion, eduLocState, eduLocCity);
   };
 
-  static RowParser<VjobcandidateeducationViewRow> _rowParser = RowParsers.of(JobcandidateId.pgType, PgTypes.text.opt(), TypoLocalDate.pgType.opt(), TypoLocalDate.pgType.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), VjobcandidateeducationViewRow::new, row -> new Tuple13<>(row.jobcandidateid(), row.eduLevel(), row.eduStartDate(), row.eduEndDate(), row.eduDegree(), row.eduMajor(), row.eduMinor(), row.eduGPA(), row.eduGPAScale(), row.eduSchool(), row.eduLocCountryRegion(), row.eduLocState(), row.eduLocCity()));;
+  static RowParser<VjobcandidateeducationViewRow> _rowParser = RowParsers.of(JobcandidateId.pgType, PgTypes.text.opt(), TypoLocalDate.pgType.opt(), TypoLocalDate.pgType.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), VjobcandidateeducationViewRow::new, row -> new Object[]{row.jobcandidateid(), row.eduLevel(), row.eduStartDate(), row.eduEndDate(), row.eduDegree(), row.eduMajor(), row.eduMinor(), row.eduGPA(), row.eduGPAScale(), row.eduSchool(), row.eduLocCountryRegion(), row.eduLocState(), row.eduLocCity()});;
 }

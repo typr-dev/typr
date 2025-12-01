@@ -11,7 +11,6 @@ import adventureworks.person.addresstype.AddresstypeId
 import adventureworks.public.Name
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple5
 
 /** View: pe.at */
 case class AtViewRow(
@@ -28,13 +27,5 @@ case class AtViewRow(
 )
 
 object AtViewRow {
-  val `_rowParser`: RowParser[AtViewRow] = {
-    RowParsers.of(AddresstypeId.pgType, AddresstypeId.pgType, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, AtViewRow.apply, row => new Tuple5(
-      row.id,
-      row.addresstypeid,
-      row.name,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[AtViewRow] = RowParsers.of(AddresstypeId.pgType, AddresstypeId.pgType, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, AtViewRow.apply, row => Array(row.id, row.addresstypeid, row.name, row.rowguid, row.modifieddate))
 }

@@ -10,7 +10,6 @@ import adventureworks.public.Name
 import adventureworks.sales.currency.CurrencyId
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple4
 
 /** View: sa.cu */
 case class CuViewRow(
@@ -25,12 +24,5 @@ case class CuViewRow(
 )
 
 object CuViewRow {
-  val `_rowParser`: RowParser[CuViewRow] = {
-    RowParsers.of(CurrencyId.pgType, CurrencyId.pgType, Name.pgType, TypoLocalDateTime.pgType, CuViewRow.apply, row => new Tuple4(
-      row.id,
-      row.currencycode,
-      row.name,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[CuViewRow] = RowParsers.of(CurrencyId.pgType, CurrencyId.pgType, Name.pgType, TypoLocalDateTime.pgType, CuViewRow.apply, row => Array(row.id, row.currencycode, row.name, row.modifieddate))
 }

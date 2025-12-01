@@ -14,7 +14,6 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple10;
 
 /** View: pe.a */
 public record AViewRow(
@@ -89,5 +88,5 @@ public record AViewRow(
     return new AViewRow(id, addressid, addressline1, addressline2, city, stateprovinceid, postalcode, spatiallocation, rowguid, modifieddate);
   };
 
-  static RowParser<AViewRow> _rowParser = RowParsers.of(AddressId.pgType, AddressId.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text, StateprovinceId.pgType, PgTypes.text, TypoBytea.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, AViewRow::new, row -> new Tuple10<>(row.id(), row.addressid(), row.addressline1(), row.addressline2(), row.city(), row.stateprovinceid(), row.postalcode(), row.spatiallocation(), row.rowguid(), row.modifieddate()));;
+  static RowParser<AViewRow> _rowParser = RowParsers.of(AddressId.pgType, AddressId.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text, StateprovinceId.pgType, PgTypes.text, TypoBytea.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, AViewRow::new, row -> new Object[]{row.id(), row.addressid(), row.addressline1(), row.addressline2(), row.city(), row.stateprovinceid(), row.postalcode(), row.spatiallocation(), row.rowguid(), row.modifieddate()});;
 }

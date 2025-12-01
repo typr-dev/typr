@@ -11,7 +11,6 @@ import adventureworks.public_.Name;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple3;
 
 /** Table: person.countryregion
   * Lookup table containing the ISO standard codes for countries and regions.
@@ -40,7 +39,7 @@ public record CountryregionRow(
     return new CountryregionRow(countryregioncode, name, modifieddate);
   };
 
-  static RowParser<CountryregionRow> _rowParser = RowParsers.of(CountryregionId.pgType, Name.pgType, TypoLocalDateTime.pgType, CountryregionRow::new, row -> new Tuple3<>(row.countryregioncode(), row.name(), row.modifieddate()));;
+  static RowParser<CountryregionRow> _rowParser = RowParsers.of(CountryregionId.pgType, Name.pgType, TypoLocalDateTime.pgType, CountryregionRow::new, row -> new Object[]{row.countryregioncode(), row.name(), row.modifieddate()});;
 
   static public PgText<CountryregionRow> pgText =
     PgText.from(_rowParser);

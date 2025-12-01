@@ -11,7 +11,6 @@ import adventureworks.person.phonenumbertype.PhonenumbertypeId;
 import adventureworks.public_.Phone;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple5;
 
 /** View: pe.pp */
 public record PpViewRow(
@@ -51,5 +50,5 @@ public record PpViewRow(
     return new PpViewRow(id, businessentityid, phonenumber, phonenumbertypeid, modifieddate);
   };
 
-  static RowParser<PpViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, Phone.pgType, PhonenumbertypeId.pgType, TypoLocalDateTime.pgType, PpViewRow::new, row -> new Tuple5<>(row.id(), row.businessentityid(), row.phonenumber(), row.phonenumbertypeid(), row.modifieddate()));;
+  static RowParser<PpViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, Phone.pgType, PhonenumbertypeId.pgType, TypoLocalDateTime.pgType, PpViewRow::new, row -> new Object[]{row.id(), row.businessentityid(), row.phonenumber(), row.phonenumbertypeid(), row.modifieddate()});;
 }

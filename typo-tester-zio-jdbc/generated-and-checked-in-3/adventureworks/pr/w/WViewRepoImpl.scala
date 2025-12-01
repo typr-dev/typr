@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class WViewRepoImpl extends WViewRepo {
-  def select: SelectBuilder[WViewFields, WViewRow] = SelectBuilder.of(""""pr"."w"""", WViewFields.structure, WViewRow.jdbcDecoder)
+  override def select: SelectBuilder[WViewFields, WViewRow] = SelectBuilder.of(""""pr"."w"""", WViewFields.structure, WViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, WViewRow] = sql"""select "id", "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text from "pr"."w"""".query(using WViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, WViewRow] = sql"""select "id", "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text from "pr"."w"""".query(using WViewRow.jdbcDecoder).selectStream()
 }

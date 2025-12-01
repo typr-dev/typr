@@ -5,22 +5,22 @@
  */
 package adventureworks.production.vproductmodelinstructions;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class VproductmodelinstructionsViewRepoImpl implements VproductmodelinstructionsViewRepo {
+  @Override
   public SelectBuilder<VproductmodelinstructionsViewFields, VproductmodelinstructionsViewRow> select() {
     return SelectBuilder.of("production.vproductmodelinstructions", VproductmodelinstructionsViewFields.structure(), VproductmodelinstructionsViewRow._rowParser);
   };
 
+  @Override
   public List<VproductmodelinstructionsViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "productmodelid", "name", "instructions", "LocationID", "SetupHours", "MachineHours", "LaborHours", "LotSize", "Step", "rowguid", "modifieddate"::text
        from "production"."vproductmodelinstructions"
-    """)).as(VproductmodelinstructionsViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(VproductmodelinstructionsViewRow._rowParser.all()).runUnchecked(c);
   };
 }

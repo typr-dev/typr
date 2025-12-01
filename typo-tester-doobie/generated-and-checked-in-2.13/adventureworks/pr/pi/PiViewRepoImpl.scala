@@ -11,7 +11,7 @@ import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class PiViewRepoImpl extends PiViewRepo {
-  def select: SelectBuilder[PiViewFields, PiViewRow] = SelectBuilder.of(""""pr"."pi"""", PiViewFields.structure, PiViewRow.read)
+  override def select: SelectBuilder[PiViewFields, PiViewRow] = SelectBuilder.of(""""pr"."pi"""", PiViewFields.structure, PiViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, PiViewRow] = sql"""select "id", "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"::text from "pr"."pi"""".query(PiViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, PiViewRow] = sql"""select "id", "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"::text from "pr"."pi"""".query(PiViewRow.read).stream
 }

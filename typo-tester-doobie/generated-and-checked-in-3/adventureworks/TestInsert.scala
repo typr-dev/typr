@@ -328,10 +328,8 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneOffset
-import org.springframework.stereotype.Repository
 import scala.util.Random
 
-@Repository
 /** Methods to generate random data for `Ident(TestInsert)` */
 case class TestInsert(
   random: Random,

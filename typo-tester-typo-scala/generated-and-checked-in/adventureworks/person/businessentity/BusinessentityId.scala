@@ -5,12 +5,13 @@
  */
 package adventureworks.person.businessentity
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
 
 /** Type for the primary key of table `person.businessentity` */
-case class BusinessentityId(value: Integer) extends scala.AnyVal
+case class BusinessentityId(@JsonValue value: Integer) extends scala.AnyVal
 
 object BusinessentityId {
   given bijection: Bijection[BusinessentityId, Integer] = Bijection.apply[BusinessentityId, Integer](_.value)(BusinessentityId.apply)

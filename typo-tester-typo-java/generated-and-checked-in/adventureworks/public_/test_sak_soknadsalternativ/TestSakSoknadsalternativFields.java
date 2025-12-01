@@ -23,7 +23,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface TestSakSoknadsalternativFields {
-  static final class Impl extends Relation<TestSakSoknadsalternativFields, TestSakSoknadsalternativRow> {
+  final class Impl extends Relation<TestSakSoknadsalternativFields, TestSakSoknadsalternativRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -31,12 +31,15 @@ public interface TestSakSoknadsalternativFields {
     @Override
     public TestSakSoknadsalternativFields fields() {
       return new TestSakSoknadsalternativFields() {
+               @Override
                public IdField<String, TestSakSoknadsalternativRow> organisasjonskodeSaksbehandler() {
                  return new IdField<String, TestSakSoknadsalternativRow>(_path, "organisasjonskode_saksbehandler", TestSakSoknadsalternativRow::organisasjonskodeSaksbehandler, Optional.empty(), Optional.empty(), (row, value) -> row.withOrganisasjonskodeSaksbehandler(value), PgTypes.text);
                };
+               @Override
                public IdField<String, TestSakSoknadsalternativRow> utdanningsmulighetKode() {
                  return new IdField<String, TestSakSoknadsalternativRow>(_path, "utdanningsmulighet_kode", TestSakSoknadsalternativRow::utdanningsmulighetKode, Optional.empty(), Optional.empty(), (row, value) -> row.withUtdanningsmulighetKode(value), PgTypes.text);
                };
+               @Override
                public Field<TestOrganisasjonId, TestSakSoknadsalternativRow> organisasjonskodeTilbyder() {
                  return new Field<TestOrganisasjonId, TestSakSoknadsalternativRow>(_path, "organisasjonskode_tilbyder", TestSakSoknadsalternativRow::organisasjonskodeTilbyder, Optional.empty(), Optional.empty(), (row, value) -> row.withOrganisasjonskodeTilbyder(value), TestOrganisasjonId.pgType);
                };
@@ -48,6 +51,7 @@ public interface TestSakSoknadsalternativFields {
       return List.of(this.fields().organisasjonskodeSaksbehandler(), this.fields().utdanningsmulighetKode(), this.fields().organisasjonskodeTilbyder());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

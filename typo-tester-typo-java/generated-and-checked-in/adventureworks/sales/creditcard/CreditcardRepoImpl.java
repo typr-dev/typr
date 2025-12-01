@@ -8,7 +8,6 @@ package adventureworks.sales.creditcard;
 import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.customtypes.TypoShort;
 import adventureworks.userdefined.CustomCreditcardId;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,12 +25,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class CreditcardRepoImpl implements CreditcardRepo {
+  @Override
   public DeleteBuilder<CreditcardFields, CreditcardRow> delete() {
     return DeleteBuilder.of("sales.creditcard", CreditcardFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     /* user-picked */ CustomCreditcardId creditcardid,
     Connection c
@@ -45,6 +45,7 @@ public class CreditcardRepoImpl implements CreditcardRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     /* user-picked */ CustomCreditcardId[] creditcardids,
     Connection c
@@ -61,6 +62,7 @@ public class CreditcardRepoImpl implements CreditcardRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public CreditcardRow insert(
     CreditcardRow unsaved,
     Connection c
@@ -88,71 +90,77 @@ public class CreditcardRepoImpl implements CreditcardRepo {
       .updateReturning(CreditcardRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public CreditcardRow insert(
     CreditcardRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"cardtype\""));
-      values.add(interpolate(
-        PgTypes.text.encode(unsaved.cardtype()),
-        typo.runtime.Fragment.lit("""
-        """)
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"cardtype\""));
+    values.add(interpolate(
+      PgTypes.text.encode(unsaved.cardtype()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    columns.add(Fragment.lit("\"cardnumber\""));
+    values.add(interpolate(
+      PgTypes.text.encode(unsaved.cardnumber()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    columns.add(Fragment.lit("\"expmonth\""));
+    values.add(interpolate(
+      TypoShort.pgType.encode(unsaved.expmonth()),
+      typo.runtime.Fragment.lit("::int2")
+    ));
+    columns.add(Fragment.lit("\"expyear\""));
+    values.add(interpolate(
+      TypoShort.pgType.encode(unsaved.expyear()),
+      typo.runtime.Fragment.lit("::int2")
+    ));
+    unsaved.creditcardid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"creditcardid\""));
+        values.add(interpolate(
+        /* user-picked */ CustomCreditcardId.pgType.encode(value),
+        typo.runtime.Fragment.lit("::int4")
       ));
-      columns.add(Fragment.lit("\"cardnumber\""));
-      values.add(interpolate(
-        PgTypes.text.encode(unsaved.cardnumber()),
-        typo.runtime.Fragment.lit("""
-        """)
+      }
+    );;
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
       ));
-      columns.add(Fragment.lit("\"expmonth\""));
-      values.add(interpolate(
-        TypoShort.pgType.encode(unsaved.expmonth()),
-        typo.runtime.Fragment.lit("::int2")
-      ));
-      columns.add(Fragment.lit("\"expyear\""));
-      values.add(interpolate(
-        TypoShort.pgType.encode(unsaved.expyear()),
-        typo.runtime.Fragment.lit("::int2")
-      ));
-      unsaved.creditcardid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"creditcardid\""));
-          values.add(interpolate(
-            /* user-picked */ CustomCreditcardId.pgType.encode(value),
-            typo.runtime.Fragment.lit("::int4")
-          ));
-        }
-      );;
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "sales"."creditcard"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "sales"."creditcard"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(CreditcardRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<CreditcardRow> unsaved,
     Integer batchSize,
@@ -164,6 +172,7 @@ public class CreditcardRepoImpl implements CreditcardRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<CreditcardRowUnsaved> unsaved,
     Integer batchSize,
@@ -174,17 +183,20 @@ public class CreditcardRepoImpl implements CreditcardRepo {
     """), batchSize, unsaved, c, CreditcardRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<CreditcardFields, CreditcardRow> select() {
     return SelectBuilder.of("sales.creditcard", CreditcardFields.structure(), CreditcardRow._rowParser);
   };
 
+  @Override
   public List<CreditcardRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"::text
        from "sales"."creditcard"
-    """)).as(CreditcardRow._rowParser.all()).runUnchecked(c);
+    """)).query(CreditcardRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<CreditcardRow> selectById(
     /* user-picked */ CustomCreditcardId creditcardid,
     Connection c
@@ -196,9 +208,10 @@ public class CreditcardRepoImpl implements CreditcardRepo {
          where "creditcardid" = """),
       /* user-picked */ CustomCreditcardId.pgType.encode(creditcardid),
       typo.runtime.Fragment.lit("")
-    ).as(CreditcardRow._rowParser.first()).runUnchecked(c);
+    ).query(CreditcardRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<CreditcardRow> selectByIds(
     /* user-picked */ CustomCreditcardId[] creditcardids,
     Connection c
@@ -210,56 +223,60 @@ public class CreditcardRepoImpl implements CreditcardRepo {
          where "creditcardid" = ANY("""),
       CustomCreditcardId.pgTypeArray.encode(creditcardids),
       typo.runtime.Fragment.lit(")")
-    ).as(CreditcardRow._rowParser.all()).runUnchecked(c);
+    ).query(CreditcardRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map</* user-picked */ CustomCreditcardId, CreditcardRow> selectByIdsTracked(
     /* user-picked */ CustomCreditcardId[] creditcardids,
     Connection c
   ) {
-    Map</* user-picked */ CustomCreditcardId, CreditcardRow> ret = new HashMap<>();;
-      selectByIds(creditcardids, c).forEach(row -> ret.put(row.creditcardid(), row));
+    HashMap</* user-picked */ CustomCreditcardId, CreditcardRow> ret = new HashMap</* user-picked */ CustomCreditcardId, CreditcardRow>();
+    selectByIds(creditcardids, c).forEach(row -> ret.put(row.creditcardid(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<CreditcardFields, CreditcardRow> update() {
     return UpdateBuilder.of("sales.creditcard", CreditcardFields.structure(), CreditcardRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     CreditcardRow row,
     Connection c
   ) {
     /* user-picked */ CustomCreditcardId creditcardid = row.creditcardid();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "sales"."creditcard"
-                set "cardtype" = """),
-             PgTypes.text.encode(row.cardtype()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "cardnumber" = """),
-             PgTypes.text.encode(row.cardnumber()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "expmonth" = """),
-             TypoShort.pgType.encode(row.expmonth()),
-             typo.runtime.Fragment.lit("""
-                ::int2,
-                "expyear" = """),
-             TypoShort.pgType.encode(row.expyear()),
-             typo.runtime.Fragment.lit("""
-                ::int2,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "creditcardid" = """),
-             /* user-picked */ CustomCreditcardId.pgType.encode(creditcardid),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "sales"."creditcard"
+         set "cardtype" = """),
+      PgTypes.text.encode(row.cardtype()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "cardnumber" = """),
+      PgTypes.text.encode(row.cardnumber()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "expmonth" = """),
+      TypoShort.pgType.encode(row.expmonth()),
+      typo.runtime.Fragment.lit("""
+         ::int2,
+         "expyear" = """),
+      TypoShort.pgType.encode(row.expyear()),
+      typo.runtime.Fragment.lit("""
+         ::int2,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "creditcardid" = """),
+      /* user-picked */ CustomCreditcardId.pgType.encode(creditcardid),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public CreditcardRow upsert(
     CreditcardRow unsaved,
     Connection c
@@ -295,6 +312,7 @@ public class CreditcardRepoImpl implements CreditcardRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<CreditcardRow> upsertBatch(
     Iterator<CreditcardRow> unsaved,
     Connection c
@@ -316,28 +334,29 @@ public class CreditcardRepoImpl implements CreditcardRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<CreditcardRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table creditcard_TEMP (like "sales"."creditcard") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy creditcard_TEMP("creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate") from stdin
-      """), batchSize, unsaved, c, CreditcardRow.pgText);
+    create temporary table creditcard_TEMP (like "sales"."creditcard") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy creditcard_TEMP("creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate") from stdin
+    """), batchSize, unsaved, c, CreditcardRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "sales"."creditcard"("creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate")
-              select * from creditcard_TEMP
-              on conflict ("creditcardid")
-              do update set
-                "cardtype" = EXCLUDED."cardtype",
-              "cardnumber" = EXCLUDED."cardnumber",
-              "expmonth" = EXCLUDED."expmonth",
-              "expyear" = EXCLUDED."expyear",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table creditcard_TEMP;""")).update().runUnchecked(c);
+       insert into "sales"."creditcard"("creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate")
+       select * from creditcard_TEMP
+       on conflict ("creditcardid")
+       do update set
+         "cardtype" = EXCLUDED."cardtype",
+       "cardnumber" = EXCLUDED."cardnumber",
+       "expmonth" = EXCLUDED."expmonth",
+       "expyear" = EXCLUDED."expyear",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table creditcard_TEMP;""")).update().runUnchecked(c);
   };
 }

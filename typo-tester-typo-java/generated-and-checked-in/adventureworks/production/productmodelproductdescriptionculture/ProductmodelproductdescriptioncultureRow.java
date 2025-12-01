@@ -13,7 +13,6 @@ import adventureworks.production.productmodel.ProductmodelId;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple4;
 
 /** Table: production.productmodelproductdescriptionculture
   * Cross-reference table mapping product descriptions and the language the description is written in.
@@ -61,7 +60,7 @@ public record ProductmodelproductdescriptioncultureRow(
     return new ProductmodelproductdescriptioncultureRow(productmodelid, productdescriptionid, cultureid, modifieddate);
   };
 
-  static RowParser<ProductmodelproductdescriptioncultureRow> _rowParser = RowParsers.of(ProductmodelId.pgType, ProductdescriptionId.pgType, CultureId.pgType, TypoLocalDateTime.pgType, ProductmodelproductdescriptioncultureRow::new, row -> new Tuple4<>(row.productmodelid(), row.productdescriptionid(), row.cultureid(), row.modifieddate()));;
+  static RowParser<ProductmodelproductdescriptioncultureRow> _rowParser = RowParsers.of(ProductmodelId.pgType, ProductdescriptionId.pgType, CultureId.pgType, TypoLocalDateTime.pgType, ProductmodelproductdescriptioncultureRow::new, row -> new Object[]{row.productmodelid(), row.productdescriptionid(), row.cultureid(), row.modifieddate()});;
 
   static public ProductmodelproductdescriptioncultureRow apply(
     ProductmodelproductdescriptioncultureId compositeId,

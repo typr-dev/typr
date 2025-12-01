@@ -12,7 +12,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple6
 
 /** Table: sales.shoppingcartitem
  * Contains online customer orders until the order is submitted or cancelled.
@@ -61,16 +60,7 @@ case class ShoppingcartitemRow(
 }
 
 object ShoppingcartitemRow {
-  val `_rowParser`: RowParser[ShoppingcartitemRow] = {
-    RowParsers.of(ShoppingcartitemId.pgType, PgTypes.text, PgTypes.int4, ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, ShoppingcartitemRow.apply, row => new Tuple6(
-      row.shoppingcartitemid,
-      row.shoppingcartid,
-      row.quantity,
-      row.productid,
-      row.datecreated,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[ShoppingcartitemRow] = RowParsers.of(ShoppingcartitemId.pgType, PgTypes.text, PgTypes.int4, ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, ShoppingcartitemRow.apply, row => Array(row.shoppingcartitemid, row.shoppingcartid, row.quantity, row.productid, row.datecreated, row.modifieddate))
 
   given pgText: PgText[ShoppingcartitemRow] = PgText.from(`_rowParser`)
 }

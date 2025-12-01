@@ -13,7 +13,6 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple9;
 
 /** View: pr.pr */
 public record PrViewRow(
@@ -81,5 +80,5 @@ public record PrViewRow(
     return new PrViewRow(id, productreviewid, productid, reviewername, reviewdate, emailaddress, rating, comments, modifieddate);
   };
 
-  static RowParser<PrViewRow> _rowParser = RowParsers.of(ProductreviewId.pgType, ProductreviewId.pgType, ProductId.pgType, Name.pgType, TypoLocalDateTime.pgType, PgTypes.text, PgTypes.int4, PgTypes.text.opt(), TypoLocalDateTime.pgType, PrViewRow::new, row -> new Tuple9<>(row.id(), row.productreviewid(), row.productid(), row.reviewername(), row.reviewdate(), row.emailaddress(), row.rating(), row.comments(), row.modifieddate()));;
+  static RowParser<PrViewRow> _rowParser = RowParsers.of(ProductreviewId.pgType, ProductreviewId.pgType, ProductId.pgType, Name.pgType, TypoLocalDateTime.pgType, PgTypes.text, PgTypes.int4, PgTypes.text.opt(), TypoLocalDateTime.pgType, PrViewRow::new, row -> new Object[]{row.id(), row.productreviewid(), row.productid(), row.reviewername(), row.reviewdate(), row.emailaddress(), row.rating(), row.comments(), row.modifieddate()});;
 }

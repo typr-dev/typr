@@ -10,7 +10,6 @@ import adventureworks.production.culture.CultureId
 import adventureworks.public.Name
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple4
 
 /** View: pr.c */
 case class CViewRow(
@@ -25,12 +24,5 @@ case class CViewRow(
 )
 
 object CViewRow {
-  val `_rowParser`: RowParser[CViewRow] = {
-    RowParsers.of(CultureId.pgType, CultureId.pgType, Name.pgType, TypoLocalDateTime.pgType, CViewRow.apply, row => new Tuple4(
-      row.id,
-      row.cultureid,
-      row.name,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[CViewRow] = RowParsers.of(CultureId.pgType, CultureId.pgType, Name.pgType, TypoLocalDateTime.pgType, CViewRow.apply, row => Array(row.id, row.cultureid, row.name, row.modifieddate))
 }

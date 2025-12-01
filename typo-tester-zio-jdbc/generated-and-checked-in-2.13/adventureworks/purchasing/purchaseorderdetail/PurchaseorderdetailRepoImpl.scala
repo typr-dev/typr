@@ -15,13 +15,13 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class PurchaseorderdetailRepoImpl extends PurchaseorderdetailRepo {
-  def select: SelectBuilder[PurchaseorderdetailFields, PurchaseorderdetailRow] = SelectBuilder.of(""""purchasing"."purchaseorderdetail"""", PurchaseorderdetailFields.structure, PurchaseorderdetailRow.jdbcDecoder)
+  override def select: SelectBuilder[PurchaseorderdetailFields, PurchaseorderdetailRow] = SelectBuilder.of(""""purchasing"."purchaseorderdetail"""", PurchaseorderdetailFields.structure, PurchaseorderdetailRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, PurchaseorderdetailRow] = sql"""select "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text from "purchasing"."purchaseorderdetail"""".query(PurchaseorderdetailRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, PurchaseorderdetailRow] = sql"""select "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text from "purchasing"."purchaseorderdetail"""".query(PurchaseorderdetailRow.jdbcDecoder).selectStream()
 
-  def selectById(compositeId: PurchaseorderdetailId): ZIO[ZConnection, Throwable, Option[PurchaseorderdetailRow]] = sql"""select "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text from "purchasing"."purchaseorderdetail" where "purchaseorderid" = ${Segment.paramSegment(compositeId.purchaseorderid)(PurchaseorderheaderId.setter)} AND "purchaseorderdetailid" = ${Segment.paramSegment(compositeId.purchaseorderdetailid)(Setter.intSetter)}""".query(PurchaseorderdetailRow.jdbcDecoder).selectOne
+  override def selectById(compositeId: PurchaseorderdetailId): ZIO[ZConnection, Throwable, Option[PurchaseorderdetailRow]] = sql"""select "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text from "purchasing"."purchaseorderdetail" where "purchaseorderid" = ${Segment.paramSegment(compositeId.purchaseorderid)(PurchaseorderheaderId.setter)} AND "purchaseorderdetailid" = ${Segment.paramSegment(compositeId.purchaseorderdetailid)(Setter.intSetter)}""".query(PurchaseorderdetailRow.jdbcDecoder).selectOne
 
-  def selectByIds(compositeIds: Array[PurchaseorderdetailId]): ZStream[ZConnection, Throwable, PurchaseorderdetailRow] = {
+  override def selectByIds(compositeIds: Array[PurchaseorderdetailId]): ZStream[ZConnection, Throwable, PurchaseorderdetailRow] = {
     val purchaseorderid = compositeIds.map(_.purchaseorderid)
     val purchaseorderdetailid = compositeIds.map(_.purchaseorderdetailid)
     sql"""select "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text
@@ -31,7 +31,7 @@ class PurchaseorderdetailRepoImpl extends PurchaseorderdetailRepo {
     """.query(using PurchaseorderdetailRow.jdbcDecoder).selectStream()
   }
 
-  def selectByIdsTracked(compositeIds: Array[PurchaseorderdetailId]): ZIO[ZConnection, Throwable, Map[PurchaseorderdetailId, PurchaseorderdetailRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[PurchaseorderdetailId]): ZIO[ZConnection, Throwable, Map[PurchaseorderdetailId, PurchaseorderdetailRow]] = {
     selectByIds(compositeIds).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap

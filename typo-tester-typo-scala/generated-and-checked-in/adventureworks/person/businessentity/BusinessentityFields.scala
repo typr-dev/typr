@@ -27,7 +27,7 @@ object BusinessentityFields {
 
     override lazy val fields: BusinessentityFields = {
       new BusinessentityFields {
-        def businessentityid: IdField[BusinessentityId, BusinessentityRow] = {
+        override def businessentityid: IdField[BusinessentityId, BusinessentityRow] = {
           new IdField[BusinessentityId, BusinessentityRow](
             _path,
             "businessentityid",
@@ -38,7 +38,7 @@ object BusinessentityFields {
             BusinessentityId.pgType
           )
         }
-        def rowguid: Field[TypoUUID, BusinessentityRow] = {
+        override def rowguid: Field[TypoUUID, BusinessentityRow] = {
           new Field[TypoUUID, BusinessentityRow](
             _path,
             "rowguid",
@@ -49,7 +49,7 @@ object BusinessentityFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, BusinessentityRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, BusinessentityRow] = {
           new Field[TypoLocalDateTime, BusinessentityRow](
             _path,
             "modifieddate",
@@ -65,7 +65,7 @@ object BusinessentityFields {
 
     override lazy val columns: java.util.List[FieldLike[?, BusinessentityRow]] = java.util.List.of(this.fields.businessentityid, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[BusinessentityFields, BusinessentityRow] = new Impl(java.util.List.of())

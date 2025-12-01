@@ -11,7 +11,6 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple7;
 
 /** View: sales.vsalespersonsalesbyfiscalyears */
 public record VsalespersonsalesbyfiscalyearsViewRow(
@@ -51,5 +50,5 @@ public record VsalespersonsalesbyfiscalyearsViewRow(
     return new VsalespersonsalesbyfiscalyearsViewRow(salesPersonID, fullName, jobTitle, salesTerritory, _2012, _2013, _2014);
   };
 
-  static RowParser<VsalespersonsalesbyfiscalyearsViewRow> _rowParser = RowParsers.of(PgTypes.int4.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.numeric.opt(), PgTypes.numeric.opt(), PgTypes.numeric.opt(), VsalespersonsalesbyfiscalyearsViewRow::new, row -> new Tuple7<>(row.salesPersonID(), row.fullName(), row.jobTitle(), row.salesTerritory(), row._2012(), row._2013(), row._2014()));;
+  static RowParser<VsalespersonsalesbyfiscalyearsViewRow> _rowParser = RowParsers.of(PgTypes.int4.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.numeric.opt(), PgTypes.numeric.opt(), PgTypes.numeric.opt(), VsalespersonsalesbyfiscalyearsViewRow::new, row -> new Object[]{row.salesPersonID(), row.fullName(), row.jobTitle(), row.salesTerritory(), row._2012(), row._2013(), row._2014()});;
 }

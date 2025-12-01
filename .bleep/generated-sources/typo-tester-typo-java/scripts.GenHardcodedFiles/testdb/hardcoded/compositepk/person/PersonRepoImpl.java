@@ -21,10 +21,12 @@ import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
 public class PersonRepoImpl implements PersonRepo {
+  @Override
   public DeleteBuilder<PersonFields, PersonRow> delete() {
     return DeleteBuilder.of("compositepk.person", PersonFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     PersonId compositeId,
     Connection c
@@ -42,6 +44,7 @@ public class PersonRepoImpl implements PersonRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public PersonRow insert(
     PersonRow unsaved,
     Connection c
@@ -63,56 +66,62 @@ public class PersonRepoImpl implements PersonRepo {
       .updateReturning(PersonRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public PersonRow insert(
     PersonRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"name\""));
-      values.add(interpolate(
-        PgTypes.text.opt().encode(unsaved.name()),
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"name\""));
+    values.add(interpolate(
+      PgTypes.text.opt().encode(unsaved.name()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    unsaved.one().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"one\""));
+        values.add(interpolate(
+        PgTypes.int8.encode(value),
+        typo.runtime.Fragment.lit("::int8")
+      ));
+      }
+    );;
+    unsaved.two().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"two\""));
+        values.add(interpolate(
+        PgTypes.text.opt().encode(value),
         typo.runtime.Fragment.lit("""
         """)
       ));
-      unsaved.one().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"one\""));
-          values.add(interpolate(
-            PgTypes.int8.encode(value),
-            typo.runtime.Fragment.lit("::int8")
-          ));
-        }
-      );;
-      unsaved.two().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"two\""));
-          values.add(interpolate(
-            PgTypes.text.opt().encode(value),
-            typo.runtime.Fragment.lit("""
-            """)
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "compositepk"."person"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "one", "two", "name"
-        """)
-      );;
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "compositepk"."person"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "one", "two", "name"
+      """)
+    );;
     return q.updateReturning(PersonRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<PersonRow> unsaved,
     Integer batchSize,
@@ -124,6 +133,7 @@ public class PersonRepoImpl implements PersonRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<PersonRowUnsaved> unsaved,
     Integer batchSize,
@@ -134,17 +144,20 @@ public class PersonRepoImpl implements PersonRepo {
     """), batchSize, unsaved, c, PersonRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<PersonFields, PersonRow> select() {
     return SelectBuilder.of("compositepk.person", PersonFields.structure(), PersonRow._rowParser);
   };
 
+  @Override
   public List<PersonRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "one", "two", "name"
        from "compositepk"."person"
-    """)).as(PersonRow._rowParser.all()).runUnchecked(c);
+    """)).query(PersonRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<PersonRow> selectById(
     PersonId compositeId,
     Connection c
@@ -160,35 +173,38 @@ public class PersonRepoImpl implements PersonRepo {
       """),
       PgTypes.text.opt().encode(compositeId.two()),
       typo.runtime.Fragment.lit("")
-    ).as(PersonRow._rowParser.first()).runUnchecked(c);
+    ).query(PersonRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public UpdateBuilder<PersonFields, PersonRow> update() {
     return UpdateBuilder.of("compositepk.person", PersonFields.structure(), PersonRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     PersonRow row,
     Connection c
   ) {
     PersonId compositeId = row.compositeId();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "compositepk"."person"
-                set "name" = """),
-             PgTypes.text.opt().encode(row.name()),
-             typo.runtime.Fragment.lit("""
+      typo.runtime.Fragment.lit("""
+         update "compositepk"."person"
+         set "name" = """),
+      PgTypes.text.opt().encode(row.name()),
+      typo.runtime.Fragment.lit("""
    
-                where "one" = """),
-             PgTypes.int8.encode(compositeId.one()),
-             typo.runtime.Fragment.lit("""
-              AND "two" = 
-             """),
-             PgTypes.text.opt().encode(compositeId.two()),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+         where "one" = """),
+      PgTypes.int8.encode(compositeId.one()),
+      typo.runtime.Fragment.lit("""
+       AND "two" = 
+      """),
+      PgTypes.text.opt().encode(compositeId.two()),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public PersonRow upsert(
     PersonRow unsaved,
     Connection c
@@ -214,6 +230,7 @@ public class PersonRepoImpl implements PersonRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<PersonRow> upsertBatch(
     Iterator<PersonRow> unsaved,
     Connection c
@@ -231,24 +248,25 @@ public class PersonRepoImpl implements PersonRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<PersonRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table person_TEMP (like "compositepk"."person") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy person_TEMP("one", "two", "name") from stdin
-      """), batchSize, unsaved, c, PersonRow.pgText);
+    create temporary table person_TEMP (like "compositepk"."person") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy person_TEMP("one", "two", "name") from stdin
+    """), batchSize, unsaved, c, PersonRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "compositepk"."person"("one", "two", "name")
-              select * from person_TEMP
-              on conflict ("one", "two")
-              do update set
-                "name" = EXCLUDED."name"
-              ;
-              drop table person_TEMP;""")).update().runUnchecked(c);
+       insert into "compositepk"."person"("one", "two", "name")
+       select * from person_TEMP
+       on conflict ("one", "two")
+       do update set
+         "name" = EXCLUDED."name"
+       ;
+       drop table person_TEMP;""")).update().runUnchecked(c);
   };
 }

@@ -7,7 +7,6 @@ package adventureworks.sales.specialoffer;
 
 import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.customtypes.TypoUUID;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,12 +24,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class SpecialofferRepoImpl implements SpecialofferRepo {
+  @Override
   public DeleteBuilder<SpecialofferFields, SpecialofferRow> delete() {
     return DeleteBuilder.of("sales.specialoffer", SpecialofferFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     SpecialofferId specialofferid,
     Connection c
@@ -44,6 +44,7 @@ public class SpecialofferRepoImpl implements SpecialofferRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     SpecialofferId[] specialofferids,
     Connection c
@@ -60,6 +61,7 @@ public class SpecialofferRepoImpl implements SpecialofferRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public SpecialofferRow insert(
     SpecialofferRow unsaved,
     Connection c
@@ -97,112 +99,124 @@ public class SpecialofferRepoImpl implements SpecialofferRepo {
       .updateReturning(SpecialofferRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public SpecialofferRow insert(
     SpecialofferRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"description\""));
-      values.add(interpolate(
-        PgTypes.text.encode(unsaved.description()),
-        typo.runtime.Fragment.lit("""
-        """)
-      ));
-      columns.add(Fragment.lit("\"type\""));
-      values.add(interpolate(
-        PgTypes.text.encode(unsaved.type()),
-        typo.runtime.Fragment.lit("""
-        """)
-      ));
-      columns.add(Fragment.lit("\"category\""));
-      values.add(interpolate(
-        PgTypes.text.encode(unsaved.category()),
-        typo.runtime.Fragment.lit("""
-        """)
-      ));
-      columns.add(Fragment.lit("\"startdate\""));
-      values.add(interpolate(
-        TypoLocalDateTime.pgType.encode(unsaved.startdate()),
-        typo.runtime.Fragment.lit("::timestamp")
-      ));
-      columns.add(Fragment.lit("\"enddate\""));
-      values.add(interpolate(
-        TypoLocalDateTime.pgType.encode(unsaved.enddate()),
-        typo.runtime.Fragment.lit("::timestamp")
-      ));
-      columns.add(Fragment.lit("\"maxqty\""));
-      values.add(interpolate(
-        PgTypes.int4.opt().encode(unsaved.maxqty()),
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"description\""));
+    values.add(interpolate(
+      PgTypes.text.encode(unsaved.description()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    columns.add(Fragment.lit("\"type\""));
+    values.add(interpolate(
+      PgTypes.text.encode(unsaved.type()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    columns.add(Fragment.lit("\"category\""));
+    values.add(interpolate(
+      PgTypes.text.encode(unsaved.category()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    columns.add(Fragment.lit("\"startdate\""));
+    values.add(interpolate(
+      TypoLocalDateTime.pgType.encode(unsaved.startdate()),
+      typo.runtime.Fragment.lit("::timestamp")
+    ));
+    columns.add(Fragment.lit("\"enddate\""));
+    values.add(interpolate(
+      TypoLocalDateTime.pgType.encode(unsaved.enddate()),
+      typo.runtime.Fragment.lit("::timestamp")
+    ));
+    columns.add(Fragment.lit("\"maxqty\""));
+    values.add(interpolate(
+      PgTypes.int4.opt().encode(unsaved.maxqty()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    unsaved.specialofferid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"specialofferid\""));
+        values.add(interpolate(
+        SpecialofferId.pgType.encode(value),
         typo.runtime.Fragment.lit("::int4")
       ));
-      unsaved.specialofferid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"specialofferid\""));
-          values.add(interpolate(
-            SpecialofferId.pgType.encode(value),
-            typo.runtime.Fragment.lit("::int4")
-          ));
-        }
-      );;
-      unsaved.discountpct().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"discountpct\""));
-          values.add(interpolate(
-            PgTypes.numeric.encode(value),
-            typo.runtime.Fragment.lit("::numeric")
-          ));
-        }
-      );;
-      unsaved.minqty().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"minqty\""));
-          values.add(interpolate(
-            PgTypes.int4.encode(value),
-            typo.runtime.Fragment.lit("::int4")
-          ));
-        }
-      );;
-      unsaved.rowguid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"rowguid\""));
-          values.add(interpolate(
-            TypoUUID.pgType.encode(value),
-            typo.runtime.Fragment.lit("::uuid")
-          ));
-        }
-      );;
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "sales"."specialoffer"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    unsaved.discountpct().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"discountpct\""));
+        values.add(interpolate(
+        PgTypes.numeric.encode(value),
+        typo.runtime.Fragment.lit("::numeric")
+      ));
+      }
+    );;
+    unsaved.minqty().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"minqty\""));
+        values.add(interpolate(
+        PgTypes.int4.encode(value),
+        typo.runtime.Fragment.lit("::int4")
+      ));
+      }
+    );;
+    unsaved.rowguid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"rowguid\""));
+        values.add(interpolate(
+        TypoUUID.pgType.encode(value),
+        typo.runtime.Fragment.lit("::uuid")
+      ));
+      }
+    );;
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
+      ));
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "sales"."specialoffer"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(SpecialofferRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<SpecialofferRow> unsaved,
     Integer batchSize,
@@ -214,6 +228,7 @@ public class SpecialofferRepoImpl implements SpecialofferRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<SpecialofferRowUnsaved> unsaved,
     Integer batchSize,
@@ -224,17 +239,20 @@ public class SpecialofferRepoImpl implements SpecialofferRepo {
     """), batchSize, unsaved, c, SpecialofferRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<SpecialofferFields, SpecialofferRow> select() {
     return SelectBuilder.of("sales.specialoffer", SpecialofferFields.structure(), SpecialofferRow._rowParser);
   };
 
+  @Override
   public List<SpecialofferRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text
        from "sales"."specialoffer"
-    """)).as(SpecialofferRow._rowParser.all()).runUnchecked(c);
+    """)).query(SpecialofferRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<SpecialofferRow> selectById(
     SpecialofferId specialofferid,
     Connection c
@@ -246,9 +264,10 @@ public class SpecialofferRepoImpl implements SpecialofferRepo {
          where "specialofferid" = """),
       SpecialofferId.pgType.encode(specialofferid),
       typo.runtime.Fragment.lit("")
-    ).as(SpecialofferRow._rowParser.first()).runUnchecked(c);
+    ).query(SpecialofferRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<SpecialofferRow> selectByIds(
     SpecialofferId[] specialofferids,
     Connection c
@@ -260,76 +279,80 @@ public class SpecialofferRepoImpl implements SpecialofferRepo {
          where "specialofferid" = ANY("""),
       SpecialofferId.pgTypeArray.encode(specialofferids),
       typo.runtime.Fragment.lit(")")
-    ).as(SpecialofferRow._rowParser.all()).runUnchecked(c);
+    ).query(SpecialofferRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<SpecialofferId, SpecialofferRow> selectByIdsTracked(
     SpecialofferId[] specialofferids,
     Connection c
   ) {
-    Map<SpecialofferId, SpecialofferRow> ret = new HashMap<>();;
-      selectByIds(specialofferids, c).forEach(row -> ret.put(row.specialofferid(), row));
+    HashMap<SpecialofferId, SpecialofferRow> ret = new HashMap<SpecialofferId, SpecialofferRow>();
+    selectByIds(specialofferids, c).forEach(row -> ret.put(row.specialofferid(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<SpecialofferFields, SpecialofferRow> update() {
     return UpdateBuilder.of("sales.specialoffer", SpecialofferFields.structure(), SpecialofferRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     SpecialofferRow row,
     Connection c
   ) {
     SpecialofferId specialofferid = row.specialofferid();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "sales"."specialoffer"
-                set "description" = """),
-             PgTypes.text.encode(row.description()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "discountpct" = """),
-             PgTypes.numeric.encode(row.discountpct()),
-             typo.runtime.Fragment.lit("""
-                ::numeric,
-                "type" = """),
-             PgTypes.text.encode(row.type()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "category" = """),
-             PgTypes.text.encode(row.category()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "startdate" = """),
-             TypoLocalDateTime.pgType.encode(row.startdate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp,
-                "enddate" = """),
-             TypoLocalDateTime.pgType.encode(row.enddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp,
-                "minqty" = """),
-             PgTypes.int4.encode(row.minqty()),
-             typo.runtime.Fragment.lit("""
-                ::int4,
-                "maxqty" = """),
-             PgTypes.int4.opt().encode(row.maxqty()),
-             typo.runtime.Fragment.lit("""
-                ::int4,
-                "rowguid" = """),
-             TypoUUID.pgType.encode(row.rowguid()),
-             typo.runtime.Fragment.lit("""
-                ::uuid,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "specialofferid" = """),
-             SpecialofferId.pgType.encode(specialofferid),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "sales"."specialoffer"
+         set "description" = """),
+      PgTypes.text.encode(row.description()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "discountpct" = """),
+      PgTypes.numeric.encode(row.discountpct()),
+      typo.runtime.Fragment.lit("""
+         ::numeric,
+         "type" = """),
+      PgTypes.text.encode(row.type()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "category" = """),
+      PgTypes.text.encode(row.category()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "startdate" = """),
+      TypoLocalDateTime.pgType.encode(row.startdate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp,
+         "enddate" = """),
+      TypoLocalDateTime.pgType.encode(row.enddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp,
+         "minqty" = """),
+      PgTypes.int4.encode(row.minqty()),
+      typo.runtime.Fragment.lit("""
+         ::int4,
+         "maxqty" = """),
+      PgTypes.int4.opt().encode(row.maxqty()),
+      typo.runtime.Fragment.lit("""
+         ::int4,
+         "rowguid" = """),
+      TypoUUID.pgType.encode(row.rowguid()),
+      typo.runtime.Fragment.lit("""
+         ::uuid,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "specialofferid" = """),
+      SpecialofferId.pgType.encode(specialofferid),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public SpecialofferRow upsert(
     SpecialofferRow unsaved,
     Connection c
@@ -380,6 +403,7 @@ public class SpecialofferRepoImpl implements SpecialofferRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<SpecialofferRow> upsertBatch(
     Iterator<SpecialofferRow> unsaved,
     Connection c
@@ -406,33 +430,34 @@ public class SpecialofferRepoImpl implements SpecialofferRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<SpecialofferRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table specialoffer_TEMP (like "sales"."specialoffer") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy specialoffer_TEMP("specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate") from stdin
-      """), batchSize, unsaved, c, SpecialofferRow.pgText);
+    create temporary table specialoffer_TEMP (like "sales"."specialoffer") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy specialoffer_TEMP("specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate") from stdin
+    """), batchSize, unsaved, c, SpecialofferRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "sales"."specialoffer"("specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate")
-              select * from specialoffer_TEMP
-              on conflict ("specialofferid")
-              do update set
-                "description" = EXCLUDED."description",
-              "discountpct" = EXCLUDED."discountpct",
-              "type" = EXCLUDED."type",
-              "category" = EXCLUDED."category",
-              "startdate" = EXCLUDED."startdate",
-              "enddate" = EXCLUDED."enddate",
-              "minqty" = EXCLUDED."minqty",
-              "maxqty" = EXCLUDED."maxqty",
-              "rowguid" = EXCLUDED."rowguid",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table specialoffer_TEMP;""")).update().runUnchecked(c);
+       insert into "sales"."specialoffer"("specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate")
+       select * from specialoffer_TEMP
+       on conflict ("specialofferid")
+       do update set
+         "description" = EXCLUDED."description",
+       "discountpct" = EXCLUDED."discountpct",
+       "type" = EXCLUDED."type",
+       "category" = EXCLUDED."category",
+       "startdate" = EXCLUDED."startdate",
+       "enddate" = EXCLUDED."enddate",
+       "minqty" = EXCLUDED."minqty",
+       "maxqty" = EXCLUDED."maxqty",
+       "rowguid" = EXCLUDED."rowguid",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table specialoffer_TEMP;""")).update().runUnchecked(c);
   };
 }

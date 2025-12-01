@@ -10,7 +10,6 @@ import adventureworks.production.unitmeasure.UnitmeasureId;
 import adventureworks.public_.Name;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple4;
 
 /** View: pr.um */
 public record UmViewRow(
@@ -43,5 +42,5 @@ public record UmViewRow(
     return new UmViewRow(id, unitmeasurecode, name, modifieddate);
   };
 
-  static RowParser<UmViewRow> _rowParser = RowParsers.of(UnitmeasureId.pgType, UnitmeasureId.pgType, Name.pgType, TypoLocalDateTime.pgType, UmViewRow::new, row -> new Tuple4<>(row.id(), row.unitmeasurecode(), row.name(), row.modifieddate()));;
+  static RowParser<UmViewRow> _rowParser = RowParsers.of(UnitmeasureId.pgType, UnitmeasureId.pgType, Name.pgType, TypoLocalDateTime.pgType, UmViewRow::new, row -> new Object[]{row.id(), row.unitmeasurecode(), row.name(), row.modifieddate()});;
 }

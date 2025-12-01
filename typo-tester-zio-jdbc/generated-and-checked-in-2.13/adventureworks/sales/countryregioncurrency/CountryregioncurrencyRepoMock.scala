@@ -25,13 +25,13 @@ case class CountryregioncurrencyRepoMock(
   toRow: CountryregioncurrencyRowUnsaved => CountryregioncurrencyRow,
   map: scala.collection.mutable.Map[CountryregioncurrencyId, CountryregioncurrencyRow] = scala.collection.mutable.Map.empty[CountryregioncurrencyId, CountryregioncurrencyRow]
 ) extends CountryregioncurrencyRepo {
-  def delete: DeleteBuilder[CountryregioncurrencyFields, CountryregioncurrencyRow] = DeleteBuilderMock(DeleteParams.empty, CountryregioncurrencyFields.structure, map)
+  override def delete: DeleteBuilder[CountryregioncurrencyFields, CountryregioncurrencyRow] = DeleteBuilderMock(DeleteParams.empty, CountryregioncurrencyFields.structure, map)
 
-  def deleteById(compositeId: CountryregioncurrencyId): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(compositeId).isDefined)
+  override def deleteById(compositeId: CountryregioncurrencyId): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(compositeId).isDefined)
 
-  def deleteByIds(compositeIds: Array[CountryregioncurrencyId]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(compositeIds.map(id => map.remove(id)).count(_.isDefined).toLong)
+  override def deleteByIds(compositeIds: Array[CountryregioncurrencyId]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(compositeIds.map(id => map.remove(id)).count(_.isDefined).toLong)
 
-  def insert(unsaved: CountryregioncurrencyRow): ZIO[ZConnection, Throwable, CountryregioncurrencyRow] = {
+  override def insert(unsaved: CountryregioncurrencyRow): ZIO[ZConnection, Throwable, CountryregioncurrencyRow] = {
   ZIO.succeed {
     val _ =
       if (map.contains(unsaved.compositeId))
@@ -43,9 +43,9 @@ case class CountryregioncurrencyRepoMock(
   }
   }
 
-  def insert(unsaved: CountryregioncurrencyRowUnsaved): ZIO[ZConnection, Throwable, CountryregioncurrencyRow] = insert(toRow(unsaved))
+  override def insert(unsaved: CountryregioncurrencyRowUnsaved): ZIO[ZConnection, Throwable, CountryregioncurrencyRow] = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, CountryregioncurrencyRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {
@@ -58,7 +58,7 @@ case class CountryregioncurrencyRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, CountryregioncurrencyRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {
@@ -71,24 +71,24 @@ case class CountryregioncurrencyRepoMock(
     }.runLast.map(_.getOrElse(0L))
   }
 
-  def select: SelectBuilder[CountryregioncurrencyFields, CountryregioncurrencyRow] = SelectBuilderMock(CountryregioncurrencyFields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
+  override def select: SelectBuilder[CountryregioncurrencyFields, CountryregioncurrencyRow] = SelectBuilderMock(CountryregioncurrencyFields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
 
-  def selectAll: ZStream[ZConnection, Throwable, CountryregioncurrencyRow] = ZStream.fromIterable(map.values)
+  override def selectAll: ZStream[ZConnection, Throwable, CountryregioncurrencyRow] = ZStream.fromIterable(map.values)
 
-  def selectById(compositeId: CountryregioncurrencyId): ZIO[ZConnection, Throwable, Option[CountryregioncurrencyRow]] = ZIO.succeed(map.get(compositeId))
+  override def selectById(compositeId: CountryregioncurrencyId): ZIO[ZConnection, Throwable, Option[CountryregioncurrencyRow]] = ZIO.succeed(map.get(compositeId))
 
-  def selectByIds(compositeIds: Array[CountryregioncurrencyId]): ZStream[ZConnection, Throwable, CountryregioncurrencyRow] = ZStream.fromIterable(compositeIds.flatMap(map.get))
+  override def selectByIds(compositeIds: Array[CountryregioncurrencyId]): ZStream[ZConnection, Throwable, CountryregioncurrencyRow] = ZStream.fromIterable(compositeIds.flatMap(map.get))
 
-  def selectByIdsTracked(compositeIds: Array[CountryregioncurrencyId]): ZIO[ZConnection, Throwable, Map[CountryregioncurrencyId, CountryregioncurrencyRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[CountryregioncurrencyId]): ZIO[ZConnection, Throwable, Map[CountryregioncurrencyId, CountryregioncurrencyRow]] = {
     selectByIds(compositeIds).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[CountryregioncurrencyFields, CountryregioncurrencyRow] = UpdateBuilderMock(UpdateParams.empty, CountryregioncurrencyFields.structure, map)
+  override def update: UpdateBuilder[CountryregioncurrencyFields, CountryregioncurrencyRow] = UpdateBuilderMock(UpdateParams.empty, CountryregioncurrencyFields.structure, map)
 
-  def update(row: CountryregioncurrencyRow): ZIO[ZConnection, Throwable, Option[CountryregioncurrencyRow]] = {
+  override def update(row: CountryregioncurrencyRow): ZIO[ZConnection, Throwable, Option[CountryregioncurrencyRow]] = {
     ZIO.succeed {
       map.get(row.compositeId).map { _ =>
         map.put(row.compositeId, row): @nowarn
@@ -97,7 +97,7 @@ case class CountryregioncurrencyRepoMock(
     }
   }
 
-  def upsert(unsaved: CountryregioncurrencyRow): ZIO[ZConnection, Throwable, UpdateResult[CountryregioncurrencyRow]] = {
+  override def upsert(unsaved: CountryregioncurrencyRow): ZIO[ZConnection, Throwable, UpdateResult[CountryregioncurrencyRow]] = {
     ZIO.succeed {
       map.put(unsaved.compositeId, unsaved): @nowarn
       UpdateResult(1, Chunk.single(unsaved))
@@ -105,7 +105,7 @@ case class CountryregioncurrencyRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, CountryregioncurrencyRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

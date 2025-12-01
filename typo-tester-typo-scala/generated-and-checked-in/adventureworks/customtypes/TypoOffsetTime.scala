@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes
 
+import com.fasterxml.jackson.annotation.JsonValue
 import java.time.OffsetTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
@@ -18,7 +19,7 @@ import typo.runtime.PgTypes
 import typo.runtime.PgWrite
 
 /** This is `java.time.OffsetTime`, but with microsecond precision and transferred to and from postgres as strings. The reason is that postgres driver and db libs are broken */
-case class TypoOffsetTime(value: OffsetTime)
+case class TypoOffsetTime(@JsonValue value: OffsetTime)
 
 object TypoOffsetTime {
   def apply(value: OffsetTime): TypoOffsetTime = new TypoOffsetTime(value.truncatedTo(ChronoUnit.MICROS))
@@ -31,9 +32,9 @@ object TypoOffsetTime {
 
   val parser: DateTimeFormatter = new DateTimeFormatterBuilder().appendPattern("HH:mm:ss").appendFraction(ChronoField.MICRO_OF_SECOND, 0, 6, true).appendPattern("X").toFormatter()
 
-  given pgText: PgText[TypoOffsetTime] = PgText.textString.contramap(v => v.value.toString)
+  given pgText: PgText[TypoOffsetTime] = PgText.textString.contramap(v => v.value.toString())
 
-  given pgType: PgType[TypoOffsetTime] = PgTypes.text.bimap(v => new TypoOffsetTime(OffsetTime.parse(v, parser)), v => v.value.toString).renamed("timetz")
+  given pgType: PgType[TypoOffsetTime] = PgTypes.text.bimap((v: String) => new TypoOffsetTime(OffsetTime.parse(v, parser)), (v: TypoOffsetTime) => v.value.toString()).renamed("timetz")
 
-  given pgTypeArray: PgType[Array[TypoOffsetTime]] = TypoOffsetTime.pgType.array(PgRead.massageJdbcArrayTo(classOf[Array[String]]).map(xs => xs.map(v => new TypoOffsetTime(OffsetTime.parse(v, parser)))), PgWrite.passObjectToJdbc[String]().array(TypoOffsetTime.pgType.typename().as[String]()).contramap(xs => xs.map((v: TypoOffsetTime) => v.value.toString)))
+  given pgTypeArray: PgType[Array[TypoOffsetTime]] = TypoOffsetTime.pgType.array(PgRead.massageJdbcArrayTo(classOf[Array[String]]).map((xs: Array[String]) => xs.map((v: String) => new TypoOffsetTime(OffsetTime.parse(v, parser)))), PgWrite.passObjectToJdbc[String]().array(TypoOffsetTime.pgType.typename().as[String]()).contramap((xs: Array[TypoOffsetTime]) => xs.map((v: TypoOffsetTime) => v.value.toString())))
 }

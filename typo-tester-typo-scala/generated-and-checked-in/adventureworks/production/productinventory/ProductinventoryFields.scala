@@ -55,7 +55,7 @@ object ProductinventoryFields {
 
     override lazy val fields: ProductinventoryFields = {
       new ProductinventoryFields {
-        def productid: IdField[ProductId, ProductinventoryRow] = {
+        override def productid: IdField[ProductId, ProductinventoryRow] = {
           new IdField[ProductId, ProductinventoryRow](
             _path,
             "productid",
@@ -66,7 +66,7 @@ object ProductinventoryFields {
             ProductId.pgType
           )
         }
-        def locationid: IdField[LocationId, ProductinventoryRow] = {
+        override def locationid: IdField[LocationId, ProductinventoryRow] = {
           new IdField[LocationId, ProductinventoryRow](
             _path,
             "locationid",
@@ -77,7 +77,7 @@ object ProductinventoryFields {
             LocationId.pgType
           )
         }
-        def shelf: Field[/* max 10 chars */ String, ProductinventoryRow] = {
+        override def shelf: Field[/* max 10 chars */ String, ProductinventoryRow] = {
           new Field[/* max 10 chars */ String, ProductinventoryRow](
             _path,
             "shelf",
@@ -88,7 +88,7 @@ object ProductinventoryFields {
             PgTypes.text
           )
         }
-        def bin: Field[TypoShort, ProductinventoryRow] = {
+        override def bin: Field[TypoShort, ProductinventoryRow] = {
           new Field[TypoShort, ProductinventoryRow](
             _path,
             "bin",
@@ -99,7 +99,7 @@ object ProductinventoryFields {
             TypoShort.pgType
           )
         }
-        def quantity: Field[TypoShort, ProductinventoryRow] = {
+        override def quantity: Field[TypoShort, ProductinventoryRow] = {
           new Field[TypoShort, ProductinventoryRow](
             _path,
             "quantity",
@@ -110,7 +110,7 @@ object ProductinventoryFields {
             TypoShort.pgType
           )
         }
-        def rowguid: Field[TypoUUID, ProductinventoryRow] = {
+        override def rowguid: Field[TypoUUID, ProductinventoryRow] = {
           new Field[TypoUUID, ProductinventoryRow](
             _path,
             "rowguid",
@@ -121,7 +121,7 @@ object ProductinventoryFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, ProductinventoryRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, ProductinventoryRow] = {
           new Field[TypoLocalDateTime, ProductinventoryRow](
             _path,
             "modifieddate",
@@ -137,7 +137,7 @@ object ProductinventoryFields {
 
     override lazy val columns: java.util.List[FieldLike[?, ProductinventoryRow]] = java.util.List.of(this.fields.productid, this.fields.locationid, this.fields.shelf, this.fields.bin, this.fields.quantity, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[ProductinventoryFields, ProductinventoryRow] = new Impl(java.util.List.of())

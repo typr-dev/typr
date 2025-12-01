@@ -30,18 +30,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class PersonRepoImpl extends PersonRepo {
-  def delete: DeleteBuilder[PersonFields, PersonRow] = DeleteBuilder.of(""""person"."person"""", PersonFields.structure, PersonRow.rowParser(1).*)
+  override def delete: DeleteBuilder[PersonFields, PersonRow] = DeleteBuilder.of(""""person"."person"""", PersonFields.structure, PersonRow.rowParser(1).*)
 
-  def deleteById(businessentityid: BusinessentityId)(using c: Connection): Boolean = SQL"""delete from "person"."person" where "businessentityid" = ${ParameterValue(businessentityid, null, BusinessentityId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): Boolean = SQL"""delete from "person"."person" where "businessentityid" = ${ParameterValue(businessentityid, null, BusinessentityId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Int = {
+  override def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Int = {
     SQL"""delete
     from "person"."person"
     where "businessentityid" = ANY(${ParameterValue(businessentityids, null, BusinessentityId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: PersonRow)(using c: Connection): PersonRow = {
+  override def insert(unsaved: PersonRow)(using c: Connection): PersonRow = {
   SQL"""insert into "person"."person"("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate")
     values (${ParameterValue(unsaved.businessentityid, null, BusinessentityId.toStatement)}::int4, ${ParameterValue(unsaved.persontype, null, ToStatement.stringToStatement)}::bpchar, ${ParameterValue(unsaved.namestyle, null, NameStyle.toStatement)}::bool, ${ParameterValue(unsaved.title, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}, ${ParameterValue(unsaved.firstname, null, /* user-picked */ FirstName.toStatement)}::varchar, ${ParameterValue(unsaved.middlename, null, ToStatement.optionToStatement(using Name.toStatement, Name.parameterMetadata))}::varchar, ${ParameterValue(unsaved.lastname, null, Name.toStatement)}::varchar, ${ParameterValue(unsaved.suffix, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}, ${ParameterValue(unsaved.emailpromotion, null, ToStatement.intToStatement)}::int4, ${ParameterValue(unsaved.additionalcontactinfo, null, ToStatement.optionToStatement(using TypoXml.toStatement, TypoXml.parameterMetadata))}::xml, ${ParameterValue(unsaved.demographics, null, ToStatement.optionToStatement(using TypoXml.toStatement, TypoXml.parameterMetadata))}::xml, ${ParameterValue(unsaved.rowguid, null, TypoUUID.toStatement)}::uuid, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text
@@ -49,7 +49,7 @@ class PersonRepoImpl extends PersonRepo {
     .executeInsert(PersonRow.rowParser(1).single)
   }
 
-  def insert(unsaved: PersonRowUnsaved)(using c: Connection): PersonRow = {
+  override def insert(unsaved: PersonRowUnsaved)(using c: Connection): PersonRow = {
     val namedParameters = List(
       Some((NamedParameter("businessentityid", ParameterValue(unsaved.businessentityid, null, BusinessentityId.toStatement)), "::int4")),
       Some((NamedParameter("persontype", ParameterValue(unsaved.persontype, null, ToStatement.stringToStatement)), "::bpchar")),
@@ -93,47 +93,47 @@ class PersonRepoImpl extends PersonRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[PersonRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "person"."person"("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved)(using PersonRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[PersonRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "person"."person"("businessentityid", "persontype", "title", "firstname", "middlename", "lastname", "suffix", "additionalcontactinfo", "demographics", "namestyle", "emailpromotion", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using PersonRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[PersonFields, PersonRow] = SelectBuilder.of(""""person"."person"""", PersonFields.structure, PersonRow.rowParser)
+  override def select: SelectBuilder[PersonFields, PersonRow] = SelectBuilder.of(""""person"."person"""", PersonFields.structure, PersonRow.rowParser)
 
-  def selectAll(using c: Connection): List[PersonRow] = {
+  override def selectAll(using c: Connection): List[PersonRow] = {
     SQL"""select "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text
     from "person"."person"
     """.as(PersonRow.rowParser(1).*)
   }
 
-  def selectById(businessentityid: BusinessentityId)(using c: Connection): Option[PersonRow] = {
+  override def selectById(businessentityid: BusinessentityId)(using c: Connection): Option[PersonRow] = {
     SQL"""select "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text
     from "person"."person"
     where "businessentityid" = ${ParameterValue(businessentityid, null, BusinessentityId.toStatement)}
     """.as(PersonRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): List[PersonRow] = {
+  override def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): List[PersonRow] = {
     SQL"""select "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text
     from "person"."person"
     where "businessentityid" = ANY(${ParameterValue(businessentityids, null, BusinessentityId.arrayToStatement)})
     """.as(PersonRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): Map[BusinessentityId, PersonRow] = {
+  override def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): Map[BusinessentityId, PersonRow] = {
     val byId = selectByIds(businessentityids).view.map(x => (x.businessentityid, x)).toMap
     businessentityids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[PersonFields, PersonRow] = UpdateBuilder.of(""""person"."person"""", PersonFields.structure, PersonRow.rowParser(1).*)
+  override def update: UpdateBuilder[PersonFields, PersonRow] = UpdateBuilder.of(""""person"."person"""", PersonFields.structure, PersonRow.rowParser(1).*)
 
-  def update(row: PersonRow)(using c: Connection): Option[PersonRow] = {
+  override def update(row: PersonRow)(using c: Connection): Option[PersonRow] = {
     val businessentityid = row.businessentityid
     SQL"""update "person"."person"
     set "persontype" = ${ParameterValue(row.persontype, null, ToStatement.stringToStatement)}::bpchar,
@@ -153,7 +153,7 @@ class PersonRepoImpl extends PersonRepo {
     """.executeInsert(PersonRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: PersonRow)(using c: Connection): PersonRow = {
+  override def upsert(unsaved: PersonRow)(using c: Connection): PersonRow = {
   SQL"""insert into "person"."person"("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate")
     values (
       ${ParameterValue(unsaved.businessentityid, null, BusinessentityId.toStatement)}::int4,
@@ -189,7 +189,7 @@ class PersonRepoImpl extends PersonRepo {
     .executeInsert(PersonRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[PersonRow])(using c: Connection): List[PersonRow] = {
+  override def upsertBatch(unsaved: Iterable[PersonRow])(using c: Connection): List[PersonRow] = {
     def toNamedParameter(row: PersonRow): List[NamedParameter] = List(
       NamedParameter("businessentityid", ParameterValue(row.businessentityid, null, BusinessentityId.toStatement)),
       NamedParameter("persontype", ParameterValue(row.persontype, null, ToStatement.stringToStatement)),
@@ -205,6 +205,7 @@ class PersonRepoImpl extends PersonRepo {
       NamedParameter("rowguid", ParameterValue(row.rowguid, null, TypoUUID.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -236,7 +237,7 @@ class PersonRepoImpl extends PersonRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[PersonRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

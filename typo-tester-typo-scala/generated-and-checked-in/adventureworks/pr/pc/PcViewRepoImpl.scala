@@ -10,11 +10,11 @@ import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PcViewRepoImpl extends PcViewRepo {
-  def select: SelectBuilder[PcViewFields, PcViewRow] = SelectBuilder.of("pr.pc", PcViewFields.structure, PcViewRow.`_rowParser`)
+  override def select: SelectBuilder[PcViewFields, PcViewRow] = SelectBuilder.of("pr.pc", PcViewFields.structure, PcViewRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[PcViewRow] = {
+  override def selectAll(using c: Connection): java.util.List[PcViewRow] = {
     interpolate"""select "id", "productcategoryid", "name", "rowguid", "modifieddate"::text
     from "pr"."pc"
-    """.as(PcViewRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(PcViewRow.`_rowParser`.all()).runUnchecked(c)
   }
 }

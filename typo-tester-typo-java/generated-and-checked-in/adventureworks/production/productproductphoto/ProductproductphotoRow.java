@@ -13,7 +13,6 @@ import adventureworks.public_.Flag;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple4;
 
 /** Table: production.productproductphoto
   * Cross-reference table mapping products and product photos.
@@ -61,7 +60,7 @@ public record ProductproductphotoRow(
     return new ProductproductphotoRow(productid, productphotoid, primary, modifieddate);
   };
 
-  static RowParser<ProductproductphotoRow> _rowParser = RowParsers.of(ProductId.pgType, ProductphotoId.pgType, Flag.pgType, TypoLocalDateTime.pgType, ProductproductphotoRow::new, row -> new Tuple4<>(row.productid(), row.productphotoid(), row.primary(), row.modifieddate()));;
+  static RowParser<ProductproductphotoRow> _rowParser = RowParsers.of(ProductId.pgType, ProductphotoId.pgType, Flag.pgType, TypoLocalDateTime.pgType, ProductproductphotoRow::new, row -> new Object[]{row.productid(), row.productphotoid(), row.primary(), row.modifieddate()});;
 
   static public ProductproductphotoRow apply(
     ProductproductphotoId compositeId,

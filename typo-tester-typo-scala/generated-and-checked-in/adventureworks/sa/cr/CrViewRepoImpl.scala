@@ -10,11 +10,11 @@ import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class CrViewRepoImpl extends CrViewRepo {
-  def select: SelectBuilder[CrViewFields, CrViewRow] = SelectBuilder.of("sa.cr", CrViewFields.structure, CrViewRow.`_rowParser`)
+  override def select: SelectBuilder[CrViewFields, CrViewRow] = SelectBuilder.of("sa.cr", CrViewFields.structure, CrViewRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[CrViewRow] = {
+  override def selectAll(using c: Connection): java.util.List[CrViewRow] = {
     interpolate"""select "currencyrateid", "currencyratedate"::text, "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"::text
     from "sa"."cr"
-    """.as(CrViewRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(CrViewRow.`_rowParser`.all()).runUnchecked(c)
   }
 }

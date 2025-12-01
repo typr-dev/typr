@@ -7,13 +7,11 @@ package adventureworks.pr.d
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class DViewRepoImpl extends DViewRepo {
-  def select: SelectBuilder[DViewFields, DViewRow] = SelectBuilder.of(""""pr"."d"""", DViewFields.structure, DViewRow.read)
+  override def select: SelectBuilder[DViewFields, DViewRow] = SelectBuilder.of(""""pr"."d"""", DViewFields.structure, DViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, DViewRow] = sql"""select "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode" from "pr"."d"""".query(using DViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, DViewRow] = sql"""select "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode" from "pr"."d"""".query(using DViewRow.read).stream
 }

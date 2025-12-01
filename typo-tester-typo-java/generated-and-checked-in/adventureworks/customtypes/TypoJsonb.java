@@ -30,11 +30,11 @@ public record TypoJsonb(@JsonValue String value) {
   static public PgType<TypoJsonb> pgType =
     PgType.of(
       "jsonb",
-      PgRead.castJdbcObjectTo(PGobject.class).map(v -> new TypoJsonb(v.getValue())),
-      PgWrite.passObjectToJdbc().contramap((TypoJsonb v) -> TypoPGObjectHelper.create("jsonb", v.value())),
+      PgRead.castJdbcObjectTo(PGobject.class).map((PGobject v) -> new TypoJsonb(v.getValue())),
+      PgWrite.<PGobject>passObjectToJdbc().contramap((TypoJsonb v) -> TypoPGObjectHelper.create("jsonb", v.value())),
       TypoJsonb.pgText
     );
 
   static public PgType<TypoJsonb[]> pgTypeArray =
-    TypoJsonb.pgType.array(PgRead.massageJdbcArrayTo(String[].class).map(xs -> arrayMap.map(xs, v -> new TypoJsonb(v), TypoJsonb.class)), PgWrite.<PGobject>passObjectToJdbc().array(TypoJsonb.pgType.typename().<PGobject>as()).contramap(xs -> arrayMap.map(xs, (TypoJsonb v) -> TypoPGObjectHelper.create("jsonb", v.value()), PGobject.class)));
+    TypoJsonb.pgType.array(PgRead.massageJdbcArrayTo(String[].class).map((String[] xs) -> arrayMap.map(xs, (String v) -> new TypoJsonb(v), TypoJsonb.class)), PgWrite.<PGobject>passObjectToJdbc().array(TypoJsonb.pgType.typename().<PGobject>as()).contramap((TypoJsonb[] xs) -> arrayMap.map(xs, (TypoJsonb v) -> TypoPGObjectHelper.create("jsonb", v.value()), PGobject.class)));
 }

@@ -10,7 +10,6 @@ import adventureworks.customtypes.TypoShort;
 import adventureworks.customtypes.TypoUUID;
 import adventureworks.person.stateprovince.StateprovinceId;
 import adventureworks.public_.Name;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,12 +27,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class SalestaxrateRepoImpl implements SalestaxrateRepo {
+  @Override
   public DeleteBuilder<SalestaxrateFields, SalestaxrateRow> delete() {
     return DeleteBuilder.of("sales.salestaxrate", SalestaxrateFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     SalestaxrateId salestaxrateid,
     Connection c
@@ -47,6 +47,7 @@ public class SalestaxrateRepoImpl implements SalestaxrateRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     SalestaxrateId[] salestaxrateids,
     Connection c
@@ -63,6 +64,7 @@ public class SalestaxrateRepoImpl implements SalestaxrateRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public SalestaxrateRow insert(
     SalestaxrateRow unsaved,
     Connection c
@@ -92,84 +94,94 @@ public class SalestaxrateRepoImpl implements SalestaxrateRepo {
       .updateReturning(SalestaxrateRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public SalestaxrateRow insert(
     SalestaxrateRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"stateprovinceid\""));
-      values.add(interpolate(
-        StateprovinceId.pgType.encode(unsaved.stateprovinceid()),
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"stateprovinceid\""));
+    values.add(interpolate(
+      StateprovinceId.pgType.encode(unsaved.stateprovinceid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"taxtype\""));
+    values.add(interpolate(
+      TypoShort.pgType.encode(unsaved.taxtype()),
+      typo.runtime.Fragment.lit("::int2")
+    ));
+    columns.add(Fragment.lit("\"name\""));
+    values.add(interpolate(
+      Name.pgType.encode(unsaved.name()),
+      typo.runtime.Fragment.lit("::varchar")
+    ));
+    unsaved.salestaxrateid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"salestaxrateid\""));
+        values.add(interpolate(
+        SalestaxrateId.pgType.encode(value),
         typo.runtime.Fragment.lit("::int4")
       ));
-      columns.add(Fragment.lit("\"taxtype\""));
-      values.add(interpolate(
-        TypoShort.pgType.encode(unsaved.taxtype()),
-        typo.runtime.Fragment.lit("::int2")
+      }
+    );;
+    unsaved.taxrate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"taxrate\""));
+        values.add(interpolate(
+        PgTypes.numeric.encode(value),
+        typo.runtime.Fragment.lit("::numeric")
       ));
-      columns.add(Fragment.lit("\"name\""));
-      values.add(interpolate(
-        Name.pgType.encode(unsaved.name()),
-        typo.runtime.Fragment.lit("::varchar")
+      }
+    );;
+    unsaved.rowguid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"rowguid\""));
+        values.add(interpolate(
+        TypoUUID.pgType.encode(value),
+        typo.runtime.Fragment.lit("::uuid")
       ));
-      unsaved.salestaxrateid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"salestaxrateid\""));
-          values.add(interpolate(
-            SalestaxrateId.pgType.encode(value),
-            typo.runtime.Fragment.lit("::int4")
-          ));
-        }
-      );;
-      unsaved.taxrate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"taxrate\""));
-          values.add(interpolate(
-            PgTypes.numeric.encode(value),
-            typo.runtime.Fragment.lit("::numeric")
-          ));
-        }
-      );;
-      unsaved.rowguid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"rowguid\""));
-          values.add(interpolate(
-            TypoUUID.pgType.encode(value),
-            typo.runtime.Fragment.lit("::uuid")
-          ));
-        }
-      );;
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "sales"."salestaxrate"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
+      ));
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "sales"."salestaxrate"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(SalestaxrateRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<SalestaxrateRow> unsaved,
     Integer batchSize,
@@ -181,6 +193,7 @@ public class SalestaxrateRepoImpl implements SalestaxrateRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<SalestaxrateRowUnsaved> unsaved,
     Integer batchSize,
@@ -191,17 +204,20 @@ public class SalestaxrateRepoImpl implements SalestaxrateRepo {
     """), batchSize, unsaved, c, SalestaxrateRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<SalestaxrateFields, SalestaxrateRow> select() {
     return SelectBuilder.of("sales.salestaxrate", SalestaxrateFields.structure(), SalestaxrateRow._rowParser);
   };
 
+  @Override
   public List<SalestaxrateRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"::text
        from "sales"."salestaxrate"
-    """)).as(SalestaxrateRow._rowParser.all()).runUnchecked(c);
+    """)).query(SalestaxrateRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<SalestaxrateRow> selectById(
     SalestaxrateId salestaxrateid,
     Connection c
@@ -213,9 +229,10 @@ public class SalestaxrateRepoImpl implements SalestaxrateRepo {
          where "salestaxrateid" = """),
       SalestaxrateId.pgType.encode(salestaxrateid),
       typo.runtime.Fragment.lit("")
-    ).as(SalestaxrateRow._rowParser.first()).runUnchecked(c);
+    ).query(SalestaxrateRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<SalestaxrateRow> selectByIds(
     SalestaxrateId[] salestaxrateids,
     Connection c
@@ -227,60 +244,64 @@ public class SalestaxrateRepoImpl implements SalestaxrateRepo {
          where "salestaxrateid" = ANY("""),
       SalestaxrateId.pgTypeArray.encode(salestaxrateids),
       typo.runtime.Fragment.lit(")")
-    ).as(SalestaxrateRow._rowParser.all()).runUnchecked(c);
+    ).query(SalestaxrateRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<SalestaxrateId, SalestaxrateRow> selectByIdsTracked(
     SalestaxrateId[] salestaxrateids,
     Connection c
   ) {
-    Map<SalestaxrateId, SalestaxrateRow> ret = new HashMap<>();;
-      selectByIds(salestaxrateids, c).forEach(row -> ret.put(row.salestaxrateid(), row));
+    HashMap<SalestaxrateId, SalestaxrateRow> ret = new HashMap<SalestaxrateId, SalestaxrateRow>();
+    selectByIds(salestaxrateids, c).forEach(row -> ret.put(row.salestaxrateid(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<SalestaxrateFields, SalestaxrateRow> update() {
     return UpdateBuilder.of("sales.salestaxrate", SalestaxrateFields.structure(), SalestaxrateRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     SalestaxrateRow row,
     Connection c
   ) {
     SalestaxrateId salestaxrateid = row.salestaxrateid();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "sales"."salestaxrate"
-                set "stateprovinceid" = """),
-             StateprovinceId.pgType.encode(row.stateprovinceid()),
-             typo.runtime.Fragment.lit("""
-                ::int4,
-                "taxtype" = """),
-             TypoShort.pgType.encode(row.taxtype()),
-             typo.runtime.Fragment.lit("""
-                ::int2,
-                "taxrate" = """),
-             PgTypes.numeric.encode(row.taxrate()),
-             typo.runtime.Fragment.lit("""
-                ::numeric,
-                "name" = """),
-             Name.pgType.encode(row.name()),
-             typo.runtime.Fragment.lit("""
-                ::varchar,
-                "rowguid" = """),
-             TypoUUID.pgType.encode(row.rowguid()),
-             typo.runtime.Fragment.lit("""
-                ::uuid,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "salestaxrateid" = """),
-             SalestaxrateId.pgType.encode(salestaxrateid),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "sales"."salestaxrate"
+         set "stateprovinceid" = """),
+      StateprovinceId.pgType.encode(row.stateprovinceid()),
+      typo.runtime.Fragment.lit("""
+         ::int4,
+         "taxtype" = """),
+      TypoShort.pgType.encode(row.taxtype()),
+      typo.runtime.Fragment.lit("""
+         ::int2,
+         "taxrate" = """),
+      PgTypes.numeric.encode(row.taxrate()),
+      typo.runtime.Fragment.lit("""
+         ::numeric,
+         "name" = """),
+      Name.pgType.encode(row.name()),
+      typo.runtime.Fragment.lit("""
+         ::varchar,
+         "rowguid" = """),
+      TypoUUID.pgType.encode(row.rowguid()),
+      typo.runtime.Fragment.lit("""
+         ::uuid,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "salestaxrateid" = """),
+      SalestaxrateId.pgType.encode(salestaxrateid),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public SalestaxrateRow upsert(
     SalestaxrateRow unsaved,
     Connection c
@@ -319,6 +340,7 @@ public class SalestaxrateRepoImpl implements SalestaxrateRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<SalestaxrateRow> upsertBatch(
     Iterator<SalestaxrateRow> unsaved,
     Connection c
@@ -341,29 +363,30 @@ public class SalestaxrateRepoImpl implements SalestaxrateRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<SalestaxrateRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table salestaxrate_TEMP (like "sales"."salestaxrate") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy salestaxrate_TEMP("salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate") from stdin
-      """), batchSize, unsaved, c, SalestaxrateRow.pgText);
+    create temporary table salestaxrate_TEMP (like "sales"."salestaxrate") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy salestaxrate_TEMP("salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate") from stdin
+    """), batchSize, unsaved, c, SalestaxrateRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "sales"."salestaxrate"("salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate")
-              select * from salestaxrate_TEMP
-              on conflict ("salestaxrateid")
-              do update set
-                "stateprovinceid" = EXCLUDED."stateprovinceid",
-              "taxtype" = EXCLUDED."taxtype",
-              "taxrate" = EXCLUDED."taxrate",
-              "name" = EXCLUDED."name",
-              "rowguid" = EXCLUDED."rowguid",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table salestaxrate_TEMP;""")).update().runUnchecked(c);
+       insert into "sales"."salestaxrate"("salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate")
+       select * from salestaxrate_TEMP
+       on conflict ("salestaxrateid")
+       do update set
+         "stateprovinceid" = EXCLUDED."stateprovinceid",
+       "taxtype" = EXCLUDED."taxtype",
+       "taxrate" = EXCLUDED."taxrate",
+       "name" = EXCLUDED."name",
+       "rowguid" = EXCLUDED."rowguid",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table salestaxrate_TEMP;""")).update().runUnchecked(c);
   };
 }

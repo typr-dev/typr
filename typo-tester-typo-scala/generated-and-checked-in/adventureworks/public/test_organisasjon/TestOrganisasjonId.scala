@@ -5,12 +5,13 @@
  */
 package adventureworks.public.test_organisasjon
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
 
 /** Type for the primary key of table `public.test_organisasjon` */
-case class TestOrganisasjonId(value: String) extends scala.AnyVal
+case class TestOrganisasjonId(@JsonValue value: String) extends scala.AnyVal
 
 object TestOrganisasjonId {
   given bijection: Bijection[TestOrganisasjonId, String] = Bijection.apply[TestOrganisasjonId, String](_.value)(TestOrganisasjonId.apply)

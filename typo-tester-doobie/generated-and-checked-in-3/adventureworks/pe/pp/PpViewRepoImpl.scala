@@ -7,13 +7,11 @@ package adventureworks.pe.pp
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class PpViewRepoImpl extends PpViewRepo {
-  def select: SelectBuilder[PpViewFields, PpViewRow] = SelectBuilder.of(""""pe"."pp"""", PpViewFields.structure, PpViewRow.read)
+  override def select: SelectBuilder[PpViewFields, PpViewRow] = SelectBuilder.of(""""pe"."pp"""", PpViewFields.structure, PpViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, PpViewRow] = sql"""select "id", "businessentityid", "phonenumber", "phonenumbertypeid", "modifieddate"::text from "pe"."pp"""".query(using PpViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, PpViewRow] = sql"""select "id", "businessentityid", "phonenumber", "phonenumbertypeid", "modifieddate"::text from "pe"."pp"""".query(using PpViewRow.read).stream
 }

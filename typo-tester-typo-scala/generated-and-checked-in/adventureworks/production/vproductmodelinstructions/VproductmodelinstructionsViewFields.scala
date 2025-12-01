@@ -46,7 +46,7 @@ object VproductmodelinstructionsViewFields {
 
     override lazy val fields: VproductmodelinstructionsViewFields = {
       new VproductmodelinstructionsViewFields {
-        def productmodelid: Field[ProductmodelId, VproductmodelinstructionsViewRow] = {
+        override def productmodelid: Field[ProductmodelId, VproductmodelinstructionsViewRow] = {
           new Field[ProductmodelId, VproductmodelinstructionsViewRow](
             _path,
             "productmodelid",
@@ -57,7 +57,7 @@ object VproductmodelinstructionsViewFields {
             ProductmodelId.pgType
           )
         }
-        def name: Field[Name, VproductmodelinstructionsViewRow] = {
+        override def name: Field[Name, VproductmodelinstructionsViewRow] = {
           new Field[Name, VproductmodelinstructionsViewRow](
             _path,
             "name",
@@ -68,7 +68,7 @@ object VproductmodelinstructionsViewFields {
             Name.pgType
           )
         }
-        def instructions: OptField[String, VproductmodelinstructionsViewRow] = {
+        override def instructions: OptField[String, VproductmodelinstructionsViewRow] = {
           new OptField[String, VproductmodelinstructionsViewRow](
             _path,
             "instructions",
@@ -79,7 +79,7 @@ object VproductmodelinstructionsViewFields {
             PgTypes.text
           )
         }
-        def locationID: OptField[Integer, VproductmodelinstructionsViewRow] = {
+        override def locationID: OptField[Integer, VproductmodelinstructionsViewRow] = {
           new OptField[Integer, VproductmodelinstructionsViewRow](
             _path,
             "LocationID",
@@ -90,7 +90,7 @@ object VproductmodelinstructionsViewFields {
             PgTypes.int4
           )
         }
-        def setupHours: OptField[java.math.BigDecimal, VproductmodelinstructionsViewRow] = {
+        override def setupHours: OptField[java.math.BigDecimal, VproductmodelinstructionsViewRow] = {
           new OptField[java.math.BigDecimal, VproductmodelinstructionsViewRow](
             _path,
             "SetupHours",
@@ -101,7 +101,7 @@ object VproductmodelinstructionsViewFields {
             PgTypes.numeric
           )
         }
-        def machineHours: OptField[java.math.BigDecimal, VproductmodelinstructionsViewRow] = {
+        override def machineHours: OptField[java.math.BigDecimal, VproductmodelinstructionsViewRow] = {
           new OptField[java.math.BigDecimal, VproductmodelinstructionsViewRow](
             _path,
             "MachineHours",
@@ -112,7 +112,7 @@ object VproductmodelinstructionsViewFields {
             PgTypes.numeric
           )
         }
-        def laborHours: OptField[java.math.BigDecimal, VproductmodelinstructionsViewRow] = {
+        override def laborHours: OptField[java.math.BigDecimal, VproductmodelinstructionsViewRow] = {
           new OptField[java.math.BigDecimal, VproductmodelinstructionsViewRow](
             _path,
             "LaborHours",
@@ -123,7 +123,7 @@ object VproductmodelinstructionsViewFields {
             PgTypes.numeric
           )
         }
-        def lotSize: OptField[Integer, VproductmodelinstructionsViewRow] = {
+        override def lotSize: OptField[Integer, VproductmodelinstructionsViewRow] = {
           new OptField[Integer, VproductmodelinstructionsViewRow](
             _path,
             "LotSize",
@@ -134,7 +134,7 @@ object VproductmodelinstructionsViewFields {
             PgTypes.int4
           )
         }
-        def step: OptField[/* max 1024 chars */ String, VproductmodelinstructionsViewRow] = {
+        override def step: OptField[/* max 1024 chars */ String, VproductmodelinstructionsViewRow] = {
           new OptField[/* max 1024 chars */ String, VproductmodelinstructionsViewRow](
             _path,
             "Step",
@@ -145,7 +145,7 @@ object VproductmodelinstructionsViewFields {
             PgTypes.text
           )
         }
-        def rowguid: Field[TypoUUID, VproductmodelinstructionsViewRow] = {
+        override def rowguid: Field[TypoUUID, VproductmodelinstructionsViewRow] = {
           new Field[TypoUUID, VproductmodelinstructionsViewRow](
             _path,
             "rowguid",
@@ -156,7 +156,7 @@ object VproductmodelinstructionsViewFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, VproductmodelinstructionsViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, VproductmodelinstructionsViewRow] = {
           new Field[TypoLocalDateTime, VproductmodelinstructionsViewRow](
             _path,
             "modifieddate",
@@ -172,7 +172,7 @@ object VproductmodelinstructionsViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, VproductmodelinstructionsViewRow]] = java.util.List.of(this.fields.productmodelid, this.fields.name, this.fields.instructions, this.fields.locationID, this.fields.setupHours, this.fields.machineHours, this.fields.laborHours, this.fields.lotSize, this.fields.step, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[VproductmodelinstructionsViewFields, VproductmodelinstructionsViewRow] = new Impl(java.util.List.of())

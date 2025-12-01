@@ -12,7 +12,6 @@ import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple13
 
 /** View: sales.vpersondemographics */
 case class VpersondemographicsViewRow(
@@ -33,21 +32,5 @@ case class VpersondemographicsViewRow(
 )
 
 object VpersondemographicsViewRow {
-  val `_rowParser`: RowParser[VpersondemographicsViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, TypoMoney.pgType.opt(), TypoLocalDate.pgType.opt(), TypoLocalDate.pgType.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.int4.opt(), PgTypes.int4.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.bool.opt(), PgTypes.int4.opt(), VpersondemographicsViewRow.apply, row => new Tuple13(
-      row.businessentityid,
-      row.totalpurchaseytd,
-      row.datefirstpurchase,
-      row.birthdate,
-      row.maritalstatus,
-      row.yearlyincome,
-      row.gender,
-      row.totalchildren,
-      row.numberchildrenathome,
-      row.education,
-      row.occupation,
-      row.homeownerflag,
-      row.numbercarsowned
-    ))
-  }
+  val `_rowParser`: RowParser[VpersondemographicsViewRow] = RowParsers.of(BusinessentityId.pgType, TypoMoney.pgType.opt(), TypoLocalDate.pgType.opt(), TypoLocalDate.pgType.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.int4.opt(), PgTypes.int4.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.bool.opt(), PgTypes.int4.opt(), VpersondemographicsViewRow.apply, row => Array(row.businessentityid, row.totalpurchaseytd, row.datefirstpurchase, row.birthdate, row.maritalstatus, row.yearlyincome, row.gender, row.totalchildren, row.numberchildrenathome, row.education, row.occupation, row.homeownerflag, row.numbercarsowned))
 }

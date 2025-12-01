@@ -11,7 +11,7 @@ import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class VsalespersonsalesbyfiscalyearsViewRepoImpl extends VsalespersonsalesbyfiscalyearsViewRepo {
-  def select: SelectBuilder[VsalespersonsalesbyfiscalyearsViewFields, VsalespersonsalesbyfiscalyearsViewRow] = SelectBuilder.of(""""sales"."vsalespersonsalesbyfiscalyears"""", VsalespersonsalesbyfiscalyearsViewFields.structure, VsalespersonsalesbyfiscalyearsViewRow.read)
+  override def select: SelectBuilder[VsalespersonsalesbyfiscalyearsViewFields, VsalespersonsalesbyfiscalyearsViewRow] = SelectBuilder.of(""""sales"."vsalespersonsalesbyfiscalyears"""", VsalespersonsalesbyfiscalyearsViewFields.structure, VsalespersonsalesbyfiscalyearsViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, VsalespersonsalesbyfiscalyearsViewRow] = sql"""select "SalesPersonID", "FullName", "JobTitle", "SalesTerritory", "2012", "2013", "2014" from "sales"."vsalespersonsalesbyfiscalyears"""".query(VsalespersonsalesbyfiscalyearsViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, VsalespersonsalesbyfiscalyearsViewRow] = sql"""select "SalesPersonID", "FullName", "JobTitle", "SalesTerritory", "2012", "2013", "2014" from "sales"."vsalespersonsalesbyfiscalyears"""".query(VsalespersonsalesbyfiscalyearsViewRow.read).stream
 }

@@ -7,8 +7,8 @@ trait DbLib {
   def resolveConstAs(tpe: jvm.Type): jvm.Code
   def defaultedInstance: List[jvm.Given]
   def repoSig(repoMethod: RepoMethod): Either[DbLib.NotImplementedFor, jvm.Method]
-  def repoImpl(repoMethod: RepoMethod): List[jvm.Code]
-  def mockRepoImpl(id: IdComputed, repoMethod: RepoMethod, maybeToRow: Option[jvm.Param[jvm.Type.Function1]]): List[jvm.Code]
+  def repoImpl(repoMethod: RepoMethod): jvm.Body
+  def mockRepoImpl(id: IdComputed, repoMethod: RepoMethod, maybeToRow: Option[jvm.Param[jvm.Type.Function1]]): jvm.Body
   def testInsertMethod(x: ComputedTestInserts.InsertMethod): jvm.Method
   def stringEnumInstances(wrapperType: jvm.Type, underlying: jvm.Type, sqlType: String, openEnum: Boolean): List[jvm.ClassMember]
   def wrapperTypeInstances(wrapperType: jvm.Type.Qualified, underlying: jvm.Type, overrideDbType: Option[String]): List[jvm.ClassMember]

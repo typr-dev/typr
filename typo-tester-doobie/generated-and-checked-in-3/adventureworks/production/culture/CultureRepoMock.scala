@@ -23,13 +23,13 @@ case class CultureRepoMock(
   toRow: CultureRowUnsaved => CultureRow,
   map: scala.collection.mutable.Map[CultureId, CultureRow] = scala.collection.mutable.Map.empty[CultureId, CultureRow]
 ) extends CultureRepo {
-  def delete: DeleteBuilder[CultureFields, CultureRow] = DeleteBuilderMock(DeleteParams.empty, CultureFields.structure, map)
+  override def delete: DeleteBuilder[CultureFields, CultureRow] = DeleteBuilderMock(DeleteParams.empty, CultureFields.structure, map)
 
-  def deleteById(cultureid: CultureId): ConnectionIO[Boolean] = delay(map.remove(cultureid).isDefined)
+  override def deleteById(cultureid: CultureId): ConnectionIO[Boolean] = delay(map.remove(cultureid).isDefined)
 
-  def deleteByIds(cultureids: Array[CultureId]): ConnectionIO[Int] = delay(cultureids.map(id => map.remove(id)).count(_.isDefined))
+  override def deleteByIds(cultureids: Array[CultureId]): ConnectionIO[Int] = delay(cultureids.map(id => map.remove(id)).count(_.isDefined))
 
-  def insert(unsaved: CultureRow): ConnectionIO[CultureRow] = {
+  override def insert(unsaved: CultureRow): ConnectionIO[CultureRow] = {
   delay {
     val _ = if (map.contains(unsaved.cultureid))
       sys.error(s"id ${unsaved.cultureid} already exists")
@@ -40,9 +40,9 @@ case class CultureRepoMock(
   }
   }
 
-  def insert(unsaved: CultureRowUnsaved): ConnectionIO[CultureRow] = insert(toRow(unsaved))
+  override def insert(unsaved: CultureRowUnsaved): ConnectionIO[CultureRow] = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, CultureRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = {
@@ -57,7 +57,7 @@ case class CultureRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, CultureRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = {
@@ -72,24 +72,24 @@ case class CultureRepoMock(
     }
   }
 
-  def select: SelectBuilder[CultureFields, CultureRow] = SelectBuilderMock(CultureFields.structure, delay(map.values.toList), SelectParams.empty)
+  override def select: SelectBuilder[CultureFields, CultureRow] = SelectBuilderMock(CultureFields.structure, delay(map.values.toList), SelectParams.empty)
 
-  def selectAll: Stream[ConnectionIO, CultureRow] = Stream.emits(map.values.toList)
+  override def selectAll: Stream[ConnectionIO, CultureRow] = Stream.emits(map.values.toList)
 
-  def selectById(cultureid: CultureId): ConnectionIO[Option[CultureRow]] = delay(map.get(cultureid))
+  override def selectById(cultureid: CultureId): ConnectionIO[Option[CultureRow]] = delay(map.get(cultureid))
 
-  def selectByIds(cultureids: Array[CultureId]): Stream[ConnectionIO, CultureRow] = Stream.emits(cultureids.flatMap(map.get).toList)
+  override def selectByIds(cultureids: Array[CultureId]): Stream[ConnectionIO, CultureRow] = Stream.emits(cultureids.flatMap(map.get).toList)
 
-  def selectByIdsTracked(cultureids: Array[CultureId]): ConnectionIO[Map[CultureId, CultureRow]] = {
+  override def selectByIdsTracked(cultureids: Array[CultureId]): ConnectionIO[Map[CultureId, CultureRow]] = {
     selectByIds(cultureids).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.cultureid, x)).toMap
       cultureids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[CultureFields, CultureRow] = UpdateBuilderMock(UpdateParams.empty, CultureFields.structure, map)
+  override def update: UpdateBuilder[CultureFields, CultureRow] = UpdateBuilderMock(UpdateParams.empty, CultureFields.structure, map)
 
-  def update(row: CultureRow): ConnectionIO[Option[CultureRow]] = {
+  override def update(row: CultureRow): ConnectionIO[Option[CultureRow]] = {
     delay {
       map.get(row.cultureid).map { _ =>
         map.put(row.cultureid, row): @nowarn
@@ -98,14 +98,14 @@ case class CultureRepoMock(
     }
   }
 
-  def upsert(unsaved: CultureRow): ConnectionIO[CultureRow] = {
+  override def upsert(unsaved: CultureRow): ConnectionIO[CultureRow] = {
     delay {
       map.put(unsaved.cultureid, unsaved): @nowarn
       unsaved
     }
   }
 
-  def upsertBatch(unsaved: List[CultureRow]): Stream[ConnectionIO, CultureRow] = {
+  override def upsertBatch(unsaved: List[CultureRow]): Stream[ConnectionIO, CultureRow] = {
     Stream.emits {
       unsaved.map { row =>
         map += (row.cultureid -> row)
@@ -115,7 +115,7 @@ case class CultureRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, CultureRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

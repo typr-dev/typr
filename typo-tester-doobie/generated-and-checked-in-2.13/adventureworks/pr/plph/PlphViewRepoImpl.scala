@@ -11,7 +11,7 @@ import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class PlphViewRepoImpl extends PlphViewRepo {
-  def select: SelectBuilder[PlphViewFields, PlphViewRow] = SelectBuilder.of(""""pr"."plph"""", PlphViewFields.structure, PlphViewRow.read)
+  override def select: SelectBuilder[PlphViewFields, PlphViewRow] = SelectBuilder.of(""""pr"."plph"""", PlphViewFields.structure, PlphViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, PlphViewRow] = sql"""select "id", "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text from "pr"."plph"""".query(PlphViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, PlphViewRow] = sql"""select "id", "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text from "pr"."plph"""".query(PlphViewRow.read).stream
 }

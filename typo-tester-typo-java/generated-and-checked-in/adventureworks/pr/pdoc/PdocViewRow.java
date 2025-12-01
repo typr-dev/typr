@@ -10,7 +10,6 @@ import adventureworks.production.document.DocumentId;
 import adventureworks.production.product.ProductId;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple4;
 
 /** View: pr.pdoc */
 public record PdocViewRow(
@@ -43,5 +42,5 @@ public record PdocViewRow(
     return new PdocViewRow(id, productid, modifieddate, documentnode);
   };
 
-  static RowParser<PdocViewRow> _rowParser = RowParsers.of(ProductId.pgType, ProductId.pgType, TypoLocalDateTime.pgType, DocumentId.pgType, PdocViewRow::new, row -> new Tuple4<>(row.id(), row.productid(), row.modifieddate(), row.documentnode()));;
+  static RowParser<PdocViewRow> _rowParser = RowParsers.of(ProductId.pgType, ProductId.pgType, TypoLocalDateTime.pgType, DocumentId.pgType, PdocViewRow::new, row -> new Object[]{row.id(), row.productid(), row.modifieddate(), row.documentnode()});;
 }

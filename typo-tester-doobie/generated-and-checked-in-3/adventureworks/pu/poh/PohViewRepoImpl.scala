@@ -7,13 +7,11 @@ package adventureworks.pu.poh
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class PohViewRepoImpl extends PohViewRepo {
-  def select: SelectBuilder[PohViewFields, PohViewRow] = SelectBuilder.of(""""pu"."poh"""", PohViewFields.structure, PohViewRow.read)
+  override def select: SelectBuilder[PohViewFields, PohViewRow] = SelectBuilder.of(""""pu"."poh"""", PohViewFields.structure, PohViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, PohViewRow] = sql"""select "id", "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text from "pu"."poh"""".query(using PohViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, PohViewRow] = sql"""select "id", "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text from "pu"."poh"""".query(using PohViewRow.read).stream
 }

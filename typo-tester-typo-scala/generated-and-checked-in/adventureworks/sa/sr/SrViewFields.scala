@@ -31,7 +31,7 @@ object SrViewFields {
 
     override lazy val fields: SrViewFields = {
       new SrViewFields {
-        def id: Field[SalesreasonId, SrViewRow] = {
+        override def id: Field[SalesreasonId, SrViewRow] = {
           new Field[SalesreasonId, SrViewRow](
             _path,
             "id",
@@ -42,7 +42,7 @@ object SrViewFields {
             SalesreasonId.pgType
           )
         }
-        def salesreasonid: Field[SalesreasonId, SrViewRow] = {
+        override def salesreasonid: Field[SalesreasonId, SrViewRow] = {
           new Field[SalesreasonId, SrViewRow](
             _path,
             "salesreasonid",
@@ -53,7 +53,7 @@ object SrViewFields {
             SalesreasonId.pgType
           )
         }
-        def name: Field[Name, SrViewRow] = {
+        override def name: Field[Name, SrViewRow] = {
           new Field[Name, SrViewRow](
             _path,
             "name",
@@ -64,7 +64,7 @@ object SrViewFields {
             Name.pgType
           )
         }
-        def reasontype: Field[Name, SrViewRow] = {
+        override def reasontype: Field[Name, SrViewRow] = {
           new Field[Name, SrViewRow](
             _path,
             "reasontype",
@@ -75,7 +75,7 @@ object SrViewFields {
             Name.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, SrViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, SrViewRow] = {
           new Field[TypoLocalDateTime, SrViewRow](
             _path,
             "modifieddate",
@@ -91,7 +91,7 @@ object SrViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, SrViewRow]] = java.util.List.of(this.fields.id, this.fields.salesreasonid, this.fields.name, this.fields.reasontype, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[SrViewFields, SrViewRow] = new Impl(java.util.List.of())

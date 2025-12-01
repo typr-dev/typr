@@ -22,13 +22,13 @@ import zio.jdbc.ZConnection
 import zio.stream.ZStream
 
 case class TestOrganisasjonRepoMock(map: scala.collection.mutable.Map[TestOrganisasjonId, TestOrganisasjonRow] = scala.collection.mutable.Map.empty[TestOrganisasjonId, TestOrganisasjonRow]) extends TestOrganisasjonRepo {
-  def delete: DeleteBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = DeleteBuilderMock(DeleteParams.empty, TestOrganisasjonFields.structure, map)
+  override def delete: DeleteBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = DeleteBuilderMock(DeleteParams.empty, TestOrganisasjonFields.structure, map)
 
-  def deleteById(organisasjonskode: TestOrganisasjonId): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(organisasjonskode).isDefined)
+  override def deleteById(organisasjonskode: TestOrganisasjonId): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(organisasjonskode).isDefined)
 
-  def deleteByIds(organisasjonskodes: Array[TestOrganisasjonId]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(organisasjonskodes.map(id => map.remove(id)).count(_.isDefined).toLong)
+  override def deleteByIds(organisasjonskodes: Array[TestOrganisasjonId]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(organisasjonskodes.map(id => map.remove(id)).count(_.isDefined).toLong)
 
-  def insert(unsaved: TestOrganisasjonRow): ZIO[ZConnection, Throwable, TestOrganisasjonRow] = {
+  override def insert(unsaved: TestOrganisasjonRow): ZIO[ZConnection, Throwable, TestOrganisasjonRow] = {
   ZIO.succeed {
     val _ =
       if (map.contains(unsaved.organisasjonskode))
@@ -40,7 +40,7 @@ case class TestOrganisasjonRepoMock(map: scala.collection.mutable.Map[TestOrgani
   }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, TestOrganisasjonRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {
@@ -52,24 +52,24 @@ case class TestOrganisasjonRepoMock(map: scala.collection.mutable.Map[TestOrgani
     }.runLast.map(_.getOrElse(0L))
   }
 
-  def select: SelectBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = SelectBuilderMock(TestOrganisasjonFields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
+  override def select: SelectBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = SelectBuilderMock(TestOrganisasjonFields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
 
-  def selectAll: ZStream[ZConnection, Throwable, TestOrganisasjonRow] = ZStream.fromIterable(map.values)
+  override def selectAll: ZStream[ZConnection, Throwable, TestOrganisasjonRow] = ZStream.fromIterable(map.values)
 
-  def selectById(organisasjonskode: TestOrganisasjonId): ZIO[ZConnection, Throwable, Option[TestOrganisasjonRow]] = ZIO.succeed(map.get(organisasjonskode))
+  override def selectById(organisasjonskode: TestOrganisasjonId): ZIO[ZConnection, Throwable, Option[TestOrganisasjonRow]] = ZIO.succeed(map.get(organisasjonskode))
 
-  def selectByIds(organisasjonskodes: Array[TestOrganisasjonId]): ZStream[ZConnection, Throwable, TestOrganisasjonRow] = ZStream.fromIterable(organisasjonskodes.flatMap(map.get))
+  override def selectByIds(organisasjonskodes: Array[TestOrganisasjonId]): ZStream[ZConnection, Throwable, TestOrganisasjonRow] = ZStream.fromIterable(organisasjonskodes.flatMap(map.get))
 
-  def selectByIdsTracked(organisasjonskodes: Array[TestOrganisasjonId]): ZIO[ZConnection, Throwable, Map[TestOrganisasjonId, TestOrganisasjonRow]] = {
+  override def selectByIdsTracked(organisasjonskodes: Array[TestOrganisasjonId]): ZIO[ZConnection, Throwable, Map[TestOrganisasjonId, TestOrganisasjonRow]] = {
     selectByIds(organisasjonskodes).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.organisasjonskode, x)).toMap
       organisasjonskodes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = UpdateBuilderMock(UpdateParams.empty, TestOrganisasjonFields.structure, map)
+  override def update: UpdateBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = UpdateBuilderMock(UpdateParams.empty, TestOrganisasjonFields.structure, map)
 
-  def upsert(unsaved: TestOrganisasjonRow): ZIO[ZConnection, Throwable, UpdateResult[TestOrganisasjonRow]] = {
+  override def upsert(unsaved: TestOrganisasjonRow): ZIO[ZConnection, Throwable, UpdateResult[TestOrganisasjonRow]] = {
     ZIO.succeed {
       map.put(unsaved.organisasjonskode, unsaved): @nowarn
       UpdateResult(1, Chunk.single(unsaved))
@@ -77,7 +77,7 @@ case class TestOrganisasjonRepoMock(map: scala.collection.mutable.Map[TestOrgani
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, TestOrganisasjonRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

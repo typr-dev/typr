@@ -25,11 +25,11 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class BusinessentitycontactRepoImpl extends BusinessentitycontactRepo {
-  def delete: DeleteBuilder[BusinessentitycontactFields, BusinessentitycontactRow] = DeleteBuilder.of(""""person"."businessentitycontact"""", BusinessentitycontactFields.structure, BusinessentitycontactRow.rowParser(1).*)
+  override def delete: DeleteBuilder[BusinessentitycontactFields, BusinessentitycontactRow] = DeleteBuilder.of(""""person"."businessentitycontact"""", BusinessentitycontactFields.structure, BusinessentitycontactRow.rowParser(1).*)
 
-  def deleteById(compositeId: BusinessentitycontactId)(implicit c: Connection): Boolean = SQL"""delete from "person"."businessentitycontact" where "businessentityid" = ${ParameterValue(compositeId.businessentityid, null, BusinessentityId.toStatement)} AND "personid" = ${ParameterValue(compositeId.personid, null, BusinessentityId.toStatement)} AND "contacttypeid" = ${ParameterValue(compositeId.contacttypeid, null, ContacttypeId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(compositeId: BusinessentitycontactId)(implicit c: Connection): Boolean = SQL"""delete from "person"."businessentitycontact" where "businessentityid" = ${ParameterValue(compositeId.businessentityid, null, BusinessentityId.toStatement)} AND "personid" = ${ParameterValue(compositeId.personid, null, BusinessentityId.toStatement)} AND "contacttypeid" = ${ParameterValue(compositeId.contacttypeid, null, ContacttypeId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(compositeIds: Array[BusinessentitycontactId])(implicit c: Connection): Int = {
+  override def deleteByIds(compositeIds: Array[BusinessentitycontactId])(implicit c: Connection): Int = {
     val businessentityid = compositeIds.map(_.businessentityid)
     val personid = compositeIds.map(_.personid)
     val contacttypeid = compositeIds.map(_.contacttypeid)
@@ -40,7 +40,7 @@ class BusinessentitycontactRepoImpl extends BusinessentitycontactRepo {
     """.executeUpdate()
   }
 
-  def insert(unsaved: BusinessentitycontactRow)(implicit c: Connection): BusinessentitycontactRow = {
+  override def insert(unsaved: BusinessentitycontactRow)(implicit c: Connection): BusinessentitycontactRow = {
   SQL"""insert into "person"."businessentitycontact"("businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate")
     values (${ParameterValue(unsaved.businessentityid, null, BusinessentityId.toStatement)}::int4, ${ParameterValue(unsaved.personid, null, BusinessentityId.toStatement)}::int4, ${ParameterValue(unsaved.contacttypeid, null, ContacttypeId.toStatement)}::int4, ${ParameterValue(unsaved.rowguid, null, TypoUUID.toStatement)}::uuid, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text
@@ -48,7 +48,7 @@ class BusinessentitycontactRepoImpl extends BusinessentitycontactRepo {
     .executeInsert(BusinessentitycontactRow.rowParser(1).single)
   }
 
-  def insert(unsaved: BusinessentitycontactRowUnsaved)(implicit c: Connection): BusinessentitycontactRow = {
+  override def insert(unsaved: BusinessentitycontactRowUnsaved)(implicit c: Connection): BusinessentitycontactRow = {
     val namedParameters = List(
       Some((NamedParameter("businessentityid", ParameterValue(unsaved.businessentityid, null, BusinessentityId.toStatement)), "::int4")),
       Some((NamedParameter("personid", ParameterValue(unsaved.personid, null, BusinessentityId.toStatement)), "::int4")),
@@ -78,33 +78,33 @@ class BusinessentitycontactRepoImpl extends BusinessentitycontactRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[BusinessentitycontactRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "person"."businessentitycontact"("businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved)(BusinessentitycontactRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[BusinessentitycontactRowUnsaved],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "person"."businessentitycontact"("businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(BusinessentitycontactRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[BusinessentitycontactFields, BusinessentitycontactRow] = SelectBuilder.of(""""person"."businessentitycontact"""", BusinessentitycontactFields.structure, BusinessentitycontactRow.rowParser)
+  override def select: SelectBuilder[BusinessentitycontactFields, BusinessentitycontactRow] = SelectBuilder.of(""""person"."businessentitycontact"""", BusinessentitycontactFields.structure, BusinessentitycontactRow.rowParser)
 
-  def selectAll(implicit c: Connection): List[BusinessentitycontactRow] = {
+  override def selectAll(implicit c: Connection): List[BusinessentitycontactRow] = {
     SQL"""select "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text
     from "person"."businessentitycontact"
     """.as(BusinessentitycontactRow.rowParser(1).*)
   }
 
-  def selectById(compositeId: BusinessentitycontactId)(implicit c: Connection): Option[BusinessentitycontactRow] = {
+  override def selectById(compositeId: BusinessentitycontactId)(implicit c: Connection): Option[BusinessentitycontactRow] = {
     SQL"""select "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text
     from "person"."businessentitycontact"
     where "businessentityid" = ${ParameterValue(compositeId.businessentityid, null, BusinessentityId.toStatement)} AND "personid" = ${ParameterValue(compositeId.personid, null, BusinessentityId.toStatement)} AND "contacttypeid" = ${ParameterValue(compositeId.contacttypeid, null, ContacttypeId.toStatement)}
     """.as(BusinessentitycontactRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(compositeIds: Array[BusinessentitycontactId])(implicit c: Connection): List[BusinessentitycontactRow] = {
+  override def selectByIds(compositeIds: Array[BusinessentitycontactId])(implicit c: Connection): List[BusinessentitycontactRow] = {
     val businessentityid = compositeIds.map(_.businessentityid)
     val personid = compositeIds.map(_.personid)
     val contacttypeid = compositeIds.map(_.contacttypeid)
@@ -115,14 +115,14 @@ class BusinessentitycontactRepoImpl extends BusinessentitycontactRepo {
     """.as(BusinessentitycontactRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(compositeIds: Array[BusinessentitycontactId])(implicit c: Connection): Map[BusinessentitycontactId, BusinessentitycontactRow] = {
+  override def selectByIdsTracked(compositeIds: Array[BusinessentitycontactId])(implicit c: Connection): Map[BusinessentitycontactId, BusinessentitycontactRow] = {
     val byId = selectByIds(compositeIds).view.map(x => (x.compositeId, x)).toMap
     compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[BusinessentitycontactFields, BusinessentitycontactRow] = UpdateBuilder.of(""""person"."businessentitycontact"""", BusinessentitycontactFields.structure, BusinessentitycontactRow.rowParser(1).*)
+  override def update: UpdateBuilder[BusinessentitycontactFields, BusinessentitycontactRow] = UpdateBuilder.of(""""person"."businessentitycontact"""", BusinessentitycontactFields.structure, BusinessentitycontactRow.rowParser(1).*)
 
-  def update(row: BusinessentitycontactRow)(implicit c: Connection): Option[BusinessentitycontactRow] = {
+  override def update(row: BusinessentitycontactRow)(implicit c: Connection): Option[BusinessentitycontactRow] = {
     val compositeId = row.compositeId
     SQL"""update "person"."businessentitycontact"
     set "rowguid" = ${ParameterValue(row.rowguid, null, TypoUUID.toStatement)}::uuid,
@@ -132,7 +132,7 @@ class BusinessentitycontactRepoImpl extends BusinessentitycontactRepo {
     """.executeInsert(BusinessentitycontactRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: BusinessentitycontactRow)(implicit c: Connection): BusinessentitycontactRow = {
+  override def upsert(unsaved: BusinessentitycontactRow)(implicit c: Connection): BusinessentitycontactRow = {
   SQL"""insert into "person"."businessentitycontact"("businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate")
     values (
       ${ParameterValue(unsaved.businessentityid, null, BusinessentityId.toStatement)}::int4,
@@ -150,7 +150,7 @@ class BusinessentitycontactRepoImpl extends BusinessentitycontactRepo {
     .executeInsert(BusinessentitycontactRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[BusinessentitycontactRow])(implicit c: Connection): List[BusinessentitycontactRow] = {
+  override def upsertBatch(unsaved: Iterable[BusinessentitycontactRow])(implicit c: Connection): List[BusinessentitycontactRow] = {
     def toNamedParameter(row: BusinessentitycontactRow): List[NamedParameter] = List(
       NamedParameter("businessentityid", ParameterValue(row.businessentityid, null, BusinessentityId.toStatement)),
       NamedParameter("personid", ParameterValue(row.personid, null, BusinessentityId.toStatement)),
@@ -158,6 +158,7 @@ class BusinessentitycontactRepoImpl extends BusinessentitycontactRepo {
       NamedParameter("rowguid", ParameterValue(row.rowguid, null, TypoUUID.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -179,7 +180,7 @@ class BusinessentitycontactRepoImpl extends BusinessentitycontactRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[BusinessentitycontactRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

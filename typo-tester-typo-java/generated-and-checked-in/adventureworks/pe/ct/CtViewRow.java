@@ -10,7 +10,6 @@ import adventureworks.person.contacttype.ContacttypeId;
 import adventureworks.public_.Name;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple4;
 
 /** View: pe.ct */
 public record CtViewRow(
@@ -43,5 +42,5 @@ public record CtViewRow(
     return new CtViewRow(id, contacttypeid, name, modifieddate);
   };
 
-  static RowParser<CtViewRow> _rowParser = RowParsers.of(ContacttypeId.pgType, ContacttypeId.pgType, Name.pgType, TypoLocalDateTime.pgType, CtViewRow::new, row -> new Tuple4<>(row.id(), row.contacttypeid(), row.name(), row.modifieddate()));;
+  static RowParser<CtViewRow> _rowParser = RowParsers.of(ContacttypeId.pgType, ContacttypeId.pgType, Name.pgType, TypoLocalDateTime.pgType, CtViewRow::new, row -> new Object[]{row.id(), row.contacttypeid(), row.name(), row.modifieddate()});;
 }

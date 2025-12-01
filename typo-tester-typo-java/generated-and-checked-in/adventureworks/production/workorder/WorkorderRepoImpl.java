@@ -9,7 +9,6 @@ import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.customtypes.TypoShort;
 import adventureworks.production.product.ProductId;
 import adventureworks.production.scrapreason.ScrapreasonId;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,12 +26,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class WorkorderRepoImpl implements WorkorderRepo {
+  @Override
   public DeleteBuilder<WorkorderFields, WorkorderRow> delete() {
     return DeleteBuilder.of("production.workorder", WorkorderFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     WorkorderId workorderid,
     Connection c
@@ -46,6 +46,7 @@ public class WorkorderRepoImpl implements WorkorderRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     WorkorderId[] workorderids,
     Connection c
@@ -62,6 +63,7 @@ public class WorkorderRepoImpl implements WorkorderRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public WorkorderRow insert(
     WorkorderRow unsaved,
     Connection c
@@ -95,84 +97,90 @@ public class WorkorderRepoImpl implements WorkorderRepo {
       .updateReturning(WorkorderRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public WorkorderRow insert(
     WorkorderRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"productid\""));
-      values.add(interpolate(
-        ProductId.pgType.encode(unsaved.productid()),
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"productid\""));
+    values.add(interpolate(
+      ProductId.pgType.encode(unsaved.productid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"orderqty\""));
+    values.add(interpolate(
+      PgTypes.int4.encode(unsaved.orderqty()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"scrappedqty\""));
+    values.add(interpolate(
+      TypoShort.pgType.encode(unsaved.scrappedqty()),
+      typo.runtime.Fragment.lit("::int2")
+    ));
+    columns.add(Fragment.lit("\"startdate\""));
+    values.add(interpolate(
+      TypoLocalDateTime.pgType.encode(unsaved.startdate()),
+      typo.runtime.Fragment.lit("::timestamp")
+    ));
+    columns.add(Fragment.lit("\"enddate\""));
+    values.add(interpolate(
+      TypoLocalDateTime.pgType.opt().encode(unsaved.enddate()),
+      typo.runtime.Fragment.lit("::timestamp")
+    ));
+    columns.add(Fragment.lit("\"duedate\""));
+    values.add(interpolate(
+      TypoLocalDateTime.pgType.encode(unsaved.duedate()),
+      typo.runtime.Fragment.lit("::timestamp")
+    ));
+    columns.add(Fragment.lit("\"scrapreasonid\""));
+    values.add(interpolate(
+      ScrapreasonId.pgType.opt().encode(unsaved.scrapreasonid()),
+      typo.runtime.Fragment.lit("::int2")
+    ));
+    unsaved.workorderid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"workorderid\""));
+        values.add(interpolate(
+        WorkorderId.pgType.encode(value),
         typo.runtime.Fragment.lit("::int4")
       ));
-      columns.add(Fragment.lit("\"orderqty\""));
-      values.add(interpolate(
-        PgTypes.int4.encode(unsaved.orderqty()),
-        typo.runtime.Fragment.lit("::int4")
-      ));
-      columns.add(Fragment.lit("\"scrappedqty\""));
-      values.add(interpolate(
-        TypoShort.pgType.encode(unsaved.scrappedqty()),
-        typo.runtime.Fragment.lit("::int2")
-      ));
-      columns.add(Fragment.lit("\"startdate\""));
-      values.add(interpolate(
-        TypoLocalDateTime.pgType.encode(unsaved.startdate()),
+      }
+    );;
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
         typo.runtime.Fragment.lit("::timestamp")
       ));
-      columns.add(Fragment.lit("\"enddate\""));
-      values.add(interpolate(
-        TypoLocalDateTime.pgType.opt().encode(unsaved.enddate()),
-        typo.runtime.Fragment.lit("::timestamp")
-      ));
-      columns.add(Fragment.lit("\"duedate\""));
-      values.add(interpolate(
-        TypoLocalDateTime.pgType.encode(unsaved.duedate()),
-        typo.runtime.Fragment.lit("::timestamp")
-      ));
-      columns.add(Fragment.lit("\"scrapreasonid\""));
-      values.add(interpolate(
-        ScrapreasonId.pgType.opt().encode(unsaved.scrapreasonid()),
-        typo.runtime.Fragment.lit("::int2")
-      ));
-      unsaved.workorderid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"workorderid\""));
-          values.add(interpolate(
-            WorkorderId.pgType.encode(value),
-            typo.runtime.Fragment.lit("::int4")
-          ));
-        }
-      );;
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "production"."workorder"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "production"."workorder"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(WorkorderRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<WorkorderRow> unsaved,
     Integer batchSize,
@@ -184,6 +192,7 @@ public class WorkorderRepoImpl implements WorkorderRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<WorkorderRowUnsaved> unsaved,
     Integer batchSize,
@@ -194,17 +203,20 @@ public class WorkorderRepoImpl implements WorkorderRepo {
     """), batchSize, unsaved, c, WorkorderRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<WorkorderFields, WorkorderRow> select() {
     return SelectBuilder.of("production.workorder", WorkorderFields.structure(), WorkorderRow._rowParser);
   };
 
+  @Override
   public List<WorkorderRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text
        from "production"."workorder"
-    """)).as(WorkorderRow._rowParser.all()).runUnchecked(c);
+    """)).query(WorkorderRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<WorkorderRow> selectById(
     WorkorderId workorderid,
     Connection c
@@ -216,9 +228,10 @@ public class WorkorderRepoImpl implements WorkorderRepo {
          where "workorderid" = """),
       WorkorderId.pgType.encode(workorderid),
       typo.runtime.Fragment.lit("")
-    ).as(WorkorderRow._rowParser.first()).runUnchecked(c);
+    ).query(WorkorderRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<WorkorderRow> selectByIds(
     WorkorderId[] workorderids,
     Connection c
@@ -230,68 +243,72 @@ public class WorkorderRepoImpl implements WorkorderRepo {
          where "workorderid" = ANY("""),
       WorkorderId.pgTypeArray.encode(workorderids),
       typo.runtime.Fragment.lit(")")
-    ).as(WorkorderRow._rowParser.all()).runUnchecked(c);
+    ).query(WorkorderRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<WorkorderId, WorkorderRow> selectByIdsTracked(
     WorkorderId[] workorderids,
     Connection c
   ) {
-    Map<WorkorderId, WorkorderRow> ret = new HashMap<>();;
-      selectByIds(workorderids, c).forEach(row -> ret.put(row.workorderid(), row));
+    HashMap<WorkorderId, WorkorderRow> ret = new HashMap<WorkorderId, WorkorderRow>();
+    selectByIds(workorderids, c).forEach(row -> ret.put(row.workorderid(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<WorkorderFields, WorkorderRow> update() {
     return UpdateBuilder.of("production.workorder", WorkorderFields.structure(), WorkorderRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     WorkorderRow row,
     Connection c
   ) {
     WorkorderId workorderid = row.workorderid();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "production"."workorder"
-                set "productid" = """),
-             ProductId.pgType.encode(row.productid()),
-             typo.runtime.Fragment.lit("""
-                ::int4,
-                "orderqty" = """),
-             PgTypes.int4.encode(row.orderqty()),
-             typo.runtime.Fragment.lit("""
-                ::int4,
-                "scrappedqty" = """),
-             TypoShort.pgType.encode(row.scrappedqty()),
-             typo.runtime.Fragment.lit("""
-                ::int2,
-                "startdate" = """),
-             TypoLocalDateTime.pgType.encode(row.startdate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp,
-                "enddate" = """),
-             TypoLocalDateTime.pgType.opt().encode(row.enddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp,
-                "duedate" = """),
-             TypoLocalDateTime.pgType.encode(row.duedate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp,
-                "scrapreasonid" = """),
-             ScrapreasonId.pgType.opt().encode(row.scrapreasonid()),
-             typo.runtime.Fragment.lit("""
-                ::int2,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "workorderid" = """),
-             WorkorderId.pgType.encode(workorderid),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "production"."workorder"
+         set "productid" = """),
+      ProductId.pgType.encode(row.productid()),
+      typo.runtime.Fragment.lit("""
+         ::int4,
+         "orderqty" = """),
+      PgTypes.int4.encode(row.orderqty()),
+      typo.runtime.Fragment.lit("""
+         ::int4,
+         "scrappedqty" = """),
+      TypoShort.pgType.encode(row.scrappedqty()),
+      typo.runtime.Fragment.lit("""
+         ::int2,
+         "startdate" = """),
+      TypoLocalDateTime.pgType.encode(row.startdate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp,
+         "enddate" = """),
+      TypoLocalDateTime.pgType.opt().encode(row.enddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp,
+         "duedate" = """),
+      TypoLocalDateTime.pgType.encode(row.duedate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp,
+         "scrapreasonid" = """),
+      ScrapreasonId.pgType.opt().encode(row.scrapreasonid()),
+      typo.runtime.Fragment.lit("""
+         ::int2,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "workorderid" = """),
+      WorkorderId.pgType.encode(workorderid),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public WorkorderRow upsert(
     WorkorderRow unsaved,
     Connection c
@@ -336,6 +353,7 @@ public class WorkorderRepoImpl implements WorkorderRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<WorkorderRow> upsertBatch(
     Iterator<WorkorderRow> unsaved,
     Connection c
@@ -360,31 +378,32 @@ public class WorkorderRepoImpl implements WorkorderRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<WorkorderRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table workorder_TEMP (like "production"."workorder") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy workorder_TEMP("workorderid", "productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "modifieddate") from stdin
-      """), batchSize, unsaved, c, WorkorderRow.pgText);
+    create temporary table workorder_TEMP (like "production"."workorder") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy workorder_TEMP("workorderid", "productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "modifieddate") from stdin
+    """), batchSize, unsaved, c, WorkorderRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "production"."workorder"("workorderid", "productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "modifieddate")
-              select * from workorder_TEMP
-              on conflict ("workorderid")
-              do update set
-                "productid" = EXCLUDED."productid",
-              "orderqty" = EXCLUDED."orderqty",
-              "scrappedqty" = EXCLUDED."scrappedqty",
-              "startdate" = EXCLUDED."startdate",
-              "enddate" = EXCLUDED."enddate",
-              "duedate" = EXCLUDED."duedate",
-              "scrapreasonid" = EXCLUDED."scrapreasonid",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table workorder_TEMP;""")).update().runUnchecked(c);
+       insert into "production"."workorder"("workorderid", "productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "modifieddate")
+       select * from workorder_TEMP
+       on conflict ("workorderid")
+       do update set
+         "productid" = EXCLUDED."productid",
+       "orderqty" = EXCLUDED."orderqty",
+       "scrappedqty" = EXCLUDED."scrappedqty",
+       "startdate" = EXCLUDED."startdate",
+       "enddate" = EXCLUDED."enddate",
+       "duedate" = EXCLUDED."duedate",
+       "scrapreasonid" = EXCLUDED."scrapreasonid",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table workorder_TEMP;""")).update().runUnchecked(c);
   };
 }

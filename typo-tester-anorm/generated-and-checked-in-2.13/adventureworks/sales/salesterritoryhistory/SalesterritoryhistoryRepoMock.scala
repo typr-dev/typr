@@ -21,13 +21,13 @@ case class SalesterritoryhistoryRepoMock(
   toRow: SalesterritoryhistoryRowUnsaved => SalesterritoryhistoryRow,
   map: scala.collection.mutable.Map[SalesterritoryhistoryId, SalesterritoryhistoryRow] = scala.collection.mutable.Map.empty[SalesterritoryhistoryId, SalesterritoryhistoryRow]
 ) extends SalesterritoryhistoryRepo {
-  def delete: DeleteBuilder[SalesterritoryhistoryFields, SalesterritoryhistoryRow] = DeleteBuilderMock(DeleteParams.empty, SalesterritoryhistoryFields.structure, map)
+  override def delete: DeleteBuilder[SalesterritoryhistoryFields, SalesterritoryhistoryRow] = DeleteBuilderMock(DeleteParams.empty, SalesterritoryhistoryFields.structure, map)
 
-  def deleteById(compositeId: SalesterritoryhistoryId)(implicit c: Connection): Boolean = map.remove(compositeId).isDefined
+  override def deleteById(compositeId: SalesterritoryhistoryId)(implicit c: Connection): Boolean = map.remove(compositeId).isDefined
 
-  def deleteByIds(compositeIds: Array[SalesterritoryhistoryId])(implicit c: Connection): Int = compositeIds.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(compositeIds: Array[SalesterritoryhistoryId])(implicit c: Connection): Int = compositeIds.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: SalesterritoryhistoryRow)(implicit c: Connection): SalesterritoryhistoryRow = {
+  override def insert(unsaved: SalesterritoryhistoryRow)(implicit c: Connection): SalesterritoryhistoryRow = {
     val _ = if (map.contains(unsaved.compositeId))
       sys.error(s"id ${unsaved.compositeId} already exists")
     else
@@ -36,9 +36,9 @@ case class SalesterritoryhistoryRepoMock(
     unsaved
   }
 
-  def insert(unsaved: SalesterritoryhistoryRowUnsaved)(implicit c: Connection): SalesterritoryhistoryRow = insert(toRow(unsaved))
+  override def insert(unsaved: SalesterritoryhistoryRowUnsaved)(implicit c: Connection): SalesterritoryhistoryRow = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[SalesterritoryhistoryRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = {
@@ -49,7 +49,7 @@ case class SalesterritoryhistoryRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[SalesterritoryhistoryRowUnsaved],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = {
@@ -60,34 +60,34 @@ case class SalesterritoryhistoryRepoMock(
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[SalesterritoryhistoryFields, SalesterritoryhistoryRow] = SelectBuilderMock(SalesterritoryhistoryFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[SalesterritoryhistoryFields, SalesterritoryhistoryRow] = SelectBuilderMock(SalesterritoryhistoryFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(implicit c: Connection): List[SalesterritoryhistoryRow] = map.values.toList
+  override def selectAll(implicit c: Connection): List[SalesterritoryhistoryRow] = map.values.toList
 
-  def selectById(compositeId: SalesterritoryhistoryId)(implicit c: Connection): Option[SalesterritoryhistoryRow] = map.get(compositeId)
+  override def selectById(compositeId: SalesterritoryhistoryId)(implicit c: Connection): Option[SalesterritoryhistoryRow] = map.get(compositeId)
 
-  def selectByIds(compositeIds: Array[SalesterritoryhistoryId])(implicit c: Connection): List[SalesterritoryhistoryRow] = compositeIds.flatMap(map.get).toList
+  override def selectByIds(compositeIds: Array[SalesterritoryhistoryId])(implicit c: Connection): List[SalesterritoryhistoryRow] = compositeIds.flatMap(map.get).toList
 
-  def selectByIdsTracked(compositeIds: Array[SalesterritoryhistoryId])(implicit c: Connection): Map[SalesterritoryhistoryId, SalesterritoryhistoryRow] = {
+  override def selectByIdsTracked(compositeIds: Array[SalesterritoryhistoryId])(implicit c: Connection): Map[SalesterritoryhistoryId, SalesterritoryhistoryRow] = {
     val byId = selectByIds(compositeIds).view.map(x => (x.compositeId, x)).toMap
     compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[SalesterritoryhistoryFields, SalesterritoryhistoryRow] = UpdateBuilderMock(UpdateParams.empty, SalesterritoryhistoryFields.structure, map)
+  override def update: UpdateBuilder[SalesterritoryhistoryFields, SalesterritoryhistoryRow] = UpdateBuilderMock(UpdateParams.empty, SalesterritoryhistoryFields.structure, map)
 
-  def update(row: SalesterritoryhistoryRow)(implicit c: Connection): Option[SalesterritoryhistoryRow] = {
+  override def update(row: SalesterritoryhistoryRow)(implicit c: Connection): Option[SalesterritoryhistoryRow] = {
     map.get(row.compositeId).map { _ =>
       map.put(row.compositeId, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: SalesterritoryhistoryRow)(implicit c: Connection): SalesterritoryhistoryRow = {
+  override def upsert(unsaved: SalesterritoryhistoryRow)(implicit c: Connection): SalesterritoryhistoryRow = {
     map.put(unsaved.compositeId, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[SalesterritoryhistoryRow])(implicit c: Connection): List[SalesterritoryhistoryRow] = {
+  override def upsertBatch(unsaved: Iterable[SalesterritoryhistoryRow])(implicit c: Connection): List[SalesterritoryhistoryRow] = {
     unsaved.map { row =>
       map += (row.compositeId -> row)
       row
@@ -95,7 +95,7 @@ case class SalesterritoryhistoryRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[SalesterritoryhistoryRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

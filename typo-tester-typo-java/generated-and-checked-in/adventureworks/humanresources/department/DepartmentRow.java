@@ -11,7 +11,6 @@ import adventureworks.public_.Name;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple4;
 
 /** Table: humanresources.department
   * Lookup table containing the departments within the Adventure Works Cycles company.
@@ -51,7 +50,7 @@ public record DepartmentRow(
     return new DepartmentRow(departmentid, name, groupname, modifieddate);
   };
 
-  static RowParser<DepartmentRow> _rowParser = RowParsers.of(DepartmentId.pgType, Name.pgType, Name.pgType, TypoLocalDateTime.pgType, DepartmentRow::new, row -> new Tuple4<>(row.departmentid(), row.name(), row.groupname(), row.modifieddate()));;
+  static RowParser<DepartmentRow> _rowParser = RowParsers.of(DepartmentId.pgType, Name.pgType, Name.pgType, TypoLocalDateTime.pgType, DepartmentRow::new, row -> new Object[]{row.departmentid(), row.name(), row.groupname(), row.modifieddate()});;
 
   static public PgText<DepartmentRow> pgText =
     PgText.from(_rowParser);

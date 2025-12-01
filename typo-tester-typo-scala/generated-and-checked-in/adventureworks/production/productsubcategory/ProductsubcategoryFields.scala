@@ -38,7 +38,7 @@ object ProductsubcategoryFields {
 
     override lazy val fields: ProductsubcategoryFields = {
       new ProductsubcategoryFields {
-        def productsubcategoryid: IdField[ProductsubcategoryId, ProductsubcategoryRow] = {
+        override def productsubcategoryid: IdField[ProductsubcategoryId, ProductsubcategoryRow] = {
           new IdField[ProductsubcategoryId, ProductsubcategoryRow](
             _path,
             "productsubcategoryid",
@@ -49,7 +49,7 @@ object ProductsubcategoryFields {
             ProductsubcategoryId.pgType
           )
         }
-        def productcategoryid: Field[ProductcategoryId, ProductsubcategoryRow] = {
+        override def productcategoryid: Field[ProductcategoryId, ProductsubcategoryRow] = {
           new Field[ProductcategoryId, ProductsubcategoryRow](
             _path,
             "productcategoryid",
@@ -60,7 +60,7 @@ object ProductsubcategoryFields {
             ProductcategoryId.pgType
           )
         }
-        def name: Field[Name, ProductsubcategoryRow] = {
+        override def name: Field[Name, ProductsubcategoryRow] = {
           new Field[Name, ProductsubcategoryRow](
             _path,
             "name",
@@ -71,7 +71,7 @@ object ProductsubcategoryFields {
             Name.pgType
           )
         }
-        def rowguid: Field[TypoUUID, ProductsubcategoryRow] = {
+        override def rowguid: Field[TypoUUID, ProductsubcategoryRow] = {
           new Field[TypoUUID, ProductsubcategoryRow](
             _path,
             "rowguid",
@@ -82,7 +82,7 @@ object ProductsubcategoryFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, ProductsubcategoryRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, ProductsubcategoryRow] = {
           new Field[TypoLocalDateTime, ProductsubcategoryRow](
             _path,
             "modifieddate",
@@ -98,7 +98,7 @@ object ProductsubcategoryFields {
 
     override lazy val columns: java.util.List[FieldLike[?, ProductsubcategoryRow]] = java.util.List.of(this.fields.productsubcategoryid, this.fields.productcategoryid, this.fields.name, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[ProductsubcategoryFields, ProductsubcategoryRow] = new Impl(java.util.List.of())

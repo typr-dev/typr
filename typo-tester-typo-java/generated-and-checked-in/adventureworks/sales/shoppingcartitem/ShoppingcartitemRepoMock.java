@@ -5,6 +5,7 @@
  */
 package adventureworks.sales.shoppingcartitem;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record ShoppingcartitemRepoMock(
     return new ShoppingcartitemRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<ShoppingcartitemFields, ShoppingcartitemRow> delete() {
     return new DeleteBuilderMock<>(ShoppingcartitemFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.shoppingcartitemid(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     ShoppingcartitemId shoppingcartitemid,
     Connection c
@@ -52,28 +55,31 @@ public record ShoppingcartitemRepoMock(
     return Optional.ofNullable(map.remove(shoppingcartitemid)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     ShoppingcartitemId[] shoppingcartitemids,
     Connection c
   ) {
     var count = 0;
-      for (var id : shoppingcartitemids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : shoppingcartitemids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public ShoppingcartitemRow insert(
     ShoppingcartitemRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.shoppingcartitemid())) {
-        throw new RuntimeException(str("id $unsaved.shoppingcartitemid() already exists"));
-      };
-      map.put(unsaved.shoppingcartitemid(), unsaved);
+      throw new RuntimeException(str("id $unsaved.shoppingcartitemid() already exists"));
+    };
+    map.put(unsaved.shoppingcartitemid(), unsaved);
     return unsaved;
   };
 
+  @Override
   public ShoppingcartitemRow insert(
     ShoppingcartitemRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record ShoppingcartitemRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<ShoppingcartitemRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.shoppingcartitemid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.shoppingcartitemid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<ShoppingcartitemRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.shoppingcartitemid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.shoppingcartitemid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<ShoppingcartitemFields, ShoppingcartitemRow> select() {
     return new SelectBuilderMock<>(ShoppingcartitemFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<ShoppingcartitemRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<ShoppingcartitemRow> selectById(
     ShoppingcartitemId shoppingcartitemid,
     Connection c
@@ -126,38 +137,43 @@ public record ShoppingcartitemRepoMock(
     return Optional.ofNullable(map.get(shoppingcartitemid));
   };
 
+  @Override
   public List<ShoppingcartitemRow> selectByIds(
     ShoppingcartitemId[] shoppingcartitemids,
     Connection c
   ) {
     var result = new ArrayList<ShoppingcartitemRow>();
-      for (var id : shoppingcartitemids) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : shoppingcartitemids) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<ShoppingcartitemId, ShoppingcartitemRow> selectByIdsTracked(
     ShoppingcartitemId[] shoppingcartitemids,
     Connection c
   ) {
-    return selectByIds(shoppingcartitemids, c).stream().collect(Collectors.toMap((adventureworks.sales.shoppingcartitem.ShoppingcartitemRow row) -> row.shoppingcartitemid(), Function.identity()));
+    return selectByIds(shoppingcartitemids, c).stream().collect(Collectors.toMap((ShoppingcartitemRow row) -> row.shoppingcartitemid(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<ShoppingcartitemFields, ShoppingcartitemRow> update() {
     return new UpdateBuilderMock<>(ShoppingcartitemFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     ShoppingcartitemRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.shoppingcartitemid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.shoppingcartitemid(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.shoppingcartitemid(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public ShoppingcartitemRow upsert(
     ShoppingcartitemRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record ShoppingcartitemRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<ShoppingcartitemRow> upsertBatch(
     Iterator<ShoppingcartitemRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<ShoppingcartitemRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.shoppingcartitemid(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.shoppingcartitemid(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<ShoppingcartitemRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.shoppingcartitemid(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.shoppingcartitemid(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

@@ -16,7 +16,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple8;
 
 /** Table: person.stateprovince
   * State and province lookup table.
@@ -96,7 +95,7 @@ public record StateprovinceRow(
     return new StateprovinceRow(stateprovinceid, stateprovincecode, countryregioncode, isonlystateprovinceflag, name, territoryid, rowguid, modifieddate);
   };
 
-  static RowParser<StateprovinceRow> _rowParser = RowParsers.of(StateprovinceId.pgType, PgTypes.text, CountryregionId.pgType, Flag.pgType, Name.pgType, SalesterritoryId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, StateprovinceRow::new, row -> new Tuple8<>(row.stateprovinceid(), row.stateprovincecode(), row.countryregioncode(), row.isonlystateprovinceflag(), row.name(), row.territoryid(), row.rowguid(), row.modifieddate()));;
+  static RowParser<StateprovinceRow> _rowParser = RowParsers.of(StateprovinceId.pgType, PgTypes.text, CountryregionId.pgType, Flag.pgType, Name.pgType, SalesterritoryId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, StateprovinceRow::new, row -> new Object[]{row.stateprovinceid(), row.stateprovincecode(), row.countryregioncode(), row.isonlystateprovinceflag(), row.name(), row.territoryid(), row.rowguid(), row.modifieddate()});;
 
   static public PgText<StateprovinceRow> pgText =
     PgText.from(_rowParser);

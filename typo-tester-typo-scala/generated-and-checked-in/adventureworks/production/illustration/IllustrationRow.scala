@@ -12,7 +12,6 @@ import java.util.Optional
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple3
 
 /** Table: production.illustration
  * Bicycle assembly diagrams.
@@ -37,7 +36,7 @@ case class IllustrationRow(
 }
 
 object IllustrationRow {
-  val `_rowParser`: RowParser[IllustrationRow] = RowParsers.of(IllustrationId.pgType, TypoXml.pgType.opt(), TypoLocalDateTime.pgType, IllustrationRow.apply, row => new Tuple3(row.illustrationid, row.diagram, row.modifieddate))
+  val `_rowParser`: RowParser[IllustrationRow] = RowParsers.of(IllustrationId.pgType, TypoXml.pgType.opt(), TypoLocalDateTime.pgType, IllustrationRow.apply, row => Array(row.illustrationid, row.diagram, row.modifieddate))
 
   given pgText: PgText[IllustrationRow] = PgText.from(`_rowParser`)
 }

@@ -48,7 +48,7 @@ object SodViewFields {
 
     override lazy val fields: SodViewFields = {
       new SodViewFields {
-        def id: Field[Integer, SodViewRow] = {
+        override def id: Field[Integer, SodViewRow] = {
           new Field[Integer, SodViewRow](
             _path,
             "id",
@@ -59,7 +59,7 @@ object SodViewFields {
             PgTypes.int4
           )
         }
-        def salesorderid: Field[SalesorderheaderId, SodViewRow] = {
+        override def salesorderid: Field[SalesorderheaderId, SodViewRow] = {
           new Field[SalesorderheaderId, SodViewRow](
             _path,
             "salesorderid",
@@ -70,7 +70,7 @@ object SodViewFields {
             SalesorderheaderId.pgType
           )
         }
-        def salesorderdetailid: Field[Integer, SodViewRow] = {
+        override def salesorderdetailid: Field[Integer, SodViewRow] = {
           new Field[Integer, SodViewRow](
             _path,
             "salesorderdetailid",
@@ -81,7 +81,7 @@ object SodViewFields {
             PgTypes.int4
           )
         }
-        def carriertrackingnumber: OptField[/* max 25 chars */ String, SodViewRow] = {
+        override def carriertrackingnumber: OptField[/* max 25 chars */ String, SodViewRow] = {
           new OptField[/* max 25 chars */ String, SodViewRow](
             _path,
             "carriertrackingnumber",
@@ -92,7 +92,7 @@ object SodViewFields {
             PgTypes.text
           )
         }
-        def orderqty: Field[TypoShort, SodViewRow] = {
+        override def orderqty: Field[TypoShort, SodViewRow] = {
           new Field[TypoShort, SodViewRow](
             _path,
             "orderqty",
@@ -103,7 +103,7 @@ object SodViewFields {
             TypoShort.pgType
           )
         }
-        def productid: Field[ProductId, SodViewRow] = {
+        override def productid: Field[ProductId, SodViewRow] = {
           new Field[ProductId, SodViewRow](
             _path,
             "productid",
@@ -114,7 +114,7 @@ object SodViewFields {
             ProductId.pgType
           )
         }
-        def specialofferid: Field[SpecialofferId, SodViewRow] = {
+        override def specialofferid: Field[SpecialofferId, SodViewRow] = {
           new Field[SpecialofferId, SodViewRow](
             _path,
             "specialofferid",
@@ -125,7 +125,7 @@ object SodViewFields {
             SpecialofferId.pgType
           )
         }
-        def unitprice: Field[java.math.BigDecimal, SodViewRow] = {
+        override def unitprice: Field[java.math.BigDecimal, SodViewRow] = {
           new Field[java.math.BigDecimal, SodViewRow](
             _path,
             "unitprice",
@@ -136,7 +136,7 @@ object SodViewFields {
             PgTypes.numeric
           )
         }
-        def unitpricediscount: Field[java.math.BigDecimal, SodViewRow] = {
+        override def unitpricediscount: Field[java.math.BigDecimal, SodViewRow] = {
           new Field[java.math.BigDecimal, SodViewRow](
             _path,
             "unitpricediscount",
@@ -147,7 +147,7 @@ object SodViewFields {
             PgTypes.numeric
           )
         }
-        def rowguid: Field[TypoUUID, SodViewRow] = {
+        override def rowguid: Field[TypoUUID, SodViewRow] = {
           new Field[TypoUUID, SodViewRow](
             _path,
             "rowguid",
@@ -158,7 +158,7 @@ object SodViewFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, SodViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, SodViewRow] = {
           new Field[TypoLocalDateTime, SodViewRow](
             _path,
             "modifieddate",
@@ -174,7 +174,7 @@ object SodViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, SodViewRow]] = java.util.List.of(this.fields.id, this.fields.salesorderid, this.fields.salesorderdetailid, this.fields.carriertrackingnumber, this.fields.orderqty, this.fields.productid, this.fields.specialofferid, this.fields.unitprice, this.fields.unitpricediscount, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[SodViewFields, SodViewRow] = new Impl(java.util.List.of())

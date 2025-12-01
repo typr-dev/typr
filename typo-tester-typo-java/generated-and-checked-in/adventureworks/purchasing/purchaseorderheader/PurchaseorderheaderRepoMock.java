@@ -5,6 +5,7 @@
  */
 package adventureworks.purchasing.purchaseorderheader;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record PurchaseorderheaderRepoMock(
     return new PurchaseorderheaderRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<PurchaseorderheaderFields, PurchaseorderheaderRow> delete() {
     return new DeleteBuilderMock<>(PurchaseorderheaderFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.purchaseorderid(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     PurchaseorderheaderId purchaseorderid,
     Connection c
@@ -52,28 +55,31 @@ public record PurchaseorderheaderRepoMock(
     return Optional.ofNullable(map.remove(purchaseorderid)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     PurchaseorderheaderId[] purchaseorderids,
     Connection c
   ) {
     var count = 0;
-      for (var id : purchaseorderids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : purchaseorderids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public PurchaseorderheaderRow insert(
     PurchaseorderheaderRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.purchaseorderid())) {
-        throw new RuntimeException(str("id $unsaved.purchaseorderid() already exists"));
-      };
-      map.put(unsaved.purchaseorderid(), unsaved);
+      throw new RuntimeException(str("id $unsaved.purchaseorderid() already exists"));
+    };
+    map.put(unsaved.purchaseorderid(), unsaved);
     return unsaved;
   };
 
+  @Override
   public PurchaseorderheaderRow insert(
     PurchaseorderheaderRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record PurchaseorderheaderRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<PurchaseorderheaderRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.purchaseorderid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.purchaseorderid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<PurchaseorderheaderRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.purchaseorderid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.purchaseorderid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<PurchaseorderheaderFields, PurchaseorderheaderRow> select() {
     return new SelectBuilderMock<>(PurchaseorderheaderFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<PurchaseorderheaderRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<PurchaseorderheaderRow> selectById(
     PurchaseorderheaderId purchaseorderid,
     Connection c
@@ -126,38 +137,43 @@ public record PurchaseorderheaderRepoMock(
     return Optional.ofNullable(map.get(purchaseorderid));
   };
 
+  @Override
   public List<PurchaseorderheaderRow> selectByIds(
     PurchaseorderheaderId[] purchaseorderids,
     Connection c
   ) {
     var result = new ArrayList<PurchaseorderheaderRow>();
-      for (var id : purchaseorderids) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : purchaseorderids) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<PurchaseorderheaderId, PurchaseorderheaderRow> selectByIdsTracked(
     PurchaseorderheaderId[] purchaseorderids,
     Connection c
   ) {
-    return selectByIds(purchaseorderids, c).stream().collect(Collectors.toMap((adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderRow row) -> row.purchaseorderid(), Function.identity()));
+    return selectByIds(purchaseorderids, c).stream().collect(Collectors.toMap((PurchaseorderheaderRow row) -> row.purchaseorderid(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<PurchaseorderheaderFields, PurchaseorderheaderRow> update() {
     return new UpdateBuilderMock<>(PurchaseorderheaderFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     PurchaseorderheaderRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.purchaseorderid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.purchaseorderid(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.purchaseorderid(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public PurchaseorderheaderRow upsert(
     PurchaseorderheaderRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record PurchaseorderheaderRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<PurchaseorderheaderRow> upsertBatch(
     Iterator<PurchaseorderheaderRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<PurchaseorderheaderRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.purchaseorderid(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.purchaseorderid(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<PurchaseorderheaderRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.purchaseorderid(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.purchaseorderid(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

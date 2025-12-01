@@ -10,9 +10,9 @@ import typo.dsl.SelectBuilder
 import anorm.SqlStringInterpolation
 
 class EdhViewRepoImpl extends EdhViewRepo {
-  def select: SelectBuilder[EdhViewFields, EdhViewRow] = SelectBuilder.of(""""hr"."edh"""", EdhViewFields.structure, EdhViewRow.rowParser)
+  override def select: SelectBuilder[EdhViewFields, EdhViewRow] = SelectBuilder.of(""""hr"."edh"""", EdhViewFields.structure, EdhViewRow.rowParser)
 
-  def selectAll(implicit c: Connection): List[EdhViewRow] = {
+  override def selectAll(implicit c: Connection): List[EdhViewRow] = {
     SQL"""select "id", "businessentityid", "departmentid", "shiftid", "startdate"::text, "enddate"::text, "modifieddate"::text
     from "hr"."edh"
     """.as(EdhViewRow.rowParser(1).*)

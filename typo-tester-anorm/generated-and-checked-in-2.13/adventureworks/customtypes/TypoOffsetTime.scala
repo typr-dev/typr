@@ -43,7 +43,7 @@ object TypoOffsetTime {
     )
   }
 
-  implicit lazy val arrayToStatement: ToStatement[Array[TypoOffsetTime]] = ToStatement[Array[TypoOffsetTime]]((s, index, v) => s.setArray(index, s.getConnection.createArrayOf("timetz", v.map(v => v.value.toString))))
+  implicit lazy val arrayToStatement: ToStatement[Array[TypoOffsetTime]] = ToStatement[Array[TypoOffsetTime]]((s, index, v) => s.setArray(index, s.getConnection.createArrayOf("timetz", v.map(v => v.value.toString()))))
 
   implicit lazy val bijection: Bijection[TypoOffsetTime, OffsetTime] = Bijection.apply[TypoOffsetTime, OffsetTime](_.value)(TypoOffsetTime.apply)
 
@@ -69,14 +69,14 @@ object TypoOffsetTime {
 
   implicit lazy val pgText: Text[TypoOffsetTime] = {
     new Text[TypoOffsetTime] {
-      override def unsafeEncode(v: TypoOffsetTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value.toString, sb)
-      override def unsafeArrayEncode(v: TypoOffsetTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value.toString, sb)
+      override def unsafeEncode(v: TypoOffsetTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value.toString(), sb)
+      override def unsafeArrayEncode(v: TypoOffsetTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value.toString(), sb)
     }
   }
 
   implicit lazy val reads: Reads[TypoOffsetTime] = adventureworks.OffsetTimeReads.map(TypoOffsetTime.apply)
 
-  implicit lazy val toStatement: ToStatement[TypoOffsetTime] = ToStatement[TypoOffsetTime]((s, index, v) => s.setObject(index, v.value.toString))
+  implicit lazy val toStatement: ToStatement[TypoOffsetTime] = ToStatement[TypoOffsetTime]((s, index, v) => s.setObject(index, v.value.toString()))
 
   implicit lazy val writes: Writes[TypoOffsetTime] = adventureworks.OffsetTimeWrites.contramap(_.value)
 }

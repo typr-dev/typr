@@ -10,11 +10,11 @@ import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class CuViewRepoImpl extends CuViewRepo {
-  def select: SelectBuilder[CuViewFields, CuViewRow] = SelectBuilder.of("sa.cu", CuViewFields.structure, CuViewRow.`_rowParser`)
+  override def select: SelectBuilder[CuViewFields, CuViewRow] = SelectBuilder.of("sa.cu", CuViewFields.structure, CuViewRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[CuViewRow] = {
+  override def selectAll(using c: Connection): java.util.List[CuViewRow] = {
     interpolate"""select "id", "currencycode", "name", "modifieddate"::text
     from "sa"."cu"
-    """.as(CuViewRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(CuViewRow.`_rowParser`.all()).runUnchecked(c)
   }
 }

@@ -24,11 +24,11 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class SalesterritoryhistoryRepoImpl extends SalesterritoryhistoryRepo {
-  def delete: DeleteBuilder[SalesterritoryhistoryFields, SalesterritoryhistoryRow] = DeleteBuilder.of(""""sales"."salesterritoryhistory"""", SalesterritoryhistoryFields.structure, SalesterritoryhistoryRow.jdbcDecoder)
+  override def delete: DeleteBuilder[SalesterritoryhistoryFields, SalesterritoryhistoryRow] = DeleteBuilder.of(""""sales"."salesterritoryhistory"""", SalesterritoryhistoryFields.structure, SalesterritoryhistoryRow.jdbcDecoder)
 
-  def deleteById(compositeId: SalesterritoryhistoryId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "sales"."salesterritoryhistory" where "businessentityid" = ${Segment.paramSegment(compositeId.businessentityid)(using BusinessentityId.setter)} AND "startdate" = ${Segment.paramSegment(compositeId.startdate)(using TypoLocalDateTime.setter)} AND "territoryid" = ${Segment.paramSegment(compositeId.territoryid)(using SalesterritoryId.setter)}""".delete.map(_ > 0)
+  override def deleteById(compositeId: SalesterritoryhistoryId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "sales"."salesterritoryhistory" where "businessentityid" = ${Segment.paramSegment(compositeId.businessentityid)(using BusinessentityId.setter)} AND "startdate" = ${Segment.paramSegment(compositeId.startdate)(using TypoLocalDateTime.setter)} AND "territoryid" = ${Segment.paramSegment(compositeId.territoryid)(using SalesterritoryId.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(compositeIds: Array[SalesterritoryhistoryId]): ZIO[ZConnection, Throwable, Long] = {
+  override def deleteByIds(compositeIds: Array[SalesterritoryhistoryId]): ZIO[ZConnection, Throwable, Long] = {
     val businessentityid = compositeIds.map(_.businessentityid)
     val startdate = compositeIds.map(_.startdate)
     val territoryid = compositeIds.map(_.territoryid)
@@ -39,14 +39,14 @@ class SalesterritoryhistoryRepoImpl extends SalesterritoryhistoryRepo {
     """.delete
   }
 
-  def insert(unsaved: SalesterritoryhistoryRow): ZIO[ZConnection, Throwable, SalesterritoryhistoryRow] = {
+  override def insert(unsaved: SalesterritoryhistoryRow): ZIO[ZConnection, Throwable, SalesterritoryhistoryRow] = {
     sql"""insert into "sales"."salesterritoryhistory"("businessentityid", "territoryid", "startdate", "enddate", "rowguid", "modifieddate")
     values (${Segment.paramSegment(unsaved.businessentityid)(using BusinessentityId.setter)}::int4, ${Segment.paramSegment(unsaved.territoryid)(using SalesterritoryId.setter)}::int4, ${Segment.paramSegment(unsaved.startdate)(using TypoLocalDateTime.setter)}::timestamp, ${Segment.paramSegment(unsaved.enddate)(using Setter.optionParamSetter(using TypoLocalDateTime.setter))}::timestamp, ${Segment.paramSegment(unsaved.rowguid)(using TypoUUID.setter)}::uuid, ${Segment.paramSegment(unsaved.modifieddate)(using TypoLocalDateTime.setter)}::timestamp)
     returning "businessentityid", "territoryid", "startdate"::text, "enddate"::text, "rowguid", "modifieddate"::text
     """.insertReturning(using SalesterritoryhistoryRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insert(unsaved: SalesterritoryhistoryRowUnsaved): ZIO[ZConnection, Throwable, SalesterritoryhistoryRow] = {
+  override def insert(unsaved: SalesterritoryhistoryRowUnsaved): ZIO[ZConnection, Throwable, SalesterritoryhistoryRow] = {
     val fs = List(
       Some((sql""""businessentityid"""", sql"${Segment.paramSegment(unsaved.businessentityid)(using BusinessentityId.setter)}::int4")),
       Some((sql""""territoryid"""", sql"${Segment.paramSegment(unsaved.territoryid)(using SalesterritoryId.setter)}::int4")),
@@ -73,24 +73,24 @@ class SalesterritoryhistoryRepoImpl extends SalesterritoryhistoryRepo {
     q.insertReturning(using SalesterritoryhistoryRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, SalesterritoryhistoryRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "sales"."salesterritoryhistory"("businessentityid", "territoryid", "startdate", "enddate", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved)(using SalesterritoryhistoryRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, SalesterritoryhistoryRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "sales"."salesterritoryhistory"("businessentityid", "territoryid", "startdate", "enddate", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using SalesterritoryhistoryRowUnsaved.pgText)
 
-  def select: SelectBuilder[SalesterritoryhistoryFields, SalesterritoryhistoryRow] = SelectBuilder.of(""""sales"."salesterritoryhistory"""", SalesterritoryhistoryFields.structure, SalesterritoryhistoryRow.jdbcDecoder)
+  override def select: SelectBuilder[SalesterritoryhistoryFields, SalesterritoryhistoryRow] = SelectBuilder.of(""""sales"."salesterritoryhistory"""", SalesterritoryhistoryFields.structure, SalesterritoryhistoryRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, SalesterritoryhistoryRow] = sql"""select "businessentityid", "territoryid", "startdate"::text, "enddate"::text, "rowguid", "modifieddate"::text from "sales"."salesterritoryhistory"""".query(using SalesterritoryhistoryRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, SalesterritoryhistoryRow] = sql"""select "businessentityid", "territoryid", "startdate"::text, "enddate"::text, "rowguid", "modifieddate"::text from "sales"."salesterritoryhistory"""".query(using SalesterritoryhistoryRow.jdbcDecoder).selectStream()
 
-  def selectById(compositeId: SalesterritoryhistoryId): ZIO[ZConnection, Throwable, Option[SalesterritoryhistoryRow]] = sql"""select "businessentityid", "territoryid", "startdate"::text, "enddate"::text, "rowguid", "modifieddate"::text from "sales"."salesterritoryhistory" where "businessentityid" = ${Segment.paramSegment(compositeId.businessentityid)(using BusinessentityId.setter)} AND "startdate" = ${Segment.paramSegment(compositeId.startdate)(using TypoLocalDateTime.setter)} AND "territoryid" = ${Segment.paramSegment(compositeId.territoryid)(using SalesterritoryId.setter)}""".query(using SalesterritoryhistoryRow.jdbcDecoder).selectOne
+  override def selectById(compositeId: SalesterritoryhistoryId): ZIO[ZConnection, Throwable, Option[SalesterritoryhistoryRow]] = sql"""select "businessentityid", "territoryid", "startdate"::text, "enddate"::text, "rowguid", "modifieddate"::text from "sales"."salesterritoryhistory" where "businessentityid" = ${Segment.paramSegment(compositeId.businessentityid)(using BusinessentityId.setter)} AND "startdate" = ${Segment.paramSegment(compositeId.startdate)(using TypoLocalDateTime.setter)} AND "territoryid" = ${Segment.paramSegment(compositeId.territoryid)(using SalesterritoryId.setter)}""".query(using SalesterritoryhistoryRow.jdbcDecoder).selectOne
 
-  def selectByIds(compositeIds: Array[SalesterritoryhistoryId]): ZStream[ZConnection, Throwable, SalesterritoryhistoryRow] = {
+  override def selectByIds(compositeIds: Array[SalesterritoryhistoryId]): ZStream[ZConnection, Throwable, SalesterritoryhistoryRow] = {
     val businessentityid = compositeIds.map(_.businessentityid)
     val startdate = compositeIds.map(_.startdate)
     val territoryid = compositeIds.map(_.territoryid)
@@ -101,16 +101,16 @@ class SalesterritoryhistoryRepoImpl extends SalesterritoryhistoryRepo {
     """.query(using SalesterritoryhistoryRow.jdbcDecoder).selectStream()
   }
 
-  def selectByIdsTracked(compositeIds: Array[SalesterritoryhistoryId]): ZIO[ZConnection, Throwable, Map[SalesterritoryhistoryId, SalesterritoryhistoryRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[SalesterritoryhistoryId]): ZIO[ZConnection, Throwable, Map[SalesterritoryhistoryId, SalesterritoryhistoryRow]] = {
     selectByIds(compositeIds).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[SalesterritoryhistoryFields, SalesterritoryhistoryRow] = UpdateBuilder.of(""""sales"."salesterritoryhistory"""", SalesterritoryhistoryFields.structure, SalesterritoryhistoryRow.jdbcDecoder)
+  override def update: UpdateBuilder[SalesterritoryhistoryFields, SalesterritoryhistoryRow] = UpdateBuilder.of(""""sales"."salesterritoryhistory"""", SalesterritoryhistoryFields.structure, SalesterritoryhistoryRow.jdbcDecoder)
 
-  def update(row: SalesterritoryhistoryRow): ZIO[ZConnection, Throwable, Option[SalesterritoryhistoryRow]] = {
+  override def update(row: SalesterritoryhistoryRow): ZIO[ZConnection, Throwable, Option[SalesterritoryhistoryRow]] = {
     val compositeId = row.compositeId
     sql"""update "sales"."salesterritoryhistory"
     set "enddate" = ${Segment.paramSegment(row.enddate)(using Setter.optionParamSetter(using TypoLocalDateTime.setter))}::timestamp,
@@ -122,7 +122,7 @@ class SalesterritoryhistoryRepoImpl extends SalesterritoryhistoryRepo {
       .selectOne
   }
 
-  def upsert(unsaved: SalesterritoryhistoryRow): ZIO[ZConnection, Throwable, UpdateResult[SalesterritoryhistoryRow]] = {
+  override def upsert(unsaved: SalesterritoryhistoryRow): ZIO[ZConnection, Throwable, UpdateResult[SalesterritoryhistoryRow]] = {
     sql"""insert into "sales"."salesterritoryhistory"("businessentityid", "territoryid", "startdate", "enddate", "rowguid", "modifieddate")
     values (
       ${Segment.paramSegment(unsaved.businessentityid)(using BusinessentityId.setter)}::int4,
@@ -141,7 +141,7 @@ class SalesterritoryhistoryRepoImpl extends SalesterritoryhistoryRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, SalesterritoryhistoryRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

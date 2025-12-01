@@ -13,7 +13,6 @@ import adventureworks.public.Name
 import java.util.Optional
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple7
 
 /** View: pr.pm */
 case class PmViewRow(
@@ -34,15 +33,5 @@ case class PmViewRow(
 )
 
 object PmViewRow {
-  val `_rowParser`: RowParser[PmViewRow] = {
-    RowParsers.of(ProductmodelId.pgType, ProductmodelId.pgType, Name.pgType, TypoXml.pgType.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, PmViewRow.apply, row => new Tuple7(
-      row.id,
-      row.productmodelid,
-      row.name,
-      row.catalogdescription,
-      row.instructions,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[PmViewRow] = RowParsers.of(ProductmodelId.pgType, ProductmodelId.pgType, Name.pgType, TypoXml.pgType.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, PmViewRow.apply, row => Array(row.id, row.productmodelid, row.name, row.catalogdescription, row.instructions, row.rowguid, row.modifieddate))
 }

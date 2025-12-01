@@ -12,7 +12,6 @@ import adventureworks.public_.Name;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple5;
 
 /** Table: humanresources.shift
   * Work shift lookup table.
@@ -59,7 +58,7 @@ public record ShiftRow(
     return new ShiftRow(shiftid, name, starttime, endtime, modifieddate);
   };
 
-  static RowParser<ShiftRow> _rowParser = RowParsers.of(ShiftId.pgType, Name.pgType, TypoLocalTime.pgType, TypoLocalTime.pgType, TypoLocalDateTime.pgType, ShiftRow::new, row -> new Tuple5<>(row.shiftid(), row.name(), row.starttime(), row.endtime(), row.modifieddate()));;
+  static RowParser<ShiftRow> _rowParser = RowParsers.of(ShiftId.pgType, Name.pgType, TypoLocalTime.pgType, TypoLocalTime.pgType, TypoLocalDateTime.pgType, ShiftRow::new, row -> new Object[]{row.shiftid(), row.name(), row.starttime(), row.endtime(), row.modifieddate()});;
 
   static public PgText<ShiftRow> pgText =
     PgText.from(_rowParser);

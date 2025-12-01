@@ -11,7 +11,7 @@ import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class WrViewRepoImpl extends WrViewRepo {
-  def select: SelectBuilder[WrViewFields, WrViewRow] = SelectBuilder.of(""""pr"."wr"""", WrViewFields.structure, WrViewRow.read)
+  override def select: SelectBuilder[WrViewFields, WrViewRow] = SelectBuilder.of(""""pr"."wr"""", WrViewFields.structure, WrViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, WrViewRow] = sql"""select "id", "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text from "pr"."wr"""".query(WrViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, WrViewRow] = sql"""select "id", "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text from "pr"."wr"""".query(WrViewRow.read).stream
 }

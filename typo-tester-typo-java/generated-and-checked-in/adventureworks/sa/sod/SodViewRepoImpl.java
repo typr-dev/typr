@@ -5,22 +5,22 @@
  */
 package adventureworks.sa.sod;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class SodViewRepoImpl implements SodViewRepo {
+  @Override
   public SelectBuilder<SodViewFields, SodViewRow> select() {
     return SelectBuilder.of("sa.sod", SodViewFields.structure(), SodViewRow._rowParser);
   };
 
+  @Override
   public List<SodViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text
        from "sa"."sod"
-    """)).as(SodViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(SodViewRow._rowParser.all()).runUnchecked(c);
   };
 }

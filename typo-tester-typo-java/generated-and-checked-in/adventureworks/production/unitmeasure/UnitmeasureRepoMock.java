@@ -5,6 +5,7 @@
  */
 package adventureworks.production.unitmeasure;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record UnitmeasureRepoMock(
     return new UnitmeasureRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<UnitmeasureFields, UnitmeasureRow> delete() {
     return new DeleteBuilderMock<>(UnitmeasureFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.unitmeasurecode(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     UnitmeasureId unitmeasurecode,
     Connection c
@@ -52,28 +55,31 @@ public record UnitmeasureRepoMock(
     return Optional.ofNullable(map.remove(unitmeasurecode)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     UnitmeasureId[] unitmeasurecodes,
     Connection c
   ) {
     var count = 0;
-      for (var id : unitmeasurecodes) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : unitmeasurecodes) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public UnitmeasureRow insert(
     UnitmeasureRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.unitmeasurecode())) {
-        throw new RuntimeException(str("id $unsaved.unitmeasurecode() already exists"));
-      };
-      map.put(unsaved.unitmeasurecode(), unsaved);
+      throw new RuntimeException(str("id $unsaved.unitmeasurecode() already exists"));
+    };
+    map.put(unsaved.unitmeasurecode(), unsaved);
     return unsaved;
   };
 
+  @Override
   public UnitmeasureRow insert(
     UnitmeasureRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record UnitmeasureRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<UnitmeasureRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.unitmeasurecode(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.unitmeasurecode(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<UnitmeasureRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.unitmeasurecode(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.unitmeasurecode(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<UnitmeasureFields, UnitmeasureRow> select() {
     return new SelectBuilderMock<>(UnitmeasureFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<UnitmeasureRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<UnitmeasureRow> selectById(
     UnitmeasureId unitmeasurecode,
     Connection c
@@ -126,38 +137,43 @@ public record UnitmeasureRepoMock(
     return Optional.ofNullable(map.get(unitmeasurecode));
   };
 
+  @Override
   public List<UnitmeasureRow> selectByIds(
     UnitmeasureId[] unitmeasurecodes,
     Connection c
   ) {
     var result = new ArrayList<UnitmeasureRow>();
-      for (var id : unitmeasurecodes) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : unitmeasurecodes) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<UnitmeasureId, UnitmeasureRow> selectByIdsTracked(
     UnitmeasureId[] unitmeasurecodes,
     Connection c
   ) {
-    return selectByIds(unitmeasurecodes, c).stream().collect(Collectors.toMap((adventureworks.production.unitmeasure.UnitmeasureRow row) -> row.unitmeasurecode(), Function.identity()));
+    return selectByIds(unitmeasurecodes, c).stream().collect(Collectors.toMap((UnitmeasureRow row) -> row.unitmeasurecode(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<UnitmeasureFields, UnitmeasureRow> update() {
     return new UpdateBuilderMock<>(UnitmeasureFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     UnitmeasureRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.unitmeasurecode())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.unitmeasurecode(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.unitmeasurecode(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public UnitmeasureRow upsert(
     UnitmeasureRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record UnitmeasureRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<UnitmeasureRow> upsertBatch(
     Iterator<UnitmeasureRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<UnitmeasureRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.unitmeasurecode(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.unitmeasurecode(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<UnitmeasureRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.unitmeasurecode(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.unitmeasurecode(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

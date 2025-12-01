@@ -5,6 +5,7 @@
  */
 package adventureworks.person.addresstype
 
+import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
@@ -25,7 +26,7 @@ case class AddresstypeRepoMock(
   toRow: AddresstypeRowUnsaved => AddresstypeRow,
   map: HashMap[AddresstypeId, AddresstypeRow] = new HashMap[AddresstypeId, AddresstypeRow]()
 ) extends AddresstypeRepo {
-  def delete: DeleteBuilder[AddresstypeFields, AddresstypeRow] = {
+  override def delete: DeleteBuilder[AddresstypeFields, AddresstypeRow] = {
     new DeleteBuilderMock(
       AddresstypeFields.structure,
       () => new ArrayList(map.values()),
@@ -35,27 +36,27 @@ case class AddresstypeRepoMock(
     )
   }
 
-  def deleteById(addresstypeid: AddresstypeId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(addresstypeid)).isPresent()
+  override def deleteById(addresstypeid: AddresstypeId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(addresstypeid)).isPresent()
 
-  def deleteByIds(addresstypeids: Array[AddresstypeId])(using c: Connection): Integer = {
+  override def deleteByIds(addresstypeids: Array[AddresstypeId])(using c: Connection): Integer = {
     var count = 0
     addresstypeids.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
-    count
+    return count
   }
 
-  def insert(unsaved: AddresstypeRow)(using c: Connection): AddresstypeRow = {
+  override def insert(unsaved: AddresstypeRow)(using c: Connection): AddresstypeRow = {
     if (map.containsKey(unsaved.addresstypeid)) {
       throw new RuntimeException(s"id $unsaved.addresstypeid already exists")
     }
     map.put(unsaved.addresstypeid, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def insert(unsaved: AddresstypeRowUnsaved)(using c: Connection): AddresstypeRow = insert(toRow(unsaved))(using c)
+  override def insert(unsaved: AddresstypeRowUnsaved)(using c: Connection): AddresstypeRow = insert(toRow(unsaved))(using c)
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[AddresstypeRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -65,11 +66,11 @@ case class AddresstypeRepoMock(
       map.put(row.addresstypeid, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[AddresstypeRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -80,25 +81,25 @@ case class AddresstypeRepoMock(
       map.put(row.addresstypeid, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
-  def select: SelectBuilder[AddresstypeFields, AddresstypeRow] = new SelectBuilderMock(AddresstypeFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
+  override def select: SelectBuilder[AddresstypeFields, AddresstypeRow] = new SelectBuilderMock(AddresstypeFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  def selectAll(using c: Connection): java.util.List[AddresstypeRow] = new ArrayList(map.values())
+  override def selectAll(using c: Connection): java.util.List[AddresstypeRow] = new ArrayList(map.values())
 
-  def selectById(addresstypeid: AddresstypeId)(using c: Connection): Optional[AddresstypeRow] = Optional.ofNullable(map.get(addresstypeid))
+  override def selectById(addresstypeid: AddresstypeId)(using c: Connection): Optional[AddresstypeRow] = Optional.ofNullable(map.get(addresstypeid))
 
-  def selectByIds(addresstypeids: Array[AddresstypeId])(using c: Connection): java.util.List[AddresstypeRow] = {
+  override def selectByIds(addresstypeids: Array[AddresstypeId])(using c: Connection): java.util.List[AddresstypeRow] = {
     val result = new ArrayList[AddresstypeRow]()
     addresstypeids.foreach { id => val opt = Optional.ofNullable(map.get(id))
     if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
-    result
+    return result
   }
 
-  def selectByIdsTracked(addresstypeids: Array[AddresstypeId])(using c: Connection): java.util.Map[AddresstypeId, AddresstypeRow] = selectByIds(addresstypeids)(using c).stream().collect(Collectors.toMap((row: adventureworks.person.addresstype.AddresstypeRow) => row.addresstypeid, Function.identity()))
+  override def selectByIdsTracked(addresstypeids: Array[AddresstypeId])(using c: Connection): java.util.Map[AddresstypeId, AddresstypeRow] = selectByIds(addresstypeids)(using c).stream().collect(Collectors.toMap((row: AddresstypeRow) => row.addresstypeid, Function.identity()))
 
-  def update: UpdateBuilder[AddresstypeFields, AddresstypeRow] = {
+  override def update: UpdateBuilder[AddresstypeFields, AddresstypeRow] = {
     new UpdateBuilderMock(
       AddresstypeFields.structure,
       () => new ArrayList(map.values()),
@@ -107,31 +108,31 @@ case class AddresstypeRepoMock(
     )
   }
 
-  def update(row: AddresstypeRow)(using c: Connection): java.lang.Boolean = {
-    val shouldUpdate = Optional.ofNullable(map.get(row.addresstypeid)).filter(oldRow => !oldRow.equals(row)).isPresent()
+  override def update(row: AddresstypeRow)(using c: Connection): java.lang.Boolean = {
+    val shouldUpdate = Optional.ofNullable(map.get(row.addresstypeid)).filter(oldRow => (oldRow != row)).isPresent()
     if (shouldUpdate) {
       map.put(row.addresstypeid, row): @scala.annotation.nowarn
     }
-    shouldUpdate
+    return shouldUpdate
   }
 
-  def upsert(unsaved: AddresstypeRow)(using c: Connection): AddresstypeRow = {
+  override def upsert(unsaved: AddresstypeRow)(using c: Connection): AddresstypeRow = {
     map.put(unsaved.addresstypeid, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[AddresstypeRow])(using c: Connection): java.util.List[AddresstypeRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[AddresstypeRow])(using c: Connection): java.util.List[AddresstypeRow] = {
     val result = new ArrayList[AddresstypeRow]()
     while (unsaved.hasNext()) {
       val row = unsaved.next()
       map.put(row.addresstypeid, row): @scala.annotation.nowarn
       result.add(row): @scala.annotation.nowarn
     }
-    result
+    return result
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[AddresstypeRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
@@ -141,6 +142,6 @@ case class AddresstypeRepoMock(
       map.put(row.addresstypeid, row): @scala.annotation.nowarn
       count = count + 1
     }
-    count
+    return count
   }
 }

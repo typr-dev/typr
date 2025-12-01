@@ -32,7 +32,7 @@ object VproductanddescriptionMVFields {
 
     override lazy val fields: VproductanddescriptionMVFields = {
       new VproductanddescriptionMVFields {
-        def productid: Field[ProductId, VproductanddescriptionMVRow] = {
+        override def productid: Field[ProductId, VproductanddescriptionMVRow] = {
           new Field[ProductId, VproductanddescriptionMVRow](
             _path,
             "productid",
@@ -43,7 +43,7 @@ object VproductanddescriptionMVFields {
             ProductId.pgType
           )
         }
-        def name: Field[Name, VproductanddescriptionMVRow] = {
+        override def name: Field[Name, VproductanddescriptionMVRow] = {
           new Field[Name, VproductanddescriptionMVRow](
             _path,
             "name",
@@ -54,7 +54,7 @@ object VproductanddescriptionMVFields {
             Name.pgType
           )
         }
-        def productmodel: Field[Name, VproductanddescriptionMVRow] = {
+        override def productmodel: Field[Name, VproductanddescriptionMVRow] = {
           new Field[Name, VproductanddescriptionMVRow](
             _path,
             "productmodel",
@@ -65,7 +65,7 @@ object VproductanddescriptionMVFields {
             Name.pgType
           )
         }
-        def cultureid: Field[CultureId, VproductanddescriptionMVRow] = {
+        override def cultureid: Field[CultureId, VproductanddescriptionMVRow] = {
           new Field[CultureId, VproductanddescriptionMVRow](
             _path,
             "cultureid",
@@ -76,7 +76,7 @@ object VproductanddescriptionMVFields {
             CultureId.pgType
           )
         }
-        def description: Field[/* max 400 chars */ String, VproductanddescriptionMVRow] = {
+        override def description: Field[/* max 400 chars */ String, VproductanddescriptionMVRow] = {
           new Field[/* max 400 chars */ String, VproductanddescriptionMVRow](
             _path,
             "description",
@@ -92,7 +92,7 @@ object VproductanddescriptionMVFields {
 
     override lazy val columns: java.util.List[FieldLike[?, VproductanddescriptionMVRow]] = java.util.List.of(this.fields.productid, this.fields.name, this.fields.productmodel, this.fields.cultureid, this.fields.description)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[VproductanddescriptionMVFields, VproductanddescriptionMVRow] = new Impl(java.util.List.of())

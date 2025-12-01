@@ -13,7 +13,6 @@ import adventureworks.sales.specialoffer.SpecialofferId;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple4;
 
 /** Table: sales.specialofferproduct
   * Cross-reference table mapping products to special offer discounts.
@@ -57,7 +56,7 @@ public record SpecialofferproductRow(
     return new SpecialofferproductRow(specialofferid, productid, rowguid, modifieddate);
   };
 
-  static RowParser<SpecialofferproductRow> _rowParser = RowParsers.of(SpecialofferId.pgType, ProductId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, SpecialofferproductRow::new, row -> new Tuple4<>(row.specialofferid(), row.productid(), row.rowguid(), row.modifieddate()));;
+  static RowParser<SpecialofferproductRow> _rowParser = RowParsers.of(SpecialofferId.pgType, ProductId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, SpecialofferproductRow::new, row -> new Object[]{row.specialofferid(), row.productid(), row.rowguid(), row.modifieddate()});;
 
   static public SpecialofferproductRow apply(
     SpecialofferproductId compositeId,

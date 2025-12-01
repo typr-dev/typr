@@ -10,7 +10,6 @@ import adventureworks.person.countryregion.CountryregionId
 import adventureworks.public.Name
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple3
 
 /** View: pe.cr */
 case class CrViewRow(
@@ -23,5 +22,5 @@ case class CrViewRow(
 )
 
 object CrViewRow {
-  val `_rowParser`: RowParser[CrViewRow] = RowParsers.of(CountryregionId.pgType, Name.pgType, TypoLocalDateTime.pgType, CrViewRow.apply, row => new Tuple3(row.countryregioncode, row.name, row.modifieddate))
+  val `_rowParser`: RowParser[CrViewRow] = RowParsers.of(CountryregionId.pgType, Name.pgType, TypoLocalDateTime.pgType, CrViewRow.apply, row => Array(row.countryregioncode, row.name, row.modifieddate))
 }

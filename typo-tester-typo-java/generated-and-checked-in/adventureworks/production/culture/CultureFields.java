@@ -16,7 +16,7 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 
 public interface CultureFields {
-  static final class Impl extends Relation<CultureFields, CultureRow> {
+  final class Impl extends Relation<CultureFields, CultureRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -24,12 +24,15 @@ public interface CultureFields {
     @Override
     public CultureFields fields() {
       return new CultureFields() {
+               @Override
                public IdField<CultureId, CultureRow> cultureid() {
                  return new IdField<CultureId, CultureRow>(_path, "cultureid", CultureRow::cultureid, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withCultureid(value), CultureId.pgType);
                };
+               @Override
                public Field<Name, CultureRow> name() {
                  return new Field<Name, CultureRow>(_path, "name", CultureRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, CultureRow> modifieddate() {
                  return new Field<TypoLocalDateTime, CultureRow>(_path, "modifieddate", CultureRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -41,6 +44,7 @@ public interface CultureFields {
       return List.of(this.fields().cultureid(), this.fields().name(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

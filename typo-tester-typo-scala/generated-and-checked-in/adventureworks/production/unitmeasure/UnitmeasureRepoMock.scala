@@ -5,6 +5,7 @@
  */
 package adventureworks.production.unitmeasure
 
+import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
@@ -25,7 +26,7 @@ case class UnitmeasureRepoMock(
   toRow: UnitmeasureRowUnsaved => UnitmeasureRow,
   map: HashMap[UnitmeasureId, UnitmeasureRow] = new HashMap[UnitmeasureId, UnitmeasureRow]()
 ) extends UnitmeasureRepo {
-  def delete: DeleteBuilder[UnitmeasureFields, UnitmeasureRow] = {
+  override def delete: DeleteBuilder[UnitmeasureFields, UnitmeasureRow] = {
     new DeleteBuilderMock(
       UnitmeasureFields.structure,
       () => new ArrayList(map.values()),
@@ -35,27 +36,27 @@ case class UnitmeasureRepoMock(
     )
   }
 
-  def deleteById(unitmeasurecode: UnitmeasureId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(unitmeasurecode)).isPresent()
+  override def deleteById(unitmeasurecode: UnitmeasureId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(unitmeasurecode)).isPresent()
 
-  def deleteByIds(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): Integer = {
+  override def deleteByIds(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): Integer = {
     var count = 0
     unitmeasurecodes.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
-    count
+    return count
   }
 
-  def insert(unsaved: UnitmeasureRow)(using c: Connection): UnitmeasureRow = {
+  override def insert(unsaved: UnitmeasureRow)(using c: Connection): UnitmeasureRow = {
     if (map.containsKey(unsaved.unitmeasurecode)) {
       throw new RuntimeException(s"id $unsaved.unitmeasurecode already exists")
     }
     map.put(unsaved.unitmeasurecode, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def insert(unsaved: UnitmeasureRowUnsaved)(using c: Connection): UnitmeasureRow = insert(toRow(unsaved))(using c)
+  override def insert(unsaved: UnitmeasureRowUnsaved)(using c: Connection): UnitmeasureRow = insert(toRow(unsaved))(using c)
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[UnitmeasureRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -65,11 +66,11 @@ case class UnitmeasureRepoMock(
       map.put(row.unitmeasurecode, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[UnitmeasureRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -80,25 +81,25 @@ case class UnitmeasureRepoMock(
       map.put(row.unitmeasurecode, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
-  def select: SelectBuilder[UnitmeasureFields, UnitmeasureRow] = new SelectBuilderMock(UnitmeasureFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
+  override def select: SelectBuilder[UnitmeasureFields, UnitmeasureRow] = new SelectBuilderMock(UnitmeasureFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  def selectAll(using c: Connection): java.util.List[UnitmeasureRow] = new ArrayList(map.values())
+  override def selectAll(using c: Connection): java.util.List[UnitmeasureRow] = new ArrayList(map.values())
 
-  def selectById(unitmeasurecode: UnitmeasureId)(using c: Connection): Optional[UnitmeasureRow] = Optional.ofNullable(map.get(unitmeasurecode))
+  override def selectById(unitmeasurecode: UnitmeasureId)(using c: Connection): Optional[UnitmeasureRow] = Optional.ofNullable(map.get(unitmeasurecode))
 
-  def selectByIds(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): java.util.List[UnitmeasureRow] = {
+  override def selectByIds(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): java.util.List[UnitmeasureRow] = {
     val result = new ArrayList[UnitmeasureRow]()
     unitmeasurecodes.foreach { id => val opt = Optional.ofNullable(map.get(id))
     if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
-    result
+    return result
   }
 
-  def selectByIdsTracked(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): java.util.Map[UnitmeasureId, UnitmeasureRow] = selectByIds(unitmeasurecodes)(using c).stream().collect(Collectors.toMap((row: adventureworks.production.unitmeasure.UnitmeasureRow) => row.unitmeasurecode, Function.identity()))
+  override def selectByIdsTracked(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): java.util.Map[UnitmeasureId, UnitmeasureRow] = selectByIds(unitmeasurecodes)(using c).stream().collect(Collectors.toMap((row: UnitmeasureRow) => row.unitmeasurecode, Function.identity()))
 
-  def update: UpdateBuilder[UnitmeasureFields, UnitmeasureRow] = {
+  override def update: UpdateBuilder[UnitmeasureFields, UnitmeasureRow] = {
     new UpdateBuilderMock(
       UnitmeasureFields.structure,
       () => new ArrayList(map.values()),
@@ -107,31 +108,31 @@ case class UnitmeasureRepoMock(
     )
   }
 
-  def update(row: UnitmeasureRow)(using c: Connection): java.lang.Boolean = {
-    val shouldUpdate = Optional.ofNullable(map.get(row.unitmeasurecode)).filter(oldRow => !oldRow.equals(row)).isPresent()
+  override def update(row: UnitmeasureRow)(using c: Connection): java.lang.Boolean = {
+    val shouldUpdate = Optional.ofNullable(map.get(row.unitmeasurecode)).filter(oldRow => (oldRow != row)).isPresent()
     if (shouldUpdate) {
       map.put(row.unitmeasurecode, row): @scala.annotation.nowarn
     }
-    shouldUpdate
+    return shouldUpdate
   }
 
-  def upsert(unsaved: UnitmeasureRow)(using c: Connection): UnitmeasureRow = {
+  override def upsert(unsaved: UnitmeasureRow)(using c: Connection): UnitmeasureRow = {
     map.put(unsaved.unitmeasurecode, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[UnitmeasureRow])(using c: Connection): java.util.List[UnitmeasureRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[UnitmeasureRow])(using c: Connection): java.util.List[UnitmeasureRow] = {
     val result = new ArrayList[UnitmeasureRow]()
     while (unsaved.hasNext()) {
       val row = unsaved.next()
       map.put(row.unitmeasurecode, row): @scala.annotation.nowarn
       result.add(row): @scala.annotation.nowarn
     }
-    result
+    return result
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[UnitmeasureRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
@@ -141,6 +142,6 @@ case class UnitmeasureRepoMock(
       map.put(row.unitmeasurecode, row): @scala.annotation.nowarn
       count = count + 1
     }
-    count
+    return count
   }
 }

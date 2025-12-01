@@ -30,11 +30,11 @@ public record TypoInet(@JsonValue String value) {
   static public PgType<TypoInet> pgType =
     PgType.of(
       "inet",
-      PgRead.castJdbcObjectTo(PGobject.class).map(v -> new TypoInet(v.getValue())),
-      PgWrite.passObjectToJdbc().contramap((TypoInet v) -> TypoPGObjectHelper.create("inet", v.value())),
+      PgRead.castJdbcObjectTo(PGobject.class).map((PGobject v) -> new TypoInet(v.getValue())),
+      PgWrite.<PGobject>passObjectToJdbc().contramap((TypoInet v) -> TypoPGObjectHelper.create("inet", v.value())),
       TypoInet.pgText
     );
 
   static public PgType<TypoInet[]> pgTypeArray =
-    TypoInet.pgType.array(PgRead.castJdbcArrayTo(PGobject.class).map(xs -> arrayMap.map(xs, v -> new TypoInet(v.getValue()), TypoInet.class)), PgWrite.<PGobject>passObjectToJdbc().array(TypoInet.pgType.typename().<PGobject>as()).contramap(xs -> arrayMap.map(xs, (TypoInet v) -> TypoPGObjectHelper.create("inet", v.value()), PGobject.class)));
+    TypoInet.pgType.array(PgRead.castJdbcArrayTo(PGobject.class).map((PGobject[] xs) -> arrayMap.map(xs, (PGobject v) -> new TypoInet(v.getValue()), TypoInet.class)), PgWrite.<PGobject>passObjectToJdbc().array(TypoInet.pgType.typename().<PGobject>as()).contramap((TypoInet[] xs) -> arrayMap.map(xs, (TypoInet v) -> TypoPGObjectHelper.create("inet", v.value()), PGobject.class)));
 }

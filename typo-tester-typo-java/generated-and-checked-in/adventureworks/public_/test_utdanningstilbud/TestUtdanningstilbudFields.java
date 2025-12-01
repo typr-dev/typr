@@ -21,7 +21,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface TestUtdanningstilbudFields {
-  static final class Impl extends Relation<TestUtdanningstilbudFields, TestUtdanningstilbudRow> {
+  final class Impl extends Relation<TestUtdanningstilbudFields, TestUtdanningstilbudRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -29,9 +29,11 @@ public interface TestUtdanningstilbudFields {
     @Override
     public TestUtdanningstilbudFields fields() {
       return new TestUtdanningstilbudFields() {
+               @Override
                public IdField<TestOrganisasjonId, TestUtdanningstilbudRow> organisasjonskode() {
                  return new IdField<TestOrganisasjonId, TestUtdanningstilbudRow>(_path, "organisasjonskode", TestUtdanningstilbudRow::organisasjonskode, Optional.empty(), Optional.empty(), (row, value) -> row.withOrganisasjonskode(value), TestOrganisasjonId.pgType);
                };
+               @Override
                public IdField<String, TestUtdanningstilbudRow> utdanningsmulighetKode() {
                  return new IdField<String, TestUtdanningstilbudRow>(_path, "utdanningsmulighet_kode", TestUtdanningstilbudRow::utdanningsmulighetKode, Optional.empty(), Optional.empty(), (row, value) -> row.withUtdanningsmulighetKode(value), PgTypes.text);
                };
@@ -43,6 +45,7 @@ public interface TestUtdanningstilbudFields {
       return List.of(this.fields().organisasjonskode(), this.fields().utdanningsmulighetKode());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

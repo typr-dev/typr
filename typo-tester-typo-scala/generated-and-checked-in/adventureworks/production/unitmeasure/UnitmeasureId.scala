@@ -5,12 +5,13 @@
  */
 package adventureworks.production.unitmeasure
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
 
 /** Type for the primary key of table `production.unitmeasure` */
-case class UnitmeasureId(value: /* bpchar, max 3 chars */ String) extends scala.AnyVal
+case class UnitmeasureId(@JsonValue value: /* bpchar, max 3 chars */ String) extends scala.AnyVal
 
 object UnitmeasureId {
   given bijection: Bijection[UnitmeasureId, /* bpchar, max 3 chars */ String] = Bijection.apply[UnitmeasureId, /* bpchar, max 3 chars */ String](_.value)(UnitmeasureId.apply)

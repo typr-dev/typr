@@ -12,7 +12,6 @@ import adventureworks.sales.salesreason.SalesreasonId;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple3;
 
 /** Table: sales.salesorderheadersalesreason
   * Cross-reference table mapping sales orders to sales reason codes.
@@ -49,7 +48,7 @@ public record SalesorderheadersalesreasonRow(
     return new SalesorderheadersalesreasonRow(salesorderid, salesreasonid, modifieddate);
   };
 
-  static RowParser<SalesorderheadersalesreasonRow> _rowParser = RowParsers.of(SalesorderheaderId.pgType, SalesreasonId.pgType, TypoLocalDateTime.pgType, SalesorderheadersalesreasonRow::new, row -> new Tuple3<>(row.salesorderid(), row.salesreasonid(), row.modifieddate()));;
+  static RowParser<SalesorderheadersalesreasonRow> _rowParser = RowParsers.of(SalesorderheaderId.pgType, SalesreasonId.pgType, TypoLocalDateTime.pgType, SalesorderheadersalesreasonRow::new, row -> new Object[]{row.salesorderid(), row.salesreasonid(), row.modifieddate()});;
 
   static public SalesorderheadersalesreasonRow apply(
     SalesorderheadersalesreasonId compositeId,

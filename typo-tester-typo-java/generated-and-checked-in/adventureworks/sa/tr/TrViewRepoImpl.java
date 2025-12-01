@@ -5,22 +5,22 @@
  */
 package adventureworks.sa.tr;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class TrViewRepoImpl implements TrViewRepo {
+  @Override
   public SelectBuilder<TrViewFields, TrViewRow> select() {
     return SelectBuilder.of("sa.tr", TrViewFields.structure(), TrViewRow._rowParser);
   };
 
+  @Override
   public List<TrViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"::text
        from "sa"."tr"
-    """)).as(TrViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(TrViewRow._rowParser.all()).runUnchecked(c);
   };
 }

@@ -22,13 +22,13 @@ case class CreditcardRepoMock(
   toRow: CreditcardRowUnsaved => CreditcardRow,
   map: scala.collection.mutable.Map[/* user-picked */ CustomCreditcardId, CreditcardRow] = scala.collection.mutable.Map.empty[/* user-picked */ CustomCreditcardId, CreditcardRow]
 ) extends CreditcardRepo {
-  def delete: DeleteBuilder[CreditcardFields, CreditcardRow] = DeleteBuilderMock(DeleteParams.empty, CreditcardFields.structure, map)
+  override def delete: DeleteBuilder[CreditcardFields, CreditcardRow] = DeleteBuilderMock(DeleteParams.empty, CreditcardFields.structure, map)
 
-  def deleteById(creditcardid: /* user-picked */ CustomCreditcardId)(using c: Connection): Boolean = map.remove(creditcardid).isDefined
+  override def deleteById(creditcardid: /* user-picked */ CustomCreditcardId)(using c: Connection): Boolean = map.remove(creditcardid).isDefined
 
-  def deleteByIds(creditcardids: Array[/* user-picked */ CustomCreditcardId])(using c: Connection): Int = creditcardids.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(creditcardids: Array[/* user-picked */ CustomCreditcardId])(using c: Connection): Int = creditcardids.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: CreditcardRow)(using c: Connection): CreditcardRow = {
+  override def insert(unsaved: CreditcardRow)(using c: Connection): CreditcardRow = {
     val _ = if (map.contains(unsaved.creditcardid))
       sys.error(s"id ${unsaved.creditcardid} already exists")
     else
@@ -37,9 +37,9 @@ case class CreditcardRepoMock(
     unsaved
   }
 
-  def insert(unsaved: CreditcardRowUnsaved)(using c: Connection): CreditcardRow = insert(toRow(unsaved))
+  override def insert(unsaved: CreditcardRowUnsaved)(using c: Connection): CreditcardRow = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[CreditcardRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -50,7 +50,7 @@ case class CreditcardRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[CreditcardRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -61,34 +61,34 @@ case class CreditcardRepoMock(
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[CreditcardFields, CreditcardRow] = SelectBuilderMock(CreditcardFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[CreditcardFields, CreditcardRow] = SelectBuilderMock(CreditcardFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(using c: Connection): List[CreditcardRow] = map.values.toList
+  override def selectAll(using c: Connection): List[CreditcardRow] = map.values.toList
 
-  def selectById(creditcardid: /* user-picked */ CustomCreditcardId)(using c: Connection): Option[CreditcardRow] = map.get(creditcardid)
+  override def selectById(creditcardid: /* user-picked */ CustomCreditcardId)(using c: Connection): Option[CreditcardRow] = map.get(creditcardid)
 
-  def selectByIds(creditcardids: Array[/* user-picked */ CustomCreditcardId])(using c: Connection): List[CreditcardRow] = creditcardids.flatMap(map.get).toList
+  override def selectByIds(creditcardids: Array[/* user-picked */ CustomCreditcardId])(using c: Connection): List[CreditcardRow] = creditcardids.flatMap(map.get).toList
 
-  def selectByIdsTracked(creditcardids: Array[/* user-picked */ CustomCreditcardId])(using c: Connection): Map[/* user-picked */ CustomCreditcardId, CreditcardRow] = {
+  override def selectByIdsTracked(creditcardids: Array[/* user-picked */ CustomCreditcardId])(using c: Connection): Map[/* user-picked */ CustomCreditcardId, CreditcardRow] = {
     val byId = selectByIds(creditcardids).view.map(x => (x.creditcardid, x)).toMap
     creditcardids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[CreditcardFields, CreditcardRow] = UpdateBuilderMock(UpdateParams.empty, CreditcardFields.structure, map)
+  override def update: UpdateBuilder[CreditcardFields, CreditcardRow] = UpdateBuilderMock(UpdateParams.empty, CreditcardFields.structure, map)
 
-  def update(row: CreditcardRow)(using c: Connection): Option[CreditcardRow] = {
+  override def update(row: CreditcardRow)(using c: Connection): Option[CreditcardRow] = {
     map.get(row.creditcardid).map { _ =>
       map.put(row.creditcardid, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: CreditcardRow)(using c: Connection): CreditcardRow = {
+  override def upsert(unsaved: CreditcardRow)(using c: Connection): CreditcardRow = {
     map.put(unsaved.creditcardid, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[CreditcardRow])(using c: Connection): List[CreditcardRow] = {
+  override def upsertBatch(unsaved: Iterable[CreditcardRow])(using c: Connection): List[CreditcardRow] = {
     unsaved.map { row =>
       map += (row.creditcardid -> row)
       row
@@ -96,7 +96,7 @@ case class CreditcardRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[CreditcardRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

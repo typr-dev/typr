@@ -34,11 +34,11 @@ public record TypoPolygon(@JsonValue List<TypoPoint> points) {
   static public PgType<TypoPolygon> pgType =
     PgType.of(
       "polygon",
-      PgRead.castJdbcObjectTo(PGpolygon.class).map(v -> new TypoPolygon(Arrays.stream(v.points).map(p -> new TypoPoint(p.x, p.y)).toList())),
-      PgWrite.passObjectToJdbc().contramap((TypoPolygon v) -> new PGpolygon(v.points().stream().map(p -> new PGpoint(p.x(), p.y())).toArray(PGpoint[]::new))),
+      PgRead.castJdbcObjectTo(PGpolygon.class).map((PGpolygon v) -> new TypoPolygon(Arrays.stream(v.points).map(p -> new TypoPoint(p.x, p.y)).toList())),
+      PgWrite.<PGpolygon>passObjectToJdbc().contramap((TypoPolygon v) -> new PGpolygon(v.points().stream().map(p -> new PGpoint(p.x(), p.y())).toArray(PGpoint[]::new))),
       TypoPolygon.pgText
     );
 
   static public PgType<TypoPolygon[]> pgTypeArray =
-    TypoPolygon.pgType.array(PgRead.castJdbcArrayTo(PGpolygon.class).map(xs -> arrayMap.map(xs, v -> new TypoPolygon(Arrays.stream(v.points).map(p -> new TypoPoint(p.x, p.y)).toList()), TypoPolygon.class)), PgWrite.<PGpolygon>passObjectToJdbc().array(TypoPolygon.pgType.typename().<PGpolygon>as()).contramap(xs -> arrayMap.map(xs, (TypoPolygon v) -> new PGpolygon(v.points().stream().map(p -> new PGpoint(p.x(), p.y())).toArray(PGpoint[]::new)), PGpolygon.class)));
+    TypoPolygon.pgType.array(PgRead.castJdbcArrayTo(PGpolygon.class).map((PGpolygon[] xs) -> arrayMap.map(xs, (PGpolygon v) -> new TypoPolygon(Arrays.stream(v.points).map(p -> new TypoPoint(p.x, p.y)).toList()), TypoPolygon.class)), PgWrite.<PGpolygon>passObjectToJdbc().array(TypoPolygon.pgType.typename().<PGpolygon>as()).contramap((TypoPolygon[] xs) -> arrayMap.map(xs, (TypoPolygon v) -> new PGpolygon(v.points().stream().map(p -> new PGpoint(p.x(), p.y())).toArray(PGpoint[]::new)), PGpolygon.class)));
 }

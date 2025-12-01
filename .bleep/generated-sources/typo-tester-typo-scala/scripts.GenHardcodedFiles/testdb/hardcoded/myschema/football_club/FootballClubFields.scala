@@ -24,7 +24,7 @@ object FootballClubFields {
 
     override lazy val fields: FootballClubFields = {
       new FootballClubFields {
-        def id: IdField[FootballClubId, FootballClubRow] = {
+        override def id: IdField[FootballClubId, FootballClubRow] = {
           new IdField[FootballClubId, FootballClubRow](
             _path,
             "id",
@@ -35,7 +35,7 @@ object FootballClubFields {
             FootballClubId.pgType
           )
         }
-        def name: Field[/* max 100 chars */ String, FootballClubRow] = {
+        override def name: Field[/* max 100 chars */ String, FootballClubRow] = {
           new Field[/* max 100 chars */ String, FootballClubRow](
             _path,
             "name",
@@ -51,7 +51,7 @@ object FootballClubFields {
 
     override lazy val columns: java.util.List[FieldLike[?, FootballClubRow]] = java.util.List.of(this.fields.id, this.fields.name)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[FootballClubFields, FootballClubRow] = new Impl(java.util.List.of())

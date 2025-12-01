@@ -14,7 +14,6 @@ import java.util.Optional;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple6;
 
 /** Table: sales.salesterritoryhistory
   * Sales representative transfers to other sales territories.
@@ -80,7 +79,7 @@ public record SalesterritoryhistoryRow(
     return new SalesterritoryhistoryRow(businessentityid, territoryid, startdate, enddate, rowguid, modifieddate);
   };
 
-  static RowParser<SalesterritoryhistoryRow> _rowParser = RowParsers.of(BusinessentityId.pgType, SalesterritoryId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SalesterritoryhistoryRow::new, row -> new Tuple6<>(row.businessentityid(), row.territoryid(), row.startdate(), row.enddate(), row.rowguid(), row.modifieddate()));;
+  static RowParser<SalesterritoryhistoryRow> _rowParser = RowParsers.of(BusinessentityId.pgType, SalesterritoryId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SalesterritoryhistoryRow::new, row -> new Object[]{row.businessentityid(), row.territoryid(), row.startdate(), row.enddate(), row.rowguid(), row.modifieddate()});;
 
   static public SalesterritoryhistoryRow apply(
     SalesterritoryhistoryId compositeId,

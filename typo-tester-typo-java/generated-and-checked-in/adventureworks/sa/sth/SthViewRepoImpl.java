@@ -5,22 +5,22 @@
  */
 package adventureworks.sa.sth;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class SthViewRepoImpl implements SthViewRepo {
+  @Override
   public SelectBuilder<SthViewFields, SthViewRow> select() {
     return SelectBuilder.of("sa.sth", SthViewFields.structure(), SthViewRow._rowParser);
   };
 
+  @Override
   public List<SthViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "businessentityid", "territoryid", "startdate"::text, "enddate"::text, "rowguid", "modifieddate"::text
        from "sa"."sth"
-    """)).as(SthViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(SthViewRow._rowParser.all()).runUnchecked(c);
   };
 }

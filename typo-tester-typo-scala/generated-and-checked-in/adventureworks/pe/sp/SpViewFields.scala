@@ -44,7 +44,7 @@ object SpViewFields {
 
     override lazy val fields: SpViewFields = {
       new SpViewFields {
-        def id: Field[StateprovinceId, SpViewRow] = {
+        override def id: Field[StateprovinceId, SpViewRow] = {
           new Field[StateprovinceId, SpViewRow](
             _path,
             "id",
@@ -55,7 +55,7 @@ object SpViewFields {
             StateprovinceId.pgType
           )
         }
-        def stateprovinceid: Field[StateprovinceId, SpViewRow] = {
+        override def stateprovinceid: Field[StateprovinceId, SpViewRow] = {
           new Field[StateprovinceId, SpViewRow](
             _path,
             "stateprovinceid",
@@ -66,7 +66,7 @@ object SpViewFields {
             StateprovinceId.pgType
           )
         }
-        def stateprovincecode: Field[/* bpchar, max 3 chars */ String, SpViewRow] = {
+        override def stateprovincecode: Field[/* bpchar, max 3 chars */ String, SpViewRow] = {
           new Field[/* bpchar, max 3 chars */ String, SpViewRow](
             _path,
             "stateprovincecode",
@@ -77,7 +77,7 @@ object SpViewFields {
             PgTypes.text
           )
         }
-        def countryregioncode: Field[CountryregionId, SpViewRow] = {
+        override def countryregioncode: Field[CountryregionId, SpViewRow] = {
           new Field[CountryregionId, SpViewRow](
             _path,
             "countryregioncode",
@@ -88,7 +88,7 @@ object SpViewFields {
             CountryregionId.pgType
           )
         }
-        def isonlystateprovinceflag: Field[Flag, SpViewRow] = {
+        override def isonlystateprovinceflag: Field[Flag, SpViewRow] = {
           new Field[Flag, SpViewRow](
             _path,
             "isonlystateprovinceflag",
@@ -99,7 +99,7 @@ object SpViewFields {
             Flag.pgType
           )
         }
-        def name: Field[Name, SpViewRow] = {
+        override def name: Field[Name, SpViewRow] = {
           new Field[Name, SpViewRow](
             _path,
             "name",
@@ -110,7 +110,7 @@ object SpViewFields {
             Name.pgType
           )
         }
-        def territoryid: Field[SalesterritoryId, SpViewRow] = {
+        override def territoryid: Field[SalesterritoryId, SpViewRow] = {
           new Field[SalesterritoryId, SpViewRow](
             _path,
             "territoryid",
@@ -121,7 +121,7 @@ object SpViewFields {
             SalesterritoryId.pgType
           )
         }
-        def rowguid: Field[TypoUUID, SpViewRow] = {
+        override def rowguid: Field[TypoUUID, SpViewRow] = {
           new Field[TypoUUID, SpViewRow](
             _path,
             "rowguid",
@@ -132,7 +132,7 @@ object SpViewFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, SpViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, SpViewRow] = {
           new Field[TypoLocalDateTime, SpViewRow](
             _path,
             "modifieddate",
@@ -148,7 +148,7 @@ object SpViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, SpViewRow]] = java.util.List.of(this.fields.id, this.fields.stateprovinceid, this.fields.stateprovincecode, this.fields.countryregioncode, this.fields.isonlystateprovinceflag, this.fields.name, this.fields.territoryid, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[SpViewFields, SpViewRow] = new Impl(java.util.List.of())

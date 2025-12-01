@@ -44,7 +44,7 @@ object ProductdocumentFields {
 
     override lazy val fields: ProductdocumentFields = {
       new ProductdocumentFields {
-        def productid: IdField[ProductId, ProductdocumentRow] = {
+        override def productid: IdField[ProductId, ProductdocumentRow] = {
           new IdField[ProductId, ProductdocumentRow](
             _path,
             "productid",
@@ -55,7 +55,7 @@ object ProductdocumentFields {
             ProductId.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, ProductdocumentRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, ProductdocumentRow] = {
           new Field[TypoLocalDateTime, ProductdocumentRow](
             _path,
             "modifieddate",
@@ -66,7 +66,7 @@ object ProductdocumentFields {
             TypoLocalDateTime.pgType
           )
         }
-        def documentnode: IdField[DocumentId, ProductdocumentRow] = {
+        override def documentnode: IdField[DocumentId, ProductdocumentRow] = {
           new IdField[DocumentId, ProductdocumentRow](
             _path,
             "documentnode",
@@ -82,7 +82,7 @@ object ProductdocumentFields {
 
     override lazy val columns: java.util.List[FieldLike[?, ProductdocumentRow]] = java.util.List.of(this.fields.productid, this.fields.modifieddate, this.fields.documentnode)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[ProductdocumentFields, ProductdocumentRow] = new Impl(java.util.List.of())

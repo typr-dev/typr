@@ -11,7 +11,6 @@ import adventureworks.public.Name
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple3
 
 /** Table: sales.currency
  * Lookup table containing standard ISO currencies.
@@ -31,7 +30,7 @@ case class CurrencyRow(
 }
 
 object CurrencyRow {
-  val `_rowParser`: RowParser[CurrencyRow] = RowParsers.of(CurrencyId.pgType, Name.pgType, TypoLocalDateTime.pgType, CurrencyRow.apply, row => new Tuple3(row.currencycode, row.name, row.modifieddate))
+  val `_rowParser`: RowParser[CurrencyRow] = RowParsers.of(CurrencyId.pgType, Name.pgType, TypoLocalDateTime.pgType, CurrencyRow.apply, row => Array(row.currencycode, row.name, row.modifieddate))
 
   given pgText: PgText[CurrencyRow] = PgText.from(`_rowParser`)
 }

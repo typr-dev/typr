@@ -23,11 +23,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class WorkorderRepoImpl extends WorkorderRepo {
-  def delete: DeleteBuilder[WorkorderFields, WorkorderRow] = DeleteBuilder.of("production.workorder", WorkorderFields.structure)
+  override def delete: DeleteBuilder[WorkorderFields, WorkorderRow] = DeleteBuilder.of("production.workorder", WorkorderFields.structure)
 
-  def deleteById(workorderid: WorkorderId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."workorder" where "workorderid" = ${WorkorderId.pgType.encode(workorderid)}""".update().runUnchecked(c) > 0
+  override def deleteById(workorderid: WorkorderId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."workorder" where "workorderid" = ${WorkorderId.pgType.encode(workorderid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(workorderids: Array[WorkorderId])(using c: Connection): Integer = {
+  override def deleteByIds(workorderids: Array[WorkorderId])(using c: Connection): Integer = {
     interpolate"""delete
     from "production"."workorder"
     where "workorderid" = ANY(${WorkorderId.pgTypeArray.encode(workorderids)})"""
@@ -35,7 +35,7 @@ class WorkorderRepoImpl extends WorkorderRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: WorkorderRow)(using c: Connection): WorkorderRow = {
+  override def insert(unsaved: WorkorderRow)(using c: Connection): WorkorderRow = {
   interpolate"""insert into "production"."workorder"("workorderid", "productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "modifieddate")
     values (${WorkorderId.pgType.encode(unsaved.workorderid)}::int4, ${ProductId.pgType.encode(unsaved.productid)}::int4, ${PgTypes.int4.encode(unsaved.orderqty)}::int4, ${TypoShort.pgType.encode(unsaved.scrappedqty)}::int2, ${TypoLocalDateTime.pgType.encode(unsaved.startdate)}::timestamp, ${TypoLocalDateTime.pgType.opt().encode(unsaved.enddate)}::timestamp, ${TypoLocalDateTime.pgType.encode(unsaved.duedate)}::timestamp, ${ScrapreasonId.pgType.opt().encode(unsaved.scrapreasonid)}::int2, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text
@@ -43,9 +43,9 @@ class WorkorderRepoImpl extends WorkorderRepo {
     .updateReturning(WorkorderRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: WorkorderRowUnsaved)(using c: Connection): WorkorderRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: WorkorderRowUnsaved)(using c: Connection): WorkorderRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""productid"""")): @scala.annotation.nowarn
     values.add(interpolate"${ProductId.pgType.encode(unsaved.productid)}::int4"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""orderqty"""")): @scala.annotation.nowarn
@@ -61,18 +61,12 @@ class WorkorderRepoImpl extends WorkorderRepo {
     columns.add(Fragment.lit(""""scrapreasonid"""")): @scala.annotation.nowarn
     values.add(interpolate"${ScrapreasonId.pgType.opt().encode(unsaved.scrapreasonid)}::int2"): @scala.annotation.nowarn
     unsaved.workorderid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""workorderid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${WorkorderId.pgType.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""workorderid"""")): @scala.annotation.nowarn; values.add(interpolate"${WorkorderId.pgType.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "production"."workorder"(${Fragment.comma(columns)})
@@ -80,51 +74,51 @@ class WorkorderRepoImpl extends WorkorderRepo {
       returning "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text
       """
     }
-    q.updateReturning(WorkorderRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(WorkorderRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[WorkorderRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."workorder"("workorderid", "productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "modifieddate") FROM STDIN""", batchSize, unsaved, c, WorkorderRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[WorkorderRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."workorder"("productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "workorderid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, WorkorderRowUnsaved.pgText)
 
-  def select: SelectBuilder[WorkorderFields, WorkorderRow] = SelectBuilder.of("production.workorder", WorkorderFields.structure, WorkorderRow.`_rowParser`)
+  override def select: SelectBuilder[WorkorderFields, WorkorderRow] = SelectBuilder.of("production.workorder", WorkorderFields.structure, WorkorderRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[WorkorderRow] = {
+  override def selectAll(using c: Connection): java.util.List[WorkorderRow] = {
     interpolate"""select "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text
     from "production"."workorder"
-    """.as(WorkorderRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(WorkorderRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(workorderid: WorkorderId)(using c: Connection): Optional[WorkorderRow] = {
+  override def selectById(workorderid: WorkorderId)(using c: Connection): Optional[WorkorderRow] = {
     interpolate"""select "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text
     from "production"."workorder"
-    where "workorderid" = ${WorkorderId.pgType.encode(workorderid)}""".as(WorkorderRow.`_rowParser`.first()).runUnchecked(c)
+    where "workorderid" = ${WorkorderId.pgType.encode(workorderid)}""".query(WorkorderRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(workorderids: Array[WorkorderId])(using c: Connection): java.util.List[WorkorderRow] = {
+  override def selectByIds(workorderids: Array[WorkorderId])(using c: Connection): java.util.List[WorkorderRow] = {
     interpolate"""select "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text
     from "production"."workorder"
-    where "workorderid" = ANY(${WorkorderId.pgTypeArray.encode(workorderids)})""".as(WorkorderRow.`_rowParser`.all()).runUnchecked(c)
+    where "workorderid" = ANY(${WorkorderId.pgTypeArray.encode(workorderids)})""".query(WorkorderRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(workorderids: Array[WorkorderId])(using c: Connection): java.util.Map[WorkorderId, WorkorderRow] = {
-    val ret: java.util.Map[WorkorderId, WorkorderRow] = new HashMap()
+  override def selectByIdsTracked(workorderids: Array[WorkorderId])(using c: Connection): java.util.Map[WorkorderId, WorkorderRow] = {
+    val ret: HashMap[WorkorderId, WorkorderRow] = new HashMap[WorkorderId, WorkorderRow]()
     selectByIds(workorderids)(using c).forEach(row => ret.put(row.workorderid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[WorkorderFields, WorkorderRow] = UpdateBuilder.of("production.workorder", WorkorderFields.structure, WorkorderRow.`_rowParser`.all())
+  override def update: UpdateBuilder[WorkorderFields, WorkorderRow] = UpdateBuilder.of("production.workorder", WorkorderFields.structure, WorkorderRow.`_rowParser`.all())
 
-  def update(row: WorkorderRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: WorkorderRow)(using c: Connection): java.lang.Boolean = {
     val workorderid: WorkorderId = row.workorderid
-    interpolate"""update "production"."workorder"
+    return interpolate"""update "production"."workorder"
     set "productid" = ${ProductId.pgType.encode(row.productid)}::int4,
     "orderqty" = ${PgTypes.int4.encode(row.orderqty)}::int4,
     "scrappedqty" = ${TypoShort.pgType.encode(row.scrappedqty)}::int2,
@@ -136,7 +130,7 @@ class WorkorderRepoImpl extends WorkorderRepo {
     where "workorderid" = ${WorkorderId.pgType.encode(workorderid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: WorkorderRow)(using c: Connection): WorkorderRow = {
+  override def upsert(unsaved: WorkorderRow)(using c: Connection): WorkorderRow = {
   interpolate"""insert into "production"."workorder"("workorderid", "productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "modifieddate")
     values (${WorkorderId.pgType.encode(unsaved.workorderid)}::int4, ${ProductId.pgType.encode(unsaved.productid)}::int4, ${PgTypes.int4.encode(unsaved.orderqty)}::int4, ${TypoShort.pgType.encode(unsaved.scrappedqty)}::int2, ${TypoLocalDateTime.pgType.encode(unsaved.startdate)}::timestamp, ${TypoLocalDateTime.pgType.opt().encode(unsaved.enddate)}::timestamp, ${TypoLocalDateTime.pgType.encode(unsaved.duedate)}::timestamp, ${ScrapreasonId.pgType.opt().encode(unsaved.scrapreasonid)}::int2, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("workorderid")
@@ -155,7 +149,7 @@ class WorkorderRepoImpl extends WorkorderRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[WorkorderRow])(using c: Connection): java.util.List[WorkorderRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[WorkorderRow])(using c: Connection): java.util.List[WorkorderRow] = {
     interpolate"""insert into "production"."workorder"("workorderid", "productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "modifieddate")
     values (?::int4, ?::int4, ?::int4, ?::int2, ?::timestamp, ?::timestamp, ?::timestamp, ?::int2, ?::timestamp)
     on conflict ("workorderid")
@@ -175,13 +169,13 @@ class WorkorderRepoImpl extends WorkorderRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[WorkorderRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table workorder_TEMP (like "production"."workorder") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy workorder_TEMP("workorderid", "productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "modifieddate") from stdin""", batchSize, unsaved, c, WorkorderRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "production"."workorder"("workorderid", "productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "modifieddate")
+    return interpolate"""insert into "production"."workorder"("workorderid", "productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "modifieddate")
     select * from workorder_TEMP
     on conflict ("workorderid")
     do update set

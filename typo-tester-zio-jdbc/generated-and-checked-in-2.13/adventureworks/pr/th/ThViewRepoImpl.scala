@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class ThViewRepoImpl extends ThViewRepo {
-  def select: SelectBuilder[ThViewFields, ThViewRow] = SelectBuilder.of(""""pr"."th"""", ThViewFields.structure, ThViewRow.jdbcDecoder)
+  override def select: SelectBuilder[ThViewFields, ThViewRow] = SelectBuilder.of(""""pr"."th"""", ThViewFields.structure, ThViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, ThViewRow] = sql"""select "id", "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text from "pr"."th"""".query(ThViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, ThViewRow] = sql"""select "id", "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text from "pr"."th"""".query(ThViewRow.jdbcDecoder).selectStream()
 }

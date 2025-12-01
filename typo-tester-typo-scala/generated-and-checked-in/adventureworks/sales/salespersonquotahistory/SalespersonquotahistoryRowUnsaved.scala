@@ -45,17 +45,5 @@ case class SalespersonquotahistoryRowUnsaved(
 }
 
 object SalespersonquotahistoryRowUnsaved {
-  given pgText: PgText[SalespersonquotahistoryRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      BusinessentityId.pgType.pgText.unsafeEncode(row.businessentityid, sb);
-      sb.append(PgText.DELIMETER);
-      TypoLocalDateTime.pgType.pgText.unsafeEncode(row.quotadate, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.numeric.pgText.unsafeEncode(row.salesquota, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[SalespersonquotahistoryRowUnsaved] = PgText.instance((row, sb) => { BusinessentityId.pgType.pgText.unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); TypoLocalDateTime.pgType.pgText.unsafeEncode(row.quotadate, sb); sb.append(PgText.DELIMETER); PgTypes.numeric.pgText.unsafeEncode(row.salesquota, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

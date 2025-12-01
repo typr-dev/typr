@@ -11,7 +11,6 @@ import adventureworks.humanresources.shift.ShiftId;
 import adventureworks.public_.Name;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple6;
 
 /** View: hr.s */
 public record SViewRow(
@@ -58,5 +57,5 @@ public record SViewRow(
     return new SViewRow(id, shiftid, name, starttime, endtime, modifieddate);
   };
 
-  static RowParser<SViewRow> _rowParser = RowParsers.of(ShiftId.pgType, ShiftId.pgType, Name.pgType, TypoLocalTime.pgType, TypoLocalTime.pgType, TypoLocalDateTime.pgType, SViewRow::new, row -> new Tuple6<>(row.id(), row.shiftid(), row.name(), row.starttime(), row.endtime(), row.modifieddate()));;
+  static RowParser<SViewRow> _rowParser = RowParsers.of(ShiftId.pgType, ShiftId.pgType, Name.pgType, TypoLocalTime.pgType, TypoLocalTime.pgType, TypoLocalDateTime.pgType, SViewRow::new, row -> new Object[]{row.id(), row.shiftid(), row.name(), row.starttime(), row.endtime(), row.modifieddate()});;
 }

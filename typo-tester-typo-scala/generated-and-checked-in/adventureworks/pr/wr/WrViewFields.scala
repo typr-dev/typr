@@ -50,7 +50,7 @@ object WrViewFields {
 
     override lazy val fields: WrViewFields = {
       new WrViewFields {
-        def id: Field[WorkorderId, WrViewRow] = {
+        override def id: Field[WorkorderId, WrViewRow] = {
           new Field[WorkorderId, WrViewRow](
             _path,
             "id",
@@ -61,7 +61,7 @@ object WrViewFields {
             WorkorderId.pgType
           )
         }
-        def workorderid: Field[WorkorderId, WrViewRow] = {
+        override def workorderid: Field[WorkorderId, WrViewRow] = {
           new Field[WorkorderId, WrViewRow](
             _path,
             "workorderid",
@@ -72,7 +72,7 @@ object WrViewFields {
             WorkorderId.pgType
           )
         }
-        def productid: Field[Integer, WrViewRow] = {
+        override def productid: Field[Integer, WrViewRow] = {
           new Field[Integer, WrViewRow](
             _path,
             "productid",
@@ -83,7 +83,7 @@ object WrViewFields {
             PgTypes.int4
           )
         }
-        def operationsequence: Field[TypoShort, WrViewRow] = {
+        override def operationsequence: Field[TypoShort, WrViewRow] = {
           new Field[TypoShort, WrViewRow](
             _path,
             "operationsequence",
@@ -94,7 +94,7 @@ object WrViewFields {
             TypoShort.pgType
           )
         }
-        def locationid: Field[LocationId, WrViewRow] = {
+        override def locationid: Field[LocationId, WrViewRow] = {
           new Field[LocationId, WrViewRow](
             _path,
             "locationid",
@@ -105,7 +105,7 @@ object WrViewFields {
             LocationId.pgType
           )
         }
-        def scheduledstartdate: Field[TypoLocalDateTime, WrViewRow] = {
+        override def scheduledstartdate: Field[TypoLocalDateTime, WrViewRow] = {
           new Field[TypoLocalDateTime, WrViewRow](
             _path,
             "scheduledstartdate",
@@ -116,7 +116,7 @@ object WrViewFields {
             TypoLocalDateTime.pgType
           )
         }
-        def scheduledenddate: Field[TypoLocalDateTime, WrViewRow] = {
+        override def scheduledenddate: Field[TypoLocalDateTime, WrViewRow] = {
           new Field[TypoLocalDateTime, WrViewRow](
             _path,
             "scheduledenddate",
@@ -127,7 +127,7 @@ object WrViewFields {
             TypoLocalDateTime.pgType
           )
         }
-        def actualstartdate: OptField[TypoLocalDateTime, WrViewRow] = {
+        override def actualstartdate: OptField[TypoLocalDateTime, WrViewRow] = {
           new OptField[TypoLocalDateTime, WrViewRow](
             _path,
             "actualstartdate",
@@ -138,7 +138,7 @@ object WrViewFields {
             TypoLocalDateTime.pgType
           )
         }
-        def actualenddate: OptField[TypoLocalDateTime, WrViewRow] = {
+        override def actualenddate: OptField[TypoLocalDateTime, WrViewRow] = {
           new OptField[TypoLocalDateTime, WrViewRow](
             _path,
             "actualenddate",
@@ -149,7 +149,7 @@ object WrViewFields {
             TypoLocalDateTime.pgType
           )
         }
-        def actualresourcehrs: OptField[java.math.BigDecimal, WrViewRow] = {
+        override def actualresourcehrs: OptField[java.math.BigDecimal, WrViewRow] = {
           new OptField[java.math.BigDecimal, WrViewRow](
             _path,
             "actualresourcehrs",
@@ -160,7 +160,7 @@ object WrViewFields {
             PgTypes.numeric
           )
         }
-        def plannedcost: Field[java.math.BigDecimal, WrViewRow] = {
+        override def plannedcost: Field[java.math.BigDecimal, WrViewRow] = {
           new Field[java.math.BigDecimal, WrViewRow](
             _path,
             "plannedcost",
@@ -171,7 +171,7 @@ object WrViewFields {
             PgTypes.numeric
           )
         }
-        def actualcost: OptField[java.math.BigDecimal, WrViewRow] = {
+        override def actualcost: OptField[java.math.BigDecimal, WrViewRow] = {
           new OptField[java.math.BigDecimal, WrViewRow](
             _path,
             "actualcost",
@@ -182,7 +182,7 @@ object WrViewFields {
             PgTypes.numeric
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, WrViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, WrViewRow] = {
           new Field[TypoLocalDateTime, WrViewRow](
             _path,
             "modifieddate",
@@ -198,7 +198,7 @@ object WrViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, WrViewRow]] = java.util.List.of(this.fields.id, this.fields.workorderid, this.fields.productid, this.fields.operationsequence, this.fields.locationid, this.fields.scheduledstartdate, this.fields.scheduledenddate, this.fields.actualstartdate, this.fields.actualenddate, this.fields.actualresourcehrs, this.fields.plannedcost, this.fields.actualcost, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[WrViewFields, WrViewRow] = new Impl(java.util.List.of())

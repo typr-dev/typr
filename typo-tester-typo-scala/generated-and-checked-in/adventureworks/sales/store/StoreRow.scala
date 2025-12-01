@@ -15,7 +15,6 @@ import java.util.Optional
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple6
 
 /** Table: sales.store
  * Customers (resellers) of Adventure Works products.
@@ -57,16 +56,7 @@ case class StoreRow(
 }
 
 object StoreRow {
-  val `_rowParser`: RowParser[StoreRow] = {
-    RowParsers.of(BusinessentityId.pgType, Name.pgType, BusinessentityId.pgType.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, StoreRow.apply, row => new Tuple6(
-      row.businessentityid,
-      row.name,
-      row.salespersonid,
-      row.demographics,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[StoreRow] = RowParsers.of(BusinessentityId.pgType, Name.pgType, BusinessentityId.pgType.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, StoreRow.apply, row => Array(row.businessentityid, row.name, row.salespersonid, row.demographics, row.rowguid, row.modifieddate))
 
   given pgText: PgText[StoreRow] = PgText.from(`_rowParser`)
 }

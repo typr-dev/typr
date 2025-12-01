@@ -24,18 +24,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class ShiftRepoImpl extends ShiftRepo {
-  def delete: DeleteBuilder[ShiftFields, ShiftRow] = DeleteBuilder.of(""""humanresources"."shift"""", ShiftFields.structure, ShiftRow.rowParser(1).*)
+  override def delete: DeleteBuilder[ShiftFields, ShiftRow] = DeleteBuilder.of(""""humanresources"."shift"""", ShiftFields.structure, ShiftRow.rowParser(1).*)
 
-  def deleteById(shiftid: ShiftId)(using c: Connection): Boolean = SQL"""delete from "humanresources"."shift" where "shiftid" = ${ParameterValue(shiftid, null, ShiftId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(shiftid: ShiftId)(using c: Connection): Boolean = SQL"""delete from "humanresources"."shift" where "shiftid" = ${ParameterValue(shiftid, null, ShiftId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(shiftids: Array[ShiftId])(using c: Connection): Int = {
+  override def deleteByIds(shiftids: Array[ShiftId])(using c: Connection): Int = {
     SQL"""delete
     from "humanresources"."shift"
     where "shiftid" = ANY(${ParameterValue(shiftids, null, ShiftId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: ShiftRow)(using c: Connection): ShiftRow = {
+  override def insert(unsaved: ShiftRow)(using c: Connection): ShiftRow = {
   SQL"""insert into "humanresources"."shift"("shiftid", "name", "starttime", "endtime", "modifieddate")
     values (${ParameterValue(unsaved.shiftid, null, ShiftId.toStatement)}::int4, ${ParameterValue(unsaved.name, null, Name.toStatement)}::varchar, ${ParameterValue(unsaved.starttime, null, TypoLocalTime.toStatement)}::time, ${ParameterValue(unsaved.endtime, null, TypoLocalTime.toStatement)}::time, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text
@@ -43,7 +43,7 @@ class ShiftRepoImpl extends ShiftRepo {
     .executeInsert(ShiftRow.rowParser(1).single)
   }
 
-  def insert(unsaved: ShiftRowUnsaved)(using c: Connection): ShiftRow = {
+  override def insert(unsaved: ShiftRowUnsaved)(using c: Connection): ShiftRow = {
     val namedParameters = List(
       Some((NamedParameter("name", ParameterValue(unsaved.name, null, Name.toStatement)), "::varchar")),
       Some((NamedParameter("starttime", ParameterValue(unsaved.starttime, null, TypoLocalTime.toStatement)), "::time")),
@@ -73,47 +73,47 @@ class ShiftRepoImpl extends ShiftRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[ShiftRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "humanresources"."shift"("shiftid", "name", "starttime", "endtime", "modifieddate") FROM STDIN""", batchSize, unsaved)(using ShiftRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[ShiftRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "humanresources"."shift"("name", "starttime", "endtime", "shiftid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using ShiftRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[ShiftFields, ShiftRow] = SelectBuilder.of(""""humanresources"."shift"""", ShiftFields.structure, ShiftRow.rowParser)
+  override def select: SelectBuilder[ShiftFields, ShiftRow] = SelectBuilder.of(""""humanresources"."shift"""", ShiftFields.structure, ShiftRow.rowParser)
 
-  def selectAll(using c: Connection): List[ShiftRow] = {
+  override def selectAll(using c: Connection): List[ShiftRow] = {
     SQL"""select "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text
     from "humanresources"."shift"
     """.as(ShiftRow.rowParser(1).*)
   }
 
-  def selectById(shiftid: ShiftId)(using c: Connection): Option[ShiftRow] = {
+  override def selectById(shiftid: ShiftId)(using c: Connection): Option[ShiftRow] = {
     SQL"""select "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text
     from "humanresources"."shift"
     where "shiftid" = ${ParameterValue(shiftid, null, ShiftId.toStatement)}
     """.as(ShiftRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(shiftids: Array[ShiftId])(using c: Connection): List[ShiftRow] = {
+  override def selectByIds(shiftids: Array[ShiftId])(using c: Connection): List[ShiftRow] = {
     SQL"""select "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text
     from "humanresources"."shift"
     where "shiftid" = ANY(${ParameterValue(shiftids, null, ShiftId.arrayToStatement)})
     """.as(ShiftRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(shiftids: Array[ShiftId])(using c: Connection): Map[ShiftId, ShiftRow] = {
+  override def selectByIdsTracked(shiftids: Array[ShiftId])(using c: Connection): Map[ShiftId, ShiftRow] = {
     val byId = selectByIds(shiftids).view.map(x => (x.shiftid, x)).toMap
     shiftids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[ShiftFields, ShiftRow] = UpdateBuilder.of(""""humanresources"."shift"""", ShiftFields.structure, ShiftRow.rowParser(1).*)
+  override def update: UpdateBuilder[ShiftFields, ShiftRow] = UpdateBuilder.of(""""humanresources"."shift"""", ShiftFields.structure, ShiftRow.rowParser(1).*)
 
-  def update(row: ShiftRow)(using c: Connection): Option[ShiftRow] = {
+  override def update(row: ShiftRow)(using c: Connection): Option[ShiftRow] = {
     val shiftid = row.shiftid
     SQL"""update "humanresources"."shift"
     set "name" = ${ParameterValue(row.name, null, Name.toStatement)}::varchar,
@@ -125,7 +125,7 @@ class ShiftRepoImpl extends ShiftRepo {
     """.executeInsert(ShiftRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: ShiftRow)(using c: Connection): ShiftRow = {
+  override def upsert(unsaved: ShiftRow)(using c: Connection): ShiftRow = {
   SQL"""insert into "humanresources"."shift"("shiftid", "name", "starttime", "endtime", "modifieddate")
     values (
       ${ParameterValue(unsaved.shiftid, null, ShiftId.toStatement)}::int4,
@@ -145,7 +145,7 @@ class ShiftRepoImpl extends ShiftRepo {
     .executeInsert(ShiftRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[ShiftRow])(using c: Connection): List[ShiftRow] = {
+  override def upsertBatch(unsaved: Iterable[ShiftRow])(using c: Connection): List[ShiftRow] = {
     def toNamedParameter(row: ShiftRow): List[NamedParameter] = List(
       NamedParameter("shiftid", ParameterValue(row.shiftid, null, ShiftId.toStatement)),
       NamedParameter("name", ParameterValue(row.name, null, Name.toStatement)),
@@ -153,6 +153,7 @@ class ShiftRepoImpl extends ShiftRepo {
       NamedParameter("endtime", ParameterValue(row.endtime, null, TypoLocalTime.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -176,7 +177,7 @@ class ShiftRepoImpl extends ShiftRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[ShiftRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

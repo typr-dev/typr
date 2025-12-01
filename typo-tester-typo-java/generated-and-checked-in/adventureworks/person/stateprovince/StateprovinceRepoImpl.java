@@ -11,7 +11,6 @@ import adventureworks.person.countryregion.CountryregionId;
 import adventureworks.public_.Flag;
 import adventureworks.public_.Name;
 import adventureworks.sales.salesterritory.SalesterritoryId;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,12 +28,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class StateprovinceRepoImpl implements StateprovinceRepo {
+  @Override
   public DeleteBuilder<StateprovinceFields, StateprovinceRow> delete() {
     return DeleteBuilder.of("person.stateprovince", StateprovinceFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     StateprovinceId stateprovinceid,
     Connection c
@@ -48,6 +48,7 @@ public class StateprovinceRepoImpl implements StateprovinceRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     StateprovinceId[] stateprovinceids,
     Connection c
@@ -64,6 +65,7 @@ public class StateprovinceRepoImpl implements StateprovinceRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public StateprovinceRow insert(
     StateprovinceRow unsaved,
     Connection c
@@ -95,90 +97,100 @@ public class StateprovinceRepoImpl implements StateprovinceRepo {
       .updateReturning(StateprovinceRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public StateprovinceRow insert(
     StateprovinceRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"stateprovincecode\""));
-      values.add(interpolate(
-        PgTypes.text.encode(unsaved.stateprovincecode()),
-        typo.runtime.Fragment.lit("::bpchar")
-      ));
-      columns.add(Fragment.lit("\"countryregioncode\""));
-      values.add(interpolate(
-        CountryregionId.pgType.encode(unsaved.countryregioncode()),
-        typo.runtime.Fragment.lit("""
-        """)
-      ));
-      columns.add(Fragment.lit("\"name\""));
-      values.add(interpolate(
-        Name.pgType.encode(unsaved.name()),
-        typo.runtime.Fragment.lit("::varchar")
-      ));
-      columns.add(Fragment.lit("\"territoryid\""));
-      values.add(interpolate(
-        SalesterritoryId.pgType.encode(unsaved.territoryid()),
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"stateprovincecode\""));
+    values.add(interpolate(
+      PgTypes.text.encode(unsaved.stateprovincecode()),
+      typo.runtime.Fragment.lit("::bpchar")
+    ));
+    columns.add(Fragment.lit("\"countryregioncode\""));
+    values.add(interpolate(
+      CountryregionId.pgType.encode(unsaved.countryregioncode()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    columns.add(Fragment.lit("\"name\""));
+    values.add(interpolate(
+      Name.pgType.encode(unsaved.name()),
+      typo.runtime.Fragment.lit("::varchar")
+    ));
+    columns.add(Fragment.lit("\"territoryid\""));
+    values.add(interpolate(
+      SalesterritoryId.pgType.encode(unsaved.territoryid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    unsaved.stateprovinceid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"stateprovinceid\""));
+        values.add(interpolate(
+        StateprovinceId.pgType.encode(value),
         typo.runtime.Fragment.lit("::int4")
       ));
-      unsaved.stateprovinceid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"stateprovinceid\""));
-          values.add(interpolate(
-            StateprovinceId.pgType.encode(value),
-            typo.runtime.Fragment.lit("::int4")
-          ));
-        }
-      );;
-      unsaved.isonlystateprovinceflag().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"isonlystateprovinceflag\""));
-          values.add(interpolate(
-            Flag.pgType.encode(value),
-            typo.runtime.Fragment.lit("::bool")
-          ));
-        }
-      );;
-      unsaved.rowguid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"rowguid\""));
-          values.add(interpolate(
-            TypoUUID.pgType.encode(value),
-            typo.runtime.Fragment.lit("::uuid")
-          ));
-        }
-      );;
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "person"."stateprovince"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    unsaved.isonlystateprovinceflag().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"isonlystateprovinceflag\""));
+        values.add(interpolate(
+        Flag.pgType.encode(value),
+        typo.runtime.Fragment.lit("::bool")
+      ));
+      }
+    );;
+    unsaved.rowguid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"rowguid\""));
+        values.add(interpolate(
+        TypoUUID.pgType.encode(value),
+        typo.runtime.Fragment.lit("::uuid")
+      ));
+      }
+    );;
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
+      ));
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "person"."stateprovince"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(StateprovinceRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<StateprovinceRow> unsaved,
     Integer batchSize,
@@ -190,6 +202,7 @@ public class StateprovinceRepoImpl implements StateprovinceRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<StateprovinceRowUnsaved> unsaved,
     Integer batchSize,
@@ -200,17 +213,20 @@ public class StateprovinceRepoImpl implements StateprovinceRepo {
     """), batchSize, unsaved, c, StateprovinceRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<StateprovinceFields, StateprovinceRow> select() {
     return SelectBuilder.of("person.stateprovince", StateprovinceFields.structure(), StateprovinceRow._rowParser);
   };
 
+  @Override
   public List<StateprovinceRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"::text
        from "person"."stateprovince"
-    """)).as(StateprovinceRow._rowParser.all()).runUnchecked(c);
+    """)).query(StateprovinceRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<StateprovinceRow> selectById(
     StateprovinceId stateprovinceid,
     Connection c
@@ -222,9 +238,10 @@ public class StateprovinceRepoImpl implements StateprovinceRepo {
          where "stateprovinceid" = """),
       StateprovinceId.pgType.encode(stateprovinceid),
       typo.runtime.Fragment.lit("")
-    ).as(StateprovinceRow._rowParser.first()).runUnchecked(c);
+    ).query(StateprovinceRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<StateprovinceRow> selectByIds(
     StateprovinceId[] stateprovinceids,
     Connection c
@@ -236,64 +253,68 @@ public class StateprovinceRepoImpl implements StateprovinceRepo {
          where "stateprovinceid" = ANY("""),
       StateprovinceId.pgTypeArray.encode(stateprovinceids),
       typo.runtime.Fragment.lit(")")
-    ).as(StateprovinceRow._rowParser.all()).runUnchecked(c);
+    ).query(StateprovinceRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<StateprovinceId, StateprovinceRow> selectByIdsTracked(
     StateprovinceId[] stateprovinceids,
     Connection c
   ) {
-    Map<StateprovinceId, StateprovinceRow> ret = new HashMap<>();;
-      selectByIds(stateprovinceids, c).forEach(row -> ret.put(row.stateprovinceid(), row));
+    HashMap<StateprovinceId, StateprovinceRow> ret = new HashMap<StateprovinceId, StateprovinceRow>();
+    selectByIds(stateprovinceids, c).forEach(row -> ret.put(row.stateprovinceid(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<StateprovinceFields, StateprovinceRow> update() {
     return UpdateBuilder.of("person.stateprovince", StateprovinceFields.structure(), StateprovinceRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     StateprovinceRow row,
     Connection c
   ) {
     StateprovinceId stateprovinceid = row.stateprovinceid();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "person"."stateprovince"
-                set "stateprovincecode" = """),
-             PgTypes.text.encode(row.stateprovincecode()),
-             typo.runtime.Fragment.lit("""
-                ::bpchar,
-                "countryregioncode" = """),
-             CountryregionId.pgType.encode(row.countryregioncode()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "isonlystateprovinceflag" = """),
-             Flag.pgType.encode(row.isonlystateprovinceflag()),
-             typo.runtime.Fragment.lit("""
-                ::bool,
-                "name" = """),
-             Name.pgType.encode(row.name()),
-             typo.runtime.Fragment.lit("""
-                ::varchar,
-                "territoryid" = """),
-             SalesterritoryId.pgType.encode(row.territoryid()),
-             typo.runtime.Fragment.lit("""
-                ::int4,
-                "rowguid" = """),
-             TypoUUID.pgType.encode(row.rowguid()),
-             typo.runtime.Fragment.lit("""
-                ::uuid,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "stateprovinceid" = """),
-             StateprovinceId.pgType.encode(stateprovinceid),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "person"."stateprovince"
+         set "stateprovincecode" = """),
+      PgTypes.text.encode(row.stateprovincecode()),
+      typo.runtime.Fragment.lit("""
+         ::bpchar,
+         "countryregioncode" = """),
+      CountryregionId.pgType.encode(row.countryregioncode()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "isonlystateprovinceflag" = """),
+      Flag.pgType.encode(row.isonlystateprovinceflag()),
+      typo.runtime.Fragment.lit("""
+         ::bool,
+         "name" = """),
+      Name.pgType.encode(row.name()),
+      typo.runtime.Fragment.lit("""
+         ::varchar,
+         "territoryid" = """),
+      SalesterritoryId.pgType.encode(row.territoryid()),
+      typo.runtime.Fragment.lit("""
+         ::int4,
+         "rowguid" = """),
+      TypoUUID.pgType.encode(row.rowguid()),
+      typo.runtime.Fragment.lit("""
+         ::uuid,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "stateprovinceid" = """),
+      StateprovinceId.pgType.encode(stateprovinceid),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public StateprovinceRow upsert(
     StateprovinceRow unsaved,
     Connection c
@@ -335,6 +356,7 @@ public class StateprovinceRepoImpl implements StateprovinceRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<StateprovinceRow> upsertBatch(
     Iterator<StateprovinceRow> unsaved,
     Connection c
@@ -358,30 +380,31 @@ public class StateprovinceRepoImpl implements StateprovinceRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<StateprovinceRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table stateprovince_TEMP (like "person"."stateprovince") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy stateprovince_TEMP("stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate") from stdin
-      """), batchSize, unsaved, c, StateprovinceRow.pgText);
+    create temporary table stateprovince_TEMP (like "person"."stateprovince") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy stateprovince_TEMP("stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate") from stdin
+    """), batchSize, unsaved, c, StateprovinceRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "person"."stateprovince"("stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate")
-              select * from stateprovince_TEMP
-              on conflict ("stateprovinceid")
-              do update set
-                "stateprovincecode" = EXCLUDED."stateprovincecode",
-              "countryregioncode" = EXCLUDED."countryregioncode",
-              "isonlystateprovinceflag" = EXCLUDED."isonlystateprovinceflag",
-              "name" = EXCLUDED."name",
-              "territoryid" = EXCLUDED."territoryid",
-              "rowguid" = EXCLUDED."rowguid",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table stateprovince_TEMP;""")).update().runUnchecked(c);
+       insert into "person"."stateprovince"("stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate")
+       select * from stateprovince_TEMP
+       on conflict ("stateprovinceid")
+       do update set
+         "stateprovincecode" = EXCLUDED."stateprovincecode",
+       "countryregioncode" = EXCLUDED."countryregioncode",
+       "isonlystateprovinceflag" = EXCLUDED."isonlystateprovinceflag",
+       "name" = EXCLUDED."name",
+       "territoryid" = EXCLUDED."territoryid",
+       "rowguid" = EXCLUDED."rowguid",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table stateprovince_TEMP;""")).update().runUnchecked(c);
   };
 }

@@ -5,6 +5,7 @@
  */
 package adventureworks.public
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
@@ -12,7 +13,7 @@ import typo.runtime.PgTypes
 /** Domain `public.short_text`
  * Constraint: CHECK ((length(VALUE) <= 55))
  */
-case class ShortText(value: String)
+case class ShortText(@JsonValue value: String)
 
 object ShortText {
   given bijection: Bijection[ShortText, String] = Bijection.apply[ShortText, String](_.value)(ShortText.apply)

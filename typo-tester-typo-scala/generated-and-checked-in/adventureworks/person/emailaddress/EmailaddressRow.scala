@@ -14,7 +14,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple5
 
 /** Table: person.emailaddress
  * Where to send a person email.
@@ -56,15 +55,7 @@ case class EmailaddressRow(
 }
 
 object EmailaddressRow {
-  val `_rowParser`: RowParser[EmailaddressRow] = {
-    RowParsers.of(BusinessentityId.pgType, PgTypes.int4, PgTypes.text.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, EmailaddressRow.apply, row => new Tuple5(
-      row.businessentityid,
-      row.emailaddressid,
-      row.emailaddress,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[EmailaddressRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.int4, PgTypes.text.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, EmailaddressRow.apply, row => Array(row.businessentityid, row.emailaddressid, row.emailaddress, row.rowguid, row.modifieddate))
 
   def apply(
     compositeId: EmailaddressId,

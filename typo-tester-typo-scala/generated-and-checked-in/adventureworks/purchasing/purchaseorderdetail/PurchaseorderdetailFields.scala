@@ -58,7 +58,7 @@ object PurchaseorderdetailFields {
 
     override lazy val fields: PurchaseorderdetailFields = {
       new PurchaseorderdetailFields {
-        def purchaseorderid: IdField[PurchaseorderheaderId, PurchaseorderdetailRow] = {
+        override def purchaseorderid: IdField[PurchaseorderheaderId, PurchaseorderdetailRow] = {
           new IdField[PurchaseorderheaderId, PurchaseorderdetailRow](
             _path,
             "purchaseorderid",
@@ -69,7 +69,7 @@ object PurchaseorderdetailFields {
             PurchaseorderheaderId.pgType
           )
         }
-        def purchaseorderdetailid: IdField[Integer, PurchaseorderdetailRow] = {
+        override def purchaseorderdetailid: IdField[Integer, PurchaseorderdetailRow] = {
           new IdField[Integer, PurchaseorderdetailRow](
             _path,
             "purchaseorderdetailid",
@@ -80,7 +80,7 @@ object PurchaseorderdetailFields {
             PgTypes.int4
           )
         }
-        def duedate: Field[TypoLocalDateTime, PurchaseorderdetailRow] = {
+        override def duedate: Field[TypoLocalDateTime, PurchaseorderdetailRow] = {
           new Field[TypoLocalDateTime, PurchaseorderdetailRow](
             _path,
             "duedate",
@@ -91,7 +91,7 @@ object PurchaseorderdetailFields {
             TypoLocalDateTime.pgType
           )
         }
-        def orderqty: Field[TypoShort, PurchaseorderdetailRow] = {
+        override def orderqty: Field[TypoShort, PurchaseorderdetailRow] = {
           new Field[TypoShort, PurchaseorderdetailRow](
             _path,
             "orderqty",
@@ -102,7 +102,7 @@ object PurchaseorderdetailFields {
             TypoShort.pgType
           )
         }
-        def productid: Field[ProductId, PurchaseorderdetailRow] = {
+        override def productid: Field[ProductId, PurchaseorderdetailRow] = {
           new Field[ProductId, PurchaseorderdetailRow](
             _path,
             "productid",
@@ -113,7 +113,7 @@ object PurchaseorderdetailFields {
             ProductId.pgType
           )
         }
-        def unitprice: Field[java.math.BigDecimal, PurchaseorderdetailRow] = {
+        override def unitprice: Field[java.math.BigDecimal, PurchaseorderdetailRow] = {
           new Field[java.math.BigDecimal, PurchaseorderdetailRow](
             _path,
             "unitprice",
@@ -124,7 +124,7 @@ object PurchaseorderdetailFields {
             PgTypes.numeric
           )
         }
-        def receivedqty: Field[java.math.BigDecimal, PurchaseorderdetailRow] = {
+        override def receivedqty: Field[java.math.BigDecimal, PurchaseorderdetailRow] = {
           new Field[java.math.BigDecimal, PurchaseorderdetailRow](
             _path,
             "receivedqty",
@@ -135,7 +135,7 @@ object PurchaseorderdetailFields {
             PgTypes.numeric
           )
         }
-        def rejectedqty: Field[java.math.BigDecimal, PurchaseorderdetailRow] = {
+        override def rejectedqty: Field[java.math.BigDecimal, PurchaseorderdetailRow] = {
           new Field[java.math.BigDecimal, PurchaseorderdetailRow](
             _path,
             "rejectedqty",
@@ -146,7 +146,7 @@ object PurchaseorderdetailFields {
             PgTypes.numeric
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, PurchaseorderdetailRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, PurchaseorderdetailRow] = {
           new Field[TypoLocalDateTime, PurchaseorderdetailRow](
             _path,
             "modifieddate",
@@ -162,7 +162,7 @@ object PurchaseorderdetailFields {
 
     override lazy val columns: java.util.List[FieldLike[?, PurchaseorderdetailRow]] = java.util.List.of(this.fields.purchaseorderid, this.fields.purchaseorderdetailid, this.fields.duedate, this.fields.orderqty, this.fields.productid, this.fields.unitprice, this.fields.receivedqty, this.fields.rejectedqty, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[PurchaseorderdetailFields, PurchaseorderdetailRow] = new Impl(java.util.List.of())

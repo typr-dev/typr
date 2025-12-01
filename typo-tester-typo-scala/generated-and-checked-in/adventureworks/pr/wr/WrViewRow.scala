@@ -13,7 +13,6 @@ import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple13
 
 /** View: pr.wr */
 case class WrViewRow(
@@ -46,21 +45,5 @@ case class WrViewRow(
 )
 
 object WrViewRow {
-  val `_rowParser`: RowParser[WrViewRow] = {
-    RowParsers.of(WorkorderId.pgType, WorkorderId.pgType, PgTypes.int4, TypoShort.pgType, LocationId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoLocalDateTime.pgType.opt(), PgTypes.numeric.opt(), PgTypes.numeric, PgTypes.numeric.opt(), TypoLocalDateTime.pgType, WrViewRow.apply, row => new Tuple13(
-      row.id,
-      row.workorderid,
-      row.productid,
-      row.operationsequence,
-      row.locationid,
-      row.scheduledstartdate,
-      row.scheduledenddate,
-      row.actualstartdate,
-      row.actualenddate,
-      row.actualresourcehrs,
-      row.plannedcost,
-      row.actualcost,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[WrViewRow] = RowParsers.of(WorkorderId.pgType, WorkorderId.pgType, PgTypes.int4, TypoShort.pgType, LocationId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoLocalDateTime.pgType.opt(), PgTypes.numeric.opt(), PgTypes.numeric, PgTypes.numeric.opt(), TypoLocalDateTime.pgType, WrViewRow.apply, row => Array(row.id, row.workorderid, row.productid, row.operationsequence, row.locationid, row.scheduledstartdate, row.scheduledenddate, row.actualstartdate, row.actualenddate, row.actualresourcehrs, row.plannedcost, row.actualcost, row.modifieddate))
 }

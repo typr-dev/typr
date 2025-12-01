@@ -5,6 +5,7 @@
  */
 package adventureworks.public.issue142
 
+import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
@@ -22,7 +23,7 @@ import typo.dsl.UpdateBuilder.UpdateBuilderMock
 import typo.dsl.UpdateParams
 
 case class Issue142RepoMock(map: HashMap[Issue142Id, Issue142Row] = new HashMap[Issue142Id, Issue142Row]()) extends Issue142Repo {
-  def delete: DeleteBuilder[Issue142Fields, Issue142Row] = {
+  override def delete: DeleteBuilder[Issue142Fields, Issue142Row] = {
     new DeleteBuilderMock(
       Issue142Fields.structure,
       () => new ArrayList(map.values()),
@@ -32,25 +33,25 @@ case class Issue142RepoMock(map: HashMap[Issue142Id, Issue142Row] = new HashMap[
     )
   }
 
-  def deleteById(tabellkode: Issue142Id)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(tabellkode)).isPresent()
+  override def deleteById(tabellkode: Issue142Id)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(tabellkode)).isPresent()
 
-  def deleteByIds(tabellkodes: Array[Issue142Id])(using c: Connection): Integer = {
+  override def deleteByIds(tabellkodes: Array[Issue142Id])(using c: Connection): Integer = {
     var count = 0
     tabellkodes.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
-    count
+    return count
   }
 
-  def insert(unsaved: Issue142Row)(using c: Connection): Issue142Row = {
+  override def insert(unsaved: Issue142Row)(using c: Connection): Issue142Row = {
     if (map.containsKey(unsaved.tabellkode)) {
       throw new RuntimeException(s"id $unsaved.tabellkode already exists")
     }
     map.put(unsaved.tabellkode, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[Issue142Row],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -60,25 +61,25 @@ case class Issue142RepoMock(map: HashMap[Issue142Id, Issue142Row] = new HashMap[
       map.put(row.tabellkode, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
-  def select: SelectBuilder[Issue142Fields, Issue142Row] = new SelectBuilderMock(Issue142Fields.structure, () => new ArrayList(map.values()), SelectParams.empty())
+  override def select: SelectBuilder[Issue142Fields, Issue142Row] = new SelectBuilderMock(Issue142Fields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  def selectAll(using c: Connection): java.util.List[Issue142Row] = new ArrayList(map.values())
+  override def selectAll(using c: Connection): java.util.List[Issue142Row] = new ArrayList(map.values())
 
-  def selectById(tabellkode: Issue142Id)(using c: Connection): Optional[Issue142Row] = Optional.ofNullable(map.get(tabellkode))
+  override def selectById(tabellkode: Issue142Id)(using c: Connection): Optional[Issue142Row] = Optional.ofNullable(map.get(tabellkode))
 
-  def selectByIds(tabellkodes: Array[Issue142Id])(using c: Connection): java.util.List[Issue142Row] = {
+  override def selectByIds(tabellkodes: Array[Issue142Id])(using c: Connection): java.util.List[Issue142Row] = {
     val result = new ArrayList[Issue142Row]()
     tabellkodes.foreach { id => val opt = Optional.ofNullable(map.get(id))
     if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
-    result
+    return result
   }
 
-  def selectByIdsTracked(tabellkodes: Array[Issue142Id])(using c: Connection): java.util.Map[Issue142Id, Issue142Row] = selectByIds(tabellkodes)(using c).stream().collect(Collectors.toMap((row: adventureworks.public.issue142.Issue142Row) => row.tabellkode, Function.identity()))
+  override def selectByIdsTracked(tabellkodes: Array[Issue142Id])(using c: Connection): java.util.Map[Issue142Id, Issue142Row] = selectByIds(tabellkodes)(using c).stream().collect(Collectors.toMap((row: Issue142Row) => row.tabellkode, Function.identity()))
 
-  def update: UpdateBuilder[Issue142Fields, Issue142Row] = {
+  override def update: UpdateBuilder[Issue142Fields, Issue142Row] = {
     new UpdateBuilderMock(
       Issue142Fields.structure,
       () => new ArrayList(map.values()),
@@ -87,23 +88,23 @@ case class Issue142RepoMock(map: HashMap[Issue142Id, Issue142Row] = new HashMap[
     )
   }
 
-  def upsert(unsaved: Issue142Row)(using c: Connection): Issue142Row = {
+  override def upsert(unsaved: Issue142Row)(using c: Connection): Issue142Row = {
     map.put(unsaved.tabellkode, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[Issue142Row])(using c: Connection): java.util.List[Issue142Row] = {
+  override def upsertBatch(unsaved: java.util.Iterator[Issue142Row])(using c: Connection): java.util.List[Issue142Row] = {
     val result = new ArrayList[Issue142Row]()
     while (unsaved.hasNext()) {
       val row = unsaved.next()
       map.put(row.tabellkode, row): @scala.annotation.nowarn
       result.add(row): @scala.annotation.nowarn
     }
-    result
+    return result
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[Issue142Row],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
@@ -113,6 +114,6 @@ case class Issue142RepoMock(map: HashMap[Issue142Id, Issue142Row] = new HashMap[
       map.put(row.tabellkode, row): @scala.annotation.nowarn
       count = count + 1
     }
-    count
+    return count
   }
 }

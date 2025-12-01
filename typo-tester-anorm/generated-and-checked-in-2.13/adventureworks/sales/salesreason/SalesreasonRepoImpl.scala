@@ -23,18 +23,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class SalesreasonRepoImpl extends SalesreasonRepo {
-  def delete: DeleteBuilder[SalesreasonFields, SalesreasonRow] = DeleteBuilder.of(""""sales"."salesreason"""", SalesreasonFields.structure, SalesreasonRow.rowParser(1).*)
+  override def delete: DeleteBuilder[SalesreasonFields, SalesreasonRow] = DeleteBuilder.of(""""sales"."salesreason"""", SalesreasonFields.structure, SalesreasonRow.rowParser(1).*)
 
-  def deleteById(salesreasonid: SalesreasonId)(implicit c: Connection): Boolean = SQL"""delete from "sales"."salesreason" where "salesreasonid" = ${ParameterValue(salesreasonid, null, SalesreasonId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(salesreasonid: SalesreasonId)(implicit c: Connection): Boolean = SQL"""delete from "sales"."salesreason" where "salesreasonid" = ${ParameterValue(salesreasonid, null, SalesreasonId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(salesreasonids: Array[SalesreasonId])(implicit c: Connection): Int = {
+  override def deleteByIds(salesreasonids: Array[SalesreasonId])(implicit c: Connection): Int = {
     SQL"""delete
     from "sales"."salesreason"
     where "salesreasonid" = ANY(${ParameterValue(salesreasonids, null, SalesreasonId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: SalesreasonRow)(implicit c: Connection): SalesreasonRow = {
+  override def insert(unsaved: SalesreasonRow)(implicit c: Connection): SalesreasonRow = {
   SQL"""insert into "sales"."salesreason"("salesreasonid", "name", "reasontype", "modifieddate")
     values (${ParameterValue(unsaved.salesreasonid, null, SalesreasonId.toStatement)}::int4, ${ParameterValue(unsaved.name, null, Name.toStatement)}::varchar, ${ParameterValue(unsaved.reasontype, null, Name.toStatement)}::varchar, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "salesreasonid", "name", "reasontype", "modifieddate"::text
@@ -42,7 +42,7 @@ class SalesreasonRepoImpl extends SalesreasonRepo {
     .executeInsert(SalesreasonRow.rowParser(1).single)
   }
 
-  def insert(unsaved: SalesreasonRowUnsaved)(implicit c: Connection): SalesreasonRow = {
+  override def insert(unsaved: SalesreasonRowUnsaved)(implicit c: Connection): SalesreasonRow = {
     val namedParameters = List(
       Some((NamedParameter("name", ParameterValue(unsaved.name, null, Name.toStatement)), "::varchar")),
       Some((NamedParameter("reasontype", ParameterValue(unsaved.reasontype, null, Name.toStatement)), "::varchar")),
@@ -71,47 +71,47 @@ class SalesreasonRepoImpl extends SalesreasonRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[SalesreasonRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "sales"."salesreason"("salesreasonid", "name", "reasontype", "modifieddate") FROM STDIN""", batchSize, unsaved)(SalesreasonRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[SalesreasonRowUnsaved],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "sales"."salesreason"("name", "reasontype", "salesreasonid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(SalesreasonRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[SalesreasonFields, SalesreasonRow] = SelectBuilder.of(""""sales"."salesreason"""", SalesreasonFields.structure, SalesreasonRow.rowParser)
+  override def select: SelectBuilder[SalesreasonFields, SalesreasonRow] = SelectBuilder.of(""""sales"."salesreason"""", SalesreasonFields.structure, SalesreasonRow.rowParser)
 
-  def selectAll(implicit c: Connection): List[SalesreasonRow] = {
+  override def selectAll(implicit c: Connection): List[SalesreasonRow] = {
     SQL"""select "salesreasonid", "name", "reasontype", "modifieddate"::text
     from "sales"."salesreason"
     """.as(SalesreasonRow.rowParser(1).*)
   }
 
-  def selectById(salesreasonid: SalesreasonId)(implicit c: Connection): Option[SalesreasonRow] = {
+  override def selectById(salesreasonid: SalesreasonId)(implicit c: Connection): Option[SalesreasonRow] = {
     SQL"""select "salesreasonid", "name", "reasontype", "modifieddate"::text
     from "sales"."salesreason"
     where "salesreasonid" = ${ParameterValue(salesreasonid, null, SalesreasonId.toStatement)}
     """.as(SalesreasonRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(salesreasonids: Array[SalesreasonId])(implicit c: Connection): List[SalesreasonRow] = {
+  override def selectByIds(salesreasonids: Array[SalesreasonId])(implicit c: Connection): List[SalesreasonRow] = {
     SQL"""select "salesreasonid", "name", "reasontype", "modifieddate"::text
     from "sales"."salesreason"
     where "salesreasonid" = ANY(${ParameterValue(salesreasonids, null, SalesreasonId.arrayToStatement)})
     """.as(SalesreasonRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(salesreasonids: Array[SalesreasonId])(implicit c: Connection): Map[SalesreasonId, SalesreasonRow] = {
+  override def selectByIdsTracked(salesreasonids: Array[SalesreasonId])(implicit c: Connection): Map[SalesreasonId, SalesreasonRow] = {
     val byId = selectByIds(salesreasonids).view.map(x => (x.salesreasonid, x)).toMap
     salesreasonids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[SalesreasonFields, SalesreasonRow] = UpdateBuilder.of(""""sales"."salesreason"""", SalesreasonFields.structure, SalesreasonRow.rowParser(1).*)
+  override def update: UpdateBuilder[SalesreasonFields, SalesreasonRow] = UpdateBuilder.of(""""sales"."salesreason"""", SalesreasonFields.structure, SalesreasonRow.rowParser(1).*)
 
-  def update(row: SalesreasonRow)(implicit c: Connection): Option[SalesreasonRow] = {
+  override def update(row: SalesreasonRow)(implicit c: Connection): Option[SalesreasonRow] = {
     val salesreasonid = row.salesreasonid
     SQL"""update "sales"."salesreason"
     set "name" = ${ParameterValue(row.name, null, Name.toStatement)}::varchar,
@@ -122,7 +122,7 @@ class SalesreasonRepoImpl extends SalesreasonRepo {
     """.executeInsert(SalesreasonRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: SalesreasonRow)(implicit c: Connection): SalesreasonRow = {
+  override def upsert(unsaved: SalesreasonRow)(implicit c: Connection): SalesreasonRow = {
   SQL"""insert into "sales"."salesreason"("salesreasonid", "name", "reasontype", "modifieddate")
     values (
       ${ParameterValue(unsaved.salesreasonid, null, SalesreasonId.toStatement)}::int4,
@@ -140,13 +140,14 @@ class SalesreasonRepoImpl extends SalesreasonRepo {
     .executeInsert(SalesreasonRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[SalesreasonRow])(implicit c: Connection): List[SalesreasonRow] = {
+  override def upsertBatch(unsaved: Iterable[SalesreasonRow])(implicit c: Connection): List[SalesreasonRow] = {
     def toNamedParameter(row: SalesreasonRow): List[NamedParameter] = List(
       NamedParameter("salesreasonid", ParameterValue(row.salesreasonid, null, SalesreasonId.toStatement)),
       NamedParameter("name", ParameterValue(row.name, null, Name.toStatement)),
       NamedParameter("reasontype", ParameterValue(row.reasontype, null, Name.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -169,7 +170,7 @@ class SalesreasonRepoImpl extends SalesreasonRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[SalesreasonRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

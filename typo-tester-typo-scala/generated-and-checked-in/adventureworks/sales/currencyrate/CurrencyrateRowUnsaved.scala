@@ -52,21 +52,5 @@ case class CurrencyrateRowUnsaved(
 }
 
 object CurrencyrateRowUnsaved {
-  given pgText: PgText[CurrencyrateRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      TypoLocalDateTime.pgType.pgText.unsafeEncode(row.currencyratedate, sb);
-      sb.append(PgText.DELIMETER);
-      CurrencyId.pgType.pgText.unsafeEncode(row.fromcurrencycode, sb);
-      sb.append(PgText.DELIMETER);
-      CurrencyId.pgType.pgText.unsafeEncode(row.tocurrencycode, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.numeric.pgText.unsafeEncode(row.averagerate, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.numeric.pgText.unsafeEncode(row.endofdayrate, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using CurrencyrateId.pgType.pgText).unsafeEncode(row.currencyrateid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[CurrencyrateRowUnsaved] = PgText.instance((row, sb) => { TypoLocalDateTime.pgType.pgText.unsafeEncode(row.currencyratedate, sb); sb.append(PgText.DELIMETER); CurrencyId.pgType.pgText.unsafeEncode(row.fromcurrencycode, sb); sb.append(PgText.DELIMETER); CurrencyId.pgType.pgText.unsafeEncode(row.tocurrencycode, sb); sb.append(PgText.DELIMETER); PgTypes.numeric.pgText.unsafeEncode(row.averagerate, sb); sb.append(PgText.DELIMETER); PgTypes.numeric.pgText.unsafeEncode(row.endofdayrate, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using CurrencyrateId.pgType.pgText).unsafeEncode(row.currencyrateid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

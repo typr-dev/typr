@@ -57,7 +57,7 @@ object EmployeedepartmenthistoryFields {
 
     override lazy val fields: EmployeedepartmenthistoryFields = {
       new EmployeedepartmenthistoryFields {
-        def businessentityid: IdField[BusinessentityId, EmployeedepartmenthistoryRow] = {
+        override def businessentityid: IdField[BusinessentityId, EmployeedepartmenthistoryRow] = {
           new IdField[BusinessentityId, EmployeedepartmenthistoryRow](
             _path,
             "businessentityid",
@@ -68,7 +68,7 @@ object EmployeedepartmenthistoryFields {
             BusinessentityId.pgType
           )
         }
-        def departmentid: IdField[DepartmentId, EmployeedepartmenthistoryRow] = {
+        override def departmentid: IdField[DepartmentId, EmployeedepartmenthistoryRow] = {
           new IdField[DepartmentId, EmployeedepartmenthistoryRow](
             _path,
             "departmentid",
@@ -79,7 +79,7 @@ object EmployeedepartmenthistoryFields {
             DepartmentId.pgType
           )
         }
-        def shiftid: IdField[ShiftId, EmployeedepartmenthistoryRow] = {
+        override def shiftid: IdField[ShiftId, EmployeedepartmenthistoryRow] = {
           new IdField[ShiftId, EmployeedepartmenthistoryRow](
             _path,
             "shiftid",
@@ -90,7 +90,7 @@ object EmployeedepartmenthistoryFields {
             ShiftId.pgType
           )
         }
-        def startdate: IdField[TypoLocalDate, EmployeedepartmenthistoryRow] = {
+        override def startdate: IdField[TypoLocalDate, EmployeedepartmenthistoryRow] = {
           new IdField[TypoLocalDate, EmployeedepartmenthistoryRow](
             _path,
             "startdate",
@@ -101,7 +101,7 @@ object EmployeedepartmenthistoryFields {
             TypoLocalDate.pgType
           )
         }
-        def enddate: OptField[TypoLocalDate, EmployeedepartmenthistoryRow] = {
+        override def enddate: OptField[TypoLocalDate, EmployeedepartmenthistoryRow] = {
           new OptField[TypoLocalDate, EmployeedepartmenthistoryRow](
             _path,
             "enddate",
@@ -112,7 +112,7 @@ object EmployeedepartmenthistoryFields {
             TypoLocalDate.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, EmployeedepartmenthistoryRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, EmployeedepartmenthistoryRow] = {
           new Field[TypoLocalDateTime, EmployeedepartmenthistoryRow](
             _path,
             "modifieddate",
@@ -128,7 +128,7 @@ object EmployeedepartmenthistoryFields {
 
     override lazy val columns: java.util.List[FieldLike[?, EmployeedepartmenthistoryRow]] = java.util.List.of(this.fields.businessentityid, this.fields.departmentid, this.fields.shiftid, this.fields.startdate, this.fields.enddate, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow] = new Impl(java.util.List.of())

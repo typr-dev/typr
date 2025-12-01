@@ -16,7 +16,7 @@ import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 
 public interface SrViewFields {
-  static final class Impl extends Relation<SrViewFields, SrViewRow> {
+  final class Impl extends Relation<SrViewFields, SrViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -24,15 +24,19 @@ public interface SrViewFields {
     @Override
     public SrViewFields fields() {
       return new SrViewFields() {
+               @Override
                public Field<ScrapreasonId, SrViewRow> id() {
                  return new Field<ScrapreasonId, SrViewRow>(_path, "id", SrViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ScrapreasonId.pgType);
                };
+               @Override
                public Field<ScrapreasonId, SrViewRow> scrapreasonid() {
                  return new Field<ScrapreasonId, SrViewRow>(_path, "scrapreasonid", SrViewRow::scrapreasonid, Optional.empty(), Optional.empty(), (row, value) -> row.withScrapreasonid(value), ScrapreasonId.pgType);
                };
+               @Override
                public Field<Name, SrViewRow> name() {
                  return new Field<Name, SrViewRow>(_path, "name", SrViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, SrViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, SrViewRow>(_path, "modifieddate", SrViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -44,6 +48,7 @@ public interface SrViewFields {
       return List.of(this.fields().id(), this.fields().scrapreasonid(), this.fields().name(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

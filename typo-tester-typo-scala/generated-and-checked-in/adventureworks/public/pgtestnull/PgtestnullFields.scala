@@ -185,7 +185,7 @@ object PgtestnullFields {
 
     override lazy val fields: PgtestnullFields = {
       new PgtestnullFields {
-        def bool: OptField[java.lang.Boolean, PgtestnullRow] = {
+        override def bool: OptField[java.lang.Boolean, PgtestnullRow] = {
           new OptField[java.lang.Boolean, PgtestnullRow](
             _path,
             "bool",
@@ -196,7 +196,7 @@ object PgtestnullFields {
             PgTypes.bool
           )
         }
-        def box: OptField[TypoBox, PgtestnullRow] = {
+        override def box: OptField[TypoBox, PgtestnullRow] = {
           new OptField[TypoBox, PgtestnullRow](
             _path,
             "box",
@@ -207,7 +207,7 @@ object PgtestnullFields {
             TypoBox.pgType
           )
         }
-        def bpchar: OptField[/* bpchar, max 3 chars */ String, PgtestnullRow] = {
+        override def bpchar: OptField[/* bpchar, max 3 chars */ String, PgtestnullRow] = {
           new OptField[/* bpchar, max 3 chars */ String, PgtestnullRow](
             _path,
             "bpchar",
@@ -218,7 +218,7 @@ object PgtestnullFields {
             PgTypes.text
           )
         }
-        def bytea: OptField[TypoBytea, PgtestnullRow] = {
+        override def bytea: OptField[TypoBytea, PgtestnullRow] = {
           new OptField[TypoBytea, PgtestnullRow](
             _path,
             "bytea",
@@ -229,7 +229,7 @@ object PgtestnullFields {
             TypoBytea.pgType
           )
         }
-        def char: OptField[/* bpchar, max 1 chars */ String, PgtestnullRow] = {
+        override def char: OptField[/* bpchar, max 1 chars */ String, PgtestnullRow] = {
           new OptField[/* bpchar, max 1 chars */ String, PgtestnullRow](
             _path,
             "char",
@@ -240,7 +240,7 @@ object PgtestnullFields {
             PgTypes.text
           )
         }
-        def circle: OptField[TypoCircle, PgtestnullRow] = {
+        override def circle: OptField[TypoCircle, PgtestnullRow] = {
           new OptField[TypoCircle, PgtestnullRow](
             _path,
             "circle",
@@ -251,7 +251,7 @@ object PgtestnullFields {
             TypoCircle.pgType
           )
         }
-        def date: OptField[TypoLocalDate, PgtestnullRow] = {
+        override def date: OptField[TypoLocalDate, PgtestnullRow] = {
           new OptField[TypoLocalDate, PgtestnullRow](
             _path,
             "date",
@@ -262,7 +262,7 @@ object PgtestnullFields {
             TypoLocalDate.pgType
           )
         }
-        def float4: OptField[java.lang.Float, PgtestnullRow] = {
+        override def float4: OptField[java.lang.Float, PgtestnullRow] = {
           new OptField[java.lang.Float, PgtestnullRow](
             _path,
             "float4",
@@ -273,7 +273,7 @@ object PgtestnullFields {
             PgTypes.float4
           )
         }
-        def float8: OptField[java.lang.Double, PgtestnullRow] = {
+        override def float8: OptField[java.lang.Double, PgtestnullRow] = {
           new OptField[java.lang.Double, PgtestnullRow](
             _path,
             "float8",
@@ -284,7 +284,7 @@ object PgtestnullFields {
             PgTypes.float8
           )
         }
-        def hstore: OptField[TypoHStore, PgtestnullRow] = {
+        override def hstore: OptField[TypoHStore, PgtestnullRow] = {
           new OptField[TypoHStore, PgtestnullRow](
             _path,
             "hstore",
@@ -295,7 +295,7 @@ object PgtestnullFields {
             TypoHStore.pgType
           )
         }
-        def inet: OptField[TypoInet, PgtestnullRow] = {
+        override def inet: OptField[TypoInet, PgtestnullRow] = {
           new OptField[TypoInet, PgtestnullRow](
             _path,
             "inet",
@@ -306,7 +306,7 @@ object PgtestnullFields {
             TypoInet.pgType
           )
         }
-        def int2: OptField[TypoShort, PgtestnullRow] = {
+        override def int2: OptField[TypoShort, PgtestnullRow] = {
           new OptField[TypoShort, PgtestnullRow](
             _path,
             "int2",
@@ -317,7 +317,7 @@ object PgtestnullFields {
             TypoShort.pgType
           )
         }
-        def int2vector: OptField[TypoInt2Vector, PgtestnullRow] = {
+        override def int2vector: OptField[TypoInt2Vector, PgtestnullRow] = {
           new OptField[TypoInt2Vector, PgtestnullRow](
             _path,
             "int2vector",
@@ -328,7 +328,7 @@ object PgtestnullFields {
             TypoInt2Vector.pgType
           )
         }
-        def int4: OptField[Integer, PgtestnullRow] = {
+        override def int4: OptField[Integer, PgtestnullRow] = {
           new OptField[Integer, PgtestnullRow](
             _path,
             "int4",
@@ -339,7 +339,7 @@ object PgtestnullFields {
             PgTypes.int4
           )
         }
-        def int8: OptField[java.lang.Long, PgtestnullRow] = {
+        override def int8: OptField[java.lang.Long, PgtestnullRow] = {
           new OptField[java.lang.Long, PgtestnullRow](
             _path,
             "int8",
@@ -350,7 +350,7 @@ object PgtestnullFields {
             PgTypes.int8
           )
         }
-        def interval: OptField[TypoInterval, PgtestnullRow] = {
+        override def interval: OptField[TypoInterval, PgtestnullRow] = {
           new OptField[TypoInterval, PgtestnullRow](
             _path,
             "interval",
@@ -361,7 +361,7 @@ object PgtestnullFields {
             TypoInterval.pgType
           )
         }
-        def json: OptField[TypoJson, PgtestnullRow] = {
+        override def json: OptField[TypoJson, PgtestnullRow] = {
           new OptField[TypoJson, PgtestnullRow](
             _path,
             "json",
@@ -372,7 +372,7 @@ object PgtestnullFields {
             TypoJson.pgType
           )
         }
-        def jsonb: OptField[TypoJsonb, PgtestnullRow] = {
+        override def jsonb: OptField[TypoJsonb, PgtestnullRow] = {
           new OptField[TypoJsonb, PgtestnullRow](
             _path,
             "jsonb",
@@ -383,7 +383,7 @@ object PgtestnullFields {
             TypoJsonb.pgType
           )
         }
-        def line: OptField[TypoLine, PgtestnullRow] = {
+        override def line: OptField[TypoLine, PgtestnullRow] = {
           new OptField[TypoLine, PgtestnullRow](
             _path,
             "line",
@@ -394,7 +394,7 @@ object PgtestnullFields {
             TypoLine.pgType
           )
         }
-        def lseg: OptField[TypoLineSegment, PgtestnullRow] = {
+        override def lseg: OptField[TypoLineSegment, PgtestnullRow] = {
           new OptField[TypoLineSegment, PgtestnullRow](
             _path,
             "lseg",
@@ -405,7 +405,7 @@ object PgtestnullFields {
             TypoLineSegment.pgType
           )
         }
-        def money: OptField[TypoMoney, PgtestnullRow] = {
+        override def money: OptField[TypoMoney, PgtestnullRow] = {
           new OptField[TypoMoney, PgtestnullRow](
             _path,
             "money",
@@ -416,7 +416,7 @@ object PgtestnullFields {
             TypoMoney.pgType
           )
         }
-        def mydomain: OptField[Mydomain, PgtestnullRow] = {
+        override def mydomain: OptField[Mydomain, PgtestnullRow] = {
           new OptField[Mydomain, PgtestnullRow](
             _path,
             "mydomain",
@@ -427,7 +427,7 @@ object PgtestnullFields {
             Mydomain.pgType
           )
         }
-        def myenum: OptField[Myenum, PgtestnullRow] = {
+        override def myenum: OptField[Myenum, PgtestnullRow] = {
           new OptField[Myenum, PgtestnullRow](
             _path,
             "myenum",
@@ -438,7 +438,7 @@ object PgtestnullFields {
             Myenum.pgType
           )
         }
-        def name: OptField[String, PgtestnullRow] = {
+        override def name: OptField[String, PgtestnullRow] = {
           new OptField[String, PgtestnullRow](
             _path,
             "name",
@@ -449,7 +449,7 @@ object PgtestnullFields {
             PgTypes.text
           )
         }
-        def numeric: OptField[java.math.BigDecimal, PgtestnullRow] = {
+        override def numeric: OptField[java.math.BigDecimal, PgtestnullRow] = {
           new OptField[java.math.BigDecimal, PgtestnullRow](
             _path,
             "numeric",
@@ -460,7 +460,7 @@ object PgtestnullFields {
             PgTypes.numeric
           )
         }
-        def path: OptField[TypoPath, PgtestnullRow] = {
+        override def path: OptField[TypoPath, PgtestnullRow] = {
           new OptField[TypoPath, PgtestnullRow](
             _path,
             "path",
@@ -471,7 +471,7 @@ object PgtestnullFields {
             TypoPath.pgType
           )
         }
-        def point: OptField[TypoPoint, PgtestnullRow] = {
+        override def point: OptField[TypoPoint, PgtestnullRow] = {
           new OptField[TypoPoint, PgtestnullRow](
             _path,
             "point",
@@ -482,7 +482,7 @@ object PgtestnullFields {
             TypoPoint.pgType
           )
         }
-        def polygon: OptField[TypoPolygon, PgtestnullRow] = {
+        override def polygon: OptField[TypoPolygon, PgtestnullRow] = {
           new OptField[TypoPolygon, PgtestnullRow](
             _path,
             "polygon",
@@ -493,7 +493,7 @@ object PgtestnullFields {
             TypoPolygon.pgType
           )
         }
-        def text: OptField[String, PgtestnullRow] = {
+        override def text: OptField[String, PgtestnullRow] = {
           new OptField[String, PgtestnullRow](
             _path,
             "text",
@@ -504,7 +504,7 @@ object PgtestnullFields {
             PgTypes.text
           )
         }
-        def time: OptField[TypoLocalTime, PgtestnullRow] = {
+        override def time: OptField[TypoLocalTime, PgtestnullRow] = {
           new OptField[TypoLocalTime, PgtestnullRow](
             _path,
             "time",
@@ -515,7 +515,7 @@ object PgtestnullFields {
             TypoLocalTime.pgType
           )
         }
-        def timestamp: OptField[TypoLocalDateTime, PgtestnullRow] = {
+        override def timestamp: OptField[TypoLocalDateTime, PgtestnullRow] = {
           new OptField[TypoLocalDateTime, PgtestnullRow](
             _path,
             "timestamp",
@@ -526,7 +526,7 @@ object PgtestnullFields {
             TypoLocalDateTime.pgType
           )
         }
-        def timestampz: OptField[TypoInstant, PgtestnullRow] = {
+        override def timestampz: OptField[TypoInstant, PgtestnullRow] = {
           new OptField[TypoInstant, PgtestnullRow](
             _path,
             "timestampz",
@@ -537,7 +537,7 @@ object PgtestnullFields {
             TypoInstant.pgType
           )
         }
-        def timez: OptField[TypoOffsetTime, PgtestnullRow] = {
+        override def timez: OptField[TypoOffsetTime, PgtestnullRow] = {
           new OptField[TypoOffsetTime, PgtestnullRow](
             _path,
             "timez",
@@ -548,7 +548,7 @@ object PgtestnullFields {
             TypoOffsetTime.pgType
           )
         }
-        def uuid: OptField[TypoUUID, PgtestnullRow] = {
+        override def uuid: OptField[TypoUUID, PgtestnullRow] = {
           new OptField[TypoUUID, PgtestnullRow](
             _path,
             "uuid",
@@ -559,7 +559,7 @@ object PgtestnullFields {
             TypoUUID.pgType
           )
         }
-        def varchar: OptField[String, PgtestnullRow] = {
+        override def varchar: OptField[String, PgtestnullRow] = {
           new OptField[String, PgtestnullRow](
             _path,
             "varchar",
@@ -570,7 +570,7 @@ object PgtestnullFields {
             PgTypes.text
           )
         }
-        def vector: OptField[TypoVector, PgtestnullRow] = {
+        override def vector: OptField[TypoVector, PgtestnullRow] = {
           new OptField[TypoVector, PgtestnullRow](
             _path,
             "vector",
@@ -581,7 +581,7 @@ object PgtestnullFields {
             TypoVector.pgType
           )
         }
-        def xml: OptField[TypoXml, PgtestnullRow] = {
+        override def xml: OptField[TypoXml, PgtestnullRow] = {
           new OptField[TypoXml, PgtestnullRow](
             _path,
             "xml",
@@ -592,7 +592,7 @@ object PgtestnullFields {
             TypoXml.pgType
           )
         }
-        def boxes: OptField[Array[TypoBox], PgtestnullRow] = {
+        override def boxes: OptField[Array[TypoBox], PgtestnullRow] = {
           new OptField[Array[TypoBox], PgtestnullRow](
             _path,
             "boxes",
@@ -603,7 +603,7 @@ object PgtestnullFields {
             TypoBox.pgTypeArray
           )
         }
-        def bpchares: OptField[Array[/* bpchar */ String], PgtestnullRow] = {
+        override def bpchares: OptField[Array[/* bpchar */ String], PgtestnullRow] = {
           new OptField[Array[/* bpchar */ String], PgtestnullRow](
             _path,
             "bpchares",
@@ -614,7 +614,7 @@ object PgtestnullFields {
             PgTypes.textArray
           )
         }
-        def chares: OptField[Array[/* bpchar */ String], PgtestnullRow] = {
+        override def chares: OptField[Array[/* bpchar */ String], PgtestnullRow] = {
           new OptField[Array[/* bpchar */ String], PgtestnullRow](
             _path,
             "chares",
@@ -625,7 +625,7 @@ object PgtestnullFields {
             PgTypes.textArray
           )
         }
-        def circlees: OptField[Array[TypoCircle], PgtestnullRow] = {
+        override def circlees: OptField[Array[TypoCircle], PgtestnullRow] = {
           new OptField[Array[TypoCircle], PgtestnullRow](
             _path,
             "circlees",
@@ -636,7 +636,7 @@ object PgtestnullFields {
             TypoCircle.pgTypeArray
           )
         }
-        def datees: OptField[Array[TypoLocalDate], PgtestnullRow] = {
+        override def datees: OptField[Array[TypoLocalDate], PgtestnullRow] = {
           new OptField[Array[TypoLocalDate], PgtestnullRow](
             _path,
             "datees",
@@ -647,7 +647,7 @@ object PgtestnullFields {
             TypoLocalDate.pgTypeArray
           )
         }
-        def float4es: OptField[Array[java.lang.Float], PgtestnullRow] = {
+        override def float4es: OptField[Array[java.lang.Float], PgtestnullRow] = {
           new OptField[Array[java.lang.Float], PgtestnullRow](
             _path,
             "float4es",
@@ -658,7 +658,7 @@ object PgtestnullFields {
             PgTypes.float4Array
           )
         }
-        def float8es: OptField[Array[java.lang.Double], PgtestnullRow] = {
+        override def float8es: OptField[Array[java.lang.Double], PgtestnullRow] = {
           new OptField[Array[java.lang.Double], PgtestnullRow](
             _path,
             "float8es",
@@ -669,7 +669,7 @@ object PgtestnullFields {
             PgTypes.float8Array
           )
         }
-        def inetes: OptField[Array[TypoInet], PgtestnullRow] = {
+        override def inetes: OptField[Array[TypoInet], PgtestnullRow] = {
           new OptField[Array[TypoInet], PgtestnullRow](
             _path,
             "inetes",
@@ -680,7 +680,7 @@ object PgtestnullFields {
             TypoInet.pgTypeArray
           )
         }
-        def int2es: OptField[Array[TypoShort], PgtestnullRow] = {
+        override def int2es: OptField[Array[TypoShort], PgtestnullRow] = {
           new OptField[Array[TypoShort], PgtestnullRow](
             _path,
             "int2es",
@@ -691,7 +691,7 @@ object PgtestnullFields {
             TypoShort.pgTypeArray
           )
         }
-        def int2vectores: OptField[Array[TypoInt2Vector], PgtestnullRow] = {
+        override def int2vectores: OptField[Array[TypoInt2Vector], PgtestnullRow] = {
           new OptField[Array[TypoInt2Vector], PgtestnullRow](
             _path,
             "int2vectores",
@@ -702,7 +702,7 @@ object PgtestnullFields {
             TypoInt2Vector.pgTypeArray
           )
         }
-        def int4es: OptField[Array[Integer], PgtestnullRow] = {
+        override def int4es: OptField[Array[Integer], PgtestnullRow] = {
           new OptField[Array[Integer], PgtestnullRow](
             _path,
             "int4es",
@@ -713,7 +713,7 @@ object PgtestnullFields {
             PgTypes.int4Array
           )
         }
-        def int8es: OptField[Array[java.lang.Long], PgtestnullRow] = {
+        override def int8es: OptField[Array[java.lang.Long], PgtestnullRow] = {
           new OptField[Array[java.lang.Long], PgtestnullRow](
             _path,
             "int8es",
@@ -724,7 +724,7 @@ object PgtestnullFields {
             PgTypes.int8Array
           )
         }
-        def intervales: OptField[Array[TypoInterval], PgtestnullRow] = {
+        override def intervales: OptField[Array[TypoInterval], PgtestnullRow] = {
           new OptField[Array[TypoInterval], PgtestnullRow](
             _path,
             "intervales",
@@ -735,7 +735,7 @@ object PgtestnullFields {
             TypoInterval.pgTypeArray
           )
         }
-        def jsones: OptField[Array[TypoJson], PgtestnullRow] = {
+        override def jsones: OptField[Array[TypoJson], PgtestnullRow] = {
           new OptField[Array[TypoJson], PgtestnullRow](
             _path,
             "jsones",
@@ -746,7 +746,7 @@ object PgtestnullFields {
             TypoJson.pgTypeArray
           )
         }
-        def jsonbes: OptField[Array[TypoJsonb], PgtestnullRow] = {
+        override def jsonbes: OptField[Array[TypoJsonb], PgtestnullRow] = {
           new OptField[Array[TypoJsonb], PgtestnullRow](
             _path,
             "jsonbes",
@@ -757,7 +757,7 @@ object PgtestnullFields {
             TypoJsonb.pgTypeArray
           )
         }
-        def linees: OptField[Array[TypoLine], PgtestnullRow] = {
+        override def linees: OptField[Array[TypoLine], PgtestnullRow] = {
           new OptField[Array[TypoLine], PgtestnullRow](
             _path,
             "linees",
@@ -768,7 +768,7 @@ object PgtestnullFields {
             TypoLine.pgTypeArray
           )
         }
-        def lseges: OptField[Array[TypoLineSegment], PgtestnullRow] = {
+        override def lseges: OptField[Array[TypoLineSegment], PgtestnullRow] = {
           new OptField[Array[TypoLineSegment], PgtestnullRow](
             _path,
             "lseges",
@@ -779,7 +779,7 @@ object PgtestnullFields {
             TypoLineSegment.pgTypeArray
           )
         }
-        def moneyes: OptField[Array[TypoMoney], PgtestnullRow] = {
+        override def moneyes: OptField[Array[TypoMoney], PgtestnullRow] = {
           new OptField[Array[TypoMoney], PgtestnullRow](
             _path,
             "moneyes",
@@ -790,7 +790,7 @@ object PgtestnullFields {
             TypoMoney.pgTypeArray
           )
         }
-        def mydomaines: OptField[Array[Mydomain], PgtestnullRow] = {
+        override def mydomaines: OptField[Array[Mydomain], PgtestnullRow] = {
           new OptField[Array[Mydomain], PgtestnullRow](
             _path,
             "mydomaines",
@@ -801,7 +801,7 @@ object PgtestnullFields {
             Mydomain.pgTypeArray
           )
         }
-        def myenumes: OptField[Array[Myenum], PgtestnullRow] = {
+        override def myenumes: OptField[Array[Myenum], PgtestnullRow] = {
           new OptField[Array[Myenum], PgtestnullRow](
             _path,
             "myenumes",
@@ -812,7 +812,7 @@ object PgtestnullFields {
             Myenum.pgTypeArray
           )
         }
-        def namees: OptField[Array[String], PgtestnullRow] = {
+        override def namees: OptField[Array[String], PgtestnullRow] = {
           new OptField[Array[String], PgtestnullRow](
             _path,
             "namees",
@@ -823,7 +823,7 @@ object PgtestnullFields {
             PgTypes.textArray
           )
         }
-        def numerices: OptField[Array[java.math.BigDecimal], PgtestnullRow] = {
+        override def numerices: OptField[Array[java.math.BigDecimal], PgtestnullRow] = {
           new OptField[Array[java.math.BigDecimal], PgtestnullRow](
             _path,
             "numerices",
@@ -834,7 +834,7 @@ object PgtestnullFields {
             PgTypes.numericArray
           )
         }
-        def pathes: OptField[Array[TypoPath], PgtestnullRow] = {
+        override def pathes: OptField[Array[TypoPath], PgtestnullRow] = {
           new OptField[Array[TypoPath], PgtestnullRow](
             _path,
             "pathes",
@@ -845,7 +845,7 @@ object PgtestnullFields {
             TypoPath.pgTypeArray
           )
         }
-        def pointes: OptField[Array[TypoPoint], PgtestnullRow] = {
+        override def pointes: OptField[Array[TypoPoint], PgtestnullRow] = {
           new OptField[Array[TypoPoint], PgtestnullRow](
             _path,
             "pointes",
@@ -856,7 +856,7 @@ object PgtestnullFields {
             TypoPoint.pgTypeArray
           )
         }
-        def polygones: OptField[Array[TypoPolygon], PgtestnullRow] = {
+        override def polygones: OptField[Array[TypoPolygon], PgtestnullRow] = {
           new OptField[Array[TypoPolygon], PgtestnullRow](
             _path,
             "polygones",
@@ -867,7 +867,7 @@ object PgtestnullFields {
             TypoPolygon.pgTypeArray
           )
         }
-        def textes: OptField[Array[String], PgtestnullRow] = {
+        override def textes: OptField[Array[String], PgtestnullRow] = {
           new OptField[Array[String], PgtestnullRow](
             _path,
             "textes",
@@ -878,7 +878,7 @@ object PgtestnullFields {
             PgTypes.textArray
           )
         }
-        def timees: OptField[Array[TypoLocalTime], PgtestnullRow] = {
+        override def timees: OptField[Array[TypoLocalTime], PgtestnullRow] = {
           new OptField[Array[TypoLocalTime], PgtestnullRow](
             _path,
             "timees",
@@ -889,7 +889,7 @@ object PgtestnullFields {
             TypoLocalTime.pgTypeArray
           )
         }
-        def timestampes: OptField[Array[TypoLocalDateTime], PgtestnullRow] = {
+        override def timestampes: OptField[Array[TypoLocalDateTime], PgtestnullRow] = {
           new OptField[Array[TypoLocalDateTime], PgtestnullRow](
             _path,
             "timestampes",
@@ -900,7 +900,7 @@ object PgtestnullFields {
             TypoLocalDateTime.pgTypeArray
           )
         }
-        def timestampzes: OptField[Array[TypoInstant], PgtestnullRow] = {
+        override def timestampzes: OptField[Array[TypoInstant], PgtestnullRow] = {
           new OptField[Array[TypoInstant], PgtestnullRow](
             _path,
             "timestampzes",
@@ -911,7 +911,7 @@ object PgtestnullFields {
             TypoInstant.pgTypeArray
           )
         }
-        def timezes: OptField[Array[TypoOffsetTime], PgtestnullRow] = {
+        override def timezes: OptField[Array[TypoOffsetTime], PgtestnullRow] = {
           new OptField[Array[TypoOffsetTime], PgtestnullRow](
             _path,
             "timezes",
@@ -922,7 +922,7 @@ object PgtestnullFields {
             TypoOffsetTime.pgTypeArray
           )
         }
-        def uuides: OptField[Array[TypoUUID], PgtestnullRow] = {
+        override def uuides: OptField[Array[TypoUUID], PgtestnullRow] = {
           new OptField[Array[TypoUUID], PgtestnullRow](
             _path,
             "uuides",
@@ -933,7 +933,7 @@ object PgtestnullFields {
             TypoUUID.pgTypeArray
           )
         }
-        def varchares: OptField[Array[String], PgtestnullRow] = {
+        override def varchares: OptField[Array[String], PgtestnullRow] = {
           new OptField[Array[String], PgtestnullRow](
             _path,
             "varchares",
@@ -944,7 +944,7 @@ object PgtestnullFields {
             PgTypes.textArray
           )
         }
-        def xmles: OptField[Array[TypoXml], PgtestnullRow] = {
+        override def xmles: OptField[Array[TypoXml], PgtestnullRow] = {
           new OptField[Array[TypoXml], PgtestnullRow](
             _path,
             "xmles",
@@ -960,7 +960,7 @@ object PgtestnullFields {
 
     override lazy val columns: java.util.List[FieldLike[?, PgtestnullRow]] = java.util.List.of(this.fields.bool, this.fields.box, this.fields.bpchar, this.fields.bytea, this.fields.char, this.fields.circle, this.fields.date, this.fields.float4, this.fields.float8, this.fields.hstore, this.fields.inet, this.fields.int2, this.fields.int2vector, this.fields.int4, this.fields.int8, this.fields.interval, this.fields.json, this.fields.jsonb, this.fields.line, this.fields.lseg, this.fields.money, this.fields.mydomain, this.fields.myenum, this.fields.name, this.fields.numeric, this.fields.path, this.fields.point, this.fields.polygon, this.fields.text, this.fields.time, this.fields.timestamp, this.fields.timestampz, this.fields.timez, this.fields.uuid, this.fields.varchar, this.fields.vector, this.fields.xml, this.fields.boxes, this.fields.bpchares, this.fields.chares, this.fields.circlees, this.fields.datees, this.fields.float4es, this.fields.float8es, this.fields.inetes, this.fields.int2es, this.fields.int2vectores, this.fields.int4es, this.fields.int8es, this.fields.intervales, this.fields.jsones, this.fields.jsonbes, this.fields.linees, this.fields.lseges, this.fields.moneyes, this.fields.mydomaines, this.fields.myenumes, this.fields.namees, this.fields.numerices, this.fields.pathes, this.fields.pointes, this.fields.polygones, this.fields.textes, this.fields.timees, this.fields.timestampes, this.fields.timestampzes, this.fields.timezes, this.fields.uuides, this.fields.varchares, this.fields.xmles)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[PgtestnullFields, PgtestnullRow] = new Impl(java.util.List.of())

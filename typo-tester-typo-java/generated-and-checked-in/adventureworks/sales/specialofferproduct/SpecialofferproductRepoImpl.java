@@ -9,7 +9,6 @@ import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.customtypes.TypoUUID;
 import adventureworks.production.product.ProductId;
 import adventureworks.sales.specialoffer.SpecialofferId;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,12 +26,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class SpecialofferproductRepoImpl implements SpecialofferproductRepo {
+  @Override
   public DeleteBuilder<SpecialofferproductFields, SpecialofferproductRow> delete() {
     return DeleteBuilder.of("sales.specialofferproduct", SpecialofferproductFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     SpecialofferproductId compositeId,
     Connection c
@@ -50,28 +50,30 @@ public class SpecialofferproductRepoImpl implements SpecialofferproductRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     SpecialofferproductId[] compositeIds,
     Connection c
   ) {
     SpecialofferId[] specialofferid = arrayMap.map(compositeIds, SpecialofferproductId::specialofferid, SpecialofferId.class);;
-      ProductId[] productid = arrayMap.map(compositeIds, SpecialofferproductId::productid, ProductId.class);;
+    ProductId[] productid = arrayMap.map(compositeIds, SpecialofferproductId::productid, ProductId.class);;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                delete
-                from "sales"."specialofferproduct"
-                where ("specialofferid", "productid")
-                in (select unnest("""),
-             SpecialofferId.pgTypeArray.encode(specialofferid),
-             typo.runtime.Fragment.lit("::int4[]), unnest("),
-             ProductId.pgTypeArray.encode(productid),
-             typo.runtime.Fragment.lit("""
-             ::int4[]))
+      typo.runtime.Fragment.lit("""
+         delete
+         from "sales"."specialofferproduct"
+         where ("specialofferid", "productid")
+         in (select unnest("""),
+      SpecialofferId.pgTypeArray.encode(specialofferid),
+      typo.runtime.Fragment.lit("::int4[]), unnest("),
+      ProductId.pgTypeArray.encode(productid),
+      typo.runtime.Fragment.lit("""
+      ::int4[]))
 
-             """)
-           ).update().runUnchecked(c);
+      """)
+    ).update().runUnchecked(c);
   };
 
+  @Override
   public SpecialofferproductRow insert(
     SpecialofferproductRow unsaved,
     Connection c
@@ -95,59 +97,65 @@ public class SpecialofferproductRepoImpl implements SpecialofferproductRepo {
       .updateReturning(SpecialofferproductRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public SpecialofferproductRow insert(
     SpecialofferproductRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"specialofferid\""));
-      values.add(interpolate(
-        SpecialofferId.pgType.encode(unsaved.specialofferid()),
-        typo.runtime.Fragment.lit("::int4")
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"specialofferid\""));
+    values.add(interpolate(
+      SpecialofferId.pgType.encode(unsaved.specialofferid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"productid\""));
+    values.add(interpolate(
+      ProductId.pgType.encode(unsaved.productid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    unsaved.rowguid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"rowguid\""));
+        values.add(interpolate(
+        TypoUUID.pgType.encode(value),
+        typo.runtime.Fragment.lit("::uuid")
       ));
-      columns.add(Fragment.lit("\"productid\""));
-      values.add(interpolate(
-        ProductId.pgType.encode(unsaved.productid()),
-        typo.runtime.Fragment.lit("::int4")
+      }
+    );;
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
       ));
-      unsaved.rowguid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"rowguid\""));
-          values.add(interpolate(
-            TypoUUID.pgType.encode(value),
-            typo.runtime.Fragment.lit("::uuid")
-          ));
-        }
-      );;
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "sales"."specialofferproduct"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "specialofferid", "productid", "rowguid", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "sales"."specialofferproduct"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "specialofferid", "productid", "rowguid", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(SpecialofferproductRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<SpecialofferproductRow> unsaved,
     Integer batchSize,
@@ -159,6 +167,7 @@ public class SpecialofferproductRepoImpl implements SpecialofferproductRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<SpecialofferproductRowUnsaved> unsaved,
     Integer batchSize,
@@ -169,17 +178,20 @@ public class SpecialofferproductRepoImpl implements SpecialofferproductRepo {
     """), batchSize, unsaved, c, SpecialofferproductRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<SpecialofferproductFields, SpecialofferproductRow> select() {
     return SelectBuilder.of("sales.specialofferproduct", SpecialofferproductFields.structure(), SpecialofferproductRow._rowParser);
   };
 
+  @Override
   public List<SpecialofferproductRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "specialofferid", "productid", "rowguid", "modifieddate"::text
        from "sales"."specialofferproduct"
-    """)).as(SpecialofferproductRow._rowParser.all()).runUnchecked(c);
+    """)).query(SpecialofferproductRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<SpecialofferproductRow> selectById(
     SpecialofferproductId compositeId,
     Connection c
@@ -195,70 +207,75 @@ public class SpecialofferproductRepoImpl implements SpecialofferproductRepo {
       """),
       ProductId.pgType.encode(compositeId.productid()),
       typo.runtime.Fragment.lit("")
-    ).as(SpecialofferproductRow._rowParser.first()).runUnchecked(c);
+    ).query(SpecialofferproductRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<SpecialofferproductRow> selectByIds(
     SpecialofferproductId[] compositeIds,
     Connection c
   ) {
     SpecialofferId[] specialofferid = arrayMap.map(compositeIds, SpecialofferproductId::specialofferid, SpecialofferId.class);;
-      ProductId[] productid = arrayMap.map(compositeIds, SpecialofferproductId::productid, ProductId.class);;
+    ProductId[] productid = arrayMap.map(compositeIds, SpecialofferproductId::productid, ProductId.class);;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                select "specialofferid", "productid", "rowguid", "modifieddate"::text
-                from "sales"."specialofferproduct"
-                where ("specialofferid", "productid")
-                in (select unnest("""),
-             SpecialofferId.pgTypeArray.encode(specialofferid),
-             typo.runtime.Fragment.lit("::int4[]), unnest("),
-             ProductId.pgTypeArray.encode(productid),
-             typo.runtime.Fragment.lit("""
-             ::int4[]))
+      typo.runtime.Fragment.lit("""
+         select "specialofferid", "productid", "rowguid", "modifieddate"::text
+         from "sales"."specialofferproduct"
+         where ("specialofferid", "productid")
+         in (select unnest("""),
+      SpecialofferId.pgTypeArray.encode(specialofferid),
+      typo.runtime.Fragment.lit("::int4[]), unnest("),
+      ProductId.pgTypeArray.encode(productid),
+      typo.runtime.Fragment.lit("""
+      ::int4[]))
 
-             """)
-           ).as(SpecialofferproductRow._rowParser.all()).runUnchecked(c);
+      """)
+    ).query(SpecialofferproductRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<SpecialofferproductId, SpecialofferproductRow> selectByIdsTracked(
     SpecialofferproductId[] compositeIds,
     Connection c
   ) {
-    Map<SpecialofferproductId, SpecialofferproductRow> ret = new HashMap<>();;
-      selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
+    HashMap<SpecialofferproductId, SpecialofferproductRow> ret = new HashMap<SpecialofferproductId, SpecialofferproductRow>();
+    selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<SpecialofferproductFields, SpecialofferproductRow> update() {
     return UpdateBuilder.of("sales.specialofferproduct", SpecialofferproductFields.structure(), SpecialofferproductRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     SpecialofferproductRow row,
     Connection c
   ) {
     SpecialofferproductId compositeId = row.compositeId();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "sales"."specialofferproduct"
-                set "rowguid" = """),
-             TypoUUID.pgType.encode(row.rowguid()),
-             typo.runtime.Fragment.lit("""
-                ::uuid,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "specialofferid" = """),
-             SpecialofferId.pgType.encode(compositeId.specialofferid()),
-             typo.runtime.Fragment.lit("""
-              AND "productid" = 
-             """),
-             ProductId.pgType.encode(compositeId.productid()),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "sales"."specialofferproduct"
+         set "rowguid" = """),
+      TypoUUID.pgType.encode(row.rowguid()),
+      typo.runtime.Fragment.lit("""
+         ::uuid,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "specialofferid" = """),
+      SpecialofferId.pgType.encode(compositeId.specialofferid()),
+      typo.runtime.Fragment.lit("""
+       AND "productid" = 
+      """),
+      ProductId.pgType.encode(compositeId.productid()),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public SpecialofferproductRow upsert(
     SpecialofferproductRow unsaved,
     Connection c
@@ -287,6 +304,7 @@ public class SpecialofferproductRepoImpl implements SpecialofferproductRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<SpecialofferproductRow> upsertBatch(
     Iterator<SpecialofferproductRow> unsaved,
     Connection c
@@ -305,25 +323,26 @@ public class SpecialofferproductRepoImpl implements SpecialofferproductRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<SpecialofferproductRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table specialofferproduct_TEMP (like "sales"."specialofferproduct") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy specialofferproduct_TEMP("specialofferid", "productid", "rowguid", "modifieddate") from stdin
-      """), batchSize, unsaved, c, SpecialofferproductRow.pgText);
+    create temporary table specialofferproduct_TEMP (like "sales"."specialofferproduct") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy specialofferproduct_TEMP("specialofferid", "productid", "rowguid", "modifieddate") from stdin
+    """), batchSize, unsaved, c, SpecialofferproductRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "sales"."specialofferproduct"("specialofferid", "productid", "rowguid", "modifieddate")
-              select * from specialofferproduct_TEMP
-              on conflict ("specialofferid", "productid")
-              do update set
-                "rowguid" = EXCLUDED."rowguid",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table specialofferproduct_TEMP;""")).update().runUnchecked(c);
+       insert into "sales"."specialofferproduct"("specialofferid", "productid", "rowguid", "modifieddate")
+       select * from specialofferproduct_TEMP
+       on conflict ("specialofferid", "productid")
+       do update set
+         "rowguid" = EXCLUDED."rowguid",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table specialofferproduct_TEMP;""")).update().runUnchecked(c);
   };
 }

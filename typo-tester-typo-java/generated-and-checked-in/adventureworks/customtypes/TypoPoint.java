@@ -32,11 +32,11 @@ public record TypoPoint(
   static public PgType<TypoPoint> pgType =
     PgType.of(
       "point",
-      PgRead.castJdbcObjectTo(PGpoint.class).map(v -> new TypoPoint(v.x, v.y)),
-      PgWrite.passObjectToJdbc().contramap((TypoPoint v) -> new PGpoint(v.x(), v.y())),
+      PgRead.castJdbcObjectTo(PGpoint.class).map((PGpoint v) -> new TypoPoint(v.x, v.y)),
+      PgWrite.<PGpoint>passObjectToJdbc().contramap((TypoPoint v) -> new PGpoint(v.x(), v.y())),
       TypoPoint.pgText
     );
 
   static public PgType<TypoPoint[]> pgTypeArray =
-    TypoPoint.pgType.array(PgRead.castJdbcArrayTo(PGpoint.class).map(xs -> arrayMap.map(xs, v -> new TypoPoint(v.x, v.y), TypoPoint.class)), PgWrite.<PGpoint>passObjectToJdbc().array(TypoPoint.pgType.typename().<PGpoint>as()).contramap(xs -> arrayMap.map(xs, (TypoPoint v) -> new PGpoint(v.x(), v.y()), PGpoint.class)));
+    TypoPoint.pgType.array(PgRead.castJdbcArrayTo(PGpoint.class).map((PGpoint[] xs) -> arrayMap.map(xs, (PGpoint v) -> new TypoPoint(v.x, v.y), TypoPoint.class)), PgWrite.<PGpoint>passObjectToJdbc().array(TypoPoint.pgType.typename().<PGpoint>as()).contramap((TypoPoint[] xs) -> arrayMap.map(xs, (TypoPoint v) -> new PGpoint(v.x(), v.y()), PGpoint.class)));
 }

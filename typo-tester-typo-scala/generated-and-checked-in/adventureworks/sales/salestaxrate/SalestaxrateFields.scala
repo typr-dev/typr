@@ -44,7 +44,7 @@ object SalestaxrateFields {
 
     override lazy val fields: SalestaxrateFields = {
       new SalestaxrateFields {
-        def salestaxrateid: IdField[SalestaxrateId, SalestaxrateRow] = {
+        override def salestaxrateid: IdField[SalestaxrateId, SalestaxrateRow] = {
           new IdField[SalestaxrateId, SalestaxrateRow](
             _path,
             "salestaxrateid",
@@ -55,7 +55,7 @@ object SalestaxrateFields {
             SalestaxrateId.pgType
           )
         }
-        def stateprovinceid: Field[StateprovinceId, SalestaxrateRow] = {
+        override def stateprovinceid: Field[StateprovinceId, SalestaxrateRow] = {
           new Field[StateprovinceId, SalestaxrateRow](
             _path,
             "stateprovinceid",
@@ -66,7 +66,7 @@ object SalestaxrateFields {
             StateprovinceId.pgType
           )
         }
-        def taxtype: Field[TypoShort, SalestaxrateRow] = {
+        override def taxtype: Field[TypoShort, SalestaxrateRow] = {
           new Field[TypoShort, SalestaxrateRow](
             _path,
             "taxtype",
@@ -77,7 +77,7 @@ object SalestaxrateFields {
             TypoShort.pgType
           )
         }
-        def taxrate: Field[java.math.BigDecimal, SalestaxrateRow] = {
+        override def taxrate: Field[java.math.BigDecimal, SalestaxrateRow] = {
           new Field[java.math.BigDecimal, SalestaxrateRow](
             _path,
             "taxrate",
@@ -88,7 +88,7 @@ object SalestaxrateFields {
             PgTypes.numeric
           )
         }
-        def name: Field[Name, SalestaxrateRow] = {
+        override def name: Field[Name, SalestaxrateRow] = {
           new Field[Name, SalestaxrateRow](
             _path,
             "name",
@@ -99,7 +99,7 @@ object SalestaxrateFields {
             Name.pgType
           )
         }
-        def rowguid: Field[TypoUUID, SalestaxrateRow] = {
+        override def rowguid: Field[TypoUUID, SalestaxrateRow] = {
           new Field[TypoUUID, SalestaxrateRow](
             _path,
             "rowguid",
@@ -110,7 +110,7 @@ object SalestaxrateFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, SalestaxrateRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, SalestaxrateRow] = {
           new Field[TypoLocalDateTime, SalestaxrateRow](
             _path,
             "modifieddate",
@@ -126,7 +126,7 @@ object SalestaxrateFields {
 
     override lazy val columns: java.util.List[FieldLike[?, SalestaxrateRow]] = java.util.List.of(this.fields.salestaxrateid, this.fields.stateprovinceid, this.fields.taxtype, this.fields.taxrate, this.fields.name, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[SalestaxrateFields, SalestaxrateRow] = new Impl(java.util.List.of())

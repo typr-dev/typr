@@ -7,13 +7,11 @@ package adventureworks.pr.bom
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class BomViewRepoImpl extends BomViewRepo {
-  def select: SelectBuilder[BomViewFields, BomViewRow] = SelectBuilder.of(""""pr"."bom"""", BomViewFields.structure, BomViewRow.read)
+  override def select: SelectBuilder[BomViewFields, BomViewRow] = SelectBuilder.of(""""pr"."bom"""", BomViewFields.structure, BomViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, BomViewRow] = sql"""select "id", "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text from "pr"."bom"""".query(using BomViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, BomViewRow] = sql"""select "id", "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text from "pr"."bom"""".query(using BomViewRow.read).stream
 }

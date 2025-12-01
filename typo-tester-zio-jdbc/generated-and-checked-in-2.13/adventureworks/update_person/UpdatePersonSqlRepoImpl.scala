@@ -13,7 +13,7 @@ import zio.jdbc.ZConnection
 import zio.jdbc.sqlInterpolator
 
 class UpdatePersonSqlRepoImpl extends UpdatePersonSqlRepo {
-  def apply(
+  override def apply(
     suffix: String,
     cutoff: Option[TypoLocalDateTime]
   ): ZIO[ZConnection, Throwable, Long] = {

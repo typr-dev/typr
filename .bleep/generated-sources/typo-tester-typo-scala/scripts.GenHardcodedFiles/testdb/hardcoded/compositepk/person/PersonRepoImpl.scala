@@ -21,11 +21,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PersonRepoImpl extends PersonRepo {
-  def delete: DeleteBuilder[PersonFields, PersonRow] = DeleteBuilder.of("compositepk.person", PersonFields.structure)
+  override def delete: DeleteBuilder[PersonFields, PersonRow] = DeleteBuilder.of("compositepk.person", PersonFields.structure)
 
-  def deleteById(compositeId: PersonId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "compositepk"."person" where "one" = ${PgTypes.int8.encode(compositeId.one)} AND "two" = ${PgTypes.text.opt().encode(compositeId.two)}""".update().runUnchecked(c) > 0
+  override def deleteById(compositeId: PersonId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "compositepk"."person" where "one" = ${PgTypes.int8.encode(compositeId.one)} AND "two" = ${PgTypes.text.opt().encode(compositeId.two)}""".update().runUnchecked(c) > 0
 
-  def insert(unsaved: PersonRow)(using c: Connection): PersonRow = {
+  override def insert(unsaved: PersonRow)(using c: Connection): PersonRow = {
   interpolate"""insert into "compositepk"."person"("one", "two", "name")
     values (${PgTypes.int8.encode(unsaved.one)}::int8, ${PgTypes.text.opt().encode(unsaved.two)}, ${PgTypes.text.opt().encode(unsaved.name)})
     returning "one", "two", "name"
@@ -33,24 +33,18 @@ class PersonRepoImpl extends PersonRepo {
     .updateReturning(PersonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: PersonRowUnsaved)(using c: Connection): PersonRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: PersonRowUnsaved)(using c: Connection): PersonRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
     values.add(interpolate"${PgTypes.text.opt().encode(unsaved.name)}"): @scala.annotation.nowarn
     unsaved.one.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""one"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PgTypes.int8.encode(value)}::int8"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""one"""")): @scala.annotation.nowarn; values.add(interpolate"${PgTypes.int8.encode(value)}::int8"): @scala.annotation.nowarn }
     );
     unsaved.two.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""two"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PgTypes.text.opt().encode(value)}"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""two"""")): @scala.annotation.nowarn; values.add(interpolate"${PgTypes.text.opt().encode(value)}"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "compositepk"."person"(${Fragment.comma(columns)})
@@ -58,29 +52,29 @@ class PersonRepoImpl extends PersonRepo {
       returning "one", "two", "name"
       """
     }
-    q.updateReturning(PersonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(PersonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[PersonRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "compositepk"."person"("one", "two", "name") FROM STDIN""", batchSize, unsaved, c, PersonRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[PersonRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "compositepk"."person"("name", "one", "two") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, PersonRowUnsaved.pgText)
 
-  def select: SelectBuilder[PersonFields, PersonRow] = SelectBuilder.of("compositepk.person", PersonFields.structure, PersonRow.`_rowParser`)
+  override def select: SelectBuilder[PersonFields, PersonRow] = SelectBuilder.of("compositepk.person", PersonFields.structure, PersonRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[PersonRow] = {
+  override def selectAll(using c: Connection): java.util.List[PersonRow] = {
     interpolate"""select "one", "two", "name"
     from "compositepk"."person"
-    """.as(PersonRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(PersonRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByFieldValues(fieldValues: java.util.List[PersonFieldValue[?]])(using c: Connection): java.util.List[PersonRow] = {
+  override def selectByFieldValues(fieldValues: java.util.List[PersonFieldValue[?]])(using c: Connection): java.util.List[PersonRow] = {
     val where: Fragment = {
       Fragment.whereAnd(
         fieldValues.stream().map(fv => fv match {
@@ -90,25 +84,25 @@ class PersonRepoImpl extends PersonRepo {
         }).toList()
       )
     }
-    interpolate"""select "one", "two", "name" from "compositepk"."person" ${where}""".as(PersonRow.`_rowParser`.all()).runUnchecked(c)
+    return interpolate"""select "one", "two", "name" from "compositepk"."person" ${where}""".query(PersonRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(compositeId: PersonId)(using c: Connection): Optional[PersonRow] = {
+  override def selectById(compositeId: PersonId)(using c: Connection): Optional[PersonRow] = {
     interpolate"""select "one", "two", "name"
     from "compositepk"."person"
-    where "one" = ${PgTypes.int8.encode(compositeId.one)} AND "two" = ${PgTypes.text.opt().encode(compositeId.two)}""".as(PersonRow.`_rowParser`.first()).runUnchecked(c)
+    where "one" = ${PgTypes.int8.encode(compositeId.one)} AND "two" = ${PgTypes.text.opt().encode(compositeId.two)}""".query(PersonRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def update: UpdateBuilder[PersonFields, PersonRow] = UpdateBuilder.of("compositepk.person", PersonFields.structure, PersonRow.`_rowParser`.all())
+  override def update: UpdateBuilder[PersonFields, PersonRow] = UpdateBuilder.of("compositepk.person", PersonFields.structure, PersonRow.`_rowParser`.all())
 
-  def update(row: PersonRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: PersonRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: PersonId = row.compositeId
-    interpolate"""update "compositepk"."person"
+    return interpolate"""update "compositepk"."person"
     set "name" = ${PgTypes.text.opt().encode(row.name)}
     where "one" = ${PgTypes.int8.encode(compositeId.one)} AND "two" = ${PgTypes.text.opt().encode(compositeId.two)}""".update().runUnchecked(c) > 0
   }
 
-  def updateFieldValues(
+  override def updateFieldValues(
     compositeId: PersonId,
     fieldValues: java.util.List[PersonFieldValue[?]]
   )(using c: Connection): java.lang.Boolean = {
@@ -119,13 +113,13 @@ class PersonRepoImpl extends PersonRepo {
         case x: name => interpolate""""name" = ${PgTypes.text.opt().encode(x.value)}"""
       }).toList()
     }
-    if (updates.isEmpty) false else interpolate"""update "compositepk"."person"
-                                    ${Fragment.set(updates)}
-                                    where "one" = ${PgTypes.int8.encode(compositeId.one)} AND "two" = ${PgTypes.text.opt().encode(compositeId.two)}"""
+    return if (updates.isEmpty) false else interpolate"""update "compositepk"."person"
+                                           ${Fragment.set(updates)}
+                                           where "one" = ${PgTypes.int8.encode(compositeId.one)} AND "two" = ${PgTypes.text.opt().encode(compositeId.two)}"""
       .update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: PersonRow)(using c: Connection): PersonRow = {
+  override def upsert(unsaved: PersonRow)(using c: Connection): PersonRow = {
   interpolate"""insert into "compositepk"."person"("one", "two", "name")
     values (${PgTypes.int8.encode(unsaved.one)}::int8, ${PgTypes.text.opt().encode(unsaved.two)}, ${PgTypes.text.opt().encode(unsaved.name)})
     on conflict ("one", "two")
@@ -137,7 +131,7 @@ class PersonRepoImpl extends PersonRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[PersonRow])(using c: Connection): java.util.List[PersonRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[PersonRow])(using c: Connection): java.util.List[PersonRow] = {
     interpolate"""insert into "compositepk"."person"("one", "two", "name")
     values (?::int8, ?, ?)
     on conflict ("one", "two")
@@ -150,13 +144,13 @@ class PersonRepoImpl extends PersonRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[PersonRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table person_TEMP (like "compositepk"."person") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy person_TEMP("one", "two", "name") from stdin""", batchSize, unsaved, c, PersonRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "compositepk"."person"("one", "two", "name")
+    return interpolate"""insert into "compositepk"."person"("one", "two", "name")
     select * from person_TEMP
     on conflict ("one", "two")
     do update set

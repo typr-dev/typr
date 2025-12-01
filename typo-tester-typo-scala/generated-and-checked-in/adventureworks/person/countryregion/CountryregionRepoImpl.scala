@@ -20,11 +20,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class CountryregionRepoImpl extends CountryregionRepo {
-  def delete: DeleteBuilder[CountryregionFields, CountryregionRow] = DeleteBuilder.of("person.countryregion", CountryregionFields.structure)
+  override def delete: DeleteBuilder[CountryregionFields, CountryregionRow] = DeleteBuilder.of("person.countryregion", CountryregionFields.structure)
 
-  def deleteById(countryregioncode: CountryregionId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "person"."countryregion" where "countryregioncode" = ${CountryregionId.pgType.encode(countryregioncode)}""".update().runUnchecked(c) > 0
+  override def deleteById(countryregioncode: CountryregionId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "person"."countryregion" where "countryregioncode" = ${CountryregionId.pgType.encode(countryregioncode)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(countryregioncodes: Array[CountryregionId])(using c: Connection): Integer = {
+  override def deleteByIds(countryregioncodes: Array[CountryregionId])(using c: Connection): Integer = {
     interpolate"""delete
     from "person"."countryregion"
     where "countryregioncode" = ANY(${CountryregionId.pgTypeArray.encode(countryregioncodes)})"""
@@ -32,7 +32,7 @@ class CountryregionRepoImpl extends CountryregionRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: CountryregionRow)(using c: Connection): CountryregionRow = {
+  override def insert(unsaved: CountryregionRow)(using c: Connection): CountryregionRow = {
   interpolate"""insert into "person"."countryregion"("countryregioncode", "name", "modifieddate")
     values (${CountryregionId.pgType.encode(unsaved.countryregioncode)}, ${Name.pgType.encode(unsaved.name)}::varchar, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "countryregioncode", "name", "modifieddate"::text
@@ -40,19 +40,16 @@ class CountryregionRepoImpl extends CountryregionRepo {
     .updateReturning(CountryregionRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: CountryregionRowUnsaved)(using c: Connection): CountryregionRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: CountryregionRowUnsaved)(using c: Connection): CountryregionRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""countryregioncode"""")): @scala.annotation.nowarn
     values.add(interpolate"${CountryregionId.pgType.encode(unsaved.countryregioncode)}"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
     values.add(interpolate"${Name.pgType.encode(unsaved.name)}::varchar"): @scala.annotation.nowarn
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "person"."countryregion"(${Fragment.comma(columns)})
@@ -60,57 +57,57 @@ class CountryregionRepoImpl extends CountryregionRepo {
       returning "countryregioncode", "name", "modifieddate"::text
       """
     }
-    q.updateReturning(CountryregionRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(CountryregionRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[CountryregionRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "person"."countryregion"("countryregioncode", "name", "modifieddate") FROM STDIN""", batchSize, unsaved, c, CountryregionRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[CountryregionRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "person"."countryregion"("countryregioncode", "name", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, CountryregionRowUnsaved.pgText)
 
-  def select: SelectBuilder[CountryregionFields, CountryregionRow] = SelectBuilder.of("person.countryregion", CountryregionFields.structure, CountryregionRow.`_rowParser`)
+  override def select: SelectBuilder[CountryregionFields, CountryregionRow] = SelectBuilder.of("person.countryregion", CountryregionFields.structure, CountryregionRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[CountryregionRow] = {
+  override def selectAll(using c: Connection): java.util.List[CountryregionRow] = {
     interpolate"""select "countryregioncode", "name", "modifieddate"::text
     from "person"."countryregion"
-    """.as(CountryregionRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(CountryregionRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(countryregioncode: CountryregionId)(using c: Connection): Optional[CountryregionRow] = {
+  override def selectById(countryregioncode: CountryregionId)(using c: Connection): Optional[CountryregionRow] = {
     interpolate"""select "countryregioncode", "name", "modifieddate"::text
     from "person"."countryregion"
-    where "countryregioncode" = ${CountryregionId.pgType.encode(countryregioncode)}""".as(CountryregionRow.`_rowParser`.first()).runUnchecked(c)
+    where "countryregioncode" = ${CountryregionId.pgType.encode(countryregioncode)}""".query(CountryregionRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(countryregioncodes: Array[CountryregionId])(using c: Connection): java.util.List[CountryregionRow] = {
+  override def selectByIds(countryregioncodes: Array[CountryregionId])(using c: Connection): java.util.List[CountryregionRow] = {
     interpolate"""select "countryregioncode", "name", "modifieddate"::text
     from "person"."countryregion"
-    where "countryregioncode" = ANY(${CountryregionId.pgTypeArray.encode(countryregioncodes)})""".as(CountryregionRow.`_rowParser`.all()).runUnchecked(c)
+    where "countryregioncode" = ANY(${CountryregionId.pgTypeArray.encode(countryregioncodes)})""".query(CountryregionRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(countryregioncodes: Array[CountryregionId])(using c: Connection): java.util.Map[CountryregionId, CountryregionRow] = {
-    val ret: java.util.Map[CountryregionId, CountryregionRow] = new HashMap()
+  override def selectByIdsTracked(countryregioncodes: Array[CountryregionId])(using c: Connection): java.util.Map[CountryregionId, CountryregionRow] = {
+    val ret: HashMap[CountryregionId, CountryregionRow] = new HashMap[CountryregionId, CountryregionRow]()
     selectByIds(countryregioncodes)(using c).forEach(row => ret.put(row.countryregioncode, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[CountryregionFields, CountryregionRow] = UpdateBuilder.of("person.countryregion", CountryregionFields.structure, CountryregionRow.`_rowParser`.all())
+  override def update: UpdateBuilder[CountryregionFields, CountryregionRow] = UpdateBuilder.of("person.countryregion", CountryregionFields.structure, CountryregionRow.`_rowParser`.all())
 
-  def update(row: CountryregionRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: CountryregionRow)(using c: Connection): java.lang.Boolean = {
     val countryregioncode: CountryregionId = row.countryregioncode
-    interpolate"""update "person"."countryregion"
+    return interpolate"""update "person"."countryregion"
     set "name" = ${Name.pgType.encode(row.name)}::varchar,
     "modifieddate" = ${TypoLocalDateTime.pgType.encode(row.modifieddate)}::timestamp
     where "countryregioncode" = ${CountryregionId.pgType.encode(countryregioncode)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: CountryregionRow)(using c: Connection): CountryregionRow = {
+  override def upsert(unsaved: CountryregionRow)(using c: Connection): CountryregionRow = {
   interpolate"""insert into "person"."countryregion"("countryregioncode", "name", "modifieddate")
     values (${CountryregionId.pgType.encode(unsaved.countryregioncode)}, ${Name.pgType.encode(unsaved.name)}::varchar, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("countryregioncode")
@@ -123,7 +120,7 @@ class CountryregionRepoImpl extends CountryregionRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[CountryregionRow])(using c: Connection): java.util.List[CountryregionRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[CountryregionRow])(using c: Connection): java.util.List[CountryregionRow] = {
     interpolate"""insert into "person"."countryregion"("countryregioncode", "name", "modifieddate")
     values (?, ?::varchar, ?::timestamp)
     on conflict ("countryregioncode")
@@ -137,13 +134,13 @@ class CountryregionRepoImpl extends CountryregionRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[CountryregionRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table countryregion_TEMP (like "person"."countryregion") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy countryregion_TEMP("countryregioncode", "name", "modifieddate") from stdin""", batchSize, unsaved, c, CountryregionRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "person"."countryregion"("countryregioncode", "name", "modifieddate")
+    return interpolate"""insert into "person"."countryregion"("countryregioncode", "name", "modifieddate")
     select * from countryregion_TEMP
     on conflict ("countryregioncode")
     do update set

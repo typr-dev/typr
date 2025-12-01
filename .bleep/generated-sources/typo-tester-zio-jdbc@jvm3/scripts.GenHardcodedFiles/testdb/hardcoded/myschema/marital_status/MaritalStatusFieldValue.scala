@@ -15,6 +15,6 @@ sealed trait MaritalStatusFieldValue[T] {
 
 object MaritalStatusFieldValue {
   case class id(value: MaritalStatusId) extends MaritalStatusFieldValue[MaritalStatusId] {
-    def name: String = "id"
+    override def name: String = "id"
   }
 }

@@ -21,13 +21,13 @@ case class ProductcosthistoryRepoMock(
   toRow: ProductcosthistoryRowUnsaved => ProductcosthistoryRow,
   map: scala.collection.mutable.Map[ProductcosthistoryId, ProductcosthistoryRow] = scala.collection.mutable.Map.empty[ProductcosthistoryId, ProductcosthistoryRow]
 ) extends ProductcosthistoryRepo {
-  def delete: DeleteBuilder[ProductcosthistoryFields, ProductcosthistoryRow] = DeleteBuilderMock(DeleteParams.empty, ProductcosthistoryFields.structure, map)
+  override def delete: DeleteBuilder[ProductcosthistoryFields, ProductcosthistoryRow] = DeleteBuilderMock(DeleteParams.empty, ProductcosthistoryFields.structure, map)
 
-  def deleteById(compositeId: ProductcosthistoryId)(using c: Connection): Boolean = map.remove(compositeId).isDefined
+  override def deleteById(compositeId: ProductcosthistoryId)(using c: Connection): Boolean = map.remove(compositeId).isDefined
 
-  def deleteByIds(compositeIds: Array[ProductcosthistoryId])(using c: Connection): Int = compositeIds.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(compositeIds: Array[ProductcosthistoryId])(using c: Connection): Int = compositeIds.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: ProductcosthistoryRow)(using c: Connection): ProductcosthistoryRow = {
+  override def insert(unsaved: ProductcosthistoryRow)(using c: Connection): ProductcosthistoryRow = {
     val _ = if (map.contains(unsaved.compositeId))
       sys.error(s"id ${unsaved.compositeId} already exists")
     else
@@ -36,9 +36,9 @@ case class ProductcosthistoryRepoMock(
     unsaved
   }
 
-  def insert(unsaved: ProductcosthistoryRowUnsaved)(using c: Connection): ProductcosthistoryRow = insert(toRow(unsaved))
+  override def insert(unsaved: ProductcosthistoryRowUnsaved)(using c: Connection): ProductcosthistoryRow = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[ProductcosthistoryRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -49,7 +49,7 @@ case class ProductcosthistoryRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[ProductcosthistoryRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -60,34 +60,34 @@ case class ProductcosthistoryRepoMock(
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[ProductcosthistoryFields, ProductcosthistoryRow] = SelectBuilderMock(ProductcosthistoryFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[ProductcosthistoryFields, ProductcosthistoryRow] = SelectBuilderMock(ProductcosthistoryFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(using c: Connection): List[ProductcosthistoryRow] = map.values.toList
+  override def selectAll(using c: Connection): List[ProductcosthistoryRow] = map.values.toList
 
-  def selectById(compositeId: ProductcosthistoryId)(using c: Connection): Option[ProductcosthistoryRow] = map.get(compositeId)
+  override def selectById(compositeId: ProductcosthistoryId)(using c: Connection): Option[ProductcosthistoryRow] = map.get(compositeId)
 
-  def selectByIds(compositeIds: Array[ProductcosthistoryId])(using c: Connection): List[ProductcosthistoryRow] = compositeIds.flatMap(map.get).toList
+  override def selectByIds(compositeIds: Array[ProductcosthistoryId])(using c: Connection): List[ProductcosthistoryRow] = compositeIds.flatMap(map.get).toList
 
-  def selectByIdsTracked(compositeIds: Array[ProductcosthistoryId])(using c: Connection): Map[ProductcosthistoryId, ProductcosthistoryRow] = {
+  override def selectByIdsTracked(compositeIds: Array[ProductcosthistoryId])(using c: Connection): Map[ProductcosthistoryId, ProductcosthistoryRow] = {
     val byId = selectByIds(compositeIds).view.map(x => (x.compositeId, x)).toMap
     compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[ProductcosthistoryFields, ProductcosthistoryRow] = UpdateBuilderMock(UpdateParams.empty, ProductcosthistoryFields.structure, map)
+  override def update: UpdateBuilder[ProductcosthistoryFields, ProductcosthistoryRow] = UpdateBuilderMock(UpdateParams.empty, ProductcosthistoryFields.structure, map)
 
-  def update(row: ProductcosthistoryRow)(using c: Connection): Option[ProductcosthistoryRow] = {
+  override def update(row: ProductcosthistoryRow)(using c: Connection): Option[ProductcosthistoryRow] = {
     map.get(row.compositeId).map { _ =>
       map.put(row.compositeId, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: ProductcosthistoryRow)(using c: Connection): ProductcosthistoryRow = {
+  override def upsert(unsaved: ProductcosthistoryRow)(using c: Connection): ProductcosthistoryRow = {
     map.put(unsaved.compositeId, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[ProductcosthistoryRow])(using c: Connection): List[ProductcosthistoryRow] = {
+  override def upsertBatch(unsaved: Iterable[ProductcosthistoryRow])(using c: Connection): List[ProductcosthistoryRow] = {
     unsaved.map { row =>
       map += (row.compositeId -> row)
       row
@@ -95,7 +95,7 @@ case class ProductcosthistoryRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[ProductcosthistoryRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

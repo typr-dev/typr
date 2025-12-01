@@ -20,11 +20,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class SalesreasonRepoImpl extends SalesreasonRepo {
-  def delete: DeleteBuilder[SalesreasonFields, SalesreasonRow] = DeleteBuilder.of("sales.salesreason", SalesreasonFields.structure)
+  override def delete: DeleteBuilder[SalesreasonFields, SalesreasonRow] = DeleteBuilder.of("sales.salesreason", SalesreasonFields.structure)
 
-  def deleteById(salesreasonid: SalesreasonId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."salesreason" where "salesreasonid" = ${SalesreasonId.pgType.encode(salesreasonid)}""".update().runUnchecked(c) > 0
+  override def deleteById(salesreasonid: SalesreasonId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."salesreason" where "salesreasonid" = ${SalesreasonId.pgType.encode(salesreasonid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(salesreasonids: Array[SalesreasonId])(using c: Connection): Integer = {
+  override def deleteByIds(salesreasonids: Array[SalesreasonId])(using c: Connection): Integer = {
     interpolate"""delete
     from "sales"."salesreason"
     where "salesreasonid" = ANY(${SalesreasonId.pgTypeArray.encode(salesreasonids)})"""
@@ -32,7 +32,7 @@ class SalesreasonRepoImpl extends SalesreasonRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: SalesreasonRow)(using c: Connection): SalesreasonRow = {
+  override def insert(unsaved: SalesreasonRow)(using c: Connection): SalesreasonRow = {
   interpolate"""insert into "sales"."salesreason"("salesreasonid", "name", "reasontype", "modifieddate")
     values (${SalesreasonId.pgType.encode(unsaved.salesreasonid)}::int4, ${Name.pgType.encode(unsaved.name)}::varchar, ${Name.pgType.encode(unsaved.reasontype)}::varchar, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "salesreasonid", "name", "reasontype", "modifieddate"::text
@@ -40,26 +40,20 @@ class SalesreasonRepoImpl extends SalesreasonRepo {
     .updateReturning(SalesreasonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: SalesreasonRowUnsaved)(using c: Connection): SalesreasonRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: SalesreasonRowUnsaved)(using c: Connection): SalesreasonRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
     values.add(interpolate"${Name.pgType.encode(unsaved.name)}::varchar"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""reasontype"""")): @scala.annotation.nowarn
     values.add(interpolate"${Name.pgType.encode(unsaved.reasontype)}::varchar"): @scala.annotation.nowarn
     unsaved.salesreasonid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""salesreasonid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${SalesreasonId.pgType.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""salesreasonid"""")): @scala.annotation.nowarn; values.add(interpolate"${SalesreasonId.pgType.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "sales"."salesreason"(${Fragment.comma(columns)})
@@ -67,58 +61,58 @@ class SalesreasonRepoImpl extends SalesreasonRepo {
       returning "salesreasonid", "name", "reasontype", "modifieddate"::text
       """
     }
-    q.updateReturning(SalesreasonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(SalesreasonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[SalesreasonRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."salesreason"("salesreasonid", "name", "reasontype", "modifieddate") FROM STDIN""", batchSize, unsaved, c, SalesreasonRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[SalesreasonRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."salesreason"("name", "reasontype", "salesreasonid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, SalesreasonRowUnsaved.pgText)
 
-  def select: SelectBuilder[SalesreasonFields, SalesreasonRow] = SelectBuilder.of("sales.salesreason", SalesreasonFields.structure, SalesreasonRow.`_rowParser`)
+  override def select: SelectBuilder[SalesreasonFields, SalesreasonRow] = SelectBuilder.of("sales.salesreason", SalesreasonFields.structure, SalesreasonRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[SalesreasonRow] = {
+  override def selectAll(using c: Connection): java.util.List[SalesreasonRow] = {
     interpolate"""select "salesreasonid", "name", "reasontype", "modifieddate"::text
     from "sales"."salesreason"
-    """.as(SalesreasonRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(SalesreasonRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(salesreasonid: SalesreasonId)(using c: Connection): Optional[SalesreasonRow] = {
+  override def selectById(salesreasonid: SalesreasonId)(using c: Connection): Optional[SalesreasonRow] = {
     interpolate"""select "salesreasonid", "name", "reasontype", "modifieddate"::text
     from "sales"."salesreason"
-    where "salesreasonid" = ${SalesreasonId.pgType.encode(salesreasonid)}""".as(SalesreasonRow.`_rowParser`.first()).runUnchecked(c)
+    where "salesreasonid" = ${SalesreasonId.pgType.encode(salesreasonid)}""".query(SalesreasonRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(salesreasonids: Array[SalesreasonId])(using c: Connection): java.util.List[SalesreasonRow] = {
+  override def selectByIds(salesreasonids: Array[SalesreasonId])(using c: Connection): java.util.List[SalesreasonRow] = {
     interpolate"""select "salesreasonid", "name", "reasontype", "modifieddate"::text
     from "sales"."salesreason"
-    where "salesreasonid" = ANY(${SalesreasonId.pgTypeArray.encode(salesreasonids)})""".as(SalesreasonRow.`_rowParser`.all()).runUnchecked(c)
+    where "salesreasonid" = ANY(${SalesreasonId.pgTypeArray.encode(salesreasonids)})""".query(SalesreasonRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(salesreasonids: Array[SalesreasonId])(using c: Connection): java.util.Map[SalesreasonId, SalesreasonRow] = {
-    val ret: java.util.Map[SalesreasonId, SalesreasonRow] = new HashMap()
+  override def selectByIdsTracked(salesreasonids: Array[SalesreasonId])(using c: Connection): java.util.Map[SalesreasonId, SalesreasonRow] = {
+    val ret: HashMap[SalesreasonId, SalesreasonRow] = new HashMap[SalesreasonId, SalesreasonRow]()
     selectByIds(salesreasonids)(using c).forEach(row => ret.put(row.salesreasonid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[SalesreasonFields, SalesreasonRow] = UpdateBuilder.of("sales.salesreason", SalesreasonFields.structure, SalesreasonRow.`_rowParser`.all())
+  override def update: UpdateBuilder[SalesreasonFields, SalesreasonRow] = UpdateBuilder.of("sales.salesreason", SalesreasonFields.structure, SalesreasonRow.`_rowParser`.all())
 
-  def update(row: SalesreasonRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: SalesreasonRow)(using c: Connection): java.lang.Boolean = {
     val salesreasonid: SalesreasonId = row.salesreasonid
-    interpolate"""update "sales"."salesreason"
+    return interpolate"""update "sales"."salesreason"
     set "name" = ${Name.pgType.encode(row.name)}::varchar,
     "reasontype" = ${Name.pgType.encode(row.reasontype)}::varchar,
     "modifieddate" = ${TypoLocalDateTime.pgType.encode(row.modifieddate)}::timestamp
     where "salesreasonid" = ${SalesreasonId.pgType.encode(salesreasonid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: SalesreasonRow)(using c: Connection): SalesreasonRow = {
+  override def upsert(unsaved: SalesreasonRow)(using c: Connection): SalesreasonRow = {
   interpolate"""insert into "sales"."salesreason"("salesreasonid", "name", "reasontype", "modifieddate")
     values (${SalesreasonId.pgType.encode(unsaved.salesreasonid)}::int4, ${Name.pgType.encode(unsaved.name)}::varchar, ${Name.pgType.encode(unsaved.reasontype)}::varchar, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("salesreasonid")
@@ -132,7 +126,7 @@ class SalesreasonRepoImpl extends SalesreasonRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[SalesreasonRow])(using c: Connection): java.util.List[SalesreasonRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[SalesreasonRow])(using c: Connection): java.util.List[SalesreasonRow] = {
     interpolate"""insert into "sales"."salesreason"("salesreasonid", "name", "reasontype", "modifieddate")
     values (?::int4, ?::varchar, ?::varchar, ?::timestamp)
     on conflict ("salesreasonid")
@@ -147,13 +141,13 @@ class SalesreasonRepoImpl extends SalesreasonRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[SalesreasonRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table salesreason_TEMP (like "sales"."salesreason") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy salesreason_TEMP("salesreasonid", "name", "reasontype", "modifieddate") from stdin""", batchSize, unsaved, c, SalesreasonRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "sales"."salesreason"("salesreasonid", "name", "reasontype", "modifieddate")
+    return interpolate"""insert into "sales"."salesreason"("salesreasonid", "name", "reasontype", "modifieddate")
     select * from salesreason_TEMP
     on conflict ("salesreasonid")
     do update set

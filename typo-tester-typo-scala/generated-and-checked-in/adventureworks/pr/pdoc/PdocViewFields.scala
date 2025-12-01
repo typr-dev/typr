@@ -29,7 +29,7 @@ object PdocViewFields {
 
     override lazy val fields: PdocViewFields = {
       new PdocViewFields {
-        def id: Field[ProductId, PdocViewRow] = {
+        override def id: Field[ProductId, PdocViewRow] = {
           new Field[ProductId, PdocViewRow](
             _path,
             "id",
@@ -40,7 +40,7 @@ object PdocViewFields {
             ProductId.pgType
           )
         }
-        def productid: Field[ProductId, PdocViewRow] = {
+        override def productid: Field[ProductId, PdocViewRow] = {
           new Field[ProductId, PdocViewRow](
             _path,
             "productid",
@@ -51,7 +51,7 @@ object PdocViewFields {
             ProductId.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, PdocViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, PdocViewRow] = {
           new Field[TypoLocalDateTime, PdocViewRow](
             _path,
             "modifieddate",
@@ -62,7 +62,7 @@ object PdocViewFields {
             TypoLocalDateTime.pgType
           )
         }
-        def documentnode: Field[DocumentId, PdocViewRow] = {
+        override def documentnode: Field[DocumentId, PdocViewRow] = {
           new Field[DocumentId, PdocViewRow](
             _path,
             "documentnode",
@@ -78,7 +78,7 @@ object PdocViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, PdocViewRow]] = java.util.List.of(this.fields.id, this.fields.productid, this.fields.modifieddate, this.fields.documentnode)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[PdocViewFields, PdocViewRow] = new Impl(java.util.List.of())

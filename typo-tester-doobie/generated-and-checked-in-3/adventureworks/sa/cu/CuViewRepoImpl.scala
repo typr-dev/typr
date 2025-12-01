@@ -7,13 +7,11 @@ package adventureworks.sa.cu
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class CuViewRepoImpl extends CuViewRepo {
-  def select: SelectBuilder[CuViewFields, CuViewRow] = SelectBuilder.of(""""sa"."cu"""", CuViewFields.structure, CuViewRow.read)
+  override def select: SelectBuilder[CuViewFields, CuViewRow] = SelectBuilder.of(""""sa"."cu"""", CuViewFields.structure, CuViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, CuViewRow] = sql"""select "id", "currencycode", "name", "modifieddate"::text from "sa"."cu"""".query(using CuViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, CuViewRow] = sql"""select "id", "currencycode", "name", "modifieddate"::text from "sa"."cu"""".query(using CuViewRow.read).stream
 }

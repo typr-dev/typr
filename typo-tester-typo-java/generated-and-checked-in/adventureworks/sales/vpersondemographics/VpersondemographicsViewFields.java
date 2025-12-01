@@ -18,7 +18,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface VpersondemographicsViewFields {
-  static final class Impl extends Relation<VpersondemographicsViewFields, VpersondemographicsViewRow> {
+  final class Impl extends Relation<VpersondemographicsViewFields, VpersondemographicsViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -26,42 +26,55 @@ public interface VpersondemographicsViewFields {
     @Override
     public VpersondemographicsViewFields fields() {
       return new VpersondemographicsViewFields() {
+               @Override
                public Field<BusinessentityId, VpersondemographicsViewRow> businessentityid() {
                  return new Field<BusinessentityId, VpersondemographicsViewRow>(_path, "businessentityid", VpersondemographicsViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public OptField<TypoMoney, VpersondemographicsViewRow> totalpurchaseytd() {
                  return new OptField<TypoMoney, VpersondemographicsViewRow>(_path, "totalpurchaseytd", VpersondemographicsViewRow::totalpurchaseytd, Optional.of("numeric"), Optional.empty(), (row, value) -> row.withTotalpurchaseytd(value), TypoMoney.pgType);
                };
+               @Override
                public OptField<TypoLocalDate, VpersondemographicsViewRow> datefirstpurchase() {
                  return new OptField<TypoLocalDate, VpersondemographicsViewRow>(_path, "datefirstpurchase", VpersondemographicsViewRow::datefirstpurchase, Optional.of("text"), Optional.empty(), (row, value) -> row.withDatefirstpurchase(value), TypoLocalDate.pgType);
                };
+               @Override
                public OptField<TypoLocalDate, VpersondemographicsViewRow> birthdate() {
                  return new OptField<TypoLocalDate, VpersondemographicsViewRow>(_path, "birthdate", VpersondemographicsViewRow::birthdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withBirthdate(value), TypoLocalDate.pgType);
                };
+               @Override
                public OptField</* max 1 chars */ String, VpersondemographicsViewRow> maritalstatus() {
                  return new OptField</* max 1 chars */ String, VpersondemographicsViewRow>(_path, "maritalstatus", VpersondemographicsViewRow::maritalstatus, Optional.empty(), Optional.empty(), (row, value) -> row.withMaritalstatus(value), PgTypes.text);
                };
+               @Override
                public OptField</* max 30 chars */ String, VpersondemographicsViewRow> yearlyincome() {
                  return new OptField</* max 30 chars */ String, VpersondemographicsViewRow>(_path, "yearlyincome", VpersondemographicsViewRow::yearlyincome, Optional.empty(), Optional.empty(), (row, value) -> row.withYearlyincome(value), PgTypes.text);
                };
+               @Override
                public OptField</* max 1 chars */ String, VpersondemographicsViewRow> gender() {
                  return new OptField</* max 1 chars */ String, VpersondemographicsViewRow>(_path, "gender", VpersondemographicsViewRow::gender, Optional.empty(), Optional.empty(), (row, value) -> row.withGender(value), PgTypes.text);
                };
+               @Override
                public OptField<Integer, VpersondemographicsViewRow> totalchildren() {
                  return new OptField<Integer, VpersondemographicsViewRow>(_path, "totalchildren", VpersondemographicsViewRow::totalchildren, Optional.empty(), Optional.empty(), (row, value) -> row.withTotalchildren(value), PgTypes.int4);
                };
+               @Override
                public OptField<Integer, VpersondemographicsViewRow> numberchildrenathome() {
                  return new OptField<Integer, VpersondemographicsViewRow>(_path, "numberchildrenathome", VpersondemographicsViewRow::numberchildrenathome, Optional.empty(), Optional.empty(), (row, value) -> row.withNumberchildrenathome(value), PgTypes.int4);
                };
+               @Override
                public OptField</* max 30 chars */ String, VpersondemographicsViewRow> education() {
                  return new OptField</* max 30 chars */ String, VpersondemographicsViewRow>(_path, "education", VpersondemographicsViewRow::education, Optional.empty(), Optional.empty(), (row, value) -> row.withEducation(value), PgTypes.text);
                };
+               @Override
                public OptField</* max 30 chars */ String, VpersondemographicsViewRow> occupation() {
                  return new OptField</* max 30 chars */ String, VpersondemographicsViewRow>(_path, "occupation", VpersondemographicsViewRow::occupation, Optional.empty(), Optional.empty(), (row, value) -> row.withOccupation(value), PgTypes.text);
                };
+               @Override
                public OptField<Boolean, VpersondemographicsViewRow> homeownerflag() {
                  return new OptField<Boolean, VpersondemographicsViewRow>(_path, "homeownerflag", VpersondemographicsViewRow::homeownerflag, Optional.empty(), Optional.empty(), (row, value) -> row.withHomeownerflag(value), PgTypes.bool);
                };
+               @Override
                public OptField<Integer, VpersondemographicsViewRow> numbercarsowned() {
                  return new OptField<Integer, VpersondemographicsViewRow>(_path, "numbercarsowned", VpersondemographicsViewRow::numbercarsowned, Optional.empty(), Optional.empty(), (row, value) -> row.withNumbercarsowned(value), PgTypes.int4);
                };
@@ -73,6 +86,7 @@ public interface VpersondemographicsViewFields {
       return List.of(this.fields().businessentityid(), this.fields().totalpurchaseytd(), this.fields().datefirstpurchase(), this.fields().birthdate(), this.fields().maritalstatus(), this.fields().yearlyincome(), this.fields().gender(), this.fields().totalchildren(), this.fields().numberchildrenathome(), this.fields().education(), this.fields().occupation(), this.fields().homeownerflag(), this.fields().numbercarsowned());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

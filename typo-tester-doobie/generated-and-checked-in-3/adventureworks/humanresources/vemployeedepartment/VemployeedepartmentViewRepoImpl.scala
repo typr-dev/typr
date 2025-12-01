@@ -7,13 +7,11 @@ package adventureworks.humanresources.vemployeedepartment
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class VemployeedepartmentViewRepoImpl extends VemployeedepartmentViewRepo {
-  def select: SelectBuilder[VemployeedepartmentViewFields, VemployeedepartmentViewRow] = SelectBuilder.of(""""humanresources"."vemployeedepartment"""", VemployeedepartmentViewFields.structure, VemployeedepartmentViewRow.read)
+  override def select: SelectBuilder[VemployeedepartmentViewFields, VemployeedepartmentViewRow] = SelectBuilder.of(""""humanresources"."vemployeedepartment"""", VemployeedepartmentViewFields.structure, VemployeedepartmentViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, VemployeedepartmentViewRow] = sql"""select "businessentityid", "title", "firstname", "middlename", "lastname", "suffix", "jobtitle", "department", "groupname", "startdate"::text from "humanresources"."vemployeedepartment"""".query(using VemployeedepartmentViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, VemployeedepartmentViewRow] = sql"""select "businessentityid", "title", "firstname", "middlename", "lastname", "suffix", "jobtitle", "department", "groupname", "startdate"::text from "humanresources"."vemployeedepartment"""".query(using VemployeedepartmentViewRow.read).stream
 }

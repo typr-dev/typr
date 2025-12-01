@@ -12,7 +12,6 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple11;
 
 /** View: humanresources.vjobcandidateemployment */
 public record VjobcandidateemploymentViewRow(
@@ -74,5 +73,5 @@ public record VjobcandidateemploymentViewRow(
     return new VjobcandidateemploymentViewRow(jobcandidateid, empStartDate, empEndDate, empOrgName, empJobTitle, empResponsibility, empFunctionCategory, empIndustryCategory, empLocCountryRegion, empLocState, empLocCity);
   };
 
-  static RowParser<VjobcandidateemploymentViewRow> _rowParser = RowParsers.of(JobcandidateId.pgType, TypoLocalDate.pgType.opt(), TypoLocalDate.pgType.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), VjobcandidateemploymentViewRow::new, row -> new Tuple11<>(row.jobcandidateid(), row.empStartDate(), row.empEndDate(), row.empOrgName(), row.empJobTitle(), row.empResponsibility(), row.empFunctionCategory(), row.empIndustryCategory(), row.empLocCountryRegion(), row.empLocState(), row.empLocCity()));;
+  static RowParser<VjobcandidateemploymentViewRow> _rowParser = RowParsers.of(JobcandidateId.pgType, TypoLocalDate.pgType.opt(), TypoLocalDate.pgType.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), VjobcandidateemploymentViewRow::new, row -> new Object[]{row.jobcandidateid(), row.empStartDate(), row.empEndDate(), row.empOrgName(), row.empJobTitle(), row.empResponsibility(), row.empFunctionCategory(), row.empIndustryCategory(), row.empLocCountryRegion(), row.empLocState(), row.empLocCity()});;
 }

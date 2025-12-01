@@ -21,11 +21,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
-  def delete: DeleteBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = DeleteBuilder.of("sales.shoppingcartitem", ShoppingcartitemFields.structure)
+  override def delete: DeleteBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = DeleteBuilder.of("sales.shoppingcartitem", ShoppingcartitemFields.structure)
 
-  def deleteById(shoppingcartitemid: ShoppingcartitemId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."shoppingcartitem" where "shoppingcartitemid" = ${ShoppingcartitemId.pgType.encode(shoppingcartitemid)}""".update().runUnchecked(c) > 0
+  override def deleteById(shoppingcartitemid: ShoppingcartitemId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."shoppingcartitem" where "shoppingcartitemid" = ${ShoppingcartitemId.pgType.encode(shoppingcartitemid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(shoppingcartitemids: Array[ShoppingcartitemId])(using c: Connection): Integer = {
+  override def deleteByIds(shoppingcartitemids: Array[ShoppingcartitemId])(using c: Connection): Integer = {
     interpolate"""delete
     from "sales"."shoppingcartitem"
     where "shoppingcartitemid" = ANY(${ShoppingcartitemId.pgTypeArray.encode(shoppingcartitemids)})"""
@@ -33,7 +33,7 @@ class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: ShoppingcartitemRow)(using c: Connection): ShoppingcartitemRow = {
+  override def insert(unsaved: ShoppingcartitemRow)(using c: Connection): ShoppingcartitemRow = {
   interpolate"""insert into "sales"."shoppingcartitem"("shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate")
     values (${ShoppingcartitemId.pgType.encode(unsaved.shoppingcartitemid)}::int4, ${PgTypes.text.encode(unsaved.shoppingcartid)}, ${PgTypes.int4.encode(unsaved.quantity)}::int4, ${ProductId.pgType.encode(unsaved.productid)}::int4, ${TypoLocalDateTime.pgType.encode(unsaved.datecreated)}::timestamp, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text
@@ -41,40 +41,28 @@ class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
     .updateReturning(ShoppingcartitemRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: ShoppingcartitemRowUnsaved)(using c: Connection): ShoppingcartitemRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: ShoppingcartitemRowUnsaved)(using c: Connection): ShoppingcartitemRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""shoppingcartid"""")): @scala.annotation.nowarn
     values.add(interpolate"${PgTypes.text.encode(unsaved.shoppingcartid)}"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""productid"""")): @scala.annotation.nowarn
     values.add(interpolate"${ProductId.pgType.encode(unsaved.productid)}::int4"): @scala.annotation.nowarn
     unsaved.shoppingcartitemid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""shoppingcartitemid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${ShoppingcartitemId.pgType.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""shoppingcartitemid"""")): @scala.annotation.nowarn; values.add(interpolate"${ShoppingcartitemId.pgType.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.quantity.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""quantity"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PgTypes.int4.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""quantity"""")): @scala.annotation.nowarn; values.add(interpolate"${PgTypes.int4.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.datecreated.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""datecreated"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""datecreated"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "sales"."shoppingcartitem"(${Fragment.comma(columns)})
@@ -82,51 +70,51 @@ class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
       returning "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text
       """
     }
-    q.updateReturning(ShoppingcartitemRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(ShoppingcartitemRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[ShoppingcartitemRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."shoppingcartitem"("shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate") FROM STDIN""", batchSize, unsaved, c, ShoppingcartitemRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[ShoppingcartitemRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."shoppingcartitem"("shoppingcartid", "productid", "shoppingcartitemid", "quantity", "datecreated", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ShoppingcartitemRowUnsaved.pgText)
 
-  def select: SelectBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = SelectBuilder.of("sales.shoppingcartitem", ShoppingcartitemFields.structure, ShoppingcartitemRow.`_rowParser`)
+  override def select: SelectBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = SelectBuilder.of("sales.shoppingcartitem", ShoppingcartitemFields.structure, ShoppingcartitemRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[ShoppingcartitemRow] = {
+  override def selectAll(using c: Connection): java.util.List[ShoppingcartitemRow] = {
     interpolate"""select "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text
     from "sales"."shoppingcartitem"
-    """.as(ShoppingcartitemRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(ShoppingcartitemRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(shoppingcartitemid: ShoppingcartitemId)(using c: Connection): Optional[ShoppingcartitemRow] = {
+  override def selectById(shoppingcartitemid: ShoppingcartitemId)(using c: Connection): Optional[ShoppingcartitemRow] = {
     interpolate"""select "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text
     from "sales"."shoppingcartitem"
-    where "shoppingcartitemid" = ${ShoppingcartitemId.pgType.encode(shoppingcartitemid)}""".as(ShoppingcartitemRow.`_rowParser`.first()).runUnchecked(c)
+    where "shoppingcartitemid" = ${ShoppingcartitemId.pgType.encode(shoppingcartitemid)}""".query(ShoppingcartitemRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(shoppingcartitemids: Array[ShoppingcartitemId])(using c: Connection): java.util.List[ShoppingcartitemRow] = {
+  override def selectByIds(shoppingcartitemids: Array[ShoppingcartitemId])(using c: Connection): java.util.List[ShoppingcartitemRow] = {
     interpolate"""select "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text
     from "sales"."shoppingcartitem"
-    where "shoppingcartitemid" = ANY(${ShoppingcartitemId.pgTypeArray.encode(shoppingcartitemids)})""".as(ShoppingcartitemRow.`_rowParser`.all()).runUnchecked(c)
+    where "shoppingcartitemid" = ANY(${ShoppingcartitemId.pgTypeArray.encode(shoppingcartitemids)})""".query(ShoppingcartitemRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(shoppingcartitemids: Array[ShoppingcartitemId])(using c: Connection): java.util.Map[ShoppingcartitemId, ShoppingcartitemRow] = {
-    val ret: java.util.Map[ShoppingcartitemId, ShoppingcartitemRow] = new HashMap()
+  override def selectByIdsTracked(shoppingcartitemids: Array[ShoppingcartitemId])(using c: Connection): java.util.Map[ShoppingcartitemId, ShoppingcartitemRow] = {
+    val ret: HashMap[ShoppingcartitemId, ShoppingcartitemRow] = new HashMap[ShoppingcartitemId, ShoppingcartitemRow]()
     selectByIds(shoppingcartitemids)(using c).forEach(row => ret.put(row.shoppingcartitemid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = UpdateBuilder.of("sales.shoppingcartitem", ShoppingcartitemFields.structure, ShoppingcartitemRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = UpdateBuilder.of("sales.shoppingcartitem", ShoppingcartitemFields.structure, ShoppingcartitemRow.`_rowParser`.all())
 
-  def update(row: ShoppingcartitemRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: ShoppingcartitemRow)(using c: Connection): java.lang.Boolean = {
     val shoppingcartitemid: ShoppingcartitemId = row.shoppingcartitemid
-    interpolate"""update "sales"."shoppingcartitem"
+    return interpolate"""update "sales"."shoppingcartitem"
     set "shoppingcartid" = ${PgTypes.text.encode(row.shoppingcartid)},
     "quantity" = ${PgTypes.int4.encode(row.quantity)}::int4,
     "productid" = ${ProductId.pgType.encode(row.productid)}::int4,
@@ -135,7 +123,7 @@ class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
     where "shoppingcartitemid" = ${ShoppingcartitemId.pgType.encode(shoppingcartitemid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: ShoppingcartitemRow)(using c: Connection): ShoppingcartitemRow = {
+  override def upsert(unsaved: ShoppingcartitemRow)(using c: Connection): ShoppingcartitemRow = {
   interpolate"""insert into "sales"."shoppingcartitem"("shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate")
     values (${ShoppingcartitemId.pgType.encode(unsaved.shoppingcartitemid)}::int4, ${PgTypes.text.encode(unsaved.shoppingcartid)}, ${PgTypes.int4.encode(unsaved.quantity)}::int4, ${ProductId.pgType.encode(unsaved.productid)}::int4, ${TypoLocalDateTime.pgType.encode(unsaved.datecreated)}::timestamp, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("shoppingcartitemid")
@@ -151,7 +139,7 @@ class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[ShoppingcartitemRow])(using c: Connection): java.util.List[ShoppingcartitemRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[ShoppingcartitemRow])(using c: Connection): java.util.List[ShoppingcartitemRow] = {
     interpolate"""insert into "sales"."shoppingcartitem"("shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate")
     values (?::int4, ?, ?::int4, ?::int4, ?::timestamp, ?::timestamp)
     on conflict ("shoppingcartitemid")
@@ -168,13 +156,13 @@ class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[ShoppingcartitemRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table shoppingcartitem_TEMP (like "sales"."shoppingcartitem") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy shoppingcartitem_TEMP("shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate") from stdin""", batchSize, unsaved, c, ShoppingcartitemRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "sales"."shoppingcartitem"("shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate")
+    return interpolate"""insert into "sales"."shoppingcartitem"("shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate")
     select * from shoppingcartitem_TEMP
     on conflict ("shoppingcartitemid")
     do update set

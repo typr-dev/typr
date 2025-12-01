@@ -51,7 +51,7 @@ object StateprovinceFields {
 
     override lazy val fields: StateprovinceFields = {
       new StateprovinceFields {
-        def stateprovinceid: IdField[StateprovinceId, StateprovinceRow] = {
+        override def stateprovinceid: IdField[StateprovinceId, StateprovinceRow] = {
           new IdField[StateprovinceId, StateprovinceRow](
             _path,
             "stateprovinceid",
@@ -62,7 +62,7 @@ object StateprovinceFields {
             StateprovinceId.pgType
           )
         }
-        def stateprovincecode: Field[/* bpchar, max 3 chars */ String, StateprovinceRow] = {
+        override def stateprovincecode: Field[/* bpchar, max 3 chars */ String, StateprovinceRow] = {
           new Field[/* bpchar, max 3 chars */ String, StateprovinceRow](
             _path,
             "stateprovincecode",
@@ -73,7 +73,7 @@ object StateprovinceFields {
             PgTypes.text
           )
         }
-        def countryregioncode: Field[CountryregionId, StateprovinceRow] = {
+        override def countryregioncode: Field[CountryregionId, StateprovinceRow] = {
           new Field[CountryregionId, StateprovinceRow](
             _path,
             "countryregioncode",
@@ -84,7 +84,7 @@ object StateprovinceFields {
             CountryregionId.pgType
           )
         }
-        def isonlystateprovinceflag: Field[Flag, StateprovinceRow] = {
+        override def isonlystateprovinceflag: Field[Flag, StateprovinceRow] = {
           new Field[Flag, StateprovinceRow](
             _path,
             "isonlystateprovinceflag",
@@ -95,7 +95,7 @@ object StateprovinceFields {
             Flag.pgType
           )
         }
-        def name: Field[Name, StateprovinceRow] = {
+        override def name: Field[Name, StateprovinceRow] = {
           new Field[Name, StateprovinceRow](
             _path,
             "name",
@@ -106,7 +106,7 @@ object StateprovinceFields {
             Name.pgType
           )
         }
-        def territoryid: Field[SalesterritoryId, StateprovinceRow] = {
+        override def territoryid: Field[SalesterritoryId, StateprovinceRow] = {
           new Field[SalesterritoryId, StateprovinceRow](
             _path,
             "territoryid",
@@ -117,7 +117,7 @@ object StateprovinceFields {
             SalesterritoryId.pgType
           )
         }
-        def rowguid: Field[TypoUUID, StateprovinceRow] = {
+        override def rowguid: Field[TypoUUID, StateprovinceRow] = {
           new Field[TypoUUID, StateprovinceRow](
             _path,
             "rowguid",
@@ -128,7 +128,7 @@ object StateprovinceFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, StateprovinceRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, StateprovinceRow] = {
           new Field[TypoLocalDateTime, StateprovinceRow](
             _path,
             "modifieddate",
@@ -144,7 +144,7 @@ object StateprovinceFields {
 
     override lazy val columns: java.util.List[FieldLike[?, StateprovinceRow]] = java.util.List.of(this.fields.stateprovinceid, this.fields.stateprovincecode, this.fields.countryregioncode, this.fields.isonlystateprovinceflag, this.fields.name, this.fields.territoryid, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[StateprovinceFields, StateprovinceRow] = new Impl(java.util.List.of())

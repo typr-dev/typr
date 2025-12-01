@@ -13,7 +13,6 @@ import java.util.Optional;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple4;
 
 /** Table: humanresources.jobcandidate
   * RÃ©sumÃ©s submitted to Human Resources by job applicants.
@@ -57,7 +56,7 @@ public record JobcandidateRow(
     return new JobcandidateRow(jobcandidateid, businessentityid, resume, modifieddate);
   };
 
-  static RowParser<JobcandidateRow> _rowParser = RowParsers.of(JobcandidateId.pgType, BusinessentityId.pgType.opt(), TypoXml.pgType.opt(), TypoLocalDateTime.pgType, JobcandidateRow::new, row -> new Tuple4<>(row.jobcandidateid(), row.businessentityid(), row.resume(), row.modifieddate()));;
+  static RowParser<JobcandidateRow> _rowParser = RowParsers.of(JobcandidateId.pgType, BusinessentityId.pgType.opt(), TypoXml.pgType.opt(), TypoLocalDateTime.pgType, JobcandidateRow::new, row -> new Object[]{row.jobcandidateid(), row.businessentityid(), row.resume(), row.modifieddate()});;
 
   static public PgText<JobcandidateRow> pgText =
     PgText.from(_rowParser);

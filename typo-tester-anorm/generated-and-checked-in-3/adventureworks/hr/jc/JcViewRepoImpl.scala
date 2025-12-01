@@ -10,9 +10,9 @@ import typo.dsl.SelectBuilder
 import anorm.SqlStringInterpolation
 
 class JcViewRepoImpl extends JcViewRepo {
-  def select: SelectBuilder[JcViewFields, JcViewRow] = SelectBuilder.of(""""hr"."jc"""", JcViewFields.structure, JcViewRow.rowParser)
+  override def select: SelectBuilder[JcViewFields, JcViewRow] = SelectBuilder.of(""""hr"."jc"""", JcViewFields.structure, JcViewRow.rowParser)
 
-  def selectAll(using c: Connection): List[JcViewRow] = {
+  override def selectAll(using c: Connection): List[JcViewRow] = {
     SQL"""select "id", "jobcandidateid", "businessentityid", "resume", "modifieddate"::text
     from "hr"."jc"
     """.as(JcViewRow.rowParser(1).*)

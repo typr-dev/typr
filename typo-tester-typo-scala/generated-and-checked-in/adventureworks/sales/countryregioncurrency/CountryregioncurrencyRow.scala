@@ -12,7 +12,6 @@ import adventureworks.sales.currency.CurrencyId
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple3
 
 /** Table: sales.countryregioncurrency
  * Cross-reference table mapping ISO currency codes to a country or region.
@@ -38,7 +37,7 @@ case class CountryregioncurrencyRow(
 }
 
 object CountryregioncurrencyRow {
-  val `_rowParser`: RowParser[CountryregioncurrencyRow] = RowParsers.of(CountryregionId.pgType, CurrencyId.pgType, TypoLocalDateTime.pgType, CountryregioncurrencyRow.apply, row => new Tuple3(row.countryregioncode, row.currencycode, row.modifieddate))
+  val `_rowParser`: RowParser[CountryregioncurrencyRow] = RowParsers.of(CountryregionId.pgType, CurrencyId.pgType, TypoLocalDateTime.pgType, CountryregioncurrencyRow.apply, row => Array(row.countryregioncode, row.currencycode, row.modifieddate))
 
   def apply(
     compositeId: CountryregioncurrencyId,

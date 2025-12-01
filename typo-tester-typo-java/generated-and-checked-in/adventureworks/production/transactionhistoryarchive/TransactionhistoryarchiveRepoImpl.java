@@ -6,7 +6,6 @@
 package adventureworks.production.transactionhistoryarchive;
 
 import adventureworks.customtypes.TypoLocalDateTime;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,12 +23,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class TransactionhistoryarchiveRepoImpl implements TransactionhistoryarchiveRepo {
+  @Override
   public DeleteBuilder<TransactionhistoryarchiveFields, TransactionhistoryarchiveRow> delete() {
     return DeleteBuilder.of("production.transactionhistoryarchive", TransactionhistoryarchiveFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     TransactionhistoryarchiveId transactionid,
     Connection c
@@ -43,6 +43,7 @@ public class TransactionhistoryarchiveRepoImpl implements Transactionhistoryarch
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     TransactionhistoryarchiveId[] transactionids,
     Connection c
@@ -59,6 +60,7 @@ public class TransactionhistoryarchiveRepoImpl implements Transactionhistoryarch
       .runUnchecked(c);
   };
 
+  @Override
   public TransactionhistoryarchiveRow insert(
     TransactionhistoryarchiveRow unsaved,
     Connection c
@@ -92,89 +94,97 @@ public class TransactionhistoryarchiveRepoImpl implements Transactionhistoryarch
       .updateReturning(TransactionhistoryarchiveRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public TransactionhistoryarchiveRow insert(
     TransactionhistoryarchiveRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"transactionid\""));
-      values.add(interpolate(
-        TransactionhistoryarchiveId.pgType.encode(unsaved.transactionid()),
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"transactionid\""));
+    values.add(interpolate(
+      TransactionhistoryarchiveId.pgType.encode(unsaved.transactionid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"productid\""));
+    values.add(interpolate(
+      PgTypes.int4.encode(unsaved.productid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"referenceorderid\""));
+    values.add(interpolate(
+      PgTypes.int4.encode(unsaved.referenceorderid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"transactiontype\""));
+    values.add(interpolate(
+      PgTypes.text.encode(unsaved.transactiontype()),
+      typo.runtime.Fragment.lit("::bpchar")
+    ));
+    columns.add(Fragment.lit("\"quantity\""));
+    values.add(interpolate(
+      PgTypes.int4.encode(unsaved.quantity()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"actualcost\""));
+    values.add(interpolate(
+      PgTypes.numeric.encode(unsaved.actualcost()),
+      typo.runtime.Fragment.lit("::numeric")
+    ));
+    unsaved.referenceorderlineid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"referenceorderlineid\""));
+        values.add(interpolate(
+        PgTypes.int4.encode(value),
         typo.runtime.Fragment.lit("::int4")
       ));
-      columns.add(Fragment.lit("\"productid\""));
-      values.add(interpolate(
-        PgTypes.int4.encode(unsaved.productid()),
-        typo.runtime.Fragment.lit("::int4")
+      }
+    );;
+    unsaved.transactiondate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"transactiondate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
       ));
-      columns.add(Fragment.lit("\"referenceorderid\""));
-      values.add(interpolate(
-        PgTypes.int4.encode(unsaved.referenceorderid()),
-        typo.runtime.Fragment.lit("::int4")
+      }
+    );;
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
       ));
-      columns.add(Fragment.lit("\"transactiontype\""));
-      values.add(interpolate(
-        PgTypes.text.encode(unsaved.transactiontype()),
-        typo.runtime.Fragment.lit("::bpchar")
-      ));
-      columns.add(Fragment.lit("\"quantity\""));
-      values.add(interpolate(
-        PgTypes.int4.encode(unsaved.quantity()),
-        typo.runtime.Fragment.lit("::int4")
-      ));
-      columns.add(Fragment.lit("\"actualcost\""));
-      values.add(interpolate(
-        PgTypes.numeric.encode(unsaved.actualcost()),
-        typo.runtime.Fragment.lit("::numeric")
-      ));
-      unsaved.referenceorderlineid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"referenceorderlineid\""));
-          values.add(interpolate(
-            PgTypes.int4.encode(value),
-            typo.runtime.Fragment.lit("::int4")
-          ));
-        }
-      );;
-      unsaved.transactiondate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"transactiondate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "production"."transactionhistoryarchive"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "production"."transactionhistoryarchive"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(TransactionhistoryarchiveRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<TransactionhistoryarchiveRow> unsaved,
     Integer batchSize,
@@ -186,6 +196,7 @@ public class TransactionhistoryarchiveRepoImpl implements Transactionhistoryarch
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<TransactionhistoryarchiveRowUnsaved> unsaved,
     Integer batchSize,
@@ -196,17 +207,20 @@ public class TransactionhistoryarchiveRepoImpl implements Transactionhistoryarch
     """), batchSize, unsaved, c, TransactionhistoryarchiveRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<TransactionhistoryarchiveFields, TransactionhistoryarchiveRow> select() {
     return SelectBuilder.of("production.transactionhistoryarchive", TransactionhistoryarchiveFields.structure(), TransactionhistoryarchiveRow._rowParser);
   };
 
+  @Override
   public List<TransactionhistoryarchiveRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text
        from "production"."transactionhistoryarchive"
-    """)).as(TransactionhistoryarchiveRow._rowParser.all()).runUnchecked(c);
+    """)).query(TransactionhistoryarchiveRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<TransactionhistoryarchiveRow> selectById(
     TransactionhistoryarchiveId transactionid,
     Connection c
@@ -218,9 +232,10 @@ public class TransactionhistoryarchiveRepoImpl implements Transactionhistoryarch
          where "transactionid" = """),
       TransactionhistoryarchiveId.pgType.encode(transactionid),
       typo.runtime.Fragment.lit("")
-    ).as(TransactionhistoryarchiveRow._rowParser.first()).runUnchecked(c);
+    ).query(TransactionhistoryarchiveRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<TransactionhistoryarchiveRow> selectByIds(
     TransactionhistoryarchiveId[] transactionids,
     Connection c
@@ -232,68 +247,72 @@ public class TransactionhistoryarchiveRepoImpl implements Transactionhistoryarch
          where "transactionid" = ANY("""),
       TransactionhistoryarchiveId.pgTypeArray.encode(transactionids),
       typo.runtime.Fragment.lit(")")
-    ).as(TransactionhistoryarchiveRow._rowParser.all()).runUnchecked(c);
+    ).query(TransactionhistoryarchiveRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<TransactionhistoryarchiveId, TransactionhistoryarchiveRow> selectByIdsTracked(
     TransactionhistoryarchiveId[] transactionids,
     Connection c
   ) {
-    Map<TransactionhistoryarchiveId, TransactionhistoryarchiveRow> ret = new HashMap<>();;
-      selectByIds(transactionids, c).forEach(row -> ret.put(row.transactionid(), row));
+    HashMap<TransactionhistoryarchiveId, TransactionhistoryarchiveRow> ret = new HashMap<TransactionhistoryarchiveId, TransactionhistoryarchiveRow>();
+    selectByIds(transactionids, c).forEach(row -> ret.put(row.transactionid(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<TransactionhistoryarchiveFields, TransactionhistoryarchiveRow> update() {
     return UpdateBuilder.of("production.transactionhistoryarchive", TransactionhistoryarchiveFields.structure(), TransactionhistoryarchiveRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     TransactionhistoryarchiveRow row,
     Connection c
   ) {
     TransactionhistoryarchiveId transactionid = row.transactionid();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "production"."transactionhistoryarchive"
-                set "productid" = """),
-             PgTypes.int4.encode(row.productid()),
-             typo.runtime.Fragment.lit("""
-                ::int4,
-                "referenceorderid" = """),
-             PgTypes.int4.encode(row.referenceorderid()),
-             typo.runtime.Fragment.lit("""
-                ::int4,
-                "referenceorderlineid" = """),
-             PgTypes.int4.encode(row.referenceorderlineid()),
-             typo.runtime.Fragment.lit("""
-                ::int4,
-                "transactiondate" = """),
-             TypoLocalDateTime.pgType.encode(row.transactiondate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp,
-                "transactiontype" = """),
-             PgTypes.text.encode(row.transactiontype()),
-             typo.runtime.Fragment.lit("""
-                ::bpchar,
-                "quantity" = """),
-             PgTypes.int4.encode(row.quantity()),
-             typo.runtime.Fragment.lit("""
-                ::int4,
-                "actualcost" = """),
-             PgTypes.numeric.encode(row.actualcost()),
-             typo.runtime.Fragment.lit("""
-                ::numeric,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "transactionid" = """),
-             TransactionhistoryarchiveId.pgType.encode(transactionid),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "production"."transactionhistoryarchive"
+         set "productid" = """),
+      PgTypes.int4.encode(row.productid()),
+      typo.runtime.Fragment.lit("""
+         ::int4,
+         "referenceorderid" = """),
+      PgTypes.int4.encode(row.referenceorderid()),
+      typo.runtime.Fragment.lit("""
+         ::int4,
+         "referenceorderlineid" = """),
+      PgTypes.int4.encode(row.referenceorderlineid()),
+      typo.runtime.Fragment.lit("""
+         ::int4,
+         "transactiondate" = """),
+      TypoLocalDateTime.pgType.encode(row.transactiondate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp,
+         "transactiontype" = """),
+      PgTypes.text.encode(row.transactiontype()),
+      typo.runtime.Fragment.lit("""
+         ::bpchar,
+         "quantity" = """),
+      PgTypes.int4.encode(row.quantity()),
+      typo.runtime.Fragment.lit("""
+         ::int4,
+         "actualcost" = """),
+      PgTypes.numeric.encode(row.actualcost()),
+      typo.runtime.Fragment.lit("""
+         ::numeric,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "transactionid" = """),
+      TransactionhistoryarchiveId.pgType.encode(transactionid),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public TransactionhistoryarchiveRow upsert(
     TransactionhistoryarchiveRow unsaved,
     Connection c
@@ -338,6 +357,7 @@ public class TransactionhistoryarchiveRepoImpl implements Transactionhistoryarch
       .runUnchecked(c);
   };
 
+  @Override
   public List<TransactionhistoryarchiveRow> upsertBatch(
     Iterator<TransactionhistoryarchiveRow> unsaved,
     Connection c
@@ -362,31 +382,32 @@ public class TransactionhistoryarchiveRepoImpl implements Transactionhistoryarch
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<TransactionhistoryarchiveRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table transactionhistoryarchive_TEMP (like "production"."transactionhistoryarchive") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy transactionhistoryarchive_TEMP("transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate") from stdin
-      """), batchSize, unsaved, c, TransactionhistoryarchiveRow.pgText);
+    create temporary table transactionhistoryarchive_TEMP (like "production"."transactionhistoryarchive") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy transactionhistoryarchive_TEMP("transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate") from stdin
+    """), batchSize, unsaved, c, TransactionhistoryarchiveRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "production"."transactionhistoryarchive"("transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate")
-              select * from transactionhistoryarchive_TEMP
-              on conflict ("transactionid")
-              do update set
-                "productid" = EXCLUDED."productid",
-              "referenceorderid" = EXCLUDED."referenceorderid",
-              "referenceorderlineid" = EXCLUDED."referenceorderlineid",
-              "transactiondate" = EXCLUDED."transactiondate",
-              "transactiontype" = EXCLUDED."transactiontype",
-              "quantity" = EXCLUDED."quantity",
-              "actualcost" = EXCLUDED."actualcost",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table transactionhistoryarchive_TEMP;""")).update().runUnchecked(c);
+       insert into "production"."transactionhistoryarchive"("transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate")
+       select * from transactionhistoryarchive_TEMP
+       on conflict ("transactionid")
+       do update set
+         "productid" = EXCLUDED."productid",
+       "referenceorderid" = EXCLUDED."referenceorderid",
+       "referenceorderlineid" = EXCLUDED."referenceorderlineid",
+       "transactiondate" = EXCLUDED."transactiondate",
+       "transactiontype" = EXCLUDED."transactiontype",
+       "quantity" = EXCLUDED."quantity",
+       "actualcost" = EXCLUDED."actualcost",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table transactionhistoryarchive_TEMP;""")).update().runUnchecked(c);
   };
 }

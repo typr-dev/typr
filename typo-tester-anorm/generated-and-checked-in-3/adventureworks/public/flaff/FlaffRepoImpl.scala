@@ -20,11 +20,11 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class FlaffRepoImpl extends FlaffRepo {
-  def delete: DeleteBuilder[FlaffFields, FlaffRow] = DeleteBuilder.of(""""public"."flaff"""", FlaffFields.structure, FlaffRow.rowParser(1).*)
+  override def delete: DeleteBuilder[FlaffFields, FlaffRow] = DeleteBuilder.of(""""public"."flaff"""", FlaffFields.structure, FlaffRow.rowParser(1).*)
 
-  def deleteById(compositeId: FlaffId)(using c: Connection): Boolean = SQL"""delete from "public"."flaff" where "code" = ${ParameterValue(compositeId.code, null, ShortText.toStatement)} AND "another_code" = ${ParameterValue(compositeId.anotherCode, null, ToStatement.stringToStatement)} AND "some_number" = ${ParameterValue(compositeId.someNumber, null, ToStatement.intToStatement)} AND "specifier" = ${ParameterValue(compositeId.specifier, null, ShortText.toStatement)}""".executeUpdate() > 0
+  override def deleteById(compositeId: FlaffId)(using c: Connection): Boolean = SQL"""delete from "public"."flaff" where "code" = ${ParameterValue(compositeId.code, null, ShortText.toStatement)} AND "another_code" = ${ParameterValue(compositeId.anotherCode, null, ToStatement.stringToStatement)} AND "some_number" = ${ParameterValue(compositeId.someNumber, null, ToStatement.intToStatement)} AND "specifier" = ${ParameterValue(compositeId.specifier, null, ShortText.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(compositeIds: Array[FlaffId])(using c: Connection): Int = {
+  override def deleteByIds(compositeIds: Array[FlaffId])(using c: Connection): Int = {
     val code = compositeIds.map(_.code)
     val anotherCode = compositeIds.map(_.anotherCode)
     val someNumber = compositeIds.map(_.someNumber)
@@ -36,7 +36,7 @@ class FlaffRepoImpl extends FlaffRepo {
     """.executeUpdate()
   }
 
-  def insert(unsaved: FlaffRow)(using c: Connection): FlaffRow = {
+  override def insert(unsaved: FlaffRow)(using c: Connection): FlaffRow = {
   SQL"""insert into "public"."flaff"("code", "another_code", "some_number", "specifier", "parentspecifier")
     values (${ParameterValue(unsaved.code, null, ShortText.toStatement)}::text, ${ParameterValue(unsaved.anotherCode, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.someNumber, null, ToStatement.intToStatement)}::int4, ${ParameterValue(unsaved.specifier, null, ShortText.toStatement)}::text, ${ParameterValue(unsaved.parentspecifier, null, ToStatement.optionToStatement(using ShortText.toStatement, ShortText.parameterMetadata))}::text)
     returning "code", "another_code", "some_number", "specifier", "parentspecifier"
@@ -44,27 +44,27 @@ class FlaffRepoImpl extends FlaffRepo {
     .executeInsert(FlaffRow.rowParser(1).single)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[FlaffRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "public"."flaff"("code", "another_code", "some_number", "specifier", "parentspecifier") FROM STDIN""", batchSize, unsaved)(using FlaffRow.pgText, c)
 
-  def select: SelectBuilder[FlaffFields, FlaffRow] = SelectBuilder.of(""""public"."flaff"""", FlaffFields.structure, FlaffRow.rowParser)
+  override def select: SelectBuilder[FlaffFields, FlaffRow] = SelectBuilder.of(""""public"."flaff"""", FlaffFields.structure, FlaffRow.rowParser)
 
-  def selectAll(using c: Connection): List[FlaffRow] = {
+  override def selectAll(using c: Connection): List[FlaffRow] = {
     SQL"""select "code", "another_code", "some_number", "specifier", "parentspecifier"
     from "public"."flaff"
     """.as(FlaffRow.rowParser(1).*)
   }
 
-  def selectById(compositeId: FlaffId)(using c: Connection): Option[FlaffRow] = {
+  override def selectById(compositeId: FlaffId)(using c: Connection): Option[FlaffRow] = {
     SQL"""select "code", "another_code", "some_number", "specifier", "parentspecifier"
     from "public"."flaff"
     where "code" = ${ParameterValue(compositeId.code, null, ShortText.toStatement)} AND "another_code" = ${ParameterValue(compositeId.anotherCode, null, ToStatement.stringToStatement)} AND "some_number" = ${ParameterValue(compositeId.someNumber, null, ToStatement.intToStatement)} AND "specifier" = ${ParameterValue(compositeId.specifier, null, ShortText.toStatement)}
     """.as(FlaffRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(compositeIds: Array[FlaffId])(using c: Connection): List[FlaffRow] = {
+  override def selectByIds(compositeIds: Array[FlaffId])(using c: Connection): List[FlaffRow] = {
     val code = compositeIds.map(_.code)
     val anotherCode = compositeIds.map(_.anotherCode)
     val someNumber = compositeIds.map(_.someNumber)
@@ -76,14 +76,14 @@ class FlaffRepoImpl extends FlaffRepo {
     """.as(FlaffRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(compositeIds: Array[FlaffId])(using c: Connection): Map[FlaffId, FlaffRow] = {
+  override def selectByIdsTracked(compositeIds: Array[FlaffId])(using c: Connection): Map[FlaffId, FlaffRow] = {
     val byId = selectByIds(compositeIds).view.map(x => (x.compositeId, x)).toMap
     compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[FlaffFields, FlaffRow] = UpdateBuilder.of(""""public"."flaff"""", FlaffFields.structure, FlaffRow.rowParser(1).*)
+  override def update: UpdateBuilder[FlaffFields, FlaffRow] = UpdateBuilder.of(""""public"."flaff"""", FlaffFields.structure, FlaffRow.rowParser(1).*)
 
-  def update(row: FlaffRow)(using c: Connection): Option[FlaffRow] = {
+  override def update(row: FlaffRow)(using c: Connection): Option[FlaffRow] = {
     val compositeId = row.compositeId
     SQL"""update "public"."flaff"
     set "parentspecifier" = ${ParameterValue(row.parentspecifier, null, ToStatement.optionToStatement(using ShortText.toStatement, ShortText.parameterMetadata))}::text
@@ -92,7 +92,7 @@ class FlaffRepoImpl extends FlaffRepo {
     """.executeInsert(FlaffRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: FlaffRow)(using c: Connection): FlaffRow = {
+  override def upsert(unsaved: FlaffRow)(using c: Connection): FlaffRow = {
   SQL"""insert into "public"."flaff"("code", "another_code", "some_number", "specifier", "parentspecifier")
     values (
       ${ParameterValue(unsaved.code, null, ShortText.toStatement)}::text,
@@ -109,7 +109,7 @@ class FlaffRepoImpl extends FlaffRepo {
     .executeInsert(FlaffRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[FlaffRow])(using c: Connection): List[FlaffRow] = {
+  override def upsertBatch(unsaved: Iterable[FlaffRow])(using c: Connection): List[FlaffRow] = {
     def toNamedParameter(row: FlaffRow): List[NamedParameter] = List(
       NamedParameter("code", ParameterValue(row.code, null, ShortText.toStatement)),
       NamedParameter("another_code", ParameterValue(row.anotherCode, null, ToStatement.stringToStatement)),
@@ -117,6 +117,7 @@ class FlaffRepoImpl extends FlaffRepo {
       NamedParameter("specifier", ParameterValue(row.specifier, null, ShortText.toStatement)),
       NamedParameter("parentspecifier", ParameterValue(row.parentspecifier, null, ToStatement.optionToStatement(using ShortText.toStatement, ShortText.parameterMetadata)))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -137,7 +138,7 @@ class FlaffRepoImpl extends FlaffRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[FlaffRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

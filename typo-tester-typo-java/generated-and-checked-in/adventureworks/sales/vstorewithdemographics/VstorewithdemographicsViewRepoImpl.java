@@ -5,22 +5,22 @@
  */
 package adventureworks.sales.vstorewithdemographics;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class VstorewithdemographicsViewRepoImpl implements VstorewithdemographicsViewRepo {
+  @Override
   public SelectBuilder<VstorewithdemographicsViewFields, VstorewithdemographicsViewRow> select() {
     return SelectBuilder.of("sales.vstorewithdemographics", VstorewithdemographicsViewFields.structure(), VstorewithdemographicsViewRow._rowParser);
   };
 
+  @Override
   public List<VstorewithdemographicsViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "businessentityid", "name", "AnnualSales"::numeric, "AnnualRevenue"::numeric, "BankName", "BusinessType", "YearOpened", "Specialty", "SquareFeet", "Brands", "Internet", "NumberEmployees"
        from "sales"."vstorewithdemographics"
-    """)).as(VstorewithdemographicsViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(VstorewithdemographicsViewRow._rowParser.all()).runUnchecked(c);
   };
 }

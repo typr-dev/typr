@@ -13,7 +13,6 @@ import adventureworks.public_.Phone;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple4;
 
 /** Table: person.personphone
   * Telephone number and type of a person.
@@ -57,7 +56,7 @@ public record PersonphoneRow(
     return new PersonphoneRow(businessentityid, phonenumber, phonenumbertypeid, modifieddate);
   };
 
-  static RowParser<PersonphoneRow> _rowParser = RowParsers.of(BusinessentityId.pgType, Phone.pgType, PhonenumbertypeId.pgType, TypoLocalDateTime.pgType, PersonphoneRow::new, row -> new Tuple4<>(row.businessentityid(), row.phonenumber(), row.phonenumbertypeid(), row.modifieddate()));;
+  static RowParser<PersonphoneRow> _rowParser = RowParsers.of(BusinessentityId.pgType, Phone.pgType, PhonenumbertypeId.pgType, TypoLocalDateTime.pgType, PersonphoneRow::new, row -> new Object[]{row.businessentityid(), row.phonenumber(), row.phonenumbertypeid(), row.modifieddate()});;
 
   static public PersonphoneRow apply(
     PersonphoneId compositeId,

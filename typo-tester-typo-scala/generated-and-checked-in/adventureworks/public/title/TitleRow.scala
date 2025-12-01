@@ -8,7 +8,6 @@ package adventureworks.public.title
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple1
 
 /** Table: public.title
  * Primary key: code
@@ -18,7 +17,7 @@ case class TitleRow(code: TitleId) {
 }
 
 object TitleRow {
-  val `_rowParser`: RowParser[TitleRow] = RowParsers.of(TitleId.pgType, TitleRow.apply, row => new Tuple1(row.code))
+  val `_rowParser`: RowParser[TitleRow] = RowParsers.of(TitleId.pgType, TitleRow.apply, row => Array(row.code))
 
   given pgText: PgText[TitleRow] = PgText.from(`_rowParser`)
 }

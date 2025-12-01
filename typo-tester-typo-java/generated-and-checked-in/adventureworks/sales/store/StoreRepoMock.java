@@ -6,6 +6,7 @@
 package adventureworks.sales.store;
 
 import adventureworks.person.businessentity.BusinessentityId;
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,10 +43,12 @@ public record StoreRepoMock(
     return new StoreRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<StoreFields, StoreRow> delete() {
     return new DeleteBuilderMock<>(StoreFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.businessentityid(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     BusinessentityId businessentityid,
     Connection c
@@ -53,28 +56,31 @@ public record StoreRepoMock(
     return Optional.ofNullable(map.remove(businessentityid)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     BusinessentityId[] businessentityids,
     Connection c
   ) {
     var count = 0;
-      for (var id : businessentityids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : businessentityids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public StoreRow insert(
     StoreRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.businessentityid())) {
-        throw new RuntimeException(str("id $unsaved.businessentityid() already exists"));
-      };
-      map.put(unsaved.businessentityid(), unsaved);
+      throw new RuntimeException(str("id $unsaved.businessentityid() already exists"));
+    };
+    map.put(unsaved.businessentityid(), unsaved);
     return unsaved;
   };
 
+  @Override
   public StoreRow insert(
     StoreRowUnsaved unsaved,
     Connection c
@@ -82,44 +88,49 @@ public record StoreRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<StoreRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.businessentityid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.businessentityid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<StoreRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.businessentityid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.businessentityid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<StoreFields, StoreRow> select() {
     return new SelectBuilderMock<>(StoreFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<StoreRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<StoreRow> selectById(
     BusinessentityId businessentityid,
     Connection c
@@ -127,38 +138,43 @@ public record StoreRepoMock(
     return Optional.ofNullable(map.get(businessentityid));
   };
 
+  @Override
   public List<StoreRow> selectByIds(
     BusinessentityId[] businessentityids,
     Connection c
   ) {
     var result = new ArrayList<StoreRow>();
-      for (var id : businessentityids) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : businessentityids) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<BusinessentityId, StoreRow> selectByIdsTracked(
     BusinessentityId[] businessentityids,
     Connection c
   ) {
-    return selectByIds(businessentityids, c).stream().collect(Collectors.toMap((adventureworks.sales.store.StoreRow row) -> row.businessentityid(), Function.identity()));
+    return selectByIds(businessentityids, c).stream().collect(Collectors.toMap((StoreRow row) -> row.businessentityid(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<StoreFields, StoreRow> update() {
     return new UpdateBuilderMock<>(StoreFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     StoreRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.businessentityid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.businessentityid(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.businessentityid(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public StoreRow upsert(
     StoreRow unsaved,
     Connection c
@@ -167,31 +183,33 @@ public record StoreRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<StoreRow> upsertBatch(
     Iterator<StoreRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<StoreRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.businessentityid(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.businessentityid(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<StoreRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.businessentityid(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.businessentityid(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

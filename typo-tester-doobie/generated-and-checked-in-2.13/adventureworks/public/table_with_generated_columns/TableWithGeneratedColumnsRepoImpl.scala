@@ -19,20 +19,20 @@ import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class TableWithGeneratedColumnsRepoImpl extends TableWithGeneratedColumnsRepo {
-  def delete: DeleteBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = DeleteBuilder.of(""""public"."table-with-generated-columns"""", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow.read)
+  override def delete: DeleteBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = DeleteBuilder.of(""""public"."table-with-generated-columns"""", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow.read)
 
-  def deleteById(name: TableWithGeneratedColumnsId): ConnectionIO[Boolean] = sql"""delete from "public"."table-with-generated-columns" where "name" = ${fromWrite(name)(new Write.Single(TableWithGeneratedColumnsId.put))}""".update.run.map(_ > 0)
+  override def deleteById(name: TableWithGeneratedColumnsId): ConnectionIO[Boolean] = sql"""delete from "public"."table-with-generated-columns" where "name" = ${fromWrite(name)(new Write.Single(TableWithGeneratedColumnsId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(names: Array[TableWithGeneratedColumnsId]): ConnectionIO[Int] = sql"""delete from "public"."table-with-generated-columns" where "name" = ANY(${fromWrite(names)(new Write.Single(TableWithGeneratedColumnsId.arrayPut))})""".update.run
+  override def deleteByIds(names: Array[TableWithGeneratedColumnsId]): ConnectionIO[Int] = sql"""delete from "public"."table-with-generated-columns" where "name" = ANY(${fromWrite(names)(new Write.Single(TableWithGeneratedColumnsId.arrayPut))})""".update.run
 
-  def insert(unsaved: TableWithGeneratedColumnsRow): ConnectionIO[TableWithGeneratedColumnsRow] = {
+  override def insert(unsaved: TableWithGeneratedColumnsRow): ConnectionIO[TableWithGeneratedColumnsRow] = {
     sql"""insert into "public"."table-with-generated-columns"("name")
     values (${fromWrite(unsaved.name)(new Write.Single(TableWithGeneratedColumnsId.put))})
     returning "name", "name-type-always"
     """.query(TableWithGeneratedColumnsRow.read).unique
   }
 
-  def insert(unsaved: TableWithGeneratedColumnsRowUnsaved): ConnectionIO[TableWithGeneratedColumnsRow] = {
+  override def insert(unsaved: TableWithGeneratedColumnsRowUnsaved): ConnectionIO[TableWithGeneratedColumnsRow] = {
     val fs = List(
       Some((Fragment.const0(s""""name""""), fr"${fromWrite(unsaved.name)(new Write.Single(TableWithGeneratedColumnsId.put))}"))
     ).flatten
@@ -50,35 +50,35 @@ class TableWithGeneratedColumnsRepoImpl extends TableWithGeneratedColumnsRepo {
     q.query(TableWithGeneratedColumnsRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, TableWithGeneratedColumnsRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "public"."table-with-generated-columns"("name") FROM STDIN""").copyIn(unsaved, batchSize)(TableWithGeneratedColumnsRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, TableWithGeneratedColumnsRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "public"."table-with-generated-columns"("name") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(TableWithGeneratedColumnsRowUnsaved.pgText)
 
-  def select: SelectBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = SelectBuilder.of(""""public"."table-with-generated-columns"""", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow.read)
+  override def select: SelectBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = SelectBuilder.of(""""public"."table-with-generated-columns"""", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow.read)
 
-  def selectAll: Stream[ConnectionIO, TableWithGeneratedColumnsRow] = sql"""select "name", "name-type-always" from "public"."table-with-generated-columns"""".query(TableWithGeneratedColumnsRow.read).stream
+  override def selectAll: Stream[ConnectionIO, TableWithGeneratedColumnsRow] = sql"""select "name", "name-type-always" from "public"."table-with-generated-columns"""".query(TableWithGeneratedColumnsRow.read).stream
 
-  def selectById(name: TableWithGeneratedColumnsId): ConnectionIO[Option[TableWithGeneratedColumnsRow]] = sql"""select "name", "name-type-always" from "public"."table-with-generated-columns" where "name" = ${fromWrite(name)(new Write.Single(TableWithGeneratedColumnsId.put))}""".query(TableWithGeneratedColumnsRow.read).option
+  override def selectById(name: TableWithGeneratedColumnsId): ConnectionIO[Option[TableWithGeneratedColumnsRow]] = sql"""select "name", "name-type-always" from "public"."table-with-generated-columns" where "name" = ${fromWrite(name)(new Write.Single(TableWithGeneratedColumnsId.put))}""".query(TableWithGeneratedColumnsRow.read).option
 
-  def selectByIds(names: Array[TableWithGeneratedColumnsId]): Stream[ConnectionIO, TableWithGeneratedColumnsRow] = sql"""select "name", "name-type-always" from "public"."table-with-generated-columns" where "name" = ANY(${fromWrite(names)(new Write.Single(TableWithGeneratedColumnsId.arrayPut))})""".query(TableWithGeneratedColumnsRow.read).stream
+  override def selectByIds(names: Array[TableWithGeneratedColumnsId]): Stream[ConnectionIO, TableWithGeneratedColumnsRow] = sql"""select "name", "name-type-always" from "public"."table-with-generated-columns" where "name" = ANY(${fromWrite(names)(new Write.Single(TableWithGeneratedColumnsId.arrayPut))})""".query(TableWithGeneratedColumnsRow.read).stream
 
-  def selectByIdsTracked(names: Array[TableWithGeneratedColumnsId]): ConnectionIO[Map[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow]] = {
+  override def selectByIdsTracked(names: Array[TableWithGeneratedColumnsId]): ConnectionIO[Map[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow]] = {
     selectByIds(names).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.name, x)).toMap
       names.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = UpdateBuilder.of(""""public"."table-with-generated-columns"""", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow.read)
+  override def update: UpdateBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = UpdateBuilder.of(""""public"."table-with-generated-columns"""", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow.read)
 
-  def upsert(unsaved: TableWithGeneratedColumnsRow): ConnectionIO[TableWithGeneratedColumnsRow] = {
+  override def upsert(unsaved: TableWithGeneratedColumnsRow): ConnectionIO[TableWithGeneratedColumnsRow] = {
     sql"""insert into "public"."table-with-generated-columns"("name")
     values (
       ${fromWrite(unsaved.name)(new Write.Single(TableWithGeneratedColumnsId.put))}
@@ -89,7 +89,7 @@ class TableWithGeneratedColumnsRepoImpl extends TableWithGeneratedColumnsRepo {
     """.query(TableWithGeneratedColumnsRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[TableWithGeneratedColumnsRow]): Stream[ConnectionIO, TableWithGeneratedColumnsRow] = {
+  override def upsertBatch(unsaved: List[TableWithGeneratedColumnsRow]): Stream[ConnectionIO, TableWithGeneratedColumnsRow] = {
     Update[TableWithGeneratedColumnsRow](
       s"""insert into "public"."table-with-generated-columns"("name")
       values (?)
@@ -101,7 +101,7 @@ class TableWithGeneratedColumnsRepoImpl extends TableWithGeneratedColumnsRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, TableWithGeneratedColumnsRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

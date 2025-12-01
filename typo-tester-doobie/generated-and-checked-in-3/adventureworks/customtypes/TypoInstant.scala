@@ -34,7 +34,7 @@ object TypoInstant {
 
   given arrayPut: Put[Array[TypoInstant]] = {
     Put.Advanced.array[AnyRef](NonEmptyList.one("timestamptz[]"), "timestamptz")
-      .contramap(_.map(v => v.value.toString))
+      .contramap(_.map(v => v.value.toString()))
   }
 
   given bijection: Bijection[TypoInstant, Instant] = Bijection.apply[TypoInstant, Instant](_.value)(TypoInstant.apply)
@@ -54,10 +54,10 @@ object TypoInstant {
 
   given pgText: Text[TypoInstant] = {
     new Text[TypoInstant] {
-      override def unsafeEncode(v: TypoInstant, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value.toString, sb)
-      override def unsafeArrayEncode(v: TypoInstant, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value.toString, sb)
+      override def unsafeEncode(v: TypoInstant, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value.toString(), sb)
+      override def unsafeArrayEncode(v: TypoInstant, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value.toString(), sb)
     }
   }
 
-  given put: Put[TypoInstant] = Put.Advanced.other[String](NonEmptyList.one("timestamptz")).contramap(v => v.value.toString)
+  given put: Put[TypoInstant] = Put.Advanced.other[String](NonEmptyList.one("timestamptz")).contramap(v => v.value.toString())
 }

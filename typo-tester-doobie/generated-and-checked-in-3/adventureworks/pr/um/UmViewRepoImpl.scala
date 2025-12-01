@@ -7,13 +7,11 @@ package adventureworks.pr.um
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class UmViewRepoImpl extends UmViewRepo {
-  def select: SelectBuilder[UmViewFields, UmViewRow] = SelectBuilder.of(""""pr"."um"""", UmViewFields.structure, UmViewRow.read)
+  override def select: SelectBuilder[UmViewFields, UmViewRow] = SelectBuilder.of(""""pr"."um"""", UmViewFields.structure, UmViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, UmViewRow] = sql"""select "id", "unitmeasurecode", "name", "modifieddate"::text from "pr"."um"""".query(using UmViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, UmViewRow] = sql"""select "id", "unitmeasurecode", "name", "modifieddate"::text from "pr"."um"""".query(using UmViewRow.read).stream
 }

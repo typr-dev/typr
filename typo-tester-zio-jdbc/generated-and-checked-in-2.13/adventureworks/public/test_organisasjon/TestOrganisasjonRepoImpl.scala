@@ -17,42 +17,42 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class TestOrganisasjonRepoImpl extends TestOrganisasjonRepo {
-  def delete: DeleteBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = DeleteBuilder.of(""""public"."test_organisasjon"""", TestOrganisasjonFields.structure, TestOrganisasjonRow.jdbcDecoder)
+  override def delete: DeleteBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = DeleteBuilder.of(""""public"."test_organisasjon"""", TestOrganisasjonFields.structure, TestOrganisasjonRow.jdbcDecoder)
 
-  def deleteById(organisasjonskode: TestOrganisasjonId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "public"."test_organisasjon" where "organisasjonskode" = ${Segment.paramSegment(organisasjonskode)(TestOrganisasjonId.setter)}""".delete.map(_ > 0)
+  override def deleteById(organisasjonskode: TestOrganisasjonId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "public"."test_organisasjon" where "organisasjonskode" = ${Segment.paramSegment(organisasjonskode)(TestOrganisasjonId.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(organisasjonskodes: Array[TestOrganisasjonId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "public"."test_organisasjon" where "organisasjonskode" = ANY(${Segment.paramSegment(organisasjonskodes)(TestOrganisasjonId.arraySetter)})""".delete
+  override def deleteByIds(organisasjonskodes: Array[TestOrganisasjonId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "public"."test_organisasjon" where "organisasjonskode" = ANY(${Segment.paramSegment(organisasjonskodes)(TestOrganisasjonId.arraySetter)})""".delete
 
-  def insert(unsaved: TestOrganisasjonRow): ZIO[ZConnection, Throwable, TestOrganisasjonRow] = {
+  override def insert(unsaved: TestOrganisasjonRow): ZIO[ZConnection, Throwable, TestOrganisasjonRow] = {
     sql"""insert into "public"."test_organisasjon"("organisasjonskode")
     values (${Segment.paramSegment(unsaved.organisasjonskode)(TestOrganisasjonId.setter)})
     returning "organisasjonskode"
     """.insertReturning(TestOrganisasjonRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, TestOrganisasjonRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "public"."test_organisasjon"("organisasjonskode") FROM STDIN""", batchSize, unsaved)(TestOrganisasjonRow.pgText)
 
-  def select: SelectBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = SelectBuilder.of(""""public"."test_organisasjon"""", TestOrganisasjonFields.structure, TestOrganisasjonRow.jdbcDecoder)
+  override def select: SelectBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = SelectBuilder.of(""""public"."test_organisasjon"""", TestOrganisasjonFields.structure, TestOrganisasjonRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, TestOrganisasjonRow] = sql"""select "organisasjonskode" from "public"."test_organisasjon"""".query(TestOrganisasjonRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, TestOrganisasjonRow] = sql"""select "organisasjonskode" from "public"."test_organisasjon"""".query(TestOrganisasjonRow.jdbcDecoder).selectStream()
 
-  def selectById(organisasjonskode: TestOrganisasjonId): ZIO[ZConnection, Throwable, Option[TestOrganisasjonRow]] = sql"""select "organisasjonskode" from "public"."test_organisasjon" where "organisasjonskode" = ${Segment.paramSegment(organisasjonskode)(TestOrganisasjonId.setter)}""".query(TestOrganisasjonRow.jdbcDecoder).selectOne
+  override def selectById(organisasjonskode: TestOrganisasjonId): ZIO[ZConnection, Throwable, Option[TestOrganisasjonRow]] = sql"""select "organisasjonskode" from "public"."test_organisasjon" where "organisasjonskode" = ${Segment.paramSegment(organisasjonskode)(TestOrganisasjonId.setter)}""".query(TestOrganisasjonRow.jdbcDecoder).selectOne
 
-  def selectByIds(organisasjonskodes: Array[TestOrganisasjonId]): ZStream[ZConnection, Throwable, TestOrganisasjonRow] = sql"""select "organisasjonskode" from "public"."test_organisasjon" where "organisasjonskode" = ANY(${Segment.paramSegment(organisasjonskodes)(TestOrganisasjonId.arraySetter)})""".query(TestOrganisasjonRow.jdbcDecoder).selectStream()
+  override def selectByIds(organisasjonskodes: Array[TestOrganisasjonId]): ZStream[ZConnection, Throwable, TestOrganisasjonRow] = sql"""select "organisasjonskode" from "public"."test_organisasjon" where "organisasjonskode" = ANY(${Segment.paramSegment(organisasjonskodes)(TestOrganisasjonId.arraySetter)})""".query(TestOrganisasjonRow.jdbcDecoder).selectStream()
 
-  def selectByIdsTracked(organisasjonskodes: Array[TestOrganisasjonId]): ZIO[ZConnection, Throwable, Map[TestOrganisasjonId, TestOrganisasjonRow]] = {
+  override def selectByIdsTracked(organisasjonskodes: Array[TestOrganisasjonId]): ZIO[ZConnection, Throwable, Map[TestOrganisasjonId, TestOrganisasjonRow]] = {
     selectByIds(organisasjonskodes).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.organisasjonskode, x)).toMap
       organisasjonskodes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = UpdateBuilder.of(""""public"."test_organisasjon"""", TestOrganisasjonFields.structure, TestOrganisasjonRow.jdbcDecoder)
+  override def update: UpdateBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = UpdateBuilder.of(""""public"."test_organisasjon"""", TestOrganisasjonFields.structure, TestOrganisasjonRow.jdbcDecoder)
 
-  def upsert(unsaved: TestOrganisasjonRow): ZIO[ZConnection, Throwable, UpdateResult[TestOrganisasjonRow]] = {
+  override def upsert(unsaved: TestOrganisasjonRow): ZIO[ZConnection, Throwable, UpdateResult[TestOrganisasjonRow]] = {
     sql"""insert into "public"."test_organisasjon"("organisasjonskode")
     values (
       ${Segment.paramSegment(unsaved.organisasjonskode)(TestOrganisasjonId.setter)}
@@ -63,7 +63,7 @@ class TestOrganisasjonRepoImpl extends TestOrganisasjonRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, TestOrganisasjonRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

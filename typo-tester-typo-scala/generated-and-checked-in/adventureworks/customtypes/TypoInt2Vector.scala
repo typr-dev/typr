@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes
 
+import com.fasterxml.jackson.annotation.JsonValue
 import org.postgresql.util.PGobject
 import typo.dsl.Bijection
 import typo.runtime.PgRead
@@ -13,7 +14,7 @@ import typo.runtime.PgType
 import typo.runtime.PgWrite
 
 /** int2vector (via PGObject). Valid syntax: `TypoInt2Vector("1 2 3") */
-case class TypoInt2Vector(value: String)
+case class TypoInt2Vector(@JsonValue value: String)
 
 object TypoInt2Vector {
   given bijection: Bijection[TypoInt2Vector, String] = Bijection.apply[TypoInt2Vector, String](_.value)(TypoInt2Vector.apply)
@@ -23,19 +24,19 @@ object TypoInt2Vector {
   given pgType: PgType[TypoInt2Vector] = {
     PgType.of(
       "int2vector",
-      PgRead.castJdbcObjectTo(classOf[PGobject]).map(v => new TypoInt2Vector(v.getValue)),
-      PgWrite.passObjectToJdbc().contramap((v: TypoInt2Vector) => {
-                                             val obj = new PGobject()
-                                             obj.setType("int2vector")
-                                             obj.setValue(v.value)
-                                             obj
-                                           }),
+      PgRead.castJdbcObjectTo(classOf[PGobject]).map((v: PGobject) => new TypoInt2Vector(v.getValue)),
+      PgWrite.passObjectToJdbc[PGobject]().contramap((v: TypoInt2Vector) => {
+                                                       val obj = new PGobject()
+                                                       obj.setType("int2vector")
+                                                       obj.setValue(v.value)
+                                                       obj
+                                                     }),
       TypoInt2Vector.pgText
     )
   }
 
   given pgTypeArray: PgType[Array[TypoInt2Vector]] = {
-    TypoInt2Vector.pgType.array(PgRead.castJdbcArrayTo(classOf[PGobject]).map(xs => xs.map(v => new TypoInt2Vector(v.getValue))), PgWrite.passObjectToJdbc[PGobject]().array(TypoInt2Vector.pgType.typename().as[PGobject]()).contramap(xs => xs.map((v: TypoInt2Vector) => {
+    TypoInt2Vector.pgType.array(PgRead.castJdbcArrayTo(classOf[PGobject]).map((xs: Array[PGobject]) => xs.map((v: PGobject) => new TypoInt2Vector(v.getValue))), PgWrite.passObjectToJdbc[PGobject]().array(TypoInt2Vector.pgType.typename().as[PGobject]()).contramap((xs: Array[TypoInt2Vector]) => xs.map((v: TypoInt2Vector) => {
       val obj = new PGobject()
       obj.setType("int2vector")
       obj.setValue(v.value)

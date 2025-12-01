@@ -5,22 +5,22 @@
  */
 package adventureworks.pu.sm;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class SmViewRepoImpl implements SmViewRepo {
+  @Override
   public SelectBuilder<SmViewFields, SmViewRow> select() {
     return SelectBuilder.of("pu.sm", SmViewFields.structure(), SmViewRow._rowParser);
   };
 
+  @Override
   public List<SmViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text
        from "pu"."sm"
-    """)).as(SmViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(SmViewRow._rowParser.all()).runUnchecked(c);
   };
 }

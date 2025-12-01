@@ -19,13 +19,13 @@ import typo.dsl.UpdateBuilder.UpdateBuilderMock
 import typo.dsl.UpdateParams
 
 case class Issue1422RepoMock(map: scala.collection.mutable.Map[Issue142Id, Issue1422Row] = scala.collection.mutable.Map.empty[Issue142Id, Issue1422Row]) extends Issue1422Repo {
-  def delete: DeleteBuilder[Issue1422Fields, Issue1422Row] = DeleteBuilderMock(DeleteParams.empty, Issue1422Fields.structure, map)
+  override def delete: DeleteBuilder[Issue1422Fields, Issue1422Row] = DeleteBuilderMock(DeleteParams.empty, Issue1422Fields.structure, map)
 
-  def deleteById(tabellkode: Issue142Id)(using c: Connection): Boolean = map.remove(tabellkode).isDefined
+  override def deleteById(tabellkode: Issue142Id)(using c: Connection): Boolean = map.remove(tabellkode).isDefined
 
-  def deleteByIds(tabellkodes: Array[Issue142Id])(using c: Connection): Int = tabellkodes.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(tabellkodes: Array[Issue142Id])(using c: Connection): Int = tabellkodes.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: Issue1422Row)(using c: Connection): Issue1422Row = {
+  override def insert(unsaved: Issue1422Row)(using c: Connection): Issue1422Row = {
     val _ = if (map.contains(unsaved.tabellkode))
       sys.error(s"id ${unsaved.tabellkode} already exists")
     else
@@ -34,7 +34,7 @@ case class Issue1422RepoMock(map: scala.collection.mutable.Map[Issue142Id, Issue
     unsaved
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[Issue1422Row],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -44,27 +44,27 @@ case class Issue1422RepoMock(map: scala.collection.mutable.Map[Issue142Id, Issue
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[Issue1422Fields, Issue1422Row] = SelectBuilderMock(Issue1422Fields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[Issue1422Fields, Issue1422Row] = SelectBuilderMock(Issue1422Fields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(using c: Connection): List[Issue1422Row] = map.values.toList
+  override def selectAll(using c: Connection): List[Issue1422Row] = map.values.toList
 
-  def selectById(tabellkode: Issue142Id)(using c: Connection): Option[Issue1422Row] = map.get(tabellkode)
+  override def selectById(tabellkode: Issue142Id)(using c: Connection): Option[Issue1422Row] = map.get(tabellkode)
 
-  def selectByIds(tabellkodes: Array[Issue142Id])(using c: Connection): List[Issue1422Row] = tabellkodes.flatMap(map.get).toList
+  override def selectByIds(tabellkodes: Array[Issue142Id])(using c: Connection): List[Issue1422Row] = tabellkodes.flatMap(map.get).toList
 
-  def selectByIdsTracked(tabellkodes: Array[Issue142Id])(using c: Connection): Map[Issue142Id, Issue1422Row] = {
+  override def selectByIdsTracked(tabellkodes: Array[Issue142Id])(using c: Connection): Map[Issue142Id, Issue1422Row] = {
     val byId = selectByIds(tabellkodes).view.map(x => (x.tabellkode, x)).toMap
     tabellkodes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[Issue1422Fields, Issue1422Row] = UpdateBuilderMock(UpdateParams.empty, Issue1422Fields.structure, map)
+  override def update: UpdateBuilder[Issue1422Fields, Issue1422Row] = UpdateBuilderMock(UpdateParams.empty, Issue1422Fields.structure, map)
 
-  def upsert(unsaved: Issue1422Row)(using c: Connection): Issue1422Row = {
+  override def upsert(unsaved: Issue1422Row)(using c: Connection): Issue1422Row = {
     map.put(unsaved.tabellkode, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[Issue1422Row])(using c: Connection): List[Issue1422Row] = {
+  override def upsertBatch(unsaved: Iterable[Issue1422Row])(using c: Connection): List[Issue1422Row] = {
     unsaved.map { row =>
       map += (row.tabellkode -> row)
       row
@@ -72,7 +72,7 @@ case class Issue1422RepoMock(map: scala.collection.mutable.Map[Issue142Id, Issue
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[Issue1422Row],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

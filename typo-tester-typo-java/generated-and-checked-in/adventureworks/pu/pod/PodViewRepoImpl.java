@@ -5,22 +5,22 @@
  */
 package adventureworks.pu.pod;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class PodViewRepoImpl implements PodViewRepo {
+  @Override
   public SelectBuilder<PodViewFields, PodViewRow> select() {
     return SelectBuilder.of("pu.pod", PodViewFields.structure(), PodViewRow._rowParser);
   };
 
+  @Override
   public List<PodViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text
        from "pu"."pod"
-    """)).as(PodViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(PodViewRow._rowParser.all()).runUnchecked(c);
   };
 }

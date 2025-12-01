@@ -12,7 +12,6 @@ import adventureworks.person.businessentity.BusinessentityId
 import java.util.Optional
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple5
 
 /** View: hr.jc */
 case class JcViewRow(
@@ -29,13 +28,5 @@ case class JcViewRow(
 )
 
 object JcViewRow {
-  val `_rowParser`: RowParser[JcViewRow] = {
-    RowParsers.of(JobcandidateId.pgType, JobcandidateId.pgType, BusinessentityId.pgType.opt(), TypoXml.pgType.opt(), TypoLocalDateTime.pgType, JcViewRow.apply, row => new Tuple5(
-      row.id,
-      row.jobcandidateid,
-      row.businessentityid,
-      row.resume,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[JcViewRow] = RowParsers.of(JobcandidateId.pgType, JobcandidateId.pgType, BusinessentityId.pgType.opt(), TypoXml.pgType.opt(), TypoLocalDateTime.pgType, JcViewRow.apply, row => Array(row.id, row.jobcandidateid, row.businessentityid, row.resume, row.modifieddate))
 }

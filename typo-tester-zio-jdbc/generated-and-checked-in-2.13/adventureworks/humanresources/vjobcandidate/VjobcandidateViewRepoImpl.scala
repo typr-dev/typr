@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class VjobcandidateViewRepoImpl extends VjobcandidateViewRepo {
-  def select: SelectBuilder[VjobcandidateViewFields, VjobcandidateViewRow] = SelectBuilder.of(""""humanresources"."vjobcandidate"""", VjobcandidateViewFields.structure, VjobcandidateViewRow.jdbcDecoder)
+  override def select: SelectBuilder[VjobcandidateViewFields, VjobcandidateViewRow] = SelectBuilder.of(""""humanresources"."vjobcandidate"""", VjobcandidateViewFields.structure, VjobcandidateViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, VjobcandidateViewRow] = sql"""select "jobcandidateid", "businessentityid", "Name.Prefix", "Name.First", "Name.Middle", "Name.Last", "Name.Suffix", "Skills", "Addr.Type", "Addr.Loc.CountryRegion", "Addr.Loc.State", "Addr.Loc.City", "Addr.PostalCode", "EMail", "WebSite", "modifieddate"::text from "humanresources"."vjobcandidate"""".query(VjobcandidateViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, VjobcandidateViewRow] = sql"""select "jobcandidateid", "businessentityid", "Name.Prefix", "Name.First", "Name.Middle", "Name.Last", "Name.Suffix", "Skills", "Addr.Type", "Addr.Loc.CountryRegion", "Addr.Loc.State", "Addr.Loc.City", "Addr.PostalCode", "EMail", "WebSite", "modifieddate"::text from "humanresources"."vjobcandidate"""".query(VjobcandidateViewRow.jdbcDecoder).selectStream()
 }

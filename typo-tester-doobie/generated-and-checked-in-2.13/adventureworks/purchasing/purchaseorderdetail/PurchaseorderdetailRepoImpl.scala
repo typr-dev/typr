@@ -15,13 +15,13 @@ import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class PurchaseorderdetailRepoImpl extends PurchaseorderdetailRepo {
-  def select: SelectBuilder[PurchaseorderdetailFields, PurchaseorderdetailRow] = SelectBuilder.of(""""purchasing"."purchaseorderdetail"""", PurchaseorderdetailFields.structure, PurchaseorderdetailRow.read)
+  override def select: SelectBuilder[PurchaseorderdetailFields, PurchaseorderdetailRow] = SelectBuilder.of(""""purchasing"."purchaseorderdetail"""", PurchaseorderdetailFields.structure, PurchaseorderdetailRow.read)
 
-  def selectAll: Stream[ConnectionIO, PurchaseorderdetailRow] = sql"""select "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text from "purchasing"."purchaseorderdetail"""".query(PurchaseorderdetailRow.read).stream
+  override def selectAll: Stream[ConnectionIO, PurchaseorderdetailRow] = sql"""select "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text from "purchasing"."purchaseorderdetail"""".query(PurchaseorderdetailRow.read).stream
 
-  def selectById(compositeId: PurchaseorderdetailId): ConnectionIO[Option[PurchaseorderdetailRow]] = sql"""select "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text from "purchasing"."purchaseorderdetail" where "purchaseorderid" = ${fromWrite(compositeId.purchaseorderid)(new Write.Single(PurchaseorderheaderId.put))} AND "purchaseorderdetailid" = ${fromWrite(compositeId.purchaseorderdetailid)(new Write.Single(Meta.IntMeta.put))}""".query(PurchaseorderdetailRow.read).option
+  override def selectById(compositeId: PurchaseorderdetailId): ConnectionIO[Option[PurchaseorderdetailRow]] = sql"""select "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text from "purchasing"."purchaseorderdetail" where "purchaseorderid" = ${fromWrite(compositeId.purchaseorderid)(new Write.Single(PurchaseorderheaderId.put))} AND "purchaseorderdetailid" = ${fromWrite(compositeId.purchaseorderdetailid)(new Write.Single(Meta.IntMeta.put))}""".query(PurchaseorderdetailRow.read).option
 
-  def selectByIds(compositeIds: Array[PurchaseorderdetailId]): Stream[ConnectionIO, PurchaseorderdetailRow] = {
+  override def selectByIds(compositeIds: Array[PurchaseorderdetailId]): Stream[ConnectionIO, PurchaseorderdetailRow] = {
     val purchaseorderid = compositeIds.map(_.purchaseorderid)
     val purchaseorderdetailid = compositeIds.map(_.purchaseorderdetailid)
     sql"""select "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text
@@ -31,7 +31,7 @@ class PurchaseorderdetailRepoImpl extends PurchaseorderdetailRepo {
     """.query(PurchaseorderdetailRow.read).stream
   }
 
-  def selectByIdsTracked(compositeIds: Array[PurchaseorderdetailId]): ConnectionIO[Map[PurchaseorderdetailId, PurchaseorderdetailRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[PurchaseorderdetailId]): ConnectionIO[Map[PurchaseorderdetailId, PurchaseorderdetailRow]] = {
     selectByIds(compositeIds).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap

@@ -7,13 +7,11 @@ package adventureworks.production.vproductmodelinstructions
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class VproductmodelinstructionsViewRepoImpl extends VproductmodelinstructionsViewRepo {
-  def select: SelectBuilder[VproductmodelinstructionsViewFields, VproductmodelinstructionsViewRow] = SelectBuilder.of(""""production"."vproductmodelinstructions"""", VproductmodelinstructionsViewFields.structure, VproductmodelinstructionsViewRow.read)
+  override def select: SelectBuilder[VproductmodelinstructionsViewFields, VproductmodelinstructionsViewRow] = SelectBuilder.of(""""production"."vproductmodelinstructions"""", VproductmodelinstructionsViewFields.structure, VproductmodelinstructionsViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, VproductmodelinstructionsViewRow] = sql"""select "productmodelid", "name", "instructions", "LocationID", "SetupHours", "MachineHours", "LaborHours", "LotSize", "Step", "rowguid", "modifieddate"::text from "production"."vproductmodelinstructions"""".query(using VproductmodelinstructionsViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, VproductmodelinstructionsViewRow] = sql"""select "productmodelid", "name", "instructions", "LocationID", "SetupHours", "MachineHours", "LaborHours", "LotSize", "Step", "rowguid", "modifieddate"::text from "production"."vproductmodelinstructions"""".query(using VproductmodelinstructionsViewRow.read).stream
 }

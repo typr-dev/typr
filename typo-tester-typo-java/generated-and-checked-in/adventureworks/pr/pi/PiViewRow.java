@@ -13,7 +13,6 @@ import adventureworks.production.product.ProductId;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple8;
 
 /** View: pr.pi */
 public record PiViewRow(
@@ -74,5 +73,5 @@ public record PiViewRow(
     return new PiViewRow(id, productid, locationid, shelf, bin, quantity, rowguid, modifieddate);
   };
 
-  static RowParser<PiViewRow> _rowParser = RowParsers.of(ProductId.pgType, ProductId.pgType, LocationId.pgType, PgTypes.text, TypoShort.pgType, TypoShort.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, PiViewRow::new, row -> new Tuple8<>(row.id(), row.productid(), row.locationid(), row.shelf(), row.bin(), row.quantity(), row.rowguid(), row.modifieddate()));;
+  static RowParser<PiViewRow> _rowParser = RowParsers.of(ProductId.pgType, ProductId.pgType, LocationId.pgType, PgTypes.text, TypoShort.pgType, TypoShort.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, PiViewRow::new, row -> new Object[]{row.id(), row.productid(), row.locationid(), row.shelf(), row.bin(), row.quantity(), row.rowguid(), row.modifieddate()});;
 }

@@ -11,7 +11,6 @@ import adventureworks.public.Name
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple3
 
 /** Table: person.phonenumbertype
  * Type of phone number of a person.
@@ -36,7 +35,7 @@ case class PhonenumbertypeRow(
 }
 
 object PhonenumbertypeRow {
-  val `_rowParser`: RowParser[PhonenumbertypeRow] = RowParsers.of(PhonenumbertypeId.pgType, Name.pgType, TypoLocalDateTime.pgType, PhonenumbertypeRow.apply, row => new Tuple3(row.phonenumbertypeid, row.name, row.modifieddate))
+  val `_rowParser`: RowParser[PhonenumbertypeRow] = RowParsers.of(PhonenumbertypeId.pgType, Name.pgType, TypoLocalDateTime.pgType, PhonenumbertypeRow.apply, row => Array(row.phonenumbertypeid, row.name, row.modifieddate))
 
   given pgText: PgText[PhonenumbertypeRow] = PgText.from(`_rowParser`)
 }

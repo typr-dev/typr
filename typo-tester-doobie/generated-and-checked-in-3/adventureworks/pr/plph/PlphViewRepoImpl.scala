@@ -7,13 +7,11 @@ package adventureworks.pr.plph
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class PlphViewRepoImpl extends PlphViewRepo {
-  def select: SelectBuilder[PlphViewFields, PlphViewRow] = SelectBuilder.of(""""pr"."plph"""", PlphViewFields.structure, PlphViewRow.read)
+  override def select: SelectBuilder[PlphViewFields, PlphViewRow] = SelectBuilder.of(""""pr"."plph"""", PlphViewFields.structure, PlphViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, PlphViewRow] = sql"""select "id", "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text from "pr"."plph"""".query(using PlphViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, PlphViewRow] = sql"""select "id", "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text from "pr"."plph"""".query(using PlphViewRow.read).stream
 }

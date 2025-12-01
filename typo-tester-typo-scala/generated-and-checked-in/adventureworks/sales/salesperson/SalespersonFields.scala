@@ -52,7 +52,7 @@ object SalespersonFields {
 
     override lazy val fields: SalespersonFields = {
       new SalespersonFields {
-        def businessentityid: IdField[BusinessentityId, SalespersonRow] = {
+        override def businessentityid: IdField[BusinessentityId, SalespersonRow] = {
           new IdField[BusinessentityId, SalespersonRow](
             _path,
             "businessentityid",
@@ -63,7 +63,7 @@ object SalespersonFields {
             BusinessentityId.pgType
           )
         }
-        def territoryid: OptField[SalesterritoryId, SalespersonRow] = {
+        override def territoryid: OptField[SalesterritoryId, SalespersonRow] = {
           new OptField[SalesterritoryId, SalespersonRow](
             _path,
             "territoryid",
@@ -74,7 +74,7 @@ object SalespersonFields {
             SalesterritoryId.pgType
           )
         }
-        def salesquota: OptField[java.math.BigDecimal, SalespersonRow] = {
+        override def salesquota: OptField[java.math.BigDecimal, SalespersonRow] = {
           new OptField[java.math.BigDecimal, SalespersonRow](
             _path,
             "salesquota",
@@ -85,7 +85,7 @@ object SalespersonFields {
             PgTypes.numeric
           )
         }
-        def bonus: Field[java.math.BigDecimal, SalespersonRow] = {
+        override def bonus: Field[java.math.BigDecimal, SalespersonRow] = {
           new Field[java.math.BigDecimal, SalespersonRow](
             _path,
             "bonus",
@@ -96,7 +96,7 @@ object SalespersonFields {
             PgTypes.numeric
           )
         }
-        def commissionpct: Field[java.math.BigDecimal, SalespersonRow] = {
+        override def commissionpct: Field[java.math.BigDecimal, SalespersonRow] = {
           new Field[java.math.BigDecimal, SalespersonRow](
             _path,
             "commissionpct",
@@ -107,7 +107,7 @@ object SalespersonFields {
             PgTypes.numeric
           )
         }
-        def salesytd: Field[java.math.BigDecimal, SalespersonRow] = {
+        override def salesytd: Field[java.math.BigDecimal, SalespersonRow] = {
           new Field[java.math.BigDecimal, SalespersonRow](
             _path,
             "salesytd",
@@ -118,7 +118,7 @@ object SalespersonFields {
             PgTypes.numeric
           )
         }
-        def saleslastyear: Field[java.math.BigDecimal, SalespersonRow] = {
+        override def saleslastyear: Field[java.math.BigDecimal, SalespersonRow] = {
           new Field[java.math.BigDecimal, SalespersonRow](
             _path,
             "saleslastyear",
@@ -129,7 +129,7 @@ object SalespersonFields {
             PgTypes.numeric
           )
         }
-        def rowguid: Field[TypoUUID, SalespersonRow] = {
+        override def rowguid: Field[TypoUUID, SalespersonRow] = {
           new Field[TypoUUID, SalespersonRow](
             _path,
             "rowguid",
@@ -140,7 +140,7 @@ object SalespersonFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, SalespersonRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, SalespersonRow] = {
           new Field[TypoLocalDateTime, SalespersonRow](
             _path,
             "modifieddate",
@@ -156,7 +156,7 @@ object SalespersonFields {
 
     override lazy val columns: java.util.List[FieldLike[?, SalespersonRow]] = java.util.List.of(this.fields.businessentityid, this.fields.territoryid, this.fields.salesquota, this.fields.bonus, this.fields.commissionpct, this.fields.salesytd, this.fields.saleslastyear, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[SalespersonFields, SalespersonRow] = new Impl(java.util.List.of())

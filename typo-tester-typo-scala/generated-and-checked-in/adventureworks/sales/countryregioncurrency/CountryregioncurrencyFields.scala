@@ -44,7 +44,7 @@ object CountryregioncurrencyFields {
 
     override lazy val fields: CountryregioncurrencyFields = {
       new CountryregioncurrencyFields {
-        def countryregioncode: IdField[CountryregionId, CountryregioncurrencyRow] = {
+        override def countryregioncode: IdField[CountryregionId, CountryregioncurrencyRow] = {
           new IdField[CountryregionId, CountryregioncurrencyRow](
             _path,
             "countryregioncode",
@@ -55,7 +55,7 @@ object CountryregioncurrencyFields {
             CountryregionId.pgType
           )
         }
-        def currencycode: IdField[CurrencyId, CountryregioncurrencyRow] = {
+        override def currencycode: IdField[CurrencyId, CountryregioncurrencyRow] = {
           new IdField[CurrencyId, CountryregioncurrencyRow](
             _path,
             "currencycode",
@@ -66,7 +66,7 @@ object CountryregioncurrencyFields {
             CurrencyId.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, CountryregioncurrencyRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, CountryregioncurrencyRow] = {
           new Field[TypoLocalDateTime, CountryregioncurrencyRow](
             _path,
             "modifieddate",
@@ -82,7 +82,7 @@ object CountryregioncurrencyFields {
 
     override lazy val columns: java.util.List[FieldLike[?, CountryregioncurrencyRow]] = java.util.List.of(this.fields.countryregioncode, this.fields.currencycode, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[CountryregioncurrencyFields, CountryregioncurrencyRow] = new Impl(java.util.List.of())

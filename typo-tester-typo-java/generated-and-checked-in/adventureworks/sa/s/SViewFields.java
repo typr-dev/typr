@@ -19,7 +19,7 @@ import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 
 public interface SViewFields {
-  static final class Impl extends Relation<SViewFields, SViewRow> {
+  final class Impl extends Relation<SViewFields, SViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -27,24 +27,31 @@ public interface SViewFields {
     @Override
     public SViewFields fields() {
       return new SViewFields() {
+               @Override
                public Field<BusinessentityId, SViewRow> id() {
                  return new Field<BusinessentityId, SViewRow>(_path, "id", SViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
                };
+               @Override
                public Field<BusinessentityId, SViewRow> businessentityid() {
                  return new Field<BusinessentityId, SViewRow>(_path, "businessentityid", SViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public Field<Name, SViewRow> name() {
                  return new Field<Name, SViewRow>(_path, "name", SViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public OptField<BusinessentityId, SViewRow> salespersonid() {
                  return new OptField<BusinessentityId, SViewRow>(_path, "salespersonid", SViewRow::salespersonid, Optional.empty(), Optional.empty(), (row, value) -> row.withSalespersonid(value), BusinessentityId.pgType);
                };
+               @Override
                public OptField<TypoXml, SViewRow> demographics() {
                  return new OptField<TypoXml, SViewRow>(_path, "demographics", SViewRow::demographics, Optional.empty(), Optional.empty(), (row, value) -> row.withDemographics(value), TypoXml.pgType);
                };
+               @Override
                public Field<TypoUUID, SViewRow> rowguid() {
                  return new Field<TypoUUID, SViewRow>(_path, "rowguid", SViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, SViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, SViewRow>(_path, "modifieddate", SViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -56,6 +63,7 @@ public interface SViewFields {
       return List.of(this.fields().id(), this.fields().businessentityid(), this.fields().name(), this.fields().salespersonid(), this.fields().demographics(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

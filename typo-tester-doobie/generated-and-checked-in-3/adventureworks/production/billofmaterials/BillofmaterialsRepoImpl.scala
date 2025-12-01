@@ -19,28 +19,26 @@ import doobie.util.fragment.Fragment
 import doobie.util.meta.Meta
 import doobie.util.update.Update
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.DeleteBuilder
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class BillofmaterialsRepoImpl extends BillofmaterialsRepo {
-  def delete: DeleteBuilder[BillofmaterialsFields, BillofmaterialsRow] = DeleteBuilder.of(""""production"."billofmaterials"""", BillofmaterialsFields.structure, BillofmaterialsRow.read)
+  override def delete: DeleteBuilder[BillofmaterialsFields, BillofmaterialsRow] = DeleteBuilder.of(""""production"."billofmaterials"""", BillofmaterialsFields.structure, BillofmaterialsRow.read)
 
-  def deleteById(billofmaterialsid: Int): ConnectionIO[Boolean] = sql"""delete from "production"."billofmaterials" where "billofmaterialsid" = ${fromWrite(billofmaterialsid)(using new Write.Single(Meta.IntMeta.put))}""".update.run.map(_ > 0)
+  override def deleteById(billofmaterialsid: Int): ConnectionIO[Boolean] = sql"""delete from "production"."billofmaterials" where "billofmaterialsid" = ${fromWrite(billofmaterialsid)(using new Write.Single(Meta.IntMeta.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(billofmaterialsids: Array[Int]): ConnectionIO[Int] = sql"""delete from "production"."billofmaterials" where "billofmaterialsid" = ANY(${fromWrite(billofmaterialsids)(using new Write.Single(adventureworks.IntegerArrayMeta.put))})""".update.run
+  override def deleteByIds(billofmaterialsids: Array[Int]): ConnectionIO[Int] = sql"""delete from "production"."billofmaterials" where "billofmaterialsid" = ANY(${fromWrite(billofmaterialsids)(using new Write.Single(adventureworks.IntegerArrayMeta.put))})""".update.run
 
-  def insert(unsaved: BillofmaterialsRow): ConnectionIO[BillofmaterialsRow] = {
+  override def insert(unsaved: BillofmaterialsRow): ConnectionIO[BillofmaterialsRow] = {
     sql"""insert into "production"."billofmaterials"("billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate")
     values (${fromWrite(unsaved.billofmaterialsid)(using new Write.Single(Meta.IntMeta.put))}::int4, ${fromWrite(unsaved.productassemblyid)(using new Write.SingleOpt(ProductId.put))}::int4, ${fromWrite(unsaved.componentid)(using new Write.Single(ProductId.put))}::int4, ${fromWrite(unsaved.startdate)(using new Write.Single(TypoLocalDateTime.put))}::timestamp, ${fromWrite(unsaved.enddate)(using new Write.SingleOpt(TypoLocalDateTime.put))}::timestamp, ${fromWrite(unsaved.unitmeasurecode)(using new Write.Single(UnitmeasureId.put))}::bpchar, ${fromWrite(unsaved.bomlevel)(using new Write.Single(TypoShort.put))}::int2, ${fromWrite(unsaved.perassemblyqty)(using new Write.Single(Meta.ScalaBigDecimalMeta.put))}::numeric, ${fromWrite(unsaved.modifieddate)(using new Write.Single(TypoLocalDateTime.put))}::timestamp)
     returning "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text
     """.query(using BillofmaterialsRow.read).unique
   }
 
-  def insert(unsaved: BillofmaterialsRowUnsaved): ConnectionIO[BillofmaterialsRow] = {
+  override def insert(unsaved: BillofmaterialsRowUnsaved): ConnectionIO[BillofmaterialsRow] = {
     val fs = List(
       Some((Fragment.const0(s""""productassemblyid""""), fr"${fromWrite(unsaved.productassemblyid)(using new Write.SingleOpt(ProductId.put))}::int4")),
       Some((Fragment.const0(s""""componentid""""), fr"${fromWrite(unsaved.componentid)(using new Write.Single(ProductId.put))}::int4")),
@@ -78,35 +76,35 @@ class BillofmaterialsRepoImpl extends BillofmaterialsRepo {
     q.query(using BillofmaterialsRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, BillofmaterialsRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "production"."billofmaterials"("billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate") FROM STDIN""").copyIn(unsaved, batchSize)(using BillofmaterialsRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, BillofmaterialsRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "production"."billofmaterials"("productassemblyid", "componentid", "enddate", "unitmeasurecode", "bomlevel", "billofmaterialsid", "startdate", "perassemblyqty", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(using BillofmaterialsRowUnsaved.pgText)
 
-  def select: SelectBuilder[BillofmaterialsFields, BillofmaterialsRow] = SelectBuilder.of(""""production"."billofmaterials"""", BillofmaterialsFields.structure, BillofmaterialsRow.read)
+  override def select: SelectBuilder[BillofmaterialsFields, BillofmaterialsRow] = SelectBuilder.of(""""production"."billofmaterials"""", BillofmaterialsFields.structure, BillofmaterialsRow.read)
 
-  def selectAll: Stream[ConnectionIO, BillofmaterialsRow] = sql"""select "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text from "production"."billofmaterials"""".query(using BillofmaterialsRow.read).stream
+  override def selectAll: Stream[ConnectionIO, BillofmaterialsRow] = sql"""select "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text from "production"."billofmaterials"""".query(using BillofmaterialsRow.read).stream
 
-  def selectById(billofmaterialsid: Int): ConnectionIO[Option[BillofmaterialsRow]] = sql"""select "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text from "production"."billofmaterials" where "billofmaterialsid" = ${fromWrite(billofmaterialsid)(using new Write.Single(Meta.IntMeta.put))}""".query(using BillofmaterialsRow.read).option
+  override def selectById(billofmaterialsid: Int): ConnectionIO[Option[BillofmaterialsRow]] = sql"""select "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text from "production"."billofmaterials" where "billofmaterialsid" = ${fromWrite(billofmaterialsid)(using new Write.Single(Meta.IntMeta.put))}""".query(using BillofmaterialsRow.read).option
 
-  def selectByIds(billofmaterialsids: Array[Int]): Stream[ConnectionIO, BillofmaterialsRow] = sql"""select "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text from "production"."billofmaterials" where "billofmaterialsid" = ANY(${fromWrite(billofmaterialsids)(using new Write.Single(adventureworks.IntegerArrayMeta.put))})""".query(using BillofmaterialsRow.read).stream
+  override def selectByIds(billofmaterialsids: Array[Int]): Stream[ConnectionIO, BillofmaterialsRow] = sql"""select "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text from "production"."billofmaterials" where "billofmaterialsid" = ANY(${fromWrite(billofmaterialsids)(using new Write.Single(adventureworks.IntegerArrayMeta.put))})""".query(using BillofmaterialsRow.read).stream
 
-  def selectByIdsTracked(billofmaterialsids: Array[Int]): ConnectionIO[Map[Int, BillofmaterialsRow]] = {
+  override def selectByIdsTracked(billofmaterialsids: Array[Int]): ConnectionIO[Map[Int, BillofmaterialsRow]] = {
     selectByIds(billofmaterialsids).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.billofmaterialsid, x)).toMap
       billofmaterialsids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[BillofmaterialsFields, BillofmaterialsRow] = UpdateBuilder.of(""""production"."billofmaterials"""", BillofmaterialsFields.structure, BillofmaterialsRow.read)
+  override def update: UpdateBuilder[BillofmaterialsFields, BillofmaterialsRow] = UpdateBuilder.of(""""production"."billofmaterials"""", BillofmaterialsFields.structure, BillofmaterialsRow.read)
 
-  def update(row: BillofmaterialsRow): ConnectionIO[Option[BillofmaterialsRow]] = {
+  override def update(row: BillofmaterialsRow): ConnectionIO[Option[BillofmaterialsRow]] = {
     val billofmaterialsid = row.billofmaterialsid
     sql"""update "production"."billofmaterials"
     set "productassemblyid" = ${fromWrite(row.productassemblyid)(using new Write.SingleOpt(ProductId.put))}::int4,
@@ -121,7 +119,7 @@ class BillofmaterialsRepoImpl extends BillofmaterialsRepo {
     returning "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text""".query(using BillofmaterialsRow.read).option
   }
 
-  def upsert(unsaved: BillofmaterialsRow): ConnectionIO[BillofmaterialsRow] = {
+  override def upsert(unsaved: BillofmaterialsRow): ConnectionIO[BillofmaterialsRow] = {
     sql"""insert into "production"."billofmaterials"("billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate")
     values (
       ${fromWrite(unsaved.billofmaterialsid)(using new Write.Single(Meta.IntMeta.put))}::int4,
@@ -148,7 +146,7 @@ class BillofmaterialsRepoImpl extends BillofmaterialsRepo {
     """.query(using BillofmaterialsRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[BillofmaterialsRow]): Stream[ConnectionIO, BillofmaterialsRow] = {
+  override def upsertBatch(unsaved: List[BillofmaterialsRow]): Stream[ConnectionIO, BillofmaterialsRow] = {
     Update[BillofmaterialsRow](
       s"""insert into "production"."billofmaterials"("billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate")
       values (?::int4,?::int4,?::int4,?::timestamp,?::timestamp,?::bpchar,?::int2,?::numeric,?::timestamp)
@@ -168,7 +166,7 @@ class BillofmaterialsRepoImpl extends BillofmaterialsRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, BillofmaterialsRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

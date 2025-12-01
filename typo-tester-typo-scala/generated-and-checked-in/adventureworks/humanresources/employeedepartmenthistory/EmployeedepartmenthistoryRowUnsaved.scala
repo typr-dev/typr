@@ -53,19 +53,5 @@ case class EmployeedepartmenthistoryRowUnsaved(
 }
 
 object EmployeedepartmenthistoryRowUnsaved {
-  given pgText: PgText[EmployeedepartmenthistoryRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      BusinessentityId.pgType.pgText.unsafeEncode(row.businessentityid, sb);
-      sb.append(PgText.DELIMETER);
-      DepartmentId.pgType.pgText.unsafeEncode(row.departmentid, sb);
-      sb.append(PgText.DELIMETER);
-      ShiftId.pgType.pgText.unsafeEncode(row.shiftid, sb);
-      sb.append(PgText.DELIMETER);
-      TypoLocalDate.pgType.pgText.unsafeEncode(row.startdate, sb);
-      sb.append(PgText.DELIMETER);
-      TypoLocalDate.pgType.opt().pgText.unsafeEncode(row.enddate, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[EmployeedepartmenthistoryRowUnsaved] = PgText.instance((row, sb) => { BusinessentityId.pgType.pgText.unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); DepartmentId.pgType.pgText.unsafeEncode(row.departmentid, sb); sb.append(PgText.DELIMETER); ShiftId.pgType.pgText.unsafeEncode(row.shiftid, sb); sb.append(PgText.DELIMETER); TypoLocalDate.pgType.pgText.unsafeEncode(row.startdate, sb); sb.append(PgText.DELIMETER); TypoLocalDate.pgType.opt().pgText.unsafeEncode(row.enddate, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

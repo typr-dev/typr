@@ -37,7 +37,7 @@ object PpViewFields {
 
     override lazy val fields: PpViewFields = {
       new PpViewFields {
-        def id: Field[ProductphotoId, PpViewRow] = {
+        override def id: Field[ProductphotoId, PpViewRow] = {
           new Field[ProductphotoId, PpViewRow](
             _path,
             "id",
@@ -48,7 +48,7 @@ object PpViewFields {
             ProductphotoId.pgType
           )
         }
-        def productphotoid: Field[ProductphotoId, PpViewRow] = {
+        override def productphotoid: Field[ProductphotoId, PpViewRow] = {
           new Field[ProductphotoId, PpViewRow](
             _path,
             "productphotoid",
@@ -59,7 +59,7 @@ object PpViewFields {
             ProductphotoId.pgType
           )
         }
-        def thumbnailphoto: OptField[TypoBytea, PpViewRow] = {
+        override def thumbnailphoto: OptField[TypoBytea, PpViewRow] = {
           new OptField[TypoBytea, PpViewRow](
             _path,
             "thumbnailphoto",
@@ -70,7 +70,7 @@ object PpViewFields {
             TypoBytea.pgType
           )
         }
-        def thumbnailphotofilename: OptField[/* max 50 chars */ String, PpViewRow] = {
+        override def thumbnailphotofilename: OptField[/* max 50 chars */ String, PpViewRow] = {
           new OptField[/* max 50 chars */ String, PpViewRow](
             _path,
             "thumbnailphotofilename",
@@ -81,7 +81,7 @@ object PpViewFields {
             PgTypes.text
           )
         }
-        def largephoto: OptField[TypoBytea, PpViewRow] = {
+        override def largephoto: OptField[TypoBytea, PpViewRow] = {
           new OptField[TypoBytea, PpViewRow](
             _path,
             "largephoto",
@@ -92,7 +92,7 @@ object PpViewFields {
             TypoBytea.pgType
           )
         }
-        def largephotofilename: OptField[/* max 50 chars */ String, PpViewRow] = {
+        override def largephotofilename: OptField[/* max 50 chars */ String, PpViewRow] = {
           new OptField[/* max 50 chars */ String, PpViewRow](
             _path,
             "largephotofilename",
@@ -103,7 +103,7 @@ object PpViewFields {
             PgTypes.text
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, PpViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, PpViewRow] = {
           new Field[TypoLocalDateTime, PpViewRow](
             _path,
             "modifieddate",
@@ -119,7 +119,7 @@ object PpViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, PpViewRow]] = java.util.List.of(this.fields.id, this.fields.productphotoid, this.fields.thumbnailphoto, this.fields.thumbnailphotofilename, this.fields.largephoto, this.fields.largephotofilename, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[PpViewFields, PpViewRow] = new Impl(java.util.List.of())

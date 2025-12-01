@@ -14,7 +14,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple5;
 
 /** Table: production.productcosthistory
   * Changes in the cost of a product over time.
@@ -73,7 +72,7 @@ public record ProductcosthistoryRow(
     return new ProductcosthistoryRow(productid, startdate, enddate, standardcost, modifieddate);
   };
 
-  static RowParser<ProductcosthistoryRow> _rowParser = RowParsers.of(ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), PgTypes.numeric, TypoLocalDateTime.pgType, ProductcosthistoryRow::new, row -> new Tuple5<>(row.productid(), row.startdate(), row.enddate(), row.standardcost(), row.modifieddate()));;
+  static RowParser<ProductcosthistoryRow> _rowParser = RowParsers.of(ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), PgTypes.numeric, TypoLocalDateTime.pgType, ProductcosthistoryRow::new, row -> new Object[]{row.productid(), row.startdate(), row.enddate(), row.standardcost(), row.modifieddate()});;
 
   static public ProductcosthistoryRow apply(
     ProductcosthistoryId compositeId,

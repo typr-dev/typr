@@ -17,42 +17,42 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class TitleRepoImpl extends TitleRepo {
-  def delete: DeleteBuilder[TitleFields, TitleRow] = DeleteBuilder.of(""""public"."title"""", TitleFields.structure, TitleRow.jdbcDecoder)
+  override def delete: DeleteBuilder[TitleFields, TitleRow] = DeleteBuilder.of(""""public"."title"""", TitleFields.structure, TitleRow.jdbcDecoder)
 
-  def deleteById(code: TitleId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "public"."title" where "code" = ${Segment.paramSegment(code)(using TitleId.setter)}""".delete.map(_ > 0)
+  override def deleteById(code: TitleId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "public"."title" where "code" = ${Segment.paramSegment(code)(using TitleId.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(codes: Array[TitleId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "public"."title" where "code" = ANY(${Segment.paramSegment(codes)(using TitleId.arraySetter)})""".delete
+  override def deleteByIds(codes: Array[TitleId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "public"."title" where "code" = ANY(${Segment.paramSegment(codes)(using TitleId.arraySetter)})""".delete
 
-  def insert(unsaved: TitleRow): ZIO[ZConnection, Throwable, TitleRow] = {
+  override def insert(unsaved: TitleRow): ZIO[ZConnection, Throwable, TitleRow] = {
     sql"""insert into "public"."title"("code")
     values (${Segment.paramSegment(unsaved.code)(using TitleId.setter)})
     returning "code"
     """.insertReturning(using TitleRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, TitleRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "public"."title"("code") FROM STDIN""", batchSize, unsaved)(using TitleRow.pgText)
 
-  def select: SelectBuilder[TitleFields, TitleRow] = SelectBuilder.of(""""public"."title"""", TitleFields.structure, TitleRow.jdbcDecoder)
+  override def select: SelectBuilder[TitleFields, TitleRow] = SelectBuilder.of(""""public"."title"""", TitleFields.structure, TitleRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, TitleRow] = sql"""select "code" from "public"."title"""".query(using TitleRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, TitleRow] = sql"""select "code" from "public"."title"""".query(using TitleRow.jdbcDecoder).selectStream()
 
-  def selectById(code: TitleId): ZIO[ZConnection, Throwable, Option[TitleRow]] = sql"""select "code" from "public"."title" where "code" = ${Segment.paramSegment(code)(using TitleId.setter)}""".query(using TitleRow.jdbcDecoder).selectOne
+  override def selectById(code: TitleId): ZIO[ZConnection, Throwable, Option[TitleRow]] = sql"""select "code" from "public"."title" where "code" = ${Segment.paramSegment(code)(using TitleId.setter)}""".query(using TitleRow.jdbcDecoder).selectOne
 
-  def selectByIds(codes: Array[TitleId]): ZStream[ZConnection, Throwable, TitleRow] = sql"""select "code" from "public"."title" where "code" = ANY(${Segment.paramSegment(codes)(using TitleId.arraySetter)})""".query(using TitleRow.jdbcDecoder).selectStream()
+  override def selectByIds(codes: Array[TitleId]): ZStream[ZConnection, Throwable, TitleRow] = sql"""select "code" from "public"."title" where "code" = ANY(${Segment.paramSegment(codes)(using TitleId.arraySetter)})""".query(using TitleRow.jdbcDecoder).selectStream()
 
-  def selectByIdsTracked(codes: Array[TitleId]): ZIO[ZConnection, Throwable, Map[TitleId, TitleRow]] = {
+  override def selectByIdsTracked(codes: Array[TitleId]): ZIO[ZConnection, Throwable, Map[TitleId, TitleRow]] = {
     selectByIds(codes).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.code, x)).toMap
       codes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[TitleFields, TitleRow] = UpdateBuilder.of(""""public"."title"""", TitleFields.structure, TitleRow.jdbcDecoder)
+  override def update: UpdateBuilder[TitleFields, TitleRow] = UpdateBuilder.of(""""public"."title"""", TitleFields.structure, TitleRow.jdbcDecoder)
 
-  def upsert(unsaved: TitleRow): ZIO[ZConnection, Throwable, UpdateResult[TitleRow]] = {
+  override def upsert(unsaved: TitleRow): ZIO[ZConnection, Throwable, UpdateResult[TitleRow]] = {
     sql"""insert into "public"."title"("code")
     values (
       ${Segment.paramSegment(unsaved.code)(using TitleId.setter)}
@@ -63,7 +63,7 @@ class TitleRepoImpl extends TitleRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, TitleRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

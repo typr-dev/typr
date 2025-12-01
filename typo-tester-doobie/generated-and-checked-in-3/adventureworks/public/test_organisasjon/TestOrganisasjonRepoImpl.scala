@@ -12,50 +12,48 @@ import doobie.syntax.SqlInterpolator.SingleFragment.fromWrite
 import doobie.util.Write
 import doobie.util.update.Update
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.DeleteBuilder
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class TestOrganisasjonRepoImpl extends TestOrganisasjonRepo {
-  def delete: DeleteBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = DeleteBuilder.of(""""public"."test_organisasjon"""", TestOrganisasjonFields.structure, TestOrganisasjonRow.read)
+  override def delete: DeleteBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = DeleteBuilder.of(""""public"."test_organisasjon"""", TestOrganisasjonFields.structure, TestOrganisasjonRow.read)
 
-  def deleteById(organisasjonskode: TestOrganisasjonId): ConnectionIO[Boolean] = sql"""delete from "public"."test_organisasjon" where "organisasjonskode" = ${fromWrite(organisasjonskode)(using new Write.Single(TestOrganisasjonId.put))}""".update.run.map(_ > 0)
+  override def deleteById(organisasjonskode: TestOrganisasjonId): ConnectionIO[Boolean] = sql"""delete from "public"."test_organisasjon" where "organisasjonskode" = ${fromWrite(organisasjonskode)(using new Write.Single(TestOrganisasjonId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(organisasjonskodes: Array[TestOrganisasjonId]): ConnectionIO[Int] = sql"""delete from "public"."test_organisasjon" where "organisasjonskode" = ANY(${fromWrite(organisasjonskodes)(using new Write.Single(TestOrganisasjonId.arrayPut))})""".update.run
+  override def deleteByIds(organisasjonskodes: Array[TestOrganisasjonId]): ConnectionIO[Int] = sql"""delete from "public"."test_organisasjon" where "organisasjonskode" = ANY(${fromWrite(organisasjonskodes)(using new Write.Single(TestOrganisasjonId.arrayPut))})""".update.run
 
-  def insert(unsaved: TestOrganisasjonRow): ConnectionIO[TestOrganisasjonRow] = {
+  override def insert(unsaved: TestOrganisasjonRow): ConnectionIO[TestOrganisasjonRow] = {
     sql"""insert into "public"."test_organisasjon"("organisasjonskode")
     values (${fromWrite(unsaved.organisasjonskode)(using new Write.Single(TestOrganisasjonId.put))})
     returning "organisasjonskode"
     """.query(using TestOrganisasjonRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, TestOrganisasjonRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "public"."test_organisasjon"("organisasjonskode") FROM STDIN""").copyIn(unsaved, batchSize)(using TestOrganisasjonRow.pgText)
 
-  def select: SelectBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = SelectBuilder.of(""""public"."test_organisasjon"""", TestOrganisasjonFields.structure, TestOrganisasjonRow.read)
+  override def select: SelectBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = SelectBuilder.of(""""public"."test_organisasjon"""", TestOrganisasjonFields.structure, TestOrganisasjonRow.read)
 
-  def selectAll: Stream[ConnectionIO, TestOrganisasjonRow] = sql"""select "organisasjonskode" from "public"."test_organisasjon"""".query(using TestOrganisasjonRow.read).stream
+  override def selectAll: Stream[ConnectionIO, TestOrganisasjonRow] = sql"""select "organisasjonskode" from "public"."test_organisasjon"""".query(using TestOrganisasjonRow.read).stream
 
-  def selectById(organisasjonskode: TestOrganisasjonId): ConnectionIO[Option[TestOrganisasjonRow]] = sql"""select "organisasjonskode" from "public"."test_organisasjon" where "organisasjonskode" = ${fromWrite(organisasjonskode)(using new Write.Single(TestOrganisasjonId.put))}""".query(using TestOrganisasjonRow.read).option
+  override def selectById(organisasjonskode: TestOrganisasjonId): ConnectionIO[Option[TestOrganisasjonRow]] = sql"""select "organisasjonskode" from "public"."test_organisasjon" where "organisasjonskode" = ${fromWrite(organisasjonskode)(using new Write.Single(TestOrganisasjonId.put))}""".query(using TestOrganisasjonRow.read).option
 
-  def selectByIds(organisasjonskodes: Array[TestOrganisasjonId]): Stream[ConnectionIO, TestOrganisasjonRow] = sql"""select "organisasjonskode" from "public"."test_organisasjon" where "organisasjonskode" = ANY(${fromWrite(organisasjonskodes)(using new Write.Single(TestOrganisasjonId.arrayPut))})""".query(using TestOrganisasjonRow.read).stream
+  override def selectByIds(organisasjonskodes: Array[TestOrganisasjonId]): Stream[ConnectionIO, TestOrganisasjonRow] = sql"""select "organisasjonskode" from "public"."test_organisasjon" where "organisasjonskode" = ANY(${fromWrite(organisasjonskodes)(using new Write.Single(TestOrganisasjonId.arrayPut))})""".query(using TestOrganisasjonRow.read).stream
 
-  def selectByIdsTracked(organisasjonskodes: Array[TestOrganisasjonId]): ConnectionIO[Map[TestOrganisasjonId, TestOrganisasjonRow]] = {
+  override def selectByIdsTracked(organisasjonskodes: Array[TestOrganisasjonId]): ConnectionIO[Map[TestOrganisasjonId, TestOrganisasjonRow]] = {
     selectByIds(organisasjonskodes).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.organisasjonskode, x)).toMap
       organisasjonskodes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = UpdateBuilder.of(""""public"."test_organisasjon"""", TestOrganisasjonFields.structure, TestOrganisasjonRow.read)
+  override def update: UpdateBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = UpdateBuilder.of(""""public"."test_organisasjon"""", TestOrganisasjonFields.structure, TestOrganisasjonRow.read)
 
-  def upsert(unsaved: TestOrganisasjonRow): ConnectionIO[TestOrganisasjonRow] = {
+  override def upsert(unsaved: TestOrganisasjonRow): ConnectionIO[TestOrganisasjonRow] = {
     sql"""insert into "public"."test_organisasjon"("organisasjonskode")
     values (
       ${fromWrite(unsaved.organisasjonskode)(using new Write.Single(TestOrganisasjonId.put))}
@@ -66,7 +64,7 @@ class TestOrganisasjonRepoImpl extends TestOrganisasjonRepo {
     """.query(using TestOrganisasjonRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[TestOrganisasjonRow]): Stream[ConnectionIO, TestOrganisasjonRow] = {
+  override def upsertBatch(unsaved: List[TestOrganisasjonRow]): Stream[ConnectionIO, TestOrganisasjonRow] = {
     Update[TestOrganisasjonRow](
       s"""insert into "public"."test_organisasjon"("organisasjonskode")
       values (?)
@@ -78,7 +76,7 @@ class TestOrganisasjonRepoImpl extends TestOrganisasjonRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, TestOrganisasjonRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

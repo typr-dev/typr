@@ -21,7 +21,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface TitledpersonFields {
-  static final class Impl extends Relation<TitledpersonFields, TitledpersonRow> {
+  final class Impl extends Relation<TitledpersonFields, TitledpersonRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -29,12 +29,15 @@ public interface TitledpersonFields {
     @Override
     public TitledpersonFields fields() {
       return new TitledpersonFields() {
+               @Override
                public Field<TitleDomainId, TitledpersonRow> titleShort() {
                  return new Field<TitleDomainId, TitledpersonRow>(_path, "title_short", TitledpersonRow::titleShort, Optional.empty(), Optional.of("text"), (row, value) -> row.withTitleShort(value), TitleDomainId.pgType);
                };
+               @Override
                public Field<TitleId, TitledpersonRow> title() {
                  return new Field<TitleId, TitledpersonRow>(_path, "title", TitledpersonRow::title, Optional.empty(), Optional.empty(), (row, value) -> row.withTitle(value), TitleId.pgType);
                };
+               @Override
                public Field<String, TitledpersonRow> name() {
                  return new Field<String, TitledpersonRow>(_path, "name", TitledpersonRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), PgTypes.text);
                };
@@ -46,6 +49,7 @@ public interface TitledpersonFields {
       return List.of(this.fields().titleShort(), this.fields().title(), this.fields().name());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

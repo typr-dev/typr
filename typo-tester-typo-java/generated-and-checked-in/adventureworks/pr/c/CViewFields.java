@@ -16,7 +16,7 @@ import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 
 public interface CViewFields {
-  static final class Impl extends Relation<CViewFields, CViewRow> {
+  final class Impl extends Relation<CViewFields, CViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -24,15 +24,19 @@ public interface CViewFields {
     @Override
     public CViewFields fields() {
       return new CViewFields() {
+               @Override
                public Field<CultureId, CViewRow> id() {
                  return new Field<CultureId, CViewRow>(_path, "id", CViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), CultureId.pgType);
                };
+               @Override
                public Field<CultureId, CViewRow> cultureid() {
                  return new Field<CultureId, CViewRow>(_path, "cultureid", CViewRow::cultureid, Optional.empty(), Optional.empty(), (row, value) -> row.withCultureid(value), CultureId.pgType);
                };
+               @Override
                public Field<Name, CViewRow> name() {
                  return new Field<Name, CViewRow>(_path, "name", CViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, CViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, CViewRow>(_path, "modifieddate", CViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -44,6 +48,7 @@ public interface CViewFields {
       return List.of(this.fields().id(), this.fields().cultureid(), this.fields().name(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

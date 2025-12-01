@@ -24,13 +24,5 @@ case class CultureRowUnsaved(
 }
 
 object CultureRowUnsaved {
-  given pgText: PgText[CultureRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      CultureId.pgType.pgText.unsafeEncode(row.cultureid, sb);
-      sb.append(PgText.DELIMETER);
-      Name.pgType.pgText.unsafeEncode(row.name, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[CultureRowUnsaved] = PgText.instance((row, sb) => { CultureId.pgType.pgText.unsafeEncode(row.cultureid, sb); sb.append(PgText.DELIMETER); Name.pgType.pgText.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

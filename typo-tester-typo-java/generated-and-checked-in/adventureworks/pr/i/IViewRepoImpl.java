@@ -5,22 +5,22 @@
  */
 package adventureworks.pr.i;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class IViewRepoImpl implements IViewRepo {
+  @Override
   public SelectBuilder<IViewFields, IViewRow> select() {
     return SelectBuilder.of("pr.i", IViewFields.structure(), IViewRow._rowParser);
   };
 
+  @Override
   public List<IViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "illustrationid", "diagram", "modifieddate"::text
        from "pr"."i"
-    """)).as(IViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(IViewRow._rowParser.all()).runUnchecked(c);
   };
 }

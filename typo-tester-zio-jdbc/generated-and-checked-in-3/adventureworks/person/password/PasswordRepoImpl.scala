@@ -23,20 +23,20 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class PasswordRepoImpl extends PasswordRepo {
-  def delete: DeleteBuilder[PasswordFields, PasswordRow] = DeleteBuilder.of(""""person"."password"""", PasswordFields.structure, PasswordRow.jdbcDecoder)
+  override def delete: DeleteBuilder[PasswordFields, PasswordRow] = DeleteBuilder.of(""""person"."password"""", PasswordFields.structure, PasswordRow.jdbcDecoder)
 
-  def deleteById(businessentityid: BusinessentityId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "person"."password" where "businessentityid" = ${Segment.paramSegment(businessentityid)(using BusinessentityId.setter)}""".delete.map(_ > 0)
+  override def deleteById(businessentityid: BusinessentityId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "person"."password" where "businessentityid" = ${Segment.paramSegment(businessentityid)(using BusinessentityId.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(businessentityids: Array[BusinessentityId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "person"."password" where "businessentityid" = ANY(${Segment.paramSegment(businessentityids)(using BusinessentityId.arraySetter)})""".delete
+  override def deleteByIds(businessentityids: Array[BusinessentityId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "person"."password" where "businessentityid" = ANY(${Segment.paramSegment(businessentityids)(using BusinessentityId.arraySetter)})""".delete
 
-  def insert(unsaved: PasswordRow): ZIO[ZConnection, Throwable, PasswordRow] = {
+  override def insert(unsaved: PasswordRow): ZIO[ZConnection, Throwable, PasswordRow] = {
     sql"""insert into "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate")
     values (${Segment.paramSegment(unsaved.businessentityid)(using BusinessentityId.setter)}::int4, ${Segment.paramSegment(unsaved.passwordhash)(using Setter.stringSetter)}, ${Segment.paramSegment(unsaved.passwordsalt)(using Setter.stringSetter)}, ${Segment.paramSegment(unsaved.rowguid)(using TypoUUID.setter)}::uuid, ${Segment.paramSegment(unsaved.modifieddate)(using TypoLocalDateTime.setter)}::timestamp)
     returning "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"::text
     """.insertReturning(using PasswordRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insert(unsaved: PasswordRowUnsaved): ZIO[ZConnection, Throwable, PasswordRow] = {
+  override def insert(unsaved: PasswordRowUnsaved): ZIO[ZConnection, Throwable, PasswordRow] = {
     val fs = List(
       Some((sql""""businessentityid"""", sql"${Segment.paramSegment(unsaved.businessentityid)(using BusinessentityId.setter)}::int4")),
       Some((sql""""passwordhash"""", sql"${Segment.paramSegment(unsaved.passwordhash)(using Setter.stringSetter)}")),
@@ -62,35 +62,35 @@ class PasswordRepoImpl extends PasswordRepo {
     q.insertReturning(using PasswordRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, PasswordRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved)(using PasswordRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, PasswordRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using PasswordRowUnsaved.pgText)
 
-  def select: SelectBuilder[PasswordFields, PasswordRow] = SelectBuilder.of(""""person"."password"""", PasswordFields.structure, PasswordRow.jdbcDecoder)
+  override def select: SelectBuilder[PasswordFields, PasswordRow] = SelectBuilder.of(""""person"."password"""", PasswordFields.structure, PasswordRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, PasswordRow] = sql"""select "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"::text from "person"."password"""".query(using PasswordRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, PasswordRow] = sql"""select "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"::text from "person"."password"""".query(using PasswordRow.jdbcDecoder).selectStream()
 
-  def selectById(businessentityid: BusinessentityId): ZIO[ZConnection, Throwable, Option[PasswordRow]] = sql"""select "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"::text from "person"."password" where "businessentityid" = ${Segment.paramSegment(businessentityid)(using BusinessentityId.setter)}""".query(using PasswordRow.jdbcDecoder).selectOne
+  override def selectById(businessentityid: BusinessentityId): ZIO[ZConnection, Throwable, Option[PasswordRow]] = sql"""select "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"::text from "person"."password" where "businessentityid" = ${Segment.paramSegment(businessentityid)(using BusinessentityId.setter)}""".query(using PasswordRow.jdbcDecoder).selectOne
 
-  def selectByIds(businessentityids: Array[BusinessentityId]): ZStream[ZConnection, Throwable, PasswordRow] = sql"""select "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"::text from "person"."password" where "businessentityid" = ANY(${Segment.paramSegment(businessentityids)(using BusinessentityId.arraySetter)})""".query(using PasswordRow.jdbcDecoder).selectStream()
+  override def selectByIds(businessentityids: Array[BusinessentityId]): ZStream[ZConnection, Throwable, PasswordRow] = sql"""select "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"::text from "person"."password" where "businessentityid" = ANY(${Segment.paramSegment(businessentityids)(using BusinessentityId.arraySetter)})""".query(using PasswordRow.jdbcDecoder).selectStream()
 
-  def selectByIdsTracked(businessentityids: Array[BusinessentityId]): ZIO[ZConnection, Throwable, Map[BusinessentityId, PasswordRow]] = {
+  override def selectByIdsTracked(businessentityids: Array[BusinessentityId]): ZIO[ZConnection, Throwable, Map[BusinessentityId, PasswordRow]] = {
     selectByIds(businessentityids).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.businessentityid, x)).toMap
       businessentityids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[PasswordFields, PasswordRow] = UpdateBuilder.of(""""person"."password"""", PasswordFields.structure, PasswordRow.jdbcDecoder)
+  override def update: UpdateBuilder[PasswordFields, PasswordRow] = UpdateBuilder.of(""""person"."password"""", PasswordFields.structure, PasswordRow.jdbcDecoder)
 
-  def update(row: PasswordRow): ZIO[ZConnection, Throwable, Option[PasswordRow]] = {
+  override def update(row: PasswordRow): ZIO[ZConnection, Throwable, Option[PasswordRow]] = {
     val businessentityid = row.businessentityid
     sql"""update "person"."password"
     set "passwordhash" = ${Segment.paramSegment(row.passwordhash)(using Setter.stringSetter)},
@@ -103,7 +103,7 @@ class PasswordRepoImpl extends PasswordRepo {
       .selectOne
   }
 
-  def upsert(unsaved: PasswordRow): ZIO[ZConnection, Throwable, UpdateResult[PasswordRow]] = {
+  override def upsert(unsaved: PasswordRow): ZIO[ZConnection, Throwable, UpdateResult[PasswordRow]] = {
     sql"""insert into "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate")
     values (
       ${Segment.paramSegment(unsaved.businessentityid)(using BusinessentityId.setter)}::int4,
@@ -122,7 +122,7 @@ class PasswordRepoImpl extends PasswordRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, PasswordRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

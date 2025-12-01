@@ -14,7 +14,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple5;
 
 /** Table: person.emailaddress
   * Where to send a person email.
@@ -65,7 +64,7 @@ public record EmailaddressRow(
     return new EmailaddressRow(businessentityid, emailaddressid, emailaddress, rowguid, modifieddate);
   };
 
-  static RowParser<EmailaddressRow> _rowParser = RowParsers.of(BusinessentityId.pgType, PgTypes.int4, PgTypes.text.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, EmailaddressRow::new, row -> new Tuple5<>(row.businessentityid(), row.emailaddressid(), row.emailaddress(), row.rowguid(), row.modifieddate()));;
+  static RowParser<EmailaddressRow> _rowParser = RowParsers.of(BusinessentityId.pgType, PgTypes.int4, PgTypes.text.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, EmailaddressRow::new, row -> new Object[]{row.businessentityid(), row.emailaddressid(), row.emailaddress(), row.rowguid(), row.modifieddate()});;
 
   static public EmailaddressRow apply(
     EmailaddressId compositeId,

@@ -24,7 +24,7 @@ object TableWithGeneratedColumnsFields {
 
     override lazy val fields: TableWithGeneratedColumnsFields = {
       new TableWithGeneratedColumnsFields {
-        def name: IdField[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow] = {
+        override def name: IdField[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow] = {
           new IdField[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow](
             _path,
             "name",
@@ -35,7 +35,7 @@ object TableWithGeneratedColumnsFields {
             TableWithGeneratedColumnsId.pgType
           )
         }
-        def nameTypeAlways: Field[String, TableWithGeneratedColumnsRow] = {
+        override def nameTypeAlways: Field[String, TableWithGeneratedColumnsRow] = {
           new Field[String, TableWithGeneratedColumnsRow](
             _path,
             "name-type-always",
@@ -51,7 +51,7 @@ object TableWithGeneratedColumnsFields {
 
     override lazy val columns: java.util.List[FieldLike[?, TableWithGeneratedColumnsRow]] = java.util.List.of(this.fields.name, this.fields.nameTypeAlways)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = new Impl(java.util.List.of())

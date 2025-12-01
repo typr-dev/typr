@@ -23,13 +23,13 @@ case class WorkorderRepoMock(
   toRow: WorkorderRowUnsaved => WorkorderRow,
   map: scala.collection.mutable.Map[WorkorderId, WorkorderRow] = scala.collection.mutable.Map.empty[WorkorderId, WorkorderRow]
 ) extends WorkorderRepo {
-  def delete: DeleteBuilder[WorkorderFields, WorkorderRow] = DeleteBuilderMock(DeleteParams.empty, WorkorderFields.structure, map)
+  override def delete: DeleteBuilder[WorkorderFields, WorkorderRow] = DeleteBuilderMock(DeleteParams.empty, WorkorderFields.structure, map)
 
-  def deleteById(workorderid: WorkorderId): ConnectionIO[Boolean] = delay(map.remove(workorderid).isDefined)
+  override def deleteById(workorderid: WorkorderId): ConnectionIO[Boolean] = delay(map.remove(workorderid).isDefined)
 
-  def deleteByIds(workorderids: Array[WorkorderId]): ConnectionIO[Int] = delay(workorderids.map(id => map.remove(id)).count(_.isDefined))
+  override def deleteByIds(workorderids: Array[WorkorderId]): ConnectionIO[Int] = delay(workorderids.map(id => map.remove(id)).count(_.isDefined))
 
-  def insert(unsaved: WorkorderRow): ConnectionIO[WorkorderRow] = {
+  override def insert(unsaved: WorkorderRow): ConnectionIO[WorkorderRow] = {
   delay {
     val _ = if (map.contains(unsaved.workorderid))
       sys.error(s"id ${unsaved.workorderid} already exists")
@@ -40,9 +40,9 @@ case class WorkorderRepoMock(
   }
   }
 
-  def insert(unsaved: WorkorderRowUnsaved): ConnectionIO[WorkorderRow] = insert(toRow(unsaved))
+  override def insert(unsaved: WorkorderRowUnsaved): ConnectionIO[WorkorderRow] = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, WorkorderRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = {
@@ -57,7 +57,7 @@ case class WorkorderRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, WorkorderRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = {
@@ -72,24 +72,24 @@ case class WorkorderRepoMock(
     }
   }
 
-  def select: SelectBuilder[WorkorderFields, WorkorderRow] = SelectBuilderMock(WorkorderFields.structure, delay(map.values.toList), SelectParams.empty)
+  override def select: SelectBuilder[WorkorderFields, WorkorderRow] = SelectBuilderMock(WorkorderFields.structure, delay(map.values.toList), SelectParams.empty)
 
-  def selectAll: Stream[ConnectionIO, WorkorderRow] = Stream.emits(map.values.toList)
+  override def selectAll: Stream[ConnectionIO, WorkorderRow] = Stream.emits(map.values.toList)
 
-  def selectById(workorderid: WorkorderId): ConnectionIO[Option[WorkorderRow]] = delay(map.get(workorderid))
+  override def selectById(workorderid: WorkorderId): ConnectionIO[Option[WorkorderRow]] = delay(map.get(workorderid))
 
-  def selectByIds(workorderids: Array[WorkorderId]): Stream[ConnectionIO, WorkorderRow] = Stream.emits(workorderids.flatMap(map.get).toList)
+  override def selectByIds(workorderids: Array[WorkorderId]): Stream[ConnectionIO, WorkorderRow] = Stream.emits(workorderids.flatMap(map.get).toList)
 
-  def selectByIdsTracked(workorderids: Array[WorkorderId]): ConnectionIO[Map[WorkorderId, WorkorderRow]] = {
+  override def selectByIdsTracked(workorderids: Array[WorkorderId]): ConnectionIO[Map[WorkorderId, WorkorderRow]] = {
     selectByIds(workorderids).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.workorderid, x)).toMap
       workorderids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[WorkorderFields, WorkorderRow] = UpdateBuilderMock(UpdateParams.empty, WorkorderFields.structure, map)
+  override def update: UpdateBuilder[WorkorderFields, WorkorderRow] = UpdateBuilderMock(UpdateParams.empty, WorkorderFields.structure, map)
 
-  def update(row: WorkorderRow): ConnectionIO[Option[WorkorderRow]] = {
+  override def update(row: WorkorderRow): ConnectionIO[Option[WorkorderRow]] = {
     delay {
       map.get(row.workorderid).map { _ =>
         map.put(row.workorderid, row): @nowarn
@@ -98,14 +98,14 @@ case class WorkorderRepoMock(
     }
   }
 
-  def upsert(unsaved: WorkorderRow): ConnectionIO[WorkorderRow] = {
+  override def upsert(unsaved: WorkorderRow): ConnectionIO[WorkorderRow] = {
     delay {
       map.put(unsaved.workorderid, unsaved): @nowarn
       unsaved
     }
   }
 
-  def upsertBatch(unsaved: List[WorkorderRow]): Stream[ConnectionIO, WorkorderRow] = {
+  override def upsertBatch(unsaved: List[WorkorderRow]): Stream[ConnectionIO, WorkorderRow] = {
     Stream.emits {
       unsaved.map { row =>
         map += (row.workorderid -> row)
@@ -115,7 +115,7 @@ case class WorkorderRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, WorkorderRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

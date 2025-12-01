@@ -14,7 +14,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple9
 
 /** Table: purchasing.purchaseorderdetail
  * Individual products associated with a specific purchase order. See PurchaseOrderHeader.
@@ -77,19 +76,7 @@ case class PurchaseorderdetailRow(
 }
 
 object PurchaseorderdetailRow {
-  val `_rowParser`: RowParser[PurchaseorderdetailRow] = {
-    RowParsers.of(PurchaseorderheaderId.pgType, PgTypes.int4, TypoLocalDateTime.pgType, TypoShort.pgType, ProductId.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, PurchaseorderdetailRow.apply, row => new Tuple9(
-      row.purchaseorderid,
-      row.purchaseorderdetailid,
-      row.duedate,
-      row.orderqty,
-      row.productid,
-      row.unitprice,
-      row.receivedqty,
-      row.rejectedqty,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[PurchaseorderdetailRow] = RowParsers.of(PurchaseorderheaderId.pgType, PgTypes.int4, TypoLocalDateTime.pgType, TypoShort.pgType, ProductId.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, PurchaseorderdetailRow.apply, row => Array(row.purchaseorderid, row.purchaseorderdetailid, row.duedate, row.orderqty, row.productid, row.unitprice, row.receivedqty, row.rejectedqty, row.modifieddate))
 
   def apply(
     compositeId: PurchaseorderdetailId,

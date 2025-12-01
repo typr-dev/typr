@@ -12,7 +12,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple6;
 
 /** Table: sales.shoppingcartitem
   * Contains online customer orders until the order is submitted or cancelled.
@@ -80,7 +79,7 @@ public record ShoppingcartitemRow(
     return new ShoppingcartitemRow(shoppingcartitemid, shoppingcartid, quantity, productid, datecreated, modifieddate);
   };
 
-  static RowParser<ShoppingcartitemRow> _rowParser = RowParsers.of(ShoppingcartitemId.pgType, PgTypes.text, PgTypes.int4, ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, ShoppingcartitemRow::new, row -> new Tuple6<>(row.shoppingcartitemid(), row.shoppingcartid(), row.quantity(), row.productid(), row.datecreated(), row.modifieddate()));;
+  static RowParser<ShoppingcartitemRow> _rowParser = RowParsers.of(ShoppingcartitemId.pgType, PgTypes.text, PgTypes.int4, ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, ShoppingcartitemRow::new, row -> new Object[]{row.shoppingcartitemid(), row.shoppingcartid(), row.quantity(), row.productid(), row.datecreated(), row.modifieddate()});;
 
   static public PgText<ShoppingcartitemRow> pgText =
     PgText.from(_rowParser);

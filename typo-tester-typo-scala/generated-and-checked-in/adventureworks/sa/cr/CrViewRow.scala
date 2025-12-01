@@ -11,7 +11,6 @@ import adventureworks.sales.currencyrate.CurrencyrateId
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple7
 
 /** View: sa.cr */
 case class CrViewRow(
@@ -32,15 +31,5 @@ case class CrViewRow(
 )
 
 object CrViewRow {
-  val `_rowParser`: RowParser[CrViewRow] = {
-    RowParsers.of(CurrencyrateId.pgType, TypoLocalDateTime.pgType, CurrencyId.pgType, CurrencyId.pgType, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, CrViewRow.apply, row => new Tuple7(
-      row.currencyrateid,
-      row.currencyratedate,
-      row.fromcurrencycode,
-      row.tocurrencycode,
-      row.averagerate,
-      row.endofdayrate,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[CrViewRow] = RowParsers.of(CurrencyrateId.pgType, TypoLocalDateTime.pgType, CurrencyId.pgType, CurrencyId.pgType, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, CrViewRow.apply, row => Array(row.currencyrateid, row.currencyratedate, row.fromcurrencycode, row.tocurrencycode, row.averagerate, row.endofdayrate, row.modifieddate))
 }

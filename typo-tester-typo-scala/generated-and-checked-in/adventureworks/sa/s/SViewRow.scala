@@ -13,7 +13,6 @@ import adventureworks.public.Name
 import java.util.Optional
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple7
 
 /** View: sa.s */
 case class SViewRow(
@@ -34,15 +33,5 @@ case class SViewRow(
 )
 
 object SViewRow {
-  val `_rowParser`: RowParser[SViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, Name.pgType, BusinessentityId.pgType.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SViewRow.apply, row => new Tuple7(
-      row.id,
-      row.businessentityid,
-      row.name,
-      row.salespersonid,
-      row.demographics,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[SViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, Name.pgType, BusinessentityId.pgType.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SViewRow.apply, row => Array(row.id, row.businessentityid, row.name, row.salespersonid, row.demographics, row.rowguid, row.modifieddate))
 }

@@ -6,7 +6,6 @@
 package adventureworks.public_.flaff;
 
 import adventureworks.public_.ShortText;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,12 +21,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class FlaffRepoImpl implements FlaffRepo {
+  @Override
   public DeleteBuilder<FlaffFields, FlaffRow> delete() {
     return DeleteBuilder.of("public.flaff", FlaffFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     FlaffId compositeId,
     Connection c
@@ -53,34 +53,36 @@ public class FlaffRepoImpl implements FlaffRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     FlaffId[] compositeIds,
     Connection c
   ) {
     ShortText[] code = arrayMap.map(compositeIds, FlaffId::code, ShortText.class);;
-      /* max 20 chars */ String[] anotherCode = arrayMap.map(compositeIds, FlaffId::anotherCode, /* max 20 chars */ String.class);;
-      Integer[] someNumber = arrayMap.map(compositeIds, FlaffId::someNumber, Integer.class);;
-      ShortText[] specifier = arrayMap.map(compositeIds, FlaffId::specifier, ShortText.class);;
+    /* max 20 chars */ String[] anotherCode = arrayMap.map(compositeIds, FlaffId::anotherCode, /* max 20 chars */ String.class);;
+    Integer[] someNumber = arrayMap.map(compositeIds, FlaffId::someNumber, Integer.class);;
+    ShortText[] specifier = arrayMap.map(compositeIds, FlaffId::specifier, ShortText.class);;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                delete
-                from "public"."flaff"
-                where ("code", "another_code", "some_number", "specifier")
-                in (select unnest("""),
-             ShortText.pgTypeArray.encode(code),
-             typo.runtime.Fragment.lit("::text[]), unnest("),
-             PgTypes.textArray.encode(anotherCode),
-             typo.runtime.Fragment.lit("::varchar[]), unnest("),
-             PgTypes.int4Array.encode(someNumber),
-             typo.runtime.Fragment.lit("::int4[]), unnest("),
-             ShortText.pgTypeArray.encode(specifier),
-             typo.runtime.Fragment.lit("""
-             ::text[]))
+      typo.runtime.Fragment.lit("""
+         delete
+         from "public"."flaff"
+         where ("code", "another_code", "some_number", "specifier")
+         in (select unnest("""),
+      ShortText.pgTypeArray.encode(code),
+      typo.runtime.Fragment.lit("::text[]), unnest("),
+      PgTypes.textArray.encode(anotherCode),
+      typo.runtime.Fragment.lit("::varchar[]), unnest("),
+      PgTypes.int4Array.encode(someNumber),
+      typo.runtime.Fragment.lit("::int4[]), unnest("),
+      ShortText.pgTypeArray.encode(specifier),
+      typo.runtime.Fragment.lit("""
+      ::text[]))
 
-             """)
-           ).update().runUnchecked(c);
+      """)
+    ).update().runUnchecked(c);
   };
 
+  @Override
   public FlaffRow insert(
     FlaffRow unsaved,
     Connection c
@@ -106,6 +108,7 @@ public class FlaffRepoImpl implements FlaffRepo {
       .updateReturning(FlaffRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<FlaffRow> unsaved,
     Integer batchSize,
@@ -116,17 +119,20 @@ public class FlaffRepoImpl implements FlaffRepo {
     """), batchSize, unsaved, c, FlaffRow.pgText);
   };
 
+  @Override
   public SelectBuilder<FlaffFields, FlaffRow> select() {
     return SelectBuilder.of("public.flaff", FlaffFields.structure(), FlaffRow._rowParser);
   };
 
+  @Override
   public List<FlaffRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "code", "another_code", "some_number", "specifier", "parentspecifier"
        from "public"."flaff"
-    """)).as(FlaffRow._rowParser.all()).runUnchecked(c);
+    """)).query(FlaffRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<FlaffRow> selectById(
     FlaffId compositeId,
     Connection c
@@ -150,80 +156,85 @@ public class FlaffRepoImpl implements FlaffRepo {
       """),
       ShortText.pgType.encode(compositeId.specifier()),
       typo.runtime.Fragment.lit("")
-    ).as(FlaffRow._rowParser.first()).runUnchecked(c);
+    ).query(FlaffRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<FlaffRow> selectByIds(
     FlaffId[] compositeIds,
     Connection c
   ) {
     ShortText[] code = arrayMap.map(compositeIds, FlaffId::code, ShortText.class);;
-      /* max 20 chars */ String[] anotherCode = arrayMap.map(compositeIds, FlaffId::anotherCode, /* max 20 chars */ String.class);;
-      Integer[] someNumber = arrayMap.map(compositeIds, FlaffId::someNumber, Integer.class);;
-      ShortText[] specifier = arrayMap.map(compositeIds, FlaffId::specifier, ShortText.class);;
+    /* max 20 chars */ String[] anotherCode = arrayMap.map(compositeIds, FlaffId::anotherCode, /* max 20 chars */ String.class);;
+    Integer[] someNumber = arrayMap.map(compositeIds, FlaffId::someNumber, Integer.class);;
+    ShortText[] specifier = arrayMap.map(compositeIds, FlaffId::specifier, ShortText.class);;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                select "code", "another_code", "some_number", "specifier", "parentspecifier"
-                from "public"."flaff"
-                where ("code", "another_code", "some_number", "specifier")
-                in (select unnest("""),
-             ShortText.pgTypeArray.encode(code),
-             typo.runtime.Fragment.lit("::text[]), unnest("),
-             PgTypes.textArray.encode(anotherCode),
-             typo.runtime.Fragment.lit("::varchar[]), unnest("),
-             PgTypes.int4Array.encode(someNumber),
-             typo.runtime.Fragment.lit("::int4[]), unnest("),
-             ShortText.pgTypeArray.encode(specifier),
-             typo.runtime.Fragment.lit("""
-             ::text[]))
+      typo.runtime.Fragment.lit("""
+         select "code", "another_code", "some_number", "specifier", "parentspecifier"
+         from "public"."flaff"
+         where ("code", "another_code", "some_number", "specifier")
+         in (select unnest("""),
+      ShortText.pgTypeArray.encode(code),
+      typo.runtime.Fragment.lit("::text[]), unnest("),
+      PgTypes.textArray.encode(anotherCode),
+      typo.runtime.Fragment.lit("::varchar[]), unnest("),
+      PgTypes.int4Array.encode(someNumber),
+      typo.runtime.Fragment.lit("::int4[]), unnest("),
+      ShortText.pgTypeArray.encode(specifier),
+      typo.runtime.Fragment.lit("""
+      ::text[]))
 
-             """)
-           ).as(FlaffRow._rowParser.all()).runUnchecked(c);
+      """)
+    ).query(FlaffRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<FlaffId, FlaffRow> selectByIdsTracked(
     FlaffId[] compositeIds,
     Connection c
   ) {
-    Map<FlaffId, FlaffRow> ret = new HashMap<>();;
-      selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
+    HashMap<FlaffId, FlaffRow> ret = new HashMap<FlaffId, FlaffRow>();
+    selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<FlaffFields, FlaffRow> update() {
     return UpdateBuilder.of("public.flaff", FlaffFields.structure(), FlaffRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     FlaffRow row,
     Connection c
   ) {
     FlaffId compositeId = row.compositeId();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "public"."flaff"
-                set "parentspecifier" = """),
-             ShortText.pgType.opt().encode(row.parentspecifier()),
-             typo.runtime.Fragment.lit("""
-                ::text
-                where "code" = """),
-             ShortText.pgType.encode(compositeId.code()),
-             typo.runtime.Fragment.lit("""
-              AND "another_code" = 
-             """),
-             PgTypes.text.encode(compositeId.anotherCode()),
-             typo.runtime.Fragment.lit("""
-              AND "some_number" = 
-             """),
-             PgTypes.int4.encode(compositeId.someNumber()),
-             typo.runtime.Fragment.lit("""
-              AND "specifier" = 
-             """),
-             ShortText.pgType.encode(compositeId.specifier()),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "public"."flaff"
+         set "parentspecifier" = """),
+      ShortText.pgType.opt().encode(row.parentspecifier()),
+      typo.runtime.Fragment.lit("""
+         ::text
+         where "code" = """),
+      ShortText.pgType.encode(compositeId.code()),
+      typo.runtime.Fragment.lit("""
+       AND "another_code" = 
+      """),
+      PgTypes.text.encode(compositeId.anotherCode()),
+      typo.runtime.Fragment.lit("""
+       AND "some_number" = 
+      """),
+      PgTypes.int4.encode(compositeId.someNumber()),
+      typo.runtime.Fragment.lit("""
+       AND "specifier" = 
+      """),
+      ShortText.pgType.encode(compositeId.specifier()),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public FlaffRow upsert(
     FlaffRow unsaved,
     Connection c
@@ -253,6 +264,7 @@ public class FlaffRepoImpl implements FlaffRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<FlaffRow> upsertBatch(
     Iterator<FlaffRow> unsaved,
     Connection c
@@ -270,24 +282,25 @@ public class FlaffRepoImpl implements FlaffRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<FlaffRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table flaff_TEMP (like "public"."flaff") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy flaff_TEMP("code", "another_code", "some_number", "specifier", "parentspecifier") from stdin
-      """), batchSize, unsaved, c, FlaffRow.pgText);
+    create temporary table flaff_TEMP (like "public"."flaff") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy flaff_TEMP("code", "another_code", "some_number", "specifier", "parentspecifier") from stdin
+    """), batchSize, unsaved, c, FlaffRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "public"."flaff"("code", "another_code", "some_number", "specifier", "parentspecifier")
-              select * from flaff_TEMP
-              on conflict ("code", "another_code", "some_number", "specifier")
-              do update set
-                "parentspecifier" = EXCLUDED."parentspecifier"
-              ;
-              drop table flaff_TEMP;""")).update().runUnchecked(c);
+       insert into "public"."flaff"("code", "another_code", "some_number", "specifier", "parentspecifier")
+       select * from flaff_TEMP
+       on conflict ("code", "another_code", "some_number", "specifier")
+       do update set
+         "parentspecifier" = EXCLUDED."parentspecifier"
+       ;
+       drop table flaff_TEMP;""")).update().runUnchecked(c);
   };
 }

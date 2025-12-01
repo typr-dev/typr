@@ -31,7 +31,7 @@ object DViewFields {
 
     override lazy val fields: DViewFields = {
       new DViewFields {
-        def id: Field[DepartmentId, DViewRow] = {
+        override def id: Field[DepartmentId, DViewRow] = {
           new Field[DepartmentId, DViewRow](
             _path,
             "id",
@@ -42,7 +42,7 @@ object DViewFields {
             DepartmentId.pgType
           )
         }
-        def departmentid: Field[DepartmentId, DViewRow] = {
+        override def departmentid: Field[DepartmentId, DViewRow] = {
           new Field[DepartmentId, DViewRow](
             _path,
             "departmentid",
@@ -53,7 +53,7 @@ object DViewFields {
             DepartmentId.pgType
           )
         }
-        def name: Field[Name, DViewRow] = {
+        override def name: Field[Name, DViewRow] = {
           new Field[Name, DViewRow](
             _path,
             "name",
@@ -64,7 +64,7 @@ object DViewFields {
             Name.pgType
           )
         }
-        def groupname: Field[Name, DViewRow] = {
+        override def groupname: Field[Name, DViewRow] = {
           new Field[Name, DViewRow](
             _path,
             "groupname",
@@ -75,7 +75,7 @@ object DViewFields {
             Name.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, DViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, DViewRow] = {
           new Field[TypoLocalDateTime, DViewRow](
             _path,
             "modifieddate",
@@ -91,7 +91,7 @@ object DViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, DViewRow]] = java.util.List.of(this.fields.id, this.fields.departmentid, this.fields.name, this.fields.groupname, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[DViewFields, DViewRow] = new Impl(java.util.List.of())

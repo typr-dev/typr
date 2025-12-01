@@ -5,22 +5,22 @@
  */
 package adventureworks.sa.crc;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class CrcViewRepoImpl implements CrcViewRepo {
+  @Override
   public SelectBuilder<CrcViewFields, CrcViewRow> select() {
     return SelectBuilder.of("sa.crc", CrcViewFields.structure(), CrcViewRow._rowParser);
   };
 
+  @Override
   public List<CrcViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "countryregioncode", "currencycode", "modifieddate"::text
        from "sa"."crc"
-    """)).as(CrcViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(CrcViewRow._rowParser.all()).runUnchecked(c);
   };
 }

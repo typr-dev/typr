@@ -69,25 +69,5 @@ case class WorkorderRowUnsaved(
 }
 
 object WorkorderRowUnsaved {
-  given pgText: PgText[WorkorderRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      ProductId.pgType.pgText.unsafeEncode(row.productid, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.int4.pgText.unsafeEncode(row.orderqty, sb);
-      sb.append(PgText.DELIMETER);
-      TypoShort.pgType.pgText.unsafeEncode(row.scrappedqty, sb);
-      sb.append(PgText.DELIMETER);
-      TypoLocalDateTime.pgType.pgText.unsafeEncode(row.startdate, sb);
-      sb.append(PgText.DELIMETER);
-      TypoLocalDateTime.pgType.opt().pgText.unsafeEncode(row.enddate, sb);
-      sb.append(PgText.DELIMETER);
-      TypoLocalDateTime.pgType.pgText.unsafeEncode(row.duedate, sb);
-      sb.append(PgText.DELIMETER);
-      ScrapreasonId.pgType.opt().pgText.unsafeEncode(row.scrapreasonid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using WorkorderId.pgType.pgText).unsafeEncode(row.workorderid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[WorkorderRowUnsaved] = PgText.instance((row, sb) => { ProductId.pgType.pgText.unsafeEncode(row.productid, sb); sb.append(PgText.DELIMETER); PgTypes.int4.pgText.unsafeEncode(row.orderqty, sb); sb.append(PgText.DELIMETER); TypoShort.pgType.pgText.unsafeEncode(row.scrappedqty, sb); sb.append(PgText.DELIMETER); TypoLocalDateTime.pgType.pgText.unsafeEncode(row.startdate, sb); sb.append(PgText.DELIMETER); TypoLocalDateTime.pgType.opt().pgText.unsafeEncode(row.enddate, sb); sb.append(PgText.DELIMETER); TypoLocalDateTime.pgType.pgText.unsafeEncode(row.duedate, sb); sb.append(PgText.DELIMETER); ScrapreasonId.pgType.opt().pgText.unsafeEncode(row.scrapreasonid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using WorkorderId.pgType.pgText).unsafeEncode(row.workorderid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

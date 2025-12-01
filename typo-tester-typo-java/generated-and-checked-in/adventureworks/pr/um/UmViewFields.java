@@ -16,7 +16,7 @@ import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 
 public interface UmViewFields {
-  static final class Impl extends Relation<UmViewFields, UmViewRow> {
+  final class Impl extends Relation<UmViewFields, UmViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -24,15 +24,19 @@ public interface UmViewFields {
     @Override
     public UmViewFields fields() {
       return new UmViewFields() {
+               @Override
                public Field<UnitmeasureId, UmViewRow> id() {
                  return new Field<UnitmeasureId, UmViewRow>(_path, "id", UmViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), UnitmeasureId.pgType);
                };
+               @Override
                public Field<UnitmeasureId, UmViewRow> unitmeasurecode() {
                  return new Field<UnitmeasureId, UmViewRow>(_path, "unitmeasurecode", UmViewRow::unitmeasurecode, Optional.empty(), Optional.empty(), (row, value) -> row.withUnitmeasurecode(value), UnitmeasureId.pgType);
                };
+               @Override
                public Field<Name, UmViewRow> name() {
                  return new Field<Name, UmViewRow>(_path, "name", UmViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, UmViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, UmViewRow>(_path, "modifieddate", UmViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -44,6 +48,7 @@ public interface UmViewFields {
       return List.of(this.fields().id(), this.fields().unitmeasurecode(), this.fields().name(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

@@ -21,7 +21,7 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 
 public interface ProductsubcategoryFields {
-  static final class Impl extends Relation<ProductsubcategoryFields, ProductsubcategoryRow> {
+  final class Impl extends Relation<ProductsubcategoryFields, ProductsubcategoryRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -29,18 +29,23 @@ public interface ProductsubcategoryFields {
     @Override
     public ProductsubcategoryFields fields() {
       return new ProductsubcategoryFields() {
+               @Override
                public IdField<ProductsubcategoryId, ProductsubcategoryRow> productsubcategoryid() {
                  return new IdField<ProductsubcategoryId, ProductsubcategoryRow>(_path, "productsubcategoryid", ProductsubcategoryRow::productsubcategoryid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductsubcategoryid(value), ProductsubcategoryId.pgType);
                };
+               @Override
                public Field<ProductcategoryId, ProductsubcategoryRow> productcategoryid() {
                  return new Field<ProductcategoryId, ProductsubcategoryRow>(_path, "productcategoryid", ProductsubcategoryRow::productcategoryid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductcategoryid(value), ProductcategoryId.pgType);
                };
+               @Override
                public Field<Name, ProductsubcategoryRow> name() {
                  return new Field<Name, ProductsubcategoryRow>(_path, "name", ProductsubcategoryRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<TypoUUID, ProductsubcategoryRow> rowguid() {
                  return new Field<TypoUUID, ProductsubcategoryRow>(_path, "rowguid", ProductsubcategoryRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, ProductsubcategoryRow> modifieddate() {
                  return new Field<TypoLocalDateTime, ProductsubcategoryRow>(_path, "modifieddate", ProductsubcategoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -52,6 +57,7 @@ public interface ProductsubcategoryFields {
       return List.of(this.fields().productsubcategoryid(), this.fields().productcategoryid(), this.fields().name(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

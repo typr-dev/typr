@@ -54,7 +54,16 @@ object TypoInterval {
     )
   }
 
-  implicit lazy val arrayToStatement: ToStatement[Array[TypoInterval]] = ToStatement[Array[TypoInterval]]((s, index, v) => s.setArray(index, s.getConnection.createArrayOf("interval", v.map(v => new PGInterval(v.years, v.months, v.days, v.hours, v.minutes, v.seconds)))))
+  implicit lazy val arrayToStatement: ToStatement[Array[TypoInterval]] = {
+    ToStatement[Array[TypoInterval]]((s, index, v) => s.setArray(index, s.getConnection.createArrayOf("interval", v.map(v => new PGInterval(
+      v.years,
+      v.months,
+      v.days,
+      v.hours,
+      v.minutes,
+      v.seconds
+    )))))
+  }
 
   implicit lazy val column: Column[TypoInterval] = {
     Column.nonNull[TypoInterval]((v1: Any, _) =>
@@ -102,7 +111,16 @@ object TypoInterval {
     )
   }
 
-  implicit lazy val toStatement: ToStatement[TypoInterval] = ToStatement[TypoInterval]((s, index, v) => s.setObject(index, new PGInterval(v.years, v.months, v.days, v.hours, v.minutes, v.seconds)))
+  implicit lazy val toStatement: ToStatement[TypoInterval] = {
+    ToStatement[TypoInterval]((s, index, v) => s.setObject(index, new PGInterval(
+      v.years,
+      v.months,
+      v.days,
+      v.hours,
+      v.minutes,
+      v.seconds
+    )))
+  }
 
   implicit lazy val writes: OWrites[TypoInterval] = {
     OWrites[TypoInterval](o =>

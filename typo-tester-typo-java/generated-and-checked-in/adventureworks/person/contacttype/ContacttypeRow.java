@@ -11,7 +11,6 @@ import adventureworks.public_.Name;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple3;
 
 /** Table: person.contacttype
   * Lookup table containing the types of business entity contacts.
@@ -44,7 +43,7 @@ public record ContacttypeRow(
     return new ContacttypeRow(contacttypeid, name, modifieddate);
   };
 
-  static RowParser<ContacttypeRow> _rowParser = RowParsers.of(ContacttypeId.pgType, Name.pgType, TypoLocalDateTime.pgType, ContacttypeRow::new, row -> new Tuple3<>(row.contacttypeid(), row.name(), row.modifieddate()));;
+  static RowParser<ContacttypeRow> _rowParser = RowParsers.of(ContacttypeId.pgType, Name.pgType, TypoLocalDateTime.pgType, ContacttypeRow::new, row -> new Object[]{row.contacttypeid(), row.name(), row.modifieddate()});;
 
   static public PgText<ContacttypeRow> pgText =
     PgText.from(_rowParser);

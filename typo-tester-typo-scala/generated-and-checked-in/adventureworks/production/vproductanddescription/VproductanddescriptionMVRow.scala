@@ -11,7 +11,6 @@ import adventureworks.public.Name
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple5
 
 /** Materialized View: production.vproductanddescription */
 case class VproductanddescriptionMVRow(
@@ -28,13 +27,5 @@ case class VproductanddescriptionMVRow(
 )
 
 object VproductanddescriptionMVRow {
-  val `_rowParser`: RowParser[VproductanddescriptionMVRow] = {
-    RowParsers.of(ProductId.pgType, Name.pgType, Name.pgType, CultureId.pgType, PgTypes.text, VproductanddescriptionMVRow.apply, row => new Tuple5(
-      row.productid,
-      row.name,
-      row.productmodel,
-      row.cultureid,
-      row.description
-    ))
-  }
+  val `_rowParser`: RowParser[VproductanddescriptionMVRow] = RowParsers.of(ProductId.pgType, Name.pgType, Name.pgType, CultureId.pgType, PgTypes.text, VproductanddescriptionMVRow.apply, row => Array(row.productid, row.name, row.productmodel, row.cultureid, row.description))
 }

@@ -15,7 +15,6 @@ import java.util.Optional;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple6;
 
 /** Table: humanresources.employeedepartmenthistory
   * Employee department transfers.
@@ -85,7 +84,7 @@ public record EmployeedepartmenthistoryRow(
     return new EmployeedepartmenthistoryRow(businessentityid, departmentid, shiftid, startdate, enddate, modifieddate);
   };
 
-  static RowParser<EmployeedepartmenthistoryRow> _rowParser = RowParsers.of(BusinessentityId.pgType, DepartmentId.pgType, ShiftId.pgType, TypoLocalDate.pgType, TypoLocalDate.pgType.opt(), TypoLocalDateTime.pgType, EmployeedepartmenthistoryRow::new, row -> new Tuple6<>(row.businessentityid(), row.departmentid(), row.shiftid(), row.startdate(), row.enddate(), row.modifieddate()));;
+  static RowParser<EmployeedepartmenthistoryRow> _rowParser = RowParsers.of(BusinessentityId.pgType, DepartmentId.pgType, ShiftId.pgType, TypoLocalDate.pgType, TypoLocalDate.pgType.opt(), TypoLocalDateTime.pgType, EmployeedepartmenthistoryRow::new, row -> new Object[]{row.businessentityid(), row.departmentid(), row.shiftid(), row.startdate(), row.enddate(), row.modifieddate()});;
 
   static public EmployeedepartmenthistoryRow apply(
     EmployeedepartmenthistoryId compositeId,

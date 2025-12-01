@@ -11,7 +11,7 @@ import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class PchViewRepoImpl extends PchViewRepo {
-  def select: SelectBuilder[PchViewFields, PchViewRow] = SelectBuilder.of(""""pr"."pch"""", PchViewFields.structure, PchViewRow.read)
+  override def select: SelectBuilder[PchViewFields, PchViewRow] = SelectBuilder.of(""""pr"."pch"""", PchViewFields.structure, PchViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, PchViewRow] = sql"""select "id", "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text from "pr"."pch"""".query(PchViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, PchViewRow] = sql"""select "id", "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text from "pr"."pch"""".query(PchViewRow.read).stream
 }

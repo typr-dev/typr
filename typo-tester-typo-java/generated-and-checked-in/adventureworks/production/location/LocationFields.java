@@ -18,7 +18,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface LocationFields {
-  static final class Impl extends Relation<LocationFields, LocationRow> {
+  final class Impl extends Relation<LocationFields, LocationRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -26,18 +26,23 @@ public interface LocationFields {
     @Override
     public LocationFields fields() {
       return new LocationFields() {
+               @Override
                public IdField<LocationId, LocationRow> locationid() {
                  return new IdField<LocationId, LocationRow>(_path, "locationid", LocationRow::locationid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withLocationid(value), LocationId.pgType);
                };
+               @Override
                public Field<Name, LocationRow> name() {
                  return new Field<Name, LocationRow>(_path, "name", LocationRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<BigDecimal, LocationRow> costrate() {
                  return new Field<BigDecimal, LocationRow>(_path, "costrate", LocationRow::costrate, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withCostrate(value), PgTypes.numeric);
                };
+               @Override
                public Field<BigDecimal, LocationRow> availability() {
                  return new Field<BigDecimal, LocationRow>(_path, "availability", LocationRow::availability, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withAvailability(value), PgTypes.numeric);
                };
+               @Override
                public Field<TypoLocalDateTime, LocationRow> modifieddate() {
                  return new Field<TypoLocalDateTime, LocationRow>(_path, "modifieddate", LocationRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -49,6 +54,7 @@ public interface LocationFields {
       return List.of(this.fields().locationid(), this.fields().name(), this.fields().costrate(), this.fields().availability(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

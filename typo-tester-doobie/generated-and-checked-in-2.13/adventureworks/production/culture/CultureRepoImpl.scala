@@ -22,20 +22,20 @@ import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class CultureRepoImpl extends CultureRepo {
-  def delete: DeleteBuilder[CultureFields, CultureRow] = DeleteBuilder.of(""""production"."culture"""", CultureFields.structure, CultureRow.read)
+  override def delete: DeleteBuilder[CultureFields, CultureRow] = DeleteBuilder.of(""""production"."culture"""", CultureFields.structure, CultureRow.read)
 
-  def deleteById(cultureid: CultureId): ConnectionIO[Boolean] = sql"""delete from "production"."culture" where "cultureid" = ${fromWrite(cultureid)(new Write.Single(CultureId.put))}""".update.run.map(_ > 0)
+  override def deleteById(cultureid: CultureId): ConnectionIO[Boolean] = sql"""delete from "production"."culture" where "cultureid" = ${fromWrite(cultureid)(new Write.Single(CultureId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(cultureids: Array[CultureId]): ConnectionIO[Int] = sql"""delete from "production"."culture" where "cultureid" = ANY(${fromWrite(cultureids)(new Write.Single(CultureId.arrayPut))})""".update.run
+  override def deleteByIds(cultureids: Array[CultureId]): ConnectionIO[Int] = sql"""delete from "production"."culture" where "cultureid" = ANY(${fromWrite(cultureids)(new Write.Single(CultureId.arrayPut))})""".update.run
 
-  def insert(unsaved: CultureRow): ConnectionIO[CultureRow] = {
+  override def insert(unsaved: CultureRow): ConnectionIO[CultureRow] = {
     sql"""insert into "production"."culture"("cultureid", "name", "modifieddate")
     values (${fromWrite(unsaved.cultureid)(new Write.Single(CultureId.put))}::bpchar, ${fromWrite(unsaved.name)(new Write.Single(Name.put))}::varchar, ${fromWrite(unsaved.modifieddate)(new Write.Single(TypoLocalDateTime.put))}::timestamp)
     returning "cultureid", "name", "modifieddate"::text
     """.query(CultureRow.read).unique
   }
 
-  def insert(unsaved: CultureRowUnsaved): ConnectionIO[CultureRow] = {
+  override def insert(unsaved: CultureRowUnsaved): ConnectionIO[CultureRow] = {
     val fs = List(
       Some((Fragment.const0(s""""cultureid""""), fr"${fromWrite(unsaved.cultureid)(new Write.Single(CultureId.put))}::bpchar")),
       Some((Fragment.const0(s""""name""""), fr"${fromWrite(unsaved.name)(new Write.Single(Name.put))}::varchar")),
@@ -58,35 +58,35 @@ class CultureRepoImpl extends CultureRepo {
     q.query(CultureRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, CultureRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "production"."culture"("cultureid", "name", "modifieddate") FROM STDIN""").copyIn(unsaved, batchSize)(CultureRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, CultureRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "production"."culture"("cultureid", "name", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(CultureRowUnsaved.pgText)
 
-  def select: SelectBuilder[CultureFields, CultureRow] = SelectBuilder.of(""""production"."culture"""", CultureFields.structure, CultureRow.read)
+  override def select: SelectBuilder[CultureFields, CultureRow] = SelectBuilder.of(""""production"."culture"""", CultureFields.structure, CultureRow.read)
 
-  def selectAll: Stream[ConnectionIO, CultureRow] = sql"""select "cultureid", "name", "modifieddate"::text from "production"."culture"""".query(CultureRow.read).stream
+  override def selectAll: Stream[ConnectionIO, CultureRow] = sql"""select "cultureid", "name", "modifieddate"::text from "production"."culture"""".query(CultureRow.read).stream
 
-  def selectById(cultureid: CultureId): ConnectionIO[Option[CultureRow]] = sql"""select "cultureid", "name", "modifieddate"::text from "production"."culture" where "cultureid" = ${fromWrite(cultureid)(new Write.Single(CultureId.put))}""".query(CultureRow.read).option
+  override def selectById(cultureid: CultureId): ConnectionIO[Option[CultureRow]] = sql"""select "cultureid", "name", "modifieddate"::text from "production"."culture" where "cultureid" = ${fromWrite(cultureid)(new Write.Single(CultureId.put))}""".query(CultureRow.read).option
 
-  def selectByIds(cultureids: Array[CultureId]): Stream[ConnectionIO, CultureRow] = sql"""select "cultureid", "name", "modifieddate"::text from "production"."culture" where "cultureid" = ANY(${fromWrite(cultureids)(new Write.Single(CultureId.arrayPut))})""".query(CultureRow.read).stream
+  override def selectByIds(cultureids: Array[CultureId]): Stream[ConnectionIO, CultureRow] = sql"""select "cultureid", "name", "modifieddate"::text from "production"."culture" where "cultureid" = ANY(${fromWrite(cultureids)(new Write.Single(CultureId.arrayPut))})""".query(CultureRow.read).stream
 
-  def selectByIdsTracked(cultureids: Array[CultureId]): ConnectionIO[Map[CultureId, CultureRow]] = {
+  override def selectByIdsTracked(cultureids: Array[CultureId]): ConnectionIO[Map[CultureId, CultureRow]] = {
     selectByIds(cultureids).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.cultureid, x)).toMap
       cultureids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[CultureFields, CultureRow] = UpdateBuilder.of(""""production"."culture"""", CultureFields.structure, CultureRow.read)
+  override def update: UpdateBuilder[CultureFields, CultureRow] = UpdateBuilder.of(""""production"."culture"""", CultureFields.structure, CultureRow.read)
 
-  def update(row: CultureRow): ConnectionIO[Option[CultureRow]] = {
+  override def update(row: CultureRow): ConnectionIO[Option[CultureRow]] = {
     val cultureid = row.cultureid
     sql"""update "production"."culture"
     set "name" = ${fromWrite(row.name)(new Write.Single(Name.put))}::varchar,
@@ -95,7 +95,7 @@ class CultureRepoImpl extends CultureRepo {
     returning "cultureid", "name", "modifieddate"::text""".query(CultureRow.read).option
   }
 
-  def upsert(unsaved: CultureRow): ConnectionIO[CultureRow] = {
+  override def upsert(unsaved: CultureRow): ConnectionIO[CultureRow] = {
     sql"""insert into "production"."culture"("cultureid", "name", "modifieddate")
     values (
       ${fromWrite(unsaved.cultureid)(new Write.Single(CultureId.put))}::bpchar,
@@ -110,7 +110,7 @@ class CultureRepoImpl extends CultureRepo {
     """.query(CultureRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[CultureRow]): Stream[ConnectionIO, CultureRow] = {
+  override def upsertBatch(unsaved: List[CultureRow]): Stream[ConnectionIO, CultureRow] = {
     Update[CultureRow](
       s"""insert into "production"."culture"("cultureid", "name", "modifieddate")
       values (?::bpchar,?::varchar,?::timestamp)
@@ -124,7 +124,7 @@ class CultureRepoImpl extends CultureRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, CultureRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

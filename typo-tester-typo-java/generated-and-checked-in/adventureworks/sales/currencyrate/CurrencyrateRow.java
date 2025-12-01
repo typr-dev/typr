@@ -13,7 +13,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple7;
 
 /** Table: sales.currencyrate
   * Currency exchange rates.
@@ -82,7 +81,7 @@ public record CurrencyrateRow(
     return new CurrencyrateRow(currencyrateid, currencyratedate, fromcurrencycode, tocurrencycode, averagerate, endofdayrate, modifieddate);
   };
 
-  static RowParser<CurrencyrateRow> _rowParser = RowParsers.of(CurrencyrateId.pgType, TypoLocalDateTime.pgType, CurrencyId.pgType, CurrencyId.pgType, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, CurrencyrateRow::new, row -> new Tuple7<>(row.currencyrateid(), row.currencyratedate(), row.fromcurrencycode(), row.tocurrencycode(), row.averagerate(), row.endofdayrate(), row.modifieddate()));;
+  static RowParser<CurrencyrateRow> _rowParser = RowParsers.of(CurrencyrateId.pgType, TypoLocalDateTime.pgType, CurrencyId.pgType, CurrencyId.pgType, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, CurrencyrateRow::new, row -> new Object[]{row.currencyrateid(), row.currencyratedate(), row.fromcurrencycode(), row.tocurrencycode(), row.averagerate(), row.endofdayrate(), row.modifieddate()});;
 
   static public PgText<CurrencyrateRow> pgText =
     PgText.from(_rowParser);

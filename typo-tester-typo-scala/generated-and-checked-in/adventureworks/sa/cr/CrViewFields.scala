@@ -36,7 +36,7 @@ object CrViewFields {
 
     override lazy val fields: CrViewFields = {
       new CrViewFields {
-        def currencyrateid: Field[CurrencyrateId, CrViewRow] = {
+        override def currencyrateid: Field[CurrencyrateId, CrViewRow] = {
           new Field[CurrencyrateId, CrViewRow](
             _path,
             "currencyrateid",
@@ -47,7 +47,7 @@ object CrViewFields {
             CurrencyrateId.pgType
           )
         }
-        def currencyratedate: Field[TypoLocalDateTime, CrViewRow] = {
+        override def currencyratedate: Field[TypoLocalDateTime, CrViewRow] = {
           new Field[TypoLocalDateTime, CrViewRow](
             _path,
             "currencyratedate",
@@ -58,7 +58,7 @@ object CrViewFields {
             TypoLocalDateTime.pgType
           )
         }
-        def fromcurrencycode: Field[CurrencyId, CrViewRow] = {
+        override def fromcurrencycode: Field[CurrencyId, CrViewRow] = {
           new Field[CurrencyId, CrViewRow](
             _path,
             "fromcurrencycode",
@@ -69,7 +69,7 @@ object CrViewFields {
             CurrencyId.pgType
           )
         }
-        def tocurrencycode: Field[CurrencyId, CrViewRow] = {
+        override def tocurrencycode: Field[CurrencyId, CrViewRow] = {
           new Field[CurrencyId, CrViewRow](
             _path,
             "tocurrencycode",
@@ -80,7 +80,7 @@ object CrViewFields {
             CurrencyId.pgType
           )
         }
-        def averagerate: Field[java.math.BigDecimal, CrViewRow] = {
+        override def averagerate: Field[java.math.BigDecimal, CrViewRow] = {
           new Field[java.math.BigDecimal, CrViewRow](
             _path,
             "averagerate",
@@ -91,7 +91,7 @@ object CrViewFields {
             PgTypes.numeric
           )
         }
-        def endofdayrate: Field[java.math.BigDecimal, CrViewRow] = {
+        override def endofdayrate: Field[java.math.BigDecimal, CrViewRow] = {
           new Field[java.math.BigDecimal, CrViewRow](
             _path,
             "endofdayrate",
@@ -102,7 +102,7 @@ object CrViewFields {
             PgTypes.numeric
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, CrViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, CrViewRow] = {
           new Field[TypoLocalDateTime, CrViewRow](
             _path,
             "modifieddate",
@@ -118,7 +118,7 @@ object CrViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, CrViewRow]] = java.util.List.of(this.fields.currencyrateid, this.fields.currencyratedate, this.fields.fromcurrencycode, this.fields.tocurrencycode, this.fields.averagerate, this.fields.endofdayrate, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[CrViewFields, CrViewRow] = new Impl(java.util.List.of())

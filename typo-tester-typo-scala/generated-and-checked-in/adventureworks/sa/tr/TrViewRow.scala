@@ -14,7 +14,6 @@ import adventureworks.sales.salestaxrate.SalestaxrateId
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple8
 
 /** View: sa.tr */
 case class TrViewRow(
@@ -37,16 +36,5 @@ case class TrViewRow(
 )
 
 object TrViewRow {
-  val `_rowParser`: RowParser[TrViewRow] = {
-    RowParsers.of(SalestaxrateId.pgType, SalestaxrateId.pgType, StateprovinceId.pgType, TypoShort.pgType, PgTypes.numeric, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, TrViewRow.apply, row => new Tuple8(
-      row.id,
-      row.salestaxrateid,
-      row.stateprovinceid,
-      row.taxtype,
-      row.taxrate,
-      row.name,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[TrViewRow] = RowParsers.of(SalestaxrateId.pgType, SalestaxrateId.pgType, StateprovinceId.pgType, TypoShort.pgType, PgTypes.numeric, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, TrViewRow.apply, row => Array(row.id, row.salestaxrateid, row.stateprovinceid, row.taxtype, row.taxrate, row.name, row.rowguid, row.modifieddate))
 }

@@ -15,7 +15,6 @@ import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple16
 
 /** View: hr.e */
 case class EViewRow(
@@ -54,24 +53,5 @@ case class EViewRow(
 )
 
 object EViewRow {
-  val `_rowParser`: RowParser[EViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.text, TypoLocalDate.pgType, PgTypes.text, PgTypes.text, TypoLocalDate.pgType, Flag.pgType, TypoShort.pgType, TypoShort.pgType, Flag.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, PgTypes.text.opt(), EViewRow.apply, row => new Tuple16(
-      row.id,
-      row.businessentityid,
-      row.nationalidnumber,
-      row.loginid,
-      row.jobtitle,
-      row.birthdate,
-      row.maritalstatus,
-      row.gender,
-      row.hiredate,
-      row.salariedflag,
-      row.vacationhours,
-      row.sickleavehours,
-      row.currentflag,
-      row.rowguid,
-      row.modifieddate,
-      row.organizationnode
-    ))
-  }
+  val `_rowParser`: RowParser[EViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.text, TypoLocalDate.pgType, PgTypes.text, PgTypes.text, TypoLocalDate.pgType, Flag.pgType, TypoShort.pgType, TypoShort.pgType, Flag.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, PgTypes.text.opt(), EViewRow.apply, row => Array(row.id, row.businessentityid, row.nationalidnumber, row.loginid, row.jobtitle, row.birthdate, row.maritalstatus, row.gender, row.hiredate, row.salariedflag, row.vacationhours, row.sickleavehours, row.currentflag, row.rowguid, row.modifieddate, row.organizationnode))
 }

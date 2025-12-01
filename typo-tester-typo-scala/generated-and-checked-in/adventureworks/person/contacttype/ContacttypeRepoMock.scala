@@ -5,6 +5,7 @@
  */
 package adventureworks.person.contacttype
 
+import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
@@ -25,7 +26,7 @@ case class ContacttypeRepoMock(
   toRow: ContacttypeRowUnsaved => ContacttypeRow,
   map: HashMap[ContacttypeId, ContacttypeRow] = new HashMap[ContacttypeId, ContacttypeRow]()
 ) extends ContacttypeRepo {
-  def delete: DeleteBuilder[ContacttypeFields, ContacttypeRow] = {
+  override def delete: DeleteBuilder[ContacttypeFields, ContacttypeRow] = {
     new DeleteBuilderMock(
       ContacttypeFields.structure,
       () => new ArrayList(map.values()),
@@ -35,27 +36,27 @@ case class ContacttypeRepoMock(
     )
   }
 
-  def deleteById(contacttypeid: ContacttypeId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(contacttypeid)).isPresent()
+  override def deleteById(contacttypeid: ContacttypeId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(contacttypeid)).isPresent()
 
-  def deleteByIds(contacttypeids: Array[ContacttypeId])(using c: Connection): Integer = {
+  override def deleteByIds(contacttypeids: Array[ContacttypeId])(using c: Connection): Integer = {
     var count = 0
     contacttypeids.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
-    count
+    return count
   }
 
-  def insert(unsaved: ContacttypeRow)(using c: Connection): ContacttypeRow = {
+  override def insert(unsaved: ContacttypeRow)(using c: Connection): ContacttypeRow = {
     if (map.containsKey(unsaved.contacttypeid)) {
       throw new RuntimeException(s"id $unsaved.contacttypeid already exists")
     }
     map.put(unsaved.contacttypeid, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def insert(unsaved: ContacttypeRowUnsaved)(using c: Connection): ContacttypeRow = insert(toRow(unsaved))(using c)
+  override def insert(unsaved: ContacttypeRowUnsaved)(using c: Connection): ContacttypeRow = insert(toRow(unsaved))(using c)
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[ContacttypeRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -65,11 +66,11 @@ case class ContacttypeRepoMock(
       map.put(row.contacttypeid, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[ContacttypeRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -80,25 +81,25 @@ case class ContacttypeRepoMock(
       map.put(row.contacttypeid, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
-  def select: SelectBuilder[ContacttypeFields, ContacttypeRow] = new SelectBuilderMock(ContacttypeFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
+  override def select: SelectBuilder[ContacttypeFields, ContacttypeRow] = new SelectBuilderMock(ContacttypeFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  def selectAll(using c: Connection): java.util.List[ContacttypeRow] = new ArrayList(map.values())
+  override def selectAll(using c: Connection): java.util.List[ContacttypeRow] = new ArrayList(map.values())
 
-  def selectById(contacttypeid: ContacttypeId)(using c: Connection): Optional[ContacttypeRow] = Optional.ofNullable(map.get(contacttypeid))
+  override def selectById(contacttypeid: ContacttypeId)(using c: Connection): Optional[ContacttypeRow] = Optional.ofNullable(map.get(contacttypeid))
 
-  def selectByIds(contacttypeids: Array[ContacttypeId])(using c: Connection): java.util.List[ContacttypeRow] = {
+  override def selectByIds(contacttypeids: Array[ContacttypeId])(using c: Connection): java.util.List[ContacttypeRow] = {
     val result = new ArrayList[ContacttypeRow]()
     contacttypeids.foreach { id => val opt = Optional.ofNullable(map.get(id))
     if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
-    result
+    return result
   }
 
-  def selectByIdsTracked(contacttypeids: Array[ContacttypeId])(using c: Connection): java.util.Map[ContacttypeId, ContacttypeRow] = selectByIds(contacttypeids)(using c).stream().collect(Collectors.toMap((row: adventureworks.person.contacttype.ContacttypeRow) => row.contacttypeid, Function.identity()))
+  override def selectByIdsTracked(contacttypeids: Array[ContacttypeId])(using c: Connection): java.util.Map[ContacttypeId, ContacttypeRow] = selectByIds(contacttypeids)(using c).stream().collect(Collectors.toMap((row: ContacttypeRow) => row.contacttypeid, Function.identity()))
 
-  def update: UpdateBuilder[ContacttypeFields, ContacttypeRow] = {
+  override def update: UpdateBuilder[ContacttypeFields, ContacttypeRow] = {
     new UpdateBuilderMock(
       ContacttypeFields.structure,
       () => new ArrayList(map.values()),
@@ -107,31 +108,31 @@ case class ContacttypeRepoMock(
     )
   }
 
-  def update(row: ContacttypeRow)(using c: Connection): java.lang.Boolean = {
-    val shouldUpdate = Optional.ofNullable(map.get(row.contacttypeid)).filter(oldRow => !oldRow.equals(row)).isPresent()
+  override def update(row: ContacttypeRow)(using c: Connection): java.lang.Boolean = {
+    val shouldUpdate = Optional.ofNullable(map.get(row.contacttypeid)).filter(oldRow => (oldRow != row)).isPresent()
     if (shouldUpdate) {
       map.put(row.contacttypeid, row): @scala.annotation.nowarn
     }
-    shouldUpdate
+    return shouldUpdate
   }
 
-  def upsert(unsaved: ContacttypeRow)(using c: Connection): ContacttypeRow = {
+  override def upsert(unsaved: ContacttypeRow)(using c: Connection): ContacttypeRow = {
     map.put(unsaved.contacttypeid, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[ContacttypeRow])(using c: Connection): java.util.List[ContacttypeRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[ContacttypeRow])(using c: Connection): java.util.List[ContacttypeRow] = {
     val result = new ArrayList[ContacttypeRow]()
     while (unsaved.hasNext()) {
       val row = unsaved.next()
       map.put(row.contacttypeid, row): @scala.annotation.nowarn
       result.add(row): @scala.annotation.nowarn
     }
-    result
+    return result
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[ContacttypeRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
@@ -141,6 +142,6 @@ case class ContacttypeRepoMock(
       map.put(row.contacttypeid, row): @scala.annotation.nowarn
       count = count + 1
     }
-    count
+    return count
   }
 }

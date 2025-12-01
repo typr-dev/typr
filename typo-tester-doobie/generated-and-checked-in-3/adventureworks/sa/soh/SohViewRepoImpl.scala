@@ -7,13 +7,11 @@ package adventureworks.sa.soh
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class SohViewRepoImpl extends SohViewRepo {
-  def select: SelectBuilder[SohViewFields, SohViewRow] = SelectBuilder.of(""""sa"."soh"""", SohViewFields.structure, SohViewRow.read)
+  override def select: SelectBuilder[SohViewFields, SohViewRow] = SelectBuilder.of(""""sa"."soh"""", SohViewFields.structure, SohViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, SohViewRow] = sql"""select "id", "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text from "sa"."soh"""".query(using SohViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, SohViewRow] = sql"""select "id", "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text from "sa"."soh"""".query(using SohViewRow.read).stream
 }

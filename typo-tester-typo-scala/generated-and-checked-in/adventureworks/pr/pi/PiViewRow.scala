@@ -13,7 +13,6 @@ import adventureworks.production.product.ProductId
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple8
 
 /** View: pr.pi */
 case class PiViewRow(
@@ -36,16 +35,5 @@ case class PiViewRow(
 )
 
 object PiViewRow {
-  val `_rowParser`: RowParser[PiViewRow] = {
-    RowParsers.of(ProductId.pgType, ProductId.pgType, LocationId.pgType, PgTypes.text, TypoShort.pgType, TypoShort.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, PiViewRow.apply, row => new Tuple8(
-      row.id,
-      row.productid,
-      row.locationid,
-      row.shelf,
-      row.bin,
-      row.quantity,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[PiViewRow] = RowParsers.of(ProductId.pgType, ProductId.pgType, LocationId.pgType, PgTypes.text, TypoShort.pgType, TypoShort.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, PiViewRow.apply, row => Array(row.id, row.productid, row.locationid, row.shelf, row.bin, row.quantity, row.rowguid, row.modifieddate))
 }

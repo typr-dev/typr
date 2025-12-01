@@ -12,7 +12,6 @@ import adventureworks.sales.salesterritory.SalesterritoryId
 import java.util.Optional
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple7
 
 /** View: sa.sth */
 case class SthViewRow(
@@ -33,15 +32,5 @@ case class SthViewRow(
 )
 
 object SthViewRow {
-  val `_rowParser`: RowParser[SthViewRow] = {
-    RowParsers.of(SalesterritoryId.pgType, BusinessentityId.pgType, SalesterritoryId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SthViewRow.apply, row => new Tuple7(
-      row.id,
-      row.businessentityid,
-      row.territoryid,
-      row.startdate,
-      row.enddate,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[SthViewRow] = RowParsers.of(SalesterritoryId.pgType, BusinessentityId.pgType, SalesterritoryId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SthViewRow.apply, row => Array(row.id, row.businessentityid, row.territoryid, row.startdate, row.enddate, row.rowguid, row.modifieddate))
 }

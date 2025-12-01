@@ -13,7 +13,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple6;
 
 /** Table: sales.creditcard
   * Customer credit card information.
@@ -67,7 +66,7 @@ public record CreditcardRow(
     return new CreditcardRow(creditcardid, cardtype, cardnumber, expmonth, expyear, modifieddate);
   };
 
-  static RowParser<CreditcardRow> _rowParser = RowParsers.of(/* user-picked */ CustomCreditcardId.pgType, PgTypes.text, PgTypes.text, TypoShort.pgType, TypoShort.pgType, TypoLocalDateTime.pgType, CreditcardRow::new, row -> new Tuple6<>(row.creditcardid(), row.cardtype(), row.cardnumber(), row.expmonth(), row.expyear(), row.modifieddate()));;
+  static RowParser<CreditcardRow> _rowParser = RowParsers.of(/* user-picked */ CustomCreditcardId.pgType, PgTypes.text, PgTypes.text, TypoShort.pgType, TypoShort.pgType, TypoLocalDateTime.pgType, CreditcardRow::new, row -> new Object[]{row.creditcardid(), row.cardtype(), row.cardnumber(), row.expmonth(), row.expyear(), row.modifieddate()});;
 
   static public PgText<CreditcardRow> pgText =
     PgText.from(_rowParser);

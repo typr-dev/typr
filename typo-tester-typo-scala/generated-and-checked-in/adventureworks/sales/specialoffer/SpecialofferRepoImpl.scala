@@ -21,11 +21,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class SpecialofferRepoImpl extends SpecialofferRepo {
-  def delete: DeleteBuilder[SpecialofferFields, SpecialofferRow] = DeleteBuilder.of("sales.specialoffer", SpecialofferFields.structure)
+  override def delete: DeleteBuilder[SpecialofferFields, SpecialofferRow] = DeleteBuilder.of("sales.specialoffer", SpecialofferFields.structure)
 
-  def deleteById(specialofferid: SpecialofferId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."specialoffer" where "specialofferid" = ${SpecialofferId.pgType.encode(specialofferid)}""".update().runUnchecked(c) > 0
+  override def deleteById(specialofferid: SpecialofferId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."specialoffer" where "specialofferid" = ${SpecialofferId.pgType.encode(specialofferid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(specialofferids: Array[SpecialofferId])(using c: Connection): Integer = {
+  override def deleteByIds(specialofferids: Array[SpecialofferId])(using c: Connection): Integer = {
     interpolate"""delete
     from "sales"."specialoffer"
     where "specialofferid" = ANY(${SpecialofferId.pgTypeArray.encode(specialofferids)})"""
@@ -33,7 +33,7 @@ class SpecialofferRepoImpl extends SpecialofferRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: SpecialofferRow)(using c: Connection): SpecialofferRow = {
+  override def insert(unsaved: SpecialofferRow)(using c: Connection): SpecialofferRow = {
   interpolate"""insert into "sales"."specialoffer"("specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate")
     values (${SpecialofferId.pgType.encode(unsaved.specialofferid)}::int4, ${PgTypes.text.encode(unsaved.description)}, ${PgTypes.numeric.encode(unsaved.discountpct)}::numeric, ${PgTypes.text.encode(unsaved.`type`)}, ${PgTypes.text.encode(unsaved.category)}, ${TypoLocalDateTime.pgType.encode(unsaved.startdate)}::timestamp, ${TypoLocalDateTime.pgType.encode(unsaved.enddate)}::timestamp, ${PgTypes.int4.encode(unsaved.minqty)}::int4, ${PgTypes.int4.opt().encode(unsaved.maxqty)}::int4, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text
@@ -41,9 +41,9 @@ class SpecialofferRepoImpl extends SpecialofferRepo {
     .updateReturning(SpecialofferRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: SpecialofferRowUnsaved)(using c: Connection): SpecialofferRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: SpecialofferRowUnsaved)(using c: Connection): SpecialofferRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""description"""")): @scala.annotation.nowarn
     values.add(interpolate"${PgTypes.text.encode(unsaved.description)}"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""type"""")): @scala.annotation.nowarn
@@ -57,39 +57,24 @@ class SpecialofferRepoImpl extends SpecialofferRepo {
     columns.add(Fragment.lit(""""maxqty"""")): @scala.annotation.nowarn
     values.add(interpolate"${PgTypes.int4.opt().encode(unsaved.maxqty)}::int4"): @scala.annotation.nowarn
     unsaved.specialofferid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""specialofferid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${SpecialofferId.pgType.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""specialofferid"""")): @scala.annotation.nowarn; values.add(interpolate"${SpecialofferId.pgType.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.discountpct.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""discountpct"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""discountpct"""")): @scala.annotation.nowarn; values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn }
     );
     unsaved.minqty.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""minqty"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PgTypes.int4.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""minqty"""")): @scala.annotation.nowarn; values.add(interpolate"${PgTypes.int4.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "sales"."specialoffer"(${Fragment.comma(columns)})
@@ -97,51 +82,51 @@ class SpecialofferRepoImpl extends SpecialofferRepo {
       returning "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text
       """
     }
-    q.updateReturning(SpecialofferRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(SpecialofferRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[SpecialofferRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."specialoffer"("specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, c, SpecialofferRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[SpecialofferRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."specialoffer"("description", "type", "category", "startdate", "enddate", "maxqty", "specialofferid", "discountpct", "minqty", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, SpecialofferRowUnsaved.pgText)
 
-  def select: SelectBuilder[SpecialofferFields, SpecialofferRow] = SelectBuilder.of("sales.specialoffer", SpecialofferFields.structure, SpecialofferRow.`_rowParser`)
+  override def select: SelectBuilder[SpecialofferFields, SpecialofferRow] = SelectBuilder.of("sales.specialoffer", SpecialofferFields.structure, SpecialofferRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[SpecialofferRow] = {
+  override def selectAll(using c: Connection): java.util.List[SpecialofferRow] = {
     interpolate"""select "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text
     from "sales"."specialoffer"
-    """.as(SpecialofferRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(SpecialofferRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(specialofferid: SpecialofferId)(using c: Connection): Optional[SpecialofferRow] = {
+  override def selectById(specialofferid: SpecialofferId)(using c: Connection): Optional[SpecialofferRow] = {
     interpolate"""select "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text
     from "sales"."specialoffer"
-    where "specialofferid" = ${SpecialofferId.pgType.encode(specialofferid)}""".as(SpecialofferRow.`_rowParser`.first()).runUnchecked(c)
+    where "specialofferid" = ${SpecialofferId.pgType.encode(specialofferid)}""".query(SpecialofferRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(specialofferids: Array[SpecialofferId])(using c: Connection): java.util.List[SpecialofferRow] = {
+  override def selectByIds(specialofferids: Array[SpecialofferId])(using c: Connection): java.util.List[SpecialofferRow] = {
     interpolate"""select "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text
     from "sales"."specialoffer"
-    where "specialofferid" = ANY(${SpecialofferId.pgTypeArray.encode(specialofferids)})""".as(SpecialofferRow.`_rowParser`.all()).runUnchecked(c)
+    where "specialofferid" = ANY(${SpecialofferId.pgTypeArray.encode(specialofferids)})""".query(SpecialofferRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(specialofferids: Array[SpecialofferId])(using c: Connection): java.util.Map[SpecialofferId, SpecialofferRow] = {
-    val ret: java.util.Map[SpecialofferId, SpecialofferRow] = new HashMap()
+  override def selectByIdsTracked(specialofferids: Array[SpecialofferId])(using c: Connection): java.util.Map[SpecialofferId, SpecialofferRow] = {
+    val ret: HashMap[SpecialofferId, SpecialofferRow] = new HashMap[SpecialofferId, SpecialofferRow]()
     selectByIds(specialofferids)(using c).forEach(row => ret.put(row.specialofferid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[SpecialofferFields, SpecialofferRow] = UpdateBuilder.of("sales.specialoffer", SpecialofferFields.structure, SpecialofferRow.`_rowParser`.all())
+  override def update: UpdateBuilder[SpecialofferFields, SpecialofferRow] = UpdateBuilder.of("sales.specialoffer", SpecialofferFields.structure, SpecialofferRow.`_rowParser`.all())
 
-  def update(row: SpecialofferRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: SpecialofferRow)(using c: Connection): java.lang.Boolean = {
     val specialofferid: SpecialofferId = row.specialofferid
-    interpolate"""update "sales"."specialoffer"
+    return interpolate"""update "sales"."specialoffer"
     set "description" = ${PgTypes.text.encode(row.description)},
     "discountpct" = ${PgTypes.numeric.encode(row.discountpct)}::numeric,
     "type" = ${PgTypes.text.encode(row.`type`)},
@@ -155,7 +140,7 @@ class SpecialofferRepoImpl extends SpecialofferRepo {
     where "specialofferid" = ${SpecialofferId.pgType.encode(specialofferid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: SpecialofferRow)(using c: Connection): SpecialofferRow = {
+  override def upsert(unsaved: SpecialofferRow)(using c: Connection): SpecialofferRow = {
   interpolate"""insert into "sales"."specialoffer"("specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate")
     values (${SpecialofferId.pgType.encode(unsaved.specialofferid)}::int4, ${PgTypes.text.encode(unsaved.description)}, ${PgTypes.numeric.encode(unsaved.discountpct)}::numeric, ${PgTypes.text.encode(unsaved.`type`)}, ${PgTypes.text.encode(unsaved.category)}, ${TypoLocalDateTime.pgType.encode(unsaved.startdate)}::timestamp, ${TypoLocalDateTime.pgType.encode(unsaved.enddate)}::timestamp, ${PgTypes.int4.encode(unsaved.minqty)}::int4, ${PgTypes.int4.opt().encode(unsaved.maxqty)}::int4, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("specialofferid")
@@ -176,7 +161,7 @@ class SpecialofferRepoImpl extends SpecialofferRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[SpecialofferRow])(using c: Connection): java.util.List[SpecialofferRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[SpecialofferRow])(using c: Connection): java.util.List[SpecialofferRow] = {
     interpolate"""insert into "sales"."specialoffer"("specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate")
     values (?::int4, ?, ?::numeric, ?, ?, ?::timestamp, ?::timestamp, ?::int4, ?::int4, ?::uuid, ?::timestamp)
     on conflict ("specialofferid")
@@ -198,13 +183,13 @@ class SpecialofferRepoImpl extends SpecialofferRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[SpecialofferRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table specialoffer_TEMP (like "sales"."specialoffer") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy specialoffer_TEMP("specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, c, SpecialofferRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "sales"."specialoffer"("specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate")
+    return interpolate"""insert into "sales"."specialoffer"("specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate")
     select * from specialoffer_TEMP
     on conflict ("specialofferid")
     do update set

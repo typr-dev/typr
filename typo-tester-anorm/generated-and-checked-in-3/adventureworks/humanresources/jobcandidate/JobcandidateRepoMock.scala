@@ -21,13 +21,13 @@ case class JobcandidateRepoMock(
   toRow: JobcandidateRowUnsaved => JobcandidateRow,
   map: scala.collection.mutable.Map[JobcandidateId, JobcandidateRow] = scala.collection.mutable.Map.empty[JobcandidateId, JobcandidateRow]
 ) extends JobcandidateRepo {
-  def delete: DeleteBuilder[JobcandidateFields, JobcandidateRow] = DeleteBuilderMock(DeleteParams.empty, JobcandidateFields.structure, map)
+  override def delete: DeleteBuilder[JobcandidateFields, JobcandidateRow] = DeleteBuilderMock(DeleteParams.empty, JobcandidateFields.structure, map)
 
-  def deleteById(jobcandidateid: JobcandidateId)(using c: Connection): Boolean = map.remove(jobcandidateid).isDefined
+  override def deleteById(jobcandidateid: JobcandidateId)(using c: Connection): Boolean = map.remove(jobcandidateid).isDefined
 
-  def deleteByIds(jobcandidateids: Array[JobcandidateId])(using c: Connection): Int = jobcandidateids.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(jobcandidateids: Array[JobcandidateId])(using c: Connection): Int = jobcandidateids.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: JobcandidateRow)(using c: Connection): JobcandidateRow = {
+  override def insert(unsaved: JobcandidateRow)(using c: Connection): JobcandidateRow = {
     val _ = if (map.contains(unsaved.jobcandidateid))
       sys.error(s"id ${unsaved.jobcandidateid} already exists")
     else
@@ -36,9 +36,9 @@ case class JobcandidateRepoMock(
     unsaved
   }
 
-  def insert(unsaved: JobcandidateRowUnsaved)(using c: Connection): JobcandidateRow = insert(toRow(unsaved))
+  override def insert(unsaved: JobcandidateRowUnsaved)(using c: Connection): JobcandidateRow = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[JobcandidateRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -49,7 +49,7 @@ case class JobcandidateRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[JobcandidateRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -60,34 +60,34 @@ case class JobcandidateRepoMock(
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[JobcandidateFields, JobcandidateRow] = SelectBuilderMock(JobcandidateFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[JobcandidateFields, JobcandidateRow] = SelectBuilderMock(JobcandidateFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(using c: Connection): List[JobcandidateRow] = map.values.toList
+  override def selectAll(using c: Connection): List[JobcandidateRow] = map.values.toList
 
-  def selectById(jobcandidateid: JobcandidateId)(using c: Connection): Option[JobcandidateRow] = map.get(jobcandidateid)
+  override def selectById(jobcandidateid: JobcandidateId)(using c: Connection): Option[JobcandidateRow] = map.get(jobcandidateid)
 
-  def selectByIds(jobcandidateids: Array[JobcandidateId])(using c: Connection): List[JobcandidateRow] = jobcandidateids.flatMap(map.get).toList
+  override def selectByIds(jobcandidateids: Array[JobcandidateId])(using c: Connection): List[JobcandidateRow] = jobcandidateids.flatMap(map.get).toList
 
-  def selectByIdsTracked(jobcandidateids: Array[JobcandidateId])(using c: Connection): Map[JobcandidateId, JobcandidateRow] = {
+  override def selectByIdsTracked(jobcandidateids: Array[JobcandidateId])(using c: Connection): Map[JobcandidateId, JobcandidateRow] = {
     val byId = selectByIds(jobcandidateids).view.map(x => (x.jobcandidateid, x)).toMap
     jobcandidateids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[JobcandidateFields, JobcandidateRow] = UpdateBuilderMock(UpdateParams.empty, JobcandidateFields.structure, map)
+  override def update: UpdateBuilder[JobcandidateFields, JobcandidateRow] = UpdateBuilderMock(UpdateParams.empty, JobcandidateFields.structure, map)
 
-  def update(row: JobcandidateRow)(using c: Connection): Option[JobcandidateRow] = {
+  override def update(row: JobcandidateRow)(using c: Connection): Option[JobcandidateRow] = {
     map.get(row.jobcandidateid).map { _ =>
       map.put(row.jobcandidateid, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: JobcandidateRow)(using c: Connection): JobcandidateRow = {
+  override def upsert(unsaved: JobcandidateRow)(using c: Connection): JobcandidateRow = {
     map.put(unsaved.jobcandidateid, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[JobcandidateRow])(using c: Connection): List[JobcandidateRow] = {
+  override def upsertBatch(unsaved: Iterable[JobcandidateRow])(using c: Connection): List[JobcandidateRow] = {
     unsaved.map { row =>
       map += (row.jobcandidateid -> row)
       row
@@ -95,7 +95,7 @@ case class JobcandidateRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[JobcandidateRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

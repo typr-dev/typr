@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgRead
 import typo.runtime.PgText
@@ -13,14 +14,14 @@ import typo.runtime.PgTypes
 import typo.runtime.PgWrite
 
 /** This is a type typo does not know how to handle yet. This falls back to casting to string and crossing fingers. Time to file an issue! :] */
-case class TypoUnknownCitext(value: String)
+case class TypoUnknownCitext(@JsonValue value: String)
 
 object TypoUnknownCitext {
   given bijection: Bijection[TypoUnknownCitext, String] = Bijection.apply[TypoUnknownCitext, String](_.value)(TypoUnknownCitext.apply)
 
-  given pgText: PgText[TypoUnknownCitext] = PgText.textString.contramap(v => v.value.toString)
+  given pgText: PgText[TypoUnknownCitext] = PgText.textString.contramap(v => v.value.toString())
 
-  given pgType: PgType[TypoUnknownCitext] = PgTypes.text.bimap(v => new TypoUnknownCitext(v), v => v.value).renamed("citext")
+  given pgType: PgType[TypoUnknownCitext] = PgTypes.text.bimap((v: String) => new TypoUnknownCitext(v), (v: TypoUnknownCitext) => v.value).renamed("citext")
 
-  given pgTypeArray: PgType[Array[TypoUnknownCitext]] = TypoUnknownCitext.pgType.array(PgRead.massageJdbcArrayTo(classOf[Array[String]]).map(xs => xs.map(v => new TypoUnknownCitext(v))), PgWrite.passObjectToJdbc[String]().array(TypoUnknownCitext.pgType.typename().as[String]()).contramap(xs => xs.map((v: TypoUnknownCitext) => v.value)))
+  given pgTypeArray: PgType[Array[TypoUnknownCitext]] = TypoUnknownCitext.pgType.array(PgRead.massageJdbcArrayTo(classOf[Array[String]]).map((xs: Array[String]) => xs.map((v: String) => new TypoUnknownCitext(v))), PgWrite.passObjectToJdbc[String]().array(TypoUnknownCitext.pgType.typename().as[String]()).contramap((xs: Array[TypoUnknownCitext]) => xs.map((v: TypoUnknownCitext) => v.value)))
 }

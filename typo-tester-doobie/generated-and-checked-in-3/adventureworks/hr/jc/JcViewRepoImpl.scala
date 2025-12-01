@@ -7,13 +7,11 @@ package adventureworks.hr.jc
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class JcViewRepoImpl extends JcViewRepo {
-  def select: SelectBuilder[JcViewFields, JcViewRow] = SelectBuilder.of(""""hr"."jc"""", JcViewFields.structure, JcViewRow.read)
+  override def select: SelectBuilder[JcViewFields, JcViewRow] = SelectBuilder.of(""""hr"."jc"""", JcViewFields.structure, JcViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, JcViewRow] = sql"""select "id", "jobcandidateid", "businessentityid", "resume", "modifieddate"::text from "hr"."jc"""".query(using JcViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, JcViewRow] = sql"""select "id", "jobcandidateid", "businessentityid", "resume", "modifieddate"::text from "hr"."jc"""".query(using JcViewRow.read).stream
 }

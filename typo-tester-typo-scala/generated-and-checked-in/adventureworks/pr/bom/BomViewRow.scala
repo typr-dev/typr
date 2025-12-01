@@ -13,7 +13,6 @@ import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple10
 
 /** View: pr.bom */
 case class BomViewRow(
@@ -40,18 +39,5 @@ case class BomViewRow(
 )
 
 object BomViewRow {
-  val `_rowParser`: RowParser[BomViewRow] = {
-    RowParsers.of(PgTypes.int4, PgTypes.int4, ProductId.pgType.opt(), ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), UnitmeasureId.pgType, TypoShort.pgType, PgTypes.numeric, TypoLocalDateTime.pgType, BomViewRow.apply, row => new Tuple10(
-      row.id,
-      row.billofmaterialsid,
-      row.productassemblyid,
-      row.componentid,
-      row.startdate,
-      row.enddate,
-      row.unitmeasurecode,
-      row.bomlevel,
-      row.perassemblyqty,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[BomViewRow] = RowParsers.of(PgTypes.int4, PgTypes.int4, ProductId.pgType.opt(), ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), UnitmeasureId.pgType, TypoShort.pgType, PgTypes.numeric, TypoLocalDateTime.pgType, BomViewRow.apply, row => Array(row.id, row.billofmaterialsid, row.productassemblyid, row.componentid, row.startdate, row.enddate, row.unitmeasurecode, row.bomlevel, row.perassemblyqty, row.modifieddate))
 }

@@ -21,13 +21,13 @@ case class SpecialofferRepoMock(
   toRow: SpecialofferRowUnsaved => SpecialofferRow,
   map: scala.collection.mutable.Map[SpecialofferId, SpecialofferRow] = scala.collection.mutable.Map.empty[SpecialofferId, SpecialofferRow]
 ) extends SpecialofferRepo {
-  def delete: DeleteBuilder[SpecialofferFields, SpecialofferRow] = DeleteBuilderMock(DeleteParams.empty, SpecialofferFields.structure, map)
+  override def delete: DeleteBuilder[SpecialofferFields, SpecialofferRow] = DeleteBuilderMock(DeleteParams.empty, SpecialofferFields.structure, map)
 
-  def deleteById(specialofferid: SpecialofferId)(implicit c: Connection): Boolean = map.remove(specialofferid).isDefined
+  override def deleteById(specialofferid: SpecialofferId)(implicit c: Connection): Boolean = map.remove(specialofferid).isDefined
 
-  def deleteByIds(specialofferids: Array[SpecialofferId])(implicit c: Connection): Int = specialofferids.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(specialofferids: Array[SpecialofferId])(implicit c: Connection): Int = specialofferids.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: SpecialofferRow)(implicit c: Connection): SpecialofferRow = {
+  override def insert(unsaved: SpecialofferRow)(implicit c: Connection): SpecialofferRow = {
     val _ = if (map.contains(unsaved.specialofferid))
       sys.error(s"id ${unsaved.specialofferid} already exists")
     else
@@ -36,9 +36,9 @@ case class SpecialofferRepoMock(
     unsaved
   }
 
-  def insert(unsaved: SpecialofferRowUnsaved)(implicit c: Connection): SpecialofferRow = insert(toRow(unsaved))
+  override def insert(unsaved: SpecialofferRowUnsaved)(implicit c: Connection): SpecialofferRow = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[SpecialofferRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = {
@@ -49,7 +49,7 @@ case class SpecialofferRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[SpecialofferRowUnsaved],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = {
@@ -60,34 +60,34 @@ case class SpecialofferRepoMock(
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[SpecialofferFields, SpecialofferRow] = SelectBuilderMock(SpecialofferFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[SpecialofferFields, SpecialofferRow] = SelectBuilderMock(SpecialofferFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(implicit c: Connection): List[SpecialofferRow] = map.values.toList
+  override def selectAll(implicit c: Connection): List[SpecialofferRow] = map.values.toList
 
-  def selectById(specialofferid: SpecialofferId)(implicit c: Connection): Option[SpecialofferRow] = map.get(specialofferid)
+  override def selectById(specialofferid: SpecialofferId)(implicit c: Connection): Option[SpecialofferRow] = map.get(specialofferid)
 
-  def selectByIds(specialofferids: Array[SpecialofferId])(implicit c: Connection): List[SpecialofferRow] = specialofferids.flatMap(map.get).toList
+  override def selectByIds(specialofferids: Array[SpecialofferId])(implicit c: Connection): List[SpecialofferRow] = specialofferids.flatMap(map.get).toList
 
-  def selectByIdsTracked(specialofferids: Array[SpecialofferId])(implicit c: Connection): Map[SpecialofferId, SpecialofferRow] = {
+  override def selectByIdsTracked(specialofferids: Array[SpecialofferId])(implicit c: Connection): Map[SpecialofferId, SpecialofferRow] = {
     val byId = selectByIds(specialofferids).view.map(x => (x.specialofferid, x)).toMap
     specialofferids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[SpecialofferFields, SpecialofferRow] = UpdateBuilderMock(UpdateParams.empty, SpecialofferFields.structure, map)
+  override def update: UpdateBuilder[SpecialofferFields, SpecialofferRow] = UpdateBuilderMock(UpdateParams.empty, SpecialofferFields.structure, map)
 
-  def update(row: SpecialofferRow)(implicit c: Connection): Option[SpecialofferRow] = {
+  override def update(row: SpecialofferRow)(implicit c: Connection): Option[SpecialofferRow] = {
     map.get(row.specialofferid).map { _ =>
       map.put(row.specialofferid, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: SpecialofferRow)(implicit c: Connection): SpecialofferRow = {
+  override def upsert(unsaved: SpecialofferRow)(implicit c: Connection): SpecialofferRow = {
     map.put(unsaved.specialofferid, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[SpecialofferRow])(implicit c: Connection): List[SpecialofferRow] = {
+  override def upsertBatch(unsaved: Iterable[SpecialofferRow])(implicit c: Connection): List[SpecialofferRow] = {
     unsaved.map { row =>
       map += (row.specialofferid -> row)
       row
@@ -95,7 +95,7 @@ case class SpecialofferRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[SpecialofferRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

@@ -20,11 +20,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class UnitmeasureRepoImpl extends UnitmeasureRepo {
-  def delete: DeleteBuilder[UnitmeasureFields, UnitmeasureRow] = DeleteBuilder.of("production.unitmeasure", UnitmeasureFields.structure)
+  override def delete: DeleteBuilder[UnitmeasureFields, UnitmeasureRow] = DeleteBuilder.of("production.unitmeasure", UnitmeasureFields.structure)
 
-  def deleteById(unitmeasurecode: UnitmeasureId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."unitmeasure" where "unitmeasurecode" = ${UnitmeasureId.pgType.encode(unitmeasurecode)}""".update().runUnchecked(c) > 0
+  override def deleteById(unitmeasurecode: UnitmeasureId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."unitmeasure" where "unitmeasurecode" = ${UnitmeasureId.pgType.encode(unitmeasurecode)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): Integer = {
+  override def deleteByIds(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): Integer = {
     interpolate"""delete
     from "production"."unitmeasure"
     where "unitmeasurecode" = ANY(${UnitmeasureId.pgTypeArray.encode(unitmeasurecodes)})"""
@@ -32,7 +32,7 @@ class UnitmeasureRepoImpl extends UnitmeasureRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: UnitmeasureRow)(using c: Connection): UnitmeasureRow = {
+  override def insert(unsaved: UnitmeasureRow)(using c: Connection): UnitmeasureRow = {
   interpolate"""insert into "production"."unitmeasure"("unitmeasurecode", "name", "modifieddate")
     values (${UnitmeasureId.pgType.encode(unsaved.unitmeasurecode)}::bpchar, ${Name.pgType.encode(unsaved.name)}::varchar, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "unitmeasurecode", "name", "modifieddate"::text
@@ -40,19 +40,16 @@ class UnitmeasureRepoImpl extends UnitmeasureRepo {
     .updateReturning(UnitmeasureRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: UnitmeasureRowUnsaved)(using c: Connection): UnitmeasureRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: UnitmeasureRowUnsaved)(using c: Connection): UnitmeasureRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""unitmeasurecode"""")): @scala.annotation.nowarn
     values.add(interpolate"${UnitmeasureId.pgType.encode(unsaved.unitmeasurecode)}::bpchar"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
     values.add(interpolate"${Name.pgType.encode(unsaved.name)}::varchar"): @scala.annotation.nowarn
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "production"."unitmeasure"(${Fragment.comma(columns)})
@@ -60,57 +57,57 @@ class UnitmeasureRepoImpl extends UnitmeasureRepo {
       returning "unitmeasurecode", "name", "modifieddate"::text
       """
     }
-    q.updateReturning(UnitmeasureRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(UnitmeasureRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[UnitmeasureRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."unitmeasure"("unitmeasurecode", "name", "modifieddate") FROM STDIN""", batchSize, unsaved, c, UnitmeasureRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[UnitmeasureRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."unitmeasure"("unitmeasurecode", "name", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, UnitmeasureRowUnsaved.pgText)
 
-  def select: SelectBuilder[UnitmeasureFields, UnitmeasureRow] = SelectBuilder.of("production.unitmeasure", UnitmeasureFields.structure, UnitmeasureRow.`_rowParser`)
+  override def select: SelectBuilder[UnitmeasureFields, UnitmeasureRow] = SelectBuilder.of("production.unitmeasure", UnitmeasureFields.structure, UnitmeasureRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[UnitmeasureRow] = {
+  override def selectAll(using c: Connection): java.util.List[UnitmeasureRow] = {
     interpolate"""select "unitmeasurecode", "name", "modifieddate"::text
     from "production"."unitmeasure"
-    """.as(UnitmeasureRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(UnitmeasureRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(unitmeasurecode: UnitmeasureId)(using c: Connection): Optional[UnitmeasureRow] = {
+  override def selectById(unitmeasurecode: UnitmeasureId)(using c: Connection): Optional[UnitmeasureRow] = {
     interpolate"""select "unitmeasurecode", "name", "modifieddate"::text
     from "production"."unitmeasure"
-    where "unitmeasurecode" = ${UnitmeasureId.pgType.encode(unitmeasurecode)}""".as(UnitmeasureRow.`_rowParser`.first()).runUnchecked(c)
+    where "unitmeasurecode" = ${UnitmeasureId.pgType.encode(unitmeasurecode)}""".query(UnitmeasureRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): java.util.List[UnitmeasureRow] = {
+  override def selectByIds(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): java.util.List[UnitmeasureRow] = {
     interpolate"""select "unitmeasurecode", "name", "modifieddate"::text
     from "production"."unitmeasure"
-    where "unitmeasurecode" = ANY(${UnitmeasureId.pgTypeArray.encode(unitmeasurecodes)})""".as(UnitmeasureRow.`_rowParser`.all()).runUnchecked(c)
+    where "unitmeasurecode" = ANY(${UnitmeasureId.pgTypeArray.encode(unitmeasurecodes)})""".query(UnitmeasureRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): java.util.Map[UnitmeasureId, UnitmeasureRow] = {
-    val ret: java.util.Map[UnitmeasureId, UnitmeasureRow] = new HashMap()
+  override def selectByIdsTracked(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): java.util.Map[UnitmeasureId, UnitmeasureRow] = {
+    val ret: HashMap[UnitmeasureId, UnitmeasureRow] = new HashMap[UnitmeasureId, UnitmeasureRow]()
     selectByIds(unitmeasurecodes)(using c).forEach(row => ret.put(row.unitmeasurecode, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[UnitmeasureFields, UnitmeasureRow] = UpdateBuilder.of("production.unitmeasure", UnitmeasureFields.structure, UnitmeasureRow.`_rowParser`.all())
+  override def update: UpdateBuilder[UnitmeasureFields, UnitmeasureRow] = UpdateBuilder.of("production.unitmeasure", UnitmeasureFields.structure, UnitmeasureRow.`_rowParser`.all())
 
-  def update(row: UnitmeasureRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: UnitmeasureRow)(using c: Connection): java.lang.Boolean = {
     val unitmeasurecode: UnitmeasureId = row.unitmeasurecode
-    interpolate"""update "production"."unitmeasure"
+    return interpolate"""update "production"."unitmeasure"
     set "name" = ${Name.pgType.encode(row.name)}::varchar,
     "modifieddate" = ${TypoLocalDateTime.pgType.encode(row.modifieddate)}::timestamp
     where "unitmeasurecode" = ${UnitmeasureId.pgType.encode(unitmeasurecode)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: UnitmeasureRow)(using c: Connection): UnitmeasureRow = {
+  override def upsert(unsaved: UnitmeasureRow)(using c: Connection): UnitmeasureRow = {
   interpolate"""insert into "production"."unitmeasure"("unitmeasurecode", "name", "modifieddate")
     values (${UnitmeasureId.pgType.encode(unsaved.unitmeasurecode)}::bpchar, ${Name.pgType.encode(unsaved.name)}::varchar, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("unitmeasurecode")
@@ -123,7 +120,7 @@ class UnitmeasureRepoImpl extends UnitmeasureRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[UnitmeasureRow])(using c: Connection): java.util.List[UnitmeasureRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[UnitmeasureRow])(using c: Connection): java.util.List[UnitmeasureRow] = {
     interpolate"""insert into "production"."unitmeasure"("unitmeasurecode", "name", "modifieddate")
     values (?::bpchar, ?::varchar, ?::timestamp)
     on conflict ("unitmeasurecode")
@@ -137,13 +134,13 @@ class UnitmeasureRepoImpl extends UnitmeasureRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[UnitmeasureRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table unitmeasure_TEMP (like "production"."unitmeasure") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy unitmeasure_TEMP("unitmeasurecode", "name", "modifieddate") from stdin""", batchSize, unsaved, c, UnitmeasureRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "production"."unitmeasure"("unitmeasurecode", "name", "modifieddate")
+    return interpolate"""insert into "production"."unitmeasure"("unitmeasurecode", "name", "modifieddate")
     select * from unitmeasure_TEMP
     on conflict ("unitmeasurecode")
     do update set

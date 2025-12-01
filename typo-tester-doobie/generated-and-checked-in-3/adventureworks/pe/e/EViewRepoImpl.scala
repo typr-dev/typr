@@ -7,13 +7,11 @@ package adventureworks.pe.e
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class EViewRepoImpl extends EViewRepo {
-  def select: SelectBuilder[EViewFields, EViewRow] = SelectBuilder.of(""""pe"."e"""", EViewFields.structure, EViewRow.read)
+  override def select: SelectBuilder[EViewFields, EViewRow] = SelectBuilder.of(""""pe"."e"""", EViewFields.structure, EViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, EViewRow] = sql"""select "id", "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"::text from "pe"."e"""".query(using EViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, EViewRow] = sql"""select "id", "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"::text from "pe"."e"""".query(using EViewRow.read).stream
 }

@@ -1,0 +1,1 @@
+UPDATE production.product SET "name"  = substring((upper(reverse("name" )) || ?::"public"."Name"), ?::int4, ?::int4)::varchar, "listprice"  = ?::numeric::numeric, "reorderpoint"  = ("reorderpoint"  + ?::int2)::int2, "sizeunitmeasurecode"  = ?::bpchar, "sellstartdate"  = ?::timestamp::timestamp WHERE ("productid"  = ?::int4)

@@ -11,7 +11,7 @@ import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class VproductanddescriptionMVRepoImpl extends VproductanddescriptionMVRepo {
-  def select: SelectBuilder[VproductanddescriptionMVFields, VproductanddescriptionMVRow] = SelectBuilder.of(""""production"."vproductanddescription"""", VproductanddescriptionMVFields.structure, VproductanddescriptionMVRow.read)
+  override def select: SelectBuilder[VproductanddescriptionMVFields, VproductanddescriptionMVRow] = SelectBuilder.of(""""production"."vproductanddescription"""", VproductanddescriptionMVFields.structure, VproductanddescriptionMVRow.read)
 
-  def selectAll: Stream[ConnectionIO, VproductanddescriptionMVRow] = sql"""select "productid", "name", "productmodel", "cultureid", "description" from "production"."vproductanddescription"""".query(VproductanddescriptionMVRow.read).stream
+  override def selectAll: Stream[ConnectionIO, VproductanddescriptionMVRow] = sql"""select "productid", "name", "productmodel", "cultureid", "description" from "production"."vproductanddescription"""".query(VproductanddescriptionMVRow.read).stream
 }

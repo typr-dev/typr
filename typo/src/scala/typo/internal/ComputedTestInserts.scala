@@ -81,7 +81,7 @@ object ComputedTestInserts {
           case lang.Float      => Some(lang.Random.nextFloat(r))
           case lang.Double     => Some(lang.Random.nextDouble(r))
           case lang.BigDecimal => Some(lang.bigDecimalFromDouble(lang.Random.nextDouble(r)))
-          case TypesJava.UUID  => Some(code"${TypesJava.UUID}.nameUUIDFromBytes{val bs = ${TypesScala.Array}.ofDim[${TypesScala.Byte}](16); ${lang.Random.nextBytes(r, code"bs")}; bs}")
+          case TypesJava.UUID  => Some(code"${TypesJava.UUID}.nameUUIDFromBytes{val bs = ${lang.newByteArray(code"16")}; ${lang.Random.nextBytes(r, code"bs")}; bs}")
           case lang.Optional(underlying) =>
             go(underlying, dbType, tableUnaryId) match {
               case None          => Some(lang.Optional.none)
@@ -91,7 +91,7 @@ object ComputedTestInserts {
             dbType match {
               case db.Type.Array(underlyingDb) =>
                 go(underlying, underlyingDb, tableUnaryId).map { default =>
-                  code"${TypesScala.Array}.fill(${lang.Random.nextIntBounded(r, code"3")})($default)"
+                  lang.arrayFill(lang.Random.nextIntBounded(r, code"3"), default, underlying)
                 }
               case _ => None
             }

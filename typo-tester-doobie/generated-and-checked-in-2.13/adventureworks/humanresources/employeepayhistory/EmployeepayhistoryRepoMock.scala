@@ -23,13 +23,13 @@ case class EmployeepayhistoryRepoMock(
   toRow: EmployeepayhistoryRowUnsaved => EmployeepayhistoryRow,
   map: scala.collection.mutable.Map[EmployeepayhistoryId, EmployeepayhistoryRow] = scala.collection.mutable.Map.empty[EmployeepayhistoryId, EmployeepayhistoryRow]
 ) extends EmployeepayhistoryRepo {
-  def delete: DeleteBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = DeleteBuilderMock(DeleteParams.empty, EmployeepayhistoryFields.structure, map)
+  override def delete: DeleteBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = DeleteBuilderMock(DeleteParams.empty, EmployeepayhistoryFields.structure, map)
 
-  def deleteById(compositeId: EmployeepayhistoryId): ConnectionIO[Boolean] = delay(map.remove(compositeId).isDefined)
+  override def deleteById(compositeId: EmployeepayhistoryId): ConnectionIO[Boolean] = delay(map.remove(compositeId).isDefined)
 
-  def deleteByIds(compositeIds: Array[EmployeepayhistoryId]): ConnectionIO[Int] = delay(compositeIds.map(id => map.remove(id)).count(_.isDefined))
+  override def deleteByIds(compositeIds: Array[EmployeepayhistoryId]): ConnectionIO[Int] = delay(compositeIds.map(id => map.remove(id)).count(_.isDefined))
 
-  def insert(unsaved: EmployeepayhistoryRow): ConnectionIO[EmployeepayhistoryRow] = {
+  override def insert(unsaved: EmployeepayhistoryRow): ConnectionIO[EmployeepayhistoryRow] = {
   delay {
     val _ = if (map.contains(unsaved.compositeId))
       sys.error(s"id ${unsaved.compositeId} already exists")
@@ -40,9 +40,9 @@ case class EmployeepayhistoryRepoMock(
   }
   }
 
-  def insert(unsaved: EmployeepayhistoryRowUnsaved): ConnectionIO[EmployeepayhistoryRow] = insert(toRow(unsaved))
+  override def insert(unsaved: EmployeepayhistoryRowUnsaved): ConnectionIO[EmployeepayhistoryRow] = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, EmployeepayhistoryRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = {
@@ -57,7 +57,7 @@ case class EmployeepayhistoryRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, EmployeepayhistoryRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = {
@@ -72,24 +72,24 @@ case class EmployeepayhistoryRepoMock(
     }
   }
 
-  def select: SelectBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = SelectBuilderMock(EmployeepayhistoryFields.structure, delay(map.values.toList), SelectParams.empty)
+  override def select: SelectBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = SelectBuilderMock(EmployeepayhistoryFields.structure, delay(map.values.toList), SelectParams.empty)
 
-  def selectAll: Stream[ConnectionIO, EmployeepayhistoryRow] = Stream.emits(map.values.toList)
+  override def selectAll: Stream[ConnectionIO, EmployeepayhistoryRow] = Stream.emits(map.values.toList)
 
-  def selectById(compositeId: EmployeepayhistoryId): ConnectionIO[Option[EmployeepayhistoryRow]] = delay(map.get(compositeId))
+  override def selectById(compositeId: EmployeepayhistoryId): ConnectionIO[Option[EmployeepayhistoryRow]] = delay(map.get(compositeId))
 
-  def selectByIds(compositeIds: Array[EmployeepayhistoryId]): Stream[ConnectionIO, EmployeepayhistoryRow] = Stream.emits(compositeIds.flatMap(map.get).toList)
+  override def selectByIds(compositeIds: Array[EmployeepayhistoryId]): Stream[ConnectionIO, EmployeepayhistoryRow] = Stream.emits(compositeIds.flatMap(map.get).toList)
 
-  def selectByIdsTracked(compositeIds: Array[EmployeepayhistoryId]): ConnectionIO[Map[EmployeepayhistoryId, EmployeepayhistoryRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[EmployeepayhistoryId]): ConnectionIO[Map[EmployeepayhistoryId, EmployeepayhistoryRow]] = {
     selectByIds(compositeIds).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = UpdateBuilderMock(UpdateParams.empty, EmployeepayhistoryFields.structure, map)
+  override def update: UpdateBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = UpdateBuilderMock(UpdateParams.empty, EmployeepayhistoryFields.structure, map)
 
-  def update(row: EmployeepayhistoryRow): ConnectionIO[Option[EmployeepayhistoryRow]] = {
+  override def update(row: EmployeepayhistoryRow): ConnectionIO[Option[EmployeepayhistoryRow]] = {
     delay {
       map.get(row.compositeId).map { _ =>
         map.put(row.compositeId, row): @nowarn
@@ -98,14 +98,14 @@ case class EmployeepayhistoryRepoMock(
     }
   }
 
-  def upsert(unsaved: EmployeepayhistoryRow): ConnectionIO[EmployeepayhistoryRow] = {
+  override def upsert(unsaved: EmployeepayhistoryRow): ConnectionIO[EmployeepayhistoryRow] = {
     delay {
       map.put(unsaved.compositeId, unsaved): @nowarn
       unsaved
     }
   }
 
-  def upsertBatch(unsaved: List[EmployeepayhistoryRow]): Stream[ConnectionIO, EmployeepayhistoryRow] = {
+  override def upsertBatch(unsaved: List[EmployeepayhistoryRow]): Stream[ConnectionIO, EmployeepayhistoryRow] = {
     Stream.emits {
       unsaved.map { row =>
         map += (row.compositeId -> row)
@@ -115,7 +115,7 @@ case class EmployeepayhistoryRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, EmployeepayhistoryRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

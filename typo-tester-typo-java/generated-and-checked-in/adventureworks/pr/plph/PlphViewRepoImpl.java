@@ -5,22 +5,22 @@
  */
 package adventureworks.pr.plph;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class PlphViewRepoImpl implements PlphViewRepo {
+  @Override
   public SelectBuilder<PlphViewFields, PlphViewRow> select() {
     return SelectBuilder.of("pr.plph", PlphViewFields.structure(), PlphViewRow._rowParser);
   };
 
+  @Override
   public List<PlphViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text
        from "pr"."plph"
-    """)).as(PlphViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(PlphViewRow._rowParser.all()).runUnchecked(c);
   };
 }

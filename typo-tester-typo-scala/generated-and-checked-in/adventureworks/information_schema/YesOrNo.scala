@@ -5,6 +5,7 @@
  */
 package adventureworks.information_schema
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
@@ -12,7 +13,7 @@ import typo.runtime.PgTypes
 /** Domain `information_schema.yes_or_no`
  * Constraint: CHECK (((VALUE)::text = ANY ((ARRAY['YES'::character varying, 'NO'::character varying])::text[])))
  */
-case class YesOrNo(value: String)
+case class YesOrNo(@JsonValue value: String)
 
 object YesOrNo {
   given bijection: Bijection[YesOrNo, String] = Bijection.apply[YesOrNo, String](_.value)(YesOrNo.apply)

@@ -17,7 +17,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface PdViewFields {
-  static final class Impl extends Relation<PdViewFields, PdViewRow> {
+  final class Impl extends Relation<PdViewFields, PdViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -25,18 +25,23 @@ public interface PdViewFields {
     @Override
     public PdViewFields fields() {
       return new PdViewFields() {
+               @Override
                public Field<ProductdescriptionId, PdViewRow> id() {
                  return new Field<ProductdescriptionId, PdViewRow>(_path, "id", PdViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ProductdescriptionId.pgType);
                };
+               @Override
                public Field<ProductdescriptionId, PdViewRow> productdescriptionid() {
                  return new Field<ProductdescriptionId, PdViewRow>(_path, "productdescriptionid", PdViewRow::productdescriptionid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductdescriptionid(value), ProductdescriptionId.pgType);
                };
+               @Override
                public Field</* max 400 chars */ String, PdViewRow> description() {
                  return new Field</* max 400 chars */ String, PdViewRow>(_path, "description", PdViewRow::description, Optional.empty(), Optional.empty(), (row, value) -> row.withDescription(value), PgTypes.text);
                };
+               @Override
                public Field<TypoUUID, PdViewRow> rowguid() {
                  return new Field<TypoUUID, PdViewRow>(_path, "rowguid", PdViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, PdViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, PdViewRow>(_path, "modifieddate", PdViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -48,6 +53,7 @@ public interface PdViewFields {
       return List.of(this.fields().id(), this.fields().productdescriptionid(), this.fields().description(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

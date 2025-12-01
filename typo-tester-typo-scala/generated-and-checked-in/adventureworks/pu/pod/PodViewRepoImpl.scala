@@ -10,11 +10,11 @@ import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PodViewRepoImpl extends PodViewRepo {
-  def select: SelectBuilder[PodViewFields, PodViewRow] = SelectBuilder.of("pu.pod", PodViewFields.structure, PodViewRow.`_rowParser`)
+  override def select: SelectBuilder[PodViewFields, PodViewRow] = SelectBuilder.of("pu.pod", PodViewFields.structure, PodViewRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[PodViewRow] = {
+  override def selectAll(using c: Connection): java.util.List[PodViewRow] = {
     interpolate"""select "id", "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text
     from "pu"."pod"
-    """.as(PodViewRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(PodViewRow.`_rowParser`.all()).runUnchecked(c)
   }
 }

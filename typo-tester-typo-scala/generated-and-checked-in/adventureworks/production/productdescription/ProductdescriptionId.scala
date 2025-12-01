@@ -5,12 +5,13 @@
  */
 package adventureworks.production.productdescription
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
 
 /** Type for the primary key of table `production.productdescription` */
-case class ProductdescriptionId(value: Integer) extends scala.AnyVal
+case class ProductdescriptionId(@JsonValue value: Integer) extends scala.AnyVal
 
 object ProductdescriptionId {
   given bijection: Bijection[ProductdescriptionId, Integer] = Bijection.apply[ProductdescriptionId, Integer](_.value)(ProductdescriptionId.apply)

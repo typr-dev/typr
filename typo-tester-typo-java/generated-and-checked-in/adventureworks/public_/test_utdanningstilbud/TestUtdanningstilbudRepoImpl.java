@@ -6,7 +6,6 @@
 package adventureworks.public_.test_utdanningstilbud;
 
 import adventureworks.public_.test_organisasjon.TestOrganisasjonId;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,12 +21,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class TestUtdanningstilbudRepoImpl implements TestUtdanningstilbudRepo {
+  @Override
   public DeleteBuilder<TestUtdanningstilbudFields, TestUtdanningstilbudRow> delete() {
     return DeleteBuilder.of("public.test_utdanningstilbud", TestUtdanningstilbudFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     TestUtdanningstilbudId compositeId,
     Connection c
@@ -45,28 +45,30 @@ public class TestUtdanningstilbudRepoImpl implements TestUtdanningstilbudRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     TestUtdanningstilbudId[] compositeIds,
     Connection c
   ) {
     TestOrganisasjonId[] organisasjonskode = arrayMap.map(compositeIds, TestUtdanningstilbudId::organisasjonskode, TestOrganisasjonId.class);;
-      String[] utdanningsmulighetKode = arrayMap.map(compositeIds, TestUtdanningstilbudId::utdanningsmulighetKode, String.class);;
+    String[] utdanningsmulighetKode = arrayMap.map(compositeIds, TestUtdanningstilbudId::utdanningsmulighetKode, String.class);;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                delete
-                from "public"."test_utdanningstilbud"
-                where ("organisasjonskode", "utdanningsmulighet_kode")
-                in (select unnest("""),
-             TestOrganisasjonId.pgTypeArray.encode(organisasjonskode),
-             typo.runtime.Fragment.lit("::text[]), unnest("),
-             PgTypes.textArray.encode(utdanningsmulighetKode),
-             typo.runtime.Fragment.lit("""
-             ::text[]))
+      typo.runtime.Fragment.lit("""
+         delete
+         from "public"."test_utdanningstilbud"
+         where ("organisasjonskode", "utdanningsmulighet_kode")
+         in (select unnest("""),
+      TestOrganisasjonId.pgTypeArray.encode(organisasjonskode),
+      typo.runtime.Fragment.lit("::text[]), unnest("),
+      PgTypes.textArray.encode(utdanningsmulighetKode),
+      typo.runtime.Fragment.lit("""
+      ::text[]))
 
-             """)
-           ).update().runUnchecked(c);
+      """)
+    ).update().runUnchecked(c);
   };
 
+  @Override
   public TestUtdanningstilbudRow insert(
     TestUtdanningstilbudRow unsaved,
     Connection c
@@ -86,6 +88,7 @@ public class TestUtdanningstilbudRepoImpl implements TestUtdanningstilbudRepo {
       .updateReturning(TestUtdanningstilbudRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<TestUtdanningstilbudRow> unsaved,
     Integer batchSize,
@@ -96,17 +99,20 @@ public class TestUtdanningstilbudRepoImpl implements TestUtdanningstilbudRepo {
     """), batchSize, unsaved, c, TestUtdanningstilbudRow.pgText);
   };
 
+  @Override
   public SelectBuilder<TestUtdanningstilbudFields, TestUtdanningstilbudRow> select() {
     return SelectBuilder.of("public.test_utdanningstilbud", TestUtdanningstilbudFields.structure(), TestUtdanningstilbudRow._rowParser);
   };
 
+  @Override
   public List<TestUtdanningstilbudRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "organisasjonskode", "utdanningsmulighet_kode"
        from "public"."test_utdanningstilbud"
-    """)).as(TestUtdanningstilbudRow._rowParser.all()).runUnchecked(c);
+    """)).query(TestUtdanningstilbudRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<TestUtdanningstilbudRow> selectById(
     TestUtdanningstilbudId compositeId,
     Connection c
@@ -122,44 +128,48 @@ public class TestUtdanningstilbudRepoImpl implements TestUtdanningstilbudRepo {
       """),
       PgTypes.text.encode(compositeId.utdanningsmulighetKode()),
       typo.runtime.Fragment.lit("")
-    ).as(TestUtdanningstilbudRow._rowParser.first()).runUnchecked(c);
+    ).query(TestUtdanningstilbudRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<TestUtdanningstilbudRow> selectByIds(
     TestUtdanningstilbudId[] compositeIds,
     Connection c
   ) {
     TestOrganisasjonId[] organisasjonskode = arrayMap.map(compositeIds, TestUtdanningstilbudId::organisasjonskode, TestOrganisasjonId.class);;
-      String[] utdanningsmulighetKode = arrayMap.map(compositeIds, TestUtdanningstilbudId::utdanningsmulighetKode, String.class);;
+    String[] utdanningsmulighetKode = arrayMap.map(compositeIds, TestUtdanningstilbudId::utdanningsmulighetKode, String.class);;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                select "organisasjonskode", "utdanningsmulighet_kode"
-                from "public"."test_utdanningstilbud"
-                where ("organisasjonskode", "utdanningsmulighet_kode")
-                in (select unnest("""),
-             TestOrganisasjonId.pgTypeArray.encode(organisasjonskode),
-             typo.runtime.Fragment.lit("::text[]), unnest("),
-             PgTypes.textArray.encode(utdanningsmulighetKode),
-             typo.runtime.Fragment.lit("""
-             ::text[]))
+      typo.runtime.Fragment.lit("""
+         select "organisasjonskode", "utdanningsmulighet_kode"
+         from "public"."test_utdanningstilbud"
+         where ("organisasjonskode", "utdanningsmulighet_kode")
+         in (select unnest("""),
+      TestOrganisasjonId.pgTypeArray.encode(organisasjonskode),
+      typo.runtime.Fragment.lit("::text[]), unnest("),
+      PgTypes.textArray.encode(utdanningsmulighetKode),
+      typo.runtime.Fragment.lit("""
+      ::text[]))
 
-             """)
-           ).as(TestUtdanningstilbudRow._rowParser.all()).runUnchecked(c);
+      """)
+    ).query(TestUtdanningstilbudRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<TestUtdanningstilbudId, TestUtdanningstilbudRow> selectByIdsTracked(
     TestUtdanningstilbudId[] compositeIds,
     Connection c
   ) {
-    Map<TestUtdanningstilbudId, TestUtdanningstilbudRow> ret = new HashMap<>();;
-      selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
+    HashMap<TestUtdanningstilbudId, TestUtdanningstilbudRow> ret = new HashMap<TestUtdanningstilbudId, TestUtdanningstilbudRow>();
+    selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<TestUtdanningstilbudFields, TestUtdanningstilbudRow> update() {
     return UpdateBuilder.of("public.test_utdanningstilbud", TestUtdanningstilbudFields.structure(), TestUtdanningstilbudRow._rowParser.all());
   };
 
+  @Override
   public TestUtdanningstilbudRow upsert(
     TestUtdanningstilbudRow unsaved,
     Connection c
@@ -182,6 +192,7 @@ public class TestUtdanningstilbudRepoImpl implements TestUtdanningstilbudRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<TestUtdanningstilbudRow> upsertBatch(
     Iterator<TestUtdanningstilbudRow> unsaved,
     Connection c
@@ -198,23 +209,24 @@ public class TestUtdanningstilbudRepoImpl implements TestUtdanningstilbudRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<TestUtdanningstilbudRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table test_utdanningstilbud_TEMP (like "public"."test_utdanningstilbud") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy test_utdanningstilbud_TEMP("organisasjonskode", "utdanningsmulighet_kode") from stdin
-      """), batchSize, unsaved, c, TestUtdanningstilbudRow.pgText);
+    create temporary table test_utdanningstilbud_TEMP (like "public"."test_utdanningstilbud") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy test_utdanningstilbud_TEMP("organisasjonskode", "utdanningsmulighet_kode") from stdin
+    """), batchSize, unsaved, c, TestUtdanningstilbudRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "public"."test_utdanningstilbud"("organisasjonskode", "utdanningsmulighet_kode")
-              select * from test_utdanningstilbud_TEMP
-              on conflict ("organisasjonskode", "utdanningsmulighet_kode")
-              do nothing
-              ;
-              drop table test_utdanningstilbud_TEMP;""")).update().runUnchecked(c);
+       insert into "public"."test_utdanningstilbud"("organisasjonskode", "utdanningsmulighet_kode")
+       select * from test_utdanningstilbud_TEMP
+       on conflict ("organisasjonskode", "utdanningsmulighet_kode")
+       do nothing
+       ;
+       drop table test_utdanningstilbud_TEMP;""")).update().runUnchecked(c);
   };
 }

@@ -26,20 +26,20 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class EmployeeRepoImpl extends EmployeeRepo {
-  def delete: DeleteBuilder[EmployeeFields, EmployeeRow] = DeleteBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, EmployeeRow.jdbcDecoder)
+  override def delete: DeleteBuilder[EmployeeFields, EmployeeRow] = DeleteBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, EmployeeRow.jdbcDecoder)
 
-  def deleteById(businessentityid: BusinessentityId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "humanresources"."employee" where "businessentityid" = ${Segment.paramSegment(businessentityid)(BusinessentityId.setter)}""".delete.map(_ > 0)
+  override def deleteById(businessentityid: BusinessentityId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "humanresources"."employee" where "businessentityid" = ${Segment.paramSegment(businessentityid)(BusinessentityId.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(businessentityids: Array[BusinessentityId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "humanresources"."employee" where "businessentityid" = ANY(${Segment.paramSegment(businessentityids)(BusinessentityId.arraySetter)})""".delete
+  override def deleteByIds(businessentityids: Array[BusinessentityId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "humanresources"."employee" where "businessentityid" = ANY(${Segment.paramSegment(businessentityids)(BusinessentityId.arraySetter)})""".delete
 
-  def insert(unsaved: EmployeeRow): ZIO[ZConnection, Throwable, EmployeeRow] = {
+  override def insert(unsaved: EmployeeRow): ZIO[ZConnection, Throwable, EmployeeRow] = {
     sql"""insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
     values (${Segment.paramSegment(unsaved.businessentityid)(BusinessentityId.setter)}::int4, ${Segment.paramSegment(unsaved.nationalidnumber)(Setter.stringSetter)}, ${Segment.paramSegment(unsaved.loginid)(Setter.stringSetter)}, ${Segment.paramSegment(unsaved.jobtitle)(Setter.stringSetter)}, ${Segment.paramSegment(unsaved.birthdate)(TypoLocalDate.setter)}::date, ${Segment.paramSegment(unsaved.maritalstatus)(Setter.stringSetter)}::bpchar, ${Segment.paramSegment(unsaved.gender)(Setter.stringSetter)}::bpchar, ${Segment.paramSegment(unsaved.hiredate)(TypoLocalDate.setter)}::date, ${Segment.paramSegment(unsaved.salariedflag)(Flag.setter)}::bool, ${Segment.paramSegment(unsaved.vacationhours)(TypoShort.setter)}::int2, ${Segment.paramSegment(unsaved.sickleavehours)(TypoShort.setter)}::int2, ${Segment.paramSegment(unsaved.currentflag)(Flag.setter)}::bool, ${Segment.paramSegment(unsaved.rowguid)(TypoUUID.setter)}::uuid, ${Segment.paramSegment(unsaved.modifieddate)(TypoLocalDateTime.setter)}::timestamp, ${Segment.paramSegment(unsaved.organizationnode)(Setter.optionParamSetter(Setter.stringSetter))})
     returning "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode"
     """.insertReturning(EmployeeRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insert(unsaved: EmployeeRowUnsaved): ZIO[ZConnection, Throwable, EmployeeRow] = {
+  override def insert(unsaved: EmployeeRowUnsaved): ZIO[ZConnection, Throwable, EmployeeRow] = {
     val fs = List(
       Some((sql""""businessentityid"""", sql"${Segment.paramSegment(unsaved.businessentityid)(BusinessentityId.setter)}::int4")),
       Some((sql""""nationalidnumber"""", sql"${Segment.paramSegment(unsaved.nationalidnumber)(Setter.stringSetter)}")),
@@ -90,35 +90,35 @@ class EmployeeRepoImpl extends EmployeeRepo {
     q.insertReturning(EmployeeRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, EmployeeRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode") FROM STDIN""", batchSize, unsaved)(EmployeeRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, EmployeeRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(EmployeeRowUnsaved.pgText)
 
-  def select: SelectBuilder[EmployeeFields, EmployeeRow] = SelectBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, EmployeeRow.jdbcDecoder)
+  override def select: SelectBuilder[EmployeeFields, EmployeeRow] = SelectBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, EmployeeRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, EmployeeRow] = sql"""select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode" from "humanresources"."employee"""".query(EmployeeRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, EmployeeRow] = sql"""select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode" from "humanresources"."employee"""".query(EmployeeRow.jdbcDecoder).selectStream()
 
-  def selectById(businessentityid: BusinessentityId): ZIO[ZConnection, Throwable, Option[EmployeeRow]] = sql"""select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode" from "humanresources"."employee" where "businessentityid" = ${Segment.paramSegment(businessentityid)(BusinessentityId.setter)}""".query(EmployeeRow.jdbcDecoder).selectOne
+  override def selectById(businessentityid: BusinessentityId): ZIO[ZConnection, Throwable, Option[EmployeeRow]] = sql"""select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode" from "humanresources"."employee" where "businessentityid" = ${Segment.paramSegment(businessentityid)(BusinessentityId.setter)}""".query(EmployeeRow.jdbcDecoder).selectOne
 
-  def selectByIds(businessentityids: Array[BusinessentityId]): ZStream[ZConnection, Throwable, EmployeeRow] = sql"""select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode" from "humanresources"."employee" where "businessentityid" = ANY(${Segment.paramSegment(businessentityids)(BusinessentityId.arraySetter)})""".query(EmployeeRow.jdbcDecoder).selectStream()
+  override def selectByIds(businessentityids: Array[BusinessentityId]): ZStream[ZConnection, Throwable, EmployeeRow] = sql"""select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode" from "humanresources"."employee" where "businessentityid" = ANY(${Segment.paramSegment(businessentityids)(BusinessentityId.arraySetter)})""".query(EmployeeRow.jdbcDecoder).selectStream()
 
-  def selectByIdsTracked(businessentityids: Array[BusinessentityId]): ZIO[ZConnection, Throwable, Map[BusinessentityId, EmployeeRow]] = {
+  override def selectByIdsTracked(businessentityids: Array[BusinessentityId]): ZIO[ZConnection, Throwable, Map[BusinessentityId, EmployeeRow]] = {
     selectByIds(businessentityids).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.businessentityid, x)).toMap
       businessentityids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[EmployeeFields, EmployeeRow] = UpdateBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, EmployeeRow.jdbcDecoder)
+  override def update: UpdateBuilder[EmployeeFields, EmployeeRow] = UpdateBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, EmployeeRow.jdbcDecoder)
 
-  def update(row: EmployeeRow): ZIO[ZConnection, Throwable, Option[EmployeeRow]] = {
+  override def update(row: EmployeeRow): ZIO[ZConnection, Throwable, Option[EmployeeRow]] = {
     val businessentityid = row.businessentityid
     sql"""update "humanresources"."employee"
     set "nationalidnumber" = ${Segment.paramSegment(row.nationalidnumber)(Setter.stringSetter)},
@@ -141,7 +141,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
       .selectOne
   }
 
-  def upsert(unsaved: EmployeeRow): ZIO[ZConnection, Throwable, UpdateResult[EmployeeRow]] = {
+  override def upsert(unsaved: EmployeeRow): ZIO[ZConnection, Throwable, UpdateResult[EmployeeRow]] = {
     sql"""insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
     values (
       ${Segment.paramSegment(unsaved.businessentityid)(BusinessentityId.setter)}::int4,
@@ -180,7 +180,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, EmployeeRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

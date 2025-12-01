@@ -26,18 +26,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class ProductreviewRepoImpl extends ProductreviewRepo {
-  def delete: DeleteBuilder[ProductreviewFields, ProductreviewRow] = DeleteBuilder.of(""""production"."productreview"""", ProductreviewFields.structure, ProductreviewRow.rowParser(1).*)
+  override def delete: DeleteBuilder[ProductreviewFields, ProductreviewRow] = DeleteBuilder.of(""""production"."productreview"""", ProductreviewFields.structure, ProductreviewRow.rowParser(1).*)
 
-  def deleteById(productreviewid: ProductreviewId)(implicit c: Connection): Boolean = SQL"""delete from "production"."productreview" where "productreviewid" = ${ParameterValue(productreviewid, null, ProductreviewId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(productreviewid: ProductreviewId)(implicit c: Connection): Boolean = SQL"""delete from "production"."productreview" where "productreviewid" = ${ParameterValue(productreviewid, null, ProductreviewId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(productreviewids: Array[ProductreviewId])(implicit c: Connection): Int = {
+  override def deleteByIds(productreviewids: Array[ProductreviewId])(implicit c: Connection): Int = {
     SQL"""delete
     from "production"."productreview"
     where "productreviewid" = ANY(${ParameterValue(productreviewids, null, ProductreviewId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: ProductreviewRow)(implicit c: Connection): ProductreviewRow = {
+  override def insert(unsaved: ProductreviewRow)(implicit c: Connection): ProductreviewRow = {
   SQL"""insert into "production"."productreview"("productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate")
     values (${ParameterValue(unsaved.productreviewid, null, ProductreviewId.toStatement)}::int4, ${ParameterValue(unsaved.productid, null, ProductId.toStatement)}::int4, ${ParameterValue(unsaved.reviewername, null, Name.toStatement)}::varchar, ${ParameterValue(unsaved.reviewdate, null, TypoLocalDateTime.toStatement)}::timestamp, ${ParameterValue(unsaved.emailaddress, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.rating, null, ToStatement.intToStatement)}::int4, ${ParameterValue(unsaved.comments, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text
@@ -45,7 +45,7 @@ class ProductreviewRepoImpl extends ProductreviewRepo {
     .executeInsert(ProductreviewRow.rowParser(1).single)
   }
 
-  def insert(unsaved: ProductreviewRowUnsaved)(implicit c: Connection): ProductreviewRow = {
+  override def insert(unsaved: ProductreviewRowUnsaved)(implicit c: Connection): ProductreviewRow = {
     val namedParameters = List(
       Some((NamedParameter("productid", ParameterValue(unsaved.productid, null, ProductId.toStatement)), "::int4")),
       Some((NamedParameter("reviewername", ParameterValue(unsaved.reviewername, null, Name.toStatement)), "::varchar")),
@@ -81,47 +81,47 @@ class ProductreviewRepoImpl extends ProductreviewRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[ProductreviewRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "production"."productreview"("productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate") FROM STDIN""", batchSize, unsaved)(ProductreviewRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[ProductreviewRowUnsaved],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "production"."productreview"("productid", "reviewername", "emailaddress", "rating", "comments", "productreviewid", "reviewdate", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(ProductreviewRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[ProductreviewFields, ProductreviewRow] = SelectBuilder.of(""""production"."productreview"""", ProductreviewFields.structure, ProductreviewRow.rowParser)
+  override def select: SelectBuilder[ProductreviewFields, ProductreviewRow] = SelectBuilder.of(""""production"."productreview"""", ProductreviewFields.structure, ProductreviewRow.rowParser)
 
-  def selectAll(implicit c: Connection): List[ProductreviewRow] = {
+  override def selectAll(implicit c: Connection): List[ProductreviewRow] = {
     SQL"""select "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text
     from "production"."productreview"
     """.as(ProductreviewRow.rowParser(1).*)
   }
 
-  def selectById(productreviewid: ProductreviewId)(implicit c: Connection): Option[ProductreviewRow] = {
+  override def selectById(productreviewid: ProductreviewId)(implicit c: Connection): Option[ProductreviewRow] = {
     SQL"""select "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text
     from "production"."productreview"
     where "productreviewid" = ${ParameterValue(productreviewid, null, ProductreviewId.toStatement)}
     """.as(ProductreviewRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(productreviewids: Array[ProductreviewId])(implicit c: Connection): List[ProductreviewRow] = {
+  override def selectByIds(productreviewids: Array[ProductreviewId])(implicit c: Connection): List[ProductreviewRow] = {
     SQL"""select "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text
     from "production"."productreview"
     where "productreviewid" = ANY(${ParameterValue(productreviewids, null, ProductreviewId.arrayToStatement)})
     """.as(ProductreviewRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(productreviewids: Array[ProductreviewId])(implicit c: Connection): Map[ProductreviewId, ProductreviewRow] = {
+  override def selectByIdsTracked(productreviewids: Array[ProductreviewId])(implicit c: Connection): Map[ProductreviewId, ProductreviewRow] = {
     val byId = selectByIds(productreviewids).view.map(x => (x.productreviewid, x)).toMap
     productreviewids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[ProductreviewFields, ProductreviewRow] = UpdateBuilder.of(""""production"."productreview"""", ProductreviewFields.structure, ProductreviewRow.rowParser(1).*)
+  override def update: UpdateBuilder[ProductreviewFields, ProductreviewRow] = UpdateBuilder.of(""""production"."productreview"""", ProductreviewFields.structure, ProductreviewRow.rowParser(1).*)
 
-  def update(row: ProductreviewRow)(implicit c: Connection): Option[ProductreviewRow] = {
+  override def update(row: ProductreviewRow)(implicit c: Connection): Option[ProductreviewRow] = {
     val productreviewid = row.productreviewid
     SQL"""update "production"."productreview"
     set "productid" = ${ParameterValue(row.productid, null, ProductId.toStatement)}::int4,
@@ -136,7 +136,7 @@ class ProductreviewRepoImpl extends ProductreviewRepo {
     """.executeInsert(ProductreviewRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: ProductreviewRow)(implicit c: Connection): ProductreviewRow = {
+  override def upsert(unsaved: ProductreviewRow)(implicit c: Connection): ProductreviewRow = {
   SQL"""insert into "production"."productreview"("productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate")
     values (
       ${ParameterValue(unsaved.productreviewid, null, ProductreviewId.toStatement)}::int4,
@@ -162,7 +162,7 @@ class ProductreviewRepoImpl extends ProductreviewRepo {
     .executeInsert(ProductreviewRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[ProductreviewRow])(implicit c: Connection): List[ProductreviewRow] = {
+  override def upsertBatch(unsaved: Iterable[ProductreviewRow])(implicit c: Connection): List[ProductreviewRow] = {
     def toNamedParameter(row: ProductreviewRow): List[NamedParameter] = List(
       NamedParameter("productreviewid", ParameterValue(row.productreviewid, null, ProductreviewId.toStatement)),
       NamedParameter("productid", ParameterValue(row.productid, null, ProductId.toStatement)),
@@ -173,6 +173,7 @@ class ProductreviewRepoImpl extends ProductreviewRepo {
       NamedParameter("comments", ParameterValue(row.comments, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -199,7 +200,7 @@ class ProductreviewRepoImpl extends ProductreviewRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[ProductreviewRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

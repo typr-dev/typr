@@ -18,7 +18,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface PchViewFields {
-  static final class Impl extends Relation<PchViewFields, PchViewRow> {
+  final class Impl extends Relation<PchViewFields, PchViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -26,21 +26,27 @@ public interface PchViewFields {
     @Override
     public PchViewFields fields() {
       return new PchViewFields() {
+               @Override
                public Field<ProductId, PchViewRow> id() {
                  return new Field<ProductId, PchViewRow>(_path, "id", PchViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ProductId.pgType);
                };
+               @Override
                public Field<ProductId, PchViewRow> productid() {
                  return new Field<ProductId, PchViewRow>(_path, "productid", PchViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, PchViewRow> startdate() {
                  return new Field<TypoLocalDateTime, PchViewRow>(_path, "startdate", PchViewRow::startdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withStartdate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public OptField<TypoLocalDateTime, PchViewRow> enddate() {
                  return new OptField<TypoLocalDateTime, PchViewRow>(_path, "enddate", PchViewRow::enddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withEnddate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public Field<BigDecimal, PchViewRow> standardcost() {
                  return new Field<BigDecimal, PchViewRow>(_path, "standardcost", PchViewRow::standardcost, Optional.empty(), Optional.empty(), (row, value) -> row.withStandardcost(value), PgTypes.numeric);
                };
+               @Override
                public Field<TypoLocalDateTime, PchViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, PchViewRow>(_path, "modifieddate", PchViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -52,6 +58,7 @@ public interface PchViewFields {
       return List.of(this.fields().id(), this.fields().productid(), this.fields().startdate(), this.fields().enddate(), this.fields().standardcost(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

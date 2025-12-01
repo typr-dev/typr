@@ -23,20 +23,20 @@ import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
-  def delete: DeleteBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = DeleteBuilder.of(""""sales"."shoppingcartitem"""", ShoppingcartitemFields.structure, ShoppingcartitemRow.read)
+  override def delete: DeleteBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = DeleteBuilder.of(""""sales"."shoppingcartitem"""", ShoppingcartitemFields.structure, ShoppingcartitemRow.read)
 
-  def deleteById(shoppingcartitemid: ShoppingcartitemId): ConnectionIO[Boolean] = sql"""delete from "sales"."shoppingcartitem" where "shoppingcartitemid" = ${fromWrite(shoppingcartitemid)(new Write.Single(ShoppingcartitemId.put))}""".update.run.map(_ > 0)
+  override def deleteById(shoppingcartitemid: ShoppingcartitemId): ConnectionIO[Boolean] = sql"""delete from "sales"."shoppingcartitem" where "shoppingcartitemid" = ${fromWrite(shoppingcartitemid)(new Write.Single(ShoppingcartitemId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(shoppingcartitemids: Array[ShoppingcartitemId]): ConnectionIO[Int] = sql"""delete from "sales"."shoppingcartitem" where "shoppingcartitemid" = ANY(${fromWrite(shoppingcartitemids)(new Write.Single(ShoppingcartitemId.arrayPut))})""".update.run
+  override def deleteByIds(shoppingcartitemids: Array[ShoppingcartitemId]): ConnectionIO[Int] = sql"""delete from "sales"."shoppingcartitem" where "shoppingcartitemid" = ANY(${fromWrite(shoppingcartitemids)(new Write.Single(ShoppingcartitemId.arrayPut))})""".update.run
 
-  def insert(unsaved: ShoppingcartitemRow): ConnectionIO[ShoppingcartitemRow] = {
+  override def insert(unsaved: ShoppingcartitemRow): ConnectionIO[ShoppingcartitemRow] = {
     sql"""insert into "sales"."shoppingcartitem"("shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate")
     values (${fromWrite(unsaved.shoppingcartitemid)(new Write.Single(ShoppingcartitemId.put))}::int4, ${fromWrite(unsaved.shoppingcartid)(new Write.Single(Meta.StringMeta.put))}, ${fromWrite(unsaved.quantity)(new Write.Single(Meta.IntMeta.put))}::int4, ${fromWrite(unsaved.productid)(new Write.Single(ProductId.put))}::int4, ${fromWrite(unsaved.datecreated)(new Write.Single(TypoLocalDateTime.put))}::timestamp, ${fromWrite(unsaved.modifieddate)(new Write.Single(TypoLocalDateTime.put))}::timestamp)
     returning "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text
     """.query(ShoppingcartitemRow.read).unique
   }
 
-  def insert(unsaved: ShoppingcartitemRowUnsaved): ConnectionIO[ShoppingcartitemRow] = {
+  override def insert(unsaved: ShoppingcartitemRowUnsaved): ConnectionIO[ShoppingcartitemRow] = {
     val fs = List(
       Some((Fragment.const0(s""""shoppingcartid""""), fr"${fromWrite(unsaved.shoppingcartid)(new Write.Single(Meta.StringMeta.put))}")),
       Some((Fragment.const0(s""""productid""""), fr"${fromWrite(unsaved.productid)(new Write.Single(ProductId.put))}::int4")),
@@ -71,35 +71,35 @@ class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
     q.query(ShoppingcartitemRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, ShoppingcartitemRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "sales"."shoppingcartitem"("shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate") FROM STDIN""").copyIn(unsaved, batchSize)(ShoppingcartitemRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, ShoppingcartitemRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "sales"."shoppingcartitem"("shoppingcartid", "productid", "shoppingcartitemid", "quantity", "datecreated", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(ShoppingcartitemRowUnsaved.pgText)
 
-  def select: SelectBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = SelectBuilder.of(""""sales"."shoppingcartitem"""", ShoppingcartitemFields.structure, ShoppingcartitemRow.read)
+  override def select: SelectBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = SelectBuilder.of(""""sales"."shoppingcartitem"""", ShoppingcartitemFields.structure, ShoppingcartitemRow.read)
 
-  def selectAll: Stream[ConnectionIO, ShoppingcartitemRow] = sql"""select "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text from "sales"."shoppingcartitem"""".query(ShoppingcartitemRow.read).stream
+  override def selectAll: Stream[ConnectionIO, ShoppingcartitemRow] = sql"""select "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text from "sales"."shoppingcartitem"""".query(ShoppingcartitemRow.read).stream
 
-  def selectById(shoppingcartitemid: ShoppingcartitemId): ConnectionIO[Option[ShoppingcartitemRow]] = sql"""select "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text from "sales"."shoppingcartitem" where "shoppingcartitemid" = ${fromWrite(shoppingcartitemid)(new Write.Single(ShoppingcartitemId.put))}""".query(ShoppingcartitemRow.read).option
+  override def selectById(shoppingcartitemid: ShoppingcartitemId): ConnectionIO[Option[ShoppingcartitemRow]] = sql"""select "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text from "sales"."shoppingcartitem" where "shoppingcartitemid" = ${fromWrite(shoppingcartitemid)(new Write.Single(ShoppingcartitemId.put))}""".query(ShoppingcartitemRow.read).option
 
-  def selectByIds(shoppingcartitemids: Array[ShoppingcartitemId]): Stream[ConnectionIO, ShoppingcartitemRow] = sql"""select "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text from "sales"."shoppingcartitem" where "shoppingcartitemid" = ANY(${fromWrite(shoppingcartitemids)(new Write.Single(ShoppingcartitemId.arrayPut))})""".query(ShoppingcartitemRow.read).stream
+  override def selectByIds(shoppingcartitemids: Array[ShoppingcartitemId]): Stream[ConnectionIO, ShoppingcartitemRow] = sql"""select "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text from "sales"."shoppingcartitem" where "shoppingcartitemid" = ANY(${fromWrite(shoppingcartitemids)(new Write.Single(ShoppingcartitemId.arrayPut))})""".query(ShoppingcartitemRow.read).stream
 
-  def selectByIdsTracked(shoppingcartitemids: Array[ShoppingcartitemId]): ConnectionIO[Map[ShoppingcartitemId, ShoppingcartitemRow]] = {
+  override def selectByIdsTracked(shoppingcartitemids: Array[ShoppingcartitemId]): ConnectionIO[Map[ShoppingcartitemId, ShoppingcartitemRow]] = {
     selectByIds(shoppingcartitemids).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.shoppingcartitemid, x)).toMap
       shoppingcartitemids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = UpdateBuilder.of(""""sales"."shoppingcartitem"""", ShoppingcartitemFields.structure, ShoppingcartitemRow.read)
+  override def update: UpdateBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = UpdateBuilder.of(""""sales"."shoppingcartitem"""", ShoppingcartitemFields.structure, ShoppingcartitemRow.read)
 
-  def update(row: ShoppingcartitemRow): ConnectionIO[Option[ShoppingcartitemRow]] = {
+  override def update(row: ShoppingcartitemRow): ConnectionIO[Option[ShoppingcartitemRow]] = {
     val shoppingcartitemid = row.shoppingcartitemid
     sql"""update "sales"."shoppingcartitem"
     set "shoppingcartid" = ${fromWrite(row.shoppingcartid)(new Write.Single(Meta.StringMeta.put))},
@@ -111,7 +111,7 @@ class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
     returning "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text""".query(ShoppingcartitemRow.read).option
   }
 
-  def upsert(unsaved: ShoppingcartitemRow): ConnectionIO[ShoppingcartitemRow] = {
+  override def upsert(unsaved: ShoppingcartitemRow): ConnectionIO[ShoppingcartitemRow] = {
     sql"""insert into "sales"."shoppingcartitem"("shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate")
     values (
       ${fromWrite(unsaved.shoppingcartitemid)(new Write.Single(ShoppingcartitemId.put))}::int4,
@@ -132,7 +132,7 @@ class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
     """.query(ShoppingcartitemRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[ShoppingcartitemRow]): Stream[ConnectionIO, ShoppingcartitemRow] = {
+  override def upsertBatch(unsaved: List[ShoppingcartitemRow]): Stream[ConnectionIO, ShoppingcartitemRow] = {
     Update[ShoppingcartitemRow](
       s"""insert into "sales"."shoppingcartitem"("shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate")
       values (?::int4,?,?::int4,?::int4,?::timestamp,?::timestamp)
@@ -149,7 +149,7 @@ class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, ShoppingcartitemRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

@@ -37,7 +37,7 @@ object UsersFields {
 
     override lazy val fields: UsersFields = {
       new UsersFields {
-        def userId: IdField[UsersId, UsersRow] = {
+        override def userId: IdField[UsersId, UsersRow] = {
           new IdField[UsersId, UsersRow](
             _path,
             "user_id",
@@ -48,7 +48,7 @@ object UsersFields {
             UsersId.pgType
           )
         }
-        def name: Field[String, UsersRow] = {
+        override def name: Field[String, UsersRow] = {
           new Field[String, UsersRow](
             _path,
             "name",
@@ -59,7 +59,7 @@ object UsersFields {
             PgTypes.text
           )
         }
-        def lastName: OptField[String, UsersRow] = {
+        override def lastName: OptField[String, UsersRow] = {
           new OptField[String, UsersRow](
             _path,
             "last_name",
@@ -70,7 +70,7 @@ object UsersFields {
             PgTypes.text
           )
         }
-        def email: Field[TypoUnknownCitext, UsersRow] = {
+        override def email: Field[TypoUnknownCitext, UsersRow] = {
           new Field[TypoUnknownCitext, UsersRow](
             _path,
             "email",
@@ -81,7 +81,7 @@ object UsersFields {
             TypoUnknownCitext.pgType
           )
         }
-        def password: Field[String, UsersRow] = {
+        override def password: Field[String, UsersRow] = {
           new Field[String, UsersRow](
             _path,
             "password",
@@ -92,7 +92,7 @@ object UsersFields {
             PgTypes.text
           )
         }
-        def createdAt: Field[TypoInstant, UsersRow] = {
+        override def createdAt: Field[TypoInstant, UsersRow] = {
           new Field[TypoInstant, UsersRow](
             _path,
             "created_at",
@@ -103,7 +103,7 @@ object UsersFields {
             TypoInstant.pgType
           )
         }
-        def verifiedOn: OptField[TypoInstant, UsersRow] = {
+        override def verifiedOn: OptField[TypoInstant, UsersRow] = {
           new OptField[TypoInstant, UsersRow](
             _path,
             "verified_on",
@@ -119,7 +119,7 @@ object UsersFields {
 
     override lazy val columns: java.util.List[FieldLike[?, UsersRow]] = java.util.List.of(this.fields.userId, this.fields.name, this.fields.lastName, this.fields.email, this.fields.password, this.fields.createdAt, this.fields.verifiedOn)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[UsersFields, UsersRow] = new Impl(java.util.List.of())

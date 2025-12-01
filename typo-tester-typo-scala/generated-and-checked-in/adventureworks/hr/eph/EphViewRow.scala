@@ -11,7 +11,6 @@ import adventureworks.person.businessentity.BusinessentityId
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple6
 
 /** View: hr.eph */
 case class EphViewRow(
@@ -30,14 +29,5 @@ case class EphViewRow(
 )
 
 object EphViewRow {
-  val `_rowParser`: RowParser[EphViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, TypoLocalDateTime.pgType, PgTypes.numeric, TypoShort.pgType, TypoLocalDateTime.pgType, EphViewRow.apply, row => new Tuple6(
-      row.id,
-      row.businessentityid,
-      row.ratechangedate,
-      row.rate,
-      row.payfrequency,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[EphViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, TypoLocalDateTime.pgType, PgTypes.numeric, TypoShort.pgType, TypoLocalDateTime.pgType, EphViewRow.apply, row => Array(row.id, row.businessentityid, row.ratechangedate, row.rate, row.payfrequency, row.modifieddate))
 }

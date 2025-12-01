@@ -5,6 +5,7 @@
  */
 package adventureworks.information_schema
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
@@ -12,7 +13,7 @@ import typo.runtime.PgTypes
 /** Domain `information_schema.cardinal_number`
  * Constraint: CHECK ((VALUE >= 0))
  */
-case class CardinalNumber(value: Integer)
+case class CardinalNumber(@JsonValue value: Integer)
 
 object CardinalNumber {
   given bijection: Bijection[CardinalNumber, Integer] = Bijection.apply[CardinalNumber, Integer](_.value)(CardinalNumber.apply)

@@ -24,18 +24,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class LocationRepoImpl extends LocationRepo {
-  def delete: DeleteBuilder[LocationFields, LocationRow] = DeleteBuilder.of(""""production"."location"""", LocationFields.structure, LocationRow.rowParser(1).*)
+  override def delete: DeleteBuilder[LocationFields, LocationRow] = DeleteBuilder.of(""""production"."location"""", LocationFields.structure, LocationRow.rowParser(1).*)
 
-  def deleteById(locationid: LocationId)(using c: Connection): Boolean = SQL"""delete from "production"."location" where "locationid" = ${ParameterValue(locationid, null, LocationId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(locationid: LocationId)(using c: Connection): Boolean = SQL"""delete from "production"."location" where "locationid" = ${ParameterValue(locationid, null, LocationId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(locationids: Array[LocationId])(using c: Connection): Int = {
+  override def deleteByIds(locationids: Array[LocationId])(using c: Connection): Int = {
     SQL"""delete
     from "production"."location"
     where "locationid" = ANY(${ParameterValue(locationids, null, LocationId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: LocationRow)(using c: Connection): LocationRow = {
+  override def insert(unsaved: LocationRow)(using c: Connection): LocationRow = {
   SQL"""insert into "production"."location"("locationid", "name", "costrate", "availability", "modifieddate")
     values (${ParameterValue(unsaved.locationid, null, LocationId.toStatement)}::int4, ${ParameterValue(unsaved.name, null, Name.toStatement)}::varchar, ${ParameterValue(unsaved.costrate, null, ToStatement.scalaBigDecimalToStatement)}::numeric, ${ParameterValue(unsaved.availability, null, ToStatement.scalaBigDecimalToStatement)}::numeric, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "locationid", "name", "costrate", "availability", "modifieddate"::text
@@ -43,7 +43,7 @@ class LocationRepoImpl extends LocationRepo {
     .executeInsert(LocationRow.rowParser(1).single)
   }
 
-  def insert(unsaved: LocationRowUnsaved)(using c: Connection): LocationRow = {
+  override def insert(unsaved: LocationRowUnsaved)(using c: Connection): LocationRow = {
     val namedParameters = List(
       Some((NamedParameter("name", ParameterValue(unsaved.name, null, Name.toStatement)), "::varchar")),
       unsaved.locationid match {
@@ -79,47 +79,47 @@ class LocationRepoImpl extends LocationRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[LocationRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "production"."location"("locationid", "name", "costrate", "availability", "modifieddate") FROM STDIN""", batchSize, unsaved)(using LocationRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[LocationRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "production"."location"("name", "locationid", "costrate", "availability", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using LocationRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[LocationFields, LocationRow] = SelectBuilder.of(""""production"."location"""", LocationFields.structure, LocationRow.rowParser)
+  override def select: SelectBuilder[LocationFields, LocationRow] = SelectBuilder.of(""""production"."location"""", LocationFields.structure, LocationRow.rowParser)
 
-  def selectAll(using c: Connection): List[LocationRow] = {
+  override def selectAll(using c: Connection): List[LocationRow] = {
     SQL"""select "locationid", "name", "costrate", "availability", "modifieddate"::text
     from "production"."location"
     """.as(LocationRow.rowParser(1).*)
   }
 
-  def selectById(locationid: LocationId)(using c: Connection): Option[LocationRow] = {
+  override def selectById(locationid: LocationId)(using c: Connection): Option[LocationRow] = {
     SQL"""select "locationid", "name", "costrate", "availability", "modifieddate"::text
     from "production"."location"
     where "locationid" = ${ParameterValue(locationid, null, LocationId.toStatement)}
     """.as(LocationRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(locationids: Array[LocationId])(using c: Connection): List[LocationRow] = {
+  override def selectByIds(locationids: Array[LocationId])(using c: Connection): List[LocationRow] = {
     SQL"""select "locationid", "name", "costrate", "availability", "modifieddate"::text
     from "production"."location"
     where "locationid" = ANY(${ParameterValue(locationids, null, LocationId.arrayToStatement)})
     """.as(LocationRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(locationids: Array[LocationId])(using c: Connection): Map[LocationId, LocationRow] = {
+  override def selectByIdsTracked(locationids: Array[LocationId])(using c: Connection): Map[LocationId, LocationRow] = {
     val byId = selectByIds(locationids).view.map(x => (x.locationid, x)).toMap
     locationids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[LocationFields, LocationRow] = UpdateBuilder.of(""""production"."location"""", LocationFields.structure, LocationRow.rowParser(1).*)
+  override def update: UpdateBuilder[LocationFields, LocationRow] = UpdateBuilder.of(""""production"."location"""", LocationFields.structure, LocationRow.rowParser(1).*)
 
-  def update(row: LocationRow)(using c: Connection): Option[LocationRow] = {
+  override def update(row: LocationRow)(using c: Connection): Option[LocationRow] = {
     val locationid = row.locationid
     SQL"""update "production"."location"
     set "name" = ${ParameterValue(row.name, null, Name.toStatement)}::varchar,
@@ -131,7 +131,7 @@ class LocationRepoImpl extends LocationRepo {
     """.executeInsert(LocationRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: LocationRow)(using c: Connection): LocationRow = {
+  override def upsert(unsaved: LocationRow)(using c: Connection): LocationRow = {
   SQL"""insert into "production"."location"("locationid", "name", "costrate", "availability", "modifieddate")
     values (
       ${ParameterValue(unsaved.locationid, null, LocationId.toStatement)}::int4,
@@ -151,7 +151,7 @@ class LocationRepoImpl extends LocationRepo {
     .executeInsert(LocationRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[LocationRow])(using c: Connection): List[LocationRow] = {
+  override def upsertBatch(unsaved: Iterable[LocationRow])(using c: Connection): List[LocationRow] = {
     def toNamedParameter(row: LocationRow): List[NamedParameter] = List(
       NamedParameter("locationid", ParameterValue(row.locationid, null, LocationId.toStatement)),
       NamedParameter("name", ParameterValue(row.name, null, Name.toStatement)),
@@ -159,6 +159,7 @@ class LocationRepoImpl extends LocationRepo {
       NamedParameter("availability", ParameterValue(row.availability, null, ToStatement.scalaBigDecimalToStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -182,7 +183,7 @@ class LocationRepoImpl extends LocationRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[LocationRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

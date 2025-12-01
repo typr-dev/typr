@@ -7,7 +7,6 @@ package adventureworks.humanresources.department;
 
 import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.public_.Name;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,12 +23,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class DepartmentRepoImpl implements DepartmentRepo {
+  @Override
   public DeleteBuilder<DepartmentFields, DepartmentRow> delete() {
     return DeleteBuilder.of("humanresources.department", DepartmentFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     DepartmentId departmentid,
     Connection c
@@ -43,6 +43,7 @@ public class DepartmentRepoImpl implements DepartmentRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     DepartmentId[] departmentids,
     Connection c
@@ -59,6 +60,7 @@ public class DepartmentRepoImpl implements DepartmentRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public DepartmentRow insert(
     DepartmentRow unsaved,
     Connection c
@@ -82,59 +84,65 @@ public class DepartmentRepoImpl implements DepartmentRepo {
       .updateReturning(DepartmentRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public DepartmentRow insert(
     DepartmentRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"name\""));
-      values.add(interpolate(
-        Name.pgType.encode(unsaved.name()),
-        typo.runtime.Fragment.lit("::varchar")
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"name\""));
+    values.add(interpolate(
+      Name.pgType.encode(unsaved.name()),
+      typo.runtime.Fragment.lit("::varchar")
+    ));
+    columns.add(Fragment.lit("\"groupname\""));
+    values.add(interpolate(
+      Name.pgType.encode(unsaved.groupname()),
+      typo.runtime.Fragment.lit("::varchar")
+    ));
+    unsaved.departmentid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"departmentid\""));
+        values.add(interpolate(
+        DepartmentId.pgType.encode(value),
+        typo.runtime.Fragment.lit("::int4")
       ));
-      columns.add(Fragment.lit("\"groupname\""));
-      values.add(interpolate(
-        Name.pgType.encode(unsaved.groupname()),
-        typo.runtime.Fragment.lit("::varchar")
+      }
+    );;
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
       ));
-      unsaved.departmentid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"departmentid\""));
-          values.add(interpolate(
-            DepartmentId.pgType.encode(value),
-            typo.runtime.Fragment.lit("::int4")
-          ));
-        }
-      );;
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "humanresources"."department"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "departmentid", "name", "groupname", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "humanresources"."department"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "departmentid", "name", "groupname", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(DepartmentRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<DepartmentRow> unsaved,
     Integer batchSize,
@@ -146,6 +154,7 @@ public class DepartmentRepoImpl implements DepartmentRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<DepartmentRowUnsaved> unsaved,
     Integer batchSize,
@@ -156,17 +165,20 @@ public class DepartmentRepoImpl implements DepartmentRepo {
     """), batchSize, unsaved, c, DepartmentRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<DepartmentFields, DepartmentRow> select() {
     return SelectBuilder.of("humanresources.department", DepartmentFields.structure(), DepartmentRow._rowParser);
   };
 
+  @Override
   public List<DepartmentRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "departmentid", "name", "groupname", "modifieddate"::text
        from "humanresources"."department"
-    """)).as(DepartmentRow._rowParser.all()).runUnchecked(c);
+    """)).query(DepartmentRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<DepartmentRow> selectById(
     DepartmentId departmentid,
     Connection c
@@ -178,9 +190,10 @@ public class DepartmentRepoImpl implements DepartmentRepo {
          where "departmentid" = """),
       DepartmentId.pgType.encode(departmentid),
       typo.runtime.Fragment.lit("")
-    ).as(DepartmentRow._rowParser.first()).runUnchecked(c);
+    ).query(DepartmentRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<DepartmentRow> selectByIds(
     DepartmentId[] departmentids,
     Connection c
@@ -192,48 +205,52 @@ public class DepartmentRepoImpl implements DepartmentRepo {
          where "departmentid" = ANY("""),
       DepartmentId.pgTypeArray.encode(departmentids),
       typo.runtime.Fragment.lit(")")
-    ).as(DepartmentRow._rowParser.all()).runUnchecked(c);
+    ).query(DepartmentRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<DepartmentId, DepartmentRow> selectByIdsTracked(
     DepartmentId[] departmentids,
     Connection c
   ) {
-    Map<DepartmentId, DepartmentRow> ret = new HashMap<>();;
-      selectByIds(departmentids, c).forEach(row -> ret.put(row.departmentid(), row));
+    HashMap<DepartmentId, DepartmentRow> ret = new HashMap<DepartmentId, DepartmentRow>();
+    selectByIds(departmentids, c).forEach(row -> ret.put(row.departmentid(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<DepartmentFields, DepartmentRow> update() {
     return UpdateBuilder.of("humanresources.department", DepartmentFields.structure(), DepartmentRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     DepartmentRow row,
     Connection c
   ) {
     DepartmentId departmentid = row.departmentid();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "humanresources"."department"
-                set "name" = """),
-             Name.pgType.encode(row.name()),
-             typo.runtime.Fragment.lit("""
-                ::varchar,
-                "groupname" = """),
-             Name.pgType.encode(row.groupname()),
-             typo.runtime.Fragment.lit("""
-                ::varchar,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "departmentid" = """),
-             DepartmentId.pgType.encode(departmentid),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "humanresources"."department"
+         set "name" = """),
+      Name.pgType.encode(row.name()),
+      typo.runtime.Fragment.lit("""
+         ::varchar,
+         "groupname" = """),
+      Name.pgType.encode(row.groupname()),
+      typo.runtime.Fragment.lit("""
+         ::varchar,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "departmentid" = """),
+      DepartmentId.pgType.encode(departmentid),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public DepartmentRow upsert(
     DepartmentRow unsaved,
     Connection c
@@ -263,6 +280,7 @@ public class DepartmentRepoImpl implements DepartmentRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<DepartmentRow> upsertBatch(
     Iterator<DepartmentRow> unsaved,
     Connection c
@@ -282,26 +300,27 @@ public class DepartmentRepoImpl implements DepartmentRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<DepartmentRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table department_TEMP (like "humanresources"."department") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy department_TEMP("departmentid", "name", "groupname", "modifieddate") from stdin
-      """), batchSize, unsaved, c, DepartmentRow.pgText);
+    create temporary table department_TEMP (like "humanresources"."department") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy department_TEMP("departmentid", "name", "groupname", "modifieddate") from stdin
+    """), batchSize, unsaved, c, DepartmentRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "humanresources"."department"("departmentid", "name", "groupname", "modifieddate")
-              select * from department_TEMP
-              on conflict ("departmentid")
-              do update set
-                "name" = EXCLUDED."name",
-              "groupname" = EXCLUDED."groupname",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table department_TEMP;""")).update().runUnchecked(c);
+       insert into "humanresources"."department"("departmentid", "name", "groupname", "modifieddate")
+       select * from department_TEMP
+       on conflict ("departmentid")
+       do update set
+         "name" = EXCLUDED."name",
+       "groupname" = EXCLUDED."groupname",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table department_TEMP;""")).update().runUnchecked(c);
   };
 }

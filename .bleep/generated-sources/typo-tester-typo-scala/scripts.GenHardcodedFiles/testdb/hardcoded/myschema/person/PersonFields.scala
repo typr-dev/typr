@@ -58,7 +58,7 @@ object PersonFields {
 
     override lazy val fields: PersonFields = {
       new PersonFields {
-        def id: IdField[PersonId, PersonRow] = {
+        override def id: IdField[PersonId, PersonRow] = {
           new IdField[PersonId, PersonRow](
             _path,
             "id",
@@ -69,7 +69,7 @@ object PersonFields {
             PersonId.pgType
           )
         }
-        def favouriteFootballClubId: Field[FootballClubId, PersonRow] = {
+        override def favouriteFootballClubId: Field[FootballClubId, PersonRow] = {
           new Field[FootballClubId, PersonRow](
             _path,
             "favourite_football_club_id",
@@ -80,7 +80,7 @@ object PersonFields {
             FootballClubId.pgType
           )
         }
-        def name: Field[/* max 100 chars */ String, PersonRow] = {
+        override def name: Field[/* max 100 chars */ String, PersonRow] = {
           new Field[/* max 100 chars */ String, PersonRow](
             _path,
             "name",
@@ -91,7 +91,7 @@ object PersonFields {
             PgTypes.text
           )
         }
-        def nickName: OptField[/* max 30 chars */ String, PersonRow] = {
+        override def nickName: OptField[/* max 30 chars */ String, PersonRow] = {
           new OptField[/* max 30 chars */ String, PersonRow](
             _path,
             "nick_name",
@@ -102,7 +102,7 @@ object PersonFields {
             PgTypes.text
           )
         }
-        def blogUrl: OptField[/* max 100 chars */ String, PersonRow] = {
+        override def blogUrl: OptField[/* max 100 chars */ String, PersonRow] = {
           new OptField[/* max 100 chars */ String, PersonRow](
             _path,
             "blog_url",
@@ -113,7 +113,7 @@ object PersonFields {
             PgTypes.text
           )
         }
-        def email: Field[/* max 254 chars */ String, PersonRow] = {
+        override def email: Field[/* max 254 chars */ String, PersonRow] = {
           new Field[/* max 254 chars */ String, PersonRow](
             _path,
             "email",
@@ -124,7 +124,7 @@ object PersonFields {
             PgTypes.text
           )
         }
-        def phone: Field[/* max 8 chars */ String, PersonRow] = {
+        override def phone: Field[/* max 8 chars */ String, PersonRow] = {
           new Field[/* max 8 chars */ String, PersonRow](
             _path,
             "phone",
@@ -135,7 +135,7 @@ object PersonFields {
             PgTypes.text
           )
         }
-        def likesPizza: Field[java.lang.Boolean, PersonRow] = {
+        override def likesPizza: Field[java.lang.Boolean, PersonRow] = {
           new Field[java.lang.Boolean, PersonRow](
             _path,
             "likes_pizza",
@@ -146,7 +146,7 @@ object PersonFields {
             PgTypes.bool
           )
         }
-        def maritalStatusId: Field[MaritalStatusId, PersonRow] = {
+        override def maritalStatusId: Field[MaritalStatusId, PersonRow] = {
           new Field[MaritalStatusId, PersonRow](
             _path,
             "marital_status_id",
@@ -157,7 +157,7 @@ object PersonFields {
             MaritalStatusId.pgType
           )
         }
-        def workEmail: OptField[/* max 254 chars */ String, PersonRow] = {
+        override def workEmail: OptField[/* max 254 chars */ String, PersonRow] = {
           new OptField[/* max 254 chars */ String, PersonRow](
             _path,
             "work_email",
@@ -168,7 +168,7 @@ object PersonFields {
             PgTypes.text
           )
         }
-        def sector: Field[Sector, PersonRow] = {
+        override def sector: Field[Sector, PersonRow] = {
           new Field[Sector, PersonRow](
             _path,
             "sector",
@@ -179,7 +179,7 @@ object PersonFields {
             Sector.pgType
           )
         }
-        def favoriteNumber: Field[Number, PersonRow] = {
+        override def favoriteNumber: Field[Number, PersonRow] = {
           new Field[Number, PersonRow](
             _path,
             "favorite_number",
@@ -195,7 +195,7 @@ object PersonFields {
 
     override lazy val columns: java.util.List[FieldLike[?, PersonRow]] = java.util.List.of(this.fields.id, this.fields.favouriteFootballClubId, this.fields.name, this.fields.nickName, this.fields.blogUrl, this.fields.email, this.fields.phone, this.fields.likesPizza, this.fields.maritalStatusId, this.fields.workEmail, this.fields.sector, this.fields.favoriteNumber)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[PersonFields, PersonRow] = new Impl(java.util.List.of())

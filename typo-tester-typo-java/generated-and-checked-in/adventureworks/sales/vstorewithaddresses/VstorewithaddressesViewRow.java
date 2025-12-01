@@ -11,7 +11,6 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple9;
 
 /** View: sales.vstorewithaddresses */
 public record VstorewithaddressesViewRow(
@@ -79,5 +78,5 @@ public record VstorewithaddressesViewRow(
     return new VstorewithaddressesViewRow(businessentityid, name, addresstype, addressline1, addressline2, city, stateprovincename, postalcode, countryregionname);
   };
 
-  static RowParser<VstorewithaddressesViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, Name.pgType, Name.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text, Name.pgType, PgTypes.text, Name.pgType, VstorewithaddressesViewRow::new, row -> new Tuple9<>(row.businessentityid(), row.name(), row.addresstype(), row.addressline1(), row.addressline2(), row.city(), row.stateprovincename(), row.postalcode(), row.countryregionname()));;
+  static RowParser<VstorewithaddressesViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, Name.pgType, Name.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text, Name.pgType, PgTypes.text, Name.pgType, VstorewithaddressesViewRow::new, row -> new Object[]{row.businessentityid(), row.name(), row.addresstype(), row.addressline1(), row.addressline2(), row.city(), row.stateprovincename(), row.postalcode(), row.countryregionname()});;
 }

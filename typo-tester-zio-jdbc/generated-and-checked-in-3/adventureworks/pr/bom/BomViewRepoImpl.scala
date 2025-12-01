@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class BomViewRepoImpl extends BomViewRepo {
-  def select: SelectBuilder[BomViewFields, BomViewRow] = SelectBuilder.of(""""pr"."bom"""", BomViewFields.structure, BomViewRow.jdbcDecoder)
+  override def select: SelectBuilder[BomViewFields, BomViewRow] = SelectBuilder.of(""""pr"."bom"""", BomViewFields.structure, BomViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, BomViewRow] = sql"""select "id", "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text from "pr"."bom"""".query(using BomViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, BomViewRow] = sql"""select "id", "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text from "pr"."bom"""".query(using BomViewRow.jdbcDecoder).selectStream()
 }

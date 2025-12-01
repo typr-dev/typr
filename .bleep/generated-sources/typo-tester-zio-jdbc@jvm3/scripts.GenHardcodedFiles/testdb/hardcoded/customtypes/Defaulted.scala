@@ -64,28 +64,28 @@ object Defaulted {
   }
 
   case class Provided[T](value: T) extends Defaulted[T] {
-    def fold[U](
+    override def fold[U](
       onDefault: => U,
       onProvided: T => U
     ): U = onProvided(value)
 
-    def getOrElse(onDefault: => T): T = value
+    override def getOrElse(onDefault: => T): T = value
 
-    def visit(
+    override def visit(
       onDefault: => Unit,
       onProvided: T => Unit
     ): Unit = onProvided(value)
   }
 
   case class UseDefault[T]() extends Defaulted[T] {
-    def fold[U](
+    override def fold[U](
       onDefault: => U,
       onProvided: T => U
     ): U = onDefault
 
-    def getOrElse(onDefault: => T): T = onDefault
+    override def getOrElse(onDefault: => T): T = onDefault
 
-    def visit(
+    override def visit(
       onDefault: => Unit,
       onProvided: T => Unit
     ): Unit = onDefault

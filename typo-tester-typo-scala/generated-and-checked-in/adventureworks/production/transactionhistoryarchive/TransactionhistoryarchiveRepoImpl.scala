@@ -20,11 +20,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class TransactionhistoryarchiveRepoImpl extends TransactionhistoryarchiveRepo {
-  def delete: DeleteBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = DeleteBuilder.of("production.transactionhistoryarchive", TransactionhistoryarchiveFields.structure)
+  override def delete: DeleteBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = DeleteBuilder.of("production.transactionhistoryarchive", TransactionhistoryarchiveFields.structure)
 
-  def deleteById(transactionid: TransactionhistoryarchiveId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."transactionhistoryarchive" where "transactionid" = ${TransactionhistoryarchiveId.pgType.encode(transactionid)}""".update().runUnchecked(c) > 0
+  override def deleteById(transactionid: TransactionhistoryarchiveId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."transactionhistoryarchive" where "transactionid" = ${TransactionhistoryarchiveId.pgType.encode(transactionid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(transactionids: Array[TransactionhistoryarchiveId])(using c: Connection): Integer = {
+  override def deleteByIds(transactionids: Array[TransactionhistoryarchiveId])(using c: Connection): Integer = {
     interpolate"""delete
     from "production"."transactionhistoryarchive"
     where "transactionid" = ANY(${TransactionhistoryarchiveId.pgTypeArray.encode(transactionids)})"""
@@ -32,7 +32,7 @@ class TransactionhistoryarchiveRepoImpl extends TransactionhistoryarchiveRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: TransactionhistoryarchiveRow)(using c: Connection): TransactionhistoryarchiveRow = {
+  override def insert(unsaved: TransactionhistoryarchiveRow)(using c: Connection): TransactionhistoryarchiveRow = {
   interpolate"""insert into "production"."transactionhistoryarchive"("transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate")
     values (${TransactionhistoryarchiveId.pgType.encode(unsaved.transactionid)}::int4, ${PgTypes.int4.encode(unsaved.productid)}::int4, ${PgTypes.int4.encode(unsaved.referenceorderid)}::int4, ${PgTypes.int4.encode(unsaved.referenceorderlineid)}::int4, ${TypoLocalDateTime.pgType.encode(unsaved.transactiondate)}::timestamp, ${PgTypes.text.encode(unsaved.transactiontype)}::bpchar, ${PgTypes.int4.encode(unsaved.quantity)}::int4, ${PgTypes.numeric.encode(unsaved.actualcost)}::numeric, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text
@@ -40,9 +40,9 @@ class TransactionhistoryarchiveRepoImpl extends TransactionhistoryarchiveRepo {
     .updateReturning(TransactionhistoryarchiveRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: TransactionhistoryarchiveRowUnsaved)(using c: Connection): TransactionhistoryarchiveRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: TransactionhistoryarchiveRowUnsaved)(using c: Connection): TransactionhistoryarchiveRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""transactionid"""")): @scala.annotation.nowarn
     values.add(interpolate"${TransactionhistoryarchiveId.pgType.encode(unsaved.transactionid)}::int4"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""productid"""")): @scala.annotation.nowarn
@@ -56,25 +56,16 @@ class TransactionhistoryarchiveRepoImpl extends TransactionhistoryarchiveRepo {
     columns.add(Fragment.lit(""""actualcost"""")): @scala.annotation.nowarn
     values.add(interpolate"${PgTypes.numeric.encode(unsaved.actualcost)}::numeric"): @scala.annotation.nowarn
     unsaved.referenceorderlineid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""referenceorderlineid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PgTypes.int4.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""referenceorderlineid"""")): @scala.annotation.nowarn; values.add(interpolate"${PgTypes.int4.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.transactiondate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""transactiondate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""transactiondate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "production"."transactionhistoryarchive"(${Fragment.comma(columns)})
@@ -82,51 +73,51 @@ class TransactionhistoryarchiveRepoImpl extends TransactionhistoryarchiveRepo {
       returning "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text
       """
     }
-    q.updateReturning(TransactionhistoryarchiveRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(TransactionhistoryarchiveRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[TransactionhistoryarchiveRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."transactionhistoryarchive"("transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate") FROM STDIN""", batchSize, unsaved, c, TransactionhistoryarchiveRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[TransactionhistoryarchiveRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."transactionhistoryarchive"("transactionid", "productid", "referenceorderid", "transactiontype", "quantity", "actualcost", "referenceorderlineid", "transactiondate", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, TransactionhistoryarchiveRowUnsaved.pgText)
 
-  def select: SelectBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = SelectBuilder.of("production.transactionhistoryarchive", TransactionhistoryarchiveFields.structure, TransactionhistoryarchiveRow.`_rowParser`)
+  override def select: SelectBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = SelectBuilder.of("production.transactionhistoryarchive", TransactionhistoryarchiveFields.structure, TransactionhistoryarchiveRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[TransactionhistoryarchiveRow] = {
+  override def selectAll(using c: Connection): java.util.List[TransactionhistoryarchiveRow] = {
     interpolate"""select "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text
     from "production"."transactionhistoryarchive"
-    """.as(TransactionhistoryarchiveRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(TransactionhistoryarchiveRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(transactionid: TransactionhistoryarchiveId)(using c: Connection): Optional[TransactionhistoryarchiveRow] = {
+  override def selectById(transactionid: TransactionhistoryarchiveId)(using c: Connection): Optional[TransactionhistoryarchiveRow] = {
     interpolate"""select "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text
     from "production"."transactionhistoryarchive"
-    where "transactionid" = ${TransactionhistoryarchiveId.pgType.encode(transactionid)}""".as(TransactionhistoryarchiveRow.`_rowParser`.first()).runUnchecked(c)
+    where "transactionid" = ${TransactionhistoryarchiveId.pgType.encode(transactionid)}""".query(TransactionhistoryarchiveRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(transactionids: Array[TransactionhistoryarchiveId])(using c: Connection): java.util.List[TransactionhistoryarchiveRow] = {
+  override def selectByIds(transactionids: Array[TransactionhistoryarchiveId])(using c: Connection): java.util.List[TransactionhistoryarchiveRow] = {
     interpolate"""select "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text
     from "production"."transactionhistoryarchive"
-    where "transactionid" = ANY(${TransactionhistoryarchiveId.pgTypeArray.encode(transactionids)})""".as(TransactionhistoryarchiveRow.`_rowParser`.all()).runUnchecked(c)
+    where "transactionid" = ANY(${TransactionhistoryarchiveId.pgTypeArray.encode(transactionids)})""".query(TransactionhistoryarchiveRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(transactionids: Array[TransactionhistoryarchiveId])(using c: Connection): java.util.Map[TransactionhistoryarchiveId, TransactionhistoryarchiveRow] = {
-    val ret: java.util.Map[TransactionhistoryarchiveId, TransactionhistoryarchiveRow] = new HashMap()
+  override def selectByIdsTracked(transactionids: Array[TransactionhistoryarchiveId])(using c: Connection): java.util.Map[TransactionhistoryarchiveId, TransactionhistoryarchiveRow] = {
+    val ret: HashMap[TransactionhistoryarchiveId, TransactionhistoryarchiveRow] = new HashMap[TransactionhistoryarchiveId, TransactionhistoryarchiveRow]()
     selectByIds(transactionids)(using c).forEach(row => ret.put(row.transactionid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = UpdateBuilder.of("production.transactionhistoryarchive", TransactionhistoryarchiveFields.structure, TransactionhistoryarchiveRow.`_rowParser`.all())
+  override def update: UpdateBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = UpdateBuilder.of("production.transactionhistoryarchive", TransactionhistoryarchiveFields.structure, TransactionhistoryarchiveRow.`_rowParser`.all())
 
-  def update(row: TransactionhistoryarchiveRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: TransactionhistoryarchiveRow)(using c: Connection): java.lang.Boolean = {
     val transactionid: TransactionhistoryarchiveId = row.transactionid
-    interpolate"""update "production"."transactionhistoryarchive"
+    return interpolate"""update "production"."transactionhistoryarchive"
     set "productid" = ${PgTypes.int4.encode(row.productid)}::int4,
     "referenceorderid" = ${PgTypes.int4.encode(row.referenceorderid)}::int4,
     "referenceorderlineid" = ${PgTypes.int4.encode(row.referenceorderlineid)}::int4,
@@ -138,7 +129,7 @@ class TransactionhistoryarchiveRepoImpl extends TransactionhistoryarchiveRepo {
     where "transactionid" = ${TransactionhistoryarchiveId.pgType.encode(transactionid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: TransactionhistoryarchiveRow)(using c: Connection): TransactionhistoryarchiveRow = {
+  override def upsert(unsaved: TransactionhistoryarchiveRow)(using c: Connection): TransactionhistoryarchiveRow = {
   interpolate"""insert into "production"."transactionhistoryarchive"("transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate")
     values (${TransactionhistoryarchiveId.pgType.encode(unsaved.transactionid)}::int4, ${PgTypes.int4.encode(unsaved.productid)}::int4, ${PgTypes.int4.encode(unsaved.referenceorderid)}::int4, ${PgTypes.int4.encode(unsaved.referenceorderlineid)}::int4, ${TypoLocalDateTime.pgType.encode(unsaved.transactiondate)}::timestamp, ${PgTypes.text.encode(unsaved.transactiontype)}::bpchar, ${PgTypes.int4.encode(unsaved.quantity)}::int4, ${PgTypes.numeric.encode(unsaved.actualcost)}::numeric, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("transactionid")
@@ -157,7 +148,7 @@ class TransactionhistoryarchiveRepoImpl extends TransactionhistoryarchiveRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[TransactionhistoryarchiveRow])(using c: Connection): java.util.List[TransactionhistoryarchiveRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[TransactionhistoryarchiveRow])(using c: Connection): java.util.List[TransactionhistoryarchiveRow] = {
     interpolate"""insert into "production"."transactionhistoryarchive"("transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate")
     values (?::int4, ?::int4, ?::int4, ?::int4, ?::timestamp, ?::bpchar, ?::int4, ?::numeric, ?::timestamp)
     on conflict ("transactionid")
@@ -177,13 +168,13 @@ class TransactionhistoryarchiveRepoImpl extends TransactionhistoryarchiveRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[TransactionhistoryarchiveRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table transactionhistoryarchive_TEMP (like "production"."transactionhistoryarchive") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy transactionhistoryarchive_TEMP("transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate") from stdin""", batchSize, unsaved, c, TransactionhistoryarchiveRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "production"."transactionhistoryarchive"("transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate")
+    return interpolate"""insert into "production"."transactionhistoryarchive"("transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate")
     select * from transactionhistoryarchive_TEMP
     on conflict ("transactionid")
     do update set

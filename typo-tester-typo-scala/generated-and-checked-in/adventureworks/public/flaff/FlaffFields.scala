@@ -46,7 +46,7 @@ object FlaffFields {
 
     override lazy val fields: FlaffFields = {
       new FlaffFields {
-        def code: IdField[ShortText, FlaffRow] = {
+        override def code: IdField[ShortText, FlaffRow] = {
           new IdField[ShortText, FlaffRow](
             _path,
             "code",
@@ -57,7 +57,7 @@ object FlaffFields {
             ShortText.pgType
           )
         }
-        def anotherCode: IdField[/* max 20 chars */ String, FlaffRow] = {
+        override def anotherCode: IdField[/* max 20 chars */ String, FlaffRow] = {
           new IdField[/* max 20 chars */ String, FlaffRow](
             _path,
             "another_code",
@@ -68,7 +68,7 @@ object FlaffFields {
             PgTypes.text
           )
         }
-        def someNumber: IdField[Integer, FlaffRow] = {
+        override def someNumber: IdField[Integer, FlaffRow] = {
           new IdField[Integer, FlaffRow](
             _path,
             "some_number",
@@ -79,7 +79,7 @@ object FlaffFields {
             PgTypes.int4
           )
         }
-        def specifier: IdField[ShortText, FlaffRow] = {
+        override def specifier: IdField[ShortText, FlaffRow] = {
           new IdField[ShortText, FlaffRow](
             _path,
             "specifier",
@@ -90,7 +90,7 @@ object FlaffFields {
             ShortText.pgType
           )
         }
-        def parentspecifier: OptField[ShortText, FlaffRow] = {
+        override def parentspecifier: OptField[ShortText, FlaffRow] = {
           new OptField[ShortText, FlaffRow](
             _path,
             "parentspecifier",
@@ -106,7 +106,7 @@ object FlaffFields {
 
     override lazy val columns: java.util.List[FieldLike[?, FlaffRow]] = java.util.List.of(this.fields.code, this.fields.anotherCode, this.fields.someNumber, this.fields.specifier, this.fields.parentspecifier)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[FlaffFields, FlaffRow] = new Impl(java.util.List.of())

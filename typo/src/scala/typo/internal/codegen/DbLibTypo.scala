@@ -3,7 +3,7 @@ package internal
 package codegen
 
 import typo.internal.analysis.MaybeReturnsRows
-import typo.jvm.Code.TreeOps
+import typo.jvm.Code.TypeOps
 
 class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefault, enableStreamingInserts: Boolean) extends DbLib {
   val Fragment = jvm.Type.Qualified("typo.runtime.Fragment")
@@ -15,33 +15,16 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
   val RowParser = jvm.Type.Qualified("typo.runtime.RowParser")
   val RowParsers = jvm.Type.Qualified("typo.runtime.RowParsers")
   val streamingInsert = jvm.Type.Qualified("typo.runtime.streamingInsert")
-  def Tuple(n: Int) = RowParsers / jvm.Ident(s"Tuple${n}")
   val DefaultValue = "__DEFAULT_VALUE__"
   // For Java, use Fragment.interpolate (static method)
   // For Scala, use FragmentInterpolator.interpolate (extension method)
   val SqlStringInterpolation: jvm.Type.Qualified = lang match {
-    case _: LangScala => jvm.Type.Qualified("typo.runtime.FragmentInterpolator")
-    case LangJava     => jvm.Type.Qualified("typo.runtime.Fragment")
-    case _            => ???
+    case _: LangScala          => jvm.Type.Qualified("typo.runtime.FragmentInterpolator")
+    case LangJava | LangKotlin => jvm.Type.Qualified("typo.runtime.Fragment")
+    case _                     => ???
   }
-  val BatchSql = jvm.Type.Qualified("anorm.BatchSql")
-  val Column = jvm.Type.Qualified("anorm.Column")
-  val ToStatement = jvm.Type.Qualified("anorm.ToStatement")
-  val ToSql = jvm.Type.Qualified("anorm.ToSql")
-  val NamedParameter = jvm.Type.Qualified("anorm.NamedParameter")
-  val ParameterValue = jvm.Type.Qualified("anorm.ParameterValue")
-  val ToParameterValue = jvm.Type.Qualified("anorm.ToParameterValue")
-  val Success = jvm.Type.Qualified("anorm.Success")
-  val SqlMappingError = jvm.Type.Qualified("anorm.SqlMappingError")
-  val ParameterMetaData = jvm.Type.Qualified("anorm.ParameterMetaData")
-  val SQL = jvm.Type.Qualified("anorm.SQL")
-  val TypeDoesNotMatch = jvm.Type.Qualified("anorm.TypeDoesNotMatch")
-  val SimpleSql = jvm.Type.Qualified("anorm.SimpleSql")
-  val Row = jvm.Type.Qualified("anorm.Row")
-  val managed = jvm.Type.Qualified("resource.managed")
 
   def rowParserFor(rowType: jvm.Type) = code"$rowType.$rowParserName"
-
   def SQL(content: jvm.Code) = jvm.StringInterpolate(SqlStringInterpolation / jvm.Ident("interpolate"), jvm.Ident("interpolate"), content)
   def FR(content: jvm.Code) = SQL(content)
 
@@ -57,11 +40,12 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
   val textSupport: Option[DbLibTextSupport] = None
   val ExecuteReturningSyntax = jvm.QIdent(List[List[jvm.Ident]](List(jvm.Ident("anorm")), pkg.idents, List(jvm.Ident("ExecuteReturningSyntax"))).flatten)
 
-  val arrayMap = jvm.Type.Qualified("typo.runtime.internal.arrayMap")
+  import lang.prop
 
-  def mapArray(arr: jvm.Code, mapElem: jvm.Code => jvm.Code, toType: jvm.Type) = {
-    val x = jvm.Ident("x")
-    lang.arrayMap(arr, jvm.Lambda1(x, mapElem(x)).code, code"$toType.class")
+  /** Access ID from a row - uses method call for composite IDs, property access for unary IDs */
+  def idAccessOnRow(on: jvm.Code, id: IdComputed): jvm.Code = id match {
+    case _: IdComputed.Composite => lang.nullaryMethodCall(on, id.paramName)
+    case _: IdComputed.Unary     => prop(on, id.paramName)
   }
 
   override val additionalFiles: List[typo.jvm.File] = Nil
@@ -79,23 +63,23 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
       case id: IdComputed.Unary =>
         code"${id.col.dbName.code} = ${runtimeInterpolateValue(id.paramName, id.tpe)}"
       case composite: IdComputed.Composite =>
-        composite.cols.map(cc => code"${cc.dbName.code} = ${runtimeInterpolateValue(code"${jvm.ApplyNullary(composite.paramName, cc.name)}", cc.tpe)}").mkCode(" AND ")
+        composite.cols.map(cc => code"${cc.dbName.code} = ${runtimeInterpolateValue(prop(composite.paramName.code, cc.name), cc.tpe)}").mkCode(" AND ")
     }
 
   /** Resolve known implicits at generation-time instead of at compile-time */
   def lookupPgType(tpe: jvm.Type): jvm.Code =
     jvm.Type.base(tpe) match {
-      case TypesJava.BigDecimal        => code"$PgTypes.numeric"
-      case TypesJava.Boolean           => code"$PgTypes.bool"
-      case TypesJava.Double            => code"$PgTypes.float8"
-      case TypesJava.Float             => code"$PgTypes.float4"
-      case TypesJava.Short             => code"$PgTypes.int2"
-      case TypesJava.Integer           => code"$PgTypes.int4"
-      case TypesJava.Long              => code"$PgTypes.int8"
-      case TypesJava.String            => code"$PgTypes.text"
-      case TypesJava.UUID              => code"$PgTypes.uuid"
-      case lang.Optional(targ)         => code"${lookupPgType(targ)}.opt()"
-      case jvm.Type.ArrayOf(lang.Byte) => code"$PgTypes.bytea"
+      case TypesJava.BigDecimal                    => code"$PgTypes.numeric"
+      case TypesJava.Boolean | TypesKotlin.Boolean => code"$PgTypes.bool"
+      case TypesJava.Double | TypesKotlin.Double   => code"$PgTypes.float8"
+      case TypesJava.Float | TypesKotlin.Float     => code"$PgTypes.float4"
+      case TypesJava.Short | TypesKotlin.Short     => code"$PgTypes.int2"
+      case TypesJava.Integer | TypesKotlin.Int     => code"$PgTypes.int4"
+      case TypesJava.Long | TypesKotlin.Long       => code"$PgTypes.int8"
+      case TypesJava.String | TypesKotlin.String   => code"$PgTypes.text"
+      case TypesJava.UUID                          => code"$PgTypes.uuid"
+      case lang.Optional(targ)                     => code"${lookupPgType(targ)}.opt()"
+      case jvm.Type.ArrayOf(lang.Byte)             => code"$PgTypes.bytea"
       // generated type
       case x: jvm.Type.Qualified if x.value.idents.startsWith(pkg.idents) =>
         code"$tpe.$pgTypeName"
@@ -141,7 +125,9 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
         implicitParams = implicitParams,
         tpe = returnType,
         throws = Nil,
-        body = Nil
+        body = jvm.Body.Abstract,
+        isOverride = false,
+        isDefault = false
       )
     )
 
@@ -203,18 +189,18 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
     }
   }
 
-  override def repoImpl(repoMethod: RepoMethod): List[jvm.Code] =
+  override def repoImpl(repoMethod: RepoMethod): jvm.Body =
     repoMethod match {
       case RepoMethod.SelectBuilder(relName, fieldsType, rowType) =>
-        val structure = code"$fieldsType".callNullary("structure")
-        List(code"${jvm.Type.dsl.SelectBuilder}.of(${jvm.StrLit(relName.value)}, $structure, $rowType.$rowParserName)")
+        val structure = prop(code"$fieldsType", "structure")
+        jvm.Body.Expr(code"${jvm.Type.dsl.SelectBuilder}.of(${jvm.StrLit(relName.value)}, $structure, $rowType.$rowParserName)")
       case RepoMethod.SelectAll(relName, cols, rowType) =>
         val sql = SQL {
           code"""|select ${dbNames(cols, isRead = true)}
                  |from $relName
                  |""".stripMargin
         }
-        List(code"""$sql.as(${rowParserFor(rowType)}.all()).runUnchecked(c)""")
+        jvm.Body.Expr(code"""$sql.query(${rowParserFor(rowType)}.all()).runUnchecked(c)""")
 
       case RepoMethod.SelectById(relName, cols, id, rowType) =>
         val sql = SQL {
@@ -222,14 +208,25 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
                  |from $relName
                  |where ${matchId(id)}""".stripMargin
         }
-        List(code"""$sql.as(${rowParserFor(rowType)}.first()).runUnchecked(c)""")
+        jvm.Body.Expr(code"""$sql.query(${rowParserFor(rowType)}.first()).runUnchecked(c)""")
 
       case RepoMethod.SelectByIds(relName, cols, computedId, idsParam, rowType) =>
         val joinedColNames = dbNames(cols, isRead = true)
         computedId match {
           case x: IdComputed.Composite =>
             val vals =
-              x.cols.map(col => jvm.Value(Nil, col.name, jvm.Type.ArrayOf(col.tpe), Some(lang.arrayMap(idsParam.name.code, jvm.FieldGetterRef(x.tpe, col.name).code, jvm.ClassOf(col.tpe).code))).code)
+              x.cols.map(col =>
+                jvm
+                  .Value(
+                    Nil,
+                    col.name,
+                    jvm.Type.ArrayOf(col.tpe),
+                    Some(lang.arrayMap(idsParam.name.code, jvm.FieldGetterRef(x.tpe, col.name).code, jvm.ClassOf(col.tpe).code)),
+                    isLazy = false,
+                    isOverride = false
+                  )
+                  .code
+              )
             // Build SQL avoiding problematic string patterns in Java text blocks
             // The issue is that Java text blocks can't have string literals containing ")
             // So we need to structure the SQL to avoid this pattern
@@ -263,7 +260,7 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
                      |in ($selectClause)
                      |""".stripMargin
             }
-            vals.toList ++ List(code"$sql.as(${rowParserFor(rowType)}.all()).runUnchecked(c)")
+            jvm.Body.Stmts(vals.toList :+ jvm.Return(code"$sql.query(${rowParserFor(rowType)}.all()).runUnchecked(c)").code)
 
           case x: IdComputed.Unary =>
             val sql = SQL {
@@ -271,7 +268,7 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
                      |from $relName
                      |where ${x.col.dbName.code} = ANY(${runtimeInterpolateValue(idsParam.name, idsParam.tpe)})""".stripMargin
             }
-            List(code"$sql.as(${rowParserFor(rowType)}.all()).runUnchecked(c)")
+            jvm.Body.Expr(code"$sql.query(${rowParserFor(rowType)}.all()).runUnchecked(c)")
         }
 
       case RepoMethod.SelectByIdsTracked(x) =>
@@ -283,17 +280,19 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
           List(jvm.Arg.Pos(code"c"))
         )
         // Use IgnoreResult to discard the return value of map.put() for Scala Consumer compatibility
-        val putCall = jvm.IgnoreResult(code"ret.put(${row.code.callNullary(x.idComputed.paramName)}, $row)")
-        val forEachLambda = lang.renderTree(jvm.Lambda1(row, putCall.code), lang.Ctx.Empty)
-        List(
-          jvm.Value(Nil, ret, TypesJava.Map.of(x.idComputed.tpe, x.rowType), Some(jvm.New(jvm.InferredTargs(TypesJava.HashMap), Nil))),
-          lang.ListType.forEach(selectByIdsCall, forEachLambda),
-          ret
+        val putCall = jvm.Body.Expr(jvm.IgnoreResult(code"ret.put(${idAccessOnRow(row.code, x.idComputed)}, $row)"))
+        val forEachLambda = lang.renderTree(jvm.Lambda(row, putCall), lang.Ctx.Empty)
+        jvm.Body.Stmts(
+          List(
+            jvm.LocalVar(ret, Some(lang.MapOps.mutableImpl.of(x.idComputed.tpe, x.rowType)), lang.MapOps.newMutableMap(x.idComputed.tpe, x.rowType)),
+            lang.ListType.forEach(selectByIdsCall, forEachLambda),
+            jvm.Return(ret)
+          )
         )
 
       case RepoMethod.UpdateBuilder(relName, fieldsType, rowType) =>
-        val structure = code"$fieldsType".callNullary("structure")
-        List(code"${jvm.Type.dsl.UpdateBuilder}.of(${jvm.StrLit(relName.value)}, $structure, $rowType.$rowParserName.all())")
+        val structure = prop(code"$fieldsType", "structure")
+        jvm.Body.Expr(code"${jvm.Type.dsl.UpdateBuilder}.of(${jvm.StrLit(relName.value)}, $structure, $rowType.$rowParserName.all())")
 
       case RepoMethod.SelectByUnique(relName, keyColumns, allCols, rowType) =>
         val sql = SQL {
@@ -303,7 +302,7 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
                  |""".stripMargin
         }
 
-        List(code"$sql.as(${rowParserFor(rowType)}.first()).runUnchecked(c)")
+        jvm.Body.Expr(code"$sql.query(${rowParserFor(rowType)}.first()).runUnchecked(c)")
 
       case RepoMethod.SelectByFieldValues(relName, cols, fieldValue, fieldValueOrIdsParam, rowType) =>
         val where = {
@@ -313,25 +312,28 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
           val typeSwitch = jvm.TypeSwitch(
             fv,
             cols.toList.map { col =>
-              jvm.TypeSwitch.Case(fieldValue / col.name, x, FR(code"${col.dbName.code} = ${runtimeInterpolateValue(jvm.ApplyNullary(x, jvm.Ident("value")), col.tpe)}"))
+              jvm.TypeSwitch.Case(fieldValue / col.name, x, FR(code"${col.dbName.code} = ${runtimeInterpolateValue(prop(x.code, "value"), col.tpe)}"))
             }
           )
-          val mapper = lang.renderTree(jvm.Lambda1(fv, typeSwitch.code), lang.Ctx.Empty)
-          val mappedList = lang.ListType.map(fieldValueOrIdsParam.name.code, mapper)
+          val mappedList = lang.ListType.map(fieldValueOrIdsParam.name.code, jvm.Lambda(fv, jvm.Body.Expr(typeSwitch)))
           jvm.Value(
             Nil,
             jvm.Ident("where"),
             Fragment,
             Some(code"""|$Fragment.whereAnd(
                      |  $mappedList
-                     |)""".stripMargin)
+                     |)""".stripMargin),
+            isLazy = false,
+            isOverride = false
           )
         }
 
         val sql = SQL(code"""select ${dbNames(cols, isRead = true)} from $relName ${jvm.RuntimeInterpolation(code"${where.name}")}""")
-        List(
-          where,
-          code"$sql.as(${rowParserFor(rowType)}.all()).runUnchecked(c)"
+        jvm.Body.Stmts(
+          List(
+            where,
+            jvm.Return(code"$sql.query(${rowParserFor(rowType)}.all()).runUnchecked(c)")
+          )
         )
 
       case RepoMethod.UpdateFieldValues(relName, id, varargsParam, fieldValue, cases0, _) =>
@@ -342,12 +344,12 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
           val typeSwitch = jvm.TypeSwitch(
             fv,
             cases0.toList.map { col =>
-              jvm.TypeSwitch.Case(fieldValue / col.name, x, FR(code"${col.dbName.code} = ${runtimeInterpolateValue(jvm.ApplyNullary(x, jvm.Ident("value")), col.tpe)}"))
+              jvm.TypeSwitch.Case(fieldValue / col.name, x, FR(code"${col.dbName.code} = ${runtimeInterpolateValue(prop(x.code, "value"), col.tpe)}"))
             }
           )
-          val mapper = lang.renderTree(jvm.Lambda1(fv, typeSwitch.code), lang.Ctx.Empty)
+          val mapper = lang.renderTree(jvm.Lambda(fv, typeSwitch.code), lang.Ctx.Empty)
           val mappedList = lang.ListType.map(varargsParam.name.code, mapper)
-          jvm.Value(Nil, jvm.Ident("updates"), lang.ListType.tpe.of(FragmentInterpolated), Some(mappedList))
+          jvm.Value(Nil, jvm.Ident("updates"), lang.ListType.tpe.of(FragmentInterpolated), Some(mappedList), isLazy = false, isOverride = false)
         }
 
         val sql = SQL {
@@ -356,32 +358,38 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
                  |where ${matchId(id)}""".stripMargin
         }
 
-        List(
-          updates,
-          jvm.IfExpr(
-            jvm.ApplyNullary(updates.name, jvm.Ident("isEmpty")),
-            code"false",
-            code"""|$sql
-                   |  .update().runUnchecked(c) > 0""".stripMargin
+        jvm.Body.Stmts(
+          List(
+            updates,
+            jvm.Return(
+              jvm.IfExpr(
+                jvm.ApplyNullary(updates.name, jvm.Ident("isEmpty")),
+                code"false",
+                code"""|$sql
+                     |  .update().runUnchecked(c) > 0""".stripMargin
+              )
+            )
           )
         )
       case RepoMethod.Update(relName, _, id, param, colsUnsaved) =>
         val sql = SQL {
           val setCols = colsUnsaved.map { col =>
-            code"${col.dbName.code} = ${runtimeInterpolateValue(jvm.ApplyNullary(param.name, col.name), col.tpe)}${SqlCast.toPgCode(col)}"
+            code"${col.dbName.code} = ${runtimeInterpolateValue(prop(param.name.code, col.name), col.tpe)}${SqlCast.toPgCode(col)}"
           }
           code"""|update $relName
                  |set ${setCols.mkCode(",\n")}
                  |where ${matchId(id)}""".stripMargin
         }
-        List(
-          jvm.Value(Nil, id.paramName, id.tpe, Some(jvm.ApplyNullary(param.name, id.paramName))),
-          code"$sql.update().runUnchecked(c) > 0"
+        jvm.Body.Stmts(
+          List(
+            jvm.Value(Nil, id.paramName, id.tpe, Some(idAccessOnRow(param.name.code, id)), isLazy = false, isOverride = false),
+            jvm.Return(code"$sql.update().runUnchecked(c) > 0")
+          )
         )
 
       case RepoMethod.Insert(relName, cols, unsavedParam, rowType, writeableColumnsWithId) =>
         val values = writeableColumnsWithId.map { c =>
-          runtimeInterpolateValue(jvm.ApplyNullary(unsavedParam.name.code, c.name), c.tpe).code ++ SqlCast.toPgCode(c)
+          runtimeInterpolateValue(prop(unsavedParam.name.code, c.name), c.tpe).code ++ SqlCast.toPgCode(c)
         }
         val sql = SQL {
           code"""|insert into $relName(${dbNames(writeableColumnsWithId, isRead = false)})
@@ -389,13 +397,13 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
                  |returning ${dbNames(cols, isRead = true)}
                  |""".stripMargin
         }
-        List(
+        jvm.Body.Expr(
           code"""|$sql
                  |  .updateReturning(${rowParserFor(rowType)}.exactlyOne()).runUnchecked(c)"""
         )
       case RepoMethod.Upsert(relName, cols, id, unsavedParam, rowType, writeableColumnsWithId) =>
         val values = writeableColumnsWithId.map { c =>
-          runtimeInterpolateValue(code"${jvm.ApplyNullary(unsavedParam.name, c.name)}", c.tpe).code ++ SqlCast.toPgCode(c)
+          runtimeInterpolateValue(prop(unsavedParam.name.code, c.name), c.tpe).code ++ SqlCast.toPgCode(c)
         }
 
         // When all columns are PK, use a no-op update to ensure RETURNING works
@@ -417,7 +425,7 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
                  |""".stripMargin
         }
 
-        List(
+        jvm.Body.Expr(
           code"""|$sql
                  |  .updateReturning($rowType.$rowParserName.exactlyOne())
                  |  .runUnchecked(c)"""
@@ -439,7 +447,7 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
                  |""".stripMargin
         }
 
-        List(
+        jvm.Body.Expr(
           code"""|$sql
                  |  .updateManyReturning($rowType.$rowParserName, unsaved)
                  |  .runUnchecked(c)""".stripMargin
@@ -464,18 +472,28 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
                  |;
                  |drop table $tempTablename;""".stripMargin
         }
-        List(
-          jvm.IgnoreResult(code"${SQL(code"create temporary table $tempTablename (like $relName) on commit drop")}.update().runUnchecked(c)"),
-          jvm.IgnoreResult(code"$streamingInsert.insertUnchecked($copySql, batchSize, unsaved, c, $rowType.${DbLibTextSupport.textName})"),
-          code"$mergeSql.update().runUnchecked(c)"
+        jvm.Body.Stmts(
+          List(
+            jvm.IgnoreResult(code"${SQL(code"create temporary table $tempTablename (like $relName) on commit drop")}.update().runUnchecked(c)"),
+            jvm.IgnoreResult(code"$streamingInsert.insertUnchecked($copySql, batchSize, unsaved, c, $rowType.${DbLibTextSupport.textName})"),
+            jvm.Return(code"$mergeSql.update().runUnchecked(c)")
+          )
         )
 
       case RepoMethod.InsertUnsaved(relName, cols, unsaved, unsavedParam, _, rowType) =>
-        val columns = jvm.Value(Nil, jvm.Ident("columns"), TypesJava.List.of(FragmentLiteral), Some(jvm.New(jvm.InferredTargs(TypesJava.ArrayList), Nil)))
-        val values = jvm.Value(Nil, jvm.Ident("values"), TypesJava.List.of(Fragment), Some(jvm.New(jvm.InferredTargs(TypesJava.ArrayList), Nil)))
+        // Use ArrayList as declared type for Kotlin compatibility (List is read-only in Kotlin)
+        val columns = jvm.Value(
+          Nil,
+          jvm.Ident("columns"),
+          TypesJava.ArrayList.of(FragmentLiteral),
+          Some(jvm.New(TypesJava.ArrayList.of(FragmentLiteral), Nil)),
+          isLazy = false,
+          isOverride = false
+        )
+        val values = jvm.Value(Nil, jvm.Ident("values"), TypesJava.ArrayList.of(Fragment), Some(jvm.New(TypesJava.ArrayList.of(Fragment), Nil)), isLazy = false, isOverride = false)
 
         val cases0 = unsaved.normalColumns.flatMap { col =>
-          val value = FR(code"${runtimeInterpolateValue(jvm.ApplyNullary(unsavedParam.name, col.name), col.tpe)}${SqlCast.toPgCode(col)}")
+          val value = FR(code"${runtimeInterpolateValue(prop(unsavedParam.name.code, col.name), col.tpe)}${SqlCast.toPgCode(col)}")
           val quotedColName = "\"" + col.dbName.value + "\""
           List(
             jvm.IgnoreResult(code"${columns.name}.add($Fragment.lit(${jvm.StrLit(quotedColName)}))").code,
@@ -487,13 +505,14 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
           val value = FR(code"${runtimeInterpolateValue(code"value", origType)}${SqlCast.toPgCode(col)}")
           val quotedColName = "\"" + col.dbName.value + "\""
           val valueIdent = jvm.Ident("value")
-          val byName0 = jvm.ByName(code"()") // By-name parameter: just () in Scala, () -> {} in Java
-          val lambda1Body = code"""|{
-                                   |  ${jvm.IgnoreResult(code"${columns.name}.add($Fragment.lit(${jvm.StrLit(quotedColName)}))")};
-                                   |  ${jvm.IgnoreResult(code"${values.name}.add($value)")};
-                                   |}""".stripMargin
-          val lambda1 = jvm.Lambda1(valueIdent, lambda1Body)
-          code"""|${jvm.ApplyNullary(unsavedParam.name, ident)}.visit(
+          val byName0 = jvm.ByName(jvm.Body.Stmts(Nil))
+          // Multi-statement lambda body
+          val lambda1BodyStatements = List(
+            jvm.IgnoreResult(code"${columns.name}.add($Fragment.lit(${jvm.StrLit(quotedColName)}))").code,
+            jvm.IgnoreResult(code"${values.name}.add($value)").code
+          )
+          val lambda1 = jvm.Lambda(List(jvm.LambdaParam(valueIdent)), jvm.Body.Stmts(lambda1BodyStatements))
+          code"""|${prop(unsavedParam.name.code, ident)}.visit(
                  |  $byName0,
                  |  $lambda1
                  |);""".stripMargin
@@ -512,38 +531,51 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
         }
         val q = {
           val body = if (unsaved.normalColumns.isEmpty) jvm.IfExpr(jvm.ApplyNullary(columns.name, jvm.Ident("isEmpty")), sqlEmpty, sql) else sql
-          jvm.Value(Nil, jvm.Ident("q"), Fragment, Some(body))
+          jvm.Value(Nil, jvm.Ident("q"), Fragment, Some(body), isLazy = false, isOverride = false)
         }
 
-        List[List[jvm.Code]](
-          List(columns, values),
-          cases0,
-          cases1,
-          List(
-            q,
-            code"q.updateReturning($rowType.$rowParserName.exactlyOne()).runUnchecked(c)"
-          )
-        ).flatten
+        jvm.Body.Stmts(
+          List[List[jvm.Code]](
+            List(columns, values),
+            cases0,
+            cases1,
+            List(
+              q,
+              jvm.Return(code"q.updateReturning($rowType.$rowParserName.exactlyOne()).runUnchecked(c)")
+            )
+          ).flatten
+        )
 
       case RepoMethod.InsertStreaming(relName, rowType, writeableColumnsWithId) =>
         val sql = lang.s(code"COPY $relName(${dbNames(writeableColumnsWithId, isRead = false)}) FROM STDIN")
-        List(code"$streamingInsert.insertUnchecked($sql, batchSize, unsaved, c, $rowType.${DbLibTextSupport.textName})")
+        jvm.Body.Expr(code"$streamingInsert.insertUnchecked($sql, batchSize, unsaved, c, $rowType.${DbLibTextSupport.textName})")
       case RepoMethod.InsertUnsavedStreaming(relName, unsaved) =>
         val sql = lang.s(code"COPY $relName(${dbNames(unsaved.unsavedCols, isRead = false)}) FROM STDIN (DEFAULT '$DefaultValue')")
-        List(code"$streamingInsert.insertUnchecked($sql, batchSize, unsaved, c, ${unsaved.tpe}.${DbLibTextSupport.textName})")
+        jvm.Body.Expr(code"$streamingInsert.insertUnchecked($sql, batchSize, unsaved, c, ${unsaved.tpe}.${DbLibTextSupport.textName})")
       case RepoMethod.DeleteBuilder(relName, fieldsType, _) =>
-        val structure = code"$fieldsType".callNullary("structure")
-        List(code"${jvm.Type.dsl.DeleteBuilder}.of(${jvm.StrLit(relName.value)}, $structure)")
+        val structure = prop(code"$fieldsType", "structure")
+        jvm.Body.Expr(code"${jvm.Type.dsl.DeleteBuilder}.of(${jvm.StrLit(relName.value)}, $structure)")
       case RepoMethod.Delete(relName, id) =>
         val sql = SQL {
           code"""delete from $relName where ${matchId(id)}"""
         }
-        List(code"$sql.update().runUnchecked(c) > 0")
+        jvm.Body.Expr(code"$sql.update().runUnchecked(c) > 0")
       case RepoMethod.DeleteByIds(relName, computedId, idsParam) =>
         computedId match {
           case x: IdComputed.Composite =>
             val vals =
-              x.cols.map(col => jvm.Value(Nil, col.name, jvm.Type.ArrayOf(col.tpe), Some(lang.arrayMap(idsParam.name.code, jvm.FieldGetterRef(x.tpe, col.name).code, jvm.ClassOf(col.tpe).code))).code)
+              x.cols.map(col =>
+                jvm
+                  .Value(
+                    Nil,
+                    col.name,
+                    jvm.Type.ArrayOf(col.tpe),
+                    Some(lang.arrayMap(idsParam.name.code, jvm.FieldGetterRef(x.tpe, col.name).code, jvm.ClassOf(col.tpe).code)),
+                    isLazy = false,
+                    isOverride = false
+                  )
+                  .code
+              )
             // Build SQL avoiding problematic string patterns in Java text blocks
             // The issue is that Java text blocks can't have string literals containing ")
             // So we need to structure the SQL to avoid this pattern
@@ -577,7 +609,7 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
                      |in ($selectClause)
                      |""".stripMargin
             }
-            vals.toList ++ List(code"$sql.update().runUnchecked(c)")
+            jvm.Body.Stmts(vals.toList :+ jvm.Return(code"$sql.update().runUnchecked(c)").code)
 
           case x: IdComputed.Unary =>
             val sql = SQL {
@@ -585,7 +617,7 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
                      |from $relName
                      |where ${x.col.dbName.code} = ANY(${runtimeInterpolateValue(idsParam.name, jvm.Type.ArrayOf(x.tpe))})""".stripMargin
             }
-            List(
+            jvm.Body.Expr(
               code"""|$sql
                      |  .update()
                      |  .runUnchecked(c)""".stripMargin
@@ -616,19 +648,22 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
                        |from $row""".stripMargin
             }
 
-          code"${SQL(renderedWithCasts)}.as(${rowParserFor(rowName)}.all()).runUnchecked(c)"
+          code"${SQL(renderedWithCasts)}.query(${rowParserFor(rowName)}.all()).runUnchecked(c)"
         }
 
-        List(ret.getOrElse(code"${SQL(renderedScript)}.update().runUnchecked(c)"))
+        jvm.Body.Expr(ret.getOrElse(code"${SQL(renderedScript)}.update().runUnchecked(c)"))
     }
 
-  override def mockRepoImpl(id: IdComputed, repoMethod: RepoMethod, maybeToRow: Option[jvm.Param[jvm.Type.Function1]]): List[jvm.Code] = {
+  override def mockRepoImpl(id: IdComputed, repoMethod: RepoMethod, maybeToRow: Option[jvm.Param[jvm.Type.Function1]]): jvm.Body = {
     val mapCode = jvm.Ident("map").code
     val MapOps = lang.MapOps
     val Opt = lang.Optional
 
-    // Helper to generate proper field access (method call in Java, field access in Scala)
-    def idAccess(on: jvm.Code): jvm.Code = lang.renderTree(jvm.ApplyNullary(on, id.paramName), lang.Ctx.Empty)
+    // Helper to generate proper ID access (method call for composite, property for unary)
+    def idAccess(on: jvm.Code): jvm.Code = id match {
+      case _: IdComputed.Composite => lang.nullaryMethodCall(on, id.paramName)
+      case _: IdComputed.Unary     => prop(on, id.paramName)
+    }
 
     // Immutable local variable keyword: Scala uses `val`, Java uses `var`
     val valKw = lang match {
@@ -640,9 +675,9 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
     repoMethod match {
       case RepoMethod.SelectBuilder(_, fieldsType, _) =>
         // Java: new SelectBuilderMock<>(structure, () -> new ArrayList<>(map.values()), SelectParams.empty())
-        val supplierLambda = lang.renderTree(jvm.Lambda0(MapOps.valuesToList(mapCode)), lang.Ctx.Empty)
-        val structure = code"$fieldsType".callNullary("structure")
-        List(
+        val supplierLambda = lang.renderTree(jvm.Lambda(jvm.Body.Expr(MapOps.valuesToList(mapCode))), lang.Ctx.Empty)
+        val structure = prop(code"$fieldsType", "structure")
+        jvm.Body.Expr(
           jvm
             .New(
               jvm.InferredTargs(jvm.Type.dsl.SelectBuilderMock),
@@ -651,9 +686,9 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
             .code
         )
       case RepoMethod.SelectAll(_, _, _) =>
-        List(MapOps.valuesToList(mapCode))
+        jvm.Body.Expr(MapOps.valuesToList(mapCode))
       case RepoMethod.SelectById(_, _, id, _) =>
-        List(MapOps.get(mapCode, id.paramName.code))
+        jvm.Body.Expr(MapOps.get(mapCode, id.paramName.code))
       case RepoMethod.SelectByIds(_, _, _, idsParam, rowType) =>
         val idVar = jvm.Ident("id")
         val resultVar = jvm.Ident("result")
@@ -663,22 +698,24 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
         val foreachBody =
           code"""|$valKw $optVar = $getOpt${lang.`;`}
                  |if (${lang.Optional.isDefined(optVar.code)}) $addCall${lang.`;`}""".stripMargin
-        List(
-          code"$valKw $resultVar = ${jvm.New(TypesJava.ArrayList.of(rowType), Nil)}",
-          lang.arrayForEach(idsParam.name.code, idVar, foreachBody),
-          resultVar.code
+        jvm.Body.Stmts(
+          List(
+            code"$valKw $resultVar = ${jvm.New(TypesJava.ArrayList.of(rowType), Nil)}",
+            lang.arrayForEach(idsParam.name.code, idVar, foreachBody),
+            jvm.Return(resultVar)
+          )
         )
       case RepoMethod.SelectByIdsTracked(x) =>
         val rowVar = jvm.Ident("row")
-        // Use TypedLambda1 to ensure proper type inference in Scala with Java collectors
-        val keyExtractor = jvm.TypedLambda1(x.rowType, rowVar, jvm.ApplyNullary(rowVar, x.idComputed.paramName))
+        // Use typed Lambda to ensure proper type inference in Scala with Java collectors
+        val keyExtractor = jvm.Lambda(List(jvm.LambdaParam.typed(rowVar, x.rowType)), jvm.Body.Expr(idAccessOnRow(rowVar.code, x.idComputed)))
         val keyExtractorCode = lang.renderTree(keyExtractor, lang.Ctx.Empty)
         val methodCall = jvm.Call.withImplicits(
           x.methodName.code,
           List(jvm.Arg.Pos(x.idsParam.name.code)),
           List(jvm.Arg.Pos(code"c"))
         )
-        List(
+        jvm.Body.Expr(
           lang.ListType.collectToMap(
             methodCall,
             keyExtractorCode,
@@ -690,18 +727,18 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
         val vVar = jvm.Ident("v")
         val predicateBody = keyColumns
           .map { c =>
-            code"${c.name}.equals(${jvm.ApplyNullary(vVar, c.name)})"
+            lang.equals(c.name.code, prop(vVar.code, c.name))
           }
           .mkCode(" && ")
-        val predicateLambda = jvm.Lambda1(vVar, predicateBody)
+        val predicateLambda = jvm.Lambda(vVar, predicateBody)
         val predicateCode = lang.renderTree(predicateLambda, lang.Ctx.Empty)
-        List(lang.ListType.findFirst(MapOps.valuesToList(mapCode), predicateCode))
+        jvm.Body.Expr(lang.ListType.findFirst(MapOps.valuesToList(mapCode), predicateCode))
 
       case RepoMethod.SelectByFieldValues(_, cols, fieldValue, fieldValueOrIdsParam, _) =>
         val cases = cols.map { col =>
           code"case (acc, $fieldValue.${col.name}(value)) => acc.filter(_.${col.name} == value)"
         }
-        List(code"""${fieldValueOrIdsParam.name}.foldLeft(map.values) {
+        jvm.Body.Expr(code"""${fieldValueOrIdsParam.name}.foldLeft(map.values) {
               |  ${cases.mkCode("\n")}
               |}.toList""".stripMargin)
       case RepoMethod.UpdateFieldValues(_, _, varargs, fieldValue, cases0, _) =>
@@ -709,7 +746,7 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
           code"case (acc, $fieldValue.${col.name}(value)) => acc.copy(${col.name} = value)"
         }
 
-        List(code"""|map.get(${id.paramName}) match {
+        jvm.Body.Expr(code"""|map.get(${id.paramName}) match {
                |  case ${TypesScala.Some}(oldRow) =>
                |    val updatedRow = ${varargs.name}.foldLeft(oldRow) {
                |      ${cases.mkCode("\n")}
@@ -724,15 +761,17 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
                |}""".stripMargin)
       case RepoMethod.UpdateBuilder(_, fieldsType, _) =>
         // Java: new UpdateBuilderMock<>(structure, () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row)
-        val supplierLambda = lang.renderTree(jvm.Lambda0(MapOps.valuesToList(mapCode)), lang.Ctx.Empty)
         val rowIdent = jvm.Ident("row")
-        val copyRowLambda = lang.renderTree(jvm.Lambda1(rowIdent, rowIdent.code), lang.Ctx.Empty)
-        val structure = code"$fieldsType".callNullary("structure")
-        List(
+        jvm.Body.Expr(
           jvm
             .New(
               jvm.InferredTargs(jvm.Type.dsl.UpdateBuilderMock),
-              List(jvm.Arg.Pos(structure), jvm.Arg.Pos(supplierLambda), jvm.Arg.Pos(code"${jvm.Type.dsl.UpdateParams}.empty()"), jvm.Arg.Pos(copyRowLambda))
+              List(
+                jvm.Arg.Pos(prop(code"$fieldsType", "structure")),
+                jvm.Arg.Pos(jvm.Lambda(jvm.Body.Expr(MapOps.valuesToList(mapCode)))),
+                jvm.Arg.Pos(code"${jvm.Type.dsl.UpdateParams}.empty()"),
+                jvm.Arg.Pos(jvm.Lambda(rowIdent, rowIdent.code))
+              )
             )
             .code
         )
@@ -741,9 +780,9 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
         val shouldUpdateVar = jvm.Ident("shouldUpdate")
         val oldRowVar = jvm.Ident("oldRow")
 
-        // Build the predicate lambda: oldRow -> !oldRow.equals(param.name)
-        val predicateBody = code"!$oldRowVar.equals(${param.name})"
-        val predicateLambda = jvm.Lambda1(oldRowVar, predicateBody)
+        // Build the predicate lambda: oldRow -> oldRow != param.name
+        val predicateBody = lang.notEquals(oldRowVar.code, param.name.code)
+        val predicateLambda = jvm.Lambda(oldRowVar, predicateBody)
         val predicateCode = lang.renderTree(predicateLambda, lang.Ctx.Empty)
 
         // shouldUpdate = map.get(id).filter(predicate).isDefined
@@ -752,54 +791,64 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
 
         val localVar = jvm.LocalVar(shouldUpdateVar, None, shouldUpdateExpr)
 
-        List(
-          lang.renderTree(localVar, lang.Ctx.Empty),
-          code"""|if ($shouldUpdateVar) {
+        jvm.Body.Stmts(
+          List(
+            lang.renderTree(localVar, lang.Ctx.Empty),
+            code"""|if ($shouldUpdateVar) {
                  |  ${MapOps.putVoid(mapCode, paramIdAccess, param.name.code)}${lang.`;`}
                  |}""".stripMargin,
-          shouldUpdateVar.code
+            jvm.Return(shouldUpdateVar)
+          )
         )
       case RepoMethod.Insert(_, _, unsavedParam, _, _) =>
         val unsavedIdAccess = idAccess(unsavedParam.name.code)
-        List(
-          code"""|if (${MapOps.contains(mapCode, unsavedIdAccess)}) {
-                 |  throw new RuntimeException(${lang.s(code"id $$${unsavedIdAccess} already exists")})${lang.`;`}
+        jvm.Body.Stmts(
+          List(
+            code"""|if (${MapOps.contains(mapCode, unsavedIdAccess)}) {
+                 |  throw ${TypesJava.RuntimeException.construct(lang.s(code"id $$${unsavedIdAccess} already exists"))}${lang.`;`}
                  |}""".stripMargin,
-          MapOps.putVoid(mapCode, unsavedIdAccess, unsavedParam.name.code),
-          unsavedParam.name.code
+            MapOps.putVoid(mapCode, unsavedIdAccess, unsavedParam.name.code),
+            jvm.Return(unsavedParam.name.code)
+          )
         )
       case RepoMethod.Upsert(_, _, _, unsavedParam, _, _) =>
         val unsavedIdAccess = idAccess(unsavedParam.name.code)
-        List(
-          MapOps.putVoid(mapCode, unsavedIdAccess, unsavedParam.name.code),
-          unsavedParam.name.code
+        jvm.Body.Stmts(
+          List(
+            MapOps.putVoid(mapCode, unsavedIdAccess, unsavedParam.name.code),
+            jvm.Return(unsavedParam.name.code)
+          )
         )
       case RepoMethod.UpsertStreaming(_, localId, _, _) =>
         val rowVar = jvm.Ident("row")
         val countVar = jvm.Ident("count")
-        val rowIdAccess = lang.renderTree(jvm.ApplyNullary(rowVar, localId.paramName), lang.Ctx.Empty)
-        List(
-          code"var $countVar = 0",
-          code"""|while (unsaved.hasNext()) {
+        val rowIdAccess = idAccessOnRow(rowVar.code, localId)
+        jvm.Body.Stmts(
+          List(
+            code"var $countVar = 0",
+            code"""|while (unsaved.hasNext()) {
                  |  $valKw $rowVar = unsaved.next()${lang.`;`}
                  |  ${MapOps.putVoid(mapCode, rowIdAccess, rowVar.code)}${lang.`;`}
                  |  $countVar = $countVar + 1${lang.`;`}
                  |}""".stripMargin,
-          countVar.code
+            jvm.Return(countVar.code)
+          )
         )
       case RepoMethod.UpsertBatch(_, _, localId, rowType, _) =>
         val rowVar = jvm.Ident("row")
         val resultVar = jvm.Ident("result")
-        val rowIdAccess = lang.renderTree(jvm.ApplyNullary(rowVar, localId.paramName), lang.Ctx.Empty)
+        val rowIdAccess = idAccessOnRow(rowVar.code, localId)
         val addCall = jvm.IgnoreResult(code"$resultVar.add($rowVar)")
-        List(
-          code"$valKw $resultVar = ${jvm.New(TypesJava.ArrayList.of(rowType), Nil)}",
-          code"""|while (unsaved.hasNext()) {
+        jvm.Body.Stmts(
+          List(
+            code"$valKw $resultVar = ${jvm.New(TypesJava.ArrayList.of(rowType), Nil)}",
+            code"""|while (unsaved.hasNext()) {
                  |  $valKw $rowVar = unsaved.next()${lang.`;`}
                  |  ${MapOps.putVoid(mapCode, rowIdAccess, rowVar.code)}${lang.`;`}
                  |  $addCall${lang.`;`}
                  |}""".stripMargin,
-          resultVar.code
+            jvm.Return(resultVar.code)
+          )
         )
       case RepoMethod.InsertUnsaved(_, _, _, unsavedParam, _, _) =>
         val insertCall = jvm.Call.withImplicits(
@@ -807,71 +856,77 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
           List(jvm.Arg.Pos(jvm.Apply1(maybeToRow.get, unsavedParam.name))),
           List(jvm.Arg.Pos(code"c"))
         )
-        List(insertCall)
+        jvm.Body.Expr(insertCall)
       case RepoMethod.InsertStreaming(_, _, _) =>
         val rowVar = jvm.Ident("row")
         val countVar = jvm.Ident("count")
         val rowIdAccess = idAccess(rowVar.code)
-        List(
-          code"var $countVar = 0L",
-          code"""|while (unsaved.hasNext()) {
+        jvm.Body.Stmts(
+          List(
+            code"var $countVar = 0L",
+            code"""|while (unsaved.hasNext()) {
                  |  $valKw $rowVar = unsaved.next()${lang.`;`}
                  |  ${MapOps.putVoid(mapCode, rowIdAccess, rowVar.code)}${lang.`;`}
                  |  $countVar = $countVar + 1L${lang.`;`}
                  |}""".stripMargin,
-          countVar.code
+            jvm.Return(countVar.code)
+          )
         )
       case RepoMethod.InsertUnsavedStreaming(_, _) =>
         val unsavedRowVar = jvm.Ident("unsavedRow")
         val rowVar = jvm.Ident("row")
         val countVar = jvm.Ident("count")
         val rowIdAccess = idAccess(rowVar.code)
-        List(
-          code"var $countVar = 0L",
-          code"""|while (unsaved.hasNext()) {
+        jvm.Body.Stmts(
+          List(
+            code"var $countVar = 0L",
+            code"""|while (unsaved.hasNext()) {
                  |  $valKw $unsavedRowVar = unsaved.next()${lang.`;`}
                  |  $valKw $rowVar = ${jvm.Apply1(maybeToRow.get, unsavedRowVar)}${lang.`;`}
                  |  ${MapOps.putVoid(mapCode, rowIdAccess, rowVar.code)}${lang.`;`}
                  |  $countVar = $countVar + 1L${lang.`;`}
                  |}""".stripMargin,
-          countVar.code
+            jvm.Return(countVar.code)
+          )
         )
       case RepoMethod.DeleteBuilder(_, fieldsType, _) =>
         // Java: new DeleteBuilderMock<>(structure, () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.id(), id -> map.remove(id))
         val rowVar = jvm.Ident("row")
         val idVar = jvm.Ident("id")
         // Use removeVoid for Consumer - returns void instead of Optional
-        List(
+        jvm.Body.Expr(
           jvm
             .New(
               jvm.InferredTargs(jvm.Type.dsl.DeleteBuilderMock),
               List(
-                jvm.Arg.Pos(code"$fieldsType".callNullary("structure")),
-                jvm.Arg.Pos(lang.renderTree(jvm.Lambda0(MapOps.valuesToList(mapCode)), lang.Ctx.Empty)),
+                jvm.Arg.Pos(prop(code"$fieldsType", "structure")),
+                jvm.Arg.Pos(lang.renderTree(jvm.Lambda(jvm.Body.Expr(MapOps.valuesToList(mapCode))), lang.Ctx.Empty)),
                 jvm.Arg.Pos(code"${jvm.Type.dsl.DeleteParams}.empty()"),
-                jvm.Arg.Pos(lang.renderTree(jvm.Lambda1(rowVar, idAccess(rowVar.code)), lang.Ctx.Empty)),
-                jvm.Arg.Pos(lang.renderTree(jvm.Lambda1(idVar, MapOps.removeVoid(mapCode, idVar.code)), lang.Ctx.Empty))
+                jvm.Arg.Pos(lang.renderTree(jvm.Lambda(rowVar, idAccess(rowVar.code)), lang.Ctx.Empty)),
+                jvm.Arg.Pos(lang.renderTree(jvm.Lambda(idVar, MapOps.removeVoid(mapCode, idVar.code)), lang.Ctx.Empty))
               )
             )
             .code
         )
 
       case RepoMethod.Delete(_, id) =>
-        List(Opt.isDefined(MapOps.remove(mapCode, id.paramName.code)))
+        jvm.Body.Expr(Opt.isDefined(MapOps.remove(mapCode, id.paramName.code)))
       case RepoMethod.DeleteByIds(_, _, idsParam) =>
         val idVar = jvm.Ident("id")
         val countVar = jvm.Ident("count")
         val forEachBody = code"""|if (${Opt.isDefined(MapOps.remove(mapCode, idVar.code))}) {
                                  |  $countVar = $countVar + 1${lang.`;`}
                                  |}""".stripMargin
-        List(
-          code"var $countVar = 0",
-          lang.arrayForEach(idsParam.name.code, idVar, forEachBody),
-          countVar.code
+        jvm.Body.Stmts(
+          List(
+            code"var $countVar = 0",
+            lang.arrayForEach(idsParam.name.code, idVar, forEachBody),
+            jvm.Return(countVar.code)
+          )
         )
       case RepoMethod.SqlFile(_) =>
         // should not happen (tm)
-        List(code"???")
+        jvm.Body.Expr(code"???")
     }
   }
 
@@ -887,7 +942,9 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
       implicitParams = List(c),
       tpe = x.table.names.RowName,
       throws = Nil,
-      body = List(jvm.Call.withImplicits(code"($newRepo).insert", List(jvm.Arg.Pos(newRow)), List(jvm.Arg.Pos(c.name))))
+      body = jvm.Body.Expr(jvm.Call.withImplicits(code"($newRepo).insert", List(jvm.Arg.Pos(newRow)), List(jvm.Arg.Pos(c.name)))),
+      isOverride = false,
+      isDefault = false
     )
   }
 
@@ -898,9 +955,11 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
       val ot = jvm.Ident("ot")
       val sb = jvm.Ident("sb")
       val value = jvm.Ident("value")
-      val innerLambda0 = jvm.ByName(code"{ ${jvm.IgnoreResult(code"""$sb.append("$DefaultValue")""")}; }")
-      val innerLambda1 = jvm.Lambda1(value, code"$textofT.unsafeEncode($value, $sb)")
-      val outerLambda = jvm.Lambda2(ot, sb, code"$ot.visit($innerLambda0, $innerLambda1)")
+      // Multi-statement body - renders with {} in Java, without in Kotlin
+      val innerLambda0Body = jvm.Body.Stmts(List(jvm.IgnoreResult(code"""$sb.append("$DefaultValue")""").code))
+      val innerLambda0 = jvm.ByName(innerLambda0Body)
+      val innerLambda1 = jvm.Lambda(value, code"$textofT.unsafeEncode($value, $sb)")
+      val outerLambda = jvm.Lambda(ot, sb, code"$ot.visit($innerLambda0, $innerLambda1)")
       jvm.Given(
         tparams = List(T),
         name = DbLibTextSupport.textName,
@@ -927,8 +986,8 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
           body = {
             val underlyingCls = jvm.ClassOf(underlying)
             val xs = jvm.Ident("xs")
-            val lambda1 = jvm.Lambda1(xs, lang.arrayMap(xs.code, create, jvm.ClassOf(wrapperType).code))
-            val lambda2 = jvm.Lambda1(xs, lang.arrayMap(xs.code, extract, underlyingCls.code))
+            val lambda1 = jvm.Lambda(xs, lang.arrayMap(xs.code, create, jvm.ClassOf(wrapperType).code))
+            val lambda2 = jvm.Lambda(xs, lang.arrayMap(xs.code, extract, underlyingCls.code))
             val base =
               code"""|${lookupPgType(jvm.Type.ArrayOf(underlying))}
                      |  .bimap($lambda1, $lambda2)""".stripMargin
@@ -972,8 +1031,8 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
           implicitParams = Nil,
           tpe = PgType.of(jvm.Type.ArrayOf(wrapperType)),
           body = {
-            val lambda1 = jvm.Lambda1(xs, lang.arrayMap(xs.code, jvm.ConstructorMethodRef(wrapperType).code, jvm.ClassOf(wrapperType).code))
-            val lambda2 = jvm.Lambda1(xs, lang.arrayMap(xs.code, jvm.FieldGetterRef(wrapperType, jvm.Ident("value")).code, jvm.ClassOf(underlying).code))
+            val lambda1 = jvm.Lambda(xs, lang.arrayMap(xs.code, jvm.ConstructorMethodRef(wrapperType).code, jvm.ClassOf(wrapperType).code))
+            val lambda2 = jvm.Lambda(xs, lang.arrayMap(xs.code, jvm.FieldGetterRef(wrapperType, jvm.Ident("value")).code, jvm.ClassOf(underlying).code))
             val base = code"${lookupPgType(jvm.Type.ArrayOf(underlying))}.bimap($lambda1, $lambda2)"
             overrideDbType.fold(base)(t => maybeRename(base, t + "[]"))
           }
@@ -1005,10 +1064,34 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
         Some {
           val pgTypes = cols.toList.map(x => lookupPgType(x.tpe)).mkCode(code", ")
           val row = jvm.Ident("row")
-          val newTuple = jvm.New(jvm.InferredTargs(Tuple(cols.length)), cols.toList.map(c => jvm.Arg.Pos(jvm.ApplyNullary(row, c.name))))
-          val lambda = jvm.Lambda1(row, newTuple)
-          code"$RowParsers.of($pgTypes, ${jvm.ConstructorMethodRef(tpe)}, $lambda)"
-        }
+          val newArray = lang.arrayOf(cols.toList.map(c => lang.propertyGetterAccess(row.code, c.name)))
+          val encodeLambda = jvm.Lambda(row, newArray)
+          // For Kotlin, we need to use a lambda instead of constructor reference
+          // because Kotlin's ::ClassName doesn't SAM-convert to Java functional interfaces
+          // Also, we must NOT use typed lambda parameters because Kotlin won't SAM-convert
+          // typed lambdas to Java functional interfaces with generic type parameters
+          val decodeLambda: jvm.Code = lang match {
+            case LangKotlin =>
+              val params = cols.toList.zipWithIndex.map { case (col, i) =>
+                jvm.Param(jvm.Ident(s"t$i"), col.tpe)
+              }
+              val args = params.zip(cols.toList).map { case (p, col) =>
+                val notNull = jvm.NotNull(p.name).code
+                // Use base() to unwrap Commented/UserDefined wrappers
+                jvm.Type.base(col.tpe) match {
+                  case TypesJava.String => code"$notNull as ${col.tpe}"
+                  case _                => notNull
+                }
+              }
+              // Use untyped params for SAM conversion compatibility
+              jvm.Lambda(params.map(p => jvm.LambdaParam(p.name)), jvm.Body.Expr(tpe.construct(args: _*)))
+            case _ =>
+              jvm.ConstructorMethodRef(tpe)
+          }
+          code"$RowParsers.of($pgTypes, $decodeLambda, $encodeLambda)"
+        },
+        isLazy = false,
+        isOverride = false
       )
     }
     rowType match {
@@ -1027,13 +1110,11 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
             }
             code"$text.unsafeEncode($row.${col.name}, $sb)"
           }
-          // Interleave encode statements with delimiter appends
+          // Interleave encode statements with delimiter appends (delimiter BETWEEN columns, not before first)
           val delimiter = code"$sb.append($PgText.DELIMETER)"
-          val statements: NonEmptyList[jvm.Code] = NonEmptyList(textCols.head, textCols.tail.flatMap(stmt => List(delimiter, stmt)))
-          val lambdaBody = code"""|{
-                                  |  ${statements.map(s => code"$s;").mkCode("\n")}
-                                  |}""".stripMargin
-          val body = code"$PgText.instance(${jvm.Lambda2(row, sb, lambdaBody)})"
+          val stmts = textCols.head :: textCols.tail.flatMap(stmt => List(delimiter, stmt))
+          val lambdaBody = jvm.Body.Stmts(stmts)
+          val body = code"$PgText.instance(${jvm.Lambda(row, sb, lambdaBody)})"
           Some(jvm.Given(tparams = Nil, name = DbLibTextSupport.textName, implicitParams = Nil, tpe = PgText.of(tpe), body = body))
         } else None
 
@@ -1053,13 +1134,13 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
   def lookupPgTypeFromJdbc(jdbcType: jvm.Type): Option[jvm.Code] =
     jdbcType match {
       case TypesJava.BigDecimal                                                                     => Some(code"$PgTypes.numeric")
-      case TypesJava.Boolean                                                                        => Some(code"$PgTypes.bool")
-      case TypesJava.Double                                                                         => Some(code"$PgTypes.float8")
-      case TypesJava.Float                                                                          => Some(code"$PgTypes.float4")
-      case TypesJava.Short                                                                          => Some(code"$PgTypes.int2")
-      case TypesJava.Integer                                                                        => Some(code"$PgTypes.int4")
-      case TypesJava.Long                                                                           => Some(code"$PgTypes.int8")
-      case TypesJava.String                                                                         => Some(code"$PgTypes.text")
+      case TypesJava.Boolean | TypesKotlin.Boolean                                                  => Some(code"$PgTypes.bool")
+      case TypesJava.Double | TypesKotlin.Double                                                    => Some(code"$PgTypes.float8")
+      case TypesJava.Float | TypesKotlin.Float                                                      => Some(code"$PgTypes.float4")
+      case TypesJava.Short | TypesKotlin.Short                                                      => Some(code"$PgTypes.int2")
+      case TypesJava.Integer | TypesKotlin.Int                                                      => Some(code"$PgTypes.int4")
+      case TypesJava.Long | TypesKotlin.Long                                                        => Some(code"$PgTypes.int8")
+      case TypesJava.String | TypesKotlin.String                                                    => Some(code"$PgTypes.text")
       case TypesJava.UUID                                                                           => Some(code"$PgTypes.uuid")
       case jvm.Type.ArrayOf(TypesJava.Byte | TypesJava.BytePrimitive | TypesScala.Byte | lang.Byte) => Some(code"$PgTypes.bytea")
       case _                                                                                        => None
@@ -1078,34 +1159,65 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
       case TypesJava.Short | lang.Short                                                             => Some(code"$PgText.textShort")
       case TypesJava.UUID                                                                           => Some(code"$PgText.textUuid")
       case jvm.Type.ArrayOf(TypesJava.Byte | TypesJava.BytePrimitive | TypesScala.Byte | lang.Byte) => Some(code"$PgText.textByteArray")
+      case TypesKotlin.ByteArray                                                                    => Some(code"$PgText.textByteArray")
       case _                                                                                        => None
     }
 
   override def customTypeInstances(ct: CustomType): List[jvm.Given] = {
     val v = jvm.Ident("v")
 
+    // Convert Java types to Kotlin equivalents for lambda parameter types
+    def kotlinifyType(tpe: jvm.Type): jvm.Type = lang match {
+      case LangKotlin =>
+        tpe match {
+          case TypesJava.String  => lang.String
+          case TypesJava.Integer => lang.Int
+          case TypesJava.Long    => lang.Long
+          case TypesJava.Short   => lang.Short
+          case TypesJava.Boolean => lang.Boolean
+          case TypesJava.Float   => lang.Float
+          case TypesJava.Double  => lang.Double
+          case other             => other
+        }
+      case _ => tpe
+    }
+
     // pgType instance - either using bimap for simple types or full PgType.of for complex types
     val pgTypeBody: jvm.Code = lookupPgTypeFromJdbc(ct.toTypo.jdbcType) match {
       case Some(basePgType) =>
         // Simple type - use bimap, then rename to correct SQL type
         val sqlTypeLit = jvm.StrLit(ct.sqlType)
-        code"$basePgType.bimap(${jvm.Lambda1(v, ct.toTypo0(v))}, ${jvm.Lambda1(v, ct.fromTypo0(v))}).renamed($sqlTypeLit)"
+        // Use TypedLambda1 for Kotlin because type inference doesn't work for bimap lambdas
+        // Convert Java types to Kotlin equivalents for lambda parameters
+        val lambda1 = jvm.Lambda(List(jvm.LambdaParam.typed(v, kotlinifyType(ct.toTypo.jdbcType))), jvm.Body.Expr(ct.toTypo0(v)))
+        val lambda2 = jvm.Lambda(List(jvm.LambdaParam.typed(v, ct.typoType)), jvm.Body.Expr(ct.fromTypo0(v)))
+        code"$basePgType.bimap($lambda1, $lambda2).renamed($sqlTypeLit)"
       case None =>
         // Complex type (e.g., PGbox, PGpath) - use PgType.of with custom read/write
         val sqlTypeLit = jvm.StrLit(ct.sqlType)
-        val jdbcType = ct.toTypo.jdbcType
-        val lambda1 = jvm.Lambda1(v, ct.toTypo0(v))
-        // Use TypedLambda1 for Scala because passObjectToJdbc() returns PgWrite[Object]
-        val lambda2 = jvm.TypedLambda1(ct.typoType, v, ct.fromTypo0(v))
-        code"""|$PgType.of(
+        val readJdbcType = ct.toTypo.jdbcType
+        val writeJdbcType = ct.fromTypo.jdbcType
+        // Use TypedLambda1 for both lambdas - Kotlin needs explicit types, Scala needs them for passObjectToJdbc
+        val lambda1 = jvm.Lambda(List(jvm.LambdaParam.typed(v, readJdbcType)), jvm.Body.Expr(ct.toTypo0(v)))
+        val lambda2 = jvm.Lambda(List(jvm.LambdaParam.typed(v, ct.typoType)), jvm.Body.Expr(ct.fromTypo0(v)))
+        // For Kotlin, add explicit type argument to PgType.of<T>()
+        val pgTypeOf = lang match {
+          case LangKotlin => code"$PgType.of<${ct.typoType}>"
+          case _          => code"$PgType.of"
+        }
+        // Use GenericMethodCall for passObjectToJdbc to add type arg for Kotlin
+        // Note: writeJdbcType is what the contramap produces (ct.fromTypo.jdbcType), not what we read
+        val passObjectToJdbc = jvm.GenericMethodCall(PgWrite, jvm.Ident("passObjectToJdbc"), List(writeJdbcType), Nil)
+        code"""|$pgTypeOf(
                |  $sqlTypeLit,
-               |  $PgRead.castJdbcObjectTo(${jvm.ClassOf(jdbcType)}).map($lambda1),
-               |  $PgWrite.passObjectToJdbc().contramap($lambda2),
+               |  $PgRead.castJdbcObjectTo(${jvm.ClassOf(readJdbcType)}).map($lambda1),
+               |  $passObjectToJdbc.contramap($lambda2),
                |  ${ct.typoType}.${DbLibTextSupport.textName}
                |)""".stripMargin
     }
 
     val pgTypeInstance = jvm.Given(
+      annotations = ct.pgTypeAnnotations,
       tparams = Nil,
       name = pgTypeName,
       implicitParams = Nil,
@@ -1121,7 +1233,7 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
       name = DbLibTextSupport.textName,
       implicitParams = Nil,
       tpe = PgText.of(ct.typoType),
-      body = code"$baseText.contramap(${jvm.Lambda1(v, ct.toText.toTextType(v))})"
+      body = code"$baseText.contramap(${jvm.Lambda(v, ct.toText.toTextType(v))})"
     )
 
     // pgTypeArray instance for array support
@@ -1135,25 +1247,31 @@ class DbLibTypo(pkg: jvm.QIdent, override val lang: Lang, default: ComputedDefau
         val xs = jvm.Ident("xs")
 
         // Determine the read method based on whether we need to cast JDBC array elements
-        val innerMapper = jvm.Lambda1(v, toTypo.toTypo(v, ct.typoType))
+        // Use TypedLambda1 for Kotlin to help with type inference
+        // Convert Java types to Kotlin equivalents for lambda parameters
+        val innerMapper = jvm.Lambda(List(jvm.LambdaParam.typed(v, kotlinifyType(toTypo.jdbcType))), jvm.Body.Expr(toTypo.toTypo(v, ct.typoType)))
         val arrayRead: jvm.Code = lookupPgTypeFromJdbc(toTypo.jdbcType) match {
           case Some(_) =>
             // Simple type - use massageJdbcArrayTo
-            val jdbcArrayType = jvm.Type.ArrayOf(toTypo.jdbcType)
-            code"$PgRead.massageJdbcArrayTo(${jvm.ClassOf(jdbcArrayType)}).map(${jvm.Lambda1(xs, lang.arrayMap(xs.code, innerMapper.code, jvm.ClassOf(ct.typoType).code))})"
+            val jdbcArrayType = jvm.Type.ArrayOf(kotlinifyType(toTypo.jdbcType))
+            val xsLambda = jvm.Lambda(List(jvm.LambdaParam.typed(xs, jdbcArrayType)), jvm.Body.Expr(lang.arrayMap(xs.code, innerMapper.code, jvm.ClassOf(ct.typoType).code)))
+            code"$PgRead.massageJdbcArrayTo(${jvm.ClassOf(jdbcArrayType)}).map($xsLambda)"
           case None =>
             // Complex type - use castJdbcArrayTo
-            code"$PgRead.castJdbcArrayTo(${jvm.ClassOf(toTypo.jdbcType)}).map(${jvm.Lambda1(xs, lang.arrayMap(xs.code, innerMapper.code, jvm.ClassOf(ct.typoType).code))})"
+            val jdbcArrayType = jvm.Type.ArrayOf(toTypo.jdbcType)
+            val xsLambda = jvm.Lambda(List(jvm.LambdaParam.typed(xs, jdbcArrayType)), jvm.Body.Expr(lang.arrayMap(xs.code, innerMapper.code, jvm.ClassOf(ct.typoType).code)))
+            code"$PgRead.castJdbcArrayTo(${jvm.ClassOf(toTypo.jdbcType)}).map($xsLambda)"
         }
 
         // Generate the array write using the fromTypo conversion
         // Use TypedLambda1 for cross-language compatibility
-        val typedLambda = jvm.TypedLambda1(ct.typoType, v, fromTypo.fromTypo0(v))
+        val typedLambda = jvm.Lambda(List(jvm.LambdaParam.typed(v, ct.typoType)), jvm.Body.Expr(fromTypo.fromTypo0(v)))
         // Use GenericMethodCall for cross-language compatibility
         val passObjectToJdbc = jvm.GenericMethodCall(PgWrite, jvm.Ident("passObjectToJdbc"), List(fromTypo.jdbcType), Nil)
         val typenameAs = jvm.GenericMethodCall(code"${ct.typoType}.$pgTypeName.typename()", jvm.Ident("as"), List(fromTypo.jdbcType), Nil)
+        val xsWriteLambda = jvm.Lambda(List(jvm.LambdaParam.typed(xs, arrayType)), jvm.Body.Expr(lang.arrayMap(xs.code, typedLambda.code, jvm.ClassOf(fromTypo.jdbcType).code)))
         val arrayWrite: jvm.Code =
-          code"$passObjectToJdbc.array($typenameAs).contramap(${jvm.Lambda1(xs, lang.arrayMap(xs.code, typedLambda.code, jvm.ClassOf(fromTypo.jdbcType).code))})"
+          code"$passObjectToJdbc.array($typenameAs).contramap($xsWriteLambda)"
 
         Some(
           jvm.Given(

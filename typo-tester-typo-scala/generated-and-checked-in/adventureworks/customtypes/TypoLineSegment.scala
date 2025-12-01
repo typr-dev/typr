@@ -24,11 +24,11 @@ object TypoLineSegment {
   given pgType: PgType[TypoLineSegment] = {
     PgType.of(
       "lseg",
-      PgRead.castJdbcObjectTo(classOf[PGlseg]).map(v => new TypoLineSegment(new TypoPoint(v.point(0).x, v.point(0).y), new TypoPoint(v.point(1).x, v.point(1).y))),
-      PgWrite.passObjectToJdbc().contramap((v: TypoLineSegment) => new PGlseg(new PGpoint(v.p1.x, v.p1.y), new PGpoint(v.p2.x, v.p2.y))),
+      PgRead.castJdbcObjectTo(classOf[PGlseg]).map((v: PGlseg) => new TypoLineSegment(new TypoPoint(v.point(0).x, v.point(0).y), new TypoPoint(v.point(1).x, v.point(1).y))),
+      PgWrite.passObjectToJdbc[PGlseg]().contramap((v: TypoLineSegment) => new PGlseg(new PGpoint(v.p1.x, v.p1.y), new PGpoint(v.p2.x, v.p2.y))),
       TypoLineSegment.pgText
     )
   }
 
-  given pgTypeArray: PgType[Array[TypoLineSegment]] = TypoLineSegment.pgType.array(PgRead.castJdbcArrayTo(classOf[PGlseg]).map(xs => xs.map(v => new TypoLineSegment(new TypoPoint(v.point(0).x, v.point(0).y), new TypoPoint(v.point(1).x, v.point(1).y)))), PgWrite.passObjectToJdbc[PGlseg]().array(TypoLineSegment.pgType.typename().as[PGlseg]()).contramap(xs => xs.map((v: TypoLineSegment) => new PGlseg(new PGpoint(v.p1.x, v.p1.y), new PGpoint(v.p2.x, v.p2.y)))))
+  given pgTypeArray: PgType[Array[TypoLineSegment]] = TypoLineSegment.pgType.array(PgRead.castJdbcArrayTo(classOf[PGlseg]).map((xs: Array[PGlseg]) => xs.map((v: PGlseg) => new TypoLineSegment(new TypoPoint(v.point(0).x, v.point(0).y), new TypoPoint(v.point(1).x, v.point(1).y)))), PgWrite.passObjectToJdbc[PGlseg]().array(TypoLineSegment.pgType.typename().as[PGlseg]()).contramap((xs: Array[TypoLineSegment]) => xs.map((v: TypoLineSegment) => new PGlseg(new PGpoint(v.p1.x, v.p1.y), new PGpoint(v.p2.x, v.p2.y)))))
 }

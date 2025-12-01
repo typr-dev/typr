@@ -26,13 +26,5 @@ case class PersonRowUnsaved(
 }
 
 object PersonRowUnsaved {
-  given pgText: PgText[PersonRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      PgTypes.text.opt().pgText.unsafeEncode(row.name, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using PgTypes.int8.pgText).unsafeEncode(row.one, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using PgTypes.text.opt().pgText).unsafeEncode(row.two, sb);
-    })
-  }
+  given pgText: PgText[PersonRowUnsaved] = PgText.instance((row, sb) => { PgTypes.text.opt().pgText.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.int8.pgText).unsafeEncode(row.one, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.text.opt().pgText).unsafeEncode(row.two, sb) })
 }

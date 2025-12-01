@@ -11,12 +11,10 @@ import doobie.free.connection.ConnectionIO
 import doobie.syntax.SqlInterpolator.SingleFragment.fromWrite
 import doobie.util.Write
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class PersonDetailSqlRepoImpl extends PersonDetailSqlRepo {
-  def apply(
+  override def apply(
     businessentityid: /* user-picked */ BusinessentityId,
     modifiedAfter: TypoLocalDateTime
   ): Stream[ConnectionIO, PersonDetailSqlRow] = {

@@ -5,6 +5,7 @@
  */
 package adventureworks.public_.title_domain;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,10 +35,12 @@ public record TitleDomainRepoMock(HashMap<TitleDomainId, TitleDomainRow> map) im
     return new TitleDomainRepoMock(map);
   };
 
+  @Override
   public DeleteBuilder<TitleDomainFields, TitleDomainRow> delete() {
     return new DeleteBuilderMock<>(TitleDomainFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.code(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     TitleDomainId code,
     Connection c
@@ -45,50 +48,56 @@ public record TitleDomainRepoMock(HashMap<TitleDomainId, TitleDomainRow> map) im
     return Optional.ofNullable(map.remove(code)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     TitleDomainId[] codes,
     Connection c
   ) {
     var count = 0;
-      for (var id : codes) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : codes) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public TitleDomainRow insert(
     TitleDomainRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.code())) {
-        throw new RuntimeException(str("id $unsaved.code() already exists"));
-      };
-      map.put(unsaved.code(), unsaved);
+      throw new RuntimeException(str("id $unsaved.code() already exists"));
+    };
+    map.put(unsaved.code(), unsaved);
     return unsaved;
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<TitleDomainRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.code(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.code(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<TitleDomainFields, TitleDomainRow> select() {
     return new SelectBuilderMock<>(TitleDomainFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<TitleDomainRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<TitleDomainRow> selectById(
     TitleDomainId code,
     Connection c
@@ -96,27 +105,31 @@ public record TitleDomainRepoMock(HashMap<TitleDomainId, TitleDomainRow> map) im
     return Optional.ofNullable(map.get(code));
   };
 
+  @Override
   public List<TitleDomainRow> selectByIds(
     TitleDomainId[] codes,
     Connection c
   ) {
     var result = new ArrayList<TitleDomainRow>();
-      for (var id : codes) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : codes) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<TitleDomainId, TitleDomainRow> selectByIdsTracked(
     TitleDomainId[] codes,
     Connection c
   ) {
-    return selectByIds(codes, c).stream().collect(Collectors.toMap((adventureworks.public_.title_domain.TitleDomainRow row) -> row.code(), Function.identity()));
+    return selectByIds(codes, c).stream().collect(Collectors.toMap((TitleDomainRow row) -> row.code(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<TitleDomainFields, TitleDomainRow> update() {
     return new UpdateBuilderMock<>(TitleDomainFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public TitleDomainRow upsert(
     TitleDomainRow unsaved,
     Connection c
@@ -125,31 +138,33 @@ public record TitleDomainRepoMock(HashMap<TitleDomainId, TitleDomainRow> map) im
     return unsaved;
   };
 
+  @Override
   public List<TitleDomainRow> upsertBatch(
     Iterator<TitleDomainRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<TitleDomainRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.code(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.code(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<TitleDomainRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.code(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.code(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

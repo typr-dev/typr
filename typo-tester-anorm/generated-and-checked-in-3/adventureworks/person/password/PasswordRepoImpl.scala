@@ -25,18 +25,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class PasswordRepoImpl extends PasswordRepo {
-  def delete: DeleteBuilder[PasswordFields, PasswordRow] = DeleteBuilder.of(""""person"."password"""", PasswordFields.structure, PasswordRow.rowParser(1).*)
+  override def delete: DeleteBuilder[PasswordFields, PasswordRow] = DeleteBuilder.of(""""person"."password"""", PasswordFields.structure, PasswordRow.rowParser(1).*)
 
-  def deleteById(businessentityid: BusinessentityId)(using c: Connection): Boolean = SQL"""delete from "person"."password" where "businessentityid" = ${ParameterValue(businessentityid, null, BusinessentityId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): Boolean = SQL"""delete from "person"."password" where "businessentityid" = ${ParameterValue(businessentityid, null, BusinessentityId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Int = {
+  override def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Int = {
     SQL"""delete
     from "person"."password"
     where "businessentityid" = ANY(${ParameterValue(businessentityids, null, BusinessentityId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: PasswordRow)(using c: Connection): PasswordRow = {
+  override def insert(unsaved: PasswordRow)(using c: Connection): PasswordRow = {
   SQL"""insert into "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate")
     values (${ParameterValue(unsaved.businessentityid, null, BusinessentityId.toStatement)}::int4, ${ParameterValue(unsaved.passwordhash, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.passwordsalt, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.rowguid, null, TypoUUID.toStatement)}::uuid, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"::text
@@ -44,7 +44,7 @@ class PasswordRepoImpl extends PasswordRepo {
     .executeInsert(PasswordRow.rowParser(1).single)
   }
 
-  def insert(unsaved: PasswordRowUnsaved)(using c: Connection): PasswordRow = {
+  override def insert(unsaved: PasswordRowUnsaved)(using c: Connection): PasswordRow = {
     val namedParameters = List(
       Some((NamedParameter("businessentityid", ParameterValue(unsaved.businessentityid, null, BusinessentityId.toStatement)), "::int4")),
       Some((NamedParameter("passwordhash", ParameterValue(unsaved.passwordhash, null, ToStatement.stringToStatement)), "")),
@@ -74,47 +74,47 @@ class PasswordRepoImpl extends PasswordRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[PasswordRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved)(using PasswordRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[PasswordRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using PasswordRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[PasswordFields, PasswordRow] = SelectBuilder.of(""""person"."password"""", PasswordFields.structure, PasswordRow.rowParser)
+  override def select: SelectBuilder[PasswordFields, PasswordRow] = SelectBuilder.of(""""person"."password"""", PasswordFields.structure, PasswordRow.rowParser)
 
-  def selectAll(using c: Connection): List[PasswordRow] = {
+  override def selectAll(using c: Connection): List[PasswordRow] = {
     SQL"""select "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"::text
     from "person"."password"
     """.as(PasswordRow.rowParser(1).*)
   }
 
-  def selectById(businessentityid: BusinessentityId)(using c: Connection): Option[PasswordRow] = {
+  override def selectById(businessentityid: BusinessentityId)(using c: Connection): Option[PasswordRow] = {
     SQL"""select "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"::text
     from "person"."password"
     where "businessentityid" = ${ParameterValue(businessentityid, null, BusinessentityId.toStatement)}
     """.as(PasswordRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): List[PasswordRow] = {
+  override def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): List[PasswordRow] = {
     SQL"""select "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"::text
     from "person"."password"
     where "businessentityid" = ANY(${ParameterValue(businessentityids, null, BusinessentityId.arrayToStatement)})
     """.as(PasswordRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): Map[BusinessentityId, PasswordRow] = {
+  override def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): Map[BusinessentityId, PasswordRow] = {
     val byId = selectByIds(businessentityids).view.map(x => (x.businessentityid, x)).toMap
     businessentityids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[PasswordFields, PasswordRow] = UpdateBuilder.of(""""person"."password"""", PasswordFields.structure, PasswordRow.rowParser(1).*)
+  override def update: UpdateBuilder[PasswordFields, PasswordRow] = UpdateBuilder.of(""""person"."password"""", PasswordFields.structure, PasswordRow.rowParser(1).*)
 
-  def update(row: PasswordRow)(using c: Connection): Option[PasswordRow] = {
+  override def update(row: PasswordRow)(using c: Connection): Option[PasswordRow] = {
     val businessentityid = row.businessentityid
     SQL"""update "person"."password"
     set "passwordhash" = ${ParameterValue(row.passwordhash, null, ToStatement.stringToStatement)},
@@ -126,7 +126,7 @@ class PasswordRepoImpl extends PasswordRepo {
     """.executeInsert(PasswordRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: PasswordRow)(using c: Connection): PasswordRow = {
+  override def upsert(unsaved: PasswordRow)(using c: Connection): PasswordRow = {
   SQL"""insert into "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate")
     values (
       ${ParameterValue(unsaved.businessentityid, null, BusinessentityId.toStatement)}::int4,
@@ -146,7 +146,7 @@ class PasswordRepoImpl extends PasswordRepo {
     .executeInsert(PasswordRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[PasswordRow])(using c: Connection): List[PasswordRow] = {
+  override def upsertBatch(unsaved: Iterable[PasswordRow])(using c: Connection): List[PasswordRow] = {
     def toNamedParameter(row: PasswordRow): List[NamedParameter] = List(
       NamedParameter("businessentityid", ParameterValue(row.businessentityid, null, BusinessentityId.toStatement)),
       NamedParameter("passwordhash", ParameterValue(row.passwordhash, null, ToStatement.stringToStatement)),
@@ -154,6 +154,7 @@ class PasswordRepoImpl extends PasswordRepo {
       NamedParameter("rowguid", ParameterValue(row.rowguid, null, TypoUUID.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -177,7 +178,7 @@ class PasswordRepoImpl extends PasswordRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[PasswordRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

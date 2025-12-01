@@ -11,7 +11,6 @@ import adventureworks.person.phonenumbertype.PhonenumbertypeId
 import adventureworks.public.Phone
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple5
 
 /** View: pe.pp */
 case class PpViewRow(
@@ -28,13 +27,5 @@ case class PpViewRow(
 )
 
 object PpViewRow {
-  val `_rowParser`: RowParser[PpViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, Phone.pgType, PhonenumbertypeId.pgType, TypoLocalDateTime.pgType, PpViewRow.apply, row => new Tuple5(
-      row.id,
-      row.businessentityid,
-      row.phonenumber,
-      row.phonenumbertypeid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[PpViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, Phone.pgType, PhonenumbertypeId.pgType, TypoLocalDateTime.pgType, PpViewRow.apply, row => Array(row.id, row.businessentityid, row.phonenumber, row.phonenumbertypeid, row.modifieddate))
 }

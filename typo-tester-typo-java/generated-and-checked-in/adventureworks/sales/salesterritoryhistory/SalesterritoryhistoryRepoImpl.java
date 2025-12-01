@@ -9,7 +9,6 @@ import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.customtypes.TypoUUID;
 import adventureworks.person.businessentity.BusinessentityId;
 import adventureworks.sales.salesterritory.SalesterritoryId;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,12 +26,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class SalesterritoryhistoryRepoImpl implements SalesterritoryhistoryRepo {
+  @Override
   public DeleteBuilder<SalesterritoryhistoryFields, SalesterritoryhistoryRow> delete() {
     return DeleteBuilder.of("sales.salesterritoryhistory", SalesterritoryhistoryFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     SalesterritoryhistoryId compositeId,
     Connection c
@@ -54,31 +54,33 @@ public class SalesterritoryhistoryRepoImpl implements SalesterritoryhistoryRepo 
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     SalesterritoryhistoryId[] compositeIds,
     Connection c
   ) {
     BusinessentityId[] businessentityid = arrayMap.map(compositeIds, SalesterritoryhistoryId::businessentityid, BusinessentityId.class);;
-      TypoLocalDateTime[] startdate = arrayMap.map(compositeIds, SalesterritoryhistoryId::startdate, TypoLocalDateTime.class);;
-      SalesterritoryId[] territoryid = arrayMap.map(compositeIds, SalesterritoryhistoryId::territoryid, SalesterritoryId.class);;
+    TypoLocalDateTime[] startdate = arrayMap.map(compositeIds, SalesterritoryhistoryId::startdate, TypoLocalDateTime.class);;
+    SalesterritoryId[] territoryid = arrayMap.map(compositeIds, SalesterritoryhistoryId::territoryid, SalesterritoryId.class);;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                delete
-                from "sales"."salesterritoryhistory"
-                where ("businessentityid", "startdate", "territoryid")
-                in (select unnest("""),
-             BusinessentityId.pgTypeArray.encode(businessentityid),
-             typo.runtime.Fragment.lit("::int4[]), unnest("),
-             TypoLocalDateTime.pgTypeArray.encode(startdate),
-             typo.runtime.Fragment.lit("::timestamp[]), unnest("),
-             SalesterritoryId.pgTypeArray.encode(territoryid),
-             typo.runtime.Fragment.lit("""
-             ::int4[]))
+      typo.runtime.Fragment.lit("""
+         delete
+         from "sales"."salesterritoryhistory"
+         where ("businessentityid", "startdate", "territoryid")
+         in (select unnest("""),
+      BusinessentityId.pgTypeArray.encode(businessentityid),
+      typo.runtime.Fragment.lit("::int4[]), unnest("),
+      TypoLocalDateTime.pgTypeArray.encode(startdate),
+      typo.runtime.Fragment.lit("::timestamp[]), unnest("),
+      SalesterritoryId.pgTypeArray.encode(territoryid),
+      typo.runtime.Fragment.lit("""
+      ::int4[]))
 
-             """)
-           ).update().runUnchecked(c);
+      """)
+    ).update().runUnchecked(c);
   };
 
+  @Override
   public SalesterritoryhistoryRow insert(
     SalesterritoryhistoryRow unsaved,
     Connection c
@@ -106,69 +108,75 @@ public class SalesterritoryhistoryRepoImpl implements SalesterritoryhistoryRepo 
       .updateReturning(SalesterritoryhistoryRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public SalesterritoryhistoryRow insert(
     SalesterritoryhistoryRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"businessentityid\""));
-      values.add(interpolate(
-        BusinessentityId.pgType.encode(unsaved.businessentityid()),
-        typo.runtime.Fragment.lit("::int4")
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"businessentityid\""));
+    values.add(interpolate(
+      BusinessentityId.pgType.encode(unsaved.businessentityid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"territoryid\""));
+    values.add(interpolate(
+      SalesterritoryId.pgType.encode(unsaved.territoryid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"startdate\""));
+    values.add(interpolate(
+      TypoLocalDateTime.pgType.encode(unsaved.startdate()),
+      typo.runtime.Fragment.lit("::timestamp")
+    ));
+    columns.add(Fragment.lit("\"enddate\""));
+    values.add(interpolate(
+      TypoLocalDateTime.pgType.opt().encode(unsaved.enddate()),
+      typo.runtime.Fragment.lit("::timestamp")
+    ));
+    unsaved.rowguid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"rowguid\""));
+        values.add(interpolate(
+        TypoUUID.pgType.encode(value),
+        typo.runtime.Fragment.lit("::uuid")
       ));
-      columns.add(Fragment.lit("\"territoryid\""));
-      values.add(interpolate(
-        SalesterritoryId.pgType.encode(unsaved.territoryid()),
-        typo.runtime.Fragment.lit("::int4")
-      ));
-      columns.add(Fragment.lit("\"startdate\""));
-      values.add(interpolate(
-        TypoLocalDateTime.pgType.encode(unsaved.startdate()),
+      }
+    );;
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
         typo.runtime.Fragment.lit("::timestamp")
       ));
-      columns.add(Fragment.lit("\"enddate\""));
-      values.add(interpolate(
-        TypoLocalDateTime.pgType.opt().encode(unsaved.enddate()),
-        typo.runtime.Fragment.lit("::timestamp")
-      ));
-      unsaved.rowguid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"rowguid\""));
-          values.add(interpolate(
-            TypoUUID.pgType.encode(value),
-            typo.runtime.Fragment.lit("::uuid")
-          ));
-        }
-      );;
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "sales"."salesterritoryhistory"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "businessentityid", "territoryid", "startdate"::text, "enddate"::text, "rowguid", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "sales"."salesterritoryhistory"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "businessentityid", "territoryid", "startdate"::text, "enddate"::text, "rowguid", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(SalesterritoryhistoryRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<SalesterritoryhistoryRow> unsaved,
     Integer batchSize,
@@ -180,6 +188,7 @@ public class SalesterritoryhistoryRepoImpl implements SalesterritoryhistoryRepo 
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<SalesterritoryhistoryRowUnsaved> unsaved,
     Integer batchSize,
@@ -190,17 +199,20 @@ public class SalesterritoryhistoryRepoImpl implements SalesterritoryhistoryRepo 
     """), batchSize, unsaved, c, SalesterritoryhistoryRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<SalesterritoryhistoryFields, SalesterritoryhistoryRow> select() {
     return SelectBuilder.of("sales.salesterritoryhistory", SalesterritoryhistoryFields.structure(), SalesterritoryhistoryRow._rowParser);
   };
 
+  @Override
   public List<SalesterritoryhistoryRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "businessentityid", "territoryid", "startdate"::text, "enddate"::text, "rowguid", "modifieddate"::text
        from "sales"."salesterritoryhistory"
-    """)).as(SalesterritoryhistoryRow._rowParser.all()).runUnchecked(c);
+    """)).query(SalesterritoryhistoryRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<SalesterritoryhistoryRow> selectById(
     SalesterritoryhistoryId compositeId,
     Connection c
@@ -220,81 +232,86 @@ public class SalesterritoryhistoryRepoImpl implements SalesterritoryhistoryRepo 
       """),
       SalesterritoryId.pgType.encode(compositeId.territoryid()),
       typo.runtime.Fragment.lit("")
-    ).as(SalesterritoryhistoryRow._rowParser.first()).runUnchecked(c);
+    ).query(SalesterritoryhistoryRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<SalesterritoryhistoryRow> selectByIds(
     SalesterritoryhistoryId[] compositeIds,
     Connection c
   ) {
     BusinessentityId[] businessentityid = arrayMap.map(compositeIds, SalesterritoryhistoryId::businessentityid, BusinessentityId.class);;
-      TypoLocalDateTime[] startdate = arrayMap.map(compositeIds, SalesterritoryhistoryId::startdate, TypoLocalDateTime.class);;
-      SalesterritoryId[] territoryid = arrayMap.map(compositeIds, SalesterritoryhistoryId::territoryid, SalesterritoryId.class);;
+    TypoLocalDateTime[] startdate = arrayMap.map(compositeIds, SalesterritoryhistoryId::startdate, TypoLocalDateTime.class);;
+    SalesterritoryId[] territoryid = arrayMap.map(compositeIds, SalesterritoryhistoryId::territoryid, SalesterritoryId.class);;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                select "businessentityid", "territoryid", "startdate"::text, "enddate"::text, "rowguid", "modifieddate"::text
-                from "sales"."salesterritoryhistory"
-                where ("businessentityid", "startdate", "territoryid")
-                in (select unnest("""),
-             BusinessentityId.pgTypeArray.encode(businessentityid),
-             typo.runtime.Fragment.lit("::int4[]), unnest("),
-             TypoLocalDateTime.pgTypeArray.encode(startdate),
-             typo.runtime.Fragment.lit("::timestamp[]), unnest("),
-             SalesterritoryId.pgTypeArray.encode(territoryid),
-             typo.runtime.Fragment.lit("""
-             ::int4[]))
+      typo.runtime.Fragment.lit("""
+         select "businessentityid", "territoryid", "startdate"::text, "enddate"::text, "rowguid", "modifieddate"::text
+         from "sales"."salesterritoryhistory"
+         where ("businessentityid", "startdate", "territoryid")
+         in (select unnest("""),
+      BusinessentityId.pgTypeArray.encode(businessentityid),
+      typo.runtime.Fragment.lit("::int4[]), unnest("),
+      TypoLocalDateTime.pgTypeArray.encode(startdate),
+      typo.runtime.Fragment.lit("::timestamp[]), unnest("),
+      SalesterritoryId.pgTypeArray.encode(territoryid),
+      typo.runtime.Fragment.lit("""
+      ::int4[]))
 
-             """)
-           ).as(SalesterritoryhistoryRow._rowParser.all()).runUnchecked(c);
+      """)
+    ).query(SalesterritoryhistoryRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<SalesterritoryhistoryId, SalesterritoryhistoryRow> selectByIdsTracked(
     SalesterritoryhistoryId[] compositeIds,
     Connection c
   ) {
-    Map<SalesterritoryhistoryId, SalesterritoryhistoryRow> ret = new HashMap<>();;
-      selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
+    HashMap<SalesterritoryhistoryId, SalesterritoryhistoryRow> ret = new HashMap<SalesterritoryhistoryId, SalesterritoryhistoryRow>();
+    selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<SalesterritoryhistoryFields, SalesterritoryhistoryRow> update() {
     return UpdateBuilder.of("sales.salesterritoryhistory", SalesterritoryhistoryFields.structure(), SalesterritoryhistoryRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     SalesterritoryhistoryRow row,
     Connection c
   ) {
     SalesterritoryhistoryId compositeId = row.compositeId();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "sales"."salesterritoryhistory"
-                set "enddate" = """),
-             TypoLocalDateTime.pgType.opt().encode(row.enddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp,
-                "rowguid" = """),
-             TypoUUID.pgType.encode(row.rowguid()),
-             typo.runtime.Fragment.lit("""
-                ::uuid,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "businessentityid" = """),
-             BusinessentityId.pgType.encode(compositeId.businessentityid()),
-             typo.runtime.Fragment.lit("""
-              AND "startdate" = 
-             """),
-             TypoLocalDateTime.pgType.encode(compositeId.startdate()),
-             typo.runtime.Fragment.lit("""
-              AND "territoryid" = 
-             """),
-             SalesterritoryId.pgType.encode(compositeId.territoryid()),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "sales"."salesterritoryhistory"
+         set "enddate" = """),
+      TypoLocalDateTime.pgType.opt().encode(row.enddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp,
+         "rowguid" = """),
+      TypoUUID.pgType.encode(row.rowguid()),
+      typo.runtime.Fragment.lit("""
+         ::uuid,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "businessentityid" = """),
+      BusinessentityId.pgType.encode(compositeId.businessentityid()),
+      typo.runtime.Fragment.lit("""
+       AND "startdate" = 
+      """),
+      TypoLocalDateTime.pgType.encode(compositeId.startdate()),
+      typo.runtime.Fragment.lit("""
+       AND "territoryid" = 
+      """),
+      SalesterritoryId.pgType.encode(compositeId.territoryid()),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public SalesterritoryhistoryRow upsert(
     SalesterritoryhistoryRow unsaved,
     Connection c
@@ -328,6 +345,7 @@ public class SalesterritoryhistoryRepoImpl implements SalesterritoryhistoryRepo 
       .runUnchecked(c);
   };
 
+  @Override
   public List<SalesterritoryhistoryRow> upsertBatch(
     Iterator<SalesterritoryhistoryRow> unsaved,
     Connection c
@@ -347,26 +365,27 @@ public class SalesterritoryhistoryRepoImpl implements SalesterritoryhistoryRepo 
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<SalesterritoryhistoryRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table salesterritoryhistory_TEMP (like "sales"."salesterritoryhistory") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy salesterritoryhistory_TEMP("businessentityid", "territoryid", "startdate", "enddate", "rowguid", "modifieddate") from stdin
-      """), batchSize, unsaved, c, SalesterritoryhistoryRow.pgText);
+    create temporary table salesterritoryhistory_TEMP (like "sales"."salesterritoryhistory") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy salesterritoryhistory_TEMP("businessentityid", "territoryid", "startdate", "enddate", "rowguid", "modifieddate") from stdin
+    """), batchSize, unsaved, c, SalesterritoryhistoryRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "sales"."salesterritoryhistory"("businessentityid", "territoryid", "startdate", "enddate", "rowguid", "modifieddate")
-              select * from salesterritoryhistory_TEMP
-              on conflict ("businessentityid", "startdate", "territoryid")
-              do update set
-                "enddate" = EXCLUDED."enddate",
-              "rowguid" = EXCLUDED."rowguid",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table salesterritoryhistory_TEMP;""")).update().runUnchecked(c);
+       insert into "sales"."salesterritoryhistory"("businessentityid", "territoryid", "startdate", "enddate", "rowguid", "modifieddate")
+       select * from salesterritoryhistory_TEMP
+       on conflict ("businessentityid", "startdate", "territoryid")
+       do update set
+         "enddate" = EXCLUDED."enddate",
+       "rowguid" = EXCLUDED."rowguid",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table salesterritoryhistory_TEMP;""")).update().runUnchecked(c);
   };
 }

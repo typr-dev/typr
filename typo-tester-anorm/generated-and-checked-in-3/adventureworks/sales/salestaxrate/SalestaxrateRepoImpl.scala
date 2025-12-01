@@ -27,18 +27,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class SalestaxrateRepoImpl extends SalestaxrateRepo {
-  def delete: DeleteBuilder[SalestaxrateFields, SalestaxrateRow] = DeleteBuilder.of(""""sales"."salestaxrate"""", SalestaxrateFields.structure, SalestaxrateRow.rowParser(1).*)
+  override def delete: DeleteBuilder[SalestaxrateFields, SalestaxrateRow] = DeleteBuilder.of(""""sales"."salestaxrate"""", SalestaxrateFields.structure, SalestaxrateRow.rowParser(1).*)
 
-  def deleteById(salestaxrateid: SalestaxrateId)(using c: Connection): Boolean = SQL"""delete from "sales"."salestaxrate" where "salestaxrateid" = ${ParameterValue(salestaxrateid, null, SalestaxrateId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(salestaxrateid: SalestaxrateId)(using c: Connection): Boolean = SQL"""delete from "sales"."salestaxrate" where "salestaxrateid" = ${ParameterValue(salestaxrateid, null, SalestaxrateId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(salestaxrateids: Array[SalestaxrateId])(using c: Connection): Int = {
+  override def deleteByIds(salestaxrateids: Array[SalestaxrateId])(using c: Connection): Int = {
     SQL"""delete
     from "sales"."salestaxrate"
     where "salestaxrateid" = ANY(${ParameterValue(salestaxrateids, null, SalestaxrateId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: SalestaxrateRow)(using c: Connection): SalestaxrateRow = {
+  override def insert(unsaved: SalestaxrateRow)(using c: Connection): SalestaxrateRow = {
   SQL"""insert into "sales"."salestaxrate"("salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate")
     values (${ParameterValue(unsaved.salestaxrateid, null, SalestaxrateId.toStatement)}::int4, ${ParameterValue(unsaved.stateprovinceid, null, StateprovinceId.toStatement)}::int4, ${ParameterValue(unsaved.taxtype, null, TypoShort.toStatement)}::int2, ${ParameterValue(unsaved.taxrate, null, ToStatement.scalaBigDecimalToStatement)}::numeric, ${ParameterValue(unsaved.name, null, Name.toStatement)}::varchar, ${ParameterValue(unsaved.rowguid, null, TypoUUID.toStatement)}::uuid, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"::text
@@ -46,7 +46,7 @@ class SalestaxrateRepoImpl extends SalestaxrateRepo {
     .executeInsert(SalestaxrateRow.rowParser(1).single)
   }
 
-  def insert(unsaved: SalestaxrateRowUnsaved)(using c: Connection): SalestaxrateRow = {
+  override def insert(unsaved: SalestaxrateRowUnsaved)(using c: Connection): SalestaxrateRow = {
     val namedParameters = List(
       Some((NamedParameter("stateprovinceid", ParameterValue(unsaved.stateprovinceid, null, StateprovinceId.toStatement)), "::int4")),
       Some((NamedParameter("taxtype", ParameterValue(unsaved.taxtype, null, TypoShort.toStatement)), "::int2")),
@@ -84,47 +84,47 @@ class SalestaxrateRepoImpl extends SalestaxrateRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[SalestaxrateRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "sales"."salestaxrate"("salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved)(using SalestaxrateRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[SalestaxrateRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "sales"."salestaxrate"("stateprovinceid", "taxtype", "name", "salestaxrateid", "taxrate", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using SalestaxrateRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[SalestaxrateFields, SalestaxrateRow] = SelectBuilder.of(""""sales"."salestaxrate"""", SalestaxrateFields.structure, SalestaxrateRow.rowParser)
+  override def select: SelectBuilder[SalestaxrateFields, SalestaxrateRow] = SelectBuilder.of(""""sales"."salestaxrate"""", SalestaxrateFields.structure, SalestaxrateRow.rowParser)
 
-  def selectAll(using c: Connection): List[SalestaxrateRow] = {
+  override def selectAll(using c: Connection): List[SalestaxrateRow] = {
     SQL"""select "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"::text
     from "sales"."salestaxrate"
     """.as(SalestaxrateRow.rowParser(1).*)
   }
 
-  def selectById(salestaxrateid: SalestaxrateId)(using c: Connection): Option[SalestaxrateRow] = {
+  override def selectById(salestaxrateid: SalestaxrateId)(using c: Connection): Option[SalestaxrateRow] = {
     SQL"""select "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"::text
     from "sales"."salestaxrate"
     where "salestaxrateid" = ${ParameterValue(salestaxrateid, null, SalestaxrateId.toStatement)}
     """.as(SalestaxrateRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(salestaxrateids: Array[SalestaxrateId])(using c: Connection): List[SalestaxrateRow] = {
+  override def selectByIds(salestaxrateids: Array[SalestaxrateId])(using c: Connection): List[SalestaxrateRow] = {
     SQL"""select "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"::text
     from "sales"."salestaxrate"
     where "salestaxrateid" = ANY(${ParameterValue(salestaxrateids, null, SalestaxrateId.arrayToStatement)})
     """.as(SalestaxrateRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(salestaxrateids: Array[SalestaxrateId])(using c: Connection): Map[SalestaxrateId, SalestaxrateRow] = {
+  override def selectByIdsTracked(salestaxrateids: Array[SalestaxrateId])(using c: Connection): Map[SalestaxrateId, SalestaxrateRow] = {
     val byId = selectByIds(salestaxrateids).view.map(x => (x.salestaxrateid, x)).toMap
     salestaxrateids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[SalestaxrateFields, SalestaxrateRow] = UpdateBuilder.of(""""sales"."salestaxrate"""", SalestaxrateFields.structure, SalestaxrateRow.rowParser(1).*)
+  override def update: UpdateBuilder[SalestaxrateFields, SalestaxrateRow] = UpdateBuilder.of(""""sales"."salestaxrate"""", SalestaxrateFields.structure, SalestaxrateRow.rowParser(1).*)
 
-  def update(row: SalestaxrateRow)(using c: Connection): Option[SalestaxrateRow] = {
+  override def update(row: SalestaxrateRow)(using c: Connection): Option[SalestaxrateRow] = {
     val salestaxrateid = row.salestaxrateid
     SQL"""update "sales"."salestaxrate"
     set "stateprovinceid" = ${ParameterValue(row.stateprovinceid, null, StateprovinceId.toStatement)}::int4,
@@ -138,7 +138,7 @@ class SalestaxrateRepoImpl extends SalestaxrateRepo {
     """.executeInsert(SalestaxrateRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: SalestaxrateRow)(using c: Connection): SalestaxrateRow = {
+  override def upsert(unsaved: SalestaxrateRow)(using c: Connection): SalestaxrateRow = {
   SQL"""insert into "sales"."salestaxrate"("salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate")
     values (
       ${ParameterValue(unsaved.salestaxrateid, null, SalestaxrateId.toStatement)}::int4,
@@ -162,7 +162,7 @@ class SalestaxrateRepoImpl extends SalestaxrateRepo {
     .executeInsert(SalestaxrateRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[SalestaxrateRow])(using c: Connection): List[SalestaxrateRow] = {
+  override def upsertBatch(unsaved: Iterable[SalestaxrateRow])(using c: Connection): List[SalestaxrateRow] = {
     def toNamedParameter(row: SalestaxrateRow): List[NamedParameter] = List(
       NamedParameter("salestaxrateid", ParameterValue(row.salestaxrateid, null, SalestaxrateId.toStatement)),
       NamedParameter("stateprovinceid", ParameterValue(row.stateprovinceid, null, StateprovinceId.toStatement)),
@@ -172,6 +172,7 @@ class SalestaxrateRepoImpl extends SalestaxrateRepo {
       NamedParameter("rowguid", ParameterValue(row.rowguid, null, TypoUUID.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -197,7 +198,7 @@ class SalestaxrateRepoImpl extends SalestaxrateRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[SalestaxrateRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

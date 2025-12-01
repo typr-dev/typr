@@ -9,7 +9,7 @@ import java.sql.Connection
 import anorm.SqlStringInterpolation
 
 class PersonRowJoinSqlRepoImpl extends PersonRowJoinSqlRepo {
-  def apply(using c: Connection): List[PersonRowJoinSqlRow] = {
+  override def apply(using c: Connection): List[PersonRowJoinSqlRow] = {
     val sql =
       SQL"""SELECT s.businessentityid,
              (select array_agg(ROW(a.emailaddress, a.rowguid)) from person.emailaddress a where a.businessentityid = s.businessentityid) as email,

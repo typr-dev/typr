@@ -10,7 +10,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple2;
 
 /** Table: public.only_pk_columns
   * Composite primary key: key_column_1, key_column_2
@@ -27,7 +26,7 @@ public record OnlyPkColumnsRow(
     return new OnlyPkColumnsRow(keyColumn1, keyColumn2);
   };
 
-  static RowParser<OnlyPkColumnsRow> _rowParser = RowParsers.of(PgTypes.text, PgTypes.int4, OnlyPkColumnsRow::new, row -> new Tuple2<>(row.keyColumn1(), row.keyColumn2()));;
+  static RowParser<OnlyPkColumnsRow> _rowParser = RowParsers.of(PgTypes.text, PgTypes.int4, OnlyPkColumnsRow::new, row -> new Object[]{row.keyColumn1(), row.keyColumn2()});;
 
   static public OnlyPkColumnsRow apply(OnlyPkColumnsId compositeId) {
     return new OnlyPkColumnsRow(compositeId.keyColumn1(), compositeId.keyColumn2());

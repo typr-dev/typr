@@ -17,7 +17,7 @@ import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 
 public interface PcViewFields {
-  static final class Impl extends Relation<PcViewFields, PcViewRow> {
+  final class Impl extends Relation<PcViewFields, PcViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -25,18 +25,23 @@ public interface PcViewFields {
     @Override
     public PcViewFields fields() {
       return new PcViewFields() {
+               @Override
                public Field<ProductcategoryId, PcViewRow> id() {
                  return new Field<ProductcategoryId, PcViewRow>(_path, "id", PcViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ProductcategoryId.pgType);
                };
+               @Override
                public Field<ProductcategoryId, PcViewRow> productcategoryid() {
                  return new Field<ProductcategoryId, PcViewRow>(_path, "productcategoryid", PcViewRow::productcategoryid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductcategoryid(value), ProductcategoryId.pgType);
                };
+               @Override
                public Field<Name, PcViewRow> name() {
                  return new Field<Name, PcViewRow>(_path, "name", PcViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<TypoUUID, PcViewRow> rowguid() {
                  return new Field<TypoUUID, PcViewRow>(_path, "rowguid", PcViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, PcViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, PcViewRow>(_path, "modifieddate", PcViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -48,6 +53,7 @@ public interface PcViewFields {
       return List.of(this.fields().id(), this.fields().productcategoryid(), this.fields().name(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

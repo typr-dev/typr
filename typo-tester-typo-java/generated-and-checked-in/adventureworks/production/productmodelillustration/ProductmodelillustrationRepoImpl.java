@@ -8,7 +8,6 @@ package adventureworks.production.productmodelillustration;
 import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.production.illustration.IllustrationId;
 import adventureworks.production.productmodel.ProductmodelId;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,12 +25,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class ProductmodelillustrationRepoImpl implements ProductmodelillustrationRepo {
+  @Override
   public DeleteBuilder<ProductmodelillustrationFields, ProductmodelillustrationRow> delete() {
     return DeleteBuilder.of("production.productmodelillustration", ProductmodelillustrationFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     ProductmodelillustrationId compositeId,
     Connection c
@@ -49,28 +49,30 @@ public class ProductmodelillustrationRepoImpl implements Productmodelillustratio
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     ProductmodelillustrationId[] compositeIds,
     Connection c
   ) {
     ProductmodelId[] productmodelid = arrayMap.map(compositeIds, ProductmodelillustrationId::productmodelid, ProductmodelId.class);;
-      IllustrationId[] illustrationid = arrayMap.map(compositeIds, ProductmodelillustrationId::illustrationid, IllustrationId.class);;
+    IllustrationId[] illustrationid = arrayMap.map(compositeIds, ProductmodelillustrationId::illustrationid, IllustrationId.class);;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                delete
-                from "production"."productmodelillustration"
-                where ("productmodelid", "illustrationid")
-                in (select unnest("""),
-             ProductmodelId.pgTypeArray.encode(productmodelid),
-             typo.runtime.Fragment.lit("::int4[]), unnest("),
-             IllustrationId.pgTypeArray.encode(illustrationid),
-             typo.runtime.Fragment.lit("""
-             ::int4[]))
+      typo.runtime.Fragment.lit("""
+         delete
+         from "production"."productmodelillustration"
+         where ("productmodelid", "illustrationid")
+         in (select unnest("""),
+      ProductmodelId.pgTypeArray.encode(productmodelid),
+      typo.runtime.Fragment.lit("::int4[]), unnest("),
+      IllustrationId.pgTypeArray.encode(illustrationid),
+      typo.runtime.Fragment.lit("""
+      ::int4[]))
 
-             """)
-           ).update().runUnchecked(c);
+      """)
+    ).update().runUnchecked(c);
   };
 
+  @Override
   public ProductmodelillustrationRow insert(
     ProductmodelillustrationRow unsaved,
     Connection c
@@ -92,49 +94,53 @@ public class ProductmodelillustrationRepoImpl implements Productmodelillustratio
       .updateReturning(ProductmodelillustrationRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public ProductmodelillustrationRow insert(
     ProductmodelillustrationRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"productmodelid\""));
-      values.add(interpolate(
-        ProductmodelId.pgType.encode(unsaved.productmodelid()),
-        typo.runtime.Fragment.lit("::int4")
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"productmodelid\""));
+    values.add(interpolate(
+      ProductmodelId.pgType.encode(unsaved.productmodelid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"illustrationid\""));
+    values.add(interpolate(
+      IllustrationId.pgType.encode(unsaved.illustrationid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
       ));
-      columns.add(Fragment.lit("\"illustrationid\""));
-      values.add(interpolate(
-        IllustrationId.pgType.encode(unsaved.illustrationid()),
-        typo.runtime.Fragment.lit("::int4")
-      ));
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "production"."productmodelillustration"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "productmodelid", "illustrationid", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "production"."productmodelillustration"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "productmodelid", "illustrationid", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(ProductmodelillustrationRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<ProductmodelillustrationRow> unsaved,
     Integer batchSize,
@@ -146,6 +152,7 @@ public class ProductmodelillustrationRepoImpl implements Productmodelillustratio
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<ProductmodelillustrationRowUnsaved> unsaved,
     Integer batchSize,
@@ -156,17 +163,20 @@ public class ProductmodelillustrationRepoImpl implements Productmodelillustratio
     """), batchSize, unsaved, c, ProductmodelillustrationRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<ProductmodelillustrationFields, ProductmodelillustrationRow> select() {
     return SelectBuilder.of("production.productmodelillustration", ProductmodelillustrationFields.structure(), ProductmodelillustrationRow._rowParser);
   };
 
+  @Override
   public List<ProductmodelillustrationRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "productmodelid", "illustrationid", "modifieddate"::text
        from "production"."productmodelillustration"
-    """)).as(ProductmodelillustrationRow._rowParser.all()).runUnchecked(c);
+    """)).query(ProductmodelillustrationRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<ProductmodelillustrationRow> selectById(
     ProductmodelillustrationId compositeId,
     Connection c
@@ -182,66 +192,71 @@ public class ProductmodelillustrationRepoImpl implements Productmodelillustratio
       """),
       IllustrationId.pgType.encode(compositeId.illustrationid()),
       typo.runtime.Fragment.lit("")
-    ).as(ProductmodelillustrationRow._rowParser.first()).runUnchecked(c);
+    ).query(ProductmodelillustrationRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<ProductmodelillustrationRow> selectByIds(
     ProductmodelillustrationId[] compositeIds,
     Connection c
   ) {
     ProductmodelId[] productmodelid = arrayMap.map(compositeIds, ProductmodelillustrationId::productmodelid, ProductmodelId.class);;
-      IllustrationId[] illustrationid = arrayMap.map(compositeIds, ProductmodelillustrationId::illustrationid, IllustrationId.class);;
+    IllustrationId[] illustrationid = arrayMap.map(compositeIds, ProductmodelillustrationId::illustrationid, IllustrationId.class);;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                select "productmodelid", "illustrationid", "modifieddate"::text
-                from "production"."productmodelillustration"
-                where ("productmodelid", "illustrationid")
-                in (select unnest("""),
-             ProductmodelId.pgTypeArray.encode(productmodelid),
-             typo.runtime.Fragment.lit("::int4[]), unnest("),
-             IllustrationId.pgTypeArray.encode(illustrationid),
-             typo.runtime.Fragment.lit("""
-             ::int4[]))
+      typo.runtime.Fragment.lit("""
+         select "productmodelid", "illustrationid", "modifieddate"::text
+         from "production"."productmodelillustration"
+         where ("productmodelid", "illustrationid")
+         in (select unnest("""),
+      ProductmodelId.pgTypeArray.encode(productmodelid),
+      typo.runtime.Fragment.lit("::int4[]), unnest("),
+      IllustrationId.pgTypeArray.encode(illustrationid),
+      typo.runtime.Fragment.lit("""
+      ::int4[]))
 
-             """)
-           ).as(ProductmodelillustrationRow._rowParser.all()).runUnchecked(c);
+      """)
+    ).query(ProductmodelillustrationRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<ProductmodelillustrationId, ProductmodelillustrationRow> selectByIdsTracked(
     ProductmodelillustrationId[] compositeIds,
     Connection c
   ) {
-    Map<ProductmodelillustrationId, ProductmodelillustrationRow> ret = new HashMap<>();;
-      selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
+    HashMap<ProductmodelillustrationId, ProductmodelillustrationRow> ret = new HashMap<ProductmodelillustrationId, ProductmodelillustrationRow>();
+    selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<ProductmodelillustrationFields, ProductmodelillustrationRow> update() {
     return UpdateBuilder.of("production.productmodelillustration", ProductmodelillustrationFields.structure(), ProductmodelillustrationRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     ProductmodelillustrationRow row,
     Connection c
   ) {
     ProductmodelillustrationId compositeId = row.compositeId();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "production"."productmodelillustration"
-                set "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "productmodelid" = """),
-             ProductmodelId.pgType.encode(compositeId.productmodelid()),
-             typo.runtime.Fragment.lit("""
-              AND "illustrationid" = 
-             """),
-             IllustrationId.pgType.encode(compositeId.illustrationid()),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "production"."productmodelillustration"
+         set "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "productmodelid" = """),
+      ProductmodelId.pgType.encode(compositeId.productmodelid()),
+      typo.runtime.Fragment.lit("""
+       AND "illustrationid" = 
+      """),
+      IllustrationId.pgType.encode(compositeId.illustrationid()),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public ProductmodelillustrationRow upsert(
     ProductmodelillustrationRow unsaved,
     Connection c
@@ -267,6 +282,7 @@ public class ProductmodelillustrationRepoImpl implements Productmodelillustratio
       .runUnchecked(c);
   };
 
+  @Override
   public List<ProductmodelillustrationRow> upsertBatch(
     Iterator<ProductmodelillustrationRow> unsaved,
     Connection c
@@ -284,24 +300,25 @@ public class ProductmodelillustrationRepoImpl implements Productmodelillustratio
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<ProductmodelillustrationRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table productmodelillustration_TEMP (like "production"."productmodelillustration") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy productmodelillustration_TEMP("productmodelid", "illustrationid", "modifieddate") from stdin
-      """), batchSize, unsaved, c, ProductmodelillustrationRow.pgText);
+    create temporary table productmodelillustration_TEMP (like "production"."productmodelillustration") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy productmodelillustration_TEMP("productmodelid", "illustrationid", "modifieddate") from stdin
+    """), batchSize, unsaved, c, ProductmodelillustrationRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "production"."productmodelillustration"("productmodelid", "illustrationid", "modifieddate")
-              select * from productmodelillustration_TEMP
-              on conflict ("productmodelid", "illustrationid")
-              do update set
-                "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table productmodelillustration_TEMP;""")).update().runUnchecked(c);
+       insert into "production"."productmodelillustration"("productmodelid", "illustrationid", "modifieddate")
+       select * from productmodelillustration_TEMP
+       on conflict ("productmodelid", "illustrationid")
+       do update set
+         "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table productmodelillustration_TEMP;""")).update().runUnchecked(c);
   };
 }

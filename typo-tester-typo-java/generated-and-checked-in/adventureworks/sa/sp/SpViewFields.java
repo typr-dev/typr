@@ -20,7 +20,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface SpViewFields {
-  static final class Impl extends Relation<SpViewFields, SpViewRow> {
+  final class Impl extends Relation<SpViewFields, SpViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -28,33 +28,43 @@ public interface SpViewFields {
     @Override
     public SpViewFields fields() {
       return new SpViewFields() {
+               @Override
                public Field<BusinessentityId, SpViewRow> id() {
                  return new Field<BusinessentityId, SpViewRow>(_path, "id", SpViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
                };
+               @Override
                public Field<BusinessentityId, SpViewRow> businessentityid() {
                  return new Field<BusinessentityId, SpViewRow>(_path, "businessentityid", SpViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public OptField<SalesterritoryId, SpViewRow> territoryid() {
                  return new OptField<SalesterritoryId, SpViewRow>(_path, "territoryid", SpViewRow::territoryid, Optional.empty(), Optional.empty(), (row, value) -> row.withTerritoryid(value), SalesterritoryId.pgType);
                };
+               @Override
                public OptField<BigDecimal, SpViewRow> salesquota() {
                  return new OptField<BigDecimal, SpViewRow>(_path, "salesquota", SpViewRow::salesquota, Optional.empty(), Optional.empty(), (row, value) -> row.withSalesquota(value), PgTypes.numeric);
                };
+               @Override
                public Field<BigDecimal, SpViewRow> bonus() {
                  return new Field<BigDecimal, SpViewRow>(_path, "bonus", SpViewRow::bonus, Optional.empty(), Optional.empty(), (row, value) -> row.withBonus(value), PgTypes.numeric);
                };
+               @Override
                public Field<BigDecimal, SpViewRow> commissionpct() {
                  return new Field<BigDecimal, SpViewRow>(_path, "commissionpct", SpViewRow::commissionpct, Optional.empty(), Optional.empty(), (row, value) -> row.withCommissionpct(value), PgTypes.numeric);
                };
+               @Override
                public Field<BigDecimal, SpViewRow> salesytd() {
                  return new Field<BigDecimal, SpViewRow>(_path, "salesytd", SpViewRow::salesytd, Optional.empty(), Optional.empty(), (row, value) -> row.withSalesytd(value), PgTypes.numeric);
                };
+               @Override
                public Field<BigDecimal, SpViewRow> saleslastyear() {
                  return new Field<BigDecimal, SpViewRow>(_path, "saleslastyear", SpViewRow::saleslastyear, Optional.empty(), Optional.empty(), (row, value) -> row.withSaleslastyear(value), PgTypes.numeric);
                };
+               @Override
                public Field<TypoUUID, SpViewRow> rowguid() {
                  return new Field<TypoUUID, SpViewRow>(_path, "rowguid", SpViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, SpViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, SpViewRow>(_path, "modifieddate", SpViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -66,6 +76,7 @@ public interface SpViewFields {
       return List.of(this.fields().id(), this.fields().businessentityid(), this.fields().territoryid(), this.fields().salesquota(), this.fields().bonus(), this.fields().commissionpct(), this.fields().salesytd(), this.fields().saleslastyear(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

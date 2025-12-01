@@ -18,13 +18,13 @@ import typo.dsl.UpdateBuilder.UpdateBuilderMock
 import typo.dsl.UpdateParams
 
 case class TitleDomainRepoMock(map: scala.collection.mutable.Map[TitleDomainId, TitleDomainRow] = scala.collection.mutable.Map.empty[TitleDomainId, TitleDomainRow]) extends TitleDomainRepo {
-  def delete: DeleteBuilder[TitleDomainFields, TitleDomainRow] = DeleteBuilderMock(DeleteParams.empty, TitleDomainFields.structure, map)
+  override def delete: DeleteBuilder[TitleDomainFields, TitleDomainRow] = DeleteBuilderMock(DeleteParams.empty, TitleDomainFields.structure, map)
 
-  def deleteById(code: TitleDomainId)(implicit c: Connection): Boolean = map.remove(code).isDefined
+  override def deleteById(code: TitleDomainId)(implicit c: Connection): Boolean = map.remove(code).isDefined
 
-  def deleteByIds(codes: Array[TitleDomainId])(implicit c: Connection): Int = codes.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(codes: Array[TitleDomainId])(implicit c: Connection): Int = codes.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: TitleDomainRow)(implicit c: Connection): TitleDomainRow = {
+  override def insert(unsaved: TitleDomainRow)(implicit c: Connection): TitleDomainRow = {
     val _ = if (map.contains(unsaved.code))
       sys.error(s"id ${unsaved.code} already exists")
     else
@@ -33,7 +33,7 @@ case class TitleDomainRepoMock(map: scala.collection.mutable.Map[TitleDomainId, 
     unsaved
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[TitleDomainRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = {
@@ -43,27 +43,27 @@ case class TitleDomainRepoMock(map: scala.collection.mutable.Map[TitleDomainId, 
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[TitleDomainFields, TitleDomainRow] = SelectBuilderMock(TitleDomainFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[TitleDomainFields, TitleDomainRow] = SelectBuilderMock(TitleDomainFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(implicit c: Connection): List[TitleDomainRow] = map.values.toList
+  override def selectAll(implicit c: Connection): List[TitleDomainRow] = map.values.toList
 
-  def selectById(code: TitleDomainId)(implicit c: Connection): Option[TitleDomainRow] = map.get(code)
+  override def selectById(code: TitleDomainId)(implicit c: Connection): Option[TitleDomainRow] = map.get(code)
 
-  def selectByIds(codes: Array[TitleDomainId])(implicit c: Connection): List[TitleDomainRow] = codes.flatMap(map.get).toList
+  override def selectByIds(codes: Array[TitleDomainId])(implicit c: Connection): List[TitleDomainRow] = codes.flatMap(map.get).toList
 
-  def selectByIdsTracked(codes: Array[TitleDomainId])(implicit c: Connection): Map[TitleDomainId, TitleDomainRow] = {
+  override def selectByIdsTracked(codes: Array[TitleDomainId])(implicit c: Connection): Map[TitleDomainId, TitleDomainRow] = {
     val byId = selectByIds(codes).view.map(x => (x.code, x)).toMap
     codes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[TitleDomainFields, TitleDomainRow] = UpdateBuilderMock(UpdateParams.empty, TitleDomainFields.structure, map)
+  override def update: UpdateBuilder[TitleDomainFields, TitleDomainRow] = UpdateBuilderMock(UpdateParams.empty, TitleDomainFields.structure, map)
 
-  def upsert(unsaved: TitleDomainRow)(implicit c: Connection): TitleDomainRow = {
+  override def upsert(unsaved: TitleDomainRow)(implicit c: Connection): TitleDomainRow = {
     map.put(unsaved.code, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[TitleDomainRow])(implicit c: Connection): List[TitleDomainRow] = {
+  override def upsertBatch(unsaved: Iterable[TitleDomainRow])(implicit c: Connection): List[TitleDomainRow] = {
     unsaved.map { row =>
       map += (row.code -> row)
       row
@@ -71,7 +71,7 @@ case class TitleDomainRepoMock(map: scala.collection.mutable.Map[TitleDomainId, 
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[TitleDomainRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

@@ -25,7 +25,7 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 
 public interface ProductdocumentFields {
-  static final class Impl extends Relation<ProductdocumentFields, ProductdocumentRow> {
+  final class Impl extends Relation<ProductdocumentFields, ProductdocumentRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -33,12 +33,15 @@ public interface ProductdocumentFields {
     @Override
     public ProductdocumentFields fields() {
       return new ProductdocumentFields() {
+               @Override
                public IdField<ProductId, ProductdocumentRow> productid() {
                  return new IdField<ProductId, ProductdocumentRow>(_path, "productid", ProductdocumentRow::productid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductid(value), ProductId.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, ProductdocumentRow> modifieddate() {
                  return new Field<TypoLocalDateTime, ProductdocumentRow>(_path, "modifieddate", ProductdocumentRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public IdField<DocumentId, ProductdocumentRow> documentnode() {
                  return new IdField<DocumentId, ProductdocumentRow>(_path, "documentnode", ProductdocumentRow::documentnode, Optional.empty(), Optional.empty(), (row, value) -> row.withDocumentnode(value), DocumentId.pgType);
                };
@@ -50,6 +53,7 @@ public interface ProductdocumentFields {
       return List.of(this.fields().productid(), this.fields().modifieddate(), this.fields().documentnode());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

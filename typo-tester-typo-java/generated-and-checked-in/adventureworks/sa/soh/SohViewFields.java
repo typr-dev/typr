@@ -30,7 +30,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface SohViewFields {
-  static final class Impl extends Relation<SohViewFields, SohViewRow> {
+  final class Impl extends Relation<SohViewFields, SohViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -38,81 +38,107 @@ public interface SohViewFields {
     @Override
     public SohViewFields fields() {
       return new SohViewFields() {
+               @Override
                public Field<SalesorderheaderId, SohViewRow> id() {
                  return new Field<SalesorderheaderId, SohViewRow>(_path, "id", SohViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), SalesorderheaderId.pgType);
                };
+               @Override
                public Field<SalesorderheaderId, SohViewRow> salesorderid() {
                  return new Field<SalesorderheaderId, SohViewRow>(_path, "salesorderid", SohViewRow::salesorderid, Optional.empty(), Optional.empty(), (row, value) -> row.withSalesorderid(value), SalesorderheaderId.pgType);
                };
+               @Override
                public Field<TypoShort, SohViewRow> revisionnumber() {
                  return new Field<TypoShort, SohViewRow>(_path, "revisionnumber", SohViewRow::revisionnumber, Optional.empty(), Optional.empty(), (row, value) -> row.withRevisionnumber(value), TypoShort.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, SohViewRow> orderdate() {
                  return new Field<TypoLocalDateTime, SohViewRow>(_path, "orderdate", SohViewRow::orderdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withOrderdate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, SohViewRow> duedate() {
                  return new Field<TypoLocalDateTime, SohViewRow>(_path, "duedate", SohViewRow::duedate, Optional.of("text"), Optional.empty(), (row, value) -> row.withDuedate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public OptField<TypoLocalDateTime, SohViewRow> shipdate() {
                  return new OptField<TypoLocalDateTime, SohViewRow>(_path, "shipdate", SohViewRow::shipdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withShipdate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public Field<TypoShort, SohViewRow> status() {
                  return new Field<TypoShort, SohViewRow>(_path, "status", SohViewRow::status, Optional.empty(), Optional.empty(), (row, value) -> row.withStatus(value), TypoShort.pgType);
                };
+               @Override
                public Field<Flag, SohViewRow> onlineorderflag() {
                  return new Field<Flag, SohViewRow>(_path, "onlineorderflag", SohViewRow::onlineorderflag, Optional.empty(), Optional.empty(), (row, value) -> row.withOnlineorderflag(value), Flag.pgType);
                };
+               @Override
                public OptField<OrderNumber, SohViewRow> purchaseordernumber() {
                  return new OptField<OrderNumber, SohViewRow>(_path, "purchaseordernumber", SohViewRow::purchaseordernumber, Optional.empty(), Optional.empty(), (row, value) -> row.withPurchaseordernumber(value), OrderNumber.pgType);
                };
+               @Override
                public OptField<AccountNumber, SohViewRow> accountnumber() {
                  return new OptField<AccountNumber, SohViewRow>(_path, "accountnumber", SohViewRow::accountnumber, Optional.empty(), Optional.empty(), (row, value) -> row.withAccountnumber(value), AccountNumber.pgType);
                };
+               @Override
                public Field<CustomerId, SohViewRow> customerid() {
                  return new Field<CustomerId, SohViewRow>(_path, "customerid", SohViewRow::customerid, Optional.empty(), Optional.empty(), (row, value) -> row.withCustomerid(value), CustomerId.pgType);
                };
+               @Override
                public OptField<BusinessentityId, SohViewRow> salespersonid() {
                  return new OptField<BusinessentityId, SohViewRow>(_path, "salespersonid", SohViewRow::salespersonid, Optional.empty(), Optional.empty(), (row, value) -> row.withSalespersonid(value), BusinessentityId.pgType);
                };
+               @Override
                public OptField<SalesterritoryId, SohViewRow> territoryid() {
                  return new OptField<SalesterritoryId, SohViewRow>(_path, "territoryid", SohViewRow::territoryid, Optional.empty(), Optional.empty(), (row, value) -> row.withTerritoryid(value), SalesterritoryId.pgType);
                };
+               @Override
                public Field<AddressId, SohViewRow> billtoaddressid() {
                  return new Field<AddressId, SohViewRow>(_path, "billtoaddressid", SohViewRow::billtoaddressid, Optional.empty(), Optional.empty(), (row, value) -> row.withBilltoaddressid(value), AddressId.pgType);
                };
+               @Override
                public Field<AddressId, SohViewRow> shiptoaddressid() {
                  return new Field<AddressId, SohViewRow>(_path, "shiptoaddressid", SohViewRow::shiptoaddressid, Optional.empty(), Optional.empty(), (row, value) -> row.withShiptoaddressid(value), AddressId.pgType);
                };
+               @Override
                public Field<ShipmethodId, SohViewRow> shipmethodid() {
                  return new Field<ShipmethodId, SohViewRow>(_path, "shipmethodid", SohViewRow::shipmethodid, Optional.empty(), Optional.empty(), (row, value) -> row.withShipmethodid(value), ShipmethodId.pgType);
                };
+               @Override
                public OptField</* user-picked */ CustomCreditcardId, SohViewRow> creditcardid() {
                  return new OptField</* user-picked */ CustomCreditcardId, SohViewRow>(_path, "creditcardid", SohViewRow::creditcardid, Optional.empty(), Optional.empty(), (row, value) -> row.withCreditcardid(value), /* user-picked */ CustomCreditcardId.pgType);
                };
+               @Override
                public OptField</* max 15 chars */ String, SohViewRow> creditcardapprovalcode() {
                  return new OptField</* max 15 chars */ String, SohViewRow>(_path, "creditcardapprovalcode", SohViewRow::creditcardapprovalcode, Optional.empty(), Optional.empty(), (row, value) -> row.withCreditcardapprovalcode(value), PgTypes.text);
                };
+               @Override
                public OptField<CurrencyrateId, SohViewRow> currencyrateid() {
                  return new OptField<CurrencyrateId, SohViewRow>(_path, "currencyrateid", SohViewRow::currencyrateid, Optional.empty(), Optional.empty(), (row, value) -> row.withCurrencyrateid(value), CurrencyrateId.pgType);
                };
+               @Override
                public Field<BigDecimal, SohViewRow> subtotal() {
                  return new Field<BigDecimal, SohViewRow>(_path, "subtotal", SohViewRow::subtotal, Optional.empty(), Optional.empty(), (row, value) -> row.withSubtotal(value), PgTypes.numeric);
                };
+               @Override
                public Field<BigDecimal, SohViewRow> taxamt() {
                  return new Field<BigDecimal, SohViewRow>(_path, "taxamt", SohViewRow::taxamt, Optional.empty(), Optional.empty(), (row, value) -> row.withTaxamt(value), PgTypes.numeric);
                };
+               @Override
                public Field<BigDecimal, SohViewRow> freight() {
                  return new Field<BigDecimal, SohViewRow>(_path, "freight", SohViewRow::freight, Optional.empty(), Optional.empty(), (row, value) -> row.withFreight(value), PgTypes.numeric);
                };
+               @Override
                public OptField<BigDecimal, SohViewRow> totaldue() {
                  return new OptField<BigDecimal, SohViewRow>(_path, "totaldue", SohViewRow::totaldue, Optional.empty(), Optional.empty(), (row, value) -> row.withTotaldue(value), PgTypes.numeric);
                };
+               @Override
                public OptField</* max 128 chars */ String, SohViewRow> comment() {
                  return new OptField</* max 128 chars */ String, SohViewRow>(_path, "comment", SohViewRow::comment, Optional.empty(), Optional.empty(), (row, value) -> row.withComment(value), PgTypes.text);
                };
+               @Override
                public Field<TypoUUID, SohViewRow> rowguid() {
                  return new Field<TypoUUID, SohViewRow>(_path, "rowguid", SohViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, SohViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, SohViewRow>(_path, "modifieddate", SohViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -124,6 +150,7 @@ public interface SohViewFields {
       return List.of(this.fields().id(), this.fields().salesorderid(), this.fields().revisionnumber(), this.fields().orderdate(), this.fields().duedate(), this.fields().shipdate(), this.fields().status(), this.fields().onlineorderflag(), this.fields().purchaseordernumber(), this.fields().accountnumber(), this.fields().customerid(), this.fields().salespersonid(), this.fields().territoryid(), this.fields().billtoaddressid(), this.fields().shiptoaddressid(), this.fields().shipmethodid(), this.fields().creditcardid(), this.fields().creditcardapprovalcode(), this.fields().currencyrateid(), this.fields().subtotal(), this.fields().taxamt(), this.fields().freight(), this.fields().totaldue(), this.fields().comment(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

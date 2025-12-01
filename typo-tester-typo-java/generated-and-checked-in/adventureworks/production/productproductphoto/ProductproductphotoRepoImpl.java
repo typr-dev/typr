@@ -9,7 +9,6 @@ import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.production.product.ProductId;
 import adventureworks.production.productphoto.ProductphotoId;
 import adventureworks.public_.Flag;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,12 +26,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class ProductproductphotoRepoImpl implements ProductproductphotoRepo {
+  @Override
   public DeleteBuilder<ProductproductphotoFields, ProductproductphotoRow> delete() {
     return DeleteBuilder.of("production.productproductphoto", ProductproductphotoFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     ProductproductphotoId compositeId,
     Connection c
@@ -50,28 +50,30 @@ public class ProductproductphotoRepoImpl implements ProductproductphotoRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     ProductproductphotoId[] compositeIds,
     Connection c
   ) {
     ProductId[] productid = arrayMap.map(compositeIds, ProductproductphotoId::productid, ProductId.class);;
-      ProductphotoId[] productphotoid = arrayMap.map(compositeIds, ProductproductphotoId::productphotoid, ProductphotoId.class);;
+    ProductphotoId[] productphotoid = arrayMap.map(compositeIds, ProductproductphotoId::productphotoid, ProductphotoId.class);;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                delete
-                from "production"."productproductphoto"
-                where ("productid", "productphotoid")
-                in (select unnest("""),
-             ProductId.pgTypeArray.encode(productid),
-             typo.runtime.Fragment.lit("::int4[]), unnest("),
-             ProductphotoId.pgTypeArray.encode(productphotoid),
-             typo.runtime.Fragment.lit("""
-             ::int4[]))
+      typo.runtime.Fragment.lit("""
+         delete
+         from "production"."productproductphoto"
+         where ("productid", "productphotoid")
+         in (select unnest("""),
+      ProductId.pgTypeArray.encode(productid),
+      typo.runtime.Fragment.lit("::int4[]), unnest("),
+      ProductphotoId.pgTypeArray.encode(productphotoid),
+      typo.runtime.Fragment.lit("""
+      ::int4[]))
 
-             """)
-           ).update().runUnchecked(c);
+      """)
+    ).update().runUnchecked(c);
   };
 
+  @Override
   public ProductproductphotoRow insert(
     ProductproductphotoRow unsaved,
     Connection c
@@ -95,59 +97,65 @@ public class ProductproductphotoRepoImpl implements ProductproductphotoRepo {
       .updateReturning(ProductproductphotoRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public ProductproductphotoRow insert(
     ProductproductphotoRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"productid\""));
-      values.add(interpolate(
-        ProductId.pgType.encode(unsaved.productid()),
-        typo.runtime.Fragment.lit("::int4")
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"productid\""));
+    values.add(interpolate(
+      ProductId.pgType.encode(unsaved.productid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"productphotoid\""));
+    values.add(interpolate(
+      ProductphotoId.pgType.encode(unsaved.productphotoid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    unsaved.primary().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"primary\""));
+        values.add(interpolate(
+        Flag.pgType.encode(value),
+        typo.runtime.Fragment.lit("::bool")
       ));
-      columns.add(Fragment.lit("\"productphotoid\""));
-      values.add(interpolate(
-        ProductphotoId.pgType.encode(unsaved.productphotoid()),
-        typo.runtime.Fragment.lit("::int4")
+      }
+    );;
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
       ));
-      unsaved.primary().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"primary\""));
-          values.add(interpolate(
-            Flag.pgType.encode(value),
-            typo.runtime.Fragment.lit("::bool")
-          ));
-        }
-      );;
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "production"."productproductphoto"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "productid", "productphotoid", "primary", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "production"."productproductphoto"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "productid", "productphotoid", "primary", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(ProductproductphotoRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<ProductproductphotoRow> unsaved,
     Integer batchSize,
@@ -159,6 +167,7 @@ public class ProductproductphotoRepoImpl implements ProductproductphotoRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<ProductproductphotoRowUnsaved> unsaved,
     Integer batchSize,
@@ -169,17 +178,20 @@ public class ProductproductphotoRepoImpl implements ProductproductphotoRepo {
     """), batchSize, unsaved, c, ProductproductphotoRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<ProductproductphotoFields, ProductproductphotoRow> select() {
     return SelectBuilder.of("production.productproductphoto", ProductproductphotoFields.structure(), ProductproductphotoRow._rowParser);
   };
 
+  @Override
   public List<ProductproductphotoRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "productid", "productphotoid", "primary", "modifieddate"::text
        from "production"."productproductphoto"
-    """)).as(ProductproductphotoRow._rowParser.all()).runUnchecked(c);
+    """)).query(ProductproductphotoRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<ProductproductphotoRow> selectById(
     ProductproductphotoId compositeId,
     Connection c
@@ -195,70 +207,75 @@ public class ProductproductphotoRepoImpl implements ProductproductphotoRepo {
       """),
       ProductphotoId.pgType.encode(compositeId.productphotoid()),
       typo.runtime.Fragment.lit("")
-    ).as(ProductproductphotoRow._rowParser.first()).runUnchecked(c);
+    ).query(ProductproductphotoRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<ProductproductphotoRow> selectByIds(
     ProductproductphotoId[] compositeIds,
     Connection c
   ) {
     ProductId[] productid = arrayMap.map(compositeIds, ProductproductphotoId::productid, ProductId.class);;
-      ProductphotoId[] productphotoid = arrayMap.map(compositeIds, ProductproductphotoId::productphotoid, ProductphotoId.class);;
+    ProductphotoId[] productphotoid = arrayMap.map(compositeIds, ProductproductphotoId::productphotoid, ProductphotoId.class);;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                select "productid", "productphotoid", "primary", "modifieddate"::text
-                from "production"."productproductphoto"
-                where ("productid", "productphotoid")
-                in (select unnest("""),
-             ProductId.pgTypeArray.encode(productid),
-             typo.runtime.Fragment.lit("::int4[]), unnest("),
-             ProductphotoId.pgTypeArray.encode(productphotoid),
-             typo.runtime.Fragment.lit("""
-             ::int4[]))
+      typo.runtime.Fragment.lit("""
+         select "productid", "productphotoid", "primary", "modifieddate"::text
+         from "production"."productproductphoto"
+         where ("productid", "productphotoid")
+         in (select unnest("""),
+      ProductId.pgTypeArray.encode(productid),
+      typo.runtime.Fragment.lit("::int4[]), unnest("),
+      ProductphotoId.pgTypeArray.encode(productphotoid),
+      typo.runtime.Fragment.lit("""
+      ::int4[]))
 
-             """)
-           ).as(ProductproductphotoRow._rowParser.all()).runUnchecked(c);
+      """)
+    ).query(ProductproductphotoRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<ProductproductphotoId, ProductproductphotoRow> selectByIdsTracked(
     ProductproductphotoId[] compositeIds,
     Connection c
   ) {
-    Map<ProductproductphotoId, ProductproductphotoRow> ret = new HashMap<>();;
-      selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
+    HashMap<ProductproductphotoId, ProductproductphotoRow> ret = new HashMap<ProductproductphotoId, ProductproductphotoRow>();
+    selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<ProductproductphotoFields, ProductproductphotoRow> update() {
     return UpdateBuilder.of("production.productproductphoto", ProductproductphotoFields.structure(), ProductproductphotoRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     ProductproductphotoRow row,
     Connection c
   ) {
     ProductproductphotoId compositeId = row.compositeId();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "production"."productproductphoto"
-                set "primary" = """),
-             Flag.pgType.encode(row.primary()),
-             typo.runtime.Fragment.lit("""
-                ::bool,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "productid" = """),
-             ProductId.pgType.encode(compositeId.productid()),
-             typo.runtime.Fragment.lit("""
-              AND "productphotoid" = 
-             """),
-             ProductphotoId.pgType.encode(compositeId.productphotoid()),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "production"."productproductphoto"
+         set "primary" = """),
+      Flag.pgType.encode(row.primary()),
+      typo.runtime.Fragment.lit("""
+         ::bool,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "productid" = """),
+      ProductId.pgType.encode(compositeId.productid()),
+      typo.runtime.Fragment.lit("""
+       AND "productphotoid" = 
+      """),
+      ProductphotoId.pgType.encode(compositeId.productphotoid()),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public ProductproductphotoRow upsert(
     ProductproductphotoRow unsaved,
     Connection c
@@ -287,6 +304,7 @@ public class ProductproductphotoRepoImpl implements ProductproductphotoRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<ProductproductphotoRow> upsertBatch(
     Iterator<ProductproductphotoRow> unsaved,
     Connection c
@@ -305,25 +323,26 @@ public class ProductproductphotoRepoImpl implements ProductproductphotoRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<ProductproductphotoRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table productproductphoto_TEMP (like "production"."productproductphoto") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy productproductphoto_TEMP("productid", "productphotoid", "primary", "modifieddate") from stdin
-      """), batchSize, unsaved, c, ProductproductphotoRow.pgText);
+    create temporary table productproductphoto_TEMP (like "production"."productproductphoto") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy productproductphoto_TEMP("productid", "productphotoid", "primary", "modifieddate") from stdin
+    """), batchSize, unsaved, c, ProductproductphotoRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "production"."productproductphoto"("productid", "productphotoid", "primary", "modifieddate")
-              select * from productproductphoto_TEMP
-              on conflict ("productid", "productphotoid")
-              do update set
-                "primary" = EXCLUDED."primary",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table productproductphoto_TEMP;""")).update().runUnchecked(c);
+       insert into "production"."productproductphoto"("productid", "productphotoid", "primary", "modifieddate")
+       select * from productproductphoto_TEMP
+       on conflict ("productid", "productphotoid")
+       do update set
+         "primary" = EXCLUDED."primary",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table productproductphoto_TEMP;""")).update().runUnchecked(c);
   };
 }

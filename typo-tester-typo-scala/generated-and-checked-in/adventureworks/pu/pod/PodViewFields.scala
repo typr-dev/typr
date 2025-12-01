@@ -43,7 +43,7 @@ object PodViewFields {
 
     override lazy val fields: PodViewFields = {
       new PodViewFields {
-        def id: Field[Integer, PodViewRow] = {
+        override def id: Field[Integer, PodViewRow] = {
           new Field[Integer, PodViewRow](
             _path,
             "id",
@@ -54,7 +54,7 @@ object PodViewFields {
             PgTypes.int4
           )
         }
-        def purchaseorderid: Field[PurchaseorderheaderId, PodViewRow] = {
+        override def purchaseorderid: Field[PurchaseorderheaderId, PodViewRow] = {
           new Field[PurchaseorderheaderId, PodViewRow](
             _path,
             "purchaseorderid",
@@ -65,7 +65,7 @@ object PodViewFields {
             PurchaseorderheaderId.pgType
           )
         }
-        def purchaseorderdetailid: Field[Integer, PodViewRow] = {
+        override def purchaseorderdetailid: Field[Integer, PodViewRow] = {
           new Field[Integer, PodViewRow](
             _path,
             "purchaseorderdetailid",
@@ -76,7 +76,7 @@ object PodViewFields {
             PgTypes.int4
           )
         }
-        def duedate: Field[TypoLocalDateTime, PodViewRow] = {
+        override def duedate: Field[TypoLocalDateTime, PodViewRow] = {
           new Field[TypoLocalDateTime, PodViewRow](
             _path,
             "duedate",
@@ -87,7 +87,7 @@ object PodViewFields {
             TypoLocalDateTime.pgType
           )
         }
-        def orderqty: Field[TypoShort, PodViewRow] = {
+        override def orderqty: Field[TypoShort, PodViewRow] = {
           new Field[TypoShort, PodViewRow](
             _path,
             "orderqty",
@@ -98,7 +98,7 @@ object PodViewFields {
             TypoShort.pgType
           )
         }
-        def productid: Field[ProductId, PodViewRow] = {
+        override def productid: Field[ProductId, PodViewRow] = {
           new Field[ProductId, PodViewRow](
             _path,
             "productid",
@@ -109,7 +109,7 @@ object PodViewFields {
             ProductId.pgType
           )
         }
-        def unitprice: Field[java.math.BigDecimal, PodViewRow] = {
+        override def unitprice: Field[java.math.BigDecimal, PodViewRow] = {
           new Field[java.math.BigDecimal, PodViewRow](
             _path,
             "unitprice",
@@ -120,7 +120,7 @@ object PodViewFields {
             PgTypes.numeric
           )
         }
-        def receivedqty: Field[java.math.BigDecimal, PodViewRow] = {
+        override def receivedqty: Field[java.math.BigDecimal, PodViewRow] = {
           new Field[java.math.BigDecimal, PodViewRow](
             _path,
             "receivedqty",
@@ -131,7 +131,7 @@ object PodViewFields {
             PgTypes.numeric
           )
         }
-        def rejectedqty: Field[java.math.BigDecimal, PodViewRow] = {
+        override def rejectedqty: Field[java.math.BigDecimal, PodViewRow] = {
           new Field[java.math.BigDecimal, PodViewRow](
             _path,
             "rejectedqty",
@@ -142,7 +142,7 @@ object PodViewFields {
             PgTypes.numeric
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, PodViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, PodViewRow] = {
           new Field[TypoLocalDateTime, PodViewRow](
             _path,
             "modifieddate",
@@ -158,7 +158,7 @@ object PodViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, PodViewRow]] = java.util.List.of(this.fields.id, this.fields.purchaseorderid, this.fields.purchaseorderdetailid, this.fields.duedate, this.fields.orderqty, this.fields.productid, this.fields.unitprice, this.fields.receivedqty, this.fields.rejectedqty, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[PodViewFields, PodViewRow] = new Impl(java.util.List.of())

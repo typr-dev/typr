@@ -5,33 +5,23 @@
  */
 package adventureworks.sales.vsalespersonsalesbyfiscalyears
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple7
 
 /** View: sales.vsalespersonsalesbyfiscalyears */
 case class VsalespersonsalesbyfiscalyearsViewRow(
-  salesPersonID: /* nullability unknown */ Optional[Integer],
-  fullName: /* nullability unknown */ Optional[String],
-  jobTitle: /* nullability unknown */ Optional[String],
-  salesTerritory: /* nullability unknown */ Optional[String],
+  @JsonProperty("SalesPersonID") salesPersonID: /* nullability unknown */ Optional[Integer],
+  @JsonProperty("FullName") fullName: /* nullability unknown */ Optional[String],
+  @JsonProperty("JobTitle") jobTitle: /* nullability unknown */ Optional[String],
+  @JsonProperty("SalesTerritory") salesTerritory: /* nullability unknown */ Optional[String],
   `2012`: /* nullability unknown */ Optional[java.math.BigDecimal],
   `2013`: /* nullability unknown */ Optional[java.math.BigDecimal],
   `2014`: /* nullability unknown */ Optional[java.math.BigDecimal]
 )
 
 object VsalespersonsalesbyfiscalyearsViewRow {
-  val `_rowParser`: RowParser[VsalespersonsalesbyfiscalyearsViewRow] = {
-    RowParsers.of(PgTypes.int4.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.numeric.opt(), PgTypes.numeric.opt(), PgTypes.numeric.opt(), VsalespersonsalesbyfiscalyearsViewRow.apply, row => new Tuple7(
-      row.salesPersonID,
-      row.fullName,
-      row.jobTitle,
-      row.salesTerritory,
-      row.`2012`,
-      row.`2013`,
-      row.`2014`
-    ))
-  }
+  val `_rowParser`: RowParser[VsalespersonsalesbyfiscalyearsViewRow] = RowParsers.of(PgTypes.int4.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.numeric.opt(), PgTypes.numeric.opt(), PgTypes.numeric.opt(), VsalespersonsalesbyfiscalyearsViewRow.apply, row => Array(row.salesPersonID, row.fullName, row.jobTitle, row.salesTerritory, row.`2012`, row.`2013`, row.`2014`))
 }

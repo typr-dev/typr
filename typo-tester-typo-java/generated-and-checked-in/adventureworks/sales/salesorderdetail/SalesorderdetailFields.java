@@ -32,7 +32,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface SalesorderdetailFields {
-  static final class Impl extends Relation<SalesorderdetailFields, SalesorderdetailRow> {
+  final class Impl extends Relation<SalesorderdetailFields, SalesorderdetailRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -40,33 +40,43 @@ public interface SalesorderdetailFields {
     @Override
     public SalesorderdetailFields fields() {
       return new SalesorderdetailFields() {
+               @Override
                public IdField<SalesorderheaderId, SalesorderdetailRow> salesorderid() {
                  return new IdField<SalesorderheaderId, SalesorderdetailRow>(_path, "salesorderid", SalesorderdetailRow::salesorderid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withSalesorderid(value), SalesorderheaderId.pgType);
                };
+               @Override
                public IdField<Integer, SalesorderdetailRow> salesorderdetailid() {
                  return new IdField<Integer, SalesorderdetailRow>(_path, "salesorderdetailid", SalesorderdetailRow::salesorderdetailid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withSalesorderdetailid(value), PgTypes.int4);
                };
+               @Override
                public OptField</* max 25 chars */ String, SalesorderdetailRow> carriertrackingnumber() {
                  return new OptField</* max 25 chars */ String, SalesorderdetailRow>(_path, "carriertrackingnumber", SalesorderdetailRow::carriertrackingnumber, Optional.empty(), Optional.empty(), (row, value) -> row.withCarriertrackingnumber(value), PgTypes.text);
                };
+               @Override
                public Field<TypoShort, SalesorderdetailRow> orderqty() {
                  return new Field<TypoShort, SalesorderdetailRow>(_path, "orderqty", SalesorderdetailRow::orderqty, Optional.empty(), Optional.of("int2"), (row, value) -> row.withOrderqty(value), TypoShort.pgType);
                };
+               @Override
                public Field<ProductId, SalesorderdetailRow> productid() {
                  return new Field<ProductId, SalesorderdetailRow>(_path, "productid", SalesorderdetailRow::productid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductid(value), ProductId.pgType);
                };
+               @Override
                public Field<SpecialofferId, SalesorderdetailRow> specialofferid() {
                  return new Field<SpecialofferId, SalesorderdetailRow>(_path, "specialofferid", SalesorderdetailRow::specialofferid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withSpecialofferid(value), SpecialofferId.pgType);
                };
+               @Override
                public Field<BigDecimal, SalesorderdetailRow> unitprice() {
                  return new Field<BigDecimal, SalesorderdetailRow>(_path, "unitprice", SalesorderdetailRow::unitprice, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withUnitprice(value), PgTypes.numeric);
                };
+               @Override
                public Field<BigDecimal, SalesorderdetailRow> unitpricediscount() {
                  return new Field<BigDecimal, SalesorderdetailRow>(_path, "unitpricediscount", SalesorderdetailRow::unitpricediscount, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withUnitpricediscount(value), PgTypes.numeric);
                };
+               @Override
                public Field<TypoUUID, SalesorderdetailRow> rowguid() {
                  return new Field<TypoUUID, SalesorderdetailRow>(_path, "rowguid", SalesorderdetailRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, SalesorderdetailRow> modifieddate() {
                  return new Field<TypoLocalDateTime, SalesorderdetailRow>(_path, "modifieddate", SalesorderdetailRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -78,6 +88,7 @@ public interface SalesorderdetailFields {
       return List.of(this.fields().salesorderid(), this.fields().salesorderdetailid(), this.fields().carriertrackingnumber(), this.fields().orderqty(), this.fields().productid(), this.fields().specialofferid(), this.fields().unitprice(), this.fields().unitpricediscount(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

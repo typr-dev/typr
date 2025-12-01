@@ -22,20 +22,20 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class IllustrationRepoImpl extends IllustrationRepo {
-  def delete: DeleteBuilder[IllustrationFields, IllustrationRow] = DeleteBuilder.of(""""production"."illustration"""", IllustrationFields.structure, IllustrationRow.jdbcDecoder)
+  override def delete: DeleteBuilder[IllustrationFields, IllustrationRow] = DeleteBuilder.of(""""production"."illustration"""", IllustrationFields.structure, IllustrationRow.jdbcDecoder)
 
-  def deleteById(illustrationid: IllustrationId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "production"."illustration" where "illustrationid" = ${Segment.paramSegment(illustrationid)(using IllustrationId.setter)}""".delete.map(_ > 0)
+  override def deleteById(illustrationid: IllustrationId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "production"."illustration" where "illustrationid" = ${Segment.paramSegment(illustrationid)(using IllustrationId.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(illustrationids: Array[IllustrationId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "production"."illustration" where "illustrationid" = ANY(${Segment.paramSegment(illustrationids)(using IllustrationId.arraySetter)})""".delete
+  override def deleteByIds(illustrationids: Array[IllustrationId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "production"."illustration" where "illustrationid" = ANY(${Segment.paramSegment(illustrationids)(using IllustrationId.arraySetter)})""".delete
 
-  def insert(unsaved: IllustrationRow): ZIO[ZConnection, Throwable, IllustrationRow] = {
+  override def insert(unsaved: IllustrationRow): ZIO[ZConnection, Throwable, IllustrationRow] = {
     sql"""insert into "production"."illustration"("illustrationid", "diagram", "modifieddate")
     values (${Segment.paramSegment(unsaved.illustrationid)(using IllustrationId.setter)}::int4, ${Segment.paramSegment(unsaved.diagram)(using Setter.optionParamSetter(using TypoXml.setter))}::xml, ${Segment.paramSegment(unsaved.modifieddate)(using TypoLocalDateTime.setter)}::timestamp)
     returning "illustrationid", "diagram", "modifieddate"::text
     """.insertReturning(using IllustrationRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insert(unsaved: IllustrationRowUnsaved): ZIO[ZConnection, Throwable, IllustrationRow] = {
+  override def insert(unsaved: IllustrationRowUnsaved): ZIO[ZConnection, Throwable, IllustrationRow] = {
     val fs = List(
       Some((sql""""diagram"""", sql"${Segment.paramSegment(unsaved.diagram)(using Setter.optionParamSetter(using TypoXml.setter))}::xml")),
       unsaved.illustrationid match {
@@ -59,35 +59,35 @@ class IllustrationRepoImpl extends IllustrationRepo {
     q.insertReturning(using IllustrationRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, IllustrationRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "production"."illustration"("illustrationid", "diagram", "modifieddate") FROM STDIN""", batchSize, unsaved)(using IllustrationRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, IllustrationRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "production"."illustration"("diagram", "illustrationid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using IllustrationRowUnsaved.pgText)
 
-  def select: SelectBuilder[IllustrationFields, IllustrationRow] = SelectBuilder.of(""""production"."illustration"""", IllustrationFields.structure, IllustrationRow.jdbcDecoder)
+  override def select: SelectBuilder[IllustrationFields, IllustrationRow] = SelectBuilder.of(""""production"."illustration"""", IllustrationFields.structure, IllustrationRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, IllustrationRow] = sql"""select "illustrationid", "diagram", "modifieddate"::text from "production"."illustration"""".query(using IllustrationRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, IllustrationRow] = sql"""select "illustrationid", "diagram", "modifieddate"::text from "production"."illustration"""".query(using IllustrationRow.jdbcDecoder).selectStream()
 
-  def selectById(illustrationid: IllustrationId): ZIO[ZConnection, Throwable, Option[IllustrationRow]] = sql"""select "illustrationid", "diagram", "modifieddate"::text from "production"."illustration" where "illustrationid" = ${Segment.paramSegment(illustrationid)(using IllustrationId.setter)}""".query(using IllustrationRow.jdbcDecoder).selectOne
+  override def selectById(illustrationid: IllustrationId): ZIO[ZConnection, Throwable, Option[IllustrationRow]] = sql"""select "illustrationid", "diagram", "modifieddate"::text from "production"."illustration" where "illustrationid" = ${Segment.paramSegment(illustrationid)(using IllustrationId.setter)}""".query(using IllustrationRow.jdbcDecoder).selectOne
 
-  def selectByIds(illustrationids: Array[IllustrationId]): ZStream[ZConnection, Throwable, IllustrationRow] = sql"""select "illustrationid", "diagram", "modifieddate"::text from "production"."illustration" where "illustrationid" = ANY(${Segment.paramSegment(illustrationids)(using IllustrationId.arraySetter)})""".query(using IllustrationRow.jdbcDecoder).selectStream()
+  override def selectByIds(illustrationids: Array[IllustrationId]): ZStream[ZConnection, Throwable, IllustrationRow] = sql"""select "illustrationid", "diagram", "modifieddate"::text from "production"."illustration" where "illustrationid" = ANY(${Segment.paramSegment(illustrationids)(using IllustrationId.arraySetter)})""".query(using IllustrationRow.jdbcDecoder).selectStream()
 
-  def selectByIdsTracked(illustrationids: Array[IllustrationId]): ZIO[ZConnection, Throwable, Map[IllustrationId, IllustrationRow]] = {
+  override def selectByIdsTracked(illustrationids: Array[IllustrationId]): ZIO[ZConnection, Throwable, Map[IllustrationId, IllustrationRow]] = {
     selectByIds(illustrationids).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.illustrationid, x)).toMap
       illustrationids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[IllustrationFields, IllustrationRow] = UpdateBuilder.of(""""production"."illustration"""", IllustrationFields.structure, IllustrationRow.jdbcDecoder)
+  override def update: UpdateBuilder[IllustrationFields, IllustrationRow] = UpdateBuilder.of(""""production"."illustration"""", IllustrationFields.structure, IllustrationRow.jdbcDecoder)
 
-  def update(row: IllustrationRow): ZIO[ZConnection, Throwable, Option[IllustrationRow]] = {
+  override def update(row: IllustrationRow): ZIO[ZConnection, Throwable, Option[IllustrationRow]] = {
     val illustrationid = row.illustrationid
     sql"""update "production"."illustration"
     set "diagram" = ${Segment.paramSegment(row.diagram)(using Setter.optionParamSetter(using TypoXml.setter))}::xml,
@@ -98,7 +98,7 @@ class IllustrationRepoImpl extends IllustrationRepo {
       .selectOne
   }
 
-  def upsert(unsaved: IllustrationRow): ZIO[ZConnection, Throwable, UpdateResult[IllustrationRow]] = {
+  override def upsert(unsaved: IllustrationRow): ZIO[ZConnection, Throwable, UpdateResult[IllustrationRow]] = {
     sql"""insert into "production"."illustration"("illustrationid", "diagram", "modifieddate")
     values (
       ${Segment.paramSegment(unsaved.illustrationid)(using IllustrationId.setter)}::int4,
@@ -113,7 +113,7 @@ class IllustrationRepoImpl extends IllustrationRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, IllustrationRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

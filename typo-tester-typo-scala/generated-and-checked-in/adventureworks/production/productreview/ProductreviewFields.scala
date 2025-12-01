@@ -45,7 +45,7 @@ object ProductreviewFields {
 
     override lazy val fields: ProductreviewFields = {
       new ProductreviewFields {
-        def productreviewid: IdField[ProductreviewId, ProductreviewRow] = {
+        override def productreviewid: IdField[ProductreviewId, ProductreviewRow] = {
           new IdField[ProductreviewId, ProductreviewRow](
             _path,
             "productreviewid",
@@ -56,7 +56,7 @@ object ProductreviewFields {
             ProductreviewId.pgType
           )
         }
-        def productid: Field[ProductId, ProductreviewRow] = {
+        override def productid: Field[ProductId, ProductreviewRow] = {
           new Field[ProductId, ProductreviewRow](
             _path,
             "productid",
@@ -67,7 +67,7 @@ object ProductreviewFields {
             ProductId.pgType
           )
         }
-        def reviewername: Field[Name, ProductreviewRow] = {
+        override def reviewername: Field[Name, ProductreviewRow] = {
           new Field[Name, ProductreviewRow](
             _path,
             "reviewername",
@@ -78,7 +78,7 @@ object ProductreviewFields {
             Name.pgType
           )
         }
-        def reviewdate: Field[TypoLocalDateTime, ProductreviewRow] = {
+        override def reviewdate: Field[TypoLocalDateTime, ProductreviewRow] = {
           new Field[TypoLocalDateTime, ProductreviewRow](
             _path,
             "reviewdate",
@@ -89,7 +89,7 @@ object ProductreviewFields {
             TypoLocalDateTime.pgType
           )
         }
-        def emailaddress: Field[/* max 50 chars */ String, ProductreviewRow] = {
+        override def emailaddress: Field[/* max 50 chars */ String, ProductreviewRow] = {
           new Field[/* max 50 chars */ String, ProductreviewRow](
             _path,
             "emailaddress",
@@ -100,7 +100,7 @@ object ProductreviewFields {
             PgTypes.text
           )
         }
-        def rating: Field[Integer, ProductreviewRow] = {
+        override def rating: Field[Integer, ProductreviewRow] = {
           new Field[Integer, ProductreviewRow](
             _path,
             "rating",
@@ -111,7 +111,7 @@ object ProductreviewFields {
             PgTypes.int4
           )
         }
-        def comments: OptField[/* max 3850 chars */ String, ProductreviewRow] = {
+        override def comments: OptField[/* max 3850 chars */ String, ProductreviewRow] = {
           new OptField[/* max 3850 chars */ String, ProductreviewRow](
             _path,
             "comments",
@@ -122,7 +122,7 @@ object ProductreviewFields {
             PgTypes.text
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, ProductreviewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, ProductreviewRow] = {
           new Field[TypoLocalDateTime, ProductreviewRow](
             _path,
             "modifieddate",
@@ -138,7 +138,7 @@ object ProductreviewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, ProductreviewRow]] = java.util.List.of(this.fields.productreviewid, this.fields.productid, this.fields.reviewername, this.fields.reviewdate, this.fields.emailaddress, this.fields.rating, this.fields.comments, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[ProductreviewFields, ProductreviewRow] = new Impl(java.util.List.of())

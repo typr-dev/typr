@@ -16,7 +16,7 @@ import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 
 public interface CrViewFields {
-  static final class Impl extends Relation<CrViewFields, CrViewRow> {
+  final class Impl extends Relation<CrViewFields, CrViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -24,12 +24,15 @@ public interface CrViewFields {
     @Override
     public CrViewFields fields() {
       return new CrViewFields() {
+               @Override
                public Field<CountryregionId, CrViewRow> countryregioncode() {
                  return new Field<CountryregionId, CrViewRow>(_path, "countryregioncode", CrViewRow::countryregioncode, Optional.empty(), Optional.empty(), (row, value) -> row.withCountryregioncode(value), CountryregionId.pgType);
                };
+               @Override
                public Field<Name, CrViewRow> name() {
                  return new Field<Name, CrViewRow>(_path, "name", CrViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, CrViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, CrViewRow>(_path, "modifieddate", CrViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -41,6 +44,7 @@ public interface CrViewFields {
       return List.of(this.fields().countryregioncode(), this.fields().name(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

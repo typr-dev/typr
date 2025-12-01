@@ -18,13 +18,13 @@ import typo.dsl.UpdateBuilder.UpdateBuilderMock
 import typo.dsl.UpdateParams
 
 case class TestSakSoknadsalternativRepoMock(map: scala.collection.mutable.Map[TestSakSoknadsalternativId, TestSakSoknadsalternativRow] = scala.collection.mutable.Map.empty[TestSakSoknadsalternativId, TestSakSoknadsalternativRow]) extends TestSakSoknadsalternativRepo {
-  def delete: DeleteBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = DeleteBuilderMock(DeleteParams.empty, TestSakSoknadsalternativFields.structure, map)
+  override def delete: DeleteBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = DeleteBuilderMock(DeleteParams.empty, TestSakSoknadsalternativFields.structure, map)
 
-  def deleteById(compositeId: TestSakSoknadsalternativId)(using c: Connection): Boolean = map.remove(compositeId).isDefined
+  override def deleteById(compositeId: TestSakSoknadsalternativId)(using c: Connection): Boolean = map.remove(compositeId).isDefined
 
-  def deleteByIds(compositeIds: Array[TestSakSoknadsalternativId])(using c: Connection): Int = compositeIds.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(compositeIds: Array[TestSakSoknadsalternativId])(using c: Connection): Int = compositeIds.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: TestSakSoknadsalternativRow)(using c: Connection): TestSakSoknadsalternativRow = {
+  override def insert(unsaved: TestSakSoknadsalternativRow)(using c: Connection): TestSakSoknadsalternativRow = {
     val _ = if (map.contains(unsaved.compositeId))
       sys.error(s"id ${unsaved.compositeId} already exists")
     else
@@ -33,7 +33,7 @@ case class TestSakSoknadsalternativRepoMock(map: scala.collection.mutable.Map[Te
     unsaved
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[TestSakSoknadsalternativRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -43,34 +43,34 @@ case class TestSakSoknadsalternativRepoMock(map: scala.collection.mutable.Map[Te
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = SelectBuilderMock(TestSakSoknadsalternativFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = SelectBuilderMock(TestSakSoknadsalternativFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(using c: Connection): List[TestSakSoknadsalternativRow] = map.values.toList
+  override def selectAll(using c: Connection): List[TestSakSoknadsalternativRow] = map.values.toList
 
-  def selectById(compositeId: TestSakSoknadsalternativId)(using c: Connection): Option[TestSakSoknadsalternativRow] = map.get(compositeId)
+  override def selectById(compositeId: TestSakSoknadsalternativId)(using c: Connection): Option[TestSakSoknadsalternativRow] = map.get(compositeId)
 
-  def selectByIds(compositeIds: Array[TestSakSoknadsalternativId])(using c: Connection): List[TestSakSoknadsalternativRow] = compositeIds.flatMap(map.get).toList
+  override def selectByIds(compositeIds: Array[TestSakSoknadsalternativId])(using c: Connection): List[TestSakSoknadsalternativRow] = compositeIds.flatMap(map.get).toList
 
-  def selectByIdsTracked(compositeIds: Array[TestSakSoknadsalternativId])(using c: Connection): Map[TestSakSoknadsalternativId, TestSakSoknadsalternativRow] = {
+  override def selectByIdsTracked(compositeIds: Array[TestSakSoknadsalternativId])(using c: Connection): Map[TestSakSoknadsalternativId, TestSakSoknadsalternativRow] = {
     val byId = selectByIds(compositeIds).view.map(x => (x.compositeId, x)).toMap
     compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = UpdateBuilderMock(UpdateParams.empty, TestSakSoknadsalternativFields.structure, map)
+  override def update: UpdateBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = UpdateBuilderMock(UpdateParams.empty, TestSakSoknadsalternativFields.structure, map)
 
-  def update(row: TestSakSoknadsalternativRow)(using c: Connection): Option[TestSakSoknadsalternativRow] = {
+  override def update(row: TestSakSoknadsalternativRow)(using c: Connection): Option[TestSakSoknadsalternativRow] = {
     map.get(row.compositeId).map { _ =>
       map.put(row.compositeId, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: TestSakSoknadsalternativRow)(using c: Connection): TestSakSoknadsalternativRow = {
+  override def upsert(unsaved: TestSakSoknadsalternativRow)(using c: Connection): TestSakSoknadsalternativRow = {
     map.put(unsaved.compositeId, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[TestSakSoknadsalternativRow])(using c: Connection): List[TestSakSoknadsalternativRow] = {
+  override def upsertBatch(unsaved: Iterable[TestSakSoknadsalternativRow])(using c: Connection): List[TestSakSoknadsalternativRow] = {
     unsaved.map { row =>
       map += (row.compositeId -> row)
       row
@@ -78,7 +78,7 @@ case class TestSakSoknadsalternativRepoMock(map: scala.collection.mutable.Map[Te
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[TestSakSoknadsalternativRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

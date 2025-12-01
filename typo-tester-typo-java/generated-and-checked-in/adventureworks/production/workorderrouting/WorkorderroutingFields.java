@@ -29,7 +29,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface WorkorderroutingFields {
-  static final class Impl extends Relation<WorkorderroutingFields, WorkorderroutingRow> {
+  final class Impl extends Relation<WorkorderroutingFields, WorkorderroutingRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -37,39 +37,51 @@ public interface WorkorderroutingFields {
     @Override
     public WorkorderroutingFields fields() {
       return new WorkorderroutingFields() {
+               @Override
                public IdField<WorkorderId, WorkorderroutingRow> workorderid() {
                  return new IdField<WorkorderId, WorkorderroutingRow>(_path, "workorderid", WorkorderroutingRow::workorderid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withWorkorderid(value), WorkorderId.pgType);
                };
+               @Override
                public IdField<Integer, WorkorderroutingRow> productid() {
                  return new IdField<Integer, WorkorderroutingRow>(_path, "productid", WorkorderroutingRow::productid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductid(value), PgTypes.int4);
                };
+               @Override
                public IdField<TypoShort, WorkorderroutingRow> operationsequence() {
                  return new IdField<TypoShort, WorkorderroutingRow>(_path, "operationsequence", WorkorderroutingRow::operationsequence, Optional.empty(), Optional.of("int2"), (row, value) -> row.withOperationsequence(value), TypoShort.pgType);
                };
+               @Override
                public Field<LocationId, WorkorderroutingRow> locationid() {
                  return new Field<LocationId, WorkorderroutingRow>(_path, "locationid", WorkorderroutingRow::locationid, Optional.empty(), Optional.of("int2"), (row, value) -> row.withLocationid(value), LocationId.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, WorkorderroutingRow> scheduledstartdate() {
                  return new Field<TypoLocalDateTime, WorkorderroutingRow>(_path, "scheduledstartdate", WorkorderroutingRow::scheduledstartdate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withScheduledstartdate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, WorkorderroutingRow> scheduledenddate() {
                  return new Field<TypoLocalDateTime, WorkorderroutingRow>(_path, "scheduledenddate", WorkorderroutingRow::scheduledenddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withScheduledenddate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public OptField<TypoLocalDateTime, WorkorderroutingRow> actualstartdate() {
                  return new OptField<TypoLocalDateTime, WorkorderroutingRow>(_path, "actualstartdate", WorkorderroutingRow::actualstartdate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withActualstartdate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public OptField<TypoLocalDateTime, WorkorderroutingRow> actualenddate() {
                  return new OptField<TypoLocalDateTime, WorkorderroutingRow>(_path, "actualenddate", WorkorderroutingRow::actualenddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withActualenddate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public OptField<BigDecimal, WorkorderroutingRow> actualresourcehrs() {
                  return new OptField<BigDecimal, WorkorderroutingRow>(_path, "actualresourcehrs", WorkorderroutingRow::actualresourcehrs, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withActualresourcehrs(value), PgTypes.numeric);
                };
+               @Override
                public Field<BigDecimal, WorkorderroutingRow> plannedcost() {
                  return new Field<BigDecimal, WorkorderroutingRow>(_path, "plannedcost", WorkorderroutingRow::plannedcost, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withPlannedcost(value), PgTypes.numeric);
                };
+               @Override
                public OptField<BigDecimal, WorkorderroutingRow> actualcost() {
                  return new OptField<BigDecimal, WorkorderroutingRow>(_path, "actualcost", WorkorderroutingRow::actualcost, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withActualcost(value), PgTypes.numeric);
                };
+               @Override
                public Field<TypoLocalDateTime, WorkorderroutingRow> modifieddate() {
                  return new Field<TypoLocalDateTime, WorkorderroutingRow>(_path, "modifieddate", WorkorderroutingRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -81,6 +93,7 @@ public interface WorkorderroutingFields {
       return List.of(this.fields().workorderid(), this.fields().productid(), this.fields().operationsequence(), this.fields().locationid(), this.fields().scheduledstartdate(), this.fields().scheduledenddate(), this.fields().actualstartdate(), this.fields().actualenddate(), this.fields().actualresourcehrs(), this.fields().plannedcost(), this.fields().actualcost(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

@@ -27,7 +27,7 @@ object CultureFields {
 
     override lazy val fields: CultureFields = {
       new CultureFields {
-        def cultureid: IdField[CultureId, CultureRow] = {
+        override def cultureid: IdField[CultureId, CultureRow] = {
           new IdField[CultureId, CultureRow](
             _path,
             "cultureid",
@@ -38,7 +38,7 @@ object CultureFields {
             CultureId.pgType
           )
         }
-        def name: Field[Name, CultureRow] = {
+        override def name: Field[Name, CultureRow] = {
           new Field[Name, CultureRow](
             _path,
             "name",
@@ -49,7 +49,7 @@ object CultureFields {
             Name.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, CultureRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, CultureRow] = {
           new Field[TypoLocalDateTime, CultureRow](
             _path,
             "modifieddate",
@@ -65,7 +65,7 @@ object CultureFields {
 
     override lazy val columns: java.util.List[FieldLike[?, CultureRow]] = java.util.List.of(this.fields.cultureid, this.fields.name, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[CultureFields, CultureRow] = new Impl(java.util.List.of())

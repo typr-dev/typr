@@ -25,18 +25,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class ShipmethodRepoImpl extends ShipmethodRepo {
-  def delete: DeleteBuilder[ShipmethodFields, ShipmethodRow] = DeleteBuilder.of(""""purchasing"."shipmethod"""", ShipmethodFields.structure, ShipmethodRow.rowParser(1).*)
+  override def delete: DeleteBuilder[ShipmethodFields, ShipmethodRow] = DeleteBuilder.of(""""purchasing"."shipmethod"""", ShipmethodFields.structure, ShipmethodRow.rowParser(1).*)
 
-  def deleteById(shipmethodid: ShipmethodId)(using c: Connection): Boolean = SQL"""delete from "purchasing"."shipmethod" where "shipmethodid" = ${ParameterValue(shipmethodid, null, ShipmethodId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(shipmethodid: ShipmethodId)(using c: Connection): Boolean = SQL"""delete from "purchasing"."shipmethod" where "shipmethodid" = ${ParameterValue(shipmethodid, null, ShipmethodId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(shipmethodids: Array[ShipmethodId])(using c: Connection): Int = {
+  override def deleteByIds(shipmethodids: Array[ShipmethodId])(using c: Connection): Int = {
     SQL"""delete
     from "purchasing"."shipmethod"
     where "shipmethodid" = ANY(${ParameterValue(shipmethodids, null, ShipmethodId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: ShipmethodRow)(using c: Connection): ShipmethodRow = {
+  override def insert(unsaved: ShipmethodRow)(using c: Connection): ShipmethodRow = {
   SQL"""insert into "purchasing"."shipmethod"("shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate")
     values (${ParameterValue(unsaved.shipmethodid, null, ShipmethodId.toStatement)}::int4, ${ParameterValue(unsaved.name, null, Name.toStatement)}::varchar, ${ParameterValue(unsaved.shipbase, null, ToStatement.scalaBigDecimalToStatement)}::numeric, ${ParameterValue(unsaved.shiprate, null, ToStatement.scalaBigDecimalToStatement)}::numeric, ${ParameterValue(unsaved.rowguid, null, TypoUUID.toStatement)}::uuid, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text
@@ -44,7 +44,7 @@ class ShipmethodRepoImpl extends ShipmethodRepo {
     .executeInsert(ShipmethodRow.rowParser(1).single)
   }
 
-  def insert(unsaved: ShipmethodRowUnsaved)(using c: Connection): ShipmethodRow = {
+  override def insert(unsaved: ShipmethodRowUnsaved)(using c: Connection): ShipmethodRow = {
     val namedParameters = List(
       Some((NamedParameter("name", ParameterValue(unsaved.name, null, Name.toStatement)), "::varchar")),
       unsaved.shipmethodid match {
@@ -84,47 +84,47 @@ class ShipmethodRepoImpl extends ShipmethodRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[ShipmethodRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "purchasing"."shipmethod"("shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved)(using ShipmethodRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[ShipmethodRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "purchasing"."shipmethod"("name", "shipmethodid", "shipbase", "shiprate", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using ShipmethodRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[ShipmethodFields, ShipmethodRow] = SelectBuilder.of(""""purchasing"."shipmethod"""", ShipmethodFields.structure, ShipmethodRow.rowParser)
+  override def select: SelectBuilder[ShipmethodFields, ShipmethodRow] = SelectBuilder.of(""""purchasing"."shipmethod"""", ShipmethodFields.structure, ShipmethodRow.rowParser)
 
-  def selectAll(using c: Connection): List[ShipmethodRow] = {
+  override def selectAll(using c: Connection): List[ShipmethodRow] = {
     SQL"""select "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text
     from "purchasing"."shipmethod"
     """.as(ShipmethodRow.rowParser(1).*)
   }
 
-  def selectById(shipmethodid: ShipmethodId)(using c: Connection): Option[ShipmethodRow] = {
+  override def selectById(shipmethodid: ShipmethodId)(using c: Connection): Option[ShipmethodRow] = {
     SQL"""select "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text
     from "purchasing"."shipmethod"
     where "shipmethodid" = ${ParameterValue(shipmethodid, null, ShipmethodId.toStatement)}
     """.as(ShipmethodRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(shipmethodids: Array[ShipmethodId])(using c: Connection): List[ShipmethodRow] = {
+  override def selectByIds(shipmethodids: Array[ShipmethodId])(using c: Connection): List[ShipmethodRow] = {
     SQL"""select "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text
     from "purchasing"."shipmethod"
     where "shipmethodid" = ANY(${ParameterValue(shipmethodids, null, ShipmethodId.arrayToStatement)})
     """.as(ShipmethodRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(shipmethodids: Array[ShipmethodId])(using c: Connection): Map[ShipmethodId, ShipmethodRow] = {
+  override def selectByIdsTracked(shipmethodids: Array[ShipmethodId])(using c: Connection): Map[ShipmethodId, ShipmethodRow] = {
     val byId = selectByIds(shipmethodids).view.map(x => (x.shipmethodid, x)).toMap
     shipmethodids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[ShipmethodFields, ShipmethodRow] = UpdateBuilder.of(""""purchasing"."shipmethod"""", ShipmethodFields.structure, ShipmethodRow.rowParser(1).*)
+  override def update: UpdateBuilder[ShipmethodFields, ShipmethodRow] = UpdateBuilder.of(""""purchasing"."shipmethod"""", ShipmethodFields.structure, ShipmethodRow.rowParser(1).*)
 
-  def update(row: ShipmethodRow)(using c: Connection): Option[ShipmethodRow] = {
+  override def update(row: ShipmethodRow)(using c: Connection): Option[ShipmethodRow] = {
     val shipmethodid = row.shipmethodid
     SQL"""update "purchasing"."shipmethod"
     set "name" = ${ParameterValue(row.name, null, Name.toStatement)}::varchar,
@@ -137,7 +137,7 @@ class ShipmethodRepoImpl extends ShipmethodRepo {
     """.executeInsert(ShipmethodRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: ShipmethodRow)(using c: Connection): ShipmethodRow = {
+  override def upsert(unsaved: ShipmethodRow)(using c: Connection): ShipmethodRow = {
   SQL"""insert into "purchasing"."shipmethod"("shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate")
     values (
       ${ParameterValue(unsaved.shipmethodid, null, ShipmethodId.toStatement)}::int4,
@@ -159,7 +159,7 @@ class ShipmethodRepoImpl extends ShipmethodRepo {
     .executeInsert(ShipmethodRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[ShipmethodRow])(using c: Connection): List[ShipmethodRow] = {
+  override def upsertBatch(unsaved: Iterable[ShipmethodRow])(using c: Connection): List[ShipmethodRow] = {
     def toNamedParameter(row: ShipmethodRow): List[NamedParameter] = List(
       NamedParameter("shipmethodid", ParameterValue(row.shipmethodid, null, ShipmethodId.toStatement)),
       NamedParameter("name", ParameterValue(row.name, null, Name.toStatement)),
@@ -168,6 +168,7 @@ class ShipmethodRepoImpl extends ShipmethodRepo {
       NamedParameter("rowguid", ParameterValue(row.rowguid, null, TypoUUID.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -192,7 +193,7 @@ class ShipmethodRepoImpl extends ShipmethodRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[ShipmethodRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

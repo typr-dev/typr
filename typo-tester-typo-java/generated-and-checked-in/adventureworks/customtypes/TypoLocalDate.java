@@ -36,8 +36,8 @@ public record TypoLocalDate(@JsonValue LocalDate value) {
     PgText.textString.contramap(v -> v.value().toString());
 
   static public PgType<TypoLocalDate> pgType =
-    PgTypes.text.bimap(v -> new TypoLocalDate(LocalDate.parse(v)), v -> v.value().toString()).renamed("date");
+    PgTypes.text.bimap((String v) -> new TypoLocalDate(LocalDate.parse(v)), (TypoLocalDate v) -> v.value().toString()).renamed("date");
 
   static public PgType<TypoLocalDate[]> pgTypeArray =
-    TypoLocalDate.pgType.array(PgRead.massageJdbcArrayTo(String[].class).map(xs -> arrayMap.map(xs, v -> new TypoLocalDate(LocalDate.parse(v)), TypoLocalDate.class)), PgWrite.<String>passObjectToJdbc().array(TypoLocalDate.pgType.typename().<String>as()).contramap(xs -> arrayMap.map(xs, (TypoLocalDate v) -> v.value().toString(), String.class)));
+    TypoLocalDate.pgType.array(PgRead.massageJdbcArrayTo(String[].class).map((String[] xs) -> arrayMap.map(xs, (String v) -> new TypoLocalDate(LocalDate.parse(v)), TypoLocalDate.class)), PgWrite.<String>passObjectToJdbc().array(TypoLocalDate.pgType.typename().<String>as()).contramap((TypoLocalDate[] xs) -> arrayMap.map(xs, (TypoLocalDate v) -> v.value().toString(), String.class)));
 }

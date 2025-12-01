@@ -5,6 +5,7 @@
  */
 package adventureworks.production.billofmaterials;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record BillofmaterialsRepoMock(
     return new BillofmaterialsRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<BillofmaterialsFields, BillofmaterialsRow> delete() {
     return new DeleteBuilderMock<>(BillofmaterialsFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.billofmaterialsid(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     Integer billofmaterialsid,
     Connection c
@@ -52,28 +55,31 @@ public record BillofmaterialsRepoMock(
     return Optional.ofNullable(map.remove(billofmaterialsid)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     Integer[] billofmaterialsids,
     Connection c
   ) {
     var count = 0;
-      for (var id : billofmaterialsids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : billofmaterialsids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public BillofmaterialsRow insert(
     BillofmaterialsRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.billofmaterialsid())) {
-        throw new RuntimeException(str("id $unsaved.billofmaterialsid() already exists"));
-      };
-      map.put(unsaved.billofmaterialsid(), unsaved);
+      throw new RuntimeException(str("id $unsaved.billofmaterialsid() already exists"));
+    };
+    map.put(unsaved.billofmaterialsid(), unsaved);
     return unsaved;
   };
 
+  @Override
   public BillofmaterialsRow insert(
     BillofmaterialsRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record BillofmaterialsRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<BillofmaterialsRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.billofmaterialsid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.billofmaterialsid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<BillofmaterialsRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.billofmaterialsid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.billofmaterialsid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<BillofmaterialsFields, BillofmaterialsRow> select() {
     return new SelectBuilderMock<>(BillofmaterialsFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<BillofmaterialsRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<BillofmaterialsRow> selectById(
     Integer billofmaterialsid,
     Connection c
@@ -126,38 +137,43 @@ public record BillofmaterialsRepoMock(
     return Optional.ofNullable(map.get(billofmaterialsid));
   };
 
+  @Override
   public List<BillofmaterialsRow> selectByIds(
     Integer[] billofmaterialsids,
     Connection c
   ) {
     var result = new ArrayList<BillofmaterialsRow>();
-      for (var id : billofmaterialsids) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : billofmaterialsids) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<Integer, BillofmaterialsRow> selectByIdsTracked(
     Integer[] billofmaterialsids,
     Connection c
   ) {
-    return selectByIds(billofmaterialsids, c).stream().collect(Collectors.toMap((adventureworks.production.billofmaterials.BillofmaterialsRow row) -> row.billofmaterialsid(), Function.identity()));
+    return selectByIds(billofmaterialsids, c).stream().collect(Collectors.toMap((BillofmaterialsRow row) -> row.billofmaterialsid(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<BillofmaterialsFields, BillofmaterialsRow> update() {
     return new UpdateBuilderMock<>(BillofmaterialsFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     BillofmaterialsRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.billofmaterialsid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.billofmaterialsid(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.billofmaterialsid(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public BillofmaterialsRow upsert(
     BillofmaterialsRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record BillofmaterialsRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<BillofmaterialsRow> upsertBatch(
     Iterator<BillofmaterialsRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<BillofmaterialsRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.billofmaterialsid(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.billofmaterialsid(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<BillofmaterialsRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.billofmaterialsid(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.billofmaterialsid(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

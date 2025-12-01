@@ -27,11 +27,11 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class ProductinventoryRepoImpl extends ProductinventoryRepo {
-  def delete: DeleteBuilder[ProductinventoryFields, ProductinventoryRow] = DeleteBuilder.of(""""production"."productinventory"""", ProductinventoryFields.structure, ProductinventoryRow.rowParser(1).*)
+  override def delete: DeleteBuilder[ProductinventoryFields, ProductinventoryRow] = DeleteBuilder.of(""""production"."productinventory"""", ProductinventoryFields.structure, ProductinventoryRow.rowParser(1).*)
 
-  def deleteById(compositeId: ProductinventoryId)(using c: Connection): Boolean = SQL"""delete from "production"."productinventory" where "productid" = ${ParameterValue(compositeId.productid, null, ProductId.toStatement)} AND "locationid" = ${ParameterValue(compositeId.locationid, null, LocationId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(compositeId: ProductinventoryId)(using c: Connection): Boolean = SQL"""delete from "production"."productinventory" where "productid" = ${ParameterValue(compositeId.productid, null, ProductId.toStatement)} AND "locationid" = ${ParameterValue(compositeId.locationid, null, LocationId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(compositeIds: Array[ProductinventoryId])(using c: Connection): Int = {
+  override def deleteByIds(compositeIds: Array[ProductinventoryId])(using c: Connection): Int = {
     val productid = compositeIds.map(_.productid)
     val locationid = compositeIds.map(_.locationid)
     SQL"""delete
@@ -41,7 +41,7 @@ class ProductinventoryRepoImpl extends ProductinventoryRepo {
     """.executeUpdate()
   }
 
-  def insert(unsaved: ProductinventoryRow)(using c: Connection): ProductinventoryRow = {
+  override def insert(unsaved: ProductinventoryRow)(using c: Connection): ProductinventoryRow = {
   SQL"""insert into "production"."productinventory"("productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate")
     values (${ParameterValue(unsaved.productid, null, ProductId.toStatement)}::int4, ${ParameterValue(unsaved.locationid, null, LocationId.toStatement)}::int2, ${ParameterValue(unsaved.shelf, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.bin, null, TypoShort.toStatement)}::int2, ${ParameterValue(unsaved.quantity, null, TypoShort.toStatement)}::int2, ${ParameterValue(unsaved.rowguid, null, TypoUUID.toStatement)}::uuid, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"::text
@@ -49,7 +49,7 @@ class ProductinventoryRepoImpl extends ProductinventoryRepo {
     .executeInsert(ProductinventoryRow.rowParser(1).single)
   }
 
-  def insert(unsaved: ProductinventoryRowUnsaved)(using c: Connection): ProductinventoryRow = {
+  override def insert(unsaved: ProductinventoryRowUnsaved)(using c: Connection): ProductinventoryRow = {
     val namedParameters = List(
       Some((NamedParameter("productid", ParameterValue(unsaved.productid, null, ProductId.toStatement)), "::int4")),
       Some((NamedParameter("locationid", ParameterValue(unsaved.locationid, null, LocationId.toStatement)), "::int2")),
@@ -84,33 +84,33 @@ class ProductinventoryRepoImpl extends ProductinventoryRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[ProductinventoryRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "production"."productinventory"("productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved)(using ProductinventoryRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[ProductinventoryRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "production"."productinventory"("productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using ProductinventoryRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[ProductinventoryFields, ProductinventoryRow] = SelectBuilder.of(""""production"."productinventory"""", ProductinventoryFields.structure, ProductinventoryRow.rowParser)
+  override def select: SelectBuilder[ProductinventoryFields, ProductinventoryRow] = SelectBuilder.of(""""production"."productinventory"""", ProductinventoryFields.structure, ProductinventoryRow.rowParser)
 
-  def selectAll(using c: Connection): List[ProductinventoryRow] = {
+  override def selectAll(using c: Connection): List[ProductinventoryRow] = {
     SQL"""select "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"::text
     from "production"."productinventory"
     """.as(ProductinventoryRow.rowParser(1).*)
   }
 
-  def selectById(compositeId: ProductinventoryId)(using c: Connection): Option[ProductinventoryRow] = {
+  override def selectById(compositeId: ProductinventoryId)(using c: Connection): Option[ProductinventoryRow] = {
     SQL"""select "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"::text
     from "production"."productinventory"
     where "productid" = ${ParameterValue(compositeId.productid, null, ProductId.toStatement)} AND "locationid" = ${ParameterValue(compositeId.locationid, null, LocationId.toStatement)}
     """.as(ProductinventoryRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(compositeIds: Array[ProductinventoryId])(using c: Connection): List[ProductinventoryRow] = {
+  override def selectByIds(compositeIds: Array[ProductinventoryId])(using c: Connection): List[ProductinventoryRow] = {
     val productid = compositeIds.map(_.productid)
     val locationid = compositeIds.map(_.locationid)
     SQL"""select "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"::text
@@ -120,14 +120,14 @@ class ProductinventoryRepoImpl extends ProductinventoryRepo {
     """.as(ProductinventoryRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(compositeIds: Array[ProductinventoryId])(using c: Connection): Map[ProductinventoryId, ProductinventoryRow] = {
+  override def selectByIdsTracked(compositeIds: Array[ProductinventoryId])(using c: Connection): Map[ProductinventoryId, ProductinventoryRow] = {
     val byId = selectByIds(compositeIds).view.map(x => (x.compositeId, x)).toMap
     compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[ProductinventoryFields, ProductinventoryRow] = UpdateBuilder.of(""""production"."productinventory"""", ProductinventoryFields.structure, ProductinventoryRow.rowParser(1).*)
+  override def update: UpdateBuilder[ProductinventoryFields, ProductinventoryRow] = UpdateBuilder.of(""""production"."productinventory"""", ProductinventoryFields.structure, ProductinventoryRow.rowParser(1).*)
 
-  def update(row: ProductinventoryRow)(using c: Connection): Option[ProductinventoryRow] = {
+  override def update(row: ProductinventoryRow)(using c: Connection): Option[ProductinventoryRow] = {
     val compositeId = row.compositeId
     SQL"""update "production"."productinventory"
     set "shelf" = ${ParameterValue(row.shelf, null, ToStatement.stringToStatement)},
@@ -140,7 +140,7 @@ class ProductinventoryRepoImpl extends ProductinventoryRepo {
     """.executeInsert(ProductinventoryRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: ProductinventoryRow)(using c: Connection): ProductinventoryRow = {
+  override def upsert(unsaved: ProductinventoryRow)(using c: Connection): ProductinventoryRow = {
   SQL"""insert into "production"."productinventory"("productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate")
     values (
       ${ParameterValue(unsaved.productid, null, ProductId.toStatement)}::int4,
@@ -163,7 +163,7 @@ class ProductinventoryRepoImpl extends ProductinventoryRepo {
     .executeInsert(ProductinventoryRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[ProductinventoryRow])(using c: Connection): List[ProductinventoryRow] = {
+  override def upsertBatch(unsaved: Iterable[ProductinventoryRow])(using c: Connection): List[ProductinventoryRow] = {
     def toNamedParameter(row: ProductinventoryRow): List[NamedParameter] = List(
       NamedParameter("productid", ParameterValue(row.productid, null, ProductId.toStatement)),
       NamedParameter("locationid", ParameterValue(row.locationid, null, LocationId.toStatement)),
@@ -173,6 +173,7 @@ class ProductinventoryRepoImpl extends ProductinventoryRepo {
       NamedParameter("rowguid", ParameterValue(row.rowguid, null, TypoUUID.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -197,7 +198,7 @@ class ProductinventoryRepoImpl extends ProductinventoryRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[ProductinventoryRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

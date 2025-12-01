@@ -62,7 +62,7 @@ object PurchaseorderheaderFields {
 
     override lazy val fields: PurchaseorderheaderFields = {
       new PurchaseorderheaderFields {
-        def purchaseorderid: IdField[PurchaseorderheaderId, PurchaseorderheaderRow] = {
+        override def purchaseorderid: IdField[PurchaseorderheaderId, PurchaseorderheaderRow] = {
           new IdField[PurchaseorderheaderId, PurchaseorderheaderRow](
             _path,
             "purchaseorderid",
@@ -73,7 +73,7 @@ object PurchaseorderheaderFields {
             PurchaseorderheaderId.pgType
           )
         }
-        def revisionnumber: Field[TypoShort, PurchaseorderheaderRow] = {
+        override def revisionnumber: Field[TypoShort, PurchaseorderheaderRow] = {
           new Field[TypoShort, PurchaseorderheaderRow](
             _path,
             "revisionnumber",
@@ -84,7 +84,7 @@ object PurchaseorderheaderFields {
             TypoShort.pgType
           )
         }
-        def status: Field[TypoShort, PurchaseorderheaderRow] = {
+        override def status: Field[TypoShort, PurchaseorderheaderRow] = {
           new Field[TypoShort, PurchaseorderheaderRow](
             _path,
             "status",
@@ -95,7 +95,7 @@ object PurchaseorderheaderFields {
             TypoShort.pgType
           )
         }
-        def employeeid: Field[BusinessentityId, PurchaseorderheaderRow] = {
+        override def employeeid: Field[BusinessentityId, PurchaseorderheaderRow] = {
           new Field[BusinessentityId, PurchaseorderheaderRow](
             _path,
             "employeeid",
@@ -106,7 +106,7 @@ object PurchaseorderheaderFields {
             BusinessentityId.pgType
           )
         }
-        def vendorid: Field[BusinessentityId, PurchaseorderheaderRow] = {
+        override def vendorid: Field[BusinessentityId, PurchaseorderheaderRow] = {
           new Field[BusinessentityId, PurchaseorderheaderRow](
             _path,
             "vendorid",
@@ -117,7 +117,7 @@ object PurchaseorderheaderFields {
             BusinessentityId.pgType
           )
         }
-        def shipmethodid: Field[ShipmethodId, PurchaseorderheaderRow] = {
+        override def shipmethodid: Field[ShipmethodId, PurchaseorderheaderRow] = {
           new Field[ShipmethodId, PurchaseorderheaderRow](
             _path,
             "shipmethodid",
@@ -128,7 +128,7 @@ object PurchaseorderheaderFields {
             ShipmethodId.pgType
           )
         }
-        def orderdate: Field[TypoLocalDateTime, PurchaseorderheaderRow] = {
+        override def orderdate: Field[TypoLocalDateTime, PurchaseorderheaderRow] = {
           new Field[TypoLocalDateTime, PurchaseorderheaderRow](
             _path,
             "orderdate",
@@ -139,7 +139,7 @@ object PurchaseorderheaderFields {
             TypoLocalDateTime.pgType
           )
         }
-        def shipdate: OptField[TypoLocalDateTime, PurchaseorderheaderRow] = {
+        override def shipdate: OptField[TypoLocalDateTime, PurchaseorderheaderRow] = {
           new OptField[TypoLocalDateTime, PurchaseorderheaderRow](
             _path,
             "shipdate",
@@ -150,7 +150,7 @@ object PurchaseorderheaderFields {
             TypoLocalDateTime.pgType
           )
         }
-        def subtotal: Field[java.math.BigDecimal, PurchaseorderheaderRow] = {
+        override def subtotal: Field[java.math.BigDecimal, PurchaseorderheaderRow] = {
           new Field[java.math.BigDecimal, PurchaseorderheaderRow](
             _path,
             "subtotal",
@@ -161,7 +161,7 @@ object PurchaseorderheaderFields {
             PgTypes.numeric
           )
         }
-        def taxamt: Field[java.math.BigDecimal, PurchaseorderheaderRow] = {
+        override def taxamt: Field[java.math.BigDecimal, PurchaseorderheaderRow] = {
           new Field[java.math.BigDecimal, PurchaseorderheaderRow](
             _path,
             "taxamt",
@@ -172,7 +172,7 @@ object PurchaseorderheaderFields {
             PgTypes.numeric
           )
         }
-        def freight: Field[java.math.BigDecimal, PurchaseorderheaderRow] = {
+        override def freight: Field[java.math.BigDecimal, PurchaseorderheaderRow] = {
           new Field[java.math.BigDecimal, PurchaseorderheaderRow](
             _path,
             "freight",
@@ -183,7 +183,7 @@ object PurchaseorderheaderFields {
             PgTypes.numeric
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, PurchaseorderheaderRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, PurchaseorderheaderRow] = {
           new Field[TypoLocalDateTime, PurchaseorderheaderRow](
             _path,
             "modifieddate",
@@ -199,7 +199,7 @@ object PurchaseorderheaderFields {
 
     override lazy val columns: java.util.List[FieldLike[?, PurchaseorderheaderRow]] = java.util.List.of(this.fields.purchaseorderid, this.fields.revisionnumber, this.fields.status, this.fields.employeeid, this.fields.vendorid, this.fields.shipmethodid, this.fields.orderdate, this.fields.shipdate, this.fields.subtotal, this.fields.taxamt, this.fields.freight, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[PurchaseorderheaderFields, PurchaseorderheaderRow] = new Impl(java.util.List.of())

@@ -20,11 +20,11 @@ import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class FlaffRepoImpl extends FlaffRepo {
-  def delete: DeleteBuilder[FlaffFields, FlaffRow] = DeleteBuilder.of(""""public"."flaff"""", FlaffFields.structure, FlaffRow.read)
+  override def delete: DeleteBuilder[FlaffFields, FlaffRow] = DeleteBuilder.of(""""public"."flaff"""", FlaffFields.structure, FlaffRow.read)
 
-  def deleteById(compositeId: FlaffId): ConnectionIO[Boolean] = sql"""delete from "public"."flaff" where "code" = ${fromWrite(compositeId.code)(new Write.Single(ShortText.put))} AND "another_code" = ${fromWrite(compositeId.anotherCode)(new Write.Single(Meta.StringMeta.put))} AND "some_number" = ${fromWrite(compositeId.someNumber)(new Write.Single(Meta.IntMeta.put))} AND "specifier" = ${fromWrite(compositeId.specifier)(new Write.Single(ShortText.put))}""".update.run.map(_ > 0)
+  override def deleteById(compositeId: FlaffId): ConnectionIO[Boolean] = sql"""delete from "public"."flaff" where "code" = ${fromWrite(compositeId.code)(new Write.Single(ShortText.put))} AND "another_code" = ${fromWrite(compositeId.anotherCode)(new Write.Single(Meta.StringMeta.put))} AND "some_number" = ${fromWrite(compositeId.someNumber)(new Write.Single(Meta.IntMeta.put))} AND "specifier" = ${fromWrite(compositeId.specifier)(new Write.Single(ShortText.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(compositeIds: Array[FlaffId]): ConnectionIO[Int] = {
+  override def deleteByIds(compositeIds: Array[FlaffId]): ConnectionIO[Int] = {
     val code = compositeIds.map(_.code)
     val anotherCode = compositeIds.map(_.anotherCode)
     val someNumber = compositeIds.map(_.someNumber)
@@ -36,25 +36,25 @@ class FlaffRepoImpl extends FlaffRepo {
     """.update.run
   }
 
-  def insert(unsaved: FlaffRow): ConnectionIO[FlaffRow] = {
+  override def insert(unsaved: FlaffRow): ConnectionIO[FlaffRow] = {
     sql"""insert into "public"."flaff"("code", "another_code", "some_number", "specifier", "parentspecifier")
     values (${fromWrite(unsaved.code)(new Write.Single(ShortText.put))}::text, ${fromWrite(unsaved.anotherCode)(new Write.Single(Meta.StringMeta.put))}, ${fromWrite(unsaved.someNumber)(new Write.Single(Meta.IntMeta.put))}::int4, ${fromWrite(unsaved.specifier)(new Write.Single(ShortText.put))}::text, ${fromWrite(unsaved.parentspecifier)(new Write.SingleOpt(ShortText.put))}::text)
     returning "code", "another_code", "some_number", "specifier", "parentspecifier"
     """.query(FlaffRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, FlaffRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "public"."flaff"("code", "another_code", "some_number", "specifier", "parentspecifier") FROM STDIN""").copyIn(unsaved, batchSize)(FlaffRow.pgText)
 
-  def select: SelectBuilder[FlaffFields, FlaffRow] = SelectBuilder.of(""""public"."flaff"""", FlaffFields.structure, FlaffRow.read)
+  override def select: SelectBuilder[FlaffFields, FlaffRow] = SelectBuilder.of(""""public"."flaff"""", FlaffFields.structure, FlaffRow.read)
 
-  def selectAll: Stream[ConnectionIO, FlaffRow] = sql"""select "code", "another_code", "some_number", "specifier", "parentspecifier" from "public"."flaff"""".query(FlaffRow.read).stream
+  override def selectAll: Stream[ConnectionIO, FlaffRow] = sql"""select "code", "another_code", "some_number", "specifier", "parentspecifier" from "public"."flaff"""".query(FlaffRow.read).stream
 
-  def selectById(compositeId: FlaffId): ConnectionIO[Option[FlaffRow]] = sql"""select "code", "another_code", "some_number", "specifier", "parentspecifier" from "public"."flaff" where "code" = ${fromWrite(compositeId.code)(new Write.Single(ShortText.put))} AND "another_code" = ${fromWrite(compositeId.anotherCode)(new Write.Single(Meta.StringMeta.put))} AND "some_number" = ${fromWrite(compositeId.someNumber)(new Write.Single(Meta.IntMeta.put))} AND "specifier" = ${fromWrite(compositeId.specifier)(new Write.Single(ShortText.put))}""".query(FlaffRow.read).option
+  override def selectById(compositeId: FlaffId): ConnectionIO[Option[FlaffRow]] = sql"""select "code", "another_code", "some_number", "specifier", "parentspecifier" from "public"."flaff" where "code" = ${fromWrite(compositeId.code)(new Write.Single(ShortText.put))} AND "another_code" = ${fromWrite(compositeId.anotherCode)(new Write.Single(Meta.StringMeta.put))} AND "some_number" = ${fromWrite(compositeId.someNumber)(new Write.Single(Meta.IntMeta.put))} AND "specifier" = ${fromWrite(compositeId.specifier)(new Write.Single(ShortText.put))}""".query(FlaffRow.read).option
 
-  def selectByIds(compositeIds: Array[FlaffId]): Stream[ConnectionIO, FlaffRow] = {
+  override def selectByIds(compositeIds: Array[FlaffId]): Stream[ConnectionIO, FlaffRow] = {
     val code = compositeIds.map(_.code)
     val anotherCode = compositeIds.map(_.anotherCode)
     val someNumber = compositeIds.map(_.someNumber)
@@ -66,16 +66,16 @@ class FlaffRepoImpl extends FlaffRepo {
     """.query(FlaffRow.read).stream
   }
 
-  def selectByIdsTracked(compositeIds: Array[FlaffId]): ConnectionIO[Map[FlaffId, FlaffRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[FlaffId]): ConnectionIO[Map[FlaffId, FlaffRow]] = {
     selectByIds(compositeIds).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[FlaffFields, FlaffRow] = UpdateBuilder.of(""""public"."flaff"""", FlaffFields.structure, FlaffRow.read)
+  override def update: UpdateBuilder[FlaffFields, FlaffRow] = UpdateBuilder.of(""""public"."flaff"""", FlaffFields.structure, FlaffRow.read)
 
-  def update(row: FlaffRow): ConnectionIO[Option[FlaffRow]] = {
+  override def update(row: FlaffRow): ConnectionIO[Option[FlaffRow]] = {
     val compositeId = row.compositeId
     sql"""update "public"."flaff"
     set "parentspecifier" = ${fromWrite(row.parentspecifier)(new Write.SingleOpt(ShortText.put))}::text
@@ -83,7 +83,7 @@ class FlaffRepoImpl extends FlaffRepo {
     returning "code", "another_code", "some_number", "specifier", "parentspecifier"""".query(FlaffRow.read).option
   }
 
-  def upsert(unsaved: FlaffRow): ConnectionIO[FlaffRow] = {
+  override def upsert(unsaved: FlaffRow): ConnectionIO[FlaffRow] = {
     sql"""insert into "public"."flaff"("code", "another_code", "some_number", "specifier", "parentspecifier")
     values (
       ${fromWrite(unsaved.code)(new Write.Single(ShortText.put))}::text,
@@ -99,7 +99,7 @@ class FlaffRepoImpl extends FlaffRepo {
     """.query(FlaffRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[FlaffRow]): Stream[ConnectionIO, FlaffRow] = {
+  override def upsertBatch(unsaved: List[FlaffRow]): Stream[ConnectionIO, FlaffRow] = {
     Update[FlaffRow](
       s"""insert into "public"."flaff"("code", "another_code", "some_number", "specifier", "parentspecifier")
       values (?::text,?,?::int4,?::text,?::text)
@@ -112,7 +112,7 @@ class FlaffRepoImpl extends FlaffRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, FlaffRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

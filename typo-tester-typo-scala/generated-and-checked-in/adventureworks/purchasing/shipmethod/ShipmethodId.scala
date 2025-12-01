@@ -5,12 +5,13 @@
  */
 package adventureworks.purchasing.shipmethod
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
 
 /** Type for the primary key of table `purchasing.shipmethod` */
-case class ShipmethodId(value: Integer) extends scala.AnyVal
+case class ShipmethodId(@JsonValue value: Integer) extends scala.AnyVal
 
 object ShipmethodId {
   given bijection: Bijection[ShipmethodId, Integer] = Bijection.apply[ShipmethodId, Integer](_.value)(ShipmethodId.apply)

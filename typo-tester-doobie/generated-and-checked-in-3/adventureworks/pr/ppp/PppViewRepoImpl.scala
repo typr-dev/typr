@@ -7,13 +7,11 @@ package adventureworks.pr.ppp
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class PppViewRepoImpl extends PppViewRepo {
-  def select: SelectBuilder[PppViewFields, PppViewRow] = SelectBuilder.of(""""pr"."ppp"""", PppViewFields.structure, PppViewRow.read)
+  override def select: SelectBuilder[PppViewFields, PppViewRow] = SelectBuilder.of(""""pr"."ppp"""", PppViewFields.structure, PppViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, PppViewRow] = sql"""select "productid", "productphotoid", "primary", "modifieddate"::text from "pr"."ppp"""".query(using PppViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, PppViewRow] = sql"""select "productid", "productphotoid", "primary", "modifieddate"::text from "pr"."ppp"""".query(using PppViewRow.read).stream
 }

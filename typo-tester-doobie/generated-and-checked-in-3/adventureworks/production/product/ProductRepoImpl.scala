@@ -23,28 +23,26 @@ import doobie.util.fragment.Fragment
 import doobie.util.meta.Meta
 import doobie.util.update.Update
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.DeleteBuilder
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class ProductRepoImpl extends ProductRepo {
-  def delete: DeleteBuilder[ProductFields, ProductRow] = DeleteBuilder.of(""""production"."product"""", ProductFields.structure, ProductRow.read)
+  override def delete: DeleteBuilder[ProductFields, ProductRow] = DeleteBuilder.of(""""production"."product"""", ProductFields.structure, ProductRow.read)
 
-  def deleteById(productid: ProductId): ConnectionIO[Boolean] = sql"""delete from "production"."product" where "productid" = ${fromWrite(productid)(using new Write.Single(ProductId.put))}""".update.run.map(_ > 0)
+  override def deleteById(productid: ProductId): ConnectionIO[Boolean] = sql"""delete from "production"."product" where "productid" = ${fromWrite(productid)(using new Write.Single(ProductId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(productids: Array[ProductId]): ConnectionIO[Int] = sql"""delete from "production"."product" where "productid" = ANY(${fromWrite(productids)(using new Write.Single(ProductId.arrayPut))})""".update.run
+  override def deleteByIds(productids: Array[ProductId]): ConnectionIO[Int] = sql"""delete from "production"."product" where "productid" = ANY(${fromWrite(productids)(using new Write.Single(ProductId.arrayPut))})""".update.run
 
-  def insert(unsaved: ProductRow): ConnectionIO[ProductRow] = {
+  override def insert(unsaved: ProductRow): ConnectionIO[ProductRow] = {
     sql"""insert into "production"."product"("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate")
     values (${fromWrite(unsaved.productid)(using new Write.Single(ProductId.put))}::int4, ${fromWrite(unsaved.name)(using new Write.Single(Name.put))}::varchar, ${fromWrite(unsaved.productnumber)(using new Write.Single(Meta.StringMeta.put))}, ${fromWrite(unsaved.makeflag)(using new Write.Single(Flag.put))}::bool, ${fromWrite(unsaved.finishedgoodsflag)(using new Write.Single(Flag.put))}::bool, ${fromWrite(unsaved.color)(using new Write.SingleOpt(Meta.StringMeta.put))}, ${fromWrite(unsaved.safetystocklevel)(using new Write.Single(TypoShort.put))}::int2, ${fromWrite(unsaved.reorderpoint)(using new Write.Single(TypoShort.put))}::int2, ${fromWrite(unsaved.standardcost)(using new Write.Single(Meta.ScalaBigDecimalMeta.put))}::numeric, ${fromWrite(unsaved.listprice)(using new Write.Single(Meta.ScalaBigDecimalMeta.put))}::numeric, ${fromWrite(unsaved.size)(using new Write.SingleOpt(Meta.StringMeta.put))}, ${fromWrite(unsaved.sizeunitmeasurecode)(using new Write.SingleOpt(UnitmeasureId.put))}::bpchar, ${fromWrite(unsaved.weightunitmeasurecode)(using new Write.SingleOpt(UnitmeasureId.put))}::bpchar, ${fromWrite(unsaved.weight)(using new Write.SingleOpt(Meta.ScalaBigDecimalMeta.put))}::numeric, ${fromWrite(unsaved.daystomanufacture)(using new Write.Single(Meta.IntMeta.put))}::int4, ${fromWrite(unsaved.productline)(using new Write.SingleOpt(Meta.StringMeta.put))}::bpchar, ${fromWrite(unsaved.`class`)(using new Write.SingleOpt(Meta.StringMeta.put))}::bpchar, ${fromWrite(unsaved.style)(using new Write.SingleOpt(Meta.StringMeta.put))}::bpchar, ${fromWrite(unsaved.productsubcategoryid)(using new Write.SingleOpt(ProductsubcategoryId.put))}::int4, ${fromWrite(unsaved.productmodelid)(using new Write.SingleOpt(ProductmodelId.put))}::int4, ${fromWrite(unsaved.sellstartdate)(using new Write.Single(TypoLocalDateTime.put))}::timestamp, ${fromWrite(unsaved.sellenddate)(using new Write.SingleOpt(TypoLocalDateTime.put))}::timestamp, ${fromWrite(unsaved.discontinueddate)(using new Write.SingleOpt(TypoLocalDateTime.put))}::timestamp, ${fromWrite(unsaved.rowguid)(using new Write.Single(TypoUUID.put))}::uuid, ${fromWrite(unsaved.modifieddate)(using new Write.Single(TypoLocalDateTime.put))}::timestamp)
     returning "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text
     """.query(using ProductRow.read).unique
   }
 
-  def insert(unsaved: ProductRowUnsaved): ConnectionIO[ProductRow] = {
+  override def insert(unsaved: ProductRowUnsaved): ConnectionIO[ProductRow] = {
     val fs = List(
       Some((Fragment.const0(s""""name""""), fr"${fromWrite(unsaved.name)(using new Write.Single(Name.put))}::varchar")),
       Some((Fragment.const0(s""""productnumber""""), fr"${fromWrite(unsaved.productnumber)(using new Write.Single(Meta.StringMeta.put))}")),
@@ -101,35 +99,35 @@ class ProductRepoImpl extends ProductRepo {
     q.query(using ProductRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, ProductRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "production"."product"("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate") FROM STDIN""").copyIn(unsaved, batchSize)(using ProductRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, ProductRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "production"."product"("name", "productnumber", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "productid", "makeflag", "finishedgoodsflag", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(using ProductRowUnsaved.pgText)
 
-  def select: SelectBuilder[ProductFields, ProductRow] = SelectBuilder.of(""""production"."product"""", ProductFields.structure, ProductRow.read)
+  override def select: SelectBuilder[ProductFields, ProductRow] = SelectBuilder.of(""""production"."product"""", ProductFields.structure, ProductRow.read)
 
-  def selectAll: Stream[ConnectionIO, ProductRow] = sql"""select "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text from "production"."product"""".query(using ProductRow.read).stream
+  override def selectAll: Stream[ConnectionIO, ProductRow] = sql"""select "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text from "production"."product"""".query(using ProductRow.read).stream
 
-  def selectById(productid: ProductId): ConnectionIO[Option[ProductRow]] = sql"""select "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text from "production"."product" where "productid" = ${fromWrite(productid)(using new Write.Single(ProductId.put))}""".query(using ProductRow.read).option
+  override def selectById(productid: ProductId): ConnectionIO[Option[ProductRow]] = sql"""select "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text from "production"."product" where "productid" = ${fromWrite(productid)(using new Write.Single(ProductId.put))}""".query(using ProductRow.read).option
 
-  def selectByIds(productids: Array[ProductId]): Stream[ConnectionIO, ProductRow] = sql"""select "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text from "production"."product" where "productid" = ANY(${fromWrite(productids)(using new Write.Single(ProductId.arrayPut))})""".query(using ProductRow.read).stream
+  override def selectByIds(productids: Array[ProductId]): Stream[ConnectionIO, ProductRow] = sql"""select "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text from "production"."product" where "productid" = ANY(${fromWrite(productids)(using new Write.Single(ProductId.arrayPut))})""".query(using ProductRow.read).stream
 
-  def selectByIdsTracked(productids: Array[ProductId]): ConnectionIO[Map[ProductId, ProductRow]] = {
+  override def selectByIdsTracked(productids: Array[ProductId]): ConnectionIO[Map[ProductId, ProductRow]] = {
     selectByIds(productids).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.productid, x)).toMap
       productids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[ProductFields, ProductRow] = UpdateBuilder.of(""""production"."product"""", ProductFields.structure, ProductRow.read)
+  override def update: UpdateBuilder[ProductFields, ProductRow] = UpdateBuilder.of(""""production"."product"""", ProductFields.structure, ProductRow.read)
 
-  def update(row: ProductRow): ConnectionIO[Option[ProductRow]] = {
+  override def update(row: ProductRow): ConnectionIO[Option[ProductRow]] = {
     val productid = row.productid
     sql"""update "production"."product"
     set "name" = ${fromWrite(row.name)(using new Write.Single(Name.put))}::varchar,
@@ -160,7 +158,7 @@ class ProductRepoImpl extends ProductRepo {
     returning "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text""".query(using ProductRow.read).option
   }
 
-  def upsert(unsaved: ProductRow): ConnectionIO[ProductRow] = {
+  override def upsert(unsaved: ProductRow): ConnectionIO[ProductRow] = {
     sql"""insert into "production"."product"("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate")
     values (
       ${fromWrite(unsaved.productid)(using new Write.Single(ProductId.put))}::int4,
@@ -219,7 +217,7 @@ class ProductRepoImpl extends ProductRepo {
     """.query(using ProductRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[ProductRow]): Stream[ConnectionIO, ProductRow] = {
+  override def upsertBatch(unsaved: List[ProductRow]): Stream[ConnectionIO, ProductRow] = {
     Update[ProductRow](
       s"""insert into "production"."product"("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate")
       values (?::int4,?::varchar,?,?::bool,?::bool,?,?::int2,?::int2,?::numeric,?::numeric,?,?::bpchar,?::bpchar,?::numeric,?::int4,?::bpchar,?::bpchar,?::bpchar,?::int4,?::int4,?::timestamp,?::timestamp,?::timestamp,?::uuid,?::timestamp)
@@ -255,7 +253,7 @@ class ProductRepoImpl extends ProductRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, ProductRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

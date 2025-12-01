@@ -5,22 +5,22 @@
  */
 package adventureworks.pr.psc;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class PscViewRepoImpl implements PscViewRepo {
+  @Override
   public SelectBuilder<PscViewFields, PscViewRow> select() {
     return SelectBuilder.of("pr.psc", PscViewFields.structure(), PscViewRow._rowParser);
   };
 
+  @Override
   public List<PscViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate"::text
        from "pr"."psc"
-    """)).as(PscViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(PscViewRow._rowParser.all()).runUnchecked(c);
   };
 }

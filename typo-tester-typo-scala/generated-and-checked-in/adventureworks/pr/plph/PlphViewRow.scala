@@ -11,7 +11,6 @@ import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple6
 
 /** View: pr.plph */
 case class PlphViewRow(
@@ -30,14 +29,5 @@ case class PlphViewRow(
 )
 
 object PlphViewRow {
-  val `_rowParser`: RowParser[PlphViewRow] = {
-    RowParsers.of(ProductId.pgType, ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), PgTypes.numeric, TypoLocalDateTime.pgType, PlphViewRow.apply, row => new Tuple6(
-      row.id,
-      row.productid,
-      row.startdate,
-      row.enddate,
-      row.listprice,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[PlphViewRow] = RowParsers.of(ProductId.pgType, ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), PgTypes.numeric, TypoLocalDateTime.pgType, PlphViewRow.apply, row => Array(row.id, row.productid, row.startdate, row.enddate, row.listprice, row.modifieddate))
 }

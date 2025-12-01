@@ -79,25 +79,5 @@ case class BillofmaterialsRowUnsaved(
 }
 
 object BillofmaterialsRowUnsaved {
-  given pgText: PgText[BillofmaterialsRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      ProductId.pgType.opt().pgText.unsafeEncode(row.productassemblyid, sb);
-      sb.append(PgText.DELIMETER);
-      ProductId.pgType.pgText.unsafeEncode(row.componentid, sb);
-      sb.append(PgText.DELIMETER);
-      TypoLocalDateTime.pgType.opt().pgText.unsafeEncode(row.enddate, sb);
-      sb.append(PgText.DELIMETER);
-      UnitmeasureId.pgType.pgText.unsafeEncode(row.unitmeasurecode, sb);
-      sb.append(PgText.DELIMETER);
-      TypoShort.pgType.pgText.unsafeEncode(row.bomlevel, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using PgTypes.int4.pgText).unsafeEncode(row.billofmaterialsid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.startdate, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using PgTypes.numeric.pgText).unsafeEncode(row.perassemblyqty, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[BillofmaterialsRowUnsaved] = PgText.instance((row, sb) => { ProductId.pgType.opt().pgText.unsafeEncode(row.productassemblyid, sb); sb.append(PgText.DELIMETER); ProductId.pgType.pgText.unsafeEncode(row.componentid, sb); sb.append(PgText.DELIMETER); TypoLocalDateTime.pgType.opt().pgText.unsafeEncode(row.enddate, sb); sb.append(PgText.DELIMETER); UnitmeasureId.pgType.pgText.unsafeEncode(row.unitmeasurecode, sb); sb.append(PgText.DELIMETER); TypoShort.pgType.pgText.unsafeEncode(row.bomlevel, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.int4.pgText).unsafeEncode(row.billofmaterialsid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.startdate, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.numeric.pgText).unsafeEncode(row.perassemblyqty, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

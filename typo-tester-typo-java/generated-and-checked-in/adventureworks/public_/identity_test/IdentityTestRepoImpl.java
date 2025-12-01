@@ -5,7 +5,6 @@
  */
 package adventureworks.public_.identity_test;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,12 +22,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class IdentityTestRepoImpl implements IdentityTestRepo {
+  @Override
   public DeleteBuilder<IdentityTestFields, IdentityTestRow> delete() {
     return DeleteBuilder.of("public.identity-test", IdentityTestFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     IdentityTestId name,
     Connection c
@@ -42,6 +42,7 @@ public class IdentityTestRepoImpl implements IdentityTestRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     IdentityTestId[] names,
     Connection c
@@ -58,6 +59,7 @@ public class IdentityTestRepoImpl implements IdentityTestRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public IdentityTestRow insert(
     IdentityTestRow unsaved,
     Connection c
@@ -77,45 +79,49 @@ public class IdentityTestRepoImpl implements IdentityTestRepo {
       .updateReturning(IdentityTestRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public IdentityTestRow insert(
     IdentityTestRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"name\""));
-      values.add(interpolate(
-        IdentityTestId.pgType.encode(unsaved.name()),
-        typo.runtime.Fragment.lit("""
-        """)
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"name\""));
+    values.add(interpolate(
+      IdentityTestId.pgType.encode(unsaved.name()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    unsaved.defaultGenerated().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"default_generated\""));
+        values.add(interpolate(
+        PgTypes.int4.encode(value),
+        typo.runtime.Fragment.lit("::int4")
       ));
-      unsaved.defaultGenerated().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"default_generated\""));
-          values.add(interpolate(
-            PgTypes.int4.encode(value),
-            typo.runtime.Fragment.lit("::int4")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "public"."identity-test"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "always_generated", "default_generated", "name"
-        """)
-      );;
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "public"."identity-test"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "always_generated", "default_generated", "name"
+      """)
+    );;
     return q.updateReturning(IdentityTestRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<IdentityTestRow> unsaved,
     Integer batchSize,
@@ -127,6 +133,7 @@ public class IdentityTestRepoImpl implements IdentityTestRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<IdentityTestRowUnsaved> unsaved,
     Integer batchSize,
@@ -137,17 +144,20 @@ public class IdentityTestRepoImpl implements IdentityTestRepo {
     """), batchSize, unsaved, c, IdentityTestRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<IdentityTestFields, IdentityTestRow> select() {
     return SelectBuilder.of("public.identity-test", IdentityTestFields.structure(), IdentityTestRow._rowParser);
   };
 
+  @Override
   public List<IdentityTestRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "always_generated", "default_generated", "name"
        from "public"."identity-test"
-    """)).as(IdentityTestRow._rowParser.all()).runUnchecked(c);
+    """)).query(IdentityTestRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<IdentityTestRow> selectById(
     IdentityTestId name,
     Connection c
@@ -159,9 +169,10 @@ public class IdentityTestRepoImpl implements IdentityTestRepo {
          where "name" = """),
       IdentityTestId.pgType.encode(name),
       typo.runtime.Fragment.lit("")
-    ).as(IdentityTestRow._rowParser.first()).runUnchecked(c);
+    ).query(IdentityTestRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<IdentityTestRow> selectByIds(
     IdentityTestId[] names,
     Connection c
@@ -173,40 +184,44 @@ public class IdentityTestRepoImpl implements IdentityTestRepo {
          where "name" = ANY("""),
       IdentityTestId.pgTypeArray.encode(names),
       typo.runtime.Fragment.lit(")")
-    ).as(IdentityTestRow._rowParser.all()).runUnchecked(c);
+    ).query(IdentityTestRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<IdentityTestId, IdentityTestRow> selectByIdsTracked(
     IdentityTestId[] names,
     Connection c
   ) {
-    Map<IdentityTestId, IdentityTestRow> ret = new HashMap<>();;
-      selectByIds(names, c).forEach(row -> ret.put(row.name(), row));
+    HashMap<IdentityTestId, IdentityTestRow> ret = new HashMap<IdentityTestId, IdentityTestRow>();
+    selectByIds(names, c).forEach(row -> ret.put(row.name(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<IdentityTestFields, IdentityTestRow> update() {
     return UpdateBuilder.of("public.identity-test", IdentityTestFields.structure(), IdentityTestRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     IdentityTestRow row,
     Connection c
   ) {
     IdentityTestId name = row.name();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "public"."identity-test"
-                set "default_generated" = """),
-             PgTypes.int4.encode(row.defaultGenerated()),
-             typo.runtime.Fragment.lit("""
-                ::int4
-                where "name" = """),
-             IdentityTestId.pgType.encode(name),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "public"."identity-test"
+         set "default_generated" = """),
+      PgTypes.int4.encode(row.defaultGenerated()),
+      typo.runtime.Fragment.lit("""
+         ::int4
+         where "name" = """),
+      IdentityTestId.pgType.encode(name),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public IdentityTestRow upsert(
     IdentityTestRow unsaved,
     Connection c
@@ -230,6 +245,7 @@ public class IdentityTestRepoImpl implements IdentityTestRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<IdentityTestRow> upsertBatch(
     Iterator<IdentityTestRow> unsaved,
     Connection c
@@ -247,24 +263,25 @@ public class IdentityTestRepoImpl implements IdentityTestRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<IdentityTestRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table identity-test_TEMP (like "public"."identity-test") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy identity-test_TEMP("default_generated", "name") from stdin
-      """), batchSize, unsaved, c, IdentityTestRow.pgText);
+    create temporary table identity-test_TEMP (like "public"."identity-test") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy identity-test_TEMP("default_generated", "name") from stdin
+    """), batchSize, unsaved, c, IdentityTestRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "public"."identity-test"("default_generated", "name")
-              select * from identity-test_TEMP
-              on conflict ("name")
-              do update set
-                "default_generated" = EXCLUDED."default_generated"
-              ;
-              drop table identity-test_TEMP;""")).update().runUnchecked(c);
+       insert into "public"."identity-test"("default_generated", "name")
+       select * from identity-test_TEMP
+       on conflict ("name")
+       do update set
+         "default_generated" = EXCLUDED."default_generated"
+       ;
+       drop table identity-test_TEMP;""")).update().runUnchecked(c);
   };
 }

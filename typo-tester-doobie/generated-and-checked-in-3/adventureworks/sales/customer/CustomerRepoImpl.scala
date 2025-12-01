@@ -18,28 +18,26 @@ import doobie.util.Write
 import doobie.util.fragment.Fragment
 import doobie.util.update.Update
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.DeleteBuilder
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class CustomerRepoImpl extends CustomerRepo {
-  def delete: DeleteBuilder[CustomerFields, CustomerRow] = DeleteBuilder.of(""""sales"."customer"""", CustomerFields.structure, CustomerRow.read)
+  override def delete: DeleteBuilder[CustomerFields, CustomerRow] = DeleteBuilder.of(""""sales"."customer"""", CustomerFields.structure, CustomerRow.read)
 
-  def deleteById(customerid: CustomerId): ConnectionIO[Boolean] = sql"""delete from "sales"."customer" where "customerid" = ${fromWrite(customerid)(using new Write.Single(CustomerId.put))}""".update.run.map(_ > 0)
+  override def deleteById(customerid: CustomerId): ConnectionIO[Boolean] = sql"""delete from "sales"."customer" where "customerid" = ${fromWrite(customerid)(using new Write.Single(CustomerId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(customerids: Array[CustomerId]): ConnectionIO[Int] = sql"""delete from "sales"."customer" where "customerid" = ANY(${fromWrite(customerids)(using new Write.Single(CustomerId.arrayPut))})""".update.run
+  override def deleteByIds(customerids: Array[CustomerId]): ConnectionIO[Int] = sql"""delete from "sales"."customer" where "customerid" = ANY(${fromWrite(customerids)(using new Write.Single(CustomerId.arrayPut))})""".update.run
 
-  def insert(unsaved: CustomerRow): ConnectionIO[CustomerRow] = {
+  override def insert(unsaved: CustomerRow): ConnectionIO[CustomerRow] = {
     sql"""insert into "sales"."customer"("customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate")
     values (${fromWrite(unsaved.customerid)(using new Write.Single(CustomerId.put))}::int4, ${fromWrite(unsaved.personid)(using new Write.SingleOpt(BusinessentityId.put))}::int4, ${fromWrite(unsaved.storeid)(using new Write.SingleOpt(BusinessentityId.put))}::int4, ${fromWrite(unsaved.territoryid)(using new Write.SingleOpt(SalesterritoryId.put))}::int4, ${fromWrite(unsaved.rowguid)(using new Write.Single(TypoUUID.put))}::uuid, ${fromWrite(unsaved.modifieddate)(using new Write.Single(TypoLocalDateTime.put))}::timestamp)
     returning "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text
     """.query(using CustomerRow.read).unique
   }
 
-  def insert(unsaved: CustomerRowUnsaved): ConnectionIO[CustomerRow] = {
+  override def insert(unsaved: CustomerRowUnsaved): ConnectionIO[CustomerRow] = {
     val fs = List(
       Some((Fragment.const0(s""""personid""""), fr"${fromWrite(unsaved.personid)(using new Write.SingleOpt(BusinessentityId.put))}::int4")),
       Some((Fragment.const0(s""""storeid""""), fr"${fromWrite(unsaved.storeid)(using new Write.SingleOpt(BusinessentityId.put))}::int4")),
@@ -71,35 +69,35 @@ class CustomerRepoImpl extends CustomerRepo {
     q.query(using CustomerRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, CustomerRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "sales"."customer"("customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate") FROM STDIN""").copyIn(unsaved, batchSize)(using CustomerRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, CustomerRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "sales"."customer"("personid", "storeid", "territoryid", "customerid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(using CustomerRowUnsaved.pgText)
 
-  def select: SelectBuilder[CustomerFields, CustomerRow] = SelectBuilder.of(""""sales"."customer"""", CustomerFields.structure, CustomerRow.read)
+  override def select: SelectBuilder[CustomerFields, CustomerRow] = SelectBuilder.of(""""sales"."customer"""", CustomerFields.structure, CustomerRow.read)
 
-  def selectAll: Stream[ConnectionIO, CustomerRow] = sql"""select "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text from "sales"."customer"""".query(using CustomerRow.read).stream
+  override def selectAll: Stream[ConnectionIO, CustomerRow] = sql"""select "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text from "sales"."customer"""".query(using CustomerRow.read).stream
 
-  def selectById(customerid: CustomerId): ConnectionIO[Option[CustomerRow]] = sql"""select "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text from "sales"."customer" where "customerid" = ${fromWrite(customerid)(using new Write.Single(CustomerId.put))}""".query(using CustomerRow.read).option
+  override def selectById(customerid: CustomerId): ConnectionIO[Option[CustomerRow]] = sql"""select "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text from "sales"."customer" where "customerid" = ${fromWrite(customerid)(using new Write.Single(CustomerId.put))}""".query(using CustomerRow.read).option
 
-  def selectByIds(customerids: Array[CustomerId]): Stream[ConnectionIO, CustomerRow] = sql"""select "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text from "sales"."customer" where "customerid" = ANY(${fromWrite(customerids)(using new Write.Single(CustomerId.arrayPut))})""".query(using CustomerRow.read).stream
+  override def selectByIds(customerids: Array[CustomerId]): Stream[ConnectionIO, CustomerRow] = sql"""select "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text from "sales"."customer" where "customerid" = ANY(${fromWrite(customerids)(using new Write.Single(CustomerId.arrayPut))})""".query(using CustomerRow.read).stream
 
-  def selectByIdsTracked(customerids: Array[CustomerId]): ConnectionIO[Map[CustomerId, CustomerRow]] = {
+  override def selectByIdsTracked(customerids: Array[CustomerId]): ConnectionIO[Map[CustomerId, CustomerRow]] = {
     selectByIds(customerids).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.customerid, x)).toMap
       customerids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[CustomerFields, CustomerRow] = UpdateBuilder.of(""""sales"."customer"""", CustomerFields.structure, CustomerRow.read)
+  override def update: UpdateBuilder[CustomerFields, CustomerRow] = UpdateBuilder.of(""""sales"."customer"""", CustomerFields.structure, CustomerRow.read)
 
-  def update(row: CustomerRow): ConnectionIO[Option[CustomerRow]] = {
+  override def update(row: CustomerRow): ConnectionIO[Option[CustomerRow]] = {
     val customerid = row.customerid
     sql"""update "sales"."customer"
     set "personid" = ${fromWrite(row.personid)(using new Write.SingleOpt(BusinessentityId.put))}::int4,
@@ -111,7 +109,7 @@ class CustomerRepoImpl extends CustomerRepo {
     returning "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text""".query(using CustomerRow.read).option
   }
 
-  def upsert(unsaved: CustomerRow): ConnectionIO[CustomerRow] = {
+  override def upsert(unsaved: CustomerRow): ConnectionIO[CustomerRow] = {
     sql"""insert into "sales"."customer"("customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate")
     values (
       ${fromWrite(unsaved.customerid)(using new Write.Single(CustomerId.put))}::int4,
@@ -132,7 +130,7 @@ class CustomerRepoImpl extends CustomerRepo {
     """.query(using CustomerRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[CustomerRow]): Stream[ConnectionIO, CustomerRow] = {
+  override def upsertBatch(unsaved: List[CustomerRow]): Stream[ConnectionIO, CustomerRow] = {
     Update[CustomerRow](
       s"""insert into "sales"."customer"("customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate")
       values (?::int4,?::int4,?::int4,?::int4,?::uuid,?::timestamp)
@@ -149,7 +147,7 @@ class CustomerRepoImpl extends CustomerRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, CustomerRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

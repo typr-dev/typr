@@ -5,22 +5,22 @@
  */
 package adventureworks.hr.jc;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class JcViewRepoImpl implements JcViewRepo {
+  @Override
   public SelectBuilder<JcViewFields, JcViewRow> select() {
     return SelectBuilder.of("hr.jc", JcViewFields.structure(), JcViewRow._rowParser);
   };
 
+  @Override
   public List<JcViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "jobcandidateid", "businessentityid", "resume", "modifieddate"::text
        from "hr"."jc"
-    """)).as(JcViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(JcViewRow._rowParser.all()).runUnchecked(c);
   };
 }

@@ -16,28 +16,26 @@ import doobie.util.Write
 import doobie.util.fragment.Fragment
 import doobie.util.update.Update
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.DeleteBuilder
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class DepartmentRepoImpl extends DepartmentRepo {
-  def delete: DeleteBuilder[DepartmentFields, DepartmentRow] = DeleteBuilder.of(""""humanresources"."department"""", DepartmentFields.structure, DepartmentRow.read)
+  override def delete: DeleteBuilder[DepartmentFields, DepartmentRow] = DeleteBuilder.of(""""humanresources"."department"""", DepartmentFields.structure, DepartmentRow.read)
 
-  def deleteById(departmentid: DepartmentId): ConnectionIO[Boolean] = sql"""delete from "humanresources"."department" where "departmentid" = ${fromWrite(departmentid)(using new Write.Single(DepartmentId.put))}""".update.run.map(_ > 0)
+  override def deleteById(departmentid: DepartmentId): ConnectionIO[Boolean] = sql"""delete from "humanresources"."department" where "departmentid" = ${fromWrite(departmentid)(using new Write.Single(DepartmentId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(departmentids: Array[DepartmentId]): ConnectionIO[Int] = sql"""delete from "humanresources"."department" where "departmentid" = ANY(${fromWrite(departmentids)(using new Write.Single(DepartmentId.arrayPut))})""".update.run
+  override def deleteByIds(departmentids: Array[DepartmentId]): ConnectionIO[Int] = sql"""delete from "humanresources"."department" where "departmentid" = ANY(${fromWrite(departmentids)(using new Write.Single(DepartmentId.arrayPut))})""".update.run
 
-  def insert(unsaved: DepartmentRow): ConnectionIO[DepartmentRow] = {
+  override def insert(unsaved: DepartmentRow): ConnectionIO[DepartmentRow] = {
     sql"""insert into "humanresources"."department"("departmentid", "name", "groupname", "modifieddate")
     values (${fromWrite(unsaved.departmentid)(using new Write.Single(DepartmentId.put))}::int4, ${fromWrite(unsaved.name)(using new Write.Single(Name.put))}::varchar, ${fromWrite(unsaved.groupname)(using new Write.Single(Name.put))}::varchar, ${fromWrite(unsaved.modifieddate)(using new Write.Single(TypoLocalDateTime.put))}::timestamp)
     returning "departmentid", "name", "groupname", "modifieddate"::text
     """.query(using DepartmentRow.read).unique
   }
 
-  def insert(unsaved: DepartmentRowUnsaved): ConnectionIO[DepartmentRow] = {
+  override def insert(unsaved: DepartmentRowUnsaved): ConnectionIO[DepartmentRow] = {
     val fs = List(
       Some((Fragment.const0(s""""name""""), fr"${fromWrite(unsaved.name)(using new Write.Single(Name.put))}::varchar")),
       Some((Fragment.const0(s""""groupname""""), fr"${fromWrite(unsaved.groupname)(using new Write.Single(Name.put))}::varchar")),
@@ -64,35 +62,35 @@ class DepartmentRepoImpl extends DepartmentRepo {
     q.query(using DepartmentRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, DepartmentRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "humanresources"."department"("departmentid", "name", "groupname", "modifieddate") FROM STDIN""").copyIn(unsaved, batchSize)(using DepartmentRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, DepartmentRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "humanresources"."department"("name", "groupname", "departmentid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(using DepartmentRowUnsaved.pgText)
 
-  def select: SelectBuilder[DepartmentFields, DepartmentRow] = SelectBuilder.of(""""humanresources"."department"""", DepartmentFields.structure, DepartmentRow.read)
+  override def select: SelectBuilder[DepartmentFields, DepartmentRow] = SelectBuilder.of(""""humanresources"."department"""", DepartmentFields.structure, DepartmentRow.read)
 
-  def selectAll: Stream[ConnectionIO, DepartmentRow] = sql"""select "departmentid", "name", "groupname", "modifieddate"::text from "humanresources"."department"""".query(using DepartmentRow.read).stream
+  override def selectAll: Stream[ConnectionIO, DepartmentRow] = sql"""select "departmentid", "name", "groupname", "modifieddate"::text from "humanresources"."department"""".query(using DepartmentRow.read).stream
 
-  def selectById(departmentid: DepartmentId): ConnectionIO[Option[DepartmentRow]] = sql"""select "departmentid", "name", "groupname", "modifieddate"::text from "humanresources"."department" where "departmentid" = ${fromWrite(departmentid)(using new Write.Single(DepartmentId.put))}""".query(using DepartmentRow.read).option
+  override def selectById(departmentid: DepartmentId): ConnectionIO[Option[DepartmentRow]] = sql"""select "departmentid", "name", "groupname", "modifieddate"::text from "humanresources"."department" where "departmentid" = ${fromWrite(departmentid)(using new Write.Single(DepartmentId.put))}""".query(using DepartmentRow.read).option
 
-  def selectByIds(departmentids: Array[DepartmentId]): Stream[ConnectionIO, DepartmentRow] = sql"""select "departmentid", "name", "groupname", "modifieddate"::text from "humanresources"."department" where "departmentid" = ANY(${fromWrite(departmentids)(using new Write.Single(DepartmentId.arrayPut))})""".query(using DepartmentRow.read).stream
+  override def selectByIds(departmentids: Array[DepartmentId]): Stream[ConnectionIO, DepartmentRow] = sql"""select "departmentid", "name", "groupname", "modifieddate"::text from "humanresources"."department" where "departmentid" = ANY(${fromWrite(departmentids)(using new Write.Single(DepartmentId.arrayPut))})""".query(using DepartmentRow.read).stream
 
-  def selectByIdsTracked(departmentids: Array[DepartmentId]): ConnectionIO[Map[DepartmentId, DepartmentRow]] = {
+  override def selectByIdsTracked(departmentids: Array[DepartmentId]): ConnectionIO[Map[DepartmentId, DepartmentRow]] = {
     selectByIds(departmentids).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.departmentid, x)).toMap
       departmentids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[DepartmentFields, DepartmentRow] = UpdateBuilder.of(""""humanresources"."department"""", DepartmentFields.structure, DepartmentRow.read)
+  override def update: UpdateBuilder[DepartmentFields, DepartmentRow] = UpdateBuilder.of(""""humanresources"."department"""", DepartmentFields.structure, DepartmentRow.read)
 
-  def update(row: DepartmentRow): ConnectionIO[Option[DepartmentRow]] = {
+  override def update(row: DepartmentRow): ConnectionIO[Option[DepartmentRow]] = {
     val departmentid = row.departmentid
     sql"""update "humanresources"."department"
     set "name" = ${fromWrite(row.name)(using new Write.Single(Name.put))}::varchar,
@@ -102,7 +100,7 @@ class DepartmentRepoImpl extends DepartmentRepo {
     returning "departmentid", "name", "groupname", "modifieddate"::text""".query(using DepartmentRow.read).option
   }
 
-  def upsert(unsaved: DepartmentRow): ConnectionIO[DepartmentRow] = {
+  override def upsert(unsaved: DepartmentRow): ConnectionIO[DepartmentRow] = {
     sql"""insert into "humanresources"."department"("departmentid", "name", "groupname", "modifieddate")
     values (
       ${fromWrite(unsaved.departmentid)(using new Write.Single(DepartmentId.put))}::int4,
@@ -119,7 +117,7 @@ class DepartmentRepoImpl extends DepartmentRepo {
     """.query(using DepartmentRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[DepartmentRow]): Stream[ConnectionIO, DepartmentRow] = {
+  override def upsertBatch(unsaved: List[DepartmentRow]): Stream[ConnectionIO, DepartmentRow] = {
     Update[DepartmentRow](
       s"""insert into "humanresources"."department"("departmentid", "name", "groupname", "modifieddate")
       values (?::int4,?::varchar,?::varchar,?::timestamp)
@@ -134,7 +132,7 @@ class DepartmentRepoImpl extends DepartmentRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, DepartmentRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

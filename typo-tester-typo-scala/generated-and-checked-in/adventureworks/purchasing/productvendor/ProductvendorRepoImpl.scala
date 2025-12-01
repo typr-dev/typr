@@ -23,21 +23,21 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ProductvendorRepoImpl extends ProductvendorRepo {
-  def delete: DeleteBuilder[ProductvendorFields, ProductvendorRow] = DeleteBuilder.of("purchasing.productvendor", ProductvendorFields.structure)
+  override def delete: DeleteBuilder[ProductvendorFields, ProductvendorRow] = DeleteBuilder.of("purchasing.productvendor", ProductvendorFields.structure)
 
-  def deleteById(compositeId: ProductvendorId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "purchasing"."productvendor" where "productid" = ${ProductId.pgType.encode(compositeId.productid)} AND "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)}""".update().runUnchecked(c) > 0
+  override def deleteById(compositeId: ProductvendorId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "purchasing"."productvendor" where "productid" = ${ProductId.pgType.encode(compositeId.productid)} AND "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(compositeIds: Array[ProductvendorId])(using c: Connection): Integer = {
+  override def deleteByIds(compositeIds: Array[ProductvendorId])(using c: Connection): Integer = {
     val productid: Array[ProductId] = compositeIds.map(_.productid)
     val businessentityid: Array[BusinessentityId] = compositeIds.map(_.businessentityid)
-    interpolate"""delete
+    return interpolate"""delete
     from "purchasing"."productvendor"
     where ("productid", "businessentityid")
     in (select unnest(${ProductId.pgTypeArray.encode(productid)}::int4[]), unnest(${BusinessentityId.pgTypeArray.encode(businessentityid)}::int4[]))
     """.update().runUnchecked(c)
   }
 
-  def insert(unsaved: ProductvendorRow)(using c: Connection): ProductvendorRow = {
+  override def insert(unsaved: ProductvendorRow)(using c: Connection): ProductvendorRow = {
   interpolate"""insert into "purchasing"."productvendor"("productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate")
     values (${ProductId.pgType.encode(unsaved.productid)}::int4, ${BusinessentityId.pgType.encode(unsaved.businessentityid)}::int4, ${PgTypes.int4.encode(unsaved.averageleadtime)}::int4, ${PgTypes.numeric.encode(unsaved.standardprice)}::numeric, ${PgTypes.numeric.opt().encode(unsaved.lastreceiptcost)}::numeric, ${TypoLocalDateTime.pgType.opt().encode(unsaved.lastreceiptdate)}::timestamp, ${PgTypes.int4.encode(unsaved.minorderqty)}::int4, ${PgTypes.int4.encode(unsaved.maxorderqty)}::int4, ${PgTypes.int4.opt().encode(unsaved.onorderqty)}::int4, ${UnitmeasureId.pgType.encode(unsaved.unitmeasurecode)}::bpchar, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text
@@ -45,9 +45,9 @@ class ProductvendorRepoImpl extends ProductvendorRepo {
     .updateReturning(ProductvendorRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: ProductvendorRowUnsaved)(using c: Connection): ProductvendorRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: ProductvendorRowUnsaved)(using c: Connection): ProductvendorRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""productid"""")): @scala.annotation.nowarn
     values.add(interpolate"${ProductId.pgType.encode(unsaved.productid)}::int4"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn
@@ -69,11 +69,8 @@ class ProductvendorRepoImpl extends ProductvendorRepo {
     columns.add(Fragment.lit(""""unitmeasurecode"""")): @scala.annotation.nowarn
     values.add(interpolate"${UnitmeasureId.pgType.encode(unsaved.unitmeasurecode)}::bpchar"): @scala.annotation.nowarn
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "purchasing"."productvendor"(${Fragment.comma(columns)})
@@ -81,55 +78,55 @@ class ProductvendorRepoImpl extends ProductvendorRepo {
       returning "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text
       """
     }
-    q.updateReturning(ProductvendorRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(ProductvendorRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[ProductvendorRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "purchasing"."productvendor"("productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate") FROM STDIN""", batchSize, unsaved, c, ProductvendorRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[ProductvendorRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "purchasing"."productvendor"("productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ProductvendorRowUnsaved.pgText)
 
-  def select: SelectBuilder[ProductvendorFields, ProductvendorRow] = SelectBuilder.of("purchasing.productvendor", ProductvendorFields.structure, ProductvendorRow.`_rowParser`)
+  override def select: SelectBuilder[ProductvendorFields, ProductvendorRow] = SelectBuilder.of("purchasing.productvendor", ProductvendorFields.structure, ProductvendorRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[ProductvendorRow] = {
+  override def selectAll(using c: Connection): java.util.List[ProductvendorRow] = {
     interpolate"""select "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text
     from "purchasing"."productvendor"
-    """.as(ProductvendorRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(ProductvendorRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(compositeId: ProductvendorId)(using c: Connection): Optional[ProductvendorRow] = {
+  override def selectById(compositeId: ProductvendorId)(using c: Connection): Optional[ProductvendorRow] = {
     interpolate"""select "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text
     from "purchasing"."productvendor"
-    where "productid" = ${ProductId.pgType.encode(compositeId.productid)} AND "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)}""".as(ProductvendorRow.`_rowParser`.first()).runUnchecked(c)
+    where "productid" = ${ProductId.pgType.encode(compositeId.productid)} AND "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)}""".query(ProductvendorRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(compositeIds: Array[ProductvendorId])(using c: Connection): java.util.List[ProductvendorRow] = {
+  override def selectByIds(compositeIds: Array[ProductvendorId])(using c: Connection): java.util.List[ProductvendorRow] = {
     val productid: Array[ProductId] = compositeIds.map(_.productid)
     val businessentityid: Array[BusinessentityId] = compositeIds.map(_.businessentityid)
-    interpolate"""select "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text
+    return interpolate"""select "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text
     from "purchasing"."productvendor"
     where ("productid", "businessentityid")
     in (select unnest(${ProductId.pgTypeArray.encode(productid)}::int4[]), unnest(${BusinessentityId.pgTypeArray.encode(businessentityid)}::int4[]))
-    """.as(ProductvendorRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(ProductvendorRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(compositeIds: Array[ProductvendorId])(using c: Connection): java.util.Map[ProductvendorId, ProductvendorRow] = {
-    val ret: java.util.Map[ProductvendorId, ProductvendorRow] = new HashMap()
+  override def selectByIdsTracked(compositeIds: Array[ProductvendorId])(using c: Connection): java.util.Map[ProductvendorId, ProductvendorRow] = {
+    val ret: HashMap[ProductvendorId, ProductvendorRow] = new HashMap[ProductvendorId, ProductvendorRow]()
     selectByIds(compositeIds)(using c).forEach(row => ret.put(row.compositeId, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[ProductvendorFields, ProductvendorRow] = UpdateBuilder.of("purchasing.productvendor", ProductvendorFields.structure, ProductvendorRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ProductvendorFields, ProductvendorRow] = UpdateBuilder.of("purchasing.productvendor", ProductvendorFields.structure, ProductvendorRow.`_rowParser`.all())
 
-  def update(row: ProductvendorRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: ProductvendorRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: ProductvendorId = row.compositeId
-    interpolate"""update "purchasing"."productvendor"
+    return interpolate"""update "purchasing"."productvendor"
     set "averageleadtime" = ${PgTypes.int4.encode(row.averageleadtime)}::int4,
     "standardprice" = ${PgTypes.numeric.encode(row.standardprice)}::numeric,
     "lastreceiptcost" = ${PgTypes.numeric.opt().encode(row.lastreceiptcost)}::numeric,
@@ -142,7 +139,7 @@ class ProductvendorRepoImpl extends ProductvendorRepo {
     where "productid" = ${ProductId.pgType.encode(compositeId.productid)} AND "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: ProductvendorRow)(using c: Connection): ProductvendorRow = {
+  override def upsert(unsaved: ProductvendorRow)(using c: Connection): ProductvendorRow = {
   interpolate"""insert into "purchasing"."productvendor"("productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate")
     values (${ProductId.pgType.encode(unsaved.productid)}::int4, ${BusinessentityId.pgType.encode(unsaved.businessentityid)}::int4, ${PgTypes.int4.encode(unsaved.averageleadtime)}::int4, ${PgTypes.numeric.encode(unsaved.standardprice)}::numeric, ${PgTypes.numeric.opt().encode(unsaved.lastreceiptcost)}::numeric, ${TypoLocalDateTime.pgType.opt().encode(unsaved.lastreceiptdate)}::timestamp, ${PgTypes.int4.encode(unsaved.minorderqty)}::int4, ${PgTypes.int4.encode(unsaved.maxorderqty)}::int4, ${PgTypes.int4.opt().encode(unsaved.onorderqty)}::int4, ${UnitmeasureId.pgType.encode(unsaved.unitmeasurecode)}::bpchar, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("productid", "businessentityid")
@@ -162,7 +159,7 @@ class ProductvendorRepoImpl extends ProductvendorRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[ProductvendorRow])(using c: Connection): java.util.List[ProductvendorRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[ProductvendorRow])(using c: Connection): java.util.List[ProductvendorRow] = {
     interpolate"""insert into "purchasing"."productvendor"("productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate")
     values (?::int4, ?::int4, ?::int4, ?::numeric, ?::numeric, ?::timestamp, ?::int4, ?::int4, ?::int4, ?::bpchar, ?::timestamp)
     on conflict ("productid", "businessentityid")
@@ -183,13 +180,13 @@ class ProductvendorRepoImpl extends ProductvendorRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[ProductvendorRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table productvendor_TEMP (like "purchasing"."productvendor") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy productvendor_TEMP("productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate") from stdin""", batchSize, unsaved, c, ProductvendorRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "purchasing"."productvendor"("productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate")
+    return interpolate"""insert into "purchasing"."productvendor"("productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate")
     select * from productvendor_TEMP
     on conflict ("productid", "businessentityid")
     do update set

@@ -18,18 +18,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class Issue1422RepoImpl extends Issue1422Repo {
-  def delete: DeleteBuilder[Issue1422Fields, Issue1422Row] = DeleteBuilder.of(""""public"."issue142_2"""", Issue1422Fields.structure, Issue1422Row.rowParser(1).*)
+  override def delete: DeleteBuilder[Issue1422Fields, Issue1422Row] = DeleteBuilder.of(""""public"."issue142_2"""", Issue1422Fields.structure, Issue1422Row.rowParser(1).*)
 
-  def deleteById(tabellkode: Issue142Id)(implicit c: Connection): Boolean = SQL"""delete from "public"."issue142_2" where "tabellkode" = ${ParameterValue(tabellkode, null, Issue142Id.toStatement)}""".executeUpdate() > 0
+  override def deleteById(tabellkode: Issue142Id)(implicit c: Connection): Boolean = SQL"""delete from "public"."issue142_2" where "tabellkode" = ${ParameterValue(tabellkode, null, Issue142Id.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(tabellkodes: Array[Issue142Id])(implicit c: Connection): Int = {
+  override def deleteByIds(tabellkodes: Array[Issue142Id])(implicit c: Connection): Int = {
     SQL"""delete
     from "public"."issue142_2"
     where "tabellkode" = ANY(${ParameterValue(tabellkodes, null, Issue142Id.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: Issue1422Row)(implicit c: Connection): Issue1422Row = {
+  override def insert(unsaved: Issue1422Row)(implicit c: Connection): Issue1422Row = {
   SQL"""insert into "public"."issue142_2"("tabellkode")
     values (${ParameterValue(unsaved.tabellkode, null, Issue142Id.toStatement)})
     returning "tabellkode"
@@ -37,41 +37,41 @@ class Issue1422RepoImpl extends Issue1422Repo {
     .executeInsert(Issue1422Row.rowParser(1).single)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[Issue1422Row],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "public"."issue142_2"("tabellkode") FROM STDIN""", batchSize, unsaved)(Issue1422Row.pgText, c)
 
-  def select: SelectBuilder[Issue1422Fields, Issue1422Row] = SelectBuilder.of(""""public"."issue142_2"""", Issue1422Fields.structure, Issue1422Row.rowParser)
+  override def select: SelectBuilder[Issue1422Fields, Issue1422Row] = SelectBuilder.of(""""public"."issue142_2"""", Issue1422Fields.structure, Issue1422Row.rowParser)
 
-  def selectAll(implicit c: Connection): List[Issue1422Row] = {
+  override def selectAll(implicit c: Connection): List[Issue1422Row] = {
     SQL"""select "tabellkode"
     from "public"."issue142_2"
     """.as(Issue1422Row.rowParser(1).*)
   }
 
-  def selectById(tabellkode: Issue142Id)(implicit c: Connection): Option[Issue1422Row] = {
+  override def selectById(tabellkode: Issue142Id)(implicit c: Connection): Option[Issue1422Row] = {
     SQL"""select "tabellkode"
     from "public"."issue142_2"
     where "tabellkode" = ${ParameterValue(tabellkode, null, Issue142Id.toStatement)}
     """.as(Issue1422Row.rowParser(1).singleOpt)
   }
 
-  def selectByIds(tabellkodes: Array[Issue142Id])(implicit c: Connection): List[Issue1422Row] = {
+  override def selectByIds(tabellkodes: Array[Issue142Id])(implicit c: Connection): List[Issue1422Row] = {
     SQL"""select "tabellkode"
     from "public"."issue142_2"
     where "tabellkode" = ANY(${ParameterValue(tabellkodes, null, Issue142Id.arrayToStatement)})
     """.as(Issue1422Row.rowParser(1).*)
   }
 
-  def selectByIdsTracked(tabellkodes: Array[Issue142Id])(implicit c: Connection): Map[Issue142Id, Issue1422Row] = {
+  override def selectByIdsTracked(tabellkodes: Array[Issue142Id])(implicit c: Connection): Map[Issue142Id, Issue1422Row] = {
     val byId = selectByIds(tabellkodes).view.map(x => (x.tabellkode, x)).toMap
     tabellkodes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[Issue1422Fields, Issue1422Row] = UpdateBuilder.of(""""public"."issue142_2"""", Issue1422Fields.structure, Issue1422Row.rowParser(1).*)
+  override def update: UpdateBuilder[Issue1422Fields, Issue1422Row] = UpdateBuilder.of(""""public"."issue142_2"""", Issue1422Fields.structure, Issue1422Row.rowParser(1).*)
 
-  def upsert(unsaved: Issue1422Row)(implicit c: Connection): Issue1422Row = {
+  override def upsert(unsaved: Issue1422Row)(implicit c: Connection): Issue1422Row = {
   SQL"""insert into "public"."issue142_2"("tabellkode")
     values (
       ${ParameterValue(unsaved.tabellkode, null, Issue142Id.toStatement)}
@@ -83,10 +83,11 @@ class Issue1422RepoImpl extends Issue1422Repo {
     .executeInsert(Issue1422Row.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[Issue1422Row])(implicit c: Connection): List[Issue1422Row] = {
+  override def upsertBatch(unsaved: Iterable[Issue1422Row])(implicit c: Connection): List[Issue1422Row] = {
     def toNamedParameter(row: Issue1422Row): List[NamedParameter] = List(
       NamedParameter("tabellkode", ParameterValue(row.tabellkode, null, Issue142Id.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -106,7 +107,7 @@ class Issue1422RepoImpl extends Issue1422Repo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[Issue1422Row],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

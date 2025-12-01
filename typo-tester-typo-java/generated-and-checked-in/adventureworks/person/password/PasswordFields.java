@@ -21,7 +21,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface PasswordFields {
-  static final class Impl extends Relation<PasswordFields, PasswordRow> {
+  final class Impl extends Relation<PasswordFields, PasswordRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -29,18 +29,23 @@ public interface PasswordFields {
     @Override
     public PasswordFields fields() {
       return new PasswordFields() {
+               @Override
                public IdField<BusinessentityId, PasswordRow> businessentityid() {
                  return new IdField<BusinessentityId, PasswordRow>(_path, "businessentityid", PasswordRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public Field</* max 128 chars */ String, PasswordRow> passwordhash() {
                  return new Field</* max 128 chars */ String, PasswordRow>(_path, "passwordhash", PasswordRow::passwordhash, Optional.empty(), Optional.empty(), (row, value) -> row.withPasswordhash(value), PgTypes.text);
                };
+               @Override
                public Field</* max 10 chars */ String, PasswordRow> passwordsalt() {
                  return new Field</* max 10 chars */ String, PasswordRow>(_path, "passwordsalt", PasswordRow::passwordsalt, Optional.empty(), Optional.empty(), (row, value) -> row.withPasswordsalt(value), PgTypes.text);
                };
+               @Override
                public Field<TypoUUID, PasswordRow> rowguid() {
                  return new Field<TypoUUID, PasswordRow>(_path, "rowguid", PasswordRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, PasswordRow> modifieddate() {
                  return new Field<TypoLocalDateTime, PasswordRow>(_path, "modifieddate", PasswordRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -52,6 +57,7 @@ public interface PasswordFields {
       return List.of(this.fields().businessentityid(), this.fields().passwordhash(), this.fields().passwordsalt(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

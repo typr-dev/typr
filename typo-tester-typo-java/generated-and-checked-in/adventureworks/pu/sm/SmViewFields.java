@@ -19,7 +19,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface SmViewFields {
-  static final class Impl extends Relation<SmViewFields, SmViewRow> {
+  final class Impl extends Relation<SmViewFields, SmViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -27,24 +27,31 @@ public interface SmViewFields {
     @Override
     public SmViewFields fields() {
       return new SmViewFields() {
+               @Override
                public Field<ShipmethodId, SmViewRow> id() {
                  return new Field<ShipmethodId, SmViewRow>(_path, "id", SmViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ShipmethodId.pgType);
                };
+               @Override
                public Field<ShipmethodId, SmViewRow> shipmethodid() {
                  return new Field<ShipmethodId, SmViewRow>(_path, "shipmethodid", SmViewRow::shipmethodid, Optional.empty(), Optional.empty(), (row, value) -> row.withShipmethodid(value), ShipmethodId.pgType);
                };
+               @Override
                public Field<Name, SmViewRow> name() {
                  return new Field<Name, SmViewRow>(_path, "name", SmViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<BigDecimal, SmViewRow> shipbase() {
                  return new Field<BigDecimal, SmViewRow>(_path, "shipbase", SmViewRow::shipbase, Optional.empty(), Optional.empty(), (row, value) -> row.withShipbase(value), PgTypes.numeric);
                };
+               @Override
                public Field<BigDecimal, SmViewRow> shiprate() {
                  return new Field<BigDecimal, SmViewRow>(_path, "shiprate", SmViewRow::shiprate, Optional.empty(), Optional.empty(), (row, value) -> row.withShiprate(value), PgTypes.numeric);
                };
+               @Override
                public Field<TypoUUID, SmViewRow> rowguid() {
                  return new Field<TypoUUID, SmViewRow>(_path, "rowguid", SmViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, SmViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, SmViewRow>(_path, "modifieddate", SmViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -56,6 +63,7 @@ public interface SmViewFields {
       return List.of(this.fields().id(), this.fields().shipmethodid(), this.fields().name(), this.fields().shipbase(), this.fields().shiprate(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

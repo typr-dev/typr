@@ -5,22 +5,22 @@
  */
 package adventureworks.pu.v;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class VViewRepoImpl implements VViewRepo {
+  @Override
   public SelectBuilder<VViewFields, VViewRow> select() {
     return SelectBuilder.of("pu.v", VViewFields.structure(), VViewRow._rowParser);
   };
 
+  @Override
   public List<VViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text
        from "pu"."v"
-    """)).as(VViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(VViewRow._rowParser.all()).runUnchecked(c);
   };
 }

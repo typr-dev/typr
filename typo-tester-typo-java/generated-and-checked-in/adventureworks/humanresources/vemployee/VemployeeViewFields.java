@@ -20,7 +20,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface VemployeeViewFields {
-  static final class Impl extends Relation<VemployeeViewFields, VemployeeViewRow> {
+  final class Impl extends Relation<VemployeeViewFields, VemployeeViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -28,57 +28,75 @@ public interface VemployeeViewFields {
     @Override
     public VemployeeViewFields fields() {
       return new VemployeeViewFields() {
+               @Override
                public Field<BusinessentityId, VemployeeViewRow> businessentityid() {
                  return new Field<BusinessentityId, VemployeeViewRow>(_path, "businessentityid", VemployeeViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public OptField</* max 8 chars */ String, VemployeeViewRow> title() {
                  return new OptField</* max 8 chars */ String, VemployeeViewRow>(_path, "title", VemployeeViewRow::title, Optional.empty(), Optional.empty(), (row, value) -> row.withTitle(value), PgTypes.text);
                };
+               @Override
                public Field</* user-picked */ FirstName, VemployeeViewRow> firstname() {
                  return new Field</* user-picked */ FirstName, VemployeeViewRow>(_path, "firstname", VemployeeViewRow::firstname, Optional.empty(), Optional.empty(), (row, value) -> row.withFirstname(value), /* user-picked */ FirstName.pgType);
                };
+               @Override
                public OptField<Name, VemployeeViewRow> middlename() {
                  return new OptField<Name, VemployeeViewRow>(_path, "middlename", VemployeeViewRow::middlename, Optional.empty(), Optional.empty(), (row, value) -> row.withMiddlename(value), Name.pgType);
                };
+               @Override
                public Field<Name, VemployeeViewRow> lastname() {
                  return new Field<Name, VemployeeViewRow>(_path, "lastname", VemployeeViewRow::lastname, Optional.empty(), Optional.empty(), (row, value) -> row.withLastname(value), Name.pgType);
                };
+               @Override
                public OptField</* max 10 chars */ String, VemployeeViewRow> suffix() {
                  return new OptField</* max 10 chars */ String, VemployeeViewRow>(_path, "suffix", VemployeeViewRow::suffix, Optional.empty(), Optional.empty(), (row, value) -> row.withSuffix(value), PgTypes.text);
                };
+               @Override
                public Field</* max 50 chars */ String, VemployeeViewRow> jobtitle() {
                  return new Field</* max 50 chars */ String, VemployeeViewRow>(_path, "jobtitle", VemployeeViewRow::jobtitle, Optional.empty(), Optional.empty(), (row, value) -> row.withJobtitle(value), PgTypes.text);
                };
+               @Override
                public OptField<Phone, VemployeeViewRow> phonenumber() {
                  return new OptField<Phone, VemployeeViewRow>(_path, "phonenumber", VemployeeViewRow::phonenumber, Optional.empty(), Optional.empty(), (row, value) -> row.withPhonenumber(value), Phone.pgType);
                };
+               @Override
                public OptField<Name, VemployeeViewRow> phonenumbertype() {
                  return new OptField<Name, VemployeeViewRow>(_path, "phonenumbertype", VemployeeViewRow::phonenumbertype, Optional.empty(), Optional.empty(), (row, value) -> row.withPhonenumbertype(value), Name.pgType);
                };
+               @Override
                public OptField</* max 50 chars */ String, VemployeeViewRow> emailaddress() {
                  return new OptField</* max 50 chars */ String, VemployeeViewRow>(_path, "emailaddress", VemployeeViewRow::emailaddress, Optional.empty(), Optional.empty(), (row, value) -> row.withEmailaddress(value), PgTypes.text);
                };
+               @Override
                public Field<Integer, VemployeeViewRow> emailpromotion() {
                  return new Field<Integer, VemployeeViewRow>(_path, "emailpromotion", VemployeeViewRow::emailpromotion, Optional.empty(), Optional.empty(), (row, value) -> row.withEmailpromotion(value), PgTypes.int4);
                };
+               @Override
                public Field</* max 60 chars */ String, VemployeeViewRow> addressline1() {
                  return new Field</* max 60 chars */ String, VemployeeViewRow>(_path, "addressline1", VemployeeViewRow::addressline1, Optional.empty(), Optional.empty(), (row, value) -> row.withAddressline1(value), PgTypes.text);
                };
+               @Override
                public OptField</* max 60 chars */ String, VemployeeViewRow> addressline2() {
                  return new OptField</* max 60 chars */ String, VemployeeViewRow>(_path, "addressline2", VemployeeViewRow::addressline2, Optional.empty(), Optional.empty(), (row, value) -> row.withAddressline2(value), PgTypes.text);
                };
+               @Override
                public Field</* max 30 chars */ String, VemployeeViewRow> city() {
                  return new Field</* max 30 chars */ String, VemployeeViewRow>(_path, "city", VemployeeViewRow::city, Optional.empty(), Optional.empty(), (row, value) -> row.withCity(value), PgTypes.text);
                };
+               @Override
                public Field<Name, VemployeeViewRow> stateprovincename() {
                  return new Field<Name, VemployeeViewRow>(_path, "stateprovincename", VemployeeViewRow::stateprovincename, Optional.empty(), Optional.empty(), (row, value) -> row.withStateprovincename(value), Name.pgType);
                };
+               @Override
                public Field</* max 15 chars */ String, VemployeeViewRow> postalcode() {
                  return new Field</* max 15 chars */ String, VemployeeViewRow>(_path, "postalcode", VemployeeViewRow::postalcode, Optional.empty(), Optional.empty(), (row, value) -> row.withPostalcode(value), PgTypes.text);
                };
+               @Override
                public Field<Name, VemployeeViewRow> countryregionname() {
                  return new Field<Name, VemployeeViewRow>(_path, "countryregionname", VemployeeViewRow::countryregionname, Optional.empty(), Optional.empty(), (row, value) -> row.withCountryregionname(value), Name.pgType);
                };
+               @Override
                public OptField<TypoXml, VemployeeViewRow> additionalcontactinfo() {
                  return new OptField<TypoXml, VemployeeViewRow>(_path, "additionalcontactinfo", VemployeeViewRow::additionalcontactinfo, Optional.empty(), Optional.empty(), (row, value) -> row.withAdditionalcontactinfo(value), TypoXml.pgType);
                };
@@ -90,6 +108,7 @@ public interface VemployeeViewFields {
       return List.of(this.fields().businessentityid(), this.fields().title(), this.fields().firstname(), this.fields().middlename(), this.fields().lastname(), this.fields().suffix(), this.fields().jobtitle(), this.fields().phonenumber(), this.fields().phonenumbertype(), this.fields().emailaddress(), this.fields().emailpromotion(), this.fields().addressline1(), this.fields().addressline2(), this.fields().city(), this.fields().stateprovincename(), this.fields().postalcode(), this.fields().countryregionname(), this.fields().additionalcontactinfo());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

@@ -10,3 +10,8 @@ site/docs
 myproject/
 docs/
 frontpage-generated/
+*.iml
+.gradle
+.kotlin
+out/
+build/

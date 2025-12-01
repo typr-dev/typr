@@ -38,7 +38,7 @@ object VstateprovincecountryregionMVFields {
 
     override lazy val fields: VstateprovincecountryregionMVFields = {
       new VstateprovincecountryregionMVFields {
-        def stateprovinceid: Field[StateprovinceId, VstateprovincecountryregionMVRow] = {
+        override def stateprovinceid: Field[StateprovinceId, VstateprovincecountryregionMVRow] = {
           new Field[StateprovinceId, VstateprovincecountryregionMVRow](
             _path,
             "stateprovinceid",
@@ -49,7 +49,7 @@ object VstateprovincecountryregionMVFields {
             StateprovinceId.pgType
           )
         }
-        def stateprovincecode: Field[/* bpchar, max 3 chars */ String, VstateprovincecountryregionMVRow] = {
+        override def stateprovincecode: Field[/* bpchar, max 3 chars */ String, VstateprovincecountryregionMVRow] = {
           new Field[/* bpchar, max 3 chars */ String, VstateprovincecountryregionMVRow](
             _path,
             "stateprovincecode",
@@ -60,7 +60,7 @@ object VstateprovincecountryregionMVFields {
             PgTypes.text
           )
         }
-        def isonlystateprovinceflag: Field[Flag, VstateprovincecountryregionMVRow] = {
+        override def isonlystateprovinceflag: Field[Flag, VstateprovincecountryregionMVRow] = {
           new Field[Flag, VstateprovincecountryregionMVRow](
             _path,
             "isonlystateprovinceflag",
@@ -71,7 +71,7 @@ object VstateprovincecountryregionMVFields {
             Flag.pgType
           )
         }
-        def stateprovincename: Field[Name, VstateprovincecountryregionMVRow] = {
+        override def stateprovincename: Field[Name, VstateprovincecountryregionMVRow] = {
           new Field[Name, VstateprovincecountryregionMVRow](
             _path,
             "stateprovincename",
@@ -82,7 +82,7 @@ object VstateprovincecountryregionMVFields {
             Name.pgType
           )
         }
-        def territoryid: Field[SalesterritoryId, VstateprovincecountryregionMVRow] = {
+        override def territoryid: Field[SalesterritoryId, VstateprovincecountryregionMVRow] = {
           new Field[SalesterritoryId, VstateprovincecountryregionMVRow](
             _path,
             "territoryid",
@@ -93,7 +93,7 @@ object VstateprovincecountryregionMVFields {
             SalesterritoryId.pgType
           )
         }
-        def countryregioncode: Field[CountryregionId, VstateprovincecountryregionMVRow] = {
+        override def countryregioncode: Field[CountryregionId, VstateprovincecountryregionMVRow] = {
           new Field[CountryregionId, VstateprovincecountryregionMVRow](
             _path,
             "countryregioncode",
@@ -104,7 +104,7 @@ object VstateprovincecountryregionMVFields {
             CountryregionId.pgType
           )
         }
-        def countryregionname: Field[Name, VstateprovincecountryregionMVRow] = {
+        override def countryregionname: Field[Name, VstateprovincecountryregionMVRow] = {
           new Field[Name, VstateprovincecountryregionMVRow](
             _path,
             "countryregionname",
@@ -120,7 +120,7 @@ object VstateprovincecountryregionMVFields {
 
     override lazy val columns: java.util.List[FieldLike[?, VstateprovincecountryregionMVRow]] = java.util.List.of(this.fields.stateprovinceid, this.fields.stateprovincecode, this.fields.isonlystateprovinceflag, this.fields.stateprovincename, this.fields.territoryid, this.fields.countryregioncode, this.fields.countryregionname)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[VstateprovincecountryregionMVFields, VstateprovincecountryregionMVRow] = new Impl(java.util.List.of())

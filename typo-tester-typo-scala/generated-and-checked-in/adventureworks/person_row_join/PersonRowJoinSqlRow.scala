@@ -10,7 +10,6 @@ import adventureworks.person.businessentity.BusinessentityId
 import java.util.Optional
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple3
 
 /** SQL file: person_row_join.sql */
 case class PersonRowJoinSqlRow(
@@ -21,5 +20,5 @@ case class PersonRowJoinSqlRow(
 )
 
 object PersonRowJoinSqlRow {
-  val `_rowParser`: RowParser[PersonRowJoinSqlRow] = RowParsers.of(BusinessentityId.pgType, TypoRecord.pgTypeArray.opt(), TypoRecord.pgTypeArray.opt(), PersonRowJoinSqlRow.apply, row => new Tuple3(row.businessentityid, row.email, row.emails))
+  val `_rowParser`: RowParser[PersonRowJoinSqlRow] = RowParsers.of(BusinessentityId.pgType, TypoRecord.pgTypeArray.opt(), TypoRecord.pgTypeArray.opt(), PersonRowJoinSqlRow.apply, row => Array(row.businessentityid, row.email, row.emails))
 }

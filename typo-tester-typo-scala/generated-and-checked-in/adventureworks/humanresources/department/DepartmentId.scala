@@ -5,12 +5,13 @@
  */
 package adventureworks.humanresources.department
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
 
 /** Type for the primary key of table `humanresources.department` */
-case class DepartmentId(value: Integer) extends scala.AnyVal
+case class DepartmentId(@JsonValue value: Integer) extends scala.AnyVal
 
 object DepartmentId {
   given bijection: Bijection[DepartmentId, Integer] = Bijection.apply[DepartmentId, Integer](_.value)(DepartmentId.apply)

@@ -32,7 +32,7 @@ object PdViewFields {
 
     override lazy val fields: PdViewFields = {
       new PdViewFields {
-        def id: Field[ProductdescriptionId, PdViewRow] = {
+        override def id: Field[ProductdescriptionId, PdViewRow] = {
           new Field[ProductdescriptionId, PdViewRow](
             _path,
             "id",
@@ -43,7 +43,7 @@ object PdViewFields {
             ProductdescriptionId.pgType
           )
         }
-        def productdescriptionid: Field[ProductdescriptionId, PdViewRow] = {
+        override def productdescriptionid: Field[ProductdescriptionId, PdViewRow] = {
           new Field[ProductdescriptionId, PdViewRow](
             _path,
             "productdescriptionid",
@@ -54,7 +54,7 @@ object PdViewFields {
             ProductdescriptionId.pgType
           )
         }
-        def description: Field[/* max 400 chars */ String, PdViewRow] = {
+        override def description: Field[/* max 400 chars */ String, PdViewRow] = {
           new Field[/* max 400 chars */ String, PdViewRow](
             _path,
             "description",
@@ -65,7 +65,7 @@ object PdViewFields {
             PgTypes.text
           )
         }
-        def rowguid: Field[TypoUUID, PdViewRow] = {
+        override def rowguid: Field[TypoUUID, PdViewRow] = {
           new Field[TypoUUID, PdViewRow](
             _path,
             "rowguid",
@@ -76,7 +76,7 @@ object PdViewFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, PdViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, PdViewRow] = {
           new Field[TypoLocalDateTime, PdViewRow](
             _path,
             "modifieddate",
@@ -92,7 +92,7 @@ object PdViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, PdViewRow]] = java.util.List.of(this.fields.id, this.fields.productdescriptionid, this.fields.description, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[PdViewFields, PdViewRow] = new Impl(java.util.List.of())

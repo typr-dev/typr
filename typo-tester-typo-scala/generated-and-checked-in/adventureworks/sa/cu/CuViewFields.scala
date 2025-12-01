@@ -29,7 +29,7 @@ object CuViewFields {
 
     override lazy val fields: CuViewFields = {
       new CuViewFields {
-        def id: Field[CurrencyId, CuViewRow] = {
+        override def id: Field[CurrencyId, CuViewRow] = {
           new Field[CurrencyId, CuViewRow](
             _path,
             "id",
@@ -40,7 +40,7 @@ object CuViewFields {
             CurrencyId.pgType
           )
         }
-        def currencycode: Field[CurrencyId, CuViewRow] = {
+        override def currencycode: Field[CurrencyId, CuViewRow] = {
           new Field[CurrencyId, CuViewRow](
             _path,
             "currencycode",
@@ -51,7 +51,7 @@ object CuViewFields {
             CurrencyId.pgType
           )
         }
-        def name: Field[Name, CuViewRow] = {
+        override def name: Field[Name, CuViewRow] = {
           new Field[Name, CuViewRow](
             _path,
             "name",
@@ -62,7 +62,7 @@ object CuViewFields {
             Name.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, CuViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, CuViewRow] = {
           new Field[TypoLocalDateTime, CuViewRow](
             _path,
             "modifieddate",
@@ -78,7 +78,7 @@ object CuViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, CuViewRow]] = java.util.List.of(this.fields.id, this.fields.currencycode, this.fields.name, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[CuViewFields, CuViewRow] = new Impl(java.util.List.of())

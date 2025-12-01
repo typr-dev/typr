@@ -22,22 +22,22 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class BusinessentitycontactRepoImpl extends BusinessentitycontactRepo {
-  def delete: DeleteBuilder[BusinessentitycontactFields, BusinessentitycontactRow] = DeleteBuilder.of("person.businessentitycontact", BusinessentitycontactFields.structure)
+  override def delete: DeleteBuilder[BusinessentitycontactFields, BusinessentitycontactRow] = DeleteBuilder.of("person.businessentitycontact", BusinessentitycontactFields.structure)
 
-  def deleteById(compositeId: BusinessentitycontactId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "person"."businessentitycontact" where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "personid" = ${BusinessentityId.pgType.encode(compositeId.personid)} AND "contacttypeid" = ${ContacttypeId.pgType.encode(compositeId.contacttypeid)}""".update().runUnchecked(c) > 0
+  override def deleteById(compositeId: BusinessentitycontactId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "person"."businessentitycontact" where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "personid" = ${BusinessentityId.pgType.encode(compositeId.personid)} AND "contacttypeid" = ${ContacttypeId.pgType.encode(compositeId.contacttypeid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(compositeIds: Array[BusinessentitycontactId])(using c: Connection): Integer = {
+  override def deleteByIds(compositeIds: Array[BusinessentitycontactId])(using c: Connection): Integer = {
     val businessentityid: Array[BusinessentityId] = compositeIds.map(_.businessentityid)
     val personid: Array[BusinessentityId] = compositeIds.map(_.personid)
     val contacttypeid: Array[ContacttypeId] = compositeIds.map(_.contacttypeid)
-    interpolate"""delete
+    return interpolate"""delete
     from "person"."businessentitycontact"
     where ("businessentityid", "personid", "contacttypeid")
     in (select unnest(${BusinessentityId.pgTypeArray.encode(businessentityid)}::int4[]), unnest(${BusinessentityId.pgTypeArray.encode(personid)}::int4[]), unnest(${ContacttypeId.pgTypeArray.encode(contacttypeid)}::int4[]))
     """.update().runUnchecked(c)
   }
 
-  def insert(unsaved: BusinessentitycontactRow)(using c: Connection): BusinessentitycontactRow = {
+  override def insert(unsaved: BusinessentitycontactRow)(using c: Connection): BusinessentitycontactRow = {
   interpolate"""insert into "person"."businessentitycontact"("businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate")
     values (${BusinessentityId.pgType.encode(unsaved.businessentityid)}::int4, ${BusinessentityId.pgType.encode(unsaved.personid)}::int4, ${ContacttypeId.pgType.encode(unsaved.contacttypeid)}::int4, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text
@@ -45,9 +45,9 @@ class BusinessentitycontactRepoImpl extends BusinessentitycontactRepo {
     .updateReturning(BusinessentitycontactRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: BusinessentitycontactRowUnsaved)(using c: Connection): BusinessentitycontactRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: BusinessentitycontactRowUnsaved)(using c: Connection): BusinessentitycontactRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn
     values.add(interpolate"${BusinessentityId.pgType.encode(unsaved.businessentityid)}::int4"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""personid"""")): @scala.annotation.nowarn
@@ -55,18 +55,12 @@ class BusinessentitycontactRepoImpl extends BusinessentitycontactRepo {
     columns.add(Fragment.lit(""""contacttypeid"""")): @scala.annotation.nowarn
     values.add(interpolate"${ContacttypeId.pgType.encode(unsaved.contacttypeid)}::int4"): @scala.annotation.nowarn
     unsaved.rowguid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "person"."businessentitycontact"(${Fragment.comma(columns)})
@@ -74,62 +68,62 @@ class BusinessentitycontactRepoImpl extends BusinessentitycontactRepo {
       returning "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text
       """
     }
-    q.updateReturning(BusinessentitycontactRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(BusinessentitycontactRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[BusinessentitycontactRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "person"."businessentitycontact"("businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, c, BusinessentitycontactRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[BusinessentitycontactRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "person"."businessentitycontact"("businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, BusinessentitycontactRowUnsaved.pgText)
 
-  def select: SelectBuilder[BusinessentitycontactFields, BusinessentitycontactRow] = SelectBuilder.of("person.businessentitycontact", BusinessentitycontactFields.structure, BusinessentitycontactRow.`_rowParser`)
+  override def select: SelectBuilder[BusinessentitycontactFields, BusinessentitycontactRow] = SelectBuilder.of("person.businessentitycontact", BusinessentitycontactFields.structure, BusinessentitycontactRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[BusinessentitycontactRow] = {
+  override def selectAll(using c: Connection): java.util.List[BusinessentitycontactRow] = {
     interpolate"""select "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text
     from "person"."businessentitycontact"
-    """.as(BusinessentitycontactRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(BusinessentitycontactRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(compositeId: BusinessentitycontactId)(using c: Connection): Optional[BusinessentitycontactRow] = {
+  override def selectById(compositeId: BusinessentitycontactId)(using c: Connection): Optional[BusinessentitycontactRow] = {
     interpolate"""select "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text
     from "person"."businessentitycontact"
-    where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "personid" = ${BusinessentityId.pgType.encode(compositeId.personid)} AND "contacttypeid" = ${ContacttypeId.pgType.encode(compositeId.contacttypeid)}""".as(BusinessentitycontactRow.`_rowParser`.first()).runUnchecked(c)
+    where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "personid" = ${BusinessentityId.pgType.encode(compositeId.personid)} AND "contacttypeid" = ${ContacttypeId.pgType.encode(compositeId.contacttypeid)}""".query(BusinessentitycontactRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(compositeIds: Array[BusinessentitycontactId])(using c: Connection): java.util.List[BusinessentitycontactRow] = {
+  override def selectByIds(compositeIds: Array[BusinessentitycontactId])(using c: Connection): java.util.List[BusinessentitycontactRow] = {
     val businessentityid: Array[BusinessentityId] = compositeIds.map(_.businessentityid)
     val personid: Array[BusinessentityId] = compositeIds.map(_.personid)
     val contacttypeid: Array[ContacttypeId] = compositeIds.map(_.contacttypeid)
-    interpolate"""select "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text
+    return interpolate"""select "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text
     from "person"."businessentitycontact"
     where ("businessentityid", "personid", "contacttypeid")
     in (select unnest(${BusinessentityId.pgTypeArray.encode(businessentityid)}::int4[]), unnest(${BusinessentityId.pgTypeArray.encode(personid)}::int4[]), unnest(${ContacttypeId.pgTypeArray.encode(contacttypeid)}::int4[]))
-    """.as(BusinessentitycontactRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(BusinessentitycontactRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(compositeIds: Array[BusinessentitycontactId])(using c: Connection): java.util.Map[BusinessentitycontactId, BusinessentitycontactRow] = {
-    val ret: java.util.Map[BusinessentitycontactId, BusinessentitycontactRow] = new HashMap()
+  override def selectByIdsTracked(compositeIds: Array[BusinessentitycontactId])(using c: Connection): java.util.Map[BusinessentitycontactId, BusinessentitycontactRow] = {
+    val ret: HashMap[BusinessentitycontactId, BusinessentitycontactRow] = new HashMap[BusinessentitycontactId, BusinessentitycontactRow]()
     selectByIds(compositeIds)(using c).forEach(row => ret.put(row.compositeId, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[BusinessentitycontactFields, BusinessentitycontactRow] = UpdateBuilder.of("person.businessentitycontact", BusinessentitycontactFields.structure, BusinessentitycontactRow.`_rowParser`.all())
+  override def update: UpdateBuilder[BusinessentitycontactFields, BusinessentitycontactRow] = UpdateBuilder.of("person.businessentitycontact", BusinessentitycontactFields.structure, BusinessentitycontactRow.`_rowParser`.all())
 
-  def update(row: BusinessentitycontactRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: BusinessentitycontactRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: BusinessentitycontactId = row.compositeId
-    interpolate"""update "person"."businessentitycontact"
+    return interpolate"""update "person"."businessentitycontact"
     set "rowguid" = ${TypoUUID.pgType.encode(row.rowguid)}::uuid,
     "modifieddate" = ${TypoLocalDateTime.pgType.encode(row.modifieddate)}::timestamp
     where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "personid" = ${BusinessentityId.pgType.encode(compositeId.personid)} AND "contacttypeid" = ${ContacttypeId.pgType.encode(compositeId.contacttypeid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: BusinessentitycontactRow)(using c: Connection): BusinessentitycontactRow = {
+  override def upsert(unsaved: BusinessentitycontactRow)(using c: Connection): BusinessentitycontactRow = {
   interpolate"""insert into "person"."businessentitycontact"("businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate")
     values (${BusinessentityId.pgType.encode(unsaved.businessentityid)}::int4, ${BusinessentityId.pgType.encode(unsaved.personid)}::int4, ${ContacttypeId.pgType.encode(unsaved.contacttypeid)}::int4, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("businessentityid", "personid", "contacttypeid")
@@ -142,7 +136,7 @@ class BusinessentitycontactRepoImpl extends BusinessentitycontactRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[BusinessentitycontactRow])(using c: Connection): java.util.List[BusinessentitycontactRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[BusinessentitycontactRow])(using c: Connection): java.util.List[BusinessentitycontactRow] = {
     interpolate"""insert into "person"."businessentitycontact"("businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate")
     values (?::int4, ?::int4, ?::int4, ?::uuid, ?::timestamp)
     on conflict ("businessentityid", "personid", "contacttypeid")
@@ -156,13 +150,13 @@ class BusinessentitycontactRepoImpl extends BusinessentitycontactRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[BusinessentitycontactRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table businessentitycontact_TEMP (like "person"."businessentitycontact") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy businessentitycontact_TEMP("businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, c, BusinessentitycontactRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "person"."businessentitycontact"("businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate")
+    return interpolate"""insert into "person"."businessentitycontact"("businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate")
     select * from businessentitycontact_TEMP
     on conflict ("businessentityid", "personid", "contacttypeid")
     do update set

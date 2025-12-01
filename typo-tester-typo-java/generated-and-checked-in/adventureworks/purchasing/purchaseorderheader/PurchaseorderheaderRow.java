@@ -16,7 +16,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple12;
 
 /** Table: purchasing.purchaseorderheader
   * General purchase order information. See PurchaseOrderDetail.
@@ -162,7 +161,7 @@ public record PurchaseorderheaderRow(
     return new PurchaseorderheaderRow(purchaseorderid, revisionnumber, status, employeeid, vendorid, shipmethodid, orderdate, shipdate, subtotal, taxamt, freight, modifieddate);
   };
 
-  static RowParser<PurchaseorderheaderRow> _rowParser = RowParsers.of(PurchaseorderheaderId.pgType, TypoShort.pgType, TypoShort.pgType, BusinessentityId.pgType, BusinessentityId.pgType, ShipmethodId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, PurchaseorderheaderRow::new, row -> new Tuple12<>(row.purchaseorderid(), row.revisionnumber(), row.status(), row.employeeid(), row.vendorid(), row.shipmethodid(), row.orderdate(), row.shipdate(), row.subtotal(), row.taxamt(), row.freight(), row.modifieddate()));;
+  static RowParser<PurchaseorderheaderRow> _rowParser = RowParsers.of(PurchaseorderheaderId.pgType, TypoShort.pgType, TypoShort.pgType, BusinessentityId.pgType, BusinessentityId.pgType, ShipmethodId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, PurchaseorderheaderRow::new, row -> new Object[]{row.purchaseorderid(), row.revisionnumber(), row.status(), row.employeeid(), row.vendorid(), row.shipmethodid(), row.orderdate(), row.shipdate(), row.subtotal(), row.taxamt(), row.freight(), row.modifieddate()});;
 
   static public PgText<PurchaseorderheaderRow> pgText =
     PgText.from(_rowParser);

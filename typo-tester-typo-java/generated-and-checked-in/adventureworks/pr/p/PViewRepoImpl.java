@@ -5,22 +5,22 @@
  */
 package adventureworks.pr.p;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class PViewRepoImpl implements PViewRepo {
+  @Override
   public SelectBuilder<PViewFields, PViewRow> select() {
     return SelectBuilder.of("pr.p", PViewFields.structure(), PViewRow._rowParser);
   };
 
+  @Override
   public List<PViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text
        from "pr"."p"
-    """)).as(PViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(PViewRow._rowParser.all()).runUnchecked(c);
   };
 }

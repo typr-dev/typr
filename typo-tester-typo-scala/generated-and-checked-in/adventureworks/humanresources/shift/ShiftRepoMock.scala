@@ -5,6 +5,7 @@
  */
 package adventureworks.humanresources.shift
 
+import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
@@ -25,7 +26,7 @@ case class ShiftRepoMock(
   toRow: ShiftRowUnsaved => ShiftRow,
   map: HashMap[ShiftId, ShiftRow] = new HashMap[ShiftId, ShiftRow]()
 ) extends ShiftRepo {
-  def delete: DeleteBuilder[ShiftFields, ShiftRow] = {
+  override def delete: DeleteBuilder[ShiftFields, ShiftRow] = {
     new DeleteBuilderMock(
       ShiftFields.structure,
       () => new ArrayList(map.values()),
@@ -35,27 +36,27 @@ case class ShiftRepoMock(
     )
   }
 
-  def deleteById(shiftid: ShiftId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(shiftid)).isPresent()
+  override def deleteById(shiftid: ShiftId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(shiftid)).isPresent()
 
-  def deleteByIds(shiftids: Array[ShiftId])(using c: Connection): Integer = {
+  override def deleteByIds(shiftids: Array[ShiftId])(using c: Connection): Integer = {
     var count = 0
     shiftids.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
-    count
+    return count
   }
 
-  def insert(unsaved: ShiftRow)(using c: Connection): ShiftRow = {
+  override def insert(unsaved: ShiftRow)(using c: Connection): ShiftRow = {
     if (map.containsKey(unsaved.shiftid)) {
       throw new RuntimeException(s"id $unsaved.shiftid already exists")
     }
     map.put(unsaved.shiftid, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def insert(unsaved: ShiftRowUnsaved)(using c: Connection): ShiftRow = insert(toRow(unsaved))(using c)
+  override def insert(unsaved: ShiftRowUnsaved)(using c: Connection): ShiftRow = insert(toRow(unsaved))(using c)
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[ShiftRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -65,11 +66,11 @@ case class ShiftRepoMock(
       map.put(row.shiftid, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[ShiftRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -80,25 +81,25 @@ case class ShiftRepoMock(
       map.put(row.shiftid, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
-  def select: SelectBuilder[ShiftFields, ShiftRow] = new SelectBuilderMock(ShiftFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
+  override def select: SelectBuilder[ShiftFields, ShiftRow] = new SelectBuilderMock(ShiftFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  def selectAll(using c: Connection): java.util.List[ShiftRow] = new ArrayList(map.values())
+  override def selectAll(using c: Connection): java.util.List[ShiftRow] = new ArrayList(map.values())
 
-  def selectById(shiftid: ShiftId)(using c: Connection): Optional[ShiftRow] = Optional.ofNullable(map.get(shiftid))
+  override def selectById(shiftid: ShiftId)(using c: Connection): Optional[ShiftRow] = Optional.ofNullable(map.get(shiftid))
 
-  def selectByIds(shiftids: Array[ShiftId])(using c: Connection): java.util.List[ShiftRow] = {
+  override def selectByIds(shiftids: Array[ShiftId])(using c: Connection): java.util.List[ShiftRow] = {
     val result = new ArrayList[ShiftRow]()
     shiftids.foreach { id => val opt = Optional.ofNullable(map.get(id))
     if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
-    result
+    return result
   }
 
-  def selectByIdsTracked(shiftids: Array[ShiftId])(using c: Connection): java.util.Map[ShiftId, ShiftRow] = selectByIds(shiftids)(using c).stream().collect(Collectors.toMap((row: adventureworks.humanresources.shift.ShiftRow) => row.shiftid, Function.identity()))
+  override def selectByIdsTracked(shiftids: Array[ShiftId])(using c: Connection): java.util.Map[ShiftId, ShiftRow] = selectByIds(shiftids)(using c).stream().collect(Collectors.toMap((row: ShiftRow) => row.shiftid, Function.identity()))
 
-  def update: UpdateBuilder[ShiftFields, ShiftRow] = {
+  override def update: UpdateBuilder[ShiftFields, ShiftRow] = {
     new UpdateBuilderMock(
       ShiftFields.structure,
       () => new ArrayList(map.values()),
@@ -107,31 +108,31 @@ case class ShiftRepoMock(
     )
   }
 
-  def update(row: ShiftRow)(using c: Connection): java.lang.Boolean = {
-    val shouldUpdate = Optional.ofNullable(map.get(row.shiftid)).filter(oldRow => !oldRow.equals(row)).isPresent()
+  override def update(row: ShiftRow)(using c: Connection): java.lang.Boolean = {
+    val shouldUpdate = Optional.ofNullable(map.get(row.shiftid)).filter(oldRow => (oldRow != row)).isPresent()
     if (shouldUpdate) {
       map.put(row.shiftid, row): @scala.annotation.nowarn
     }
-    shouldUpdate
+    return shouldUpdate
   }
 
-  def upsert(unsaved: ShiftRow)(using c: Connection): ShiftRow = {
+  override def upsert(unsaved: ShiftRow)(using c: Connection): ShiftRow = {
     map.put(unsaved.shiftid, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[ShiftRow])(using c: Connection): java.util.List[ShiftRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[ShiftRow])(using c: Connection): java.util.List[ShiftRow] = {
     val result = new ArrayList[ShiftRow]()
     while (unsaved.hasNext()) {
       val row = unsaved.next()
       map.put(row.shiftid, row): @scala.annotation.nowarn
       result.add(row): @scala.annotation.nowarn
     }
-    result
+    return result
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[ShiftRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
@@ -141,6 +142,6 @@ case class ShiftRepoMock(
       map.put(row.shiftid, row): @scala.annotation.nowarn
       count = count + 1
     }
-    count
+    return count
   }
 }

@@ -5,6 +5,7 @@
  */
 package adventureworks.sales.salesterritory;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record SalesterritoryRepoMock(
     return new SalesterritoryRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<SalesterritoryFields, SalesterritoryRow> delete() {
     return new DeleteBuilderMock<>(SalesterritoryFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.territoryid(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     SalesterritoryId territoryid,
     Connection c
@@ -52,28 +55,31 @@ public record SalesterritoryRepoMock(
     return Optional.ofNullable(map.remove(territoryid)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     SalesterritoryId[] territoryids,
     Connection c
   ) {
     var count = 0;
-      for (var id : territoryids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : territoryids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public SalesterritoryRow insert(
     SalesterritoryRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.territoryid())) {
-        throw new RuntimeException(str("id $unsaved.territoryid() already exists"));
-      };
-      map.put(unsaved.territoryid(), unsaved);
+      throw new RuntimeException(str("id $unsaved.territoryid() already exists"));
+    };
+    map.put(unsaved.territoryid(), unsaved);
     return unsaved;
   };
 
+  @Override
   public SalesterritoryRow insert(
     SalesterritoryRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record SalesterritoryRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<SalesterritoryRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.territoryid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.territoryid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<SalesterritoryRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.territoryid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.territoryid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<SalesterritoryFields, SalesterritoryRow> select() {
     return new SelectBuilderMock<>(SalesterritoryFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<SalesterritoryRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<SalesterritoryRow> selectById(
     SalesterritoryId territoryid,
     Connection c
@@ -126,38 +137,43 @@ public record SalesterritoryRepoMock(
     return Optional.ofNullable(map.get(territoryid));
   };
 
+  @Override
   public List<SalesterritoryRow> selectByIds(
     SalesterritoryId[] territoryids,
     Connection c
   ) {
     var result = new ArrayList<SalesterritoryRow>();
-      for (var id : territoryids) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : territoryids) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<SalesterritoryId, SalesterritoryRow> selectByIdsTracked(
     SalesterritoryId[] territoryids,
     Connection c
   ) {
-    return selectByIds(territoryids, c).stream().collect(Collectors.toMap((adventureworks.sales.salesterritory.SalesterritoryRow row) -> row.territoryid(), Function.identity()));
+    return selectByIds(territoryids, c).stream().collect(Collectors.toMap((SalesterritoryRow row) -> row.territoryid(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<SalesterritoryFields, SalesterritoryRow> update() {
     return new UpdateBuilderMock<>(SalesterritoryFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     SalesterritoryRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.territoryid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.territoryid(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.territoryid(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public SalesterritoryRow upsert(
     SalesterritoryRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record SalesterritoryRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<SalesterritoryRow> upsertBatch(
     Iterator<SalesterritoryRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<SalesterritoryRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.territoryid(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.territoryid(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<SalesterritoryRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.territoryid(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.territoryid(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

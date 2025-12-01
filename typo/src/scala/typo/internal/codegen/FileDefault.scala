@@ -31,7 +31,9 @@ case class FileDefault(default: ComputedDefault, jsonLibs: List[JsonLib], dbLib:
         implicitParams = Nil,
         tpe = U,
         throws = Nil,
-        body = Nil
+        body = jvm.Body.Abstract,
+        isOverride = false,
+        isDefault = false
       )
 
     val visitOnDefaultParam = jvm.Param(onDefaultName, jvm.Type.Function0(jvm.Type.Void))
@@ -46,7 +48,9 @@ case class FileDefault(default: ComputedDefault, jsonLibs: List[JsonLib], dbLib:
         implicitParams = Nil,
         tpe = jvm.Type.Void,
         throws = Nil,
-        body = Nil
+        body = jvm.Body.Abstract,
+        isOverride = false,
+        isDefault = false
       )
 
     val getOrElseParam = jvm.Param(onDefaultName, jvm.Type.Function0(T))
@@ -60,7 +64,9 @@ case class FileDefault(default: ComputedDefault, jsonLibs: List[JsonLib], dbLib:
         implicitParams = Nil,
         tpe = T,
         throws = Nil,
-        body = Nil
+        body = jvm.Body.Abstract,
+        isOverride = false,
+        isDefault = false
       )
     val valueParam = jvm.Param(jvm.Ident("value"), T)
 
@@ -83,9 +89,9 @@ case class FileDefault(default: ComputedDefault, jsonLibs: List[JsonLib], dbLib:
           `extends` = None,
           implements = List(default.Defaulted.of(T)),
           members = List(
-            foldAbstract.copy(body = List(jvm.Apply1(foldOnProvidedParam, valueParam.name.code))),
-            getOrElseAbstract.copy(body = List(valueParam.name.code)),
-            visitAbstract.copy(body = List(jvm.Apply1(visitOnProvidedParam, valueParam.name.code)))
+            foldAbstract.copy(body = jvm.Body.Expr(jvm.Apply1(foldOnProvidedParam, valueParam.name.code)), isOverride = true),
+            getOrElseAbstract.copy(body = jvm.Body.Expr(valueParam.name.code), isOverride = true),
+            visitAbstract.copy(body = jvm.Body.Expr(jvm.Apply1(visitOnProvidedParam, valueParam.name.code)), isOverride = true)
           ),
           staticMembers = Nil
         ),
@@ -100,9 +106,9 @@ case class FileDefault(default: ComputedDefault, jsonLibs: List[JsonLib], dbLib:
           `extends` = None,
           implements = List(default.Defaulted.of(T)),
           members = List(
-            foldAbstract.copy(body = List(jvm.Apply0(foldOnDefaultParam))),
-            getOrElseAbstract.copy(body = List(jvm.Apply0(getOrElseParam))),
-            visitAbstract.copy(body = List(jvm.Apply0(visitOnDefaultParam)))
+            foldAbstract.copy(body = jvm.Body.Expr(jvm.Apply0(foldOnDefaultParam)), isOverride = true),
+            getOrElseAbstract.copy(body = jvm.Body.Expr(jvm.Apply0(getOrElseParam)), isOverride = true),
+            visitAbstract.copy(body = jvm.Body.Expr(jvm.Apply0(visitOnDefaultParam)), isOverride = true)
           ),
           staticMembers = Nil
         )

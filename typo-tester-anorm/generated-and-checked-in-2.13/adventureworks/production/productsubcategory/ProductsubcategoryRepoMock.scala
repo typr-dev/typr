@@ -21,13 +21,13 @@ case class ProductsubcategoryRepoMock(
   toRow: ProductsubcategoryRowUnsaved => ProductsubcategoryRow,
   map: scala.collection.mutable.Map[ProductsubcategoryId, ProductsubcategoryRow] = scala.collection.mutable.Map.empty[ProductsubcategoryId, ProductsubcategoryRow]
 ) extends ProductsubcategoryRepo {
-  def delete: DeleteBuilder[ProductsubcategoryFields, ProductsubcategoryRow] = DeleteBuilderMock(DeleteParams.empty, ProductsubcategoryFields.structure, map)
+  override def delete: DeleteBuilder[ProductsubcategoryFields, ProductsubcategoryRow] = DeleteBuilderMock(DeleteParams.empty, ProductsubcategoryFields.structure, map)
 
-  def deleteById(productsubcategoryid: ProductsubcategoryId)(implicit c: Connection): Boolean = map.remove(productsubcategoryid).isDefined
+  override def deleteById(productsubcategoryid: ProductsubcategoryId)(implicit c: Connection): Boolean = map.remove(productsubcategoryid).isDefined
 
-  def deleteByIds(productsubcategoryids: Array[ProductsubcategoryId])(implicit c: Connection): Int = productsubcategoryids.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(productsubcategoryids: Array[ProductsubcategoryId])(implicit c: Connection): Int = productsubcategoryids.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: ProductsubcategoryRow)(implicit c: Connection): ProductsubcategoryRow = {
+  override def insert(unsaved: ProductsubcategoryRow)(implicit c: Connection): ProductsubcategoryRow = {
     val _ = if (map.contains(unsaved.productsubcategoryid))
       sys.error(s"id ${unsaved.productsubcategoryid} already exists")
     else
@@ -36,9 +36,9 @@ case class ProductsubcategoryRepoMock(
     unsaved
   }
 
-  def insert(unsaved: ProductsubcategoryRowUnsaved)(implicit c: Connection): ProductsubcategoryRow = insert(toRow(unsaved))
+  override def insert(unsaved: ProductsubcategoryRowUnsaved)(implicit c: Connection): ProductsubcategoryRow = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[ProductsubcategoryRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = {
@@ -49,7 +49,7 @@ case class ProductsubcategoryRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[ProductsubcategoryRowUnsaved],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = {
@@ -60,34 +60,34 @@ case class ProductsubcategoryRepoMock(
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[ProductsubcategoryFields, ProductsubcategoryRow] = SelectBuilderMock(ProductsubcategoryFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[ProductsubcategoryFields, ProductsubcategoryRow] = SelectBuilderMock(ProductsubcategoryFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(implicit c: Connection): List[ProductsubcategoryRow] = map.values.toList
+  override def selectAll(implicit c: Connection): List[ProductsubcategoryRow] = map.values.toList
 
-  def selectById(productsubcategoryid: ProductsubcategoryId)(implicit c: Connection): Option[ProductsubcategoryRow] = map.get(productsubcategoryid)
+  override def selectById(productsubcategoryid: ProductsubcategoryId)(implicit c: Connection): Option[ProductsubcategoryRow] = map.get(productsubcategoryid)
 
-  def selectByIds(productsubcategoryids: Array[ProductsubcategoryId])(implicit c: Connection): List[ProductsubcategoryRow] = productsubcategoryids.flatMap(map.get).toList
+  override def selectByIds(productsubcategoryids: Array[ProductsubcategoryId])(implicit c: Connection): List[ProductsubcategoryRow] = productsubcategoryids.flatMap(map.get).toList
 
-  def selectByIdsTracked(productsubcategoryids: Array[ProductsubcategoryId])(implicit c: Connection): Map[ProductsubcategoryId, ProductsubcategoryRow] = {
+  override def selectByIdsTracked(productsubcategoryids: Array[ProductsubcategoryId])(implicit c: Connection): Map[ProductsubcategoryId, ProductsubcategoryRow] = {
     val byId = selectByIds(productsubcategoryids).view.map(x => (x.productsubcategoryid, x)).toMap
     productsubcategoryids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[ProductsubcategoryFields, ProductsubcategoryRow] = UpdateBuilderMock(UpdateParams.empty, ProductsubcategoryFields.structure, map)
+  override def update: UpdateBuilder[ProductsubcategoryFields, ProductsubcategoryRow] = UpdateBuilderMock(UpdateParams.empty, ProductsubcategoryFields.structure, map)
 
-  def update(row: ProductsubcategoryRow)(implicit c: Connection): Option[ProductsubcategoryRow] = {
+  override def update(row: ProductsubcategoryRow)(implicit c: Connection): Option[ProductsubcategoryRow] = {
     map.get(row.productsubcategoryid).map { _ =>
       map.put(row.productsubcategoryid, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: ProductsubcategoryRow)(implicit c: Connection): ProductsubcategoryRow = {
+  override def upsert(unsaved: ProductsubcategoryRow)(implicit c: Connection): ProductsubcategoryRow = {
     map.put(unsaved.productsubcategoryid, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[ProductsubcategoryRow])(implicit c: Connection): List[ProductsubcategoryRow] = {
+  override def upsertBatch(unsaved: Iterable[ProductsubcategoryRow])(implicit c: Connection): List[ProductsubcategoryRow] = {
     unsaved.map { row =>
       map += (row.productsubcategoryid -> row)
       row
@@ -95,7 +95,7 @@ case class ProductsubcategoryRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[ProductsubcategoryRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

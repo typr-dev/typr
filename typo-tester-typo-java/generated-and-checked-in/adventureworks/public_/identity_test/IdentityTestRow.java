@@ -11,7 +11,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple3;
 
 /** Table: public.identity-test
   * Primary key: name
@@ -37,7 +36,7 @@ public record IdentityTestRow(
     return new IdentityTestRow(alwaysGenerated, defaultGenerated, name);
   };
 
-  static RowParser<IdentityTestRow> _rowParser = RowParsers.of(PgTypes.int4, PgTypes.int4, IdentityTestId.pgType, IdentityTestRow::new, row -> new Tuple3<>(row.alwaysGenerated(), row.defaultGenerated(), row.name()));;
+  static RowParser<IdentityTestRow> _rowParser = RowParsers.of(PgTypes.int4, PgTypes.int4, IdentityTestId.pgType, IdentityTestRow::new, row -> new Object[]{row.alwaysGenerated(), row.defaultGenerated(), row.name()});;
 
   static public PgText<IdentityTestRow> pgText =
     PgText.from(_rowParser);

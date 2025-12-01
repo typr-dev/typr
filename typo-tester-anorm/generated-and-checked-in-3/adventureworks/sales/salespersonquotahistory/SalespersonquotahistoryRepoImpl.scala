@@ -25,11 +25,11 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class SalespersonquotahistoryRepoImpl extends SalespersonquotahistoryRepo {
-  def delete: DeleteBuilder[SalespersonquotahistoryFields, SalespersonquotahistoryRow] = DeleteBuilder.of(""""sales"."salespersonquotahistory"""", SalespersonquotahistoryFields.structure, SalespersonquotahistoryRow.rowParser(1).*)
+  override def delete: DeleteBuilder[SalespersonquotahistoryFields, SalespersonquotahistoryRow] = DeleteBuilder.of(""""sales"."salespersonquotahistory"""", SalespersonquotahistoryFields.structure, SalespersonquotahistoryRow.rowParser(1).*)
 
-  def deleteById(compositeId: SalespersonquotahistoryId)(using c: Connection): Boolean = SQL"""delete from "sales"."salespersonquotahistory" where "businessentityid" = ${ParameterValue(compositeId.businessentityid, null, BusinessentityId.toStatement)} AND "quotadate" = ${ParameterValue(compositeId.quotadate, null, TypoLocalDateTime.toStatement)}""".executeUpdate() > 0
+  override def deleteById(compositeId: SalespersonquotahistoryId)(using c: Connection): Boolean = SQL"""delete from "sales"."salespersonquotahistory" where "businessentityid" = ${ParameterValue(compositeId.businessentityid, null, BusinessentityId.toStatement)} AND "quotadate" = ${ParameterValue(compositeId.quotadate, null, TypoLocalDateTime.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(compositeIds: Array[SalespersonquotahistoryId])(using c: Connection): Int = {
+  override def deleteByIds(compositeIds: Array[SalespersonquotahistoryId])(using c: Connection): Int = {
     val businessentityid = compositeIds.map(_.businessentityid)
     val quotadate = compositeIds.map(_.quotadate)
     SQL"""delete
@@ -39,7 +39,7 @@ class SalespersonquotahistoryRepoImpl extends SalespersonquotahistoryRepo {
     """.executeUpdate()
   }
 
-  def insert(unsaved: SalespersonquotahistoryRow)(using c: Connection): SalespersonquotahistoryRow = {
+  override def insert(unsaved: SalespersonquotahistoryRow)(using c: Connection): SalespersonquotahistoryRow = {
   SQL"""insert into "sales"."salespersonquotahistory"("businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate")
     values (${ParameterValue(unsaved.businessentityid, null, BusinessentityId.toStatement)}::int4, ${ParameterValue(unsaved.quotadate, null, TypoLocalDateTime.toStatement)}::timestamp, ${ParameterValue(unsaved.salesquota, null, ToStatement.scalaBigDecimalToStatement)}::numeric, ${ParameterValue(unsaved.rowguid, null, TypoUUID.toStatement)}::uuid, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text
@@ -47,7 +47,7 @@ class SalespersonquotahistoryRepoImpl extends SalespersonquotahistoryRepo {
     .executeInsert(SalespersonquotahistoryRow.rowParser(1).single)
   }
 
-  def insert(unsaved: SalespersonquotahistoryRowUnsaved)(using c: Connection): SalespersonquotahistoryRow = {
+  override def insert(unsaved: SalespersonquotahistoryRowUnsaved)(using c: Connection): SalespersonquotahistoryRow = {
     val namedParameters = List(
       Some((NamedParameter("businessentityid", ParameterValue(unsaved.businessentityid, null, BusinessentityId.toStatement)), "::int4")),
       Some((NamedParameter("quotadate", ParameterValue(unsaved.quotadate, null, TypoLocalDateTime.toStatement)), "::timestamp")),
@@ -77,33 +77,33 @@ class SalespersonquotahistoryRepoImpl extends SalespersonquotahistoryRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[SalespersonquotahistoryRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "sales"."salespersonquotahistory"("businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved)(using SalespersonquotahistoryRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[SalespersonquotahistoryRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "sales"."salespersonquotahistory"("businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using SalespersonquotahistoryRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[SalespersonquotahistoryFields, SalespersonquotahistoryRow] = SelectBuilder.of(""""sales"."salespersonquotahistory"""", SalespersonquotahistoryFields.structure, SalespersonquotahistoryRow.rowParser)
+  override def select: SelectBuilder[SalespersonquotahistoryFields, SalespersonquotahistoryRow] = SelectBuilder.of(""""sales"."salespersonquotahistory"""", SalespersonquotahistoryFields.structure, SalespersonquotahistoryRow.rowParser)
 
-  def selectAll(using c: Connection): List[SalespersonquotahistoryRow] = {
+  override def selectAll(using c: Connection): List[SalespersonquotahistoryRow] = {
     SQL"""select "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text
     from "sales"."salespersonquotahistory"
     """.as(SalespersonquotahistoryRow.rowParser(1).*)
   }
 
-  def selectById(compositeId: SalespersonquotahistoryId)(using c: Connection): Option[SalespersonquotahistoryRow] = {
+  override def selectById(compositeId: SalespersonquotahistoryId)(using c: Connection): Option[SalespersonquotahistoryRow] = {
     SQL"""select "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text
     from "sales"."salespersonquotahistory"
     where "businessentityid" = ${ParameterValue(compositeId.businessentityid, null, BusinessentityId.toStatement)} AND "quotadate" = ${ParameterValue(compositeId.quotadate, null, TypoLocalDateTime.toStatement)}
     """.as(SalespersonquotahistoryRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(compositeIds: Array[SalespersonquotahistoryId])(using c: Connection): List[SalespersonquotahistoryRow] = {
+  override def selectByIds(compositeIds: Array[SalespersonquotahistoryId])(using c: Connection): List[SalespersonquotahistoryRow] = {
     val businessentityid = compositeIds.map(_.businessentityid)
     val quotadate = compositeIds.map(_.quotadate)
     SQL"""select "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text
@@ -113,14 +113,14 @@ class SalespersonquotahistoryRepoImpl extends SalespersonquotahistoryRepo {
     """.as(SalespersonquotahistoryRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(compositeIds: Array[SalespersonquotahistoryId])(using c: Connection): Map[SalespersonquotahistoryId, SalespersonquotahistoryRow] = {
+  override def selectByIdsTracked(compositeIds: Array[SalespersonquotahistoryId])(using c: Connection): Map[SalespersonquotahistoryId, SalespersonquotahistoryRow] = {
     val byId = selectByIds(compositeIds).view.map(x => (x.compositeId, x)).toMap
     compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[SalespersonquotahistoryFields, SalespersonquotahistoryRow] = UpdateBuilder.of(""""sales"."salespersonquotahistory"""", SalespersonquotahistoryFields.structure, SalespersonquotahistoryRow.rowParser(1).*)
+  override def update: UpdateBuilder[SalespersonquotahistoryFields, SalespersonquotahistoryRow] = UpdateBuilder.of(""""sales"."salespersonquotahistory"""", SalespersonquotahistoryFields.structure, SalespersonquotahistoryRow.rowParser(1).*)
 
-  def update(row: SalespersonquotahistoryRow)(using c: Connection): Option[SalespersonquotahistoryRow] = {
+  override def update(row: SalespersonquotahistoryRow)(using c: Connection): Option[SalespersonquotahistoryRow] = {
     val compositeId = row.compositeId
     SQL"""update "sales"."salespersonquotahistory"
     set "salesquota" = ${ParameterValue(row.salesquota, null, ToStatement.scalaBigDecimalToStatement)}::numeric,
@@ -131,7 +131,7 @@ class SalespersonquotahistoryRepoImpl extends SalespersonquotahistoryRepo {
     """.executeInsert(SalespersonquotahistoryRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: SalespersonquotahistoryRow)(using c: Connection): SalespersonquotahistoryRow = {
+  override def upsert(unsaved: SalespersonquotahistoryRow)(using c: Connection): SalespersonquotahistoryRow = {
   SQL"""insert into "sales"."salespersonquotahistory"("businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate")
     values (
       ${ParameterValue(unsaved.businessentityid, null, BusinessentityId.toStatement)}::int4,
@@ -150,7 +150,7 @@ class SalespersonquotahistoryRepoImpl extends SalespersonquotahistoryRepo {
     .executeInsert(SalespersonquotahistoryRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[SalespersonquotahistoryRow])(using c: Connection): List[SalespersonquotahistoryRow] = {
+  override def upsertBatch(unsaved: Iterable[SalespersonquotahistoryRow])(using c: Connection): List[SalespersonquotahistoryRow] = {
     def toNamedParameter(row: SalespersonquotahistoryRow): List[NamedParameter] = List(
       NamedParameter("businessentityid", ParameterValue(row.businessentityid, null, BusinessentityId.toStatement)),
       NamedParameter("quotadate", ParameterValue(row.quotadate, null, TypoLocalDateTime.toStatement)),
@@ -158,6 +158,7 @@ class SalespersonquotahistoryRepoImpl extends SalespersonquotahistoryRepo {
       NamedParameter("rowguid", ParameterValue(row.rowguid, null, TypoUUID.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -180,7 +181,7 @@ class SalespersonquotahistoryRepoImpl extends SalespersonquotahistoryRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[SalespersonquotahistoryRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

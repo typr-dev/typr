@@ -13,9 +13,5 @@ case class TableWithGeneratedColumnsRowUnsaved(name: TableWithGeneratedColumnsId
 }
 
 object TableWithGeneratedColumnsRowUnsaved {
-  given pgText: PgText[TableWithGeneratedColumnsRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      TableWithGeneratedColumnsId.pgType.pgText.unsafeEncode(row.name, sb);
-    })
-  }
+  given pgText: PgText[TableWithGeneratedColumnsRowUnsaved] = PgText.instance((row, sb) => { TableWithGeneratedColumnsId.pgType.pgText.unsafeEncode(row.name, sb) })
 }

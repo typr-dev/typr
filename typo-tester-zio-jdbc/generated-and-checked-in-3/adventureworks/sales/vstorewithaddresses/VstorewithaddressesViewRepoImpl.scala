@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class VstorewithaddressesViewRepoImpl extends VstorewithaddressesViewRepo {
-  def select: SelectBuilder[VstorewithaddressesViewFields, VstorewithaddressesViewRow] = SelectBuilder.of(""""sales"."vstorewithaddresses"""", VstorewithaddressesViewFields.structure, VstorewithaddressesViewRow.jdbcDecoder)
+  override def select: SelectBuilder[VstorewithaddressesViewFields, VstorewithaddressesViewRow] = SelectBuilder.of(""""sales"."vstorewithaddresses"""", VstorewithaddressesViewFields.structure, VstorewithaddressesViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, VstorewithaddressesViewRow] = sql"""select "businessentityid", "name", "addresstype", "addressline1", "addressline2", "city", "stateprovincename", "postalcode", "countryregionname" from "sales"."vstorewithaddresses"""".query(using VstorewithaddressesViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, VstorewithaddressesViewRow] = sql"""select "businessentityid", "name", "addresstype", "addressline1", "addressline2", "city", "stateprovincename", "postalcode", "countryregionname" from "sales"."vstorewithaddresses"""".query(using VstorewithaddressesViewRow.jdbcDecoder).selectStream()
 }

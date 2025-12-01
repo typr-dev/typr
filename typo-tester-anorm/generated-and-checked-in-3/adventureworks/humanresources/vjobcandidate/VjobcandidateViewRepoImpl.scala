@@ -10,9 +10,9 @@ import typo.dsl.SelectBuilder
 import anorm.SqlStringInterpolation
 
 class VjobcandidateViewRepoImpl extends VjobcandidateViewRepo {
-  def select: SelectBuilder[VjobcandidateViewFields, VjobcandidateViewRow] = SelectBuilder.of(""""humanresources"."vjobcandidate"""", VjobcandidateViewFields.structure, VjobcandidateViewRow.rowParser)
+  override def select: SelectBuilder[VjobcandidateViewFields, VjobcandidateViewRow] = SelectBuilder.of(""""humanresources"."vjobcandidate"""", VjobcandidateViewFields.structure, VjobcandidateViewRow.rowParser)
 
-  def selectAll(using c: Connection): List[VjobcandidateViewRow] = {
+  override def selectAll(using c: Connection): List[VjobcandidateViewRow] = {
     SQL"""select "jobcandidateid", "businessentityid", "Name.Prefix", "Name.First", "Name.Middle", "Name.Last", "Name.Suffix", "Skills", "Addr.Type", "Addr.Loc.CountryRegion", "Addr.Loc.State", "Addr.Loc.City", "Addr.PostalCode", "EMail", "WebSite", "modifieddate"::text
     from "humanresources"."vjobcandidate"
     """.as(VjobcandidateViewRow.rowParser(1).*)

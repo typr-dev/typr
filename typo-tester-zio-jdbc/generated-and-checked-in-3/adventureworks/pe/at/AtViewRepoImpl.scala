@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class AtViewRepoImpl extends AtViewRepo {
-  def select: SelectBuilder[AtViewFields, AtViewRow] = SelectBuilder.of(""""pe"."at"""", AtViewFields.structure, AtViewRow.jdbcDecoder)
+  override def select: SelectBuilder[AtViewFields, AtViewRow] = SelectBuilder.of(""""pe"."at"""", AtViewFields.structure, AtViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, AtViewRow] = sql"""select "id", "addresstypeid", "name", "rowguid", "modifieddate"::text from "pe"."at"""".query(using AtViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, AtViewRow] = sql"""select "id", "addresstypeid", "name", "rowguid", "modifieddate"::text from "pe"."at"""".query(using AtViewRow.jdbcDecoder).selectStream()
 }

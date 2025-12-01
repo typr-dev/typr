@@ -14,19 +14,17 @@ import doobie.util.Write
 import doobie.util.meta.Meta
 import doobie.util.update.Update
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.DeleteBuilder
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class TestUtdanningstilbudRepoImpl extends TestUtdanningstilbudRepo {
-  def delete: DeleteBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = DeleteBuilder.of(""""public"."test_utdanningstilbud"""", TestUtdanningstilbudFields.structure, TestUtdanningstilbudRow.read)
+  override def delete: DeleteBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = DeleteBuilder.of(""""public"."test_utdanningstilbud"""", TestUtdanningstilbudFields.structure, TestUtdanningstilbudRow.read)
 
-  def deleteById(compositeId: TestUtdanningstilbudId): ConnectionIO[Boolean] = sql"""delete from "public"."test_utdanningstilbud" where "organisasjonskode" = ${fromWrite(compositeId.organisasjonskode)(using new Write.Single(TestOrganisasjonId.put))} AND "utdanningsmulighet_kode" = ${fromWrite(compositeId.utdanningsmulighetKode)(using new Write.Single(Meta.StringMeta.put))}""".update.run.map(_ > 0)
+  override def deleteById(compositeId: TestUtdanningstilbudId): ConnectionIO[Boolean] = sql"""delete from "public"."test_utdanningstilbud" where "organisasjonskode" = ${fromWrite(compositeId.organisasjonskode)(using new Write.Single(TestOrganisasjonId.put))} AND "utdanningsmulighet_kode" = ${fromWrite(compositeId.utdanningsmulighetKode)(using new Write.Single(Meta.StringMeta.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(compositeIds: Array[TestUtdanningstilbudId]): ConnectionIO[Int] = {
+  override def deleteByIds(compositeIds: Array[TestUtdanningstilbudId]): ConnectionIO[Int] = {
     val organisasjonskode = compositeIds.map(_.organisasjonskode)
     val utdanningsmulighetKode = compositeIds.map(_.utdanningsmulighetKode)
     sql"""delete
@@ -36,25 +34,25 @@ class TestUtdanningstilbudRepoImpl extends TestUtdanningstilbudRepo {
     """.update.run
   }
 
-  def insert(unsaved: TestUtdanningstilbudRow): ConnectionIO[TestUtdanningstilbudRow] = {
+  override def insert(unsaved: TestUtdanningstilbudRow): ConnectionIO[TestUtdanningstilbudRow] = {
     sql"""insert into "public"."test_utdanningstilbud"("organisasjonskode", "utdanningsmulighet_kode")
     values (${fromWrite(unsaved.organisasjonskode)(using new Write.Single(TestOrganisasjonId.put))}, ${fromWrite(unsaved.utdanningsmulighetKode)(using new Write.Single(Meta.StringMeta.put))})
     returning "organisasjonskode", "utdanningsmulighet_kode"
     """.query(using TestUtdanningstilbudRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, TestUtdanningstilbudRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "public"."test_utdanningstilbud"("organisasjonskode", "utdanningsmulighet_kode") FROM STDIN""").copyIn(unsaved, batchSize)(using TestUtdanningstilbudRow.pgText)
 
-  def select: SelectBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = SelectBuilder.of(""""public"."test_utdanningstilbud"""", TestUtdanningstilbudFields.structure, TestUtdanningstilbudRow.read)
+  override def select: SelectBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = SelectBuilder.of(""""public"."test_utdanningstilbud"""", TestUtdanningstilbudFields.structure, TestUtdanningstilbudRow.read)
 
-  def selectAll: Stream[ConnectionIO, TestUtdanningstilbudRow] = sql"""select "organisasjonskode", "utdanningsmulighet_kode" from "public"."test_utdanningstilbud"""".query(using TestUtdanningstilbudRow.read).stream
+  override def selectAll: Stream[ConnectionIO, TestUtdanningstilbudRow] = sql"""select "organisasjonskode", "utdanningsmulighet_kode" from "public"."test_utdanningstilbud"""".query(using TestUtdanningstilbudRow.read).stream
 
-  def selectById(compositeId: TestUtdanningstilbudId): ConnectionIO[Option[TestUtdanningstilbudRow]] = sql"""select "organisasjonskode", "utdanningsmulighet_kode" from "public"."test_utdanningstilbud" where "organisasjonskode" = ${fromWrite(compositeId.organisasjonskode)(using new Write.Single(TestOrganisasjonId.put))} AND "utdanningsmulighet_kode" = ${fromWrite(compositeId.utdanningsmulighetKode)(using new Write.Single(Meta.StringMeta.put))}""".query(using TestUtdanningstilbudRow.read).option
+  override def selectById(compositeId: TestUtdanningstilbudId): ConnectionIO[Option[TestUtdanningstilbudRow]] = sql"""select "organisasjonskode", "utdanningsmulighet_kode" from "public"."test_utdanningstilbud" where "organisasjonskode" = ${fromWrite(compositeId.organisasjonskode)(using new Write.Single(TestOrganisasjonId.put))} AND "utdanningsmulighet_kode" = ${fromWrite(compositeId.utdanningsmulighetKode)(using new Write.Single(Meta.StringMeta.put))}""".query(using TestUtdanningstilbudRow.read).option
 
-  def selectByIds(compositeIds: Array[TestUtdanningstilbudId]): Stream[ConnectionIO, TestUtdanningstilbudRow] = {
+  override def selectByIds(compositeIds: Array[TestUtdanningstilbudId]): Stream[ConnectionIO, TestUtdanningstilbudRow] = {
     val organisasjonskode = compositeIds.map(_.organisasjonskode)
     val utdanningsmulighetKode = compositeIds.map(_.utdanningsmulighetKode)
     sql"""select "organisasjonskode", "utdanningsmulighet_kode"
@@ -64,16 +62,16 @@ class TestUtdanningstilbudRepoImpl extends TestUtdanningstilbudRepo {
     """.query(using TestUtdanningstilbudRow.read).stream
   }
 
-  def selectByIdsTracked(compositeIds: Array[TestUtdanningstilbudId]): ConnectionIO[Map[TestUtdanningstilbudId, TestUtdanningstilbudRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[TestUtdanningstilbudId]): ConnectionIO[Map[TestUtdanningstilbudId, TestUtdanningstilbudRow]] = {
     selectByIds(compositeIds).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = UpdateBuilder.of(""""public"."test_utdanningstilbud"""", TestUtdanningstilbudFields.structure, TestUtdanningstilbudRow.read)
+  override def update: UpdateBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = UpdateBuilder.of(""""public"."test_utdanningstilbud"""", TestUtdanningstilbudFields.structure, TestUtdanningstilbudRow.read)
 
-  def upsert(unsaved: TestUtdanningstilbudRow): ConnectionIO[TestUtdanningstilbudRow] = {
+  override def upsert(unsaved: TestUtdanningstilbudRow): ConnectionIO[TestUtdanningstilbudRow] = {
     sql"""insert into "public"."test_utdanningstilbud"("organisasjonskode", "utdanningsmulighet_kode")
     values (
       ${fromWrite(unsaved.organisasjonskode)(using new Write.Single(TestOrganisasjonId.put))},
@@ -85,7 +83,7 @@ class TestUtdanningstilbudRepoImpl extends TestUtdanningstilbudRepo {
     """.query(using TestUtdanningstilbudRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[TestUtdanningstilbudRow]): Stream[ConnectionIO, TestUtdanningstilbudRow] = {
+  override def upsertBatch(unsaved: List[TestUtdanningstilbudRow]): Stream[ConnectionIO, TestUtdanningstilbudRow] = {
     Update[TestUtdanningstilbudRow](
       s"""insert into "public"."test_utdanningstilbud"("organisasjonskode", "utdanningsmulighet_kode")
       values (?,?)
@@ -97,7 +95,7 @@ class TestUtdanningstilbudRepoImpl extends TestUtdanningstilbudRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, TestUtdanningstilbudRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

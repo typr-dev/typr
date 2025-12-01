@@ -16,28 +16,26 @@ import doobie.util.Write
 import doobie.util.fragment.Fragment
 import doobie.util.update.Update
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.DeleteBuilder
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class ScrapreasonRepoImpl extends ScrapreasonRepo {
-  def delete: DeleteBuilder[ScrapreasonFields, ScrapreasonRow] = DeleteBuilder.of(""""production"."scrapreason"""", ScrapreasonFields.structure, ScrapreasonRow.read)
+  override def delete: DeleteBuilder[ScrapreasonFields, ScrapreasonRow] = DeleteBuilder.of(""""production"."scrapreason"""", ScrapreasonFields.structure, ScrapreasonRow.read)
 
-  def deleteById(scrapreasonid: ScrapreasonId): ConnectionIO[Boolean] = sql"""delete from "production"."scrapreason" where "scrapreasonid" = ${fromWrite(scrapreasonid)(using new Write.Single(ScrapreasonId.put))}""".update.run.map(_ > 0)
+  override def deleteById(scrapreasonid: ScrapreasonId): ConnectionIO[Boolean] = sql"""delete from "production"."scrapreason" where "scrapreasonid" = ${fromWrite(scrapreasonid)(using new Write.Single(ScrapreasonId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(scrapreasonids: Array[ScrapreasonId]): ConnectionIO[Int] = sql"""delete from "production"."scrapreason" where "scrapreasonid" = ANY(${fromWrite(scrapreasonids)(using new Write.Single(ScrapreasonId.arrayPut))})""".update.run
+  override def deleteByIds(scrapreasonids: Array[ScrapreasonId]): ConnectionIO[Int] = sql"""delete from "production"."scrapreason" where "scrapreasonid" = ANY(${fromWrite(scrapreasonids)(using new Write.Single(ScrapreasonId.arrayPut))})""".update.run
 
-  def insert(unsaved: ScrapreasonRow): ConnectionIO[ScrapreasonRow] = {
+  override def insert(unsaved: ScrapreasonRow): ConnectionIO[ScrapreasonRow] = {
     sql"""insert into "production"."scrapreason"("scrapreasonid", "name", "modifieddate")
     values (${fromWrite(unsaved.scrapreasonid)(using new Write.Single(ScrapreasonId.put))}::int4, ${fromWrite(unsaved.name)(using new Write.Single(Name.put))}::varchar, ${fromWrite(unsaved.modifieddate)(using new Write.Single(TypoLocalDateTime.put))}::timestamp)
     returning "scrapreasonid", "name", "modifieddate"::text
     """.query(using ScrapreasonRow.read).unique
   }
 
-  def insert(unsaved: ScrapreasonRowUnsaved): ConnectionIO[ScrapreasonRow] = {
+  override def insert(unsaved: ScrapreasonRowUnsaved): ConnectionIO[ScrapreasonRow] = {
     val fs = List(
       Some((Fragment.const0(s""""name""""), fr"${fromWrite(unsaved.name)(using new Write.Single(Name.put))}::varchar")),
       unsaved.scrapreasonid match {
@@ -63,35 +61,35 @@ class ScrapreasonRepoImpl extends ScrapreasonRepo {
     q.query(using ScrapreasonRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, ScrapreasonRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "production"."scrapreason"("scrapreasonid", "name", "modifieddate") FROM STDIN""").copyIn(unsaved, batchSize)(using ScrapreasonRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, ScrapreasonRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "production"."scrapreason"("name", "scrapreasonid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(using ScrapreasonRowUnsaved.pgText)
 
-  def select: SelectBuilder[ScrapreasonFields, ScrapreasonRow] = SelectBuilder.of(""""production"."scrapreason"""", ScrapreasonFields.structure, ScrapreasonRow.read)
+  override def select: SelectBuilder[ScrapreasonFields, ScrapreasonRow] = SelectBuilder.of(""""production"."scrapreason"""", ScrapreasonFields.structure, ScrapreasonRow.read)
 
-  def selectAll: Stream[ConnectionIO, ScrapreasonRow] = sql"""select "scrapreasonid", "name", "modifieddate"::text from "production"."scrapreason"""".query(using ScrapreasonRow.read).stream
+  override def selectAll: Stream[ConnectionIO, ScrapreasonRow] = sql"""select "scrapreasonid", "name", "modifieddate"::text from "production"."scrapreason"""".query(using ScrapreasonRow.read).stream
 
-  def selectById(scrapreasonid: ScrapreasonId): ConnectionIO[Option[ScrapreasonRow]] = sql"""select "scrapreasonid", "name", "modifieddate"::text from "production"."scrapreason" where "scrapreasonid" = ${fromWrite(scrapreasonid)(using new Write.Single(ScrapreasonId.put))}""".query(using ScrapreasonRow.read).option
+  override def selectById(scrapreasonid: ScrapreasonId): ConnectionIO[Option[ScrapreasonRow]] = sql"""select "scrapreasonid", "name", "modifieddate"::text from "production"."scrapreason" where "scrapreasonid" = ${fromWrite(scrapreasonid)(using new Write.Single(ScrapreasonId.put))}""".query(using ScrapreasonRow.read).option
 
-  def selectByIds(scrapreasonids: Array[ScrapreasonId]): Stream[ConnectionIO, ScrapreasonRow] = sql"""select "scrapreasonid", "name", "modifieddate"::text from "production"."scrapreason" where "scrapreasonid" = ANY(${fromWrite(scrapreasonids)(using new Write.Single(ScrapreasonId.arrayPut))})""".query(using ScrapreasonRow.read).stream
+  override def selectByIds(scrapreasonids: Array[ScrapreasonId]): Stream[ConnectionIO, ScrapreasonRow] = sql"""select "scrapreasonid", "name", "modifieddate"::text from "production"."scrapreason" where "scrapreasonid" = ANY(${fromWrite(scrapreasonids)(using new Write.Single(ScrapreasonId.arrayPut))})""".query(using ScrapreasonRow.read).stream
 
-  def selectByIdsTracked(scrapreasonids: Array[ScrapreasonId]): ConnectionIO[Map[ScrapreasonId, ScrapreasonRow]] = {
+  override def selectByIdsTracked(scrapreasonids: Array[ScrapreasonId]): ConnectionIO[Map[ScrapreasonId, ScrapreasonRow]] = {
     selectByIds(scrapreasonids).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.scrapreasonid, x)).toMap
       scrapreasonids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[ScrapreasonFields, ScrapreasonRow] = UpdateBuilder.of(""""production"."scrapreason"""", ScrapreasonFields.structure, ScrapreasonRow.read)
+  override def update: UpdateBuilder[ScrapreasonFields, ScrapreasonRow] = UpdateBuilder.of(""""production"."scrapreason"""", ScrapreasonFields.structure, ScrapreasonRow.read)
 
-  def update(row: ScrapreasonRow): ConnectionIO[Option[ScrapreasonRow]] = {
+  override def update(row: ScrapreasonRow): ConnectionIO[Option[ScrapreasonRow]] = {
     val scrapreasonid = row.scrapreasonid
     sql"""update "production"."scrapreason"
     set "name" = ${fromWrite(row.name)(using new Write.Single(Name.put))}::varchar,
@@ -100,7 +98,7 @@ class ScrapreasonRepoImpl extends ScrapreasonRepo {
     returning "scrapreasonid", "name", "modifieddate"::text""".query(using ScrapreasonRow.read).option
   }
 
-  def upsert(unsaved: ScrapreasonRow): ConnectionIO[ScrapreasonRow] = {
+  override def upsert(unsaved: ScrapreasonRow): ConnectionIO[ScrapreasonRow] = {
     sql"""insert into "production"."scrapreason"("scrapreasonid", "name", "modifieddate")
     values (
       ${fromWrite(unsaved.scrapreasonid)(using new Write.Single(ScrapreasonId.put))}::int4,
@@ -115,7 +113,7 @@ class ScrapreasonRepoImpl extends ScrapreasonRepo {
     """.query(using ScrapreasonRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[ScrapreasonRow]): Stream[ConnectionIO, ScrapreasonRow] = {
+  override def upsertBatch(unsaved: List[ScrapreasonRow]): Stream[ConnectionIO, ScrapreasonRow] = {
     Update[ScrapreasonRow](
       s"""insert into "production"."scrapreason"("scrapreasonid", "name", "modifieddate")
       values (?::int4,?::varchar,?::timestamp)
@@ -129,7 +127,7 @@ class ScrapreasonRepoImpl extends ScrapreasonRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, ScrapreasonRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

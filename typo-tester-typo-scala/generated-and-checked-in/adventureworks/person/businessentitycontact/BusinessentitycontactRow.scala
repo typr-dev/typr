@@ -13,7 +13,6 @@ import adventureworks.person.contacttype.ContacttypeId
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple5
 
 /** Table: person.businessentitycontact
  * Cross-reference table mapping stores, vendors, and employees to people
@@ -56,15 +55,7 @@ case class BusinessentitycontactRow(
 }
 
 object BusinessentitycontactRow {
-  val `_rowParser`: RowParser[BusinessentitycontactRow] = {
-    RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, ContacttypeId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BusinessentitycontactRow.apply, row => new Tuple5(
-      row.businessentityid,
-      row.personid,
-      row.contacttypeid,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[BusinessentitycontactRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, ContacttypeId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BusinessentitycontactRow.apply, row => Array(row.businessentityid, row.personid, row.contacttypeid, row.rowguid, row.modifieddate))
 
   def apply(
     compositeId: BusinessentitycontactId,

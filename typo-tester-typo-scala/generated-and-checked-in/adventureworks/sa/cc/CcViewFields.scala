@@ -36,7 +36,7 @@ object CcViewFields {
 
     override lazy val fields: CcViewFields = {
       new CcViewFields {
-        def id: Field[/* user-picked */ CustomCreditcardId, CcViewRow] = {
+        override def id: Field[/* user-picked */ CustomCreditcardId, CcViewRow] = {
           new Field[/* user-picked */ CustomCreditcardId, CcViewRow](
             _path,
             "id",
@@ -47,7 +47,7 @@ object CcViewFields {
             /* user-picked */ CustomCreditcardId.pgType
           )
         }
-        def creditcardid: Field[/* user-picked */ CustomCreditcardId, CcViewRow] = {
+        override def creditcardid: Field[/* user-picked */ CustomCreditcardId, CcViewRow] = {
           new Field[/* user-picked */ CustomCreditcardId, CcViewRow](
             _path,
             "creditcardid",
@@ -58,7 +58,7 @@ object CcViewFields {
             /* user-picked */ CustomCreditcardId.pgType
           )
         }
-        def cardtype: Field[/* max 50 chars */ String, CcViewRow] = {
+        override def cardtype: Field[/* max 50 chars */ String, CcViewRow] = {
           new Field[/* max 50 chars */ String, CcViewRow](
             _path,
             "cardtype",
@@ -69,7 +69,7 @@ object CcViewFields {
             PgTypes.text
           )
         }
-        def cardnumber: Field[/* max 25 chars */ String, CcViewRow] = {
+        override def cardnumber: Field[/* max 25 chars */ String, CcViewRow] = {
           new Field[/* max 25 chars */ String, CcViewRow](
             _path,
             "cardnumber",
@@ -80,7 +80,7 @@ object CcViewFields {
             PgTypes.text
           )
         }
-        def expmonth: Field[TypoShort, CcViewRow] = {
+        override def expmonth: Field[TypoShort, CcViewRow] = {
           new Field[TypoShort, CcViewRow](
             _path,
             "expmonth",
@@ -91,7 +91,7 @@ object CcViewFields {
             TypoShort.pgType
           )
         }
-        def expyear: Field[TypoShort, CcViewRow] = {
+        override def expyear: Field[TypoShort, CcViewRow] = {
           new Field[TypoShort, CcViewRow](
             _path,
             "expyear",
@@ -102,7 +102,7 @@ object CcViewFields {
             TypoShort.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, CcViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, CcViewRow] = {
           new Field[TypoLocalDateTime, CcViewRow](
             _path,
             "modifieddate",
@@ -118,7 +118,7 @@ object CcViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, CcViewRow]] = java.util.List.of(this.fields.id, this.fields.creditcardid, this.fields.cardtype, this.fields.cardnumber, this.fields.expmonth, this.fields.expyear, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[CcViewFields, CcViewRow] = new Impl(java.util.List.of())

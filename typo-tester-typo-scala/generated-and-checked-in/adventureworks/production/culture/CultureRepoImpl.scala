@@ -20,11 +20,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class CultureRepoImpl extends CultureRepo {
-  def delete: DeleteBuilder[CultureFields, CultureRow] = DeleteBuilder.of("production.culture", CultureFields.structure)
+  override def delete: DeleteBuilder[CultureFields, CultureRow] = DeleteBuilder.of("production.culture", CultureFields.structure)
 
-  def deleteById(cultureid: CultureId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."culture" where "cultureid" = ${CultureId.pgType.encode(cultureid)}""".update().runUnchecked(c) > 0
+  override def deleteById(cultureid: CultureId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."culture" where "cultureid" = ${CultureId.pgType.encode(cultureid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(cultureids: Array[CultureId])(using c: Connection): Integer = {
+  override def deleteByIds(cultureids: Array[CultureId])(using c: Connection): Integer = {
     interpolate"""delete
     from "production"."culture"
     where "cultureid" = ANY(${CultureId.pgTypeArray.encode(cultureids)})"""
@@ -32,7 +32,7 @@ class CultureRepoImpl extends CultureRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: CultureRow)(using c: Connection): CultureRow = {
+  override def insert(unsaved: CultureRow)(using c: Connection): CultureRow = {
   interpolate"""insert into "production"."culture"("cultureid", "name", "modifieddate")
     values (${CultureId.pgType.encode(unsaved.cultureid)}::bpchar, ${Name.pgType.encode(unsaved.name)}::varchar, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "cultureid", "name", "modifieddate"::text
@@ -40,19 +40,16 @@ class CultureRepoImpl extends CultureRepo {
     .updateReturning(CultureRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: CultureRowUnsaved)(using c: Connection): CultureRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: CultureRowUnsaved)(using c: Connection): CultureRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""cultureid"""")): @scala.annotation.nowarn
     values.add(interpolate"${CultureId.pgType.encode(unsaved.cultureid)}::bpchar"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
     values.add(interpolate"${Name.pgType.encode(unsaved.name)}::varchar"): @scala.annotation.nowarn
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "production"."culture"(${Fragment.comma(columns)})
@@ -60,57 +57,57 @@ class CultureRepoImpl extends CultureRepo {
       returning "cultureid", "name", "modifieddate"::text
       """
     }
-    q.updateReturning(CultureRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(CultureRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[CultureRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."culture"("cultureid", "name", "modifieddate") FROM STDIN""", batchSize, unsaved, c, CultureRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[CultureRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."culture"("cultureid", "name", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, CultureRowUnsaved.pgText)
 
-  def select: SelectBuilder[CultureFields, CultureRow] = SelectBuilder.of("production.culture", CultureFields.structure, CultureRow.`_rowParser`)
+  override def select: SelectBuilder[CultureFields, CultureRow] = SelectBuilder.of("production.culture", CultureFields.structure, CultureRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[CultureRow] = {
+  override def selectAll(using c: Connection): java.util.List[CultureRow] = {
     interpolate"""select "cultureid", "name", "modifieddate"::text
     from "production"."culture"
-    """.as(CultureRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(CultureRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(cultureid: CultureId)(using c: Connection): Optional[CultureRow] = {
+  override def selectById(cultureid: CultureId)(using c: Connection): Optional[CultureRow] = {
     interpolate"""select "cultureid", "name", "modifieddate"::text
     from "production"."culture"
-    where "cultureid" = ${CultureId.pgType.encode(cultureid)}""".as(CultureRow.`_rowParser`.first()).runUnchecked(c)
+    where "cultureid" = ${CultureId.pgType.encode(cultureid)}""".query(CultureRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(cultureids: Array[CultureId])(using c: Connection): java.util.List[CultureRow] = {
+  override def selectByIds(cultureids: Array[CultureId])(using c: Connection): java.util.List[CultureRow] = {
     interpolate"""select "cultureid", "name", "modifieddate"::text
     from "production"."culture"
-    where "cultureid" = ANY(${CultureId.pgTypeArray.encode(cultureids)})""".as(CultureRow.`_rowParser`.all()).runUnchecked(c)
+    where "cultureid" = ANY(${CultureId.pgTypeArray.encode(cultureids)})""".query(CultureRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(cultureids: Array[CultureId])(using c: Connection): java.util.Map[CultureId, CultureRow] = {
-    val ret: java.util.Map[CultureId, CultureRow] = new HashMap()
+  override def selectByIdsTracked(cultureids: Array[CultureId])(using c: Connection): java.util.Map[CultureId, CultureRow] = {
+    val ret: HashMap[CultureId, CultureRow] = new HashMap[CultureId, CultureRow]()
     selectByIds(cultureids)(using c).forEach(row => ret.put(row.cultureid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[CultureFields, CultureRow] = UpdateBuilder.of("production.culture", CultureFields.structure, CultureRow.`_rowParser`.all())
+  override def update: UpdateBuilder[CultureFields, CultureRow] = UpdateBuilder.of("production.culture", CultureFields.structure, CultureRow.`_rowParser`.all())
 
-  def update(row: CultureRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: CultureRow)(using c: Connection): java.lang.Boolean = {
     val cultureid: CultureId = row.cultureid
-    interpolate"""update "production"."culture"
+    return interpolate"""update "production"."culture"
     set "name" = ${Name.pgType.encode(row.name)}::varchar,
     "modifieddate" = ${TypoLocalDateTime.pgType.encode(row.modifieddate)}::timestamp
     where "cultureid" = ${CultureId.pgType.encode(cultureid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: CultureRow)(using c: Connection): CultureRow = {
+  override def upsert(unsaved: CultureRow)(using c: Connection): CultureRow = {
   interpolate"""insert into "production"."culture"("cultureid", "name", "modifieddate")
     values (${CultureId.pgType.encode(unsaved.cultureid)}::bpchar, ${Name.pgType.encode(unsaved.name)}::varchar, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("cultureid")
@@ -123,7 +120,7 @@ class CultureRepoImpl extends CultureRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[CultureRow])(using c: Connection): java.util.List[CultureRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[CultureRow])(using c: Connection): java.util.List[CultureRow] = {
     interpolate"""insert into "production"."culture"("cultureid", "name", "modifieddate")
     values (?::bpchar, ?::varchar, ?::timestamp)
     on conflict ("cultureid")
@@ -137,13 +134,13 @@ class CultureRepoImpl extends CultureRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[CultureRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table culture_TEMP (like "production"."culture") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy culture_TEMP("cultureid", "name", "modifieddate") from stdin""", batchSize, unsaved, c, CultureRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "production"."culture"("cultureid", "name", "modifieddate")
+    return interpolate"""insert into "production"."culture"("cultureid", "name", "modifieddate")
     select * from culture_TEMP
     on conflict ("cultureid")
     do update set

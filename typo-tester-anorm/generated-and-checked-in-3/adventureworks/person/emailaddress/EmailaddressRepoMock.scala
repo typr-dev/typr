@@ -21,13 +21,13 @@ case class EmailaddressRepoMock(
   toRow: EmailaddressRowUnsaved => EmailaddressRow,
   map: scala.collection.mutable.Map[EmailaddressId, EmailaddressRow] = scala.collection.mutable.Map.empty[EmailaddressId, EmailaddressRow]
 ) extends EmailaddressRepo {
-  def delete: DeleteBuilder[EmailaddressFields, EmailaddressRow] = DeleteBuilderMock(DeleteParams.empty, EmailaddressFields.structure, map)
+  override def delete: DeleteBuilder[EmailaddressFields, EmailaddressRow] = DeleteBuilderMock(DeleteParams.empty, EmailaddressFields.structure, map)
 
-  def deleteById(compositeId: EmailaddressId)(using c: Connection): Boolean = map.remove(compositeId).isDefined
+  override def deleteById(compositeId: EmailaddressId)(using c: Connection): Boolean = map.remove(compositeId).isDefined
 
-  def deleteByIds(compositeIds: Array[EmailaddressId])(using c: Connection): Int = compositeIds.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(compositeIds: Array[EmailaddressId])(using c: Connection): Int = compositeIds.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: EmailaddressRow)(using c: Connection): EmailaddressRow = {
+  override def insert(unsaved: EmailaddressRow)(using c: Connection): EmailaddressRow = {
     val _ = if (map.contains(unsaved.compositeId))
       sys.error(s"id ${unsaved.compositeId} already exists")
     else
@@ -36,9 +36,9 @@ case class EmailaddressRepoMock(
     unsaved
   }
 
-  def insert(unsaved: EmailaddressRowUnsaved)(using c: Connection): EmailaddressRow = insert(toRow(unsaved))
+  override def insert(unsaved: EmailaddressRowUnsaved)(using c: Connection): EmailaddressRow = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[EmailaddressRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -49,7 +49,7 @@ case class EmailaddressRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[EmailaddressRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -60,34 +60,34 @@ case class EmailaddressRepoMock(
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[EmailaddressFields, EmailaddressRow] = SelectBuilderMock(EmailaddressFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[EmailaddressFields, EmailaddressRow] = SelectBuilderMock(EmailaddressFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(using c: Connection): List[EmailaddressRow] = map.values.toList
+  override def selectAll(using c: Connection): List[EmailaddressRow] = map.values.toList
 
-  def selectById(compositeId: EmailaddressId)(using c: Connection): Option[EmailaddressRow] = map.get(compositeId)
+  override def selectById(compositeId: EmailaddressId)(using c: Connection): Option[EmailaddressRow] = map.get(compositeId)
 
-  def selectByIds(compositeIds: Array[EmailaddressId])(using c: Connection): List[EmailaddressRow] = compositeIds.flatMap(map.get).toList
+  override def selectByIds(compositeIds: Array[EmailaddressId])(using c: Connection): List[EmailaddressRow] = compositeIds.flatMap(map.get).toList
 
-  def selectByIdsTracked(compositeIds: Array[EmailaddressId])(using c: Connection): Map[EmailaddressId, EmailaddressRow] = {
+  override def selectByIdsTracked(compositeIds: Array[EmailaddressId])(using c: Connection): Map[EmailaddressId, EmailaddressRow] = {
     val byId = selectByIds(compositeIds).view.map(x => (x.compositeId, x)).toMap
     compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[EmailaddressFields, EmailaddressRow] = UpdateBuilderMock(UpdateParams.empty, EmailaddressFields.structure, map)
+  override def update: UpdateBuilder[EmailaddressFields, EmailaddressRow] = UpdateBuilderMock(UpdateParams.empty, EmailaddressFields.structure, map)
 
-  def update(row: EmailaddressRow)(using c: Connection): Option[EmailaddressRow] = {
+  override def update(row: EmailaddressRow)(using c: Connection): Option[EmailaddressRow] = {
     map.get(row.compositeId).map { _ =>
       map.put(row.compositeId, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: EmailaddressRow)(using c: Connection): EmailaddressRow = {
+  override def upsert(unsaved: EmailaddressRow)(using c: Connection): EmailaddressRow = {
     map.put(unsaved.compositeId, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[EmailaddressRow])(using c: Connection): List[EmailaddressRow] = {
+  override def upsertBatch(unsaved: Iterable[EmailaddressRow])(using c: Connection): List[EmailaddressRow] = {
     unsaved.map { row =>
       map += (row.compositeId -> row)
       row
@@ -95,7 +95,7 @@ case class EmailaddressRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[EmailaddressRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

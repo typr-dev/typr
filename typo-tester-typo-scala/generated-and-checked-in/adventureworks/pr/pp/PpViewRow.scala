@@ -12,7 +12,6 @@ import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple7
 
 /** View: pr.pp */
 case class PpViewRow(
@@ -33,15 +32,5 @@ case class PpViewRow(
 )
 
 object PpViewRow {
-  val `_rowParser`: RowParser[PpViewRow] = {
-    RowParsers.of(ProductphotoId.pgType, ProductphotoId.pgType, TypoBytea.pgType.opt(), PgTypes.text.opt(), TypoBytea.pgType.opt(), PgTypes.text.opt(), TypoLocalDateTime.pgType, PpViewRow.apply, row => new Tuple7(
-      row.id,
-      row.productphotoid,
-      row.thumbnailphoto,
-      row.thumbnailphotofilename,
-      row.largephoto,
-      row.largephotofilename,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[PpViewRow] = RowParsers.of(ProductphotoId.pgType, ProductphotoId.pgType, TypoBytea.pgType.opt(), PgTypes.text.opt(), TypoBytea.pgType.opt(), PgTypes.text.opt(), TypoLocalDateTime.pgType, PpViewRow.apply, row => Array(row.id, row.productphotoid, row.thumbnailphoto, row.thumbnailphotofilename, row.largephoto, row.largephotofilename, row.modifieddate))
 }

@@ -26,18 +26,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class WorkorderRepoImpl extends WorkorderRepo {
-  def delete: DeleteBuilder[WorkorderFields, WorkorderRow] = DeleteBuilder.of(""""production"."workorder"""", WorkorderFields.structure, WorkorderRow.rowParser(1).*)
+  override def delete: DeleteBuilder[WorkorderFields, WorkorderRow] = DeleteBuilder.of(""""production"."workorder"""", WorkorderFields.structure, WorkorderRow.rowParser(1).*)
 
-  def deleteById(workorderid: WorkorderId)(implicit c: Connection): Boolean = SQL"""delete from "production"."workorder" where "workorderid" = ${ParameterValue(workorderid, null, WorkorderId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(workorderid: WorkorderId)(implicit c: Connection): Boolean = SQL"""delete from "production"."workorder" where "workorderid" = ${ParameterValue(workorderid, null, WorkorderId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(workorderids: Array[WorkorderId])(implicit c: Connection): Int = {
+  override def deleteByIds(workorderids: Array[WorkorderId])(implicit c: Connection): Int = {
     SQL"""delete
     from "production"."workorder"
     where "workorderid" = ANY(${ParameterValue(workorderids, null, WorkorderId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: WorkorderRow)(implicit c: Connection): WorkorderRow = {
+  override def insert(unsaved: WorkorderRow)(implicit c: Connection): WorkorderRow = {
   SQL"""insert into "production"."workorder"("workorderid", "productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "modifieddate")
     values (${ParameterValue(unsaved.workorderid, null, WorkorderId.toStatement)}::int4, ${ParameterValue(unsaved.productid, null, ProductId.toStatement)}::int4, ${ParameterValue(unsaved.orderqty, null, ToStatement.intToStatement)}::int4, ${ParameterValue(unsaved.scrappedqty, null, TypoShort.toStatement)}::int2, ${ParameterValue(unsaved.startdate, null, TypoLocalDateTime.toStatement)}::timestamp, ${ParameterValue(unsaved.enddate, null, ToStatement.optionToStatement(TypoLocalDateTime.toStatement, TypoLocalDateTime.parameterMetadata))}::timestamp, ${ParameterValue(unsaved.duedate, null, TypoLocalDateTime.toStatement)}::timestamp, ${ParameterValue(unsaved.scrapreasonid, null, ToStatement.optionToStatement(ScrapreasonId.toStatement, ScrapreasonId.parameterMetadata))}::int2, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text
@@ -45,7 +45,7 @@ class WorkorderRepoImpl extends WorkorderRepo {
     .executeInsert(WorkorderRow.rowParser(1).single)
   }
 
-  def insert(unsaved: WorkorderRowUnsaved)(implicit c: Connection): WorkorderRow = {
+  override def insert(unsaved: WorkorderRowUnsaved)(implicit c: Connection): WorkorderRow = {
     val namedParameters = List(
       Some((NamedParameter("productid", ParameterValue(unsaved.productid, null, ProductId.toStatement)), "::int4")),
       Some((NamedParameter("orderqty", ParameterValue(unsaved.orderqty, null, ToStatement.intToStatement)), "::int4")),
@@ -79,47 +79,47 @@ class WorkorderRepoImpl extends WorkorderRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[WorkorderRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "production"."workorder"("workorderid", "productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "modifieddate") FROM STDIN""", batchSize, unsaved)(WorkorderRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[WorkorderRowUnsaved],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "production"."workorder"("productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "workorderid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(WorkorderRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[WorkorderFields, WorkorderRow] = SelectBuilder.of(""""production"."workorder"""", WorkorderFields.structure, WorkorderRow.rowParser)
+  override def select: SelectBuilder[WorkorderFields, WorkorderRow] = SelectBuilder.of(""""production"."workorder"""", WorkorderFields.structure, WorkorderRow.rowParser)
 
-  def selectAll(implicit c: Connection): List[WorkorderRow] = {
+  override def selectAll(implicit c: Connection): List[WorkorderRow] = {
     SQL"""select "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text
     from "production"."workorder"
     """.as(WorkorderRow.rowParser(1).*)
   }
 
-  def selectById(workorderid: WorkorderId)(implicit c: Connection): Option[WorkorderRow] = {
+  override def selectById(workorderid: WorkorderId)(implicit c: Connection): Option[WorkorderRow] = {
     SQL"""select "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text
     from "production"."workorder"
     where "workorderid" = ${ParameterValue(workorderid, null, WorkorderId.toStatement)}
     """.as(WorkorderRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(workorderids: Array[WorkorderId])(implicit c: Connection): List[WorkorderRow] = {
+  override def selectByIds(workorderids: Array[WorkorderId])(implicit c: Connection): List[WorkorderRow] = {
     SQL"""select "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text
     from "production"."workorder"
     where "workorderid" = ANY(${ParameterValue(workorderids, null, WorkorderId.arrayToStatement)})
     """.as(WorkorderRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(workorderids: Array[WorkorderId])(implicit c: Connection): Map[WorkorderId, WorkorderRow] = {
+  override def selectByIdsTracked(workorderids: Array[WorkorderId])(implicit c: Connection): Map[WorkorderId, WorkorderRow] = {
     val byId = selectByIds(workorderids).view.map(x => (x.workorderid, x)).toMap
     workorderids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[WorkorderFields, WorkorderRow] = UpdateBuilder.of(""""production"."workorder"""", WorkorderFields.structure, WorkorderRow.rowParser(1).*)
+  override def update: UpdateBuilder[WorkorderFields, WorkorderRow] = UpdateBuilder.of(""""production"."workorder"""", WorkorderFields.structure, WorkorderRow.rowParser(1).*)
 
-  def update(row: WorkorderRow)(implicit c: Connection): Option[WorkorderRow] = {
+  override def update(row: WorkorderRow)(implicit c: Connection): Option[WorkorderRow] = {
     val workorderid = row.workorderid
     SQL"""update "production"."workorder"
     set "productid" = ${ParameterValue(row.productid, null, ProductId.toStatement)}::int4,
@@ -135,7 +135,7 @@ class WorkorderRepoImpl extends WorkorderRepo {
     """.executeInsert(WorkorderRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: WorkorderRow)(implicit c: Connection): WorkorderRow = {
+  override def upsert(unsaved: WorkorderRow)(implicit c: Connection): WorkorderRow = {
   SQL"""insert into "production"."workorder"("workorderid", "productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "modifieddate")
     values (
       ${ParameterValue(unsaved.workorderid, null, WorkorderId.toStatement)}::int4,
@@ -163,7 +163,7 @@ class WorkorderRepoImpl extends WorkorderRepo {
     .executeInsert(WorkorderRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[WorkorderRow])(implicit c: Connection): List[WorkorderRow] = {
+  override def upsertBatch(unsaved: Iterable[WorkorderRow])(implicit c: Connection): List[WorkorderRow] = {
     def toNamedParameter(row: WorkorderRow): List[NamedParameter] = List(
       NamedParameter("workorderid", ParameterValue(row.workorderid, null, WorkorderId.toStatement)),
       NamedParameter("productid", ParameterValue(row.productid, null, ProductId.toStatement)),
@@ -175,6 +175,7 @@ class WorkorderRepoImpl extends WorkorderRepo {
       NamedParameter("scrapreasonid", ParameterValue(row.scrapreasonid, null, ToStatement.optionToStatement(ScrapreasonId.toStatement, ScrapreasonId.parameterMetadata))),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -202,7 +203,7 @@ class WorkorderRepoImpl extends WorkorderRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[WorkorderRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

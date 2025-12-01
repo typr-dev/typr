@@ -24,13 +24,5 @@ case class UnitmeasureRowUnsaved(
 }
 
 object UnitmeasureRowUnsaved {
-  given pgText: PgText[UnitmeasureRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      UnitmeasureId.pgType.pgText.unsafeEncode(row.unitmeasurecode, sb);
-      sb.append(PgText.DELIMETER);
-      Name.pgType.pgText.unsafeEncode(row.name, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[UnitmeasureRowUnsaved] = PgText.instance((row, sb) => { UnitmeasureId.pgType.pgText.unsafeEncode(row.unitmeasurecode, sb); sb.append(PgText.DELIMETER); Name.pgType.pgText.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

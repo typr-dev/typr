@@ -34,7 +34,7 @@ object LViewFields {
 
     override lazy val fields: LViewFields = {
       new LViewFields {
-        def id: Field[LocationId, LViewRow] = {
+        override def id: Field[LocationId, LViewRow] = {
           new Field[LocationId, LViewRow](
             _path,
             "id",
@@ -45,7 +45,7 @@ object LViewFields {
             LocationId.pgType
           )
         }
-        def locationid: Field[LocationId, LViewRow] = {
+        override def locationid: Field[LocationId, LViewRow] = {
           new Field[LocationId, LViewRow](
             _path,
             "locationid",
@@ -56,7 +56,7 @@ object LViewFields {
             LocationId.pgType
           )
         }
-        def name: Field[Name, LViewRow] = {
+        override def name: Field[Name, LViewRow] = {
           new Field[Name, LViewRow](
             _path,
             "name",
@@ -67,7 +67,7 @@ object LViewFields {
             Name.pgType
           )
         }
-        def costrate: Field[java.math.BigDecimal, LViewRow] = {
+        override def costrate: Field[java.math.BigDecimal, LViewRow] = {
           new Field[java.math.BigDecimal, LViewRow](
             _path,
             "costrate",
@@ -78,7 +78,7 @@ object LViewFields {
             PgTypes.numeric
           )
         }
-        def availability: Field[java.math.BigDecimal, LViewRow] = {
+        override def availability: Field[java.math.BigDecimal, LViewRow] = {
           new Field[java.math.BigDecimal, LViewRow](
             _path,
             "availability",
@@ -89,7 +89,7 @@ object LViewFields {
             PgTypes.numeric
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, LViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, LViewRow] = {
           new Field[TypoLocalDateTime, LViewRow](
             _path,
             "modifieddate",
@@ -105,7 +105,7 @@ object LViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, LViewRow]] = java.util.List.of(this.fields.id, this.fields.locationid, this.fields.name, this.fields.costrate, this.fields.availability, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[LViewFields, LViewRow] = new Impl(java.util.List.of())

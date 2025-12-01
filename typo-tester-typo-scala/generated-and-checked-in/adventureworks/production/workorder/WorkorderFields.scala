@@ -52,7 +52,7 @@ object WorkorderFields {
 
     override lazy val fields: WorkorderFields = {
       new WorkorderFields {
-        def workorderid: IdField[WorkorderId, WorkorderRow] = {
+        override def workorderid: IdField[WorkorderId, WorkorderRow] = {
           new IdField[WorkorderId, WorkorderRow](
             _path,
             "workorderid",
@@ -63,7 +63,7 @@ object WorkorderFields {
             WorkorderId.pgType
           )
         }
-        def productid: Field[ProductId, WorkorderRow] = {
+        override def productid: Field[ProductId, WorkorderRow] = {
           new Field[ProductId, WorkorderRow](
             _path,
             "productid",
@@ -74,7 +74,7 @@ object WorkorderFields {
             ProductId.pgType
           )
         }
-        def orderqty: Field[Integer, WorkorderRow] = {
+        override def orderqty: Field[Integer, WorkorderRow] = {
           new Field[Integer, WorkorderRow](
             _path,
             "orderqty",
@@ -85,7 +85,7 @@ object WorkorderFields {
             PgTypes.int4
           )
         }
-        def scrappedqty: Field[TypoShort, WorkorderRow] = {
+        override def scrappedqty: Field[TypoShort, WorkorderRow] = {
           new Field[TypoShort, WorkorderRow](
             _path,
             "scrappedqty",
@@ -96,7 +96,7 @@ object WorkorderFields {
             TypoShort.pgType
           )
         }
-        def startdate: Field[TypoLocalDateTime, WorkorderRow] = {
+        override def startdate: Field[TypoLocalDateTime, WorkorderRow] = {
           new Field[TypoLocalDateTime, WorkorderRow](
             _path,
             "startdate",
@@ -107,7 +107,7 @@ object WorkorderFields {
             TypoLocalDateTime.pgType
           )
         }
-        def enddate: OptField[TypoLocalDateTime, WorkorderRow] = {
+        override def enddate: OptField[TypoLocalDateTime, WorkorderRow] = {
           new OptField[TypoLocalDateTime, WorkorderRow](
             _path,
             "enddate",
@@ -118,7 +118,7 @@ object WorkorderFields {
             TypoLocalDateTime.pgType
           )
         }
-        def duedate: Field[TypoLocalDateTime, WorkorderRow] = {
+        override def duedate: Field[TypoLocalDateTime, WorkorderRow] = {
           new Field[TypoLocalDateTime, WorkorderRow](
             _path,
             "duedate",
@@ -129,7 +129,7 @@ object WorkorderFields {
             TypoLocalDateTime.pgType
           )
         }
-        def scrapreasonid: OptField[ScrapreasonId, WorkorderRow] = {
+        override def scrapreasonid: OptField[ScrapreasonId, WorkorderRow] = {
           new OptField[ScrapreasonId, WorkorderRow](
             _path,
             "scrapreasonid",
@@ -140,7 +140,7 @@ object WorkorderFields {
             ScrapreasonId.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, WorkorderRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, WorkorderRow] = {
           new Field[TypoLocalDateTime, WorkorderRow](
             _path,
             "modifieddate",
@@ -156,7 +156,7 @@ object WorkorderFields {
 
     override lazy val columns: java.util.List[FieldLike[?, WorkorderRow]] = java.util.List.of(this.fields.workorderid, this.fields.productid, this.fields.orderqty, this.fields.scrappedqty, this.fields.startdate, this.fields.enddate, this.fields.duedate, this.fields.scrapreasonid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[WorkorderFields, WorkorderRow] = new Impl(java.util.List.of())

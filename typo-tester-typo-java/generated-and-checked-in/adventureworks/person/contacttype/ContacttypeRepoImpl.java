@@ -7,7 +7,6 @@ package adventureworks.person.contacttype;
 
 import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.public_.Name;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,12 +23,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class ContacttypeRepoImpl implements ContacttypeRepo {
+  @Override
   public DeleteBuilder<ContacttypeFields, ContacttypeRow> delete() {
     return DeleteBuilder.of("person.contacttype", ContacttypeFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     ContacttypeId contacttypeid,
     Connection c
@@ -43,6 +43,7 @@ public class ContacttypeRepoImpl implements ContacttypeRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     ContacttypeId[] contacttypeids,
     Connection c
@@ -59,6 +60,7 @@ public class ContacttypeRepoImpl implements ContacttypeRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public ContacttypeRow insert(
     ContacttypeRow unsaved,
     Connection c
@@ -80,54 +82,60 @@ public class ContacttypeRepoImpl implements ContacttypeRepo {
       .updateReturning(ContacttypeRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public ContacttypeRow insert(
     ContacttypeRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"name\""));
-      values.add(interpolate(
-        Name.pgType.encode(unsaved.name()),
-        typo.runtime.Fragment.lit("::varchar")
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"name\""));
+    values.add(interpolate(
+      Name.pgType.encode(unsaved.name()),
+      typo.runtime.Fragment.lit("::varchar")
+    ));
+    unsaved.contacttypeid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"contacttypeid\""));
+        values.add(interpolate(
+        ContacttypeId.pgType.encode(value),
+        typo.runtime.Fragment.lit("::int4")
       ));
-      unsaved.contacttypeid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"contacttypeid\""));
-          values.add(interpolate(
-            ContacttypeId.pgType.encode(value),
-            typo.runtime.Fragment.lit("::int4")
-          ));
-        }
-      );;
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "person"."contacttype"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "contacttypeid", "name", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
+      ));
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "person"."contacttype"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "contacttypeid", "name", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(ContacttypeRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<ContacttypeRow> unsaved,
     Integer batchSize,
@@ -139,6 +147,7 @@ public class ContacttypeRepoImpl implements ContacttypeRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<ContacttypeRowUnsaved> unsaved,
     Integer batchSize,
@@ -149,17 +158,20 @@ public class ContacttypeRepoImpl implements ContacttypeRepo {
     """), batchSize, unsaved, c, ContacttypeRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<ContacttypeFields, ContacttypeRow> select() {
     return SelectBuilder.of("person.contacttype", ContacttypeFields.structure(), ContacttypeRow._rowParser);
   };
 
+  @Override
   public List<ContacttypeRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "contacttypeid", "name", "modifieddate"::text
        from "person"."contacttype"
-    """)).as(ContacttypeRow._rowParser.all()).runUnchecked(c);
+    """)).query(ContacttypeRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<ContacttypeRow> selectById(
     ContacttypeId contacttypeid,
     Connection c
@@ -171,9 +183,10 @@ public class ContacttypeRepoImpl implements ContacttypeRepo {
          where "contacttypeid" = """),
       ContacttypeId.pgType.encode(contacttypeid),
       typo.runtime.Fragment.lit("")
-    ).as(ContacttypeRow._rowParser.first()).runUnchecked(c);
+    ).query(ContacttypeRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<ContacttypeRow> selectByIds(
     ContacttypeId[] contacttypeids,
     Connection c
@@ -185,44 +198,48 @@ public class ContacttypeRepoImpl implements ContacttypeRepo {
          where "contacttypeid" = ANY("""),
       ContacttypeId.pgTypeArray.encode(contacttypeids),
       typo.runtime.Fragment.lit(")")
-    ).as(ContacttypeRow._rowParser.all()).runUnchecked(c);
+    ).query(ContacttypeRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<ContacttypeId, ContacttypeRow> selectByIdsTracked(
     ContacttypeId[] contacttypeids,
     Connection c
   ) {
-    Map<ContacttypeId, ContacttypeRow> ret = new HashMap<>();;
-      selectByIds(contacttypeids, c).forEach(row -> ret.put(row.contacttypeid(), row));
+    HashMap<ContacttypeId, ContacttypeRow> ret = new HashMap<ContacttypeId, ContacttypeRow>();
+    selectByIds(contacttypeids, c).forEach(row -> ret.put(row.contacttypeid(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<ContacttypeFields, ContacttypeRow> update() {
     return UpdateBuilder.of("person.contacttype", ContacttypeFields.structure(), ContacttypeRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     ContacttypeRow row,
     Connection c
   ) {
     ContacttypeId contacttypeid = row.contacttypeid();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "person"."contacttype"
-                set "name" = """),
-             Name.pgType.encode(row.name()),
-             typo.runtime.Fragment.lit("""
-                ::varchar,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "contacttypeid" = """),
-             ContacttypeId.pgType.encode(contacttypeid),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "person"."contacttype"
+         set "name" = """),
+      Name.pgType.encode(row.name()),
+      typo.runtime.Fragment.lit("""
+         ::varchar,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "contacttypeid" = """),
+      ContacttypeId.pgType.encode(contacttypeid),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public ContacttypeRow upsert(
     ContacttypeRow unsaved,
     Connection c
@@ -249,6 +266,7 @@ public class ContacttypeRepoImpl implements ContacttypeRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<ContacttypeRow> upsertBatch(
     Iterator<ContacttypeRow> unsaved,
     Connection c
@@ -267,25 +285,26 @@ public class ContacttypeRepoImpl implements ContacttypeRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<ContacttypeRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table contacttype_TEMP (like "person"."contacttype") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy contacttype_TEMP("contacttypeid", "name", "modifieddate") from stdin
-      """), batchSize, unsaved, c, ContacttypeRow.pgText);
+    create temporary table contacttype_TEMP (like "person"."contacttype") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy contacttype_TEMP("contacttypeid", "name", "modifieddate") from stdin
+    """), batchSize, unsaved, c, ContacttypeRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "person"."contacttype"("contacttypeid", "name", "modifieddate")
-              select * from contacttype_TEMP
-              on conflict ("contacttypeid")
-              do update set
-                "name" = EXCLUDED."name",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table contacttype_TEMP;""")).update().runUnchecked(c);
+       insert into "person"."contacttype"("contacttypeid", "name", "modifieddate")
+       select * from contacttype_TEMP
+       on conflict ("contacttypeid")
+       do update set
+         "name" = EXCLUDED."name",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table contacttype_TEMP;""")).update().runUnchecked(c);
   };
 }

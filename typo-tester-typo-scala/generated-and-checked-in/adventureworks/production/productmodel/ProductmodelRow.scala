@@ -14,7 +14,6 @@ import java.util.Optional
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple6
 
 /** Table: production.productmodel
  * Product model classification.
@@ -55,16 +54,7 @@ case class ProductmodelRow(
 }
 
 object ProductmodelRow {
-  val `_rowParser`: RowParser[ProductmodelRow] = {
-    RowParsers.of(ProductmodelId.pgType, Name.pgType, TypoXml.pgType.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, ProductmodelRow.apply, row => new Tuple6(
-      row.productmodelid,
-      row.name,
-      row.catalogdescription,
-      row.instructions,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[ProductmodelRow] = RowParsers.of(ProductmodelId.pgType, Name.pgType, TypoXml.pgType.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, ProductmodelRow.apply, row => Array(row.productmodelid, row.name, row.catalogdescription, row.instructions, row.rowguid, row.modifieddate))
 
   given pgText: PgText[ProductmodelRow] = PgText.from(`_rowParser`)
 }

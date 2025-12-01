@@ -8,7 +8,6 @@ package adventureworks.sales.salespersonquotahistory;
 import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.customtypes.TypoUUID;
 import adventureworks.person.businessentity.BusinessentityId;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,12 +26,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class SalespersonquotahistoryRepoImpl implements SalespersonquotahistoryRepo {
+  @Override
   public DeleteBuilder<SalespersonquotahistoryFields, SalespersonquotahistoryRow> delete() {
     return DeleteBuilder.of("sales.salespersonquotahistory", SalespersonquotahistoryFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     SalespersonquotahistoryId compositeId,
     Connection c
@@ -50,28 +50,30 @@ public class SalespersonquotahistoryRepoImpl implements SalespersonquotahistoryR
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     SalespersonquotahistoryId[] compositeIds,
     Connection c
   ) {
     BusinessentityId[] businessentityid = arrayMap.map(compositeIds, SalespersonquotahistoryId::businessentityid, BusinessentityId.class);;
-      TypoLocalDateTime[] quotadate = arrayMap.map(compositeIds, SalespersonquotahistoryId::quotadate, TypoLocalDateTime.class);;
+    TypoLocalDateTime[] quotadate = arrayMap.map(compositeIds, SalespersonquotahistoryId::quotadate, TypoLocalDateTime.class);;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                delete
-                from "sales"."salespersonquotahistory"
-                where ("businessentityid", "quotadate")
-                in (select unnest("""),
-             BusinessentityId.pgTypeArray.encode(businessentityid),
-             typo.runtime.Fragment.lit("::int4[]), unnest("),
-             TypoLocalDateTime.pgTypeArray.encode(quotadate),
-             typo.runtime.Fragment.lit("""
-             ::timestamp[]))
+      typo.runtime.Fragment.lit("""
+         delete
+         from "sales"."salespersonquotahistory"
+         where ("businessentityid", "quotadate")
+         in (select unnest("""),
+      BusinessentityId.pgTypeArray.encode(businessentityid),
+      typo.runtime.Fragment.lit("::int4[]), unnest("),
+      TypoLocalDateTime.pgTypeArray.encode(quotadate),
+      typo.runtime.Fragment.lit("""
+      ::timestamp[]))
 
-             """)
-           ).update().runUnchecked(c);
+      """)
+    ).update().runUnchecked(c);
   };
 
+  @Override
   public SalespersonquotahistoryRow insert(
     SalespersonquotahistoryRow unsaved,
     Connection c
@@ -97,64 +99,70 @@ public class SalespersonquotahistoryRepoImpl implements SalespersonquotahistoryR
       .updateReturning(SalespersonquotahistoryRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public SalespersonquotahistoryRow insert(
     SalespersonquotahistoryRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"businessentityid\""));
-      values.add(interpolate(
-        BusinessentityId.pgType.encode(unsaved.businessentityid()),
-        typo.runtime.Fragment.lit("::int4")
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"businessentityid\""));
+    values.add(interpolate(
+      BusinessentityId.pgType.encode(unsaved.businessentityid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"quotadate\""));
+    values.add(interpolate(
+      TypoLocalDateTime.pgType.encode(unsaved.quotadate()),
+      typo.runtime.Fragment.lit("::timestamp")
+    ));
+    columns.add(Fragment.lit("\"salesquota\""));
+    values.add(interpolate(
+      PgTypes.numeric.encode(unsaved.salesquota()),
+      typo.runtime.Fragment.lit("::numeric")
+    ));
+    unsaved.rowguid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"rowguid\""));
+        values.add(interpolate(
+        TypoUUID.pgType.encode(value),
+        typo.runtime.Fragment.lit("::uuid")
       ));
-      columns.add(Fragment.lit("\"quotadate\""));
-      values.add(interpolate(
-        TypoLocalDateTime.pgType.encode(unsaved.quotadate()),
+      }
+    );;
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
         typo.runtime.Fragment.lit("::timestamp")
       ));
-      columns.add(Fragment.lit("\"salesquota\""));
-      values.add(interpolate(
-        PgTypes.numeric.encode(unsaved.salesquota()),
-        typo.runtime.Fragment.lit("::numeric")
-      ));
-      unsaved.rowguid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"rowguid\""));
-          values.add(interpolate(
-            TypoUUID.pgType.encode(value),
-            typo.runtime.Fragment.lit("::uuid")
-          ));
-        }
-      );;
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "sales"."salespersonquotahistory"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "sales"."salespersonquotahistory"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(SalespersonquotahistoryRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<SalespersonquotahistoryRow> unsaved,
     Integer batchSize,
@@ -166,6 +174,7 @@ public class SalespersonquotahistoryRepoImpl implements SalespersonquotahistoryR
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<SalespersonquotahistoryRowUnsaved> unsaved,
     Integer batchSize,
@@ -176,17 +185,20 @@ public class SalespersonquotahistoryRepoImpl implements SalespersonquotahistoryR
     """), batchSize, unsaved, c, SalespersonquotahistoryRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<SalespersonquotahistoryFields, SalespersonquotahistoryRow> select() {
     return SelectBuilder.of("sales.salespersonquotahistory", SalespersonquotahistoryFields.structure(), SalespersonquotahistoryRow._rowParser);
   };
 
+  @Override
   public List<SalespersonquotahistoryRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text
        from "sales"."salespersonquotahistory"
-    """)).as(SalespersonquotahistoryRow._rowParser.all()).runUnchecked(c);
+    """)).query(SalespersonquotahistoryRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<SalespersonquotahistoryRow> selectById(
     SalespersonquotahistoryId compositeId,
     Connection c
@@ -202,74 +214,79 @@ public class SalespersonquotahistoryRepoImpl implements SalespersonquotahistoryR
       """),
       TypoLocalDateTime.pgType.encode(compositeId.quotadate()),
       typo.runtime.Fragment.lit("")
-    ).as(SalespersonquotahistoryRow._rowParser.first()).runUnchecked(c);
+    ).query(SalespersonquotahistoryRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<SalespersonquotahistoryRow> selectByIds(
     SalespersonquotahistoryId[] compositeIds,
     Connection c
   ) {
     BusinessentityId[] businessentityid = arrayMap.map(compositeIds, SalespersonquotahistoryId::businessentityid, BusinessentityId.class);;
-      TypoLocalDateTime[] quotadate = arrayMap.map(compositeIds, SalespersonquotahistoryId::quotadate, TypoLocalDateTime.class);;
+    TypoLocalDateTime[] quotadate = arrayMap.map(compositeIds, SalespersonquotahistoryId::quotadate, TypoLocalDateTime.class);;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                select "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text
-                from "sales"."salespersonquotahistory"
-                where ("businessentityid", "quotadate")
-                in (select unnest("""),
-             BusinessentityId.pgTypeArray.encode(businessentityid),
-             typo.runtime.Fragment.lit("::int4[]), unnest("),
-             TypoLocalDateTime.pgTypeArray.encode(quotadate),
-             typo.runtime.Fragment.lit("""
-             ::timestamp[]))
+      typo.runtime.Fragment.lit("""
+         select "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text
+         from "sales"."salespersonquotahistory"
+         where ("businessentityid", "quotadate")
+         in (select unnest("""),
+      BusinessentityId.pgTypeArray.encode(businessentityid),
+      typo.runtime.Fragment.lit("::int4[]), unnest("),
+      TypoLocalDateTime.pgTypeArray.encode(quotadate),
+      typo.runtime.Fragment.lit("""
+      ::timestamp[]))
 
-             """)
-           ).as(SalespersonquotahistoryRow._rowParser.all()).runUnchecked(c);
+      """)
+    ).query(SalespersonquotahistoryRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<SalespersonquotahistoryId, SalespersonquotahistoryRow> selectByIdsTracked(
     SalespersonquotahistoryId[] compositeIds,
     Connection c
   ) {
-    Map<SalespersonquotahistoryId, SalespersonquotahistoryRow> ret = new HashMap<>();;
-      selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
+    HashMap<SalespersonquotahistoryId, SalespersonquotahistoryRow> ret = new HashMap<SalespersonquotahistoryId, SalespersonquotahistoryRow>();
+    selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<SalespersonquotahistoryFields, SalespersonquotahistoryRow> update() {
     return UpdateBuilder.of("sales.salespersonquotahistory", SalespersonquotahistoryFields.structure(), SalespersonquotahistoryRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     SalespersonquotahistoryRow row,
     Connection c
   ) {
     SalespersonquotahistoryId compositeId = row.compositeId();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "sales"."salespersonquotahistory"
-                set "salesquota" = """),
-             PgTypes.numeric.encode(row.salesquota()),
-             typo.runtime.Fragment.lit("""
-                ::numeric,
-                "rowguid" = """),
-             TypoUUID.pgType.encode(row.rowguid()),
-             typo.runtime.Fragment.lit("""
-                ::uuid,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "businessentityid" = """),
-             BusinessentityId.pgType.encode(compositeId.businessentityid()),
-             typo.runtime.Fragment.lit("""
-              AND "quotadate" = 
-             """),
-             TypoLocalDateTime.pgType.encode(compositeId.quotadate()),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "sales"."salespersonquotahistory"
+         set "salesquota" = """),
+      PgTypes.numeric.encode(row.salesquota()),
+      typo.runtime.Fragment.lit("""
+         ::numeric,
+         "rowguid" = """),
+      TypoUUID.pgType.encode(row.rowguid()),
+      typo.runtime.Fragment.lit("""
+         ::uuid,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "businessentityid" = """),
+      BusinessentityId.pgType.encode(compositeId.businessentityid()),
+      typo.runtime.Fragment.lit("""
+       AND "quotadate" = 
+      """),
+      TypoLocalDateTime.pgType.encode(compositeId.quotadate()),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public SalespersonquotahistoryRow upsert(
     SalespersonquotahistoryRow unsaved,
     Connection c
@@ -301,6 +318,7 @@ public class SalespersonquotahistoryRepoImpl implements SalespersonquotahistoryR
       .runUnchecked(c);
   };
 
+  @Override
   public List<SalespersonquotahistoryRow> upsertBatch(
     Iterator<SalespersonquotahistoryRow> unsaved,
     Connection c
@@ -320,26 +338,27 @@ public class SalespersonquotahistoryRepoImpl implements SalespersonquotahistoryR
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<SalespersonquotahistoryRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table salespersonquotahistory_TEMP (like "sales"."salespersonquotahistory") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy salespersonquotahistory_TEMP("businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate") from stdin
-      """), batchSize, unsaved, c, SalespersonquotahistoryRow.pgText);
+    create temporary table salespersonquotahistory_TEMP (like "sales"."salespersonquotahistory") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy salespersonquotahistory_TEMP("businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate") from stdin
+    """), batchSize, unsaved, c, SalespersonquotahistoryRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "sales"."salespersonquotahistory"("businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate")
-              select * from salespersonquotahistory_TEMP
-              on conflict ("businessentityid", "quotadate")
-              do update set
-                "salesquota" = EXCLUDED."salesquota",
-              "rowguid" = EXCLUDED."rowguid",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table salespersonquotahistory_TEMP;""")).update().runUnchecked(c);
+       insert into "sales"."salespersonquotahistory"("businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate")
+       select * from salespersonquotahistory_TEMP
+       on conflict ("businessentityid", "quotadate")
+       do update set
+         "salesquota" = EXCLUDED."salesquota",
+       "rowguid" = EXCLUDED."rowguid",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table salespersonquotahistory_TEMP;""")).update().runUnchecked(c);
   };
 }

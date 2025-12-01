@@ -27,20 +27,20 @@ import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class EmployeeRepoImpl extends EmployeeRepo {
-  def delete: DeleteBuilder[EmployeeFields, EmployeeRow] = DeleteBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, EmployeeRow.read)
+  override def delete: DeleteBuilder[EmployeeFields, EmployeeRow] = DeleteBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, EmployeeRow.read)
 
-  def deleteById(businessentityid: BusinessentityId): ConnectionIO[Boolean] = sql"""delete from "humanresources"."employee" where "businessentityid" = ${fromWrite(businessentityid)(new Write.Single(BusinessentityId.put))}""".update.run.map(_ > 0)
+  override def deleteById(businessentityid: BusinessentityId): ConnectionIO[Boolean] = sql"""delete from "humanresources"."employee" where "businessentityid" = ${fromWrite(businessentityid)(new Write.Single(BusinessentityId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(businessentityids: Array[BusinessentityId]): ConnectionIO[Int] = sql"""delete from "humanresources"."employee" where "businessentityid" = ANY(${fromWrite(businessentityids)(new Write.Single(BusinessentityId.arrayPut))})""".update.run
+  override def deleteByIds(businessentityids: Array[BusinessentityId]): ConnectionIO[Int] = sql"""delete from "humanresources"."employee" where "businessentityid" = ANY(${fromWrite(businessentityids)(new Write.Single(BusinessentityId.arrayPut))})""".update.run
 
-  def insert(unsaved: EmployeeRow): ConnectionIO[EmployeeRow] = {
+  override def insert(unsaved: EmployeeRow): ConnectionIO[EmployeeRow] = {
     sql"""insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
     values (${fromWrite(unsaved.businessentityid)(new Write.Single(BusinessentityId.put))}::int4, ${fromWrite(unsaved.nationalidnumber)(new Write.Single(Meta.StringMeta.put))}, ${fromWrite(unsaved.loginid)(new Write.Single(Meta.StringMeta.put))}, ${fromWrite(unsaved.jobtitle)(new Write.Single(Meta.StringMeta.put))}, ${fromWrite(unsaved.birthdate)(new Write.Single(TypoLocalDate.put))}::date, ${fromWrite(unsaved.maritalstatus)(new Write.Single(Meta.StringMeta.put))}::bpchar, ${fromWrite(unsaved.gender)(new Write.Single(Meta.StringMeta.put))}::bpchar, ${fromWrite(unsaved.hiredate)(new Write.Single(TypoLocalDate.put))}::date, ${fromWrite(unsaved.salariedflag)(new Write.Single(Flag.put))}::bool, ${fromWrite(unsaved.vacationhours)(new Write.Single(TypoShort.put))}::int2, ${fromWrite(unsaved.sickleavehours)(new Write.Single(TypoShort.put))}::int2, ${fromWrite(unsaved.currentflag)(new Write.Single(Flag.put))}::bool, ${fromWrite(unsaved.rowguid)(new Write.Single(TypoUUID.put))}::uuid, ${fromWrite(unsaved.modifieddate)(new Write.Single(TypoLocalDateTime.put))}::timestamp, ${fromWrite(unsaved.organizationnode)(new Write.SingleOpt(Meta.StringMeta.put))})
     returning "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode"
     """.query(EmployeeRow.read).unique
   }
 
-  def insert(unsaved: EmployeeRowUnsaved): ConnectionIO[EmployeeRow] = {
+  override def insert(unsaved: EmployeeRowUnsaved): ConnectionIO[EmployeeRow] = {
     val fs = List(
       Some((Fragment.const0(s""""businessentityid""""), fr"${fromWrite(unsaved.businessentityid)(new Write.Single(BusinessentityId.put))}::int4")),
       Some((Fragment.const0(s""""nationalidnumber""""), fr"${fromWrite(unsaved.nationalidnumber)(new Write.Single(Meta.StringMeta.put))}")),
@@ -93,35 +93,35 @@ class EmployeeRepoImpl extends EmployeeRepo {
     q.query(EmployeeRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, EmployeeRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode") FROM STDIN""").copyIn(unsaved, batchSize)(EmployeeRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, EmployeeRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(EmployeeRowUnsaved.pgText)
 
-  def select: SelectBuilder[EmployeeFields, EmployeeRow] = SelectBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, EmployeeRow.read)
+  override def select: SelectBuilder[EmployeeFields, EmployeeRow] = SelectBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, EmployeeRow.read)
 
-  def selectAll: Stream[ConnectionIO, EmployeeRow] = sql"""select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode" from "humanresources"."employee"""".query(EmployeeRow.read).stream
+  override def selectAll: Stream[ConnectionIO, EmployeeRow] = sql"""select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode" from "humanresources"."employee"""".query(EmployeeRow.read).stream
 
-  def selectById(businessentityid: BusinessentityId): ConnectionIO[Option[EmployeeRow]] = sql"""select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode" from "humanresources"."employee" where "businessentityid" = ${fromWrite(businessentityid)(new Write.Single(BusinessentityId.put))}""".query(EmployeeRow.read).option
+  override def selectById(businessentityid: BusinessentityId): ConnectionIO[Option[EmployeeRow]] = sql"""select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode" from "humanresources"."employee" where "businessentityid" = ${fromWrite(businessentityid)(new Write.Single(BusinessentityId.put))}""".query(EmployeeRow.read).option
 
-  def selectByIds(businessentityids: Array[BusinessentityId]): Stream[ConnectionIO, EmployeeRow] = sql"""select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode" from "humanresources"."employee" where "businessentityid" = ANY(${fromWrite(businessentityids)(new Write.Single(BusinessentityId.arrayPut))})""".query(EmployeeRow.read).stream
+  override def selectByIds(businessentityids: Array[BusinessentityId]): Stream[ConnectionIO, EmployeeRow] = sql"""select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode" from "humanresources"."employee" where "businessentityid" = ANY(${fromWrite(businessentityids)(new Write.Single(BusinessentityId.arrayPut))})""".query(EmployeeRow.read).stream
 
-  def selectByIdsTracked(businessentityids: Array[BusinessentityId]): ConnectionIO[Map[BusinessentityId, EmployeeRow]] = {
+  override def selectByIdsTracked(businessentityids: Array[BusinessentityId]): ConnectionIO[Map[BusinessentityId, EmployeeRow]] = {
     selectByIds(businessentityids).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.businessentityid, x)).toMap
       businessentityids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[EmployeeFields, EmployeeRow] = UpdateBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, EmployeeRow.read)
+  override def update: UpdateBuilder[EmployeeFields, EmployeeRow] = UpdateBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, EmployeeRow.read)
 
-  def update(row: EmployeeRow): ConnectionIO[Option[EmployeeRow]] = {
+  override def update(row: EmployeeRow): ConnectionIO[Option[EmployeeRow]] = {
     val businessentityid = row.businessentityid
     sql"""update "humanresources"."employee"
     set "nationalidnumber" = ${fromWrite(row.nationalidnumber)(new Write.Single(Meta.StringMeta.put))},
@@ -142,7 +142,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
     returning "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode"""".query(EmployeeRow.read).option
   }
 
-  def upsert(unsaved: EmployeeRow): ConnectionIO[EmployeeRow] = {
+  override def upsert(unsaved: EmployeeRow): ConnectionIO[EmployeeRow] = {
     sql"""insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
     values (
       ${fromWrite(unsaved.businessentityid)(new Write.Single(BusinessentityId.put))}::int4,
@@ -181,7 +181,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
     """.query(EmployeeRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[EmployeeRow]): Stream[ConnectionIO, EmployeeRow] = {
+  override def upsertBatch(unsaved: List[EmployeeRow]): Stream[ConnectionIO, EmployeeRow] = {
     Update[EmployeeRow](
       s"""insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
       values (?::int4,?,?,?,?::date,?::bpchar,?::bpchar,?::date,?::bool,?::int2,?::int2,?::bool,?::uuid,?::timestamp,?)
@@ -207,7 +207,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, EmployeeRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

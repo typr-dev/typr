@@ -26,7 +26,7 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 
 public interface SpecialofferproductFields {
-  static final class Impl extends Relation<SpecialofferproductFields, SpecialofferproductRow> {
+  final class Impl extends Relation<SpecialofferproductFields, SpecialofferproductRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -34,15 +34,19 @@ public interface SpecialofferproductFields {
     @Override
     public SpecialofferproductFields fields() {
       return new SpecialofferproductFields() {
+               @Override
                public IdField<SpecialofferId, SpecialofferproductRow> specialofferid() {
                  return new IdField<SpecialofferId, SpecialofferproductRow>(_path, "specialofferid", SpecialofferproductRow::specialofferid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withSpecialofferid(value), SpecialofferId.pgType);
                };
+               @Override
                public IdField<ProductId, SpecialofferproductRow> productid() {
                  return new IdField<ProductId, SpecialofferproductRow>(_path, "productid", SpecialofferproductRow::productid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductid(value), ProductId.pgType);
                };
+               @Override
                public Field<TypoUUID, SpecialofferproductRow> rowguid() {
                  return new Field<TypoUUID, SpecialofferproductRow>(_path, "rowguid", SpecialofferproductRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, SpecialofferproductRow> modifieddate() {
                  return new Field<TypoLocalDateTime, SpecialofferproductRow>(_path, "modifieddate", SpecialofferproductRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -54,6 +58,7 @@ public interface SpecialofferproductFields {
       return List.of(this.fields().specialofferid(), this.fields().productid(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

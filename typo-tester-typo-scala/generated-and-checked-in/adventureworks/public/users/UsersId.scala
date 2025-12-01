@@ -6,11 +6,12 @@
 package adventureworks.public.users
 
 import adventureworks.customtypes.TypoUUID
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 
 /** Type for the primary key of table `public.users` */
-case class UsersId(value: TypoUUID) extends scala.AnyVal
+case class UsersId(@JsonValue value: TypoUUID) extends scala.AnyVal
 
 object UsersId {
   given bijection: Bijection[UsersId, TypoUUID] = Bijection.apply[UsersId, TypoUUID](_.value)(UsersId.apply)

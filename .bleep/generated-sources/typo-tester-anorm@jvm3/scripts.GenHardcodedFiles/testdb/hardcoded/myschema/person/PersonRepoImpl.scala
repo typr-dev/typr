@@ -27,18 +27,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class PersonRepoImpl extends PersonRepo {
-  def delete: DeleteBuilder[PersonFields, PersonRow] = DeleteBuilder.of(""""myschema"."person"""", PersonFields.structure, PersonRow.rowParser(1).*)
+  override def delete: DeleteBuilder[PersonFields, PersonRow] = DeleteBuilder.of(""""myschema"."person"""", PersonFields.structure, PersonRow.rowParser(1).*)
 
-  def deleteById(id: PersonId)(using c: Connection): Boolean = SQL"""delete from "myschema"."person" where "id" = ${ParameterValue(id, null, PersonId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(id: PersonId)(using c: Connection): Boolean = SQL"""delete from "myschema"."person" where "id" = ${ParameterValue(id, null, PersonId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(ids: Array[PersonId])(using c: Connection): Int = {
+  override def deleteByIds(ids: Array[PersonId])(using c: Connection): Int = {
     SQL"""delete
     from "myschema"."person"
     where "id" = ANY(${ParameterValue(ids, null, PersonId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: PersonRow)(using c: Connection): PersonRow = {
+  override def insert(unsaved: PersonRow)(using c: Connection): PersonRow = {
   SQL"""insert into "myschema"."person"("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number")
     values (${ParameterValue(unsaved.id, null, PersonId.toStatement)}::int8, ${ParameterValue(unsaved.favouriteFootballClubId, null, FootballClubId.toStatement)}, ${ParameterValue(unsaved.name, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.nickName, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}, ${ParameterValue(unsaved.blogUrl, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}, ${ParameterValue(unsaved.email, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.phone, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.likesPizza, null, ToStatement.booleanToStatement)}, ${ParameterValue(unsaved.maritalStatusId, null, MaritalStatusId.toStatement)}, ${ParameterValue(unsaved.workEmail, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}, ${ParameterValue(unsaved.favoriteNumber, null, Number.toStatement)}::myschema.number)
     returning "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number"
@@ -46,7 +46,7 @@ class PersonRepoImpl extends PersonRepo {
     .executeInsert(PersonRow.rowParser(1).single)
   }
 
-  def insert(unsaved: PersonRowUnsaved)(using c: Connection): PersonRow = {
+  override def insert(unsaved: PersonRowUnsaved)(using c: Connection): PersonRow = {
     val namedParameters = List(
       Some((NamedParameter("favourite_football_club_id", ParameterValue(unsaved.favouriteFootballClubId, null, FootballClubId.toStatement)), "")),
       Some((NamedParameter("name", ParameterValue(unsaved.name, null, ToStatement.stringToStatement)), "")),
@@ -85,26 +85,26 @@ class PersonRepoImpl extends PersonRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[PersonRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "myschema"."person"("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number") FROM STDIN""", batchSize, unsaved)(using PersonRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[PersonRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "myschema"."person"("favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "work_email", "id", "marital_status_id", "favorite_number") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using PersonRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[PersonFields, PersonRow] = SelectBuilder.of(""""myschema"."person"""", PersonFields.structure, PersonRow.rowParser)
+  override def select: SelectBuilder[PersonFields, PersonRow] = SelectBuilder.of(""""myschema"."person"""", PersonFields.structure, PersonRow.rowParser)
 
-  def selectAll(using c: Connection): List[PersonRow] = {
+  override def selectAll(using c: Connection): List[PersonRow] = {
     SQL"""select "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number"
     from "myschema"."person"
     """.as(PersonRow.rowParser(1).*)
   }
 
-  def selectByFieldValues(fieldValues: List[PersonFieldValue[?]])(using c: Connection): List[PersonRow] = {
+  override def selectByFieldValues(fieldValues: List[PersonFieldValue[?]])(using c: Connection): List[PersonRow] = {
     fieldValues match {
       case Nil => selectAll
       case nonEmpty =>
@@ -132,28 +132,28 @@ class PersonRepoImpl extends PersonRepo {
     }
   }
 
-  def selectById(id: PersonId)(using c: Connection): Option[PersonRow] = {
+  override def selectById(id: PersonId)(using c: Connection): Option[PersonRow] = {
     SQL"""select "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number"
     from "myschema"."person"
     where "id" = ${ParameterValue(id, null, PersonId.toStatement)}
     """.as(PersonRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(ids: Array[PersonId])(using c: Connection): List[PersonRow] = {
+  override def selectByIds(ids: Array[PersonId])(using c: Connection): List[PersonRow] = {
     SQL"""select "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number"
     from "myschema"."person"
     where "id" = ANY(${ParameterValue(ids, null, PersonId.arrayToStatement)})
     """.as(PersonRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(ids: Array[PersonId])(using c: Connection): Map[PersonId, PersonRow] = {
+  override def selectByIdsTracked(ids: Array[PersonId])(using c: Connection): Map[PersonId, PersonRow] = {
     val byId = selectByIds(ids).view.map(x => (x.id, x)).toMap
     ids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[PersonFields, PersonRow] = UpdateBuilder.of(""""myschema"."person"""", PersonFields.structure, PersonRow.rowParser(1).*)
+  override def update: UpdateBuilder[PersonFields, PersonRow] = UpdateBuilder.of(""""myschema"."person"""", PersonFields.structure, PersonRow.rowParser(1).*)
 
-  def update(row: PersonRow)(using c: Connection): Option[PersonRow] = {
+  override def update(row: PersonRow)(using c: Connection): Option[PersonRow] = {
     val id = row.id
     SQL"""update "myschema"."person"
     set "favourite_football_club_id" = ${ParameterValue(row.favouriteFootballClubId, null, FootballClubId.toStatement)},
@@ -171,7 +171,7 @@ class PersonRepoImpl extends PersonRepo {
     """.executeInsert(PersonRow.rowParser(1).singleOpt)
   }
 
-  def updateFieldValues(
+  override def updateFieldValues(
     id: PersonId,
     fieldValues: List[PersonFieldValue[?]]
   )(using c: Connection): Boolean = {
@@ -202,7 +202,7 @@ class PersonRepoImpl extends PersonRepo {
     }
   }
 
-  def upsert(unsaved: PersonRow)(using c: Connection): PersonRow = {
+  override def upsert(unsaved: PersonRow)(using c: Connection): PersonRow = {
   SQL"""insert into "myschema"."person"("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number")
     values (
       ${ParameterValue(unsaved.id, null, PersonId.toStatement)}::int8,
@@ -234,7 +234,7 @@ class PersonRepoImpl extends PersonRepo {
     .executeInsert(PersonRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[PersonRow])(using c: Connection): List[PersonRow] = {
+  override def upsertBatch(unsaved: Iterable[PersonRow])(using c: Connection): List[PersonRow] = {
     def toNamedParameter(row: PersonRow): List[NamedParameter] = List(
       NamedParameter("id", ParameterValue(row.id, null, PersonId.toStatement)),
       NamedParameter("favourite_football_club_id", ParameterValue(row.favouriteFootballClubId, null, FootballClubId.toStatement)),
@@ -248,6 +248,7 @@ class PersonRepoImpl extends PersonRepo {
       NamedParameter("work_email", ParameterValue(row.workEmail, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))),
       NamedParameter("favorite_number", ParameterValue(row.favoriteNumber, null, Number.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -277,7 +278,7 @@ class PersonRepoImpl extends PersonRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[PersonRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

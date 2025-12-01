@@ -17,7 +17,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface TransactionhistoryarchiveFields {
-  static final class Impl extends Relation<TransactionhistoryarchiveFields, TransactionhistoryarchiveRow> {
+  final class Impl extends Relation<TransactionhistoryarchiveFields, TransactionhistoryarchiveRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -25,30 +25,39 @@ public interface TransactionhistoryarchiveFields {
     @Override
     public TransactionhistoryarchiveFields fields() {
       return new TransactionhistoryarchiveFields() {
+               @Override
                public IdField<TransactionhistoryarchiveId, TransactionhistoryarchiveRow> transactionid() {
                  return new IdField<TransactionhistoryarchiveId, TransactionhistoryarchiveRow>(_path, "transactionid", TransactionhistoryarchiveRow::transactionid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withTransactionid(value), TransactionhistoryarchiveId.pgType);
                };
+               @Override
                public Field<Integer, TransactionhistoryarchiveRow> productid() {
                  return new Field<Integer, TransactionhistoryarchiveRow>(_path, "productid", TransactionhistoryarchiveRow::productid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductid(value), PgTypes.int4);
                };
+               @Override
                public Field<Integer, TransactionhistoryarchiveRow> referenceorderid() {
                  return new Field<Integer, TransactionhistoryarchiveRow>(_path, "referenceorderid", TransactionhistoryarchiveRow::referenceorderid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withReferenceorderid(value), PgTypes.int4);
                };
+               @Override
                public Field<Integer, TransactionhistoryarchiveRow> referenceorderlineid() {
                  return new Field<Integer, TransactionhistoryarchiveRow>(_path, "referenceorderlineid", TransactionhistoryarchiveRow::referenceorderlineid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withReferenceorderlineid(value), PgTypes.int4);
                };
+               @Override
                public Field<TypoLocalDateTime, TransactionhistoryarchiveRow> transactiondate() {
                  return new Field<TypoLocalDateTime, TransactionhistoryarchiveRow>(_path, "transactiondate", TransactionhistoryarchiveRow::transactiondate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withTransactiondate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public Field</* bpchar, max 1 chars */ String, TransactionhistoryarchiveRow> transactiontype() {
                  return new Field</* bpchar, max 1 chars */ String, TransactionhistoryarchiveRow>(_path, "transactiontype", TransactionhistoryarchiveRow::transactiontype, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withTransactiontype(value), PgTypes.text);
                };
+               @Override
                public Field<Integer, TransactionhistoryarchiveRow> quantity() {
                  return new Field<Integer, TransactionhistoryarchiveRow>(_path, "quantity", TransactionhistoryarchiveRow::quantity, Optional.empty(), Optional.of("int4"), (row, value) -> row.withQuantity(value), PgTypes.int4);
                };
+               @Override
                public Field<BigDecimal, TransactionhistoryarchiveRow> actualcost() {
                  return new Field<BigDecimal, TransactionhistoryarchiveRow>(_path, "actualcost", TransactionhistoryarchiveRow::actualcost, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withActualcost(value), PgTypes.numeric);
                };
+               @Override
                public Field<TypoLocalDateTime, TransactionhistoryarchiveRow> modifieddate() {
                  return new Field<TypoLocalDateTime, TransactionhistoryarchiveRow>(_path, "modifieddate", TransactionhistoryarchiveRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -60,6 +69,7 @@ public interface TransactionhistoryarchiveFields {
       return List.of(this.fields().transactionid(), this.fields().productid(), this.fields().referenceorderid(), this.fields().referenceorderlineid(), this.fields().transactiondate(), this.fields().transactiontype(), this.fields().quantity(), this.fields().actualcost(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

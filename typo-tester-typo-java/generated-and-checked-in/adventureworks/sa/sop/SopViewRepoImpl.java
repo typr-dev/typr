@@ -5,22 +5,22 @@
  */
 package adventureworks.sa.sop;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class SopViewRepoImpl implements SopViewRepo {
+  @Override
   public SelectBuilder<SopViewFields, SopViewRow> select() {
     return SelectBuilder.of("sa.sop", SopViewFields.structure(), SopViewRow._rowParser);
   };
 
+  @Override
   public List<SopViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "specialofferid", "productid", "rowguid", "modifieddate"::text
        from "sa"."sop"
-    """)).as(SopViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(SopViewRow._rowParser.all()).runUnchecked(c);
   };
 }

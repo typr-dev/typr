@@ -16,6 +16,8 @@ import java.util.*;
 
 public interface tester {
 
+    record TestPair<A>(A t0, Optional<A> t1) {}
+
     record PgTypeAndExample<A>(PgType<A> type, A example, boolean hasIdentity, boolean streamingWorks) {
         public PgTypeAndExample(PgType<A> type, A example) {
             this(type, example, true, true);
@@ -177,7 +179,7 @@ public interface tester {
 
         select.execute();
         var rs = select.getResultSet();
-        List<RowParsers.Tuple2<A, Optional<A>>> rows = RowParsers.of(t.type, t.type.opt(), RowParsers.Tuple2::new, x -> x).all().apply(rs);
+        List<TestPair<A>> rows = RowParsers.of(t.type, t.type.opt(), TestPair::new, row -> new Object[]{row.t0, row.t1}).all().apply(rs);
         select.close();
         conn.createStatement().execute("drop table test;");
         assertEquals(rows.get(0).t0(), expected);

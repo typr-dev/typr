@@ -11,10 +11,10 @@ import typo.runtime.PgTypes
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PersonDynamicSqlRepoImpl extends PersonDynamicSqlRepo {
-  def apply(firstName: Optional[String])(using c: Connection): java.util.List[PersonDynamicSqlRow] = {
+  override def apply(firstName: Optional[String])(using c: Connection): java.util.List[PersonDynamicSqlRow] = {
     interpolate"""SELECT p.title, p.firstname, p.middlename, p.lastname
     FROM person.person p
     WHERE ${PgTypes.text.opt().encode(firstName)}::text IS NULL OR p.firstname = ${PgTypes.text.opt().encode(firstName)}
-    """.as(PersonDynamicSqlRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(PersonDynamicSqlRow.`_rowParser`.all()).runUnchecked(c)
   }
 }

@@ -21,11 +21,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ProductphotoRepoImpl extends ProductphotoRepo {
-  def delete: DeleteBuilder[ProductphotoFields, ProductphotoRow] = DeleteBuilder.of("production.productphoto", ProductphotoFields.structure)
+  override def delete: DeleteBuilder[ProductphotoFields, ProductphotoRow] = DeleteBuilder.of("production.productphoto", ProductphotoFields.structure)
 
-  def deleteById(productphotoid: ProductphotoId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."productphoto" where "productphotoid" = ${ProductphotoId.pgType.encode(productphotoid)}""".update().runUnchecked(c) > 0
+  override def deleteById(productphotoid: ProductphotoId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."productphoto" where "productphotoid" = ${ProductphotoId.pgType.encode(productphotoid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(productphotoids: Array[ProductphotoId])(using c: Connection): Integer = {
+  override def deleteByIds(productphotoids: Array[ProductphotoId])(using c: Connection): Integer = {
     interpolate"""delete
     from "production"."productphoto"
     where "productphotoid" = ANY(${ProductphotoId.pgTypeArray.encode(productphotoids)})"""
@@ -33,7 +33,7 @@ class ProductphotoRepoImpl extends ProductphotoRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: ProductphotoRow)(using c: Connection): ProductphotoRow = {
+  override def insert(unsaved: ProductphotoRow)(using c: Connection): ProductphotoRow = {
   interpolate"""insert into "production"."productphoto"("productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate")
     values (${ProductphotoId.pgType.encode(unsaved.productphotoid)}::int4, ${TypoBytea.pgType.opt().encode(unsaved.thumbnailphoto)}::bytea, ${PgTypes.text.opt().encode(unsaved.thumbnailphotofilename)}, ${TypoBytea.pgType.opt().encode(unsaved.largephoto)}::bytea, ${PgTypes.text.opt().encode(unsaved.largephotofilename)}, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate"::text
@@ -41,9 +41,9 @@ class ProductphotoRepoImpl extends ProductphotoRepo {
     .updateReturning(ProductphotoRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: ProductphotoRowUnsaved)(using c: Connection): ProductphotoRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: ProductphotoRowUnsaved)(using c: Connection): ProductphotoRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""thumbnailphoto"""")): @scala.annotation.nowarn
     values.add(interpolate"${TypoBytea.pgType.opt().encode(unsaved.thumbnailphoto)}::bytea"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""thumbnailphotofilename"""")): @scala.annotation.nowarn
@@ -53,18 +53,12 @@ class ProductphotoRepoImpl extends ProductphotoRepo {
     columns.add(Fragment.lit(""""largephotofilename"""")): @scala.annotation.nowarn
     values.add(interpolate"${PgTypes.text.opt().encode(unsaved.largephotofilename)}"): @scala.annotation.nowarn
     unsaved.productphotoid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""productphotoid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${ProductphotoId.pgType.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""productphotoid"""")): @scala.annotation.nowarn; values.add(interpolate"${ProductphotoId.pgType.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "production"."productphoto"(${Fragment.comma(columns)})
@@ -72,51 +66,51 @@ class ProductphotoRepoImpl extends ProductphotoRepo {
       returning "productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate"::text
       """
     }
-    q.updateReturning(ProductphotoRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(ProductphotoRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[ProductphotoRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."productphoto"("productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate") FROM STDIN""", batchSize, unsaved, c, ProductphotoRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[ProductphotoRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."productphoto"("thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "productphotoid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ProductphotoRowUnsaved.pgText)
 
-  def select: SelectBuilder[ProductphotoFields, ProductphotoRow] = SelectBuilder.of("production.productphoto", ProductphotoFields.structure, ProductphotoRow.`_rowParser`)
+  override def select: SelectBuilder[ProductphotoFields, ProductphotoRow] = SelectBuilder.of("production.productphoto", ProductphotoFields.structure, ProductphotoRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[ProductphotoRow] = {
+  override def selectAll(using c: Connection): java.util.List[ProductphotoRow] = {
     interpolate"""select "productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate"::text
     from "production"."productphoto"
-    """.as(ProductphotoRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(ProductphotoRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(productphotoid: ProductphotoId)(using c: Connection): Optional[ProductphotoRow] = {
+  override def selectById(productphotoid: ProductphotoId)(using c: Connection): Optional[ProductphotoRow] = {
     interpolate"""select "productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate"::text
     from "production"."productphoto"
-    where "productphotoid" = ${ProductphotoId.pgType.encode(productphotoid)}""".as(ProductphotoRow.`_rowParser`.first()).runUnchecked(c)
+    where "productphotoid" = ${ProductphotoId.pgType.encode(productphotoid)}""".query(ProductphotoRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(productphotoids: Array[ProductphotoId])(using c: Connection): java.util.List[ProductphotoRow] = {
+  override def selectByIds(productphotoids: Array[ProductphotoId])(using c: Connection): java.util.List[ProductphotoRow] = {
     interpolate"""select "productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate"::text
     from "production"."productphoto"
-    where "productphotoid" = ANY(${ProductphotoId.pgTypeArray.encode(productphotoids)})""".as(ProductphotoRow.`_rowParser`.all()).runUnchecked(c)
+    where "productphotoid" = ANY(${ProductphotoId.pgTypeArray.encode(productphotoids)})""".query(ProductphotoRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(productphotoids: Array[ProductphotoId])(using c: Connection): java.util.Map[ProductphotoId, ProductphotoRow] = {
-    val ret: java.util.Map[ProductphotoId, ProductphotoRow] = new HashMap()
+  override def selectByIdsTracked(productphotoids: Array[ProductphotoId])(using c: Connection): java.util.Map[ProductphotoId, ProductphotoRow] = {
+    val ret: HashMap[ProductphotoId, ProductphotoRow] = new HashMap[ProductphotoId, ProductphotoRow]()
     selectByIds(productphotoids)(using c).forEach(row => ret.put(row.productphotoid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[ProductphotoFields, ProductphotoRow] = UpdateBuilder.of("production.productphoto", ProductphotoFields.structure, ProductphotoRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ProductphotoFields, ProductphotoRow] = UpdateBuilder.of("production.productphoto", ProductphotoFields.structure, ProductphotoRow.`_rowParser`.all())
 
-  def update(row: ProductphotoRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: ProductphotoRow)(using c: Connection): java.lang.Boolean = {
     val productphotoid: ProductphotoId = row.productphotoid
-    interpolate"""update "production"."productphoto"
+    return interpolate"""update "production"."productphoto"
     set "thumbnailphoto" = ${TypoBytea.pgType.opt().encode(row.thumbnailphoto)}::bytea,
     "thumbnailphotofilename" = ${PgTypes.text.opt().encode(row.thumbnailphotofilename)},
     "largephoto" = ${TypoBytea.pgType.opt().encode(row.largephoto)}::bytea,
@@ -125,7 +119,7 @@ class ProductphotoRepoImpl extends ProductphotoRepo {
     where "productphotoid" = ${ProductphotoId.pgType.encode(productphotoid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: ProductphotoRow)(using c: Connection): ProductphotoRow = {
+  override def upsert(unsaved: ProductphotoRow)(using c: Connection): ProductphotoRow = {
   interpolate"""insert into "production"."productphoto"("productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate")
     values (${ProductphotoId.pgType.encode(unsaved.productphotoid)}::int4, ${TypoBytea.pgType.opt().encode(unsaved.thumbnailphoto)}::bytea, ${PgTypes.text.opt().encode(unsaved.thumbnailphotofilename)}, ${TypoBytea.pgType.opt().encode(unsaved.largephoto)}::bytea, ${PgTypes.text.opt().encode(unsaved.largephotofilename)}, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("productphotoid")
@@ -141,7 +135,7 @@ class ProductphotoRepoImpl extends ProductphotoRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[ProductphotoRow])(using c: Connection): java.util.List[ProductphotoRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[ProductphotoRow])(using c: Connection): java.util.List[ProductphotoRow] = {
     interpolate"""insert into "production"."productphoto"("productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate")
     values (?::int4, ?::bytea, ?, ?::bytea, ?, ?::timestamp)
     on conflict ("productphotoid")
@@ -158,13 +152,13 @@ class ProductphotoRepoImpl extends ProductphotoRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[ProductphotoRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table productphoto_TEMP (like "production"."productphoto") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy productphoto_TEMP("productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate") from stdin""", batchSize, unsaved, c, ProductphotoRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "production"."productphoto"("productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate")
+    return interpolate"""insert into "production"."productphoto"("productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate")
     select * from productphoto_TEMP
     on conflict ("productphotoid")
     do update set

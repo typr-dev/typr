@@ -11,7 +11,6 @@ import adventureworks.public_.Name;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple3;
 
 /** Table: production.scrapreason
   * Manufacturing failure reasons lookup table.
@@ -44,7 +43,7 @@ public record ScrapreasonRow(
     return new ScrapreasonRow(scrapreasonid, name, modifieddate);
   };
 
-  static RowParser<ScrapreasonRow> _rowParser = RowParsers.of(ScrapreasonId.pgType, Name.pgType, TypoLocalDateTime.pgType, ScrapreasonRow::new, row -> new Tuple3<>(row.scrapreasonid(), row.name(), row.modifieddate()));;
+  static RowParser<ScrapreasonRow> _rowParser = RowParsers.of(ScrapreasonId.pgType, Name.pgType, TypoLocalDateTime.pgType, ScrapreasonRow::new, row -> new Object[]{row.scrapreasonid(), row.name(), row.modifieddate()});;
 
   static public PgText<ScrapreasonRow> pgText =
     PgText.from(_rowParser);

@@ -23,13 +23,13 @@ case class ProductRepoMock(
   toRow: ProductRowUnsaved => ProductRow,
   map: scala.collection.mutable.Map[ProductId, ProductRow] = scala.collection.mutable.Map.empty[ProductId, ProductRow]
 ) extends ProductRepo {
-  def delete: DeleteBuilder[ProductFields, ProductRow] = DeleteBuilderMock(DeleteParams.empty, ProductFields.structure, map)
+  override def delete: DeleteBuilder[ProductFields, ProductRow] = DeleteBuilderMock(DeleteParams.empty, ProductFields.structure, map)
 
-  def deleteById(productid: ProductId): ConnectionIO[Boolean] = delay(map.remove(productid).isDefined)
+  override def deleteById(productid: ProductId): ConnectionIO[Boolean] = delay(map.remove(productid).isDefined)
 
-  def deleteByIds(productids: Array[ProductId]): ConnectionIO[Int] = delay(productids.map(id => map.remove(id)).count(_.isDefined))
+  override def deleteByIds(productids: Array[ProductId]): ConnectionIO[Int] = delay(productids.map(id => map.remove(id)).count(_.isDefined))
 
-  def insert(unsaved: ProductRow): ConnectionIO[ProductRow] = {
+  override def insert(unsaved: ProductRow): ConnectionIO[ProductRow] = {
   delay {
     val _ = if (map.contains(unsaved.productid))
       sys.error(s"id ${unsaved.productid} already exists")
@@ -40,9 +40,9 @@ case class ProductRepoMock(
   }
   }
 
-  def insert(unsaved: ProductRowUnsaved): ConnectionIO[ProductRow] = insert(toRow(unsaved))
+  override def insert(unsaved: ProductRowUnsaved): ConnectionIO[ProductRow] = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, ProductRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = {
@@ -57,7 +57,7 @@ case class ProductRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, ProductRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = {
@@ -72,24 +72,24 @@ case class ProductRepoMock(
     }
   }
 
-  def select: SelectBuilder[ProductFields, ProductRow] = SelectBuilderMock(ProductFields.structure, delay(map.values.toList), SelectParams.empty)
+  override def select: SelectBuilder[ProductFields, ProductRow] = SelectBuilderMock(ProductFields.structure, delay(map.values.toList), SelectParams.empty)
 
-  def selectAll: Stream[ConnectionIO, ProductRow] = Stream.emits(map.values.toList)
+  override def selectAll: Stream[ConnectionIO, ProductRow] = Stream.emits(map.values.toList)
 
-  def selectById(productid: ProductId): ConnectionIO[Option[ProductRow]] = delay(map.get(productid))
+  override def selectById(productid: ProductId): ConnectionIO[Option[ProductRow]] = delay(map.get(productid))
 
-  def selectByIds(productids: Array[ProductId]): Stream[ConnectionIO, ProductRow] = Stream.emits(productids.flatMap(map.get).toList)
+  override def selectByIds(productids: Array[ProductId]): Stream[ConnectionIO, ProductRow] = Stream.emits(productids.flatMap(map.get).toList)
 
-  def selectByIdsTracked(productids: Array[ProductId]): ConnectionIO[Map[ProductId, ProductRow]] = {
+  override def selectByIdsTracked(productids: Array[ProductId]): ConnectionIO[Map[ProductId, ProductRow]] = {
     selectByIds(productids).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.productid, x)).toMap
       productids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[ProductFields, ProductRow] = UpdateBuilderMock(UpdateParams.empty, ProductFields.structure, map)
+  override def update: UpdateBuilder[ProductFields, ProductRow] = UpdateBuilderMock(UpdateParams.empty, ProductFields.structure, map)
 
-  def update(row: ProductRow): ConnectionIO[Option[ProductRow]] = {
+  override def update(row: ProductRow): ConnectionIO[Option[ProductRow]] = {
     delay {
       map.get(row.productid).map { _ =>
         map.put(row.productid, row): @nowarn
@@ -98,14 +98,14 @@ case class ProductRepoMock(
     }
   }
 
-  def upsert(unsaved: ProductRow): ConnectionIO[ProductRow] = {
+  override def upsert(unsaved: ProductRow): ConnectionIO[ProductRow] = {
     delay {
       map.put(unsaved.productid, unsaved): @nowarn
       unsaved
     }
   }
 
-  def upsertBatch(unsaved: List[ProductRow]): Stream[ConnectionIO, ProductRow] = {
+  override def upsertBatch(unsaved: List[ProductRow]): Stream[ConnectionIO, ProductRow] = {
     Stream.emits {
       unsaved.map { row =>
         map += (row.productid -> row)
@@ -115,7 +115,7 @@ case class ProductRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, ProductRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

@@ -7,23 +7,23 @@ package adventureworks.public.titledperson
 
 import adventureworks.public.title.TitleId
 import adventureworks.public.title_domain.TitleDomainId
+import com.fasterxml.jackson.annotation.JsonProperty
 import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple3
 
 /** Table: public.titledperson */
 case class TitledpersonRow(
   /** Points to [[adventureworks.public.title_domain.TitleDomainRow.code]] */
-  titleShort: TitleDomainId,
+  @JsonProperty("title_short") titleShort: TitleDomainId,
   /** Points to [[adventureworks.public.title.TitleRow.code]] */
   title: TitleId,
   name: String
 )
 
 object TitledpersonRow {
-  val `_rowParser`: RowParser[TitledpersonRow] = RowParsers.of(TitleDomainId.pgType, TitleId.pgType, PgTypes.text, TitledpersonRow.apply, row => new Tuple3(row.titleShort, row.title, row.name))
+  val `_rowParser`: RowParser[TitledpersonRow] = RowParsers.of(TitleDomainId.pgType, TitleId.pgType, PgTypes.text, TitledpersonRow.apply, row => Array(row.titleShort, row.title, row.name))
 
   given pgText: PgText[TitledpersonRow] = PgText.from(`_rowParser`)
 }

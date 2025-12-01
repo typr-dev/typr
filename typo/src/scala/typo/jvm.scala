@@ -63,6 +63,9 @@ object jvm {
   case class ConstructorMethodRef(tpe: Type) extends Tree
   case class ClassOf(tpe: Type) extends Tree
 
+  /** Not-null assertion: Kotlin renders as `expr!!`, other languages ignore */
+  case class NotNull(expr: Code) extends Tree
+
   case class StrLit(str: String) extends Tree
 
   case class Annotation(
@@ -163,16 +166,57 @@ object jvm {
   /** Generic method call with type arguments: Java: `.<T>method(args)`, Scala: `.method[T](args)` */
   case class GenericMethodCall(target: Code, methodName: Ident, typeArgs: List[Type], args: List[Arg]) extends Tree
 
-  /** Lambda expressions: () -> body, x -> body, (x, y) -> body */
-  case class Lambda0(body: Code) extends Tree
-  case class Lambda1(param: Ident, body: Code) extends Tree
-  case class Lambda2(param1: Ident, param2: Ident, body: Code) extends Tree
+  /** Return statement for explicit control flow in statement bodies */
+  case class Return(expr: Code) extends Tree
+
+  /** Throw statement for explicit exception throwing */
+  case class Throw(expr: Code) extends Tree
+
+  /** Body of a method or lambda - either a single expression, list of statements, or abstract (no body) */
+  sealed trait Body
+  object Body {
+
+    /** No body - abstract method */
+    case object Abstract extends Body
+
+    /** Expression body - the expression's value is the return value */
+    case class Expr(value: Code) extends Body
+
+    /** Statement body - explicit statements with control flow (Return/Throw) */
+    case class Stmts(stmts: List[Code]) extends Body
+
+    /** Convert a list of statements to Body - single element becomes Expr, multiple becomes Stmts */
+    def apply(stmts: List[Code]): Body = stmts match {
+      case List(single) => Expr(single)
+      case multiple     => Stmts(multiple)
+    }
+  }
+
+  /** Lambda parameter - may or may not have explicit type */
+  case class LambdaParam(name: Ident, tpe: Option[Type])
+  object LambdaParam {
+    def apply(name: Ident): LambdaParam = LambdaParam(name, None)
+    def apply(name: String): LambdaParam = LambdaParam(Ident(name), None)
+    def typed(name: Ident, tpe: Type): LambdaParam = LambdaParam(name, Some(tpe))
+    def typed(name: String, tpe: Type): LambdaParam = LambdaParam(Ident(name), Some(tpe))
+  }
+
+  /** Lambda expressions: () -> body, x -> body, (x, y) -> body, (Type x) -> body */
+  case class Lambda(params: List[LambdaParam], body: Body) extends Tree
+  object Lambda {
+    def apply(body: Body): Lambda = Lambda(Nil, body)
+    def apply(p1: String, body: Body): Lambda = Lambda(List(LambdaParam(p1)), body)
+    def apply(p1: String, p2: String, body: Body): Lambda = Lambda(List(LambdaParam(p1), LambdaParam(p2)), body)
+    def apply(p1: Ident, body: Body): Lambda = Lambda(List(LambdaParam(p1)), body)
+    def apply(p1: Ident, p2: Ident, body: Body): Lambda = Lambda(List(LambdaParam(p1), LambdaParam(p2)), body)
+    def apply(p1: Ident, expr: Code): Lambda = Lambda(List(LambdaParam(p1)), Body.Expr(expr))
+    def apply(p1: Ident, p2: Ident, expr: Code): Lambda = Lambda(List(LambdaParam(p1), LambdaParam(p2)), Body.Expr(expr))
+    def apply(p1: String, expr: Code): Lambda = Lambda(List(LambdaParam(p1)), Body.Expr(expr))
+    def apply(p1: String, p2: String, expr: Code): Lambda = Lambda(List(LambdaParam(p1), LambdaParam(p2)), Body.Expr(expr))
+  }
 
   /** By-name argument for method calls. Scala: `body` (by-name parameter), Java: `() -> body` (Supplier/Runnable) */
-  case class ByName(body: Code) extends Tree
-
-  /** Typed lambda: Java: (Type param) -> body, Scala: (param: Type) => body */
-  case class TypedLambda1(paramType: Type, param: Ident, body: Code) extends Tree
+  case class ByName(body: Body) extends Tree
 
   /** Field getter as method reference. Java: RowType::field, Scala: _.field */
   case class FieldGetterRef(rowType: Type, field: Ident) extends Tree
@@ -273,8 +317,8 @@ object jvm {
       name: Ident,
       tpe: Type,
       body: Option[Code],
-      isLazy: Boolean = false,
-      isOverride: Boolean = false
+      isLazy: Boolean,
+      isOverride: Boolean
   ) extends ClassMember
 
   /** Local variable declaration - renders as `val` in Scala, `var` in Java */
@@ -293,7 +337,9 @@ object jvm {
       implicitParams: List[Param[Type]],
       tpe: Type,
       throws: List[Type],
-      body: List[Code]
+      body: Body,
+      isOverride: Boolean,
+      isDefault: Boolean
   ) extends ClassMember
 
   sealed trait Type extends Tree {
@@ -318,6 +364,9 @@ object jvm {
     case class Commented(underlying: Type, comment: String) extends Type
     case class UserDefined(underlying: Type) extends Type
     case class ArrayOf(underlying: Type) extends Type
+
+    /** Primitive type - rendered as-is without identifier escaping (for Java primitive types like byte, int, etc.) */
+    case class Primitive(name: String) extends Type
 
     object Qualified {
       implicit val ordering: Ordering[Qualified] = scala.Ordering.by(x => x.dotName)
@@ -369,6 +418,7 @@ object jvm {
         case Function0(_)              => false
         case Function1(_, _)           => false
         case Function2(_, _, _)        => false
+        case Primitive(_)              => false
       }
 
     def base(tpe: Type): Type = tpe match {
@@ -383,6 +433,7 @@ object jvm {
       case tpe @ Function0(_)        => tpe
       case tpe @ Function1(_, _)     => tpe
       case tpe @ Function2(_, _, _)  => tpe
+      case tpe @ Primitive(_)        => tpe
     }
   }
 

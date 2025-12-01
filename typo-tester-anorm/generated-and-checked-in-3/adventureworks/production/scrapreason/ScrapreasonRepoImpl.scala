@@ -23,18 +23,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class ScrapreasonRepoImpl extends ScrapreasonRepo {
-  def delete: DeleteBuilder[ScrapreasonFields, ScrapreasonRow] = DeleteBuilder.of(""""production"."scrapreason"""", ScrapreasonFields.structure, ScrapreasonRow.rowParser(1).*)
+  override def delete: DeleteBuilder[ScrapreasonFields, ScrapreasonRow] = DeleteBuilder.of(""""production"."scrapreason"""", ScrapreasonFields.structure, ScrapreasonRow.rowParser(1).*)
 
-  def deleteById(scrapreasonid: ScrapreasonId)(using c: Connection): Boolean = SQL"""delete from "production"."scrapreason" where "scrapreasonid" = ${ParameterValue(scrapreasonid, null, ScrapreasonId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(scrapreasonid: ScrapreasonId)(using c: Connection): Boolean = SQL"""delete from "production"."scrapreason" where "scrapreasonid" = ${ParameterValue(scrapreasonid, null, ScrapreasonId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(scrapreasonids: Array[ScrapreasonId])(using c: Connection): Int = {
+  override def deleteByIds(scrapreasonids: Array[ScrapreasonId])(using c: Connection): Int = {
     SQL"""delete
     from "production"."scrapreason"
     where "scrapreasonid" = ANY(${ParameterValue(scrapreasonids, null, ScrapreasonId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: ScrapreasonRow)(using c: Connection): ScrapreasonRow = {
+  override def insert(unsaved: ScrapreasonRow)(using c: Connection): ScrapreasonRow = {
   SQL"""insert into "production"."scrapreason"("scrapreasonid", "name", "modifieddate")
     values (${ParameterValue(unsaved.scrapreasonid, null, ScrapreasonId.toStatement)}::int4, ${ParameterValue(unsaved.name, null, Name.toStatement)}::varchar, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "scrapreasonid", "name", "modifieddate"::text
@@ -42,7 +42,7 @@ class ScrapreasonRepoImpl extends ScrapreasonRepo {
     .executeInsert(ScrapreasonRow.rowParser(1).single)
   }
 
-  def insert(unsaved: ScrapreasonRowUnsaved)(using c: Connection): ScrapreasonRow = {
+  override def insert(unsaved: ScrapreasonRowUnsaved)(using c: Connection): ScrapreasonRow = {
     val namedParameters = List(
       Some((NamedParameter("name", ParameterValue(unsaved.name, null, Name.toStatement)), "::varchar")),
       unsaved.scrapreasonid match {
@@ -70,47 +70,47 @@ class ScrapreasonRepoImpl extends ScrapreasonRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[ScrapreasonRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "production"."scrapreason"("scrapreasonid", "name", "modifieddate") FROM STDIN""", batchSize, unsaved)(using ScrapreasonRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[ScrapreasonRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "production"."scrapreason"("name", "scrapreasonid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using ScrapreasonRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[ScrapreasonFields, ScrapreasonRow] = SelectBuilder.of(""""production"."scrapreason"""", ScrapreasonFields.structure, ScrapreasonRow.rowParser)
+  override def select: SelectBuilder[ScrapreasonFields, ScrapreasonRow] = SelectBuilder.of(""""production"."scrapreason"""", ScrapreasonFields.structure, ScrapreasonRow.rowParser)
 
-  def selectAll(using c: Connection): List[ScrapreasonRow] = {
+  override def selectAll(using c: Connection): List[ScrapreasonRow] = {
     SQL"""select "scrapreasonid", "name", "modifieddate"::text
     from "production"."scrapreason"
     """.as(ScrapreasonRow.rowParser(1).*)
   }
 
-  def selectById(scrapreasonid: ScrapreasonId)(using c: Connection): Option[ScrapreasonRow] = {
+  override def selectById(scrapreasonid: ScrapreasonId)(using c: Connection): Option[ScrapreasonRow] = {
     SQL"""select "scrapreasonid", "name", "modifieddate"::text
     from "production"."scrapreason"
     where "scrapreasonid" = ${ParameterValue(scrapreasonid, null, ScrapreasonId.toStatement)}
     """.as(ScrapreasonRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(scrapreasonids: Array[ScrapreasonId])(using c: Connection): List[ScrapreasonRow] = {
+  override def selectByIds(scrapreasonids: Array[ScrapreasonId])(using c: Connection): List[ScrapreasonRow] = {
     SQL"""select "scrapreasonid", "name", "modifieddate"::text
     from "production"."scrapreason"
     where "scrapreasonid" = ANY(${ParameterValue(scrapreasonids, null, ScrapreasonId.arrayToStatement)})
     """.as(ScrapreasonRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(scrapreasonids: Array[ScrapreasonId])(using c: Connection): Map[ScrapreasonId, ScrapreasonRow] = {
+  override def selectByIdsTracked(scrapreasonids: Array[ScrapreasonId])(using c: Connection): Map[ScrapreasonId, ScrapreasonRow] = {
     val byId = selectByIds(scrapreasonids).view.map(x => (x.scrapreasonid, x)).toMap
     scrapreasonids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[ScrapreasonFields, ScrapreasonRow] = UpdateBuilder.of(""""production"."scrapreason"""", ScrapreasonFields.structure, ScrapreasonRow.rowParser(1).*)
+  override def update: UpdateBuilder[ScrapreasonFields, ScrapreasonRow] = UpdateBuilder.of(""""production"."scrapreason"""", ScrapreasonFields.structure, ScrapreasonRow.rowParser(1).*)
 
-  def update(row: ScrapreasonRow)(using c: Connection): Option[ScrapreasonRow] = {
+  override def update(row: ScrapreasonRow)(using c: Connection): Option[ScrapreasonRow] = {
     val scrapreasonid = row.scrapreasonid
     SQL"""update "production"."scrapreason"
     set "name" = ${ParameterValue(row.name, null, Name.toStatement)}::varchar,
@@ -120,7 +120,7 @@ class ScrapreasonRepoImpl extends ScrapreasonRepo {
     """.executeInsert(ScrapreasonRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: ScrapreasonRow)(using c: Connection): ScrapreasonRow = {
+  override def upsert(unsaved: ScrapreasonRow)(using c: Connection): ScrapreasonRow = {
   SQL"""insert into "production"."scrapreason"("scrapreasonid", "name", "modifieddate")
     values (
       ${ParameterValue(unsaved.scrapreasonid, null, ScrapreasonId.toStatement)}::int4,
@@ -136,12 +136,13 @@ class ScrapreasonRepoImpl extends ScrapreasonRepo {
     .executeInsert(ScrapreasonRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[ScrapreasonRow])(using c: Connection): List[ScrapreasonRow] = {
+  override def upsertBatch(unsaved: Iterable[ScrapreasonRow])(using c: Connection): List[ScrapreasonRow] = {
     def toNamedParameter(row: ScrapreasonRow): List[NamedParameter] = List(
       NamedParameter("scrapreasonid", ParameterValue(row.scrapreasonid, null, ScrapreasonId.toStatement)),
       NamedParameter("name", ParameterValue(row.name, null, Name.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -163,7 +164,7 @@ class ScrapreasonRepoImpl extends ScrapreasonRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[ScrapreasonRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

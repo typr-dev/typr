@@ -12,7 +12,6 @@ import adventureworks.production.productmodel.ProductmodelId
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple3
 
 /** Table: production.productmodelillustration
  * Cross-reference table mapping product models and illustrations.
@@ -38,7 +37,7 @@ case class ProductmodelillustrationRow(
 }
 
 object ProductmodelillustrationRow {
-  val `_rowParser`: RowParser[ProductmodelillustrationRow] = RowParsers.of(ProductmodelId.pgType, IllustrationId.pgType, TypoLocalDateTime.pgType, ProductmodelillustrationRow.apply, row => new Tuple3(row.productmodelid, row.illustrationid, row.modifieddate))
+  val `_rowParser`: RowParser[ProductmodelillustrationRow] = RowParsers.of(ProductmodelId.pgType, IllustrationId.pgType, TypoLocalDateTime.pgType, ProductmodelillustrationRow.apply, row => Array(row.productmodelid, row.illustrationid, row.modifieddate))
 
   def apply(
     compositeId: ProductmodelillustrationId,

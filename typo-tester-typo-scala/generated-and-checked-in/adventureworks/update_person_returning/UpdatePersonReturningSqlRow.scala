@@ -9,7 +9,6 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.userdefined.FirstName
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple2
 
 /** SQL file: update_person_returning.sql */
 case class UpdatePersonReturningSqlRow(
@@ -20,5 +19,5 @@ case class UpdatePersonReturningSqlRow(
 )
 
 object UpdatePersonReturningSqlRow {
-  val `_rowParser`: RowParser[UpdatePersonReturningSqlRow] = RowParsers.of(/* user-picked */ FirstName.pgType, TypoLocalDateTime.pgType, UpdatePersonReturningSqlRow.apply, row => new Tuple2(row.firstname, row.modifieddate))
+  val `_rowParser`: RowParser[UpdatePersonReturningSqlRow] = RowParsers.of(/* user-picked */ FirstName.pgType, TypoLocalDateTime.pgType, UpdatePersonReturningSqlRow.apply, row => Array(row.firstname, row.modifieddate))
 }

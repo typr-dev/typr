@@ -11,7 +11,7 @@ import java.sql.Connection
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PersonDetailSqlRepoImpl extends PersonDetailSqlRepo {
-  def apply(
+  override def apply(
     businessentityid: /* user-picked */ BusinessentityId,
     modifiedAfter: TypoLocalDateTime
   )(using c: Connection): java.util.List[PersonDetailSqlRow] = {
@@ -31,6 +31,6 @@ class PersonDetailSqlRepoImpl extends PersonDetailSqlRepo {
              JOIN person.businessentityaddress bea ON bea.businessentityid = s.businessentityid
              LEFT JOIN person.address a ON a.addressid = bea.addressid
     where s.businessentityid = ${/* user-picked */ BusinessentityId.pgType.encode(businessentityid)}::int4
-      and p.modifieddate > ${TypoLocalDateTime.pgType.encode(modifiedAfter)}::timestamp""".as(PersonDetailSqlRow.`_rowParser`.all()).runUnchecked(c)
+      and p.modifieddate > ${TypoLocalDateTime.pgType.encode(modifiedAfter)}::timestamp""".query(PersonDetailSqlRow.`_rowParser`.all()).runUnchecked(c)
   }
 }

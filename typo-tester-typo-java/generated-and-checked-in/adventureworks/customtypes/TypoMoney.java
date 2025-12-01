@@ -28,8 +28,8 @@ public record TypoMoney(@JsonValue BigDecimal value) {
     PgText.textBigDecimal.contramap(v -> v.value());
 
   static public PgType<TypoMoney> pgType =
-    PgTypes.numeric.bimap(v -> new TypoMoney(v), v -> v.value()).renamed("money");
+    PgTypes.numeric.bimap((BigDecimal v) -> new TypoMoney(v), (TypoMoney v) -> v.value()).renamed("money");
 
   static public PgType<TypoMoney[]> pgTypeArray =
-    TypoMoney.pgType.array(PgRead.massageJdbcArrayTo(BigDecimal[].class).map(xs -> arrayMap.map(xs, v -> new TypoMoney(v), TypoMoney.class)), PgWrite.<BigDecimal>passObjectToJdbc().array(TypoMoney.pgType.typename().<BigDecimal>as()).contramap(xs -> arrayMap.map(xs, (TypoMoney v) -> v.value(), BigDecimal.class)));
+    TypoMoney.pgType.array(PgRead.massageJdbcArrayTo(BigDecimal[].class).map((BigDecimal[] xs) -> arrayMap.map(xs, (BigDecimal v) -> new TypoMoney(v), TypoMoney.class)), PgWrite.<BigDecimal>passObjectToJdbc().array(TypoMoney.pgType.typename().<BigDecimal>as()).contramap((TypoMoney[] xs) -> arrayMap.map(xs, (TypoMoney v) -> v.value(), BigDecimal.class)));
 }

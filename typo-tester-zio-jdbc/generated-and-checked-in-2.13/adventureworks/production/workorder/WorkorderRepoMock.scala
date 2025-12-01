@@ -25,13 +25,13 @@ case class WorkorderRepoMock(
   toRow: WorkorderRowUnsaved => WorkorderRow,
   map: scala.collection.mutable.Map[WorkorderId, WorkorderRow] = scala.collection.mutable.Map.empty[WorkorderId, WorkorderRow]
 ) extends WorkorderRepo {
-  def delete: DeleteBuilder[WorkorderFields, WorkorderRow] = DeleteBuilderMock(DeleteParams.empty, WorkorderFields.structure, map)
+  override def delete: DeleteBuilder[WorkorderFields, WorkorderRow] = DeleteBuilderMock(DeleteParams.empty, WorkorderFields.structure, map)
 
-  def deleteById(workorderid: WorkorderId): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(workorderid).isDefined)
+  override def deleteById(workorderid: WorkorderId): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(workorderid).isDefined)
 
-  def deleteByIds(workorderids: Array[WorkorderId]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(workorderids.map(id => map.remove(id)).count(_.isDefined).toLong)
+  override def deleteByIds(workorderids: Array[WorkorderId]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(workorderids.map(id => map.remove(id)).count(_.isDefined).toLong)
 
-  def insert(unsaved: WorkorderRow): ZIO[ZConnection, Throwable, WorkorderRow] = {
+  override def insert(unsaved: WorkorderRow): ZIO[ZConnection, Throwable, WorkorderRow] = {
   ZIO.succeed {
     val _ =
       if (map.contains(unsaved.workorderid))
@@ -43,9 +43,9 @@ case class WorkorderRepoMock(
   }
   }
 
-  def insert(unsaved: WorkorderRowUnsaved): ZIO[ZConnection, Throwable, WorkorderRow] = insert(toRow(unsaved))
+  override def insert(unsaved: WorkorderRowUnsaved): ZIO[ZConnection, Throwable, WorkorderRow] = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, WorkorderRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {
@@ -58,7 +58,7 @@ case class WorkorderRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, WorkorderRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {
@@ -71,24 +71,24 @@ case class WorkorderRepoMock(
     }.runLast.map(_.getOrElse(0L))
   }
 
-  def select: SelectBuilder[WorkorderFields, WorkorderRow] = SelectBuilderMock(WorkorderFields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
+  override def select: SelectBuilder[WorkorderFields, WorkorderRow] = SelectBuilderMock(WorkorderFields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
 
-  def selectAll: ZStream[ZConnection, Throwable, WorkorderRow] = ZStream.fromIterable(map.values)
+  override def selectAll: ZStream[ZConnection, Throwable, WorkorderRow] = ZStream.fromIterable(map.values)
 
-  def selectById(workorderid: WorkorderId): ZIO[ZConnection, Throwable, Option[WorkorderRow]] = ZIO.succeed(map.get(workorderid))
+  override def selectById(workorderid: WorkorderId): ZIO[ZConnection, Throwable, Option[WorkorderRow]] = ZIO.succeed(map.get(workorderid))
 
-  def selectByIds(workorderids: Array[WorkorderId]): ZStream[ZConnection, Throwable, WorkorderRow] = ZStream.fromIterable(workorderids.flatMap(map.get))
+  override def selectByIds(workorderids: Array[WorkorderId]): ZStream[ZConnection, Throwable, WorkorderRow] = ZStream.fromIterable(workorderids.flatMap(map.get))
 
-  def selectByIdsTracked(workorderids: Array[WorkorderId]): ZIO[ZConnection, Throwable, Map[WorkorderId, WorkorderRow]] = {
+  override def selectByIdsTracked(workorderids: Array[WorkorderId]): ZIO[ZConnection, Throwable, Map[WorkorderId, WorkorderRow]] = {
     selectByIds(workorderids).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.workorderid, x)).toMap
       workorderids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[WorkorderFields, WorkorderRow] = UpdateBuilderMock(UpdateParams.empty, WorkorderFields.structure, map)
+  override def update: UpdateBuilder[WorkorderFields, WorkorderRow] = UpdateBuilderMock(UpdateParams.empty, WorkorderFields.structure, map)
 
-  def update(row: WorkorderRow): ZIO[ZConnection, Throwable, Option[WorkorderRow]] = {
+  override def update(row: WorkorderRow): ZIO[ZConnection, Throwable, Option[WorkorderRow]] = {
     ZIO.succeed {
       map.get(row.workorderid).map { _ =>
         map.put(row.workorderid, row): @nowarn
@@ -97,7 +97,7 @@ case class WorkorderRepoMock(
     }
   }
 
-  def upsert(unsaved: WorkorderRow): ZIO[ZConnection, Throwable, UpdateResult[WorkorderRow]] = {
+  override def upsert(unsaved: WorkorderRow): ZIO[ZConnection, Throwable, UpdateResult[WorkorderRow]] = {
     ZIO.succeed {
       map.put(unsaved.workorderid, unsaved): @nowarn
       UpdateResult(1, Chunk.single(unsaved))
@@ -105,7 +105,7 @@ case class WorkorderRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, WorkorderRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

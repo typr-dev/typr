@@ -322,7 +322,6 @@ import adventureworks.sales.store.StoreRow;
 import adventureworks.sales.store.StoreRowUnsaved;
 import adventureworks.userdefined.CustomCreditcardId;
 import adventureworks.userdefined.FirstName;
-import jakarta.inject.Singleton;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.time.Instant;
@@ -332,10 +331,9 @@ import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.Optional;
 import java.util.Random;
-import scala.Array;
+import java.util.stream.Stream;
 import typo.runtime.internal.RandomHelper;
 
-@Singleton
 /** Methods to generate random data for `Ident(TestInsert)` */
 public record TestInsert(
   Random random,

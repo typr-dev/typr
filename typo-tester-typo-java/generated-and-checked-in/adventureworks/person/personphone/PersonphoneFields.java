@@ -26,7 +26,7 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 
 public interface PersonphoneFields {
-  static final class Impl extends Relation<PersonphoneFields, PersonphoneRow> {
+  final class Impl extends Relation<PersonphoneFields, PersonphoneRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -34,15 +34,19 @@ public interface PersonphoneFields {
     @Override
     public PersonphoneFields fields() {
       return new PersonphoneFields() {
+               @Override
                public IdField<BusinessentityId, PersonphoneRow> businessentityid() {
                  return new IdField<BusinessentityId, PersonphoneRow>(_path, "businessentityid", PersonphoneRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public IdField<Phone, PersonphoneRow> phonenumber() {
                  return new IdField<Phone, PersonphoneRow>(_path, "phonenumber", PersonphoneRow::phonenumber, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withPhonenumber(value), Phone.pgType);
                };
+               @Override
                public IdField<PhonenumbertypeId, PersonphoneRow> phonenumbertypeid() {
                  return new IdField<PhonenumbertypeId, PersonphoneRow>(_path, "phonenumbertypeid", PersonphoneRow::phonenumbertypeid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withPhonenumbertypeid(value), PhonenumbertypeId.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, PersonphoneRow> modifieddate() {
                  return new Field<TypoLocalDateTime, PersonphoneRow>(_path, "modifieddate", PersonphoneRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -54,6 +58,7 @@ public interface PersonphoneFields {
       return List.of(this.fields().businessentityid(), this.fields().phonenumber(), this.fields().phonenumbertypeid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

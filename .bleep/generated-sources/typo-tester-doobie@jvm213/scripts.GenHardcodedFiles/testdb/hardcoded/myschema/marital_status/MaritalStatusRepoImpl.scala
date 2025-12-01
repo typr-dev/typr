@@ -21,29 +21,29 @@ import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class MaritalStatusRepoImpl extends MaritalStatusRepo {
-  def delete: DeleteBuilder[MaritalStatusFields, MaritalStatusRow] = DeleteBuilder.of(""""myschema"."marital_status"""", MaritalStatusFields.structure, MaritalStatusRow.read)
+  override def delete: DeleteBuilder[MaritalStatusFields, MaritalStatusRow] = DeleteBuilder.of(""""myschema"."marital_status"""", MaritalStatusFields.structure, MaritalStatusRow.read)
 
-  def deleteById(id: MaritalStatusId): ConnectionIO[Boolean] = sql"""delete from "myschema"."marital_status" where "id" = ${fromWrite(id)(new Write.Single(MaritalStatusId.put))}""".update.run.map(_ > 0)
+  override def deleteById(id: MaritalStatusId): ConnectionIO[Boolean] = sql"""delete from "myschema"."marital_status" where "id" = ${fromWrite(id)(new Write.Single(MaritalStatusId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(ids: Array[MaritalStatusId]): ConnectionIO[Int] = sql"""delete from "myschema"."marital_status" where "id" = ANY(${fromWrite(ids)(new Write.Single(MaritalStatusId.arrayPut))})""".update.run
+  override def deleteByIds(ids: Array[MaritalStatusId]): ConnectionIO[Int] = sql"""delete from "myschema"."marital_status" where "id" = ANY(${fromWrite(ids)(new Write.Single(MaritalStatusId.arrayPut))})""".update.run
 
-  def insert(unsaved: MaritalStatusRow): ConnectionIO[MaritalStatusRow] = {
+  override def insert(unsaved: MaritalStatusRow): ConnectionIO[MaritalStatusRow] = {
     sql"""insert into "myschema"."marital_status"("id")
     values (${fromWrite(unsaved.id)(new Write.Single(MaritalStatusId.put))}::int8)
     returning "id"
     """.query(MaritalStatusRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, MaritalStatusRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "myschema"."marital_status"("id") FROM STDIN""").copyIn(unsaved, batchSize)(MaritalStatusRow.pgText)
 
-  def select: SelectBuilder[MaritalStatusFields, MaritalStatusRow] = SelectBuilder.of(""""myschema"."marital_status"""", MaritalStatusFields.structure, MaritalStatusRow.read)
+  override def select: SelectBuilder[MaritalStatusFields, MaritalStatusRow] = SelectBuilder.of(""""myschema"."marital_status"""", MaritalStatusFields.structure, MaritalStatusRow.read)
 
-  def selectAll: Stream[ConnectionIO, MaritalStatusRow] = sql"""select "id" from "myschema"."marital_status"""".query(MaritalStatusRow.read).stream
+  override def selectAll: Stream[ConnectionIO, MaritalStatusRow] = sql"""select "id" from "myschema"."marital_status"""".query(MaritalStatusRow.read).stream
 
-  def selectByFieldValues(fieldValues: List[MaritalStatusFieldValue[?]]): Stream[ConnectionIO, MaritalStatusRow] = {
+  override def selectByFieldValues(fieldValues: List[MaritalStatusFieldValue[?]]): Stream[ConnectionIO, MaritalStatusRow] = {
     val where = fragments.whereAndOpt(
       fieldValues.map {
         case MaritalStatusFieldValue.id(value) => fr""""id" = ${fromWrite(value)(new Write.Single(MaritalStatusId.put))}"""
@@ -52,20 +52,20 @@ class MaritalStatusRepoImpl extends MaritalStatusRepo {
     sql"""select "id" from "myschema"."marital_status" $where""".query(MaritalStatusRow.read).stream
   }
 
-  def selectById(id: MaritalStatusId): ConnectionIO[Option[MaritalStatusRow]] = sql"""select "id" from "myschema"."marital_status" where "id" = ${fromWrite(id)(new Write.Single(MaritalStatusId.put))}""".query(MaritalStatusRow.read).option
+  override def selectById(id: MaritalStatusId): ConnectionIO[Option[MaritalStatusRow]] = sql"""select "id" from "myschema"."marital_status" where "id" = ${fromWrite(id)(new Write.Single(MaritalStatusId.put))}""".query(MaritalStatusRow.read).option
 
-  def selectByIds(ids: Array[MaritalStatusId]): Stream[ConnectionIO, MaritalStatusRow] = sql"""select "id" from "myschema"."marital_status" where "id" = ANY(${fromWrite(ids)(new Write.Single(MaritalStatusId.arrayPut))})""".query(MaritalStatusRow.read).stream
+  override def selectByIds(ids: Array[MaritalStatusId]): Stream[ConnectionIO, MaritalStatusRow] = sql"""select "id" from "myschema"."marital_status" where "id" = ANY(${fromWrite(ids)(new Write.Single(MaritalStatusId.arrayPut))})""".query(MaritalStatusRow.read).stream
 
-  def selectByIdsTracked(ids: Array[MaritalStatusId]): ConnectionIO[Map[MaritalStatusId, MaritalStatusRow]] = {
+  override def selectByIdsTracked(ids: Array[MaritalStatusId]): ConnectionIO[Map[MaritalStatusId, MaritalStatusRow]] = {
     selectByIds(ids).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.id, x)).toMap
       ids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[MaritalStatusFields, MaritalStatusRow] = UpdateBuilder.of(""""myschema"."marital_status"""", MaritalStatusFields.structure, MaritalStatusRow.read)
+  override def update: UpdateBuilder[MaritalStatusFields, MaritalStatusRow] = UpdateBuilder.of(""""myschema"."marital_status"""", MaritalStatusFields.structure, MaritalStatusRow.read)
 
-  def updateFieldValues(
+  override def updateFieldValues(
     id: MaritalStatusId,
     fieldValues: List[MaritalStatusFieldValue[?]]
   ): ConnectionIO[Boolean] = {
@@ -83,7 +83,7 @@ class MaritalStatusRepoImpl extends MaritalStatusRepo {
     }
   }
 
-  def upsert(unsaved: MaritalStatusRow): ConnectionIO[MaritalStatusRow] = {
+  override def upsert(unsaved: MaritalStatusRow): ConnectionIO[MaritalStatusRow] = {
     sql"""insert into "myschema"."marital_status"("id")
     values (
       ${fromWrite(unsaved.id)(new Write.Single(MaritalStatusId.put))}::int8
@@ -94,7 +94,7 @@ class MaritalStatusRepoImpl extends MaritalStatusRepo {
     """.query(MaritalStatusRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[MaritalStatusRow]): Stream[ConnectionIO, MaritalStatusRow] = {
+  override def upsertBatch(unsaved: List[MaritalStatusRow]): Stream[ConnectionIO, MaritalStatusRow] = {
     Update[MaritalStatusRow](
       s"""insert into "myschema"."marital_status"("id")
       values (?::int8)
@@ -106,7 +106,7 @@ class MaritalStatusRepoImpl extends MaritalStatusRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, MaritalStatusRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

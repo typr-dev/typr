@@ -13,7 +13,6 @@ import adventureworks.production.productmodel.ProductmodelId
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple4
 
 /** Table: production.productmodelproductdescriptionculture
  * Cross-reference table mapping product descriptions and the language the description is written in.
@@ -50,14 +49,7 @@ case class ProductmodelproductdescriptioncultureRow(
 }
 
 object ProductmodelproductdescriptioncultureRow {
-  val `_rowParser`: RowParser[ProductmodelproductdescriptioncultureRow] = {
-    RowParsers.of(ProductmodelId.pgType, ProductdescriptionId.pgType, CultureId.pgType, TypoLocalDateTime.pgType, ProductmodelproductdescriptioncultureRow.apply, row => new Tuple4(
-      row.productmodelid,
-      row.productdescriptionid,
-      row.cultureid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[ProductmodelproductdescriptioncultureRow] = RowParsers.of(ProductmodelId.pgType, ProductdescriptionId.pgType, CultureId.pgType, TypoLocalDateTime.pgType, ProductmodelproductdescriptioncultureRow.apply, row => Array(row.productmodelid, row.productdescriptionid, row.cultureid, row.modifieddate))
 
   def apply(
     compositeId: ProductmodelproductdescriptioncultureId,

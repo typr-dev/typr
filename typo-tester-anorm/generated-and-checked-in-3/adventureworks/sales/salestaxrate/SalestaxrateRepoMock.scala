@@ -21,13 +21,13 @@ case class SalestaxrateRepoMock(
   toRow: SalestaxrateRowUnsaved => SalestaxrateRow,
   map: scala.collection.mutable.Map[SalestaxrateId, SalestaxrateRow] = scala.collection.mutable.Map.empty[SalestaxrateId, SalestaxrateRow]
 ) extends SalestaxrateRepo {
-  def delete: DeleteBuilder[SalestaxrateFields, SalestaxrateRow] = DeleteBuilderMock(DeleteParams.empty, SalestaxrateFields.structure, map)
+  override def delete: DeleteBuilder[SalestaxrateFields, SalestaxrateRow] = DeleteBuilderMock(DeleteParams.empty, SalestaxrateFields.structure, map)
 
-  def deleteById(salestaxrateid: SalestaxrateId)(using c: Connection): Boolean = map.remove(salestaxrateid).isDefined
+  override def deleteById(salestaxrateid: SalestaxrateId)(using c: Connection): Boolean = map.remove(salestaxrateid).isDefined
 
-  def deleteByIds(salestaxrateids: Array[SalestaxrateId])(using c: Connection): Int = salestaxrateids.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(salestaxrateids: Array[SalestaxrateId])(using c: Connection): Int = salestaxrateids.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: SalestaxrateRow)(using c: Connection): SalestaxrateRow = {
+  override def insert(unsaved: SalestaxrateRow)(using c: Connection): SalestaxrateRow = {
     val _ = if (map.contains(unsaved.salestaxrateid))
       sys.error(s"id ${unsaved.salestaxrateid} already exists")
     else
@@ -36,9 +36,9 @@ case class SalestaxrateRepoMock(
     unsaved
   }
 
-  def insert(unsaved: SalestaxrateRowUnsaved)(using c: Connection): SalestaxrateRow = insert(toRow(unsaved))
+  override def insert(unsaved: SalestaxrateRowUnsaved)(using c: Connection): SalestaxrateRow = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[SalestaxrateRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -49,7 +49,7 @@ case class SalestaxrateRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[SalestaxrateRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -60,34 +60,34 @@ case class SalestaxrateRepoMock(
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[SalestaxrateFields, SalestaxrateRow] = SelectBuilderMock(SalestaxrateFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[SalestaxrateFields, SalestaxrateRow] = SelectBuilderMock(SalestaxrateFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(using c: Connection): List[SalestaxrateRow] = map.values.toList
+  override def selectAll(using c: Connection): List[SalestaxrateRow] = map.values.toList
 
-  def selectById(salestaxrateid: SalestaxrateId)(using c: Connection): Option[SalestaxrateRow] = map.get(salestaxrateid)
+  override def selectById(salestaxrateid: SalestaxrateId)(using c: Connection): Option[SalestaxrateRow] = map.get(salestaxrateid)
 
-  def selectByIds(salestaxrateids: Array[SalestaxrateId])(using c: Connection): List[SalestaxrateRow] = salestaxrateids.flatMap(map.get).toList
+  override def selectByIds(salestaxrateids: Array[SalestaxrateId])(using c: Connection): List[SalestaxrateRow] = salestaxrateids.flatMap(map.get).toList
 
-  def selectByIdsTracked(salestaxrateids: Array[SalestaxrateId])(using c: Connection): Map[SalestaxrateId, SalestaxrateRow] = {
+  override def selectByIdsTracked(salestaxrateids: Array[SalestaxrateId])(using c: Connection): Map[SalestaxrateId, SalestaxrateRow] = {
     val byId = selectByIds(salestaxrateids).view.map(x => (x.salestaxrateid, x)).toMap
     salestaxrateids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[SalestaxrateFields, SalestaxrateRow] = UpdateBuilderMock(UpdateParams.empty, SalestaxrateFields.structure, map)
+  override def update: UpdateBuilder[SalestaxrateFields, SalestaxrateRow] = UpdateBuilderMock(UpdateParams.empty, SalestaxrateFields.structure, map)
 
-  def update(row: SalestaxrateRow)(using c: Connection): Option[SalestaxrateRow] = {
+  override def update(row: SalestaxrateRow)(using c: Connection): Option[SalestaxrateRow] = {
     map.get(row.salestaxrateid).map { _ =>
       map.put(row.salestaxrateid, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: SalestaxrateRow)(using c: Connection): SalestaxrateRow = {
+  override def upsert(unsaved: SalestaxrateRow)(using c: Connection): SalestaxrateRow = {
     map.put(unsaved.salestaxrateid, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[SalestaxrateRow])(using c: Connection): List[SalestaxrateRow] = {
+  override def upsertBatch(unsaved: Iterable[SalestaxrateRow])(using c: Connection): List[SalestaxrateRow] = {
     unsaved.map { row =>
       map += (row.salestaxrateid -> row)
       row
@@ -95,7 +95,7 @@ case class SalestaxrateRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[SalestaxrateRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

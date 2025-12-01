@@ -10,7 +10,7 @@ public class Foo {
     }
     public static String a = "";
     static RowParser<User> userRowParser =
-            RowParsers.of(PgTypes.text, PgTypes.int4, User::new, row -> new RowParsers.Tuple2<>(row.name, row.age));
+            RowParsers.of(PgTypes.text, PgTypes.int4, User::new, row -> new Object[]{row.name, row.age});
 
     public static void main(String[] args) throws SQLException {
         var value = "Alice";
@@ -31,8 +31,8 @@ public class Foo {
         System.out.println(update.query().render());
 
         var c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/mydb", "user", "password");
-        List<User> users = frag.as(userRowParser.all()).run(c);
-        User user = frag.as(userRowParser.exactlyOne()).run(c);
+        List<User> users = frag.query(userRowParser.all()).run(c);
+        User user = frag.query(userRowParser.exactlyOne()).run(c);
 
         System.out.println(user);
         System.out.println(users);

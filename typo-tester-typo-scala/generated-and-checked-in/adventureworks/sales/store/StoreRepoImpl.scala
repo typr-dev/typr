@@ -23,11 +23,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class StoreRepoImpl extends StoreRepo {
-  def delete: DeleteBuilder[StoreFields, StoreRow] = DeleteBuilder.of("sales.store", StoreFields.structure)
+  override def delete: DeleteBuilder[StoreFields, StoreRow] = DeleteBuilder.of("sales.store", StoreFields.structure)
 
-  def deleteById(businessentityid: BusinessentityId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."store" where "businessentityid" = ${BusinessentityId.pgType.encode(businessentityid)}""".update().runUnchecked(c) > 0
+  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."store" where "businessentityid" = ${BusinessentityId.pgType.encode(businessentityid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Integer = {
+  override def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Integer = {
     interpolate"""delete
     from "sales"."store"
     where "businessentityid" = ANY(${BusinessentityId.pgTypeArray.encode(businessentityids)})"""
@@ -35,7 +35,7 @@ class StoreRepoImpl extends StoreRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: StoreRow)(using c: Connection): StoreRow = {
+  override def insert(unsaved: StoreRow)(using c: Connection): StoreRow = {
   interpolate"""insert into "sales"."store"("businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate")
     values (${BusinessentityId.pgType.encode(unsaved.businessentityid)}::int4, ${Name.pgType.encode(unsaved.name)}::varchar, ${BusinessentityId.pgType.opt().encode(unsaved.salespersonid)}::int4, ${TypoXml.pgType.opt().encode(unsaved.demographics)}::xml, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"::text
@@ -43,9 +43,9 @@ class StoreRepoImpl extends StoreRepo {
     .updateReturning(StoreRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: StoreRowUnsaved)(using c: Connection): StoreRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: StoreRowUnsaved)(using c: Connection): StoreRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn
     values.add(interpolate"${BusinessentityId.pgType.encode(unsaved.businessentityid)}::int4"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
@@ -55,18 +55,12 @@ class StoreRepoImpl extends StoreRepo {
     columns.add(Fragment.lit(""""demographics"""")): @scala.annotation.nowarn
     values.add(interpolate"${TypoXml.pgType.opt().encode(unsaved.demographics)}::xml"): @scala.annotation.nowarn
     unsaved.rowguid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "sales"."store"(${Fragment.comma(columns)})
@@ -74,51 +68,51 @@ class StoreRepoImpl extends StoreRepo {
       returning "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"::text
       """
     }
-    q.updateReturning(StoreRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(StoreRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[StoreRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."store"("businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, c, StoreRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[StoreRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."store"("businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, StoreRowUnsaved.pgText)
 
-  def select: SelectBuilder[StoreFields, StoreRow] = SelectBuilder.of("sales.store", StoreFields.structure, StoreRow.`_rowParser`)
+  override def select: SelectBuilder[StoreFields, StoreRow] = SelectBuilder.of("sales.store", StoreFields.structure, StoreRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[StoreRow] = {
+  override def selectAll(using c: Connection): java.util.List[StoreRow] = {
     interpolate"""select "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"::text
     from "sales"."store"
-    """.as(StoreRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(StoreRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(businessentityid: BusinessentityId)(using c: Connection): Optional[StoreRow] = {
+  override def selectById(businessentityid: BusinessentityId)(using c: Connection): Optional[StoreRow] = {
     interpolate"""select "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"::text
     from "sales"."store"
-    where "businessentityid" = ${BusinessentityId.pgType.encode(businessentityid)}""".as(StoreRow.`_rowParser`.first()).runUnchecked(c)
+    where "businessentityid" = ${BusinessentityId.pgType.encode(businessentityid)}""".query(StoreRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.List[StoreRow] = {
+  override def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.List[StoreRow] = {
     interpolate"""select "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"::text
     from "sales"."store"
-    where "businessentityid" = ANY(${BusinessentityId.pgTypeArray.encode(businessentityids)})""".as(StoreRow.`_rowParser`.all()).runUnchecked(c)
+    where "businessentityid" = ANY(${BusinessentityId.pgTypeArray.encode(businessentityids)})""".query(StoreRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.Map[BusinessentityId, StoreRow] = {
-    val ret: java.util.Map[BusinessentityId, StoreRow] = new HashMap()
+  override def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.Map[BusinessentityId, StoreRow] = {
+    val ret: HashMap[BusinessentityId, StoreRow] = new HashMap[BusinessentityId, StoreRow]()
     selectByIds(businessentityids)(using c).forEach(row => ret.put(row.businessentityid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[StoreFields, StoreRow] = UpdateBuilder.of("sales.store", StoreFields.structure, StoreRow.`_rowParser`.all())
+  override def update: UpdateBuilder[StoreFields, StoreRow] = UpdateBuilder.of("sales.store", StoreFields.structure, StoreRow.`_rowParser`.all())
 
-  def update(row: StoreRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: StoreRow)(using c: Connection): java.lang.Boolean = {
     val businessentityid: BusinessentityId = row.businessentityid
-    interpolate"""update "sales"."store"
+    return interpolate"""update "sales"."store"
     set "name" = ${Name.pgType.encode(row.name)}::varchar,
     "salespersonid" = ${BusinessentityId.pgType.opt().encode(row.salespersonid)}::int4,
     "demographics" = ${TypoXml.pgType.opt().encode(row.demographics)}::xml,
@@ -127,7 +121,7 @@ class StoreRepoImpl extends StoreRepo {
     where "businessentityid" = ${BusinessentityId.pgType.encode(businessentityid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: StoreRow)(using c: Connection): StoreRow = {
+  override def upsert(unsaved: StoreRow)(using c: Connection): StoreRow = {
   interpolate"""insert into "sales"."store"("businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate")
     values (${BusinessentityId.pgType.encode(unsaved.businessentityid)}::int4, ${Name.pgType.encode(unsaved.name)}::varchar, ${BusinessentityId.pgType.opt().encode(unsaved.salespersonid)}::int4, ${TypoXml.pgType.opt().encode(unsaved.demographics)}::xml, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("businessentityid")
@@ -143,7 +137,7 @@ class StoreRepoImpl extends StoreRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[StoreRow])(using c: Connection): java.util.List[StoreRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[StoreRow])(using c: Connection): java.util.List[StoreRow] = {
     interpolate"""insert into "sales"."store"("businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate")
     values (?::int4, ?::varchar, ?::int4, ?::xml, ?::uuid, ?::timestamp)
     on conflict ("businessentityid")
@@ -160,13 +154,13 @@ class StoreRepoImpl extends StoreRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[StoreRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table store_TEMP (like "sales"."store") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy store_TEMP("businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, c, StoreRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "sales"."store"("businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate")
+    return interpolate"""insert into "sales"."store"("businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate")
     select * from store_TEMP
     on conflict ("businessentityid")
     do update set

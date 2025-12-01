@@ -5,18 +5,18 @@
  */
 package adventureworks.public.only_pk_columns
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple2
 
 /** Table: public.only_pk_columns
  * Composite primary key: key_column_1, key_column_2
  */
 case class OnlyPkColumnsRow(
-  keyColumn1: String,
-  keyColumn2: Integer
+  @JsonProperty("key_column_1") keyColumn1: String,
+  @JsonProperty("key_column_2") keyColumn2: Integer
 ) {
   def compositeId: OnlyPkColumnsId = new OnlyPkColumnsId(keyColumn1, keyColumn2)
 
@@ -24,7 +24,7 @@ case class OnlyPkColumnsRow(
 }
 
 object OnlyPkColumnsRow {
-  val `_rowParser`: RowParser[OnlyPkColumnsRow] = RowParsers.of(PgTypes.text, PgTypes.int4, OnlyPkColumnsRow.apply, row => new Tuple2(row.keyColumn1, row.keyColumn2))
+  val `_rowParser`: RowParser[OnlyPkColumnsRow] = RowParsers.of(PgTypes.text, PgTypes.int4, OnlyPkColumnsRow.apply, row => Array(row.keyColumn1, row.keyColumn2))
 
   def apply(compositeId: OnlyPkColumnsId): OnlyPkColumnsRow = new OnlyPkColumnsRow(compositeId.keyColumn1, compositeId.keyColumn2)
 

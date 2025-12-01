@@ -33,7 +33,7 @@ object TypoLocalDateTime {
 
   implicit lazy val arrayPut: Put[Array[TypoLocalDateTime]] = {
     Put.Advanced.array[AnyRef](NonEmptyList.one("timestamp[]"), "timestamp")
-      .contramap(_.map(v => v.value.toString))
+      .contramap(_.map(v => v.value.toString()))
   }
 
   implicit lazy val bijection: Bijection[TypoLocalDateTime, LocalDateTime] = Bijection.apply[TypoLocalDateTime, LocalDateTime](_.value)(TypoLocalDateTime.apply)
@@ -53,10 +53,10 @@ object TypoLocalDateTime {
 
   implicit lazy val pgText: Text[TypoLocalDateTime] = {
     new Text[TypoLocalDateTime] {
-      override def unsafeEncode(v: TypoLocalDateTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value.toString, sb)
-      override def unsafeArrayEncode(v: TypoLocalDateTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value.toString, sb)
+      override def unsafeEncode(v: TypoLocalDateTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value.toString(), sb)
+      override def unsafeArrayEncode(v: TypoLocalDateTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value.toString(), sb)
     }
   }
 
-  implicit lazy val put: Put[TypoLocalDateTime] = Put.Advanced.other[String](NonEmptyList.one("timestamp")).contramap(v => v.value.toString)
+  implicit lazy val put: Put[TypoLocalDateTime] = Put.Advanced.other[String](NonEmptyList.one("timestamp")).contramap(v => v.value.toString())
 }

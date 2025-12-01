@@ -5,6 +5,7 @@
  */
 package adventureworks.person.emailaddress
 
+import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
@@ -25,7 +26,7 @@ case class EmailaddressRepoMock(
   toRow: EmailaddressRowUnsaved => EmailaddressRow,
   map: HashMap[EmailaddressId, EmailaddressRow] = new HashMap[EmailaddressId, EmailaddressRow]()
 ) extends EmailaddressRepo {
-  def delete: DeleteBuilder[EmailaddressFields, EmailaddressRow] = {
+  override def delete: DeleteBuilder[EmailaddressFields, EmailaddressRow] = {
     new DeleteBuilderMock(
       EmailaddressFields.structure,
       () => new ArrayList(map.values()),
@@ -35,27 +36,27 @@ case class EmailaddressRepoMock(
     )
   }
 
-  def deleteById(compositeId: EmailaddressId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(compositeId)).isPresent()
+  override def deleteById(compositeId: EmailaddressId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(compositeId)).isPresent()
 
-  def deleteByIds(compositeIds: Array[EmailaddressId])(using c: Connection): Integer = {
+  override def deleteByIds(compositeIds: Array[EmailaddressId])(using c: Connection): Integer = {
     var count = 0
     compositeIds.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
-    count
+    return count
   }
 
-  def insert(unsaved: EmailaddressRow)(using c: Connection): EmailaddressRow = {
+  override def insert(unsaved: EmailaddressRow)(using c: Connection): EmailaddressRow = {
     if (map.containsKey(unsaved.compositeId)) {
       throw new RuntimeException(s"id $unsaved.compositeId already exists")
     }
     map.put(unsaved.compositeId, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def insert(unsaved: EmailaddressRowUnsaved)(using c: Connection): EmailaddressRow = insert(toRow(unsaved))(using c)
+  override def insert(unsaved: EmailaddressRowUnsaved)(using c: Connection): EmailaddressRow = insert(toRow(unsaved))(using c)
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[EmailaddressRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -65,11 +66,11 @@ case class EmailaddressRepoMock(
       map.put(row.compositeId, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[EmailaddressRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -80,25 +81,25 @@ case class EmailaddressRepoMock(
       map.put(row.compositeId, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
-  def select: SelectBuilder[EmailaddressFields, EmailaddressRow] = new SelectBuilderMock(EmailaddressFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
+  override def select: SelectBuilder[EmailaddressFields, EmailaddressRow] = new SelectBuilderMock(EmailaddressFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  def selectAll(using c: Connection): java.util.List[EmailaddressRow] = new ArrayList(map.values())
+  override def selectAll(using c: Connection): java.util.List[EmailaddressRow] = new ArrayList(map.values())
 
-  def selectById(compositeId: EmailaddressId)(using c: Connection): Optional[EmailaddressRow] = Optional.ofNullable(map.get(compositeId))
+  override def selectById(compositeId: EmailaddressId)(using c: Connection): Optional[EmailaddressRow] = Optional.ofNullable(map.get(compositeId))
 
-  def selectByIds(compositeIds: Array[EmailaddressId])(using c: Connection): java.util.List[EmailaddressRow] = {
+  override def selectByIds(compositeIds: Array[EmailaddressId])(using c: Connection): java.util.List[EmailaddressRow] = {
     val result = new ArrayList[EmailaddressRow]()
     compositeIds.foreach { id => val opt = Optional.ofNullable(map.get(id))
     if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
-    result
+    return result
   }
 
-  def selectByIdsTracked(compositeIds: Array[EmailaddressId])(using c: Connection): java.util.Map[EmailaddressId, EmailaddressRow] = selectByIds(compositeIds)(using c).stream().collect(Collectors.toMap((row: adventureworks.person.emailaddress.EmailaddressRow) => row.compositeId, Function.identity()))
+  override def selectByIdsTracked(compositeIds: Array[EmailaddressId])(using c: Connection): java.util.Map[EmailaddressId, EmailaddressRow] = selectByIds(compositeIds)(using c).stream().collect(Collectors.toMap((row: EmailaddressRow) => row.compositeId, Function.identity()))
 
-  def update: UpdateBuilder[EmailaddressFields, EmailaddressRow] = {
+  override def update: UpdateBuilder[EmailaddressFields, EmailaddressRow] = {
     new UpdateBuilderMock(
       EmailaddressFields.structure,
       () => new ArrayList(map.values()),
@@ -107,31 +108,31 @@ case class EmailaddressRepoMock(
     )
   }
 
-  def update(row: EmailaddressRow)(using c: Connection): java.lang.Boolean = {
-    val shouldUpdate = Optional.ofNullable(map.get(row.compositeId)).filter(oldRow => !oldRow.equals(row)).isPresent()
+  override def update(row: EmailaddressRow)(using c: Connection): java.lang.Boolean = {
+    val shouldUpdate = Optional.ofNullable(map.get(row.compositeId)).filter(oldRow => (oldRow != row)).isPresent()
     if (shouldUpdate) {
       map.put(row.compositeId, row): @scala.annotation.nowarn
     }
-    shouldUpdate
+    return shouldUpdate
   }
 
-  def upsert(unsaved: EmailaddressRow)(using c: Connection): EmailaddressRow = {
+  override def upsert(unsaved: EmailaddressRow)(using c: Connection): EmailaddressRow = {
     map.put(unsaved.compositeId, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[EmailaddressRow])(using c: Connection): java.util.List[EmailaddressRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[EmailaddressRow])(using c: Connection): java.util.List[EmailaddressRow] = {
     val result = new ArrayList[EmailaddressRow]()
     while (unsaved.hasNext()) {
       val row = unsaved.next()
       map.put(row.compositeId, row): @scala.annotation.nowarn
       result.add(row): @scala.annotation.nowarn
     }
-    result
+    return result
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[EmailaddressRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
@@ -141,6 +142,6 @@ case class EmailaddressRepoMock(
       map.put(row.compositeId, row): @scala.annotation.nowarn
       count = count + 1
     }
-    count
+    return count
   }
 }

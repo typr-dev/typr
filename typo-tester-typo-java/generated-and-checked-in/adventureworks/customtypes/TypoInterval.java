@@ -52,11 +52,11 @@ public record TypoInterval(
   static public PgType<TypoInterval> pgType =
     PgType.of(
       "interval",
-      PgRead.castJdbcObjectTo(PGInterval.class).map(v -> new TypoInterval(v.getYears(), v.getMonths(), v.getDays(), v.getHours(), v.getMinutes(), v.getSeconds())),
-      PgWrite.passObjectToJdbc().contramap((TypoInterval v) -> new PGInterval(v.years(), v.months(), v.days(), v.hours(), v.minutes(), v.seconds())),
+      PgRead.castJdbcObjectTo(PGInterval.class).map((PGInterval v) -> new TypoInterval(v.getYears(), v.getMonths(), v.getDays(), v.getHours(), v.getMinutes(), v.getSeconds())),
+      PgWrite.<PGInterval>passObjectToJdbc().contramap((TypoInterval v) -> new PGInterval(v.years(), v.months(), v.days(), v.hours(), v.minutes(), v.seconds())),
       TypoInterval.pgText
     );
 
   static public PgType<TypoInterval[]> pgTypeArray =
-    TypoInterval.pgType.array(PgRead.castJdbcArrayTo(PGInterval.class).map(xs -> arrayMap.map(xs, v -> new TypoInterval(v.getYears(), v.getMonths(), v.getDays(), v.getHours(), v.getMinutes(), v.getSeconds()), TypoInterval.class)), PgWrite.<PGInterval>passObjectToJdbc().array(TypoInterval.pgType.typename().<PGInterval>as()).contramap(xs -> arrayMap.map(xs, (TypoInterval v) -> new PGInterval(v.years(), v.months(), v.days(), v.hours(), v.minutes(), v.seconds()), PGInterval.class)));
+    TypoInterval.pgType.array(PgRead.castJdbcArrayTo(PGInterval.class).map((PGInterval[] xs) -> arrayMap.map(xs, (PGInterval v) -> new TypoInterval(v.getYears(), v.getMonths(), v.getDays(), v.getHours(), v.getMinutes(), v.getSeconds()), TypoInterval.class)), PgWrite.<PGInterval>passObjectToJdbc().array(TypoInterval.pgType.typename().<PGInterval>as()).contramap((TypoInterval[] xs) -> arrayMap.map(xs, (TypoInterval v) -> new PGInterval(v.years(), v.months(), v.days(), v.hours(), v.minutes(), v.seconds()), PGInterval.class)));
 }

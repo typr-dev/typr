@@ -18,7 +18,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface CreditcardFields {
-  static final class Impl extends Relation<CreditcardFields, CreditcardRow> {
+  final class Impl extends Relation<CreditcardFields, CreditcardRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -26,21 +26,27 @@ public interface CreditcardFields {
     @Override
     public CreditcardFields fields() {
       return new CreditcardFields() {
+               @Override
                public IdField</* user-picked */ CustomCreditcardId, CreditcardRow> creditcardid() {
                  return new IdField</* user-picked */ CustomCreditcardId, CreditcardRow>(_path, "creditcardid", CreditcardRow::creditcardid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withCreditcardid(value), /* user-picked */ CustomCreditcardId.pgType);
                };
+               @Override
                public Field</* max 50 chars */ String, CreditcardRow> cardtype() {
                  return new Field</* max 50 chars */ String, CreditcardRow>(_path, "cardtype", CreditcardRow::cardtype, Optional.empty(), Optional.empty(), (row, value) -> row.withCardtype(value), PgTypes.text);
                };
+               @Override
                public Field</* max 25 chars */ String, CreditcardRow> cardnumber() {
                  return new Field</* max 25 chars */ String, CreditcardRow>(_path, "cardnumber", CreditcardRow::cardnumber, Optional.empty(), Optional.empty(), (row, value) -> row.withCardnumber(value), PgTypes.text);
                };
+               @Override
                public Field<TypoShort, CreditcardRow> expmonth() {
                  return new Field<TypoShort, CreditcardRow>(_path, "expmonth", CreditcardRow::expmonth, Optional.empty(), Optional.of("int2"), (row, value) -> row.withExpmonth(value), TypoShort.pgType);
                };
+               @Override
                public Field<TypoShort, CreditcardRow> expyear() {
                  return new Field<TypoShort, CreditcardRow>(_path, "expyear", CreditcardRow::expyear, Optional.empty(), Optional.of("int2"), (row, value) -> row.withExpyear(value), TypoShort.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, CreditcardRow> modifieddate() {
                  return new Field<TypoLocalDateTime, CreditcardRow>(_path, "modifieddate", CreditcardRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -52,6 +58,7 @@ public interface CreditcardFields {
       return List.of(this.fields().creditcardid(), this.fields().cardtype(), this.fields().cardnumber(), this.fields().expmonth(), this.fields().expyear(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

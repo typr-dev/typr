@@ -53,7 +53,7 @@ object DViewFields {
 
     override lazy val fields: DViewFields = {
       new DViewFields {
-        def title: Field[/* max 50 chars */ String, DViewRow] = {
+        override def title: Field[/* max 50 chars */ String, DViewRow] = {
           new Field[/* max 50 chars */ String, DViewRow](
             _path,
             "title",
@@ -64,7 +64,7 @@ object DViewFields {
             PgTypes.text
           )
         }
-        def owner: Field[BusinessentityId, DViewRow] = {
+        override def owner: Field[BusinessentityId, DViewRow] = {
           new Field[BusinessentityId, DViewRow](
             _path,
             "owner",
@@ -75,7 +75,7 @@ object DViewFields {
             BusinessentityId.pgType
           )
         }
-        def folderflag: Field[Flag, DViewRow] = {
+        override def folderflag: Field[Flag, DViewRow] = {
           new Field[Flag, DViewRow](
             _path,
             "folderflag",
@@ -86,7 +86,7 @@ object DViewFields {
             Flag.pgType
           )
         }
-        def filename: Field[/* max 400 chars */ String, DViewRow] = {
+        override def filename: Field[/* max 400 chars */ String, DViewRow] = {
           new Field[/* max 400 chars */ String, DViewRow](
             _path,
             "filename",
@@ -97,7 +97,7 @@ object DViewFields {
             PgTypes.text
           )
         }
-        def fileextension: OptField[/* max 8 chars */ String, DViewRow] = {
+        override def fileextension: OptField[/* max 8 chars */ String, DViewRow] = {
           new OptField[/* max 8 chars */ String, DViewRow](
             _path,
             "fileextension",
@@ -108,7 +108,7 @@ object DViewFields {
             PgTypes.text
           )
         }
-        def revision: Field[/* bpchar, max 5 chars */ String, DViewRow] = {
+        override def revision: Field[/* bpchar, max 5 chars */ String, DViewRow] = {
           new Field[/* bpchar, max 5 chars */ String, DViewRow](
             _path,
             "revision",
@@ -119,7 +119,7 @@ object DViewFields {
             PgTypes.text
           )
         }
-        def changenumber: Field[Integer, DViewRow] = {
+        override def changenumber: Field[Integer, DViewRow] = {
           new Field[Integer, DViewRow](
             _path,
             "changenumber",
@@ -130,7 +130,7 @@ object DViewFields {
             PgTypes.int4
           )
         }
-        def status: Field[TypoShort, DViewRow] = {
+        override def status: Field[TypoShort, DViewRow] = {
           new Field[TypoShort, DViewRow](
             _path,
             "status",
@@ -141,7 +141,7 @@ object DViewFields {
             TypoShort.pgType
           )
         }
-        def documentsummary: OptField[String, DViewRow] = {
+        override def documentsummary: OptField[String, DViewRow] = {
           new OptField[String, DViewRow](
             _path,
             "documentsummary",
@@ -152,7 +152,7 @@ object DViewFields {
             PgTypes.text
           )
         }
-        def document: OptField[TypoBytea, DViewRow] = {
+        override def document: OptField[TypoBytea, DViewRow] = {
           new OptField[TypoBytea, DViewRow](
             _path,
             "document",
@@ -163,7 +163,7 @@ object DViewFields {
             TypoBytea.pgType
           )
         }
-        def rowguid: Field[TypoUUID, DViewRow] = {
+        override def rowguid: Field[TypoUUID, DViewRow] = {
           new Field[TypoUUID, DViewRow](
             _path,
             "rowguid",
@@ -174,7 +174,7 @@ object DViewFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, DViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, DViewRow] = {
           new Field[TypoLocalDateTime, DViewRow](
             _path,
             "modifieddate",
@@ -185,7 +185,7 @@ object DViewFields {
             TypoLocalDateTime.pgType
           )
         }
-        def documentnode: Field[DocumentId, DViewRow] = {
+        override def documentnode: Field[DocumentId, DViewRow] = {
           new Field[DocumentId, DViewRow](
             _path,
             "documentnode",
@@ -201,7 +201,7 @@ object DViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, DViewRow]] = java.util.List.of(this.fields.title, this.fields.owner, this.fields.folderflag, this.fields.filename, this.fields.fileextension, this.fields.revision, this.fields.changenumber, this.fields.status, this.fields.documentsummary, this.fields.document, this.fields.rowguid, this.fields.modifieddate, this.fields.documentnode)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[DViewFields, DViewRow] = new Impl(java.util.List.of())

@@ -47,17 +47,5 @@ case class EmailaddressRowUnsaved(
 }
 
 object EmailaddressRowUnsaved {
-  given pgText: PgText[EmailaddressRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      BusinessentityId.pgType.pgText.unsafeEncode(row.businessentityid, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.text.opt().pgText.unsafeEncode(row.emailaddress, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using PgTypes.int4.pgText).unsafeEncode(row.emailaddressid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[EmailaddressRowUnsaved] = PgText.instance((row, sb) => { BusinessentityId.pgType.pgText.unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); PgTypes.text.opt().pgText.unsafeEncode(row.emailaddress, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.int4.pgText).unsafeEncode(row.emailaddressid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

@@ -10,9 +10,9 @@ import typo.dsl.SelectBuilder
 import anorm.SqlStringInterpolation
 
 class UmViewRepoImpl extends UmViewRepo {
-  def select: SelectBuilder[UmViewFields, UmViewRow] = SelectBuilder.of(""""pr"."um"""", UmViewFields.structure, UmViewRow.rowParser)
+  override def select: SelectBuilder[UmViewFields, UmViewRow] = SelectBuilder.of(""""pr"."um"""", UmViewFields.structure, UmViewRow.rowParser)
 
-  def selectAll(using c: Connection): List[UmViewRow] = {
+  override def selectAll(using c: Connection): List[UmViewRow] = {
     SQL"""select "id", "unitmeasurecode", "name", "modifieddate"::text
     from "pr"."um"
     """.as(UmViewRow.rowParser(1).*)

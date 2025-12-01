@@ -60,25 +60,5 @@ case class AddressRowUnsaved(
 }
 
 object AddressRowUnsaved {
-  given pgText: PgText[AddressRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      PgTypes.text.pgText.unsafeEncode(row.addressline1, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.text.opt().pgText.unsafeEncode(row.addressline2, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.text.pgText.unsafeEncode(row.city, sb);
-      sb.append(PgText.DELIMETER);
-      StateprovinceId.pgType.pgText.unsafeEncode(row.stateprovinceid, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.text.pgText.unsafeEncode(row.postalcode, sb);
-      sb.append(PgText.DELIMETER);
-      TypoBytea.pgType.opt().pgText.unsafeEncode(row.spatiallocation, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using AddressId.pgType.pgText).unsafeEncode(row.addressid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[AddressRowUnsaved] = PgText.instance((row, sb) => { PgTypes.text.pgText.unsafeEncode(row.addressline1, sb); sb.append(PgText.DELIMETER); PgTypes.text.opt().pgText.unsafeEncode(row.addressline2, sb); sb.append(PgText.DELIMETER); PgTypes.text.pgText.unsafeEncode(row.city, sb); sb.append(PgText.DELIMETER); StateprovinceId.pgType.pgText.unsafeEncode(row.stateprovinceid, sb); sb.append(PgText.DELIMETER); PgTypes.text.pgText.unsafeEncode(row.postalcode, sb); sb.append(PgText.DELIMETER); TypoBytea.pgType.opt().pgText.unsafeEncode(row.spatiallocation, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using AddressId.pgType.pgText).unsafeEncode(row.addressid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

@@ -5,6 +5,7 @@
  */
 package adventureworks.public_.issue142;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,10 +35,12 @@ public record Issue142RepoMock(HashMap<Issue142Id, Issue142Row> map) implements 
     return new Issue142RepoMock(map);
   };
 
+  @Override
   public DeleteBuilder<Issue142Fields, Issue142Row> delete() {
     return new DeleteBuilderMock<>(Issue142Fields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.tabellkode(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     Issue142Id tabellkode,
     Connection c
@@ -45,50 +48,56 @@ public record Issue142RepoMock(HashMap<Issue142Id, Issue142Row> map) implements 
     return Optional.ofNullable(map.remove(tabellkode)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     Issue142Id[] tabellkodes,
     Connection c
   ) {
     var count = 0;
-      for (var id : tabellkodes) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : tabellkodes) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public Issue142Row insert(
     Issue142Row unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.tabellkode())) {
-        throw new RuntimeException(str("id $unsaved.tabellkode() already exists"));
-      };
-      map.put(unsaved.tabellkode(), unsaved);
+      throw new RuntimeException(str("id $unsaved.tabellkode() already exists"));
+    };
+    map.put(unsaved.tabellkode(), unsaved);
     return unsaved;
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<Issue142Row> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.tabellkode(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.tabellkode(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<Issue142Fields, Issue142Row> select() {
     return new SelectBuilderMock<>(Issue142Fields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<Issue142Row> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<Issue142Row> selectById(
     Issue142Id tabellkode,
     Connection c
@@ -96,27 +105,31 @@ public record Issue142RepoMock(HashMap<Issue142Id, Issue142Row> map) implements 
     return Optional.ofNullable(map.get(tabellkode));
   };
 
+  @Override
   public List<Issue142Row> selectByIds(
     Issue142Id[] tabellkodes,
     Connection c
   ) {
     var result = new ArrayList<Issue142Row>();
-      for (var id : tabellkodes) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : tabellkodes) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<Issue142Id, Issue142Row> selectByIdsTracked(
     Issue142Id[] tabellkodes,
     Connection c
   ) {
-    return selectByIds(tabellkodes, c).stream().collect(Collectors.toMap((adventureworks.public_.issue142.Issue142Row row) -> row.tabellkode(), Function.identity()));
+    return selectByIds(tabellkodes, c).stream().collect(Collectors.toMap((Issue142Row row) -> row.tabellkode(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<Issue142Fields, Issue142Row> update() {
     return new UpdateBuilderMock<>(Issue142Fields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Issue142Row upsert(
     Issue142Row unsaved,
     Connection c
@@ -125,31 +138,33 @@ public record Issue142RepoMock(HashMap<Issue142Id, Issue142Row> map) implements 
     return unsaved;
   };
 
+  @Override
   public List<Issue142Row> upsertBatch(
     Iterator<Issue142Row> unsaved,
     Connection c
   ) {
     var result = new ArrayList<Issue142Row>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.tabellkode(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.tabellkode(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<Issue142Row> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.tabellkode(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.tabellkode(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

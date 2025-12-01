@@ -1,0 +1,1 @@
+DELETE FROM production.product WHERE ("productid"  = ?::int4)

@@ -11,7 +11,7 @@ import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class VindividualcustomerViewRepoImpl extends VindividualcustomerViewRepo {
-  def select: SelectBuilder[VindividualcustomerViewFields, VindividualcustomerViewRow] = SelectBuilder.of(""""sales"."vindividualcustomer"""", VindividualcustomerViewFields.structure, VindividualcustomerViewRow.read)
+  override def select: SelectBuilder[VindividualcustomerViewFields, VindividualcustomerViewRow] = SelectBuilder.of(""""sales"."vindividualcustomer"""", VindividualcustomerViewFields.structure, VindividualcustomerViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, VindividualcustomerViewRow] = sql"""select "businessentityid", "title", "firstname", "middlename", "lastname", "suffix", "phonenumber", "phonenumbertype", "emailaddress", "emailpromotion", "addresstype", "addressline1", "addressline2", "city", "stateprovincename", "postalcode", "countryregionname", "demographics" from "sales"."vindividualcustomer"""".query(VindividualcustomerViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, VindividualcustomerViewRow] = sql"""select "businessentityid", "title", "firstname", "middlename", "lastname", "suffix", "phonenumber", "phonenumbertype", "emailaddress", "emailpromotion", "addresstype", "addressline1", "addressline2", "city", "stateprovincename", "postalcode", "countryregionname", "demographics" from "sales"."vindividualcustomer"""".query(VindividualcustomerViewRow.read).stream
 }

@@ -26,18 +26,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class SalesterritoryRepoImpl extends SalesterritoryRepo {
-  def delete: DeleteBuilder[SalesterritoryFields, SalesterritoryRow] = DeleteBuilder.of(""""sales"."salesterritory"""", SalesterritoryFields.structure, SalesterritoryRow.rowParser(1).*)
+  override def delete: DeleteBuilder[SalesterritoryFields, SalesterritoryRow] = DeleteBuilder.of(""""sales"."salesterritory"""", SalesterritoryFields.structure, SalesterritoryRow.rowParser(1).*)
 
-  def deleteById(territoryid: SalesterritoryId)(implicit c: Connection): Boolean = SQL"""delete from "sales"."salesterritory" where "territoryid" = ${ParameterValue(territoryid, null, SalesterritoryId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(territoryid: SalesterritoryId)(implicit c: Connection): Boolean = SQL"""delete from "sales"."salesterritory" where "territoryid" = ${ParameterValue(territoryid, null, SalesterritoryId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(territoryids: Array[SalesterritoryId])(implicit c: Connection): Int = {
+  override def deleteByIds(territoryids: Array[SalesterritoryId])(implicit c: Connection): Int = {
     SQL"""delete
     from "sales"."salesterritory"
     where "territoryid" = ANY(${ParameterValue(territoryids, null, SalesterritoryId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: SalesterritoryRow)(implicit c: Connection): SalesterritoryRow = {
+  override def insert(unsaved: SalesterritoryRow)(implicit c: Connection): SalesterritoryRow = {
   SQL"""insert into "sales"."salesterritory"("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate")
     values (${ParameterValue(unsaved.territoryid, null, SalesterritoryId.toStatement)}::int4, ${ParameterValue(unsaved.name, null, Name.toStatement)}::varchar, ${ParameterValue(unsaved.countryregioncode, null, CountryregionId.toStatement)}, ${ParameterValue(unsaved.group, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.salesytd, null, ToStatement.scalaBigDecimalToStatement)}::numeric, ${ParameterValue(unsaved.saleslastyear, null, ToStatement.scalaBigDecimalToStatement)}::numeric, ${ParameterValue(unsaved.costytd, null, ToStatement.scalaBigDecimalToStatement)}::numeric, ${ParameterValue(unsaved.costlastyear, null, ToStatement.scalaBigDecimalToStatement)}::numeric, ${ParameterValue(unsaved.rowguid, null, TypoUUID.toStatement)}::uuid, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"::text
@@ -45,7 +45,7 @@ class SalesterritoryRepoImpl extends SalesterritoryRepo {
     .executeInsert(SalesterritoryRow.rowParser(1).single)
   }
 
-  def insert(unsaved: SalesterritoryRowUnsaved)(implicit c: Connection): SalesterritoryRow = {
+  override def insert(unsaved: SalesterritoryRowUnsaved)(implicit c: Connection): SalesterritoryRow = {
     val namedParameters = List(
       Some((NamedParameter("name", ParameterValue(unsaved.name, null, Name.toStatement)), "::varchar")),
       Some((NamedParameter("countryregioncode", ParameterValue(unsaved.countryregioncode, null, CountryregionId.toStatement)), "")),
@@ -95,47 +95,47 @@ class SalesterritoryRepoImpl extends SalesterritoryRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[SalesterritoryRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "sales"."salesterritory"("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved)(SalesterritoryRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[SalesterritoryRowUnsaved],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "sales"."salesterritory"("name", "countryregioncode", "group", "territoryid", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(SalesterritoryRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[SalesterritoryFields, SalesterritoryRow] = SelectBuilder.of(""""sales"."salesterritory"""", SalesterritoryFields.structure, SalesterritoryRow.rowParser)
+  override def select: SelectBuilder[SalesterritoryFields, SalesterritoryRow] = SelectBuilder.of(""""sales"."salesterritory"""", SalesterritoryFields.structure, SalesterritoryRow.rowParser)
 
-  def selectAll(implicit c: Connection): List[SalesterritoryRow] = {
+  override def selectAll(implicit c: Connection): List[SalesterritoryRow] = {
     SQL"""select "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"::text
     from "sales"."salesterritory"
     """.as(SalesterritoryRow.rowParser(1).*)
   }
 
-  def selectById(territoryid: SalesterritoryId)(implicit c: Connection): Option[SalesterritoryRow] = {
+  override def selectById(territoryid: SalesterritoryId)(implicit c: Connection): Option[SalesterritoryRow] = {
     SQL"""select "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"::text
     from "sales"."salesterritory"
     where "territoryid" = ${ParameterValue(territoryid, null, SalesterritoryId.toStatement)}
     """.as(SalesterritoryRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(territoryids: Array[SalesterritoryId])(implicit c: Connection): List[SalesterritoryRow] = {
+  override def selectByIds(territoryids: Array[SalesterritoryId])(implicit c: Connection): List[SalesterritoryRow] = {
     SQL"""select "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"::text
     from "sales"."salesterritory"
     where "territoryid" = ANY(${ParameterValue(territoryids, null, SalesterritoryId.arrayToStatement)})
     """.as(SalesterritoryRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(territoryids: Array[SalesterritoryId])(implicit c: Connection): Map[SalesterritoryId, SalesterritoryRow] = {
+  override def selectByIdsTracked(territoryids: Array[SalesterritoryId])(implicit c: Connection): Map[SalesterritoryId, SalesterritoryRow] = {
     val byId = selectByIds(territoryids).view.map(x => (x.territoryid, x)).toMap
     territoryids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[SalesterritoryFields, SalesterritoryRow] = UpdateBuilder.of(""""sales"."salesterritory"""", SalesterritoryFields.structure, SalesterritoryRow.rowParser(1).*)
+  override def update: UpdateBuilder[SalesterritoryFields, SalesterritoryRow] = UpdateBuilder.of(""""sales"."salesterritory"""", SalesterritoryFields.structure, SalesterritoryRow.rowParser(1).*)
 
-  def update(row: SalesterritoryRow)(implicit c: Connection): Option[SalesterritoryRow] = {
+  override def update(row: SalesterritoryRow)(implicit c: Connection): Option[SalesterritoryRow] = {
     val territoryid = row.territoryid
     SQL"""update "sales"."salesterritory"
     set "name" = ${ParameterValue(row.name, null, Name.toStatement)}::varchar,
@@ -152,7 +152,7 @@ class SalesterritoryRepoImpl extends SalesterritoryRepo {
     """.executeInsert(SalesterritoryRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: SalesterritoryRow)(implicit c: Connection): SalesterritoryRow = {
+  override def upsert(unsaved: SalesterritoryRow)(implicit c: Connection): SalesterritoryRow = {
   SQL"""insert into "sales"."salesterritory"("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate")
     values (
       ${ParameterValue(unsaved.territoryid, null, SalesterritoryId.toStatement)}::int4,
@@ -182,7 +182,7 @@ class SalesterritoryRepoImpl extends SalesterritoryRepo {
     .executeInsert(SalesterritoryRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[SalesterritoryRow])(implicit c: Connection): List[SalesterritoryRow] = {
+  override def upsertBatch(unsaved: Iterable[SalesterritoryRow])(implicit c: Connection): List[SalesterritoryRow] = {
     def toNamedParameter(row: SalesterritoryRow): List[NamedParameter] = List(
       NamedParameter("territoryid", ParameterValue(row.territoryid, null, SalesterritoryId.toStatement)),
       NamedParameter("name", ParameterValue(row.name, null, Name.toStatement)),
@@ -195,6 +195,7 @@ class SalesterritoryRepoImpl extends SalesterritoryRepo {
       NamedParameter("rowguid", ParameterValue(row.rowguid, null, TypoUUID.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -223,7 +224,7 @@ class SalesterritoryRepoImpl extends SalesterritoryRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[SalesterritoryRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

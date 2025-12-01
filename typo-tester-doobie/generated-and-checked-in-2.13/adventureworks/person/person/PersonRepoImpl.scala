@@ -28,20 +28,20 @@ import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class PersonRepoImpl extends PersonRepo {
-  def delete: DeleteBuilder[PersonFields, PersonRow] = DeleteBuilder.of(""""person"."person"""", PersonFields.structure, PersonRow.read)
+  override def delete: DeleteBuilder[PersonFields, PersonRow] = DeleteBuilder.of(""""person"."person"""", PersonFields.structure, PersonRow.read)
 
-  def deleteById(businessentityid: BusinessentityId): ConnectionIO[Boolean] = sql"""delete from "person"."person" where "businessentityid" = ${fromWrite(businessentityid)(new Write.Single(BusinessentityId.put))}""".update.run.map(_ > 0)
+  override def deleteById(businessentityid: BusinessentityId): ConnectionIO[Boolean] = sql"""delete from "person"."person" where "businessentityid" = ${fromWrite(businessentityid)(new Write.Single(BusinessentityId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(businessentityids: Array[BusinessentityId]): ConnectionIO[Int] = sql"""delete from "person"."person" where "businessentityid" = ANY(${fromWrite(businessentityids)(new Write.Single(BusinessentityId.arrayPut))})""".update.run
+  override def deleteByIds(businessentityids: Array[BusinessentityId]): ConnectionIO[Int] = sql"""delete from "person"."person" where "businessentityid" = ANY(${fromWrite(businessentityids)(new Write.Single(BusinessentityId.arrayPut))})""".update.run
 
-  def insert(unsaved: PersonRow): ConnectionIO[PersonRow] = {
+  override def insert(unsaved: PersonRow): ConnectionIO[PersonRow] = {
     sql"""insert into "person"."person"("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate")
     values (${fromWrite(unsaved.businessentityid)(new Write.Single(BusinessentityId.put))}::int4, ${fromWrite(unsaved.persontype)(new Write.Single(Meta.StringMeta.put))}::bpchar, ${fromWrite(unsaved.namestyle)(new Write.Single(NameStyle.put))}::bool, ${fromWrite(unsaved.title)(new Write.SingleOpt(Meta.StringMeta.put))}, ${fromWrite(unsaved.firstname)(new Write.Single(/* user-picked */ FirstName.put))}::varchar, ${fromWrite(unsaved.middlename)(new Write.SingleOpt(Name.put))}::varchar, ${fromWrite(unsaved.lastname)(new Write.Single(Name.put))}::varchar, ${fromWrite(unsaved.suffix)(new Write.SingleOpt(Meta.StringMeta.put))}, ${fromWrite(unsaved.emailpromotion)(new Write.Single(Meta.IntMeta.put))}::int4, ${fromWrite(unsaved.additionalcontactinfo)(new Write.SingleOpt(TypoXml.put))}::xml, ${fromWrite(unsaved.demographics)(new Write.SingleOpt(TypoXml.put))}::xml, ${fromWrite(unsaved.rowguid)(new Write.Single(TypoUUID.put))}::uuid, ${fromWrite(unsaved.modifieddate)(new Write.Single(TypoLocalDateTime.put))}::timestamp)
     returning "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text
     """.query(PersonRow.read).unique
   }
 
-  def insert(unsaved: PersonRowUnsaved): ConnectionIO[PersonRow] = {
+  override def insert(unsaved: PersonRowUnsaved): ConnectionIO[PersonRow] = {
     val fs = List(
       Some((Fragment.const0(s""""businessentityid""""), fr"${fromWrite(unsaved.businessentityid)(new Write.Single(BusinessentityId.put))}::int4")),
       Some((Fragment.const0(s""""persontype""""), fr"${fromWrite(unsaved.persontype)(new Write.Single(Meta.StringMeta.put))}::bpchar")),
@@ -83,35 +83,35 @@ class PersonRepoImpl extends PersonRepo {
     q.query(PersonRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, PersonRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "person"."person"("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate") FROM STDIN""").copyIn(unsaved, batchSize)(PersonRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, PersonRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "person"."person"("businessentityid", "persontype", "title", "firstname", "middlename", "lastname", "suffix", "additionalcontactinfo", "demographics", "namestyle", "emailpromotion", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(PersonRowUnsaved.pgText)
 
-  def select: SelectBuilder[PersonFields, PersonRow] = SelectBuilder.of(""""person"."person"""", PersonFields.structure, PersonRow.read)
+  override def select: SelectBuilder[PersonFields, PersonRow] = SelectBuilder.of(""""person"."person"""", PersonFields.structure, PersonRow.read)
 
-  def selectAll: Stream[ConnectionIO, PersonRow] = sql"""select "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text from "person"."person"""".query(PersonRow.read).stream
+  override def selectAll: Stream[ConnectionIO, PersonRow] = sql"""select "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text from "person"."person"""".query(PersonRow.read).stream
 
-  def selectById(businessentityid: BusinessentityId): ConnectionIO[Option[PersonRow]] = sql"""select "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text from "person"."person" where "businessentityid" = ${fromWrite(businessentityid)(new Write.Single(BusinessentityId.put))}""".query(PersonRow.read).option
+  override def selectById(businessentityid: BusinessentityId): ConnectionIO[Option[PersonRow]] = sql"""select "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text from "person"."person" where "businessentityid" = ${fromWrite(businessentityid)(new Write.Single(BusinessentityId.put))}""".query(PersonRow.read).option
 
-  def selectByIds(businessentityids: Array[BusinessentityId]): Stream[ConnectionIO, PersonRow] = sql"""select "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text from "person"."person" where "businessentityid" = ANY(${fromWrite(businessentityids)(new Write.Single(BusinessentityId.arrayPut))})""".query(PersonRow.read).stream
+  override def selectByIds(businessentityids: Array[BusinessentityId]): Stream[ConnectionIO, PersonRow] = sql"""select "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text from "person"."person" where "businessentityid" = ANY(${fromWrite(businessentityids)(new Write.Single(BusinessentityId.arrayPut))})""".query(PersonRow.read).stream
 
-  def selectByIdsTracked(businessentityids: Array[BusinessentityId]): ConnectionIO[Map[BusinessentityId, PersonRow]] = {
+  override def selectByIdsTracked(businessentityids: Array[BusinessentityId]): ConnectionIO[Map[BusinessentityId, PersonRow]] = {
     selectByIds(businessentityids).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.businessentityid, x)).toMap
       businessentityids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[PersonFields, PersonRow] = UpdateBuilder.of(""""person"."person"""", PersonFields.structure, PersonRow.read)
+  override def update: UpdateBuilder[PersonFields, PersonRow] = UpdateBuilder.of(""""person"."person"""", PersonFields.structure, PersonRow.read)
 
-  def update(row: PersonRow): ConnectionIO[Option[PersonRow]] = {
+  override def update(row: PersonRow): ConnectionIO[Option[PersonRow]] = {
     val businessentityid = row.businessentityid
     sql"""update "person"."person"
     set "persontype" = ${fromWrite(row.persontype)(new Write.Single(Meta.StringMeta.put))}::bpchar,
@@ -130,7 +130,7 @@ class PersonRepoImpl extends PersonRepo {
     returning "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text""".query(PersonRow.read).option
   }
 
-  def upsert(unsaved: PersonRow): ConnectionIO[PersonRow] = {
+  override def upsert(unsaved: PersonRow): ConnectionIO[PersonRow] = {
     sql"""insert into "person"."person"("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate")
     values (
       ${fromWrite(unsaved.businessentityid)(new Write.Single(BusinessentityId.put))}::int4,
@@ -165,7 +165,7 @@ class PersonRepoImpl extends PersonRepo {
     """.query(PersonRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[PersonRow]): Stream[ConnectionIO, PersonRow] = {
+  override def upsertBatch(unsaved: List[PersonRow]): Stream[ConnectionIO, PersonRow] = {
     Update[PersonRow](
       s"""insert into "person"."person"("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate")
       values (?::int4,?::bpchar,?::bool,?,?::varchar,?::varchar,?::varchar,?,?::int4,?::xml,?::xml,?::uuid,?::timestamp)
@@ -189,7 +189,7 @@ class PersonRepoImpl extends PersonRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, PersonRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

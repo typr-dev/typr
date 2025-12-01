@@ -5,12 +5,13 @@
  */
 package adventureworks.sales.specialoffer
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
 
 /** Type for the primary key of table `sales.specialoffer` */
-case class SpecialofferId(value: Integer) extends scala.AnyVal
+case class SpecialofferId(@JsonValue value: Integer) extends scala.AnyVal
 
 object SpecialofferId {
   given bijection: Bijection[SpecialofferId, Integer] = Bijection.apply[SpecialofferId, Integer](_.value)(SpecialofferId.apply)

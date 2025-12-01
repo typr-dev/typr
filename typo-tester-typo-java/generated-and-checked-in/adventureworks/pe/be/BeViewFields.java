@@ -16,7 +16,7 @@ import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 
 public interface BeViewFields {
-  static final class Impl extends Relation<BeViewFields, BeViewRow> {
+  final class Impl extends Relation<BeViewFields, BeViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -24,15 +24,19 @@ public interface BeViewFields {
     @Override
     public BeViewFields fields() {
       return new BeViewFields() {
+               @Override
                public Field<BusinessentityId, BeViewRow> id() {
                  return new Field<BusinessentityId, BeViewRow>(_path, "id", BeViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
                };
+               @Override
                public Field<BusinessentityId, BeViewRow> businessentityid() {
                  return new Field<BusinessentityId, BeViewRow>(_path, "businessentityid", BeViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public Field<TypoUUID, BeViewRow> rowguid() {
                  return new Field<TypoUUID, BeViewRow>(_path, "rowguid", BeViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, BeViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, BeViewRow>(_path, "modifieddate", BeViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -44,6 +48,7 @@ public interface BeViewFields {
       return List.of(this.fields().id(), this.fields().businessentityid(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

@@ -16,7 +16,7 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 
 public interface ScrapreasonFields {
-  static final class Impl extends Relation<ScrapreasonFields, ScrapreasonRow> {
+  final class Impl extends Relation<ScrapreasonFields, ScrapreasonRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -24,12 +24,15 @@ public interface ScrapreasonFields {
     @Override
     public ScrapreasonFields fields() {
       return new ScrapreasonFields() {
+               @Override
                public IdField<ScrapreasonId, ScrapreasonRow> scrapreasonid() {
                  return new IdField<ScrapreasonId, ScrapreasonRow>(_path, "scrapreasonid", ScrapreasonRow::scrapreasonid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withScrapreasonid(value), ScrapreasonId.pgType);
                };
+               @Override
                public Field<Name, ScrapreasonRow> name() {
                  return new Field<Name, ScrapreasonRow>(_path, "name", ScrapreasonRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, ScrapreasonRow> modifieddate() {
                  return new Field<TypoLocalDateTime, ScrapreasonRow>(_path, "modifieddate", ScrapreasonRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -41,6 +44,7 @@ public interface ScrapreasonFields {
       return List.of(this.fields().scrapreasonid(), this.fields().name(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

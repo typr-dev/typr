@@ -38,7 +38,14 @@ object TypoInterval {
 
   implicit lazy val arrayPut: Put[Array[TypoInterval]] = {
     Put.Advanced.array[AnyRef](NonEmptyList.one("interval[]"), "interval")
-      .contramap(_.map(v => new PGInterval(v.years, v.months, v.days, v.hours, v.minutes, v.seconds)))
+      .contramap(_.map(v => new PGInterval(
+                              v.years,
+                              v.months,
+                              v.days,
+                              v.hours,
+                              v.minutes,
+                              v.seconds
+                            )))
   }
 
   implicit lazy val decoder: Decoder[TypoInterval] = Decoder.forProduct6[TypoInterval, Int, Int, Int, Int, Int, Double]("years", "months", "days", "hours", "minutes", "seconds")(TypoInterval.apply)(Decoder.decodeInt, Decoder.decodeInt, Decoder.decodeInt, Decoder.decodeInt, Decoder.decodeInt, Decoder.decodeDouble)
@@ -64,5 +71,14 @@ object TypoInterval {
     }
   }
 
-  implicit lazy val put: Put[TypoInterval] = Put.Advanced.other[PGInterval](NonEmptyList.one("interval")).contramap(v => new PGInterval(v.years, v.months, v.days, v.hours, v.minutes, v.seconds))
+  implicit lazy val put: Put[TypoInterval] = {
+    Put.Advanced.other[PGInterval](NonEmptyList.one("interval")).contramap(v => new PGInterval(
+      v.years,
+      v.months,
+      v.days,
+      v.hours,
+      v.minutes,
+      v.seconds
+    ))
+  }
 }

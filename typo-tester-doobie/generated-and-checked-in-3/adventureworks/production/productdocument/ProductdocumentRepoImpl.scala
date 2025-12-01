@@ -17,19 +17,17 @@ import doobie.util.Write
 import doobie.util.fragment.Fragment
 import doobie.util.update.Update
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.DeleteBuilder
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class ProductdocumentRepoImpl extends ProductdocumentRepo {
-  def delete: DeleteBuilder[ProductdocumentFields, ProductdocumentRow] = DeleteBuilder.of(""""production"."productdocument"""", ProductdocumentFields.structure, ProductdocumentRow.read)
+  override def delete: DeleteBuilder[ProductdocumentFields, ProductdocumentRow] = DeleteBuilder.of(""""production"."productdocument"""", ProductdocumentFields.structure, ProductdocumentRow.read)
 
-  def deleteById(compositeId: ProductdocumentId): ConnectionIO[Boolean] = sql"""delete from "production"."productdocument" where "productid" = ${fromWrite(compositeId.productid)(using new Write.Single(ProductId.put))} AND "documentnode" = ${fromWrite(compositeId.documentnode)(using new Write.Single(DocumentId.put))}""".update.run.map(_ > 0)
+  override def deleteById(compositeId: ProductdocumentId): ConnectionIO[Boolean] = sql"""delete from "production"."productdocument" where "productid" = ${fromWrite(compositeId.productid)(using new Write.Single(ProductId.put))} AND "documentnode" = ${fromWrite(compositeId.documentnode)(using new Write.Single(DocumentId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(compositeIds: Array[ProductdocumentId]): ConnectionIO[Int] = {
+  override def deleteByIds(compositeIds: Array[ProductdocumentId]): ConnectionIO[Int] = {
     val productid = compositeIds.map(_.productid)
     val documentnode = compositeIds.map(_.documentnode)
     sql"""delete
@@ -39,14 +37,14 @@ class ProductdocumentRepoImpl extends ProductdocumentRepo {
     """.update.run
   }
 
-  def insert(unsaved: ProductdocumentRow): ConnectionIO[ProductdocumentRow] = {
+  override def insert(unsaved: ProductdocumentRow): ConnectionIO[ProductdocumentRow] = {
     sql"""insert into "production"."productdocument"("productid", "modifieddate", "documentnode")
     values (${fromWrite(unsaved.productid)(using new Write.Single(ProductId.put))}::int4, ${fromWrite(unsaved.modifieddate)(using new Write.Single(TypoLocalDateTime.put))}::timestamp, ${fromWrite(unsaved.documentnode)(using new Write.Single(DocumentId.put))})
     returning "productid", "modifieddate"::text, "documentnode"
     """.query(using ProductdocumentRow.read).unique
   }
 
-  def insert(unsaved: ProductdocumentRowUnsaved): ConnectionIO[ProductdocumentRow] = {
+  override def insert(unsaved: ProductdocumentRowUnsaved): ConnectionIO[ProductdocumentRow] = {
     val fs = List(
       Some((Fragment.const0(s""""productid""""), fr"${fromWrite(unsaved.productid)(using new Write.Single(ProductId.put))}::int4")),
       unsaved.modifieddate match {
@@ -72,24 +70,24 @@ class ProductdocumentRepoImpl extends ProductdocumentRepo {
     q.query(using ProductdocumentRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, ProductdocumentRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "production"."productdocument"("productid", "modifieddate", "documentnode") FROM STDIN""").copyIn(unsaved, batchSize)(using ProductdocumentRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, ProductdocumentRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "production"."productdocument"("productid", "modifieddate", "documentnode") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(using ProductdocumentRowUnsaved.pgText)
 
-  def select: SelectBuilder[ProductdocumentFields, ProductdocumentRow] = SelectBuilder.of(""""production"."productdocument"""", ProductdocumentFields.structure, ProductdocumentRow.read)
+  override def select: SelectBuilder[ProductdocumentFields, ProductdocumentRow] = SelectBuilder.of(""""production"."productdocument"""", ProductdocumentFields.structure, ProductdocumentRow.read)
 
-  def selectAll: Stream[ConnectionIO, ProductdocumentRow] = sql"""select "productid", "modifieddate"::text, "documentnode" from "production"."productdocument"""".query(using ProductdocumentRow.read).stream
+  override def selectAll: Stream[ConnectionIO, ProductdocumentRow] = sql"""select "productid", "modifieddate"::text, "documentnode" from "production"."productdocument"""".query(using ProductdocumentRow.read).stream
 
-  def selectById(compositeId: ProductdocumentId): ConnectionIO[Option[ProductdocumentRow]] = sql"""select "productid", "modifieddate"::text, "documentnode" from "production"."productdocument" where "productid" = ${fromWrite(compositeId.productid)(using new Write.Single(ProductId.put))} AND "documentnode" = ${fromWrite(compositeId.documentnode)(using new Write.Single(DocumentId.put))}""".query(using ProductdocumentRow.read).option
+  override def selectById(compositeId: ProductdocumentId): ConnectionIO[Option[ProductdocumentRow]] = sql"""select "productid", "modifieddate"::text, "documentnode" from "production"."productdocument" where "productid" = ${fromWrite(compositeId.productid)(using new Write.Single(ProductId.put))} AND "documentnode" = ${fromWrite(compositeId.documentnode)(using new Write.Single(DocumentId.put))}""".query(using ProductdocumentRow.read).option
 
-  def selectByIds(compositeIds: Array[ProductdocumentId]): Stream[ConnectionIO, ProductdocumentRow] = {
+  override def selectByIds(compositeIds: Array[ProductdocumentId]): Stream[ConnectionIO, ProductdocumentRow] = {
     val productid = compositeIds.map(_.productid)
     val documentnode = compositeIds.map(_.documentnode)
     sql"""select "productid", "modifieddate"::text, "documentnode"
@@ -99,16 +97,16 @@ class ProductdocumentRepoImpl extends ProductdocumentRepo {
     """.query(using ProductdocumentRow.read).stream
   }
 
-  def selectByIdsTracked(compositeIds: Array[ProductdocumentId]): ConnectionIO[Map[ProductdocumentId, ProductdocumentRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[ProductdocumentId]): ConnectionIO[Map[ProductdocumentId, ProductdocumentRow]] = {
     selectByIds(compositeIds).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[ProductdocumentFields, ProductdocumentRow] = UpdateBuilder.of(""""production"."productdocument"""", ProductdocumentFields.structure, ProductdocumentRow.read)
+  override def update: UpdateBuilder[ProductdocumentFields, ProductdocumentRow] = UpdateBuilder.of(""""production"."productdocument"""", ProductdocumentFields.structure, ProductdocumentRow.read)
 
-  def update(row: ProductdocumentRow): ConnectionIO[Option[ProductdocumentRow]] = {
+  override def update(row: ProductdocumentRow): ConnectionIO[Option[ProductdocumentRow]] = {
     val compositeId = row.compositeId
     sql"""update "production"."productdocument"
     set "modifieddate" = ${fromWrite(row.modifieddate)(using new Write.Single(TypoLocalDateTime.put))}::timestamp
@@ -116,7 +114,7 @@ class ProductdocumentRepoImpl extends ProductdocumentRepo {
     returning "productid", "modifieddate"::text, "documentnode"""".query(using ProductdocumentRow.read).option
   }
 
-  def upsert(unsaved: ProductdocumentRow): ConnectionIO[ProductdocumentRow] = {
+  override def upsert(unsaved: ProductdocumentRow): ConnectionIO[ProductdocumentRow] = {
     sql"""insert into "production"."productdocument"("productid", "modifieddate", "documentnode")
     values (
       ${fromWrite(unsaved.productid)(using new Write.Single(ProductId.put))}::int4,
@@ -130,7 +128,7 @@ class ProductdocumentRepoImpl extends ProductdocumentRepo {
     """.query(using ProductdocumentRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[ProductdocumentRow]): Stream[ConnectionIO, ProductdocumentRow] = {
+  override def upsertBatch(unsaved: List[ProductdocumentRow]): Stream[ConnectionIO, ProductdocumentRow] = {
     Update[ProductdocumentRow](
       s"""insert into "production"."productdocument"("productid", "modifieddate", "documentnode")
       values (?::int4,?::timestamp,?)
@@ -143,7 +141,7 @@ class ProductdocumentRepoImpl extends ProductdocumentRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, ProductdocumentRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

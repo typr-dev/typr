@@ -11,7 +11,7 @@ import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class PntViewRepoImpl extends PntViewRepo {
-  def select: SelectBuilder[PntViewFields, PntViewRow] = SelectBuilder.of(""""pe"."pnt"""", PntViewFields.structure, PntViewRow.read)
+  override def select: SelectBuilder[PntViewFields, PntViewRow] = SelectBuilder.of(""""pe"."pnt"""", PntViewFields.structure, PntViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, PntViewRow] = sql"""select "id", "phonenumbertypeid", "name", "modifieddate"::text from "pe"."pnt"""".query(PntViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, PntViewRow] = sql"""select "id", "phonenumbertypeid", "name", "modifieddate"::text from "pe"."pnt"""".query(PntViewRow.read).stream
 }

@@ -7,13 +7,11 @@ package adventureworks.pr.pdoc
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class PdocViewRepoImpl extends PdocViewRepo {
-  def select: SelectBuilder[PdocViewFields, PdocViewRow] = SelectBuilder.of(""""pr"."pdoc"""", PdocViewFields.structure, PdocViewRow.read)
+  override def select: SelectBuilder[PdocViewFields, PdocViewRow] = SelectBuilder.of(""""pr"."pdoc"""", PdocViewFields.structure, PdocViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, PdocViewRow] = sql"""select "id", "productid", "modifieddate"::text, "documentnode" from "pr"."pdoc"""".query(using PdocViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, PdocViewRow] = sql"""select "id", "productid", "modifieddate"::text, "documentnode" from "pr"."pdoc"""".query(using PdocViewRow.read).stream
 }

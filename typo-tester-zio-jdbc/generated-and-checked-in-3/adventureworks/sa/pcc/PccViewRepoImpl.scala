@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class PccViewRepoImpl extends PccViewRepo {
-  def select: SelectBuilder[PccViewFields, PccViewRow] = SelectBuilder.of(""""sa"."pcc"""", PccViewFields.structure, PccViewRow.jdbcDecoder)
+  override def select: SelectBuilder[PccViewFields, PccViewRow] = SelectBuilder.of(""""sa"."pcc"""", PccViewFields.structure, PccViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, PccViewRow] = sql"""select "id", "businessentityid", "creditcardid", "modifieddate"::text from "sa"."pcc"""".query(using PccViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, PccViewRow] = sql"""select "id", "businessentityid", "creditcardid", "modifieddate"::text from "sa"."pcc"""".query(using PccViewRow.jdbcDecoder).selectStream()
 }

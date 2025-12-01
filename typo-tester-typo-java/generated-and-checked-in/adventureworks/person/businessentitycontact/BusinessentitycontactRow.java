@@ -13,7 +13,6 @@ import adventureworks.person.contacttype.ContacttypeId;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple5;
 
 /** Table: person.businessentitycontact
   * Cross-reference table mapping stores, vendors, and employees to people
@@ -68,7 +67,7 @@ public record BusinessentitycontactRow(
     return new BusinessentitycontactRow(businessentityid, personid, contacttypeid, rowguid, modifieddate);
   };
 
-  static RowParser<BusinessentitycontactRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, ContacttypeId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BusinessentitycontactRow::new, row -> new Tuple5<>(row.businessentityid(), row.personid(), row.contacttypeid(), row.rowguid(), row.modifieddate()));;
+  static RowParser<BusinessentitycontactRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, ContacttypeId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BusinessentitycontactRow::new, row -> new Object[]{row.businessentityid(), row.personid(), row.contacttypeid(), row.rowguid(), row.modifieddate()});;
 
   static public BusinessentitycontactRow apply(
     BusinessentitycontactId compositeId,

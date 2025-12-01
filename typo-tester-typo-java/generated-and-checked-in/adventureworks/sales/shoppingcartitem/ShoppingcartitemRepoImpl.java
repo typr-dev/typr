@@ -7,7 +7,6 @@ package adventureworks.sales.shoppingcartitem;
 
 import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.production.product.ProductId;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,12 +24,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class ShoppingcartitemRepoImpl implements ShoppingcartitemRepo {
+  @Override
   public DeleteBuilder<ShoppingcartitemFields, ShoppingcartitemRow> delete() {
     return DeleteBuilder.of("sales.shoppingcartitem", ShoppingcartitemFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     ShoppingcartitemId shoppingcartitemid,
     Connection c
@@ -44,6 +44,7 @@ public class ShoppingcartitemRepoImpl implements ShoppingcartitemRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     ShoppingcartitemId[] shoppingcartitemids,
     Connection c
@@ -60,6 +61,7 @@ public class ShoppingcartitemRepoImpl implements ShoppingcartitemRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public ShoppingcartitemRow insert(
     ShoppingcartitemRow unsaved,
     Connection c
@@ -87,80 +89,90 @@ public class ShoppingcartitemRepoImpl implements ShoppingcartitemRepo {
       .updateReturning(ShoppingcartitemRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public ShoppingcartitemRow insert(
     ShoppingcartitemRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"shoppingcartid\""));
-      values.add(interpolate(
-        PgTypes.text.encode(unsaved.shoppingcartid()),
-        typo.runtime.Fragment.lit("""
-        """)
-      ));
-      columns.add(Fragment.lit("\"productid\""));
-      values.add(interpolate(
-        ProductId.pgType.encode(unsaved.productid()),
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"shoppingcartid\""));
+    values.add(interpolate(
+      PgTypes.text.encode(unsaved.shoppingcartid()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    columns.add(Fragment.lit("\"productid\""));
+    values.add(interpolate(
+      ProductId.pgType.encode(unsaved.productid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    unsaved.shoppingcartitemid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"shoppingcartitemid\""));
+        values.add(interpolate(
+        ShoppingcartitemId.pgType.encode(value),
         typo.runtime.Fragment.lit("::int4")
       ));
-      unsaved.shoppingcartitemid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"shoppingcartitemid\""));
-          values.add(interpolate(
-            ShoppingcartitemId.pgType.encode(value),
-            typo.runtime.Fragment.lit("::int4")
-          ));
-        }
-      );;
-      unsaved.quantity().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"quantity\""));
-          values.add(interpolate(
-            PgTypes.int4.encode(value),
-            typo.runtime.Fragment.lit("::int4")
-          ));
-        }
-      );;
-      unsaved.datecreated().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"datecreated\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "sales"."shoppingcartitem"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    unsaved.quantity().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"quantity\""));
+        values.add(interpolate(
+        PgTypes.int4.encode(value),
+        typo.runtime.Fragment.lit("::int4")
+      ));
+      }
+    );;
+    unsaved.datecreated().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"datecreated\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
+      ));
+      }
+    );;
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
+      ));
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "sales"."shoppingcartitem"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(ShoppingcartitemRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<ShoppingcartitemRow> unsaved,
     Integer batchSize,
@@ -172,6 +184,7 @@ public class ShoppingcartitemRepoImpl implements ShoppingcartitemRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<ShoppingcartitemRowUnsaved> unsaved,
     Integer batchSize,
@@ -182,17 +195,20 @@ public class ShoppingcartitemRepoImpl implements ShoppingcartitemRepo {
     """), batchSize, unsaved, c, ShoppingcartitemRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<ShoppingcartitemFields, ShoppingcartitemRow> select() {
     return SelectBuilder.of("sales.shoppingcartitem", ShoppingcartitemFields.structure(), ShoppingcartitemRow._rowParser);
   };
 
+  @Override
   public List<ShoppingcartitemRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text
        from "sales"."shoppingcartitem"
-    """)).as(ShoppingcartitemRow._rowParser.all()).runUnchecked(c);
+    """)).query(ShoppingcartitemRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<ShoppingcartitemRow> selectById(
     ShoppingcartitemId shoppingcartitemid,
     Connection c
@@ -204,9 +220,10 @@ public class ShoppingcartitemRepoImpl implements ShoppingcartitemRepo {
          where "shoppingcartitemid" = """),
       ShoppingcartitemId.pgType.encode(shoppingcartitemid),
       typo.runtime.Fragment.lit("")
-    ).as(ShoppingcartitemRow._rowParser.first()).runUnchecked(c);
+    ).query(ShoppingcartitemRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<ShoppingcartitemRow> selectByIds(
     ShoppingcartitemId[] shoppingcartitemids,
     Connection c
@@ -218,56 +235,60 @@ public class ShoppingcartitemRepoImpl implements ShoppingcartitemRepo {
          where "shoppingcartitemid" = ANY("""),
       ShoppingcartitemId.pgTypeArray.encode(shoppingcartitemids),
       typo.runtime.Fragment.lit(")")
-    ).as(ShoppingcartitemRow._rowParser.all()).runUnchecked(c);
+    ).query(ShoppingcartitemRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<ShoppingcartitemId, ShoppingcartitemRow> selectByIdsTracked(
     ShoppingcartitemId[] shoppingcartitemids,
     Connection c
   ) {
-    Map<ShoppingcartitemId, ShoppingcartitemRow> ret = new HashMap<>();;
-      selectByIds(shoppingcartitemids, c).forEach(row -> ret.put(row.shoppingcartitemid(), row));
+    HashMap<ShoppingcartitemId, ShoppingcartitemRow> ret = new HashMap<ShoppingcartitemId, ShoppingcartitemRow>();
+    selectByIds(shoppingcartitemids, c).forEach(row -> ret.put(row.shoppingcartitemid(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<ShoppingcartitemFields, ShoppingcartitemRow> update() {
     return UpdateBuilder.of("sales.shoppingcartitem", ShoppingcartitemFields.structure(), ShoppingcartitemRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     ShoppingcartitemRow row,
     Connection c
   ) {
     ShoppingcartitemId shoppingcartitemid = row.shoppingcartitemid();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "sales"."shoppingcartitem"
-                set "shoppingcartid" = """),
-             PgTypes.text.encode(row.shoppingcartid()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "quantity" = """),
-             PgTypes.int4.encode(row.quantity()),
-             typo.runtime.Fragment.lit("""
-                ::int4,
-                "productid" = """),
-             ProductId.pgType.encode(row.productid()),
-             typo.runtime.Fragment.lit("""
-                ::int4,
-                "datecreated" = """),
-             TypoLocalDateTime.pgType.encode(row.datecreated()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "shoppingcartitemid" = """),
-             ShoppingcartitemId.pgType.encode(shoppingcartitemid),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "sales"."shoppingcartitem"
+         set "shoppingcartid" = """),
+      PgTypes.text.encode(row.shoppingcartid()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "quantity" = """),
+      PgTypes.int4.encode(row.quantity()),
+      typo.runtime.Fragment.lit("""
+         ::int4,
+         "productid" = """),
+      ProductId.pgType.encode(row.productid()),
+      typo.runtime.Fragment.lit("""
+         ::int4,
+         "datecreated" = """),
+      TypoLocalDateTime.pgType.encode(row.datecreated()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "shoppingcartitemid" = """),
+      ShoppingcartitemId.pgType.encode(shoppingcartitemid),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public ShoppingcartitemRow upsert(
     ShoppingcartitemRow unsaved,
     Connection c
@@ -303,6 +324,7 @@ public class ShoppingcartitemRepoImpl implements ShoppingcartitemRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<ShoppingcartitemRow> upsertBatch(
     Iterator<ShoppingcartitemRow> unsaved,
     Connection c
@@ -324,28 +346,29 @@ public class ShoppingcartitemRepoImpl implements ShoppingcartitemRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<ShoppingcartitemRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table shoppingcartitem_TEMP (like "sales"."shoppingcartitem") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy shoppingcartitem_TEMP("shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate") from stdin
-      """), batchSize, unsaved, c, ShoppingcartitemRow.pgText);
+    create temporary table shoppingcartitem_TEMP (like "sales"."shoppingcartitem") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy shoppingcartitem_TEMP("shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate") from stdin
+    """), batchSize, unsaved, c, ShoppingcartitemRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "sales"."shoppingcartitem"("shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate")
-              select * from shoppingcartitem_TEMP
-              on conflict ("shoppingcartitemid")
-              do update set
-                "shoppingcartid" = EXCLUDED."shoppingcartid",
-              "quantity" = EXCLUDED."quantity",
-              "productid" = EXCLUDED."productid",
-              "datecreated" = EXCLUDED."datecreated",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table shoppingcartitem_TEMP;""")).update().runUnchecked(c);
+       insert into "sales"."shoppingcartitem"("shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate")
+       select * from shoppingcartitem_TEMP
+       on conflict ("shoppingcartitemid")
+       do update set
+         "shoppingcartid" = EXCLUDED."shoppingcartid",
+       "quantity" = EXCLUDED."quantity",
+       "productid" = EXCLUDED."productid",
+       "datecreated" = EXCLUDED."datecreated",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table shoppingcartitem_TEMP;""")).update().runUnchecked(c);
   };
 }

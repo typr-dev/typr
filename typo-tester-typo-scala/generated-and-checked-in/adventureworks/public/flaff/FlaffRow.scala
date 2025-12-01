@@ -6,12 +6,12 @@
 package adventureworks.public.flaff
 
 import adventureworks.public.ShortText
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.util.Optional
 import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple5
 
 /** Table: public.flaff
  * Composite primary key: code, another_code, some_number, specifier
@@ -20,9 +20,9 @@ case class FlaffRow(
   /** Points to [[adventureworks.public.flaff.FlaffRow.code]] */
   code: ShortText,
   /** Points to [[adventureworks.public.flaff.FlaffRow.anotherCode]] */
-  anotherCode: /* max 20 chars */ String,
+  @JsonProperty("another_code") anotherCode: /* max 20 chars */ String,
   /** Points to [[adventureworks.public.flaff.FlaffRow.someNumber]] */
-  someNumber: Integer,
+  @JsonProperty("some_number") someNumber: Integer,
   specifier: ShortText,
   /** Points to [[adventureworks.public.flaff.FlaffRow.specifier]] */
   parentspecifier: Optional[ShortText]
@@ -40,15 +40,7 @@ case class FlaffRow(
 }
 
 object FlaffRow {
-  val `_rowParser`: RowParser[FlaffRow] = {
-    RowParsers.of(ShortText.pgType, PgTypes.text, PgTypes.int4, ShortText.pgType, ShortText.pgType.opt(), FlaffRow.apply, row => new Tuple5(
-      row.code,
-      row.anotherCode,
-      row.someNumber,
-      row.specifier,
-      row.parentspecifier
-    ))
-  }
+  val `_rowParser`: RowParser[FlaffRow] = RowParsers.of(ShortText.pgType, PgTypes.text, PgTypes.int4, ShortText.pgType, ShortText.pgType.opt(), FlaffRow.apply, row => Array(row.code, row.anotherCode, row.someNumber, row.specifier, row.parentspecifier))
 
   def apply(
     compositeId: FlaffId,

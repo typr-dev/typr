@@ -26,11 +26,11 @@ object TypoPath {
   given pgType: PgType[TypoPath] = {
     PgType.of(
       "path",
-      PgRead.castJdbcObjectTo(classOf[PGpath]).map(v => new TypoPath(v.isOpen, Arrays.stream(v.points).map(p => new TypoPoint(p.x, p.y)).toList())),
-      PgWrite.passObjectToJdbc().contramap((v: TypoPath) => new PGpath(v.points.stream().map(p => new PGpoint(p.x, p.y)).toArray((n => new Array[PGpoint](n))), v.open)),
+      PgRead.castJdbcObjectTo(classOf[PGpath]).map((v: PGpath) => new TypoPath(v.isOpen, Arrays.stream(v.points).map(p => new TypoPoint(p.x, p.y)).toList())),
+      PgWrite.passObjectToJdbc[PGpath]().contramap((v: TypoPath) => new PGpath(v.points.stream().map(p => new PGpoint(p.x, p.y)).toArray((n => new Array[PGpoint](n))), v.open)),
       TypoPath.pgText
     )
   }
 
-  given pgTypeArray: PgType[Array[TypoPath]] = TypoPath.pgType.array(PgRead.castJdbcArrayTo(classOf[PGpath]).map(xs => xs.map(v => new TypoPath(v.isOpen, Arrays.stream(v.points).map(p => new TypoPoint(p.x, p.y)).toList()))), PgWrite.passObjectToJdbc[PGpath]().array(TypoPath.pgType.typename().as[PGpath]()).contramap(xs => xs.map((v: TypoPath) => new PGpath(v.points.stream().map(p => new PGpoint(p.x, p.y)).toArray((n => new Array[PGpoint](n))), v.open))))
+  given pgTypeArray: PgType[Array[TypoPath]] = TypoPath.pgType.array(PgRead.castJdbcArrayTo(classOf[PGpath]).map((xs: Array[PGpath]) => xs.map((v: PGpath) => new TypoPath(v.isOpen, Arrays.stream(v.points).map(p => new TypoPoint(p.x, p.y)).toList()))), PgWrite.passObjectToJdbc[PGpath]().array(TypoPath.pgType.typename().as[PGpath]()).contramap((xs: Array[TypoPath]) => xs.map((v: TypoPath) => new PGpath(v.points.stream().map(p => new PGpoint(p.x, p.y)).toArray((n => new Array[PGpoint](n))), v.open))))
 }

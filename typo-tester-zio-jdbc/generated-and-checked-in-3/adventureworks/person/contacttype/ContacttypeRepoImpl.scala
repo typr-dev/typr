@@ -21,20 +21,20 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class ContacttypeRepoImpl extends ContacttypeRepo {
-  def delete: DeleteBuilder[ContacttypeFields, ContacttypeRow] = DeleteBuilder.of(""""person"."contacttype"""", ContacttypeFields.structure, ContacttypeRow.jdbcDecoder)
+  override def delete: DeleteBuilder[ContacttypeFields, ContacttypeRow] = DeleteBuilder.of(""""person"."contacttype"""", ContacttypeFields.structure, ContacttypeRow.jdbcDecoder)
 
-  def deleteById(contacttypeid: ContacttypeId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "person"."contacttype" where "contacttypeid" = ${Segment.paramSegment(contacttypeid)(using ContacttypeId.setter)}""".delete.map(_ > 0)
+  override def deleteById(contacttypeid: ContacttypeId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "person"."contacttype" where "contacttypeid" = ${Segment.paramSegment(contacttypeid)(using ContacttypeId.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(contacttypeids: Array[ContacttypeId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "person"."contacttype" where "contacttypeid" = ANY(${Segment.paramSegment(contacttypeids)(using ContacttypeId.arraySetter)})""".delete
+  override def deleteByIds(contacttypeids: Array[ContacttypeId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "person"."contacttype" where "contacttypeid" = ANY(${Segment.paramSegment(contacttypeids)(using ContacttypeId.arraySetter)})""".delete
 
-  def insert(unsaved: ContacttypeRow): ZIO[ZConnection, Throwable, ContacttypeRow] = {
+  override def insert(unsaved: ContacttypeRow): ZIO[ZConnection, Throwable, ContacttypeRow] = {
     sql"""insert into "person"."contacttype"("contacttypeid", "name", "modifieddate")
     values (${Segment.paramSegment(unsaved.contacttypeid)(using ContacttypeId.setter)}::int4, ${Segment.paramSegment(unsaved.name)(using Name.setter)}::varchar, ${Segment.paramSegment(unsaved.modifieddate)(using TypoLocalDateTime.setter)}::timestamp)
     returning "contacttypeid", "name", "modifieddate"::text
     """.insertReturning(using ContacttypeRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insert(unsaved: ContacttypeRowUnsaved): ZIO[ZConnection, Throwable, ContacttypeRow] = {
+  override def insert(unsaved: ContacttypeRowUnsaved): ZIO[ZConnection, Throwable, ContacttypeRow] = {
     val fs = List(
       Some((sql""""name"""", sql"${Segment.paramSegment(unsaved.name)(using Name.setter)}::varchar")),
       unsaved.contacttypeid match {
@@ -58,35 +58,35 @@ class ContacttypeRepoImpl extends ContacttypeRepo {
     q.insertReturning(using ContacttypeRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, ContacttypeRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "person"."contacttype"("contacttypeid", "name", "modifieddate") FROM STDIN""", batchSize, unsaved)(using ContacttypeRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, ContacttypeRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "person"."contacttype"("name", "contacttypeid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using ContacttypeRowUnsaved.pgText)
 
-  def select: SelectBuilder[ContacttypeFields, ContacttypeRow] = SelectBuilder.of(""""person"."contacttype"""", ContacttypeFields.structure, ContacttypeRow.jdbcDecoder)
+  override def select: SelectBuilder[ContacttypeFields, ContacttypeRow] = SelectBuilder.of(""""person"."contacttype"""", ContacttypeFields.structure, ContacttypeRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, ContacttypeRow] = sql"""select "contacttypeid", "name", "modifieddate"::text from "person"."contacttype"""".query(using ContacttypeRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, ContacttypeRow] = sql"""select "contacttypeid", "name", "modifieddate"::text from "person"."contacttype"""".query(using ContacttypeRow.jdbcDecoder).selectStream()
 
-  def selectById(contacttypeid: ContacttypeId): ZIO[ZConnection, Throwable, Option[ContacttypeRow]] = sql"""select "contacttypeid", "name", "modifieddate"::text from "person"."contacttype" where "contacttypeid" = ${Segment.paramSegment(contacttypeid)(using ContacttypeId.setter)}""".query(using ContacttypeRow.jdbcDecoder).selectOne
+  override def selectById(contacttypeid: ContacttypeId): ZIO[ZConnection, Throwable, Option[ContacttypeRow]] = sql"""select "contacttypeid", "name", "modifieddate"::text from "person"."contacttype" where "contacttypeid" = ${Segment.paramSegment(contacttypeid)(using ContacttypeId.setter)}""".query(using ContacttypeRow.jdbcDecoder).selectOne
 
-  def selectByIds(contacttypeids: Array[ContacttypeId]): ZStream[ZConnection, Throwable, ContacttypeRow] = sql"""select "contacttypeid", "name", "modifieddate"::text from "person"."contacttype" where "contacttypeid" = ANY(${Segment.paramSegment(contacttypeids)(using ContacttypeId.arraySetter)})""".query(using ContacttypeRow.jdbcDecoder).selectStream()
+  override def selectByIds(contacttypeids: Array[ContacttypeId]): ZStream[ZConnection, Throwable, ContacttypeRow] = sql"""select "contacttypeid", "name", "modifieddate"::text from "person"."contacttype" where "contacttypeid" = ANY(${Segment.paramSegment(contacttypeids)(using ContacttypeId.arraySetter)})""".query(using ContacttypeRow.jdbcDecoder).selectStream()
 
-  def selectByIdsTracked(contacttypeids: Array[ContacttypeId]): ZIO[ZConnection, Throwable, Map[ContacttypeId, ContacttypeRow]] = {
+  override def selectByIdsTracked(contacttypeids: Array[ContacttypeId]): ZIO[ZConnection, Throwable, Map[ContacttypeId, ContacttypeRow]] = {
     selectByIds(contacttypeids).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.contacttypeid, x)).toMap
       contacttypeids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[ContacttypeFields, ContacttypeRow] = UpdateBuilder.of(""""person"."contacttype"""", ContacttypeFields.structure, ContacttypeRow.jdbcDecoder)
+  override def update: UpdateBuilder[ContacttypeFields, ContacttypeRow] = UpdateBuilder.of(""""person"."contacttype"""", ContacttypeFields.structure, ContacttypeRow.jdbcDecoder)
 
-  def update(row: ContacttypeRow): ZIO[ZConnection, Throwable, Option[ContacttypeRow]] = {
+  override def update(row: ContacttypeRow): ZIO[ZConnection, Throwable, Option[ContacttypeRow]] = {
     val contacttypeid = row.contacttypeid
     sql"""update "person"."contacttype"
     set "name" = ${Segment.paramSegment(row.name)(using Name.setter)}::varchar,
@@ -97,7 +97,7 @@ class ContacttypeRepoImpl extends ContacttypeRepo {
       .selectOne
   }
 
-  def upsert(unsaved: ContacttypeRow): ZIO[ZConnection, Throwable, UpdateResult[ContacttypeRow]] = {
+  override def upsert(unsaved: ContacttypeRow): ZIO[ZConnection, Throwable, UpdateResult[ContacttypeRow]] = {
     sql"""insert into "person"."contacttype"("contacttypeid", "name", "modifieddate")
     values (
       ${Segment.paramSegment(unsaved.contacttypeid)(using ContacttypeId.setter)}::int4,
@@ -112,7 +112,7 @@ class ContacttypeRepoImpl extends ContacttypeRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, ContacttypeRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

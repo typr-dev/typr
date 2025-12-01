@@ -9,7 +9,6 @@ import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.production.culture.CultureId;
 import adventureworks.production.productdescription.ProductdescriptionId;
 import adventureworks.production.productmodel.ProductmodelId;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,12 +26,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class ProductmodelproductdescriptioncultureRepoImpl implements ProductmodelproductdescriptioncultureRepo {
+  @Override
   public DeleteBuilder<ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow> delete() {
     return DeleteBuilder.of("production.productmodelproductdescriptionculture", ProductmodelproductdescriptioncultureFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     ProductmodelproductdescriptioncultureId compositeId,
     Connection c
@@ -54,31 +54,33 @@ public class ProductmodelproductdescriptioncultureRepoImpl implements Productmod
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     ProductmodelproductdescriptioncultureId[] compositeIds,
     Connection c
   ) {
     ProductmodelId[] productmodelid = arrayMap.map(compositeIds, ProductmodelproductdescriptioncultureId::productmodelid, ProductmodelId.class);;
-      ProductdescriptionId[] productdescriptionid = arrayMap.map(compositeIds, ProductmodelproductdescriptioncultureId::productdescriptionid, ProductdescriptionId.class);;
-      CultureId[] cultureid = arrayMap.map(compositeIds, ProductmodelproductdescriptioncultureId::cultureid, CultureId.class);;
+    ProductdescriptionId[] productdescriptionid = arrayMap.map(compositeIds, ProductmodelproductdescriptioncultureId::productdescriptionid, ProductdescriptionId.class);;
+    CultureId[] cultureid = arrayMap.map(compositeIds, ProductmodelproductdescriptioncultureId::cultureid, CultureId.class);;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                delete
-                from "production"."productmodelproductdescriptionculture"
-                where ("productmodelid", "productdescriptionid", "cultureid")
-                in (select unnest("""),
-             ProductmodelId.pgTypeArray.encode(productmodelid),
-             typo.runtime.Fragment.lit("::int4[]), unnest("),
-             ProductdescriptionId.pgTypeArray.encode(productdescriptionid),
-             typo.runtime.Fragment.lit("::int4[]), unnest("),
-             CultureId.pgTypeArray.encode(cultureid),
-             typo.runtime.Fragment.lit("""
-             ::bpchar[]))
+      typo.runtime.Fragment.lit("""
+         delete
+         from "production"."productmodelproductdescriptionculture"
+         where ("productmodelid", "productdescriptionid", "cultureid")
+         in (select unnest("""),
+      ProductmodelId.pgTypeArray.encode(productmodelid),
+      typo.runtime.Fragment.lit("::int4[]), unnest("),
+      ProductdescriptionId.pgTypeArray.encode(productdescriptionid),
+      typo.runtime.Fragment.lit("::int4[]), unnest("),
+      CultureId.pgTypeArray.encode(cultureid),
+      typo.runtime.Fragment.lit("""
+      ::bpchar[]))
 
-             """)
-           ).update().runUnchecked(c);
+      """)
+    ).update().runUnchecked(c);
   };
 
+  @Override
   public ProductmodelproductdescriptioncultureRow insert(
     ProductmodelproductdescriptioncultureRow unsaved,
     Connection c
@@ -102,54 +104,58 @@ public class ProductmodelproductdescriptioncultureRepoImpl implements Productmod
       .updateReturning(ProductmodelproductdescriptioncultureRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public ProductmodelproductdescriptioncultureRow insert(
     ProductmodelproductdescriptioncultureRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"productmodelid\""));
-      values.add(interpolate(
-        ProductmodelId.pgType.encode(unsaved.productmodelid()),
-        typo.runtime.Fragment.lit("::int4")
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"productmodelid\""));
+    values.add(interpolate(
+      ProductmodelId.pgType.encode(unsaved.productmodelid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"productdescriptionid\""));
+    values.add(interpolate(
+      ProductdescriptionId.pgType.encode(unsaved.productdescriptionid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"cultureid\""));
+    values.add(interpolate(
+      CultureId.pgType.encode(unsaved.cultureid()),
+      typo.runtime.Fragment.lit("::bpchar")
+    ));
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
       ));
-      columns.add(Fragment.lit("\"productdescriptionid\""));
-      values.add(interpolate(
-        ProductdescriptionId.pgType.encode(unsaved.productdescriptionid()),
-        typo.runtime.Fragment.lit("::int4")
-      ));
-      columns.add(Fragment.lit("\"cultureid\""));
-      values.add(interpolate(
-        CultureId.pgType.encode(unsaved.cultureid()),
-        typo.runtime.Fragment.lit("::bpchar")
-      ));
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "production"."productmodelproductdescriptionculture"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "productmodelid", "productdescriptionid", "cultureid", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "production"."productmodelproductdescriptionculture"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "productmodelid", "productdescriptionid", "cultureid", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(ProductmodelproductdescriptioncultureRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<ProductmodelproductdescriptioncultureRow> unsaved,
     Integer batchSize,
@@ -161,6 +167,7 @@ public class ProductmodelproductdescriptioncultureRepoImpl implements Productmod
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<ProductmodelproductdescriptioncultureRowUnsaved> unsaved,
     Integer batchSize,
@@ -171,17 +178,20 @@ public class ProductmodelproductdescriptioncultureRepoImpl implements Productmod
     """), batchSize, unsaved, c, ProductmodelproductdescriptioncultureRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow> select() {
     return SelectBuilder.of("production.productmodelproductdescriptionculture", ProductmodelproductdescriptioncultureFields.structure(), ProductmodelproductdescriptioncultureRow._rowParser);
   };
 
+  @Override
   public List<ProductmodelproductdescriptioncultureRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "productmodelid", "productdescriptionid", "cultureid", "modifieddate"::text
        from "production"."productmodelproductdescriptionculture"
-    """)).as(ProductmodelproductdescriptioncultureRow._rowParser.all()).runUnchecked(c);
+    """)).query(ProductmodelproductdescriptioncultureRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<ProductmodelproductdescriptioncultureRow> selectById(
     ProductmodelproductdescriptioncultureId compositeId,
     Connection c
@@ -201,73 +211,78 @@ public class ProductmodelproductdescriptioncultureRepoImpl implements Productmod
       """),
       CultureId.pgType.encode(compositeId.cultureid()),
       typo.runtime.Fragment.lit("")
-    ).as(ProductmodelproductdescriptioncultureRow._rowParser.first()).runUnchecked(c);
+    ).query(ProductmodelproductdescriptioncultureRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<ProductmodelproductdescriptioncultureRow> selectByIds(
     ProductmodelproductdescriptioncultureId[] compositeIds,
     Connection c
   ) {
     ProductmodelId[] productmodelid = arrayMap.map(compositeIds, ProductmodelproductdescriptioncultureId::productmodelid, ProductmodelId.class);;
-      ProductdescriptionId[] productdescriptionid = arrayMap.map(compositeIds, ProductmodelproductdescriptioncultureId::productdescriptionid, ProductdescriptionId.class);;
-      CultureId[] cultureid = arrayMap.map(compositeIds, ProductmodelproductdescriptioncultureId::cultureid, CultureId.class);;
+    ProductdescriptionId[] productdescriptionid = arrayMap.map(compositeIds, ProductmodelproductdescriptioncultureId::productdescriptionid, ProductdescriptionId.class);;
+    CultureId[] cultureid = arrayMap.map(compositeIds, ProductmodelproductdescriptioncultureId::cultureid, CultureId.class);;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                select "productmodelid", "productdescriptionid", "cultureid", "modifieddate"::text
-                from "production"."productmodelproductdescriptionculture"
-                where ("productmodelid", "productdescriptionid", "cultureid")
-                in (select unnest("""),
-             ProductmodelId.pgTypeArray.encode(productmodelid),
-             typo.runtime.Fragment.lit("::int4[]), unnest("),
-             ProductdescriptionId.pgTypeArray.encode(productdescriptionid),
-             typo.runtime.Fragment.lit("::int4[]), unnest("),
-             CultureId.pgTypeArray.encode(cultureid),
-             typo.runtime.Fragment.lit("""
-             ::bpchar[]))
+      typo.runtime.Fragment.lit("""
+         select "productmodelid", "productdescriptionid", "cultureid", "modifieddate"::text
+         from "production"."productmodelproductdescriptionculture"
+         where ("productmodelid", "productdescriptionid", "cultureid")
+         in (select unnest("""),
+      ProductmodelId.pgTypeArray.encode(productmodelid),
+      typo.runtime.Fragment.lit("::int4[]), unnest("),
+      ProductdescriptionId.pgTypeArray.encode(productdescriptionid),
+      typo.runtime.Fragment.lit("::int4[]), unnest("),
+      CultureId.pgTypeArray.encode(cultureid),
+      typo.runtime.Fragment.lit("""
+      ::bpchar[]))
 
-             """)
-           ).as(ProductmodelproductdescriptioncultureRow._rowParser.all()).runUnchecked(c);
+      """)
+    ).query(ProductmodelproductdescriptioncultureRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<ProductmodelproductdescriptioncultureId, ProductmodelproductdescriptioncultureRow> selectByIdsTracked(
     ProductmodelproductdescriptioncultureId[] compositeIds,
     Connection c
   ) {
-    Map<ProductmodelproductdescriptioncultureId, ProductmodelproductdescriptioncultureRow> ret = new HashMap<>();;
-      selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
+    HashMap<ProductmodelproductdescriptioncultureId, ProductmodelproductdescriptioncultureRow> ret = new HashMap<ProductmodelproductdescriptioncultureId, ProductmodelproductdescriptioncultureRow>();
+    selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow> update() {
     return UpdateBuilder.of("production.productmodelproductdescriptionculture", ProductmodelproductdescriptioncultureFields.structure(), ProductmodelproductdescriptioncultureRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     ProductmodelproductdescriptioncultureRow row,
     Connection c
   ) {
     ProductmodelproductdescriptioncultureId compositeId = row.compositeId();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "production"."productmodelproductdescriptionculture"
-                set "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "productmodelid" = """),
-             ProductmodelId.pgType.encode(compositeId.productmodelid()),
-             typo.runtime.Fragment.lit("""
-              AND "productdescriptionid" = 
-             """),
-             ProductdescriptionId.pgType.encode(compositeId.productdescriptionid()),
-             typo.runtime.Fragment.lit("""
-              AND "cultureid" = 
-             """),
-             CultureId.pgType.encode(compositeId.cultureid()),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "production"."productmodelproductdescriptionculture"
+         set "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "productmodelid" = """),
+      ProductmodelId.pgType.encode(compositeId.productmodelid()),
+      typo.runtime.Fragment.lit("""
+       AND "productdescriptionid" = 
+      """),
+      ProductdescriptionId.pgType.encode(compositeId.productdescriptionid()),
+      typo.runtime.Fragment.lit("""
+       AND "cultureid" = 
+      """),
+      CultureId.pgType.encode(compositeId.cultureid()),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public ProductmodelproductdescriptioncultureRow upsert(
     ProductmodelproductdescriptioncultureRow unsaved,
     Connection c
@@ -295,6 +310,7 @@ public class ProductmodelproductdescriptioncultureRepoImpl implements Productmod
       .runUnchecked(c);
   };
 
+  @Override
   public List<ProductmodelproductdescriptioncultureRow> upsertBatch(
     Iterator<ProductmodelproductdescriptioncultureRow> unsaved,
     Connection c
@@ -312,24 +328,25 @@ public class ProductmodelproductdescriptioncultureRepoImpl implements Productmod
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<ProductmodelproductdescriptioncultureRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table productmodelproductdescriptionculture_TEMP (like "production"."productmodelproductdescriptionculture") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy productmodelproductdescriptionculture_TEMP("productmodelid", "productdescriptionid", "cultureid", "modifieddate") from stdin
-      """), batchSize, unsaved, c, ProductmodelproductdescriptioncultureRow.pgText);
+    create temporary table productmodelproductdescriptionculture_TEMP (like "production"."productmodelproductdescriptionculture") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy productmodelproductdescriptionculture_TEMP("productmodelid", "productdescriptionid", "cultureid", "modifieddate") from stdin
+    """), batchSize, unsaved, c, ProductmodelproductdescriptioncultureRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "production"."productmodelproductdescriptionculture"("productmodelid", "productdescriptionid", "cultureid", "modifieddate")
-              select * from productmodelproductdescriptionculture_TEMP
-              on conflict ("productmodelid", "productdescriptionid", "cultureid")
-              do update set
-                "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table productmodelproductdescriptionculture_TEMP;""")).update().runUnchecked(c);
+       insert into "production"."productmodelproductdescriptionculture"("productmodelid", "productdescriptionid", "cultureid", "modifieddate")
+       select * from productmodelproductdescriptionculture_TEMP
+       on conflict ("productmodelid", "productdescriptionid", "cultureid")
+       do update set
+         "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table productmodelproductdescriptionculture_TEMP;""")).update().runUnchecked(c);
   };
 }

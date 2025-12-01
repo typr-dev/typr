@@ -12,7 +12,6 @@ import java.util.Optional;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple3;
 
 /** Table: production.illustration
   * Bicycle assembly diagrams.
@@ -45,7 +44,7 @@ public record IllustrationRow(
     return new IllustrationRow(illustrationid, diagram, modifieddate);
   };
 
-  static RowParser<IllustrationRow> _rowParser = RowParsers.of(IllustrationId.pgType, TypoXml.pgType.opt(), TypoLocalDateTime.pgType, IllustrationRow::new, row -> new Tuple3<>(row.illustrationid(), row.diagram(), row.modifieddate()));;
+  static RowParser<IllustrationRow> _rowParser = RowParsers.of(IllustrationId.pgType, TypoXml.pgType.opt(), TypoLocalDateTime.pgType, IllustrationRow::new, row -> new Object[]{row.illustrationid(), row.diagram(), row.modifieddate()});;
 
   static public PgText<IllustrationRow> pgText =
     PgText.from(_rowParser);

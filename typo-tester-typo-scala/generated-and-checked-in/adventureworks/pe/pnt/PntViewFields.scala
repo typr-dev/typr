@@ -29,7 +29,7 @@ object PntViewFields {
 
     override lazy val fields: PntViewFields = {
       new PntViewFields {
-        def id: Field[PhonenumbertypeId, PntViewRow] = {
+        override def id: Field[PhonenumbertypeId, PntViewRow] = {
           new Field[PhonenumbertypeId, PntViewRow](
             _path,
             "id",
@@ -40,7 +40,7 @@ object PntViewFields {
             PhonenumbertypeId.pgType
           )
         }
-        def phonenumbertypeid: Field[PhonenumbertypeId, PntViewRow] = {
+        override def phonenumbertypeid: Field[PhonenumbertypeId, PntViewRow] = {
           new Field[PhonenumbertypeId, PntViewRow](
             _path,
             "phonenumbertypeid",
@@ -51,7 +51,7 @@ object PntViewFields {
             PhonenumbertypeId.pgType
           )
         }
-        def name: Field[Name, PntViewRow] = {
+        override def name: Field[Name, PntViewRow] = {
           new Field[Name, PntViewRow](
             _path,
             "name",
@@ -62,7 +62,7 @@ object PntViewFields {
             Name.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, PntViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, PntViewRow] = {
           new Field[TypoLocalDateTime, PntViewRow](
             _path,
             "modifieddate",
@@ -78,7 +78,7 @@ object PntViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, PntViewRow]] = java.util.List.of(this.fields.id, this.fields.phonenumbertypeid, this.fields.name, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[PntViewFields, PntViewRow] = new Impl(java.util.List.of())

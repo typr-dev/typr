@@ -5,22 +5,22 @@
  */
 package adventureworks.sa.cu;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class CuViewRepoImpl implements CuViewRepo {
+  @Override
   public SelectBuilder<CuViewFields, CuViewRow> select() {
     return SelectBuilder.of("sa.cu", CuViewFields.structure(), CuViewRow._rowParser);
   };
 
+  @Override
   public List<CuViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "currencycode", "name", "modifieddate"::text
        from "sa"."cu"
-    """)).as(CuViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(CuViewRow._rowParser.all()).runUnchecked(c);
   };
 }

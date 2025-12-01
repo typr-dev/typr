@@ -35,7 +35,7 @@ object ShipmethodFields {
 
     override lazy val fields: ShipmethodFields = {
       new ShipmethodFields {
-        def shipmethodid: IdField[ShipmethodId, ShipmethodRow] = {
+        override def shipmethodid: IdField[ShipmethodId, ShipmethodRow] = {
           new IdField[ShipmethodId, ShipmethodRow](
             _path,
             "shipmethodid",
@@ -46,7 +46,7 @@ object ShipmethodFields {
             ShipmethodId.pgType
           )
         }
-        def name: Field[Name, ShipmethodRow] = {
+        override def name: Field[Name, ShipmethodRow] = {
           new Field[Name, ShipmethodRow](
             _path,
             "name",
@@ -57,7 +57,7 @@ object ShipmethodFields {
             Name.pgType
           )
         }
-        def shipbase: Field[java.math.BigDecimal, ShipmethodRow] = {
+        override def shipbase: Field[java.math.BigDecimal, ShipmethodRow] = {
           new Field[java.math.BigDecimal, ShipmethodRow](
             _path,
             "shipbase",
@@ -68,7 +68,7 @@ object ShipmethodFields {
             PgTypes.numeric
           )
         }
-        def shiprate: Field[java.math.BigDecimal, ShipmethodRow] = {
+        override def shiprate: Field[java.math.BigDecimal, ShipmethodRow] = {
           new Field[java.math.BigDecimal, ShipmethodRow](
             _path,
             "shiprate",
@@ -79,7 +79,7 @@ object ShipmethodFields {
             PgTypes.numeric
           )
         }
-        def rowguid: Field[TypoUUID, ShipmethodRow] = {
+        override def rowguid: Field[TypoUUID, ShipmethodRow] = {
           new Field[TypoUUID, ShipmethodRow](
             _path,
             "rowguid",
@@ -90,7 +90,7 @@ object ShipmethodFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, ShipmethodRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, ShipmethodRow] = {
           new Field[TypoLocalDateTime, ShipmethodRow](
             _path,
             "modifieddate",
@@ -106,7 +106,7 @@ object ShipmethodFields {
 
     override lazy val columns: java.util.List[FieldLike[?, ShipmethodRow]] = java.util.List.of(this.fields.shipmethodid, this.fields.name, this.fields.shipbase, this.fields.shiprate, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[ShipmethodFields, ShipmethodRow] = new Impl(java.util.List.of())

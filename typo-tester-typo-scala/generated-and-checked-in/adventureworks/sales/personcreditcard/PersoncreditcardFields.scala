@@ -44,7 +44,7 @@ object PersoncreditcardFields {
 
     override lazy val fields: PersoncreditcardFields = {
       new PersoncreditcardFields {
-        def businessentityid: IdField[BusinessentityId, PersoncreditcardRow] = {
+        override def businessentityid: IdField[BusinessentityId, PersoncreditcardRow] = {
           new IdField[BusinessentityId, PersoncreditcardRow](
             _path,
             "businessentityid",
@@ -55,7 +55,7 @@ object PersoncreditcardFields {
             BusinessentityId.pgType
           )
         }
-        def creditcardid: IdField[/* user-picked */ CustomCreditcardId, PersoncreditcardRow] = {
+        override def creditcardid: IdField[/* user-picked */ CustomCreditcardId, PersoncreditcardRow] = {
           new IdField[/* user-picked */ CustomCreditcardId, PersoncreditcardRow](
             _path,
             "creditcardid",
@@ -66,7 +66,7 @@ object PersoncreditcardFields {
             /* user-picked */ CustomCreditcardId.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, PersoncreditcardRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, PersoncreditcardRow] = {
           new Field[TypoLocalDateTime, PersoncreditcardRow](
             _path,
             "modifieddate",
@@ -82,7 +82,7 @@ object PersoncreditcardFields {
 
     override lazy val columns: java.util.List[FieldLike[?, PersoncreditcardRow]] = java.util.List.of(this.fields.businessentityid, this.fields.creditcardid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[PersoncreditcardFields, PersoncreditcardRow] = new Impl(java.util.List.of())

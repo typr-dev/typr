@@ -21,11 +21,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class LocationRepoImpl extends LocationRepo {
-  def delete: DeleteBuilder[LocationFields, LocationRow] = DeleteBuilder.of("production.location", LocationFields.structure)
+  override def delete: DeleteBuilder[LocationFields, LocationRow] = DeleteBuilder.of("production.location", LocationFields.structure)
 
-  def deleteById(locationid: LocationId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."location" where "locationid" = ${LocationId.pgType.encode(locationid)}""".update().runUnchecked(c) > 0
+  override def deleteById(locationid: LocationId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."location" where "locationid" = ${LocationId.pgType.encode(locationid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(locationids: Array[LocationId])(using c: Connection): Integer = {
+  override def deleteByIds(locationids: Array[LocationId])(using c: Connection): Integer = {
     interpolate"""delete
     from "production"."location"
     where "locationid" = ANY(${LocationId.pgTypeArray.encode(locationids)})"""
@@ -33,7 +33,7 @@ class LocationRepoImpl extends LocationRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: LocationRow)(using c: Connection): LocationRow = {
+  override def insert(unsaved: LocationRow)(using c: Connection): LocationRow = {
   interpolate"""insert into "production"."location"("locationid", "name", "costrate", "availability", "modifieddate")
     values (${LocationId.pgType.encode(unsaved.locationid)}::int4, ${Name.pgType.encode(unsaved.name)}::varchar, ${PgTypes.numeric.encode(unsaved.costrate)}::numeric, ${PgTypes.numeric.encode(unsaved.availability)}::numeric, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "locationid", "name", "costrate", "availability", "modifieddate"::text
@@ -41,38 +41,26 @@ class LocationRepoImpl extends LocationRepo {
     .updateReturning(LocationRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: LocationRowUnsaved)(using c: Connection): LocationRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: LocationRowUnsaved)(using c: Connection): LocationRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
     values.add(interpolate"${Name.pgType.encode(unsaved.name)}::varchar"): @scala.annotation.nowarn
     unsaved.locationid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""locationid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${LocationId.pgType.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""locationid"""")): @scala.annotation.nowarn; values.add(interpolate"${LocationId.pgType.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.costrate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""costrate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""costrate"""")): @scala.annotation.nowarn; values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn }
     );
     unsaved.availability.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""availability"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""availability"""")): @scala.annotation.nowarn; values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "production"."location"(${Fragment.comma(columns)})
@@ -80,51 +68,51 @@ class LocationRepoImpl extends LocationRepo {
       returning "locationid", "name", "costrate", "availability", "modifieddate"::text
       """
     }
-    q.updateReturning(LocationRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(LocationRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[LocationRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."location"("locationid", "name", "costrate", "availability", "modifieddate") FROM STDIN""", batchSize, unsaved, c, LocationRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[LocationRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."location"("name", "locationid", "costrate", "availability", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, LocationRowUnsaved.pgText)
 
-  def select: SelectBuilder[LocationFields, LocationRow] = SelectBuilder.of("production.location", LocationFields.structure, LocationRow.`_rowParser`)
+  override def select: SelectBuilder[LocationFields, LocationRow] = SelectBuilder.of("production.location", LocationFields.structure, LocationRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[LocationRow] = {
+  override def selectAll(using c: Connection): java.util.List[LocationRow] = {
     interpolate"""select "locationid", "name", "costrate", "availability", "modifieddate"::text
     from "production"."location"
-    """.as(LocationRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(LocationRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(locationid: LocationId)(using c: Connection): Optional[LocationRow] = {
+  override def selectById(locationid: LocationId)(using c: Connection): Optional[LocationRow] = {
     interpolate"""select "locationid", "name", "costrate", "availability", "modifieddate"::text
     from "production"."location"
-    where "locationid" = ${LocationId.pgType.encode(locationid)}""".as(LocationRow.`_rowParser`.first()).runUnchecked(c)
+    where "locationid" = ${LocationId.pgType.encode(locationid)}""".query(LocationRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(locationids: Array[LocationId])(using c: Connection): java.util.List[LocationRow] = {
+  override def selectByIds(locationids: Array[LocationId])(using c: Connection): java.util.List[LocationRow] = {
     interpolate"""select "locationid", "name", "costrate", "availability", "modifieddate"::text
     from "production"."location"
-    where "locationid" = ANY(${LocationId.pgTypeArray.encode(locationids)})""".as(LocationRow.`_rowParser`.all()).runUnchecked(c)
+    where "locationid" = ANY(${LocationId.pgTypeArray.encode(locationids)})""".query(LocationRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(locationids: Array[LocationId])(using c: Connection): java.util.Map[LocationId, LocationRow] = {
-    val ret: java.util.Map[LocationId, LocationRow] = new HashMap()
+  override def selectByIdsTracked(locationids: Array[LocationId])(using c: Connection): java.util.Map[LocationId, LocationRow] = {
+    val ret: HashMap[LocationId, LocationRow] = new HashMap[LocationId, LocationRow]()
     selectByIds(locationids)(using c).forEach(row => ret.put(row.locationid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[LocationFields, LocationRow] = UpdateBuilder.of("production.location", LocationFields.structure, LocationRow.`_rowParser`.all())
+  override def update: UpdateBuilder[LocationFields, LocationRow] = UpdateBuilder.of("production.location", LocationFields.structure, LocationRow.`_rowParser`.all())
 
-  def update(row: LocationRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: LocationRow)(using c: Connection): java.lang.Boolean = {
     val locationid: LocationId = row.locationid
-    interpolate"""update "production"."location"
+    return interpolate"""update "production"."location"
     set "name" = ${Name.pgType.encode(row.name)}::varchar,
     "costrate" = ${PgTypes.numeric.encode(row.costrate)}::numeric,
     "availability" = ${PgTypes.numeric.encode(row.availability)}::numeric,
@@ -132,7 +120,7 @@ class LocationRepoImpl extends LocationRepo {
     where "locationid" = ${LocationId.pgType.encode(locationid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: LocationRow)(using c: Connection): LocationRow = {
+  override def upsert(unsaved: LocationRow)(using c: Connection): LocationRow = {
   interpolate"""insert into "production"."location"("locationid", "name", "costrate", "availability", "modifieddate")
     values (${LocationId.pgType.encode(unsaved.locationid)}::int4, ${Name.pgType.encode(unsaved.name)}::varchar, ${PgTypes.numeric.encode(unsaved.costrate)}::numeric, ${PgTypes.numeric.encode(unsaved.availability)}::numeric, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("locationid")
@@ -147,7 +135,7 @@ class LocationRepoImpl extends LocationRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[LocationRow])(using c: Connection): java.util.List[LocationRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[LocationRow])(using c: Connection): java.util.List[LocationRow] = {
     interpolate"""insert into "production"."location"("locationid", "name", "costrate", "availability", "modifieddate")
     values (?::int4, ?::varchar, ?::numeric, ?::numeric, ?::timestamp)
     on conflict ("locationid")
@@ -163,13 +151,13 @@ class LocationRepoImpl extends LocationRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[LocationRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table location_TEMP (like "production"."location") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy location_TEMP("locationid", "name", "costrate", "availability", "modifieddate") from stdin""", batchSize, unsaved, c, LocationRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "production"."location"("locationid", "name", "costrate", "availability", "modifieddate")
+    return interpolate"""insert into "production"."location"("locationid", "name", "costrate", "availability", "modifieddate")
     select * from location_TEMP
     on conflict ("locationid")
     do update set

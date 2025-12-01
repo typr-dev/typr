@@ -7,13 +7,11 @@ package adventureworks.pr.pi
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class PiViewRepoImpl extends PiViewRepo {
-  def select: SelectBuilder[PiViewFields, PiViewRow] = SelectBuilder.of(""""pr"."pi"""", PiViewFields.structure, PiViewRow.read)
+  override def select: SelectBuilder[PiViewFields, PiViewRow] = SelectBuilder.of(""""pr"."pi"""", PiViewFields.structure, PiViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, PiViewRow] = sql"""select "id", "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"::text from "pr"."pi"""".query(using PiViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, PiViewRow] = sql"""select "id", "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"::text from "pr"."pi"""".query(using PiViewRow.read).stream
 }

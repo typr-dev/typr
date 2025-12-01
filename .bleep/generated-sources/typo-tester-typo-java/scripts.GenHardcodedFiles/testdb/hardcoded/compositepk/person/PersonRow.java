@@ -11,7 +11,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple3;
 
 /** Table: compositepk.person
   * Composite primary key: one, two
@@ -37,7 +36,7 @@ public record PersonRow(
     return new PersonRow(one, two, name);
   };
 
-  static RowParser<PersonRow> _rowParser = RowParsers.of(PgTypes.int8, PgTypes.text.opt(), PgTypes.text.opt(), PersonRow::new, row -> new Tuple3<>(row.one(), row.two(), row.name()));;
+  static RowParser<PersonRow> _rowParser = RowParsers.of(PgTypes.int8, PgTypes.text.opt(), PgTypes.text.opt(), PersonRow::new, row -> new Object[]{row.one(), row.two(), row.name()});;
 
   static public PersonRow apply(
     PersonId compositeId,

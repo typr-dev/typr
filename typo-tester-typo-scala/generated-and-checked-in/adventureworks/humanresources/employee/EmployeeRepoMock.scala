@@ -6,6 +6,7 @@
 package adventureworks.humanresources.employee
 
 import adventureworks.person.businessentity.BusinessentityId
+import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
@@ -26,7 +27,7 @@ case class EmployeeRepoMock(
   toRow: EmployeeRowUnsaved => EmployeeRow,
   map: HashMap[BusinessentityId, EmployeeRow] = new HashMap[BusinessentityId, EmployeeRow]()
 ) extends EmployeeRepo {
-  def delete: DeleteBuilder[EmployeeFields, EmployeeRow] = {
+  override def delete: DeleteBuilder[EmployeeFields, EmployeeRow] = {
     new DeleteBuilderMock(
       EmployeeFields.structure,
       () => new ArrayList(map.values()),
@@ -36,27 +37,27 @@ case class EmployeeRepoMock(
     )
   }
 
-  def deleteById(businessentityid: BusinessentityId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(businessentityid)).isPresent()
+  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(businessentityid)).isPresent()
 
-  def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Integer = {
+  override def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Integer = {
     var count = 0
     businessentityids.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
-    count
+    return count
   }
 
-  def insert(unsaved: EmployeeRow)(using c: Connection): EmployeeRow = {
+  override def insert(unsaved: EmployeeRow)(using c: Connection): EmployeeRow = {
     if (map.containsKey(unsaved.businessentityid)) {
       throw new RuntimeException(s"id $unsaved.businessentityid already exists")
     }
     map.put(unsaved.businessentityid, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def insert(unsaved: EmployeeRowUnsaved)(using c: Connection): EmployeeRow = insert(toRow(unsaved))(using c)
+  override def insert(unsaved: EmployeeRowUnsaved)(using c: Connection): EmployeeRow = insert(toRow(unsaved))(using c)
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[EmployeeRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -66,11 +67,11 @@ case class EmployeeRepoMock(
       map.put(row.businessentityid, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[EmployeeRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -81,25 +82,25 @@ case class EmployeeRepoMock(
       map.put(row.businessentityid, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
-  def select: SelectBuilder[EmployeeFields, EmployeeRow] = new SelectBuilderMock(EmployeeFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
+  override def select: SelectBuilder[EmployeeFields, EmployeeRow] = new SelectBuilderMock(EmployeeFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  def selectAll(using c: Connection): java.util.List[EmployeeRow] = new ArrayList(map.values())
+  override def selectAll(using c: Connection): java.util.List[EmployeeRow] = new ArrayList(map.values())
 
-  def selectById(businessentityid: BusinessentityId)(using c: Connection): Optional[EmployeeRow] = Optional.ofNullable(map.get(businessentityid))
+  override def selectById(businessentityid: BusinessentityId)(using c: Connection): Optional[EmployeeRow] = Optional.ofNullable(map.get(businessentityid))
 
-  def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.List[EmployeeRow] = {
+  override def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.List[EmployeeRow] = {
     val result = new ArrayList[EmployeeRow]()
     businessentityids.foreach { id => val opt = Optional.ofNullable(map.get(id))
     if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
-    result
+    return result
   }
 
-  def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.Map[BusinessentityId, EmployeeRow] = selectByIds(businessentityids)(using c).stream().collect(Collectors.toMap((row: adventureworks.humanresources.employee.EmployeeRow) => row.businessentityid, Function.identity()))
+  override def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.Map[BusinessentityId, EmployeeRow] = selectByIds(businessentityids)(using c).stream().collect(Collectors.toMap((row: EmployeeRow) => row.businessentityid, Function.identity()))
 
-  def update: UpdateBuilder[EmployeeFields, EmployeeRow] = {
+  override def update: UpdateBuilder[EmployeeFields, EmployeeRow] = {
     new UpdateBuilderMock(
       EmployeeFields.structure,
       () => new ArrayList(map.values()),
@@ -108,31 +109,31 @@ case class EmployeeRepoMock(
     )
   }
 
-  def update(row: EmployeeRow)(using c: Connection): java.lang.Boolean = {
-    val shouldUpdate = Optional.ofNullable(map.get(row.businessentityid)).filter(oldRow => !oldRow.equals(row)).isPresent()
+  override def update(row: EmployeeRow)(using c: Connection): java.lang.Boolean = {
+    val shouldUpdate = Optional.ofNullable(map.get(row.businessentityid)).filter(oldRow => (oldRow != row)).isPresent()
     if (shouldUpdate) {
       map.put(row.businessentityid, row): @scala.annotation.nowarn
     }
-    shouldUpdate
+    return shouldUpdate
   }
 
-  def upsert(unsaved: EmployeeRow)(using c: Connection): EmployeeRow = {
+  override def upsert(unsaved: EmployeeRow)(using c: Connection): EmployeeRow = {
     map.put(unsaved.businessentityid, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[EmployeeRow])(using c: Connection): java.util.List[EmployeeRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[EmployeeRow])(using c: Connection): java.util.List[EmployeeRow] = {
     val result = new ArrayList[EmployeeRow]()
     while (unsaved.hasNext()) {
       val row = unsaved.next()
       map.put(row.businessentityid, row): @scala.annotation.nowarn
       result.add(row): @scala.annotation.nowarn
     }
-    result
+    return result
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[EmployeeRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
@@ -142,6 +143,6 @@ case class EmployeeRepoMock(
       map.put(row.businessentityid, row): @scala.annotation.nowarn
       count = count + 1
     }
-    count
+    return count
   }
 }

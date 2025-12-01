@@ -39,15 +39,5 @@ case class PersonphoneRowUnsaved(
 }
 
 object PersonphoneRowUnsaved {
-  given pgText: PgText[PersonphoneRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      BusinessentityId.pgType.pgText.unsafeEncode(row.businessentityid, sb);
-      sb.append(PgText.DELIMETER);
-      Phone.pgType.pgText.unsafeEncode(row.phonenumber, sb);
-      sb.append(PgText.DELIMETER);
-      PhonenumbertypeId.pgType.pgText.unsafeEncode(row.phonenumbertypeid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[PersonphoneRowUnsaved] = PgText.instance((row, sb) => { BusinessentityId.pgType.pgText.unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); Phone.pgType.pgText.unsafeEncode(row.phonenumber, sb); sb.append(PgText.DELIMETER); PhonenumbertypeId.pgType.pgText.unsafeEncode(row.phonenumbertypeid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

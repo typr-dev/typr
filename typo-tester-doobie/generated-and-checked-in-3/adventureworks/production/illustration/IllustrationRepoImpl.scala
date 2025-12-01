@@ -16,28 +16,26 @@ import doobie.util.Write
 import doobie.util.fragment.Fragment
 import doobie.util.update.Update
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.DeleteBuilder
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class IllustrationRepoImpl extends IllustrationRepo {
-  def delete: DeleteBuilder[IllustrationFields, IllustrationRow] = DeleteBuilder.of(""""production"."illustration"""", IllustrationFields.structure, IllustrationRow.read)
+  override def delete: DeleteBuilder[IllustrationFields, IllustrationRow] = DeleteBuilder.of(""""production"."illustration"""", IllustrationFields.structure, IllustrationRow.read)
 
-  def deleteById(illustrationid: IllustrationId): ConnectionIO[Boolean] = sql"""delete from "production"."illustration" where "illustrationid" = ${fromWrite(illustrationid)(using new Write.Single(IllustrationId.put))}""".update.run.map(_ > 0)
+  override def deleteById(illustrationid: IllustrationId): ConnectionIO[Boolean] = sql"""delete from "production"."illustration" where "illustrationid" = ${fromWrite(illustrationid)(using new Write.Single(IllustrationId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(illustrationids: Array[IllustrationId]): ConnectionIO[Int] = sql"""delete from "production"."illustration" where "illustrationid" = ANY(${fromWrite(illustrationids)(using new Write.Single(IllustrationId.arrayPut))})""".update.run
+  override def deleteByIds(illustrationids: Array[IllustrationId]): ConnectionIO[Int] = sql"""delete from "production"."illustration" where "illustrationid" = ANY(${fromWrite(illustrationids)(using new Write.Single(IllustrationId.arrayPut))})""".update.run
 
-  def insert(unsaved: IllustrationRow): ConnectionIO[IllustrationRow] = {
+  override def insert(unsaved: IllustrationRow): ConnectionIO[IllustrationRow] = {
     sql"""insert into "production"."illustration"("illustrationid", "diagram", "modifieddate")
     values (${fromWrite(unsaved.illustrationid)(using new Write.Single(IllustrationId.put))}::int4, ${fromWrite(unsaved.diagram)(using new Write.SingleOpt(TypoXml.put))}::xml, ${fromWrite(unsaved.modifieddate)(using new Write.Single(TypoLocalDateTime.put))}::timestamp)
     returning "illustrationid", "diagram", "modifieddate"::text
     """.query(using IllustrationRow.read).unique
   }
 
-  def insert(unsaved: IllustrationRowUnsaved): ConnectionIO[IllustrationRow] = {
+  override def insert(unsaved: IllustrationRowUnsaved): ConnectionIO[IllustrationRow] = {
     val fs = List(
       Some((Fragment.const0(s""""diagram""""), fr"${fromWrite(unsaved.diagram)(using new Write.SingleOpt(TypoXml.put))}::xml")),
       unsaved.illustrationid match {
@@ -63,35 +61,35 @@ class IllustrationRepoImpl extends IllustrationRepo {
     q.query(using IllustrationRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, IllustrationRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "production"."illustration"("illustrationid", "diagram", "modifieddate") FROM STDIN""").copyIn(unsaved, batchSize)(using IllustrationRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, IllustrationRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "production"."illustration"("diagram", "illustrationid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(using IllustrationRowUnsaved.pgText)
 
-  def select: SelectBuilder[IllustrationFields, IllustrationRow] = SelectBuilder.of(""""production"."illustration"""", IllustrationFields.structure, IllustrationRow.read)
+  override def select: SelectBuilder[IllustrationFields, IllustrationRow] = SelectBuilder.of(""""production"."illustration"""", IllustrationFields.structure, IllustrationRow.read)
 
-  def selectAll: Stream[ConnectionIO, IllustrationRow] = sql"""select "illustrationid", "diagram", "modifieddate"::text from "production"."illustration"""".query(using IllustrationRow.read).stream
+  override def selectAll: Stream[ConnectionIO, IllustrationRow] = sql"""select "illustrationid", "diagram", "modifieddate"::text from "production"."illustration"""".query(using IllustrationRow.read).stream
 
-  def selectById(illustrationid: IllustrationId): ConnectionIO[Option[IllustrationRow]] = sql"""select "illustrationid", "diagram", "modifieddate"::text from "production"."illustration" where "illustrationid" = ${fromWrite(illustrationid)(using new Write.Single(IllustrationId.put))}""".query(using IllustrationRow.read).option
+  override def selectById(illustrationid: IllustrationId): ConnectionIO[Option[IllustrationRow]] = sql"""select "illustrationid", "diagram", "modifieddate"::text from "production"."illustration" where "illustrationid" = ${fromWrite(illustrationid)(using new Write.Single(IllustrationId.put))}""".query(using IllustrationRow.read).option
 
-  def selectByIds(illustrationids: Array[IllustrationId]): Stream[ConnectionIO, IllustrationRow] = sql"""select "illustrationid", "diagram", "modifieddate"::text from "production"."illustration" where "illustrationid" = ANY(${fromWrite(illustrationids)(using new Write.Single(IllustrationId.arrayPut))})""".query(using IllustrationRow.read).stream
+  override def selectByIds(illustrationids: Array[IllustrationId]): Stream[ConnectionIO, IllustrationRow] = sql"""select "illustrationid", "diagram", "modifieddate"::text from "production"."illustration" where "illustrationid" = ANY(${fromWrite(illustrationids)(using new Write.Single(IllustrationId.arrayPut))})""".query(using IllustrationRow.read).stream
 
-  def selectByIdsTracked(illustrationids: Array[IllustrationId]): ConnectionIO[Map[IllustrationId, IllustrationRow]] = {
+  override def selectByIdsTracked(illustrationids: Array[IllustrationId]): ConnectionIO[Map[IllustrationId, IllustrationRow]] = {
     selectByIds(illustrationids).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.illustrationid, x)).toMap
       illustrationids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[IllustrationFields, IllustrationRow] = UpdateBuilder.of(""""production"."illustration"""", IllustrationFields.structure, IllustrationRow.read)
+  override def update: UpdateBuilder[IllustrationFields, IllustrationRow] = UpdateBuilder.of(""""production"."illustration"""", IllustrationFields.structure, IllustrationRow.read)
 
-  def update(row: IllustrationRow): ConnectionIO[Option[IllustrationRow]] = {
+  override def update(row: IllustrationRow): ConnectionIO[Option[IllustrationRow]] = {
     val illustrationid = row.illustrationid
     sql"""update "production"."illustration"
     set "diagram" = ${fromWrite(row.diagram)(using new Write.SingleOpt(TypoXml.put))}::xml,
@@ -100,7 +98,7 @@ class IllustrationRepoImpl extends IllustrationRepo {
     returning "illustrationid", "diagram", "modifieddate"::text""".query(using IllustrationRow.read).option
   }
 
-  def upsert(unsaved: IllustrationRow): ConnectionIO[IllustrationRow] = {
+  override def upsert(unsaved: IllustrationRow): ConnectionIO[IllustrationRow] = {
     sql"""insert into "production"."illustration"("illustrationid", "diagram", "modifieddate")
     values (
       ${fromWrite(unsaved.illustrationid)(using new Write.Single(IllustrationId.put))}::int4,
@@ -115,7 +113,7 @@ class IllustrationRepoImpl extends IllustrationRepo {
     """.query(using IllustrationRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[IllustrationRow]): Stream[ConnectionIO, IllustrationRow] = {
+  override def upsertBatch(unsaved: List[IllustrationRow]): Stream[ConnectionIO, IllustrationRow] = {
     Update[IllustrationRow](
       s"""insert into "production"."illustration"("illustrationid", "diagram", "modifieddate")
       values (?::int4,?::xml,?::timestamp)
@@ -129,7 +127,7 @@ class IllustrationRepoImpl extends IllustrationRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, IllustrationRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

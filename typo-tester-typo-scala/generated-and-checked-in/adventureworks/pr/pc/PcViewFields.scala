@@ -32,7 +32,7 @@ object PcViewFields {
 
     override lazy val fields: PcViewFields = {
       new PcViewFields {
-        def id: Field[ProductcategoryId, PcViewRow] = {
+        override def id: Field[ProductcategoryId, PcViewRow] = {
           new Field[ProductcategoryId, PcViewRow](
             _path,
             "id",
@@ -43,7 +43,7 @@ object PcViewFields {
             ProductcategoryId.pgType
           )
         }
-        def productcategoryid: Field[ProductcategoryId, PcViewRow] = {
+        override def productcategoryid: Field[ProductcategoryId, PcViewRow] = {
           new Field[ProductcategoryId, PcViewRow](
             _path,
             "productcategoryid",
@@ -54,7 +54,7 @@ object PcViewFields {
             ProductcategoryId.pgType
           )
         }
-        def name: Field[Name, PcViewRow] = {
+        override def name: Field[Name, PcViewRow] = {
           new Field[Name, PcViewRow](
             _path,
             "name",
@@ -65,7 +65,7 @@ object PcViewFields {
             Name.pgType
           )
         }
-        def rowguid: Field[TypoUUID, PcViewRow] = {
+        override def rowguid: Field[TypoUUID, PcViewRow] = {
           new Field[TypoUUID, PcViewRow](
             _path,
             "rowguid",
@@ -76,7 +76,7 @@ object PcViewFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, PcViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, PcViewRow] = {
           new Field[TypoLocalDateTime, PcViewRow](
             _path,
             "modifieddate",
@@ -92,7 +92,7 @@ object PcViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, PcViewRow]] = java.util.List.of(this.fields.id, this.fields.productcategoryid, this.fields.name, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[PcViewFields, PcViewRow] = new Impl(java.util.List.of())

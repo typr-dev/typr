@@ -12,7 +12,6 @@ import adventureworks.public_.Name;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple4;
 
 /** Table: person.addresstype
   * Types of addresses stored in the Address table.
@@ -52,7 +51,7 @@ public record AddresstypeRow(
     return new AddresstypeRow(addresstypeid, name, rowguid, modifieddate);
   };
 
-  static RowParser<AddresstypeRow> _rowParser = RowParsers.of(AddresstypeId.pgType, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, AddresstypeRow::new, row -> new Tuple4<>(row.addresstypeid(), row.name(), row.rowguid(), row.modifieddate()));;
+  static RowParser<AddresstypeRow> _rowParser = RowParsers.of(AddresstypeId.pgType, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, AddresstypeRow::new, row -> new Object[]{row.addresstypeid(), row.name(), row.rowguid(), row.modifieddate()});;
 
   static public PgText<AddresstypeRow> pgText =
     PgText.from(_rowParser);

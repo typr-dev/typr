@@ -5,6 +5,7 @@
  */
 package adventureworks.production.productdescription;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record ProductdescriptionRepoMock(
     return new ProductdescriptionRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<ProductdescriptionFields, ProductdescriptionRow> delete() {
     return new DeleteBuilderMock<>(ProductdescriptionFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.productdescriptionid(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     ProductdescriptionId productdescriptionid,
     Connection c
@@ -52,28 +55,31 @@ public record ProductdescriptionRepoMock(
     return Optional.ofNullable(map.remove(productdescriptionid)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     ProductdescriptionId[] productdescriptionids,
     Connection c
   ) {
     var count = 0;
-      for (var id : productdescriptionids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : productdescriptionids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public ProductdescriptionRow insert(
     ProductdescriptionRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.productdescriptionid())) {
-        throw new RuntimeException(str("id $unsaved.productdescriptionid() already exists"));
-      };
-      map.put(unsaved.productdescriptionid(), unsaved);
+      throw new RuntimeException(str("id $unsaved.productdescriptionid() already exists"));
+    };
+    map.put(unsaved.productdescriptionid(), unsaved);
     return unsaved;
   };
 
+  @Override
   public ProductdescriptionRow insert(
     ProductdescriptionRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record ProductdescriptionRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<ProductdescriptionRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.productdescriptionid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.productdescriptionid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<ProductdescriptionRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.productdescriptionid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.productdescriptionid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<ProductdescriptionFields, ProductdescriptionRow> select() {
     return new SelectBuilderMock<>(ProductdescriptionFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<ProductdescriptionRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<ProductdescriptionRow> selectById(
     ProductdescriptionId productdescriptionid,
     Connection c
@@ -126,38 +137,43 @@ public record ProductdescriptionRepoMock(
     return Optional.ofNullable(map.get(productdescriptionid));
   };
 
+  @Override
   public List<ProductdescriptionRow> selectByIds(
     ProductdescriptionId[] productdescriptionids,
     Connection c
   ) {
     var result = new ArrayList<ProductdescriptionRow>();
-      for (var id : productdescriptionids) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : productdescriptionids) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<ProductdescriptionId, ProductdescriptionRow> selectByIdsTracked(
     ProductdescriptionId[] productdescriptionids,
     Connection c
   ) {
-    return selectByIds(productdescriptionids, c).stream().collect(Collectors.toMap((adventureworks.production.productdescription.ProductdescriptionRow row) -> row.productdescriptionid(), Function.identity()));
+    return selectByIds(productdescriptionids, c).stream().collect(Collectors.toMap((ProductdescriptionRow row) -> row.productdescriptionid(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<ProductdescriptionFields, ProductdescriptionRow> update() {
     return new UpdateBuilderMock<>(ProductdescriptionFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     ProductdescriptionRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.productdescriptionid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.productdescriptionid(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.productdescriptionid(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public ProductdescriptionRow upsert(
     ProductdescriptionRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record ProductdescriptionRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<ProductdescriptionRow> upsertBatch(
     Iterator<ProductdescriptionRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<ProductdescriptionRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.productdescriptionid(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.productdescriptionid(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<ProductdescriptionRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.productdescriptionid(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.productdescriptionid(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

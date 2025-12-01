@@ -34,7 +34,7 @@ object EphViewFields {
 
     override lazy val fields: EphViewFields = {
       new EphViewFields {
-        def id: Field[BusinessentityId, EphViewRow] = {
+        override def id: Field[BusinessentityId, EphViewRow] = {
           new Field[BusinessentityId, EphViewRow](
             _path,
             "id",
@@ -45,7 +45,7 @@ object EphViewFields {
             BusinessentityId.pgType
           )
         }
-        def businessentityid: Field[BusinessentityId, EphViewRow] = {
+        override def businessentityid: Field[BusinessentityId, EphViewRow] = {
           new Field[BusinessentityId, EphViewRow](
             _path,
             "businessentityid",
@@ -56,7 +56,7 @@ object EphViewFields {
             BusinessentityId.pgType
           )
         }
-        def ratechangedate: Field[TypoLocalDateTime, EphViewRow] = {
+        override def ratechangedate: Field[TypoLocalDateTime, EphViewRow] = {
           new Field[TypoLocalDateTime, EphViewRow](
             _path,
             "ratechangedate",
@@ -67,7 +67,7 @@ object EphViewFields {
             TypoLocalDateTime.pgType
           )
         }
-        def rate: Field[java.math.BigDecimal, EphViewRow] = {
+        override def rate: Field[java.math.BigDecimal, EphViewRow] = {
           new Field[java.math.BigDecimal, EphViewRow](
             _path,
             "rate",
@@ -78,7 +78,7 @@ object EphViewFields {
             PgTypes.numeric
           )
         }
-        def payfrequency: Field[TypoShort, EphViewRow] = {
+        override def payfrequency: Field[TypoShort, EphViewRow] = {
           new Field[TypoShort, EphViewRow](
             _path,
             "payfrequency",
@@ -89,7 +89,7 @@ object EphViewFields {
             TypoShort.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, EphViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, EphViewRow] = {
           new Field[TypoLocalDateTime, EphViewRow](
             _path,
             "modifieddate",
@@ -105,7 +105,7 @@ object EphViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, EphViewRow]] = java.util.List.of(this.fields.id, this.fields.businessentityid, this.fields.ratechangedate, this.fields.rate, this.fields.payfrequency, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[EphViewFields, EphViewRow] = new Impl(java.util.List.of())

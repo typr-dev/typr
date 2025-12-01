@@ -12,7 +12,6 @@ import adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderId
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple10
 
 /** View: pu.pod */
 case class PodViewRow(
@@ -39,18 +38,5 @@ case class PodViewRow(
 )
 
 object PodViewRow {
-  val `_rowParser`: RowParser[PodViewRow] = {
-    RowParsers.of(PgTypes.int4, PurchaseorderheaderId.pgType, PgTypes.int4, TypoLocalDateTime.pgType, TypoShort.pgType, ProductId.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, PodViewRow.apply, row => new Tuple10(
-      row.id,
-      row.purchaseorderid,
-      row.purchaseorderdetailid,
-      row.duedate,
-      row.orderqty,
-      row.productid,
-      row.unitprice,
-      row.receivedqty,
-      row.rejectedqty,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[PodViewRow] = RowParsers.of(PgTypes.int4, PurchaseorderheaderId.pgType, PgTypes.int4, TypoLocalDateTime.pgType, TypoShort.pgType, ProductId.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, PodViewRow.apply, row => Array(row.id, row.purchaseorderid, row.purchaseorderdetailid, row.duedate, row.orderqty, row.productid, row.unitprice, row.receivedqty, row.rejectedqty, row.modifieddate))
 }

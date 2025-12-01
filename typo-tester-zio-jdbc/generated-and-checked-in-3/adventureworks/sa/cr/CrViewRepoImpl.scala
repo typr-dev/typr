@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class CrViewRepoImpl extends CrViewRepo {
-  def select: SelectBuilder[CrViewFields, CrViewRow] = SelectBuilder.of(""""sa"."cr"""", CrViewFields.structure, CrViewRow.jdbcDecoder)
+  override def select: SelectBuilder[CrViewFields, CrViewRow] = SelectBuilder.of(""""sa"."cr"""", CrViewFields.structure, CrViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, CrViewRow] = sql"""select "currencyrateid", "currencyratedate"::text, "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"::text from "sa"."cr"""".query(using CrViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, CrViewRow] = sql"""select "currencyrateid", "currencyratedate"::text, "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"::text from "sa"."cr"""".query(using CrViewRow.jdbcDecoder).selectStream()
 }

@@ -5,22 +5,22 @@
  */
 package adventureworks.sa.soh;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class SohViewRepoImpl implements SohViewRepo {
+  @Override
   public SelectBuilder<SohViewFields, SohViewRow> select() {
     return SelectBuilder.of("sa.soh", SohViewFields.structure(), SohViewRow._rowParser);
   };
 
+  @Override
   public List<SohViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text
        from "sa"."soh"
-    """)).as(SohViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(SohViewRow._rowParser.all()).runUnchecked(c);
   };
 }

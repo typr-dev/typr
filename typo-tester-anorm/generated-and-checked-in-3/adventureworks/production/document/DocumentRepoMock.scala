@@ -22,13 +22,13 @@ case class DocumentRepoMock(
   toRow: DocumentRowUnsaved => DocumentRow,
   map: scala.collection.mutable.Map[DocumentId, DocumentRow] = scala.collection.mutable.Map.empty[DocumentId, DocumentRow]
 ) extends DocumentRepo {
-  def delete: DeleteBuilder[DocumentFields, DocumentRow] = DeleteBuilderMock(DeleteParams.empty, DocumentFields.structure, map)
+  override def delete: DeleteBuilder[DocumentFields, DocumentRow] = DeleteBuilderMock(DeleteParams.empty, DocumentFields.structure, map)
 
-  def deleteById(documentnode: DocumentId)(using c: Connection): Boolean = map.remove(documentnode).isDefined
+  override def deleteById(documentnode: DocumentId)(using c: Connection): Boolean = map.remove(documentnode).isDefined
 
-  def deleteByIds(documentnodes: Array[DocumentId])(using c: Connection): Int = documentnodes.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(documentnodes: Array[DocumentId])(using c: Connection): Int = documentnodes.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: DocumentRow)(using c: Connection): DocumentRow = {
+  override def insert(unsaved: DocumentRow)(using c: Connection): DocumentRow = {
     val _ = if (map.contains(unsaved.documentnode))
       sys.error(s"id ${unsaved.documentnode} already exists")
     else
@@ -37,9 +37,9 @@ case class DocumentRepoMock(
     unsaved
   }
 
-  def insert(unsaved: DocumentRowUnsaved)(using c: Connection): DocumentRow = insert(toRow(unsaved))
+  override def insert(unsaved: DocumentRowUnsaved)(using c: Connection): DocumentRow = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[DocumentRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -50,7 +50,7 @@ case class DocumentRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[DocumentRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -61,36 +61,36 @@ case class DocumentRepoMock(
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[DocumentFields, DocumentRow] = SelectBuilderMock(DocumentFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[DocumentFields, DocumentRow] = SelectBuilderMock(DocumentFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(using c: Connection): List[DocumentRow] = map.values.toList
+  override def selectAll(using c: Connection): List[DocumentRow] = map.values.toList
 
-  def selectById(documentnode: DocumentId)(using c: Connection): Option[DocumentRow] = map.get(documentnode)
+  override def selectById(documentnode: DocumentId)(using c: Connection): Option[DocumentRow] = map.get(documentnode)
 
-  def selectByIds(documentnodes: Array[DocumentId])(using c: Connection): List[DocumentRow] = documentnodes.flatMap(map.get).toList
+  override def selectByIds(documentnodes: Array[DocumentId])(using c: Connection): List[DocumentRow] = documentnodes.flatMap(map.get).toList
 
-  def selectByIdsTracked(documentnodes: Array[DocumentId])(using c: Connection): Map[DocumentId, DocumentRow] = {
+  override def selectByIdsTracked(documentnodes: Array[DocumentId])(using c: Connection): Map[DocumentId, DocumentRow] = {
     val byId = selectByIds(documentnodes).view.map(x => (x.documentnode, x)).toMap
     documentnodes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def selectByUniqueRowguid(rowguid: TypoUUID)(using c: Connection): Option[DocumentRow] = map.values.find(v => rowguid == v.rowguid)
+  override def selectByUniqueRowguid(rowguid: TypoUUID)(using c: Connection): Option[DocumentRow] = map.values.find(v => rowguid == v.rowguid)
 
-  def update: UpdateBuilder[DocumentFields, DocumentRow] = UpdateBuilderMock(UpdateParams.empty, DocumentFields.structure, map)
+  override def update: UpdateBuilder[DocumentFields, DocumentRow] = UpdateBuilderMock(UpdateParams.empty, DocumentFields.structure, map)
 
-  def update(row: DocumentRow)(using c: Connection): Option[DocumentRow] = {
+  override def update(row: DocumentRow)(using c: Connection): Option[DocumentRow] = {
     map.get(row.documentnode).map { _ =>
       map.put(row.documentnode, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: DocumentRow)(using c: Connection): DocumentRow = {
+  override def upsert(unsaved: DocumentRow)(using c: Connection): DocumentRow = {
     map.put(unsaved.documentnode, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[DocumentRow])(using c: Connection): List[DocumentRow] = {
+  override def upsertBatch(unsaved: Iterable[DocumentRow])(using c: Connection): List[DocumentRow] = {
     unsaved.map { row =>
       map += (row.documentnode -> row)
       row
@@ -98,7 +98,7 @@ case class DocumentRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[DocumentRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

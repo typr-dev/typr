@@ -13,7 +13,6 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple16;
 
 /** View: humanresources.vjobcandidate */
 public record VjobcandidateViewRow(
@@ -104,5 +103,5 @@ public record VjobcandidateViewRow(
     return new VjobcandidateViewRow(jobcandidateid, businessentityid, namePrefix, nameFirst, nameMiddle, nameLast, nameSuffix, skills, addrType, addrLocCountryRegion, addrLocState, addrLocCity, addrPostalCode, eMail, webSite, modifieddate);
   };
 
-  static RowParser<VjobcandidateViewRow> _rowParser = RowParsers.of(JobcandidateId.pgType, BusinessentityId.pgType.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), TypoLocalDateTime.pgType, VjobcandidateViewRow::new, row -> new Tuple16<>(row.jobcandidateid(), row.businessentityid(), row.namePrefix(), row.nameFirst(), row.nameMiddle(), row.nameLast(), row.nameSuffix(), row.skills(), row.addrType(), row.addrLocCountryRegion(), row.addrLocState(), row.addrLocCity(), row.addrPostalCode(), row.eMail(), row.webSite(), row.modifieddate()));;
+  static RowParser<VjobcandidateViewRow> _rowParser = RowParsers.of(JobcandidateId.pgType, BusinessentityId.pgType.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), TypoLocalDateTime.pgType, VjobcandidateViewRow::new, row -> new Object[]{row.jobcandidateid(), row.businessentityid(), row.namePrefix(), row.nameFirst(), row.nameMiddle(), row.nameLast(), row.nameSuffix(), row.skills(), row.addrType(), row.addrLocCountryRegion(), row.addrLocState(), row.addrLocCity(), row.addrPostalCode(), row.eMail(), row.webSite(), row.modifieddate()});;
 }

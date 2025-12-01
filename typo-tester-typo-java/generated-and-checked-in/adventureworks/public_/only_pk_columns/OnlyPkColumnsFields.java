@@ -17,7 +17,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface OnlyPkColumnsFields {
-  static final class Impl extends Relation<OnlyPkColumnsFields, OnlyPkColumnsRow> {
+  final class Impl extends Relation<OnlyPkColumnsFields, OnlyPkColumnsRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -25,9 +25,11 @@ public interface OnlyPkColumnsFields {
     @Override
     public OnlyPkColumnsFields fields() {
       return new OnlyPkColumnsFields() {
+               @Override
                public IdField<String, OnlyPkColumnsRow> keyColumn1() {
                  return new IdField<String, OnlyPkColumnsRow>(_path, "key_column_1", OnlyPkColumnsRow::keyColumn1, Optional.empty(), Optional.empty(), (row, value) -> row.withKeyColumn1(value), PgTypes.text);
                };
+               @Override
                public IdField<Integer, OnlyPkColumnsRow> keyColumn2() {
                  return new IdField<Integer, OnlyPkColumnsRow>(_path, "key_column_2", OnlyPkColumnsRow::keyColumn2, Optional.empty(), Optional.of("int4"), (row, value) -> row.withKeyColumn2(value), PgTypes.int4);
                };
@@ -39,6 +41,7 @@ public interface OnlyPkColumnsFields {
       return List.of(this.fields().keyColumn1(), this.fields().keyColumn2());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

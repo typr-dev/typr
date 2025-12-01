@@ -46,17 +46,5 @@ case class ProductlistpricehistoryRowUnsaved(
 }
 
 object ProductlistpricehistoryRowUnsaved {
-  given pgText: PgText[ProductlistpricehistoryRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      ProductId.pgType.pgText.unsafeEncode(row.productid, sb);
-      sb.append(PgText.DELIMETER);
-      TypoLocalDateTime.pgType.pgText.unsafeEncode(row.startdate, sb);
-      sb.append(PgText.DELIMETER);
-      TypoLocalDateTime.pgType.opt().pgText.unsafeEncode(row.enddate, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.numeric.pgText.unsafeEncode(row.listprice, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[ProductlistpricehistoryRowUnsaved] = PgText.instance((row, sb) => { ProductId.pgType.pgText.unsafeEncode(row.productid, sb); sb.append(PgText.DELIMETER); TypoLocalDateTime.pgType.pgText.unsafeEncode(row.startdate, sb); sb.append(PgText.DELIMETER); TypoLocalDateTime.pgType.opt().pgText.unsafeEncode(row.enddate, sb); sb.append(PgText.DELIMETER); PgTypes.numeric.pgText.unsafeEncode(row.listprice, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

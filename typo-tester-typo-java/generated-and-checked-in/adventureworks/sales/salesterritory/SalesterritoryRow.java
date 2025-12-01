@@ -15,7 +15,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple10;
 
 /** Table: sales.salesterritory
   * Sales territory lookup table.
@@ -125,7 +124,7 @@ public record SalesterritoryRow(
     return new SalesterritoryRow(territoryid, name, countryregioncode, group, salesytd, saleslastyear, costytd, costlastyear, rowguid, modifieddate);
   };
 
-  static RowParser<SalesterritoryRow> _rowParser = RowParsers.of(SalesterritoryId.pgType, Name.pgType, CountryregionId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SalesterritoryRow::new, row -> new Tuple10<>(row.territoryid(), row.name(), row.countryregioncode(), row.group(), row.salesytd(), row.saleslastyear(), row.costytd(), row.costlastyear(), row.rowguid(), row.modifieddate()));;
+  static RowParser<SalesterritoryRow> _rowParser = RowParsers.of(SalesterritoryId.pgType, Name.pgType, CountryregionId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SalesterritoryRow::new, row -> new Object[]{row.territoryid(), row.name(), row.countryregioncode(), row.group(), row.salesytd(), row.saleslastyear(), row.costytd(), row.costlastyear(), row.rowguid(), row.modifieddate()});;
 
   static public PgText<SalesterritoryRow> pgText =
     PgText.from(_rowParser);

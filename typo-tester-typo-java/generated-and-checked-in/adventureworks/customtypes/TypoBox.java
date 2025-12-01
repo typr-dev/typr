@@ -42,11 +42,11 @@ public record TypoBox(
   static public PgType<TypoBox> pgType =
     PgType.of(
       "box",
-      PgRead.castJdbcObjectTo(PGbox.class).map(v -> new TypoBox(v.point[0].x, v.point[0].y, v.point[1].x, v.point[1].y)),
-      PgWrite.passObjectToJdbc().contramap((TypoBox v) -> new PGbox(v.x1(), v.y1(), v.x2(), v.y2())),
+      PgRead.castJdbcObjectTo(PGbox.class).map((PGbox v) -> new TypoBox(v.point[0].x, v.point[0].y, v.point[1].x, v.point[1].y)),
+      PgWrite.<PGbox>passObjectToJdbc().contramap((TypoBox v) -> new PGbox(v.x1(), v.y1(), v.x2(), v.y2())),
       TypoBox.pgText
     );
 
   static public PgType<TypoBox[]> pgTypeArray =
-    TypoBox.pgType.array(PgRead.castJdbcArrayTo(PGbox.class).map(xs -> arrayMap.map(xs, v -> new TypoBox(v.point[0].x, v.point[0].y, v.point[1].x, v.point[1].y), TypoBox.class)), PgWrite.<PGbox>passObjectToJdbc().array(TypoBox.pgType.typename().<PGbox>as()).contramap(xs -> arrayMap.map(xs, (TypoBox v) -> new PGbox(v.x1(), v.y1(), v.x2(), v.y2()), PGbox.class)));
+    TypoBox.pgType.array(PgRead.castJdbcArrayTo(PGbox.class).map((PGbox[] xs) -> arrayMap.map(xs, (PGbox v) -> new TypoBox(v.point[0].x, v.point[0].y, v.point[1].x, v.point[1].y), TypoBox.class)), PgWrite.<PGbox>passObjectToJdbc().array(TypoBox.pgType.typename().<PGbox>as()).contramap((TypoBox[] xs) -> arrayMap.map(xs, (TypoBox v) -> new PGbox(v.x1(), v.y1(), v.x2(), v.y2()), PGbox.class)));
 }

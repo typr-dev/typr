@@ -15,7 +15,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface PersonFields {
-  static final class Impl extends Relation<PersonFields, PersonRow> {
+  final class Impl extends Relation<PersonFields, PersonRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -23,12 +23,15 @@ public interface PersonFields {
     @Override
     public PersonFields fields() {
       return new PersonFields() {
+               @Override
                public IdField<Long, PersonRow> one() {
                  return new IdField<Long, PersonRow>(_path, "one", PersonRow::one, Optional.empty(), Optional.of("int8"), (row, value) -> row.withOne(value), PgTypes.int8);
                };
+               @Override
                public IdField<Optional<String>, PersonRow> two() {
                  return new IdField<Optional<String>, PersonRow>(_path, "two", PersonRow::two, Optional.empty(), Optional.empty(), (row, value) -> row.withTwo(value), PgTypes.text.opt());
                };
+               @Override
                public OptField<String, PersonRow> name() {
                  return new OptField<String, PersonRow>(_path, "name", PersonRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), PgTypes.text);
                };
@@ -40,6 +43,7 @@ public interface PersonFields {
       return List.of(this.fields().one(), this.fields().two(), this.fields().name());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

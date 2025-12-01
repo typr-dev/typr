@@ -5,22 +5,22 @@
  */
 package adventureworks.sa.c;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class CViewRepoImpl implements CViewRepo {
+  @Override
   public SelectBuilder<CViewFields, CViewRow> select() {
     return SelectBuilder.of("sa.c", CViewFields.structure(), CViewRow._rowParser);
   };
 
+  @Override
   public List<CViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text
        from "sa"."c"
-    """)).as(CViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(CViewRow._rowParser.all()).runUnchecked(c);
   };
 }

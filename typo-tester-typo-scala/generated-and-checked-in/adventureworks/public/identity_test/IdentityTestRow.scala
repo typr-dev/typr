@@ -6,20 +6,20 @@
 package adventureworks.public.identity_test
 
 import adventureworks.customtypes.Defaulted
+import com.fasterxml.jackson.annotation.JsonProperty
 import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple3
 
 /** Table: public.identity-test
  * Primary key: name
  */
 case class IdentityTestRow(
   /** Identity ALWAYS, identityStart: 1, identityIncrement: 1, identityMaximum: 2147483647, identityMinimum: 1 */
-  alwaysGenerated: Integer,
+  @JsonProperty("always_generated") alwaysGenerated: Integer,
   /** Identity BY DEFAULT, identityStart: 1, identityIncrement: 1, identityMaximum: 2147483647, identityMinimum: 1 */
-  defaultGenerated: Integer,
+  @JsonProperty("default_generated") defaultGenerated: Integer,
   name: IdentityTestId
 ) {
   def id: IdentityTestId = name
@@ -28,7 +28,7 @@ case class IdentityTestRow(
 }
 
 object IdentityTestRow {
-  val `_rowParser`: RowParser[IdentityTestRow] = RowParsers.of(PgTypes.int4, PgTypes.int4, IdentityTestId.pgType, IdentityTestRow.apply, row => new Tuple3(row.alwaysGenerated, row.defaultGenerated, row.name))
+  val `_rowParser`: RowParser[IdentityTestRow] = RowParsers.of(PgTypes.int4, PgTypes.int4, IdentityTestId.pgType, IdentityTestRow.apply, row => Array(row.alwaysGenerated, row.defaultGenerated, row.name))
 
   given pgText: PgText[IdentityTestRow] = PgText.from(`_rowParser`)
 }

@@ -46,7 +46,7 @@ object VemployeedepartmenthistoryViewFields {
 
     override lazy val fields: VemployeedepartmenthistoryViewFields = {
       new VemployeedepartmenthistoryViewFields {
-        def businessentityid: Field[BusinessentityId, VemployeedepartmenthistoryViewRow] = {
+        override def businessentityid: Field[BusinessentityId, VemployeedepartmenthistoryViewRow] = {
           new Field[BusinessentityId, VemployeedepartmenthistoryViewRow](
             _path,
             "businessentityid",
@@ -57,7 +57,7 @@ object VemployeedepartmenthistoryViewFields {
             BusinessentityId.pgType
           )
         }
-        def title: OptField[/* max 8 chars */ String, VemployeedepartmenthistoryViewRow] = {
+        override def title: OptField[/* max 8 chars */ String, VemployeedepartmenthistoryViewRow] = {
           new OptField[/* max 8 chars */ String, VemployeedepartmenthistoryViewRow](
             _path,
             "title",
@@ -68,7 +68,7 @@ object VemployeedepartmenthistoryViewFields {
             PgTypes.text
           )
         }
-        def firstname: Field[/* user-picked */ FirstName, VemployeedepartmenthistoryViewRow] = {
+        override def firstname: Field[/* user-picked */ FirstName, VemployeedepartmenthistoryViewRow] = {
           new Field[/* user-picked */ FirstName, VemployeedepartmenthistoryViewRow](
             _path,
             "firstname",
@@ -79,7 +79,7 @@ object VemployeedepartmenthistoryViewFields {
             /* user-picked */ FirstName.pgType
           )
         }
-        def middlename: OptField[Name, VemployeedepartmenthistoryViewRow] = {
+        override def middlename: OptField[Name, VemployeedepartmenthistoryViewRow] = {
           new OptField[Name, VemployeedepartmenthistoryViewRow](
             _path,
             "middlename",
@@ -90,7 +90,7 @@ object VemployeedepartmenthistoryViewFields {
             Name.pgType
           )
         }
-        def lastname: Field[Name, VemployeedepartmenthistoryViewRow] = {
+        override def lastname: Field[Name, VemployeedepartmenthistoryViewRow] = {
           new Field[Name, VemployeedepartmenthistoryViewRow](
             _path,
             "lastname",
@@ -101,7 +101,7 @@ object VemployeedepartmenthistoryViewFields {
             Name.pgType
           )
         }
-        def suffix: OptField[/* max 10 chars */ String, VemployeedepartmenthistoryViewRow] = {
+        override def suffix: OptField[/* max 10 chars */ String, VemployeedepartmenthistoryViewRow] = {
           new OptField[/* max 10 chars */ String, VemployeedepartmenthistoryViewRow](
             _path,
             "suffix",
@@ -112,7 +112,7 @@ object VemployeedepartmenthistoryViewFields {
             PgTypes.text
           )
         }
-        def shift: Field[Name, VemployeedepartmenthistoryViewRow] = {
+        override def shift: Field[Name, VemployeedepartmenthistoryViewRow] = {
           new Field[Name, VemployeedepartmenthistoryViewRow](
             _path,
             "shift",
@@ -123,7 +123,7 @@ object VemployeedepartmenthistoryViewFields {
             Name.pgType
           )
         }
-        def department: Field[Name, VemployeedepartmenthistoryViewRow] = {
+        override def department: Field[Name, VemployeedepartmenthistoryViewRow] = {
           new Field[Name, VemployeedepartmenthistoryViewRow](
             _path,
             "department",
@@ -134,7 +134,7 @@ object VemployeedepartmenthistoryViewFields {
             Name.pgType
           )
         }
-        def groupname: Field[Name, VemployeedepartmenthistoryViewRow] = {
+        override def groupname: Field[Name, VemployeedepartmenthistoryViewRow] = {
           new Field[Name, VemployeedepartmenthistoryViewRow](
             _path,
             "groupname",
@@ -145,7 +145,7 @@ object VemployeedepartmenthistoryViewFields {
             Name.pgType
           )
         }
-        def startdate: Field[TypoLocalDate, VemployeedepartmenthistoryViewRow] = {
+        override def startdate: Field[TypoLocalDate, VemployeedepartmenthistoryViewRow] = {
           new Field[TypoLocalDate, VemployeedepartmenthistoryViewRow](
             _path,
             "startdate",
@@ -156,7 +156,7 @@ object VemployeedepartmenthistoryViewFields {
             TypoLocalDate.pgType
           )
         }
-        def enddate: OptField[TypoLocalDate, VemployeedepartmenthistoryViewRow] = {
+        override def enddate: OptField[TypoLocalDate, VemployeedepartmenthistoryViewRow] = {
           new OptField[TypoLocalDate, VemployeedepartmenthistoryViewRow](
             _path,
             "enddate",
@@ -172,7 +172,7 @@ object VemployeedepartmenthistoryViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, VemployeedepartmenthistoryViewRow]] = java.util.List.of(this.fields.businessentityid, this.fields.title, this.fields.firstname, this.fields.middlename, this.fields.lastname, this.fields.suffix, this.fields.shift, this.fields.department, this.fields.groupname, this.fields.startdate, this.fields.enddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[VemployeedepartmenthistoryViewFields, VemployeedepartmenthistoryViewRow] = new Impl(java.util.List.of())

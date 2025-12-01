@@ -16,7 +16,7 @@ import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 
 public interface PccViewFields {
-  static final class Impl extends Relation<PccViewFields, PccViewRow> {
+  final class Impl extends Relation<PccViewFields, PccViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -24,15 +24,19 @@ public interface PccViewFields {
     @Override
     public PccViewFields fields() {
       return new PccViewFields() {
+               @Override
                public Field<BusinessentityId, PccViewRow> id() {
                  return new Field<BusinessentityId, PccViewRow>(_path, "id", PccViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
                };
+               @Override
                public Field<BusinessentityId, PccViewRow> businessentityid() {
                  return new Field<BusinessentityId, PccViewRow>(_path, "businessentityid", PccViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public Field</* user-picked */ CustomCreditcardId, PccViewRow> creditcardid() {
                  return new Field</* user-picked */ CustomCreditcardId, PccViewRow>(_path, "creditcardid", PccViewRow::creditcardid, Optional.empty(), Optional.empty(), (row, value) -> row.withCreditcardid(value), /* user-picked */ CustomCreditcardId.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, PccViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, PccViewRow>(_path, "modifieddate", PccViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -44,6 +48,7 @@ public interface PccViewFields {
       return List.of(this.fields().id(), this.fields().businessentityid(), this.fields().creditcardid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

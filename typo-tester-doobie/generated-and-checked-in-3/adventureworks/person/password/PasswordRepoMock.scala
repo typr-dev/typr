@@ -24,13 +24,13 @@ case class PasswordRepoMock(
   toRow: PasswordRowUnsaved => PasswordRow,
   map: scala.collection.mutable.Map[BusinessentityId, PasswordRow] = scala.collection.mutable.Map.empty[BusinessentityId, PasswordRow]
 ) extends PasswordRepo {
-  def delete: DeleteBuilder[PasswordFields, PasswordRow] = DeleteBuilderMock(DeleteParams.empty, PasswordFields.structure, map)
+  override def delete: DeleteBuilder[PasswordFields, PasswordRow] = DeleteBuilderMock(DeleteParams.empty, PasswordFields.structure, map)
 
-  def deleteById(businessentityid: BusinessentityId): ConnectionIO[Boolean] = delay(map.remove(businessentityid).isDefined)
+  override def deleteById(businessentityid: BusinessentityId): ConnectionIO[Boolean] = delay(map.remove(businessentityid).isDefined)
 
-  def deleteByIds(businessentityids: Array[BusinessentityId]): ConnectionIO[Int] = delay(businessentityids.map(id => map.remove(id)).count(_.isDefined))
+  override def deleteByIds(businessentityids: Array[BusinessentityId]): ConnectionIO[Int] = delay(businessentityids.map(id => map.remove(id)).count(_.isDefined))
 
-  def insert(unsaved: PasswordRow): ConnectionIO[PasswordRow] = {
+  override def insert(unsaved: PasswordRow): ConnectionIO[PasswordRow] = {
   delay {
     val _ = if (map.contains(unsaved.businessentityid))
       sys.error(s"id ${unsaved.businessentityid} already exists")
@@ -41,9 +41,9 @@ case class PasswordRepoMock(
   }
   }
 
-  def insert(unsaved: PasswordRowUnsaved): ConnectionIO[PasswordRow] = insert(toRow(unsaved))
+  override def insert(unsaved: PasswordRowUnsaved): ConnectionIO[PasswordRow] = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, PasswordRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = {
@@ -58,7 +58,7 @@ case class PasswordRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, PasswordRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = {
@@ -73,24 +73,24 @@ case class PasswordRepoMock(
     }
   }
 
-  def select: SelectBuilder[PasswordFields, PasswordRow] = SelectBuilderMock(PasswordFields.structure, delay(map.values.toList), SelectParams.empty)
+  override def select: SelectBuilder[PasswordFields, PasswordRow] = SelectBuilderMock(PasswordFields.structure, delay(map.values.toList), SelectParams.empty)
 
-  def selectAll: Stream[ConnectionIO, PasswordRow] = Stream.emits(map.values.toList)
+  override def selectAll: Stream[ConnectionIO, PasswordRow] = Stream.emits(map.values.toList)
 
-  def selectById(businessentityid: BusinessentityId): ConnectionIO[Option[PasswordRow]] = delay(map.get(businessentityid))
+  override def selectById(businessentityid: BusinessentityId): ConnectionIO[Option[PasswordRow]] = delay(map.get(businessentityid))
 
-  def selectByIds(businessentityids: Array[BusinessentityId]): Stream[ConnectionIO, PasswordRow] = Stream.emits(businessentityids.flatMap(map.get).toList)
+  override def selectByIds(businessentityids: Array[BusinessentityId]): Stream[ConnectionIO, PasswordRow] = Stream.emits(businessentityids.flatMap(map.get).toList)
 
-  def selectByIdsTracked(businessentityids: Array[BusinessentityId]): ConnectionIO[Map[BusinessentityId, PasswordRow]] = {
+  override def selectByIdsTracked(businessentityids: Array[BusinessentityId]): ConnectionIO[Map[BusinessentityId, PasswordRow]] = {
     selectByIds(businessentityids).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.businessentityid, x)).toMap
       businessentityids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[PasswordFields, PasswordRow] = UpdateBuilderMock(UpdateParams.empty, PasswordFields.structure, map)
+  override def update: UpdateBuilder[PasswordFields, PasswordRow] = UpdateBuilderMock(UpdateParams.empty, PasswordFields.structure, map)
 
-  def update(row: PasswordRow): ConnectionIO[Option[PasswordRow]] = {
+  override def update(row: PasswordRow): ConnectionIO[Option[PasswordRow]] = {
     delay {
       map.get(row.businessentityid).map { _ =>
         map.put(row.businessentityid, row): @nowarn
@@ -99,14 +99,14 @@ case class PasswordRepoMock(
     }
   }
 
-  def upsert(unsaved: PasswordRow): ConnectionIO[PasswordRow] = {
+  override def upsert(unsaved: PasswordRow): ConnectionIO[PasswordRow] = {
     delay {
       map.put(unsaved.businessentityid, unsaved): @nowarn
       unsaved
     }
   }
 
-  def upsertBatch(unsaved: List[PasswordRow]): Stream[ConnectionIO, PasswordRow] = {
+  override def upsertBatch(unsaved: List[PasswordRow]): Stream[ConnectionIO, PasswordRow] = {
     Stream.emits {
       unsaved.map { row =>
         map += (row.businessentityid -> row)
@@ -116,7 +116,7 @@ case class PasswordRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, PasswordRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

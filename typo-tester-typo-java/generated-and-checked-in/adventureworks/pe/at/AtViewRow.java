@@ -11,7 +11,6 @@ import adventureworks.person.addresstype.AddresstypeId;
 import adventureworks.public_.Name;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple5;
 
 /** View: pe.at */
 public record AtViewRow(
@@ -51,5 +50,5 @@ public record AtViewRow(
     return new AtViewRow(id, addresstypeid, name, rowguid, modifieddate);
   };
 
-  static RowParser<AtViewRow> _rowParser = RowParsers.of(AddresstypeId.pgType, AddresstypeId.pgType, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, AtViewRow::new, row -> new Tuple5<>(row.id(), row.addresstypeid(), row.name(), row.rowguid(), row.modifieddate()));;
+  static RowParser<AtViewRow> _rowParser = RowParsers.of(AddresstypeId.pgType, AddresstypeId.pgType, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, AtViewRow::new, row -> new Object[]{row.id(), row.addresstypeid(), row.name(), row.rowguid(), row.modifieddate()});;
 }

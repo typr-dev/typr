@@ -21,7 +21,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface VViewFields {
-  static final class Impl extends Relation<VViewFields, VViewRow> {
+  final class Impl extends Relation<VViewFields, VViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -29,30 +29,39 @@ public interface VViewFields {
     @Override
     public VViewFields fields() {
       return new VViewFields() {
+               @Override
                public Field<BusinessentityId, VViewRow> id() {
                  return new Field<BusinessentityId, VViewRow>(_path, "id", VViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
                };
+               @Override
                public Field<BusinessentityId, VViewRow> businessentityid() {
                  return new Field<BusinessentityId, VViewRow>(_path, "businessentityid", VViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public Field<AccountNumber, VViewRow> accountnumber() {
                  return new Field<AccountNumber, VViewRow>(_path, "accountnumber", VViewRow::accountnumber, Optional.empty(), Optional.empty(), (row, value) -> row.withAccountnumber(value), AccountNumber.pgType);
                };
+               @Override
                public Field<Name, VViewRow> name() {
                  return new Field<Name, VViewRow>(_path, "name", VViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<TypoShort, VViewRow> creditrating() {
                  return new Field<TypoShort, VViewRow>(_path, "creditrating", VViewRow::creditrating, Optional.empty(), Optional.empty(), (row, value) -> row.withCreditrating(value), TypoShort.pgType);
                };
+               @Override
                public Field<Flag, VViewRow> preferredvendorstatus() {
                  return new Field<Flag, VViewRow>(_path, "preferredvendorstatus", VViewRow::preferredvendorstatus, Optional.empty(), Optional.empty(), (row, value) -> row.withPreferredvendorstatus(value), Flag.pgType);
                };
+               @Override
                public Field<Flag, VViewRow> activeflag() {
                  return new Field<Flag, VViewRow>(_path, "activeflag", VViewRow::activeflag, Optional.empty(), Optional.empty(), (row, value) -> row.withActiveflag(value), Flag.pgType);
                };
+               @Override
                public OptField</* max 1024 chars */ String, VViewRow> purchasingwebserviceurl() {
                  return new OptField</* max 1024 chars */ String, VViewRow>(_path, "purchasingwebserviceurl", VViewRow::purchasingwebserviceurl, Optional.empty(), Optional.empty(), (row, value) -> row.withPurchasingwebserviceurl(value), PgTypes.text);
                };
+               @Override
                public Field<TypoLocalDateTime, VViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, VViewRow>(_path, "modifieddate", VViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -64,6 +73,7 @@ public interface VViewFields {
       return List.of(this.fields().id(), this.fields().businessentityid(), this.fields().accountnumber(), this.fields().name(), this.fields().creditrating(), this.fields().preferredvendorstatus(), this.fields().activeflag(), this.fields().purchasingwebserviceurl(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

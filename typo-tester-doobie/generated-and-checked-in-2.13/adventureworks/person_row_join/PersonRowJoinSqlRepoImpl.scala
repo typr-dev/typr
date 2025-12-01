@@ -10,7 +10,7 @@ import fs2.Stream
 import doobie.syntax.string.toSqlInterpolator
 
 class PersonRowJoinSqlRepoImpl extends PersonRowJoinSqlRepo {
-  def apply: Stream[ConnectionIO, PersonRowJoinSqlRow] = {
+  override def apply: Stream[ConnectionIO, PersonRowJoinSqlRow] = {
     val sql =
       sql"""SELECT s.businessentityid,
              (select array_agg(ROW(a.emailaddress, a.rowguid)) from person.emailaddress a where a.businessentityid = s.businessentityid) as email,

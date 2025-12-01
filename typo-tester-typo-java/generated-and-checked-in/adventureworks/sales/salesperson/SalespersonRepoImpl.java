@@ -9,7 +9,6 @@ import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.customtypes.TypoUUID;
 import adventureworks.person.businessentity.BusinessentityId;
 import adventureworks.sales.salesterritory.SalesterritoryId;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,12 +26,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class SalespersonRepoImpl implements SalespersonRepo {
+  @Override
   public DeleteBuilder<SalespersonFields, SalespersonRow> delete() {
     return DeleteBuilder.of("sales.salesperson", SalespersonFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     BusinessentityId businessentityid,
     Connection c
@@ -46,6 +46,7 @@ public class SalespersonRepoImpl implements SalespersonRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     BusinessentityId[] businessentityids,
     Connection c
@@ -62,6 +63,7 @@ public class SalespersonRepoImpl implements SalespersonRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public SalespersonRow insert(
     SalespersonRow unsaved,
     Connection c
@@ -95,104 +97,118 @@ public class SalespersonRepoImpl implements SalespersonRepo {
       .updateReturning(SalespersonRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public SalespersonRow insert(
     SalespersonRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"businessentityid\""));
-      values.add(interpolate(
-        BusinessentityId.pgType.encode(unsaved.businessentityid()),
-        typo.runtime.Fragment.lit("::int4")
-      ));
-      columns.add(Fragment.lit("\"territoryid\""));
-      values.add(interpolate(
-        SalesterritoryId.pgType.opt().encode(unsaved.territoryid()),
-        typo.runtime.Fragment.lit("::int4")
-      ));
-      columns.add(Fragment.lit("\"salesquota\""));
-      values.add(interpolate(
-        PgTypes.numeric.opt().encode(unsaved.salesquota()),
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"businessentityid\""));
+    values.add(interpolate(
+      BusinessentityId.pgType.encode(unsaved.businessentityid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"territoryid\""));
+    values.add(interpolate(
+      SalesterritoryId.pgType.opt().encode(unsaved.territoryid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"salesquota\""));
+    values.add(interpolate(
+      PgTypes.numeric.opt().encode(unsaved.salesquota()),
+      typo.runtime.Fragment.lit("::numeric")
+    ));
+    unsaved.bonus().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"bonus\""));
+        values.add(interpolate(
+        PgTypes.numeric.encode(value),
         typo.runtime.Fragment.lit("::numeric")
       ));
-      unsaved.bonus().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"bonus\""));
-          values.add(interpolate(
-            PgTypes.numeric.encode(value),
-            typo.runtime.Fragment.lit("::numeric")
-          ));
-        }
-      );;
-      unsaved.commissionpct().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"commissionpct\""));
-          values.add(interpolate(
-            PgTypes.numeric.encode(value),
-            typo.runtime.Fragment.lit("::numeric")
-          ));
-        }
-      );;
-      unsaved.salesytd().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"salesytd\""));
-          values.add(interpolate(
-            PgTypes.numeric.encode(value),
-            typo.runtime.Fragment.lit("::numeric")
-          ));
-        }
-      );;
-      unsaved.saleslastyear().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"saleslastyear\""));
-          values.add(interpolate(
-            PgTypes.numeric.encode(value),
-            typo.runtime.Fragment.lit("::numeric")
-          ));
-        }
-      );;
-      unsaved.rowguid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"rowguid\""));
-          values.add(interpolate(
-            TypoUUID.pgType.encode(value),
-            typo.runtime.Fragment.lit("::uuid")
-          ));
-        }
-      );;
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "sales"."salesperson"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    unsaved.commissionpct().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"commissionpct\""));
+        values.add(interpolate(
+        PgTypes.numeric.encode(value),
+        typo.runtime.Fragment.lit("::numeric")
+      ));
+      }
+    );;
+    unsaved.salesytd().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"salesytd\""));
+        values.add(interpolate(
+        PgTypes.numeric.encode(value),
+        typo.runtime.Fragment.lit("::numeric")
+      ));
+      }
+    );;
+    unsaved.saleslastyear().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"saleslastyear\""));
+        values.add(interpolate(
+        PgTypes.numeric.encode(value),
+        typo.runtime.Fragment.lit("::numeric")
+      ));
+      }
+    );;
+    unsaved.rowguid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"rowguid\""));
+        values.add(interpolate(
+        TypoUUID.pgType.encode(value),
+        typo.runtime.Fragment.lit("::uuid")
+      ));
+      }
+    );;
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
+      ));
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "sales"."salesperson"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(SalespersonRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<SalespersonRow> unsaved,
     Integer batchSize,
@@ -204,6 +220,7 @@ public class SalespersonRepoImpl implements SalespersonRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<SalespersonRowUnsaved> unsaved,
     Integer batchSize,
@@ -214,17 +231,20 @@ public class SalespersonRepoImpl implements SalespersonRepo {
     """), batchSize, unsaved, c, SalespersonRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<SalespersonFields, SalespersonRow> select() {
     return SelectBuilder.of("sales.salesperson", SalespersonFields.structure(), SalespersonRow._rowParser);
   };
 
+  @Override
   public List<SalespersonRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate"::text
        from "sales"."salesperson"
-    """)).as(SalespersonRow._rowParser.all()).runUnchecked(c);
+    """)).query(SalespersonRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<SalespersonRow> selectById(
     BusinessentityId businessentityid,
     Connection c
@@ -236,9 +256,10 @@ public class SalespersonRepoImpl implements SalespersonRepo {
          where "businessentityid" = """),
       BusinessentityId.pgType.encode(businessentityid),
       typo.runtime.Fragment.lit("")
-    ).as(SalespersonRow._rowParser.first()).runUnchecked(c);
+    ).query(SalespersonRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<SalespersonRow> selectByIds(
     BusinessentityId[] businessentityids,
     Connection c
@@ -250,68 +271,72 @@ public class SalespersonRepoImpl implements SalespersonRepo {
          where "businessentityid" = ANY("""),
       BusinessentityId.pgTypeArray.encode(businessentityids),
       typo.runtime.Fragment.lit(")")
-    ).as(SalespersonRow._rowParser.all()).runUnchecked(c);
+    ).query(SalespersonRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<BusinessentityId, SalespersonRow> selectByIdsTracked(
     BusinessentityId[] businessentityids,
     Connection c
   ) {
-    Map<BusinessentityId, SalespersonRow> ret = new HashMap<>();;
-      selectByIds(businessentityids, c).forEach(row -> ret.put(row.businessentityid(), row));
+    HashMap<BusinessentityId, SalespersonRow> ret = new HashMap<BusinessentityId, SalespersonRow>();
+    selectByIds(businessentityids, c).forEach(row -> ret.put(row.businessentityid(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<SalespersonFields, SalespersonRow> update() {
     return UpdateBuilder.of("sales.salesperson", SalespersonFields.structure(), SalespersonRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     SalespersonRow row,
     Connection c
   ) {
     BusinessentityId businessentityid = row.businessentityid();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "sales"."salesperson"
-                set "territoryid" = """),
-             SalesterritoryId.pgType.opt().encode(row.territoryid()),
-             typo.runtime.Fragment.lit("""
-                ::int4,
-                "salesquota" = """),
-             PgTypes.numeric.opt().encode(row.salesquota()),
-             typo.runtime.Fragment.lit("""
-                ::numeric,
-                "bonus" = """),
-             PgTypes.numeric.encode(row.bonus()),
-             typo.runtime.Fragment.lit("""
-                ::numeric,
-                "commissionpct" = """),
-             PgTypes.numeric.encode(row.commissionpct()),
-             typo.runtime.Fragment.lit("""
-                ::numeric,
-                "salesytd" = """),
-             PgTypes.numeric.encode(row.salesytd()),
-             typo.runtime.Fragment.lit("""
-                ::numeric,
-                "saleslastyear" = """),
-             PgTypes.numeric.encode(row.saleslastyear()),
-             typo.runtime.Fragment.lit("""
-                ::numeric,
-                "rowguid" = """),
-             TypoUUID.pgType.encode(row.rowguid()),
-             typo.runtime.Fragment.lit("""
-                ::uuid,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "businessentityid" = """),
-             BusinessentityId.pgType.encode(businessentityid),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "sales"."salesperson"
+         set "territoryid" = """),
+      SalesterritoryId.pgType.opt().encode(row.territoryid()),
+      typo.runtime.Fragment.lit("""
+         ::int4,
+         "salesquota" = """),
+      PgTypes.numeric.opt().encode(row.salesquota()),
+      typo.runtime.Fragment.lit("""
+         ::numeric,
+         "bonus" = """),
+      PgTypes.numeric.encode(row.bonus()),
+      typo.runtime.Fragment.lit("""
+         ::numeric,
+         "commissionpct" = """),
+      PgTypes.numeric.encode(row.commissionpct()),
+      typo.runtime.Fragment.lit("""
+         ::numeric,
+         "salesytd" = """),
+      PgTypes.numeric.encode(row.salesytd()),
+      typo.runtime.Fragment.lit("""
+         ::numeric,
+         "saleslastyear" = """),
+      PgTypes.numeric.encode(row.saleslastyear()),
+      typo.runtime.Fragment.lit("""
+         ::numeric,
+         "rowguid" = """),
+      TypoUUID.pgType.encode(row.rowguid()),
+      typo.runtime.Fragment.lit("""
+         ::uuid,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "businessentityid" = """),
+      BusinessentityId.pgType.encode(businessentityid),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public SalespersonRow upsert(
     SalespersonRow unsaved,
     Connection c
@@ -356,6 +381,7 @@ public class SalespersonRepoImpl implements SalespersonRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<SalespersonRow> upsertBatch(
     Iterator<SalespersonRow> unsaved,
     Connection c
@@ -380,31 +406,32 @@ public class SalespersonRepoImpl implements SalespersonRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<SalespersonRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table salesperson_TEMP (like "sales"."salesperson") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy salesperson_TEMP("businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate") from stdin
-      """), batchSize, unsaved, c, SalespersonRow.pgText);
+    create temporary table salesperson_TEMP (like "sales"."salesperson") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy salesperson_TEMP("businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate") from stdin
+    """), batchSize, unsaved, c, SalespersonRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "sales"."salesperson"("businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate")
-              select * from salesperson_TEMP
-              on conflict ("businessentityid")
-              do update set
-                "territoryid" = EXCLUDED."territoryid",
-              "salesquota" = EXCLUDED."salesquota",
-              "bonus" = EXCLUDED."bonus",
-              "commissionpct" = EXCLUDED."commissionpct",
-              "salesytd" = EXCLUDED."salesytd",
-              "saleslastyear" = EXCLUDED."saleslastyear",
-              "rowguid" = EXCLUDED."rowguid",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table salesperson_TEMP;""")).update().runUnchecked(c);
+       insert into "sales"."salesperson"("businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate")
+       select * from salesperson_TEMP
+       on conflict ("businessentityid")
+       do update set
+         "territoryid" = EXCLUDED."territoryid",
+       "salesquota" = EXCLUDED."salesquota",
+       "bonus" = EXCLUDED."bonus",
+       "commissionpct" = EXCLUDED."commissionpct",
+       "salesytd" = EXCLUDED."salesytd",
+       "saleslastyear" = EXCLUDED."saleslastyear",
+       "rowguid" = EXCLUDED."rowguid",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table salesperson_TEMP;""")).update().runUnchecked(c);
   };
 }

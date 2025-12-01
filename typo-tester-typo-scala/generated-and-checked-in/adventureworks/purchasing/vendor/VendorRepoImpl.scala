@@ -25,11 +25,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class VendorRepoImpl extends VendorRepo {
-  def delete: DeleteBuilder[VendorFields, VendorRow] = DeleteBuilder.of("purchasing.vendor", VendorFields.structure)
+  override def delete: DeleteBuilder[VendorFields, VendorRow] = DeleteBuilder.of("purchasing.vendor", VendorFields.structure)
 
-  def deleteById(businessentityid: BusinessentityId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "purchasing"."vendor" where "businessentityid" = ${BusinessentityId.pgType.encode(businessentityid)}""".update().runUnchecked(c) > 0
+  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "purchasing"."vendor" where "businessentityid" = ${BusinessentityId.pgType.encode(businessentityid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Integer = {
+  override def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Integer = {
     interpolate"""delete
     from "purchasing"."vendor"
     where "businessentityid" = ANY(${BusinessentityId.pgTypeArray.encode(businessentityids)})"""
@@ -37,7 +37,7 @@ class VendorRepoImpl extends VendorRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: VendorRow)(using c: Connection): VendorRow = {
+  override def insert(unsaved: VendorRow)(using c: Connection): VendorRow = {
   interpolate"""insert into "purchasing"."vendor"("businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate")
     values (${BusinessentityId.pgType.encode(unsaved.businessentityid)}::int4, ${AccountNumber.pgType.encode(unsaved.accountnumber)}::varchar, ${Name.pgType.encode(unsaved.name)}::varchar, ${TypoShort.pgType.encode(unsaved.creditrating)}::int2, ${Flag.pgType.encode(unsaved.preferredvendorstatus)}::bool, ${Flag.pgType.encode(unsaved.activeflag)}::bool, ${PgTypes.text.opt().encode(unsaved.purchasingwebserviceurl)}, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text
@@ -45,9 +45,9 @@ class VendorRepoImpl extends VendorRepo {
     .updateReturning(VendorRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: VendorRowUnsaved)(using c: Connection): VendorRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: VendorRowUnsaved)(using c: Connection): VendorRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn
     values.add(interpolate"${BusinessentityId.pgType.encode(unsaved.businessentityid)}::int4"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""accountnumber"""")): @scala.annotation.nowarn
@@ -59,25 +59,16 @@ class VendorRepoImpl extends VendorRepo {
     columns.add(Fragment.lit(""""purchasingwebserviceurl"""")): @scala.annotation.nowarn
     values.add(interpolate"${PgTypes.text.opt().encode(unsaved.purchasingwebserviceurl)}"): @scala.annotation.nowarn
     unsaved.preferredvendorstatus.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""preferredvendorstatus"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${Flag.pgType.encode(value)}::bool"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""preferredvendorstatus"""")): @scala.annotation.nowarn; values.add(interpolate"${Flag.pgType.encode(value)}::bool"): @scala.annotation.nowarn }
     );
     unsaved.activeflag.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""activeflag"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${Flag.pgType.encode(value)}::bool"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""activeflag"""")): @scala.annotation.nowarn; values.add(interpolate"${Flag.pgType.encode(value)}::bool"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "purchasing"."vendor"(${Fragment.comma(columns)})
@@ -85,51 +76,51 @@ class VendorRepoImpl extends VendorRepo {
       returning "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text
       """
     }
-    q.updateReturning(VendorRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(VendorRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[VendorRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "purchasing"."vendor"("businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate") FROM STDIN""", batchSize, unsaved, c, VendorRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[VendorRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "purchasing"."vendor"("businessentityid", "accountnumber", "name", "creditrating", "purchasingwebserviceurl", "preferredvendorstatus", "activeflag", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, VendorRowUnsaved.pgText)
 
-  def select: SelectBuilder[VendorFields, VendorRow] = SelectBuilder.of("purchasing.vendor", VendorFields.structure, VendorRow.`_rowParser`)
+  override def select: SelectBuilder[VendorFields, VendorRow] = SelectBuilder.of("purchasing.vendor", VendorFields.structure, VendorRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[VendorRow] = {
+  override def selectAll(using c: Connection): java.util.List[VendorRow] = {
     interpolate"""select "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text
     from "purchasing"."vendor"
-    """.as(VendorRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(VendorRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(businessentityid: BusinessentityId)(using c: Connection): Optional[VendorRow] = {
+  override def selectById(businessentityid: BusinessentityId)(using c: Connection): Optional[VendorRow] = {
     interpolate"""select "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text
     from "purchasing"."vendor"
-    where "businessentityid" = ${BusinessentityId.pgType.encode(businessentityid)}""".as(VendorRow.`_rowParser`.first()).runUnchecked(c)
+    where "businessentityid" = ${BusinessentityId.pgType.encode(businessentityid)}""".query(VendorRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.List[VendorRow] = {
+  override def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.List[VendorRow] = {
     interpolate"""select "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text
     from "purchasing"."vendor"
-    where "businessentityid" = ANY(${BusinessentityId.pgTypeArray.encode(businessentityids)})""".as(VendorRow.`_rowParser`.all()).runUnchecked(c)
+    where "businessentityid" = ANY(${BusinessentityId.pgTypeArray.encode(businessentityids)})""".query(VendorRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.Map[BusinessentityId, VendorRow] = {
-    val ret: java.util.Map[BusinessentityId, VendorRow] = new HashMap()
+  override def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.Map[BusinessentityId, VendorRow] = {
+    val ret: HashMap[BusinessentityId, VendorRow] = new HashMap[BusinessentityId, VendorRow]()
     selectByIds(businessentityids)(using c).forEach(row => ret.put(row.businessentityid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[VendorFields, VendorRow] = UpdateBuilder.of("purchasing.vendor", VendorFields.structure, VendorRow.`_rowParser`.all())
+  override def update: UpdateBuilder[VendorFields, VendorRow] = UpdateBuilder.of("purchasing.vendor", VendorFields.structure, VendorRow.`_rowParser`.all())
 
-  def update(row: VendorRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: VendorRow)(using c: Connection): java.lang.Boolean = {
     val businessentityid: BusinessentityId = row.businessentityid
-    interpolate"""update "purchasing"."vendor"
+    return interpolate"""update "purchasing"."vendor"
     set "accountnumber" = ${AccountNumber.pgType.encode(row.accountnumber)}::varchar,
     "name" = ${Name.pgType.encode(row.name)}::varchar,
     "creditrating" = ${TypoShort.pgType.encode(row.creditrating)}::int2,
@@ -140,7 +131,7 @@ class VendorRepoImpl extends VendorRepo {
     where "businessentityid" = ${BusinessentityId.pgType.encode(businessentityid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: VendorRow)(using c: Connection): VendorRow = {
+  override def upsert(unsaved: VendorRow)(using c: Connection): VendorRow = {
   interpolate"""insert into "purchasing"."vendor"("businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate")
     values (${BusinessentityId.pgType.encode(unsaved.businessentityid)}::int4, ${AccountNumber.pgType.encode(unsaved.accountnumber)}::varchar, ${Name.pgType.encode(unsaved.name)}::varchar, ${TypoShort.pgType.encode(unsaved.creditrating)}::int2, ${Flag.pgType.encode(unsaved.preferredvendorstatus)}::bool, ${Flag.pgType.encode(unsaved.activeflag)}::bool, ${PgTypes.text.opt().encode(unsaved.purchasingwebserviceurl)}, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("businessentityid")
@@ -158,7 +149,7 @@ class VendorRepoImpl extends VendorRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[VendorRow])(using c: Connection): java.util.List[VendorRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[VendorRow])(using c: Connection): java.util.List[VendorRow] = {
     interpolate"""insert into "purchasing"."vendor"("businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate")
     values (?::int4, ?::varchar, ?::varchar, ?::int2, ?::bool, ?::bool, ?, ?::timestamp)
     on conflict ("businessentityid")
@@ -177,13 +168,13 @@ class VendorRepoImpl extends VendorRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[VendorRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table vendor_TEMP (like "purchasing"."vendor") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy vendor_TEMP("businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate") from stdin""", batchSize, unsaved, c, VendorRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "purchasing"."vendor"("businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate")
+    return interpolate"""insert into "purchasing"."vendor"("businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate")
     select * from vendor_TEMP
     on conflict ("businessentityid")
     do update set

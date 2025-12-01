@@ -5,6 +5,7 @@
  */
 package adventureworks.person.countryregion
 
+import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
@@ -25,7 +26,7 @@ case class CountryregionRepoMock(
   toRow: CountryregionRowUnsaved => CountryregionRow,
   map: HashMap[CountryregionId, CountryregionRow] = new HashMap[CountryregionId, CountryregionRow]()
 ) extends CountryregionRepo {
-  def delete: DeleteBuilder[CountryregionFields, CountryregionRow] = {
+  override def delete: DeleteBuilder[CountryregionFields, CountryregionRow] = {
     new DeleteBuilderMock(
       CountryregionFields.structure,
       () => new ArrayList(map.values()),
@@ -35,27 +36,27 @@ case class CountryregionRepoMock(
     )
   }
 
-  def deleteById(countryregioncode: CountryregionId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(countryregioncode)).isPresent()
+  override def deleteById(countryregioncode: CountryregionId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(countryregioncode)).isPresent()
 
-  def deleteByIds(countryregioncodes: Array[CountryregionId])(using c: Connection): Integer = {
+  override def deleteByIds(countryregioncodes: Array[CountryregionId])(using c: Connection): Integer = {
     var count = 0
     countryregioncodes.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
-    count
+    return count
   }
 
-  def insert(unsaved: CountryregionRow)(using c: Connection): CountryregionRow = {
+  override def insert(unsaved: CountryregionRow)(using c: Connection): CountryregionRow = {
     if (map.containsKey(unsaved.countryregioncode)) {
       throw new RuntimeException(s"id $unsaved.countryregioncode already exists")
     }
     map.put(unsaved.countryregioncode, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def insert(unsaved: CountryregionRowUnsaved)(using c: Connection): CountryregionRow = insert(toRow(unsaved))(using c)
+  override def insert(unsaved: CountryregionRowUnsaved)(using c: Connection): CountryregionRow = insert(toRow(unsaved))(using c)
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[CountryregionRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -65,11 +66,11 @@ case class CountryregionRepoMock(
       map.put(row.countryregioncode, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[CountryregionRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -80,25 +81,25 @@ case class CountryregionRepoMock(
       map.put(row.countryregioncode, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
-  def select: SelectBuilder[CountryregionFields, CountryregionRow] = new SelectBuilderMock(CountryregionFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
+  override def select: SelectBuilder[CountryregionFields, CountryregionRow] = new SelectBuilderMock(CountryregionFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  def selectAll(using c: Connection): java.util.List[CountryregionRow] = new ArrayList(map.values())
+  override def selectAll(using c: Connection): java.util.List[CountryregionRow] = new ArrayList(map.values())
 
-  def selectById(countryregioncode: CountryregionId)(using c: Connection): Optional[CountryregionRow] = Optional.ofNullable(map.get(countryregioncode))
+  override def selectById(countryregioncode: CountryregionId)(using c: Connection): Optional[CountryregionRow] = Optional.ofNullable(map.get(countryregioncode))
 
-  def selectByIds(countryregioncodes: Array[CountryregionId])(using c: Connection): java.util.List[CountryregionRow] = {
+  override def selectByIds(countryregioncodes: Array[CountryregionId])(using c: Connection): java.util.List[CountryregionRow] = {
     val result = new ArrayList[CountryregionRow]()
     countryregioncodes.foreach { id => val opt = Optional.ofNullable(map.get(id))
     if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
-    result
+    return result
   }
 
-  def selectByIdsTracked(countryregioncodes: Array[CountryregionId])(using c: Connection): java.util.Map[CountryregionId, CountryregionRow] = selectByIds(countryregioncodes)(using c).stream().collect(Collectors.toMap((row: adventureworks.person.countryregion.CountryregionRow) => row.countryregioncode, Function.identity()))
+  override def selectByIdsTracked(countryregioncodes: Array[CountryregionId])(using c: Connection): java.util.Map[CountryregionId, CountryregionRow] = selectByIds(countryregioncodes)(using c).stream().collect(Collectors.toMap((row: CountryregionRow) => row.countryregioncode, Function.identity()))
 
-  def update: UpdateBuilder[CountryregionFields, CountryregionRow] = {
+  override def update: UpdateBuilder[CountryregionFields, CountryregionRow] = {
     new UpdateBuilderMock(
       CountryregionFields.structure,
       () => new ArrayList(map.values()),
@@ -107,31 +108,31 @@ case class CountryregionRepoMock(
     )
   }
 
-  def update(row: CountryregionRow)(using c: Connection): java.lang.Boolean = {
-    val shouldUpdate = Optional.ofNullable(map.get(row.countryregioncode)).filter(oldRow => !oldRow.equals(row)).isPresent()
+  override def update(row: CountryregionRow)(using c: Connection): java.lang.Boolean = {
+    val shouldUpdate = Optional.ofNullable(map.get(row.countryregioncode)).filter(oldRow => (oldRow != row)).isPresent()
     if (shouldUpdate) {
       map.put(row.countryregioncode, row): @scala.annotation.nowarn
     }
-    shouldUpdate
+    return shouldUpdate
   }
 
-  def upsert(unsaved: CountryregionRow)(using c: Connection): CountryregionRow = {
+  override def upsert(unsaved: CountryregionRow)(using c: Connection): CountryregionRow = {
     map.put(unsaved.countryregioncode, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[CountryregionRow])(using c: Connection): java.util.List[CountryregionRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[CountryregionRow])(using c: Connection): java.util.List[CountryregionRow] = {
     val result = new ArrayList[CountryregionRow]()
     while (unsaved.hasNext()) {
       val row = unsaved.next()
       map.put(row.countryregioncode, row): @scala.annotation.nowarn
       result.add(row): @scala.annotation.nowarn
     }
-    result
+    return result
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[CountryregionRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
@@ -141,6 +142,6 @@ case class CountryregionRepoMock(
       map.put(row.countryregioncode, row): @scala.annotation.nowarn
       count = count + 1
     }
-    count
+    return count
   }
 }

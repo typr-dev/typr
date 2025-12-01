@@ -12,7 +12,6 @@ import adventureworks.sales.currency.CurrencyId;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple3;
 
 /** Table: sales.countryregioncurrency
   * Cross-reference table mapping ISO currency codes to a country or region.
@@ -49,7 +48,7 @@ public record CountryregioncurrencyRow(
     return new CountryregioncurrencyRow(countryregioncode, currencycode, modifieddate);
   };
 
-  static RowParser<CountryregioncurrencyRow> _rowParser = RowParsers.of(CountryregionId.pgType, CurrencyId.pgType, TypoLocalDateTime.pgType, CountryregioncurrencyRow::new, row -> new Tuple3<>(row.countryregioncode(), row.currencycode(), row.modifieddate()));;
+  static RowParser<CountryregioncurrencyRow> _rowParser = RowParsers.of(CountryregionId.pgType, CurrencyId.pgType, TypoLocalDateTime.pgType, CountryregioncurrencyRow::new, row -> new Object[]{row.countryregioncode(), row.currencycode(), row.modifieddate()});;
 
   static public CountryregioncurrencyRow apply(
     CountryregioncurrencyId compositeId,

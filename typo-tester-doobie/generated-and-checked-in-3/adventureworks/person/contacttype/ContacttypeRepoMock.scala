@@ -23,13 +23,13 @@ case class ContacttypeRepoMock(
   toRow: ContacttypeRowUnsaved => ContacttypeRow,
   map: scala.collection.mutable.Map[ContacttypeId, ContacttypeRow] = scala.collection.mutable.Map.empty[ContacttypeId, ContacttypeRow]
 ) extends ContacttypeRepo {
-  def delete: DeleteBuilder[ContacttypeFields, ContacttypeRow] = DeleteBuilderMock(DeleteParams.empty, ContacttypeFields.structure, map)
+  override def delete: DeleteBuilder[ContacttypeFields, ContacttypeRow] = DeleteBuilderMock(DeleteParams.empty, ContacttypeFields.structure, map)
 
-  def deleteById(contacttypeid: ContacttypeId): ConnectionIO[Boolean] = delay(map.remove(contacttypeid).isDefined)
+  override def deleteById(contacttypeid: ContacttypeId): ConnectionIO[Boolean] = delay(map.remove(contacttypeid).isDefined)
 
-  def deleteByIds(contacttypeids: Array[ContacttypeId]): ConnectionIO[Int] = delay(contacttypeids.map(id => map.remove(id)).count(_.isDefined))
+  override def deleteByIds(contacttypeids: Array[ContacttypeId]): ConnectionIO[Int] = delay(contacttypeids.map(id => map.remove(id)).count(_.isDefined))
 
-  def insert(unsaved: ContacttypeRow): ConnectionIO[ContacttypeRow] = {
+  override def insert(unsaved: ContacttypeRow): ConnectionIO[ContacttypeRow] = {
   delay {
     val _ = if (map.contains(unsaved.contacttypeid))
       sys.error(s"id ${unsaved.contacttypeid} already exists")
@@ -40,9 +40,9 @@ case class ContacttypeRepoMock(
   }
   }
 
-  def insert(unsaved: ContacttypeRowUnsaved): ConnectionIO[ContacttypeRow] = insert(toRow(unsaved))
+  override def insert(unsaved: ContacttypeRowUnsaved): ConnectionIO[ContacttypeRow] = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, ContacttypeRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = {
@@ -57,7 +57,7 @@ case class ContacttypeRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, ContacttypeRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = {
@@ -72,24 +72,24 @@ case class ContacttypeRepoMock(
     }
   }
 
-  def select: SelectBuilder[ContacttypeFields, ContacttypeRow] = SelectBuilderMock(ContacttypeFields.structure, delay(map.values.toList), SelectParams.empty)
+  override def select: SelectBuilder[ContacttypeFields, ContacttypeRow] = SelectBuilderMock(ContacttypeFields.structure, delay(map.values.toList), SelectParams.empty)
 
-  def selectAll: Stream[ConnectionIO, ContacttypeRow] = Stream.emits(map.values.toList)
+  override def selectAll: Stream[ConnectionIO, ContacttypeRow] = Stream.emits(map.values.toList)
 
-  def selectById(contacttypeid: ContacttypeId): ConnectionIO[Option[ContacttypeRow]] = delay(map.get(contacttypeid))
+  override def selectById(contacttypeid: ContacttypeId): ConnectionIO[Option[ContacttypeRow]] = delay(map.get(contacttypeid))
 
-  def selectByIds(contacttypeids: Array[ContacttypeId]): Stream[ConnectionIO, ContacttypeRow] = Stream.emits(contacttypeids.flatMap(map.get).toList)
+  override def selectByIds(contacttypeids: Array[ContacttypeId]): Stream[ConnectionIO, ContacttypeRow] = Stream.emits(contacttypeids.flatMap(map.get).toList)
 
-  def selectByIdsTracked(contacttypeids: Array[ContacttypeId]): ConnectionIO[Map[ContacttypeId, ContacttypeRow]] = {
+  override def selectByIdsTracked(contacttypeids: Array[ContacttypeId]): ConnectionIO[Map[ContacttypeId, ContacttypeRow]] = {
     selectByIds(contacttypeids).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.contacttypeid, x)).toMap
       contacttypeids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[ContacttypeFields, ContacttypeRow] = UpdateBuilderMock(UpdateParams.empty, ContacttypeFields.structure, map)
+  override def update: UpdateBuilder[ContacttypeFields, ContacttypeRow] = UpdateBuilderMock(UpdateParams.empty, ContacttypeFields.structure, map)
 
-  def update(row: ContacttypeRow): ConnectionIO[Option[ContacttypeRow]] = {
+  override def update(row: ContacttypeRow): ConnectionIO[Option[ContacttypeRow]] = {
     delay {
       map.get(row.contacttypeid).map { _ =>
         map.put(row.contacttypeid, row): @nowarn
@@ -98,14 +98,14 @@ case class ContacttypeRepoMock(
     }
   }
 
-  def upsert(unsaved: ContacttypeRow): ConnectionIO[ContacttypeRow] = {
+  override def upsert(unsaved: ContacttypeRow): ConnectionIO[ContacttypeRow] = {
     delay {
       map.put(unsaved.contacttypeid, unsaved): @nowarn
       unsaved
     }
   }
 
-  def upsertBatch(unsaved: List[ContacttypeRow]): Stream[ConnectionIO, ContacttypeRow] = {
+  override def upsertBatch(unsaved: List[ContacttypeRow]): Stream[ConnectionIO, ContacttypeRow] = {
     Stream.emits {
       unsaved.map { row =>
         map += (row.contacttypeid -> row)
@@ -115,7 +115,7 @@ case class ContacttypeRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, ContacttypeRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

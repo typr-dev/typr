@@ -7,13 +7,11 @@ package adventureworks.pu.v
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class VViewRepoImpl extends VViewRepo {
-  def select: SelectBuilder[VViewFields, VViewRow] = SelectBuilder.of(""""pu"."v"""", VViewFields.structure, VViewRow.read)
+  override def select: SelectBuilder[VViewFields, VViewRow] = SelectBuilder.of(""""pu"."v"""", VViewFields.structure, VViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, VViewRow] = sql"""select "id", "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text from "pu"."v"""".query(using VViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, VViewRow] = sql"""select "id", "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text from "pu"."v"""".query(using VViewRow.read).stream
 }

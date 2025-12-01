@@ -47,7 +47,7 @@ object SpecialofferproductFields {
 
     override lazy val fields: SpecialofferproductFields = {
       new SpecialofferproductFields {
-        def specialofferid: IdField[SpecialofferId, SpecialofferproductRow] = {
+        override def specialofferid: IdField[SpecialofferId, SpecialofferproductRow] = {
           new IdField[SpecialofferId, SpecialofferproductRow](
             _path,
             "specialofferid",
@@ -58,7 +58,7 @@ object SpecialofferproductFields {
             SpecialofferId.pgType
           )
         }
-        def productid: IdField[ProductId, SpecialofferproductRow] = {
+        override def productid: IdField[ProductId, SpecialofferproductRow] = {
           new IdField[ProductId, SpecialofferproductRow](
             _path,
             "productid",
@@ -69,7 +69,7 @@ object SpecialofferproductFields {
             ProductId.pgType
           )
         }
-        def rowguid: Field[TypoUUID, SpecialofferproductRow] = {
+        override def rowguid: Field[TypoUUID, SpecialofferproductRow] = {
           new Field[TypoUUID, SpecialofferproductRow](
             _path,
             "rowguid",
@@ -80,7 +80,7 @@ object SpecialofferproductFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, SpecialofferproductRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, SpecialofferproductRow] = {
           new Field[TypoLocalDateTime, SpecialofferproductRow](
             _path,
             "modifieddate",
@@ -96,7 +96,7 @@ object SpecialofferproductFields {
 
     override lazy val columns: java.util.List[FieldLike[?, SpecialofferproductRow]] = java.util.List.of(this.fields.specialofferid, this.fields.productid, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[SpecialofferproductFields, SpecialofferproductRow] = new Impl(java.util.List.of())

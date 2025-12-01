@@ -12,7 +12,6 @@ import adventureworks.public.Name
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple4
 
 /** Table: production.productcategory
  * High-level product categorization.
@@ -47,14 +46,7 @@ case class ProductcategoryRow(
 }
 
 object ProductcategoryRow {
-  val `_rowParser`: RowParser[ProductcategoryRow] = {
-    RowParsers.of(ProductcategoryId.pgType, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, ProductcategoryRow.apply, row => new Tuple4(
-      row.productcategoryid,
-      row.name,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[ProductcategoryRow] = RowParsers.of(ProductcategoryId.pgType, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, ProductcategoryRow.apply, row => Array(row.productcategoryid, row.name, row.rowguid, row.modifieddate))
 
   given pgText: PgText[ProductcategoryRow] = PgText.from(`_rowParser`)
 }

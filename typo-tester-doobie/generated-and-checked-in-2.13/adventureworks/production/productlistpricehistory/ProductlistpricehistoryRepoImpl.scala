@@ -23,11 +23,11 @@ import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class ProductlistpricehistoryRepoImpl extends ProductlistpricehistoryRepo {
-  def delete: DeleteBuilder[ProductlistpricehistoryFields, ProductlistpricehistoryRow] = DeleteBuilder.of(""""production"."productlistpricehistory"""", ProductlistpricehistoryFields.structure, ProductlistpricehistoryRow.read)
+  override def delete: DeleteBuilder[ProductlistpricehistoryFields, ProductlistpricehistoryRow] = DeleteBuilder.of(""""production"."productlistpricehistory"""", ProductlistpricehistoryFields.structure, ProductlistpricehistoryRow.read)
 
-  def deleteById(compositeId: ProductlistpricehistoryId): ConnectionIO[Boolean] = sql"""delete from "production"."productlistpricehistory" where "productid" = ${fromWrite(compositeId.productid)(new Write.Single(ProductId.put))} AND "startdate" = ${fromWrite(compositeId.startdate)(new Write.Single(TypoLocalDateTime.put))}""".update.run.map(_ > 0)
+  override def deleteById(compositeId: ProductlistpricehistoryId): ConnectionIO[Boolean] = sql"""delete from "production"."productlistpricehistory" where "productid" = ${fromWrite(compositeId.productid)(new Write.Single(ProductId.put))} AND "startdate" = ${fromWrite(compositeId.startdate)(new Write.Single(TypoLocalDateTime.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(compositeIds: Array[ProductlistpricehistoryId]): ConnectionIO[Int] = {
+  override def deleteByIds(compositeIds: Array[ProductlistpricehistoryId]): ConnectionIO[Int] = {
     val productid = compositeIds.map(_.productid)
     val startdate = compositeIds.map(_.startdate)
     sql"""delete
@@ -37,14 +37,14 @@ class ProductlistpricehistoryRepoImpl extends ProductlistpricehistoryRepo {
     """.update.run
   }
 
-  def insert(unsaved: ProductlistpricehistoryRow): ConnectionIO[ProductlistpricehistoryRow] = {
+  override def insert(unsaved: ProductlistpricehistoryRow): ConnectionIO[ProductlistpricehistoryRow] = {
     sql"""insert into "production"."productlistpricehistory"("productid", "startdate", "enddate", "listprice", "modifieddate")
     values (${fromWrite(unsaved.productid)(new Write.Single(ProductId.put))}::int4, ${fromWrite(unsaved.startdate)(new Write.Single(TypoLocalDateTime.put))}::timestamp, ${fromWrite(unsaved.enddate)(new Write.SingleOpt(TypoLocalDateTime.put))}::timestamp, ${fromWrite(unsaved.listprice)(new Write.Single(Meta.ScalaBigDecimalMeta.put))}::numeric, ${fromWrite(unsaved.modifieddate)(new Write.Single(TypoLocalDateTime.put))}::timestamp)
     returning "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text
     """.query(ProductlistpricehistoryRow.read).unique
   }
 
-  def insert(unsaved: ProductlistpricehistoryRowUnsaved): ConnectionIO[ProductlistpricehistoryRow] = {
+  override def insert(unsaved: ProductlistpricehistoryRowUnsaved): ConnectionIO[ProductlistpricehistoryRow] = {
     val fs = List(
       Some((Fragment.const0(s""""productid""""), fr"${fromWrite(unsaved.productid)(new Write.Single(ProductId.put))}::int4")),
       Some((Fragment.const0(s""""startdate""""), fr"${fromWrite(unsaved.startdate)(new Write.Single(TypoLocalDateTime.put))}::timestamp")),
@@ -69,24 +69,24 @@ class ProductlistpricehistoryRepoImpl extends ProductlistpricehistoryRepo {
     q.query(ProductlistpricehistoryRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, ProductlistpricehistoryRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "production"."productlistpricehistory"("productid", "startdate", "enddate", "listprice", "modifieddate") FROM STDIN""").copyIn(unsaved, batchSize)(ProductlistpricehistoryRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, ProductlistpricehistoryRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "production"."productlistpricehistory"("productid", "startdate", "enddate", "listprice", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(ProductlistpricehistoryRowUnsaved.pgText)
 
-  def select: SelectBuilder[ProductlistpricehistoryFields, ProductlistpricehistoryRow] = SelectBuilder.of(""""production"."productlistpricehistory"""", ProductlistpricehistoryFields.structure, ProductlistpricehistoryRow.read)
+  override def select: SelectBuilder[ProductlistpricehistoryFields, ProductlistpricehistoryRow] = SelectBuilder.of(""""production"."productlistpricehistory"""", ProductlistpricehistoryFields.structure, ProductlistpricehistoryRow.read)
 
-  def selectAll: Stream[ConnectionIO, ProductlistpricehistoryRow] = sql"""select "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text from "production"."productlistpricehistory"""".query(ProductlistpricehistoryRow.read).stream
+  override def selectAll: Stream[ConnectionIO, ProductlistpricehistoryRow] = sql"""select "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text from "production"."productlistpricehistory"""".query(ProductlistpricehistoryRow.read).stream
 
-  def selectById(compositeId: ProductlistpricehistoryId): ConnectionIO[Option[ProductlistpricehistoryRow]] = sql"""select "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text from "production"."productlistpricehistory" where "productid" = ${fromWrite(compositeId.productid)(new Write.Single(ProductId.put))} AND "startdate" = ${fromWrite(compositeId.startdate)(new Write.Single(TypoLocalDateTime.put))}""".query(ProductlistpricehistoryRow.read).option
+  override def selectById(compositeId: ProductlistpricehistoryId): ConnectionIO[Option[ProductlistpricehistoryRow]] = sql"""select "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text from "production"."productlistpricehistory" where "productid" = ${fromWrite(compositeId.productid)(new Write.Single(ProductId.put))} AND "startdate" = ${fromWrite(compositeId.startdate)(new Write.Single(TypoLocalDateTime.put))}""".query(ProductlistpricehistoryRow.read).option
 
-  def selectByIds(compositeIds: Array[ProductlistpricehistoryId]): Stream[ConnectionIO, ProductlistpricehistoryRow] = {
+  override def selectByIds(compositeIds: Array[ProductlistpricehistoryId]): Stream[ConnectionIO, ProductlistpricehistoryRow] = {
     val productid = compositeIds.map(_.productid)
     val startdate = compositeIds.map(_.startdate)
     sql"""select "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text
@@ -96,16 +96,16 @@ class ProductlistpricehistoryRepoImpl extends ProductlistpricehistoryRepo {
     """.query(ProductlistpricehistoryRow.read).stream
   }
 
-  def selectByIdsTracked(compositeIds: Array[ProductlistpricehistoryId]): ConnectionIO[Map[ProductlistpricehistoryId, ProductlistpricehistoryRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[ProductlistpricehistoryId]): ConnectionIO[Map[ProductlistpricehistoryId, ProductlistpricehistoryRow]] = {
     selectByIds(compositeIds).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[ProductlistpricehistoryFields, ProductlistpricehistoryRow] = UpdateBuilder.of(""""production"."productlistpricehistory"""", ProductlistpricehistoryFields.structure, ProductlistpricehistoryRow.read)
+  override def update: UpdateBuilder[ProductlistpricehistoryFields, ProductlistpricehistoryRow] = UpdateBuilder.of(""""production"."productlistpricehistory"""", ProductlistpricehistoryFields.structure, ProductlistpricehistoryRow.read)
 
-  def update(row: ProductlistpricehistoryRow): ConnectionIO[Option[ProductlistpricehistoryRow]] = {
+  override def update(row: ProductlistpricehistoryRow): ConnectionIO[Option[ProductlistpricehistoryRow]] = {
     val compositeId = row.compositeId
     sql"""update "production"."productlistpricehistory"
     set "enddate" = ${fromWrite(row.enddate)(new Write.SingleOpt(TypoLocalDateTime.put))}::timestamp,
@@ -115,7 +115,7 @@ class ProductlistpricehistoryRepoImpl extends ProductlistpricehistoryRepo {
     returning "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text""".query(ProductlistpricehistoryRow.read).option
   }
 
-  def upsert(unsaved: ProductlistpricehistoryRow): ConnectionIO[ProductlistpricehistoryRow] = {
+  override def upsert(unsaved: ProductlistpricehistoryRow): ConnectionIO[ProductlistpricehistoryRow] = {
     sql"""insert into "production"."productlistpricehistory"("productid", "startdate", "enddate", "listprice", "modifieddate")
     values (
       ${fromWrite(unsaved.productid)(new Write.Single(ProductId.put))}::int4,
@@ -133,7 +133,7 @@ class ProductlistpricehistoryRepoImpl extends ProductlistpricehistoryRepo {
     """.query(ProductlistpricehistoryRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[ProductlistpricehistoryRow]): Stream[ConnectionIO, ProductlistpricehistoryRow] = {
+  override def upsertBatch(unsaved: List[ProductlistpricehistoryRow]): Stream[ConnectionIO, ProductlistpricehistoryRow] = {
     Update[ProductlistpricehistoryRow](
       s"""insert into "production"."productlistpricehistory"("productid", "startdate", "enddate", "listprice", "modifieddate")
       values (?::int4,?::timestamp,?::timestamp,?::numeric,?::timestamp)
@@ -148,7 +148,7 @@ class ProductlistpricehistoryRepoImpl extends ProductlistpricehistoryRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, ProductlistpricehistoryRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

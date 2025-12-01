@@ -21,11 +21,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class UsersRepoImpl extends UsersRepo {
-  def delete: DeleteBuilder[UsersFields, UsersRow] = DeleteBuilder.of("public.users", UsersFields.structure)
+  override def delete: DeleteBuilder[UsersFields, UsersRow] = DeleteBuilder.of("public.users", UsersFields.structure)
 
-  def deleteById(userId: UsersId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."users" where "user_id" = ${UsersId.pgType.encode(userId)}""".update().runUnchecked(c) > 0
+  override def deleteById(userId: UsersId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."users" where "user_id" = ${UsersId.pgType.encode(userId)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(userIds: Array[UsersId])(using c: Connection): Integer = {
+  override def deleteByIds(userIds: Array[UsersId])(using c: Connection): Integer = {
     interpolate"""delete
     from "public"."users"
     where "user_id" = ANY(${UsersId.pgTypeArray.encode(userIds)})"""
@@ -33,7 +33,7 @@ class UsersRepoImpl extends UsersRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: UsersRow)(using c: Connection): UsersRow = {
+  override def insert(unsaved: UsersRow)(using c: Connection): UsersRow = {
   interpolate"""insert into "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on")
     values (${UsersId.pgType.encode(unsaved.userId)}::uuid, ${PgTypes.text.encode(unsaved.name)}, ${PgTypes.text.opt().encode(unsaved.lastName)}, ${TypoUnknownCitext.pgType.encode(unsaved.email)}::citext, ${PgTypes.text.encode(unsaved.password)}, ${TypoInstant.pgType.encode(unsaved.createdAt)}::timestamptz, ${TypoInstant.pgType.opt().encode(unsaved.verifiedOn)}::timestamptz)
     returning "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text
@@ -41,9 +41,9 @@ class UsersRepoImpl extends UsersRepo {
     .updateReturning(UsersRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: UsersRowUnsaved)(using c: Connection): UsersRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: UsersRowUnsaved)(using c: Connection): UsersRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""user_id"""")): @scala.annotation.nowarn
     values.add(interpolate"${UsersId.pgType.encode(unsaved.userId)}::uuid"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
@@ -57,11 +57,8 @@ class UsersRepoImpl extends UsersRepo {
     columns.add(Fragment.lit(""""verified_on"""")): @scala.annotation.nowarn
     values.add(interpolate"${TypoInstant.pgType.opt().encode(unsaved.verifiedOn)}::timestamptz"): @scala.annotation.nowarn
     unsaved.createdAt.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""created_at"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoInstant.pgType.encode(value)}::timestamptz"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""created_at"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoInstant.pgType.encode(value)}::timestamptz"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "public"."users"(${Fragment.comma(columns)})
@@ -69,58 +66,58 @@ class UsersRepoImpl extends UsersRepo {
       returning "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text
       """
     }
-    q.updateReturning(UsersRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(UsersRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[UsersRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on") FROM STDIN""", batchSize, unsaved, c, UsersRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[UsersRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."users"("user_id", "name", "last_name", "email", "password", "verified_on", "created_at") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, UsersRowUnsaved.pgText)
 
-  def select: SelectBuilder[UsersFields, UsersRow] = SelectBuilder.of("public.users", UsersFields.structure, UsersRow.`_rowParser`)
+  override def select: SelectBuilder[UsersFields, UsersRow] = SelectBuilder.of("public.users", UsersFields.structure, UsersRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[UsersRow] = {
+  override def selectAll(using c: Connection): java.util.List[UsersRow] = {
     interpolate"""select "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text
     from "public"."users"
-    """.as(UsersRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(UsersRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(userId: UsersId)(using c: Connection): Optional[UsersRow] = {
+  override def selectById(userId: UsersId)(using c: Connection): Optional[UsersRow] = {
     interpolate"""select "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text
     from "public"."users"
-    where "user_id" = ${UsersId.pgType.encode(userId)}""".as(UsersRow.`_rowParser`.first()).runUnchecked(c)
+    where "user_id" = ${UsersId.pgType.encode(userId)}""".query(UsersRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(userIds: Array[UsersId])(using c: Connection): java.util.List[UsersRow] = {
+  override def selectByIds(userIds: Array[UsersId])(using c: Connection): java.util.List[UsersRow] = {
     interpolate"""select "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text
     from "public"."users"
-    where "user_id" = ANY(${UsersId.pgTypeArray.encode(userIds)})""".as(UsersRow.`_rowParser`.all()).runUnchecked(c)
+    where "user_id" = ANY(${UsersId.pgTypeArray.encode(userIds)})""".query(UsersRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(userIds: Array[UsersId])(using c: Connection): java.util.Map[UsersId, UsersRow] = {
-    val ret: java.util.Map[UsersId, UsersRow] = new HashMap()
+  override def selectByIdsTracked(userIds: Array[UsersId])(using c: Connection): java.util.Map[UsersId, UsersRow] = {
+    val ret: HashMap[UsersId, UsersRow] = new HashMap[UsersId, UsersRow]()
     selectByIds(userIds)(using c).forEach(row => ret.put(row.userId, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def selectByUniqueEmail(email: TypoUnknownCitext)(using c: Connection): Optional[UsersRow] = {
+  override def selectByUniqueEmail(email: TypoUnknownCitext)(using c: Connection): Optional[UsersRow] = {
     interpolate"""select "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text
     from "public"."users"
     where "email" = ${TypoUnknownCitext.pgType.encode(email)}
-    """.as(UsersRow.`_rowParser`.first()).runUnchecked(c)
+    """.query(UsersRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def update: UpdateBuilder[UsersFields, UsersRow] = UpdateBuilder.of("public.users", UsersFields.structure, UsersRow.`_rowParser`.all())
+  override def update: UpdateBuilder[UsersFields, UsersRow] = UpdateBuilder.of("public.users", UsersFields.structure, UsersRow.`_rowParser`.all())
 
-  def update(row: UsersRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: UsersRow)(using c: Connection): java.lang.Boolean = {
     val userId: UsersId = row.userId
-    interpolate"""update "public"."users"
+    return interpolate"""update "public"."users"
     set "name" = ${PgTypes.text.encode(row.name)},
     "last_name" = ${PgTypes.text.opt().encode(row.lastName)},
     "email" = ${TypoUnknownCitext.pgType.encode(row.email)}::citext,
@@ -130,7 +127,7 @@ class UsersRepoImpl extends UsersRepo {
     where "user_id" = ${UsersId.pgType.encode(userId)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: UsersRow)(using c: Connection): UsersRow = {
+  override def upsert(unsaved: UsersRow)(using c: Connection): UsersRow = {
   interpolate"""insert into "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on")
     values (${UsersId.pgType.encode(unsaved.userId)}::uuid, ${PgTypes.text.encode(unsaved.name)}, ${PgTypes.text.opt().encode(unsaved.lastName)}, ${TypoUnknownCitext.pgType.encode(unsaved.email)}::citext, ${PgTypes.text.encode(unsaved.password)}, ${TypoInstant.pgType.encode(unsaved.createdAt)}::timestamptz, ${TypoInstant.pgType.opt().encode(unsaved.verifiedOn)}::timestamptz)
     on conflict ("user_id")
@@ -147,7 +144,7 @@ class UsersRepoImpl extends UsersRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[UsersRow])(using c: Connection): java.util.List[UsersRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[UsersRow])(using c: Connection): java.util.List[UsersRow] = {
     interpolate"""insert into "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on")
     values (?::uuid, ?, ?, ?::citext, ?, ?::timestamptz, ?::timestamptz)
     on conflict ("user_id")
@@ -165,13 +162,13 @@ class UsersRepoImpl extends UsersRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[UsersRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table users_TEMP (like "public"."users") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy users_TEMP("user_id", "name", "last_name", "email", "password", "created_at", "verified_on") from stdin""", batchSize, unsaved, c, UsersRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on")
+    return interpolate"""insert into "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on")
     select * from users_TEMP
     on conflict ("user_id")
     do update set

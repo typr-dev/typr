@@ -35,7 +35,7 @@ object BeaViewFields {
 
     override lazy val fields: BeaViewFields = {
       new BeaViewFields {
-        def id: Field[BusinessentityId, BeaViewRow] = {
+        override def id: Field[BusinessentityId, BeaViewRow] = {
           new Field[BusinessentityId, BeaViewRow](
             _path,
             "id",
@@ -46,7 +46,7 @@ object BeaViewFields {
             BusinessentityId.pgType
           )
         }
-        def businessentityid: Field[BusinessentityId, BeaViewRow] = {
+        override def businessentityid: Field[BusinessentityId, BeaViewRow] = {
           new Field[BusinessentityId, BeaViewRow](
             _path,
             "businessentityid",
@@ -57,7 +57,7 @@ object BeaViewFields {
             BusinessentityId.pgType
           )
         }
-        def addressid: Field[AddressId, BeaViewRow] = {
+        override def addressid: Field[AddressId, BeaViewRow] = {
           new Field[AddressId, BeaViewRow](
             _path,
             "addressid",
@@ -68,7 +68,7 @@ object BeaViewFields {
             AddressId.pgType
           )
         }
-        def addresstypeid: Field[AddresstypeId, BeaViewRow] = {
+        override def addresstypeid: Field[AddresstypeId, BeaViewRow] = {
           new Field[AddresstypeId, BeaViewRow](
             _path,
             "addresstypeid",
@@ -79,7 +79,7 @@ object BeaViewFields {
             AddresstypeId.pgType
           )
         }
-        def rowguid: Field[TypoUUID, BeaViewRow] = {
+        override def rowguid: Field[TypoUUID, BeaViewRow] = {
           new Field[TypoUUID, BeaViewRow](
             _path,
             "rowguid",
@@ -90,7 +90,7 @@ object BeaViewFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, BeaViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, BeaViewRow] = {
           new Field[TypoLocalDateTime, BeaViewRow](
             _path,
             "modifieddate",
@@ -106,7 +106,7 @@ object BeaViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, BeaViewRow]] = java.util.List.of(this.fields.id, this.fields.businessentityid, this.fields.addressid, this.fields.addresstypeid, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[BeaViewFields, BeaViewRow] = new Impl(java.util.List.of())

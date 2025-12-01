@@ -15,7 +15,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface FootballClubFields {
-  static final class Impl extends Relation<FootballClubFields, FootballClubRow> {
+  final class Impl extends Relation<FootballClubFields, FootballClubRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -23,9 +23,11 @@ public interface FootballClubFields {
     @Override
     public FootballClubFields fields() {
       return new FootballClubFields() {
+               @Override
                public IdField<FootballClubId, FootballClubRow> id() {
                  return new IdField<FootballClubId, FootballClubRow>(_path, "id", FootballClubRow::id, Optional.empty(), Optional.of("int8"), (row, value) -> row.withId(value), FootballClubId.pgType);
                };
+               @Override
                public Field</* max 100 chars */ String, FootballClubRow> name() {
                  return new Field</* max 100 chars */ String, FootballClubRow>(_path, "name", FootballClubRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), PgTypes.text);
                };
@@ -37,6 +39,7 @@ public interface FootballClubFields {
       return List.of(this.fields().id(), this.fields().name());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

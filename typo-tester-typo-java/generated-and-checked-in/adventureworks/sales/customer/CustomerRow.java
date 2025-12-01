@@ -14,7 +14,6 @@ import java.util.Optional;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple6;
 
 /** Table: sales.customer
   * Current customer information. Also see the Person and Store tables.
@@ -80,7 +79,7 @@ public record CustomerRow(
     return new CustomerRow(customerid, personid, storeid, territoryid, rowguid, modifieddate);
   };
 
-  static RowParser<CustomerRow> _rowParser = RowParsers.of(CustomerId.pgType, BusinessentityId.pgType.opt(), BusinessentityId.pgType.opt(), SalesterritoryId.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, CustomerRow::new, row -> new Tuple6<>(row.customerid(), row.personid(), row.storeid(), row.territoryid(), row.rowguid(), row.modifieddate()));;
+  static RowParser<CustomerRow> _rowParser = RowParsers.of(CustomerId.pgType, BusinessentityId.pgType.opt(), BusinessentityId.pgType.opt(), SalesterritoryId.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, CustomerRow::new, row -> new Object[]{row.customerid(), row.personid(), row.storeid(), row.territoryid(), row.rowguid(), row.modifieddate()});;
 
   static public PgText<CustomerRow> pgText =
     PgText.from(_rowParser);

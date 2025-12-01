@@ -25,13 +25,13 @@ case class TableWithGeneratedColumnsRepoMock(
   toRow: TableWithGeneratedColumnsRowUnsaved => TableWithGeneratedColumnsRow,
   map: scala.collection.mutable.Map[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow] = scala.collection.mutable.Map.empty[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow]
 ) extends TableWithGeneratedColumnsRepo {
-  def delete: DeleteBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = DeleteBuilderMock(DeleteParams.empty, TableWithGeneratedColumnsFields.structure, map)
+  override def delete: DeleteBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = DeleteBuilderMock(DeleteParams.empty, TableWithGeneratedColumnsFields.structure, map)
 
-  def deleteById(name: TableWithGeneratedColumnsId): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(name).isDefined)
+  override def deleteById(name: TableWithGeneratedColumnsId): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(name).isDefined)
 
-  def deleteByIds(names: Array[TableWithGeneratedColumnsId]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(names.map(id => map.remove(id)).count(_.isDefined).toLong)
+  override def deleteByIds(names: Array[TableWithGeneratedColumnsId]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(names.map(id => map.remove(id)).count(_.isDefined).toLong)
 
-  def insert(unsaved: TableWithGeneratedColumnsRow): ZIO[ZConnection, Throwable, TableWithGeneratedColumnsRow] = {
+  override def insert(unsaved: TableWithGeneratedColumnsRow): ZIO[ZConnection, Throwable, TableWithGeneratedColumnsRow] = {
   ZIO.succeed {
     val _ =
       if (map.contains(unsaved.name))
@@ -43,9 +43,9 @@ case class TableWithGeneratedColumnsRepoMock(
   }
   }
 
-  def insert(unsaved: TableWithGeneratedColumnsRowUnsaved): ZIO[ZConnection, Throwable, TableWithGeneratedColumnsRow] = insert(toRow(unsaved))
+  override def insert(unsaved: TableWithGeneratedColumnsRowUnsaved): ZIO[ZConnection, Throwable, TableWithGeneratedColumnsRow] = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, TableWithGeneratedColumnsRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {
@@ -58,7 +58,7 @@ case class TableWithGeneratedColumnsRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, TableWithGeneratedColumnsRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {
@@ -71,24 +71,24 @@ case class TableWithGeneratedColumnsRepoMock(
     }.runLast.map(_.getOrElse(0L))
   }
 
-  def select: SelectBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = SelectBuilderMock(TableWithGeneratedColumnsFields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
+  override def select: SelectBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = SelectBuilderMock(TableWithGeneratedColumnsFields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
 
-  def selectAll: ZStream[ZConnection, Throwable, TableWithGeneratedColumnsRow] = ZStream.fromIterable(map.values)
+  override def selectAll: ZStream[ZConnection, Throwable, TableWithGeneratedColumnsRow] = ZStream.fromIterable(map.values)
 
-  def selectById(name: TableWithGeneratedColumnsId): ZIO[ZConnection, Throwable, Option[TableWithGeneratedColumnsRow]] = ZIO.succeed(map.get(name))
+  override def selectById(name: TableWithGeneratedColumnsId): ZIO[ZConnection, Throwable, Option[TableWithGeneratedColumnsRow]] = ZIO.succeed(map.get(name))
 
-  def selectByIds(names: Array[TableWithGeneratedColumnsId]): ZStream[ZConnection, Throwable, TableWithGeneratedColumnsRow] = ZStream.fromIterable(names.flatMap(map.get))
+  override def selectByIds(names: Array[TableWithGeneratedColumnsId]): ZStream[ZConnection, Throwable, TableWithGeneratedColumnsRow] = ZStream.fromIterable(names.flatMap(map.get))
 
-  def selectByIdsTracked(names: Array[TableWithGeneratedColumnsId]): ZIO[ZConnection, Throwable, Map[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow]] = {
+  override def selectByIdsTracked(names: Array[TableWithGeneratedColumnsId]): ZIO[ZConnection, Throwable, Map[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow]] = {
     selectByIds(names).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.name, x)).toMap
       names.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = UpdateBuilderMock(UpdateParams.empty, TableWithGeneratedColumnsFields.structure, map)
+  override def update: UpdateBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = UpdateBuilderMock(UpdateParams.empty, TableWithGeneratedColumnsFields.structure, map)
 
-  def upsert(unsaved: TableWithGeneratedColumnsRow): ZIO[ZConnection, Throwable, UpdateResult[TableWithGeneratedColumnsRow]] = {
+  override def upsert(unsaved: TableWithGeneratedColumnsRow): ZIO[ZConnection, Throwable, UpdateResult[TableWithGeneratedColumnsRow]] = {
     ZIO.succeed {
       map.put(unsaved.name, unsaved): @nowarn
       UpdateResult(1, Chunk.single(unsaved))
@@ -96,7 +96,7 @@ case class TableWithGeneratedColumnsRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, TableWithGeneratedColumnsRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

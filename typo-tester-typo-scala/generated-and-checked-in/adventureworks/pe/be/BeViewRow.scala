@@ -10,7 +10,6 @@ import adventureworks.customtypes.TypoUUID
 import adventureworks.person.businessentity.BusinessentityId
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple4
 
 /** View: pe.be */
 case class BeViewRow(
@@ -25,12 +24,5 @@ case class BeViewRow(
 )
 
 object BeViewRow {
-  val `_rowParser`: RowParser[BeViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BeViewRow.apply, row => new Tuple4(
-      row.id,
-      row.businessentityid,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[BeViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BeViewRow.apply, row => Array(row.id, row.businessentityid, row.rowguid, row.modifieddate))
 }

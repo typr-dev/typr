@@ -16,7 +16,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple8
 
 /** Table: person.stateprovince
  * State and province lookup table.
@@ -70,18 +69,7 @@ case class StateprovinceRow(
 }
 
 object StateprovinceRow {
-  val `_rowParser`: RowParser[StateprovinceRow] = {
-    RowParsers.of(StateprovinceId.pgType, PgTypes.text, CountryregionId.pgType, Flag.pgType, Name.pgType, SalesterritoryId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, StateprovinceRow.apply, row => new Tuple8(
-      row.stateprovinceid,
-      row.stateprovincecode,
-      row.countryregioncode,
-      row.isonlystateprovinceflag,
-      row.name,
-      row.territoryid,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[StateprovinceRow] = RowParsers.of(StateprovinceId.pgType, PgTypes.text, CountryregionId.pgType, Flag.pgType, Name.pgType, SalesterritoryId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, StateprovinceRow.apply, row => Array(row.stateprovinceid, row.stateprovincecode, row.countryregioncode, row.isonlystateprovinceflag, row.name, row.territoryid, row.rowguid, row.modifieddate))
 
   given pgText: PgText[StateprovinceRow] = PgText.from(`_rowParser`)
 }

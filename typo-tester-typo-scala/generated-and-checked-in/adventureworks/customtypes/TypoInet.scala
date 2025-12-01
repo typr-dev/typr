@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes
 
+import com.fasterxml.jackson.annotation.JsonValue
 import org.postgresql.util.PGobject
 import typo.dsl.Bijection
 import typo.runtime.PgRead
@@ -13,7 +14,7 @@ import typo.runtime.PgType
 import typo.runtime.PgWrite
 
 /** inet (via PGObject) */
-case class TypoInet(value: String)
+case class TypoInet(@JsonValue value: String)
 
 object TypoInet {
   given bijection: Bijection[TypoInet, String] = Bijection.apply[TypoInet, String](_.value)(TypoInet.apply)
@@ -23,19 +24,19 @@ object TypoInet {
   given pgType: PgType[TypoInet] = {
     PgType.of(
       "inet",
-      PgRead.castJdbcObjectTo(classOf[PGobject]).map(v => new TypoInet(v.getValue)),
-      PgWrite.passObjectToJdbc().contramap((v: TypoInet) => {
-                                             val obj = new PGobject()
-                                             obj.setType("inet")
-                                             obj.setValue(v.value)
-                                             obj
-                                           }),
+      PgRead.castJdbcObjectTo(classOf[PGobject]).map((v: PGobject) => new TypoInet(v.getValue)),
+      PgWrite.passObjectToJdbc[PGobject]().contramap((v: TypoInet) => {
+                                                       val obj = new PGobject()
+                                                       obj.setType("inet")
+                                                       obj.setValue(v.value)
+                                                       obj
+                                                     }),
       TypoInet.pgText
     )
   }
 
   given pgTypeArray: PgType[Array[TypoInet]] = {
-    TypoInet.pgType.array(PgRead.castJdbcArrayTo(classOf[PGobject]).map(xs => xs.map(v => new TypoInet(v.getValue))), PgWrite.passObjectToJdbc[PGobject]().array(TypoInet.pgType.typename().as[PGobject]()).contramap(xs => xs.map((v: TypoInet) => {
+    TypoInet.pgType.array(PgRead.castJdbcArrayTo(classOf[PGobject]).map((xs: Array[PGobject]) => xs.map((v: PGobject) => new TypoInet(v.getValue))), PgWrite.passObjectToJdbc[PGobject]().array(TypoInet.pgType.typename().as[PGobject]()).contramap((xs: Array[TypoInet]) => xs.map((v: TypoInet) => {
       val obj = new PGobject()
       obj.setType("inet")
       obj.setValue(v.value)

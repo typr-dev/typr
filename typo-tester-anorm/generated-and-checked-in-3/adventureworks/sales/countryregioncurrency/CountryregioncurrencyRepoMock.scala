@@ -21,13 +21,13 @@ case class CountryregioncurrencyRepoMock(
   toRow: CountryregioncurrencyRowUnsaved => CountryregioncurrencyRow,
   map: scala.collection.mutable.Map[CountryregioncurrencyId, CountryregioncurrencyRow] = scala.collection.mutable.Map.empty[CountryregioncurrencyId, CountryregioncurrencyRow]
 ) extends CountryregioncurrencyRepo {
-  def delete: DeleteBuilder[CountryregioncurrencyFields, CountryregioncurrencyRow] = DeleteBuilderMock(DeleteParams.empty, CountryregioncurrencyFields.structure, map)
+  override def delete: DeleteBuilder[CountryregioncurrencyFields, CountryregioncurrencyRow] = DeleteBuilderMock(DeleteParams.empty, CountryregioncurrencyFields.structure, map)
 
-  def deleteById(compositeId: CountryregioncurrencyId)(using c: Connection): Boolean = map.remove(compositeId).isDefined
+  override def deleteById(compositeId: CountryregioncurrencyId)(using c: Connection): Boolean = map.remove(compositeId).isDefined
 
-  def deleteByIds(compositeIds: Array[CountryregioncurrencyId])(using c: Connection): Int = compositeIds.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(compositeIds: Array[CountryregioncurrencyId])(using c: Connection): Int = compositeIds.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: CountryregioncurrencyRow)(using c: Connection): CountryregioncurrencyRow = {
+  override def insert(unsaved: CountryregioncurrencyRow)(using c: Connection): CountryregioncurrencyRow = {
     val _ = if (map.contains(unsaved.compositeId))
       sys.error(s"id ${unsaved.compositeId} already exists")
     else
@@ -36,9 +36,9 @@ case class CountryregioncurrencyRepoMock(
     unsaved
   }
 
-  def insert(unsaved: CountryregioncurrencyRowUnsaved)(using c: Connection): CountryregioncurrencyRow = insert(toRow(unsaved))
+  override def insert(unsaved: CountryregioncurrencyRowUnsaved)(using c: Connection): CountryregioncurrencyRow = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[CountryregioncurrencyRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -49,7 +49,7 @@ case class CountryregioncurrencyRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[CountryregioncurrencyRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -60,34 +60,34 @@ case class CountryregioncurrencyRepoMock(
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[CountryregioncurrencyFields, CountryregioncurrencyRow] = SelectBuilderMock(CountryregioncurrencyFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[CountryregioncurrencyFields, CountryregioncurrencyRow] = SelectBuilderMock(CountryregioncurrencyFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(using c: Connection): List[CountryregioncurrencyRow] = map.values.toList
+  override def selectAll(using c: Connection): List[CountryregioncurrencyRow] = map.values.toList
 
-  def selectById(compositeId: CountryregioncurrencyId)(using c: Connection): Option[CountryregioncurrencyRow] = map.get(compositeId)
+  override def selectById(compositeId: CountryregioncurrencyId)(using c: Connection): Option[CountryregioncurrencyRow] = map.get(compositeId)
 
-  def selectByIds(compositeIds: Array[CountryregioncurrencyId])(using c: Connection): List[CountryregioncurrencyRow] = compositeIds.flatMap(map.get).toList
+  override def selectByIds(compositeIds: Array[CountryregioncurrencyId])(using c: Connection): List[CountryregioncurrencyRow] = compositeIds.flatMap(map.get).toList
 
-  def selectByIdsTracked(compositeIds: Array[CountryregioncurrencyId])(using c: Connection): Map[CountryregioncurrencyId, CountryregioncurrencyRow] = {
+  override def selectByIdsTracked(compositeIds: Array[CountryregioncurrencyId])(using c: Connection): Map[CountryregioncurrencyId, CountryregioncurrencyRow] = {
     val byId = selectByIds(compositeIds).view.map(x => (x.compositeId, x)).toMap
     compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[CountryregioncurrencyFields, CountryregioncurrencyRow] = UpdateBuilderMock(UpdateParams.empty, CountryregioncurrencyFields.structure, map)
+  override def update: UpdateBuilder[CountryregioncurrencyFields, CountryregioncurrencyRow] = UpdateBuilderMock(UpdateParams.empty, CountryregioncurrencyFields.structure, map)
 
-  def update(row: CountryregioncurrencyRow)(using c: Connection): Option[CountryregioncurrencyRow] = {
+  override def update(row: CountryregioncurrencyRow)(using c: Connection): Option[CountryregioncurrencyRow] = {
     map.get(row.compositeId).map { _ =>
       map.put(row.compositeId, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: CountryregioncurrencyRow)(using c: Connection): CountryregioncurrencyRow = {
+  override def upsert(unsaved: CountryregioncurrencyRow)(using c: Connection): CountryregioncurrencyRow = {
     map.put(unsaved.compositeId, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[CountryregioncurrencyRow])(using c: Connection): List[CountryregioncurrencyRow] = {
+  override def upsertBatch(unsaved: Iterable[CountryregioncurrencyRow])(using c: Connection): List[CountryregioncurrencyRow] = {
     unsaved.map { row =>
       map += (row.compositeId -> row)
       row
@@ -95,7 +95,7 @@ case class CountryregioncurrencyRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[CountryregioncurrencyRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

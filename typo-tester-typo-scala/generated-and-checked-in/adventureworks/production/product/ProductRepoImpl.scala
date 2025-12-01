@@ -27,11 +27,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ProductRepoImpl extends ProductRepo {
-  def delete: DeleteBuilder[ProductFields, ProductRow] = DeleteBuilder.of("production.product", ProductFields.structure)
+  override def delete: DeleteBuilder[ProductFields, ProductRow] = DeleteBuilder.of("production.product", ProductFields.structure)
 
-  def deleteById(productid: ProductId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."product" where "productid" = ${ProductId.pgType.encode(productid)}""".update().runUnchecked(c) > 0
+  override def deleteById(productid: ProductId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."product" where "productid" = ${ProductId.pgType.encode(productid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(productids: Array[ProductId])(using c: Connection): Integer = {
+  override def deleteByIds(productids: Array[ProductId])(using c: Connection): Integer = {
     interpolate"""delete
     from "production"."product"
     where "productid" = ANY(${ProductId.pgTypeArray.encode(productids)})"""
@@ -39,7 +39,7 @@ class ProductRepoImpl extends ProductRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: ProductRow)(using c: Connection): ProductRow = {
+  override def insert(unsaved: ProductRow)(using c: Connection): ProductRow = {
   interpolate"""insert into "production"."product"("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate")
     values (${ProductId.pgType.encode(unsaved.productid)}::int4, ${Name.pgType.encode(unsaved.name)}::varchar, ${PgTypes.text.encode(unsaved.productnumber)}, ${Flag.pgType.encode(unsaved.makeflag)}::bool, ${Flag.pgType.encode(unsaved.finishedgoodsflag)}::bool, ${PgTypes.text.opt().encode(unsaved.color)}, ${TypoShort.pgType.encode(unsaved.safetystocklevel)}::int2, ${TypoShort.pgType.encode(unsaved.reorderpoint)}::int2, ${PgTypes.numeric.encode(unsaved.standardcost)}::numeric, ${PgTypes.numeric.encode(unsaved.listprice)}::numeric, ${PgTypes.text.opt().encode(unsaved.size)}, ${UnitmeasureId.pgType.opt().encode(unsaved.sizeunitmeasurecode)}::bpchar, ${UnitmeasureId.pgType.opt().encode(unsaved.weightunitmeasurecode)}::bpchar, ${PgTypes.numeric.opt().encode(unsaved.weight)}::numeric, ${PgTypes.int4.encode(unsaved.daystomanufacture)}::int4, ${PgTypes.text.opt().encode(unsaved.productline)}::bpchar, ${PgTypes.text.opt().encode(unsaved.`class`)}::bpchar, ${PgTypes.text.opt().encode(unsaved.style)}::bpchar, ${ProductsubcategoryId.pgType.opt().encode(unsaved.productsubcategoryid)}::int4, ${ProductmodelId.pgType.opt().encode(unsaved.productmodelid)}::int4, ${TypoLocalDateTime.pgType.encode(unsaved.sellstartdate)}::timestamp, ${TypoLocalDateTime.pgType.opt().encode(unsaved.sellenddate)}::timestamp, ${TypoLocalDateTime.pgType.opt().encode(unsaved.discontinueddate)}::timestamp, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text
@@ -47,9 +47,9 @@ class ProductRepoImpl extends ProductRepo {
     .updateReturning(ProductRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: ProductRowUnsaved)(using c: Connection): ProductRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: ProductRowUnsaved)(using c: Connection): ProductRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
     values.add(interpolate"${Name.pgType.encode(unsaved.name)}::varchar"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""productnumber"""")): @scala.annotation.nowarn
@@ -91,39 +91,24 @@ class ProductRepoImpl extends ProductRepo {
     columns.add(Fragment.lit(""""discontinueddate"""")): @scala.annotation.nowarn
     values.add(interpolate"${TypoLocalDateTime.pgType.opt().encode(unsaved.discontinueddate)}::timestamp"): @scala.annotation.nowarn
     unsaved.productid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""productid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${ProductId.pgType.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""productid"""")): @scala.annotation.nowarn; values.add(interpolate"${ProductId.pgType.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.makeflag.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""makeflag"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${Flag.pgType.encode(value)}::bool"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""makeflag"""")): @scala.annotation.nowarn; values.add(interpolate"${Flag.pgType.encode(value)}::bool"): @scala.annotation.nowarn }
     );
     unsaved.finishedgoodsflag.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""finishedgoodsflag"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${Flag.pgType.encode(value)}::bool"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""finishedgoodsflag"""")): @scala.annotation.nowarn; values.add(interpolate"${Flag.pgType.encode(value)}::bool"): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "production"."product"(${Fragment.comma(columns)})
@@ -131,51 +116,51 @@ class ProductRepoImpl extends ProductRepo {
       returning "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text
       """
     }
-    q.updateReturning(ProductRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(ProductRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[ProductRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."product"("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, c, ProductRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[ProductRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."product"("name", "productnumber", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "productid", "makeflag", "finishedgoodsflag", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ProductRowUnsaved.pgText)
 
-  def select: SelectBuilder[ProductFields, ProductRow] = SelectBuilder.of("production.product", ProductFields.structure, ProductRow.`_rowParser`)
+  override def select: SelectBuilder[ProductFields, ProductRow] = SelectBuilder.of("production.product", ProductFields.structure, ProductRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[ProductRow] = {
+  override def selectAll(using c: Connection): java.util.List[ProductRow] = {
     interpolate"""select "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text
     from "production"."product"
-    """.as(ProductRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(ProductRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(productid: ProductId)(using c: Connection): Optional[ProductRow] = {
+  override def selectById(productid: ProductId)(using c: Connection): Optional[ProductRow] = {
     interpolate"""select "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text
     from "production"."product"
-    where "productid" = ${ProductId.pgType.encode(productid)}""".as(ProductRow.`_rowParser`.first()).runUnchecked(c)
+    where "productid" = ${ProductId.pgType.encode(productid)}""".query(ProductRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(productids: Array[ProductId])(using c: Connection): java.util.List[ProductRow] = {
+  override def selectByIds(productids: Array[ProductId])(using c: Connection): java.util.List[ProductRow] = {
     interpolate"""select "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text
     from "production"."product"
-    where "productid" = ANY(${ProductId.pgTypeArray.encode(productids)})""".as(ProductRow.`_rowParser`.all()).runUnchecked(c)
+    where "productid" = ANY(${ProductId.pgTypeArray.encode(productids)})""".query(ProductRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(productids: Array[ProductId])(using c: Connection): java.util.Map[ProductId, ProductRow] = {
-    val ret: java.util.Map[ProductId, ProductRow] = new HashMap()
+  override def selectByIdsTracked(productids: Array[ProductId])(using c: Connection): java.util.Map[ProductId, ProductRow] = {
+    val ret: HashMap[ProductId, ProductRow] = new HashMap[ProductId, ProductRow]()
     selectByIds(productids)(using c).forEach(row => ret.put(row.productid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[ProductFields, ProductRow] = UpdateBuilder.of("production.product", ProductFields.structure, ProductRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ProductFields, ProductRow] = UpdateBuilder.of("production.product", ProductFields.structure, ProductRow.`_rowParser`.all())
 
-  def update(row: ProductRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: ProductRow)(using c: Connection): java.lang.Boolean = {
     val productid: ProductId = row.productid
-    interpolate"""update "production"."product"
+    return interpolate"""update "production"."product"
     set "name" = ${Name.pgType.encode(row.name)}::varchar,
     "productnumber" = ${PgTypes.text.encode(row.productnumber)},
     "makeflag" = ${Flag.pgType.encode(row.makeflag)}::bool,
@@ -203,7 +188,7 @@ class ProductRepoImpl extends ProductRepo {
     where "productid" = ${ProductId.pgType.encode(productid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: ProductRow)(using c: Connection): ProductRow = {
+  override def upsert(unsaved: ProductRow)(using c: Connection): ProductRow = {
   interpolate"""insert into "production"."product"("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate")
     values (${ProductId.pgType.encode(unsaved.productid)}::int4, ${Name.pgType.encode(unsaved.name)}::varchar, ${PgTypes.text.encode(unsaved.productnumber)}, ${Flag.pgType.encode(unsaved.makeflag)}::bool, ${Flag.pgType.encode(unsaved.finishedgoodsflag)}::bool, ${PgTypes.text.opt().encode(unsaved.color)}, ${TypoShort.pgType.encode(unsaved.safetystocklevel)}::int2, ${TypoShort.pgType.encode(unsaved.reorderpoint)}::int2, ${PgTypes.numeric.encode(unsaved.standardcost)}::numeric, ${PgTypes.numeric.encode(unsaved.listprice)}::numeric, ${PgTypes.text.opt().encode(unsaved.size)}, ${UnitmeasureId.pgType.opt().encode(unsaved.sizeunitmeasurecode)}::bpchar, ${UnitmeasureId.pgType.opt().encode(unsaved.weightunitmeasurecode)}::bpchar, ${PgTypes.numeric.opt().encode(unsaved.weight)}::numeric, ${PgTypes.int4.encode(unsaved.daystomanufacture)}::int4, ${PgTypes.text.opt().encode(unsaved.productline)}::bpchar, ${PgTypes.text.opt().encode(unsaved.`class`)}::bpchar, ${PgTypes.text.opt().encode(unsaved.style)}::bpchar, ${ProductsubcategoryId.pgType.opt().encode(unsaved.productsubcategoryid)}::int4, ${ProductmodelId.pgType.opt().encode(unsaved.productmodelid)}::int4, ${TypoLocalDateTime.pgType.encode(unsaved.sellstartdate)}::timestamp, ${TypoLocalDateTime.pgType.opt().encode(unsaved.sellenddate)}::timestamp, ${TypoLocalDateTime.pgType.opt().encode(unsaved.discontinueddate)}::timestamp, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("productid")
@@ -238,7 +223,7 @@ class ProductRepoImpl extends ProductRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[ProductRow])(using c: Connection): java.util.List[ProductRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[ProductRow])(using c: Connection): java.util.List[ProductRow] = {
     interpolate"""insert into "production"."product"("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate")
     values (?::int4, ?::varchar, ?, ?::bool, ?::bool, ?, ?::int2, ?::int2, ?::numeric, ?::numeric, ?, ?::bpchar, ?::bpchar, ?::numeric, ?::int4, ?::bpchar, ?::bpchar, ?::bpchar, ?::int4, ?::int4, ?::timestamp, ?::timestamp, ?::timestamp, ?::uuid, ?::timestamp)
     on conflict ("productid")
@@ -274,13 +259,13 @@ class ProductRepoImpl extends ProductRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[ProductRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table product_TEMP (like "production"."product") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy product_TEMP("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, c, ProductRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "production"."product"("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate")
+    return interpolate"""insert into "production"."product"("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate")
     select * from product_TEMP
     on conflict ("productid")
     do update set

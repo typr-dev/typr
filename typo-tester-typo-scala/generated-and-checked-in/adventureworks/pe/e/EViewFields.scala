@@ -35,7 +35,7 @@ object EViewFields {
 
     override lazy val fields: EViewFields = {
       new EViewFields {
-        def id: Field[Integer, EViewRow] = {
+        override def id: Field[Integer, EViewRow] = {
           new Field[Integer, EViewRow](
             _path,
             "id",
@@ -46,7 +46,7 @@ object EViewFields {
             PgTypes.int4
           )
         }
-        def businessentityid: Field[BusinessentityId, EViewRow] = {
+        override def businessentityid: Field[BusinessentityId, EViewRow] = {
           new Field[BusinessentityId, EViewRow](
             _path,
             "businessentityid",
@@ -57,7 +57,7 @@ object EViewFields {
             BusinessentityId.pgType
           )
         }
-        def emailaddressid: Field[Integer, EViewRow] = {
+        override def emailaddressid: Field[Integer, EViewRow] = {
           new Field[Integer, EViewRow](
             _path,
             "emailaddressid",
@@ -68,7 +68,7 @@ object EViewFields {
             PgTypes.int4
           )
         }
-        def emailaddress: OptField[/* max 50 chars */ String, EViewRow] = {
+        override def emailaddress: OptField[/* max 50 chars */ String, EViewRow] = {
           new OptField[/* max 50 chars */ String, EViewRow](
             _path,
             "emailaddress",
@@ -79,7 +79,7 @@ object EViewFields {
             PgTypes.text
           )
         }
-        def rowguid: Field[TypoUUID, EViewRow] = {
+        override def rowguid: Field[TypoUUID, EViewRow] = {
           new Field[TypoUUID, EViewRow](
             _path,
             "rowguid",
@@ -90,7 +90,7 @@ object EViewFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, EViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, EViewRow] = {
           new Field[TypoLocalDateTime, EViewRow](
             _path,
             "modifieddate",
@@ -106,7 +106,7 @@ object EViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, EViewRow]] = java.util.List.of(this.fields.id, this.fields.businessentityid, this.fields.emailaddressid, this.fields.emailaddress, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[EViewFields, EViewRow] = new Impl(java.util.List.of())

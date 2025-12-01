@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple6;
 
 /** View: pr.l */
 public record LViewRow(
@@ -59,5 +58,5 @@ public record LViewRow(
     return new LViewRow(id, locationid, name, costrate, availability, modifieddate);
   };
 
-  static RowParser<LViewRow> _rowParser = RowParsers.of(LocationId.pgType, LocationId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, LViewRow::new, row -> new Tuple6<>(row.id(), row.locationid(), row.name(), row.costrate(), row.availability(), row.modifieddate()));;
+  static RowParser<LViewRow> _rowParser = RowParsers.of(LocationId.pgType, LocationId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, LViewRow::new, row -> new Object[]{row.id(), row.locationid(), row.name(), row.costrate(), row.availability(), row.modifieddate()});;
 }

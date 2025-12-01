@@ -24,18 +24,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
-  def delete: DeleteBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = DeleteBuilder.of(""""sales"."shoppingcartitem"""", ShoppingcartitemFields.structure, ShoppingcartitemRow.rowParser(1).*)
+  override def delete: DeleteBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = DeleteBuilder.of(""""sales"."shoppingcartitem"""", ShoppingcartitemFields.structure, ShoppingcartitemRow.rowParser(1).*)
 
-  def deleteById(shoppingcartitemid: ShoppingcartitemId)(implicit c: Connection): Boolean = SQL"""delete from "sales"."shoppingcartitem" where "shoppingcartitemid" = ${ParameterValue(shoppingcartitemid, null, ShoppingcartitemId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(shoppingcartitemid: ShoppingcartitemId)(implicit c: Connection): Boolean = SQL"""delete from "sales"."shoppingcartitem" where "shoppingcartitemid" = ${ParameterValue(shoppingcartitemid, null, ShoppingcartitemId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(shoppingcartitemids: Array[ShoppingcartitemId])(implicit c: Connection): Int = {
+  override def deleteByIds(shoppingcartitemids: Array[ShoppingcartitemId])(implicit c: Connection): Int = {
     SQL"""delete
     from "sales"."shoppingcartitem"
     where "shoppingcartitemid" = ANY(${ParameterValue(shoppingcartitemids, null, ShoppingcartitemId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: ShoppingcartitemRow)(implicit c: Connection): ShoppingcartitemRow = {
+  override def insert(unsaved: ShoppingcartitemRow)(implicit c: Connection): ShoppingcartitemRow = {
   SQL"""insert into "sales"."shoppingcartitem"("shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate")
     values (${ParameterValue(unsaved.shoppingcartitemid, null, ShoppingcartitemId.toStatement)}::int4, ${ParameterValue(unsaved.shoppingcartid, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.quantity, null, ToStatement.intToStatement)}::int4, ${ParameterValue(unsaved.productid, null, ProductId.toStatement)}::int4, ${ParameterValue(unsaved.datecreated, null, TypoLocalDateTime.toStatement)}::timestamp, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text
@@ -43,7 +43,7 @@ class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
     .executeInsert(ShoppingcartitemRow.rowParser(1).single)
   }
 
-  def insert(unsaved: ShoppingcartitemRowUnsaved)(implicit c: Connection): ShoppingcartitemRow = {
+  override def insert(unsaved: ShoppingcartitemRowUnsaved)(implicit c: Connection): ShoppingcartitemRow = {
     val namedParameters = List(
       Some((NamedParameter("shoppingcartid", ParameterValue(unsaved.shoppingcartid, null, ToStatement.stringToStatement)), "")),
       Some((NamedParameter("productid", ParameterValue(unsaved.productid, null, ProductId.toStatement)), "::int4")),
@@ -80,47 +80,47 @@ class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[ShoppingcartitemRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "sales"."shoppingcartitem"("shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate") FROM STDIN""", batchSize, unsaved)(ShoppingcartitemRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[ShoppingcartitemRowUnsaved],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "sales"."shoppingcartitem"("shoppingcartid", "productid", "shoppingcartitemid", "quantity", "datecreated", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(ShoppingcartitemRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = SelectBuilder.of(""""sales"."shoppingcartitem"""", ShoppingcartitemFields.structure, ShoppingcartitemRow.rowParser)
+  override def select: SelectBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = SelectBuilder.of(""""sales"."shoppingcartitem"""", ShoppingcartitemFields.structure, ShoppingcartitemRow.rowParser)
 
-  def selectAll(implicit c: Connection): List[ShoppingcartitemRow] = {
+  override def selectAll(implicit c: Connection): List[ShoppingcartitemRow] = {
     SQL"""select "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text
     from "sales"."shoppingcartitem"
     """.as(ShoppingcartitemRow.rowParser(1).*)
   }
 
-  def selectById(shoppingcartitemid: ShoppingcartitemId)(implicit c: Connection): Option[ShoppingcartitemRow] = {
+  override def selectById(shoppingcartitemid: ShoppingcartitemId)(implicit c: Connection): Option[ShoppingcartitemRow] = {
     SQL"""select "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text
     from "sales"."shoppingcartitem"
     where "shoppingcartitemid" = ${ParameterValue(shoppingcartitemid, null, ShoppingcartitemId.toStatement)}
     """.as(ShoppingcartitemRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(shoppingcartitemids: Array[ShoppingcartitemId])(implicit c: Connection): List[ShoppingcartitemRow] = {
+  override def selectByIds(shoppingcartitemids: Array[ShoppingcartitemId])(implicit c: Connection): List[ShoppingcartitemRow] = {
     SQL"""select "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text
     from "sales"."shoppingcartitem"
     where "shoppingcartitemid" = ANY(${ParameterValue(shoppingcartitemids, null, ShoppingcartitemId.arrayToStatement)})
     """.as(ShoppingcartitemRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(shoppingcartitemids: Array[ShoppingcartitemId])(implicit c: Connection): Map[ShoppingcartitemId, ShoppingcartitemRow] = {
+  override def selectByIdsTracked(shoppingcartitemids: Array[ShoppingcartitemId])(implicit c: Connection): Map[ShoppingcartitemId, ShoppingcartitemRow] = {
     val byId = selectByIds(shoppingcartitemids).view.map(x => (x.shoppingcartitemid, x)).toMap
     shoppingcartitemids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = UpdateBuilder.of(""""sales"."shoppingcartitem"""", ShoppingcartitemFields.structure, ShoppingcartitemRow.rowParser(1).*)
+  override def update: UpdateBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = UpdateBuilder.of(""""sales"."shoppingcartitem"""", ShoppingcartitemFields.structure, ShoppingcartitemRow.rowParser(1).*)
 
-  def update(row: ShoppingcartitemRow)(implicit c: Connection): Option[ShoppingcartitemRow] = {
+  override def update(row: ShoppingcartitemRow)(implicit c: Connection): Option[ShoppingcartitemRow] = {
     val shoppingcartitemid = row.shoppingcartitemid
     SQL"""update "sales"."shoppingcartitem"
     set "shoppingcartid" = ${ParameterValue(row.shoppingcartid, null, ToStatement.stringToStatement)},
@@ -133,7 +133,7 @@ class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
     """.executeInsert(ShoppingcartitemRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: ShoppingcartitemRow)(implicit c: Connection): ShoppingcartitemRow = {
+  override def upsert(unsaved: ShoppingcartitemRow)(implicit c: Connection): ShoppingcartitemRow = {
   SQL"""insert into "sales"."shoppingcartitem"("shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate")
     values (
       ${ParameterValue(unsaved.shoppingcartitemid, null, ShoppingcartitemId.toStatement)}::int4,
@@ -155,7 +155,7 @@ class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
     .executeInsert(ShoppingcartitemRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[ShoppingcartitemRow])(implicit c: Connection): List[ShoppingcartitemRow] = {
+  override def upsertBatch(unsaved: Iterable[ShoppingcartitemRow])(implicit c: Connection): List[ShoppingcartitemRow] = {
     def toNamedParameter(row: ShoppingcartitemRow): List[NamedParameter] = List(
       NamedParameter("shoppingcartitemid", ParameterValue(row.shoppingcartitemid, null, ShoppingcartitemId.toStatement)),
       NamedParameter("shoppingcartid", ParameterValue(row.shoppingcartid, null, ToStatement.stringToStatement)),
@@ -164,6 +164,7 @@ class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
       NamedParameter("datecreated", ParameterValue(row.datecreated, null, TypoLocalDateTime.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -188,7 +189,7 @@ class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[ShoppingcartitemRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

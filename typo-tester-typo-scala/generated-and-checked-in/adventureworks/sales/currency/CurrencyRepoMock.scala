@@ -5,6 +5,7 @@
  */
 package adventureworks.sales.currency
 
+import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
@@ -25,7 +26,7 @@ case class CurrencyRepoMock(
   toRow: CurrencyRowUnsaved => CurrencyRow,
   map: HashMap[CurrencyId, CurrencyRow] = new HashMap[CurrencyId, CurrencyRow]()
 ) extends CurrencyRepo {
-  def delete: DeleteBuilder[CurrencyFields, CurrencyRow] = {
+  override def delete: DeleteBuilder[CurrencyFields, CurrencyRow] = {
     new DeleteBuilderMock(
       CurrencyFields.structure,
       () => new ArrayList(map.values()),
@@ -35,27 +36,27 @@ case class CurrencyRepoMock(
     )
   }
 
-  def deleteById(currencycode: CurrencyId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(currencycode)).isPresent()
+  override def deleteById(currencycode: CurrencyId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(currencycode)).isPresent()
 
-  def deleteByIds(currencycodes: Array[CurrencyId])(using c: Connection): Integer = {
+  override def deleteByIds(currencycodes: Array[CurrencyId])(using c: Connection): Integer = {
     var count = 0
     currencycodes.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
-    count
+    return count
   }
 
-  def insert(unsaved: CurrencyRow)(using c: Connection): CurrencyRow = {
+  override def insert(unsaved: CurrencyRow)(using c: Connection): CurrencyRow = {
     if (map.containsKey(unsaved.currencycode)) {
       throw new RuntimeException(s"id $unsaved.currencycode already exists")
     }
     map.put(unsaved.currencycode, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def insert(unsaved: CurrencyRowUnsaved)(using c: Connection): CurrencyRow = insert(toRow(unsaved))(using c)
+  override def insert(unsaved: CurrencyRowUnsaved)(using c: Connection): CurrencyRow = insert(toRow(unsaved))(using c)
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[CurrencyRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -65,11 +66,11 @@ case class CurrencyRepoMock(
       map.put(row.currencycode, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[CurrencyRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -80,25 +81,25 @@ case class CurrencyRepoMock(
       map.put(row.currencycode, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
-  def select: SelectBuilder[CurrencyFields, CurrencyRow] = new SelectBuilderMock(CurrencyFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
+  override def select: SelectBuilder[CurrencyFields, CurrencyRow] = new SelectBuilderMock(CurrencyFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  def selectAll(using c: Connection): java.util.List[CurrencyRow] = new ArrayList(map.values())
+  override def selectAll(using c: Connection): java.util.List[CurrencyRow] = new ArrayList(map.values())
 
-  def selectById(currencycode: CurrencyId)(using c: Connection): Optional[CurrencyRow] = Optional.ofNullable(map.get(currencycode))
+  override def selectById(currencycode: CurrencyId)(using c: Connection): Optional[CurrencyRow] = Optional.ofNullable(map.get(currencycode))
 
-  def selectByIds(currencycodes: Array[CurrencyId])(using c: Connection): java.util.List[CurrencyRow] = {
+  override def selectByIds(currencycodes: Array[CurrencyId])(using c: Connection): java.util.List[CurrencyRow] = {
     val result = new ArrayList[CurrencyRow]()
     currencycodes.foreach { id => val opt = Optional.ofNullable(map.get(id))
     if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
-    result
+    return result
   }
 
-  def selectByIdsTracked(currencycodes: Array[CurrencyId])(using c: Connection): java.util.Map[CurrencyId, CurrencyRow] = selectByIds(currencycodes)(using c).stream().collect(Collectors.toMap((row: adventureworks.sales.currency.CurrencyRow) => row.currencycode, Function.identity()))
+  override def selectByIdsTracked(currencycodes: Array[CurrencyId])(using c: Connection): java.util.Map[CurrencyId, CurrencyRow] = selectByIds(currencycodes)(using c).stream().collect(Collectors.toMap((row: CurrencyRow) => row.currencycode, Function.identity()))
 
-  def update: UpdateBuilder[CurrencyFields, CurrencyRow] = {
+  override def update: UpdateBuilder[CurrencyFields, CurrencyRow] = {
     new UpdateBuilderMock(
       CurrencyFields.structure,
       () => new ArrayList(map.values()),
@@ -107,31 +108,31 @@ case class CurrencyRepoMock(
     )
   }
 
-  def update(row: CurrencyRow)(using c: Connection): java.lang.Boolean = {
-    val shouldUpdate = Optional.ofNullable(map.get(row.currencycode)).filter(oldRow => !oldRow.equals(row)).isPresent()
+  override def update(row: CurrencyRow)(using c: Connection): java.lang.Boolean = {
+    val shouldUpdate = Optional.ofNullable(map.get(row.currencycode)).filter(oldRow => (oldRow != row)).isPresent()
     if (shouldUpdate) {
       map.put(row.currencycode, row): @scala.annotation.nowarn
     }
-    shouldUpdate
+    return shouldUpdate
   }
 
-  def upsert(unsaved: CurrencyRow)(using c: Connection): CurrencyRow = {
+  override def upsert(unsaved: CurrencyRow)(using c: Connection): CurrencyRow = {
     map.put(unsaved.currencycode, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[CurrencyRow])(using c: Connection): java.util.List[CurrencyRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[CurrencyRow])(using c: Connection): java.util.List[CurrencyRow] = {
     val result = new ArrayList[CurrencyRow]()
     while (unsaved.hasNext()) {
       val row = unsaved.next()
       map.put(row.currencycode, row): @scala.annotation.nowarn
       result.add(row): @scala.annotation.nowarn
     }
-    result
+    return result
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[CurrencyRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
@@ -141,6 +142,6 @@ case class CurrencyRepoMock(
       map.put(row.currencycode, row): @scala.annotation.nowarn
       count = count + 1
     }
-    count
+    return count
   }
 }

@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class BecViewRepoImpl extends BecViewRepo {
-  def select: SelectBuilder[BecViewFields, BecViewRow] = SelectBuilder.of(""""pe"."bec"""", BecViewFields.structure, BecViewRow.jdbcDecoder)
+  override def select: SelectBuilder[BecViewFields, BecViewRow] = SelectBuilder.of(""""pe"."bec"""", BecViewFields.structure, BecViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, BecViewRow] = sql"""select "id", "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text from "pe"."bec"""".query(using BecViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, BecViewRow] = sql"""select "id", "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text from "pe"."bec"""".query(using BecViewRow.jdbcDecoder).selectStream()
 }

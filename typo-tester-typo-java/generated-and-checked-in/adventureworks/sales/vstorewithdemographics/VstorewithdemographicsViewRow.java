@@ -13,7 +13,6 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple12;
 
 /** View: sales.vstorewithdemographics */
 public record VstorewithdemographicsViewRow(
@@ -82,5 +81,5 @@ public record VstorewithdemographicsViewRow(
     return new VstorewithdemographicsViewRow(businessentityid, name, annualSales, annualRevenue, bankName, businessType, yearOpened, specialty, squareFeet, brands, internet, numberEmployees);
   };
 
-  static RowParser<VstorewithdemographicsViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, Name.pgType, TypoMoney.pgType.opt(), TypoMoney.pgType.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.int4.opt(), PgTypes.text.opt(), PgTypes.int4.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.int4.opt(), VstorewithdemographicsViewRow::new, row -> new Tuple12<>(row.businessentityid(), row.name(), row.annualSales(), row.annualRevenue(), row.bankName(), row.businessType(), row.yearOpened(), row.specialty(), row.squareFeet(), row.brands(), row.internet(), row.numberEmployees()));;
+  static RowParser<VstorewithdemographicsViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, Name.pgType, TypoMoney.pgType.opt(), TypoMoney.pgType.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.int4.opt(), PgTypes.text.opt(), PgTypes.int4.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.int4.opt(), VstorewithdemographicsViewRow::new, row -> new Object[]{row.businessentityid(), row.name(), row.annualSales(), row.annualRevenue(), row.bankName(), row.businessType(), row.yearOpened(), row.specialty(), row.squareFeet(), row.brands(), row.internet(), row.numberEmployees()});;
 }

@@ -5,22 +5,22 @@
  */
 package adventureworks.pr.pmi;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class PmiViewRepoImpl implements PmiViewRepo {
+  @Override
   public SelectBuilder<PmiViewFields, PmiViewRow> select() {
     return SelectBuilder.of("pr.pmi", PmiViewFields.structure(), PmiViewRow._rowParser);
   };
 
+  @Override
   public List<PmiViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "productmodelid", "illustrationid", "modifieddate"::text
        from "pr"."pmi"
-    """)).as(PmiViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(PmiViewRow._rowParser.all()).runUnchecked(c);
   };
 }

@@ -5,6 +5,7 @@
  */
 package adventureworks.production.workorder;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record WorkorderRepoMock(
     return new WorkorderRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<WorkorderFields, WorkorderRow> delete() {
     return new DeleteBuilderMock<>(WorkorderFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.workorderid(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     WorkorderId workorderid,
     Connection c
@@ -52,28 +55,31 @@ public record WorkorderRepoMock(
     return Optional.ofNullable(map.remove(workorderid)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     WorkorderId[] workorderids,
     Connection c
   ) {
     var count = 0;
-      for (var id : workorderids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : workorderids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public WorkorderRow insert(
     WorkorderRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.workorderid())) {
-        throw new RuntimeException(str("id $unsaved.workorderid() already exists"));
-      };
-      map.put(unsaved.workorderid(), unsaved);
+      throw new RuntimeException(str("id $unsaved.workorderid() already exists"));
+    };
+    map.put(unsaved.workorderid(), unsaved);
     return unsaved;
   };
 
+  @Override
   public WorkorderRow insert(
     WorkorderRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record WorkorderRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<WorkorderRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.workorderid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.workorderid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<WorkorderRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.workorderid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.workorderid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<WorkorderFields, WorkorderRow> select() {
     return new SelectBuilderMock<>(WorkorderFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<WorkorderRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<WorkorderRow> selectById(
     WorkorderId workorderid,
     Connection c
@@ -126,38 +137,43 @@ public record WorkorderRepoMock(
     return Optional.ofNullable(map.get(workorderid));
   };
 
+  @Override
   public List<WorkorderRow> selectByIds(
     WorkorderId[] workorderids,
     Connection c
   ) {
     var result = new ArrayList<WorkorderRow>();
-      for (var id : workorderids) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : workorderids) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<WorkorderId, WorkorderRow> selectByIdsTracked(
     WorkorderId[] workorderids,
     Connection c
   ) {
-    return selectByIds(workorderids, c).stream().collect(Collectors.toMap((adventureworks.production.workorder.WorkorderRow row) -> row.workorderid(), Function.identity()));
+    return selectByIds(workorderids, c).stream().collect(Collectors.toMap((WorkorderRow row) -> row.workorderid(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<WorkorderFields, WorkorderRow> update() {
     return new UpdateBuilderMock<>(WorkorderFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     WorkorderRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.workorderid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.workorderid(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.workorderid(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public WorkorderRow upsert(
     WorkorderRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record WorkorderRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<WorkorderRow> upsertBatch(
     Iterator<WorkorderRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<WorkorderRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.workorderid(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.workorderid(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<WorkorderRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.workorderid(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.workorderid(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

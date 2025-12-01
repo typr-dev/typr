@@ -12,7 +12,6 @@ import adventureworks.purchasing.shipmethod.ShipmethodId
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple7
 
 /** View: pu.sm */
 case class SmViewRow(
@@ -33,15 +32,5 @@ case class SmViewRow(
 )
 
 object SmViewRow {
-  val `_rowParser`: RowParser[SmViewRow] = {
-    RowParsers.of(ShipmethodId.pgType, ShipmethodId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SmViewRow.apply, row => new Tuple7(
-      row.id,
-      row.shipmethodid,
-      row.name,
-      row.shipbase,
-      row.shiprate,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[SmViewRow] = RowParsers.of(ShipmethodId.pgType, ShipmethodId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SmViewRow.apply, row => Array(row.id, row.shipmethodid, row.name, row.shipbase, row.shiprate, row.rowguid, row.modifieddate))
 }

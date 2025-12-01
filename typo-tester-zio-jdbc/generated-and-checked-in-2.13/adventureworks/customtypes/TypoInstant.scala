@@ -49,7 +49,7 @@ object TypoInstant {
         ps.getConnection.createArrayOf(
           "timestamptz",
           v.map { vv =>
-            vv.value.toString
+            vv.value.toString()
           }
         )
       ),
@@ -81,8 +81,8 @@ object TypoInstant {
 
   implicit lazy val pgText: Text[TypoInstant] = {
     new Text[TypoInstant] {
-      override def unsafeEncode(v: TypoInstant, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value.toString, sb)
-      override def unsafeArrayEncode(v: TypoInstant, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value.toString, sb)
+      override def unsafeEncode(v: TypoInstant, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value.toString(), sb)
+      override def unsafeArrayEncode(v: TypoInstant, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value.toString(), sb)
     }
   }
 
@@ -93,7 +93,7 @@ object TypoInstant {
       (ps, i, v) => {
         ps.setObject(
           i,
-          v.value.toString
+          v.value.toString()
         )
       },
       "timestamptz"

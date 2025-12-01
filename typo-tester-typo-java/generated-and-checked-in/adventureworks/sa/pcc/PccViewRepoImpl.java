@@ -5,22 +5,22 @@
  */
 package adventureworks.sa.pcc;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class PccViewRepoImpl implements PccViewRepo {
+  @Override
   public SelectBuilder<PccViewFields, PccViewRow> select() {
     return SelectBuilder.of("sa.pcc", PccViewFields.structure(), PccViewRow._rowParser);
   };
 
+  @Override
   public List<PccViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "businessentityid", "creditcardid", "modifieddate"::text
        from "sa"."pcc"
-    """)).as(PccViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(PccViewRow._rowParser.all()).runUnchecked(c);
   };
 }

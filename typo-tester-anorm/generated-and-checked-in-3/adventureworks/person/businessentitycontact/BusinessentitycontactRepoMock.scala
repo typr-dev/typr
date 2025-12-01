@@ -21,13 +21,13 @@ case class BusinessentitycontactRepoMock(
   toRow: BusinessentitycontactRowUnsaved => BusinessentitycontactRow,
   map: scala.collection.mutable.Map[BusinessentitycontactId, BusinessentitycontactRow] = scala.collection.mutable.Map.empty[BusinessentitycontactId, BusinessentitycontactRow]
 ) extends BusinessentitycontactRepo {
-  def delete: DeleteBuilder[BusinessentitycontactFields, BusinessentitycontactRow] = DeleteBuilderMock(DeleteParams.empty, BusinessentitycontactFields.structure, map)
+  override def delete: DeleteBuilder[BusinessentitycontactFields, BusinessentitycontactRow] = DeleteBuilderMock(DeleteParams.empty, BusinessentitycontactFields.structure, map)
 
-  def deleteById(compositeId: BusinessentitycontactId)(using c: Connection): Boolean = map.remove(compositeId).isDefined
+  override def deleteById(compositeId: BusinessentitycontactId)(using c: Connection): Boolean = map.remove(compositeId).isDefined
 
-  def deleteByIds(compositeIds: Array[BusinessentitycontactId])(using c: Connection): Int = compositeIds.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(compositeIds: Array[BusinessentitycontactId])(using c: Connection): Int = compositeIds.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: BusinessentitycontactRow)(using c: Connection): BusinessentitycontactRow = {
+  override def insert(unsaved: BusinessentitycontactRow)(using c: Connection): BusinessentitycontactRow = {
     val _ = if (map.contains(unsaved.compositeId))
       sys.error(s"id ${unsaved.compositeId} already exists")
     else
@@ -36,9 +36,9 @@ case class BusinessentitycontactRepoMock(
     unsaved
   }
 
-  def insert(unsaved: BusinessentitycontactRowUnsaved)(using c: Connection): BusinessentitycontactRow = insert(toRow(unsaved))
+  override def insert(unsaved: BusinessentitycontactRowUnsaved)(using c: Connection): BusinessentitycontactRow = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[BusinessentitycontactRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -49,7 +49,7 @@ case class BusinessentitycontactRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[BusinessentitycontactRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -60,34 +60,34 @@ case class BusinessentitycontactRepoMock(
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[BusinessentitycontactFields, BusinessentitycontactRow] = SelectBuilderMock(BusinessentitycontactFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[BusinessentitycontactFields, BusinessentitycontactRow] = SelectBuilderMock(BusinessentitycontactFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(using c: Connection): List[BusinessentitycontactRow] = map.values.toList
+  override def selectAll(using c: Connection): List[BusinessentitycontactRow] = map.values.toList
 
-  def selectById(compositeId: BusinessentitycontactId)(using c: Connection): Option[BusinessentitycontactRow] = map.get(compositeId)
+  override def selectById(compositeId: BusinessentitycontactId)(using c: Connection): Option[BusinessentitycontactRow] = map.get(compositeId)
 
-  def selectByIds(compositeIds: Array[BusinessentitycontactId])(using c: Connection): List[BusinessentitycontactRow] = compositeIds.flatMap(map.get).toList
+  override def selectByIds(compositeIds: Array[BusinessentitycontactId])(using c: Connection): List[BusinessentitycontactRow] = compositeIds.flatMap(map.get).toList
 
-  def selectByIdsTracked(compositeIds: Array[BusinessentitycontactId])(using c: Connection): Map[BusinessentitycontactId, BusinessentitycontactRow] = {
+  override def selectByIdsTracked(compositeIds: Array[BusinessentitycontactId])(using c: Connection): Map[BusinessentitycontactId, BusinessentitycontactRow] = {
     val byId = selectByIds(compositeIds).view.map(x => (x.compositeId, x)).toMap
     compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[BusinessentitycontactFields, BusinessentitycontactRow] = UpdateBuilderMock(UpdateParams.empty, BusinessentitycontactFields.structure, map)
+  override def update: UpdateBuilder[BusinessentitycontactFields, BusinessentitycontactRow] = UpdateBuilderMock(UpdateParams.empty, BusinessentitycontactFields.structure, map)
 
-  def update(row: BusinessentitycontactRow)(using c: Connection): Option[BusinessentitycontactRow] = {
+  override def update(row: BusinessentitycontactRow)(using c: Connection): Option[BusinessentitycontactRow] = {
     map.get(row.compositeId).map { _ =>
       map.put(row.compositeId, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: BusinessentitycontactRow)(using c: Connection): BusinessentitycontactRow = {
+  override def upsert(unsaved: BusinessentitycontactRow)(using c: Connection): BusinessentitycontactRow = {
     map.put(unsaved.compositeId, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[BusinessentitycontactRow])(using c: Connection): List[BusinessentitycontactRow] = {
+  override def upsertBatch(unsaved: Iterable[BusinessentitycontactRow])(using c: Connection): List[BusinessentitycontactRow] = {
     unsaved.map { row =>
       map += (row.compositeId -> row)
       row
@@ -95,7 +95,7 @@ case class BusinessentitycontactRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[BusinessentitycontactRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

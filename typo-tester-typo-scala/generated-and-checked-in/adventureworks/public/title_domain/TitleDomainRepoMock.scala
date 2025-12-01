@@ -5,6 +5,7 @@
  */
 package adventureworks.public.title_domain
 
+import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
@@ -22,7 +23,7 @@ import typo.dsl.UpdateBuilder.UpdateBuilderMock
 import typo.dsl.UpdateParams
 
 case class TitleDomainRepoMock(map: HashMap[TitleDomainId, TitleDomainRow] = new HashMap[TitleDomainId, TitleDomainRow]()) extends TitleDomainRepo {
-  def delete: DeleteBuilder[TitleDomainFields, TitleDomainRow] = {
+  override def delete: DeleteBuilder[TitleDomainFields, TitleDomainRow] = {
     new DeleteBuilderMock(
       TitleDomainFields.structure,
       () => new ArrayList(map.values()),
@@ -32,25 +33,25 @@ case class TitleDomainRepoMock(map: HashMap[TitleDomainId, TitleDomainRow] = new
     )
   }
 
-  def deleteById(code: TitleDomainId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(code)).isPresent()
+  override def deleteById(code: TitleDomainId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(code)).isPresent()
 
-  def deleteByIds(codes: Array[TitleDomainId])(using c: Connection): Integer = {
+  override def deleteByIds(codes: Array[TitleDomainId])(using c: Connection): Integer = {
     var count = 0
     codes.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
-    count
+    return count
   }
 
-  def insert(unsaved: TitleDomainRow)(using c: Connection): TitleDomainRow = {
+  override def insert(unsaved: TitleDomainRow)(using c: Connection): TitleDomainRow = {
     if (map.containsKey(unsaved.code)) {
       throw new RuntimeException(s"id $unsaved.code already exists")
     }
     map.put(unsaved.code, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[TitleDomainRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -60,25 +61,25 @@ case class TitleDomainRepoMock(map: HashMap[TitleDomainId, TitleDomainRow] = new
       map.put(row.code, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
-  def select: SelectBuilder[TitleDomainFields, TitleDomainRow] = new SelectBuilderMock(TitleDomainFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
+  override def select: SelectBuilder[TitleDomainFields, TitleDomainRow] = new SelectBuilderMock(TitleDomainFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  def selectAll(using c: Connection): java.util.List[TitleDomainRow] = new ArrayList(map.values())
+  override def selectAll(using c: Connection): java.util.List[TitleDomainRow] = new ArrayList(map.values())
 
-  def selectById(code: TitleDomainId)(using c: Connection): Optional[TitleDomainRow] = Optional.ofNullable(map.get(code))
+  override def selectById(code: TitleDomainId)(using c: Connection): Optional[TitleDomainRow] = Optional.ofNullable(map.get(code))
 
-  def selectByIds(codes: Array[TitleDomainId])(using c: Connection): java.util.List[TitleDomainRow] = {
+  override def selectByIds(codes: Array[TitleDomainId])(using c: Connection): java.util.List[TitleDomainRow] = {
     val result = new ArrayList[TitleDomainRow]()
     codes.foreach { id => val opt = Optional.ofNullable(map.get(id))
     if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
-    result
+    return result
   }
 
-  def selectByIdsTracked(codes: Array[TitleDomainId])(using c: Connection): java.util.Map[TitleDomainId, TitleDomainRow] = selectByIds(codes)(using c).stream().collect(Collectors.toMap((row: adventureworks.public.title_domain.TitleDomainRow) => row.code, Function.identity()))
+  override def selectByIdsTracked(codes: Array[TitleDomainId])(using c: Connection): java.util.Map[TitleDomainId, TitleDomainRow] = selectByIds(codes)(using c).stream().collect(Collectors.toMap((row: TitleDomainRow) => row.code, Function.identity()))
 
-  def update: UpdateBuilder[TitleDomainFields, TitleDomainRow] = {
+  override def update: UpdateBuilder[TitleDomainFields, TitleDomainRow] = {
     new UpdateBuilderMock(
       TitleDomainFields.structure,
       () => new ArrayList(map.values()),
@@ -87,23 +88,23 @@ case class TitleDomainRepoMock(map: HashMap[TitleDomainId, TitleDomainRow] = new
     )
   }
 
-  def upsert(unsaved: TitleDomainRow)(using c: Connection): TitleDomainRow = {
+  override def upsert(unsaved: TitleDomainRow)(using c: Connection): TitleDomainRow = {
     map.put(unsaved.code, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[TitleDomainRow])(using c: Connection): java.util.List[TitleDomainRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[TitleDomainRow])(using c: Connection): java.util.List[TitleDomainRow] = {
     val result = new ArrayList[TitleDomainRow]()
     while (unsaved.hasNext()) {
       val row = unsaved.next()
       map.put(row.code, row): @scala.annotation.nowarn
       result.add(row): @scala.annotation.nowarn
     }
-    result
+    return result
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[TitleDomainRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
@@ -113,6 +114,6 @@ case class TitleDomainRepoMock(map: HashMap[TitleDomainId, TitleDomainRow] = new
       map.put(row.code, row): @scala.annotation.nowarn
       count = count + 1
     }
-    count
+    return count
   }
 }

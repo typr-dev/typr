@@ -13,7 +13,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple5;
 
 /** Table: person.password
   * One way hashed authentication information
@@ -56,7 +55,7 @@ public record PasswordRow(
     return new PasswordRow(businessentityid, passwordhash, passwordsalt, rowguid, modifieddate);
   };
 
-  static RowParser<PasswordRow> _rowParser = RowParsers.of(BusinessentityId.pgType, PgTypes.text, PgTypes.text, TypoUUID.pgType, TypoLocalDateTime.pgType, PasswordRow::new, row -> new Tuple5<>(row.businessentityid(), row.passwordhash(), row.passwordsalt(), row.rowguid(), row.modifieddate()));;
+  static RowParser<PasswordRow> _rowParser = RowParsers.of(BusinessentityId.pgType, PgTypes.text, PgTypes.text, TypoUUID.pgType, TypoLocalDateTime.pgType, PasswordRow::new, row -> new Object[]{row.businessentityid(), row.passwordhash(), row.passwordsalt(), row.rowguid(), row.modifieddate()});;
 
   static public PgText<PasswordRow> pgText =
     PgText.from(_rowParser);

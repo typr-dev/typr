@@ -10,7 +10,6 @@ import adventureworks.customtypes.TypoUUID;
 import adventureworks.person.businessentity.BusinessentityId;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple4;
 
 /** View: pe.be */
 public record BeViewRow(
@@ -43,5 +42,5 @@ public record BeViewRow(
     return new BeViewRow(id, businessentityid, rowguid, modifieddate);
   };
 
-  static RowParser<BeViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BeViewRow::new, row -> new Tuple4<>(row.id(), row.businessentityid(), row.rowguid(), row.modifieddate()));;
+  static RowParser<BeViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BeViewRow::new, row -> new Object[]{row.id(), row.businessentityid(), row.rowguid(), row.modifieddate()});;
 }

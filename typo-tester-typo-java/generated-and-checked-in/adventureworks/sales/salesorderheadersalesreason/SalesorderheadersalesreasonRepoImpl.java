@@ -8,7 +8,6 @@ package adventureworks.sales.salesorderheadersalesreason;
 import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.sales.salesorderheader.SalesorderheaderId;
 import adventureworks.sales.salesreason.SalesreasonId;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,12 +25,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class SalesorderheadersalesreasonRepoImpl implements SalesorderheadersalesreasonRepo {
+  @Override
   public DeleteBuilder<SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow> delete() {
     return DeleteBuilder.of("sales.salesorderheadersalesreason", SalesorderheadersalesreasonFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     SalesorderheadersalesreasonId compositeId,
     Connection c
@@ -49,28 +49,30 @@ public class SalesorderheadersalesreasonRepoImpl implements Salesorderheadersale
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     SalesorderheadersalesreasonId[] compositeIds,
     Connection c
   ) {
     SalesorderheaderId[] salesorderid = arrayMap.map(compositeIds, SalesorderheadersalesreasonId::salesorderid, SalesorderheaderId.class);;
-      SalesreasonId[] salesreasonid = arrayMap.map(compositeIds, SalesorderheadersalesreasonId::salesreasonid, SalesreasonId.class);;
+    SalesreasonId[] salesreasonid = arrayMap.map(compositeIds, SalesorderheadersalesreasonId::salesreasonid, SalesreasonId.class);;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                delete
-                from "sales"."salesorderheadersalesreason"
-                where ("salesorderid", "salesreasonid")
-                in (select unnest("""),
-             SalesorderheaderId.pgTypeArray.encode(salesorderid),
-             typo.runtime.Fragment.lit("::int4[]), unnest("),
-             SalesreasonId.pgTypeArray.encode(salesreasonid),
-             typo.runtime.Fragment.lit("""
-             ::int4[]))
+      typo.runtime.Fragment.lit("""
+         delete
+         from "sales"."salesorderheadersalesreason"
+         where ("salesorderid", "salesreasonid")
+         in (select unnest("""),
+      SalesorderheaderId.pgTypeArray.encode(salesorderid),
+      typo.runtime.Fragment.lit("::int4[]), unnest("),
+      SalesreasonId.pgTypeArray.encode(salesreasonid),
+      typo.runtime.Fragment.lit("""
+      ::int4[]))
 
-             """)
-           ).update().runUnchecked(c);
+      """)
+    ).update().runUnchecked(c);
   };
 
+  @Override
   public SalesorderheadersalesreasonRow insert(
     SalesorderheadersalesreasonRow unsaved,
     Connection c
@@ -92,49 +94,53 @@ public class SalesorderheadersalesreasonRepoImpl implements Salesorderheadersale
       .updateReturning(SalesorderheadersalesreasonRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public SalesorderheadersalesreasonRow insert(
     SalesorderheadersalesreasonRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"salesorderid\""));
-      values.add(interpolate(
-        SalesorderheaderId.pgType.encode(unsaved.salesorderid()),
-        typo.runtime.Fragment.lit("::int4")
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"salesorderid\""));
+    values.add(interpolate(
+      SalesorderheaderId.pgType.encode(unsaved.salesorderid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"salesreasonid\""));
+    values.add(interpolate(
+      SalesreasonId.pgType.encode(unsaved.salesreasonid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
       ));
-      columns.add(Fragment.lit("\"salesreasonid\""));
-      values.add(interpolate(
-        SalesreasonId.pgType.encode(unsaved.salesreasonid()),
-        typo.runtime.Fragment.lit("::int4")
-      ));
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "sales"."salesorderheadersalesreason"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "salesorderid", "salesreasonid", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "sales"."salesorderheadersalesreason"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "salesorderid", "salesreasonid", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(SalesorderheadersalesreasonRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<SalesorderheadersalesreasonRow> unsaved,
     Integer batchSize,
@@ -146,6 +152,7 @@ public class SalesorderheadersalesreasonRepoImpl implements Salesorderheadersale
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<SalesorderheadersalesreasonRowUnsaved> unsaved,
     Integer batchSize,
@@ -156,17 +163,20 @@ public class SalesorderheadersalesreasonRepoImpl implements Salesorderheadersale
     """), batchSize, unsaved, c, SalesorderheadersalesreasonRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow> select() {
     return SelectBuilder.of("sales.salesorderheadersalesreason", SalesorderheadersalesreasonFields.structure(), SalesorderheadersalesreasonRow._rowParser);
   };
 
+  @Override
   public List<SalesorderheadersalesreasonRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "salesorderid", "salesreasonid", "modifieddate"::text
        from "sales"."salesorderheadersalesreason"
-    """)).as(SalesorderheadersalesreasonRow._rowParser.all()).runUnchecked(c);
+    """)).query(SalesorderheadersalesreasonRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<SalesorderheadersalesreasonRow> selectById(
     SalesorderheadersalesreasonId compositeId,
     Connection c
@@ -182,66 +192,71 @@ public class SalesorderheadersalesreasonRepoImpl implements Salesorderheadersale
       """),
       SalesreasonId.pgType.encode(compositeId.salesreasonid()),
       typo.runtime.Fragment.lit("")
-    ).as(SalesorderheadersalesreasonRow._rowParser.first()).runUnchecked(c);
+    ).query(SalesorderheadersalesreasonRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<SalesorderheadersalesreasonRow> selectByIds(
     SalesorderheadersalesreasonId[] compositeIds,
     Connection c
   ) {
     SalesorderheaderId[] salesorderid = arrayMap.map(compositeIds, SalesorderheadersalesreasonId::salesorderid, SalesorderheaderId.class);;
-      SalesreasonId[] salesreasonid = arrayMap.map(compositeIds, SalesorderheadersalesreasonId::salesreasonid, SalesreasonId.class);;
+    SalesreasonId[] salesreasonid = arrayMap.map(compositeIds, SalesorderheadersalesreasonId::salesreasonid, SalesreasonId.class);;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                select "salesorderid", "salesreasonid", "modifieddate"::text
-                from "sales"."salesorderheadersalesreason"
-                where ("salesorderid", "salesreasonid")
-                in (select unnest("""),
-             SalesorderheaderId.pgTypeArray.encode(salesorderid),
-             typo.runtime.Fragment.lit("::int4[]), unnest("),
-             SalesreasonId.pgTypeArray.encode(salesreasonid),
-             typo.runtime.Fragment.lit("""
-             ::int4[]))
+      typo.runtime.Fragment.lit("""
+         select "salesorderid", "salesreasonid", "modifieddate"::text
+         from "sales"."salesorderheadersalesreason"
+         where ("salesorderid", "salesreasonid")
+         in (select unnest("""),
+      SalesorderheaderId.pgTypeArray.encode(salesorderid),
+      typo.runtime.Fragment.lit("::int4[]), unnest("),
+      SalesreasonId.pgTypeArray.encode(salesreasonid),
+      typo.runtime.Fragment.lit("""
+      ::int4[]))
 
-             """)
-           ).as(SalesorderheadersalesreasonRow._rowParser.all()).runUnchecked(c);
+      """)
+    ).query(SalesorderheadersalesreasonRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<SalesorderheadersalesreasonId, SalesorderheadersalesreasonRow> selectByIdsTracked(
     SalesorderheadersalesreasonId[] compositeIds,
     Connection c
   ) {
-    Map<SalesorderheadersalesreasonId, SalesorderheadersalesreasonRow> ret = new HashMap<>();;
-      selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
+    HashMap<SalesorderheadersalesreasonId, SalesorderheadersalesreasonRow> ret = new HashMap<SalesorderheadersalesreasonId, SalesorderheadersalesreasonRow>();
+    selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow> update() {
     return UpdateBuilder.of("sales.salesorderheadersalesreason", SalesorderheadersalesreasonFields.structure(), SalesorderheadersalesreasonRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     SalesorderheadersalesreasonRow row,
     Connection c
   ) {
     SalesorderheadersalesreasonId compositeId = row.compositeId();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "sales"."salesorderheadersalesreason"
-                set "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "salesorderid" = """),
-             SalesorderheaderId.pgType.encode(compositeId.salesorderid()),
-             typo.runtime.Fragment.lit("""
-              AND "salesreasonid" = 
-             """),
-             SalesreasonId.pgType.encode(compositeId.salesreasonid()),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "sales"."salesorderheadersalesreason"
+         set "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "salesorderid" = """),
+      SalesorderheaderId.pgType.encode(compositeId.salesorderid()),
+      typo.runtime.Fragment.lit("""
+       AND "salesreasonid" = 
+      """),
+      SalesreasonId.pgType.encode(compositeId.salesreasonid()),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public SalesorderheadersalesreasonRow upsert(
     SalesorderheadersalesreasonRow unsaved,
     Connection c
@@ -267,6 +282,7 @@ public class SalesorderheadersalesreasonRepoImpl implements Salesorderheadersale
       .runUnchecked(c);
   };
 
+  @Override
   public List<SalesorderheadersalesreasonRow> upsertBatch(
     Iterator<SalesorderheadersalesreasonRow> unsaved,
     Connection c
@@ -284,24 +300,25 @@ public class SalesorderheadersalesreasonRepoImpl implements Salesorderheadersale
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<SalesorderheadersalesreasonRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table salesorderheadersalesreason_TEMP (like "sales"."salesorderheadersalesreason") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy salesorderheadersalesreason_TEMP("salesorderid", "salesreasonid", "modifieddate") from stdin
-      """), batchSize, unsaved, c, SalesorderheadersalesreasonRow.pgText);
+    create temporary table salesorderheadersalesreason_TEMP (like "sales"."salesorderheadersalesreason") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy salesorderheadersalesreason_TEMP("salesorderid", "salesreasonid", "modifieddate") from stdin
+    """), batchSize, unsaved, c, SalesorderheadersalesreasonRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "sales"."salesorderheadersalesreason"("salesorderid", "salesreasonid", "modifieddate")
-              select * from salesorderheadersalesreason_TEMP
-              on conflict ("salesorderid", "salesreasonid")
-              do update set
-                "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table salesorderheadersalesreason_TEMP;""")).update().runUnchecked(c);
+       insert into "sales"."salesorderheadersalesreason"("salesorderid", "salesreasonid", "modifieddate")
+       select * from salesorderheadersalesreason_TEMP
+       on conflict ("salesorderid", "salesreasonid")
+       do update set
+         "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table salesorderheadersalesreason_TEMP;""")).update().runUnchecked(c);
   };
 }

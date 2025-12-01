@@ -19,50 +19,50 @@ sealed trait PersonFieldValue[T] {
 
 object PersonFieldValue {
   case class blogUrl(value: Optional[/* max 100 chars */ String]) extends PersonFieldValue[Optional[/* max 100 chars */ String]] {
-    def name: String = "blog_url"
+    override def name: String = "blog_url"
   }
 
   case class email(value: /* max 254 chars */ String) extends PersonFieldValue[/* max 254 chars */ String] {
-    def name: String = "email"
+    override def name: String = "email"
   }
 
   case class favoriteNumber(value: Number) extends PersonFieldValue[Number] {
-    def name: String = "favorite_number"
+    override def name: String = "favorite_number"
   }
 
   case class favouriteFootballClubId(value: FootballClubId) extends PersonFieldValue[FootballClubId] {
-    def name: String = "favourite_football_club_id"
+    override def name: String = "favourite_football_club_id"
   }
 
   case class id(value: PersonId) extends PersonFieldValue[PersonId] {
-    def name: String = "id"
+    override def name: String = "id"
   }
 
   case class likesPizza(value: java.lang.Boolean) extends PersonFieldValue[java.lang.Boolean] {
-    def name: String = "likes_pizza"
+    override def name: String = "likes_pizza"
   }
 
   case class maritalStatusId(value: MaritalStatusId) extends PersonFieldValue[MaritalStatusId] {
-    def name: String = "marital_status_id"
+    override def name: String = "marital_status_id"
   }
 
   case class name(value: /* max 100 chars */ String) extends PersonFieldValue[/* max 100 chars */ String] {
-    def name: String = "name"
+    override def name: String = "name"
   }
 
   case class nickName(value: Optional[/* max 30 chars */ String]) extends PersonFieldValue[Optional[/* max 30 chars */ String]] {
-    def name: String = "nick_name"
+    override def name: String = "nick_name"
   }
 
   case class phone(value: /* max 8 chars */ String) extends PersonFieldValue[/* max 8 chars */ String] {
-    def name: String = "phone"
+    override def name: String = "phone"
   }
 
   case class sector(value: Sector) extends PersonFieldValue[Sector] {
-    def name: String = "sector"
+    override def name: String = "sector"
   }
 
   case class workEmail(value: Optional[/* max 254 chars */ String]) extends PersonFieldValue[Optional[/* max 254 chars */ String]] {
-    def name: String = "work_email"
+    override def name: String = "work_email"
   }
 }

@@ -5,22 +5,22 @@
  */
 package adventureworks.pe.be;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class BeViewRepoImpl implements BeViewRepo {
+  @Override
   public SelectBuilder<BeViewFields, BeViewRow> select() {
     return SelectBuilder.of("pe.be", BeViewFields.structure(), BeViewRow._rowParser);
   };
 
+  @Override
   public List<BeViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "businessentityid", "rowguid", "modifieddate"::text
        from "pe"."be"
-    """)).as(BeViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(BeViewRow._rowParser.all()).runUnchecked(c);
   };
 }

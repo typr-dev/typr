@@ -15,7 +15,6 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple9;
 
 /** View: pu.v */
 public record VViewRow(
@@ -83,5 +82,5 @@ public record VViewRow(
     return new VViewRow(id, businessentityid, accountnumber, name, creditrating, preferredvendorstatus, activeflag, purchasingwebserviceurl, modifieddate);
   };
 
-  static RowParser<VViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, AccountNumber.pgType, Name.pgType, TypoShort.pgType, Flag.pgType, Flag.pgType, PgTypes.text.opt(), TypoLocalDateTime.pgType, VViewRow::new, row -> new Tuple9<>(row.id(), row.businessentityid(), row.accountnumber(), row.name(), row.creditrating(), row.preferredvendorstatus(), row.activeflag(), row.purchasingwebserviceurl(), row.modifieddate()));;
+  static RowParser<VViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, AccountNumber.pgType, Name.pgType, TypoShort.pgType, Flag.pgType, Flag.pgType, PgTypes.text.opt(), TypoLocalDateTime.pgType, VViewRow::new, row -> new Object[]{row.id(), row.businessentityid(), row.accountnumber(), row.name(), row.creditrating(), row.preferredvendorstatus(), row.activeflag(), row.purchasingwebserviceurl(), row.modifieddate()});;
 }

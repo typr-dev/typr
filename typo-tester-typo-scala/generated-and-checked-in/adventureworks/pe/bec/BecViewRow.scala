@@ -11,7 +11,6 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.person.contacttype.ContacttypeId
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple6
 
 /** View: pe.bec */
 case class BecViewRow(
@@ -30,14 +29,5 @@ case class BecViewRow(
 )
 
 object BecViewRow {
-  val `_rowParser`: RowParser[BecViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, BusinessentityId.pgType, ContacttypeId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BecViewRow.apply, row => new Tuple6(
-      row.id,
-      row.businessentityid,
-      row.personid,
-      row.contacttypeid,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[BecViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, BusinessentityId.pgType, ContacttypeId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BecViewRow.apply, row => Array(row.id, row.businessentityid, row.personid, row.contacttypeid, row.rowguid, row.modifieddate))
 }

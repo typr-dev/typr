@@ -26,7 +26,7 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 
 public interface ProductproductphotoFields {
-  static final class Impl extends Relation<ProductproductphotoFields, ProductproductphotoRow> {
+  final class Impl extends Relation<ProductproductphotoFields, ProductproductphotoRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -34,15 +34,19 @@ public interface ProductproductphotoFields {
     @Override
     public ProductproductphotoFields fields() {
       return new ProductproductphotoFields() {
+               @Override
                public IdField<ProductId, ProductproductphotoRow> productid() {
                  return new IdField<ProductId, ProductproductphotoRow>(_path, "productid", ProductproductphotoRow::productid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductid(value), ProductId.pgType);
                };
+               @Override
                public IdField<ProductphotoId, ProductproductphotoRow> productphotoid() {
                  return new IdField<ProductphotoId, ProductproductphotoRow>(_path, "productphotoid", ProductproductphotoRow::productphotoid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductphotoid(value), ProductphotoId.pgType);
                };
+               @Override
                public Field<Flag, ProductproductphotoRow> primary() {
                  return new Field<Flag, ProductproductphotoRow>(_path, "primary", ProductproductphotoRow::primary, Optional.empty(), Optional.of("bool"), (row, value) -> row.withPrimary(value), Flag.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, ProductproductphotoRow> modifieddate() {
                  return new Field<TypoLocalDateTime, ProductproductphotoRow>(_path, "modifieddate", ProductproductphotoRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -54,6 +58,7 @@ public interface ProductproductphotoFields {
       return List.of(this.fields().productid(), this.fields().productphotoid(), this.fields().primary(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

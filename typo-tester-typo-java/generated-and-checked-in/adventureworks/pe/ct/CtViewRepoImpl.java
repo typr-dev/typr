@@ -5,22 +5,22 @@
  */
 package adventureworks.pe.ct;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class CtViewRepoImpl implements CtViewRepo {
+  @Override
   public SelectBuilder<CtViewFields, CtViewRow> select() {
     return SelectBuilder.of("pe.ct", CtViewFields.structure(), CtViewRow._rowParser);
   };
 
+  @Override
   public List<CtViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "contacttypeid", "name", "modifieddate"::text
        from "pe"."ct"
-    """)).as(CtViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(CtViewRow._rowParser.all()).runUnchecked(c);
   };
 }

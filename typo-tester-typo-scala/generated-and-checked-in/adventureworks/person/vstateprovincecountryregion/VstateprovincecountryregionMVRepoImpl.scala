@@ -10,11 +10,11 @@ import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class VstateprovincecountryregionMVRepoImpl extends VstateprovincecountryregionMVRepo {
-  def select: SelectBuilder[VstateprovincecountryregionMVFields, VstateprovincecountryregionMVRow] = SelectBuilder.of("person.vstateprovincecountryregion", VstateprovincecountryregionMVFields.structure, VstateprovincecountryregionMVRow.`_rowParser`)
+  override def select: SelectBuilder[VstateprovincecountryregionMVFields, VstateprovincecountryregionMVRow] = SelectBuilder.of("person.vstateprovincecountryregion", VstateprovincecountryregionMVFields.structure, VstateprovincecountryregionMVRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[VstateprovincecountryregionMVRow] = {
+  override def selectAll(using c: Connection): java.util.List[VstateprovincecountryregionMVRow] = {
     interpolate"""select "stateprovinceid", "stateprovincecode", "isonlystateprovinceflag", "stateprovincename", "territoryid", "countryregioncode", "countryregionname"
     from "person"."vstateprovincecountryregion"
-    """.as(VstateprovincecountryregionMVRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(VstateprovincecountryregionMVRow.`_rowParser`.all()).runUnchecked(c)
   }
 }

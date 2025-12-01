@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgRead
 import typo.runtime.PgText
@@ -13,7 +14,7 @@ import typo.runtime.PgTypes
 import typo.runtime.PgWrite
 
 /** Short primitive */
-case class TypoShort(value: java.lang.Short)
+case class TypoShort(@JsonValue value: java.lang.Short)
 
 object TypoShort {
   given bijection: Bijection[TypoShort, java.lang.Short] = Bijection.apply[TypoShort, java.lang.Short](_.value)(TypoShort.apply)
@@ -37,7 +38,7 @@ object TypoShort {
 
   given pgText: PgText[TypoShort] = PgText.textShort.contramap(v => v.value)
 
-  given pgType: PgType[TypoShort] = PgTypes.int4.bimap(v => TypoShort(v.toShort), v => v.value.toInt).renamed("int2")
+  given pgType: PgType[TypoShort] = PgTypes.int4.bimap((v: Integer) => TypoShort(v.toShort), (v: TypoShort) => v.value.toInt).renamed("int2")
 
-  given pgTypeArray: PgType[Array[TypoShort]] = TypoShort.pgType.array(PgRead.massageJdbcArrayTo(classOf[Array[java.lang.Short]]).map(xs => xs.map(v => new TypoShort(v))), PgWrite.passObjectToJdbc[java.lang.Short]().array(TypoShort.pgType.typename().as[java.lang.Short]()).contramap(xs => xs.map((v: TypoShort) => v.value: java.lang.Short)))
+  given pgTypeArray: PgType[Array[TypoShort]] = TypoShort.pgType.array(PgRead.massageJdbcArrayTo(classOf[Array[java.lang.Short]]).map((xs: Array[java.lang.Short]) => xs.map((v: java.lang.Short) => new TypoShort(v))), PgWrite.passObjectToJdbc[java.lang.Short]().array(TypoShort.pgType.typename().as[java.lang.Short]()).contramap((xs: Array[TypoShort]) => xs.map((v: TypoShort) => v.value: java.lang.Short)))
 }

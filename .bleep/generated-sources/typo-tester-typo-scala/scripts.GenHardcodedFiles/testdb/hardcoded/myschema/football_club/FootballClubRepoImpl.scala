@@ -19,11 +19,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class FootballClubRepoImpl extends FootballClubRepo {
-  def delete: DeleteBuilder[FootballClubFields, FootballClubRow] = DeleteBuilder.of("myschema.football_club", FootballClubFields.structure)
+  override def delete: DeleteBuilder[FootballClubFields, FootballClubRow] = DeleteBuilder.of("myschema.football_club", FootballClubFields.structure)
 
-  def deleteById(id: FootballClubId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "myschema"."football_club" where "id" = ${FootballClubId.pgType.encode(id)}""".update().runUnchecked(c) > 0
+  override def deleteById(id: FootballClubId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "myschema"."football_club" where "id" = ${FootballClubId.pgType.encode(id)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(ids: Array[FootballClubId])(using c: Connection): Integer = {
+  override def deleteByIds(ids: Array[FootballClubId])(using c: Connection): Integer = {
     interpolate"""delete
     from "myschema"."football_club"
     where "id" = ANY(${FootballClubId.pgTypeArray.encode(ids)})"""
@@ -31,7 +31,7 @@ class FootballClubRepoImpl extends FootballClubRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: FootballClubRow)(using c: Connection): FootballClubRow = {
+  override def insert(unsaved: FootballClubRow)(using c: Connection): FootballClubRow = {
   interpolate"""insert into "myschema"."football_club"("id", "name")
     values (${FootballClubId.pgType.encode(unsaved.id)}::int8, ${PgTypes.text.encode(unsaved.name)})
     returning "id", "name"
@@ -39,20 +39,20 @@ class FootballClubRepoImpl extends FootballClubRepo {
     .updateReturning(FootballClubRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[FootballClubRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "myschema"."football_club"("id", "name") FROM STDIN""", batchSize, unsaved, c, FootballClubRow.pgText)
 
-  def select: SelectBuilder[FootballClubFields, FootballClubRow] = SelectBuilder.of("myschema.football_club", FootballClubFields.structure, FootballClubRow.`_rowParser`)
+  override def select: SelectBuilder[FootballClubFields, FootballClubRow] = SelectBuilder.of("myschema.football_club", FootballClubFields.structure, FootballClubRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[FootballClubRow] = {
+  override def selectAll(using c: Connection): java.util.List[FootballClubRow] = {
     interpolate"""select "id", "name"
     from "myschema"."football_club"
-    """.as(FootballClubRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(FootballClubRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByFieldValues(fieldValues: java.util.List[FootballClubFieldValue[?]])(using c: Connection): java.util.List[FootballClubRow] = {
+  override def selectByFieldValues(fieldValues: java.util.List[FootballClubFieldValue[?]])(using c: Connection): java.util.List[FootballClubRow] = {
     val where: Fragment = {
       Fragment.whereAnd(
         fieldValues.stream().map(fv => fv match {
@@ -61,37 +61,37 @@ class FootballClubRepoImpl extends FootballClubRepo {
         }).toList()
       )
     }
-    interpolate"""select "id", "name" from "myschema"."football_club" ${where}""".as(FootballClubRow.`_rowParser`.all()).runUnchecked(c)
+    return interpolate"""select "id", "name" from "myschema"."football_club" ${where}""".query(FootballClubRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(id: FootballClubId)(using c: Connection): Optional[FootballClubRow] = {
+  override def selectById(id: FootballClubId)(using c: Connection): Optional[FootballClubRow] = {
     interpolate"""select "id", "name"
     from "myschema"."football_club"
-    where "id" = ${FootballClubId.pgType.encode(id)}""".as(FootballClubRow.`_rowParser`.first()).runUnchecked(c)
+    where "id" = ${FootballClubId.pgType.encode(id)}""".query(FootballClubRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(ids: Array[FootballClubId])(using c: Connection): java.util.List[FootballClubRow] = {
+  override def selectByIds(ids: Array[FootballClubId])(using c: Connection): java.util.List[FootballClubRow] = {
     interpolate"""select "id", "name"
     from "myschema"."football_club"
-    where "id" = ANY(${FootballClubId.pgTypeArray.encode(ids)})""".as(FootballClubRow.`_rowParser`.all()).runUnchecked(c)
+    where "id" = ANY(${FootballClubId.pgTypeArray.encode(ids)})""".query(FootballClubRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(ids: Array[FootballClubId])(using c: Connection): java.util.Map[FootballClubId, FootballClubRow] = {
-    val ret: java.util.Map[FootballClubId, FootballClubRow] = new HashMap()
+  override def selectByIdsTracked(ids: Array[FootballClubId])(using c: Connection): java.util.Map[FootballClubId, FootballClubRow] = {
+    val ret: HashMap[FootballClubId, FootballClubRow] = new HashMap[FootballClubId, FootballClubRow]()
     selectByIds(ids)(using c).forEach(row => ret.put(row.id, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[FootballClubFields, FootballClubRow] = UpdateBuilder.of("myschema.football_club", FootballClubFields.structure, FootballClubRow.`_rowParser`.all())
+  override def update: UpdateBuilder[FootballClubFields, FootballClubRow] = UpdateBuilder.of("myschema.football_club", FootballClubFields.structure, FootballClubRow.`_rowParser`.all())
 
-  def update(row: FootballClubRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: FootballClubRow)(using c: Connection): java.lang.Boolean = {
     val id: FootballClubId = row.id
-    interpolate"""update "myschema"."football_club"
+    return interpolate"""update "myschema"."football_club"
     set "name" = ${PgTypes.text.encode(row.name)}
     where "id" = ${FootballClubId.pgType.encode(id)}""".update().runUnchecked(c) > 0
   }
 
-  def updateFieldValues(
+  override def updateFieldValues(
     id: FootballClubId,
     fieldValues: java.util.List[FootballClubFieldValue[?]]
   )(using c: Connection): java.lang.Boolean = {
@@ -101,13 +101,13 @@ class FootballClubRepoImpl extends FootballClubRepo {
         case x: name => interpolate""""name" = ${PgTypes.text.encode(x.value)}"""
       }).toList()
     }
-    if (updates.isEmpty) false else interpolate"""update "myschema"."football_club"
-                                    ${Fragment.set(updates)}
-                                    where "id" = ${FootballClubId.pgType.encode(id)}"""
+    return if (updates.isEmpty) false else interpolate"""update "myschema"."football_club"
+                                           ${Fragment.set(updates)}
+                                           where "id" = ${FootballClubId.pgType.encode(id)}"""
       .update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: FootballClubRow)(using c: Connection): FootballClubRow = {
+  override def upsert(unsaved: FootballClubRow)(using c: Connection): FootballClubRow = {
   interpolate"""insert into "myschema"."football_club"("id", "name")
     values (${FootballClubId.pgType.encode(unsaved.id)}::int8, ${PgTypes.text.encode(unsaved.name)})
     on conflict ("id")
@@ -119,7 +119,7 @@ class FootballClubRepoImpl extends FootballClubRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[FootballClubRow])(using c: Connection): java.util.List[FootballClubRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[FootballClubRow])(using c: Connection): java.util.List[FootballClubRow] = {
     interpolate"""insert into "myschema"."football_club"("id", "name")
     values (?::int8, ?)
     on conflict ("id")
@@ -132,13 +132,13 @@ class FootballClubRepoImpl extends FootballClubRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[FootballClubRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table football_club_TEMP (like "myschema"."football_club") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy football_club_TEMP("id", "name") from stdin""", batchSize, unsaved, c, FootballClubRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "myschema"."football_club"("id", "name")
+    return interpolate"""insert into "myschema"."football_club"("id", "name")
     select * from football_club_TEMP
     on conflict ("id")
     do update set

@@ -32,11 +32,11 @@ public record TypoCircle(
   static public PgType<TypoCircle> pgType =
     PgType.of(
       "circle",
-      PgRead.castJdbcObjectTo(PGcircle.class).map(v -> new TypoCircle(new TypoPoint(v.center.x, v.center.y), v.radius)),
-      PgWrite.passObjectToJdbc().contramap((TypoCircle v) -> new PGcircle(v.center().x(), v.center().y(), v.radius())),
+      PgRead.castJdbcObjectTo(PGcircle.class).map((PGcircle v) -> new TypoCircle(new TypoPoint(v.center.x, v.center.y), v.radius)),
+      PgWrite.<PGcircle>passObjectToJdbc().contramap((TypoCircle v) -> new PGcircle(v.center().x(), v.center().y(), v.radius())),
       TypoCircle.pgText
     );
 
   static public PgType<TypoCircle[]> pgTypeArray =
-    TypoCircle.pgType.array(PgRead.castJdbcArrayTo(PGcircle.class).map(xs -> arrayMap.map(xs, v -> new TypoCircle(new TypoPoint(v.center.x, v.center.y), v.radius), TypoCircle.class)), PgWrite.<PGcircle>passObjectToJdbc().array(TypoCircle.pgType.typename().<PGcircle>as()).contramap(xs -> arrayMap.map(xs, (TypoCircle v) -> new PGcircle(v.center().x(), v.center().y(), v.radius()), PGcircle.class)));
+    TypoCircle.pgType.array(PgRead.castJdbcArrayTo(PGcircle.class).map((PGcircle[] xs) -> arrayMap.map(xs, (PGcircle v) -> new TypoCircle(new TypoPoint(v.center.x, v.center.y), v.radius), TypoCircle.class)), PgWrite.<PGcircle>passObjectToJdbc().array(TypoCircle.pgType.typename().<PGcircle>as()).contramap((TypoCircle[] xs) -> arrayMap.map(xs, (TypoCircle v) -> new PGcircle(v.center().x(), v.center().y(), v.radius()), PGcircle.class)));
 }

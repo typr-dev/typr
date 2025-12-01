@@ -16,7 +16,7 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 
 public interface SalesreasonFields {
-  static final class Impl extends Relation<SalesreasonFields, SalesreasonRow> {
+  final class Impl extends Relation<SalesreasonFields, SalesreasonRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -24,15 +24,19 @@ public interface SalesreasonFields {
     @Override
     public SalesreasonFields fields() {
       return new SalesreasonFields() {
+               @Override
                public IdField<SalesreasonId, SalesreasonRow> salesreasonid() {
                  return new IdField<SalesreasonId, SalesreasonRow>(_path, "salesreasonid", SalesreasonRow::salesreasonid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withSalesreasonid(value), SalesreasonId.pgType);
                };
+               @Override
                public Field<Name, SalesreasonRow> name() {
                  return new Field<Name, SalesreasonRow>(_path, "name", SalesreasonRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<Name, SalesreasonRow> reasontype() {
                  return new Field<Name, SalesreasonRow>(_path, "reasontype", SalesreasonRow::reasontype, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withReasontype(value), Name.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, SalesreasonRow> modifieddate() {
                  return new Field<TypoLocalDateTime, SalesreasonRow>(_path, "modifieddate", SalesreasonRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -44,6 +48,7 @@ public interface SalesreasonFields {
       return List.of(this.fields().salesreasonid(), this.fields().name(), this.fields().reasontype(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

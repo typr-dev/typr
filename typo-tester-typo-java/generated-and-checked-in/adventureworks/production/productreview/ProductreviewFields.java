@@ -22,7 +22,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface ProductreviewFields {
-  static final class Impl extends Relation<ProductreviewFields, ProductreviewRow> {
+  final class Impl extends Relation<ProductreviewFields, ProductreviewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -30,27 +30,35 @@ public interface ProductreviewFields {
     @Override
     public ProductreviewFields fields() {
       return new ProductreviewFields() {
+               @Override
                public IdField<ProductreviewId, ProductreviewRow> productreviewid() {
                  return new IdField<ProductreviewId, ProductreviewRow>(_path, "productreviewid", ProductreviewRow::productreviewid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductreviewid(value), ProductreviewId.pgType);
                };
+               @Override
                public Field<ProductId, ProductreviewRow> productid() {
                  return new Field<ProductId, ProductreviewRow>(_path, "productid", ProductreviewRow::productid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductid(value), ProductId.pgType);
                };
+               @Override
                public Field<Name, ProductreviewRow> reviewername() {
                  return new Field<Name, ProductreviewRow>(_path, "reviewername", ProductreviewRow::reviewername, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withReviewername(value), Name.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, ProductreviewRow> reviewdate() {
                  return new Field<TypoLocalDateTime, ProductreviewRow>(_path, "reviewdate", ProductreviewRow::reviewdate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withReviewdate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public Field</* max 50 chars */ String, ProductreviewRow> emailaddress() {
                  return new Field</* max 50 chars */ String, ProductreviewRow>(_path, "emailaddress", ProductreviewRow::emailaddress, Optional.empty(), Optional.empty(), (row, value) -> row.withEmailaddress(value), PgTypes.text);
                };
+               @Override
                public Field<Integer, ProductreviewRow> rating() {
                  return new Field<Integer, ProductreviewRow>(_path, "rating", ProductreviewRow::rating, Optional.empty(), Optional.of("int4"), (row, value) -> row.withRating(value), PgTypes.int4);
                };
+               @Override
                public OptField</* max 3850 chars */ String, ProductreviewRow> comments() {
                  return new OptField</* max 3850 chars */ String, ProductreviewRow>(_path, "comments", ProductreviewRow::comments, Optional.empty(), Optional.empty(), (row, value) -> row.withComments(value), PgTypes.text);
                };
+               @Override
                public Field<TypoLocalDateTime, ProductreviewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, ProductreviewRow>(_path, "modifieddate", ProductreviewRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -62,6 +70,7 @@ public interface ProductreviewFields {
       return List.of(this.fields().productreviewid(), this.fields().productid(), this.fields().reviewername(), this.fields().reviewdate(), this.fields().emailaddress(), this.fields().rating(), this.fields().comments(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

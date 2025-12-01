@@ -11,7 +11,6 @@ import adventureworks.public.Name
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple3
 
 /** Table: production.culture
  * Lookup table containing the languages in which some AdventureWorks data is stored.
@@ -31,7 +30,7 @@ case class CultureRow(
 }
 
 object CultureRow {
-  val `_rowParser`: RowParser[CultureRow] = RowParsers.of(CultureId.pgType, Name.pgType, TypoLocalDateTime.pgType, CultureRow.apply, row => new Tuple3(row.cultureid, row.name, row.modifieddate))
+  val `_rowParser`: RowParser[CultureRow] = RowParsers.of(CultureId.pgType, Name.pgType, TypoLocalDateTime.pgType, CultureRow.apply, row => Array(row.cultureid, row.name, row.modifieddate))
 
   given pgText: PgText[CultureRow] = PgText.from(`_rowParser`)
 }

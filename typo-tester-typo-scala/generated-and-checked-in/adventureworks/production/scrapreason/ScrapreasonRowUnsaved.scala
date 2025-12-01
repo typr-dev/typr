@@ -29,13 +29,5 @@ case class ScrapreasonRowUnsaved(
 }
 
 object ScrapreasonRowUnsaved {
-  given pgText: PgText[ScrapreasonRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      Name.pgType.pgText.unsafeEncode(row.name, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using ScrapreasonId.pgType.pgText).unsafeEncode(row.scrapreasonid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[ScrapreasonRowUnsaved] = PgText.instance((row, sb) => { Name.pgType.pgText.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using ScrapreasonId.pgType.pgText).unsafeEncode(row.scrapreasonid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

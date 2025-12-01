@@ -10,11 +10,11 @@ import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class BomViewRepoImpl extends BomViewRepo {
-  def select: SelectBuilder[BomViewFields, BomViewRow] = SelectBuilder.of("pr.bom", BomViewFields.structure, BomViewRow.`_rowParser`)
+  override def select: SelectBuilder[BomViewFields, BomViewRow] = SelectBuilder.of("pr.bom", BomViewFields.structure, BomViewRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[BomViewRow] = {
+  override def selectAll(using c: Connection): java.util.List[BomViewRow] = {
     interpolate"""select "id", "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text
     from "pr"."bom"
-    """.as(BomViewRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(BomViewRow.`_rowParser`.all()).runUnchecked(c)
   }
 }

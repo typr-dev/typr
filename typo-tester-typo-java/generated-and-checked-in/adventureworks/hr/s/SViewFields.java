@@ -17,7 +17,7 @@ import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 
 public interface SViewFields {
-  static final class Impl extends Relation<SViewFields, SViewRow> {
+  final class Impl extends Relation<SViewFields, SViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -25,21 +25,27 @@ public interface SViewFields {
     @Override
     public SViewFields fields() {
       return new SViewFields() {
+               @Override
                public Field<ShiftId, SViewRow> id() {
                  return new Field<ShiftId, SViewRow>(_path, "id", SViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ShiftId.pgType);
                };
+               @Override
                public Field<ShiftId, SViewRow> shiftid() {
                  return new Field<ShiftId, SViewRow>(_path, "shiftid", SViewRow::shiftid, Optional.empty(), Optional.empty(), (row, value) -> row.withShiftid(value), ShiftId.pgType);
                };
+               @Override
                public Field<Name, SViewRow> name() {
                  return new Field<Name, SViewRow>(_path, "name", SViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<TypoLocalTime, SViewRow> starttime() {
                  return new Field<TypoLocalTime, SViewRow>(_path, "starttime", SViewRow::starttime, Optional.of("text"), Optional.empty(), (row, value) -> row.withStarttime(value), TypoLocalTime.pgType);
                };
+               @Override
                public Field<TypoLocalTime, SViewRow> endtime() {
                  return new Field<TypoLocalTime, SViewRow>(_path, "endtime", SViewRow::endtime, Optional.of("text"), Optional.empty(), (row, value) -> row.withEndtime(value), TypoLocalTime.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, SViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, SViewRow>(_path, "modifieddate", SViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -51,6 +57,7 @@ public interface SViewFields {
       return List.of(this.fields().id(), this.fields().shiftid(), this.fields().name(), this.fields().starttime(), this.fields().endtime(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

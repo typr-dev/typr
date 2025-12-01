@@ -10,12 +10,10 @@ import doobie.free.connection.ConnectionIO
 import doobie.syntax.SqlInterpolator.SingleFragment.fromWrite
 import doobie.util.Write
 import doobie.util.meta.Meta
-import org.springframework.stereotype.Repository
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class UpdatePersonSqlRepoImpl extends UpdatePersonSqlRepo {
-  def apply(
+  override def apply(
     suffix: String,
     cutoff: Option[TypoLocalDateTime]
   ): ConnectionIO[Int] = {

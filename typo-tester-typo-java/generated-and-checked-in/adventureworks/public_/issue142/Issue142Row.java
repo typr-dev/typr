@@ -8,7 +8,6 @@ package adventureworks.public_.issue142;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple1;
 
 /** Table: public.issue142
   * Primary key: tabellkode
@@ -18,7 +17,7 @@ public record Issue142Row(Issue142Id tabellkode) {
     return new Issue142Row(tabellkode);
   };
 
-  static RowParser<Issue142Row> _rowParser = RowParsers.of(Issue142Id.pgType, Issue142Row::new, row -> new Tuple1<>(row.tabellkode()));;
+  static RowParser<Issue142Row> _rowParser = RowParsers.of(Issue142Id.pgType, Issue142Row::new, row -> new Object[]{row.tabellkode()});;
 
   static public PgText<Issue142Row> pgText =
     PgText.from(_rowParser);

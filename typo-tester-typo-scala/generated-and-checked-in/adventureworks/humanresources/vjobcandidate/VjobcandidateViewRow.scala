@@ -8,11 +8,11 @@ package adventureworks.humanresources.vjobcandidate
 import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.humanresources.jobcandidate.JobcandidateId
 import adventureworks.person.businessentity.BusinessentityId
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple16
 
 /** View: humanresources.vjobcandidate */
 case class VjobcandidateViewRow(
@@ -20,42 +20,23 @@ case class VjobcandidateViewRow(
   jobcandidateid: JobcandidateId,
   /** Points to [[adventureworks.humanresources.jobcandidate.JobcandidateRow.businessentityid]] */
   businessentityid: Optional[BusinessentityId],
-  namePrefix: /* nullability unknown */ Optional[/* max 30 chars */ String],
-  nameFirst: /* nullability unknown */ Optional[/* max 30 chars */ String],
-  nameMiddle: /* nullability unknown */ Optional[/* max 30 chars */ String],
-  nameLast: /* nullability unknown */ Optional[/* max 30 chars */ String],
-  nameSuffix: /* nullability unknown */ Optional[/* max 30 chars */ String],
-  skills: /* nullability unknown */ Optional[String],
-  addrType: /* nullability unknown */ Optional[/* max 30 chars */ String],
-  addrLocCountryRegion: /* nullability unknown */ Optional[/* max 100 chars */ String],
-  addrLocState: /* nullability unknown */ Optional[/* max 100 chars */ String],
-  addrLocCity: /* nullability unknown */ Optional[/* max 100 chars */ String],
-  addrPostalCode: /* nullability unknown */ Optional[/* max 20 chars */ String],
-  eMail: /* nullability unknown */ Optional[String],
-  webSite: /* nullability unknown */ Optional[String],
+  @JsonProperty("Name.Prefix") namePrefix: /* nullability unknown */ Optional[/* max 30 chars */ String],
+  @JsonProperty("Name.First") nameFirst: /* nullability unknown */ Optional[/* max 30 chars */ String],
+  @JsonProperty("Name.Middle") nameMiddle: /* nullability unknown */ Optional[/* max 30 chars */ String],
+  @JsonProperty("Name.Last") nameLast: /* nullability unknown */ Optional[/* max 30 chars */ String],
+  @JsonProperty("Name.Suffix") nameSuffix: /* nullability unknown */ Optional[/* max 30 chars */ String],
+  @JsonProperty("Skills") skills: /* nullability unknown */ Optional[String],
+  @JsonProperty("Addr.Type") addrType: /* nullability unknown */ Optional[/* max 30 chars */ String],
+  @JsonProperty("Addr.Loc.CountryRegion") addrLocCountryRegion: /* nullability unknown */ Optional[/* max 100 chars */ String],
+  @JsonProperty("Addr.Loc.State") addrLocState: /* nullability unknown */ Optional[/* max 100 chars */ String],
+  @JsonProperty("Addr.Loc.City") addrLocCity: /* nullability unknown */ Optional[/* max 100 chars */ String],
+  @JsonProperty("Addr.PostalCode") addrPostalCode: /* nullability unknown */ Optional[/* max 20 chars */ String],
+  @JsonProperty("EMail") eMail: /* nullability unknown */ Optional[String],
+  @JsonProperty("WebSite") webSite: /* nullability unknown */ Optional[String],
   /** Points to [[adventureworks.humanresources.jobcandidate.JobcandidateRow.modifieddate]] */
   modifieddate: TypoLocalDateTime
 )
 
 object VjobcandidateViewRow {
-  val `_rowParser`: RowParser[VjobcandidateViewRow] = {
-    RowParsers.of(JobcandidateId.pgType, BusinessentityId.pgType.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), TypoLocalDateTime.pgType, VjobcandidateViewRow.apply, row => new Tuple16(
-      row.jobcandidateid,
-      row.businessentityid,
-      row.namePrefix,
-      row.nameFirst,
-      row.nameMiddle,
-      row.nameLast,
-      row.nameSuffix,
-      row.skills,
-      row.addrType,
-      row.addrLocCountryRegion,
-      row.addrLocState,
-      row.addrLocCity,
-      row.addrPostalCode,
-      row.eMail,
-      row.webSite,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[VjobcandidateViewRow] = RowParsers.of(JobcandidateId.pgType, BusinessentityId.pgType.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), TypoLocalDateTime.pgType, VjobcandidateViewRow.apply, row => Array(row.jobcandidateid, row.businessentityid, row.namePrefix, row.nameFirst, row.nameMiddle, row.nameLast, row.nameSuffix, row.skills, row.addrType, row.addrLocCountryRegion, row.addrLocState, row.addrLocCity, row.addrPostalCode, row.eMail, row.webSite, row.modifieddate))
 }

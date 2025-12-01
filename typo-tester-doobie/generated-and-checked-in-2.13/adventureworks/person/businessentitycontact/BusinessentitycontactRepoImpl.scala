@@ -24,11 +24,11 @@ import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class BusinessentitycontactRepoImpl extends BusinessentitycontactRepo {
-  def delete: DeleteBuilder[BusinessentitycontactFields, BusinessentitycontactRow] = DeleteBuilder.of(""""person"."businessentitycontact"""", BusinessentitycontactFields.structure, BusinessentitycontactRow.read)
+  override def delete: DeleteBuilder[BusinessentitycontactFields, BusinessentitycontactRow] = DeleteBuilder.of(""""person"."businessentitycontact"""", BusinessentitycontactFields.structure, BusinessentitycontactRow.read)
 
-  def deleteById(compositeId: BusinessentitycontactId): ConnectionIO[Boolean] = sql"""delete from "person"."businessentitycontact" where "businessentityid" = ${fromWrite(compositeId.businessentityid)(new Write.Single(BusinessentityId.put))} AND "personid" = ${fromWrite(compositeId.personid)(new Write.Single(BusinessentityId.put))} AND "contacttypeid" = ${fromWrite(compositeId.contacttypeid)(new Write.Single(ContacttypeId.put))}""".update.run.map(_ > 0)
+  override def deleteById(compositeId: BusinessentitycontactId): ConnectionIO[Boolean] = sql"""delete from "person"."businessentitycontact" where "businessentityid" = ${fromWrite(compositeId.businessentityid)(new Write.Single(BusinessentityId.put))} AND "personid" = ${fromWrite(compositeId.personid)(new Write.Single(BusinessentityId.put))} AND "contacttypeid" = ${fromWrite(compositeId.contacttypeid)(new Write.Single(ContacttypeId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(compositeIds: Array[BusinessentitycontactId]): ConnectionIO[Int] = {
+  override def deleteByIds(compositeIds: Array[BusinessentitycontactId]): ConnectionIO[Int] = {
     val businessentityid = compositeIds.map(_.businessentityid)
     val personid = compositeIds.map(_.personid)
     val contacttypeid = compositeIds.map(_.contacttypeid)
@@ -39,14 +39,14 @@ class BusinessentitycontactRepoImpl extends BusinessentitycontactRepo {
     """.update.run
   }
 
-  def insert(unsaved: BusinessentitycontactRow): ConnectionIO[BusinessentitycontactRow] = {
+  override def insert(unsaved: BusinessentitycontactRow): ConnectionIO[BusinessentitycontactRow] = {
     sql"""insert into "person"."businessentitycontact"("businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate")
     values (${fromWrite(unsaved.businessentityid)(new Write.Single(BusinessentityId.put))}::int4, ${fromWrite(unsaved.personid)(new Write.Single(BusinessentityId.put))}::int4, ${fromWrite(unsaved.contacttypeid)(new Write.Single(ContacttypeId.put))}::int4, ${fromWrite(unsaved.rowguid)(new Write.Single(TypoUUID.put))}::uuid, ${fromWrite(unsaved.modifieddate)(new Write.Single(TypoLocalDateTime.put))}::timestamp)
     returning "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text
     """.query(BusinessentitycontactRow.read).unique
   }
 
-  def insert(unsaved: BusinessentitycontactRowUnsaved): ConnectionIO[BusinessentitycontactRow] = {
+  override def insert(unsaved: BusinessentitycontactRowUnsaved): ConnectionIO[BusinessentitycontactRow] = {
     val fs = List(
       Some((Fragment.const0(s""""businessentityid""""), fr"${fromWrite(unsaved.businessentityid)(new Write.Single(BusinessentityId.put))}::int4")),
       Some((Fragment.const0(s""""personid""""), fr"${fromWrite(unsaved.personid)(new Write.Single(BusinessentityId.put))}::int4")),
@@ -74,24 +74,24 @@ class BusinessentitycontactRepoImpl extends BusinessentitycontactRepo {
     q.query(BusinessentitycontactRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, BusinessentitycontactRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "person"."businessentitycontact"("businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate") FROM STDIN""").copyIn(unsaved, batchSize)(BusinessentitycontactRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, BusinessentitycontactRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "person"."businessentitycontact"("businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(BusinessentitycontactRowUnsaved.pgText)
 
-  def select: SelectBuilder[BusinessentitycontactFields, BusinessentitycontactRow] = SelectBuilder.of(""""person"."businessentitycontact"""", BusinessentitycontactFields.structure, BusinessentitycontactRow.read)
+  override def select: SelectBuilder[BusinessentitycontactFields, BusinessentitycontactRow] = SelectBuilder.of(""""person"."businessentitycontact"""", BusinessentitycontactFields.structure, BusinessentitycontactRow.read)
 
-  def selectAll: Stream[ConnectionIO, BusinessentitycontactRow] = sql"""select "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text from "person"."businessentitycontact"""".query(BusinessentitycontactRow.read).stream
+  override def selectAll: Stream[ConnectionIO, BusinessentitycontactRow] = sql"""select "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text from "person"."businessentitycontact"""".query(BusinessentitycontactRow.read).stream
 
-  def selectById(compositeId: BusinessentitycontactId): ConnectionIO[Option[BusinessentitycontactRow]] = sql"""select "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text from "person"."businessentitycontact" where "businessentityid" = ${fromWrite(compositeId.businessentityid)(new Write.Single(BusinessentityId.put))} AND "personid" = ${fromWrite(compositeId.personid)(new Write.Single(BusinessentityId.put))} AND "contacttypeid" = ${fromWrite(compositeId.contacttypeid)(new Write.Single(ContacttypeId.put))}""".query(BusinessentitycontactRow.read).option
+  override def selectById(compositeId: BusinessentitycontactId): ConnectionIO[Option[BusinessentitycontactRow]] = sql"""select "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text from "person"."businessentitycontact" where "businessentityid" = ${fromWrite(compositeId.businessentityid)(new Write.Single(BusinessentityId.put))} AND "personid" = ${fromWrite(compositeId.personid)(new Write.Single(BusinessentityId.put))} AND "contacttypeid" = ${fromWrite(compositeId.contacttypeid)(new Write.Single(ContacttypeId.put))}""".query(BusinessentitycontactRow.read).option
 
-  def selectByIds(compositeIds: Array[BusinessentitycontactId]): Stream[ConnectionIO, BusinessentitycontactRow] = {
+  override def selectByIds(compositeIds: Array[BusinessentitycontactId]): Stream[ConnectionIO, BusinessentitycontactRow] = {
     val businessentityid = compositeIds.map(_.businessentityid)
     val personid = compositeIds.map(_.personid)
     val contacttypeid = compositeIds.map(_.contacttypeid)
@@ -102,16 +102,16 @@ class BusinessentitycontactRepoImpl extends BusinessentitycontactRepo {
     """.query(BusinessentitycontactRow.read).stream
   }
 
-  def selectByIdsTracked(compositeIds: Array[BusinessentitycontactId]): ConnectionIO[Map[BusinessentitycontactId, BusinessentitycontactRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[BusinessentitycontactId]): ConnectionIO[Map[BusinessentitycontactId, BusinessentitycontactRow]] = {
     selectByIds(compositeIds).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[BusinessentitycontactFields, BusinessentitycontactRow] = UpdateBuilder.of(""""person"."businessentitycontact"""", BusinessentitycontactFields.structure, BusinessentitycontactRow.read)
+  override def update: UpdateBuilder[BusinessentitycontactFields, BusinessentitycontactRow] = UpdateBuilder.of(""""person"."businessentitycontact"""", BusinessentitycontactFields.structure, BusinessentitycontactRow.read)
 
-  def update(row: BusinessentitycontactRow): ConnectionIO[Option[BusinessentitycontactRow]] = {
+  override def update(row: BusinessentitycontactRow): ConnectionIO[Option[BusinessentitycontactRow]] = {
     val compositeId = row.compositeId
     sql"""update "person"."businessentitycontact"
     set "rowguid" = ${fromWrite(row.rowguid)(new Write.Single(TypoUUID.put))}::uuid,
@@ -120,7 +120,7 @@ class BusinessentitycontactRepoImpl extends BusinessentitycontactRepo {
     returning "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text""".query(BusinessentitycontactRow.read).option
   }
 
-  def upsert(unsaved: BusinessentitycontactRow): ConnectionIO[BusinessentitycontactRow] = {
+  override def upsert(unsaved: BusinessentitycontactRow): ConnectionIO[BusinessentitycontactRow] = {
     sql"""insert into "person"."businessentitycontact"("businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate")
     values (
       ${fromWrite(unsaved.businessentityid)(new Write.Single(BusinessentityId.put))}::int4,
@@ -137,7 +137,7 @@ class BusinessentitycontactRepoImpl extends BusinessentitycontactRepo {
     """.query(BusinessentitycontactRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[BusinessentitycontactRow]): Stream[ConnectionIO, BusinessentitycontactRow] = {
+  override def upsertBatch(unsaved: List[BusinessentitycontactRow]): Stream[ConnectionIO, BusinessentitycontactRow] = {
     Update[BusinessentitycontactRow](
       s"""insert into "person"."businessentitycontact"("businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate")
       values (?::int4,?::int4,?::int4,?::uuid,?::timestamp)
@@ -151,7 +151,7 @@ class BusinessentitycontactRepoImpl extends BusinessentitycontactRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, BusinessentitycontactRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

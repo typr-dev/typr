@@ -61,7 +61,7 @@ abstract class TypeMapperJvm(lang: Lang, typeOverride: TypeOverride, nullability
       case jvm.Type.TApply(other, targs)                 => jvm.Type.TApply(stripOptionAndArray(other), targs.map(stripOptionAndArray))
       case jvm.Type.UserDefined(underlying)              => jvm.Type.UserDefined(stripOptionAndArray(underlying))
       case tpe @ (
-            jvm.Type.Abstract(_) | jvm.Type.Wildcard | jvm.Type.Qualified(_) | jvm.Type.Function0(_) | jvm.Type.Function1(_, _) | jvm.Type.Function2(_, _, _) | jvm.Type.Void
+            jvm.Type.Abstract(_) | jvm.Type.Wildcard | jvm.Type.Qualified(_) | jvm.Type.Function0(_) | jvm.Type.Function1(_, _) | jvm.Type.Function2(_, _, _) | jvm.Type.Void | jvm.Type.Primitive(_)
           ) =>
         tpe
     }

@@ -24,7 +24,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple25
 
 /** Table: sales.salesorderheader
  * General sales order information.
@@ -169,35 +168,7 @@ case class SalesorderheaderRow(
 }
 
 object SalesorderheaderRow {
-  val `_rowParser`: RowParser[SalesorderheaderRow] = {
-    RowParsers.of(SalesorderheaderId.pgType, TypoShort.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoShort.pgType, Flag.pgType, OrderNumber.pgType.opt(), AccountNumber.pgType.opt(), CustomerId.pgType, BusinessentityId.pgType.opt(), SalesterritoryId.pgType.opt(), AddressId.pgType, AddressId.pgType, ShipmethodId.pgType, CustomCreditcardId.pgType.opt(), PgTypes.text.opt(), CurrencyrateId.pgType.opt(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric.opt(), PgTypes.text.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SalesorderheaderRow.apply, row => new Tuple25(
-      row.salesorderid,
-      row.revisionnumber,
-      row.orderdate,
-      row.duedate,
-      row.shipdate,
-      row.status,
-      row.onlineorderflag,
-      row.purchaseordernumber,
-      row.accountnumber,
-      row.customerid,
-      row.salespersonid,
-      row.territoryid,
-      row.billtoaddressid,
-      row.shiptoaddressid,
-      row.shipmethodid,
-      row.creditcardid,
-      row.creditcardapprovalcode,
-      row.currencyrateid,
-      row.subtotal,
-      row.taxamt,
-      row.freight,
-      row.totaldue,
-      row.comment,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[SalesorderheaderRow] = RowParsers.of(SalesorderheaderId.pgType, TypoShort.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoShort.pgType, Flag.pgType, OrderNumber.pgType.opt(), AccountNumber.pgType.opt(), CustomerId.pgType, BusinessentityId.pgType.opt(), SalesterritoryId.pgType.opt(), AddressId.pgType, AddressId.pgType, ShipmethodId.pgType, CustomCreditcardId.pgType.opt(), PgTypes.text.opt(), CurrencyrateId.pgType.opt(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric.opt(), PgTypes.text.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SalesorderheaderRow.apply, row => Array(row.salesorderid, row.revisionnumber, row.orderdate, row.duedate, row.shipdate, row.status, row.onlineorderflag, row.purchaseordernumber, row.accountnumber, row.customerid, row.salespersonid, row.territoryid, row.billtoaddressid, row.shiptoaddressid, row.shipmethodid, row.creditcardid, row.creditcardapprovalcode, row.currencyrateid, row.subtotal, row.taxamt, row.freight, row.totaldue, row.comment, row.rowguid, row.modifieddate))
 
   given pgText: PgText[SalesorderheaderRow] = PgText.from(`_rowParser`)
 }

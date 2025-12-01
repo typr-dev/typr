@@ -17,7 +17,7 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 
 public interface AddresstypeFields {
-  static final class Impl extends Relation<AddresstypeFields, AddresstypeRow> {
+  final class Impl extends Relation<AddresstypeFields, AddresstypeRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -25,15 +25,19 @@ public interface AddresstypeFields {
     @Override
     public AddresstypeFields fields() {
       return new AddresstypeFields() {
+               @Override
                public IdField<AddresstypeId, AddresstypeRow> addresstypeid() {
                  return new IdField<AddresstypeId, AddresstypeRow>(_path, "addresstypeid", AddresstypeRow::addresstypeid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withAddresstypeid(value), AddresstypeId.pgType);
                };
+               @Override
                public Field<Name, AddresstypeRow> name() {
                  return new Field<Name, AddresstypeRow>(_path, "name", AddresstypeRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<TypoUUID, AddresstypeRow> rowguid() {
                  return new Field<TypoUUID, AddresstypeRow>(_path, "rowguid", AddresstypeRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, AddresstypeRow> modifieddate() {
                  return new Field<TypoLocalDateTime, AddresstypeRow>(_path, "modifieddate", AddresstypeRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -45,6 +49,7 @@ public interface AddresstypeFields {
       return List.of(this.fields().addresstypeid(), this.fields().name(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

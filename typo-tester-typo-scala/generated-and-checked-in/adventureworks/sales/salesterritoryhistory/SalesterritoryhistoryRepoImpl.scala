@@ -22,22 +22,22 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class SalesterritoryhistoryRepoImpl extends SalesterritoryhistoryRepo {
-  def delete: DeleteBuilder[SalesterritoryhistoryFields, SalesterritoryhistoryRow] = DeleteBuilder.of("sales.salesterritoryhistory", SalesterritoryhistoryFields.structure)
+  override def delete: DeleteBuilder[SalesterritoryhistoryFields, SalesterritoryhistoryRow] = DeleteBuilder.of("sales.salesterritoryhistory", SalesterritoryhistoryFields.structure)
 
-  def deleteById(compositeId: SalesterritoryhistoryId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."salesterritoryhistory" where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "startdate" = ${TypoLocalDateTime.pgType.encode(compositeId.startdate)} AND "territoryid" = ${SalesterritoryId.pgType.encode(compositeId.territoryid)}""".update().runUnchecked(c) > 0
+  override def deleteById(compositeId: SalesterritoryhistoryId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."salesterritoryhistory" where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "startdate" = ${TypoLocalDateTime.pgType.encode(compositeId.startdate)} AND "territoryid" = ${SalesterritoryId.pgType.encode(compositeId.territoryid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(compositeIds: Array[SalesterritoryhistoryId])(using c: Connection): Integer = {
+  override def deleteByIds(compositeIds: Array[SalesterritoryhistoryId])(using c: Connection): Integer = {
     val businessentityid: Array[BusinessentityId] = compositeIds.map(_.businessentityid)
     val startdate: Array[TypoLocalDateTime] = compositeIds.map(_.startdate)
     val territoryid: Array[SalesterritoryId] = compositeIds.map(_.territoryid)
-    interpolate"""delete
+    return interpolate"""delete
     from "sales"."salesterritoryhistory"
     where ("businessentityid", "startdate", "territoryid")
     in (select unnest(${BusinessentityId.pgTypeArray.encode(businessentityid)}::int4[]), unnest(${TypoLocalDateTime.pgTypeArray.encode(startdate)}::timestamp[]), unnest(${SalesterritoryId.pgTypeArray.encode(territoryid)}::int4[]))
     """.update().runUnchecked(c)
   }
 
-  def insert(unsaved: SalesterritoryhistoryRow)(using c: Connection): SalesterritoryhistoryRow = {
+  override def insert(unsaved: SalesterritoryhistoryRow)(using c: Connection): SalesterritoryhistoryRow = {
   interpolate"""insert into "sales"."salesterritoryhistory"("businessentityid", "territoryid", "startdate", "enddate", "rowguid", "modifieddate")
     values (${BusinessentityId.pgType.encode(unsaved.businessentityid)}::int4, ${SalesterritoryId.pgType.encode(unsaved.territoryid)}::int4, ${TypoLocalDateTime.pgType.encode(unsaved.startdate)}::timestamp, ${TypoLocalDateTime.pgType.opt().encode(unsaved.enddate)}::timestamp, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "businessentityid", "territoryid", "startdate"::text, "enddate"::text, "rowguid", "modifieddate"::text
@@ -45,9 +45,9 @@ class SalesterritoryhistoryRepoImpl extends SalesterritoryhistoryRepo {
     .updateReturning(SalesterritoryhistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: SalesterritoryhistoryRowUnsaved)(using c: Connection): SalesterritoryhistoryRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: SalesterritoryhistoryRowUnsaved)(using c: Connection): SalesterritoryhistoryRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn
     values.add(interpolate"${BusinessentityId.pgType.encode(unsaved.businessentityid)}::int4"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""territoryid"""")): @scala.annotation.nowarn
@@ -57,18 +57,12 @@ class SalesterritoryhistoryRepoImpl extends SalesterritoryhistoryRepo {
     columns.add(Fragment.lit(""""enddate"""")): @scala.annotation.nowarn
     values.add(interpolate"${TypoLocalDateTime.pgType.opt().encode(unsaved.enddate)}::timestamp"): @scala.annotation.nowarn
     unsaved.rowguid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "sales"."salesterritoryhistory"(${Fragment.comma(columns)})
@@ -76,63 +70,63 @@ class SalesterritoryhistoryRepoImpl extends SalesterritoryhistoryRepo {
       returning "businessentityid", "territoryid", "startdate"::text, "enddate"::text, "rowguid", "modifieddate"::text
       """
     }
-    q.updateReturning(SalesterritoryhistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(SalesterritoryhistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[SalesterritoryhistoryRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."salesterritoryhistory"("businessentityid", "territoryid", "startdate", "enddate", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, c, SalesterritoryhistoryRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[SalesterritoryhistoryRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."salesterritoryhistory"("businessentityid", "territoryid", "startdate", "enddate", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, SalesterritoryhistoryRowUnsaved.pgText)
 
-  def select: SelectBuilder[SalesterritoryhistoryFields, SalesterritoryhistoryRow] = SelectBuilder.of("sales.salesterritoryhistory", SalesterritoryhistoryFields.structure, SalesterritoryhistoryRow.`_rowParser`)
+  override def select: SelectBuilder[SalesterritoryhistoryFields, SalesterritoryhistoryRow] = SelectBuilder.of("sales.salesterritoryhistory", SalesterritoryhistoryFields.structure, SalesterritoryhistoryRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[SalesterritoryhistoryRow] = {
+  override def selectAll(using c: Connection): java.util.List[SalesterritoryhistoryRow] = {
     interpolate"""select "businessentityid", "territoryid", "startdate"::text, "enddate"::text, "rowguid", "modifieddate"::text
     from "sales"."salesterritoryhistory"
-    """.as(SalesterritoryhistoryRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(SalesterritoryhistoryRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(compositeId: SalesterritoryhistoryId)(using c: Connection): Optional[SalesterritoryhistoryRow] = {
+  override def selectById(compositeId: SalesterritoryhistoryId)(using c: Connection): Optional[SalesterritoryhistoryRow] = {
     interpolate"""select "businessentityid", "territoryid", "startdate"::text, "enddate"::text, "rowguid", "modifieddate"::text
     from "sales"."salesterritoryhistory"
-    where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "startdate" = ${TypoLocalDateTime.pgType.encode(compositeId.startdate)} AND "territoryid" = ${SalesterritoryId.pgType.encode(compositeId.territoryid)}""".as(SalesterritoryhistoryRow.`_rowParser`.first()).runUnchecked(c)
+    where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "startdate" = ${TypoLocalDateTime.pgType.encode(compositeId.startdate)} AND "territoryid" = ${SalesterritoryId.pgType.encode(compositeId.territoryid)}""".query(SalesterritoryhistoryRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(compositeIds: Array[SalesterritoryhistoryId])(using c: Connection): java.util.List[SalesterritoryhistoryRow] = {
+  override def selectByIds(compositeIds: Array[SalesterritoryhistoryId])(using c: Connection): java.util.List[SalesterritoryhistoryRow] = {
     val businessentityid: Array[BusinessentityId] = compositeIds.map(_.businessentityid)
     val startdate: Array[TypoLocalDateTime] = compositeIds.map(_.startdate)
     val territoryid: Array[SalesterritoryId] = compositeIds.map(_.territoryid)
-    interpolate"""select "businessentityid", "territoryid", "startdate"::text, "enddate"::text, "rowguid", "modifieddate"::text
+    return interpolate"""select "businessentityid", "territoryid", "startdate"::text, "enddate"::text, "rowguid", "modifieddate"::text
     from "sales"."salesterritoryhistory"
     where ("businessentityid", "startdate", "territoryid")
     in (select unnest(${BusinessentityId.pgTypeArray.encode(businessentityid)}::int4[]), unnest(${TypoLocalDateTime.pgTypeArray.encode(startdate)}::timestamp[]), unnest(${SalesterritoryId.pgTypeArray.encode(territoryid)}::int4[]))
-    """.as(SalesterritoryhistoryRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(SalesterritoryhistoryRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(compositeIds: Array[SalesterritoryhistoryId])(using c: Connection): java.util.Map[SalesterritoryhistoryId, SalesterritoryhistoryRow] = {
-    val ret: java.util.Map[SalesterritoryhistoryId, SalesterritoryhistoryRow] = new HashMap()
+  override def selectByIdsTracked(compositeIds: Array[SalesterritoryhistoryId])(using c: Connection): java.util.Map[SalesterritoryhistoryId, SalesterritoryhistoryRow] = {
+    val ret: HashMap[SalesterritoryhistoryId, SalesterritoryhistoryRow] = new HashMap[SalesterritoryhistoryId, SalesterritoryhistoryRow]()
     selectByIds(compositeIds)(using c).forEach(row => ret.put(row.compositeId, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[SalesterritoryhistoryFields, SalesterritoryhistoryRow] = UpdateBuilder.of("sales.salesterritoryhistory", SalesterritoryhistoryFields.structure, SalesterritoryhistoryRow.`_rowParser`.all())
+  override def update: UpdateBuilder[SalesterritoryhistoryFields, SalesterritoryhistoryRow] = UpdateBuilder.of("sales.salesterritoryhistory", SalesterritoryhistoryFields.structure, SalesterritoryhistoryRow.`_rowParser`.all())
 
-  def update(row: SalesterritoryhistoryRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: SalesterritoryhistoryRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: SalesterritoryhistoryId = row.compositeId
-    interpolate"""update "sales"."salesterritoryhistory"
+    return interpolate"""update "sales"."salesterritoryhistory"
     set "enddate" = ${TypoLocalDateTime.pgType.opt().encode(row.enddate)}::timestamp,
     "rowguid" = ${TypoUUID.pgType.encode(row.rowguid)}::uuid,
     "modifieddate" = ${TypoLocalDateTime.pgType.encode(row.modifieddate)}::timestamp
     where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "startdate" = ${TypoLocalDateTime.pgType.encode(compositeId.startdate)} AND "territoryid" = ${SalesterritoryId.pgType.encode(compositeId.territoryid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: SalesterritoryhistoryRow)(using c: Connection): SalesterritoryhistoryRow = {
+  override def upsert(unsaved: SalesterritoryhistoryRow)(using c: Connection): SalesterritoryhistoryRow = {
   interpolate"""insert into "sales"."salesterritoryhistory"("businessentityid", "territoryid", "startdate", "enddate", "rowguid", "modifieddate")
     values (${BusinessentityId.pgType.encode(unsaved.businessentityid)}::int4, ${SalesterritoryId.pgType.encode(unsaved.territoryid)}::int4, ${TypoLocalDateTime.pgType.encode(unsaved.startdate)}::timestamp, ${TypoLocalDateTime.pgType.opt().encode(unsaved.enddate)}::timestamp, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("businessentityid", "startdate", "territoryid")
@@ -146,7 +140,7 @@ class SalesterritoryhistoryRepoImpl extends SalesterritoryhistoryRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[SalesterritoryhistoryRow])(using c: Connection): java.util.List[SalesterritoryhistoryRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[SalesterritoryhistoryRow])(using c: Connection): java.util.List[SalesterritoryhistoryRow] = {
     interpolate"""insert into "sales"."salesterritoryhistory"("businessentityid", "territoryid", "startdate", "enddate", "rowguid", "modifieddate")
     values (?::int4, ?::int4, ?::timestamp, ?::timestamp, ?::uuid, ?::timestamp)
     on conflict ("businessentityid", "startdate", "territoryid")
@@ -161,13 +155,13 @@ class SalesterritoryhistoryRepoImpl extends SalesterritoryhistoryRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[SalesterritoryhistoryRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table salesterritoryhistory_TEMP (like "sales"."salesterritoryhistory") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy salesterritoryhistory_TEMP("businessentityid", "territoryid", "startdate", "enddate", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, c, SalesterritoryhistoryRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "sales"."salesterritoryhistory"("businessentityid", "territoryid", "startdate", "enddate", "rowguid", "modifieddate")
+    return interpolate"""insert into "sales"."salesterritoryhistory"("businessentityid", "territoryid", "startdate", "enddate", "rowguid", "modifieddate")
     select * from salesterritoryhistory_TEMP
     on conflict ("businessentityid", "startdate", "territoryid")
     do update set

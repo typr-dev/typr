@@ -27,18 +27,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class AddressRepoImpl extends AddressRepo {
-  def delete: DeleteBuilder[AddressFields, AddressRow] = DeleteBuilder.of(""""person"."address"""", AddressFields.structure, AddressRow.rowParser(1).*)
+  override def delete: DeleteBuilder[AddressFields, AddressRow] = DeleteBuilder.of(""""person"."address"""", AddressFields.structure, AddressRow.rowParser(1).*)
 
-  def deleteById(addressid: AddressId)(implicit c: Connection): Boolean = SQL"""delete from "person"."address" where "addressid" = ${ParameterValue(addressid, null, AddressId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(addressid: AddressId)(implicit c: Connection): Boolean = SQL"""delete from "person"."address" where "addressid" = ${ParameterValue(addressid, null, AddressId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(addressids: Array[AddressId])(implicit c: Connection): Int = {
+  override def deleteByIds(addressids: Array[AddressId])(implicit c: Connection): Int = {
     SQL"""delete
     from "person"."address"
     where "addressid" = ANY(${ParameterValue(addressids, null, AddressId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: AddressRow)(implicit c: Connection): AddressRow = {
+  override def insert(unsaved: AddressRow)(implicit c: Connection): AddressRow = {
   SQL"""insert into "person"."address"("addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate")
     values (${ParameterValue(unsaved.addressid, null, AddressId.toStatement)}::int4, ${ParameterValue(unsaved.addressline1, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.addressline2, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}, ${ParameterValue(unsaved.city, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.stateprovinceid, null, StateprovinceId.toStatement)}::int4, ${ParameterValue(unsaved.postalcode, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.spatiallocation, null, ToStatement.optionToStatement(TypoBytea.toStatement, TypoBytea.parameterMetadata))}::bytea, ${ParameterValue(unsaved.rowguid, null, TypoUUID.toStatement)}::uuid, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate"::text
@@ -46,7 +46,7 @@ class AddressRepoImpl extends AddressRepo {
     .executeInsert(AddressRow.rowParser(1).single)
   }
 
-  def insert(unsaved: AddressRowUnsaved)(implicit c: Connection): AddressRow = {
+  override def insert(unsaved: AddressRowUnsaved)(implicit c: Connection): AddressRow = {
     val namedParameters = List(
       Some((NamedParameter("addressline1", ParameterValue(unsaved.addressline1, null, ToStatement.stringToStatement)), "")),
       Some((NamedParameter("addressline2", ParameterValue(unsaved.addressline2, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))), "")),
@@ -83,47 +83,47 @@ class AddressRepoImpl extends AddressRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[AddressRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "person"."address"("addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved)(AddressRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[AddressRowUnsaved],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "person"."address"("addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "addressid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(AddressRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[AddressFields, AddressRow] = SelectBuilder.of(""""person"."address"""", AddressFields.structure, AddressRow.rowParser)
+  override def select: SelectBuilder[AddressFields, AddressRow] = SelectBuilder.of(""""person"."address"""", AddressFields.structure, AddressRow.rowParser)
 
-  def selectAll(implicit c: Connection): List[AddressRow] = {
+  override def selectAll(implicit c: Connection): List[AddressRow] = {
     SQL"""select "addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate"::text
     from "person"."address"
     """.as(AddressRow.rowParser(1).*)
   }
 
-  def selectById(addressid: AddressId)(implicit c: Connection): Option[AddressRow] = {
+  override def selectById(addressid: AddressId)(implicit c: Connection): Option[AddressRow] = {
     SQL"""select "addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate"::text
     from "person"."address"
     where "addressid" = ${ParameterValue(addressid, null, AddressId.toStatement)}
     """.as(AddressRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(addressids: Array[AddressId])(implicit c: Connection): List[AddressRow] = {
+  override def selectByIds(addressids: Array[AddressId])(implicit c: Connection): List[AddressRow] = {
     SQL"""select "addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate"::text
     from "person"."address"
     where "addressid" = ANY(${ParameterValue(addressids, null, AddressId.arrayToStatement)})
     """.as(AddressRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(addressids: Array[AddressId])(implicit c: Connection): Map[AddressId, AddressRow] = {
+  override def selectByIdsTracked(addressids: Array[AddressId])(implicit c: Connection): Map[AddressId, AddressRow] = {
     val byId = selectByIds(addressids).view.map(x => (x.addressid, x)).toMap
     addressids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[AddressFields, AddressRow] = UpdateBuilder.of(""""person"."address"""", AddressFields.structure, AddressRow.rowParser(1).*)
+  override def update: UpdateBuilder[AddressFields, AddressRow] = UpdateBuilder.of(""""person"."address"""", AddressFields.structure, AddressRow.rowParser(1).*)
 
-  def update(row: AddressRow)(implicit c: Connection): Option[AddressRow] = {
+  override def update(row: AddressRow)(implicit c: Connection): Option[AddressRow] = {
     val addressid = row.addressid
     SQL"""update "person"."address"
     set "addressline1" = ${ParameterValue(row.addressline1, null, ToStatement.stringToStatement)},
@@ -139,7 +139,7 @@ class AddressRepoImpl extends AddressRepo {
     """.executeInsert(AddressRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: AddressRow)(implicit c: Connection): AddressRow = {
+  override def upsert(unsaved: AddressRow)(implicit c: Connection): AddressRow = {
   SQL"""insert into "person"."address"("addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate")
     values (
       ${ParameterValue(unsaved.addressid, null, AddressId.toStatement)}::int4,
@@ -167,7 +167,7 @@ class AddressRepoImpl extends AddressRepo {
     .executeInsert(AddressRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[AddressRow])(implicit c: Connection): List[AddressRow] = {
+  override def upsertBatch(unsaved: Iterable[AddressRow])(implicit c: Connection): List[AddressRow] = {
     def toNamedParameter(row: AddressRow): List[NamedParameter] = List(
       NamedParameter("addressid", ParameterValue(row.addressid, null, AddressId.toStatement)),
       NamedParameter("addressline1", ParameterValue(row.addressline1, null, ToStatement.stringToStatement)),
@@ -179,6 +179,7 @@ class AddressRepoImpl extends AddressRepo {
       NamedParameter("rowguid", ParameterValue(row.rowguid, null, TypoUUID.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -206,7 +207,7 @@ class AddressRepoImpl extends AddressRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[AddressRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

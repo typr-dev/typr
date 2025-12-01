@@ -37,11 +37,11 @@ public record TypoLine(
   static public PgType<TypoLine> pgType =
     PgType.of(
       "line",
-      PgRead.castJdbcObjectTo(PGline.class).map(v -> new TypoLine(v.a, v.b, v.c)),
-      PgWrite.passObjectToJdbc().contramap((TypoLine v) -> new PGline(v.a(), v.b(), v.c())),
+      PgRead.castJdbcObjectTo(PGline.class).map((PGline v) -> new TypoLine(v.a, v.b, v.c)),
+      PgWrite.<PGline>passObjectToJdbc().contramap((TypoLine v) -> new PGline(v.a(), v.b(), v.c())),
       TypoLine.pgText
     );
 
   static public PgType<TypoLine[]> pgTypeArray =
-    TypoLine.pgType.array(PgRead.castJdbcArrayTo(PGline.class).map(xs -> arrayMap.map(xs, v -> new TypoLine(v.a, v.b, v.c), TypoLine.class)), PgWrite.<PGline>passObjectToJdbc().array(TypoLine.pgType.typename().<PGline>as()).contramap(xs -> arrayMap.map(xs, (TypoLine v) -> new PGline(v.a(), v.b(), v.c()), PGline.class)));
+    TypoLine.pgType.array(PgRead.castJdbcArrayTo(PGline.class).map((PGline[] xs) -> arrayMap.map(xs, (PGline v) -> new TypoLine(v.a, v.b, v.c), TypoLine.class)), PgWrite.<PGline>passObjectToJdbc().array(TypoLine.pgType.typename().<PGline>as()).contramap((TypoLine[] xs) -> arrayMap.map(xs, (TypoLine v) -> new PGline(v.a(), v.b(), v.c()), PGline.class)));
 }

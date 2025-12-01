@@ -23,20 +23,20 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class ShipmethodRepoImpl extends ShipmethodRepo {
-  def delete: DeleteBuilder[ShipmethodFields, ShipmethodRow] = DeleteBuilder.of(""""purchasing"."shipmethod"""", ShipmethodFields.structure, ShipmethodRow.jdbcDecoder)
+  override def delete: DeleteBuilder[ShipmethodFields, ShipmethodRow] = DeleteBuilder.of(""""purchasing"."shipmethod"""", ShipmethodFields.structure, ShipmethodRow.jdbcDecoder)
 
-  def deleteById(shipmethodid: ShipmethodId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "purchasing"."shipmethod" where "shipmethodid" = ${Segment.paramSegment(shipmethodid)(ShipmethodId.setter)}""".delete.map(_ > 0)
+  override def deleteById(shipmethodid: ShipmethodId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "purchasing"."shipmethod" where "shipmethodid" = ${Segment.paramSegment(shipmethodid)(ShipmethodId.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(shipmethodids: Array[ShipmethodId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "purchasing"."shipmethod" where "shipmethodid" = ANY(${Segment.paramSegment(shipmethodids)(ShipmethodId.arraySetter)})""".delete
+  override def deleteByIds(shipmethodids: Array[ShipmethodId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "purchasing"."shipmethod" where "shipmethodid" = ANY(${Segment.paramSegment(shipmethodids)(ShipmethodId.arraySetter)})""".delete
 
-  def insert(unsaved: ShipmethodRow): ZIO[ZConnection, Throwable, ShipmethodRow] = {
+  override def insert(unsaved: ShipmethodRow): ZIO[ZConnection, Throwable, ShipmethodRow] = {
     sql"""insert into "purchasing"."shipmethod"("shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate")
     values (${Segment.paramSegment(unsaved.shipmethodid)(ShipmethodId.setter)}::int4, ${Segment.paramSegment(unsaved.name)(Name.setter)}::varchar, ${Segment.paramSegment(unsaved.shipbase)(Setter.bigDecimalScalaSetter)}::numeric, ${Segment.paramSegment(unsaved.shiprate)(Setter.bigDecimalScalaSetter)}::numeric, ${Segment.paramSegment(unsaved.rowguid)(TypoUUID.setter)}::uuid, ${Segment.paramSegment(unsaved.modifieddate)(TypoLocalDateTime.setter)}::timestamp)
     returning "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text
     """.insertReturning(ShipmethodRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insert(unsaved: ShipmethodRowUnsaved): ZIO[ZConnection, Throwable, ShipmethodRow] = {
+  override def insert(unsaved: ShipmethodRowUnsaved): ZIO[ZConnection, Throwable, ShipmethodRow] = {
     val fs = List(
       Some((sql""""name"""", sql"${Segment.paramSegment(unsaved.name)(Name.setter)}::varchar")),
       unsaved.shipmethodid match {
@@ -72,35 +72,35 @@ class ShipmethodRepoImpl extends ShipmethodRepo {
     q.insertReturning(ShipmethodRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, ShipmethodRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "purchasing"."shipmethod"("shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved)(ShipmethodRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, ShipmethodRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "purchasing"."shipmethod"("name", "shipmethodid", "shipbase", "shiprate", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(ShipmethodRowUnsaved.pgText)
 
-  def select: SelectBuilder[ShipmethodFields, ShipmethodRow] = SelectBuilder.of(""""purchasing"."shipmethod"""", ShipmethodFields.structure, ShipmethodRow.jdbcDecoder)
+  override def select: SelectBuilder[ShipmethodFields, ShipmethodRow] = SelectBuilder.of(""""purchasing"."shipmethod"""", ShipmethodFields.structure, ShipmethodRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, ShipmethodRow] = sql"""select "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text from "purchasing"."shipmethod"""".query(ShipmethodRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, ShipmethodRow] = sql"""select "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text from "purchasing"."shipmethod"""".query(ShipmethodRow.jdbcDecoder).selectStream()
 
-  def selectById(shipmethodid: ShipmethodId): ZIO[ZConnection, Throwable, Option[ShipmethodRow]] = sql"""select "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text from "purchasing"."shipmethod" where "shipmethodid" = ${Segment.paramSegment(shipmethodid)(ShipmethodId.setter)}""".query(ShipmethodRow.jdbcDecoder).selectOne
+  override def selectById(shipmethodid: ShipmethodId): ZIO[ZConnection, Throwable, Option[ShipmethodRow]] = sql"""select "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text from "purchasing"."shipmethod" where "shipmethodid" = ${Segment.paramSegment(shipmethodid)(ShipmethodId.setter)}""".query(ShipmethodRow.jdbcDecoder).selectOne
 
-  def selectByIds(shipmethodids: Array[ShipmethodId]): ZStream[ZConnection, Throwable, ShipmethodRow] = sql"""select "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text from "purchasing"."shipmethod" where "shipmethodid" = ANY(${Segment.paramSegment(shipmethodids)(ShipmethodId.arraySetter)})""".query(ShipmethodRow.jdbcDecoder).selectStream()
+  override def selectByIds(shipmethodids: Array[ShipmethodId]): ZStream[ZConnection, Throwable, ShipmethodRow] = sql"""select "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text from "purchasing"."shipmethod" where "shipmethodid" = ANY(${Segment.paramSegment(shipmethodids)(ShipmethodId.arraySetter)})""".query(ShipmethodRow.jdbcDecoder).selectStream()
 
-  def selectByIdsTracked(shipmethodids: Array[ShipmethodId]): ZIO[ZConnection, Throwable, Map[ShipmethodId, ShipmethodRow]] = {
+  override def selectByIdsTracked(shipmethodids: Array[ShipmethodId]): ZIO[ZConnection, Throwable, Map[ShipmethodId, ShipmethodRow]] = {
     selectByIds(shipmethodids).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.shipmethodid, x)).toMap
       shipmethodids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[ShipmethodFields, ShipmethodRow] = UpdateBuilder.of(""""purchasing"."shipmethod"""", ShipmethodFields.structure, ShipmethodRow.jdbcDecoder)
+  override def update: UpdateBuilder[ShipmethodFields, ShipmethodRow] = UpdateBuilder.of(""""purchasing"."shipmethod"""", ShipmethodFields.structure, ShipmethodRow.jdbcDecoder)
 
-  def update(row: ShipmethodRow): ZIO[ZConnection, Throwable, Option[ShipmethodRow]] = {
+  override def update(row: ShipmethodRow): ZIO[ZConnection, Throwable, Option[ShipmethodRow]] = {
     val shipmethodid = row.shipmethodid
     sql"""update "purchasing"."shipmethod"
     set "name" = ${Segment.paramSegment(row.name)(Name.setter)}::varchar,
@@ -114,7 +114,7 @@ class ShipmethodRepoImpl extends ShipmethodRepo {
       .selectOne
   }
 
-  def upsert(unsaved: ShipmethodRow): ZIO[ZConnection, Throwable, UpdateResult[ShipmethodRow]] = {
+  override def upsert(unsaved: ShipmethodRow): ZIO[ZConnection, Throwable, UpdateResult[ShipmethodRow]] = {
     sql"""insert into "purchasing"."shipmethod"("shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate")
     values (
       ${Segment.paramSegment(unsaved.shipmethodid)(ShipmethodId.setter)}::int4,
@@ -135,7 +135,7 @@ class ShipmethodRepoImpl extends ShipmethodRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, ShipmethodRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

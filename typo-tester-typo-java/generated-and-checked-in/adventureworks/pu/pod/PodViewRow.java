@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple10;
 
 /** View: pu.pod */
 public record PodViewRow(
@@ -88,5 +87,5 @@ public record PodViewRow(
     return new PodViewRow(id, purchaseorderid, purchaseorderdetailid, duedate, orderqty, productid, unitprice, receivedqty, rejectedqty, modifieddate);
   };
 
-  static RowParser<PodViewRow> _rowParser = RowParsers.of(PgTypes.int4, PurchaseorderheaderId.pgType, PgTypes.int4, TypoLocalDateTime.pgType, TypoShort.pgType, ProductId.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, PodViewRow::new, row -> new Tuple10<>(row.id(), row.purchaseorderid(), row.purchaseorderdetailid(), row.duedate(), row.orderqty(), row.productid(), row.unitprice(), row.receivedqty(), row.rejectedqty(), row.modifieddate()));;
+  static RowParser<PodViewRow> _rowParser = RowParsers.of(PgTypes.int4, PurchaseorderheaderId.pgType, PgTypes.int4, TypoLocalDateTime.pgType, TypoShort.pgType, ProductId.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, PodViewRow::new, row -> new Object[]{row.id(), row.purchaseorderid(), row.purchaseorderdetailid(), row.duedate(), row.orderqty(), row.productid(), row.unitprice(), row.receivedqty(), row.rejectedqty(), row.modifieddate()});;
 }

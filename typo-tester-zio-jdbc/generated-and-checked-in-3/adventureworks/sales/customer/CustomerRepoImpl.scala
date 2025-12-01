@@ -24,20 +24,20 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class CustomerRepoImpl extends CustomerRepo {
-  def delete: DeleteBuilder[CustomerFields, CustomerRow] = DeleteBuilder.of(""""sales"."customer"""", CustomerFields.structure, CustomerRow.jdbcDecoder)
+  override def delete: DeleteBuilder[CustomerFields, CustomerRow] = DeleteBuilder.of(""""sales"."customer"""", CustomerFields.structure, CustomerRow.jdbcDecoder)
 
-  def deleteById(customerid: CustomerId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "sales"."customer" where "customerid" = ${Segment.paramSegment(customerid)(using CustomerId.setter)}""".delete.map(_ > 0)
+  override def deleteById(customerid: CustomerId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "sales"."customer" where "customerid" = ${Segment.paramSegment(customerid)(using CustomerId.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(customerids: Array[CustomerId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "sales"."customer" where "customerid" = ANY(${Segment.paramSegment(customerids)(using CustomerId.arraySetter)})""".delete
+  override def deleteByIds(customerids: Array[CustomerId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "sales"."customer" where "customerid" = ANY(${Segment.paramSegment(customerids)(using CustomerId.arraySetter)})""".delete
 
-  def insert(unsaved: CustomerRow): ZIO[ZConnection, Throwable, CustomerRow] = {
+  override def insert(unsaved: CustomerRow): ZIO[ZConnection, Throwable, CustomerRow] = {
     sql"""insert into "sales"."customer"("customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate")
     values (${Segment.paramSegment(unsaved.customerid)(using CustomerId.setter)}::int4, ${Segment.paramSegment(unsaved.personid)(using Setter.optionParamSetter(using BusinessentityId.setter))}::int4, ${Segment.paramSegment(unsaved.storeid)(using Setter.optionParamSetter(using BusinessentityId.setter))}::int4, ${Segment.paramSegment(unsaved.territoryid)(using Setter.optionParamSetter(using SalesterritoryId.setter))}::int4, ${Segment.paramSegment(unsaved.rowguid)(using TypoUUID.setter)}::uuid, ${Segment.paramSegment(unsaved.modifieddate)(using TypoLocalDateTime.setter)}::timestamp)
     returning "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text
     """.insertReturning(using CustomerRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insert(unsaved: CustomerRowUnsaved): ZIO[ZConnection, Throwable, CustomerRow] = {
+  override def insert(unsaved: CustomerRowUnsaved): ZIO[ZConnection, Throwable, CustomerRow] = {
     val fs = List(
       Some((sql""""personid"""", sql"${Segment.paramSegment(unsaved.personid)(using Setter.optionParamSetter(using BusinessentityId.setter))}::int4")),
       Some((sql""""storeid"""", sql"${Segment.paramSegment(unsaved.storeid)(using Setter.optionParamSetter(using BusinessentityId.setter))}::int4")),
@@ -67,35 +67,35 @@ class CustomerRepoImpl extends CustomerRepo {
     q.insertReturning(using CustomerRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, CustomerRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "sales"."customer"("customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved)(using CustomerRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, CustomerRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "sales"."customer"("personid", "storeid", "territoryid", "customerid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using CustomerRowUnsaved.pgText)
 
-  def select: SelectBuilder[CustomerFields, CustomerRow] = SelectBuilder.of(""""sales"."customer"""", CustomerFields.structure, CustomerRow.jdbcDecoder)
+  override def select: SelectBuilder[CustomerFields, CustomerRow] = SelectBuilder.of(""""sales"."customer"""", CustomerFields.structure, CustomerRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, CustomerRow] = sql"""select "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text from "sales"."customer"""".query(using CustomerRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, CustomerRow] = sql"""select "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text from "sales"."customer"""".query(using CustomerRow.jdbcDecoder).selectStream()
 
-  def selectById(customerid: CustomerId): ZIO[ZConnection, Throwable, Option[CustomerRow]] = sql"""select "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text from "sales"."customer" where "customerid" = ${Segment.paramSegment(customerid)(using CustomerId.setter)}""".query(using CustomerRow.jdbcDecoder).selectOne
+  override def selectById(customerid: CustomerId): ZIO[ZConnection, Throwable, Option[CustomerRow]] = sql"""select "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text from "sales"."customer" where "customerid" = ${Segment.paramSegment(customerid)(using CustomerId.setter)}""".query(using CustomerRow.jdbcDecoder).selectOne
 
-  def selectByIds(customerids: Array[CustomerId]): ZStream[ZConnection, Throwable, CustomerRow] = sql"""select "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text from "sales"."customer" where "customerid" = ANY(${Segment.paramSegment(customerids)(using CustomerId.arraySetter)})""".query(using CustomerRow.jdbcDecoder).selectStream()
+  override def selectByIds(customerids: Array[CustomerId]): ZStream[ZConnection, Throwable, CustomerRow] = sql"""select "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text from "sales"."customer" where "customerid" = ANY(${Segment.paramSegment(customerids)(using CustomerId.arraySetter)})""".query(using CustomerRow.jdbcDecoder).selectStream()
 
-  def selectByIdsTracked(customerids: Array[CustomerId]): ZIO[ZConnection, Throwable, Map[CustomerId, CustomerRow]] = {
+  override def selectByIdsTracked(customerids: Array[CustomerId]): ZIO[ZConnection, Throwable, Map[CustomerId, CustomerRow]] = {
     selectByIds(customerids).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.customerid, x)).toMap
       customerids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[CustomerFields, CustomerRow] = UpdateBuilder.of(""""sales"."customer"""", CustomerFields.structure, CustomerRow.jdbcDecoder)
+  override def update: UpdateBuilder[CustomerFields, CustomerRow] = UpdateBuilder.of(""""sales"."customer"""", CustomerFields.structure, CustomerRow.jdbcDecoder)
 
-  def update(row: CustomerRow): ZIO[ZConnection, Throwable, Option[CustomerRow]] = {
+  override def update(row: CustomerRow): ZIO[ZConnection, Throwable, Option[CustomerRow]] = {
     val customerid = row.customerid
     sql"""update "sales"."customer"
     set "personid" = ${Segment.paramSegment(row.personid)(using Setter.optionParamSetter(using BusinessentityId.setter))}::int4,
@@ -109,7 +109,7 @@ class CustomerRepoImpl extends CustomerRepo {
       .selectOne
   }
 
-  def upsert(unsaved: CustomerRow): ZIO[ZConnection, Throwable, UpdateResult[CustomerRow]] = {
+  override def upsert(unsaved: CustomerRow): ZIO[ZConnection, Throwable, UpdateResult[CustomerRow]] = {
     sql"""insert into "sales"."customer"("customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate")
     values (
       ${Segment.paramSegment(unsaved.customerid)(using CustomerId.setter)}::int4,
@@ -130,7 +130,7 @@ class CustomerRepoImpl extends CustomerRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, CustomerRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

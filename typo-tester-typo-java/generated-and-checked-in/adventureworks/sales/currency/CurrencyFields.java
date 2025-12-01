@@ -16,7 +16,7 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 
 public interface CurrencyFields {
-  static final class Impl extends Relation<CurrencyFields, CurrencyRow> {
+  final class Impl extends Relation<CurrencyFields, CurrencyRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -24,12 +24,15 @@ public interface CurrencyFields {
     @Override
     public CurrencyFields fields() {
       return new CurrencyFields() {
+               @Override
                public IdField<CurrencyId, CurrencyRow> currencycode() {
                  return new IdField<CurrencyId, CurrencyRow>(_path, "currencycode", CurrencyRow::currencycode, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withCurrencycode(value), CurrencyId.pgType);
                };
+               @Override
                public Field<Name, CurrencyRow> name() {
                  return new Field<Name, CurrencyRow>(_path, "name", CurrencyRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, CurrencyRow> modifieddate() {
                  return new Field<TypoLocalDateTime, CurrencyRow>(_path, "modifieddate", CurrencyRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -41,6 +44,7 @@ public interface CurrencyFields {
       return List.of(this.fields().currencycode(), this.fields().name(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

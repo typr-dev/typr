@@ -67,7 +67,7 @@ object ProductvendorFields {
 
     override lazy val fields: ProductvendorFields = {
       new ProductvendorFields {
-        def productid: IdField[ProductId, ProductvendorRow] = {
+        override def productid: IdField[ProductId, ProductvendorRow] = {
           new IdField[ProductId, ProductvendorRow](
             _path,
             "productid",
@@ -78,7 +78,7 @@ object ProductvendorFields {
             ProductId.pgType
           )
         }
-        def businessentityid: IdField[BusinessentityId, ProductvendorRow] = {
+        override def businessentityid: IdField[BusinessentityId, ProductvendorRow] = {
           new IdField[BusinessentityId, ProductvendorRow](
             _path,
             "businessentityid",
@@ -89,7 +89,7 @@ object ProductvendorFields {
             BusinessentityId.pgType
           )
         }
-        def averageleadtime: Field[Integer, ProductvendorRow] = {
+        override def averageleadtime: Field[Integer, ProductvendorRow] = {
           new Field[Integer, ProductvendorRow](
             _path,
             "averageleadtime",
@@ -100,7 +100,7 @@ object ProductvendorFields {
             PgTypes.int4
           )
         }
-        def standardprice: Field[java.math.BigDecimal, ProductvendorRow] = {
+        override def standardprice: Field[java.math.BigDecimal, ProductvendorRow] = {
           new Field[java.math.BigDecimal, ProductvendorRow](
             _path,
             "standardprice",
@@ -111,7 +111,7 @@ object ProductvendorFields {
             PgTypes.numeric
           )
         }
-        def lastreceiptcost: OptField[java.math.BigDecimal, ProductvendorRow] = {
+        override def lastreceiptcost: OptField[java.math.BigDecimal, ProductvendorRow] = {
           new OptField[java.math.BigDecimal, ProductvendorRow](
             _path,
             "lastreceiptcost",
@@ -122,7 +122,7 @@ object ProductvendorFields {
             PgTypes.numeric
           )
         }
-        def lastreceiptdate: OptField[TypoLocalDateTime, ProductvendorRow] = {
+        override def lastreceiptdate: OptField[TypoLocalDateTime, ProductvendorRow] = {
           new OptField[TypoLocalDateTime, ProductvendorRow](
             _path,
             "lastreceiptdate",
@@ -133,7 +133,7 @@ object ProductvendorFields {
             TypoLocalDateTime.pgType
           )
         }
-        def minorderqty: Field[Integer, ProductvendorRow] = {
+        override def minorderqty: Field[Integer, ProductvendorRow] = {
           new Field[Integer, ProductvendorRow](
             _path,
             "minorderqty",
@@ -144,7 +144,7 @@ object ProductvendorFields {
             PgTypes.int4
           )
         }
-        def maxorderqty: Field[Integer, ProductvendorRow] = {
+        override def maxorderqty: Field[Integer, ProductvendorRow] = {
           new Field[Integer, ProductvendorRow](
             _path,
             "maxorderqty",
@@ -155,7 +155,7 @@ object ProductvendorFields {
             PgTypes.int4
           )
         }
-        def onorderqty: OptField[Integer, ProductvendorRow] = {
+        override def onorderqty: OptField[Integer, ProductvendorRow] = {
           new OptField[Integer, ProductvendorRow](
             _path,
             "onorderqty",
@@ -166,7 +166,7 @@ object ProductvendorFields {
             PgTypes.int4
           )
         }
-        def unitmeasurecode: Field[UnitmeasureId, ProductvendorRow] = {
+        override def unitmeasurecode: Field[UnitmeasureId, ProductvendorRow] = {
           new Field[UnitmeasureId, ProductvendorRow](
             _path,
             "unitmeasurecode",
@@ -177,7 +177,7 @@ object ProductvendorFields {
             UnitmeasureId.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, ProductvendorRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, ProductvendorRow] = {
           new Field[TypoLocalDateTime, ProductvendorRow](
             _path,
             "modifieddate",
@@ -193,7 +193,7 @@ object ProductvendorFields {
 
     override lazy val columns: java.util.List[FieldLike[?, ProductvendorRow]] = java.util.List.of(this.fields.productid, this.fields.businessentityid, this.fields.averageleadtime, this.fields.standardprice, this.fields.lastreceiptcost, this.fields.lastreceiptdate, this.fields.minorderqty, this.fields.maxorderqty, this.fields.onorderqty, this.fields.unitmeasurecode, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[ProductvendorFields, ProductvendorRow] = new Impl(java.util.List.of())

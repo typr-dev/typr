@@ -7,7 +7,6 @@ package adventureworks.production.productdescription;
 
 import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.customtypes.TypoUUID;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,12 +24,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class ProductdescriptionRepoImpl implements ProductdescriptionRepo {
+  @Override
   public DeleteBuilder<ProductdescriptionFields, ProductdescriptionRow> delete() {
     return DeleteBuilder.of("production.productdescription", ProductdescriptionFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     ProductdescriptionId productdescriptionid,
     Connection c
@@ -44,6 +44,7 @@ public class ProductdescriptionRepoImpl implements ProductdescriptionRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     ProductdescriptionId[] productdescriptionids,
     Connection c
@@ -60,6 +61,7 @@ public class ProductdescriptionRepoImpl implements ProductdescriptionRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public ProductdescriptionRow insert(
     ProductdescriptionRow unsaved,
     Connection c
@@ -83,65 +85,73 @@ public class ProductdescriptionRepoImpl implements ProductdescriptionRepo {
       .updateReturning(ProductdescriptionRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public ProductdescriptionRow insert(
     ProductdescriptionRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"description\""));
-      values.add(interpolate(
-        PgTypes.text.encode(unsaved.description()),
-        typo.runtime.Fragment.lit("""
-        """)
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"description\""));
+    values.add(interpolate(
+      PgTypes.text.encode(unsaved.description()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    unsaved.productdescriptionid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"productdescriptionid\""));
+        values.add(interpolate(
+        ProductdescriptionId.pgType.encode(value),
+        typo.runtime.Fragment.lit("::int4")
       ));
-      unsaved.productdescriptionid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"productdescriptionid\""));
-          values.add(interpolate(
-            ProductdescriptionId.pgType.encode(value),
-            typo.runtime.Fragment.lit("::int4")
-          ));
-        }
-      );;
-      unsaved.rowguid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"rowguid\""));
-          values.add(interpolate(
-            TypoUUID.pgType.encode(value),
-            typo.runtime.Fragment.lit("::uuid")
-          ));
-        }
-      );;
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "production"."productdescription"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "productdescriptionid", "description", "rowguid", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    unsaved.rowguid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"rowguid\""));
+        values.add(interpolate(
+        TypoUUID.pgType.encode(value),
+        typo.runtime.Fragment.lit("::uuid")
+      ));
+      }
+    );;
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
+      ));
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "production"."productdescription"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "productdescriptionid", "description", "rowguid", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(ProductdescriptionRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<ProductdescriptionRow> unsaved,
     Integer batchSize,
@@ -153,6 +163,7 @@ public class ProductdescriptionRepoImpl implements ProductdescriptionRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<ProductdescriptionRowUnsaved> unsaved,
     Integer batchSize,
@@ -163,17 +174,20 @@ public class ProductdescriptionRepoImpl implements ProductdescriptionRepo {
     """), batchSize, unsaved, c, ProductdescriptionRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<ProductdescriptionFields, ProductdescriptionRow> select() {
     return SelectBuilder.of("production.productdescription", ProductdescriptionFields.structure(), ProductdescriptionRow._rowParser);
   };
 
+  @Override
   public List<ProductdescriptionRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "productdescriptionid", "description", "rowguid", "modifieddate"::text
        from "production"."productdescription"
-    """)).as(ProductdescriptionRow._rowParser.all()).runUnchecked(c);
+    """)).query(ProductdescriptionRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<ProductdescriptionRow> selectById(
     ProductdescriptionId productdescriptionid,
     Connection c
@@ -185,9 +199,10 @@ public class ProductdescriptionRepoImpl implements ProductdescriptionRepo {
          where "productdescriptionid" = """),
       ProductdescriptionId.pgType.encode(productdescriptionid),
       typo.runtime.Fragment.lit("")
-    ).as(ProductdescriptionRow._rowParser.first()).runUnchecked(c);
+    ).query(ProductdescriptionRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<ProductdescriptionRow> selectByIds(
     ProductdescriptionId[] productdescriptionids,
     Connection c
@@ -199,48 +214,52 @@ public class ProductdescriptionRepoImpl implements ProductdescriptionRepo {
          where "productdescriptionid" = ANY("""),
       ProductdescriptionId.pgTypeArray.encode(productdescriptionids),
       typo.runtime.Fragment.lit(")")
-    ).as(ProductdescriptionRow._rowParser.all()).runUnchecked(c);
+    ).query(ProductdescriptionRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<ProductdescriptionId, ProductdescriptionRow> selectByIdsTracked(
     ProductdescriptionId[] productdescriptionids,
     Connection c
   ) {
-    Map<ProductdescriptionId, ProductdescriptionRow> ret = new HashMap<>();;
-      selectByIds(productdescriptionids, c).forEach(row -> ret.put(row.productdescriptionid(), row));
+    HashMap<ProductdescriptionId, ProductdescriptionRow> ret = new HashMap<ProductdescriptionId, ProductdescriptionRow>();
+    selectByIds(productdescriptionids, c).forEach(row -> ret.put(row.productdescriptionid(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<ProductdescriptionFields, ProductdescriptionRow> update() {
     return UpdateBuilder.of("production.productdescription", ProductdescriptionFields.structure(), ProductdescriptionRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     ProductdescriptionRow row,
     Connection c
   ) {
     ProductdescriptionId productdescriptionid = row.productdescriptionid();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "production"."productdescription"
-                set "description" = """),
-             PgTypes.text.encode(row.description()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "rowguid" = """),
-             TypoUUID.pgType.encode(row.rowguid()),
-             typo.runtime.Fragment.lit("""
-                ::uuid,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "productdescriptionid" = """),
-             ProductdescriptionId.pgType.encode(productdescriptionid),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "production"."productdescription"
+         set "description" = """),
+      PgTypes.text.encode(row.description()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "rowguid" = """),
+      TypoUUID.pgType.encode(row.rowguid()),
+      typo.runtime.Fragment.lit("""
+         ::uuid,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "productdescriptionid" = """),
+      ProductdescriptionId.pgType.encode(productdescriptionid),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public ProductdescriptionRow upsert(
     ProductdescriptionRow unsaved,
     Connection c
@@ -270,6 +289,7 @@ public class ProductdescriptionRepoImpl implements ProductdescriptionRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<ProductdescriptionRow> upsertBatch(
     Iterator<ProductdescriptionRow> unsaved,
     Connection c
@@ -289,26 +309,27 @@ public class ProductdescriptionRepoImpl implements ProductdescriptionRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<ProductdescriptionRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table productdescription_TEMP (like "production"."productdescription") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy productdescription_TEMP("productdescriptionid", "description", "rowguid", "modifieddate") from stdin
-      """), batchSize, unsaved, c, ProductdescriptionRow.pgText);
+    create temporary table productdescription_TEMP (like "production"."productdescription") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy productdescription_TEMP("productdescriptionid", "description", "rowguid", "modifieddate") from stdin
+    """), batchSize, unsaved, c, ProductdescriptionRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "production"."productdescription"("productdescriptionid", "description", "rowguid", "modifieddate")
-              select * from productdescription_TEMP
-              on conflict ("productdescriptionid")
-              do update set
-                "description" = EXCLUDED."description",
-              "rowguid" = EXCLUDED."rowguid",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table productdescription_TEMP;""")).update().runUnchecked(c);
+       insert into "production"."productdescription"("productdescriptionid", "description", "rowguid", "modifieddate")
+       select * from productdescription_TEMP
+       on conflict ("productdescriptionid")
+       do update set
+         "description" = EXCLUDED."description",
+       "rowguid" = EXCLUDED."rowguid",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table productdescription_TEMP;""")).update().runUnchecked(c);
   };
 }

@@ -30,8 +30,8 @@ public record TypoVector(@JsonValue Float[] value) {
   static public PgType<TypoVector> pgType =
     PgType.of(
       "vector",
-      PgRead.castJdbcObjectTo(PgArray.class).map(v -> new TypoVector((Float[]) v.getArray())),
-      PgWrite.passObjectToJdbc().contramap((TypoVector v) -> v.value()),
+      PgRead.castJdbcObjectTo(PgArray.class).map((PgArray v) -> new TypoVector((Float[]) v.getArray())),
+      PgWrite.<Float[]>passObjectToJdbc().contramap((TypoVector v) -> v.value()),
       TypoVector.pgText
     );
 }

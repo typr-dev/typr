@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class CViewRepoImpl extends CViewRepo {
-  def select: SelectBuilder[CViewFields, CViewRow] = SelectBuilder.of(""""pr"."c"""", CViewFields.structure, CViewRow.jdbcDecoder)
+  override def select: SelectBuilder[CViewFields, CViewRow] = SelectBuilder.of(""""pr"."c"""", CViewFields.structure, CViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, CViewRow] = sql"""select "id", "cultureid", "name", "modifieddate"::text from "pr"."c"""".query(CViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, CViewRow] = sql"""select "id", "cultureid", "name", "modifieddate"::text from "pr"."c"""".query(CViewRow.jdbcDecoder).selectStream()
 }

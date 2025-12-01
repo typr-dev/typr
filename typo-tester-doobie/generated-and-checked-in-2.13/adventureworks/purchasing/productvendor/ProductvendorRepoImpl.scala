@@ -25,11 +25,11 @@ import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class ProductvendorRepoImpl extends ProductvendorRepo {
-  def delete: DeleteBuilder[ProductvendorFields, ProductvendorRow] = DeleteBuilder.of(""""purchasing"."productvendor"""", ProductvendorFields.structure, ProductvendorRow.read)
+  override def delete: DeleteBuilder[ProductvendorFields, ProductvendorRow] = DeleteBuilder.of(""""purchasing"."productvendor"""", ProductvendorFields.structure, ProductvendorRow.read)
 
-  def deleteById(compositeId: ProductvendorId): ConnectionIO[Boolean] = sql"""delete from "purchasing"."productvendor" where "productid" = ${fromWrite(compositeId.productid)(new Write.Single(ProductId.put))} AND "businessentityid" = ${fromWrite(compositeId.businessentityid)(new Write.Single(BusinessentityId.put))}""".update.run.map(_ > 0)
+  override def deleteById(compositeId: ProductvendorId): ConnectionIO[Boolean] = sql"""delete from "purchasing"."productvendor" where "productid" = ${fromWrite(compositeId.productid)(new Write.Single(ProductId.put))} AND "businessentityid" = ${fromWrite(compositeId.businessentityid)(new Write.Single(BusinessentityId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(compositeIds: Array[ProductvendorId]): ConnectionIO[Int] = {
+  override def deleteByIds(compositeIds: Array[ProductvendorId]): ConnectionIO[Int] = {
     val productid = compositeIds.map(_.productid)
     val businessentityid = compositeIds.map(_.businessentityid)
     sql"""delete
@@ -39,14 +39,14 @@ class ProductvendorRepoImpl extends ProductvendorRepo {
     """.update.run
   }
 
-  def insert(unsaved: ProductvendorRow): ConnectionIO[ProductvendorRow] = {
+  override def insert(unsaved: ProductvendorRow): ConnectionIO[ProductvendorRow] = {
     sql"""insert into "purchasing"."productvendor"("productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate")
     values (${fromWrite(unsaved.productid)(new Write.Single(ProductId.put))}::int4, ${fromWrite(unsaved.businessentityid)(new Write.Single(BusinessentityId.put))}::int4, ${fromWrite(unsaved.averageleadtime)(new Write.Single(Meta.IntMeta.put))}::int4, ${fromWrite(unsaved.standardprice)(new Write.Single(Meta.ScalaBigDecimalMeta.put))}::numeric, ${fromWrite(unsaved.lastreceiptcost)(new Write.SingleOpt(Meta.ScalaBigDecimalMeta.put))}::numeric, ${fromWrite(unsaved.lastreceiptdate)(new Write.SingleOpt(TypoLocalDateTime.put))}::timestamp, ${fromWrite(unsaved.minorderqty)(new Write.Single(Meta.IntMeta.put))}::int4, ${fromWrite(unsaved.maxorderqty)(new Write.Single(Meta.IntMeta.put))}::int4, ${fromWrite(unsaved.onorderqty)(new Write.SingleOpt(Meta.IntMeta.put))}::int4, ${fromWrite(unsaved.unitmeasurecode)(new Write.Single(UnitmeasureId.put))}::bpchar, ${fromWrite(unsaved.modifieddate)(new Write.Single(TypoLocalDateTime.put))}::timestamp)
     returning "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text
     """.query(ProductvendorRow.read).unique
   }
 
-  def insert(unsaved: ProductvendorRowUnsaved): ConnectionIO[ProductvendorRow] = {
+  override def insert(unsaved: ProductvendorRowUnsaved): ConnectionIO[ProductvendorRow] = {
     val fs = List(
       Some((Fragment.const0(s""""productid""""), fr"${fromWrite(unsaved.productid)(new Write.Single(ProductId.put))}::int4")),
       Some((Fragment.const0(s""""businessentityid""""), fr"${fromWrite(unsaved.businessentityid)(new Write.Single(BusinessentityId.put))}::int4")),
@@ -77,24 +77,24 @@ class ProductvendorRepoImpl extends ProductvendorRepo {
     q.query(ProductvendorRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, ProductvendorRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "purchasing"."productvendor"("productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate") FROM STDIN""").copyIn(unsaved, batchSize)(ProductvendorRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, ProductvendorRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "purchasing"."productvendor"("productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(ProductvendorRowUnsaved.pgText)
 
-  def select: SelectBuilder[ProductvendorFields, ProductvendorRow] = SelectBuilder.of(""""purchasing"."productvendor"""", ProductvendorFields.structure, ProductvendorRow.read)
+  override def select: SelectBuilder[ProductvendorFields, ProductvendorRow] = SelectBuilder.of(""""purchasing"."productvendor"""", ProductvendorFields.structure, ProductvendorRow.read)
 
-  def selectAll: Stream[ConnectionIO, ProductvendorRow] = sql"""select "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text from "purchasing"."productvendor"""".query(ProductvendorRow.read).stream
+  override def selectAll: Stream[ConnectionIO, ProductvendorRow] = sql"""select "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text from "purchasing"."productvendor"""".query(ProductvendorRow.read).stream
 
-  def selectById(compositeId: ProductvendorId): ConnectionIO[Option[ProductvendorRow]] = sql"""select "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text from "purchasing"."productvendor" where "productid" = ${fromWrite(compositeId.productid)(new Write.Single(ProductId.put))} AND "businessentityid" = ${fromWrite(compositeId.businessentityid)(new Write.Single(BusinessentityId.put))}""".query(ProductvendorRow.read).option
+  override def selectById(compositeId: ProductvendorId): ConnectionIO[Option[ProductvendorRow]] = sql"""select "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text from "purchasing"."productvendor" where "productid" = ${fromWrite(compositeId.productid)(new Write.Single(ProductId.put))} AND "businessentityid" = ${fromWrite(compositeId.businessentityid)(new Write.Single(BusinessentityId.put))}""".query(ProductvendorRow.read).option
 
-  def selectByIds(compositeIds: Array[ProductvendorId]): Stream[ConnectionIO, ProductvendorRow] = {
+  override def selectByIds(compositeIds: Array[ProductvendorId]): Stream[ConnectionIO, ProductvendorRow] = {
     val productid = compositeIds.map(_.productid)
     val businessentityid = compositeIds.map(_.businessentityid)
     sql"""select "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text
@@ -104,16 +104,16 @@ class ProductvendorRepoImpl extends ProductvendorRepo {
     """.query(ProductvendorRow.read).stream
   }
 
-  def selectByIdsTracked(compositeIds: Array[ProductvendorId]): ConnectionIO[Map[ProductvendorId, ProductvendorRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[ProductvendorId]): ConnectionIO[Map[ProductvendorId, ProductvendorRow]] = {
     selectByIds(compositeIds).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[ProductvendorFields, ProductvendorRow] = UpdateBuilder.of(""""purchasing"."productvendor"""", ProductvendorFields.structure, ProductvendorRow.read)
+  override def update: UpdateBuilder[ProductvendorFields, ProductvendorRow] = UpdateBuilder.of(""""purchasing"."productvendor"""", ProductvendorFields.structure, ProductvendorRow.read)
 
-  def update(row: ProductvendorRow): ConnectionIO[Option[ProductvendorRow]] = {
+  override def update(row: ProductvendorRow): ConnectionIO[Option[ProductvendorRow]] = {
     val compositeId = row.compositeId
     sql"""update "purchasing"."productvendor"
     set "averageleadtime" = ${fromWrite(row.averageleadtime)(new Write.Single(Meta.IntMeta.put))}::int4,
@@ -129,7 +129,7 @@ class ProductvendorRepoImpl extends ProductvendorRepo {
     returning "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text""".query(ProductvendorRow.read).option
   }
 
-  def upsert(unsaved: ProductvendorRow): ConnectionIO[ProductvendorRow] = {
+  override def upsert(unsaved: ProductvendorRow): ConnectionIO[ProductvendorRow] = {
     sql"""insert into "purchasing"."productvendor"("productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate")
     values (
       ${fromWrite(unsaved.productid)(new Write.Single(ProductId.put))}::int4,
@@ -159,7 +159,7 @@ class ProductvendorRepoImpl extends ProductvendorRepo {
     """.query(ProductvendorRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[ProductvendorRow]): Stream[ConnectionIO, ProductvendorRow] = {
+  override def upsertBatch(unsaved: List[ProductvendorRow]): Stream[ConnectionIO, ProductvendorRow] = {
     Update[ProductvendorRow](
       s"""insert into "purchasing"."productvendor"("productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate")
       values (?::int4,?::int4,?::int4,?::numeric,?::numeric,?::timestamp,?::int4,?::int4,?::int4,?::bpchar,?::timestamp)
@@ -180,7 +180,7 @@ class ProductvendorRepoImpl extends ProductvendorRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, ProductvendorRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

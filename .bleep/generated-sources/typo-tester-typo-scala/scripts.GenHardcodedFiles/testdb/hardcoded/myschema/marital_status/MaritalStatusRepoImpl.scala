@@ -17,11 +17,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class MaritalStatusRepoImpl extends MaritalStatusRepo {
-  def delete: DeleteBuilder[MaritalStatusFields, MaritalStatusRow] = DeleteBuilder.of("myschema.marital_status", MaritalStatusFields.structure)
+  override def delete: DeleteBuilder[MaritalStatusFields, MaritalStatusRow] = DeleteBuilder.of("myschema.marital_status", MaritalStatusFields.structure)
 
-  def deleteById(id: MaritalStatusId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "myschema"."marital_status" where "id" = ${MaritalStatusId.pgType.encode(id)}""".update().runUnchecked(c) > 0
+  override def deleteById(id: MaritalStatusId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "myschema"."marital_status" where "id" = ${MaritalStatusId.pgType.encode(id)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(ids: Array[MaritalStatusId])(using c: Connection): Integer = {
+  override def deleteByIds(ids: Array[MaritalStatusId])(using c: Connection): Integer = {
     interpolate"""delete
     from "myschema"."marital_status"
     where "id" = ANY(${MaritalStatusId.pgTypeArray.encode(ids)})"""
@@ -29,7 +29,7 @@ class MaritalStatusRepoImpl extends MaritalStatusRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: MaritalStatusRow)(using c: Connection): MaritalStatusRow = {
+  override def insert(unsaved: MaritalStatusRow)(using c: Connection): MaritalStatusRow = {
   interpolate"""insert into "myschema"."marital_status"("id")
     values (${MaritalStatusId.pgType.encode(unsaved.id)}::int8)
     returning "id"
@@ -37,20 +37,20 @@ class MaritalStatusRepoImpl extends MaritalStatusRepo {
     .updateReturning(MaritalStatusRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[MaritalStatusRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "myschema"."marital_status"("id") FROM STDIN""", batchSize, unsaved, c, MaritalStatusRow.pgText)
 
-  def select: SelectBuilder[MaritalStatusFields, MaritalStatusRow] = SelectBuilder.of("myschema.marital_status", MaritalStatusFields.structure, MaritalStatusRow.`_rowParser`)
+  override def select: SelectBuilder[MaritalStatusFields, MaritalStatusRow] = SelectBuilder.of("myschema.marital_status", MaritalStatusFields.structure, MaritalStatusRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[MaritalStatusRow] = {
+  override def selectAll(using c: Connection): java.util.List[MaritalStatusRow] = {
     interpolate"""select "id"
     from "myschema"."marital_status"
-    """.as(MaritalStatusRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(MaritalStatusRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByFieldValues(fieldValues: java.util.List[MaritalStatusFieldValue[?]])(using c: Connection): java.util.List[MaritalStatusRow] = {
+  override def selectByFieldValues(fieldValues: java.util.List[MaritalStatusFieldValue[?]])(using c: Connection): java.util.List[MaritalStatusRow] = {
     val where: Fragment = {
       Fragment.whereAnd(
         fieldValues.stream().map(fv => fv match {
@@ -58,30 +58,30 @@ class MaritalStatusRepoImpl extends MaritalStatusRepo {
         }).toList()
       )
     }
-    interpolate"""select "id" from "myschema"."marital_status" ${where}""".as(MaritalStatusRow.`_rowParser`.all()).runUnchecked(c)
+    return interpolate"""select "id" from "myschema"."marital_status" ${where}""".query(MaritalStatusRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(id: MaritalStatusId)(using c: Connection): Optional[MaritalStatusRow] = {
+  override def selectById(id: MaritalStatusId)(using c: Connection): Optional[MaritalStatusRow] = {
     interpolate"""select "id"
     from "myschema"."marital_status"
-    where "id" = ${MaritalStatusId.pgType.encode(id)}""".as(MaritalStatusRow.`_rowParser`.first()).runUnchecked(c)
+    where "id" = ${MaritalStatusId.pgType.encode(id)}""".query(MaritalStatusRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(ids: Array[MaritalStatusId])(using c: Connection): java.util.List[MaritalStatusRow] = {
+  override def selectByIds(ids: Array[MaritalStatusId])(using c: Connection): java.util.List[MaritalStatusRow] = {
     interpolate"""select "id"
     from "myschema"."marital_status"
-    where "id" = ANY(${MaritalStatusId.pgTypeArray.encode(ids)})""".as(MaritalStatusRow.`_rowParser`.all()).runUnchecked(c)
+    where "id" = ANY(${MaritalStatusId.pgTypeArray.encode(ids)})""".query(MaritalStatusRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(ids: Array[MaritalStatusId])(using c: Connection): java.util.Map[MaritalStatusId, MaritalStatusRow] = {
-    val ret: java.util.Map[MaritalStatusId, MaritalStatusRow] = new HashMap()
+  override def selectByIdsTracked(ids: Array[MaritalStatusId])(using c: Connection): java.util.Map[MaritalStatusId, MaritalStatusRow] = {
+    val ret: HashMap[MaritalStatusId, MaritalStatusRow] = new HashMap[MaritalStatusId, MaritalStatusRow]()
     selectByIds(ids)(using c).forEach(row => ret.put(row.id, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[MaritalStatusFields, MaritalStatusRow] = UpdateBuilder.of("myschema.marital_status", MaritalStatusFields.structure, MaritalStatusRow.`_rowParser`.all())
+  override def update: UpdateBuilder[MaritalStatusFields, MaritalStatusRow] = UpdateBuilder.of("myschema.marital_status", MaritalStatusFields.structure, MaritalStatusRow.`_rowParser`.all())
 
-  def updateFieldValues(
+  override def updateFieldValues(
     id: MaritalStatusId,
     fieldValues: java.util.List[MaritalStatusFieldValue[?]]
   )(using c: Connection): java.lang.Boolean = {
@@ -90,13 +90,13 @@ class MaritalStatusRepoImpl extends MaritalStatusRepo {
         case x: id => interpolate""""id" = ${MaritalStatusId.pgType.encode(x.value)}"""
       }).toList()
     }
-    if (updates.isEmpty) false else interpolate"""update "myschema"."marital_status"
-                                    ${Fragment.set(updates)}
-                                    where "id" = ${MaritalStatusId.pgType.encode(id)}"""
+    return if (updates.isEmpty) false else interpolate"""update "myschema"."marital_status"
+                                           ${Fragment.set(updates)}
+                                           where "id" = ${MaritalStatusId.pgType.encode(id)}"""
       .update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: MaritalStatusRow)(using c: Connection): MaritalStatusRow = {
+  override def upsert(unsaved: MaritalStatusRow)(using c: Connection): MaritalStatusRow = {
   interpolate"""insert into "myschema"."marital_status"("id")
     values (${MaritalStatusId.pgType.encode(unsaved.id)}::int8)
     on conflict ("id")
@@ -107,7 +107,7 @@ class MaritalStatusRepoImpl extends MaritalStatusRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[MaritalStatusRow])(using c: Connection): java.util.List[MaritalStatusRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[MaritalStatusRow])(using c: Connection): java.util.List[MaritalStatusRow] = {
     interpolate"""insert into "myschema"."marital_status"("id")
     values (?::int8)
     on conflict ("id")
@@ -119,13 +119,13 @@ class MaritalStatusRepoImpl extends MaritalStatusRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[MaritalStatusRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table marital_status_TEMP (like "myschema"."marital_status") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy marital_status_TEMP("id") from stdin""", batchSize, unsaved, c, MaritalStatusRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "myschema"."marital_status"("id")
+    return interpolate"""insert into "myschema"."marital_status"("id")
     select * from marital_status_TEMP
     on conflict ("id")
     do nothing

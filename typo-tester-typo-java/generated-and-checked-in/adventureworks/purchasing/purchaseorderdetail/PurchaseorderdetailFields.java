@@ -28,7 +28,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface PurchaseorderdetailFields {
-  static final class Impl extends Relation<PurchaseorderdetailFields, PurchaseorderdetailRow> {
+  final class Impl extends Relation<PurchaseorderdetailFields, PurchaseorderdetailRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -36,30 +36,39 @@ public interface PurchaseorderdetailFields {
     @Override
     public PurchaseorderdetailFields fields() {
       return new PurchaseorderdetailFields() {
+               @Override
                public IdField<PurchaseorderheaderId, PurchaseorderdetailRow> purchaseorderid() {
                  return new IdField<PurchaseorderheaderId, PurchaseorderdetailRow>(_path, "purchaseorderid", PurchaseorderdetailRow::purchaseorderid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withPurchaseorderid(value), PurchaseorderheaderId.pgType);
                };
+               @Override
                public IdField<Integer, PurchaseorderdetailRow> purchaseorderdetailid() {
                  return new IdField<Integer, PurchaseorderdetailRow>(_path, "purchaseorderdetailid", PurchaseorderdetailRow::purchaseorderdetailid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withPurchaseorderdetailid(value), PgTypes.int4);
                };
+               @Override
                public Field<TypoLocalDateTime, PurchaseorderdetailRow> duedate() {
                  return new Field<TypoLocalDateTime, PurchaseorderdetailRow>(_path, "duedate", PurchaseorderdetailRow::duedate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withDuedate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public Field<TypoShort, PurchaseorderdetailRow> orderqty() {
                  return new Field<TypoShort, PurchaseorderdetailRow>(_path, "orderqty", PurchaseorderdetailRow::orderqty, Optional.empty(), Optional.of("int2"), (row, value) -> row.withOrderqty(value), TypoShort.pgType);
                };
+               @Override
                public Field<ProductId, PurchaseorderdetailRow> productid() {
                  return new Field<ProductId, PurchaseorderdetailRow>(_path, "productid", PurchaseorderdetailRow::productid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductid(value), ProductId.pgType);
                };
+               @Override
                public Field<BigDecimal, PurchaseorderdetailRow> unitprice() {
                  return new Field<BigDecimal, PurchaseorderdetailRow>(_path, "unitprice", PurchaseorderdetailRow::unitprice, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withUnitprice(value), PgTypes.numeric);
                };
+               @Override
                public Field<BigDecimal, PurchaseorderdetailRow> receivedqty() {
                  return new Field<BigDecimal, PurchaseorderdetailRow>(_path, "receivedqty", PurchaseorderdetailRow::receivedqty, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withReceivedqty(value), PgTypes.numeric);
                };
+               @Override
                public Field<BigDecimal, PurchaseorderdetailRow> rejectedqty() {
                  return new Field<BigDecimal, PurchaseorderdetailRow>(_path, "rejectedqty", PurchaseorderdetailRow::rejectedqty, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withRejectedqty(value), PgTypes.numeric);
                };
+               @Override
                public Field<TypoLocalDateTime, PurchaseorderdetailRow> modifieddate() {
                  return new Field<TypoLocalDateTime, PurchaseorderdetailRow>(_path, "modifieddate", PurchaseorderdetailRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -71,6 +80,7 @@ public interface PurchaseorderdetailFields {
       return List.of(this.fields().purchaseorderid(), this.fields().purchaseorderdetailid(), this.fields().duedate(), this.fields().orderqty(), this.fields().productid(), this.fields().unitprice(), this.fields().receivedqty(), this.fields().rejectedqty(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

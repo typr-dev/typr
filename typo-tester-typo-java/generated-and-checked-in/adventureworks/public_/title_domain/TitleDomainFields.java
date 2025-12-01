@@ -13,7 +13,7 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 
 public interface TitleDomainFields {
-  static final class Impl extends Relation<TitleDomainFields, TitleDomainRow> {
+  final class Impl extends Relation<TitleDomainFields, TitleDomainRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -21,6 +21,7 @@ public interface TitleDomainFields {
     @Override
     public TitleDomainFields fields() {
       return new TitleDomainFields() {
+               @Override
                public IdField<TitleDomainId, TitleDomainRow> code() {
                  return new IdField<TitleDomainId, TitleDomainRow>(_path, "code", TitleDomainRow::code, Optional.empty(), Optional.of("text"), (row, value) -> row.withCode(value), TitleDomainId.pgType);
                };
@@ -32,6 +33,7 @@ public interface TitleDomainFields {
       return List.of(this.fields().code());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

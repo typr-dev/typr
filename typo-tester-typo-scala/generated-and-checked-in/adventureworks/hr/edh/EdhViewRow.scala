@@ -13,7 +13,6 @@ import adventureworks.person.businessentity.BusinessentityId
 import java.util.Optional
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple7
 
 /** View: hr.edh */
 case class EdhViewRow(
@@ -34,15 +33,5 @@ case class EdhViewRow(
 )
 
 object EdhViewRow {
-  val `_rowParser`: RowParser[EdhViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, DepartmentId.pgType, ShiftId.pgType, TypoLocalDate.pgType, TypoLocalDate.pgType.opt(), TypoLocalDateTime.pgType, EdhViewRow.apply, row => new Tuple7(
-      row.id,
-      row.businessentityid,
-      row.departmentid,
-      row.shiftid,
-      row.startdate,
-      row.enddate,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[EdhViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, DepartmentId.pgType, ShiftId.pgType, TypoLocalDate.pgType, TypoLocalDate.pgType.opt(), TypoLocalDateTime.pgType, EdhViewRow.apply, row => Array(row.id, row.businessentityid, row.departmentid, row.shiftid, row.startdate, row.enddate, row.modifieddate))
 }

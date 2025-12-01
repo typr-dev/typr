@@ -14,7 +14,6 @@ import java.util.Optional;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple6;
 
 /** Table: production.productmodel
   * Product model classification.
@@ -68,7 +67,7 @@ public record ProductmodelRow(
     return new ProductmodelRow(productmodelid, name, catalogdescription, instructions, rowguid, modifieddate);
   };
 
-  static RowParser<ProductmodelRow> _rowParser = RowParsers.of(ProductmodelId.pgType, Name.pgType, TypoXml.pgType.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, ProductmodelRow::new, row -> new Tuple6<>(row.productmodelid(), row.name(), row.catalogdescription(), row.instructions(), row.rowguid(), row.modifieddate()));;
+  static RowParser<ProductmodelRow> _rowParser = RowParsers.of(ProductmodelId.pgType, Name.pgType, TypoXml.pgType.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, ProductmodelRow::new, row -> new Object[]{row.productmodelid(), row.name(), row.catalogdescription(), row.instructions(), row.rowguid(), row.modifieddate()});;
 
   static public PgText<ProductmodelRow> pgText =
     PgText.from(_rowParser);

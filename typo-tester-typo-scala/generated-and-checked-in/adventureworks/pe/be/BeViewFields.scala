@@ -29,7 +29,7 @@ object BeViewFields {
 
     override lazy val fields: BeViewFields = {
       new BeViewFields {
-        def id: Field[BusinessentityId, BeViewRow] = {
+        override def id: Field[BusinessentityId, BeViewRow] = {
           new Field[BusinessentityId, BeViewRow](
             _path,
             "id",
@@ -40,7 +40,7 @@ object BeViewFields {
             BusinessentityId.pgType
           )
         }
-        def businessentityid: Field[BusinessentityId, BeViewRow] = {
+        override def businessentityid: Field[BusinessentityId, BeViewRow] = {
           new Field[BusinessentityId, BeViewRow](
             _path,
             "businessentityid",
@@ -51,7 +51,7 @@ object BeViewFields {
             BusinessentityId.pgType
           )
         }
-        def rowguid: Field[TypoUUID, BeViewRow] = {
+        override def rowguid: Field[TypoUUID, BeViewRow] = {
           new Field[TypoUUID, BeViewRow](
             _path,
             "rowguid",
@@ -62,7 +62,7 @@ object BeViewFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, BeViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, BeViewRow] = {
           new Field[TypoLocalDateTime, BeViewRow](
             _path,
             "modifieddate",
@@ -78,7 +78,7 @@ object BeViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, BeViewRow]] = java.util.List.of(this.fields.id, this.fields.businessentityid, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[BeViewFields, BeViewRow] = new Impl(java.util.List.of())

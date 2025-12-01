@@ -23,11 +23,11 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class EmployeepayhistoryRepoImpl extends EmployeepayhistoryRepo {
-  def delete: DeleteBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = DeleteBuilder.of(""""humanresources"."employeepayhistory"""", EmployeepayhistoryFields.structure, EmployeepayhistoryRow.jdbcDecoder)
+  override def delete: DeleteBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = DeleteBuilder.of(""""humanresources"."employeepayhistory"""", EmployeepayhistoryFields.structure, EmployeepayhistoryRow.jdbcDecoder)
 
-  def deleteById(compositeId: EmployeepayhistoryId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "humanresources"."employeepayhistory" where "businessentityid" = ${Segment.paramSegment(compositeId.businessentityid)(using BusinessentityId.setter)} AND "ratechangedate" = ${Segment.paramSegment(compositeId.ratechangedate)(using TypoLocalDateTime.setter)}""".delete.map(_ > 0)
+  override def deleteById(compositeId: EmployeepayhistoryId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "humanresources"."employeepayhistory" where "businessentityid" = ${Segment.paramSegment(compositeId.businessentityid)(using BusinessentityId.setter)} AND "ratechangedate" = ${Segment.paramSegment(compositeId.ratechangedate)(using TypoLocalDateTime.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(compositeIds: Array[EmployeepayhistoryId]): ZIO[ZConnection, Throwable, Long] = {
+  override def deleteByIds(compositeIds: Array[EmployeepayhistoryId]): ZIO[ZConnection, Throwable, Long] = {
     val businessentityid = compositeIds.map(_.businessentityid)
     val ratechangedate = compositeIds.map(_.ratechangedate)
     sql"""delete
@@ -37,14 +37,14 @@ class EmployeepayhistoryRepoImpl extends EmployeepayhistoryRepo {
     """.delete
   }
 
-  def insert(unsaved: EmployeepayhistoryRow): ZIO[ZConnection, Throwable, EmployeepayhistoryRow] = {
+  override def insert(unsaved: EmployeepayhistoryRow): ZIO[ZConnection, Throwable, EmployeepayhistoryRow] = {
     sql"""insert into "humanresources"."employeepayhistory"("businessentityid", "ratechangedate", "rate", "payfrequency", "modifieddate")
     values (${Segment.paramSegment(unsaved.businessentityid)(using BusinessentityId.setter)}::int4, ${Segment.paramSegment(unsaved.ratechangedate)(using TypoLocalDateTime.setter)}::timestamp, ${Segment.paramSegment(unsaved.rate)(using Setter.bigDecimalScalaSetter)}::numeric, ${Segment.paramSegment(unsaved.payfrequency)(using TypoShort.setter)}::int2, ${Segment.paramSegment(unsaved.modifieddate)(using TypoLocalDateTime.setter)}::timestamp)
     returning "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text
     """.insertReturning(using EmployeepayhistoryRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insert(unsaved: EmployeepayhistoryRowUnsaved): ZIO[ZConnection, Throwable, EmployeepayhistoryRow] = {
+  override def insert(unsaved: EmployeepayhistoryRowUnsaved): ZIO[ZConnection, Throwable, EmployeepayhistoryRow] = {
     val fs = List(
       Some((sql""""businessentityid"""", sql"${Segment.paramSegment(unsaved.businessentityid)(using BusinessentityId.setter)}::int4")),
       Some((sql""""ratechangedate"""", sql"${Segment.paramSegment(unsaved.ratechangedate)(using TypoLocalDateTime.setter)}::timestamp")),
@@ -67,24 +67,24 @@ class EmployeepayhistoryRepoImpl extends EmployeepayhistoryRepo {
     q.insertReturning(using EmployeepayhistoryRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, EmployeepayhistoryRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "humanresources"."employeepayhistory"("businessentityid", "ratechangedate", "rate", "payfrequency", "modifieddate") FROM STDIN""", batchSize, unsaved)(using EmployeepayhistoryRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, EmployeepayhistoryRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "humanresources"."employeepayhistory"("businessentityid", "ratechangedate", "rate", "payfrequency", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using EmployeepayhistoryRowUnsaved.pgText)
 
-  def select: SelectBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = SelectBuilder.of(""""humanresources"."employeepayhistory"""", EmployeepayhistoryFields.structure, EmployeepayhistoryRow.jdbcDecoder)
+  override def select: SelectBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = SelectBuilder.of(""""humanresources"."employeepayhistory"""", EmployeepayhistoryFields.structure, EmployeepayhistoryRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, EmployeepayhistoryRow] = sql"""select "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text from "humanresources"."employeepayhistory"""".query(using EmployeepayhistoryRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, EmployeepayhistoryRow] = sql"""select "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text from "humanresources"."employeepayhistory"""".query(using EmployeepayhistoryRow.jdbcDecoder).selectStream()
 
-  def selectById(compositeId: EmployeepayhistoryId): ZIO[ZConnection, Throwable, Option[EmployeepayhistoryRow]] = sql"""select "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text from "humanresources"."employeepayhistory" where "businessentityid" = ${Segment.paramSegment(compositeId.businessentityid)(using BusinessentityId.setter)} AND "ratechangedate" = ${Segment.paramSegment(compositeId.ratechangedate)(using TypoLocalDateTime.setter)}""".query(using EmployeepayhistoryRow.jdbcDecoder).selectOne
+  override def selectById(compositeId: EmployeepayhistoryId): ZIO[ZConnection, Throwable, Option[EmployeepayhistoryRow]] = sql"""select "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text from "humanresources"."employeepayhistory" where "businessentityid" = ${Segment.paramSegment(compositeId.businessentityid)(using BusinessentityId.setter)} AND "ratechangedate" = ${Segment.paramSegment(compositeId.ratechangedate)(using TypoLocalDateTime.setter)}""".query(using EmployeepayhistoryRow.jdbcDecoder).selectOne
 
-  def selectByIds(compositeIds: Array[EmployeepayhistoryId]): ZStream[ZConnection, Throwable, EmployeepayhistoryRow] = {
+  override def selectByIds(compositeIds: Array[EmployeepayhistoryId]): ZStream[ZConnection, Throwable, EmployeepayhistoryRow] = {
     val businessentityid = compositeIds.map(_.businessentityid)
     val ratechangedate = compositeIds.map(_.ratechangedate)
     sql"""select "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text
@@ -94,16 +94,16 @@ class EmployeepayhistoryRepoImpl extends EmployeepayhistoryRepo {
     """.query(using EmployeepayhistoryRow.jdbcDecoder).selectStream()
   }
 
-  def selectByIdsTracked(compositeIds: Array[EmployeepayhistoryId]): ZIO[ZConnection, Throwable, Map[EmployeepayhistoryId, EmployeepayhistoryRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[EmployeepayhistoryId]): ZIO[ZConnection, Throwable, Map[EmployeepayhistoryId, EmployeepayhistoryRow]] = {
     selectByIds(compositeIds).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = UpdateBuilder.of(""""humanresources"."employeepayhistory"""", EmployeepayhistoryFields.structure, EmployeepayhistoryRow.jdbcDecoder)
+  override def update: UpdateBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = UpdateBuilder.of(""""humanresources"."employeepayhistory"""", EmployeepayhistoryFields.structure, EmployeepayhistoryRow.jdbcDecoder)
 
-  def update(row: EmployeepayhistoryRow): ZIO[ZConnection, Throwable, Option[EmployeepayhistoryRow]] = {
+  override def update(row: EmployeepayhistoryRow): ZIO[ZConnection, Throwable, Option[EmployeepayhistoryRow]] = {
     val compositeId = row.compositeId
     sql"""update "humanresources"."employeepayhistory"
     set "rate" = ${Segment.paramSegment(row.rate)(using Setter.bigDecimalScalaSetter)}::numeric,
@@ -115,7 +115,7 @@ class EmployeepayhistoryRepoImpl extends EmployeepayhistoryRepo {
       .selectOne
   }
 
-  def upsert(unsaved: EmployeepayhistoryRow): ZIO[ZConnection, Throwable, UpdateResult[EmployeepayhistoryRow]] = {
+  override def upsert(unsaved: EmployeepayhistoryRow): ZIO[ZConnection, Throwable, UpdateResult[EmployeepayhistoryRow]] = {
     sql"""insert into "humanresources"."employeepayhistory"("businessentityid", "ratechangedate", "rate", "payfrequency", "modifieddate")
     values (
       ${Segment.paramSegment(unsaved.businessentityid)(using BusinessentityId.setter)}::int4,
@@ -133,7 +133,7 @@ class EmployeepayhistoryRepoImpl extends EmployeepayhistoryRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, EmployeepayhistoryRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

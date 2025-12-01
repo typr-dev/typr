@@ -22,13 +22,13 @@ import zio.jdbc.ZConnection
 import zio.stream.ZStream
 
 case class OnlyPkColumnsRepoMock(map: scala.collection.mutable.Map[OnlyPkColumnsId, OnlyPkColumnsRow] = scala.collection.mutable.Map.empty[OnlyPkColumnsId, OnlyPkColumnsRow]) extends OnlyPkColumnsRepo {
-  def delete: DeleteBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = DeleteBuilderMock(DeleteParams.empty, OnlyPkColumnsFields.structure, map)
+  override def delete: DeleteBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = DeleteBuilderMock(DeleteParams.empty, OnlyPkColumnsFields.structure, map)
 
-  def deleteById(compositeId: OnlyPkColumnsId): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(compositeId).isDefined)
+  override def deleteById(compositeId: OnlyPkColumnsId): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(compositeId).isDefined)
 
-  def deleteByIds(compositeIds: Array[OnlyPkColumnsId]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(compositeIds.map(id => map.remove(id)).count(_.isDefined).toLong)
+  override def deleteByIds(compositeIds: Array[OnlyPkColumnsId]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(compositeIds.map(id => map.remove(id)).count(_.isDefined).toLong)
 
-  def insert(unsaved: OnlyPkColumnsRow): ZIO[ZConnection, Throwable, OnlyPkColumnsRow] = {
+  override def insert(unsaved: OnlyPkColumnsRow): ZIO[ZConnection, Throwable, OnlyPkColumnsRow] = {
   ZIO.succeed {
     val _ =
       if (map.contains(unsaved.compositeId))
@@ -40,7 +40,7 @@ case class OnlyPkColumnsRepoMock(map: scala.collection.mutable.Map[OnlyPkColumns
   }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, OnlyPkColumnsRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {
@@ -52,24 +52,24 @@ case class OnlyPkColumnsRepoMock(map: scala.collection.mutable.Map[OnlyPkColumns
     }.runLast.map(_.getOrElse(0L))
   }
 
-  def select: SelectBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = SelectBuilderMock(OnlyPkColumnsFields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
+  override def select: SelectBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = SelectBuilderMock(OnlyPkColumnsFields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
 
-  def selectAll: ZStream[ZConnection, Throwable, OnlyPkColumnsRow] = ZStream.fromIterable(map.values)
+  override def selectAll: ZStream[ZConnection, Throwable, OnlyPkColumnsRow] = ZStream.fromIterable(map.values)
 
-  def selectById(compositeId: OnlyPkColumnsId): ZIO[ZConnection, Throwable, Option[OnlyPkColumnsRow]] = ZIO.succeed(map.get(compositeId))
+  override def selectById(compositeId: OnlyPkColumnsId): ZIO[ZConnection, Throwable, Option[OnlyPkColumnsRow]] = ZIO.succeed(map.get(compositeId))
 
-  def selectByIds(compositeIds: Array[OnlyPkColumnsId]): ZStream[ZConnection, Throwable, OnlyPkColumnsRow] = ZStream.fromIterable(compositeIds.flatMap(map.get))
+  override def selectByIds(compositeIds: Array[OnlyPkColumnsId]): ZStream[ZConnection, Throwable, OnlyPkColumnsRow] = ZStream.fromIterable(compositeIds.flatMap(map.get))
 
-  def selectByIdsTracked(compositeIds: Array[OnlyPkColumnsId]): ZIO[ZConnection, Throwable, Map[OnlyPkColumnsId, OnlyPkColumnsRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[OnlyPkColumnsId]): ZIO[ZConnection, Throwable, Map[OnlyPkColumnsId, OnlyPkColumnsRow]] = {
     selectByIds(compositeIds).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = UpdateBuilderMock(UpdateParams.empty, OnlyPkColumnsFields.structure, map)
+  override def update: UpdateBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = UpdateBuilderMock(UpdateParams.empty, OnlyPkColumnsFields.structure, map)
 
-  def upsert(unsaved: OnlyPkColumnsRow): ZIO[ZConnection, Throwable, UpdateResult[OnlyPkColumnsRow]] = {
+  override def upsert(unsaved: OnlyPkColumnsRow): ZIO[ZConnection, Throwable, UpdateResult[OnlyPkColumnsRow]] = {
     ZIO.succeed {
       map.put(unsaved.compositeId, unsaved): @nowarn
       UpdateResult(1, Chunk.single(unsaved))
@@ -77,7 +77,7 @@ case class OnlyPkColumnsRepoMock(map: scala.collection.mutable.Map[OnlyPkColumns
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, OnlyPkColumnsRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

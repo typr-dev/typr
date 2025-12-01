@@ -50,17 +50,5 @@ case class LocationRowUnsaved(
 }
 
 object LocationRowUnsaved {
-  given pgText: PgText[LocationRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      Name.pgType.pgText.unsafeEncode(row.name, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using LocationId.pgType.pgText).unsafeEncode(row.locationid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using PgTypes.numeric.pgText).unsafeEncode(row.costrate, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using PgTypes.numeric.pgText).unsafeEncode(row.availability, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[LocationRowUnsaved] = PgText.instance((row, sb) => { Name.pgType.pgText.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using LocationId.pgType.pgText).unsafeEncode(row.locationid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.numeric.pgText).unsafeEncode(row.costrate, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.numeric.pgText).unsafeEncode(row.availability, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

@@ -28,7 +28,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface ProductinventoryFields {
-  static final class Impl extends Relation<ProductinventoryFields, ProductinventoryRow> {
+  final class Impl extends Relation<ProductinventoryFields, ProductinventoryRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -36,24 +36,31 @@ public interface ProductinventoryFields {
     @Override
     public ProductinventoryFields fields() {
       return new ProductinventoryFields() {
+               @Override
                public IdField<ProductId, ProductinventoryRow> productid() {
                  return new IdField<ProductId, ProductinventoryRow>(_path, "productid", ProductinventoryRow::productid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductid(value), ProductId.pgType);
                };
+               @Override
                public IdField<LocationId, ProductinventoryRow> locationid() {
                  return new IdField<LocationId, ProductinventoryRow>(_path, "locationid", ProductinventoryRow::locationid, Optional.empty(), Optional.of("int2"), (row, value) -> row.withLocationid(value), LocationId.pgType);
                };
+               @Override
                public Field</* max 10 chars */ String, ProductinventoryRow> shelf() {
                  return new Field</* max 10 chars */ String, ProductinventoryRow>(_path, "shelf", ProductinventoryRow::shelf, Optional.empty(), Optional.empty(), (row, value) -> row.withShelf(value), PgTypes.text);
                };
+               @Override
                public Field<TypoShort, ProductinventoryRow> bin() {
                  return new Field<TypoShort, ProductinventoryRow>(_path, "bin", ProductinventoryRow::bin, Optional.empty(), Optional.of("int2"), (row, value) -> row.withBin(value), TypoShort.pgType);
                };
+               @Override
                public Field<TypoShort, ProductinventoryRow> quantity() {
                  return new Field<TypoShort, ProductinventoryRow>(_path, "quantity", ProductinventoryRow::quantity, Optional.empty(), Optional.of("int2"), (row, value) -> row.withQuantity(value), TypoShort.pgType);
                };
+               @Override
                public Field<TypoUUID, ProductinventoryRow> rowguid() {
                  return new Field<TypoUUID, ProductinventoryRow>(_path, "rowguid", ProductinventoryRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, ProductinventoryRow> modifieddate() {
                  return new Field<TypoLocalDateTime, ProductinventoryRow>(_path, "modifieddate", ProductinventoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -65,6 +72,7 @@ public interface ProductinventoryFields {
       return List.of(this.fields().productid(), this.fields().locationid(), this.fields().shelf(), this.fields().bin(), this.fields().quantity(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

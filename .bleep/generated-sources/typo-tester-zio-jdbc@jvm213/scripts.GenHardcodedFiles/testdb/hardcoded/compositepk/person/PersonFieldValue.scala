@@ -15,14 +15,14 @@ sealed trait PersonFieldValue[T] {
 
 object PersonFieldValue {
   case class name(value: Option[String]) extends PersonFieldValue[Option[String]] {
-    def name: String = "name"
+    override def name: String = "name"
   }
 
   case class one(value: Long) extends PersonFieldValue[Long] {
-    def name: String = "one"
+    override def name: String = "one"
   }
 
   case class two(value: Option[String]) extends PersonFieldValue[Option[String]] {
-    def name: String = "two"
+    override def name: String = "two"
   }
 }

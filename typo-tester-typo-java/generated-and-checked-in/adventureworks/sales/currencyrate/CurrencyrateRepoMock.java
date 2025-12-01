@@ -5,6 +5,7 @@
  */
 package adventureworks.sales.currencyrate;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record CurrencyrateRepoMock(
     return new CurrencyrateRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<CurrencyrateFields, CurrencyrateRow> delete() {
     return new DeleteBuilderMock<>(CurrencyrateFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.currencyrateid(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     CurrencyrateId currencyrateid,
     Connection c
@@ -52,28 +55,31 @@ public record CurrencyrateRepoMock(
     return Optional.ofNullable(map.remove(currencyrateid)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     CurrencyrateId[] currencyrateids,
     Connection c
   ) {
     var count = 0;
-      for (var id : currencyrateids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : currencyrateids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public CurrencyrateRow insert(
     CurrencyrateRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.currencyrateid())) {
-        throw new RuntimeException(str("id $unsaved.currencyrateid() already exists"));
-      };
-      map.put(unsaved.currencyrateid(), unsaved);
+      throw new RuntimeException(str("id $unsaved.currencyrateid() already exists"));
+    };
+    map.put(unsaved.currencyrateid(), unsaved);
     return unsaved;
   };
 
+  @Override
   public CurrencyrateRow insert(
     CurrencyrateRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record CurrencyrateRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<CurrencyrateRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.currencyrateid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.currencyrateid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<CurrencyrateRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.currencyrateid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.currencyrateid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<CurrencyrateFields, CurrencyrateRow> select() {
     return new SelectBuilderMock<>(CurrencyrateFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<CurrencyrateRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<CurrencyrateRow> selectById(
     CurrencyrateId currencyrateid,
     Connection c
@@ -126,38 +137,43 @@ public record CurrencyrateRepoMock(
     return Optional.ofNullable(map.get(currencyrateid));
   };
 
+  @Override
   public List<CurrencyrateRow> selectByIds(
     CurrencyrateId[] currencyrateids,
     Connection c
   ) {
     var result = new ArrayList<CurrencyrateRow>();
-      for (var id : currencyrateids) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : currencyrateids) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<CurrencyrateId, CurrencyrateRow> selectByIdsTracked(
     CurrencyrateId[] currencyrateids,
     Connection c
   ) {
-    return selectByIds(currencyrateids, c).stream().collect(Collectors.toMap((adventureworks.sales.currencyrate.CurrencyrateRow row) -> row.currencyrateid(), Function.identity()));
+    return selectByIds(currencyrateids, c).stream().collect(Collectors.toMap((CurrencyrateRow row) -> row.currencyrateid(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<CurrencyrateFields, CurrencyrateRow> update() {
     return new UpdateBuilderMock<>(CurrencyrateFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     CurrencyrateRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.currencyrateid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.currencyrateid(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.currencyrateid(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public CurrencyrateRow upsert(
     CurrencyrateRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record CurrencyrateRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<CurrencyrateRow> upsertBatch(
     Iterator<CurrencyrateRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<CurrencyrateRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.currencyrateid(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.currencyrateid(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<CurrencyrateRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.currencyrateid(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.currencyrateid(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

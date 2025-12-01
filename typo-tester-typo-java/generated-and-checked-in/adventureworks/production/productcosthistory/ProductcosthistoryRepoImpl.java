@@ -7,7 +7,6 @@ package adventureworks.production.productcosthistory;
 
 import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.production.product.ProductId;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,12 +25,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class ProductcosthistoryRepoImpl implements ProductcosthistoryRepo {
+  @Override
   public DeleteBuilder<ProductcosthistoryFields, ProductcosthistoryRow> delete() {
     return DeleteBuilder.of("production.productcosthistory", ProductcosthistoryFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     ProductcosthistoryId compositeId,
     Connection c
@@ -49,28 +49,30 @@ public class ProductcosthistoryRepoImpl implements ProductcosthistoryRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     ProductcosthistoryId[] compositeIds,
     Connection c
   ) {
     ProductId[] productid = arrayMap.map(compositeIds, ProductcosthistoryId::productid, ProductId.class);;
-      TypoLocalDateTime[] startdate = arrayMap.map(compositeIds, ProductcosthistoryId::startdate, TypoLocalDateTime.class);;
+    TypoLocalDateTime[] startdate = arrayMap.map(compositeIds, ProductcosthistoryId::startdate, TypoLocalDateTime.class);;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                delete
-                from "production"."productcosthistory"
-                where ("productid", "startdate")
-                in (select unnest("""),
-             ProductId.pgTypeArray.encode(productid),
-             typo.runtime.Fragment.lit("::int4[]), unnest("),
-             TypoLocalDateTime.pgTypeArray.encode(startdate),
-             typo.runtime.Fragment.lit("""
-             ::timestamp[]))
+      typo.runtime.Fragment.lit("""
+         delete
+         from "production"."productcosthistory"
+         where ("productid", "startdate")
+         in (select unnest("""),
+      ProductId.pgTypeArray.encode(productid),
+      typo.runtime.Fragment.lit("::int4[]), unnest("),
+      TypoLocalDateTime.pgTypeArray.encode(startdate),
+      typo.runtime.Fragment.lit("""
+      ::timestamp[]))
 
-             """)
-           ).update().runUnchecked(c);
+      """)
+    ).update().runUnchecked(c);
   };
 
+  @Override
   public ProductcosthistoryRow insert(
     ProductcosthistoryRow unsaved,
     Connection c
@@ -96,59 +98,63 @@ public class ProductcosthistoryRepoImpl implements ProductcosthistoryRepo {
       .updateReturning(ProductcosthistoryRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public ProductcosthistoryRow insert(
     ProductcosthistoryRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"productid\""));
-      values.add(interpolate(
-        ProductId.pgType.encode(unsaved.productid()),
-        typo.runtime.Fragment.lit("::int4")
-      ));
-      columns.add(Fragment.lit("\"startdate\""));
-      values.add(interpolate(
-        TypoLocalDateTime.pgType.encode(unsaved.startdate()),
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"productid\""));
+    values.add(interpolate(
+      ProductId.pgType.encode(unsaved.productid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"startdate\""));
+    values.add(interpolate(
+      TypoLocalDateTime.pgType.encode(unsaved.startdate()),
+      typo.runtime.Fragment.lit("::timestamp")
+    ));
+    columns.add(Fragment.lit("\"enddate\""));
+    values.add(interpolate(
+      TypoLocalDateTime.pgType.opt().encode(unsaved.enddate()),
+      typo.runtime.Fragment.lit("::timestamp")
+    ));
+    columns.add(Fragment.lit("\"standardcost\""));
+    values.add(interpolate(
+      PgTypes.numeric.encode(unsaved.standardcost()),
+      typo.runtime.Fragment.lit("::numeric")
+    ));
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
         typo.runtime.Fragment.lit("::timestamp")
       ));
-      columns.add(Fragment.lit("\"enddate\""));
-      values.add(interpolate(
-        TypoLocalDateTime.pgType.opt().encode(unsaved.enddate()),
-        typo.runtime.Fragment.lit("::timestamp")
-      ));
-      columns.add(Fragment.lit("\"standardcost\""));
-      values.add(interpolate(
-        PgTypes.numeric.encode(unsaved.standardcost()),
-        typo.runtime.Fragment.lit("::numeric")
-      ));
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "production"."productcosthistory"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "production"."productcosthistory"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(ProductcosthistoryRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<ProductcosthistoryRow> unsaved,
     Integer batchSize,
@@ -160,6 +166,7 @@ public class ProductcosthistoryRepoImpl implements ProductcosthistoryRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<ProductcosthistoryRowUnsaved> unsaved,
     Integer batchSize,
@@ -170,17 +177,20 @@ public class ProductcosthistoryRepoImpl implements ProductcosthistoryRepo {
     """), batchSize, unsaved, c, ProductcosthistoryRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<ProductcosthistoryFields, ProductcosthistoryRow> select() {
     return SelectBuilder.of("production.productcosthistory", ProductcosthistoryFields.structure(), ProductcosthistoryRow._rowParser);
   };
 
+  @Override
   public List<ProductcosthistoryRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text
        from "production"."productcosthistory"
-    """)).as(ProductcosthistoryRow._rowParser.all()).runUnchecked(c);
+    """)).query(ProductcosthistoryRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<ProductcosthistoryRow> selectById(
     ProductcosthistoryId compositeId,
     Connection c
@@ -196,74 +206,79 @@ public class ProductcosthistoryRepoImpl implements ProductcosthistoryRepo {
       """),
       TypoLocalDateTime.pgType.encode(compositeId.startdate()),
       typo.runtime.Fragment.lit("")
-    ).as(ProductcosthistoryRow._rowParser.first()).runUnchecked(c);
+    ).query(ProductcosthistoryRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<ProductcosthistoryRow> selectByIds(
     ProductcosthistoryId[] compositeIds,
     Connection c
   ) {
     ProductId[] productid = arrayMap.map(compositeIds, ProductcosthistoryId::productid, ProductId.class);;
-      TypoLocalDateTime[] startdate = arrayMap.map(compositeIds, ProductcosthistoryId::startdate, TypoLocalDateTime.class);;
+    TypoLocalDateTime[] startdate = arrayMap.map(compositeIds, ProductcosthistoryId::startdate, TypoLocalDateTime.class);;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                select "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text
-                from "production"."productcosthistory"
-                where ("productid", "startdate")
-                in (select unnest("""),
-             ProductId.pgTypeArray.encode(productid),
-             typo.runtime.Fragment.lit("::int4[]), unnest("),
-             TypoLocalDateTime.pgTypeArray.encode(startdate),
-             typo.runtime.Fragment.lit("""
-             ::timestamp[]))
+      typo.runtime.Fragment.lit("""
+         select "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text
+         from "production"."productcosthistory"
+         where ("productid", "startdate")
+         in (select unnest("""),
+      ProductId.pgTypeArray.encode(productid),
+      typo.runtime.Fragment.lit("::int4[]), unnest("),
+      TypoLocalDateTime.pgTypeArray.encode(startdate),
+      typo.runtime.Fragment.lit("""
+      ::timestamp[]))
 
-             """)
-           ).as(ProductcosthistoryRow._rowParser.all()).runUnchecked(c);
+      """)
+    ).query(ProductcosthistoryRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<ProductcosthistoryId, ProductcosthistoryRow> selectByIdsTracked(
     ProductcosthistoryId[] compositeIds,
     Connection c
   ) {
-    Map<ProductcosthistoryId, ProductcosthistoryRow> ret = new HashMap<>();;
-      selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
+    HashMap<ProductcosthistoryId, ProductcosthistoryRow> ret = new HashMap<ProductcosthistoryId, ProductcosthistoryRow>();
+    selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<ProductcosthistoryFields, ProductcosthistoryRow> update() {
     return UpdateBuilder.of("production.productcosthistory", ProductcosthistoryFields.structure(), ProductcosthistoryRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     ProductcosthistoryRow row,
     Connection c
   ) {
     ProductcosthistoryId compositeId = row.compositeId();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "production"."productcosthistory"
-                set "enddate" = """),
-             TypoLocalDateTime.pgType.opt().encode(row.enddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp,
-                "standardcost" = """),
-             PgTypes.numeric.encode(row.standardcost()),
-             typo.runtime.Fragment.lit("""
-                ::numeric,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "productid" = """),
-             ProductId.pgType.encode(compositeId.productid()),
-             typo.runtime.Fragment.lit("""
-              AND "startdate" = 
-             """),
-             TypoLocalDateTime.pgType.encode(compositeId.startdate()),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "production"."productcosthistory"
+         set "enddate" = """),
+      TypoLocalDateTime.pgType.opt().encode(row.enddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp,
+         "standardcost" = """),
+      PgTypes.numeric.encode(row.standardcost()),
+      typo.runtime.Fragment.lit("""
+         ::numeric,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "productid" = """),
+      ProductId.pgType.encode(compositeId.productid()),
+      typo.runtime.Fragment.lit("""
+       AND "startdate" = 
+      """),
+      TypoLocalDateTime.pgType.encode(compositeId.startdate()),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public ProductcosthistoryRow upsert(
     ProductcosthistoryRow unsaved,
     Connection c
@@ -295,6 +310,7 @@ public class ProductcosthistoryRepoImpl implements ProductcosthistoryRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<ProductcosthistoryRow> upsertBatch(
     Iterator<ProductcosthistoryRow> unsaved,
     Connection c
@@ -314,26 +330,27 @@ public class ProductcosthistoryRepoImpl implements ProductcosthistoryRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<ProductcosthistoryRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table productcosthistory_TEMP (like "production"."productcosthistory") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy productcosthistory_TEMP("productid", "startdate", "enddate", "standardcost", "modifieddate") from stdin
-      """), batchSize, unsaved, c, ProductcosthistoryRow.pgText);
+    create temporary table productcosthistory_TEMP (like "production"."productcosthistory") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy productcosthistory_TEMP("productid", "startdate", "enddate", "standardcost", "modifieddate") from stdin
+    """), batchSize, unsaved, c, ProductcosthistoryRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "production"."productcosthistory"("productid", "startdate", "enddate", "standardcost", "modifieddate")
-              select * from productcosthistory_TEMP
-              on conflict ("productid", "startdate")
-              do update set
-                "enddate" = EXCLUDED."enddate",
-              "standardcost" = EXCLUDED."standardcost",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table productcosthistory_TEMP;""")).update().runUnchecked(c);
+       insert into "production"."productcosthistory"("productid", "startdate", "enddate", "standardcost", "modifieddate")
+       select * from productcosthistory_TEMP
+       on conflict ("productid", "startdate")
+       do update set
+         "enddate" = EXCLUDED."enddate",
+       "standardcost" = EXCLUDED."standardcost",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table productcosthistory_TEMP;""")).update().runUnchecked(c);
   };
 }

@@ -13,7 +13,6 @@ import java.util.Optional
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple4
 
 /** Table: humanresources.jobcandidate
  * RÃ©sumÃ©s submitted to Human Resources by job applicants.
@@ -49,14 +48,7 @@ case class JobcandidateRow(
 }
 
 object JobcandidateRow {
-  val `_rowParser`: RowParser[JobcandidateRow] = {
-    RowParsers.of(JobcandidateId.pgType, BusinessentityId.pgType.opt(), TypoXml.pgType.opt(), TypoLocalDateTime.pgType, JobcandidateRow.apply, row => new Tuple4(
-      row.jobcandidateid,
-      row.businessentityid,
-      row.resume,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[JobcandidateRow] = RowParsers.of(JobcandidateId.pgType, BusinessentityId.pgType.opt(), TypoXml.pgType.opt(), TypoLocalDateTime.pgType, JobcandidateRow.apply, row => Array(row.jobcandidateid, row.businessentityid, row.resume, row.modifieddate))
 
   given pgText: PgText[JobcandidateRow] = PgText.from(`_rowParser`)
 }

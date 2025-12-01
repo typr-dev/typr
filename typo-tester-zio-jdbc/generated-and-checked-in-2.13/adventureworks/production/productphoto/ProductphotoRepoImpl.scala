@@ -22,20 +22,20 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class ProductphotoRepoImpl extends ProductphotoRepo {
-  def delete: DeleteBuilder[ProductphotoFields, ProductphotoRow] = DeleteBuilder.of(""""production"."productphoto"""", ProductphotoFields.structure, ProductphotoRow.jdbcDecoder)
+  override def delete: DeleteBuilder[ProductphotoFields, ProductphotoRow] = DeleteBuilder.of(""""production"."productphoto"""", ProductphotoFields.structure, ProductphotoRow.jdbcDecoder)
 
-  def deleteById(productphotoid: ProductphotoId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "production"."productphoto" where "productphotoid" = ${Segment.paramSegment(productphotoid)(ProductphotoId.setter)}""".delete.map(_ > 0)
+  override def deleteById(productphotoid: ProductphotoId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "production"."productphoto" where "productphotoid" = ${Segment.paramSegment(productphotoid)(ProductphotoId.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(productphotoids: Array[ProductphotoId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "production"."productphoto" where "productphotoid" = ANY(${Segment.paramSegment(productphotoids)(ProductphotoId.arraySetter)})""".delete
+  override def deleteByIds(productphotoids: Array[ProductphotoId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "production"."productphoto" where "productphotoid" = ANY(${Segment.paramSegment(productphotoids)(ProductphotoId.arraySetter)})""".delete
 
-  def insert(unsaved: ProductphotoRow): ZIO[ZConnection, Throwable, ProductphotoRow] = {
+  override def insert(unsaved: ProductphotoRow): ZIO[ZConnection, Throwable, ProductphotoRow] = {
     sql"""insert into "production"."productphoto"("productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate")
     values (${Segment.paramSegment(unsaved.productphotoid)(ProductphotoId.setter)}::int4, ${Segment.paramSegment(unsaved.thumbnailphoto)(Setter.optionParamSetter(TypoBytea.setter))}::bytea, ${Segment.paramSegment(unsaved.thumbnailphotofilename)(Setter.optionParamSetter(Setter.stringSetter))}, ${Segment.paramSegment(unsaved.largephoto)(Setter.optionParamSetter(TypoBytea.setter))}::bytea, ${Segment.paramSegment(unsaved.largephotofilename)(Setter.optionParamSetter(Setter.stringSetter))}, ${Segment.paramSegment(unsaved.modifieddate)(TypoLocalDateTime.setter)}::timestamp)
     returning "productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate"::text
     """.insertReturning(ProductphotoRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insert(unsaved: ProductphotoRowUnsaved): ZIO[ZConnection, Throwable, ProductphotoRow] = {
+  override def insert(unsaved: ProductphotoRowUnsaved): ZIO[ZConnection, Throwable, ProductphotoRow] = {
     val fs = List(
       Some((sql""""thumbnailphoto"""", sql"${Segment.paramSegment(unsaved.thumbnailphoto)(Setter.optionParamSetter(TypoBytea.setter))}::bytea")),
       Some((sql""""thumbnailphotofilename"""", sql"${Segment.paramSegment(unsaved.thumbnailphotofilename)(Setter.optionParamSetter(Setter.stringSetter))}")),
@@ -62,35 +62,35 @@ class ProductphotoRepoImpl extends ProductphotoRepo {
     q.insertReturning(ProductphotoRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, ProductphotoRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "production"."productphoto"("productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate") FROM STDIN""", batchSize, unsaved)(ProductphotoRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, ProductphotoRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "production"."productphoto"("thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "productphotoid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(ProductphotoRowUnsaved.pgText)
 
-  def select: SelectBuilder[ProductphotoFields, ProductphotoRow] = SelectBuilder.of(""""production"."productphoto"""", ProductphotoFields.structure, ProductphotoRow.jdbcDecoder)
+  override def select: SelectBuilder[ProductphotoFields, ProductphotoRow] = SelectBuilder.of(""""production"."productphoto"""", ProductphotoFields.structure, ProductphotoRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, ProductphotoRow] = sql"""select "productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate"::text from "production"."productphoto"""".query(ProductphotoRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, ProductphotoRow] = sql"""select "productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate"::text from "production"."productphoto"""".query(ProductphotoRow.jdbcDecoder).selectStream()
 
-  def selectById(productphotoid: ProductphotoId): ZIO[ZConnection, Throwable, Option[ProductphotoRow]] = sql"""select "productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate"::text from "production"."productphoto" where "productphotoid" = ${Segment.paramSegment(productphotoid)(ProductphotoId.setter)}""".query(ProductphotoRow.jdbcDecoder).selectOne
+  override def selectById(productphotoid: ProductphotoId): ZIO[ZConnection, Throwable, Option[ProductphotoRow]] = sql"""select "productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate"::text from "production"."productphoto" where "productphotoid" = ${Segment.paramSegment(productphotoid)(ProductphotoId.setter)}""".query(ProductphotoRow.jdbcDecoder).selectOne
 
-  def selectByIds(productphotoids: Array[ProductphotoId]): ZStream[ZConnection, Throwable, ProductphotoRow] = sql"""select "productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate"::text from "production"."productphoto" where "productphotoid" = ANY(${Segment.paramSegment(productphotoids)(ProductphotoId.arraySetter)})""".query(ProductphotoRow.jdbcDecoder).selectStream()
+  override def selectByIds(productphotoids: Array[ProductphotoId]): ZStream[ZConnection, Throwable, ProductphotoRow] = sql"""select "productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate"::text from "production"."productphoto" where "productphotoid" = ANY(${Segment.paramSegment(productphotoids)(ProductphotoId.arraySetter)})""".query(ProductphotoRow.jdbcDecoder).selectStream()
 
-  def selectByIdsTracked(productphotoids: Array[ProductphotoId]): ZIO[ZConnection, Throwable, Map[ProductphotoId, ProductphotoRow]] = {
+  override def selectByIdsTracked(productphotoids: Array[ProductphotoId]): ZIO[ZConnection, Throwable, Map[ProductphotoId, ProductphotoRow]] = {
     selectByIds(productphotoids).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.productphotoid, x)).toMap
       productphotoids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[ProductphotoFields, ProductphotoRow] = UpdateBuilder.of(""""production"."productphoto"""", ProductphotoFields.structure, ProductphotoRow.jdbcDecoder)
+  override def update: UpdateBuilder[ProductphotoFields, ProductphotoRow] = UpdateBuilder.of(""""production"."productphoto"""", ProductphotoFields.structure, ProductphotoRow.jdbcDecoder)
 
-  def update(row: ProductphotoRow): ZIO[ZConnection, Throwable, Option[ProductphotoRow]] = {
+  override def update(row: ProductphotoRow): ZIO[ZConnection, Throwable, Option[ProductphotoRow]] = {
     val productphotoid = row.productphotoid
     sql"""update "production"."productphoto"
     set "thumbnailphoto" = ${Segment.paramSegment(row.thumbnailphoto)(Setter.optionParamSetter(TypoBytea.setter))}::bytea,
@@ -104,7 +104,7 @@ class ProductphotoRepoImpl extends ProductphotoRepo {
       .selectOne
   }
 
-  def upsert(unsaved: ProductphotoRow): ZIO[ZConnection, Throwable, UpdateResult[ProductphotoRow]] = {
+  override def upsert(unsaved: ProductphotoRow): ZIO[ZConnection, Throwable, UpdateResult[ProductphotoRow]] = {
     sql"""insert into "production"."productphoto"("productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate")
     values (
       ${Segment.paramSegment(unsaved.productphotoid)(ProductphotoId.setter)}::int4,
@@ -125,7 +125,7 @@ class ProductphotoRepoImpl extends ProductphotoRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, ProductphotoRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

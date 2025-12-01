@@ -11,7 +11,7 @@ import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class AtViewRepoImpl extends AtViewRepo {
-  def select: SelectBuilder[AtViewFields, AtViewRow] = SelectBuilder.of(""""pe"."at"""", AtViewFields.structure, AtViewRow.read)
+  override def select: SelectBuilder[AtViewFields, AtViewRow] = SelectBuilder.of(""""pe"."at"""", AtViewFields.structure, AtViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, AtViewRow] = sql"""select "id", "addresstypeid", "name", "rowguid", "modifieddate"::text from "pe"."at"""".query(AtViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, AtViewRow] = sql"""select "id", "addresstypeid", "name", "rowguid", "modifieddate"::text from "pe"."at"""".query(AtViewRow.read).stream
 }

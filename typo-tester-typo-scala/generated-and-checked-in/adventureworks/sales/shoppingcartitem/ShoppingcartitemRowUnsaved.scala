@@ -54,19 +54,5 @@ case class ShoppingcartitemRowUnsaved(
 }
 
 object ShoppingcartitemRowUnsaved {
-  given pgText: PgText[ShoppingcartitemRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      PgTypes.text.pgText.unsafeEncode(row.shoppingcartid, sb);
-      sb.append(PgText.DELIMETER);
-      ProductId.pgType.pgText.unsafeEncode(row.productid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using ShoppingcartitemId.pgType.pgText).unsafeEncode(row.shoppingcartitemid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using PgTypes.int4.pgText).unsafeEncode(row.quantity, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.datecreated, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[ShoppingcartitemRowUnsaved] = PgText.instance((row, sb) => { PgTypes.text.pgText.unsafeEncode(row.shoppingcartid, sb); sb.append(PgText.DELIMETER); ProductId.pgType.pgText.unsafeEncode(row.productid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using ShoppingcartitemId.pgType.pgText).unsafeEncode(row.shoppingcartitemid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.int4.pgText).unsafeEncode(row.quantity, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.datecreated, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

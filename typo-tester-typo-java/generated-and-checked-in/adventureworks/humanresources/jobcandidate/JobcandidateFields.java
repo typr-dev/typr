@@ -21,7 +21,7 @@ import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 
 public interface JobcandidateFields {
-  static final class Impl extends Relation<JobcandidateFields, JobcandidateRow> {
+  final class Impl extends Relation<JobcandidateFields, JobcandidateRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -29,15 +29,19 @@ public interface JobcandidateFields {
     @Override
     public JobcandidateFields fields() {
       return new JobcandidateFields() {
+               @Override
                public IdField<JobcandidateId, JobcandidateRow> jobcandidateid() {
                  return new IdField<JobcandidateId, JobcandidateRow>(_path, "jobcandidateid", JobcandidateRow::jobcandidateid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withJobcandidateid(value), JobcandidateId.pgType);
                };
+               @Override
                public OptField<BusinessentityId, JobcandidateRow> businessentityid() {
                  return new OptField<BusinessentityId, JobcandidateRow>(_path, "businessentityid", JobcandidateRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public OptField<TypoXml, JobcandidateRow> resume() {
                  return new OptField<TypoXml, JobcandidateRow>(_path, "resume", JobcandidateRow::resume, Optional.empty(), Optional.of("xml"), (row, value) -> row.withResume(value), TypoXml.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, JobcandidateRow> modifieddate() {
                  return new Field<TypoLocalDateTime, JobcandidateRow>(_path, "modifieddate", JobcandidateRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -49,6 +53,7 @@ public interface JobcandidateFields {
       return List.of(this.fields().jobcandidateid(), this.fields().businessentityid(), this.fields().resume(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

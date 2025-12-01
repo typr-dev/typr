@@ -25,13 +25,13 @@ case class PurchaseorderheaderRepoMock(
   toRow: PurchaseorderheaderRowUnsaved => PurchaseorderheaderRow,
   map: scala.collection.mutable.Map[PurchaseorderheaderId, PurchaseorderheaderRow] = scala.collection.mutable.Map.empty[PurchaseorderheaderId, PurchaseorderheaderRow]
 ) extends PurchaseorderheaderRepo {
-  def delete: DeleteBuilder[PurchaseorderheaderFields, PurchaseorderheaderRow] = DeleteBuilderMock(DeleteParams.empty, PurchaseorderheaderFields.structure, map)
+  override def delete: DeleteBuilder[PurchaseorderheaderFields, PurchaseorderheaderRow] = DeleteBuilderMock(DeleteParams.empty, PurchaseorderheaderFields.structure, map)
 
-  def deleteById(purchaseorderid: PurchaseorderheaderId): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(purchaseorderid).isDefined)
+  override def deleteById(purchaseorderid: PurchaseorderheaderId): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(purchaseorderid).isDefined)
 
-  def deleteByIds(purchaseorderids: Array[PurchaseorderheaderId]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(purchaseorderids.map(id => map.remove(id)).count(_.isDefined).toLong)
+  override def deleteByIds(purchaseorderids: Array[PurchaseorderheaderId]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(purchaseorderids.map(id => map.remove(id)).count(_.isDefined).toLong)
 
-  def insert(unsaved: PurchaseorderheaderRow): ZIO[ZConnection, Throwable, PurchaseorderheaderRow] = {
+  override def insert(unsaved: PurchaseorderheaderRow): ZIO[ZConnection, Throwable, PurchaseorderheaderRow] = {
   ZIO.succeed {
     val _ =
       if (map.contains(unsaved.purchaseorderid))
@@ -43,9 +43,9 @@ case class PurchaseorderheaderRepoMock(
   }
   }
 
-  def insert(unsaved: PurchaseorderheaderRowUnsaved): ZIO[ZConnection, Throwable, PurchaseorderheaderRow] = insert(toRow(unsaved))
+  override def insert(unsaved: PurchaseorderheaderRowUnsaved): ZIO[ZConnection, Throwable, PurchaseorderheaderRow] = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, PurchaseorderheaderRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {
@@ -58,7 +58,7 @@ case class PurchaseorderheaderRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, PurchaseorderheaderRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {
@@ -71,24 +71,24 @@ case class PurchaseorderheaderRepoMock(
     }.runLast.map(_.getOrElse(0L))
   }
 
-  def select: SelectBuilder[PurchaseorderheaderFields, PurchaseorderheaderRow] = SelectBuilderMock(PurchaseorderheaderFields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
+  override def select: SelectBuilder[PurchaseorderheaderFields, PurchaseorderheaderRow] = SelectBuilderMock(PurchaseorderheaderFields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
 
-  def selectAll: ZStream[ZConnection, Throwable, PurchaseorderheaderRow] = ZStream.fromIterable(map.values)
+  override def selectAll: ZStream[ZConnection, Throwable, PurchaseorderheaderRow] = ZStream.fromIterable(map.values)
 
-  def selectById(purchaseorderid: PurchaseorderheaderId): ZIO[ZConnection, Throwable, Option[PurchaseorderheaderRow]] = ZIO.succeed(map.get(purchaseorderid))
+  override def selectById(purchaseorderid: PurchaseorderheaderId): ZIO[ZConnection, Throwable, Option[PurchaseorderheaderRow]] = ZIO.succeed(map.get(purchaseorderid))
 
-  def selectByIds(purchaseorderids: Array[PurchaseorderheaderId]): ZStream[ZConnection, Throwable, PurchaseorderheaderRow] = ZStream.fromIterable(purchaseorderids.flatMap(map.get))
+  override def selectByIds(purchaseorderids: Array[PurchaseorderheaderId]): ZStream[ZConnection, Throwable, PurchaseorderheaderRow] = ZStream.fromIterable(purchaseorderids.flatMap(map.get))
 
-  def selectByIdsTracked(purchaseorderids: Array[PurchaseorderheaderId]): ZIO[ZConnection, Throwable, Map[PurchaseorderheaderId, PurchaseorderheaderRow]] = {
+  override def selectByIdsTracked(purchaseorderids: Array[PurchaseorderheaderId]): ZIO[ZConnection, Throwable, Map[PurchaseorderheaderId, PurchaseorderheaderRow]] = {
     selectByIds(purchaseorderids).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.purchaseorderid, x)).toMap
       purchaseorderids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[PurchaseorderheaderFields, PurchaseorderheaderRow] = UpdateBuilderMock(UpdateParams.empty, PurchaseorderheaderFields.structure, map)
+  override def update: UpdateBuilder[PurchaseorderheaderFields, PurchaseorderheaderRow] = UpdateBuilderMock(UpdateParams.empty, PurchaseorderheaderFields.structure, map)
 
-  def update(row: PurchaseorderheaderRow): ZIO[ZConnection, Throwable, Option[PurchaseorderheaderRow]] = {
+  override def update(row: PurchaseorderheaderRow): ZIO[ZConnection, Throwable, Option[PurchaseorderheaderRow]] = {
     ZIO.succeed {
       map.get(row.purchaseorderid).map { _ =>
         map.put(row.purchaseorderid, row): @nowarn
@@ -97,7 +97,7 @@ case class PurchaseorderheaderRepoMock(
     }
   }
 
-  def upsert(unsaved: PurchaseorderheaderRow): ZIO[ZConnection, Throwable, UpdateResult[PurchaseorderheaderRow]] = {
+  override def upsert(unsaved: PurchaseorderheaderRow): ZIO[ZConnection, Throwable, UpdateResult[PurchaseorderheaderRow]] = {
     ZIO.succeed {
       map.put(unsaved.purchaseorderid, unsaved): @nowarn
       UpdateResult(1, Chunk.single(unsaved))
@@ -105,7 +105,7 @@ case class PurchaseorderheaderRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, PurchaseorderheaderRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

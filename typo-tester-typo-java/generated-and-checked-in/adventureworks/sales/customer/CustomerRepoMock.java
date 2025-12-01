@@ -5,6 +5,7 @@
  */
 package adventureworks.sales.customer;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record CustomerRepoMock(
     return new CustomerRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<CustomerFields, CustomerRow> delete() {
     return new DeleteBuilderMock<>(CustomerFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.customerid(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     CustomerId customerid,
     Connection c
@@ -52,28 +55,31 @@ public record CustomerRepoMock(
     return Optional.ofNullable(map.remove(customerid)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     CustomerId[] customerids,
     Connection c
   ) {
     var count = 0;
-      for (var id : customerids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : customerids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public CustomerRow insert(
     CustomerRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.customerid())) {
-        throw new RuntimeException(str("id $unsaved.customerid() already exists"));
-      };
-      map.put(unsaved.customerid(), unsaved);
+      throw new RuntimeException(str("id $unsaved.customerid() already exists"));
+    };
+    map.put(unsaved.customerid(), unsaved);
     return unsaved;
   };
 
+  @Override
   public CustomerRow insert(
     CustomerRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record CustomerRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<CustomerRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.customerid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.customerid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<CustomerRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.customerid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.customerid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<CustomerFields, CustomerRow> select() {
     return new SelectBuilderMock<>(CustomerFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<CustomerRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<CustomerRow> selectById(
     CustomerId customerid,
     Connection c
@@ -126,38 +137,43 @@ public record CustomerRepoMock(
     return Optional.ofNullable(map.get(customerid));
   };
 
+  @Override
   public List<CustomerRow> selectByIds(
     CustomerId[] customerids,
     Connection c
   ) {
     var result = new ArrayList<CustomerRow>();
-      for (var id : customerids) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : customerids) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<CustomerId, CustomerRow> selectByIdsTracked(
     CustomerId[] customerids,
     Connection c
   ) {
-    return selectByIds(customerids, c).stream().collect(Collectors.toMap((adventureworks.sales.customer.CustomerRow row) -> row.customerid(), Function.identity()));
+    return selectByIds(customerids, c).stream().collect(Collectors.toMap((CustomerRow row) -> row.customerid(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<CustomerFields, CustomerRow> update() {
     return new UpdateBuilderMock<>(CustomerFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     CustomerRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.customerid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.customerid(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.customerid(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public CustomerRow upsert(
     CustomerRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record CustomerRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<CustomerRow> upsertBatch(
     Iterator<CustomerRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<CustomerRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.customerid(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.customerid(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<CustomerRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.customerid(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.customerid(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

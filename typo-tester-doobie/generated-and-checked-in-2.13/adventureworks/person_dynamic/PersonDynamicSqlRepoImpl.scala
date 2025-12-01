@@ -13,7 +13,7 @@ import fs2.Stream
 import doobie.syntax.string.toSqlInterpolator
 
 class PersonDynamicSqlRepoImpl extends PersonDynamicSqlRepo {
-  def apply(firstName: Option[String]): Stream[ConnectionIO, PersonDynamicSqlRow] = {
+  override def apply(firstName: Option[String]): Stream[ConnectionIO, PersonDynamicSqlRow] = {
     val sql =
       sql"""SELECT p.title, p.firstname, p.middlename, p.lastname
       FROM person.person p

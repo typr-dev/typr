@@ -12,7 +12,6 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple13;
 
 /** View: sales.vpersondemographics */
 public record VpersondemographicsViewRow(
@@ -84,5 +83,5 @@ public record VpersondemographicsViewRow(
     return new VpersondemographicsViewRow(businessentityid, totalpurchaseytd, datefirstpurchase, birthdate, maritalstatus, yearlyincome, gender, totalchildren, numberchildrenathome, education, occupation, homeownerflag, numbercarsowned);
   };
 
-  static RowParser<VpersondemographicsViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, TypoMoney.pgType.opt(), TypoLocalDate.pgType.opt(), TypoLocalDate.pgType.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.int4.opt(), PgTypes.int4.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.bool.opt(), PgTypes.int4.opt(), VpersondemographicsViewRow::new, row -> new Tuple13<>(row.businessentityid(), row.totalpurchaseytd(), row.datefirstpurchase(), row.birthdate(), row.maritalstatus(), row.yearlyincome(), row.gender(), row.totalchildren(), row.numberchildrenathome(), row.education(), row.occupation(), row.homeownerflag(), row.numbercarsowned()));;
+  static RowParser<VpersondemographicsViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, TypoMoney.pgType.opt(), TypoLocalDate.pgType.opt(), TypoLocalDate.pgType.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.int4.opt(), PgTypes.int4.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.bool.opt(), PgTypes.int4.opt(), VpersondemographicsViewRow::new, row -> new Object[]{row.businessentityid(), row.totalpurchaseytd(), row.datefirstpurchase(), row.birthdate(), row.maritalstatus(), row.yearlyincome(), row.gender(), row.totalchildren(), row.numberchildrenathome(), row.education(), row.occupation(), row.homeownerflag(), row.numbercarsowned()});;
 }

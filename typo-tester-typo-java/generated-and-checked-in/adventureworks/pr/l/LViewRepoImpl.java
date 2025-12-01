@@ -5,22 +5,22 @@
  */
 package adventureworks.pr.l;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class LViewRepoImpl implements LViewRepo {
+  @Override
   public SelectBuilder<LViewFields, LViewRow> select() {
     return SelectBuilder.of("pr.l", LViewFields.structure(), LViewRow._rowParser);
   };
 
+  @Override
   public List<LViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "locationid", "name", "costrate", "availability", "modifieddate"::text
        from "pr"."l"
-    """)).as(LViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(LViewRow._rowParser.all()).runUnchecked(c);
   };
 }

@@ -11,7 +11,6 @@ import adventureworks.production.productcategory.ProductcategoryId;
 import adventureworks.public_.Name;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple5;
 
 /** View: pr.pc */
 public record PcViewRow(
@@ -51,5 +50,5 @@ public record PcViewRow(
     return new PcViewRow(id, productcategoryid, name, rowguid, modifieddate);
   };
 
-  static RowParser<PcViewRow> _rowParser = RowParsers.of(ProductcategoryId.pgType, ProductcategoryId.pgType, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, PcViewRow::new, row -> new Tuple5<>(row.id(), row.productcategoryid(), row.name(), row.rowguid(), row.modifieddate()));;
+  static RowParser<PcViewRow> _rowParser = RowParsers.of(ProductcategoryId.pgType, ProductcategoryId.pgType, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, PcViewRow::new, row -> new Object[]{row.id(), row.productcategoryid(), row.name(), row.rowguid(), row.modifieddate()});;
 }

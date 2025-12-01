@@ -25,7 +25,7 @@ import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 
 public interface StoreFields {
-  static final class Impl extends Relation<StoreFields, StoreRow> {
+  final class Impl extends Relation<StoreFields, StoreRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -33,21 +33,27 @@ public interface StoreFields {
     @Override
     public StoreFields fields() {
       return new StoreFields() {
+               @Override
                public IdField<BusinessentityId, StoreRow> businessentityid() {
                  return new IdField<BusinessentityId, StoreRow>(_path, "businessentityid", StoreRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public Field<Name, StoreRow> name() {
                  return new Field<Name, StoreRow>(_path, "name", StoreRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public OptField<BusinessentityId, StoreRow> salespersonid() {
                  return new OptField<BusinessentityId, StoreRow>(_path, "salespersonid", StoreRow::salespersonid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withSalespersonid(value), BusinessentityId.pgType);
                };
+               @Override
                public OptField<TypoXml, StoreRow> demographics() {
                  return new OptField<TypoXml, StoreRow>(_path, "demographics", StoreRow::demographics, Optional.empty(), Optional.of("xml"), (row, value) -> row.withDemographics(value), TypoXml.pgType);
                };
+               @Override
                public Field<TypoUUID, StoreRow> rowguid() {
                  return new Field<TypoUUID, StoreRow>(_path, "rowguid", StoreRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, StoreRow> modifieddate() {
                  return new Field<TypoLocalDateTime, StoreRow>(_path, "modifieddate", StoreRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -59,6 +65,7 @@ public interface StoreFields {
       return List.of(this.fields().businessentityid(), this.fields().name(), this.fields().salespersonid(), this.fields().demographics(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

@@ -6,11 +6,12 @@
 package adventureworks.public.test_sak_soknadsalternativ
 
 import adventureworks.public.test_utdanningstilbud.TestUtdanningstilbudId
+import com.fasterxml.jackson.annotation.JsonProperty
 
 /** Type for the composite primary key of table `public.test_sak_soknadsalternativ` */
 case class TestSakSoknadsalternativId(
-  organisasjonskodeSaksbehandler: String,
-  utdanningsmulighetKode: String
+  @JsonProperty("organisasjonskode_saksbehandler") organisasjonskodeSaksbehandler: String,
+  @JsonProperty("utdanningsmulighet_kode") utdanningsmulighetKode: String
 )
 
 object TestSakSoknadsalternativId {

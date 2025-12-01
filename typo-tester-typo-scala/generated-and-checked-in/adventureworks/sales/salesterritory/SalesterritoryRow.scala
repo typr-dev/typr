@@ -14,7 +14,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple10
 
 /** Table: sales.salesterritory
  * Sales territory lookup table.
@@ -85,20 +84,7 @@ case class SalesterritoryRow(
 }
 
 object SalesterritoryRow {
-  val `_rowParser`: RowParser[SalesterritoryRow] = {
-    RowParsers.of(SalesterritoryId.pgType, Name.pgType, CountryregionId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SalesterritoryRow.apply, row => new Tuple10(
-      row.territoryid,
-      row.name,
-      row.countryregioncode,
-      row.group,
-      row.salesytd,
-      row.saleslastyear,
-      row.costytd,
-      row.costlastyear,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[SalesterritoryRow] = RowParsers.of(SalesterritoryId.pgType, Name.pgType, CountryregionId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SalesterritoryRow.apply, row => Array(row.territoryid, row.name, row.countryregioncode, row.group, row.salesytd, row.saleslastyear, row.costytd, row.costlastyear, row.rowguid, row.modifieddate))
 
   given pgText: PgText[SalesterritoryRow] = PgText.from(`_rowParser`)
 }

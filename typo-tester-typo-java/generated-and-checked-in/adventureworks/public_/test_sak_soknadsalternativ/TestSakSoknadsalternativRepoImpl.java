@@ -6,7 +6,6 @@
 package adventureworks.public_.test_sak_soknadsalternativ;
 
 import adventureworks.public_.test_organisasjon.TestOrganisasjonId;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,12 +21,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class TestSakSoknadsalternativRepoImpl implements TestSakSoknadsalternativRepo {
+  @Override
   public DeleteBuilder<TestSakSoknadsalternativFields, TestSakSoknadsalternativRow> delete() {
     return DeleteBuilder.of("public.test_sak_soknadsalternativ", TestSakSoknadsalternativFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     TestSakSoknadsalternativId compositeId,
     Connection c
@@ -45,28 +45,30 @@ public class TestSakSoknadsalternativRepoImpl implements TestSakSoknadsalternati
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     TestSakSoknadsalternativId[] compositeIds,
     Connection c
   ) {
     String[] organisasjonskodeSaksbehandler = arrayMap.map(compositeIds, TestSakSoknadsalternativId::organisasjonskodeSaksbehandler, String.class);;
-      String[] utdanningsmulighetKode = arrayMap.map(compositeIds, TestSakSoknadsalternativId::utdanningsmulighetKode, String.class);;
+    String[] utdanningsmulighetKode = arrayMap.map(compositeIds, TestSakSoknadsalternativId::utdanningsmulighetKode, String.class);;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                delete
-                from "public"."test_sak_soknadsalternativ"
-                where ("organisasjonskode_saksbehandler", "utdanningsmulighet_kode")
-                in (select unnest("""),
-             PgTypes.textArray.encode(organisasjonskodeSaksbehandler),
-             typo.runtime.Fragment.lit("::text[]), unnest("),
-             PgTypes.textArray.encode(utdanningsmulighetKode),
-             typo.runtime.Fragment.lit("""
-             ::text[]))
+      typo.runtime.Fragment.lit("""
+         delete
+         from "public"."test_sak_soknadsalternativ"
+         where ("organisasjonskode_saksbehandler", "utdanningsmulighet_kode")
+         in (select unnest("""),
+      PgTypes.textArray.encode(organisasjonskodeSaksbehandler),
+      typo.runtime.Fragment.lit("::text[]), unnest("),
+      PgTypes.textArray.encode(utdanningsmulighetKode),
+      typo.runtime.Fragment.lit("""
+      ::text[]))
 
-             """)
-           ).update().runUnchecked(c);
+      """)
+    ).update().runUnchecked(c);
   };
 
+  @Override
   public TestSakSoknadsalternativRow insert(
     TestSakSoknadsalternativRow unsaved,
     Connection c
@@ -88,6 +90,7 @@ public class TestSakSoknadsalternativRepoImpl implements TestSakSoknadsalternati
       .updateReturning(TestSakSoknadsalternativRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<TestSakSoknadsalternativRow> unsaved,
     Integer batchSize,
@@ -98,17 +101,20 @@ public class TestSakSoknadsalternativRepoImpl implements TestSakSoknadsalternati
     """), batchSize, unsaved, c, TestSakSoknadsalternativRow.pgText);
   };
 
+  @Override
   public SelectBuilder<TestSakSoknadsalternativFields, TestSakSoknadsalternativRow> select() {
     return SelectBuilder.of("public.test_sak_soknadsalternativ", TestSakSoknadsalternativFields.structure(), TestSakSoknadsalternativRow._rowParser);
   };
 
+  @Override
   public List<TestSakSoknadsalternativRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder"
        from "public"."test_sak_soknadsalternativ"
-    """)).as(TestSakSoknadsalternativRow._rowParser.all()).runUnchecked(c);
+    """)).query(TestSakSoknadsalternativRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<TestSakSoknadsalternativRow> selectById(
     TestSakSoknadsalternativId compositeId,
     Connection c
@@ -124,66 +130,71 @@ public class TestSakSoknadsalternativRepoImpl implements TestSakSoknadsalternati
       """),
       PgTypes.text.encode(compositeId.utdanningsmulighetKode()),
       typo.runtime.Fragment.lit("")
-    ).as(TestSakSoknadsalternativRow._rowParser.first()).runUnchecked(c);
+    ).query(TestSakSoknadsalternativRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<TestSakSoknadsalternativRow> selectByIds(
     TestSakSoknadsalternativId[] compositeIds,
     Connection c
   ) {
     String[] organisasjonskodeSaksbehandler = arrayMap.map(compositeIds, TestSakSoknadsalternativId::organisasjonskodeSaksbehandler, String.class);;
-      String[] utdanningsmulighetKode = arrayMap.map(compositeIds, TestSakSoknadsalternativId::utdanningsmulighetKode, String.class);;
+    String[] utdanningsmulighetKode = arrayMap.map(compositeIds, TestSakSoknadsalternativId::utdanningsmulighetKode, String.class);;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                select "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder"
-                from "public"."test_sak_soknadsalternativ"
-                where ("organisasjonskode_saksbehandler", "utdanningsmulighet_kode")
-                in (select unnest("""),
-             PgTypes.textArray.encode(organisasjonskodeSaksbehandler),
-             typo.runtime.Fragment.lit("::text[]), unnest("),
-             PgTypes.textArray.encode(utdanningsmulighetKode),
-             typo.runtime.Fragment.lit("""
-             ::text[]))
+      typo.runtime.Fragment.lit("""
+         select "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder"
+         from "public"."test_sak_soknadsalternativ"
+         where ("organisasjonskode_saksbehandler", "utdanningsmulighet_kode")
+         in (select unnest("""),
+      PgTypes.textArray.encode(organisasjonskodeSaksbehandler),
+      typo.runtime.Fragment.lit("::text[]), unnest("),
+      PgTypes.textArray.encode(utdanningsmulighetKode),
+      typo.runtime.Fragment.lit("""
+      ::text[]))
 
-             """)
-           ).as(TestSakSoknadsalternativRow._rowParser.all()).runUnchecked(c);
+      """)
+    ).query(TestSakSoknadsalternativRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<TestSakSoknadsalternativId, TestSakSoknadsalternativRow> selectByIdsTracked(
     TestSakSoknadsalternativId[] compositeIds,
     Connection c
   ) {
-    Map<TestSakSoknadsalternativId, TestSakSoknadsalternativRow> ret = new HashMap<>();;
-      selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
+    HashMap<TestSakSoknadsalternativId, TestSakSoknadsalternativRow> ret = new HashMap<TestSakSoknadsalternativId, TestSakSoknadsalternativRow>();
+    selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<TestSakSoknadsalternativFields, TestSakSoknadsalternativRow> update() {
     return UpdateBuilder.of("public.test_sak_soknadsalternativ", TestSakSoknadsalternativFields.structure(), TestSakSoknadsalternativRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     TestSakSoknadsalternativRow row,
     Connection c
   ) {
     TestSakSoknadsalternativId compositeId = row.compositeId();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "public"."test_sak_soknadsalternativ"
-                set "organisasjonskode_tilbyder" = """),
-             TestOrganisasjonId.pgType.encode(row.organisasjonskodeTilbyder()),
-             typo.runtime.Fragment.lit("""
+      typo.runtime.Fragment.lit("""
+         update "public"."test_sak_soknadsalternativ"
+         set "organisasjonskode_tilbyder" = """),
+      TestOrganisasjonId.pgType.encode(row.organisasjonskodeTilbyder()),
+      typo.runtime.Fragment.lit("""
    
-                where "organisasjonskode_saksbehandler" = """),
-             PgTypes.text.encode(compositeId.organisasjonskodeSaksbehandler()),
-             typo.runtime.Fragment.lit("""
-              AND "utdanningsmulighet_kode" = 
-             """),
-             PgTypes.text.encode(compositeId.utdanningsmulighetKode()),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+         where "organisasjonskode_saksbehandler" = """),
+      PgTypes.text.encode(compositeId.organisasjonskodeSaksbehandler()),
+      typo.runtime.Fragment.lit("""
+       AND "utdanningsmulighet_kode" = 
+      """),
+      PgTypes.text.encode(compositeId.utdanningsmulighetKode()),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public TestSakSoknadsalternativRow upsert(
     TestSakSoknadsalternativRow unsaved,
     Connection c
@@ -209,6 +220,7 @@ public class TestSakSoknadsalternativRepoImpl implements TestSakSoknadsalternati
       .runUnchecked(c);
   };
 
+  @Override
   public List<TestSakSoknadsalternativRow> upsertBatch(
     Iterator<TestSakSoknadsalternativRow> unsaved,
     Connection c
@@ -226,24 +238,25 @@ public class TestSakSoknadsalternativRepoImpl implements TestSakSoknadsalternati
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<TestSakSoknadsalternativRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table test_sak_soknadsalternativ_TEMP (like "public"."test_sak_soknadsalternativ") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy test_sak_soknadsalternativ_TEMP("organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder") from stdin
-      """), batchSize, unsaved, c, TestSakSoknadsalternativRow.pgText);
+    create temporary table test_sak_soknadsalternativ_TEMP (like "public"."test_sak_soknadsalternativ") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy test_sak_soknadsalternativ_TEMP("organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder") from stdin
+    """), batchSize, unsaved, c, TestSakSoknadsalternativRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "public"."test_sak_soknadsalternativ"("organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder")
-              select * from test_sak_soknadsalternativ_TEMP
-              on conflict ("organisasjonskode_saksbehandler", "utdanningsmulighet_kode")
-              do update set
-                "organisasjonskode_tilbyder" = EXCLUDED."organisasjonskode_tilbyder"
-              ;
-              drop table test_sak_soknadsalternativ_TEMP;""")).update().runUnchecked(c);
+       insert into "public"."test_sak_soknadsalternativ"("organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder")
+       select * from test_sak_soknadsalternativ_TEMP
+       on conflict ("organisasjonskode_saksbehandler", "utdanningsmulighet_kode")
+       do update set
+         "organisasjonskode_tilbyder" = EXCLUDED."organisasjonskode_tilbyder"
+       ;
+       drop table test_sak_soknadsalternativ_TEMP;""")).update().runUnchecked(c);
   };
 }

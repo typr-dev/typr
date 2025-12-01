@@ -55,7 +55,7 @@ object VjobcandidateViewFields {
 
     override lazy val fields: VjobcandidateViewFields = {
       new VjobcandidateViewFields {
-        def jobcandidateid: Field[JobcandidateId, VjobcandidateViewRow] = {
+        override def jobcandidateid: Field[JobcandidateId, VjobcandidateViewRow] = {
           new Field[JobcandidateId, VjobcandidateViewRow](
             _path,
             "jobcandidateid",
@@ -66,7 +66,7 @@ object VjobcandidateViewFields {
             JobcandidateId.pgType
           )
         }
-        def businessentityid: OptField[BusinessentityId, VjobcandidateViewRow] = {
+        override def businessentityid: OptField[BusinessentityId, VjobcandidateViewRow] = {
           new OptField[BusinessentityId, VjobcandidateViewRow](
             _path,
             "businessentityid",
@@ -77,7 +77,7 @@ object VjobcandidateViewFields {
             BusinessentityId.pgType
           )
         }
-        def namePrefix: OptField[/* max 30 chars */ String, VjobcandidateViewRow] = {
+        override def namePrefix: OptField[/* max 30 chars */ String, VjobcandidateViewRow] = {
           new OptField[/* max 30 chars */ String, VjobcandidateViewRow](
             _path,
             "Name.Prefix",
@@ -88,7 +88,7 @@ object VjobcandidateViewFields {
             PgTypes.text
           )
         }
-        def nameFirst: OptField[/* max 30 chars */ String, VjobcandidateViewRow] = {
+        override def nameFirst: OptField[/* max 30 chars */ String, VjobcandidateViewRow] = {
           new OptField[/* max 30 chars */ String, VjobcandidateViewRow](
             _path,
             "Name.First",
@@ -99,7 +99,7 @@ object VjobcandidateViewFields {
             PgTypes.text
           )
         }
-        def nameMiddle: OptField[/* max 30 chars */ String, VjobcandidateViewRow] = {
+        override def nameMiddle: OptField[/* max 30 chars */ String, VjobcandidateViewRow] = {
           new OptField[/* max 30 chars */ String, VjobcandidateViewRow](
             _path,
             "Name.Middle",
@@ -110,7 +110,7 @@ object VjobcandidateViewFields {
             PgTypes.text
           )
         }
-        def nameLast: OptField[/* max 30 chars */ String, VjobcandidateViewRow] = {
+        override def nameLast: OptField[/* max 30 chars */ String, VjobcandidateViewRow] = {
           new OptField[/* max 30 chars */ String, VjobcandidateViewRow](
             _path,
             "Name.Last",
@@ -121,7 +121,7 @@ object VjobcandidateViewFields {
             PgTypes.text
           )
         }
-        def nameSuffix: OptField[/* max 30 chars */ String, VjobcandidateViewRow] = {
+        override def nameSuffix: OptField[/* max 30 chars */ String, VjobcandidateViewRow] = {
           new OptField[/* max 30 chars */ String, VjobcandidateViewRow](
             _path,
             "Name.Suffix",
@@ -132,7 +132,7 @@ object VjobcandidateViewFields {
             PgTypes.text
           )
         }
-        def skills: OptField[String, VjobcandidateViewRow] = {
+        override def skills: OptField[String, VjobcandidateViewRow] = {
           new OptField[String, VjobcandidateViewRow](
             _path,
             "Skills",
@@ -143,7 +143,7 @@ object VjobcandidateViewFields {
             PgTypes.text
           )
         }
-        def addrType: OptField[/* max 30 chars */ String, VjobcandidateViewRow] = {
+        override def addrType: OptField[/* max 30 chars */ String, VjobcandidateViewRow] = {
           new OptField[/* max 30 chars */ String, VjobcandidateViewRow](
             _path,
             "Addr.Type",
@@ -154,7 +154,7 @@ object VjobcandidateViewFields {
             PgTypes.text
           )
         }
-        def addrLocCountryRegion: OptField[/* max 100 chars */ String, VjobcandidateViewRow] = {
+        override def addrLocCountryRegion: OptField[/* max 100 chars */ String, VjobcandidateViewRow] = {
           new OptField[/* max 100 chars */ String, VjobcandidateViewRow](
             _path,
             "Addr.Loc.CountryRegion",
@@ -165,7 +165,7 @@ object VjobcandidateViewFields {
             PgTypes.text
           )
         }
-        def addrLocState: OptField[/* max 100 chars */ String, VjobcandidateViewRow] = {
+        override def addrLocState: OptField[/* max 100 chars */ String, VjobcandidateViewRow] = {
           new OptField[/* max 100 chars */ String, VjobcandidateViewRow](
             _path,
             "Addr.Loc.State",
@@ -176,7 +176,7 @@ object VjobcandidateViewFields {
             PgTypes.text
           )
         }
-        def addrLocCity: OptField[/* max 100 chars */ String, VjobcandidateViewRow] = {
+        override def addrLocCity: OptField[/* max 100 chars */ String, VjobcandidateViewRow] = {
           new OptField[/* max 100 chars */ String, VjobcandidateViewRow](
             _path,
             "Addr.Loc.City",
@@ -187,7 +187,7 @@ object VjobcandidateViewFields {
             PgTypes.text
           )
         }
-        def addrPostalCode: OptField[/* max 20 chars */ String, VjobcandidateViewRow] = {
+        override def addrPostalCode: OptField[/* max 20 chars */ String, VjobcandidateViewRow] = {
           new OptField[/* max 20 chars */ String, VjobcandidateViewRow](
             _path,
             "Addr.PostalCode",
@@ -198,7 +198,7 @@ object VjobcandidateViewFields {
             PgTypes.text
           )
         }
-        def eMail: OptField[String, VjobcandidateViewRow] = {
+        override def eMail: OptField[String, VjobcandidateViewRow] = {
           new OptField[String, VjobcandidateViewRow](
             _path,
             "EMail",
@@ -209,7 +209,7 @@ object VjobcandidateViewFields {
             PgTypes.text
           )
         }
-        def webSite: OptField[String, VjobcandidateViewRow] = {
+        override def webSite: OptField[String, VjobcandidateViewRow] = {
           new OptField[String, VjobcandidateViewRow](
             _path,
             "WebSite",
@@ -220,7 +220,7 @@ object VjobcandidateViewFields {
             PgTypes.text
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, VjobcandidateViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, VjobcandidateViewRow] = {
           new Field[TypoLocalDateTime, VjobcandidateViewRow](
             _path,
             "modifieddate",
@@ -236,7 +236,7 @@ object VjobcandidateViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, VjobcandidateViewRow]] = java.util.List.of(this.fields.jobcandidateid, this.fields.businessentityid, this.fields.namePrefix, this.fields.nameFirst, this.fields.nameMiddle, this.fields.nameLast, this.fields.nameSuffix, this.fields.skills, this.fields.addrType, this.fields.addrLocCountryRegion, this.fields.addrLocState, this.fields.addrLocCity, this.fields.addrPostalCode, this.fields.eMail, this.fields.webSite, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[VjobcandidateViewFields, VjobcandidateViewRow] = new Impl(java.util.List.of())

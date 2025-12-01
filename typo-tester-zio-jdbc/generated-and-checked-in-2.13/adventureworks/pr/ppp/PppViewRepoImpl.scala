@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class PppViewRepoImpl extends PppViewRepo {
-  def select: SelectBuilder[PppViewFields, PppViewRow] = SelectBuilder.of(""""pr"."ppp"""", PppViewFields.structure, PppViewRow.jdbcDecoder)
+  override def select: SelectBuilder[PppViewFields, PppViewRow] = SelectBuilder.of(""""pr"."ppp"""", PppViewFields.structure, PppViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, PppViewRow] = sql"""select "productid", "productphotoid", "primary", "modifieddate"::text from "pr"."ppp"""".query(PppViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, PppViewRow] = sql"""select "productid", "productphotoid", "primary", "modifieddate"::text from "pr"."ppp"""".query(PppViewRow.jdbcDecoder).selectStream()
 }

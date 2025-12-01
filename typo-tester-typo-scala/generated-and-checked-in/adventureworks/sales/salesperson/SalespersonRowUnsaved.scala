@@ -77,25 +77,5 @@ case class SalespersonRowUnsaved(
 }
 
 object SalespersonRowUnsaved {
-  given pgText: PgText[SalespersonRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      BusinessentityId.pgType.pgText.unsafeEncode(row.businessentityid, sb);
-      sb.append(PgText.DELIMETER);
-      SalesterritoryId.pgType.opt().pgText.unsafeEncode(row.territoryid, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.numeric.opt().pgText.unsafeEncode(row.salesquota, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using PgTypes.numeric.pgText).unsafeEncode(row.bonus, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using PgTypes.numeric.pgText).unsafeEncode(row.commissionpct, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using PgTypes.numeric.pgText).unsafeEncode(row.salesytd, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using PgTypes.numeric.pgText).unsafeEncode(row.saleslastyear, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[SalespersonRowUnsaved] = PgText.instance((row, sb) => { BusinessentityId.pgType.pgText.unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); SalesterritoryId.pgType.opt().pgText.unsafeEncode(row.territoryid, sb); sb.append(PgText.DELIMETER); PgTypes.numeric.opt().pgText.unsafeEncode(row.salesquota, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.numeric.pgText).unsafeEncode(row.bonus, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.numeric.pgText).unsafeEncode(row.commissionpct, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.numeric.pgText).unsafeEncode(row.salesytd, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.numeric.pgText).unsafeEncode(row.saleslastyear, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

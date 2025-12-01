@@ -21,13 +21,13 @@ case class SalesorderheadersalesreasonRepoMock(
   toRow: SalesorderheadersalesreasonRowUnsaved => SalesorderheadersalesreasonRow,
   map: scala.collection.mutable.Map[SalesorderheadersalesreasonId, SalesorderheadersalesreasonRow] = scala.collection.mutable.Map.empty[SalesorderheadersalesreasonId, SalesorderheadersalesreasonRow]
 ) extends SalesorderheadersalesreasonRepo {
-  def delete: DeleteBuilder[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow] = DeleteBuilderMock(DeleteParams.empty, SalesorderheadersalesreasonFields.structure, map)
+  override def delete: DeleteBuilder[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow] = DeleteBuilderMock(DeleteParams.empty, SalesorderheadersalesreasonFields.structure, map)
 
-  def deleteById(compositeId: SalesorderheadersalesreasonId)(using c: Connection): Boolean = map.remove(compositeId).isDefined
+  override def deleteById(compositeId: SalesorderheadersalesreasonId)(using c: Connection): Boolean = map.remove(compositeId).isDefined
 
-  def deleteByIds(compositeIds: Array[SalesorderheadersalesreasonId])(using c: Connection): Int = compositeIds.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(compositeIds: Array[SalesorderheadersalesreasonId])(using c: Connection): Int = compositeIds.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: SalesorderheadersalesreasonRow)(using c: Connection): SalesorderheadersalesreasonRow = {
+  override def insert(unsaved: SalesorderheadersalesreasonRow)(using c: Connection): SalesorderheadersalesreasonRow = {
     val _ = if (map.contains(unsaved.compositeId))
       sys.error(s"id ${unsaved.compositeId} already exists")
     else
@@ -36,9 +36,9 @@ case class SalesorderheadersalesreasonRepoMock(
     unsaved
   }
 
-  def insert(unsaved: SalesorderheadersalesreasonRowUnsaved)(using c: Connection): SalesorderheadersalesreasonRow = insert(toRow(unsaved))
+  override def insert(unsaved: SalesorderheadersalesreasonRowUnsaved)(using c: Connection): SalesorderheadersalesreasonRow = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[SalesorderheadersalesreasonRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -49,7 +49,7 @@ case class SalesorderheadersalesreasonRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[SalesorderheadersalesreasonRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -60,34 +60,34 @@ case class SalesorderheadersalesreasonRepoMock(
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow] = SelectBuilderMock(SalesorderheadersalesreasonFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow] = SelectBuilderMock(SalesorderheadersalesreasonFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(using c: Connection): List[SalesorderheadersalesreasonRow] = map.values.toList
+  override def selectAll(using c: Connection): List[SalesorderheadersalesreasonRow] = map.values.toList
 
-  def selectById(compositeId: SalesorderheadersalesreasonId)(using c: Connection): Option[SalesorderheadersalesreasonRow] = map.get(compositeId)
+  override def selectById(compositeId: SalesorderheadersalesreasonId)(using c: Connection): Option[SalesorderheadersalesreasonRow] = map.get(compositeId)
 
-  def selectByIds(compositeIds: Array[SalesorderheadersalesreasonId])(using c: Connection): List[SalesorderheadersalesreasonRow] = compositeIds.flatMap(map.get).toList
+  override def selectByIds(compositeIds: Array[SalesorderheadersalesreasonId])(using c: Connection): List[SalesorderheadersalesreasonRow] = compositeIds.flatMap(map.get).toList
 
-  def selectByIdsTracked(compositeIds: Array[SalesorderheadersalesreasonId])(using c: Connection): Map[SalesorderheadersalesreasonId, SalesorderheadersalesreasonRow] = {
+  override def selectByIdsTracked(compositeIds: Array[SalesorderheadersalesreasonId])(using c: Connection): Map[SalesorderheadersalesreasonId, SalesorderheadersalesreasonRow] = {
     val byId = selectByIds(compositeIds).view.map(x => (x.compositeId, x)).toMap
     compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow] = UpdateBuilderMock(UpdateParams.empty, SalesorderheadersalesreasonFields.structure, map)
+  override def update: UpdateBuilder[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow] = UpdateBuilderMock(UpdateParams.empty, SalesorderheadersalesreasonFields.structure, map)
 
-  def update(row: SalesorderheadersalesreasonRow)(using c: Connection): Option[SalesorderheadersalesreasonRow] = {
+  override def update(row: SalesorderheadersalesreasonRow)(using c: Connection): Option[SalesorderheadersalesreasonRow] = {
     map.get(row.compositeId).map { _ =>
       map.put(row.compositeId, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: SalesorderheadersalesreasonRow)(using c: Connection): SalesorderheadersalesreasonRow = {
+  override def upsert(unsaved: SalesorderheadersalesreasonRow)(using c: Connection): SalesorderheadersalesreasonRow = {
     map.put(unsaved.compositeId, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[SalesorderheadersalesreasonRow])(using c: Connection): List[SalesorderheadersalesreasonRow] = {
+  override def upsertBatch(unsaved: Iterable[SalesorderheadersalesreasonRow])(using c: Connection): List[SalesorderheadersalesreasonRow] = {
     unsaved.map { row =>
       map += (row.compositeId -> row)
       row
@@ -95,7 +95,7 @@ case class SalesorderheadersalesreasonRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[SalesorderheadersalesreasonRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

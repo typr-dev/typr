@@ -5,22 +5,22 @@
  */
 package adventureworks.sa.spqh;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class SpqhViewRepoImpl implements SpqhViewRepo {
+  @Override
   public SelectBuilder<SpqhViewFields, SpqhViewRow> select() {
     return SelectBuilder.of("sa.spqh", SpqhViewFields.structure(), SpqhViewRow._rowParser);
   };
 
+  @Override
   public List<SpqhViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text
        from "sa"."spqh"
-    """)).as(SpqhViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(SpqhViewRow._rowParser.all()).runUnchecked(c);
   };
 }

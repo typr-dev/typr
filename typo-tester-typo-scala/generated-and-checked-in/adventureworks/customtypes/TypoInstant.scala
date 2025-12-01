@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes
 
+import com.fasterxml.jackson.annotation.JsonValue
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -19,7 +20,7 @@ import typo.runtime.PgTypes
 import typo.runtime.PgWrite
 
 /** This is `java.time.TypoInstant`, but with microsecond precision and transferred to and from postgres as strings. The reason is that postgres driver and db libs are broken */
-case class TypoInstant(value: Instant)
+case class TypoInstant(@JsonValue value: Instant)
 
 object TypoInstant {
   def apply(value: Instant): TypoInstant = new TypoInstant(value.truncatedTo(ChronoUnit.MICROS))
@@ -32,9 +33,9 @@ object TypoInstant {
 
   val parser: DateTimeFormatter = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd HH:mm:ss").appendFraction(ChronoField.MICRO_OF_SECOND, 0, 6, true).appendPattern("X").toFormatter()
 
-  given pgText: PgText[TypoInstant] = PgText.textString.contramap(v => v.value.toString)
+  given pgText: PgText[TypoInstant] = PgText.textString.contramap(v => v.value.toString())
 
-  given pgType: PgType[TypoInstant] = PgTypes.text.bimap(v => apply(v), v => v.value.toString).renamed("timestamptz")
+  given pgType: PgType[TypoInstant] = PgTypes.text.bimap((v: String) => apply(v), (v: TypoInstant) => v.value.toString()).renamed("timestamptz")
 
-  given pgTypeArray: PgType[Array[TypoInstant]] = TypoInstant.pgType.array(PgRead.massageJdbcArrayTo(classOf[Array[String]]).map(xs => xs.map(v => apply(v))), PgWrite.passObjectToJdbc[String]().array(TypoInstant.pgType.typename().as[String]()).contramap(xs => xs.map((v: TypoInstant) => v.value.toString)))
+  given pgTypeArray: PgType[Array[TypoInstant]] = TypoInstant.pgType.array(PgRead.massageJdbcArrayTo(classOf[Array[String]]).map((xs: Array[String]) => xs.map((v: String) => apply(v))), PgWrite.passObjectToJdbc[String]().array(TypoInstant.pgType.typename().as[String]()).contramap((xs: Array[TypoInstant]) => xs.map((v: TypoInstant) => v.value.toString())))
 }

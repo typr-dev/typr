@@ -20,6 +20,7 @@ trait TypeSupport {
   val IteratorType: jvm.Type
   val Long: jvm.Type
   val Short: jvm.Type
+  val String: jvm.Type
 
   // Support traits for common patterns
   val Optional: OptionalSupport
@@ -42,6 +43,7 @@ object TypeSupportScala extends TypeSupport {
   override val IteratorType: jvm.Type = TypesScala.Iterator
   override val Long: jvm.Type = TypesScala.Long
   override val Short: jvm.Type = TypesScala.Short
+  override val String: jvm.Type = TypesJava.String
 
   override def bigDecimalFromDouble(d: jvm.Code): jvm.Code =
     code"${TypesScala.BigDecimal}.decimal($d)"
@@ -122,7 +124,7 @@ object TypeSupportScala extends TypeSupport {
     def mkStringKV(map: jvm.Code, kvSep: String, entrySep: String): jvm.Code =
       code"""$map.map { case (k, v) => k + "$kvSep" + v }.mkString("$entrySep")"""
 
-    def forEach(map: jvm.Code, lambda: jvm.Lambda2): jvm.Code =
+    def forEach(map: jvm.Code, lambda: jvm.Lambda): jvm.Code =
       code"$map.foreach($lambda)"
 
     def castMap(expr: jvm.Code, keyType: jvm.Type, valueType: jvm.Type): jvm.Code =
@@ -163,6 +165,7 @@ object TypeSupportJava extends TypeSupport {
   override val IteratorType: jvm.Type = TypesJava.Iterator
   override val Long: jvm.Type = TypesJava.Long
   override val Short: jvm.Type = TypesJava.Short
+  override val String: jvm.Type = TypesJava.String
 
   override def bigDecimalFromDouble(d: jvm.Code): jvm.Code =
     code"${TypesJava.BigDecimal}.valueOf($d)"
@@ -243,7 +246,7 @@ object TypeSupportJava extends TypeSupport {
     def mkStringKV(map: jvm.Code, kvSep: String, entrySep: String): jvm.Code =
       code"""${TypesJava.String}.join("$entrySep", $map.entrySet().stream().map(e -> e.getKey() + "$kvSep" + e.getValue()).toList())"""
 
-    def forEach(map: jvm.Code, lambda: jvm.Lambda2): jvm.Code =
+    def forEach(map: jvm.Code, lambda: jvm.Lambda): jvm.Code =
       code"$map.forEach($lambda)"
 
     def castMap(expr: jvm.Code, keyType: jvm.Type, valueType: jvm.Type): jvm.Code =

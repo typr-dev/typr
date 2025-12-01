@@ -11,7 +11,6 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple4;
 
 /** SQL file: person_dynamic.sql */
 public record PersonDynamicSqlRow(
@@ -44,5 +43,5 @@ public record PersonDynamicSqlRow(
     return new PersonDynamicSqlRow(title, firstname, middlename, lastname);
   };
 
-  static RowParser<PersonDynamicSqlRow> _rowParser = RowParsers.of(PgTypes.text.opt(), /* user-picked */ FirstName.pgType, Name.pgType.opt(), Name.pgType, PersonDynamicSqlRow::new, row -> new Tuple4<>(row.title(), row.firstname(), row.middlename(), row.lastname()));;
+  static RowParser<PersonDynamicSqlRow> _rowParser = RowParsers.of(PgTypes.text.opt(), /* user-picked */ FirstName.pgType, Name.pgType.opt(), Name.pgType, PersonDynamicSqlRow::new, row -> new Object[]{row.title(), row.firstname(), row.middlename(), row.lastname()});;
 }

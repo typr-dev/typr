@@ -27,7 +27,7 @@ object ContacttypeFields {
 
     override lazy val fields: ContacttypeFields = {
       new ContacttypeFields {
-        def contacttypeid: IdField[ContacttypeId, ContacttypeRow] = {
+        override def contacttypeid: IdField[ContacttypeId, ContacttypeRow] = {
           new IdField[ContacttypeId, ContacttypeRow](
             _path,
             "contacttypeid",
@@ -38,7 +38,7 @@ object ContacttypeFields {
             ContacttypeId.pgType
           )
         }
-        def name: Field[Name, ContacttypeRow] = {
+        override def name: Field[Name, ContacttypeRow] = {
           new Field[Name, ContacttypeRow](
             _path,
             "name",
@@ -49,7 +49,7 @@ object ContacttypeFields {
             Name.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, ContacttypeRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, ContacttypeRow] = {
           new Field[TypoLocalDateTime, ContacttypeRow](
             _path,
             "modifieddate",
@@ -65,7 +65,7 @@ object ContacttypeFields {
 
     override lazy val columns: java.util.List[FieldLike[?, ContacttypeRow]] = java.util.List.of(this.fields.contacttypeid, this.fields.name, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[ContacttypeFields, ContacttypeRow] = new Impl(java.util.List.of())

@@ -23,20 +23,20 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class ProductreviewRepoImpl extends ProductreviewRepo {
-  def delete: DeleteBuilder[ProductreviewFields, ProductreviewRow] = DeleteBuilder.of(""""production"."productreview"""", ProductreviewFields.structure, ProductreviewRow.jdbcDecoder)
+  override def delete: DeleteBuilder[ProductreviewFields, ProductreviewRow] = DeleteBuilder.of(""""production"."productreview"""", ProductreviewFields.structure, ProductreviewRow.jdbcDecoder)
 
-  def deleteById(productreviewid: ProductreviewId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "production"."productreview" where "productreviewid" = ${Segment.paramSegment(productreviewid)(ProductreviewId.setter)}""".delete.map(_ > 0)
+  override def deleteById(productreviewid: ProductreviewId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "production"."productreview" where "productreviewid" = ${Segment.paramSegment(productreviewid)(ProductreviewId.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(productreviewids: Array[ProductreviewId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "production"."productreview" where "productreviewid" = ANY(${Segment.paramSegment(productreviewids)(ProductreviewId.arraySetter)})""".delete
+  override def deleteByIds(productreviewids: Array[ProductreviewId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "production"."productreview" where "productreviewid" = ANY(${Segment.paramSegment(productreviewids)(ProductreviewId.arraySetter)})""".delete
 
-  def insert(unsaved: ProductreviewRow): ZIO[ZConnection, Throwable, ProductreviewRow] = {
+  override def insert(unsaved: ProductreviewRow): ZIO[ZConnection, Throwable, ProductreviewRow] = {
     sql"""insert into "production"."productreview"("productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate")
     values (${Segment.paramSegment(unsaved.productreviewid)(ProductreviewId.setter)}::int4, ${Segment.paramSegment(unsaved.productid)(ProductId.setter)}::int4, ${Segment.paramSegment(unsaved.reviewername)(Name.setter)}::varchar, ${Segment.paramSegment(unsaved.reviewdate)(TypoLocalDateTime.setter)}::timestamp, ${Segment.paramSegment(unsaved.emailaddress)(Setter.stringSetter)}, ${Segment.paramSegment(unsaved.rating)(Setter.intSetter)}::int4, ${Segment.paramSegment(unsaved.comments)(Setter.optionParamSetter(Setter.stringSetter))}, ${Segment.paramSegment(unsaved.modifieddate)(TypoLocalDateTime.setter)}::timestamp)
     returning "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text
     """.insertReturning(ProductreviewRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insert(unsaved: ProductreviewRowUnsaved): ZIO[ZConnection, Throwable, ProductreviewRow] = {
+  override def insert(unsaved: ProductreviewRowUnsaved): ZIO[ZConnection, Throwable, ProductreviewRow] = {
     val fs = List(
       Some((sql""""productid"""", sql"${Segment.paramSegment(unsaved.productid)(ProductId.setter)}::int4")),
       Some((sql""""reviewername"""", sql"${Segment.paramSegment(unsaved.reviewername)(Name.setter)}::varchar")),
@@ -68,35 +68,35 @@ class ProductreviewRepoImpl extends ProductreviewRepo {
     q.insertReturning(ProductreviewRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, ProductreviewRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "production"."productreview"("productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate") FROM STDIN""", batchSize, unsaved)(ProductreviewRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, ProductreviewRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "production"."productreview"("productid", "reviewername", "emailaddress", "rating", "comments", "productreviewid", "reviewdate", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(ProductreviewRowUnsaved.pgText)
 
-  def select: SelectBuilder[ProductreviewFields, ProductreviewRow] = SelectBuilder.of(""""production"."productreview"""", ProductreviewFields.structure, ProductreviewRow.jdbcDecoder)
+  override def select: SelectBuilder[ProductreviewFields, ProductreviewRow] = SelectBuilder.of(""""production"."productreview"""", ProductreviewFields.structure, ProductreviewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, ProductreviewRow] = sql"""select "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text from "production"."productreview"""".query(ProductreviewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, ProductreviewRow] = sql"""select "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text from "production"."productreview"""".query(ProductreviewRow.jdbcDecoder).selectStream()
 
-  def selectById(productreviewid: ProductreviewId): ZIO[ZConnection, Throwable, Option[ProductreviewRow]] = sql"""select "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text from "production"."productreview" where "productreviewid" = ${Segment.paramSegment(productreviewid)(ProductreviewId.setter)}""".query(ProductreviewRow.jdbcDecoder).selectOne
+  override def selectById(productreviewid: ProductreviewId): ZIO[ZConnection, Throwable, Option[ProductreviewRow]] = sql"""select "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text from "production"."productreview" where "productreviewid" = ${Segment.paramSegment(productreviewid)(ProductreviewId.setter)}""".query(ProductreviewRow.jdbcDecoder).selectOne
 
-  def selectByIds(productreviewids: Array[ProductreviewId]): ZStream[ZConnection, Throwable, ProductreviewRow] = sql"""select "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text from "production"."productreview" where "productreviewid" = ANY(${Segment.paramSegment(productreviewids)(ProductreviewId.arraySetter)})""".query(ProductreviewRow.jdbcDecoder).selectStream()
+  override def selectByIds(productreviewids: Array[ProductreviewId]): ZStream[ZConnection, Throwable, ProductreviewRow] = sql"""select "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text from "production"."productreview" where "productreviewid" = ANY(${Segment.paramSegment(productreviewids)(ProductreviewId.arraySetter)})""".query(ProductreviewRow.jdbcDecoder).selectStream()
 
-  def selectByIdsTracked(productreviewids: Array[ProductreviewId]): ZIO[ZConnection, Throwable, Map[ProductreviewId, ProductreviewRow]] = {
+  override def selectByIdsTracked(productreviewids: Array[ProductreviewId]): ZIO[ZConnection, Throwable, Map[ProductreviewId, ProductreviewRow]] = {
     selectByIds(productreviewids).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.productreviewid, x)).toMap
       productreviewids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[ProductreviewFields, ProductreviewRow] = UpdateBuilder.of(""""production"."productreview"""", ProductreviewFields.structure, ProductreviewRow.jdbcDecoder)
+  override def update: UpdateBuilder[ProductreviewFields, ProductreviewRow] = UpdateBuilder.of(""""production"."productreview"""", ProductreviewFields.structure, ProductreviewRow.jdbcDecoder)
 
-  def update(row: ProductreviewRow): ZIO[ZConnection, Throwable, Option[ProductreviewRow]] = {
+  override def update(row: ProductreviewRow): ZIO[ZConnection, Throwable, Option[ProductreviewRow]] = {
     val productreviewid = row.productreviewid
     sql"""update "production"."productreview"
     set "productid" = ${Segment.paramSegment(row.productid)(ProductId.setter)}::int4,
@@ -112,7 +112,7 @@ class ProductreviewRepoImpl extends ProductreviewRepo {
       .selectOne
   }
 
-  def upsert(unsaved: ProductreviewRow): ZIO[ZConnection, Throwable, UpdateResult[ProductreviewRow]] = {
+  override def upsert(unsaved: ProductreviewRow): ZIO[ZConnection, Throwable, UpdateResult[ProductreviewRow]] = {
     sql"""insert into "production"."productreview"("productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate")
     values (
       ${Segment.paramSegment(unsaved.productreviewid)(ProductreviewId.setter)}::int4,
@@ -137,7 +137,7 @@ class ProductreviewRepoImpl extends ProductreviewRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, ProductreviewRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

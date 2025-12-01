@@ -23,7 +23,6 @@ import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple26
 
 /** View: sa.soh */
 case class SohViewRow(
@@ -82,34 +81,5 @@ case class SohViewRow(
 )
 
 object SohViewRow {
-  val `_rowParser`: RowParser[SohViewRow] = {
-    RowParsers.of(SalesorderheaderId.pgType, SalesorderheaderId.pgType, TypoShort.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoShort.pgType, Flag.pgType, OrderNumber.pgType.opt(), AccountNumber.pgType.opt(), CustomerId.pgType, BusinessentityId.pgType.opt(), SalesterritoryId.pgType.opt(), AddressId.pgType, AddressId.pgType, ShipmethodId.pgType, CustomCreditcardId.pgType.opt(), PgTypes.text.opt(), CurrencyrateId.pgType.opt(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric.opt(), PgTypes.text.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SohViewRow.apply, row => new Tuple26(
-      row.id,
-      row.salesorderid,
-      row.revisionnumber,
-      row.orderdate,
-      row.duedate,
-      row.shipdate,
-      row.status,
-      row.onlineorderflag,
-      row.purchaseordernumber,
-      row.accountnumber,
-      row.customerid,
-      row.salespersonid,
-      row.territoryid,
-      row.billtoaddressid,
-      row.shiptoaddressid,
-      row.shipmethodid,
-      row.creditcardid,
-      row.creditcardapprovalcode,
-      row.currencyrateid,
-      row.subtotal,
-      row.taxamt,
-      row.freight,
-      row.totaldue,
-      row.comment,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[SohViewRow] = RowParsers.of(SalesorderheaderId.pgType, SalesorderheaderId.pgType, TypoShort.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoShort.pgType, Flag.pgType, OrderNumber.pgType.opt(), AccountNumber.pgType.opt(), CustomerId.pgType, BusinessentityId.pgType.opt(), SalesterritoryId.pgType.opt(), AddressId.pgType, AddressId.pgType, ShipmethodId.pgType, CustomCreditcardId.pgType.opt(), PgTypes.text.opt(), CurrencyrateId.pgType.opt(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric.opt(), PgTypes.text.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SohViewRow.apply, row => Array(row.id, row.salesorderid, row.revisionnumber, row.orderdate, row.duedate, row.shipdate, row.status, row.onlineorderflag, row.purchaseordernumber, row.accountnumber, row.customerid, row.salespersonid, row.territoryid, row.billtoaddressid, row.shiptoaddressid, row.shipmethodid, row.creditcardid, row.creditcardapprovalcode, row.currencyrateid, row.subtotal, row.taxamt, row.freight, row.totaldue, row.comment, row.rowguid, row.modifieddate))
 }

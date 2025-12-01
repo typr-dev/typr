@@ -43,7 +43,7 @@ object CurrencyrateFields {
 
     override lazy val fields: CurrencyrateFields = {
       new CurrencyrateFields {
-        def currencyrateid: IdField[CurrencyrateId, CurrencyrateRow] = {
+        override def currencyrateid: IdField[CurrencyrateId, CurrencyrateRow] = {
           new IdField[CurrencyrateId, CurrencyrateRow](
             _path,
             "currencyrateid",
@@ -54,7 +54,7 @@ object CurrencyrateFields {
             CurrencyrateId.pgType
           )
         }
-        def currencyratedate: Field[TypoLocalDateTime, CurrencyrateRow] = {
+        override def currencyratedate: Field[TypoLocalDateTime, CurrencyrateRow] = {
           new Field[TypoLocalDateTime, CurrencyrateRow](
             _path,
             "currencyratedate",
@@ -65,7 +65,7 @@ object CurrencyrateFields {
             TypoLocalDateTime.pgType
           )
         }
-        def fromcurrencycode: Field[CurrencyId, CurrencyrateRow] = {
+        override def fromcurrencycode: Field[CurrencyId, CurrencyrateRow] = {
           new Field[CurrencyId, CurrencyrateRow](
             _path,
             "fromcurrencycode",
@@ -76,7 +76,7 @@ object CurrencyrateFields {
             CurrencyId.pgType
           )
         }
-        def tocurrencycode: Field[CurrencyId, CurrencyrateRow] = {
+        override def tocurrencycode: Field[CurrencyId, CurrencyrateRow] = {
           new Field[CurrencyId, CurrencyrateRow](
             _path,
             "tocurrencycode",
@@ -87,7 +87,7 @@ object CurrencyrateFields {
             CurrencyId.pgType
           )
         }
-        def averagerate: Field[java.math.BigDecimal, CurrencyrateRow] = {
+        override def averagerate: Field[java.math.BigDecimal, CurrencyrateRow] = {
           new Field[java.math.BigDecimal, CurrencyrateRow](
             _path,
             "averagerate",
@@ -98,7 +98,7 @@ object CurrencyrateFields {
             PgTypes.numeric
           )
         }
-        def endofdayrate: Field[java.math.BigDecimal, CurrencyrateRow] = {
+        override def endofdayrate: Field[java.math.BigDecimal, CurrencyrateRow] = {
           new Field[java.math.BigDecimal, CurrencyrateRow](
             _path,
             "endofdayrate",
@@ -109,7 +109,7 @@ object CurrencyrateFields {
             PgTypes.numeric
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, CurrencyrateRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, CurrencyrateRow] = {
           new Field[TypoLocalDateTime, CurrencyrateRow](
             _path,
             "modifieddate",
@@ -125,7 +125,7 @@ object CurrencyrateFields {
 
     override lazy val columns: java.util.List[FieldLike[?, CurrencyrateRow]] = java.util.List.of(this.fields.currencyrateid, this.fields.currencyratedate, this.fields.fromcurrencycode, this.fields.tocurrencycode, this.fields.averagerate, this.fields.endofdayrate, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[CurrencyrateFields, CurrencyrateRow] = new Impl(java.util.List.of())

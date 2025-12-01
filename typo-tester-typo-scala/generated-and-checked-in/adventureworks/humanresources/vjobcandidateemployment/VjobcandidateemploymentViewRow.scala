@@ -7,42 +7,28 @@ package adventureworks.humanresources.vjobcandidateemployment
 
 import adventureworks.customtypes.TypoLocalDate
 import adventureworks.humanresources.jobcandidate.JobcandidateId
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple11
 
 /** View: humanresources.vjobcandidateemployment */
 case class VjobcandidateemploymentViewRow(
   /** Points to [[adventureworks.humanresources.jobcandidate.JobcandidateRow.jobcandidateid]] */
   jobcandidateid: JobcandidateId,
-  empStartDate: /* nullability unknown */ Optional[TypoLocalDate],
-  empEndDate: /* nullability unknown */ Optional[TypoLocalDate],
-  empOrgName: /* nullability unknown */ Optional[/* max 100 chars */ String],
-  empJobTitle: /* nullability unknown */ Optional[/* max 100 chars */ String],
-  empResponsibility: /* nullability unknown */ Optional[String],
-  empFunctionCategory: /* nullability unknown */ Optional[String],
-  empIndustryCategory: /* nullability unknown */ Optional[String],
-  empLocCountryRegion: /* nullability unknown */ Optional[String],
-  empLocState: /* nullability unknown */ Optional[String],
-  empLocCity: /* nullability unknown */ Optional[String]
+  @JsonProperty("Emp.StartDate") empStartDate: /* nullability unknown */ Optional[TypoLocalDate],
+  @JsonProperty("Emp.EndDate") empEndDate: /* nullability unknown */ Optional[TypoLocalDate],
+  @JsonProperty("Emp.OrgName") empOrgName: /* nullability unknown */ Optional[/* max 100 chars */ String],
+  @JsonProperty("Emp.JobTitle") empJobTitle: /* nullability unknown */ Optional[/* max 100 chars */ String],
+  @JsonProperty("Emp.Responsibility") empResponsibility: /* nullability unknown */ Optional[String],
+  @JsonProperty("Emp.FunctionCategory") empFunctionCategory: /* nullability unknown */ Optional[String],
+  @JsonProperty("Emp.IndustryCategory") empIndustryCategory: /* nullability unknown */ Optional[String],
+  @JsonProperty("Emp.Loc.CountryRegion") empLocCountryRegion: /* nullability unknown */ Optional[String],
+  @JsonProperty("Emp.Loc.State") empLocState: /* nullability unknown */ Optional[String],
+  @JsonProperty("Emp.Loc.City") empLocCity: /* nullability unknown */ Optional[String]
 )
 
 object VjobcandidateemploymentViewRow {
-  val `_rowParser`: RowParser[VjobcandidateemploymentViewRow] = {
-    RowParsers.of(JobcandidateId.pgType, TypoLocalDate.pgType.opt(), TypoLocalDate.pgType.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), VjobcandidateemploymentViewRow.apply, row => new Tuple11(
-      row.jobcandidateid,
-      row.empStartDate,
-      row.empEndDate,
-      row.empOrgName,
-      row.empJobTitle,
-      row.empResponsibility,
-      row.empFunctionCategory,
-      row.empIndustryCategory,
-      row.empLocCountryRegion,
-      row.empLocState,
-      row.empLocCity
-    ))
-  }
+  val `_rowParser`: RowParser[VjobcandidateemploymentViewRow] = RowParsers.of(JobcandidateId.pgType, TypoLocalDate.pgType.opt(), TypoLocalDate.pgType.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), VjobcandidateemploymentViewRow.apply, row => Array(row.jobcandidateid, row.empStartDate, row.empEndDate, row.empOrgName, row.empJobTitle, row.empResponsibility, row.empFunctionCategory, row.empIndustryCategory, row.empLocCountryRegion, row.empLocState, row.empLocCity))
 }

@@ -29,7 +29,7 @@ object CViewFields {
 
     override lazy val fields: CViewFields = {
       new CViewFields {
-        def id: Field[CultureId, CViewRow] = {
+        override def id: Field[CultureId, CViewRow] = {
           new Field[CultureId, CViewRow](
             _path,
             "id",
@@ -40,7 +40,7 @@ object CViewFields {
             CultureId.pgType
           )
         }
-        def cultureid: Field[CultureId, CViewRow] = {
+        override def cultureid: Field[CultureId, CViewRow] = {
           new Field[CultureId, CViewRow](
             _path,
             "cultureid",
@@ -51,7 +51,7 @@ object CViewFields {
             CultureId.pgType
           )
         }
-        def name: Field[Name, CViewRow] = {
+        override def name: Field[Name, CViewRow] = {
           new Field[Name, CViewRow](
             _path,
             "name",
@@ -62,7 +62,7 @@ object CViewFields {
             Name.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, CViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, CViewRow] = {
           new Field[TypoLocalDateTime, CViewRow](
             _path,
             "modifieddate",
@@ -78,7 +78,7 @@ object CViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, CViewRow]] = java.util.List.of(this.fields.id, this.fields.cultureid, this.fields.name, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[CViewFields, CViewRow] = new Impl(java.util.List.of())

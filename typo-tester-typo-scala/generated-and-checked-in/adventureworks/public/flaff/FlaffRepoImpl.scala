@@ -17,23 +17,23 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class FlaffRepoImpl extends FlaffRepo {
-  def delete: DeleteBuilder[FlaffFields, FlaffRow] = DeleteBuilder.of("public.flaff", FlaffFields.structure)
+  override def delete: DeleteBuilder[FlaffFields, FlaffRow] = DeleteBuilder.of("public.flaff", FlaffFields.structure)
 
-  def deleteById(compositeId: FlaffId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."flaff" where "code" = ${ShortText.pgType.encode(compositeId.code)} AND "another_code" = ${PgTypes.text.encode(compositeId.anotherCode)} AND "some_number" = ${PgTypes.int4.encode(compositeId.someNumber)} AND "specifier" = ${ShortText.pgType.encode(compositeId.specifier)}""".update().runUnchecked(c) > 0
+  override def deleteById(compositeId: FlaffId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."flaff" where "code" = ${ShortText.pgType.encode(compositeId.code)} AND "another_code" = ${PgTypes.text.encode(compositeId.anotherCode)} AND "some_number" = ${PgTypes.int4.encode(compositeId.someNumber)} AND "specifier" = ${ShortText.pgType.encode(compositeId.specifier)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(compositeIds: Array[FlaffId])(using c: Connection): Integer = {
+  override def deleteByIds(compositeIds: Array[FlaffId])(using c: Connection): Integer = {
     val code: Array[ShortText] = compositeIds.map(_.code)
     val anotherCode: Array[/* max 20 chars */ String] = compositeIds.map(_.anotherCode)
     val someNumber: Array[Integer] = compositeIds.map(_.someNumber)
     val specifier: Array[ShortText] = compositeIds.map(_.specifier)
-    interpolate"""delete
+    return interpolate"""delete
     from "public"."flaff"
     where ("code", "another_code", "some_number", "specifier")
     in (select unnest(${ShortText.pgTypeArray.encode(code)}::text[]), unnest(${PgTypes.textArray.encode(anotherCode)}::varchar[]), unnest(${PgTypes.int4Array.encode(someNumber)}::int4[]), unnest(${ShortText.pgTypeArray.encode(specifier)}::text[]))
     """.update().runUnchecked(c)
   }
 
-  def insert(unsaved: FlaffRow)(using c: Connection): FlaffRow = {
+  override def insert(unsaved: FlaffRow)(using c: Connection): FlaffRow = {
   interpolate"""insert into "public"."flaff"("code", "another_code", "some_number", "specifier", "parentspecifier")
     values (${ShortText.pgType.encode(unsaved.code)}::text, ${PgTypes.text.encode(unsaved.anotherCode)}, ${PgTypes.int4.encode(unsaved.someNumber)}::int4, ${ShortText.pgType.encode(unsaved.specifier)}::text, ${ShortText.pgType.opt().encode(unsaved.parentspecifier)}::text)
     returning "code", "another_code", "some_number", "specifier", "parentspecifier"
@@ -41,53 +41,53 @@ class FlaffRepoImpl extends FlaffRepo {
     .updateReturning(FlaffRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[FlaffRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."flaff"("code", "another_code", "some_number", "specifier", "parentspecifier") FROM STDIN""", batchSize, unsaved, c, FlaffRow.pgText)
 
-  def select: SelectBuilder[FlaffFields, FlaffRow] = SelectBuilder.of("public.flaff", FlaffFields.structure, FlaffRow.`_rowParser`)
+  override def select: SelectBuilder[FlaffFields, FlaffRow] = SelectBuilder.of("public.flaff", FlaffFields.structure, FlaffRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[FlaffRow] = {
+  override def selectAll(using c: Connection): java.util.List[FlaffRow] = {
     interpolate"""select "code", "another_code", "some_number", "specifier", "parentspecifier"
     from "public"."flaff"
-    """.as(FlaffRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(FlaffRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(compositeId: FlaffId)(using c: Connection): Optional[FlaffRow] = {
+  override def selectById(compositeId: FlaffId)(using c: Connection): Optional[FlaffRow] = {
     interpolate"""select "code", "another_code", "some_number", "specifier", "parentspecifier"
     from "public"."flaff"
-    where "code" = ${ShortText.pgType.encode(compositeId.code)} AND "another_code" = ${PgTypes.text.encode(compositeId.anotherCode)} AND "some_number" = ${PgTypes.int4.encode(compositeId.someNumber)} AND "specifier" = ${ShortText.pgType.encode(compositeId.specifier)}""".as(FlaffRow.`_rowParser`.first()).runUnchecked(c)
+    where "code" = ${ShortText.pgType.encode(compositeId.code)} AND "another_code" = ${PgTypes.text.encode(compositeId.anotherCode)} AND "some_number" = ${PgTypes.int4.encode(compositeId.someNumber)} AND "specifier" = ${ShortText.pgType.encode(compositeId.specifier)}""".query(FlaffRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(compositeIds: Array[FlaffId])(using c: Connection): java.util.List[FlaffRow] = {
+  override def selectByIds(compositeIds: Array[FlaffId])(using c: Connection): java.util.List[FlaffRow] = {
     val code: Array[ShortText] = compositeIds.map(_.code)
     val anotherCode: Array[/* max 20 chars */ String] = compositeIds.map(_.anotherCode)
     val someNumber: Array[Integer] = compositeIds.map(_.someNumber)
     val specifier: Array[ShortText] = compositeIds.map(_.specifier)
-    interpolate"""select "code", "another_code", "some_number", "specifier", "parentspecifier"
+    return interpolate"""select "code", "another_code", "some_number", "specifier", "parentspecifier"
     from "public"."flaff"
     where ("code", "another_code", "some_number", "specifier")
     in (select unnest(${ShortText.pgTypeArray.encode(code)}::text[]), unnest(${PgTypes.textArray.encode(anotherCode)}::varchar[]), unnest(${PgTypes.int4Array.encode(someNumber)}::int4[]), unnest(${ShortText.pgTypeArray.encode(specifier)}::text[]))
-    """.as(FlaffRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(FlaffRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(compositeIds: Array[FlaffId])(using c: Connection): java.util.Map[FlaffId, FlaffRow] = {
-    val ret: java.util.Map[FlaffId, FlaffRow] = new HashMap()
+  override def selectByIdsTracked(compositeIds: Array[FlaffId])(using c: Connection): java.util.Map[FlaffId, FlaffRow] = {
+    val ret: HashMap[FlaffId, FlaffRow] = new HashMap[FlaffId, FlaffRow]()
     selectByIds(compositeIds)(using c).forEach(row => ret.put(row.compositeId, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[FlaffFields, FlaffRow] = UpdateBuilder.of("public.flaff", FlaffFields.structure, FlaffRow.`_rowParser`.all())
+  override def update: UpdateBuilder[FlaffFields, FlaffRow] = UpdateBuilder.of("public.flaff", FlaffFields.structure, FlaffRow.`_rowParser`.all())
 
-  def update(row: FlaffRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: FlaffRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: FlaffId = row.compositeId
-    interpolate"""update "public"."flaff"
+    return interpolate"""update "public"."flaff"
     set "parentspecifier" = ${ShortText.pgType.opt().encode(row.parentspecifier)}::text
     where "code" = ${ShortText.pgType.encode(compositeId.code)} AND "another_code" = ${PgTypes.text.encode(compositeId.anotherCode)} AND "some_number" = ${PgTypes.int4.encode(compositeId.someNumber)} AND "specifier" = ${ShortText.pgType.encode(compositeId.specifier)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: FlaffRow)(using c: Connection): FlaffRow = {
+  override def upsert(unsaved: FlaffRow)(using c: Connection): FlaffRow = {
   interpolate"""insert into "public"."flaff"("code", "another_code", "some_number", "specifier", "parentspecifier")
     values (${ShortText.pgType.encode(unsaved.code)}::text, ${PgTypes.text.encode(unsaved.anotherCode)}, ${PgTypes.int4.encode(unsaved.someNumber)}::int4, ${ShortText.pgType.encode(unsaved.specifier)}::text, ${ShortText.pgType.opt().encode(unsaved.parentspecifier)}::text)
     on conflict ("code", "another_code", "some_number", "specifier")
@@ -99,7 +99,7 @@ class FlaffRepoImpl extends FlaffRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[FlaffRow])(using c: Connection): java.util.List[FlaffRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[FlaffRow])(using c: Connection): java.util.List[FlaffRow] = {
     interpolate"""insert into "public"."flaff"("code", "another_code", "some_number", "specifier", "parentspecifier")
     values (?::text, ?, ?::int4, ?::text, ?::text)
     on conflict ("code", "another_code", "some_number", "specifier")
@@ -112,13 +112,13 @@ class FlaffRepoImpl extends FlaffRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[FlaffRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table flaff_TEMP (like "public"."flaff") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy flaff_TEMP("code", "another_code", "some_number", "specifier", "parentspecifier") from stdin""", batchSize, unsaved, c, FlaffRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "public"."flaff"("code", "another_code", "some_number", "specifier", "parentspecifier")
+    return interpolate"""insert into "public"."flaff"("code", "another_code", "some_number", "specifier", "parentspecifier")
     select * from flaff_TEMP
     on conflict ("code", "another_code", "some_number", "specifier")
     do update set

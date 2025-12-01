@@ -14,7 +14,6 @@ import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple13
 
 /** View: pu.poh */
 case class PohViewRow(
@@ -47,21 +46,5 @@ case class PohViewRow(
 )
 
 object PohViewRow {
-  val `_rowParser`: RowParser[PohViewRow] = {
-    RowParsers.of(PurchaseorderheaderId.pgType, PurchaseorderheaderId.pgType, TypoShort.pgType, TypoShort.pgType, BusinessentityId.pgType, BusinessentityId.pgType, ShipmethodId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, PohViewRow.apply, row => new Tuple13(
-      row.id,
-      row.purchaseorderid,
-      row.revisionnumber,
-      row.status,
-      row.employeeid,
-      row.vendorid,
-      row.shipmethodid,
-      row.orderdate,
-      row.shipdate,
-      row.subtotal,
-      row.taxamt,
-      row.freight,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[PohViewRow] = RowParsers.of(PurchaseorderheaderId.pgType, PurchaseorderheaderId.pgType, TypoShort.pgType, TypoShort.pgType, BusinessentityId.pgType, BusinessentityId.pgType, ShipmethodId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, PohViewRow.apply, row => Array(row.id, row.purchaseorderid, row.revisionnumber, row.status, row.employeeid, row.vendorid, row.shipmethodid, row.orderdate, row.shipdate, row.subtotal, row.taxamt, row.freight, row.modifieddate))
 }

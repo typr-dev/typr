@@ -5,22 +5,22 @@
  */
 package adventureworks.pr.pch;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class PchViewRepoImpl implements PchViewRepo {
+  @Override
   public SelectBuilder<PchViewFields, PchViewRow> select() {
     return SelectBuilder.of("pr.pch", PchViewFields.structure(), PchViewRow._rowParser);
   };
 
+  @Override
   public List<PchViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text
        from "pr"."pch"
-    """)).as(PchViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(PchViewRow._rowParser.all()).runUnchecked(c);
   };
 }

@@ -25,7 +25,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface EmployeeFields {
-  static final class Impl extends Relation<EmployeeFields, EmployeeRow> {
+  final class Impl extends Relation<EmployeeFields, EmployeeRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -33,48 +33,63 @@ public interface EmployeeFields {
     @Override
     public EmployeeFields fields() {
       return new EmployeeFields() {
+               @Override
                public IdField<BusinessentityId, EmployeeRow> businessentityid() {
                  return new IdField<BusinessentityId, EmployeeRow>(_path, "businessentityid", EmployeeRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public Field</* max 15 chars */ String, EmployeeRow> nationalidnumber() {
                  return new Field</* max 15 chars */ String, EmployeeRow>(_path, "nationalidnumber", EmployeeRow::nationalidnumber, Optional.empty(), Optional.empty(), (row, value) -> row.withNationalidnumber(value), PgTypes.text);
                };
+               @Override
                public Field</* max 256 chars */ String, EmployeeRow> loginid() {
                  return new Field</* max 256 chars */ String, EmployeeRow>(_path, "loginid", EmployeeRow::loginid, Optional.empty(), Optional.empty(), (row, value) -> row.withLoginid(value), PgTypes.text);
                };
+               @Override
                public Field</* max 50 chars */ String, EmployeeRow> jobtitle() {
                  return new Field</* max 50 chars */ String, EmployeeRow>(_path, "jobtitle", EmployeeRow::jobtitle, Optional.empty(), Optional.empty(), (row, value) -> row.withJobtitle(value), PgTypes.text);
                };
+               @Override
                public Field<TypoLocalDate, EmployeeRow> birthdate() {
                  return new Field<TypoLocalDate, EmployeeRow>(_path, "birthdate", EmployeeRow::birthdate, Optional.of("text"), Optional.of("date"), (row, value) -> row.withBirthdate(value), TypoLocalDate.pgType);
                };
+               @Override
                public Field</* bpchar, max 1 chars */ String, EmployeeRow> maritalstatus() {
                  return new Field</* bpchar, max 1 chars */ String, EmployeeRow>(_path, "maritalstatus", EmployeeRow::maritalstatus, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withMaritalstatus(value), PgTypes.text);
                };
+               @Override
                public Field</* bpchar, max 1 chars */ String, EmployeeRow> gender() {
                  return new Field</* bpchar, max 1 chars */ String, EmployeeRow>(_path, "gender", EmployeeRow::gender, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withGender(value), PgTypes.text);
                };
+               @Override
                public Field<TypoLocalDate, EmployeeRow> hiredate() {
                  return new Field<TypoLocalDate, EmployeeRow>(_path, "hiredate", EmployeeRow::hiredate, Optional.of("text"), Optional.of("date"), (row, value) -> row.withHiredate(value), TypoLocalDate.pgType);
                };
+               @Override
                public Field<Flag, EmployeeRow> salariedflag() {
                  return new Field<Flag, EmployeeRow>(_path, "salariedflag", EmployeeRow::salariedflag, Optional.empty(), Optional.of("bool"), (row, value) -> row.withSalariedflag(value), Flag.pgType);
                };
+               @Override
                public Field<TypoShort, EmployeeRow> vacationhours() {
                  return new Field<TypoShort, EmployeeRow>(_path, "vacationhours", EmployeeRow::vacationhours, Optional.empty(), Optional.of("int2"), (row, value) -> row.withVacationhours(value), TypoShort.pgType);
                };
+               @Override
                public Field<TypoShort, EmployeeRow> sickleavehours() {
                  return new Field<TypoShort, EmployeeRow>(_path, "sickleavehours", EmployeeRow::sickleavehours, Optional.empty(), Optional.of("int2"), (row, value) -> row.withSickleavehours(value), TypoShort.pgType);
                };
+               @Override
                public Field<Flag, EmployeeRow> currentflag() {
                  return new Field<Flag, EmployeeRow>(_path, "currentflag", EmployeeRow::currentflag, Optional.empty(), Optional.of("bool"), (row, value) -> row.withCurrentflag(value), Flag.pgType);
                };
+               @Override
                public Field<TypoUUID, EmployeeRow> rowguid() {
                  return new Field<TypoUUID, EmployeeRow>(_path, "rowguid", EmployeeRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, EmployeeRow> modifieddate() {
                  return new Field<TypoLocalDateTime, EmployeeRow>(_path, "modifieddate", EmployeeRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public OptField<String, EmployeeRow> organizationnode() {
                  return new OptField<String, EmployeeRow>(_path, "organizationnode", EmployeeRow::organizationnode, Optional.empty(), Optional.empty(), (row, value) -> row.withOrganizationnode(value), PgTypes.text);
                };
@@ -86,6 +101,7 @@ public interface EmployeeFields {
       return List.of(this.fields().businessentityid(), this.fields().nationalidnumber(), this.fields().loginid(), this.fields().jobtitle(), this.fields().birthdate(), this.fields().maritalstatus(), this.fields().gender(), this.fields().hiredate(), this.fields().salariedflag(), this.fields().vacationhours(), this.fields().sickleavehours(), this.fields().currentflag(), this.fields().rowguid(), this.fields().modifieddate(), this.fields().organizationnode());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

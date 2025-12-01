@@ -162,57 +162,5 @@ case class SalesorderheaderRowUnsaved(
 }
 
 object SalesorderheaderRowUnsaved {
-  given pgText: PgText[SalesorderheaderRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      TypoLocalDateTime.pgType.pgText.unsafeEncode(row.duedate, sb);
-      sb.append(PgText.DELIMETER);
-      TypoLocalDateTime.pgType.opt().pgText.unsafeEncode(row.shipdate, sb);
-      sb.append(PgText.DELIMETER);
-      OrderNumber.pgType.opt().pgText.unsafeEncode(row.purchaseordernumber, sb);
-      sb.append(PgText.DELIMETER);
-      AccountNumber.pgType.opt().pgText.unsafeEncode(row.accountnumber, sb);
-      sb.append(PgText.DELIMETER);
-      CustomerId.pgType.pgText.unsafeEncode(row.customerid, sb);
-      sb.append(PgText.DELIMETER);
-      BusinessentityId.pgType.opt().pgText.unsafeEncode(row.salespersonid, sb);
-      sb.append(PgText.DELIMETER);
-      SalesterritoryId.pgType.opt().pgText.unsafeEncode(row.territoryid, sb);
-      sb.append(PgText.DELIMETER);
-      AddressId.pgType.pgText.unsafeEncode(row.billtoaddressid, sb);
-      sb.append(PgText.DELIMETER);
-      AddressId.pgType.pgText.unsafeEncode(row.shiptoaddressid, sb);
-      sb.append(PgText.DELIMETER);
-      ShipmethodId.pgType.pgText.unsafeEncode(row.shipmethodid, sb);
-      sb.append(PgText.DELIMETER);
-      CustomCreditcardId.pgType.opt().pgText.unsafeEncode(row.creditcardid, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.text.opt().pgText.unsafeEncode(row.creditcardapprovalcode, sb);
-      sb.append(PgText.DELIMETER);
-      CurrencyrateId.pgType.opt().pgText.unsafeEncode(row.currencyrateid, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.numeric.opt().pgText.unsafeEncode(row.totaldue, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.text.opt().pgText.unsafeEncode(row.comment, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using SalesorderheaderId.pgType.pgText).unsafeEncode(row.salesorderid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoShort.pgType.pgText).unsafeEncode(row.revisionnumber, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.orderdate, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoShort.pgType.pgText).unsafeEncode(row.status, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using Flag.pgType.pgText).unsafeEncode(row.onlineorderflag, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using PgTypes.numeric.pgText).unsafeEncode(row.subtotal, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using PgTypes.numeric.pgText).unsafeEncode(row.taxamt, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using PgTypes.numeric.pgText).unsafeEncode(row.freight, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[SalesorderheaderRowUnsaved] = PgText.instance((row, sb) => { TypoLocalDateTime.pgType.pgText.unsafeEncode(row.duedate, sb); sb.append(PgText.DELIMETER); TypoLocalDateTime.pgType.opt().pgText.unsafeEncode(row.shipdate, sb); sb.append(PgText.DELIMETER); OrderNumber.pgType.opt().pgText.unsafeEncode(row.purchaseordernumber, sb); sb.append(PgText.DELIMETER); AccountNumber.pgType.opt().pgText.unsafeEncode(row.accountnumber, sb); sb.append(PgText.DELIMETER); CustomerId.pgType.pgText.unsafeEncode(row.customerid, sb); sb.append(PgText.DELIMETER); BusinessentityId.pgType.opt().pgText.unsafeEncode(row.salespersonid, sb); sb.append(PgText.DELIMETER); SalesterritoryId.pgType.opt().pgText.unsafeEncode(row.territoryid, sb); sb.append(PgText.DELIMETER); AddressId.pgType.pgText.unsafeEncode(row.billtoaddressid, sb); sb.append(PgText.DELIMETER); AddressId.pgType.pgText.unsafeEncode(row.shiptoaddressid, sb); sb.append(PgText.DELIMETER); ShipmethodId.pgType.pgText.unsafeEncode(row.shipmethodid, sb); sb.append(PgText.DELIMETER); CustomCreditcardId.pgType.opt().pgText.unsafeEncode(row.creditcardid, sb); sb.append(PgText.DELIMETER); PgTypes.text.opt().pgText.unsafeEncode(row.creditcardapprovalcode, sb); sb.append(PgText.DELIMETER); CurrencyrateId.pgType.opt().pgText.unsafeEncode(row.currencyrateid, sb); sb.append(PgText.DELIMETER); PgTypes.numeric.opt().pgText.unsafeEncode(row.totaldue, sb); sb.append(PgText.DELIMETER); PgTypes.text.opt().pgText.unsafeEncode(row.comment, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using SalesorderheaderId.pgType.pgText).unsafeEncode(row.salesorderid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoShort.pgType.pgText).unsafeEncode(row.revisionnumber, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.orderdate, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoShort.pgType.pgText).unsafeEncode(row.status, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using Flag.pgType.pgText).unsafeEncode(row.onlineorderflag, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.numeric.pgText).unsafeEncode(row.subtotal, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.numeric.pgText).unsafeEncode(row.taxamt, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.numeric.pgText).unsafeEncode(row.freight, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

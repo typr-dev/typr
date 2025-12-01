@@ -14,33 +14,33 @@ import typo.runtime.PgTypes
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PurchaseorderdetailRepoImpl extends PurchaseorderdetailRepo {
-  def select: SelectBuilder[PurchaseorderdetailFields, PurchaseorderdetailRow] = SelectBuilder.of("purchasing.purchaseorderdetail", PurchaseorderdetailFields.structure, PurchaseorderdetailRow.`_rowParser`)
+  override def select: SelectBuilder[PurchaseorderdetailFields, PurchaseorderdetailRow] = SelectBuilder.of("purchasing.purchaseorderdetail", PurchaseorderdetailFields.structure, PurchaseorderdetailRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[PurchaseorderdetailRow] = {
+  override def selectAll(using c: Connection): java.util.List[PurchaseorderdetailRow] = {
     interpolate"""select "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text
     from "purchasing"."purchaseorderdetail"
-    """.as(PurchaseorderdetailRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(PurchaseorderdetailRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(compositeId: PurchaseorderdetailId)(using c: Connection): Optional[PurchaseorderdetailRow] = {
+  override def selectById(compositeId: PurchaseorderdetailId)(using c: Connection): Optional[PurchaseorderdetailRow] = {
     interpolate"""select "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text
     from "purchasing"."purchaseorderdetail"
-    where "purchaseorderid" = ${PurchaseorderheaderId.pgType.encode(compositeId.purchaseorderid)} AND "purchaseorderdetailid" = ${PgTypes.int4.encode(compositeId.purchaseorderdetailid)}""".as(PurchaseorderdetailRow.`_rowParser`.first()).runUnchecked(c)
+    where "purchaseorderid" = ${PurchaseorderheaderId.pgType.encode(compositeId.purchaseorderid)} AND "purchaseorderdetailid" = ${PgTypes.int4.encode(compositeId.purchaseorderdetailid)}""".query(PurchaseorderdetailRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(compositeIds: Array[PurchaseorderdetailId])(using c: Connection): java.util.List[PurchaseorderdetailRow] = {
+  override def selectByIds(compositeIds: Array[PurchaseorderdetailId])(using c: Connection): java.util.List[PurchaseorderdetailRow] = {
     val purchaseorderid: Array[PurchaseorderheaderId] = compositeIds.map(_.purchaseorderid)
     val purchaseorderdetailid: Array[Integer] = compositeIds.map(_.purchaseorderdetailid)
-    interpolate"""select "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text
+    return interpolate"""select "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text
     from "purchasing"."purchaseorderdetail"
     where ("purchaseorderid", "purchaseorderdetailid")
     in (select unnest(${PurchaseorderheaderId.pgTypeArray.encode(purchaseorderid)}::int4[]), unnest(${PgTypes.int4Array.encode(purchaseorderdetailid)}::int4[]))
-    """.as(PurchaseorderdetailRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(PurchaseorderdetailRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(compositeIds: Array[PurchaseorderdetailId])(using c: Connection): java.util.Map[PurchaseorderdetailId, PurchaseorderdetailRow] = {
-    val ret: java.util.Map[PurchaseorderdetailId, PurchaseorderdetailRow] = new HashMap()
+  override def selectByIdsTracked(compositeIds: Array[PurchaseorderdetailId])(using c: Connection): java.util.Map[PurchaseorderdetailId, PurchaseorderdetailRow] = {
+    val ret: HashMap[PurchaseorderdetailId, PurchaseorderdetailRow] = new HashMap[PurchaseorderdetailId, PurchaseorderdetailRow]()
     selectByIds(compositeIds)(using c).forEach(row => ret.put(row.compositeId, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 }

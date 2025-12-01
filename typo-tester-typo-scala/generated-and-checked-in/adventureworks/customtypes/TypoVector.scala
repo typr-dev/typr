@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes
 
+import com.fasterxml.jackson.annotation.JsonValue
 import org.postgresql.jdbc.PgArray
 import typo.dsl.Bijection
 import typo.runtime.PgRead
@@ -13,7 +14,7 @@ import typo.runtime.PgType
 import typo.runtime.PgWrite
 
 /** extension: https://github.com/pgvector/pgvector */
-case class TypoVector(value: Array[java.lang.Float])
+case class TypoVector(@JsonValue value: Array[java.lang.Float])
 
 object TypoVector {
   given bijection: Bijection[TypoVector, Array[java.lang.Float]] = Bijection.apply[TypoVector, Array[java.lang.Float]](_.value)(TypoVector.apply)
@@ -23,8 +24,8 @@ object TypoVector {
   given pgType: PgType[TypoVector] = {
     PgType.of(
       "vector",
-      PgRead.castJdbcObjectTo(classOf[PgArray]).map(v => TypoVector(v.getArray.asInstanceOf[Array[java.lang.Float]].map(Float2float))),
-      PgWrite.passObjectToJdbc().contramap((v: TypoVector) => v.value.map(x => x: java.lang.Float)),
+      PgRead.castJdbcObjectTo(classOf[PgArray]).map((v: PgArray) => TypoVector(v.getArray.asInstanceOf[Array[java.lang.Float]].map(Float2float))),
+      PgWrite.passObjectToJdbc[Array[java.lang.Float]]().contramap((v: TypoVector) => v.value.map(x => x: java.lang.Float)),
       TypoVector.pgText
     )
   }

@@ -5,22 +5,22 @@
  */
 package adventureworks.hr.d;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class DViewRepoImpl implements DViewRepo {
+  @Override
   public SelectBuilder<DViewFields, DViewRow> select() {
     return SelectBuilder.of("hr.d", DViewFields.structure(), DViewRow._rowParser);
   };
 
+  @Override
   public List<DViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "departmentid", "name", "groupname", "modifieddate"::text
        from "hr"."d"
-    """)).as(DViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(DViewRow._rowParser.all()).runUnchecked(c);
   };
 }

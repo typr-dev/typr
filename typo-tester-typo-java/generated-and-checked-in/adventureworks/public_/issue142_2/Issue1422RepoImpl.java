@@ -6,7 +6,6 @@
 package adventureworks.public_.issue142_2;
 
 import adventureworks.public_.issue142.Issue142Id;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,12 +19,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class Issue1422RepoImpl implements Issue1422Repo {
+  @Override
   public DeleteBuilder<Issue1422Fields, Issue1422Row> delete() {
     return DeleteBuilder.of("public.issue142_2", Issue1422Fields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     Issue142Id tabellkode,
     Connection c
@@ -39,6 +39,7 @@ public class Issue1422RepoImpl implements Issue1422Repo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     Issue142Id[] tabellkodes,
     Connection c
@@ -55,6 +56,7 @@ public class Issue1422RepoImpl implements Issue1422Repo {
       .runUnchecked(c);
   };
 
+  @Override
   public Issue1422Row insert(
     Issue1422Row unsaved,
     Connection c
@@ -72,6 +74,7 @@ public class Issue1422RepoImpl implements Issue1422Repo {
       .updateReturning(Issue1422Row._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<Issue1422Row> unsaved,
     Integer batchSize,
@@ -82,17 +85,20 @@ public class Issue1422RepoImpl implements Issue1422Repo {
     """), batchSize, unsaved, c, Issue1422Row.pgText);
   };
 
+  @Override
   public SelectBuilder<Issue1422Fields, Issue1422Row> select() {
     return SelectBuilder.of("public.issue142_2", Issue1422Fields.structure(), Issue1422Row._rowParser);
   };
 
+  @Override
   public List<Issue1422Row> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "tabellkode"
        from "public"."issue142_2"
-    """)).as(Issue1422Row._rowParser.all()).runUnchecked(c);
+    """)).query(Issue1422Row._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<Issue1422Row> selectById(
     Issue142Id tabellkode,
     Connection c
@@ -104,9 +110,10 @@ public class Issue1422RepoImpl implements Issue1422Repo {
          where "tabellkode" = """),
       Issue142Id.pgType.encode(tabellkode),
       typo.runtime.Fragment.lit("")
-    ).as(Issue1422Row._rowParser.first()).runUnchecked(c);
+    ).query(Issue1422Row._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<Issue1422Row> selectByIds(
     Issue142Id[] tabellkodes,
     Connection c
@@ -118,22 +125,25 @@ public class Issue1422RepoImpl implements Issue1422Repo {
          where "tabellkode" = ANY("""),
       Issue142Id.pgTypeArray.encode(tabellkodes),
       typo.runtime.Fragment.lit(")")
-    ).as(Issue1422Row._rowParser.all()).runUnchecked(c);
+    ).query(Issue1422Row._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<Issue142Id, Issue1422Row> selectByIdsTracked(
     Issue142Id[] tabellkodes,
     Connection c
   ) {
-    Map<Issue142Id, Issue1422Row> ret = new HashMap<>();;
-      selectByIds(tabellkodes, c).forEach(row -> ret.put(row.tabellkode(), row));
+    HashMap<Issue142Id, Issue1422Row> ret = new HashMap<Issue142Id, Issue1422Row>();
+    selectByIds(tabellkodes, c).forEach(row -> ret.put(row.tabellkode(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<Issue1422Fields, Issue1422Row> update() {
     return UpdateBuilder.of("public.issue142_2", Issue1422Fields.structure(), Issue1422Row._rowParser.all());
   };
 
+  @Override
   public Issue1422Row upsert(
     Issue1422Row unsaved,
     Connection c
@@ -154,6 +164,7 @@ public class Issue1422RepoImpl implements Issue1422Repo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<Issue1422Row> upsertBatch(
     Iterator<Issue1422Row> unsaved,
     Connection c
@@ -170,23 +181,24 @@ public class Issue1422RepoImpl implements Issue1422Repo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<Issue1422Row> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table issue142_2_TEMP (like "public"."issue142_2") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy issue142_2_TEMP("tabellkode") from stdin
-      """), batchSize, unsaved, c, Issue1422Row.pgText);
+    create temporary table issue142_2_TEMP (like "public"."issue142_2") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy issue142_2_TEMP("tabellkode") from stdin
+    """), batchSize, unsaved, c, Issue1422Row.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "public"."issue142_2"("tabellkode")
-              select * from issue142_2_TEMP
-              on conflict ("tabellkode")
-              do nothing
-              ;
-              drop table issue142_2_TEMP;""")).update().runUnchecked(c);
+       insert into "public"."issue142_2"("tabellkode")
+       select * from issue142_2_TEMP
+       on conflict ("tabellkode")
+       do nothing
+       ;
+       drop table issue142_2_TEMP;""")).update().runUnchecked(c);
   };
 }

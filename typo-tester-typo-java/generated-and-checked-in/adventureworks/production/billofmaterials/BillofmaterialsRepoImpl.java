@@ -9,7 +9,6 @@ import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.customtypes.TypoShort;
 import adventureworks.production.product.ProductId;
 import adventureworks.production.unitmeasure.UnitmeasureId;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,12 +26,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class BillofmaterialsRepoImpl implements BillofmaterialsRepo {
+  @Override
   public DeleteBuilder<BillofmaterialsFields, BillofmaterialsRow> delete() {
     return DeleteBuilder.of("production.billofmaterials", BillofmaterialsFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     Integer billofmaterialsid,
     Connection c
@@ -46,6 +46,7 @@ public class BillofmaterialsRepoImpl implements BillofmaterialsRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     Integer[] billofmaterialsids,
     Connection c
@@ -62,6 +63,7 @@ public class BillofmaterialsRepoImpl implements BillofmaterialsRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public BillofmaterialsRow insert(
     BillofmaterialsRow unsaved,
     Connection c
@@ -95,94 +97,104 @@ public class BillofmaterialsRepoImpl implements BillofmaterialsRepo {
       .updateReturning(BillofmaterialsRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public BillofmaterialsRow insert(
     BillofmaterialsRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"productassemblyid\""));
-      values.add(interpolate(
-        ProductId.pgType.opt().encode(unsaved.productassemblyid()),
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"productassemblyid\""));
+    values.add(interpolate(
+      ProductId.pgType.opt().encode(unsaved.productassemblyid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"componentid\""));
+    values.add(interpolate(
+      ProductId.pgType.encode(unsaved.componentid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"enddate\""));
+    values.add(interpolate(
+      TypoLocalDateTime.pgType.opt().encode(unsaved.enddate()),
+      typo.runtime.Fragment.lit("::timestamp")
+    ));
+    columns.add(Fragment.lit("\"unitmeasurecode\""));
+    values.add(interpolate(
+      UnitmeasureId.pgType.encode(unsaved.unitmeasurecode()),
+      typo.runtime.Fragment.lit("::bpchar")
+    ));
+    columns.add(Fragment.lit("\"bomlevel\""));
+    values.add(interpolate(
+      TypoShort.pgType.encode(unsaved.bomlevel()),
+      typo.runtime.Fragment.lit("::int2")
+    ));
+    unsaved.billofmaterialsid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"billofmaterialsid\""));
+        values.add(interpolate(
+        PgTypes.int4.encode(value),
         typo.runtime.Fragment.lit("::int4")
       ));
-      columns.add(Fragment.lit("\"componentid\""));
-      values.add(interpolate(
-        ProductId.pgType.encode(unsaved.componentid()),
-        typo.runtime.Fragment.lit("::int4")
-      ));
-      columns.add(Fragment.lit("\"enddate\""));
-      values.add(interpolate(
-        TypoLocalDateTime.pgType.opt().encode(unsaved.enddate()),
+      }
+    );;
+    unsaved.startdate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"startdate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
         typo.runtime.Fragment.lit("::timestamp")
       ));
-      columns.add(Fragment.lit("\"unitmeasurecode\""));
-      values.add(interpolate(
-        UnitmeasureId.pgType.encode(unsaved.unitmeasurecode()),
-        typo.runtime.Fragment.lit("::bpchar")
+      }
+    );;
+    unsaved.perassemblyqty().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"perassemblyqty\""));
+        values.add(interpolate(
+        PgTypes.numeric.encode(value),
+        typo.runtime.Fragment.lit("::numeric")
       ));
-      columns.add(Fragment.lit("\"bomlevel\""));
-      values.add(interpolate(
-        TypoShort.pgType.encode(unsaved.bomlevel()),
-        typo.runtime.Fragment.lit("::int2")
+      }
+    );;
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
       ));
-      unsaved.billofmaterialsid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"billofmaterialsid\""));
-          values.add(interpolate(
-            PgTypes.int4.encode(value),
-            typo.runtime.Fragment.lit("::int4")
-          ));
-        }
-      );;
-      unsaved.startdate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"startdate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      unsaved.perassemblyqty().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"perassemblyqty\""));
-          values.add(interpolate(
-            PgTypes.numeric.encode(value),
-            typo.runtime.Fragment.lit("::numeric")
-          ));
-        }
-      );;
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "production"."billofmaterials"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "production"."billofmaterials"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(BillofmaterialsRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<BillofmaterialsRow> unsaved,
     Integer batchSize,
@@ -194,6 +206,7 @@ public class BillofmaterialsRepoImpl implements BillofmaterialsRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<BillofmaterialsRowUnsaved> unsaved,
     Integer batchSize,
@@ -204,17 +217,20 @@ public class BillofmaterialsRepoImpl implements BillofmaterialsRepo {
     """), batchSize, unsaved, c, BillofmaterialsRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<BillofmaterialsFields, BillofmaterialsRow> select() {
     return SelectBuilder.of("production.billofmaterials", BillofmaterialsFields.structure(), BillofmaterialsRow._rowParser);
   };
 
+  @Override
   public List<BillofmaterialsRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text
        from "production"."billofmaterials"
-    """)).as(BillofmaterialsRow._rowParser.all()).runUnchecked(c);
+    """)).query(BillofmaterialsRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<BillofmaterialsRow> selectById(
     Integer billofmaterialsid,
     Connection c
@@ -226,9 +242,10 @@ public class BillofmaterialsRepoImpl implements BillofmaterialsRepo {
          where "billofmaterialsid" = """),
       PgTypes.int4.encode(billofmaterialsid),
       typo.runtime.Fragment.lit("")
-    ).as(BillofmaterialsRow._rowParser.first()).runUnchecked(c);
+    ).query(BillofmaterialsRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<BillofmaterialsRow> selectByIds(
     Integer[] billofmaterialsids,
     Connection c
@@ -240,68 +257,72 @@ public class BillofmaterialsRepoImpl implements BillofmaterialsRepo {
          where "billofmaterialsid" = ANY("""),
       PgTypes.int4Array.encode(billofmaterialsids),
       typo.runtime.Fragment.lit(")")
-    ).as(BillofmaterialsRow._rowParser.all()).runUnchecked(c);
+    ).query(BillofmaterialsRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<Integer, BillofmaterialsRow> selectByIdsTracked(
     Integer[] billofmaterialsids,
     Connection c
   ) {
-    Map<Integer, BillofmaterialsRow> ret = new HashMap<>();;
-      selectByIds(billofmaterialsids, c).forEach(row -> ret.put(row.billofmaterialsid(), row));
+    HashMap<Integer, BillofmaterialsRow> ret = new HashMap<Integer, BillofmaterialsRow>();
+    selectByIds(billofmaterialsids, c).forEach(row -> ret.put(row.billofmaterialsid(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<BillofmaterialsFields, BillofmaterialsRow> update() {
     return UpdateBuilder.of("production.billofmaterials", BillofmaterialsFields.structure(), BillofmaterialsRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     BillofmaterialsRow row,
     Connection c
   ) {
     Integer billofmaterialsid = row.billofmaterialsid();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "production"."billofmaterials"
-                set "productassemblyid" = """),
-             ProductId.pgType.opt().encode(row.productassemblyid()),
-             typo.runtime.Fragment.lit("""
-                ::int4,
-                "componentid" = """),
-             ProductId.pgType.encode(row.componentid()),
-             typo.runtime.Fragment.lit("""
-                ::int4,
-                "startdate" = """),
-             TypoLocalDateTime.pgType.encode(row.startdate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp,
-                "enddate" = """),
-             TypoLocalDateTime.pgType.opt().encode(row.enddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp,
-                "unitmeasurecode" = """),
-             UnitmeasureId.pgType.encode(row.unitmeasurecode()),
-             typo.runtime.Fragment.lit("""
-                ::bpchar,
-                "bomlevel" = """),
-             TypoShort.pgType.encode(row.bomlevel()),
-             typo.runtime.Fragment.lit("""
-                ::int2,
-                "perassemblyqty" = """),
-             PgTypes.numeric.encode(row.perassemblyqty()),
-             typo.runtime.Fragment.lit("""
-                ::numeric,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "billofmaterialsid" = """),
-             PgTypes.int4.encode(billofmaterialsid),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "production"."billofmaterials"
+         set "productassemblyid" = """),
+      ProductId.pgType.opt().encode(row.productassemblyid()),
+      typo.runtime.Fragment.lit("""
+         ::int4,
+         "componentid" = """),
+      ProductId.pgType.encode(row.componentid()),
+      typo.runtime.Fragment.lit("""
+         ::int4,
+         "startdate" = """),
+      TypoLocalDateTime.pgType.encode(row.startdate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp,
+         "enddate" = """),
+      TypoLocalDateTime.pgType.opt().encode(row.enddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp,
+         "unitmeasurecode" = """),
+      UnitmeasureId.pgType.encode(row.unitmeasurecode()),
+      typo.runtime.Fragment.lit("""
+         ::bpchar,
+         "bomlevel" = """),
+      TypoShort.pgType.encode(row.bomlevel()),
+      typo.runtime.Fragment.lit("""
+         ::int2,
+         "perassemblyqty" = """),
+      PgTypes.numeric.encode(row.perassemblyqty()),
+      typo.runtime.Fragment.lit("""
+         ::numeric,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "billofmaterialsid" = """),
+      PgTypes.int4.encode(billofmaterialsid),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public BillofmaterialsRow upsert(
     BillofmaterialsRow unsaved,
     Connection c
@@ -346,6 +367,7 @@ public class BillofmaterialsRepoImpl implements BillofmaterialsRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<BillofmaterialsRow> upsertBatch(
     Iterator<BillofmaterialsRow> unsaved,
     Connection c
@@ -370,31 +392,32 @@ public class BillofmaterialsRepoImpl implements BillofmaterialsRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<BillofmaterialsRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table billofmaterials_TEMP (like "production"."billofmaterials") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy billofmaterials_TEMP("billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate") from stdin
-      """), batchSize, unsaved, c, BillofmaterialsRow.pgText);
+    create temporary table billofmaterials_TEMP (like "production"."billofmaterials") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy billofmaterials_TEMP("billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate") from stdin
+    """), batchSize, unsaved, c, BillofmaterialsRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "production"."billofmaterials"("billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate")
-              select * from billofmaterials_TEMP
-              on conflict ("billofmaterialsid")
-              do update set
-                "productassemblyid" = EXCLUDED."productassemblyid",
-              "componentid" = EXCLUDED."componentid",
-              "startdate" = EXCLUDED."startdate",
-              "enddate" = EXCLUDED."enddate",
-              "unitmeasurecode" = EXCLUDED."unitmeasurecode",
-              "bomlevel" = EXCLUDED."bomlevel",
-              "perassemblyqty" = EXCLUDED."perassemblyqty",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table billofmaterials_TEMP;""")).update().runUnchecked(c);
+       insert into "production"."billofmaterials"("billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate")
+       select * from billofmaterials_TEMP
+       on conflict ("billofmaterialsid")
+       do update set
+         "productassemblyid" = EXCLUDED."productassemblyid",
+       "componentid" = EXCLUDED."componentid",
+       "startdate" = EXCLUDED."startdate",
+       "enddate" = EXCLUDED."enddate",
+       "unitmeasurecode" = EXCLUDED."unitmeasurecode",
+       "bomlevel" = EXCLUDED."bomlevel",
+       "perassemblyqty" = EXCLUDED."perassemblyqty",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table billofmaterials_TEMP;""")).update().runUnchecked(c);
   };
 }

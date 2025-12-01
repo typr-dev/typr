@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgRead
 import typo.runtime.PgText
@@ -13,14 +14,14 @@ import typo.runtime.PgTypes
 import typo.runtime.PgWrite
 
 /** Money and cash types in PostgreSQL */
-case class TypoMoney(value: java.math.BigDecimal)
+case class TypoMoney(@JsonValue value: java.math.BigDecimal)
 
 object TypoMoney {
   given bijection: Bijection[TypoMoney, java.math.BigDecimal] = Bijection.apply[TypoMoney, java.math.BigDecimal](_.value)(TypoMoney.apply)
 
   given pgText: PgText[TypoMoney] = PgText.textBigDecimal.contramap(v => v.value)
 
-  given pgType: PgType[TypoMoney] = PgTypes.numeric.bimap(v => new TypoMoney(v), v => v.value).renamed("money")
+  given pgType: PgType[TypoMoney] = PgTypes.numeric.bimap((v: java.math.BigDecimal) => new TypoMoney(v), (v: TypoMoney) => v.value).renamed("money")
 
-  given pgTypeArray: PgType[Array[TypoMoney]] = TypoMoney.pgType.array(PgRead.massageJdbcArrayTo(classOf[Array[java.math.BigDecimal]]).map(xs => xs.map(v => new TypoMoney(v))), PgWrite.passObjectToJdbc[java.math.BigDecimal]().array(TypoMoney.pgType.typename().as[java.math.BigDecimal]()).contramap(xs => xs.map((v: TypoMoney) => v.value)))
+  given pgTypeArray: PgType[Array[TypoMoney]] = TypoMoney.pgType.array(PgRead.massageJdbcArrayTo(classOf[Array[java.math.BigDecimal]]).map((xs: Array[java.math.BigDecimal]) => xs.map((v: java.math.BigDecimal) => new TypoMoney(v))), PgWrite.passObjectToJdbc[java.math.BigDecimal]().array(TypoMoney.pgType.typename().as[java.math.BigDecimal]()).contramap((xs: Array[TypoMoney]) => xs.map((v: TypoMoney) => v.value)))
 }

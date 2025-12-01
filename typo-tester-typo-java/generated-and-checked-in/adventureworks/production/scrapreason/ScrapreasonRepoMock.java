@@ -5,6 +5,7 @@
  */
 package adventureworks.production.scrapreason;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record ScrapreasonRepoMock(
     return new ScrapreasonRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<ScrapreasonFields, ScrapreasonRow> delete() {
     return new DeleteBuilderMock<>(ScrapreasonFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.scrapreasonid(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     ScrapreasonId scrapreasonid,
     Connection c
@@ -52,28 +55,31 @@ public record ScrapreasonRepoMock(
     return Optional.ofNullable(map.remove(scrapreasonid)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     ScrapreasonId[] scrapreasonids,
     Connection c
   ) {
     var count = 0;
-      for (var id : scrapreasonids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : scrapreasonids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public ScrapreasonRow insert(
     ScrapreasonRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.scrapreasonid())) {
-        throw new RuntimeException(str("id $unsaved.scrapreasonid() already exists"));
-      };
-      map.put(unsaved.scrapreasonid(), unsaved);
+      throw new RuntimeException(str("id $unsaved.scrapreasonid() already exists"));
+    };
+    map.put(unsaved.scrapreasonid(), unsaved);
     return unsaved;
   };
 
+  @Override
   public ScrapreasonRow insert(
     ScrapreasonRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record ScrapreasonRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<ScrapreasonRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.scrapreasonid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.scrapreasonid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<ScrapreasonRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.scrapreasonid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.scrapreasonid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<ScrapreasonFields, ScrapreasonRow> select() {
     return new SelectBuilderMock<>(ScrapreasonFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<ScrapreasonRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<ScrapreasonRow> selectById(
     ScrapreasonId scrapreasonid,
     Connection c
@@ -126,38 +137,43 @@ public record ScrapreasonRepoMock(
     return Optional.ofNullable(map.get(scrapreasonid));
   };
 
+  @Override
   public List<ScrapreasonRow> selectByIds(
     ScrapreasonId[] scrapreasonids,
     Connection c
   ) {
     var result = new ArrayList<ScrapreasonRow>();
-      for (var id : scrapreasonids) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : scrapreasonids) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<ScrapreasonId, ScrapreasonRow> selectByIdsTracked(
     ScrapreasonId[] scrapreasonids,
     Connection c
   ) {
-    return selectByIds(scrapreasonids, c).stream().collect(Collectors.toMap((adventureworks.production.scrapreason.ScrapreasonRow row) -> row.scrapreasonid(), Function.identity()));
+    return selectByIds(scrapreasonids, c).stream().collect(Collectors.toMap((ScrapreasonRow row) -> row.scrapreasonid(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<ScrapreasonFields, ScrapreasonRow> update() {
     return new UpdateBuilderMock<>(ScrapreasonFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     ScrapreasonRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.scrapreasonid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.scrapreasonid(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.scrapreasonid(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public ScrapreasonRow upsert(
     ScrapreasonRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record ScrapreasonRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<ScrapreasonRow> upsertBatch(
     Iterator<ScrapreasonRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<ScrapreasonRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.scrapreasonid(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.scrapreasonid(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<ScrapreasonRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.scrapreasonid(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.scrapreasonid(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

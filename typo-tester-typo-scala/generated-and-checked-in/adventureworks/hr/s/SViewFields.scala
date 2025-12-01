@@ -34,7 +34,7 @@ object SViewFields {
 
     override lazy val fields: SViewFields = {
       new SViewFields {
-        def id: Field[ShiftId, SViewRow] = {
+        override def id: Field[ShiftId, SViewRow] = {
           new Field[ShiftId, SViewRow](
             _path,
             "id",
@@ -45,7 +45,7 @@ object SViewFields {
             ShiftId.pgType
           )
         }
-        def shiftid: Field[ShiftId, SViewRow] = {
+        override def shiftid: Field[ShiftId, SViewRow] = {
           new Field[ShiftId, SViewRow](
             _path,
             "shiftid",
@@ -56,7 +56,7 @@ object SViewFields {
             ShiftId.pgType
           )
         }
-        def name: Field[Name, SViewRow] = {
+        override def name: Field[Name, SViewRow] = {
           new Field[Name, SViewRow](
             _path,
             "name",
@@ -67,7 +67,7 @@ object SViewFields {
             Name.pgType
           )
         }
-        def starttime: Field[TypoLocalTime, SViewRow] = {
+        override def starttime: Field[TypoLocalTime, SViewRow] = {
           new Field[TypoLocalTime, SViewRow](
             _path,
             "starttime",
@@ -78,7 +78,7 @@ object SViewFields {
             TypoLocalTime.pgType
           )
         }
-        def endtime: Field[TypoLocalTime, SViewRow] = {
+        override def endtime: Field[TypoLocalTime, SViewRow] = {
           new Field[TypoLocalTime, SViewRow](
             _path,
             "endtime",
@@ -89,7 +89,7 @@ object SViewFields {
             TypoLocalTime.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, SViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, SViewRow] = {
           new Field[TypoLocalDateTime, SViewRow](
             _path,
             "modifieddate",
@@ -105,7 +105,7 @@ object SViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, SViewRow]] = java.util.List.of(this.fields.id, this.fields.shiftid, this.fields.name, this.fields.starttime, this.fields.endtime, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[SViewFields, SViewRow] = new Impl(java.util.List.of())

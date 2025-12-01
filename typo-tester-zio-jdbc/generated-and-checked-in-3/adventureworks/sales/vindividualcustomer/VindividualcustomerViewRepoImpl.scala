@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class VindividualcustomerViewRepoImpl extends VindividualcustomerViewRepo {
-  def select: SelectBuilder[VindividualcustomerViewFields, VindividualcustomerViewRow] = SelectBuilder.of(""""sales"."vindividualcustomer"""", VindividualcustomerViewFields.structure, VindividualcustomerViewRow.jdbcDecoder)
+  override def select: SelectBuilder[VindividualcustomerViewFields, VindividualcustomerViewRow] = SelectBuilder.of(""""sales"."vindividualcustomer"""", VindividualcustomerViewFields.structure, VindividualcustomerViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, VindividualcustomerViewRow] = sql"""select "businessentityid", "title", "firstname", "middlename", "lastname", "suffix", "phonenumber", "phonenumbertype", "emailaddress", "emailpromotion", "addresstype", "addressline1", "addressline2", "city", "stateprovincename", "postalcode", "countryregionname", "demographics" from "sales"."vindividualcustomer"""".query(using VindividualcustomerViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, VindividualcustomerViewRow] = sql"""select "businessentityid", "title", "firstname", "middlename", "lastname", "suffix", "phonenumber", "phonenumbertype", "emailaddress", "emailpromotion", "addresstype", "addressline1", "addressline2", "city", "stateprovincename", "postalcode", "countryregionname", "demographics" from "sales"."vindividualcustomer"""".query(using VindividualcustomerViewRow.jdbcDecoder).selectStream()
 }

@@ -5,6 +5,7 @@
  */
 package adventureworks.production.productmodelproductdescriptionculture;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record ProductmodelproductdescriptioncultureRepoMock(
     return new ProductmodelproductdescriptioncultureRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow> delete() {
     return new DeleteBuilderMock<>(ProductmodelproductdescriptioncultureFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.compositeId(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     ProductmodelproductdescriptioncultureId compositeId,
     Connection c
@@ -52,28 +55,31 @@ public record ProductmodelproductdescriptioncultureRepoMock(
     return Optional.ofNullable(map.remove(compositeId)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     ProductmodelproductdescriptioncultureId[] compositeIds,
     Connection c
   ) {
     var count = 0;
-      for (var id : compositeIds) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : compositeIds) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public ProductmodelproductdescriptioncultureRow insert(
     ProductmodelproductdescriptioncultureRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.compositeId())) {
-        throw new RuntimeException(str("id $unsaved.compositeId() already exists"));
-      };
-      map.put(unsaved.compositeId(), unsaved);
+      throw new RuntimeException(str("id $unsaved.compositeId() already exists"));
+    };
+    map.put(unsaved.compositeId(), unsaved);
     return unsaved;
   };
 
+  @Override
   public ProductmodelproductdescriptioncultureRow insert(
     ProductmodelproductdescriptioncultureRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record ProductmodelproductdescriptioncultureRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<ProductmodelproductdescriptioncultureRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.compositeId(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.compositeId(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<ProductmodelproductdescriptioncultureRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.compositeId(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.compositeId(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow> select() {
     return new SelectBuilderMock<>(ProductmodelproductdescriptioncultureFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<ProductmodelproductdescriptioncultureRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<ProductmodelproductdescriptioncultureRow> selectById(
     ProductmodelproductdescriptioncultureId compositeId,
     Connection c
@@ -126,38 +137,43 @@ public record ProductmodelproductdescriptioncultureRepoMock(
     return Optional.ofNullable(map.get(compositeId));
   };
 
+  @Override
   public List<ProductmodelproductdescriptioncultureRow> selectByIds(
     ProductmodelproductdescriptioncultureId[] compositeIds,
     Connection c
   ) {
     var result = new ArrayList<ProductmodelproductdescriptioncultureRow>();
-      for (var id : compositeIds) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : compositeIds) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<ProductmodelproductdescriptioncultureId, ProductmodelproductdescriptioncultureRow> selectByIdsTracked(
     ProductmodelproductdescriptioncultureId[] compositeIds,
     Connection c
   ) {
-    return selectByIds(compositeIds, c).stream().collect(Collectors.toMap((adventureworks.production.productmodelproductdescriptionculture.ProductmodelproductdescriptioncultureRow row) -> row.compositeId(), Function.identity()));
+    return selectByIds(compositeIds, c).stream().collect(Collectors.toMap((ProductmodelproductdescriptioncultureRow row) -> row.compositeId(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow> update() {
     return new UpdateBuilderMock<>(ProductmodelproductdescriptioncultureFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     ProductmodelproductdescriptioncultureRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.compositeId())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.compositeId(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.compositeId(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public ProductmodelproductdescriptioncultureRow upsert(
     ProductmodelproductdescriptioncultureRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record ProductmodelproductdescriptioncultureRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<ProductmodelproductdescriptioncultureRow> upsertBatch(
     Iterator<ProductmodelproductdescriptioncultureRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<ProductmodelproductdescriptioncultureRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.compositeId(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.compositeId(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<ProductmodelproductdescriptioncultureRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.compositeId(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.compositeId(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

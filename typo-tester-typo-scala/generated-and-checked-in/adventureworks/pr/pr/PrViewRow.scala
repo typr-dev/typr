@@ -13,7 +13,6 @@ import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple9
 
 /** View: pr.pr */
 case class PrViewRow(
@@ -38,17 +37,5 @@ case class PrViewRow(
 )
 
 object PrViewRow {
-  val `_rowParser`: RowParser[PrViewRow] = {
-    RowParsers.of(ProductreviewId.pgType, ProductreviewId.pgType, ProductId.pgType, Name.pgType, TypoLocalDateTime.pgType, PgTypes.text, PgTypes.int4, PgTypes.text.opt(), TypoLocalDateTime.pgType, PrViewRow.apply, row => new Tuple9(
-      row.id,
-      row.productreviewid,
-      row.productid,
-      row.reviewername,
-      row.reviewdate,
-      row.emailaddress,
-      row.rating,
-      row.comments,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[PrViewRow] = RowParsers.of(ProductreviewId.pgType, ProductreviewId.pgType, ProductId.pgType, Name.pgType, TypoLocalDateTime.pgType, PgTypes.text, PgTypes.int4, PgTypes.text.opt(), TypoLocalDateTime.pgType, PrViewRow.apply, row => Array(row.id, row.productreviewid, row.productid, row.reviewername, row.reviewdate, row.emailaddress, row.rating, row.comments, row.modifieddate))
 }

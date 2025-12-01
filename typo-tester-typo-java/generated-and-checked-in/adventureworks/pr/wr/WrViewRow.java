@@ -14,7 +14,6 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple13;
 
 /** View: pr.wr */
 public record WrViewRow(
@@ -110,5 +109,5 @@ public record WrViewRow(
     return new WrViewRow(id, workorderid, productid, operationsequence, locationid, scheduledstartdate, scheduledenddate, actualstartdate, actualenddate, actualresourcehrs, plannedcost, actualcost, modifieddate);
   };
 
-  static RowParser<WrViewRow> _rowParser = RowParsers.of(WorkorderId.pgType, WorkorderId.pgType, PgTypes.int4, TypoShort.pgType, LocationId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoLocalDateTime.pgType.opt(), PgTypes.numeric.opt(), PgTypes.numeric, PgTypes.numeric.opt(), TypoLocalDateTime.pgType, WrViewRow::new, row -> new Tuple13<>(row.id(), row.workorderid(), row.productid(), row.operationsequence(), row.locationid(), row.scheduledstartdate(), row.scheduledenddate(), row.actualstartdate(), row.actualenddate(), row.actualresourcehrs(), row.plannedcost(), row.actualcost(), row.modifieddate()));;
+  static RowParser<WrViewRow> _rowParser = RowParsers.of(WorkorderId.pgType, WorkorderId.pgType, PgTypes.int4, TypoShort.pgType, LocationId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoLocalDateTime.pgType.opt(), PgTypes.numeric.opt(), PgTypes.numeric, PgTypes.numeric.opt(), TypoLocalDateTime.pgType, WrViewRow::new, row -> new Object[]{row.id(), row.workorderid(), row.productid(), row.operationsequence(), row.locationid(), row.scheduledstartdate(), row.scheduledenddate(), row.actualstartdate(), row.actualenddate(), row.actualresourcehrs(), row.plannedcost(), row.actualcost(), row.modifieddate()});;
 }

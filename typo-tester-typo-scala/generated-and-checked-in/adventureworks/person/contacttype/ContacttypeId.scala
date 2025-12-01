@@ -5,12 +5,13 @@
  */
 package adventureworks.person.contacttype
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
 
 /** Type for the primary key of table `person.contacttype` */
-case class ContacttypeId(value: Integer) extends scala.AnyVal
+case class ContacttypeId(@JsonValue value: Integer) extends scala.AnyVal
 
 object ContacttypeId {
   given bijection: Bijection[ContacttypeId, Integer] = Bijection.apply[ContacttypeId, Integer](_.value)(ContacttypeId.apply)

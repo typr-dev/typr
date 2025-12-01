@@ -27,7 +27,7 @@ object SohsrViewFields {
 
     override lazy val fields: SohsrViewFields = {
       new SohsrViewFields {
-        def salesorderid: Field[SalesorderheaderId, SohsrViewRow] = {
+        override def salesorderid: Field[SalesorderheaderId, SohsrViewRow] = {
           new Field[SalesorderheaderId, SohsrViewRow](
             _path,
             "salesorderid",
@@ -38,7 +38,7 @@ object SohsrViewFields {
             SalesorderheaderId.pgType
           )
         }
-        def salesreasonid: Field[SalesreasonId, SohsrViewRow] = {
+        override def salesreasonid: Field[SalesreasonId, SohsrViewRow] = {
           new Field[SalesreasonId, SohsrViewRow](
             _path,
             "salesreasonid",
@@ -49,7 +49,7 @@ object SohsrViewFields {
             SalesreasonId.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, SohsrViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, SohsrViewRow] = {
           new Field[TypoLocalDateTime, SohsrViewRow](
             _path,
             "modifieddate",
@@ -65,7 +65,7 @@ object SohsrViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, SohsrViewRow]] = java.util.List.of(this.fields.salesorderid, this.fields.salesreasonid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[SohsrViewFields, SohsrViewRow] = new Impl(java.util.List.of())

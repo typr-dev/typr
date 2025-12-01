@@ -23,13 +23,13 @@ case class BillofmaterialsRepoMock(
   toRow: BillofmaterialsRowUnsaved => BillofmaterialsRow,
   map: scala.collection.mutable.Map[Int, BillofmaterialsRow] = scala.collection.mutable.Map.empty[Int, BillofmaterialsRow]
 ) extends BillofmaterialsRepo {
-  def delete: DeleteBuilder[BillofmaterialsFields, BillofmaterialsRow] = DeleteBuilderMock(DeleteParams.empty, BillofmaterialsFields.structure, map)
+  override def delete: DeleteBuilder[BillofmaterialsFields, BillofmaterialsRow] = DeleteBuilderMock(DeleteParams.empty, BillofmaterialsFields.structure, map)
 
-  def deleteById(billofmaterialsid: Int): ConnectionIO[Boolean] = delay(map.remove(billofmaterialsid).isDefined)
+  override def deleteById(billofmaterialsid: Int): ConnectionIO[Boolean] = delay(map.remove(billofmaterialsid).isDefined)
 
-  def deleteByIds(billofmaterialsids: Array[Int]): ConnectionIO[Int] = delay(billofmaterialsids.map(id => map.remove(id)).count(_.isDefined))
+  override def deleteByIds(billofmaterialsids: Array[Int]): ConnectionIO[Int] = delay(billofmaterialsids.map(id => map.remove(id)).count(_.isDefined))
 
-  def insert(unsaved: BillofmaterialsRow): ConnectionIO[BillofmaterialsRow] = {
+  override def insert(unsaved: BillofmaterialsRow): ConnectionIO[BillofmaterialsRow] = {
   delay {
     val _ = if (map.contains(unsaved.billofmaterialsid))
       sys.error(s"id ${unsaved.billofmaterialsid} already exists")
@@ -40,9 +40,9 @@ case class BillofmaterialsRepoMock(
   }
   }
 
-  def insert(unsaved: BillofmaterialsRowUnsaved): ConnectionIO[BillofmaterialsRow] = insert(toRow(unsaved))
+  override def insert(unsaved: BillofmaterialsRowUnsaved): ConnectionIO[BillofmaterialsRow] = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, BillofmaterialsRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = {
@@ -57,7 +57,7 @@ case class BillofmaterialsRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, BillofmaterialsRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = {
@@ -72,24 +72,24 @@ case class BillofmaterialsRepoMock(
     }
   }
 
-  def select: SelectBuilder[BillofmaterialsFields, BillofmaterialsRow] = SelectBuilderMock(BillofmaterialsFields.structure, delay(map.values.toList), SelectParams.empty)
+  override def select: SelectBuilder[BillofmaterialsFields, BillofmaterialsRow] = SelectBuilderMock(BillofmaterialsFields.structure, delay(map.values.toList), SelectParams.empty)
 
-  def selectAll: Stream[ConnectionIO, BillofmaterialsRow] = Stream.emits(map.values.toList)
+  override def selectAll: Stream[ConnectionIO, BillofmaterialsRow] = Stream.emits(map.values.toList)
 
-  def selectById(billofmaterialsid: Int): ConnectionIO[Option[BillofmaterialsRow]] = delay(map.get(billofmaterialsid))
+  override def selectById(billofmaterialsid: Int): ConnectionIO[Option[BillofmaterialsRow]] = delay(map.get(billofmaterialsid))
 
-  def selectByIds(billofmaterialsids: Array[Int]): Stream[ConnectionIO, BillofmaterialsRow] = Stream.emits(billofmaterialsids.flatMap(map.get).toList)
+  override def selectByIds(billofmaterialsids: Array[Int]): Stream[ConnectionIO, BillofmaterialsRow] = Stream.emits(billofmaterialsids.flatMap(map.get).toList)
 
-  def selectByIdsTracked(billofmaterialsids: Array[Int]): ConnectionIO[Map[Int, BillofmaterialsRow]] = {
+  override def selectByIdsTracked(billofmaterialsids: Array[Int]): ConnectionIO[Map[Int, BillofmaterialsRow]] = {
     selectByIds(billofmaterialsids).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.billofmaterialsid, x)).toMap
       billofmaterialsids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[BillofmaterialsFields, BillofmaterialsRow] = UpdateBuilderMock(UpdateParams.empty, BillofmaterialsFields.structure, map)
+  override def update: UpdateBuilder[BillofmaterialsFields, BillofmaterialsRow] = UpdateBuilderMock(UpdateParams.empty, BillofmaterialsFields.structure, map)
 
-  def update(row: BillofmaterialsRow): ConnectionIO[Option[BillofmaterialsRow]] = {
+  override def update(row: BillofmaterialsRow): ConnectionIO[Option[BillofmaterialsRow]] = {
     delay {
       map.get(row.billofmaterialsid).map { _ =>
         map.put(row.billofmaterialsid, row): @nowarn
@@ -98,14 +98,14 @@ case class BillofmaterialsRepoMock(
     }
   }
 
-  def upsert(unsaved: BillofmaterialsRow): ConnectionIO[BillofmaterialsRow] = {
+  override def upsert(unsaved: BillofmaterialsRow): ConnectionIO[BillofmaterialsRow] = {
     delay {
       map.put(unsaved.billofmaterialsid, unsaved): @nowarn
       unsaved
     }
   }
 
-  def upsertBatch(unsaved: List[BillofmaterialsRow]): Stream[ConnectionIO, BillofmaterialsRow] = {
+  override def upsertBatch(unsaved: List[BillofmaterialsRow]): Stream[ConnectionIO, BillofmaterialsRow] = {
     Stream.emits {
       unsaved.map { row =>
         map += (row.billofmaterialsid -> row)
@@ -115,7 +115,7 @@ case class BillofmaterialsRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, BillofmaterialsRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

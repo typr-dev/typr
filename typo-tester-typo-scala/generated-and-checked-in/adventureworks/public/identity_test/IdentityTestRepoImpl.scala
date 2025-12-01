@@ -19,11 +19,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class IdentityTestRepoImpl extends IdentityTestRepo {
-  def delete: DeleteBuilder[IdentityTestFields, IdentityTestRow] = DeleteBuilder.of("public.identity-test", IdentityTestFields.structure)
+  override def delete: DeleteBuilder[IdentityTestFields, IdentityTestRow] = DeleteBuilder.of("public.identity-test", IdentityTestFields.structure)
 
-  def deleteById(name: IdentityTestId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."identity-test" where "name" = ${IdentityTestId.pgType.encode(name)}""".update().runUnchecked(c) > 0
+  override def deleteById(name: IdentityTestId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."identity-test" where "name" = ${IdentityTestId.pgType.encode(name)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(names: Array[IdentityTestId])(using c: Connection): Integer = {
+  override def deleteByIds(names: Array[IdentityTestId])(using c: Connection): Integer = {
     interpolate"""delete
     from "public"."identity-test"
     where "name" = ANY(${IdentityTestId.pgTypeArray.encode(names)})"""
@@ -31,7 +31,7 @@ class IdentityTestRepoImpl extends IdentityTestRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: IdentityTestRow)(using c: Connection): IdentityTestRow = {
+  override def insert(unsaved: IdentityTestRow)(using c: Connection): IdentityTestRow = {
   interpolate"""insert into "public"."identity-test"("default_generated", "name")
     values (${PgTypes.int4.encode(unsaved.defaultGenerated)}::int4, ${IdentityTestId.pgType.encode(unsaved.name)})
     returning "always_generated", "default_generated", "name"
@@ -39,17 +39,14 @@ class IdentityTestRepoImpl extends IdentityTestRepo {
     .updateReturning(IdentityTestRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: IdentityTestRowUnsaved)(using c: Connection): IdentityTestRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: IdentityTestRowUnsaved)(using c: Connection): IdentityTestRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
     values.add(interpolate"${IdentityTestId.pgType.encode(unsaved.name)}"): @scala.annotation.nowarn
     unsaved.defaultGenerated.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""default_generated"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PgTypes.int4.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""default_generated"""")): @scala.annotation.nowarn; values.add(interpolate"${PgTypes.int4.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "public"."identity-test"(${Fragment.comma(columns)})
@@ -57,56 +54,56 @@ class IdentityTestRepoImpl extends IdentityTestRepo {
       returning "always_generated", "default_generated", "name"
       """
     }
-    q.updateReturning(IdentityTestRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(IdentityTestRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[IdentityTestRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."identity-test"("default_generated", "name") FROM STDIN""", batchSize, unsaved, c, IdentityTestRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[IdentityTestRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."identity-test"("name", "default_generated") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, IdentityTestRowUnsaved.pgText)
 
-  def select: SelectBuilder[IdentityTestFields, IdentityTestRow] = SelectBuilder.of("public.identity-test", IdentityTestFields.structure, IdentityTestRow.`_rowParser`)
+  override def select: SelectBuilder[IdentityTestFields, IdentityTestRow] = SelectBuilder.of("public.identity-test", IdentityTestFields.structure, IdentityTestRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[IdentityTestRow] = {
+  override def selectAll(using c: Connection): java.util.List[IdentityTestRow] = {
     interpolate"""select "always_generated", "default_generated", "name"
     from "public"."identity-test"
-    """.as(IdentityTestRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(IdentityTestRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(name: IdentityTestId)(using c: Connection): Optional[IdentityTestRow] = {
+  override def selectById(name: IdentityTestId)(using c: Connection): Optional[IdentityTestRow] = {
     interpolate"""select "always_generated", "default_generated", "name"
     from "public"."identity-test"
-    where "name" = ${IdentityTestId.pgType.encode(name)}""".as(IdentityTestRow.`_rowParser`.first()).runUnchecked(c)
+    where "name" = ${IdentityTestId.pgType.encode(name)}""".query(IdentityTestRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(names: Array[IdentityTestId])(using c: Connection): java.util.List[IdentityTestRow] = {
+  override def selectByIds(names: Array[IdentityTestId])(using c: Connection): java.util.List[IdentityTestRow] = {
     interpolate"""select "always_generated", "default_generated", "name"
     from "public"."identity-test"
-    where "name" = ANY(${IdentityTestId.pgTypeArray.encode(names)})""".as(IdentityTestRow.`_rowParser`.all()).runUnchecked(c)
+    where "name" = ANY(${IdentityTestId.pgTypeArray.encode(names)})""".query(IdentityTestRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(names: Array[IdentityTestId])(using c: Connection): java.util.Map[IdentityTestId, IdentityTestRow] = {
-    val ret: java.util.Map[IdentityTestId, IdentityTestRow] = new HashMap()
+  override def selectByIdsTracked(names: Array[IdentityTestId])(using c: Connection): java.util.Map[IdentityTestId, IdentityTestRow] = {
+    val ret: HashMap[IdentityTestId, IdentityTestRow] = new HashMap[IdentityTestId, IdentityTestRow]()
     selectByIds(names)(using c).forEach(row => ret.put(row.name, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[IdentityTestFields, IdentityTestRow] = UpdateBuilder.of("public.identity-test", IdentityTestFields.structure, IdentityTestRow.`_rowParser`.all())
+  override def update: UpdateBuilder[IdentityTestFields, IdentityTestRow] = UpdateBuilder.of("public.identity-test", IdentityTestFields.structure, IdentityTestRow.`_rowParser`.all())
 
-  def update(row: IdentityTestRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: IdentityTestRow)(using c: Connection): java.lang.Boolean = {
     val name: IdentityTestId = row.name
-    interpolate"""update "public"."identity-test"
+    return interpolate"""update "public"."identity-test"
     set "default_generated" = ${PgTypes.int4.encode(row.defaultGenerated)}::int4
     where "name" = ${IdentityTestId.pgType.encode(name)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: IdentityTestRow)(using c: Connection): IdentityTestRow = {
+  override def upsert(unsaved: IdentityTestRow)(using c: Connection): IdentityTestRow = {
   interpolate"""insert into "public"."identity-test"("default_generated", "name")
     values (${PgTypes.int4.encode(unsaved.defaultGenerated)}::int4, ${IdentityTestId.pgType.encode(unsaved.name)})
     on conflict ("name")
@@ -118,7 +115,7 @@ class IdentityTestRepoImpl extends IdentityTestRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[IdentityTestRow])(using c: Connection): java.util.List[IdentityTestRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[IdentityTestRow])(using c: Connection): java.util.List[IdentityTestRow] = {
     interpolate"""insert into "public"."identity-test"("default_generated", "name")
     values (?::int4, ?)
     on conflict ("name")
@@ -131,13 +128,13 @@ class IdentityTestRepoImpl extends IdentityTestRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[IdentityTestRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table identity-test_TEMP (like "public"."identity-test") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy identity-test_TEMP("default_generated", "name") from stdin""", batchSize, unsaved, c, IdentityTestRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "public"."identity-test"("default_generated", "name")
+    return interpolate"""insert into "public"."identity-test"("default_generated", "name")
     select * from identity-test_TEMP
     on conflict ("name")
     do update set

@@ -25,18 +25,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class CreditcardRepoImpl extends CreditcardRepo {
-  def delete: DeleteBuilder[CreditcardFields, CreditcardRow] = DeleteBuilder.of(""""sales"."creditcard"""", CreditcardFields.structure, CreditcardRow.rowParser(1).*)
+  override def delete: DeleteBuilder[CreditcardFields, CreditcardRow] = DeleteBuilder.of(""""sales"."creditcard"""", CreditcardFields.structure, CreditcardRow.rowParser(1).*)
 
-  def deleteById(creditcardid: /* user-picked */ CustomCreditcardId)(using c: Connection): Boolean = SQL"""delete from "sales"."creditcard" where "creditcardid" = ${ParameterValue(creditcardid, null, /* user-picked */ CustomCreditcardId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(creditcardid: /* user-picked */ CustomCreditcardId)(using c: Connection): Boolean = SQL"""delete from "sales"."creditcard" where "creditcardid" = ${ParameterValue(creditcardid, null, /* user-picked */ CustomCreditcardId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(creditcardids: Array[/* user-picked */ CustomCreditcardId])(using c: Connection): Int = {
+  override def deleteByIds(creditcardids: Array[/* user-picked */ CustomCreditcardId])(using c: Connection): Int = {
     SQL"""delete
     from "sales"."creditcard"
     where "creditcardid" = ANY(${ParameterValue(creditcardids, null, CustomCreditcardId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: CreditcardRow)(using c: Connection): CreditcardRow = {
+  override def insert(unsaved: CreditcardRow)(using c: Connection): CreditcardRow = {
   SQL"""insert into "sales"."creditcard"("creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate")
     values (${ParameterValue(unsaved.creditcardid, null, /* user-picked */ CustomCreditcardId.toStatement)}::int4, ${ParameterValue(unsaved.cardtype, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.cardnumber, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.expmonth, null, TypoShort.toStatement)}::int2, ${ParameterValue(unsaved.expyear, null, TypoShort.toStatement)}::int2, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"::text
@@ -44,7 +44,7 @@ class CreditcardRepoImpl extends CreditcardRepo {
     .executeInsert(CreditcardRow.rowParser(1).single)
   }
 
-  def insert(unsaved: CreditcardRowUnsaved)(using c: Connection): CreditcardRow = {
+  override def insert(unsaved: CreditcardRowUnsaved)(using c: Connection): CreditcardRow = {
     val namedParameters = List(
       Some((NamedParameter("cardtype", ParameterValue(unsaved.cardtype, null, ToStatement.stringToStatement)), "")),
       Some((NamedParameter("cardnumber", ParameterValue(unsaved.cardnumber, null, ToStatement.stringToStatement)), "")),
@@ -75,47 +75,47 @@ class CreditcardRepoImpl extends CreditcardRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[CreditcardRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "sales"."creditcard"("creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate") FROM STDIN""", batchSize, unsaved)(using CreditcardRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[CreditcardRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "sales"."creditcard"("cardtype", "cardnumber", "expmonth", "expyear", "creditcardid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using CreditcardRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[CreditcardFields, CreditcardRow] = SelectBuilder.of(""""sales"."creditcard"""", CreditcardFields.structure, CreditcardRow.rowParser)
+  override def select: SelectBuilder[CreditcardFields, CreditcardRow] = SelectBuilder.of(""""sales"."creditcard"""", CreditcardFields.structure, CreditcardRow.rowParser)
 
-  def selectAll(using c: Connection): List[CreditcardRow] = {
+  override def selectAll(using c: Connection): List[CreditcardRow] = {
     SQL"""select "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"::text
     from "sales"."creditcard"
     """.as(CreditcardRow.rowParser(1).*)
   }
 
-  def selectById(creditcardid: /* user-picked */ CustomCreditcardId)(using c: Connection): Option[CreditcardRow] = {
+  override def selectById(creditcardid: /* user-picked */ CustomCreditcardId)(using c: Connection): Option[CreditcardRow] = {
     SQL"""select "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"::text
     from "sales"."creditcard"
     where "creditcardid" = ${ParameterValue(creditcardid, null, /* user-picked */ CustomCreditcardId.toStatement)}
     """.as(CreditcardRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(creditcardids: Array[/* user-picked */ CustomCreditcardId])(using c: Connection): List[CreditcardRow] = {
+  override def selectByIds(creditcardids: Array[/* user-picked */ CustomCreditcardId])(using c: Connection): List[CreditcardRow] = {
     SQL"""select "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"::text
     from "sales"."creditcard"
     where "creditcardid" = ANY(${ParameterValue(creditcardids, null, CustomCreditcardId.arrayToStatement)})
     """.as(CreditcardRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(creditcardids: Array[/* user-picked */ CustomCreditcardId])(using c: Connection): Map[/* user-picked */ CustomCreditcardId, CreditcardRow] = {
+  override def selectByIdsTracked(creditcardids: Array[/* user-picked */ CustomCreditcardId])(using c: Connection): Map[/* user-picked */ CustomCreditcardId, CreditcardRow] = {
     val byId = selectByIds(creditcardids).view.map(x => (x.creditcardid, x)).toMap
     creditcardids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[CreditcardFields, CreditcardRow] = UpdateBuilder.of(""""sales"."creditcard"""", CreditcardFields.structure, CreditcardRow.rowParser(1).*)
+  override def update: UpdateBuilder[CreditcardFields, CreditcardRow] = UpdateBuilder.of(""""sales"."creditcard"""", CreditcardFields.structure, CreditcardRow.rowParser(1).*)
 
-  def update(row: CreditcardRow)(using c: Connection): Option[CreditcardRow] = {
+  override def update(row: CreditcardRow)(using c: Connection): Option[CreditcardRow] = {
     val creditcardid = row.creditcardid
     SQL"""update "sales"."creditcard"
     set "cardtype" = ${ParameterValue(row.cardtype, null, ToStatement.stringToStatement)},
@@ -128,7 +128,7 @@ class CreditcardRepoImpl extends CreditcardRepo {
     """.executeInsert(CreditcardRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: CreditcardRow)(using c: Connection): CreditcardRow = {
+  override def upsert(unsaved: CreditcardRow)(using c: Connection): CreditcardRow = {
   SQL"""insert into "sales"."creditcard"("creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate")
     values (
       ${ParameterValue(unsaved.creditcardid, null, /* user-picked */ CustomCreditcardId.toStatement)}::int4,
@@ -150,7 +150,7 @@ class CreditcardRepoImpl extends CreditcardRepo {
     .executeInsert(CreditcardRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[CreditcardRow])(using c: Connection): List[CreditcardRow] = {
+  override def upsertBatch(unsaved: Iterable[CreditcardRow])(using c: Connection): List[CreditcardRow] = {
     def toNamedParameter(row: CreditcardRow): List[NamedParameter] = List(
       NamedParameter("creditcardid", ParameterValue(row.creditcardid, null, /* user-picked */ CustomCreditcardId.toStatement)),
       NamedParameter("cardtype", ParameterValue(row.cardtype, null, ToStatement.stringToStatement)),
@@ -159,6 +159,7 @@ class CreditcardRepoImpl extends CreditcardRepo {
       NamedParameter("expyear", ParameterValue(row.expyear, null, TypoShort.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -183,7 +184,7 @@ class CreditcardRepoImpl extends CreditcardRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[CreditcardRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

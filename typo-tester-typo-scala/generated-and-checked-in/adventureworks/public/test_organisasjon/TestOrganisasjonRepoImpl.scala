@@ -15,11 +15,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class TestOrganisasjonRepoImpl extends TestOrganisasjonRepo {
-  def delete: DeleteBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = DeleteBuilder.of("public.test_organisasjon", TestOrganisasjonFields.structure)
+  override def delete: DeleteBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = DeleteBuilder.of("public.test_organisasjon", TestOrganisasjonFields.structure)
 
-  def deleteById(organisasjonskode: TestOrganisasjonId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."test_organisasjon" where "organisasjonskode" = ${TestOrganisasjonId.pgType.encode(organisasjonskode)}""".update().runUnchecked(c) > 0
+  override def deleteById(organisasjonskode: TestOrganisasjonId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."test_organisasjon" where "organisasjonskode" = ${TestOrganisasjonId.pgType.encode(organisasjonskode)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(organisasjonskodes: Array[TestOrganisasjonId])(using c: Connection): Integer = {
+  override def deleteByIds(organisasjonskodes: Array[TestOrganisasjonId])(using c: Connection): Integer = {
     interpolate"""delete
     from "public"."test_organisasjon"
     where "organisasjonskode" = ANY(${TestOrganisasjonId.pgTypeArray.encode(organisasjonskodes)})"""
@@ -27,7 +27,7 @@ class TestOrganisasjonRepoImpl extends TestOrganisasjonRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: TestOrganisasjonRow)(using c: Connection): TestOrganisasjonRow = {
+  override def insert(unsaved: TestOrganisasjonRow)(using c: Connection): TestOrganisasjonRow = {
   interpolate"""insert into "public"."test_organisasjon"("organisasjonskode")
     values (${TestOrganisasjonId.pgType.encode(unsaved.organisasjonskode)})
     returning "organisasjonskode"
@@ -35,40 +35,40 @@ class TestOrganisasjonRepoImpl extends TestOrganisasjonRepo {
     .updateReturning(TestOrganisasjonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[TestOrganisasjonRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."test_organisasjon"("organisasjonskode") FROM STDIN""", batchSize, unsaved, c, TestOrganisasjonRow.pgText)
 
-  def select: SelectBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = SelectBuilder.of("public.test_organisasjon", TestOrganisasjonFields.structure, TestOrganisasjonRow.`_rowParser`)
+  override def select: SelectBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = SelectBuilder.of("public.test_organisasjon", TestOrganisasjonFields.structure, TestOrganisasjonRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[TestOrganisasjonRow] = {
+  override def selectAll(using c: Connection): java.util.List[TestOrganisasjonRow] = {
     interpolate"""select "organisasjonskode"
     from "public"."test_organisasjon"
-    """.as(TestOrganisasjonRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(TestOrganisasjonRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(organisasjonskode: TestOrganisasjonId)(using c: Connection): Optional[TestOrganisasjonRow] = {
+  override def selectById(organisasjonskode: TestOrganisasjonId)(using c: Connection): Optional[TestOrganisasjonRow] = {
     interpolate"""select "organisasjonskode"
     from "public"."test_organisasjon"
-    where "organisasjonskode" = ${TestOrganisasjonId.pgType.encode(organisasjonskode)}""".as(TestOrganisasjonRow.`_rowParser`.first()).runUnchecked(c)
+    where "organisasjonskode" = ${TestOrganisasjonId.pgType.encode(organisasjonskode)}""".query(TestOrganisasjonRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(organisasjonskodes: Array[TestOrganisasjonId])(using c: Connection): java.util.List[TestOrganisasjonRow] = {
+  override def selectByIds(organisasjonskodes: Array[TestOrganisasjonId])(using c: Connection): java.util.List[TestOrganisasjonRow] = {
     interpolate"""select "organisasjonskode"
     from "public"."test_organisasjon"
-    where "organisasjonskode" = ANY(${TestOrganisasjonId.pgTypeArray.encode(organisasjonskodes)})""".as(TestOrganisasjonRow.`_rowParser`.all()).runUnchecked(c)
+    where "organisasjonskode" = ANY(${TestOrganisasjonId.pgTypeArray.encode(organisasjonskodes)})""".query(TestOrganisasjonRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(organisasjonskodes: Array[TestOrganisasjonId])(using c: Connection): java.util.Map[TestOrganisasjonId, TestOrganisasjonRow] = {
-    val ret: java.util.Map[TestOrganisasjonId, TestOrganisasjonRow] = new HashMap()
+  override def selectByIdsTracked(organisasjonskodes: Array[TestOrganisasjonId])(using c: Connection): java.util.Map[TestOrganisasjonId, TestOrganisasjonRow] = {
+    val ret: HashMap[TestOrganisasjonId, TestOrganisasjonRow] = new HashMap[TestOrganisasjonId, TestOrganisasjonRow]()
     selectByIds(organisasjonskodes)(using c).forEach(row => ret.put(row.organisasjonskode, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = UpdateBuilder.of("public.test_organisasjon", TestOrganisasjonFields.structure, TestOrganisasjonRow.`_rowParser`.all())
+  override def update: UpdateBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = UpdateBuilder.of("public.test_organisasjon", TestOrganisasjonFields.structure, TestOrganisasjonRow.`_rowParser`.all())
 
-  def upsert(unsaved: TestOrganisasjonRow)(using c: Connection): TestOrganisasjonRow = {
+  override def upsert(unsaved: TestOrganisasjonRow)(using c: Connection): TestOrganisasjonRow = {
   interpolate"""insert into "public"."test_organisasjon"("organisasjonskode")
     values (${TestOrganisasjonId.pgType.encode(unsaved.organisasjonskode)})
     on conflict ("organisasjonskode")
@@ -79,7 +79,7 @@ class TestOrganisasjonRepoImpl extends TestOrganisasjonRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[TestOrganisasjonRow])(using c: Connection): java.util.List[TestOrganisasjonRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[TestOrganisasjonRow])(using c: Connection): java.util.List[TestOrganisasjonRow] = {
     interpolate"""insert into "public"."test_organisasjon"("organisasjonskode")
     values (?)
     on conflict ("organisasjonskode")
@@ -91,13 +91,13 @@ class TestOrganisasjonRepoImpl extends TestOrganisasjonRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[TestOrganisasjonRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table test_organisasjon_TEMP (like "public"."test_organisasjon") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy test_organisasjon_TEMP("organisasjonskode") from stdin""", batchSize, unsaved, c, TestOrganisasjonRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "public"."test_organisasjon"("organisasjonskode")
+    return interpolate"""insert into "public"."test_organisasjon"("organisasjonskode")
     select * from test_organisasjon_TEMP
     on conflict ("organisasjonskode")
     do nothing

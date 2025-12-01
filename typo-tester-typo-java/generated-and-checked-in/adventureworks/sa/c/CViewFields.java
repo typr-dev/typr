@@ -19,7 +19,7 @@ import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 
 public interface CViewFields {
-  static final class Impl extends Relation<CViewFields, CViewRow> {
+  final class Impl extends Relation<CViewFields, CViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -27,24 +27,31 @@ public interface CViewFields {
     @Override
     public CViewFields fields() {
       return new CViewFields() {
+               @Override
                public Field<CustomerId, CViewRow> id() {
                  return new Field<CustomerId, CViewRow>(_path, "id", CViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), CustomerId.pgType);
                };
+               @Override
                public Field<CustomerId, CViewRow> customerid() {
                  return new Field<CustomerId, CViewRow>(_path, "customerid", CViewRow::customerid, Optional.empty(), Optional.empty(), (row, value) -> row.withCustomerid(value), CustomerId.pgType);
                };
+               @Override
                public OptField<BusinessentityId, CViewRow> personid() {
                  return new OptField<BusinessentityId, CViewRow>(_path, "personid", CViewRow::personid, Optional.empty(), Optional.empty(), (row, value) -> row.withPersonid(value), BusinessentityId.pgType);
                };
+               @Override
                public OptField<BusinessentityId, CViewRow> storeid() {
                  return new OptField<BusinessentityId, CViewRow>(_path, "storeid", CViewRow::storeid, Optional.empty(), Optional.empty(), (row, value) -> row.withStoreid(value), BusinessentityId.pgType);
                };
+               @Override
                public OptField<SalesterritoryId, CViewRow> territoryid() {
                  return new OptField<SalesterritoryId, CViewRow>(_path, "territoryid", CViewRow::territoryid, Optional.empty(), Optional.empty(), (row, value) -> row.withTerritoryid(value), SalesterritoryId.pgType);
                };
+               @Override
                public Field<TypoUUID, CViewRow> rowguid() {
                  return new Field<TypoUUID, CViewRow>(_path, "rowguid", CViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, CViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, CViewRow>(_path, "modifieddate", CViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -56,6 +63,7 @@ public interface CViewFields {
       return List.of(this.fields().id(), this.fields().customerid(), this.fields().personid(), this.fields().storeid(), this.fields().territoryid(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

@@ -21,13 +21,13 @@ case class ShoppingcartitemRepoMock(
   toRow: ShoppingcartitemRowUnsaved => ShoppingcartitemRow,
   map: scala.collection.mutable.Map[ShoppingcartitemId, ShoppingcartitemRow] = scala.collection.mutable.Map.empty[ShoppingcartitemId, ShoppingcartitemRow]
 ) extends ShoppingcartitemRepo {
-  def delete: DeleteBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = DeleteBuilderMock(DeleteParams.empty, ShoppingcartitemFields.structure, map)
+  override def delete: DeleteBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = DeleteBuilderMock(DeleteParams.empty, ShoppingcartitemFields.structure, map)
 
-  def deleteById(shoppingcartitemid: ShoppingcartitemId)(using c: Connection): Boolean = map.remove(shoppingcartitemid).isDefined
+  override def deleteById(shoppingcartitemid: ShoppingcartitemId)(using c: Connection): Boolean = map.remove(shoppingcartitemid).isDefined
 
-  def deleteByIds(shoppingcartitemids: Array[ShoppingcartitemId])(using c: Connection): Int = shoppingcartitemids.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(shoppingcartitemids: Array[ShoppingcartitemId])(using c: Connection): Int = shoppingcartitemids.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: ShoppingcartitemRow)(using c: Connection): ShoppingcartitemRow = {
+  override def insert(unsaved: ShoppingcartitemRow)(using c: Connection): ShoppingcartitemRow = {
     val _ = if (map.contains(unsaved.shoppingcartitemid))
       sys.error(s"id ${unsaved.shoppingcartitemid} already exists")
     else
@@ -36,9 +36,9 @@ case class ShoppingcartitemRepoMock(
     unsaved
   }
 
-  def insert(unsaved: ShoppingcartitemRowUnsaved)(using c: Connection): ShoppingcartitemRow = insert(toRow(unsaved))
+  override def insert(unsaved: ShoppingcartitemRowUnsaved)(using c: Connection): ShoppingcartitemRow = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[ShoppingcartitemRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -49,7 +49,7 @@ case class ShoppingcartitemRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[ShoppingcartitemRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -60,34 +60,34 @@ case class ShoppingcartitemRepoMock(
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = SelectBuilderMock(ShoppingcartitemFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = SelectBuilderMock(ShoppingcartitemFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(using c: Connection): List[ShoppingcartitemRow] = map.values.toList
+  override def selectAll(using c: Connection): List[ShoppingcartitemRow] = map.values.toList
 
-  def selectById(shoppingcartitemid: ShoppingcartitemId)(using c: Connection): Option[ShoppingcartitemRow] = map.get(shoppingcartitemid)
+  override def selectById(shoppingcartitemid: ShoppingcartitemId)(using c: Connection): Option[ShoppingcartitemRow] = map.get(shoppingcartitemid)
 
-  def selectByIds(shoppingcartitemids: Array[ShoppingcartitemId])(using c: Connection): List[ShoppingcartitemRow] = shoppingcartitemids.flatMap(map.get).toList
+  override def selectByIds(shoppingcartitemids: Array[ShoppingcartitemId])(using c: Connection): List[ShoppingcartitemRow] = shoppingcartitemids.flatMap(map.get).toList
 
-  def selectByIdsTracked(shoppingcartitemids: Array[ShoppingcartitemId])(using c: Connection): Map[ShoppingcartitemId, ShoppingcartitemRow] = {
+  override def selectByIdsTracked(shoppingcartitemids: Array[ShoppingcartitemId])(using c: Connection): Map[ShoppingcartitemId, ShoppingcartitemRow] = {
     val byId = selectByIds(shoppingcartitemids).view.map(x => (x.shoppingcartitemid, x)).toMap
     shoppingcartitemids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = UpdateBuilderMock(UpdateParams.empty, ShoppingcartitemFields.structure, map)
+  override def update: UpdateBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = UpdateBuilderMock(UpdateParams.empty, ShoppingcartitemFields.structure, map)
 
-  def update(row: ShoppingcartitemRow)(using c: Connection): Option[ShoppingcartitemRow] = {
+  override def update(row: ShoppingcartitemRow)(using c: Connection): Option[ShoppingcartitemRow] = {
     map.get(row.shoppingcartitemid).map { _ =>
       map.put(row.shoppingcartitemid, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: ShoppingcartitemRow)(using c: Connection): ShoppingcartitemRow = {
+  override def upsert(unsaved: ShoppingcartitemRow)(using c: Connection): ShoppingcartitemRow = {
     map.put(unsaved.shoppingcartitemid, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[ShoppingcartitemRow])(using c: Connection): List[ShoppingcartitemRow] = {
+  override def upsertBatch(unsaved: Iterable[ShoppingcartitemRow])(using c: Connection): List[ShoppingcartitemRow] = {
     unsaved.map { row =>
       map += (row.shoppingcartitemid -> row)
       row
@@ -95,7 +95,7 @@ case class ShoppingcartitemRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[ShoppingcartitemRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

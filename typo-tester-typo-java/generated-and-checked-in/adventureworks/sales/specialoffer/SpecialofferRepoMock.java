@@ -5,6 +5,7 @@
  */
 package adventureworks.sales.specialoffer;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record SpecialofferRepoMock(
     return new SpecialofferRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<SpecialofferFields, SpecialofferRow> delete() {
     return new DeleteBuilderMock<>(SpecialofferFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.specialofferid(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     SpecialofferId specialofferid,
     Connection c
@@ -52,28 +55,31 @@ public record SpecialofferRepoMock(
     return Optional.ofNullable(map.remove(specialofferid)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     SpecialofferId[] specialofferids,
     Connection c
   ) {
     var count = 0;
-      for (var id : specialofferids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : specialofferids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public SpecialofferRow insert(
     SpecialofferRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.specialofferid())) {
-        throw new RuntimeException(str("id $unsaved.specialofferid() already exists"));
-      };
-      map.put(unsaved.specialofferid(), unsaved);
+      throw new RuntimeException(str("id $unsaved.specialofferid() already exists"));
+    };
+    map.put(unsaved.specialofferid(), unsaved);
     return unsaved;
   };
 
+  @Override
   public SpecialofferRow insert(
     SpecialofferRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record SpecialofferRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<SpecialofferRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.specialofferid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.specialofferid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<SpecialofferRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.specialofferid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.specialofferid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<SpecialofferFields, SpecialofferRow> select() {
     return new SelectBuilderMock<>(SpecialofferFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<SpecialofferRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<SpecialofferRow> selectById(
     SpecialofferId specialofferid,
     Connection c
@@ -126,38 +137,43 @@ public record SpecialofferRepoMock(
     return Optional.ofNullable(map.get(specialofferid));
   };
 
+  @Override
   public List<SpecialofferRow> selectByIds(
     SpecialofferId[] specialofferids,
     Connection c
   ) {
     var result = new ArrayList<SpecialofferRow>();
-      for (var id : specialofferids) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : specialofferids) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<SpecialofferId, SpecialofferRow> selectByIdsTracked(
     SpecialofferId[] specialofferids,
     Connection c
   ) {
-    return selectByIds(specialofferids, c).stream().collect(Collectors.toMap((adventureworks.sales.specialoffer.SpecialofferRow row) -> row.specialofferid(), Function.identity()));
+    return selectByIds(specialofferids, c).stream().collect(Collectors.toMap((SpecialofferRow row) -> row.specialofferid(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<SpecialofferFields, SpecialofferRow> update() {
     return new UpdateBuilderMock<>(SpecialofferFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     SpecialofferRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.specialofferid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.specialofferid(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.specialofferid(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public SpecialofferRow upsert(
     SpecialofferRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record SpecialofferRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<SpecialofferRow> upsertBatch(
     Iterator<SpecialofferRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<SpecialofferRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.specialofferid(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.specialofferid(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<SpecialofferRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.specialofferid(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.specialofferid(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

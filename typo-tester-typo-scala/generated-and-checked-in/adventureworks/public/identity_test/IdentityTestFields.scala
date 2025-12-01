@@ -26,7 +26,7 @@ object IdentityTestFields {
 
     override lazy val fields: IdentityTestFields = {
       new IdentityTestFields {
-        def alwaysGenerated: Field[Integer, IdentityTestRow] = {
+        override def alwaysGenerated: Field[Integer, IdentityTestRow] = {
           new Field[Integer, IdentityTestRow](
             _path,
             "always_generated",
@@ -37,7 +37,7 @@ object IdentityTestFields {
             PgTypes.int4
           )
         }
-        def defaultGenerated: Field[Integer, IdentityTestRow] = {
+        override def defaultGenerated: Field[Integer, IdentityTestRow] = {
           new Field[Integer, IdentityTestRow](
             _path,
             "default_generated",
@@ -48,7 +48,7 @@ object IdentityTestFields {
             PgTypes.int4
           )
         }
-        def name: IdField[IdentityTestId, IdentityTestRow] = {
+        override def name: IdField[IdentityTestId, IdentityTestRow] = {
           new IdField[IdentityTestId, IdentityTestRow](
             _path,
             "name",
@@ -64,7 +64,7 @@ object IdentityTestFields {
 
     override lazy val columns: java.util.List[FieldLike[?, IdentityTestRow]] = java.util.List.of(this.fields.alwaysGenerated, this.fields.defaultGenerated, this.fields.name)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[IdentityTestFields, IdentityTestRow] = new Impl(java.util.List.of())

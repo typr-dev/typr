@@ -5,12 +5,13 @@
  */
 package adventureworks.person.countryregion
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
 
 /** Type for the primary key of table `person.countryregion` */
-case class CountryregionId(value: /* max 3 chars */ String) extends scala.AnyVal
+case class CountryregionId(@JsonValue value: /* max 3 chars */ String) extends scala.AnyVal
 
 object CountryregionId {
   given bijection: Bijection[CountryregionId, /* max 3 chars */ String] = Bijection.apply[CountryregionId, /* max 3 chars */ String](_.value)(CountryregionId.apply)

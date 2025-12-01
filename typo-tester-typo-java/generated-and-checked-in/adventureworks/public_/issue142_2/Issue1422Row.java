@@ -9,7 +9,6 @@ import adventureworks.public_.issue142.Issue142Id;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple1;
 
 /** Table: public.issue142_2
   * Primary key: tabellkode
@@ -24,7 +23,7 @@ public record Issue1422Row(
     return new Issue1422Row(tabellkode);
   };
 
-  static RowParser<Issue1422Row> _rowParser = RowParsers.of(Issue142Id.pgType, Issue1422Row::new, row -> new Tuple1<>(row.tabellkode()));;
+  static RowParser<Issue1422Row> _rowParser = RowParsers.of(Issue142Id.pgType, Issue1422Row::new, row -> new Object[]{row.tabellkode()});;
 
   static public PgText<Issue1422Row> pgText =
     PgText.from(_rowParser);

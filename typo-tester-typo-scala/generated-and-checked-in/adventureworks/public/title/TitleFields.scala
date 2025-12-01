@@ -20,7 +20,7 @@ object TitleFields {
 
     override lazy val fields: TitleFields = {
       new TitleFields {
-        def code: IdField[TitleId, TitleRow] = {
+        override def code: IdField[TitleId, TitleRow] = {
           new IdField[TitleId, TitleRow](
             _path,
             "code",
@@ -36,7 +36,7 @@ object TitleFields {
 
     override lazy val columns: java.util.List[FieldLike[?, TitleRow]] = java.util.List.of(this.fields.code)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[TitleFields, TitleRow] = new Impl(java.util.List.of())

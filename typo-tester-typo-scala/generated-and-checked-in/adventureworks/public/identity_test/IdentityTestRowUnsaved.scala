@@ -7,6 +7,7 @@ package adventureworks.public.identity_test
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.Defaulted.UseDefault
+import com.fasterxml.jackson.annotation.JsonProperty
 import typo.runtime.PgText
 import typo.runtime.PgTypes
 
@@ -14,7 +15,7 @@ import typo.runtime.PgTypes
 case class IdentityTestRowUnsaved(
   name: IdentityTestId,
   /** Identity BY DEFAULT, identityStart: 1, identityIncrement: 1, identityMaximum: 2147483647, identityMinimum: 1 */
-  defaultGenerated: Defaulted[Integer] = new UseDefault()
+  @JsonProperty("default_generated") defaultGenerated: Defaulted[Integer] = new UseDefault()
 ) {
   def toRow(
     defaultGeneratedDefault: => Integer,
@@ -23,11 +24,5 @@ case class IdentityTestRowUnsaved(
 }
 
 object IdentityTestRowUnsaved {
-  given pgText: PgText[IdentityTestRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      IdentityTestId.pgType.pgText.unsafeEncode(row.name, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using PgTypes.int4.pgText).unsafeEncode(row.defaultGenerated, sb);
-    })
-  }
+  given pgText: PgText[IdentityTestRowUnsaved] = PgText.instance((row, sb) => { IdentityTestId.pgType.pgText.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.int4.pgText).unsafeEncode(row.defaultGenerated, sb) })
 }

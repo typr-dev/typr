@@ -25,11 +25,11 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class ProductproductphotoRepoImpl extends ProductproductphotoRepo {
-  def delete: DeleteBuilder[ProductproductphotoFields, ProductproductphotoRow] = DeleteBuilder.of(""""production"."productproductphoto"""", ProductproductphotoFields.structure, ProductproductphotoRow.rowParser(1).*)
+  override def delete: DeleteBuilder[ProductproductphotoFields, ProductproductphotoRow] = DeleteBuilder.of(""""production"."productproductphoto"""", ProductproductphotoFields.structure, ProductproductphotoRow.rowParser(1).*)
 
-  def deleteById(compositeId: ProductproductphotoId)(using c: Connection): Boolean = SQL"""delete from "production"."productproductphoto" where "productid" = ${ParameterValue(compositeId.productid, null, ProductId.toStatement)} AND "productphotoid" = ${ParameterValue(compositeId.productphotoid, null, ProductphotoId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(compositeId: ProductproductphotoId)(using c: Connection): Boolean = SQL"""delete from "production"."productproductphoto" where "productid" = ${ParameterValue(compositeId.productid, null, ProductId.toStatement)} AND "productphotoid" = ${ParameterValue(compositeId.productphotoid, null, ProductphotoId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(compositeIds: Array[ProductproductphotoId])(using c: Connection): Int = {
+  override def deleteByIds(compositeIds: Array[ProductproductphotoId])(using c: Connection): Int = {
     val productid = compositeIds.map(_.productid)
     val productphotoid = compositeIds.map(_.productphotoid)
     SQL"""delete
@@ -39,7 +39,7 @@ class ProductproductphotoRepoImpl extends ProductproductphotoRepo {
     """.executeUpdate()
   }
 
-  def insert(unsaved: ProductproductphotoRow)(using c: Connection): ProductproductphotoRow = {
+  override def insert(unsaved: ProductproductphotoRow)(using c: Connection): ProductproductphotoRow = {
   SQL"""insert into "production"."productproductphoto"("productid", "productphotoid", "primary", "modifieddate")
     values (${ParameterValue(unsaved.productid, null, ProductId.toStatement)}::int4, ${ParameterValue(unsaved.productphotoid, null, ProductphotoId.toStatement)}::int4, ${ParameterValue(unsaved.primary, null, Flag.toStatement)}::bool, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "productid", "productphotoid", "primary", "modifieddate"::text
@@ -47,7 +47,7 @@ class ProductproductphotoRepoImpl extends ProductproductphotoRepo {
     .executeInsert(ProductproductphotoRow.rowParser(1).single)
   }
 
-  def insert(unsaved: ProductproductphotoRowUnsaved)(using c: Connection): ProductproductphotoRow = {
+  override def insert(unsaved: ProductproductphotoRowUnsaved)(using c: Connection): ProductproductphotoRow = {
     val namedParameters = List(
       Some((NamedParameter("productid", ParameterValue(unsaved.productid, null, ProductId.toStatement)), "::int4")),
       Some((NamedParameter("productphotoid", ParameterValue(unsaved.productphotoid, null, ProductphotoId.toStatement)), "::int4")),
@@ -76,33 +76,33 @@ class ProductproductphotoRepoImpl extends ProductproductphotoRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[ProductproductphotoRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "production"."productproductphoto"("productid", "productphotoid", "primary", "modifieddate") FROM STDIN""", batchSize, unsaved)(using ProductproductphotoRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[ProductproductphotoRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "production"."productproductphoto"("productid", "productphotoid", "primary", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using ProductproductphotoRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[ProductproductphotoFields, ProductproductphotoRow] = SelectBuilder.of(""""production"."productproductphoto"""", ProductproductphotoFields.structure, ProductproductphotoRow.rowParser)
+  override def select: SelectBuilder[ProductproductphotoFields, ProductproductphotoRow] = SelectBuilder.of(""""production"."productproductphoto"""", ProductproductphotoFields.structure, ProductproductphotoRow.rowParser)
 
-  def selectAll(using c: Connection): List[ProductproductphotoRow] = {
+  override def selectAll(using c: Connection): List[ProductproductphotoRow] = {
     SQL"""select "productid", "productphotoid", "primary", "modifieddate"::text
     from "production"."productproductphoto"
     """.as(ProductproductphotoRow.rowParser(1).*)
   }
 
-  def selectById(compositeId: ProductproductphotoId)(using c: Connection): Option[ProductproductphotoRow] = {
+  override def selectById(compositeId: ProductproductphotoId)(using c: Connection): Option[ProductproductphotoRow] = {
     SQL"""select "productid", "productphotoid", "primary", "modifieddate"::text
     from "production"."productproductphoto"
     where "productid" = ${ParameterValue(compositeId.productid, null, ProductId.toStatement)} AND "productphotoid" = ${ParameterValue(compositeId.productphotoid, null, ProductphotoId.toStatement)}
     """.as(ProductproductphotoRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(compositeIds: Array[ProductproductphotoId])(using c: Connection): List[ProductproductphotoRow] = {
+  override def selectByIds(compositeIds: Array[ProductproductphotoId])(using c: Connection): List[ProductproductphotoRow] = {
     val productid = compositeIds.map(_.productid)
     val productphotoid = compositeIds.map(_.productphotoid)
     SQL"""select "productid", "productphotoid", "primary", "modifieddate"::text
@@ -112,14 +112,14 @@ class ProductproductphotoRepoImpl extends ProductproductphotoRepo {
     """.as(ProductproductphotoRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(compositeIds: Array[ProductproductphotoId])(using c: Connection): Map[ProductproductphotoId, ProductproductphotoRow] = {
+  override def selectByIdsTracked(compositeIds: Array[ProductproductphotoId])(using c: Connection): Map[ProductproductphotoId, ProductproductphotoRow] = {
     val byId = selectByIds(compositeIds).view.map(x => (x.compositeId, x)).toMap
     compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[ProductproductphotoFields, ProductproductphotoRow] = UpdateBuilder.of(""""production"."productproductphoto"""", ProductproductphotoFields.structure, ProductproductphotoRow.rowParser(1).*)
+  override def update: UpdateBuilder[ProductproductphotoFields, ProductproductphotoRow] = UpdateBuilder.of(""""production"."productproductphoto"""", ProductproductphotoFields.structure, ProductproductphotoRow.rowParser(1).*)
 
-  def update(row: ProductproductphotoRow)(using c: Connection): Option[ProductproductphotoRow] = {
+  override def update(row: ProductproductphotoRow)(using c: Connection): Option[ProductproductphotoRow] = {
     val compositeId = row.compositeId
     SQL"""update "production"."productproductphoto"
     set "primary" = ${ParameterValue(row.primary, null, Flag.toStatement)}::bool,
@@ -129,7 +129,7 @@ class ProductproductphotoRepoImpl extends ProductproductphotoRepo {
     """.executeInsert(ProductproductphotoRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: ProductproductphotoRow)(using c: Connection): ProductproductphotoRow = {
+  override def upsert(unsaved: ProductproductphotoRow)(using c: Connection): ProductproductphotoRow = {
   SQL"""insert into "production"."productproductphoto"("productid", "productphotoid", "primary", "modifieddate")
     values (
       ${ParameterValue(unsaved.productid, null, ProductId.toStatement)}::int4,
@@ -146,13 +146,14 @@ class ProductproductphotoRepoImpl extends ProductproductphotoRepo {
     .executeInsert(ProductproductphotoRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[ProductproductphotoRow])(using c: Connection): List[ProductproductphotoRow] = {
+  override def upsertBatch(unsaved: Iterable[ProductproductphotoRow])(using c: Connection): List[ProductproductphotoRow] = {
     def toNamedParameter(row: ProductproductphotoRow): List[NamedParameter] = List(
       NamedParameter("productid", ParameterValue(row.productid, null, ProductId.toStatement)),
       NamedParameter("productphotoid", ParameterValue(row.productphotoid, null, ProductphotoId.toStatement)),
       NamedParameter("primary", ParameterValue(row.primary, null, Flag.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -174,7 +175,7 @@ class ProductproductphotoRepoImpl extends ProductproductphotoRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[ProductproductphotoRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

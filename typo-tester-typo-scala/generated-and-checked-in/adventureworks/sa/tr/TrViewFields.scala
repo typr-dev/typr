@@ -41,7 +41,7 @@ object TrViewFields {
 
     override lazy val fields: TrViewFields = {
       new TrViewFields {
-        def id: Field[SalestaxrateId, TrViewRow] = {
+        override def id: Field[SalestaxrateId, TrViewRow] = {
           new Field[SalestaxrateId, TrViewRow](
             _path,
             "id",
@@ -52,7 +52,7 @@ object TrViewFields {
             SalestaxrateId.pgType
           )
         }
-        def salestaxrateid: Field[SalestaxrateId, TrViewRow] = {
+        override def salestaxrateid: Field[SalestaxrateId, TrViewRow] = {
           new Field[SalestaxrateId, TrViewRow](
             _path,
             "salestaxrateid",
@@ -63,7 +63,7 @@ object TrViewFields {
             SalestaxrateId.pgType
           )
         }
-        def stateprovinceid: Field[StateprovinceId, TrViewRow] = {
+        override def stateprovinceid: Field[StateprovinceId, TrViewRow] = {
           new Field[StateprovinceId, TrViewRow](
             _path,
             "stateprovinceid",
@@ -74,7 +74,7 @@ object TrViewFields {
             StateprovinceId.pgType
           )
         }
-        def taxtype: Field[TypoShort, TrViewRow] = {
+        override def taxtype: Field[TypoShort, TrViewRow] = {
           new Field[TypoShort, TrViewRow](
             _path,
             "taxtype",
@@ -85,7 +85,7 @@ object TrViewFields {
             TypoShort.pgType
           )
         }
-        def taxrate: Field[java.math.BigDecimal, TrViewRow] = {
+        override def taxrate: Field[java.math.BigDecimal, TrViewRow] = {
           new Field[java.math.BigDecimal, TrViewRow](
             _path,
             "taxrate",
@@ -96,7 +96,7 @@ object TrViewFields {
             PgTypes.numeric
           )
         }
-        def name: Field[Name, TrViewRow] = {
+        override def name: Field[Name, TrViewRow] = {
           new Field[Name, TrViewRow](
             _path,
             "name",
@@ -107,7 +107,7 @@ object TrViewFields {
             Name.pgType
           )
         }
-        def rowguid: Field[TypoUUID, TrViewRow] = {
+        override def rowguid: Field[TypoUUID, TrViewRow] = {
           new Field[TypoUUID, TrViewRow](
             _path,
             "rowguid",
@@ -118,7 +118,7 @@ object TrViewFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, TrViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, TrViewRow] = {
           new Field[TypoLocalDateTime, TrViewRow](
             _path,
             "modifieddate",
@@ -134,7 +134,7 @@ object TrViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, TrViewRow]] = java.util.List.of(this.fields.id, this.fields.salestaxrateid, this.fields.stateprovinceid, this.fields.taxtype, this.fields.taxrate, this.fields.name, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[TrViewFields, TrViewRow] = new Impl(java.util.List.of())

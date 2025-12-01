@@ -19,23 +19,23 @@ import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class TitledpersonRepoImpl extends TitledpersonRepo {
-  def delete: DeleteBuilder[TitledpersonFields, TitledpersonRow] = DeleteBuilder.of(""""public"."titledperson"""", TitledpersonFields.structure, TitledpersonRow.read)
+  override def delete: DeleteBuilder[TitledpersonFields, TitledpersonRow] = DeleteBuilder.of(""""public"."titledperson"""", TitledpersonFields.structure, TitledpersonRow.read)
 
-  def insert(unsaved: TitledpersonRow): ConnectionIO[TitledpersonRow] = {
+  override def insert(unsaved: TitledpersonRow): ConnectionIO[TitledpersonRow] = {
     sql"""insert into "public"."titledperson"("title_short", "title", "name")
     values (${fromWrite(unsaved.titleShort)(new Write.Single(TitleDomainId.put))}::text, ${fromWrite(unsaved.title)(new Write.Single(TitleId.put))}, ${fromWrite(unsaved.name)(new Write.Single(Meta.StringMeta.put))})
     returning "title_short", "title", "name"
     """.query(TitledpersonRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, TitledpersonRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "public"."titledperson"("title_short", "title", "name") FROM STDIN""").copyIn(unsaved, batchSize)(TitledpersonRow.pgText)
 
-  def select: SelectBuilder[TitledpersonFields, TitledpersonRow] = SelectBuilder.of(""""public"."titledperson"""", TitledpersonFields.structure, TitledpersonRow.read)
+  override def select: SelectBuilder[TitledpersonFields, TitledpersonRow] = SelectBuilder.of(""""public"."titledperson"""", TitledpersonFields.structure, TitledpersonRow.read)
 
-  def selectAll: Stream[ConnectionIO, TitledpersonRow] = sql"""select "title_short", "title", "name" from "public"."titledperson"""".query(TitledpersonRow.read).stream
+  override def selectAll: Stream[ConnectionIO, TitledpersonRow] = sql"""select "title_short", "title", "name" from "public"."titledperson"""".query(TitledpersonRow.read).stream
 
-  def update: UpdateBuilder[TitledpersonFields, TitledpersonRow] = UpdateBuilder.of(""""public"."titledperson"""", TitledpersonFields.structure, TitledpersonRow.read)
+  override def update: UpdateBuilder[TitledpersonFields, TitledpersonRow] = UpdateBuilder.of(""""public"."titledperson"""", TitledpersonFields.structure, TitledpersonRow.read)
 }

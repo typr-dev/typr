@@ -14,7 +14,6 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple10;
 
 /** View: sa.sp */
 public record SpViewRow(
@@ -89,5 +88,5 @@ public record SpViewRow(
     return new SpViewRow(id, businessentityid, territoryid, salesquota, bonus, commissionpct, salesytd, saleslastyear, rowguid, modifieddate);
   };
 
-  static RowParser<SpViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, SalesterritoryId.pgType.opt(), PgTypes.numeric.opt(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SpViewRow::new, row -> new Tuple10<>(row.id(), row.businessentityid(), row.territoryid(), row.salesquota(), row.bonus(), row.commissionpct(), row.salesytd(), row.saleslastyear(), row.rowguid(), row.modifieddate()));;
+  static RowParser<SpViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, SalesterritoryId.pgType.opt(), PgTypes.numeric.opt(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SpViewRow::new, row -> new Object[]{row.id(), row.businessentityid(), row.territoryid(), row.salesquota(), row.bonus(), row.commissionpct(), row.salesytd(), row.saleslastyear(), row.rowguid(), row.modifieddate()});;
 }

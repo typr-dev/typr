@@ -15,11 +15,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class TitleDomainRepoImpl extends TitleDomainRepo {
-  def delete: DeleteBuilder[TitleDomainFields, TitleDomainRow] = DeleteBuilder.of("public.title_domain", TitleDomainFields.structure)
+  override def delete: DeleteBuilder[TitleDomainFields, TitleDomainRow] = DeleteBuilder.of("public.title_domain", TitleDomainFields.structure)
 
-  def deleteById(code: TitleDomainId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."title_domain" where "code" = ${TitleDomainId.pgType.encode(code)}""".update().runUnchecked(c) > 0
+  override def deleteById(code: TitleDomainId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."title_domain" where "code" = ${TitleDomainId.pgType.encode(code)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(codes: Array[TitleDomainId])(using c: Connection): Integer = {
+  override def deleteByIds(codes: Array[TitleDomainId])(using c: Connection): Integer = {
     interpolate"""delete
     from "public"."title_domain"
     where "code" = ANY(${TitleDomainId.pgTypeArray.encode(codes)})"""
@@ -27,7 +27,7 @@ class TitleDomainRepoImpl extends TitleDomainRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: TitleDomainRow)(using c: Connection): TitleDomainRow = {
+  override def insert(unsaved: TitleDomainRow)(using c: Connection): TitleDomainRow = {
   interpolate"""insert into "public"."title_domain"("code")
     values (${TitleDomainId.pgType.encode(unsaved.code)}::text)
     returning "code"
@@ -35,40 +35,40 @@ class TitleDomainRepoImpl extends TitleDomainRepo {
     .updateReturning(TitleDomainRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[TitleDomainRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."title_domain"("code") FROM STDIN""", batchSize, unsaved, c, TitleDomainRow.pgText)
 
-  def select: SelectBuilder[TitleDomainFields, TitleDomainRow] = SelectBuilder.of("public.title_domain", TitleDomainFields.structure, TitleDomainRow.`_rowParser`)
+  override def select: SelectBuilder[TitleDomainFields, TitleDomainRow] = SelectBuilder.of("public.title_domain", TitleDomainFields.structure, TitleDomainRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[TitleDomainRow] = {
+  override def selectAll(using c: Connection): java.util.List[TitleDomainRow] = {
     interpolate"""select "code"
     from "public"."title_domain"
-    """.as(TitleDomainRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(TitleDomainRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(code: TitleDomainId)(using c: Connection): Optional[TitleDomainRow] = {
+  override def selectById(code: TitleDomainId)(using c: Connection): Optional[TitleDomainRow] = {
     interpolate"""select "code"
     from "public"."title_domain"
-    where "code" = ${TitleDomainId.pgType.encode(code)}""".as(TitleDomainRow.`_rowParser`.first()).runUnchecked(c)
+    where "code" = ${TitleDomainId.pgType.encode(code)}""".query(TitleDomainRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(codes: Array[TitleDomainId])(using c: Connection): java.util.List[TitleDomainRow] = {
+  override def selectByIds(codes: Array[TitleDomainId])(using c: Connection): java.util.List[TitleDomainRow] = {
     interpolate"""select "code"
     from "public"."title_domain"
-    where "code" = ANY(${TitleDomainId.pgTypeArray.encode(codes)})""".as(TitleDomainRow.`_rowParser`.all()).runUnchecked(c)
+    where "code" = ANY(${TitleDomainId.pgTypeArray.encode(codes)})""".query(TitleDomainRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(codes: Array[TitleDomainId])(using c: Connection): java.util.Map[TitleDomainId, TitleDomainRow] = {
-    val ret: java.util.Map[TitleDomainId, TitleDomainRow] = new HashMap()
+  override def selectByIdsTracked(codes: Array[TitleDomainId])(using c: Connection): java.util.Map[TitleDomainId, TitleDomainRow] = {
+    val ret: HashMap[TitleDomainId, TitleDomainRow] = new HashMap[TitleDomainId, TitleDomainRow]()
     selectByIds(codes)(using c).forEach(row => ret.put(row.code, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[TitleDomainFields, TitleDomainRow] = UpdateBuilder.of("public.title_domain", TitleDomainFields.structure, TitleDomainRow.`_rowParser`.all())
+  override def update: UpdateBuilder[TitleDomainFields, TitleDomainRow] = UpdateBuilder.of("public.title_domain", TitleDomainFields.structure, TitleDomainRow.`_rowParser`.all())
 
-  def upsert(unsaved: TitleDomainRow)(using c: Connection): TitleDomainRow = {
+  override def upsert(unsaved: TitleDomainRow)(using c: Connection): TitleDomainRow = {
   interpolate"""insert into "public"."title_domain"("code")
     values (${TitleDomainId.pgType.encode(unsaved.code)}::text)
     on conflict ("code")
@@ -79,7 +79,7 @@ class TitleDomainRepoImpl extends TitleDomainRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[TitleDomainRow])(using c: Connection): java.util.List[TitleDomainRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[TitleDomainRow])(using c: Connection): java.util.List[TitleDomainRow] = {
     interpolate"""insert into "public"."title_domain"("code")
     values (?::text)
     on conflict ("code")
@@ -91,13 +91,13 @@ class TitleDomainRepoImpl extends TitleDomainRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[TitleDomainRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table title_domain_TEMP (like "public"."title_domain") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy title_domain_TEMP("code") from stdin""", batchSize, unsaved, c, TitleDomainRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "public"."title_domain"("code")
+    return interpolate"""insert into "public"."title_domain"("code")
     select * from title_domain_TEMP
     on conflict ("code")
     do nothing

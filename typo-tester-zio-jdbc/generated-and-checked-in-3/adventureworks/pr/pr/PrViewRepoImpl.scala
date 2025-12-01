@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class PrViewRepoImpl extends PrViewRepo {
-  def select: SelectBuilder[PrViewFields, PrViewRow] = SelectBuilder.of(""""pr"."pr"""", PrViewFields.structure, PrViewRow.jdbcDecoder)
+  override def select: SelectBuilder[PrViewFields, PrViewRow] = SelectBuilder.of(""""pr"."pr"""", PrViewFields.structure, PrViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, PrViewRow] = sql"""select "id", "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text from "pr"."pr"""".query(using PrViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, PrViewRow] = sql"""select "id", "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text from "pr"."pr"""".query(using PrViewRow.jdbcDecoder).selectStream()
 }

@@ -5,22 +5,22 @@
  */
 package adventureworks.pr.pdoc;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class PdocViewRepoImpl implements PdocViewRepo {
+  @Override
   public SelectBuilder<PdocViewFields, PdocViewRow> select() {
     return SelectBuilder.of("pr.pdoc", PdocViewFields.structure(), PdocViewRow._rowParser);
   };
 
+  @Override
   public List<PdocViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "productid", "modifieddate"::text, "documentnode"
        from "pr"."pdoc"
-    """)).as(PdocViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(PdocViewRow._rowParser.all()).runUnchecked(c);
   };
 }

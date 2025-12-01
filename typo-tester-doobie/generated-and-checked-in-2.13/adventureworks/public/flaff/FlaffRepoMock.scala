@@ -20,13 +20,13 @@ import typo.dsl.UpdateBuilder.UpdateBuilderMock
 import typo.dsl.UpdateParams
 
 case class FlaffRepoMock(map: scala.collection.mutable.Map[FlaffId, FlaffRow] = scala.collection.mutable.Map.empty[FlaffId, FlaffRow]) extends FlaffRepo {
-  def delete: DeleteBuilder[FlaffFields, FlaffRow] = DeleteBuilderMock(DeleteParams.empty, FlaffFields.structure, map)
+  override def delete: DeleteBuilder[FlaffFields, FlaffRow] = DeleteBuilderMock(DeleteParams.empty, FlaffFields.structure, map)
 
-  def deleteById(compositeId: FlaffId): ConnectionIO[Boolean] = delay(map.remove(compositeId).isDefined)
+  override def deleteById(compositeId: FlaffId): ConnectionIO[Boolean] = delay(map.remove(compositeId).isDefined)
 
-  def deleteByIds(compositeIds: Array[FlaffId]): ConnectionIO[Int] = delay(compositeIds.map(id => map.remove(id)).count(_.isDefined))
+  override def deleteByIds(compositeIds: Array[FlaffId]): ConnectionIO[Int] = delay(compositeIds.map(id => map.remove(id)).count(_.isDefined))
 
-  def insert(unsaved: FlaffRow): ConnectionIO[FlaffRow] = {
+  override def insert(unsaved: FlaffRow): ConnectionIO[FlaffRow] = {
   delay {
     val _ = if (map.contains(unsaved.compositeId))
       sys.error(s"id ${unsaved.compositeId} already exists")
@@ -37,7 +37,7 @@ case class FlaffRepoMock(map: scala.collection.mutable.Map[FlaffId, FlaffRow] = 
   }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, FlaffRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = {
@@ -51,24 +51,24 @@ case class FlaffRepoMock(map: scala.collection.mutable.Map[FlaffId, FlaffRow] = 
     }
   }
 
-  def select: SelectBuilder[FlaffFields, FlaffRow] = SelectBuilderMock(FlaffFields.structure, delay(map.values.toList), SelectParams.empty)
+  override def select: SelectBuilder[FlaffFields, FlaffRow] = SelectBuilderMock(FlaffFields.structure, delay(map.values.toList), SelectParams.empty)
 
-  def selectAll: Stream[ConnectionIO, FlaffRow] = Stream.emits(map.values.toList)
+  override def selectAll: Stream[ConnectionIO, FlaffRow] = Stream.emits(map.values.toList)
 
-  def selectById(compositeId: FlaffId): ConnectionIO[Option[FlaffRow]] = delay(map.get(compositeId))
+  override def selectById(compositeId: FlaffId): ConnectionIO[Option[FlaffRow]] = delay(map.get(compositeId))
 
-  def selectByIds(compositeIds: Array[FlaffId]): Stream[ConnectionIO, FlaffRow] = Stream.emits(compositeIds.flatMap(map.get).toList)
+  override def selectByIds(compositeIds: Array[FlaffId]): Stream[ConnectionIO, FlaffRow] = Stream.emits(compositeIds.flatMap(map.get).toList)
 
-  def selectByIdsTracked(compositeIds: Array[FlaffId]): ConnectionIO[Map[FlaffId, FlaffRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[FlaffId]): ConnectionIO[Map[FlaffId, FlaffRow]] = {
     selectByIds(compositeIds).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[FlaffFields, FlaffRow] = UpdateBuilderMock(UpdateParams.empty, FlaffFields.structure, map)
+  override def update: UpdateBuilder[FlaffFields, FlaffRow] = UpdateBuilderMock(UpdateParams.empty, FlaffFields.structure, map)
 
-  def update(row: FlaffRow): ConnectionIO[Option[FlaffRow]] = {
+  override def update(row: FlaffRow): ConnectionIO[Option[FlaffRow]] = {
     delay {
       map.get(row.compositeId).map { _ =>
         map.put(row.compositeId, row): @nowarn
@@ -77,14 +77,14 @@ case class FlaffRepoMock(map: scala.collection.mutable.Map[FlaffId, FlaffRow] = 
     }
   }
 
-  def upsert(unsaved: FlaffRow): ConnectionIO[FlaffRow] = {
+  override def upsert(unsaved: FlaffRow): ConnectionIO[FlaffRow] = {
     delay {
       map.put(unsaved.compositeId, unsaved): @nowarn
       unsaved
     }
   }
 
-  def upsertBatch(unsaved: List[FlaffRow]): Stream[ConnectionIO, FlaffRow] = {
+  override def upsertBatch(unsaved: List[FlaffRow]): Stream[ConnectionIO, FlaffRow] = {
     Stream.emits {
       unsaved.map { row =>
         map += (row.compositeId -> row)
@@ -94,7 +94,7 @@ case class FlaffRepoMock(map: scala.collection.mutable.Map[FlaffId, FlaffRow] = 
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, FlaffRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

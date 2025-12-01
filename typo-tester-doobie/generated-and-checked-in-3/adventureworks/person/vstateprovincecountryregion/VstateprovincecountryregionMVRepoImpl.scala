@@ -7,13 +7,11 @@ package adventureworks.person.vstateprovincecountryregion
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class VstateprovincecountryregionMVRepoImpl extends VstateprovincecountryregionMVRepo {
-  def select: SelectBuilder[VstateprovincecountryregionMVFields, VstateprovincecountryregionMVRow] = SelectBuilder.of(""""person"."vstateprovincecountryregion"""", VstateprovincecountryregionMVFields.structure, VstateprovincecountryregionMVRow.read)
+  override def select: SelectBuilder[VstateprovincecountryregionMVFields, VstateprovincecountryregionMVRow] = SelectBuilder.of(""""person"."vstateprovincecountryregion"""", VstateprovincecountryregionMVFields.structure, VstateprovincecountryregionMVRow.read)
 
-  def selectAll: Stream[ConnectionIO, VstateprovincecountryregionMVRow] = sql"""select "stateprovinceid", "stateprovincecode", "isonlystateprovinceflag", "stateprovincename", "territoryid", "countryregioncode", "countryregionname" from "person"."vstateprovincecountryregion"""".query(using VstateprovincecountryregionMVRow.read).stream
+  override def selectAll: Stream[ConnectionIO, VstateprovincecountryregionMVRow] = sql"""select "stateprovinceid", "stateprovincecode", "isonlystateprovinceflag", "stateprovincename", "territoryid", "countryregioncode", "countryregionname" from "person"."vstateprovincecountryregion"""".query(using VstateprovincecountryregionMVRow.read).stream
 }

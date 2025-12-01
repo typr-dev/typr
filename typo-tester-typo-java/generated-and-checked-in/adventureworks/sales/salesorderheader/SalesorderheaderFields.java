@@ -45,7 +45,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface SalesorderheaderFields {
-  static final class Impl extends Relation<SalesorderheaderFields, SalesorderheaderRow> {
+  final class Impl extends Relation<SalesorderheaderFields, SalesorderheaderRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -53,78 +53,103 @@ public interface SalesorderheaderFields {
     @Override
     public SalesorderheaderFields fields() {
       return new SalesorderheaderFields() {
+               @Override
                public IdField<SalesorderheaderId, SalesorderheaderRow> salesorderid() {
                  return new IdField<SalesorderheaderId, SalesorderheaderRow>(_path, "salesorderid", SalesorderheaderRow::salesorderid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withSalesorderid(value), SalesorderheaderId.pgType);
                };
+               @Override
                public Field<TypoShort, SalesorderheaderRow> revisionnumber() {
                  return new Field<TypoShort, SalesorderheaderRow>(_path, "revisionnumber", SalesorderheaderRow::revisionnumber, Optional.empty(), Optional.of("int2"), (row, value) -> row.withRevisionnumber(value), TypoShort.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, SalesorderheaderRow> orderdate() {
                  return new Field<TypoLocalDateTime, SalesorderheaderRow>(_path, "orderdate", SalesorderheaderRow::orderdate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withOrderdate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, SalesorderheaderRow> duedate() {
                  return new Field<TypoLocalDateTime, SalesorderheaderRow>(_path, "duedate", SalesorderheaderRow::duedate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withDuedate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public OptField<TypoLocalDateTime, SalesorderheaderRow> shipdate() {
                  return new OptField<TypoLocalDateTime, SalesorderheaderRow>(_path, "shipdate", SalesorderheaderRow::shipdate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withShipdate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public Field<TypoShort, SalesorderheaderRow> status() {
                  return new Field<TypoShort, SalesorderheaderRow>(_path, "status", SalesorderheaderRow::status, Optional.empty(), Optional.of("int2"), (row, value) -> row.withStatus(value), TypoShort.pgType);
                };
+               @Override
                public Field<Flag, SalesorderheaderRow> onlineorderflag() {
                  return new Field<Flag, SalesorderheaderRow>(_path, "onlineorderflag", SalesorderheaderRow::onlineorderflag, Optional.empty(), Optional.of("bool"), (row, value) -> row.withOnlineorderflag(value), Flag.pgType);
                };
+               @Override
                public OptField<OrderNumber, SalesorderheaderRow> purchaseordernumber() {
                  return new OptField<OrderNumber, SalesorderheaderRow>(_path, "purchaseordernumber", SalesorderheaderRow::purchaseordernumber, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withPurchaseordernumber(value), OrderNumber.pgType);
                };
+               @Override
                public OptField<AccountNumber, SalesorderheaderRow> accountnumber() {
                  return new OptField<AccountNumber, SalesorderheaderRow>(_path, "accountnumber", SalesorderheaderRow::accountnumber, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withAccountnumber(value), AccountNumber.pgType);
                };
+               @Override
                public Field<CustomerId, SalesorderheaderRow> customerid() {
                  return new Field<CustomerId, SalesorderheaderRow>(_path, "customerid", SalesorderheaderRow::customerid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withCustomerid(value), CustomerId.pgType);
                };
+               @Override
                public OptField<BusinessentityId, SalesorderheaderRow> salespersonid() {
                  return new OptField<BusinessentityId, SalesorderheaderRow>(_path, "salespersonid", SalesorderheaderRow::salespersonid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withSalespersonid(value), BusinessentityId.pgType);
                };
+               @Override
                public OptField<SalesterritoryId, SalesorderheaderRow> territoryid() {
                  return new OptField<SalesterritoryId, SalesorderheaderRow>(_path, "territoryid", SalesorderheaderRow::territoryid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withTerritoryid(value), SalesterritoryId.pgType);
                };
+               @Override
                public Field<AddressId, SalesorderheaderRow> billtoaddressid() {
                  return new Field<AddressId, SalesorderheaderRow>(_path, "billtoaddressid", SalesorderheaderRow::billtoaddressid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBilltoaddressid(value), AddressId.pgType);
                };
+               @Override
                public Field<AddressId, SalesorderheaderRow> shiptoaddressid() {
                  return new Field<AddressId, SalesorderheaderRow>(_path, "shiptoaddressid", SalesorderheaderRow::shiptoaddressid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withShiptoaddressid(value), AddressId.pgType);
                };
+               @Override
                public Field<ShipmethodId, SalesorderheaderRow> shipmethodid() {
                  return new Field<ShipmethodId, SalesorderheaderRow>(_path, "shipmethodid", SalesorderheaderRow::shipmethodid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withShipmethodid(value), ShipmethodId.pgType);
                };
+               @Override
                public OptField</* user-picked */ CustomCreditcardId, SalesorderheaderRow> creditcardid() {
                  return new OptField</* user-picked */ CustomCreditcardId, SalesorderheaderRow>(_path, "creditcardid", SalesorderheaderRow::creditcardid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withCreditcardid(value), /* user-picked */ CustomCreditcardId.pgType);
                };
+               @Override
                public OptField</* max 15 chars */ String, SalesorderheaderRow> creditcardapprovalcode() {
                  return new OptField</* max 15 chars */ String, SalesorderheaderRow>(_path, "creditcardapprovalcode", SalesorderheaderRow::creditcardapprovalcode, Optional.empty(), Optional.empty(), (row, value) -> row.withCreditcardapprovalcode(value), PgTypes.text);
                };
+               @Override
                public OptField<CurrencyrateId, SalesorderheaderRow> currencyrateid() {
                  return new OptField<CurrencyrateId, SalesorderheaderRow>(_path, "currencyrateid", SalesorderheaderRow::currencyrateid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withCurrencyrateid(value), CurrencyrateId.pgType);
                };
+               @Override
                public Field<BigDecimal, SalesorderheaderRow> subtotal() {
                  return new Field<BigDecimal, SalesorderheaderRow>(_path, "subtotal", SalesorderheaderRow::subtotal, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withSubtotal(value), PgTypes.numeric);
                };
+               @Override
                public Field<BigDecimal, SalesorderheaderRow> taxamt() {
                  return new Field<BigDecimal, SalesorderheaderRow>(_path, "taxamt", SalesorderheaderRow::taxamt, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withTaxamt(value), PgTypes.numeric);
                };
+               @Override
                public Field<BigDecimal, SalesorderheaderRow> freight() {
                  return new Field<BigDecimal, SalesorderheaderRow>(_path, "freight", SalesorderheaderRow::freight, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withFreight(value), PgTypes.numeric);
                };
+               @Override
                public OptField<BigDecimal, SalesorderheaderRow> totaldue() {
                  return new OptField<BigDecimal, SalesorderheaderRow>(_path, "totaldue", SalesorderheaderRow::totaldue, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withTotaldue(value), PgTypes.numeric);
                };
+               @Override
                public OptField</* max 128 chars */ String, SalesorderheaderRow> comment() {
                  return new OptField</* max 128 chars */ String, SalesorderheaderRow>(_path, "comment", SalesorderheaderRow::comment, Optional.empty(), Optional.empty(), (row, value) -> row.withComment(value), PgTypes.text);
                };
+               @Override
                public Field<TypoUUID, SalesorderheaderRow> rowguid() {
                  return new Field<TypoUUID, SalesorderheaderRow>(_path, "rowguid", SalesorderheaderRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, SalesorderheaderRow> modifieddate() {
                  return new Field<TypoLocalDateTime, SalesorderheaderRow>(_path, "modifieddate", SalesorderheaderRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -136,6 +161,7 @@ public interface SalesorderheaderFields {
       return List.of(this.fields().salesorderid(), this.fields().revisionnumber(), this.fields().orderdate(), this.fields().duedate(), this.fields().shipdate(), this.fields().status(), this.fields().onlineorderflag(), this.fields().purchaseordernumber(), this.fields().accountnumber(), this.fields().customerid(), this.fields().salespersonid(), this.fields().territoryid(), this.fields().billtoaddressid(), this.fields().shiptoaddressid(), this.fields().shipmethodid(), this.fields().creditcardid(), this.fields().creditcardapprovalcode(), this.fields().currencyrateid(), this.fields().subtotal(), this.fields().taxamt(), this.fields().freight(), this.fields().totaldue(), this.fields().comment(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

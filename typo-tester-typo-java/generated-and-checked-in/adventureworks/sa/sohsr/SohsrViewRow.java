@@ -10,7 +10,6 @@ import adventureworks.sales.salesorderheader.SalesorderheaderId;
 import adventureworks.sales.salesreason.SalesreasonId;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple3;
 
 /** View: sa.sohsr */
 public record SohsrViewRow(
@@ -36,5 +35,5 @@ public record SohsrViewRow(
     return new SohsrViewRow(salesorderid, salesreasonid, modifieddate);
   };
 
-  static RowParser<SohsrViewRow> _rowParser = RowParsers.of(SalesorderheaderId.pgType, SalesreasonId.pgType, TypoLocalDateTime.pgType, SohsrViewRow::new, row -> new Tuple3<>(row.salesorderid(), row.salesreasonid(), row.modifieddate()));;
+  static RowParser<SohsrViewRow> _rowParser = RowParsers.of(SalesorderheaderId.pgType, SalesreasonId.pgType, TypoLocalDateTime.pgType, SohsrViewRow::new, row -> new Object[]{row.salesorderid(), row.salesreasonid(), row.modifieddate()});;
 }

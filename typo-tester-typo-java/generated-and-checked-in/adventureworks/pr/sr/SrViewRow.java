@@ -10,7 +10,6 @@ import adventureworks.production.scrapreason.ScrapreasonId;
 import adventureworks.public_.Name;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple4;
 
 /** View: pr.sr */
 public record SrViewRow(
@@ -43,5 +42,5 @@ public record SrViewRow(
     return new SrViewRow(id, scrapreasonid, name, modifieddate);
   };
 
-  static RowParser<SrViewRow> _rowParser = RowParsers.of(ScrapreasonId.pgType, ScrapreasonId.pgType, Name.pgType, TypoLocalDateTime.pgType, SrViewRow::new, row -> new Tuple4<>(row.id(), row.scrapreasonid(), row.name(), row.modifieddate()));;
+  static RowParser<SrViewRow> _rowParser = RowParsers.of(ScrapreasonId.pgType, ScrapreasonId.pgType, Name.pgType, TypoLocalDateTime.pgType, SrViewRow::new, row -> new Object[]{row.id(), row.scrapreasonid(), row.name(), row.modifieddate()});;
 }

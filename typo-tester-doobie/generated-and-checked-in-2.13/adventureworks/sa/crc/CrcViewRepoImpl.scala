@@ -11,7 +11,7 @@ import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class CrcViewRepoImpl extends CrcViewRepo {
-  def select: SelectBuilder[CrcViewFields, CrcViewRow] = SelectBuilder.of(""""sa"."crc"""", CrcViewFields.structure, CrcViewRow.read)
+  override def select: SelectBuilder[CrcViewFields, CrcViewRow] = SelectBuilder.of(""""sa"."crc"""", CrcViewFields.structure, CrcViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, CrcViewRow] = sql"""select "countryregioncode", "currencycode", "modifieddate"::text from "sa"."crc"""".query(CrcViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, CrcViewRow] = sql"""select "countryregioncode", "currencycode", "modifieddate"::text from "sa"."crc"""".query(CrcViewRow.read).stream
 }

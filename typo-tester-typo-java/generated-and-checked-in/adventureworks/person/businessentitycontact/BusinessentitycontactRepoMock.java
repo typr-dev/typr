@@ -5,6 +5,7 @@
  */
 package adventureworks.person.businessentitycontact;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record BusinessentitycontactRepoMock(
     return new BusinessentitycontactRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<BusinessentitycontactFields, BusinessentitycontactRow> delete() {
     return new DeleteBuilderMock<>(BusinessentitycontactFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.compositeId(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     BusinessentitycontactId compositeId,
     Connection c
@@ -52,28 +55,31 @@ public record BusinessentitycontactRepoMock(
     return Optional.ofNullable(map.remove(compositeId)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     BusinessentitycontactId[] compositeIds,
     Connection c
   ) {
     var count = 0;
-      for (var id : compositeIds) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : compositeIds) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public BusinessentitycontactRow insert(
     BusinessentitycontactRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.compositeId())) {
-        throw new RuntimeException(str("id $unsaved.compositeId() already exists"));
-      };
-      map.put(unsaved.compositeId(), unsaved);
+      throw new RuntimeException(str("id $unsaved.compositeId() already exists"));
+    };
+    map.put(unsaved.compositeId(), unsaved);
     return unsaved;
   };
 
+  @Override
   public BusinessentitycontactRow insert(
     BusinessentitycontactRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record BusinessentitycontactRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<BusinessentitycontactRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.compositeId(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.compositeId(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<BusinessentitycontactRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.compositeId(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.compositeId(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<BusinessentitycontactFields, BusinessentitycontactRow> select() {
     return new SelectBuilderMock<>(BusinessentitycontactFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<BusinessentitycontactRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<BusinessentitycontactRow> selectById(
     BusinessentitycontactId compositeId,
     Connection c
@@ -126,38 +137,43 @@ public record BusinessentitycontactRepoMock(
     return Optional.ofNullable(map.get(compositeId));
   };
 
+  @Override
   public List<BusinessentitycontactRow> selectByIds(
     BusinessentitycontactId[] compositeIds,
     Connection c
   ) {
     var result = new ArrayList<BusinessentitycontactRow>();
-      for (var id : compositeIds) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : compositeIds) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<BusinessentitycontactId, BusinessentitycontactRow> selectByIdsTracked(
     BusinessentitycontactId[] compositeIds,
     Connection c
   ) {
-    return selectByIds(compositeIds, c).stream().collect(Collectors.toMap((adventureworks.person.businessentitycontact.BusinessentitycontactRow row) -> row.compositeId(), Function.identity()));
+    return selectByIds(compositeIds, c).stream().collect(Collectors.toMap((BusinessentitycontactRow row) -> row.compositeId(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<BusinessentitycontactFields, BusinessentitycontactRow> update() {
     return new UpdateBuilderMock<>(BusinessentitycontactFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     BusinessentitycontactRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.compositeId())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.compositeId(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.compositeId(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public BusinessentitycontactRow upsert(
     BusinessentitycontactRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record BusinessentitycontactRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<BusinessentitycontactRow> upsertBatch(
     Iterator<BusinessentitycontactRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<BusinessentitycontactRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.compositeId(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.compositeId(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<BusinessentitycontactRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.compositeId(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.compositeId(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

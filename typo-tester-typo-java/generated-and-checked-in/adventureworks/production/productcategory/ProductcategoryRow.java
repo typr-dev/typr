@@ -12,7 +12,6 @@ import adventureworks.public_.Name;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple4;
 
 /** Table: production.productcategory
   * High-level product categorization.
@@ -52,7 +51,7 @@ public record ProductcategoryRow(
     return new ProductcategoryRow(productcategoryid, name, rowguid, modifieddate);
   };
 
-  static RowParser<ProductcategoryRow> _rowParser = RowParsers.of(ProductcategoryId.pgType, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, ProductcategoryRow::new, row -> new Tuple4<>(row.productcategoryid(), row.name(), row.rowguid(), row.modifieddate()));;
+  static RowParser<ProductcategoryRow> _rowParser = RowParsers.of(ProductcategoryId.pgType, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, ProductcategoryRow::new, row -> new Object[]{row.productcategoryid(), row.name(), row.rowguid(), row.modifieddate()});;
 
   static public PgText<ProductcategoryRow> pgText =
     PgText.from(_rowParser);

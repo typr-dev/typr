@@ -11,15 +11,16 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import typo.runtime.PgText;
 
+/** This signals a value where if you don't provide it, postgres will generate it for you */
 @JsonSerialize(using = DefaultedSerializer.class)
 @JsonDeserialize(using = DefaultedDeserializer.class)
-/** This signals a value where if you don't provide it, postgres will generate it for you */
 public sealed interface Defaulted<T> {
   record Provided<T>(T value) implements Defaulted<T> {
     public Provided<T> withValue(T value) {
       return new Provided<>(value);
     };
 
+    @Override
     public <U>U fold(
       java.util.function.Supplier<U> onDefault,
       java.util.function.Function<T, U> onProvided
@@ -27,10 +28,12 @@ public sealed interface Defaulted<T> {
       return onProvided.apply(value);
     };
 
+    @Override
     public T getOrElse(java.util.function.Supplier<T> onDefault) {
       return value;
     };
 
+    @Override
     public void visit(
       java.lang.Runnable onDefault,
       java.util.function.Consumer<T> onProvided
@@ -40,6 +43,7 @@ public sealed interface Defaulted<T> {
   };
 
   record UseDefault<T>() implements Defaulted<T> {
+    @Override
     public <U>U fold(
       java.util.function.Supplier<U> onDefault,
       java.util.function.Function<T, U> onProvided
@@ -47,10 +51,12 @@ public sealed interface Defaulted<T> {
       return onDefault.get();
     };
 
+    @Override
     public T getOrElse(java.util.function.Supplier<T> onDefault) {
       return onDefault.get();
     };
 
+    @Override
     public void visit(
       java.lang.Runnable onDefault,
       java.util.function.Consumer<T> onProvided
@@ -60,7 +66,9 @@ public sealed interface Defaulted<T> {
   };
 
   static <T> PgText<Defaulted<T>> pgText(PgText<T> t) {
-    return PgText.instance((ot, sb) -> ot.visit(() -> { sb.append("__DEFAULT_VALUE__"); }, value -> t.unsafeEncode(value, sb)));
+    return PgText.instance((ot, sb) -> ot.visit(() -> {
+             sb.append("__DEFAULT_VALUE__");
+           }, value -> t.unsafeEncode(value, sb)));
   };
 
   <U>U fold(

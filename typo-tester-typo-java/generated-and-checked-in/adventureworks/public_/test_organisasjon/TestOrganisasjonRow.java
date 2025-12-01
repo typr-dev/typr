@@ -8,7 +8,6 @@ package adventureworks.public_.test_organisasjon;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple1;
 
 /** Table: public.test_organisasjon
   * Primary key: organisasjonskode
@@ -18,7 +17,7 @@ public record TestOrganisasjonRow(TestOrganisasjonId organisasjonskode) {
     return new TestOrganisasjonRow(organisasjonskode);
   };
 
-  static RowParser<TestOrganisasjonRow> _rowParser = RowParsers.of(TestOrganisasjonId.pgType, TestOrganisasjonRow::new, row -> new Tuple1<>(row.organisasjonskode()));;
+  static RowParser<TestOrganisasjonRow> _rowParser = RowParsers.of(TestOrganisasjonId.pgType, TestOrganisasjonRow::new, row -> new Object[]{row.organisasjonskode()});;
 
   static public PgText<TestOrganisasjonRow> pgText =
     PgText.from(_rowParser);

@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple7;
 
 /** View: sa.cr */
 public record CrViewRow(
@@ -66,5 +65,5 @@ public record CrViewRow(
     return new CrViewRow(currencyrateid, currencyratedate, fromcurrencycode, tocurrencycode, averagerate, endofdayrate, modifieddate);
   };
 
-  static RowParser<CrViewRow> _rowParser = RowParsers.of(CurrencyrateId.pgType, TypoLocalDateTime.pgType, CurrencyId.pgType, CurrencyId.pgType, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, CrViewRow::new, row -> new Tuple7<>(row.currencyrateid(), row.currencyratedate(), row.fromcurrencycode(), row.tocurrencycode(), row.averagerate(), row.endofdayrate(), row.modifieddate()));;
+  static RowParser<CrViewRow> _rowParser = RowParsers.of(CurrencyrateId.pgType, TypoLocalDateTime.pgType, CurrencyId.pgType, CurrencyId.pgType, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, CrViewRow::new, row -> new Object[]{row.currencyrateid(), row.currencyratedate(), row.fromcurrencycode(), row.tocurrencycode(), row.averagerate(), row.endofdayrate(), row.modifieddate()});;
 }

@@ -14,7 +14,6 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple10;
 
 /** View: pr.w */
 public record WViewRow(
@@ -89,5 +88,5 @@ public record WViewRow(
     return new WViewRow(id, workorderid, productid, orderqty, scrappedqty, startdate, enddate, duedate, scrapreasonid, modifieddate);
   };
 
-  static RowParser<WViewRow> _rowParser = RowParsers.of(WorkorderId.pgType, WorkorderId.pgType, ProductId.pgType, PgTypes.int4, TypoShort.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoLocalDateTime.pgType, ScrapreasonId.pgType.opt(), TypoLocalDateTime.pgType, WViewRow::new, row -> new Tuple10<>(row.id(), row.workorderid(), row.productid(), row.orderqty(), row.scrappedqty(), row.startdate(), row.enddate(), row.duedate(), row.scrapreasonid(), row.modifieddate()));;
+  static RowParser<WViewRow> _rowParser = RowParsers.of(WorkorderId.pgType, WorkorderId.pgType, ProductId.pgType, PgTypes.int4, TypoShort.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoLocalDateTime.pgType, ScrapreasonId.pgType.opt(), TypoLocalDateTime.pgType, WViewRow::new, row -> new Object[]{row.id(), row.workorderid(), row.productid(), row.orderqty(), row.scrappedqty(), row.startdate(), row.enddate(), row.duedate(), row.scrapreasonid(), row.modifieddate()});;
 }

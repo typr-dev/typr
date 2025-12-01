@@ -14,7 +14,6 @@ import java.math.BigDecimal;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple11;
 
 /** View: sa.st */
 public record StViewRow(
@@ -96,5 +95,5 @@ public record StViewRow(
     return new StViewRow(id, territoryid, name, countryregioncode, group, salesytd, saleslastyear, costytd, costlastyear, rowguid, modifieddate);
   };
 
-  static RowParser<StViewRow> _rowParser = RowParsers.of(SalesterritoryId.pgType, SalesterritoryId.pgType, Name.pgType, CountryregionId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, StViewRow::new, row -> new Tuple11<>(row.id(), row.territoryid(), row.name(), row.countryregioncode(), row.group(), row.salesytd(), row.saleslastyear(), row.costytd(), row.costlastyear(), row.rowguid(), row.modifieddate()));;
+  static RowParser<StViewRow> _rowParser = RowParsers.of(SalesterritoryId.pgType, SalesterritoryId.pgType, Name.pgType, CountryregionId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, StViewRow::new, row -> new Object[]{row.id(), row.territoryid(), row.name(), row.countryregioncode(), row.group(), row.salesytd(), row.saleslastyear(), row.costytd(), row.costlastyear(), row.rowguid(), row.modifieddate()});;
 }

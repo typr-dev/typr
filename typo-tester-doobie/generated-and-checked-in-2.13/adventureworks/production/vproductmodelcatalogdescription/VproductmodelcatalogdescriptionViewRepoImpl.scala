@@ -11,7 +11,7 @@ import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class VproductmodelcatalogdescriptionViewRepoImpl extends VproductmodelcatalogdescriptionViewRepo {
-  def select: SelectBuilder[VproductmodelcatalogdescriptionViewFields, VproductmodelcatalogdescriptionViewRow] = SelectBuilder.of(""""production"."vproductmodelcatalogdescription"""", VproductmodelcatalogdescriptionViewFields.structure, VproductmodelcatalogdescriptionViewRow.read)
+  override def select: SelectBuilder[VproductmodelcatalogdescriptionViewFields, VproductmodelcatalogdescriptionViewRow] = SelectBuilder.of(""""production"."vproductmodelcatalogdescription"""", VproductmodelcatalogdescriptionViewFields.structure, VproductmodelcatalogdescriptionViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, VproductmodelcatalogdescriptionViewRow] = sql"""select "productmodelid", "name", "Summary", "manufacturer", "copyright", "producturl", "warrantyperiod", "warrantydescription", "noofyears", "maintenancedescription", "wheel", "saddle", "pedal", "bikeframe", "crankset", "pictureangle", "picturesize", "productphotoid", "material", "color", "productline", "style", "riderexperience", "rowguid", "modifieddate"::text from "production"."vproductmodelcatalogdescription"""".query(VproductmodelcatalogdescriptionViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, VproductmodelcatalogdescriptionViewRow] = sql"""select "productmodelid", "name", "Summary", "manufacturer", "copyright", "producturl", "warrantyperiod", "warrantydescription", "noofyears", "maintenancedescription", "wheel", "saddle", "pedal", "bikeframe", "crankset", "pictureangle", "picturesize", "productphotoid", "material", "color", "productline", "style", "riderexperience", "rowguid", "modifieddate"::text from "production"."vproductmodelcatalogdescription"""".query(VproductmodelcatalogdescriptionViewRow.read).stream
 }

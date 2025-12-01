@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class VjobcandidateemploymentViewRepoImpl extends VjobcandidateemploymentViewRepo {
-  def select: SelectBuilder[VjobcandidateemploymentViewFields, VjobcandidateemploymentViewRow] = SelectBuilder.of(""""humanresources"."vjobcandidateemployment"""", VjobcandidateemploymentViewFields.structure, VjobcandidateemploymentViewRow.jdbcDecoder)
+  override def select: SelectBuilder[VjobcandidateemploymentViewFields, VjobcandidateemploymentViewRow] = SelectBuilder.of(""""humanresources"."vjobcandidateemployment"""", VjobcandidateemploymentViewFields.structure, VjobcandidateemploymentViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, VjobcandidateemploymentViewRow] = sql"""select "jobcandidateid", "Emp.StartDate"::text, "Emp.EndDate"::text, "Emp.OrgName", "Emp.JobTitle", "Emp.Responsibility", "Emp.FunctionCategory", "Emp.IndustryCategory", "Emp.Loc.CountryRegion", "Emp.Loc.State", "Emp.Loc.City" from "humanresources"."vjobcandidateemployment"""".query(VjobcandidateemploymentViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, VjobcandidateemploymentViewRow] = sql"""select "jobcandidateid", "Emp.StartDate"::text, "Emp.EndDate"::text, "Emp.OrgName", "Emp.JobTitle", "Emp.Responsibility", "Emp.FunctionCategory", "Emp.IndustryCategory", "Emp.Loc.CountryRegion", "Emp.Loc.State", "Emp.Loc.City" from "humanresources"."vjobcandidateemployment"""".query(VjobcandidateemploymentViewRow.jdbcDecoder).selectStream()
 }

@@ -8,7 +8,6 @@ package adventureworks.public_.title;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple1;
 
 /** Table: public.title
   * Primary key: code
@@ -18,7 +17,7 @@ public record TitleRow(TitleId code) {
     return new TitleRow(code);
   };
 
-  static RowParser<TitleRow> _rowParser = RowParsers.of(TitleId.pgType, TitleRow::new, row -> new Tuple1<>(row.code()));;
+  static RowParser<TitleRow> _rowParser = RowParsers.of(TitleId.pgType, TitleRow::new, row -> new Object[]{row.code()});;
 
   static public PgText<TitleRow> pgText =
     PgText.from(_rowParser);

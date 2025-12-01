@@ -45,7 +45,7 @@ class FkAnalysisTest extends AnyFunSuite with Matchers {
 
     val colsFromFk = FkAnalysis.ColsFromFk(candidateFk.otherId, thisColumns, candidateFk)
 
-    val expr = colsFromFk.expr
+    val expr = colsFromFk.expr(lang)
     assert(expr.size == 1): @nowarn
     assert(expr.keys.head.value == "utdanningsmulighetKode"): @nowarn
 
@@ -88,7 +88,7 @@ class FkAnalysisTest extends AnyFunSuite with Matchers {
 
     val colsFromFk = FkAnalysis.ColsFromFk(candidateFk.otherId, thisColumns, candidateFk)
 
-    val expr = colsFromFk.expr
+    val expr = colsFromFk.expr(lang)
     assert(expr.size == 2): @nowarn
 
     // Both columns should map correctly
@@ -131,7 +131,7 @@ class FkAnalysisTest extends AnyFunSuite with Matchers {
 
     val colsFromFk = FkAnalysis.ColsFromFk(candidateFk.otherId, thisColumns, candidateFk)
 
-    val expr = colsFromFk.expr
+    val expr = colsFromFk.expr(lang)
     assert(expr.size == 2): @nowarn
 
     // Should map correctly even with identical names
@@ -175,7 +175,7 @@ class FkAnalysisTest extends AnyFunSuite with Matchers {
 
     val colsFromFk = FkAnalysis.ColsFromFk(candidateFk.otherId, thisColumns, candidateFk)
 
-    val expr = colsFromFk.expr
+    val expr = colsFromFk.expr(lang)
     assert(expr.size == 2): @nowarn
 
     // Should map correctly despite reordering

@@ -24,11 +24,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class SalestaxrateRepoImpl extends SalestaxrateRepo {
-  def delete: DeleteBuilder[SalestaxrateFields, SalestaxrateRow] = DeleteBuilder.of("sales.salestaxrate", SalestaxrateFields.structure)
+  override def delete: DeleteBuilder[SalestaxrateFields, SalestaxrateRow] = DeleteBuilder.of("sales.salestaxrate", SalestaxrateFields.structure)
 
-  def deleteById(salestaxrateid: SalestaxrateId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."salestaxrate" where "salestaxrateid" = ${SalestaxrateId.pgType.encode(salestaxrateid)}""".update().runUnchecked(c) > 0
+  override def deleteById(salestaxrateid: SalestaxrateId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."salestaxrate" where "salestaxrateid" = ${SalestaxrateId.pgType.encode(salestaxrateid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(salestaxrateids: Array[SalestaxrateId])(using c: Connection): Integer = {
+  override def deleteByIds(salestaxrateids: Array[SalestaxrateId])(using c: Connection): Integer = {
     interpolate"""delete
     from "sales"."salestaxrate"
     where "salestaxrateid" = ANY(${SalestaxrateId.pgTypeArray.encode(salestaxrateids)})"""
@@ -36,7 +36,7 @@ class SalestaxrateRepoImpl extends SalestaxrateRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: SalestaxrateRow)(using c: Connection): SalestaxrateRow = {
+  override def insert(unsaved: SalestaxrateRow)(using c: Connection): SalestaxrateRow = {
   interpolate"""insert into "sales"."salestaxrate"("salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate")
     values (${SalestaxrateId.pgType.encode(unsaved.salestaxrateid)}::int4, ${StateprovinceId.pgType.encode(unsaved.stateprovinceid)}::int4, ${TypoShort.pgType.encode(unsaved.taxtype)}::int2, ${PgTypes.numeric.encode(unsaved.taxrate)}::numeric, ${Name.pgType.encode(unsaved.name)}::varchar, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"::text
@@ -44,9 +44,9 @@ class SalestaxrateRepoImpl extends SalestaxrateRepo {
     .updateReturning(SalestaxrateRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: SalestaxrateRowUnsaved)(using c: Connection): SalestaxrateRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: SalestaxrateRowUnsaved)(using c: Connection): SalestaxrateRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""stateprovinceid"""")): @scala.annotation.nowarn
     values.add(interpolate"${StateprovinceId.pgType.encode(unsaved.stateprovinceid)}::int4"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""taxtype"""")): @scala.annotation.nowarn
@@ -54,32 +54,20 @@ class SalestaxrateRepoImpl extends SalestaxrateRepo {
     columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
     values.add(interpolate"${Name.pgType.encode(unsaved.name)}::varchar"): @scala.annotation.nowarn
     unsaved.salestaxrateid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""salestaxrateid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${SalestaxrateId.pgType.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""salestaxrateid"""")): @scala.annotation.nowarn; values.add(interpolate"${SalestaxrateId.pgType.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.taxrate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""taxrate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""taxrate"""")): @scala.annotation.nowarn; values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "sales"."salestaxrate"(${Fragment.comma(columns)})
@@ -87,51 +75,51 @@ class SalestaxrateRepoImpl extends SalestaxrateRepo {
       returning "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"::text
       """
     }
-    q.updateReturning(SalestaxrateRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(SalestaxrateRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[SalestaxrateRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."salestaxrate"("salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, c, SalestaxrateRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[SalestaxrateRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."salestaxrate"("stateprovinceid", "taxtype", "name", "salestaxrateid", "taxrate", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, SalestaxrateRowUnsaved.pgText)
 
-  def select: SelectBuilder[SalestaxrateFields, SalestaxrateRow] = SelectBuilder.of("sales.salestaxrate", SalestaxrateFields.structure, SalestaxrateRow.`_rowParser`)
+  override def select: SelectBuilder[SalestaxrateFields, SalestaxrateRow] = SelectBuilder.of("sales.salestaxrate", SalestaxrateFields.structure, SalestaxrateRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[SalestaxrateRow] = {
+  override def selectAll(using c: Connection): java.util.List[SalestaxrateRow] = {
     interpolate"""select "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"::text
     from "sales"."salestaxrate"
-    """.as(SalestaxrateRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(SalestaxrateRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(salestaxrateid: SalestaxrateId)(using c: Connection): Optional[SalestaxrateRow] = {
+  override def selectById(salestaxrateid: SalestaxrateId)(using c: Connection): Optional[SalestaxrateRow] = {
     interpolate"""select "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"::text
     from "sales"."salestaxrate"
-    where "salestaxrateid" = ${SalestaxrateId.pgType.encode(salestaxrateid)}""".as(SalestaxrateRow.`_rowParser`.first()).runUnchecked(c)
+    where "salestaxrateid" = ${SalestaxrateId.pgType.encode(salestaxrateid)}""".query(SalestaxrateRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(salestaxrateids: Array[SalestaxrateId])(using c: Connection): java.util.List[SalestaxrateRow] = {
+  override def selectByIds(salestaxrateids: Array[SalestaxrateId])(using c: Connection): java.util.List[SalestaxrateRow] = {
     interpolate"""select "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"::text
     from "sales"."salestaxrate"
-    where "salestaxrateid" = ANY(${SalestaxrateId.pgTypeArray.encode(salestaxrateids)})""".as(SalestaxrateRow.`_rowParser`.all()).runUnchecked(c)
+    where "salestaxrateid" = ANY(${SalestaxrateId.pgTypeArray.encode(salestaxrateids)})""".query(SalestaxrateRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(salestaxrateids: Array[SalestaxrateId])(using c: Connection): java.util.Map[SalestaxrateId, SalestaxrateRow] = {
-    val ret: java.util.Map[SalestaxrateId, SalestaxrateRow] = new HashMap()
+  override def selectByIdsTracked(salestaxrateids: Array[SalestaxrateId])(using c: Connection): java.util.Map[SalestaxrateId, SalestaxrateRow] = {
+    val ret: HashMap[SalestaxrateId, SalestaxrateRow] = new HashMap[SalestaxrateId, SalestaxrateRow]()
     selectByIds(salestaxrateids)(using c).forEach(row => ret.put(row.salestaxrateid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[SalestaxrateFields, SalestaxrateRow] = UpdateBuilder.of("sales.salestaxrate", SalestaxrateFields.structure, SalestaxrateRow.`_rowParser`.all())
+  override def update: UpdateBuilder[SalestaxrateFields, SalestaxrateRow] = UpdateBuilder.of("sales.salestaxrate", SalestaxrateFields.structure, SalestaxrateRow.`_rowParser`.all())
 
-  def update(row: SalestaxrateRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: SalestaxrateRow)(using c: Connection): java.lang.Boolean = {
     val salestaxrateid: SalestaxrateId = row.salestaxrateid
-    interpolate"""update "sales"."salestaxrate"
+    return interpolate"""update "sales"."salestaxrate"
     set "stateprovinceid" = ${StateprovinceId.pgType.encode(row.stateprovinceid)}::int4,
     "taxtype" = ${TypoShort.pgType.encode(row.taxtype)}::int2,
     "taxrate" = ${PgTypes.numeric.encode(row.taxrate)}::numeric,
@@ -141,7 +129,7 @@ class SalestaxrateRepoImpl extends SalestaxrateRepo {
     where "salestaxrateid" = ${SalestaxrateId.pgType.encode(salestaxrateid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: SalestaxrateRow)(using c: Connection): SalestaxrateRow = {
+  override def upsert(unsaved: SalestaxrateRow)(using c: Connection): SalestaxrateRow = {
   interpolate"""insert into "sales"."salestaxrate"("salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate")
     values (${SalestaxrateId.pgType.encode(unsaved.salestaxrateid)}::int4, ${StateprovinceId.pgType.encode(unsaved.stateprovinceid)}::int4, ${TypoShort.pgType.encode(unsaved.taxtype)}::int2, ${PgTypes.numeric.encode(unsaved.taxrate)}::numeric, ${Name.pgType.encode(unsaved.name)}::varchar, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("salestaxrateid")
@@ -158,7 +146,7 @@ class SalestaxrateRepoImpl extends SalestaxrateRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[SalestaxrateRow])(using c: Connection): java.util.List[SalestaxrateRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[SalestaxrateRow])(using c: Connection): java.util.List[SalestaxrateRow] = {
     interpolate"""insert into "sales"."salestaxrate"("salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate")
     values (?::int4, ?::int4, ?::int2, ?::numeric, ?::varchar, ?::uuid, ?::timestamp)
     on conflict ("salestaxrateid")
@@ -176,13 +164,13 @@ class SalestaxrateRepoImpl extends SalestaxrateRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[SalestaxrateRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table salestaxrate_TEMP (like "sales"."salestaxrate") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy salestaxrate_TEMP("salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, c, SalestaxrateRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "sales"."salestaxrate"("salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate")
+    return interpolate"""insert into "sales"."salestaxrate"("salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate")
     select * from salestaxrate_TEMP
     on conflict ("salestaxrateid")
     do update set

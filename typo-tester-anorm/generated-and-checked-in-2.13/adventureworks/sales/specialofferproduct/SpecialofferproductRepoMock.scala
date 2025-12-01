@@ -21,13 +21,13 @@ case class SpecialofferproductRepoMock(
   toRow: SpecialofferproductRowUnsaved => SpecialofferproductRow,
   map: scala.collection.mutable.Map[SpecialofferproductId, SpecialofferproductRow] = scala.collection.mutable.Map.empty[SpecialofferproductId, SpecialofferproductRow]
 ) extends SpecialofferproductRepo {
-  def delete: DeleteBuilder[SpecialofferproductFields, SpecialofferproductRow] = DeleteBuilderMock(DeleteParams.empty, SpecialofferproductFields.structure, map)
+  override def delete: DeleteBuilder[SpecialofferproductFields, SpecialofferproductRow] = DeleteBuilderMock(DeleteParams.empty, SpecialofferproductFields.structure, map)
 
-  def deleteById(compositeId: SpecialofferproductId)(implicit c: Connection): Boolean = map.remove(compositeId).isDefined
+  override def deleteById(compositeId: SpecialofferproductId)(implicit c: Connection): Boolean = map.remove(compositeId).isDefined
 
-  def deleteByIds(compositeIds: Array[SpecialofferproductId])(implicit c: Connection): Int = compositeIds.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(compositeIds: Array[SpecialofferproductId])(implicit c: Connection): Int = compositeIds.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: SpecialofferproductRow)(implicit c: Connection): SpecialofferproductRow = {
+  override def insert(unsaved: SpecialofferproductRow)(implicit c: Connection): SpecialofferproductRow = {
     val _ = if (map.contains(unsaved.compositeId))
       sys.error(s"id ${unsaved.compositeId} already exists")
     else
@@ -36,9 +36,9 @@ case class SpecialofferproductRepoMock(
     unsaved
   }
 
-  def insert(unsaved: SpecialofferproductRowUnsaved)(implicit c: Connection): SpecialofferproductRow = insert(toRow(unsaved))
+  override def insert(unsaved: SpecialofferproductRowUnsaved)(implicit c: Connection): SpecialofferproductRow = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[SpecialofferproductRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = {
@@ -49,7 +49,7 @@ case class SpecialofferproductRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[SpecialofferproductRowUnsaved],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = {
@@ -60,34 +60,34 @@ case class SpecialofferproductRepoMock(
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[SpecialofferproductFields, SpecialofferproductRow] = SelectBuilderMock(SpecialofferproductFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[SpecialofferproductFields, SpecialofferproductRow] = SelectBuilderMock(SpecialofferproductFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(implicit c: Connection): List[SpecialofferproductRow] = map.values.toList
+  override def selectAll(implicit c: Connection): List[SpecialofferproductRow] = map.values.toList
 
-  def selectById(compositeId: SpecialofferproductId)(implicit c: Connection): Option[SpecialofferproductRow] = map.get(compositeId)
+  override def selectById(compositeId: SpecialofferproductId)(implicit c: Connection): Option[SpecialofferproductRow] = map.get(compositeId)
 
-  def selectByIds(compositeIds: Array[SpecialofferproductId])(implicit c: Connection): List[SpecialofferproductRow] = compositeIds.flatMap(map.get).toList
+  override def selectByIds(compositeIds: Array[SpecialofferproductId])(implicit c: Connection): List[SpecialofferproductRow] = compositeIds.flatMap(map.get).toList
 
-  def selectByIdsTracked(compositeIds: Array[SpecialofferproductId])(implicit c: Connection): Map[SpecialofferproductId, SpecialofferproductRow] = {
+  override def selectByIdsTracked(compositeIds: Array[SpecialofferproductId])(implicit c: Connection): Map[SpecialofferproductId, SpecialofferproductRow] = {
     val byId = selectByIds(compositeIds).view.map(x => (x.compositeId, x)).toMap
     compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[SpecialofferproductFields, SpecialofferproductRow] = UpdateBuilderMock(UpdateParams.empty, SpecialofferproductFields.structure, map)
+  override def update: UpdateBuilder[SpecialofferproductFields, SpecialofferproductRow] = UpdateBuilderMock(UpdateParams.empty, SpecialofferproductFields.structure, map)
 
-  def update(row: SpecialofferproductRow)(implicit c: Connection): Option[SpecialofferproductRow] = {
+  override def update(row: SpecialofferproductRow)(implicit c: Connection): Option[SpecialofferproductRow] = {
     map.get(row.compositeId).map { _ =>
       map.put(row.compositeId, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: SpecialofferproductRow)(implicit c: Connection): SpecialofferproductRow = {
+  override def upsert(unsaved: SpecialofferproductRow)(implicit c: Connection): SpecialofferproductRow = {
     map.put(unsaved.compositeId, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[SpecialofferproductRow])(implicit c: Connection): List[SpecialofferproductRow] = {
+  override def upsertBatch(unsaved: Iterable[SpecialofferproductRow])(implicit c: Connection): List[SpecialofferproductRow] = {
     unsaved.map { row =>
       map += (row.compositeId -> row)
       row
@@ -95,7 +95,7 @@ case class SpecialofferproductRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[SpecialofferproductRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

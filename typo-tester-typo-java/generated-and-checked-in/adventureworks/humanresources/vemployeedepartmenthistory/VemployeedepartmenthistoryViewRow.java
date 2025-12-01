@@ -13,7 +13,6 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple11;
 
 /** View: humanresources.vemployeedepartmenthistory */
 public record VemployeedepartmenthistoryViewRow(
@@ -95,5 +94,5 @@ public record VemployeedepartmenthistoryViewRow(
     return new VemployeedepartmenthistoryViewRow(businessentityid, title, firstname, middlename, lastname, suffix, shift, department, groupname, startdate, enddate);
   };
 
-  static RowParser<VemployeedepartmenthistoryViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), /* user-picked */ FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text.opt(), Name.pgType, Name.pgType, Name.pgType, TypoLocalDate.pgType, TypoLocalDate.pgType.opt(), VemployeedepartmenthistoryViewRow::new, row -> new Tuple11<>(row.businessentityid(), row.title(), row.firstname(), row.middlename(), row.lastname(), row.suffix(), row.shift(), row.department(), row.groupname(), row.startdate(), row.enddate()));;
+  static RowParser<VemployeedepartmenthistoryViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), /* user-picked */ FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text.opt(), Name.pgType, Name.pgType, Name.pgType, TypoLocalDate.pgType, TypoLocalDate.pgType.opt(), VemployeedepartmenthistoryViewRow::new, row -> new Object[]{row.businessentityid(), row.title(), row.firstname(), row.middlename(), row.lastname(), row.suffix(), row.shift(), row.department(), row.groupname(), row.startdate(), row.enddate()});;
 }

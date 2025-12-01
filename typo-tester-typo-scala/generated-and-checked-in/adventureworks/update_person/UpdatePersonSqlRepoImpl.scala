@@ -12,7 +12,7 @@ import typo.runtime.PgTypes
 import typo.runtime.FragmentInterpolator.interpolate
 
 class UpdatePersonSqlRepoImpl extends UpdatePersonSqlRepo {
-  def apply(
+  override def apply(
     suffix: String,
     cutoff: Optional[TypoLocalDateTime]
   )(using c: Connection): Integer = {

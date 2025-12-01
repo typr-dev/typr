@@ -7,13 +7,11 @@ package adventureworks.pr.pmpdc
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class PmpdcViewRepoImpl extends PmpdcViewRepo {
-  def select: SelectBuilder[PmpdcViewFields, PmpdcViewRow] = SelectBuilder.of(""""pr"."pmpdc"""", PmpdcViewFields.structure, PmpdcViewRow.read)
+  override def select: SelectBuilder[PmpdcViewFields, PmpdcViewRow] = SelectBuilder.of(""""pr"."pmpdc"""", PmpdcViewFields.structure, PmpdcViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, PmpdcViewRow] = sql"""select "productmodelid", "productdescriptionid", "cultureid", "modifieddate"::text from "pr"."pmpdc"""".query(using PmpdcViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, PmpdcViewRow] = sql"""select "productmodelid", "productdescriptionid", "cultureid", "modifieddate"::text from "pr"."pmpdc"""".query(using PmpdcViewRow.read).stream
 }

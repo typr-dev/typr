@@ -9,20 +9,21 @@ import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.Defaulted.UseDefault
 import adventureworks.customtypes.TypoInstant
 import adventureworks.customtypes.TypoUnknownCitext
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.util.Optional
 import typo.runtime.PgText
 import typo.runtime.PgTypes
 
 /** This class corresponds to a row in table `public.users` which has not been persisted yet */
 case class UsersRowUnsaved(
-  userId: UsersId,
+  @JsonProperty("user_id") userId: UsersId,
   name: String,
-  lastName: Optional[String] = Optional.empty(),
+  @JsonProperty("last_name") lastName: Optional[String] = Optional.empty(),
   email: TypoUnknownCitext,
   password: String,
-  verifiedOn: Optional[TypoInstant] = Optional.empty(),
+  @JsonProperty("verified_on") verifiedOn: Optional[TypoInstant] = Optional.empty(),
   /** Default: now() */
-  createdAt: Defaulted[TypoInstant] = new UseDefault()
+  @JsonProperty("created_at") createdAt: Defaulted[TypoInstant] = new UseDefault()
 ) {
   def toRow(createdAtDefault: => TypoInstant): UsersRow = {
     new UsersRow(
@@ -38,21 +39,5 @@ case class UsersRowUnsaved(
 }
 
 object UsersRowUnsaved {
-  given pgText: PgText[UsersRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      UsersId.pgType.pgText.unsafeEncode(row.userId, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.text.pgText.unsafeEncode(row.name, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.text.opt().pgText.unsafeEncode(row.lastName, sb);
-      sb.append(PgText.DELIMETER);
-      TypoUnknownCitext.pgType.pgText.unsafeEncode(row.email, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.text.pgText.unsafeEncode(row.password, sb);
-      sb.append(PgText.DELIMETER);
-      TypoInstant.pgType.opt().pgText.unsafeEncode(row.verifiedOn, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoInstant.pgType.pgText).unsafeEncode(row.createdAt, sb);
-    })
-  }
+  given pgText: PgText[UsersRowUnsaved] = PgText.instance((row, sb) => { UsersId.pgType.pgText.unsafeEncode(row.userId, sb); sb.append(PgText.DELIMETER); PgTypes.text.pgText.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); PgTypes.text.opt().pgText.unsafeEncode(row.lastName, sb); sb.append(PgText.DELIMETER); TypoUnknownCitext.pgType.pgText.unsafeEncode(row.email, sb); sb.append(PgText.DELIMETER); PgTypes.text.pgText.unsafeEncode(row.password, sb); sb.append(PgText.DELIMETER); TypoInstant.pgType.opt().pgText.unsafeEncode(row.verifiedOn, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoInstant.pgType.pgText).unsafeEncode(row.createdAt, sb) })
 }

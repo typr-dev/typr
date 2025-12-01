@@ -19,28 +19,18 @@ object GeneratedRowParsers extends bleep.BleepCodegenScript("GeneratedRowParsers
       .until(N)
       .map { n =>
         val range = 0.until(n)
+        val tparamsDecl = range.map(nn => s"T$nn").mkString(", ")
         val tparams = range.map(nn => s"T$nn").mkString(", ")
         val params = range.map(nn => s"PgType<T$nn> t$nn").mkString(", ")
         val decodeFunction = s"Function$n<$tparams, Row>"
         val decodeParams = range.map(nn => s"(T$nn) a[$nn]").mkString(", ")
-        val tuple = s"Tuple$n<$tparams>"
-        val encodeFunction = s"Function1<Row, $tuple>"
+        // Use java.util.function.Function<Row, Object[]> for encode - no complex generic inference needed
         s"""|    @SuppressWarnings("unchecked")
-            |    static <$tparams, Row> RowParser<Row> of($params, $decodeFunction decode, $encodeFunction encode) {
-            |        return new RowParser<>(unmodifiableList(asList(${range.map(nn => s"t$nn").mkString(", ")})), a -> decode.apply($decodeParams), row -> encode.apply(row).toArray());
+            |    static <$tparamsDecl, Row> RowParser<Row> of($params, $decodeFunction decode, java.util.function.Function<Row, Object[]> encode) {
+            |        return new RowParser<>(unmodifiableList(asList(${range.map(nn => s"t$nn").mkString(", ")})), a -> decode.apply($decodeParams), encode);
             |    }""".stripMargin
       }
 
-    val tuples = 1
-      .until(N)
-      .map { n =>
-        val range = 0.until(n)
-        s"""    record Tuple$n<${range.map(nn => s"T$nn").mkString(", ")}>(${range.map(nn => s"T$nn t$nn").mkString(", ")}) implements Tuple {
-           |        public Object[] toArray() {
-           |            return new Object[]{${range.map(nn => s"t$nn").mkString(", ")}};
-           |        }
-           |    }""".stripMargin
-      }
     val contents =
       s"""|package typo.runtime;
           |
@@ -50,10 +40,6 @@ object GeneratedRowParsers extends bleep.BleepCodegenScript("GeneratedRowParsers
           |public interface RowParsers {
           |${constructorMethods.mkString("\n\n")}
           |${functions.mkString("\n\n")}
-          |    interface Tuple {
-          |        Object[] toArray();
-          |    }
-          |${tuples.mkString("\n\n")}
           |}""".stripMargin
 
     targets.foreach { target =>

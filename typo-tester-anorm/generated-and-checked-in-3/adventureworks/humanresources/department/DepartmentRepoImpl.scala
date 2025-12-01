@@ -23,18 +23,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class DepartmentRepoImpl extends DepartmentRepo {
-  def delete: DeleteBuilder[DepartmentFields, DepartmentRow] = DeleteBuilder.of(""""humanresources"."department"""", DepartmentFields.structure, DepartmentRow.rowParser(1).*)
+  override def delete: DeleteBuilder[DepartmentFields, DepartmentRow] = DeleteBuilder.of(""""humanresources"."department"""", DepartmentFields.structure, DepartmentRow.rowParser(1).*)
 
-  def deleteById(departmentid: DepartmentId)(using c: Connection): Boolean = SQL"""delete from "humanresources"."department" where "departmentid" = ${ParameterValue(departmentid, null, DepartmentId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(departmentid: DepartmentId)(using c: Connection): Boolean = SQL"""delete from "humanresources"."department" where "departmentid" = ${ParameterValue(departmentid, null, DepartmentId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(departmentids: Array[DepartmentId])(using c: Connection): Int = {
+  override def deleteByIds(departmentids: Array[DepartmentId])(using c: Connection): Int = {
     SQL"""delete
     from "humanresources"."department"
     where "departmentid" = ANY(${ParameterValue(departmentids, null, DepartmentId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: DepartmentRow)(using c: Connection): DepartmentRow = {
+  override def insert(unsaved: DepartmentRow)(using c: Connection): DepartmentRow = {
   SQL"""insert into "humanresources"."department"("departmentid", "name", "groupname", "modifieddate")
     values (${ParameterValue(unsaved.departmentid, null, DepartmentId.toStatement)}::int4, ${ParameterValue(unsaved.name, null, Name.toStatement)}::varchar, ${ParameterValue(unsaved.groupname, null, Name.toStatement)}::varchar, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "departmentid", "name", "groupname", "modifieddate"::text
@@ -42,7 +42,7 @@ class DepartmentRepoImpl extends DepartmentRepo {
     .executeInsert(DepartmentRow.rowParser(1).single)
   }
 
-  def insert(unsaved: DepartmentRowUnsaved)(using c: Connection): DepartmentRow = {
+  override def insert(unsaved: DepartmentRowUnsaved)(using c: Connection): DepartmentRow = {
     val namedParameters = List(
       Some((NamedParameter("name", ParameterValue(unsaved.name, null, Name.toStatement)), "::varchar")),
       Some((NamedParameter("groupname", ParameterValue(unsaved.groupname, null, Name.toStatement)), "::varchar")),
@@ -71,47 +71,47 @@ class DepartmentRepoImpl extends DepartmentRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[DepartmentRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "humanresources"."department"("departmentid", "name", "groupname", "modifieddate") FROM STDIN""", batchSize, unsaved)(using DepartmentRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[DepartmentRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "humanresources"."department"("name", "groupname", "departmentid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using DepartmentRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[DepartmentFields, DepartmentRow] = SelectBuilder.of(""""humanresources"."department"""", DepartmentFields.structure, DepartmentRow.rowParser)
+  override def select: SelectBuilder[DepartmentFields, DepartmentRow] = SelectBuilder.of(""""humanresources"."department"""", DepartmentFields.structure, DepartmentRow.rowParser)
 
-  def selectAll(using c: Connection): List[DepartmentRow] = {
+  override def selectAll(using c: Connection): List[DepartmentRow] = {
     SQL"""select "departmentid", "name", "groupname", "modifieddate"::text
     from "humanresources"."department"
     """.as(DepartmentRow.rowParser(1).*)
   }
 
-  def selectById(departmentid: DepartmentId)(using c: Connection): Option[DepartmentRow] = {
+  override def selectById(departmentid: DepartmentId)(using c: Connection): Option[DepartmentRow] = {
     SQL"""select "departmentid", "name", "groupname", "modifieddate"::text
     from "humanresources"."department"
     where "departmentid" = ${ParameterValue(departmentid, null, DepartmentId.toStatement)}
     """.as(DepartmentRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(departmentids: Array[DepartmentId])(using c: Connection): List[DepartmentRow] = {
+  override def selectByIds(departmentids: Array[DepartmentId])(using c: Connection): List[DepartmentRow] = {
     SQL"""select "departmentid", "name", "groupname", "modifieddate"::text
     from "humanresources"."department"
     where "departmentid" = ANY(${ParameterValue(departmentids, null, DepartmentId.arrayToStatement)})
     """.as(DepartmentRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(departmentids: Array[DepartmentId])(using c: Connection): Map[DepartmentId, DepartmentRow] = {
+  override def selectByIdsTracked(departmentids: Array[DepartmentId])(using c: Connection): Map[DepartmentId, DepartmentRow] = {
     val byId = selectByIds(departmentids).view.map(x => (x.departmentid, x)).toMap
     departmentids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[DepartmentFields, DepartmentRow] = UpdateBuilder.of(""""humanresources"."department"""", DepartmentFields.structure, DepartmentRow.rowParser(1).*)
+  override def update: UpdateBuilder[DepartmentFields, DepartmentRow] = UpdateBuilder.of(""""humanresources"."department"""", DepartmentFields.structure, DepartmentRow.rowParser(1).*)
 
-  def update(row: DepartmentRow)(using c: Connection): Option[DepartmentRow] = {
+  override def update(row: DepartmentRow)(using c: Connection): Option[DepartmentRow] = {
     val departmentid = row.departmentid
     SQL"""update "humanresources"."department"
     set "name" = ${ParameterValue(row.name, null, Name.toStatement)}::varchar,
@@ -122,7 +122,7 @@ class DepartmentRepoImpl extends DepartmentRepo {
     """.executeInsert(DepartmentRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: DepartmentRow)(using c: Connection): DepartmentRow = {
+  override def upsert(unsaved: DepartmentRow)(using c: Connection): DepartmentRow = {
   SQL"""insert into "humanresources"."department"("departmentid", "name", "groupname", "modifieddate")
     values (
       ${ParameterValue(unsaved.departmentid, null, DepartmentId.toStatement)}::int4,
@@ -140,13 +140,14 @@ class DepartmentRepoImpl extends DepartmentRepo {
     .executeInsert(DepartmentRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[DepartmentRow])(using c: Connection): List[DepartmentRow] = {
+  override def upsertBatch(unsaved: Iterable[DepartmentRow])(using c: Connection): List[DepartmentRow] = {
     def toNamedParameter(row: DepartmentRow): List[NamedParameter] = List(
       NamedParameter("departmentid", ParameterValue(row.departmentid, null, DepartmentId.toStatement)),
       NamedParameter("name", ParameterValue(row.name, null, Name.toStatement)),
       NamedParameter("groupname", ParameterValue(row.groupname, null, Name.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -169,7 +170,7 @@ class DepartmentRepoImpl extends DepartmentRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[DepartmentRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

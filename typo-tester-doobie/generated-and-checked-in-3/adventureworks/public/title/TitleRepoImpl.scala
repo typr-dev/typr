@@ -12,50 +12,48 @@ import doobie.syntax.SqlInterpolator.SingleFragment.fromWrite
 import doobie.util.Write
 import doobie.util.update.Update
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.DeleteBuilder
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class TitleRepoImpl extends TitleRepo {
-  def delete: DeleteBuilder[TitleFields, TitleRow] = DeleteBuilder.of(""""public"."title"""", TitleFields.structure, TitleRow.read)
+  override def delete: DeleteBuilder[TitleFields, TitleRow] = DeleteBuilder.of(""""public"."title"""", TitleFields.structure, TitleRow.read)
 
-  def deleteById(code: TitleId): ConnectionIO[Boolean] = sql"""delete from "public"."title" where "code" = ${fromWrite(code)(using new Write.Single(TitleId.put))}""".update.run.map(_ > 0)
+  override def deleteById(code: TitleId): ConnectionIO[Boolean] = sql"""delete from "public"."title" where "code" = ${fromWrite(code)(using new Write.Single(TitleId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(codes: Array[TitleId]): ConnectionIO[Int] = sql"""delete from "public"."title" where "code" = ANY(${fromWrite(codes)(using new Write.Single(TitleId.arrayPut))})""".update.run
+  override def deleteByIds(codes: Array[TitleId]): ConnectionIO[Int] = sql"""delete from "public"."title" where "code" = ANY(${fromWrite(codes)(using new Write.Single(TitleId.arrayPut))})""".update.run
 
-  def insert(unsaved: TitleRow): ConnectionIO[TitleRow] = {
+  override def insert(unsaved: TitleRow): ConnectionIO[TitleRow] = {
     sql"""insert into "public"."title"("code")
     values (${fromWrite(unsaved.code)(using new Write.Single(TitleId.put))})
     returning "code"
     """.query(using TitleRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, TitleRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "public"."title"("code") FROM STDIN""").copyIn(unsaved, batchSize)(using TitleRow.pgText)
 
-  def select: SelectBuilder[TitleFields, TitleRow] = SelectBuilder.of(""""public"."title"""", TitleFields.structure, TitleRow.read)
+  override def select: SelectBuilder[TitleFields, TitleRow] = SelectBuilder.of(""""public"."title"""", TitleFields.structure, TitleRow.read)
 
-  def selectAll: Stream[ConnectionIO, TitleRow] = sql"""select "code" from "public"."title"""".query(using TitleRow.read).stream
+  override def selectAll: Stream[ConnectionIO, TitleRow] = sql"""select "code" from "public"."title"""".query(using TitleRow.read).stream
 
-  def selectById(code: TitleId): ConnectionIO[Option[TitleRow]] = sql"""select "code" from "public"."title" where "code" = ${fromWrite(code)(using new Write.Single(TitleId.put))}""".query(using TitleRow.read).option
+  override def selectById(code: TitleId): ConnectionIO[Option[TitleRow]] = sql"""select "code" from "public"."title" where "code" = ${fromWrite(code)(using new Write.Single(TitleId.put))}""".query(using TitleRow.read).option
 
-  def selectByIds(codes: Array[TitleId]): Stream[ConnectionIO, TitleRow] = sql"""select "code" from "public"."title" where "code" = ANY(${fromWrite(codes)(using new Write.Single(TitleId.arrayPut))})""".query(using TitleRow.read).stream
+  override def selectByIds(codes: Array[TitleId]): Stream[ConnectionIO, TitleRow] = sql"""select "code" from "public"."title" where "code" = ANY(${fromWrite(codes)(using new Write.Single(TitleId.arrayPut))})""".query(using TitleRow.read).stream
 
-  def selectByIdsTracked(codes: Array[TitleId]): ConnectionIO[Map[TitleId, TitleRow]] = {
+  override def selectByIdsTracked(codes: Array[TitleId]): ConnectionIO[Map[TitleId, TitleRow]] = {
     selectByIds(codes).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.code, x)).toMap
       codes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[TitleFields, TitleRow] = UpdateBuilder.of(""""public"."title"""", TitleFields.structure, TitleRow.read)
+  override def update: UpdateBuilder[TitleFields, TitleRow] = UpdateBuilder.of(""""public"."title"""", TitleFields.structure, TitleRow.read)
 
-  def upsert(unsaved: TitleRow): ConnectionIO[TitleRow] = {
+  override def upsert(unsaved: TitleRow): ConnectionIO[TitleRow] = {
     sql"""insert into "public"."title"("code")
     values (
       ${fromWrite(unsaved.code)(using new Write.Single(TitleId.put))}
@@ -66,7 +64,7 @@ class TitleRepoImpl extends TitleRepo {
     """.query(using TitleRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[TitleRow]): Stream[ConnectionIO, TitleRow] = {
+  override def upsertBatch(unsaved: List[TitleRow]): Stream[ConnectionIO, TitleRow] = {
     Update[TitleRow](
       s"""insert into "public"."title"("code")
       values (?)
@@ -78,7 +76,7 @@ class TitleRepoImpl extends TitleRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, TitleRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

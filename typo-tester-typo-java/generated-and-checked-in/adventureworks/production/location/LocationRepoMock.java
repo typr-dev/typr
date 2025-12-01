@@ -5,6 +5,7 @@
  */
 package adventureworks.production.location;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record LocationRepoMock(
     return new LocationRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<LocationFields, LocationRow> delete() {
     return new DeleteBuilderMock<>(LocationFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.locationid(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     LocationId locationid,
     Connection c
@@ -52,28 +55,31 @@ public record LocationRepoMock(
     return Optional.ofNullable(map.remove(locationid)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     LocationId[] locationids,
     Connection c
   ) {
     var count = 0;
-      for (var id : locationids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : locationids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public LocationRow insert(
     LocationRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.locationid())) {
-        throw new RuntimeException(str("id $unsaved.locationid() already exists"));
-      };
-      map.put(unsaved.locationid(), unsaved);
+      throw new RuntimeException(str("id $unsaved.locationid() already exists"));
+    };
+    map.put(unsaved.locationid(), unsaved);
     return unsaved;
   };
 
+  @Override
   public LocationRow insert(
     LocationRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record LocationRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<LocationRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.locationid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.locationid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<LocationRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.locationid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.locationid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<LocationFields, LocationRow> select() {
     return new SelectBuilderMock<>(LocationFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<LocationRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<LocationRow> selectById(
     LocationId locationid,
     Connection c
@@ -126,38 +137,43 @@ public record LocationRepoMock(
     return Optional.ofNullable(map.get(locationid));
   };
 
+  @Override
   public List<LocationRow> selectByIds(
     LocationId[] locationids,
     Connection c
   ) {
     var result = new ArrayList<LocationRow>();
-      for (var id : locationids) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : locationids) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<LocationId, LocationRow> selectByIdsTracked(
     LocationId[] locationids,
     Connection c
   ) {
-    return selectByIds(locationids, c).stream().collect(Collectors.toMap((adventureworks.production.location.LocationRow row) -> row.locationid(), Function.identity()));
+    return selectByIds(locationids, c).stream().collect(Collectors.toMap((LocationRow row) -> row.locationid(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<LocationFields, LocationRow> update() {
     return new UpdateBuilderMock<>(LocationFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     LocationRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.locationid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.locationid(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.locationid(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public LocationRow upsert(
     LocationRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record LocationRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<LocationRow> upsertBatch(
     Iterator<LocationRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<LocationRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.locationid(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.locationid(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<LocationRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.locationid(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.locationid(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

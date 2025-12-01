@@ -11,7 +11,6 @@ import adventureworks.production.product.ProductId
 import adventureworks.sales.specialoffer.SpecialofferId
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple5
 
 /** View: sa.sop */
 case class SopViewRow(
@@ -28,13 +27,5 @@ case class SopViewRow(
 )
 
 object SopViewRow {
-  val `_rowParser`: RowParser[SopViewRow] = {
-    RowParsers.of(SpecialofferId.pgType, SpecialofferId.pgType, ProductId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, SopViewRow.apply, row => new Tuple5(
-      row.id,
-      row.specialofferid,
-      row.productid,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[SopViewRow] = RowParsers.of(SpecialofferId.pgType, SpecialofferId.pgType, ProductId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, SopViewRow.apply, row => Array(row.id, row.specialofferid, row.productid, row.rowguid, row.modifieddate))
 }

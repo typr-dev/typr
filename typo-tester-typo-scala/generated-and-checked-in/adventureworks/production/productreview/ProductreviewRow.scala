@@ -14,7 +14,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple8
 
 /** Table: production.productreview
  * Customer reviews of products they have purchased.
@@ -67,18 +66,7 @@ case class ProductreviewRow(
 }
 
 object ProductreviewRow {
-  val `_rowParser`: RowParser[ProductreviewRow] = {
-    RowParsers.of(ProductreviewId.pgType, ProductId.pgType, Name.pgType, TypoLocalDateTime.pgType, PgTypes.text, PgTypes.int4, PgTypes.text.opt(), TypoLocalDateTime.pgType, ProductreviewRow.apply, row => new Tuple8(
-      row.productreviewid,
-      row.productid,
-      row.reviewername,
-      row.reviewdate,
-      row.emailaddress,
-      row.rating,
-      row.comments,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[ProductreviewRow] = RowParsers.of(ProductreviewId.pgType, ProductId.pgType, Name.pgType, TypoLocalDateTime.pgType, PgTypes.text, PgTypes.int4, PgTypes.text.opt(), TypoLocalDateTime.pgType, ProductreviewRow.apply, row => Array(row.productreviewid, row.productid, row.reviewername, row.reviewdate, row.emailaddress, row.rating, row.comments, row.modifieddate))
 
   given pgText: PgText[ProductreviewRow] = PgText.from(`_rowParser`)
 }

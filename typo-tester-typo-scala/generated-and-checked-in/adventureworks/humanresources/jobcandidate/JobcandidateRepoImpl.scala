@@ -21,11 +21,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class JobcandidateRepoImpl extends JobcandidateRepo {
-  def delete: DeleteBuilder[JobcandidateFields, JobcandidateRow] = DeleteBuilder.of("humanresources.jobcandidate", JobcandidateFields.structure)
+  override def delete: DeleteBuilder[JobcandidateFields, JobcandidateRow] = DeleteBuilder.of("humanresources.jobcandidate", JobcandidateFields.structure)
 
-  def deleteById(jobcandidateid: JobcandidateId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "humanresources"."jobcandidate" where "jobcandidateid" = ${JobcandidateId.pgType.encode(jobcandidateid)}""".update().runUnchecked(c) > 0
+  override def deleteById(jobcandidateid: JobcandidateId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "humanresources"."jobcandidate" where "jobcandidateid" = ${JobcandidateId.pgType.encode(jobcandidateid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(jobcandidateids: Array[JobcandidateId])(using c: Connection): Integer = {
+  override def deleteByIds(jobcandidateids: Array[JobcandidateId])(using c: Connection): Integer = {
     interpolate"""delete
     from "humanresources"."jobcandidate"
     where "jobcandidateid" = ANY(${JobcandidateId.pgTypeArray.encode(jobcandidateids)})"""
@@ -33,7 +33,7 @@ class JobcandidateRepoImpl extends JobcandidateRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: JobcandidateRow)(using c: Connection): JobcandidateRow = {
+  override def insert(unsaved: JobcandidateRow)(using c: Connection): JobcandidateRow = {
   interpolate"""insert into "humanresources"."jobcandidate"("jobcandidateid", "businessentityid", "resume", "modifieddate")
     values (${JobcandidateId.pgType.encode(unsaved.jobcandidateid)}::int4, ${BusinessentityId.pgType.opt().encode(unsaved.businessentityid)}::int4, ${TypoXml.pgType.opt().encode(unsaved.resume)}::xml, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "jobcandidateid", "businessentityid", "resume", "modifieddate"::text
@@ -41,26 +41,20 @@ class JobcandidateRepoImpl extends JobcandidateRepo {
     .updateReturning(JobcandidateRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: JobcandidateRowUnsaved)(using c: Connection): JobcandidateRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: JobcandidateRowUnsaved)(using c: Connection): JobcandidateRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn
     values.add(interpolate"${BusinessentityId.pgType.opt().encode(unsaved.businessentityid)}::int4"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""resume"""")): @scala.annotation.nowarn
     values.add(interpolate"${TypoXml.pgType.opt().encode(unsaved.resume)}::xml"): @scala.annotation.nowarn
     unsaved.jobcandidateid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""jobcandidateid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${JobcandidateId.pgType.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""jobcandidateid"""")): @scala.annotation.nowarn; values.add(interpolate"${JobcandidateId.pgType.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "humanresources"."jobcandidate"(${Fragment.comma(columns)})
@@ -68,58 +62,58 @@ class JobcandidateRepoImpl extends JobcandidateRepo {
       returning "jobcandidateid", "businessentityid", "resume", "modifieddate"::text
       """
     }
-    q.updateReturning(JobcandidateRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(JobcandidateRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[JobcandidateRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "humanresources"."jobcandidate"("jobcandidateid", "businessentityid", "resume", "modifieddate") FROM STDIN""", batchSize, unsaved, c, JobcandidateRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[JobcandidateRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "humanresources"."jobcandidate"("businessentityid", "resume", "jobcandidateid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, JobcandidateRowUnsaved.pgText)
 
-  def select: SelectBuilder[JobcandidateFields, JobcandidateRow] = SelectBuilder.of("humanresources.jobcandidate", JobcandidateFields.structure, JobcandidateRow.`_rowParser`)
+  override def select: SelectBuilder[JobcandidateFields, JobcandidateRow] = SelectBuilder.of("humanresources.jobcandidate", JobcandidateFields.structure, JobcandidateRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[JobcandidateRow] = {
+  override def selectAll(using c: Connection): java.util.List[JobcandidateRow] = {
     interpolate"""select "jobcandidateid", "businessentityid", "resume", "modifieddate"::text
     from "humanresources"."jobcandidate"
-    """.as(JobcandidateRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(JobcandidateRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(jobcandidateid: JobcandidateId)(using c: Connection): Optional[JobcandidateRow] = {
+  override def selectById(jobcandidateid: JobcandidateId)(using c: Connection): Optional[JobcandidateRow] = {
     interpolate"""select "jobcandidateid", "businessentityid", "resume", "modifieddate"::text
     from "humanresources"."jobcandidate"
-    where "jobcandidateid" = ${JobcandidateId.pgType.encode(jobcandidateid)}""".as(JobcandidateRow.`_rowParser`.first()).runUnchecked(c)
+    where "jobcandidateid" = ${JobcandidateId.pgType.encode(jobcandidateid)}""".query(JobcandidateRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(jobcandidateids: Array[JobcandidateId])(using c: Connection): java.util.List[JobcandidateRow] = {
+  override def selectByIds(jobcandidateids: Array[JobcandidateId])(using c: Connection): java.util.List[JobcandidateRow] = {
     interpolate"""select "jobcandidateid", "businessentityid", "resume", "modifieddate"::text
     from "humanresources"."jobcandidate"
-    where "jobcandidateid" = ANY(${JobcandidateId.pgTypeArray.encode(jobcandidateids)})""".as(JobcandidateRow.`_rowParser`.all()).runUnchecked(c)
+    where "jobcandidateid" = ANY(${JobcandidateId.pgTypeArray.encode(jobcandidateids)})""".query(JobcandidateRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(jobcandidateids: Array[JobcandidateId])(using c: Connection): java.util.Map[JobcandidateId, JobcandidateRow] = {
-    val ret: java.util.Map[JobcandidateId, JobcandidateRow] = new HashMap()
+  override def selectByIdsTracked(jobcandidateids: Array[JobcandidateId])(using c: Connection): java.util.Map[JobcandidateId, JobcandidateRow] = {
+    val ret: HashMap[JobcandidateId, JobcandidateRow] = new HashMap[JobcandidateId, JobcandidateRow]()
     selectByIds(jobcandidateids)(using c).forEach(row => ret.put(row.jobcandidateid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[JobcandidateFields, JobcandidateRow] = UpdateBuilder.of("humanresources.jobcandidate", JobcandidateFields.structure, JobcandidateRow.`_rowParser`.all())
+  override def update: UpdateBuilder[JobcandidateFields, JobcandidateRow] = UpdateBuilder.of("humanresources.jobcandidate", JobcandidateFields.structure, JobcandidateRow.`_rowParser`.all())
 
-  def update(row: JobcandidateRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: JobcandidateRow)(using c: Connection): java.lang.Boolean = {
     val jobcandidateid: JobcandidateId = row.jobcandidateid
-    interpolate"""update "humanresources"."jobcandidate"
+    return interpolate"""update "humanresources"."jobcandidate"
     set "businessentityid" = ${BusinessentityId.pgType.opt().encode(row.businessentityid)}::int4,
     "resume" = ${TypoXml.pgType.opt().encode(row.resume)}::xml,
     "modifieddate" = ${TypoLocalDateTime.pgType.encode(row.modifieddate)}::timestamp
     where "jobcandidateid" = ${JobcandidateId.pgType.encode(jobcandidateid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: JobcandidateRow)(using c: Connection): JobcandidateRow = {
+  override def upsert(unsaved: JobcandidateRow)(using c: Connection): JobcandidateRow = {
   interpolate"""insert into "humanresources"."jobcandidate"("jobcandidateid", "businessentityid", "resume", "modifieddate")
     values (${JobcandidateId.pgType.encode(unsaved.jobcandidateid)}::int4, ${BusinessentityId.pgType.opt().encode(unsaved.businessentityid)}::int4, ${TypoXml.pgType.opt().encode(unsaved.resume)}::xml, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("jobcandidateid")
@@ -133,7 +127,7 @@ class JobcandidateRepoImpl extends JobcandidateRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[JobcandidateRow])(using c: Connection): java.util.List[JobcandidateRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[JobcandidateRow])(using c: Connection): java.util.List[JobcandidateRow] = {
     interpolate"""insert into "humanresources"."jobcandidate"("jobcandidateid", "businessentityid", "resume", "modifieddate")
     values (?::int4, ?::int4, ?::xml, ?::timestamp)
     on conflict ("jobcandidateid")
@@ -148,13 +142,13 @@ class JobcandidateRepoImpl extends JobcandidateRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[JobcandidateRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table jobcandidate_TEMP (like "humanresources"."jobcandidate") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy jobcandidate_TEMP("jobcandidateid", "businessentityid", "resume", "modifieddate") from stdin""", batchSize, unsaved, c, JobcandidateRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "humanresources"."jobcandidate"("jobcandidateid", "businessentityid", "resume", "modifieddate")
+    return interpolate"""insert into "humanresources"."jobcandidate"("jobcandidateid", "businessentityid", "resume", "modifieddate")
     select * from jobcandidate_TEMP
     on conflict ("jobcandidateid")
     do update set

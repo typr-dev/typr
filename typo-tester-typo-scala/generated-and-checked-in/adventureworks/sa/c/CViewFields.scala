@@ -38,7 +38,7 @@ object CViewFields {
 
     override lazy val fields: CViewFields = {
       new CViewFields {
-        def id: Field[CustomerId, CViewRow] = {
+        override def id: Field[CustomerId, CViewRow] = {
           new Field[CustomerId, CViewRow](
             _path,
             "id",
@@ -49,7 +49,7 @@ object CViewFields {
             CustomerId.pgType
           )
         }
-        def customerid: Field[CustomerId, CViewRow] = {
+        override def customerid: Field[CustomerId, CViewRow] = {
           new Field[CustomerId, CViewRow](
             _path,
             "customerid",
@@ -60,7 +60,7 @@ object CViewFields {
             CustomerId.pgType
           )
         }
-        def personid: OptField[BusinessentityId, CViewRow] = {
+        override def personid: OptField[BusinessentityId, CViewRow] = {
           new OptField[BusinessentityId, CViewRow](
             _path,
             "personid",
@@ -71,7 +71,7 @@ object CViewFields {
             BusinessentityId.pgType
           )
         }
-        def storeid: OptField[BusinessentityId, CViewRow] = {
+        override def storeid: OptField[BusinessentityId, CViewRow] = {
           new OptField[BusinessentityId, CViewRow](
             _path,
             "storeid",
@@ -82,7 +82,7 @@ object CViewFields {
             BusinessentityId.pgType
           )
         }
-        def territoryid: OptField[SalesterritoryId, CViewRow] = {
+        override def territoryid: OptField[SalesterritoryId, CViewRow] = {
           new OptField[SalesterritoryId, CViewRow](
             _path,
             "territoryid",
@@ -93,7 +93,7 @@ object CViewFields {
             SalesterritoryId.pgType
           )
         }
-        def rowguid: Field[TypoUUID, CViewRow] = {
+        override def rowguid: Field[TypoUUID, CViewRow] = {
           new Field[TypoUUID, CViewRow](
             _path,
             "rowguid",
@@ -104,7 +104,7 @@ object CViewFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, CViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, CViewRow] = {
           new Field[TypoLocalDateTime, CViewRow](
             _path,
             "modifieddate",
@@ -120,7 +120,7 @@ object CViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, CViewRow]] = java.util.List.of(this.fields.id, this.fields.customerid, this.fields.personid, this.fields.storeid, this.fields.territoryid, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[CViewFields, CViewRow] = new Impl(java.util.List.of())

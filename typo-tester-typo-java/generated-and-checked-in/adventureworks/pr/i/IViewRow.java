@@ -11,7 +11,6 @@ import adventureworks.production.illustration.IllustrationId;
 import java.util.Optional;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple4;
 
 /** View: pr.i */
 public record IViewRow(
@@ -44,5 +43,5 @@ public record IViewRow(
     return new IViewRow(id, illustrationid, diagram, modifieddate);
   };
 
-  static RowParser<IViewRow> _rowParser = RowParsers.of(IllustrationId.pgType, IllustrationId.pgType, TypoXml.pgType.opt(), TypoLocalDateTime.pgType, IViewRow::new, row -> new Tuple4<>(row.id(), row.illustrationid(), row.diagram(), row.modifieddate()));;
+  static RowParser<IViewRow> _rowParser = RowParsers.of(IllustrationId.pgType, IllustrationId.pgType, TypoXml.pgType.opt(), TypoLocalDateTime.pgType, IViewRow::new, row -> new Object[]{row.id(), row.illustrationid(), row.diagram(), row.modifieddate()});;
 }

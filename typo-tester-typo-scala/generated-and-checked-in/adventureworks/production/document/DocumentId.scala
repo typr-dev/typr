@@ -5,12 +5,13 @@
  */
 package adventureworks.production.document
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
 
 /** Type for the primary key of table `production.document` */
-case class DocumentId(value: String) extends scala.AnyVal
+case class DocumentId(@JsonValue value: String) extends scala.AnyVal
 
 object DocumentId {
   given bijection: Bijection[DocumentId, String] = Bijection.apply[DocumentId, String](_.value)(DocumentId.apply)

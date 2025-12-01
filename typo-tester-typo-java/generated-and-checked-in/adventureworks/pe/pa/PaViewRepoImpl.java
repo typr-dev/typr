@@ -5,22 +5,22 @@
  */
 package adventureworks.pe.pa;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class PaViewRepoImpl implements PaViewRepo {
+  @Override
   public SelectBuilder<PaViewFields, PaViewRow> select() {
     return SelectBuilder.of("pe.pa", PaViewFields.structure(), PaViewRow._rowParser);
   };
 
+  @Override
   public List<PaViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"::text
        from "pe"."pa"
-    """)).as(PaViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(PaViewRow._rowParser.all()).runUnchecked(c);
   };
 }

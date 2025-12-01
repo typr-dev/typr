@@ -25,7 +25,7 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 
 public interface SalesorderheadersalesreasonFields {
-  static final class Impl extends Relation<SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow> {
+  final class Impl extends Relation<SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -33,12 +33,15 @@ public interface SalesorderheadersalesreasonFields {
     @Override
     public SalesorderheadersalesreasonFields fields() {
       return new SalesorderheadersalesreasonFields() {
+               @Override
                public IdField<SalesorderheaderId, SalesorderheadersalesreasonRow> salesorderid() {
                  return new IdField<SalesorderheaderId, SalesorderheadersalesreasonRow>(_path, "salesorderid", SalesorderheadersalesreasonRow::salesorderid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withSalesorderid(value), SalesorderheaderId.pgType);
                };
+               @Override
                public IdField<SalesreasonId, SalesorderheadersalesreasonRow> salesreasonid() {
                  return new IdField<SalesreasonId, SalesorderheadersalesreasonRow>(_path, "salesreasonid", SalesorderheadersalesreasonRow::salesreasonid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withSalesreasonid(value), SalesreasonId.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, SalesorderheadersalesreasonRow> modifieddate() {
                  return new Field<TypoLocalDateTime, SalesorderheadersalesreasonRow>(_path, "modifieddate", SalesorderheadersalesreasonRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -50,6 +53,7 @@ public interface SalesorderheadersalesreasonFields {
       return List.of(this.fields().salesorderid(), this.fields().salesreasonid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

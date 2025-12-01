@@ -15,7 +15,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple9
 
 /** Table: person.address
  * Street address information for customers, employees, and vendors.
@@ -67,19 +66,7 @@ case class AddressRow(
 }
 
 object AddressRow {
-  val `_rowParser`: RowParser[AddressRow] = {
-    RowParsers.of(AddressId.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text, StateprovinceId.pgType, PgTypes.text, TypoBytea.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, AddressRow.apply, row => new Tuple9(
-      row.addressid,
-      row.addressline1,
-      row.addressline2,
-      row.city,
-      row.stateprovinceid,
-      row.postalcode,
-      row.spatiallocation,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[AddressRow] = RowParsers.of(AddressId.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text, StateprovinceId.pgType, PgTypes.text, TypoBytea.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, AddressRow.apply, row => Array(row.addressid, row.addressline1, row.addressline2, row.city, row.stateprovinceid, row.postalcode, row.spatiallocation, row.rowguid, row.modifieddate))
 
   given pgText: PgText[AddressRow] = PgText.from(`_rowParser`)
 }

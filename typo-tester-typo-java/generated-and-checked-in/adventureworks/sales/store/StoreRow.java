@@ -15,7 +15,6 @@ import java.util.Optional;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple6;
 
 /** Table: sales.store
   * Customers (resellers) of Adventure Works products.
@@ -73,7 +72,7 @@ public record StoreRow(
     return new StoreRow(businessentityid, name, salespersonid, demographics, rowguid, modifieddate);
   };
 
-  static RowParser<StoreRow> _rowParser = RowParsers.of(BusinessentityId.pgType, Name.pgType, BusinessentityId.pgType.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, StoreRow::new, row -> new Tuple6<>(row.businessentityid(), row.name(), row.salespersonid(), row.demographics(), row.rowguid(), row.modifieddate()));;
+  static RowParser<StoreRow> _rowParser = RowParsers.of(BusinessentityId.pgType, Name.pgType, BusinessentityId.pgType.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, StoreRow::new, row -> new Object[]{row.businessentityid(), row.name(), row.salespersonid(), row.demographics(), row.rowguid(), row.modifieddate()});;
 
   static public PgText<StoreRow> pgText =
     PgText.from(_rowParser);

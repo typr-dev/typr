@@ -10,7 +10,6 @@ import adventureworks.production.culture.CultureId;
 import adventureworks.public_.Name;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple4;
 
 /** View: pr.c */
 public record CViewRow(
@@ -43,5 +42,5 @@ public record CViewRow(
     return new CViewRow(id, cultureid, name, modifieddate);
   };
 
-  static RowParser<CViewRow> _rowParser = RowParsers.of(CultureId.pgType, CultureId.pgType, Name.pgType, TypoLocalDateTime.pgType, CViewRow::new, row -> new Tuple4<>(row.id(), row.cultureid(), row.name(), row.modifieddate()));;
+  static RowParser<CViewRow> _rowParser = RowParsers.of(CultureId.pgType, CultureId.pgType, Name.pgType, TypoLocalDateTime.pgType, CViewRow::new, row -> new Object[]{row.id(), row.cultureid(), row.name(), row.modifieddate()});;
 }

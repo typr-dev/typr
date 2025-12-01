@@ -25,13 +25,13 @@ case class PersoncreditcardRepoMock(
   toRow: PersoncreditcardRowUnsaved => PersoncreditcardRow,
   map: scala.collection.mutable.Map[PersoncreditcardId, PersoncreditcardRow] = scala.collection.mutable.Map.empty[PersoncreditcardId, PersoncreditcardRow]
 ) extends PersoncreditcardRepo {
-  def delete: DeleteBuilder[PersoncreditcardFields, PersoncreditcardRow] = DeleteBuilderMock(DeleteParams.empty, PersoncreditcardFields.structure, map)
+  override def delete: DeleteBuilder[PersoncreditcardFields, PersoncreditcardRow] = DeleteBuilderMock(DeleteParams.empty, PersoncreditcardFields.structure, map)
 
-  def deleteById(compositeId: PersoncreditcardId): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(compositeId).isDefined)
+  override def deleteById(compositeId: PersoncreditcardId): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(compositeId).isDefined)
 
-  def deleteByIds(compositeIds: Array[PersoncreditcardId]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(compositeIds.map(id => map.remove(id)).count(_.isDefined).toLong)
+  override def deleteByIds(compositeIds: Array[PersoncreditcardId]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(compositeIds.map(id => map.remove(id)).count(_.isDefined).toLong)
 
-  def insert(unsaved: PersoncreditcardRow): ZIO[ZConnection, Throwable, PersoncreditcardRow] = {
+  override def insert(unsaved: PersoncreditcardRow): ZIO[ZConnection, Throwable, PersoncreditcardRow] = {
   ZIO.succeed {
     val _ =
       if (map.contains(unsaved.compositeId))
@@ -43,9 +43,9 @@ case class PersoncreditcardRepoMock(
   }
   }
 
-  def insert(unsaved: PersoncreditcardRowUnsaved): ZIO[ZConnection, Throwable, PersoncreditcardRow] = insert(toRow(unsaved))
+  override def insert(unsaved: PersoncreditcardRowUnsaved): ZIO[ZConnection, Throwable, PersoncreditcardRow] = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, PersoncreditcardRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {
@@ -58,7 +58,7 @@ case class PersoncreditcardRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, PersoncreditcardRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {
@@ -71,24 +71,24 @@ case class PersoncreditcardRepoMock(
     }.runLast.map(_.getOrElse(0L))
   }
 
-  def select: SelectBuilder[PersoncreditcardFields, PersoncreditcardRow] = SelectBuilderMock(PersoncreditcardFields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
+  override def select: SelectBuilder[PersoncreditcardFields, PersoncreditcardRow] = SelectBuilderMock(PersoncreditcardFields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
 
-  def selectAll: ZStream[ZConnection, Throwable, PersoncreditcardRow] = ZStream.fromIterable(map.values)
+  override def selectAll: ZStream[ZConnection, Throwable, PersoncreditcardRow] = ZStream.fromIterable(map.values)
 
-  def selectById(compositeId: PersoncreditcardId): ZIO[ZConnection, Throwable, Option[PersoncreditcardRow]] = ZIO.succeed(map.get(compositeId))
+  override def selectById(compositeId: PersoncreditcardId): ZIO[ZConnection, Throwable, Option[PersoncreditcardRow]] = ZIO.succeed(map.get(compositeId))
 
-  def selectByIds(compositeIds: Array[PersoncreditcardId]): ZStream[ZConnection, Throwable, PersoncreditcardRow] = ZStream.fromIterable(compositeIds.flatMap(map.get))
+  override def selectByIds(compositeIds: Array[PersoncreditcardId]): ZStream[ZConnection, Throwable, PersoncreditcardRow] = ZStream.fromIterable(compositeIds.flatMap(map.get))
 
-  def selectByIdsTracked(compositeIds: Array[PersoncreditcardId]): ZIO[ZConnection, Throwable, Map[PersoncreditcardId, PersoncreditcardRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[PersoncreditcardId]): ZIO[ZConnection, Throwable, Map[PersoncreditcardId, PersoncreditcardRow]] = {
     selectByIds(compositeIds).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[PersoncreditcardFields, PersoncreditcardRow] = UpdateBuilderMock(UpdateParams.empty, PersoncreditcardFields.structure, map)
+  override def update: UpdateBuilder[PersoncreditcardFields, PersoncreditcardRow] = UpdateBuilderMock(UpdateParams.empty, PersoncreditcardFields.structure, map)
 
-  def update(row: PersoncreditcardRow): ZIO[ZConnection, Throwable, Option[PersoncreditcardRow]] = {
+  override def update(row: PersoncreditcardRow): ZIO[ZConnection, Throwable, Option[PersoncreditcardRow]] = {
     ZIO.succeed {
       map.get(row.compositeId).map { _ =>
         map.put(row.compositeId, row): @nowarn
@@ -97,7 +97,7 @@ case class PersoncreditcardRepoMock(
     }
   }
 
-  def upsert(unsaved: PersoncreditcardRow): ZIO[ZConnection, Throwable, UpdateResult[PersoncreditcardRow]] = {
+  override def upsert(unsaved: PersoncreditcardRow): ZIO[ZConnection, Throwable, UpdateResult[PersoncreditcardRow]] = {
     ZIO.succeed {
       map.put(unsaved.compositeId, unsaved): @nowarn
       UpdateResult(1, Chunk.single(unsaved))
@@ -105,7 +105,7 @@ case class PersoncreditcardRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, PersoncreditcardRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

@@ -10,9 +10,9 @@ import typo.dsl.SelectBuilder
 import anorm.SqlStringInterpolation
 
 class BeaViewRepoImpl extends BeaViewRepo {
-  def select: SelectBuilder[BeaViewFields, BeaViewRow] = SelectBuilder.of(""""pe"."bea"""", BeaViewFields.structure, BeaViewRow.rowParser)
+  override def select: SelectBuilder[BeaViewFields, BeaViewRow] = SelectBuilder.of(""""pe"."bea"""", BeaViewFields.structure, BeaViewRow.rowParser)
 
-  def selectAll(using c: Connection): List[BeaViewRow] = {
+  override def selectAll(using c: Connection): List[BeaViewRow] = {
     SQL"""select "id", "businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate"::text
     from "pe"."bea"
     """.as(BeaViewRow.rowParser(1).*)

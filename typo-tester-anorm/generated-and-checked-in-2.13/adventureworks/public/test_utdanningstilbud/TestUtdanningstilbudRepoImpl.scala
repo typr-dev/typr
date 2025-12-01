@@ -20,11 +20,11 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class TestUtdanningstilbudRepoImpl extends TestUtdanningstilbudRepo {
-  def delete: DeleteBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = DeleteBuilder.of(""""public"."test_utdanningstilbud"""", TestUtdanningstilbudFields.structure, TestUtdanningstilbudRow.rowParser(1).*)
+  override def delete: DeleteBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = DeleteBuilder.of(""""public"."test_utdanningstilbud"""", TestUtdanningstilbudFields.structure, TestUtdanningstilbudRow.rowParser(1).*)
 
-  def deleteById(compositeId: TestUtdanningstilbudId)(implicit c: Connection): Boolean = SQL"""delete from "public"."test_utdanningstilbud" where "organisasjonskode" = ${ParameterValue(compositeId.organisasjonskode, null, TestOrganisasjonId.toStatement)} AND "utdanningsmulighet_kode" = ${ParameterValue(compositeId.utdanningsmulighetKode, null, ToStatement.stringToStatement)}""".executeUpdate() > 0
+  override def deleteById(compositeId: TestUtdanningstilbudId)(implicit c: Connection): Boolean = SQL"""delete from "public"."test_utdanningstilbud" where "organisasjonskode" = ${ParameterValue(compositeId.organisasjonskode, null, TestOrganisasjonId.toStatement)} AND "utdanningsmulighet_kode" = ${ParameterValue(compositeId.utdanningsmulighetKode, null, ToStatement.stringToStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(compositeIds: Array[TestUtdanningstilbudId])(implicit c: Connection): Int = {
+  override def deleteByIds(compositeIds: Array[TestUtdanningstilbudId])(implicit c: Connection): Int = {
     val organisasjonskode = compositeIds.map(_.organisasjonskode)
     val utdanningsmulighetKode = compositeIds.map(_.utdanningsmulighetKode)
     SQL"""delete
@@ -34,7 +34,7 @@ class TestUtdanningstilbudRepoImpl extends TestUtdanningstilbudRepo {
     """.executeUpdate()
   }
 
-  def insert(unsaved: TestUtdanningstilbudRow)(implicit c: Connection): TestUtdanningstilbudRow = {
+  override def insert(unsaved: TestUtdanningstilbudRow)(implicit c: Connection): TestUtdanningstilbudRow = {
   SQL"""insert into "public"."test_utdanningstilbud"("organisasjonskode", "utdanningsmulighet_kode")
     values (${ParameterValue(unsaved.organisasjonskode, null, TestOrganisasjonId.toStatement)}, ${ParameterValue(unsaved.utdanningsmulighetKode, null, ToStatement.stringToStatement)})
     returning "organisasjonskode", "utdanningsmulighet_kode"
@@ -42,27 +42,27 @@ class TestUtdanningstilbudRepoImpl extends TestUtdanningstilbudRepo {
     .executeInsert(TestUtdanningstilbudRow.rowParser(1).single)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[TestUtdanningstilbudRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "public"."test_utdanningstilbud"("organisasjonskode", "utdanningsmulighet_kode") FROM STDIN""", batchSize, unsaved)(TestUtdanningstilbudRow.pgText, c)
 
-  def select: SelectBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = SelectBuilder.of(""""public"."test_utdanningstilbud"""", TestUtdanningstilbudFields.structure, TestUtdanningstilbudRow.rowParser)
+  override def select: SelectBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = SelectBuilder.of(""""public"."test_utdanningstilbud"""", TestUtdanningstilbudFields.structure, TestUtdanningstilbudRow.rowParser)
 
-  def selectAll(implicit c: Connection): List[TestUtdanningstilbudRow] = {
+  override def selectAll(implicit c: Connection): List[TestUtdanningstilbudRow] = {
     SQL"""select "organisasjonskode", "utdanningsmulighet_kode"
     from "public"."test_utdanningstilbud"
     """.as(TestUtdanningstilbudRow.rowParser(1).*)
   }
 
-  def selectById(compositeId: TestUtdanningstilbudId)(implicit c: Connection): Option[TestUtdanningstilbudRow] = {
+  override def selectById(compositeId: TestUtdanningstilbudId)(implicit c: Connection): Option[TestUtdanningstilbudRow] = {
     SQL"""select "organisasjonskode", "utdanningsmulighet_kode"
     from "public"."test_utdanningstilbud"
     where "organisasjonskode" = ${ParameterValue(compositeId.organisasjonskode, null, TestOrganisasjonId.toStatement)} AND "utdanningsmulighet_kode" = ${ParameterValue(compositeId.utdanningsmulighetKode, null, ToStatement.stringToStatement)}
     """.as(TestUtdanningstilbudRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(compositeIds: Array[TestUtdanningstilbudId])(implicit c: Connection): List[TestUtdanningstilbudRow] = {
+  override def selectByIds(compositeIds: Array[TestUtdanningstilbudId])(implicit c: Connection): List[TestUtdanningstilbudRow] = {
     val organisasjonskode = compositeIds.map(_.organisasjonskode)
     val utdanningsmulighetKode = compositeIds.map(_.utdanningsmulighetKode)
     SQL"""select "organisasjonskode", "utdanningsmulighet_kode"
@@ -72,14 +72,14 @@ class TestUtdanningstilbudRepoImpl extends TestUtdanningstilbudRepo {
     """.as(TestUtdanningstilbudRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(compositeIds: Array[TestUtdanningstilbudId])(implicit c: Connection): Map[TestUtdanningstilbudId, TestUtdanningstilbudRow] = {
+  override def selectByIdsTracked(compositeIds: Array[TestUtdanningstilbudId])(implicit c: Connection): Map[TestUtdanningstilbudId, TestUtdanningstilbudRow] = {
     val byId = selectByIds(compositeIds).view.map(x => (x.compositeId, x)).toMap
     compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = UpdateBuilder.of(""""public"."test_utdanningstilbud"""", TestUtdanningstilbudFields.structure, TestUtdanningstilbudRow.rowParser(1).*)
+  override def update: UpdateBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = UpdateBuilder.of(""""public"."test_utdanningstilbud"""", TestUtdanningstilbudFields.structure, TestUtdanningstilbudRow.rowParser(1).*)
 
-  def upsert(unsaved: TestUtdanningstilbudRow)(implicit c: Connection): TestUtdanningstilbudRow = {
+  override def upsert(unsaved: TestUtdanningstilbudRow)(implicit c: Connection): TestUtdanningstilbudRow = {
   SQL"""insert into "public"."test_utdanningstilbud"("organisasjonskode", "utdanningsmulighet_kode")
     values (
       ${ParameterValue(unsaved.organisasjonskode, null, TestOrganisasjonId.toStatement)},
@@ -92,11 +92,12 @@ class TestUtdanningstilbudRepoImpl extends TestUtdanningstilbudRepo {
     .executeInsert(TestUtdanningstilbudRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[TestUtdanningstilbudRow])(implicit c: Connection): List[TestUtdanningstilbudRow] = {
+  override def upsertBatch(unsaved: Iterable[TestUtdanningstilbudRow])(implicit c: Connection): List[TestUtdanningstilbudRow] = {
     def toNamedParameter(row: TestUtdanningstilbudRow): List[NamedParameter] = List(
       NamedParameter("organisasjonskode", ParameterValue(row.organisasjonskode, null, TestOrganisasjonId.toStatement)),
       NamedParameter("utdanningsmulighet_kode", ParameterValue(row.utdanningsmulighetKode, null, ToStatement.stringToStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -116,7 +117,7 @@ class TestUtdanningstilbudRepoImpl extends TestUtdanningstilbudRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[TestUtdanningstilbudRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

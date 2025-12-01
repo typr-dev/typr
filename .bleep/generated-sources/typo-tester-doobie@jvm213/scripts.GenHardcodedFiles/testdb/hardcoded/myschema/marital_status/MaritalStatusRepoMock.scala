@@ -20,13 +20,13 @@ import typo.dsl.UpdateBuilder.UpdateBuilderMock
 import typo.dsl.UpdateParams
 
 case class MaritalStatusRepoMock(map: scala.collection.mutable.Map[MaritalStatusId, MaritalStatusRow] = scala.collection.mutable.Map.empty[MaritalStatusId, MaritalStatusRow]) extends MaritalStatusRepo {
-  def delete: DeleteBuilder[MaritalStatusFields, MaritalStatusRow] = DeleteBuilderMock(DeleteParams.empty, MaritalStatusFields.structure, map)
+  override def delete: DeleteBuilder[MaritalStatusFields, MaritalStatusRow] = DeleteBuilderMock(DeleteParams.empty, MaritalStatusFields.structure, map)
 
-  def deleteById(id: MaritalStatusId): ConnectionIO[Boolean] = delay(map.remove(id).isDefined)
+  override def deleteById(id: MaritalStatusId): ConnectionIO[Boolean] = delay(map.remove(id).isDefined)
 
-  def deleteByIds(ids: Array[MaritalStatusId]): ConnectionIO[Int] = delay(ids.map(id => map.remove(id)).count(_.isDefined))
+  override def deleteByIds(ids: Array[MaritalStatusId]): ConnectionIO[Int] = delay(ids.map(id => map.remove(id)).count(_.isDefined))
 
-  def insert(unsaved: MaritalStatusRow): ConnectionIO[MaritalStatusRow] = {
+  override def insert(unsaved: MaritalStatusRow): ConnectionIO[MaritalStatusRow] = {
   delay {
     val _ = if (map.contains(unsaved.id))
       sys.error(s"id ${unsaved.id} already exists")
@@ -37,7 +37,7 @@ case class MaritalStatusRepoMock(map: scala.collection.mutable.Map[MaritalStatus
   }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, MaritalStatusRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = {
@@ -51,11 +51,11 @@ case class MaritalStatusRepoMock(map: scala.collection.mutable.Map[MaritalStatus
     }
   }
 
-  def select: SelectBuilder[MaritalStatusFields, MaritalStatusRow] = SelectBuilderMock(MaritalStatusFields.structure, delay(map.values.toList), SelectParams.empty)
+  override def select: SelectBuilder[MaritalStatusFields, MaritalStatusRow] = SelectBuilderMock(MaritalStatusFields.structure, delay(map.values.toList), SelectParams.empty)
 
-  def selectAll: Stream[ConnectionIO, MaritalStatusRow] = Stream.emits(map.values.toList)
+  override def selectAll: Stream[ConnectionIO, MaritalStatusRow] = Stream.emits(map.values.toList)
 
-  def selectByFieldValues(fieldValues: List[MaritalStatusFieldValue[?]]): Stream[ConnectionIO, MaritalStatusRow] = {
+  override def selectByFieldValues(fieldValues: List[MaritalStatusFieldValue[?]]): Stream[ConnectionIO, MaritalStatusRow] = {
     Stream.emits {
       fieldValues.foldLeft(map.values) {
         case (acc, MaritalStatusFieldValue.id(value)) => acc.filter(_.id == value)
@@ -63,20 +63,20 @@ case class MaritalStatusRepoMock(map: scala.collection.mutable.Map[MaritalStatus
     }
   }
 
-  def selectById(id: MaritalStatusId): ConnectionIO[Option[MaritalStatusRow]] = delay(map.get(id))
+  override def selectById(id: MaritalStatusId): ConnectionIO[Option[MaritalStatusRow]] = delay(map.get(id))
 
-  def selectByIds(ids: Array[MaritalStatusId]): Stream[ConnectionIO, MaritalStatusRow] = Stream.emits(ids.flatMap(map.get).toList)
+  override def selectByIds(ids: Array[MaritalStatusId]): Stream[ConnectionIO, MaritalStatusRow] = Stream.emits(ids.flatMap(map.get).toList)
 
-  def selectByIdsTracked(ids: Array[MaritalStatusId]): ConnectionIO[Map[MaritalStatusId, MaritalStatusRow]] = {
+  override def selectByIdsTracked(ids: Array[MaritalStatusId]): ConnectionIO[Map[MaritalStatusId, MaritalStatusRow]] = {
     selectByIds(ids).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.id, x)).toMap
       ids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[MaritalStatusFields, MaritalStatusRow] = UpdateBuilderMock(UpdateParams.empty, MaritalStatusFields.structure, map)
+  override def update: UpdateBuilder[MaritalStatusFields, MaritalStatusRow] = UpdateBuilderMock(UpdateParams.empty, MaritalStatusFields.structure, map)
 
-  def updateFieldValues(
+  override def updateFieldValues(
     id: MaritalStatusId,
     fieldValues: List[MaritalStatusFieldValue[?]]
   ): ConnectionIO[Boolean] = {
@@ -97,14 +97,14 @@ case class MaritalStatusRepoMock(map: scala.collection.mutable.Map[MaritalStatus
     }
   }
 
-  def upsert(unsaved: MaritalStatusRow): ConnectionIO[MaritalStatusRow] = {
+  override def upsert(unsaved: MaritalStatusRow): ConnectionIO[MaritalStatusRow] = {
     delay {
       map.put(unsaved.id, unsaved): @nowarn
       unsaved
     }
   }
 
-  def upsertBatch(unsaved: List[MaritalStatusRow]): Stream[ConnectionIO, MaritalStatusRow] = {
+  override def upsertBatch(unsaved: List[MaritalStatusRow]): Stream[ConnectionIO, MaritalStatusRow] = {
     Stream.emits {
       unsaved.map { row =>
         map += (row.id -> row)
@@ -114,7 +114,7 @@ case class MaritalStatusRepoMock(map: scala.collection.mutable.Map[MaritalStatus
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, MaritalStatusRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

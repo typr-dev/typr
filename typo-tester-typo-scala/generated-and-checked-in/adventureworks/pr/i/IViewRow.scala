@@ -11,7 +11,6 @@ import adventureworks.production.illustration.IllustrationId
 import java.util.Optional
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple4
 
 /** View: pr.i */
 case class IViewRow(
@@ -26,12 +25,5 @@ case class IViewRow(
 )
 
 object IViewRow {
-  val `_rowParser`: RowParser[IViewRow] = {
-    RowParsers.of(IllustrationId.pgType, IllustrationId.pgType, TypoXml.pgType.opt(), TypoLocalDateTime.pgType, IViewRow.apply, row => new Tuple4(
-      row.id,
-      row.illustrationid,
-      row.diagram,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[IViewRow] = RowParsers.of(IllustrationId.pgType, IllustrationId.pgType, TypoXml.pgType.opt(), TypoLocalDateTime.pgType, IViewRow.apply, row => Array(row.id, row.illustrationid, row.diagram, row.modifieddate))
 }

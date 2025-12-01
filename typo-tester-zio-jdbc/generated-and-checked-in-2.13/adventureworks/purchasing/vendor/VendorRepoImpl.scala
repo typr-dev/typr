@@ -26,20 +26,20 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class VendorRepoImpl extends VendorRepo {
-  def delete: DeleteBuilder[VendorFields, VendorRow] = DeleteBuilder.of(""""purchasing"."vendor"""", VendorFields.structure, VendorRow.jdbcDecoder)
+  override def delete: DeleteBuilder[VendorFields, VendorRow] = DeleteBuilder.of(""""purchasing"."vendor"""", VendorFields.structure, VendorRow.jdbcDecoder)
 
-  def deleteById(businessentityid: BusinessentityId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "purchasing"."vendor" where "businessentityid" = ${Segment.paramSegment(businessentityid)(BusinessentityId.setter)}""".delete.map(_ > 0)
+  override def deleteById(businessentityid: BusinessentityId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "purchasing"."vendor" where "businessentityid" = ${Segment.paramSegment(businessentityid)(BusinessentityId.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(businessentityids: Array[BusinessentityId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "purchasing"."vendor" where "businessentityid" = ANY(${Segment.paramSegment(businessentityids)(BusinessentityId.arraySetter)})""".delete
+  override def deleteByIds(businessentityids: Array[BusinessentityId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "purchasing"."vendor" where "businessentityid" = ANY(${Segment.paramSegment(businessentityids)(BusinessentityId.arraySetter)})""".delete
 
-  def insert(unsaved: VendorRow): ZIO[ZConnection, Throwable, VendorRow] = {
+  override def insert(unsaved: VendorRow): ZIO[ZConnection, Throwable, VendorRow] = {
     sql"""insert into "purchasing"."vendor"("businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate")
     values (${Segment.paramSegment(unsaved.businessentityid)(BusinessentityId.setter)}::int4, ${Segment.paramSegment(unsaved.accountnumber)(AccountNumber.setter)}::varchar, ${Segment.paramSegment(unsaved.name)(Name.setter)}::varchar, ${Segment.paramSegment(unsaved.creditrating)(TypoShort.setter)}::int2, ${Segment.paramSegment(unsaved.preferredvendorstatus)(Flag.setter)}::bool, ${Segment.paramSegment(unsaved.activeflag)(Flag.setter)}::bool, ${Segment.paramSegment(unsaved.purchasingwebserviceurl)(Setter.optionParamSetter(Setter.stringSetter))}, ${Segment.paramSegment(unsaved.modifieddate)(TypoLocalDateTime.setter)}::timestamp)
     returning "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text
     """.insertReturning(VendorRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insert(unsaved: VendorRowUnsaved): ZIO[ZConnection, Throwable, VendorRow] = {
+  override def insert(unsaved: VendorRowUnsaved): ZIO[ZConnection, Throwable, VendorRow] = {
     val fs = List(
       Some((sql""""businessentityid"""", sql"${Segment.paramSegment(unsaved.businessentityid)(BusinessentityId.setter)}::int4")),
       Some((sql""""accountnumber"""", sql"${Segment.paramSegment(unsaved.accountnumber)(AccountNumber.setter)}::varchar")),
@@ -71,35 +71,35 @@ class VendorRepoImpl extends VendorRepo {
     q.insertReturning(VendorRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, VendorRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "purchasing"."vendor"("businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate") FROM STDIN""", batchSize, unsaved)(VendorRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, VendorRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "purchasing"."vendor"("businessentityid", "accountnumber", "name", "creditrating", "purchasingwebserviceurl", "preferredvendorstatus", "activeflag", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(VendorRowUnsaved.pgText)
 
-  def select: SelectBuilder[VendorFields, VendorRow] = SelectBuilder.of(""""purchasing"."vendor"""", VendorFields.structure, VendorRow.jdbcDecoder)
+  override def select: SelectBuilder[VendorFields, VendorRow] = SelectBuilder.of(""""purchasing"."vendor"""", VendorFields.structure, VendorRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, VendorRow] = sql"""select "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text from "purchasing"."vendor"""".query(VendorRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, VendorRow] = sql"""select "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text from "purchasing"."vendor"""".query(VendorRow.jdbcDecoder).selectStream()
 
-  def selectById(businessentityid: BusinessentityId): ZIO[ZConnection, Throwable, Option[VendorRow]] = sql"""select "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text from "purchasing"."vendor" where "businessentityid" = ${Segment.paramSegment(businessentityid)(BusinessentityId.setter)}""".query(VendorRow.jdbcDecoder).selectOne
+  override def selectById(businessentityid: BusinessentityId): ZIO[ZConnection, Throwable, Option[VendorRow]] = sql"""select "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text from "purchasing"."vendor" where "businessentityid" = ${Segment.paramSegment(businessentityid)(BusinessentityId.setter)}""".query(VendorRow.jdbcDecoder).selectOne
 
-  def selectByIds(businessentityids: Array[BusinessentityId]): ZStream[ZConnection, Throwable, VendorRow] = sql"""select "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text from "purchasing"."vendor" where "businessentityid" = ANY(${Segment.paramSegment(businessentityids)(BusinessentityId.arraySetter)})""".query(VendorRow.jdbcDecoder).selectStream()
+  override def selectByIds(businessentityids: Array[BusinessentityId]): ZStream[ZConnection, Throwable, VendorRow] = sql"""select "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text from "purchasing"."vendor" where "businessentityid" = ANY(${Segment.paramSegment(businessentityids)(BusinessentityId.arraySetter)})""".query(VendorRow.jdbcDecoder).selectStream()
 
-  def selectByIdsTracked(businessentityids: Array[BusinessentityId]): ZIO[ZConnection, Throwable, Map[BusinessentityId, VendorRow]] = {
+  override def selectByIdsTracked(businessentityids: Array[BusinessentityId]): ZIO[ZConnection, Throwable, Map[BusinessentityId, VendorRow]] = {
     selectByIds(businessentityids).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.businessentityid, x)).toMap
       businessentityids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[VendorFields, VendorRow] = UpdateBuilder.of(""""purchasing"."vendor"""", VendorFields.structure, VendorRow.jdbcDecoder)
+  override def update: UpdateBuilder[VendorFields, VendorRow] = UpdateBuilder.of(""""purchasing"."vendor"""", VendorFields.structure, VendorRow.jdbcDecoder)
 
-  def update(row: VendorRow): ZIO[ZConnection, Throwable, Option[VendorRow]] = {
+  override def update(row: VendorRow): ZIO[ZConnection, Throwable, Option[VendorRow]] = {
     val businessentityid = row.businessentityid
     sql"""update "purchasing"."vendor"
     set "accountnumber" = ${Segment.paramSegment(row.accountnumber)(AccountNumber.setter)}::varchar,
@@ -115,7 +115,7 @@ class VendorRepoImpl extends VendorRepo {
       .selectOne
   }
 
-  def upsert(unsaved: VendorRow): ZIO[ZConnection, Throwable, UpdateResult[VendorRow]] = {
+  override def upsert(unsaved: VendorRow): ZIO[ZConnection, Throwable, UpdateResult[VendorRow]] = {
     sql"""insert into "purchasing"."vendor"("businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate")
     values (
       ${Segment.paramSegment(unsaved.businessentityid)(BusinessentityId.setter)}::int4,
@@ -140,7 +140,7 @@ class VendorRepoImpl extends VendorRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, VendorRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

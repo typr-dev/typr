@@ -7,13 +7,11 @@ package adventureworks.pe.bec
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class BecViewRepoImpl extends BecViewRepo {
-  def select: SelectBuilder[BecViewFields, BecViewRow] = SelectBuilder.of(""""pe"."bec"""", BecViewFields.structure, BecViewRow.read)
+  override def select: SelectBuilder[BecViewFields, BecViewRow] = SelectBuilder.of(""""pe"."bec"""", BecViewFields.structure, BecViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, BecViewRow] = sql"""select "id", "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text from "pe"."bec"""".query(using BecViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, BecViewRow] = sql"""select "id", "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text from "pe"."bec"""".query(using BecViewRow.read).stream
 }

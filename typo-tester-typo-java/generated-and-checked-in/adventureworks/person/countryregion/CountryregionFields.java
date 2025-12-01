@@ -16,7 +16,7 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 
 public interface CountryregionFields {
-  static final class Impl extends Relation<CountryregionFields, CountryregionRow> {
+  final class Impl extends Relation<CountryregionFields, CountryregionRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -24,12 +24,15 @@ public interface CountryregionFields {
     @Override
     public CountryregionFields fields() {
       return new CountryregionFields() {
+               @Override
                public IdField<CountryregionId, CountryregionRow> countryregioncode() {
                  return new IdField<CountryregionId, CountryregionRow>(_path, "countryregioncode", CountryregionRow::countryregioncode, Optional.empty(), Optional.empty(), (row, value) -> row.withCountryregioncode(value), CountryregionId.pgType);
                };
+               @Override
                public Field<Name, CountryregionRow> name() {
                  return new Field<Name, CountryregionRow>(_path, "name", CountryregionRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, CountryregionRow> modifieddate() {
                  return new Field<TypoLocalDateTime, CountryregionRow>(_path, "modifieddate", CountryregionRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -41,6 +44,7 @@ public interface CountryregionFields {
       return List.of(this.fields().countryregioncode(), this.fields().name(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

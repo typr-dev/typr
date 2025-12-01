@@ -22,20 +22,20 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class SpecialofferRepoImpl extends SpecialofferRepo {
-  def delete: DeleteBuilder[SpecialofferFields, SpecialofferRow] = DeleteBuilder.of(""""sales"."specialoffer"""", SpecialofferFields.structure, SpecialofferRow.jdbcDecoder)
+  override def delete: DeleteBuilder[SpecialofferFields, SpecialofferRow] = DeleteBuilder.of(""""sales"."specialoffer"""", SpecialofferFields.structure, SpecialofferRow.jdbcDecoder)
 
-  def deleteById(specialofferid: SpecialofferId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "sales"."specialoffer" where "specialofferid" = ${Segment.paramSegment(specialofferid)(using SpecialofferId.setter)}""".delete.map(_ > 0)
+  override def deleteById(specialofferid: SpecialofferId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "sales"."specialoffer" where "specialofferid" = ${Segment.paramSegment(specialofferid)(using SpecialofferId.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(specialofferids: Array[SpecialofferId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "sales"."specialoffer" where "specialofferid" = ANY(${Segment.paramSegment(specialofferids)(using SpecialofferId.arraySetter)})""".delete
+  override def deleteByIds(specialofferids: Array[SpecialofferId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "sales"."specialoffer" where "specialofferid" = ANY(${Segment.paramSegment(specialofferids)(using SpecialofferId.arraySetter)})""".delete
 
-  def insert(unsaved: SpecialofferRow): ZIO[ZConnection, Throwable, SpecialofferRow] = {
+  override def insert(unsaved: SpecialofferRow): ZIO[ZConnection, Throwable, SpecialofferRow] = {
     sql"""insert into "sales"."specialoffer"("specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate")
     values (${Segment.paramSegment(unsaved.specialofferid)(using SpecialofferId.setter)}::int4, ${Segment.paramSegment(unsaved.description)(using Setter.stringSetter)}, ${Segment.paramSegment(unsaved.discountpct)(using Setter.bigDecimalScalaSetter)}::numeric, ${Segment.paramSegment(unsaved.`type`)(using Setter.stringSetter)}, ${Segment.paramSegment(unsaved.category)(using Setter.stringSetter)}, ${Segment.paramSegment(unsaved.startdate)(using TypoLocalDateTime.setter)}::timestamp, ${Segment.paramSegment(unsaved.enddate)(using TypoLocalDateTime.setter)}::timestamp, ${Segment.paramSegment(unsaved.minqty)(using Setter.intSetter)}::int4, ${Segment.paramSegment(unsaved.maxqty)(using Setter.optionParamSetter(using Setter.intSetter))}::int4, ${Segment.paramSegment(unsaved.rowguid)(using TypoUUID.setter)}::uuid, ${Segment.paramSegment(unsaved.modifieddate)(using TypoLocalDateTime.setter)}::timestamp)
     returning "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text
     """.insertReturning(using SpecialofferRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insert(unsaved: SpecialofferRowUnsaved): ZIO[ZConnection, Throwable, SpecialofferRow] = {
+  override def insert(unsaved: SpecialofferRowUnsaved): ZIO[ZConnection, Throwable, SpecialofferRow] = {
     val fs = List(
       Some((sql""""description"""", sql"${Segment.paramSegment(unsaved.description)(using Setter.stringSetter)}")),
       Some((sql""""type"""", sql"${Segment.paramSegment(unsaved.`type`)(using Setter.stringSetter)}")),
@@ -76,35 +76,35 @@ class SpecialofferRepoImpl extends SpecialofferRepo {
     q.insertReturning(using SpecialofferRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, SpecialofferRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "sales"."specialoffer"("specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved)(using SpecialofferRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, SpecialofferRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "sales"."specialoffer"("description", "type", "category", "startdate", "enddate", "maxqty", "specialofferid", "discountpct", "minqty", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using SpecialofferRowUnsaved.pgText)
 
-  def select: SelectBuilder[SpecialofferFields, SpecialofferRow] = SelectBuilder.of(""""sales"."specialoffer"""", SpecialofferFields.structure, SpecialofferRow.jdbcDecoder)
+  override def select: SelectBuilder[SpecialofferFields, SpecialofferRow] = SelectBuilder.of(""""sales"."specialoffer"""", SpecialofferFields.structure, SpecialofferRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, SpecialofferRow] = sql"""select "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text from "sales"."specialoffer"""".query(using SpecialofferRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, SpecialofferRow] = sql"""select "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text from "sales"."specialoffer"""".query(using SpecialofferRow.jdbcDecoder).selectStream()
 
-  def selectById(specialofferid: SpecialofferId): ZIO[ZConnection, Throwable, Option[SpecialofferRow]] = sql"""select "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text from "sales"."specialoffer" where "specialofferid" = ${Segment.paramSegment(specialofferid)(using SpecialofferId.setter)}""".query(using SpecialofferRow.jdbcDecoder).selectOne
+  override def selectById(specialofferid: SpecialofferId): ZIO[ZConnection, Throwable, Option[SpecialofferRow]] = sql"""select "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text from "sales"."specialoffer" where "specialofferid" = ${Segment.paramSegment(specialofferid)(using SpecialofferId.setter)}""".query(using SpecialofferRow.jdbcDecoder).selectOne
 
-  def selectByIds(specialofferids: Array[SpecialofferId]): ZStream[ZConnection, Throwable, SpecialofferRow] = sql"""select "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text from "sales"."specialoffer" where "specialofferid" = ANY(${Segment.paramSegment(specialofferids)(using SpecialofferId.arraySetter)})""".query(using SpecialofferRow.jdbcDecoder).selectStream()
+  override def selectByIds(specialofferids: Array[SpecialofferId]): ZStream[ZConnection, Throwable, SpecialofferRow] = sql"""select "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text from "sales"."specialoffer" where "specialofferid" = ANY(${Segment.paramSegment(specialofferids)(using SpecialofferId.arraySetter)})""".query(using SpecialofferRow.jdbcDecoder).selectStream()
 
-  def selectByIdsTracked(specialofferids: Array[SpecialofferId]): ZIO[ZConnection, Throwable, Map[SpecialofferId, SpecialofferRow]] = {
+  override def selectByIdsTracked(specialofferids: Array[SpecialofferId]): ZIO[ZConnection, Throwable, Map[SpecialofferId, SpecialofferRow]] = {
     selectByIds(specialofferids).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.specialofferid, x)).toMap
       specialofferids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[SpecialofferFields, SpecialofferRow] = UpdateBuilder.of(""""sales"."specialoffer"""", SpecialofferFields.structure, SpecialofferRow.jdbcDecoder)
+  override def update: UpdateBuilder[SpecialofferFields, SpecialofferRow] = UpdateBuilder.of(""""sales"."specialoffer"""", SpecialofferFields.structure, SpecialofferRow.jdbcDecoder)
 
-  def update(row: SpecialofferRow): ZIO[ZConnection, Throwable, Option[SpecialofferRow]] = {
+  override def update(row: SpecialofferRow): ZIO[ZConnection, Throwable, Option[SpecialofferRow]] = {
     val specialofferid = row.specialofferid
     sql"""update "sales"."specialoffer"
     set "description" = ${Segment.paramSegment(row.description)(using Setter.stringSetter)},
@@ -123,7 +123,7 @@ class SpecialofferRepoImpl extends SpecialofferRepo {
       .selectOne
   }
 
-  def upsert(unsaved: SpecialofferRow): ZIO[ZConnection, Throwable, UpdateResult[SpecialofferRow]] = {
+  override def upsert(unsaved: SpecialofferRow): ZIO[ZConnection, Throwable, UpdateResult[SpecialofferRow]] = {
     sql"""insert into "sales"."specialoffer"("specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate")
     values (
       ${Segment.paramSegment(unsaved.specialofferid)(using SpecialofferId.setter)}::int4,
@@ -154,7 +154,7 @@ class SpecialofferRepoImpl extends SpecialofferRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, SpecialofferRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

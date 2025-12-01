@@ -13,22 +13,22 @@ import typo.dsl.SelectBuilder
 import anorm.SqlStringInterpolation
 
 class PurchaseorderdetailRepoImpl extends PurchaseorderdetailRepo {
-  def select: SelectBuilder[PurchaseorderdetailFields, PurchaseorderdetailRow] = SelectBuilder.of(""""purchasing"."purchaseorderdetail"""", PurchaseorderdetailFields.structure, PurchaseorderdetailRow.rowParser)
+  override def select: SelectBuilder[PurchaseorderdetailFields, PurchaseorderdetailRow] = SelectBuilder.of(""""purchasing"."purchaseorderdetail"""", PurchaseorderdetailFields.structure, PurchaseorderdetailRow.rowParser)
 
-  def selectAll(using c: Connection): List[PurchaseorderdetailRow] = {
+  override def selectAll(using c: Connection): List[PurchaseorderdetailRow] = {
     SQL"""select "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text
     from "purchasing"."purchaseorderdetail"
     """.as(PurchaseorderdetailRow.rowParser(1).*)
   }
 
-  def selectById(compositeId: PurchaseorderdetailId)(using c: Connection): Option[PurchaseorderdetailRow] = {
+  override def selectById(compositeId: PurchaseorderdetailId)(using c: Connection): Option[PurchaseorderdetailRow] = {
     SQL"""select "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text
     from "purchasing"."purchaseorderdetail"
     where "purchaseorderid" = ${ParameterValue(compositeId.purchaseorderid, null, PurchaseorderheaderId.toStatement)} AND "purchaseorderdetailid" = ${ParameterValue(compositeId.purchaseorderdetailid, null, ToStatement.intToStatement)}
     """.as(PurchaseorderdetailRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(compositeIds: Array[PurchaseorderdetailId])(using c: Connection): List[PurchaseorderdetailRow] = {
+  override def selectByIds(compositeIds: Array[PurchaseorderdetailId])(using c: Connection): List[PurchaseorderdetailRow] = {
     val purchaseorderid = compositeIds.map(_.purchaseorderid)
     val purchaseorderdetailid = compositeIds.map(_.purchaseorderdetailid)
     SQL"""select "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text
@@ -38,7 +38,7 @@ class PurchaseorderdetailRepoImpl extends PurchaseorderdetailRepo {
     """.as(PurchaseorderdetailRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(compositeIds: Array[PurchaseorderdetailId])(using c: Connection): Map[PurchaseorderdetailId, PurchaseorderdetailRow] = {
+  override def selectByIdsTracked(compositeIds: Array[PurchaseorderdetailId])(using c: Connection): Map[PurchaseorderdetailId, PurchaseorderdetailRow] = {
     val byId = selectByIds(compositeIds).view.map(x => (x.compositeId, x)).toMap
     compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }

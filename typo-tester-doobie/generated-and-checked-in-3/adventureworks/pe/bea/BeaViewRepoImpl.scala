@@ -7,13 +7,11 @@ package adventureworks.pe.bea
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class BeaViewRepoImpl extends BeaViewRepo {
-  def select: SelectBuilder[BeaViewFields, BeaViewRow] = SelectBuilder.of(""""pe"."bea"""", BeaViewFields.structure, BeaViewRow.read)
+  override def select: SelectBuilder[BeaViewFields, BeaViewRow] = SelectBuilder.of(""""pe"."bea"""", BeaViewFields.structure, BeaViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, BeaViewRow] = sql"""select "id", "businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate"::text from "pe"."bea"""".query(using BeaViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, BeaViewRow] = sql"""select "id", "businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate"::text from "pe"."bea"""".query(using BeaViewRow.read).stream
 }

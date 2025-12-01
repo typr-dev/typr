@@ -30,11 +30,11 @@ public record TypoInt2Vector(@JsonValue String value) {
   static public PgType<TypoInt2Vector> pgType =
     PgType.of(
       "int2vector",
-      PgRead.castJdbcObjectTo(PGobject.class).map(v -> new TypoInt2Vector(v.getValue())),
-      PgWrite.passObjectToJdbc().contramap((TypoInt2Vector v) -> TypoPGObjectHelper.create("int2vector", v.value())),
+      PgRead.castJdbcObjectTo(PGobject.class).map((PGobject v) -> new TypoInt2Vector(v.getValue())),
+      PgWrite.<PGobject>passObjectToJdbc().contramap((TypoInt2Vector v) -> TypoPGObjectHelper.create("int2vector", v.value())),
       TypoInt2Vector.pgText
     );
 
   static public PgType<TypoInt2Vector[]> pgTypeArray =
-    TypoInt2Vector.pgType.array(PgRead.castJdbcArrayTo(PGobject.class).map(xs -> arrayMap.map(xs, v -> new TypoInt2Vector(v.getValue()), TypoInt2Vector.class)), PgWrite.<PGobject>passObjectToJdbc().array(TypoInt2Vector.pgType.typename().<PGobject>as()).contramap(xs -> arrayMap.map(xs, (TypoInt2Vector v) -> TypoPGObjectHelper.create("int2vector", v.value()), PGobject.class)));
+    TypoInt2Vector.pgType.array(PgRead.castJdbcArrayTo(PGobject.class).map((PGobject[] xs) -> arrayMap.map(xs, (PGobject v) -> new TypoInt2Vector(v.getValue()), TypoInt2Vector.class)), PgWrite.<PGobject>passObjectToJdbc().array(TypoInt2Vector.pgType.typename().<PGobject>as()).contramap((TypoInt2Vector[] xs) -> arrayMap.map(xs, (TypoInt2Vector v) -> TypoPGObjectHelper.create("int2vector", v.value()), PGobject.class)));
 }

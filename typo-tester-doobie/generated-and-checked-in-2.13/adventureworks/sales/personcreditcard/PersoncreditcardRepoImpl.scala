@@ -23,11 +23,11 @@ import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class PersoncreditcardRepoImpl extends PersoncreditcardRepo {
-  def delete: DeleteBuilder[PersoncreditcardFields, PersoncreditcardRow] = DeleteBuilder.of(""""sales"."personcreditcard"""", PersoncreditcardFields.structure, PersoncreditcardRow.read)
+  override def delete: DeleteBuilder[PersoncreditcardFields, PersoncreditcardRow] = DeleteBuilder.of(""""sales"."personcreditcard"""", PersoncreditcardFields.structure, PersoncreditcardRow.read)
 
-  def deleteById(compositeId: PersoncreditcardId): ConnectionIO[Boolean] = sql"""delete from "sales"."personcreditcard" where "businessentityid" = ${fromWrite(compositeId.businessentityid)(new Write.Single(BusinessentityId.put))} AND "creditcardid" = ${fromWrite(compositeId.creditcardid)(new Write.Single(/* user-picked */ CustomCreditcardId.put))}""".update.run.map(_ > 0)
+  override def deleteById(compositeId: PersoncreditcardId): ConnectionIO[Boolean] = sql"""delete from "sales"."personcreditcard" where "businessentityid" = ${fromWrite(compositeId.businessentityid)(new Write.Single(BusinessentityId.put))} AND "creditcardid" = ${fromWrite(compositeId.creditcardid)(new Write.Single(/* user-picked */ CustomCreditcardId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(compositeIds: Array[PersoncreditcardId]): ConnectionIO[Int] = {
+  override def deleteByIds(compositeIds: Array[PersoncreditcardId]): ConnectionIO[Int] = {
     val businessentityid = compositeIds.map(_.businessentityid)
     val creditcardid = compositeIds.map(_.creditcardid)
     sql"""delete
@@ -37,14 +37,14 @@ class PersoncreditcardRepoImpl extends PersoncreditcardRepo {
     """.update.run
   }
 
-  def insert(unsaved: PersoncreditcardRow): ConnectionIO[PersoncreditcardRow] = {
+  override def insert(unsaved: PersoncreditcardRow): ConnectionIO[PersoncreditcardRow] = {
     sql"""insert into "sales"."personcreditcard"("businessentityid", "creditcardid", "modifieddate")
     values (${fromWrite(unsaved.businessentityid)(new Write.Single(BusinessentityId.put))}::int4, ${fromWrite(unsaved.creditcardid)(new Write.Single(/* user-picked */ CustomCreditcardId.put))}::int4, ${fromWrite(unsaved.modifieddate)(new Write.Single(TypoLocalDateTime.put))}::timestamp)
     returning "businessentityid", "creditcardid", "modifieddate"::text
     """.query(PersoncreditcardRow.read).unique
   }
 
-  def insert(unsaved: PersoncreditcardRowUnsaved): ConnectionIO[PersoncreditcardRow] = {
+  override def insert(unsaved: PersoncreditcardRowUnsaved): ConnectionIO[PersoncreditcardRow] = {
     val fs = List(
       Some((Fragment.const0(s""""businessentityid""""), fr"${fromWrite(unsaved.businessentityid)(new Write.Single(BusinessentityId.put))}::int4")),
       Some((Fragment.const0(s""""creditcardid""""), fr"${fromWrite(unsaved.creditcardid)(new Write.Single(/* user-picked */ CustomCreditcardId.put))}::int4")),
@@ -67,24 +67,24 @@ class PersoncreditcardRepoImpl extends PersoncreditcardRepo {
     q.query(PersoncreditcardRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, PersoncreditcardRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "sales"."personcreditcard"("businessentityid", "creditcardid", "modifieddate") FROM STDIN""").copyIn(unsaved, batchSize)(PersoncreditcardRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, PersoncreditcardRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "sales"."personcreditcard"("businessentityid", "creditcardid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(PersoncreditcardRowUnsaved.pgText)
 
-  def select: SelectBuilder[PersoncreditcardFields, PersoncreditcardRow] = SelectBuilder.of(""""sales"."personcreditcard"""", PersoncreditcardFields.structure, PersoncreditcardRow.read)
+  override def select: SelectBuilder[PersoncreditcardFields, PersoncreditcardRow] = SelectBuilder.of(""""sales"."personcreditcard"""", PersoncreditcardFields.structure, PersoncreditcardRow.read)
 
-  def selectAll: Stream[ConnectionIO, PersoncreditcardRow] = sql"""select "businessentityid", "creditcardid", "modifieddate"::text from "sales"."personcreditcard"""".query(PersoncreditcardRow.read).stream
+  override def selectAll: Stream[ConnectionIO, PersoncreditcardRow] = sql"""select "businessentityid", "creditcardid", "modifieddate"::text from "sales"."personcreditcard"""".query(PersoncreditcardRow.read).stream
 
-  def selectById(compositeId: PersoncreditcardId): ConnectionIO[Option[PersoncreditcardRow]] = sql"""select "businessentityid", "creditcardid", "modifieddate"::text from "sales"."personcreditcard" where "businessentityid" = ${fromWrite(compositeId.businessentityid)(new Write.Single(BusinessentityId.put))} AND "creditcardid" = ${fromWrite(compositeId.creditcardid)(new Write.Single(/* user-picked */ CustomCreditcardId.put))}""".query(PersoncreditcardRow.read).option
+  override def selectById(compositeId: PersoncreditcardId): ConnectionIO[Option[PersoncreditcardRow]] = sql"""select "businessentityid", "creditcardid", "modifieddate"::text from "sales"."personcreditcard" where "businessentityid" = ${fromWrite(compositeId.businessentityid)(new Write.Single(BusinessentityId.put))} AND "creditcardid" = ${fromWrite(compositeId.creditcardid)(new Write.Single(/* user-picked */ CustomCreditcardId.put))}""".query(PersoncreditcardRow.read).option
 
-  def selectByIds(compositeIds: Array[PersoncreditcardId]): Stream[ConnectionIO, PersoncreditcardRow] = {
+  override def selectByIds(compositeIds: Array[PersoncreditcardId]): Stream[ConnectionIO, PersoncreditcardRow] = {
     val businessentityid = compositeIds.map(_.businessentityid)
     val creditcardid = compositeIds.map(_.creditcardid)
     sql"""select "businessentityid", "creditcardid", "modifieddate"::text
@@ -94,16 +94,16 @@ class PersoncreditcardRepoImpl extends PersoncreditcardRepo {
     """.query(PersoncreditcardRow.read).stream
   }
 
-  def selectByIdsTracked(compositeIds: Array[PersoncreditcardId]): ConnectionIO[Map[PersoncreditcardId, PersoncreditcardRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[PersoncreditcardId]): ConnectionIO[Map[PersoncreditcardId, PersoncreditcardRow]] = {
     selectByIds(compositeIds).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[PersoncreditcardFields, PersoncreditcardRow] = UpdateBuilder.of(""""sales"."personcreditcard"""", PersoncreditcardFields.structure, PersoncreditcardRow.read)
+  override def update: UpdateBuilder[PersoncreditcardFields, PersoncreditcardRow] = UpdateBuilder.of(""""sales"."personcreditcard"""", PersoncreditcardFields.structure, PersoncreditcardRow.read)
 
-  def update(row: PersoncreditcardRow): ConnectionIO[Option[PersoncreditcardRow]] = {
+  override def update(row: PersoncreditcardRow): ConnectionIO[Option[PersoncreditcardRow]] = {
     val compositeId = row.compositeId
     sql"""update "sales"."personcreditcard"
     set "modifieddate" = ${fromWrite(row.modifieddate)(new Write.Single(TypoLocalDateTime.put))}::timestamp
@@ -111,7 +111,7 @@ class PersoncreditcardRepoImpl extends PersoncreditcardRepo {
     returning "businessentityid", "creditcardid", "modifieddate"::text""".query(PersoncreditcardRow.read).option
   }
 
-  def upsert(unsaved: PersoncreditcardRow): ConnectionIO[PersoncreditcardRow] = {
+  override def upsert(unsaved: PersoncreditcardRow): ConnectionIO[PersoncreditcardRow] = {
     sql"""insert into "sales"."personcreditcard"("businessentityid", "creditcardid", "modifieddate")
     values (
       ${fromWrite(unsaved.businessentityid)(new Write.Single(BusinessentityId.put))}::int4,
@@ -125,7 +125,7 @@ class PersoncreditcardRepoImpl extends PersoncreditcardRepo {
     """.query(PersoncreditcardRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[PersoncreditcardRow]): Stream[ConnectionIO, PersoncreditcardRow] = {
+  override def upsertBatch(unsaved: List[PersoncreditcardRow]): Stream[ConnectionIO, PersoncreditcardRow] = {
     Update[PersoncreditcardRow](
       s"""insert into "sales"."personcreditcard"("businessentityid", "creditcardid", "modifieddate")
       values (?::int4,?::int4,?::timestamp)
@@ -138,7 +138,7 @@ class PersoncreditcardRepoImpl extends PersoncreditcardRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, PersoncreditcardRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

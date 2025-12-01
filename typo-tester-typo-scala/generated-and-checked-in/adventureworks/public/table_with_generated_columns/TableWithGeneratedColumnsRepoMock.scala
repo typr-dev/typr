@@ -5,6 +5,7 @@
  */
 package adventureworks.public.table_with_generated_columns
 
+import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
@@ -25,7 +26,7 @@ case class TableWithGeneratedColumnsRepoMock(
   toRow: TableWithGeneratedColumnsRowUnsaved => TableWithGeneratedColumnsRow,
   map: HashMap[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow] = new HashMap[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow]()
 ) extends TableWithGeneratedColumnsRepo {
-  def delete: DeleteBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = {
+  override def delete: DeleteBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = {
     new DeleteBuilderMock(
       TableWithGeneratedColumnsFields.structure,
       () => new ArrayList(map.values()),
@@ -35,27 +36,27 @@ case class TableWithGeneratedColumnsRepoMock(
     )
   }
 
-  def deleteById(name: TableWithGeneratedColumnsId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(name)).isPresent()
+  override def deleteById(name: TableWithGeneratedColumnsId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(name)).isPresent()
 
-  def deleteByIds(names: Array[TableWithGeneratedColumnsId])(using c: Connection): Integer = {
+  override def deleteByIds(names: Array[TableWithGeneratedColumnsId])(using c: Connection): Integer = {
     var count = 0
     names.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
-    count
+    return count
   }
 
-  def insert(unsaved: TableWithGeneratedColumnsRow)(using c: Connection): TableWithGeneratedColumnsRow = {
+  override def insert(unsaved: TableWithGeneratedColumnsRow)(using c: Connection): TableWithGeneratedColumnsRow = {
     if (map.containsKey(unsaved.name)) {
       throw new RuntimeException(s"id $unsaved.name already exists")
     }
     map.put(unsaved.name, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def insert(unsaved: TableWithGeneratedColumnsRowUnsaved)(using c: Connection): TableWithGeneratedColumnsRow = insert(toRow(unsaved))(using c)
+  override def insert(unsaved: TableWithGeneratedColumnsRowUnsaved)(using c: Connection): TableWithGeneratedColumnsRow = insert(toRow(unsaved))(using c)
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[TableWithGeneratedColumnsRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -65,11 +66,11 @@ case class TableWithGeneratedColumnsRepoMock(
       map.put(row.name, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[TableWithGeneratedColumnsRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -80,25 +81,25 @@ case class TableWithGeneratedColumnsRepoMock(
       map.put(row.name, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
-  def select: SelectBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = new SelectBuilderMock(TableWithGeneratedColumnsFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
+  override def select: SelectBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = new SelectBuilderMock(TableWithGeneratedColumnsFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  def selectAll(using c: Connection): java.util.List[TableWithGeneratedColumnsRow] = new ArrayList(map.values())
+  override def selectAll(using c: Connection): java.util.List[TableWithGeneratedColumnsRow] = new ArrayList(map.values())
 
-  def selectById(name: TableWithGeneratedColumnsId)(using c: Connection): Optional[TableWithGeneratedColumnsRow] = Optional.ofNullable(map.get(name))
+  override def selectById(name: TableWithGeneratedColumnsId)(using c: Connection): Optional[TableWithGeneratedColumnsRow] = Optional.ofNullable(map.get(name))
 
-  def selectByIds(names: Array[TableWithGeneratedColumnsId])(using c: Connection): java.util.List[TableWithGeneratedColumnsRow] = {
+  override def selectByIds(names: Array[TableWithGeneratedColumnsId])(using c: Connection): java.util.List[TableWithGeneratedColumnsRow] = {
     val result = new ArrayList[TableWithGeneratedColumnsRow]()
     names.foreach { id => val opt = Optional.ofNullable(map.get(id))
     if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
-    result
+    return result
   }
 
-  def selectByIdsTracked(names: Array[TableWithGeneratedColumnsId])(using c: Connection): java.util.Map[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow] = selectByIds(names)(using c).stream().collect(Collectors.toMap((row: adventureworks.public.table_with_generated_columns.TableWithGeneratedColumnsRow) => row.name, Function.identity()))
+  override def selectByIdsTracked(names: Array[TableWithGeneratedColumnsId])(using c: Connection): java.util.Map[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow] = selectByIds(names)(using c).stream().collect(Collectors.toMap((row: TableWithGeneratedColumnsRow) => row.name, Function.identity()))
 
-  def update: UpdateBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = {
+  override def update: UpdateBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = {
     new UpdateBuilderMock(
       TableWithGeneratedColumnsFields.structure,
       () => new ArrayList(map.values()),
@@ -107,23 +108,23 @@ case class TableWithGeneratedColumnsRepoMock(
     )
   }
 
-  def upsert(unsaved: TableWithGeneratedColumnsRow)(using c: Connection): TableWithGeneratedColumnsRow = {
+  override def upsert(unsaved: TableWithGeneratedColumnsRow)(using c: Connection): TableWithGeneratedColumnsRow = {
     map.put(unsaved.name, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[TableWithGeneratedColumnsRow])(using c: Connection): java.util.List[TableWithGeneratedColumnsRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[TableWithGeneratedColumnsRow])(using c: Connection): java.util.List[TableWithGeneratedColumnsRow] = {
     val result = new ArrayList[TableWithGeneratedColumnsRow]()
     while (unsaved.hasNext()) {
       val row = unsaved.next()
       map.put(row.name, row): @scala.annotation.nowarn
       result.add(row): @scala.annotation.nowarn
     }
-    result
+    return result
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[TableWithGeneratedColumnsRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
@@ -133,6 +134,6 @@ case class TableWithGeneratedColumnsRepoMock(
       map.put(row.name, row): @scala.annotation.nowarn
       count = count + 1
     }
-    count
+    return count
   }
 }

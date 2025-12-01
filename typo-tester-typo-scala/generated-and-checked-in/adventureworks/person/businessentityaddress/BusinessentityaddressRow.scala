@@ -14,7 +14,6 @@ import adventureworks.person.businessentity.BusinessentityId
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple5
 
 /** Table: person.businessentityaddress
  * Cross-reference table mapping customers, vendors, and employees to their addresses.
@@ -57,15 +56,7 @@ case class BusinessentityaddressRow(
 }
 
 object BusinessentityaddressRow {
-  val `_rowParser`: RowParser[BusinessentityaddressRow] = {
-    RowParsers.of(BusinessentityId.pgType, AddressId.pgType, AddresstypeId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BusinessentityaddressRow.apply, row => new Tuple5(
-      row.businessentityid,
-      row.addressid,
-      row.addresstypeid,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[BusinessentityaddressRow] = RowParsers.of(BusinessentityId.pgType, AddressId.pgType, AddresstypeId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BusinessentityaddressRow.apply, row => Array(row.businessentityid, row.addressid, row.addresstypeid, row.rowguid, row.modifieddate))
 
   def apply(
     compositeId: BusinessentityaddressId,

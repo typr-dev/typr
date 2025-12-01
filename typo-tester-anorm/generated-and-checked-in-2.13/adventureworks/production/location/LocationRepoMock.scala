@@ -21,13 +21,13 @@ case class LocationRepoMock(
   toRow: LocationRowUnsaved => LocationRow,
   map: scala.collection.mutable.Map[LocationId, LocationRow] = scala.collection.mutable.Map.empty[LocationId, LocationRow]
 ) extends LocationRepo {
-  def delete: DeleteBuilder[LocationFields, LocationRow] = DeleteBuilderMock(DeleteParams.empty, LocationFields.structure, map)
+  override def delete: DeleteBuilder[LocationFields, LocationRow] = DeleteBuilderMock(DeleteParams.empty, LocationFields.structure, map)
 
-  def deleteById(locationid: LocationId)(implicit c: Connection): Boolean = map.remove(locationid).isDefined
+  override def deleteById(locationid: LocationId)(implicit c: Connection): Boolean = map.remove(locationid).isDefined
 
-  def deleteByIds(locationids: Array[LocationId])(implicit c: Connection): Int = locationids.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(locationids: Array[LocationId])(implicit c: Connection): Int = locationids.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: LocationRow)(implicit c: Connection): LocationRow = {
+  override def insert(unsaved: LocationRow)(implicit c: Connection): LocationRow = {
     val _ = if (map.contains(unsaved.locationid))
       sys.error(s"id ${unsaved.locationid} already exists")
     else
@@ -36,9 +36,9 @@ case class LocationRepoMock(
     unsaved
   }
 
-  def insert(unsaved: LocationRowUnsaved)(implicit c: Connection): LocationRow = insert(toRow(unsaved))
+  override def insert(unsaved: LocationRowUnsaved)(implicit c: Connection): LocationRow = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[LocationRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = {
@@ -49,7 +49,7 @@ case class LocationRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[LocationRowUnsaved],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = {
@@ -60,34 +60,34 @@ case class LocationRepoMock(
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[LocationFields, LocationRow] = SelectBuilderMock(LocationFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[LocationFields, LocationRow] = SelectBuilderMock(LocationFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(implicit c: Connection): List[LocationRow] = map.values.toList
+  override def selectAll(implicit c: Connection): List[LocationRow] = map.values.toList
 
-  def selectById(locationid: LocationId)(implicit c: Connection): Option[LocationRow] = map.get(locationid)
+  override def selectById(locationid: LocationId)(implicit c: Connection): Option[LocationRow] = map.get(locationid)
 
-  def selectByIds(locationids: Array[LocationId])(implicit c: Connection): List[LocationRow] = locationids.flatMap(map.get).toList
+  override def selectByIds(locationids: Array[LocationId])(implicit c: Connection): List[LocationRow] = locationids.flatMap(map.get).toList
 
-  def selectByIdsTracked(locationids: Array[LocationId])(implicit c: Connection): Map[LocationId, LocationRow] = {
+  override def selectByIdsTracked(locationids: Array[LocationId])(implicit c: Connection): Map[LocationId, LocationRow] = {
     val byId = selectByIds(locationids).view.map(x => (x.locationid, x)).toMap
     locationids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[LocationFields, LocationRow] = UpdateBuilderMock(UpdateParams.empty, LocationFields.structure, map)
+  override def update: UpdateBuilder[LocationFields, LocationRow] = UpdateBuilderMock(UpdateParams.empty, LocationFields.structure, map)
 
-  def update(row: LocationRow)(implicit c: Connection): Option[LocationRow] = {
+  override def update(row: LocationRow)(implicit c: Connection): Option[LocationRow] = {
     map.get(row.locationid).map { _ =>
       map.put(row.locationid, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: LocationRow)(implicit c: Connection): LocationRow = {
+  override def upsert(unsaved: LocationRow)(implicit c: Connection): LocationRow = {
     map.put(unsaved.locationid, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[LocationRow])(implicit c: Connection): List[LocationRow] = {
+  override def upsertBatch(unsaved: Iterable[LocationRow])(implicit c: Connection): List[LocationRow] = {
     unsaved.map { row =>
       map += (row.locationid -> row)
       row
@@ -95,7 +95,7 @@ case class LocationRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[LocationRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

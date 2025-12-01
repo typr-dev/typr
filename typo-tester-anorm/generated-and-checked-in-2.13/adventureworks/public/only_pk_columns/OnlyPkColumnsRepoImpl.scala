@@ -19,11 +19,11 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class OnlyPkColumnsRepoImpl extends OnlyPkColumnsRepo {
-  def delete: DeleteBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = DeleteBuilder.of(""""public"."only_pk_columns"""", OnlyPkColumnsFields.structure, OnlyPkColumnsRow.rowParser(1).*)
+  override def delete: DeleteBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = DeleteBuilder.of(""""public"."only_pk_columns"""", OnlyPkColumnsFields.structure, OnlyPkColumnsRow.rowParser(1).*)
 
-  def deleteById(compositeId: OnlyPkColumnsId)(implicit c: Connection): Boolean = SQL"""delete from "public"."only_pk_columns" where "key_column_1" = ${ParameterValue(compositeId.keyColumn1, null, ToStatement.stringToStatement)} AND "key_column_2" = ${ParameterValue(compositeId.keyColumn2, null, ToStatement.intToStatement)}""".executeUpdate() > 0
+  override def deleteById(compositeId: OnlyPkColumnsId)(implicit c: Connection): Boolean = SQL"""delete from "public"."only_pk_columns" where "key_column_1" = ${ParameterValue(compositeId.keyColumn1, null, ToStatement.stringToStatement)} AND "key_column_2" = ${ParameterValue(compositeId.keyColumn2, null, ToStatement.intToStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(compositeIds: Array[OnlyPkColumnsId])(implicit c: Connection): Int = {
+  override def deleteByIds(compositeIds: Array[OnlyPkColumnsId])(implicit c: Connection): Int = {
     val keyColumn1 = compositeIds.map(_.keyColumn1)
     val keyColumn2 = compositeIds.map(_.keyColumn2)
     SQL"""delete
@@ -33,7 +33,7 @@ class OnlyPkColumnsRepoImpl extends OnlyPkColumnsRepo {
     """.executeUpdate()
   }
 
-  def insert(unsaved: OnlyPkColumnsRow)(implicit c: Connection): OnlyPkColumnsRow = {
+  override def insert(unsaved: OnlyPkColumnsRow)(implicit c: Connection): OnlyPkColumnsRow = {
   SQL"""insert into "public"."only_pk_columns"("key_column_1", "key_column_2")
     values (${ParameterValue(unsaved.keyColumn1, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.keyColumn2, null, ToStatement.intToStatement)}::int4)
     returning "key_column_1", "key_column_2"
@@ -41,27 +41,27 @@ class OnlyPkColumnsRepoImpl extends OnlyPkColumnsRepo {
     .executeInsert(OnlyPkColumnsRow.rowParser(1).single)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[OnlyPkColumnsRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "public"."only_pk_columns"("key_column_1", "key_column_2") FROM STDIN""", batchSize, unsaved)(OnlyPkColumnsRow.pgText, c)
 
-  def select: SelectBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = SelectBuilder.of(""""public"."only_pk_columns"""", OnlyPkColumnsFields.structure, OnlyPkColumnsRow.rowParser)
+  override def select: SelectBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = SelectBuilder.of(""""public"."only_pk_columns"""", OnlyPkColumnsFields.structure, OnlyPkColumnsRow.rowParser)
 
-  def selectAll(implicit c: Connection): List[OnlyPkColumnsRow] = {
+  override def selectAll(implicit c: Connection): List[OnlyPkColumnsRow] = {
     SQL"""select "key_column_1", "key_column_2"
     from "public"."only_pk_columns"
     """.as(OnlyPkColumnsRow.rowParser(1).*)
   }
 
-  def selectById(compositeId: OnlyPkColumnsId)(implicit c: Connection): Option[OnlyPkColumnsRow] = {
+  override def selectById(compositeId: OnlyPkColumnsId)(implicit c: Connection): Option[OnlyPkColumnsRow] = {
     SQL"""select "key_column_1", "key_column_2"
     from "public"."only_pk_columns"
     where "key_column_1" = ${ParameterValue(compositeId.keyColumn1, null, ToStatement.stringToStatement)} AND "key_column_2" = ${ParameterValue(compositeId.keyColumn2, null, ToStatement.intToStatement)}
     """.as(OnlyPkColumnsRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(compositeIds: Array[OnlyPkColumnsId])(implicit c: Connection): List[OnlyPkColumnsRow] = {
+  override def selectByIds(compositeIds: Array[OnlyPkColumnsId])(implicit c: Connection): List[OnlyPkColumnsRow] = {
     val keyColumn1 = compositeIds.map(_.keyColumn1)
     val keyColumn2 = compositeIds.map(_.keyColumn2)
     SQL"""select "key_column_1", "key_column_2"
@@ -71,14 +71,14 @@ class OnlyPkColumnsRepoImpl extends OnlyPkColumnsRepo {
     """.as(OnlyPkColumnsRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(compositeIds: Array[OnlyPkColumnsId])(implicit c: Connection): Map[OnlyPkColumnsId, OnlyPkColumnsRow] = {
+  override def selectByIdsTracked(compositeIds: Array[OnlyPkColumnsId])(implicit c: Connection): Map[OnlyPkColumnsId, OnlyPkColumnsRow] = {
     val byId = selectByIds(compositeIds).view.map(x => (x.compositeId, x)).toMap
     compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = UpdateBuilder.of(""""public"."only_pk_columns"""", OnlyPkColumnsFields.structure, OnlyPkColumnsRow.rowParser(1).*)
+  override def update: UpdateBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = UpdateBuilder.of(""""public"."only_pk_columns"""", OnlyPkColumnsFields.structure, OnlyPkColumnsRow.rowParser(1).*)
 
-  def upsert(unsaved: OnlyPkColumnsRow)(implicit c: Connection): OnlyPkColumnsRow = {
+  override def upsert(unsaved: OnlyPkColumnsRow)(implicit c: Connection): OnlyPkColumnsRow = {
   SQL"""insert into "public"."only_pk_columns"("key_column_1", "key_column_2")
     values (
       ${ParameterValue(unsaved.keyColumn1, null, ToStatement.stringToStatement)},
@@ -91,11 +91,12 @@ class OnlyPkColumnsRepoImpl extends OnlyPkColumnsRepo {
     .executeInsert(OnlyPkColumnsRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[OnlyPkColumnsRow])(implicit c: Connection): List[OnlyPkColumnsRow] = {
+  override def upsertBatch(unsaved: Iterable[OnlyPkColumnsRow])(implicit c: Connection): List[OnlyPkColumnsRow] = {
     def toNamedParameter(row: OnlyPkColumnsRow): List[NamedParameter] = List(
       NamedParameter("key_column_1", ParameterValue(row.keyColumn1, null, ToStatement.stringToStatement)),
       NamedParameter("key_column_2", ParameterValue(row.keyColumn2, null, ToStatement.intToStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -115,7 +116,7 @@ class OnlyPkColumnsRepoImpl extends OnlyPkColumnsRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[OnlyPkColumnsRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

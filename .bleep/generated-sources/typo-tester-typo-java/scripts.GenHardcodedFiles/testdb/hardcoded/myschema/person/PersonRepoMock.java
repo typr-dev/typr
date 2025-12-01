@@ -5,6 +5,7 @@
  */
 package testdb.hardcoded.myschema.person;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record PersonRepoMock(
     return new PersonRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<PersonFields, PersonRow> delete() {
     return new DeleteBuilderMock<>(PersonFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.id(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     PersonId id,
     Connection c
@@ -52,28 +55,31 @@ public record PersonRepoMock(
     return Optional.ofNullable(map.remove(id)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     PersonId[] ids,
     Connection c
   ) {
     var count = 0;
-      for (var id : ids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : ids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public PersonRow insert(
     PersonRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.id())) {
-        throw new RuntimeException(str("id $unsaved.id() already exists"));
-      };
-      map.put(unsaved.id(), unsaved);
+      throw new RuntimeException(str("id $unsaved.id() already exists"));
+    };
+    map.put(unsaved.id(), unsaved);
     return unsaved;
   };
 
+  @Override
   public PersonRow insert(
     PersonRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record PersonRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<PersonRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.id(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.id(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<PersonRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.id(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.id(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<PersonFields, PersonRow> select() {
     return new SelectBuilderMock<>(PersonFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<PersonRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<PersonRow> selectById(
     PersonId id,
     Connection c
@@ -126,38 +137,43 @@ public record PersonRepoMock(
     return Optional.ofNullable(map.get(id));
   };
 
+  @Override
   public List<PersonRow> selectByIds(
     PersonId[] ids,
     Connection c
   ) {
     var result = new ArrayList<PersonRow>();
-      for (var id : ids) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : ids) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<PersonId, PersonRow> selectByIdsTracked(
     PersonId[] ids,
     Connection c
   ) {
-    return selectByIds(ids, c).stream().collect(Collectors.toMap((testdb.hardcoded.myschema.person.PersonRow row) -> row.id(), Function.identity()));
+    return selectByIds(ids, c).stream().collect(Collectors.toMap((PersonRow row) -> row.id(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<PersonFields, PersonRow> update() {
     return new UpdateBuilderMock<>(PersonFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     PersonRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.id())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.id(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.id(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public PersonRow upsert(
     PersonRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record PersonRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<PersonRow> upsertBatch(
     Iterator<PersonRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<PersonRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.id(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.id(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<PersonRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.id(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.id(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

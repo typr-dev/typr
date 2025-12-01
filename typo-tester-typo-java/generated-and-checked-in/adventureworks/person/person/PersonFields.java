@@ -26,7 +26,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface PersonFields {
-  static final class Impl extends Relation<PersonFields, PersonRow> {
+  final class Impl extends Relation<PersonFields, PersonRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -34,42 +34,55 @@ public interface PersonFields {
     @Override
     public PersonFields fields() {
       return new PersonFields() {
+               @Override
                public IdField<BusinessentityId, PersonRow> businessentityid() {
                  return new IdField<BusinessentityId, PersonRow>(_path, "businessentityid", PersonRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public Field</* bpchar, max 2 chars */ String, PersonRow> persontype() {
                  return new Field</* bpchar, max 2 chars */ String, PersonRow>(_path, "persontype", PersonRow::persontype, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withPersontype(value), PgTypes.text);
                };
+               @Override
                public Field<NameStyle, PersonRow> namestyle() {
                  return new Field<NameStyle, PersonRow>(_path, "namestyle", PersonRow::namestyle, Optional.empty(), Optional.of("bool"), (row, value) -> row.withNamestyle(value), NameStyle.pgType);
                };
+               @Override
                public OptField</* max 8 chars */ String, PersonRow> title() {
                  return new OptField</* max 8 chars */ String, PersonRow>(_path, "title", PersonRow::title, Optional.empty(), Optional.empty(), (row, value) -> row.withTitle(value), PgTypes.text);
                };
+               @Override
                public Field</* user-picked */ FirstName, PersonRow> firstname() {
                  return new Field</* user-picked */ FirstName, PersonRow>(_path, "firstname", PersonRow::firstname, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withFirstname(value), /* user-picked */ FirstName.pgType);
                };
+               @Override
                public OptField<Name, PersonRow> middlename() {
                  return new OptField<Name, PersonRow>(_path, "middlename", PersonRow::middlename, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withMiddlename(value), Name.pgType);
                };
+               @Override
                public Field<Name, PersonRow> lastname() {
                  return new Field<Name, PersonRow>(_path, "lastname", PersonRow::lastname, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withLastname(value), Name.pgType);
                };
+               @Override
                public OptField</* max 10 chars */ String, PersonRow> suffix() {
                  return new OptField</* max 10 chars */ String, PersonRow>(_path, "suffix", PersonRow::suffix, Optional.empty(), Optional.empty(), (row, value) -> row.withSuffix(value), PgTypes.text);
                };
+               @Override
                public Field<Integer, PersonRow> emailpromotion() {
                  return new Field<Integer, PersonRow>(_path, "emailpromotion", PersonRow::emailpromotion, Optional.empty(), Optional.of("int4"), (row, value) -> row.withEmailpromotion(value), PgTypes.int4);
                };
+               @Override
                public OptField<TypoXml, PersonRow> additionalcontactinfo() {
                  return new OptField<TypoXml, PersonRow>(_path, "additionalcontactinfo", PersonRow::additionalcontactinfo, Optional.empty(), Optional.of("xml"), (row, value) -> row.withAdditionalcontactinfo(value), TypoXml.pgType);
                };
+               @Override
                public OptField<TypoXml, PersonRow> demographics() {
                  return new OptField<TypoXml, PersonRow>(_path, "demographics", PersonRow::demographics, Optional.empty(), Optional.of("xml"), (row, value) -> row.withDemographics(value), TypoXml.pgType);
                };
+               @Override
                public Field<TypoUUID, PersonRow> rowguid() {
                  return new Field<TypoUUID, PersonRow>(_path, "rowguid", PersonRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, PersonRow> modifieddate() {
                  return new Field<TypoLocalDateTime, PersonRow>(_path, "modifieddate", PersonRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -81,6 +94,7 @@ public interface PersonFields {
       return List.of(this.fields().businessentityid(), this.fields().persontype(), this.fields().namestyle(), this.fields().title(), this.fields().firstname(), this.fields().middlename(), this.fields().lastname(), this.fields().suffix(), this.fields().emailpromotion(), this.fields().additionalcontactinfo(), this.fields().demographics(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

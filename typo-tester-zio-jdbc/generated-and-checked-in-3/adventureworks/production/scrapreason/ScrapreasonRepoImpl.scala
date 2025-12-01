@@ -21,20 +21,20 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class ScrapreasonRepoImpl extends ScrapreasonRepo {
-  def delete: DeleteBuilder[ScrapreasonFields, ScrapreasonRow] = DeleteBuilder.of(""""production"."scrapreason"""", ScrapreasonFields.structure, ScrapreasonRow.jdbcDecoder)
+  override def delete: DeleteBuilder[ScrapreasonFields, ScrapreasonRow] = DeleteBuilder.of(""""production"."scrapreason"""", ScrapreasonFields.structure, ScrapreasonRow.jdbcDecoder)
 
-  def deleteById(scrapreasonid: ScrapreasonId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "production"."scrapreason" where "scrapreasonid" = ${Segment.paramSegment(scrapreasonid)(using ScrapreasonId.setter)}""".delete.map(_ > 0)
+  override def deleteById(scrapreasonid: ScrapreasonId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "production"."scrapreason" where "scrapreasonid" = ${Segment.paramSegment(scrapreasonid)(using ScrapreasonId.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(scrapreasonids: Array[ScrapreasonId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "production"."scrapreason" where "scrapreasonid" = ANY(${Segment.paramSegment(scrapreasonids)(using ScrapreasonId.arraySetter)})""".delete
+  override def deleteByIds(scrapreasonids: Array[ScrapreasonId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "production"."scrapreason" where "scrapreasonid" = ANY(${Segment.paramSegment(scrapreasonids)(using ScrapreasonId.arraySetter)})""".delete
 
-  def insert(unsaved: ScrapreasonRow): ZIO[ZConnection, Throwable, ScrapreasonRow] = {
+  override def insert(unsaved: ScrapreasonRow): ZIO[ZConnection, Throwable, ScrapreasonRow] = {
     sql"""insert into "production"."scrapreason"("scrapreasonid", "name", "modifieddate")
     values (${Segment.paramSegment(unsaved.scrapreasonid)(using ScrapreasonId.setter)}::int4, ${Segment.paramSegment(unsaved.name)(using Name.setter)}::varchar, ${Segment.paramSegment(unsaved.modifieddate)(using TypoLocalDateTime.setter)}::timestamp)
     returning "scrapreasonid", "name", "modifieddate"::text
     """.insertReturning(using ScrapreasonRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insert(unsaved: ScrapreasonRowUnsaved): ZIO[ZConnection, Throwable, ScrapreasonRow] = {
+  override def insert(unsaved: ScrapreasonRowUnsaved): ZIO[ZConnection, Throwable, ScrapreasonRow] = {
     val fs = List(
       Some((sql""""name"""", sql"${Segment.paramSegment(unsaved.name)(using Name.setter)}::varchar")),
       unsaved.scrapreasonid match {
@@ -58,35 +58,35 @@ class ScrapreasonRepoImpl extends ScrapreasonRepo {
     q.insertReturning(using ScrapreasonRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, ScrapreasonRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "production"."scrapreason"("scrapreasonid", "name", "modifieddate") FROM STDIN""", batchSize, unsaved)(using ScrapreasonRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, ScrapreasonRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "production"."scrapreason"("name", "scrapreasonid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using ScrapreasonRowUnsaved.pgText)
 
-  def select: SelectBuilder[ScrapreasonFields, ScrapreasonRow] = SelectBuilder.of(""""production"."scrapreason"""", ScrapreasonFields.structure, ScrapreasonRow.jdbcDecoder)
+  override def select: SelectBuilder[ScrapreasonFields, ScrapreasonRow] = SelectBuilder.of(""""production"."scrapreason"""", ScrapreasonFields.structure, ScrapreasonRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, ScrapreasonRow] = sql"""select "scrapreasonid", "name", "modifieddate"::text from "production"."scrapreason"""".query(using ScrapreasonRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, ScrapreasonRow] = sql"""select "scrapreasonid", "name", "modifieddate"::text from "production"."scrapreason"""".query(using ScrapreasonRow.jdbcDecoder).selectStream()
 
-  def selectById(scrapreasonid: ScrapreasonId): ZIO[ZConnection, Throwable, Option[ScrapreasonRow]] = sql"""select "scrapreasonid", "name", "modifieddate"::text from "production"."scrapreason" where "scrapreasonid" = ${Segment.paramSegment(scrapreasonid)(using ScrapreasonId.setter)}""".query(using ScrapreasonRow.jdbcDecoder).selectOne
+  override def selectById(scrapreasonid: ScrapreasonId): ZIO[ZConnection, Throwable, Option[ScrapreasonRow]] = sql"""select "scrapreasonid", "name", "modifieddate"::text from "production"."scrapreason" where "scrapreasonid" = ${Segment.paramSegment(scrapreasonid)(using ScrapreasonId.setter)}""".query(using ScrapreasonRow.jdbcDecoder).selectOne
 
-  def selectByIds(scrapreasonids: Array[ScrapreasonId]): ZStream[ZConnection, Throwable, ScrapreasonRow] = sql"""select "scrapreasonid", "name", "modifieddate"::text from "production"."scrapreason" where "scrapreasonid" = ANY(${Segment.paramSegment(scrapreasonids)(using ScrapreasonId.arraySetter)})""".query(using ScrapreasonRow.jdbcDecoder).selectStream()
+  override def selectByIds(scrapreasonids: Array[ScrapreasonId]): ZStream[ZConnection, Throwable, ScrapreasonRow] = sql"""select "scrapreasonid", "name", "modifieddate"::text from "production"."scrapreason" where "scrapreasonid" = ANY(${Segment.paramSegment(scrapreasonids)(using ScrapreasonId.arraySetter)})""".query(using ScrapreasonRow.jdbcDecoder).selectStream()
 
-  def selectByIdsTracked(scrapreasonids: Array[ScrapreasonId]): ZIO[ZConnection, Throwable, Map[ScrapreasonId, ScrapreasonRow]] = {
+  override def selectByIdsTracked(scrapreasonids: Array[ScrapreasonId]): ZIO[ZConnection, Throwable, Map[ScrapreasonId, ScrapreasonRow]] = {
     selectByIds(scrapreasonids).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.scrapreasonid, x)).toMap
       scrapreasonids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[ScrapreasonFields, ScrapreasonRow] = UpdateBuilder.of(""""production"."scrapreason"""", ScrapreasonFields.structure, ScrapreasonRow.jdbcDecoder)
+  override def update: UpdateBuilder[ScrapreasonFields, ScrapreasonRow] = UpdateBuilder.of(""""production"."scrapreason"""", ScrapreasonFields.structure, ScrapreasonRow.jdbcDecoder)
 
-  def update(row: ScrapreasonRow): ZIO[ZConnection, Throwable, Option[ScrapreasonRow]] = {
+  override def update(row: ScrapreasonRow): ZIO[ZConnection, Throwable, Option[ScrapreasonRow]] = {
     val scrapreasonid = row.scrapreasonid
     sql"""update "production"."scrapreason"
     set "name" = ${Segment.paramSegment(row.name)(using Name.setter)}::varchar,
@@ -97,7 +97,7 @@ class ScrapreasonRepoImpl extends ScrapreasonRepo {
       .selectOne
   }
 
-  def upsert(unsaved: ScrapreasonRow): ZIO[ZConnection, Throwable, UpdateResult[ScrapreasonRow]] = {
+  override def upsert(unsaved: ScrapreasonRow): ZIO[ZConnection, Throwable, UpdateResult[ScrapreasonRow]] = {
     sql"""insert into "production"."scrapreason"("scrapreasonid", "name", "modifieddate")
     values (
       ${Segment.paramSegment(unsaved.scrapreasonid)(using ScrapreasonId.setter)}::int4,
@@ -112,7 +112,7 @@ class ScrapreasonRepoImpl extends ScrapreasonRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, ScrapreasonRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

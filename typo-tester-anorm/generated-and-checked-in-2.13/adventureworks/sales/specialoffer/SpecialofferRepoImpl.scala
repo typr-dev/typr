@@ -25,18 +25,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class SpecialofferRepoImpl extends SpecialofferRepo {
-  def delete: DeleteBuilder[SpecialofferFields, SpecialofferRow] = DeleteBuilder.of(""""sales"."specialoffer"""", SpecialofferFields.structure, SpecialofferRow.rowParser(1).*)
+  override def delete: DeleteBuilder[SpecialofferFields, SpecialofferRow] = DeleteBuilder.of(""""sales"."specialoffer"""", SpecialofferFields.structure, SpecialofferRow.rowParser(1).*)
 
-  def deleteById(specialofferid: SpecialofferId)(implicit c: Connection): Boolean = SQL"""delete from "sales"."specialoffer" where "specialofferid" = ${ParameterValue(specialofferid, null, SpecialofferId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(specialofferid: SpecialofferId)(implicit c: Connection): Boolean = SQL"""delete from "sales"."specialoffer" where "specialofferid" = ${ParameterValue(specialofferid, null, SpecialofferId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(specialofferids: Array[SpecialofferId])(implicit c: Connection): Int = {
+  override def deleteByIds(specialofferids: Array[SpecialofferId])(implicit c: Connection): Int = {
     SQL"""delete
     from "sales"."specialoffer"
     where "specialofferid" = ANY(${ParameterValue(specialofferids, null, SpecialofferId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: SpecialofferRow)(implicit c: Connection): SpecialofferRow = {
+  override def insert(unsaved: SpecialofferRow)(implicit c: Connection): SpecialofferRow = {
   SQL"""insert into "sales"."specialoffer"("specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate")
     values (${ParameterValue(unsaved.specialofferid, null, SpecialofferId.toStatement)}::int4, ${ParameterValue(unsaved.description, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.discountpct, null, ToStatement.scalaBigDecimalToStatement)}::numeric, ${ParameterValue(unsaved.`type`, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.category, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.startdate, null, TypoLocalDateTime.toStatement)}::timestamp, ${ParameterValue(unsaved.enddate, null, TypoLocalDateTime.toStatement)}::timestamp, ${ParameterValue(unsaved.minqty, null, ToStatement.intToStatement)}::int4, ${ParameterValue(unsaved.maxqty, null, ToStatement.optionToStatement(ToStatement.intToStatement, ParameterMetaData.IntParameterMetaData))}::int4, ${ParameterValue(unsaved.rowguid, null, TypoUUID.toStatement)}::uuid, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text
@@ -44,7 +44,7 @@ class SpecialofferRepoImpl extends SpecialofferRepo {
     .executeInsert(SpecialofferRow.rowParser(1).single)
   }
 
-  def insert(unsaved: SpecialofferRowUnsaved)(implicit c: Connection): SpecialofferRow = {
+  override def insert(unsaved: SpecialofferRowUnsaved)(implicit c: Connection): SpecialofferRow = {
     val namedParameters = List(
       Some((NamedParameter("description", ParameterValue(unsaved.description, null, ToStatement.stringToStatement)), "")),
       Some((NamedParameter("type", ParameterValue(unsaved.`type`, null, ToStatement.stringToStatement)), "")),
@@ -89,47 +89,47 @@ class SpecialofferRepoImpl extends SpecialofferRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[SpecialofferRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "sales"."specialoffer"("specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved)(SpecialofferRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[SpecialofferRowUnsaved],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "sales"."specialoffer"("description", "type", "category", "startdate", "enddate", "maxqty", "specialofferid", "discountpct", "minqty", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(SpecialofferRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[SpecialofferFields, SpecialofferRow] = SelectBuilder.of(""""sales"."specialoffer"""", SpecialofferFields.structure, SpecialofferRow.rowParser)
+  override def select: SelectBuilder[SpecialofferFields, SpecialofferRow] = SelectBuilder.of(""""sales"."specialoffer"""", SpecialofferFields.structure, SpecialofferRow.rowParser)
 
-  def selectAll(implicit c: Connection): List[SpecialofferRow] = {
+  override def selectAll(implicit c: Connection): List[SpecialofferRow] = {
     SQL"""select "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text
     from "sales"."specialoffer"
     """.as(SpecialofferRow.rowParser(1).*)
   }
 
-  def selectById(specialofferid: SpecialofferId)(implicit c: Connection): Option[SpecialofferRow] = {
+  override def selectById(specialofferid: SpecialofferId)(implicit c: Connection): Option[SpecialofferRow] = {
     SQL"""select "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text
     from "sales"."specialoffer"
     where "specialofferid" = ${ParameterValue(specialofferid, null, SpecialofferId.toStatement)}
     """.as(SpecialofferRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(specialofferids: Array[SpecialofferId])(implicit c: Connection): List[SpecialofferRow] = {
+  override def selectByIds(specialofferids: Array[SpecialofferId])(implicit c: Connection): List[SpecialofferRow] = {
     SQL"""select "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text
     from "sales"."specialoffer"
     where "specialofferid" = ANY(${ParameterValue(specialofferids, null, SpecialofferId.arrayToStatement)})
     """.as(SpecialofferRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(specialofferids: Array[SpecialofferId])(implicit c: Connection): Map[SpecialofferId, SpecialofferRow] = {
+  override def selectByIdsTracked(specialofferids: Array[SpecialofferId])(implicit c: Connection): Map[SpecialofferId, SpecialofferRow] = {
     val byId = selectByIds(specialofferids).view.map(x => (x.specialofferid, x)).toMap
     specialofferids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[SpecialofferFields, SpecialofferRow] = UpdateBuilder.of(""""sales"."specialoffer"""", SpecialofferFields.structure, SpecialofferRow.rowParser(1).*)
+  override def update: UpdateBuilder[SpecialofferFields, SpecialofferRow] = UpdateBuilder.of(""""sales"."specialoffer"""", SpecialofferFields.structure, SpecialofferRow.rowParser(1).*)
 
-  def update(row: SpecialofferRow)(implicit c: Connection): Option[SpecialofferRow] = {
+  override def update(row: SpecialofferRow)(implicit c: Connection): Option[SpecialofferRow] = {
     val specialofferid = row.specialofferid
     SQL"""update "sales"."specialoffer"
     set "description" = ${ParameterValue(row.description, null, ToStatement.stringToStatement)},
@@ -147,7 +147,7 @@ class SpecialofferRepoImpl extends SpecialofferRepo {
     """.executeInsert(SpecialofferRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: SpecialofferRow)(implicit c: Connection): SpecialofferRow = {
+  override def upsert(unsaved: SpecialofferRow)(implicit c: Connection): SpecialofferRow = {
   SQL"""insert into "sales"."specialoffer"("specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate")
     values (
       ${ParameterValue(unsaved.specialofferid, null, SpecialofferId.toStatement)}::int4,
@@ -179,7 +179,7 @@ class SpecialofferRepoImpl extends SpecialofferRepo {
     .executeInsert(SpecialofferRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[SpecialofferRow])(implicit c: Connection): List[SpecialofferRow] = {
+  override def upsertBatch(unsaved: Iterable[SpecialofferRow])(implicit c: Connection): List[SpecialofferRow] = {
     def toNamedParameter(row: SpecialofferRow): List[NamedParameter] = List(
       NamedParameter("specialofferid", ParameterValue(row.specialofferid, null, SpecialofferId.toStatement)),
       NamedParameter("description", ParameterValue(row.description, null, ToStatement.stringToStatement)),
@@ -193,6 +193,7 @@ class SpecialofferRepoImpl extends SpecialofferRepo {
       NamedParameter("rowguid", ParameterValue(row.rowguid, null, TypoUUID.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -222,7 +223,7 @@ class SpecialofferRepoImpl extends SpecialofferRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[SpecialofferRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

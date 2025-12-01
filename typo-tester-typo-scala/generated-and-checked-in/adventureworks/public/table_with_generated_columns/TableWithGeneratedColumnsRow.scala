@@ -5,11 +5,11 @@
  */
 package adventureworks.public.table_with_generated_columns
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple2
 
 /** Table: public.table-with-generated-columns
  * Primary key: name
@@ -22,7 +22,7 @@ case class TableWithGeneratedColumnsRow(
       WHEN (name = 'a'::text) THEN 'a-name'::text
       ELSE 'some-name'::text
   END */
-  nameTypeAlways: String
+  @JsonProperty("name-type-always") nameTypeAlways: String
 ) {
   def id: TableWithGeneratedColumnsId = name
 
@@ -30,7 +30,7 @@ case class TableWithGeneratedColumnsRow(
 }
 
 object TableWithGeneratedColumnsRow {
-  val `_rowParser`: RowParser[TableWithGeneratedColumnsRow] = RowParsers.of(TableWithGeneratedColumnsId.pgType, PgTypes.text, TableWithGeneratedColumnsRow.apply, row => new Tuple2(row.name, row.nameTypeAlways))
+  val `_rowParser`: RowParser[TableWithGeneratedColumnsRow] = RowParsers.of(TableWithGeneratedColumnsId.pgType, PgTypes.text, TableWithGeneratedColumnsRow.apply, row => Array(row.name, row.nameTypeAlways))
 
   given pgText: PgText[TableWithGeneratedColumnsRow] = PgText.from(`_rowParser`)
 }

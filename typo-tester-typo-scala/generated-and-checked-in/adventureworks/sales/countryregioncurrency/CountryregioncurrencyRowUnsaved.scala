@@ -29,13 +29,5 @@ case class CountryregioncurrencyRowUnsaved(
 }
 
 object CountryregioncurrencyRowUnsaved {
-  given pgText: PgText[CountryregioncurrencyRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      CountryregionId.pgType.pgText.unsafeEncode(row.countryregioncode, sb);
-      sb.append(PgText.DELIMETER);
-      CurrencyId.pgType.pgText.unsafeEncode(row.currencycode, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[CountryregioncurrencyRowUnsaved] = PgText.instance((row, sb) => { CountryregionId.pgType.pgText.unsafeEncode(row.countryregioncode, sb); sb.append(PgText.DELIMETER); CurrencyId.pgType.pgText.unsafeEncode(row.currencycode, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

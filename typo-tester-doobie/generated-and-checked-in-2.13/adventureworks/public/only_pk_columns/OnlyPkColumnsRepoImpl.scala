@@ -19,11 +19,11 @@ import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class OnlyPkColumnsRepoImpl extends OnlyPkColumnsRepo {
-  def delete: DeleteBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = DeleteBuilder.of(""""public"."only_pk_columns"""", OnlyPkColumnsFields.structure, OnlyPkColumnsRow.read)
+  override def delete: DeleteBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = DeleteBuilder.of(""""public"."only_pk_columns"""", OnlyPkColumnsFields.structure, OnlyPkColumnsRow.read)
 
-  def deleteById(compositeId: OnlyPkColumnsId): ConnectionIO[Boolean] = sql"""delete from "public"."only_pk_columns" where "key_column_1" = ${fromWrite(compositeId.keyColumn1)(new Write.Single(Meta.StringMeta.put))} AND "key_column_2" = ${fromWrite(compositeId.keyColumn2)(new Write.Single(Meta.IntMeta.put))}""".update.run.map(_ > 0)
+  override def deleteById(compositeId: OnlyPkColumnsId): ConnectionIO[Boolean] = sql"""delete from "public"."only_pk_columns" where "key_column_1" = ${fromWrite(compositeId.keyColumn1)(new Write.Single(Meta.StringMeta.put))} AND "key_column_2" = ${fromWrite(compositeId.keyColumn2)(new Write.Single(Meta.IntMeta.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(compositeIds: Array[OnlyPkColumnsId]): ConnectionIO[Int] = {
+  override def deleteByIds(compositeIds: Array[OnlyPkColumnsId]): ConnectionIO[Int] = {
     val keyColumn1 = compositeIds.map(_.keyColumn1)
     val keyColumn2 = compositeIds.map(_.keyColumn2)
     sql"""delete
@@ -33,25 +33,25 @@ class OnlyPkColumnsRepoImpl extends OnlyPkColumnsRepo {
     """.update.run
   }
 
-  def insert(unsaved: OnlyPkColumnsRow): ConnectionIO[OnlyPkColumnsRow] = {
+  override def insert(unsaved: OnlyPkColumnsRow): ConnectionIO[OnlyPkColumnsRow] = {
     sql"""insert into "public"."only_pk_columns"("key_column_1", "key_column_2")
     values (${fromWrite(unsaved.keyColumn1)(new Write.Single(Meta.StringMeta.put))}, ${fromWrite(unsaved.keyColumn2)(new Write.Single(Meta.IntMeta.put))}::int4)
     returning "key_column_1", "key_column_2"
     """.query(OnlyPkColumnsRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, OnlyPkColumnsRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "public"."only_pk_columns"("key_column_1", "key_column_2") FROM STDIN""").copyIn(unsaved, batchSize)(OnlyPkColumnsRow.pgText)
 
-  def select: SelectBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = SelectBuilder.of(""""public"."only_pk_columns"""", OnlyPkColumnsFields.structure, OnlyPkColumnsRow.read)
+  override def select: SelectBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = SelectBuilder.of(""""public"."only_pk_columns"""", OnlyPkColumnsFields.structure, OnlyPkColumnsRow.read)
 
-  def selectAll: Stream[ConnectionIO, OnlyPkColumnsRow] = sql"""select "key_column_1", "key_column_2" from "public"."only_pk_columns"""".query(OnlyPkColumnsRow.read).stream
+  override def selectAll: Stream[ConnectionIO, OnlyPkColumnsRow] = sql"""select "key_column_1", "key_column_2" from "public"."only_pk_columns"""".query(OnlyPkColumnsRow.read).stream
 
-  def selectById(compositeId: OnlyPkColumnsId): ConnectionIO[Option[OnlyPkColumnsRow]] = sql"""select "key_column_1", "key_column_2" from "public"."only_pk_columns" where "key_column_1" = ${fromWrite(compositeId.keyColumn1)(new Write.Single(Meta.StringMeta.put))} AND "key_column_2" = ${fromWrite(compositeId.keyColumn2)(new Write.Single(Meta.IntMeta.put))}""".query(OnlyPkColumnsRow.read).option
+  override def selectById(compositeId: OnlyPkColumnsId): ConnectionIO[Option[OnlyPkColumnsRow]] = sql"""select "key_column_1", "key_column_2" from "public"."only_pk_columns" where "key_column_1" = ${fromWrite(compositeId.keyColumn1)(new Write.Single(Meta.StringMeta.put))} AND "key_column_2" = ${fromWrite(compositeId.keyColumn2)(new Write.Single(Meta.IntMeta.put))}""".query(OnlyPkColumnsRow.read).option
 
-  def selectByIds(compositeIds: Array[OnlyPkColumnsId]): Stream[ConnectionIO, OnlyPkColumnsRow] = {
+  override def selectByIds(compositeIds: Array[OnlyPkColumnsId]): Stream[ConnectionIO, OnlyPkColumnsRow] = {
     val keyColumn1 = compositeIds.map(_.keyColumn1)
     val keyColumn2 = compositeIds.map(_.keyColumn2)
     sql"""select "key_column_1", "key_column_2"
@@ -61,16 +61,16 @@ class OnlyPkColumnsRepoImpl extends OnlyPkColumnsRepo {
     """.query(OnlyPkColumnsRow.read).stream
   }
 
-  def selectByIdsTracked(compositeIds: Array[OnlyPkColumnsId]): ConnectionIO[Map[OnlyPkColumnsId, OnlyPkColumnsRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[OnlyPkColumnsId]): ConnectionIO[Map[OnlyPkColumnsId, OnlyPkColumnsRow]] = {
     selectByIds(compositeIds).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = UpdateBuilder.of(""""public"."only_pk_columns"""", OnlyPkColumnsFields.structure, OnlyPkColumnsRow.read)
+  override def update: UpdateBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = UpdateBuilder.of(""""public"."only_pk_columns"""", OnlyPkColumnsFields.structure, OnlyPkColumnsRow.read)
 
-  def upsert(unsaved: OnlyPkColumnsRow): ConnectionIO[OnlyPkColumnsRow] = {
+  override def upsert(unsaved: OnlyPkColumnsRow): ConnectionIO[OnlyPkColumnsRow] = {
     sql"""insert into "public"."only_pk_columns"("key_column_1", "key_column_2")
     values (
       ${fromWrite(unsaved.keyColumn1)(new Write.Single(Meta.StringMeta.put))},
@@ -82,7 +82,7 @@ class OnlyPkColumnsRepoImpl extends OnlyPkColumnsRepo {
     """.query(OnlyPkColumnsRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[OnlyPkColumnsRow]): Stream[ConnectionIO, OnlyPkColumnsRow] = {
+  override def upsertBatch(unsaved: List[OnlyPkColumnsRow]): Stream[ConnectionIO, OnlyPkColumnsRow] = {
     Update[OnlyPkColumnsRow](
       s"""insert into "public"."only_pk_columns"("key_column_1", "key_column_2")
       values (?,?::int4)
@@ -94,7 +94,7 @@ class OnlyPkColumnsRepoImpl extends OnlyPkColumnsRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, OnlyPkColumnsRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

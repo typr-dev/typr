@@ -19,7 +19,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface PiViewFields {
-  static final class Impl extends Relation<PiViewFields, PiViewRow> {
+  final class Impl extends Relation<PiViewFields, PiViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -27,27 +27,35 @@ public interface PiViewFields {
     @Override
     public PiViewFields fields() {
       return new PiViewFields() {
+               @Override
                public Field<ProductId, PiViewRow> id() {
                  return new Field<ProductId, PiViewRow>(_path, "id", PiViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ProductId.pgType);
                };
+               @Override
                public Field<ProductId, PiViewRow> productid() {
                  return new Field<ProductId, PiViewRow>(_path, "productid", PiViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
                };
+               @Override
                public Field<LocationId, PiViewRow> locationid() {
                  return new Field<LocationId, PiViewRow>(_path, "locationid", PiViewRow::locationid, Optional.empty(), Optional.empty(), (row, value) -> row.withLocationid(value), LocationId.pgType);
                };
+               @Override
                public Field</* max 10 chars */ String, PiViewRow> shelf() {
                  return new Field</* max 10 chars */ String, PiViewRow>(_path, "shelf", PiViewRow::shelf, Optional.empty(), Optional.empty(), (row, value) -> row.withShelf(value), PgTypes.text);
                };
+               @Override
                public Field<TypoShort, PiViewRow> bin() {
                  return new Field<TypoShort, PiViewRow>(_path, "bin", PiViewRow::bin, Optional.empty(), Optional.empty(), (row, value) -> row.withBin(value), TypoShort.pgType);
                };
+               @Override
                public Field<TypoShort, PiViewRow> quantity() {
                  return new Field<TypoShort, PiViewRow>(_path, "quantity", PiViewRow::quantity, Optional.empty(), Optional.empty(), (row, value) -> row.withQuantity(value), TypoShort.pgType);
                };
+               @Override
                public Field<TypoUUID, PiViewRow> rowguid() {
                  return new Field<TypoUUID, PiViewRow>(_path, "rowguid", PiViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, PiViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, PiViewRow>(_path, "modifieddate", PiViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -59,6 +67,7 @@ public interface PiViewFields {
       return List.of(this.fields().id(), this.fields().productid(), this.fields().locationid(), this.fields().shelf(), this.fields().bin(), this.fields().quantity(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

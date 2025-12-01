@@ -18,7 +18,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface PpViewFields {
-  static final class Impl extends Relation<PpViewFields, PpViewRow> {
+  final class Impl extends Relation<PpViewFields, PpViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -26,24 +26,31 @@ public interface PpViewFields {
     @Override
     public PpViewFields fields() {
       return new PpViewFields() {
+               @Override
                public Field<ProductphotoId, PpViewRow> id() {
                  return new Field<ProductphotoId, PpViewRow>(_path, "id", PpViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ProductphotoId.pgType);
                };
+               @Override
                public Field<ProductphotoId, PpViewRow> productphotoid() {
                  return new Field<ProductphotoId, PpViewRow>(_path, "productphotoid", PpViewRow::productphotoid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductphotoid(value), ProductphotoId.pgType);
                };
+               @Override
                public OptField<TypoBytea, PpViewRow> thumbnailphoto() {
                  return new OptField<TypoBytea, PpViewRow>(_path, "thumbnailphoto", PpViewRow::thumbnailphoto, Optional.empty(), Optional.empty(), (row, value) -> row.withThumbnailphoto(value), TypoBytea.pgType);
                };
+               @Override
                public OptField</* max 50 chars */ String, PpViewRow> thumbnailphotofilename() {
                  return new OptField</* max 50 chars */ String, PpViewRow>(_path, "thumbnailphotofilename", PpViewRow::thumbnailphotofilename, Optional.empty(), Optional.empty(), (row, value) -> row.withThumbnailphotofilename(value), PgTypes.text);
                };
+               @Override
                public OptField<TypoBytea, PpViewRow> largephoto() {
                  return new OptField<TypoBytea, PpViewRow>(_path, "largephoto", PpViewRow::largephoto, Optional.empty(), Optional.empty(), (row, value) -> row.withLargephoto(value), TypoBytea.pgType);
                };
+               @Override
                public OptField</* max 50 chars */ String, PpViewRow> largephotofilename() {
                  return new OptField</* max 50 chars */ String, PpViewRow>(_path, "largephotofilename", PpViewRow::largephotofilename, Optional.empty(), Optional.empty(), (row, value) -> row.withLargephotofilename(value), PgTypes.text);
                };
+               @Override
                public Field<TypoLocalDateTime, PpViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, PpViewRow>(_path, "modifieddate", PpViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -55,6 +62,7 @@ public interface PpViewFields {
       return List.of(this.fields().id(), this.fields().productphotoid(), this.fields().thumbnailphoto(), this.fields().thumbnailphotofilename(), this.fields().largephoto(), this.fields().largephotofilename(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

@@ -29,7 +29,7 @@ object UmViewFields {
 
     override lazy val fields: UmViewFields = {
       new UmViewFields {
-        def id: Field[UnitmeasureId, UmViewRow] = {
+        override def id: Field[UnitmeasureId, UmViewRow] = {
           new Field[UnitmeasureId, UmViewRow](
             _path,
             "id",
@@ -40,7 +40,7 @@ object UmViewFields {
             UnitmeasureId.pgType
           )
         }
-        def unitmeasurecode: Field[UnitmeasureId, UmViewRow] = {
+        override def unitmeasurecode: Field[UnitmeasureId, UmViewRow] = {
           new Field[UnitmeasureId, UmViewRow](
             _path,
             "unitmeasurecode",
@@ -51,7 +51,7 @@ object UmViewFields {
             UnitmeasureId.pgType
           )
         }
-        def name: Field[Name, UmViewRow] = {
+        override def name: Field[Name, UmViewRow] = {
           new Field[Name, UmViewRow](
             _path,
             "name",
@@ -62,7 +62,7 @@ object UmViewFields {
             Name.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, UmViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, UmViewRow] = {
           new Field[TypoLocalDateTime, UmViewRow](
             _path,
             "modifieddate",
@@ -78,7 +78,7 @@ object UmViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, UmViewRow]] = java.util.List.of(this.fields.id, this.fields.unitmeasurecode, this.fields.name, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[UmViewFields, UmViewRow] = new Impl(java.util.List.of())

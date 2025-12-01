@@ -27,8 +27,8 @@ public record TypoShort(@JsonValue Short value) {
     PgText.textShort.contramap(v -> v.value());
 
   static public PgType<TypoShort> pgType =
-    PgTypes.int4.bimap(v -> new TypoShort(v.shortValue()), v -> (int) v.value()).renamed("int2");
+    PgTypes.int4.bimap((Integer v) -> new TypoShort(v.shortValue()), (TypoShort v) -> (int) v.value()).renamed("int2");
 
   static public PgType<TypoShort[]> pgTypeArray =
-    TypoShort.pgType.array(PgRead.massageJdbcArrayTo(Short[].class).map(xs -> arrayMap.map(xs, v -> new TypoShort(v), TypoShort.class)), PgWrite.<Short>passObjectToJdbc().array(TypoShort.pgType.typename().<Short>as()).contramap(xs -> arrayMap.map(xs, (TypoShort v) -> v.value(), Short.class)));
+    TypoShort.pgType.array(PgRead.massageJdbcArrayTo(Short[].class).map((Short[] xs) -> arrayMap.map(xs, (Short v) -> new TypoShort(v), TypoShort.class)), PgWrite.<Short>passObjectToJdbc().array(TypoShort.pgType.typename().<Short>as()).contramap((TypoShort[] xs) -> arrayMap.map(xs, (TypoShort v) -> v.value(), Short.class)));
 }

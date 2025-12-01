@@ -5,6 +5,7 @@
  */
 package adventureworks.humanresources.employeepayhistory
 
+import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
@@ -25,7 +26,7 @@ case class EmployeepayhistoryRepoMock(
   toRow: EmployeepayhistoryRowUnsaved => EmployeepayhistoryRow,
   map: HashMap[EmployeepayhistoryId, EmployeepayhistoryRow] = new HashMap[EmployeepayhistoryId, EmployeepayhistoryRow]()
 ) extends EmployeepayhistoryRepo {
-  def delete: DeleteBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = {
+  override def delete: DeleteBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = {
     new DeleteBuilderMock(
       EmployeepayhistoryFields.structure,
       () => new ArrayList(map.values()),
@@ -35,27 +36,27 @@ case class EmployeepayhistoryRepoMock(
     )
   }
 
-  def deleteById(compositeId: EmployeepayhistoryId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(compositeId)).isPresent()
+  override def deleteById(compositeId: EmployeepayhistoryId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(compositeId)).isPresent()
 
-  def deleteByIds(compositeIds: Array[EmployeepayhistoryId])(using c: Connection): Integer = {
+  override def deleteByIds(compositeIds: Array[EmployeepayhistoryId])(using c: Connection): Integer = {
     var count = 0
     compositeIds.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
-    count
+    return count
   }
 
-  def insert(unsaved: EmployeepayhistoryRow)(using c: Connection): EmployeepayhistoryRow = {
+  override def insert(unsaved: EmployeepayhistoryRow)(using c: Connection): EmployeepayhistoryRow = {
     if (map.containsKey(unsaved.compositeId)) {
       throw new RuntimeException(s"id $unsaved.compositeId already exists")
     }
     map.put(unsaved.compositeId, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def insert(unsaved: EmployeepayhistoryRowUnsaved)(using c: Connection): EmployeepayhistoryRow = insert(toRow(unsaved))(using c)
+  override def insert(unsaved: EmployeepayhistoryRowUnsaved)(using c: Connection): EmployeepayhistoryRow = insert(toRow(unsaved))(using c)
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[EmployeepayhistoryRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -65,11 +66,11 @@ case class EmployeepayhistoryRepoMock(
       map.put(row.compositeId, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[EmployeepayhistoryRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -80,25 +81,25 @@ case class EmployeepayhistoryRepoMock(
       map.put(row.compositeId, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
-  def select: SelectBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = new SelectBuilderMock(EmployeepayhistoryFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
+  override def select: SelectBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = new SelectBuilderMock(EmployeepayhistoryFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  def selectAll(using c: Connection): java.util.List[EmployeepayhistoryRow] = new ArrayList(map.values())
+  override def selectAll(using c: Connection): java.util.List[EmployeepayhistoryRow] = new ArrayList(map.values())
 
-  def selectById(compositeId: EmployeepayhistoryId)(using c: Connection): Optional[EmployeepayhistoryRow] = Optional.ofNullable(map.get(compositeId))
+  override def selectById(compositeId: EmployeepayhistoryId)(using c: Connection): Optional[EmployeepayhistoryRow] = Optional.ofNullable(map.get(compositeId))
 
-  def selectByIds(compositeIds: Array[EmployeepayhistoryId])(using c: Connection): java.util.List[EmployeepayhistoryRow] = {
+  override def selectByIds(compositeIds: Array[EmployeepayhistoryId])(using c: Connection): java.util.List[EmployeepayhistoryRow] = {
     val result = new ArrayList[EmployeepayhistoryRow]()
     compositeIds.foreach { id => val opt = Optional.ofNullable(map.get(id))
     if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
-    result
+    return result
   }
 
-  def selectByIdsTracked(compositeIds: Array[EmployeepayhistoryId])(using c: Connection): java.util.Map[EmployeepayhistoryId, EmployeepayhistoryRow] = selectByIds(compositeIds)(using c).stream().collect(Collectors.toMap((row: adventureworks.humanresources.employeepayhistory.EmployeepayhistoryRow) => row.compositeId, Function.identity()))
+  override def selectByIdsTracked(compositeIds: Array[EmployeepayhistoryId])(using c: Connection): java.util.Map[EmployeepayhistoryId, EmployeepayhistoryRow] = selectByIds(compositeIds)(using c).stream().collect(Collectors.toMap((row: EmployeepayhistoryRow) => row.compositeId, Function.identity()))
 
-  def update: UpdateBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = {
+  override def update: UpdateBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = {
     new UpdateBuilderMock(
       EmployeepayhistoryFields.structure,
       () => new ArrayList(map.values()),
@@ -107,31 +108,31 @@ case class EmployeepayhistoryRepoMock(
     )
   }
 
-  def update(row: EmployeepayhistoryRow)(using c: Connection): java.lang.Boolean = {
-    val shouldUpdate = Optional.ofNullable(map.get(row.compositeId)).filter(oldRow => !oldRow.equals(row)).isPresent()
+  override def update(row: EmployeepayhistoryRow)(using c: Connection): java.lang.Boolean = {
+    val shouldUpdate = Optional.ofNullable(map.get(row.compositeId)).filter(oldRow => (oldRow != row)).isPresent()
     if (shouldUpdate) {
       map.put(row.compositeId, row): @scala.annotation.nowarn
     }
-    shouldUpdate
+    return shouldUpdate
   }
 
-  def upsert(unsaved: EmployeepayhistoryRow)(using c: Connection): EmployeepayhistoryRow = {
+  override def upsert(unsaved: EmployeepayhistoryRow)(using c: Connection): EmployeepayhistoryRow = {
     map.put(unsaved.compositeId, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[EmployeepayhistoryRow])(using c: Connection): java.util.List[EmployeepayhistoryRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[EmployeepayhistoryRow])(using c: Connection): java.util.List[EmployeepayhistoryRow] = {
     val result = new ArrayList[EmployeepayhistoryRow]()
     while (unsaved.hasNext()) {
       val row = unsaved.next()
       map.put(row.compositeId, row): @scala.annotation.nowarn
       result.add(row): @scala.annotation.nowarn
     }
-    result
+    return result
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[EmployeepayhistoryRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
@@ -141,6 +142,6 @@ case class EmployeepayhistoryRepoMock(
       map.put(row.compositeId, row): @scala.annotation.nowarn
       count = count + 1
     }
-    count
+    return count
   }
 }

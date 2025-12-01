@@ -17,7 +17,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface VstorewithaddressesViewFields {
-  static final class Impl extends Relation<VstorewithaddressesViewFields, VstorewithaddressesViewRow> {
+  final class Impl extends Relation<VstorewithaddressesViewFields, VstorewithaddressesViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -25,30 +25,39 @@ public interface VstorewithaddressesViewFields {
     @Override
     public VstorewithaddressesViewFields fields() {
       return new VstorewithaddressesViewFields() {
+               @Override
                public Field<BusinessentityId, VstorewithaddressesViewRow> businessentityid() {
                  return new Field<BusinessentityId, VstorewithaddressesViewRow>(_path, "businessentityid", VstorewithaddressesViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public Field<Name, VstorewithaddressesViewRow> name() {
                  return new Field<Name, VstorewithaddressesViewRow>(_path, "name", VstorewithaddressesViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<Name, VstorewithaddressesViewRow> addresstype() {
                  return new Field<Name, VstorewithaddressesViewRow>(_path, "addresstype", VstorewithaddressesViewRow::addresstype, Optional.empty(), Optional.empty(), (row, value) -> row.withAddresstype(value), Name.pgType);
                };
+               @Override
                public Field</* max 60 chars */ String, VstorewithaddressesViewRow> addressline1() {
                  return new Field</* max 60 chars */ String, VstorewithaddressesViewRow>(_path, "addressline1", VstorewithaddressesViewRow::addressline1, Optional.empty(), Optional.empty(), (row, value) -> row.withAddressline1(value), PgTypes.text);
                };
+               @Override
                public OptField</* max 60 chars */ String, VstorewithaddressesViewRow> addressline2() {
                  return new OptField</* max 60 chars */ String, VstorewithaddressesViewRow>(_path, "addressline2", VstorewithaddressesViewRow::addressline2, Optional.empty(), Optional.empty(), (row, value) -> row.withAddressline2(value), PgTypes.text);
                };
+               @Override
                public Field</* max 30 chars */ String, VstorewithaddressesViewRow> city() {
                  return new Field</* max 30 chars */ String, VstorewithaddressesViewRow>(_path, "city", VstorewithaddressesViewRow::city, Optional.empty(), Optional.empty(), (row, value) -> row.withCity(value), PgTypes.text);
                };
+               @Override
                public Field<Name, VstorewithaddressesViewRow> stateprovincename() {
                  return new Field<Name, VstorewithaddressesViewRow>(_path, "stateprovincename", VstorewithaddressesViewRow::stateprovincename, Optional.empty(), Optional.empty(), (row, value) -> row.withStateprovincename(value), Name.pgType);
                };
+               @Override
                public Field</* max 15 chars */ String, VstorewithaddressesViewRow> postalcode() {
                  return new Field</* max 15 chars */ String, VstorewithaddressesViewRow>(_path, "postalcode", VstorewithaddressesViewRow::postalcode, Optional.empty(), Optional.empty(), (row, value) -> row.withPostalcode(value), PgTypes.text);
                };
+               @Override
                public Field<Name, VstorewithaddressesViewRow> countryregionname() {
                  return new Field<Name, VstorewithaddressesViewRow>(_path, "countryregionname", VstorewithaddressesViewRow::countryregionname, Optional.empty(), Optional.empty(), (row, value) -> row.withCountryregionname(value), Name.pgType);
                };
@@ -60,6 +69,7 @@ public interface VstorewithaddressesViewFields {
       return List.of(this.fields().businessentityid(), this.fields().name(), this.fields().addresstype(), this.fields().addressline1(), this.fields().addressline2(), this.fields().city(), this.fields().stateprovincename(), this.fields().postalcode(), this.fields().countryregionname());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

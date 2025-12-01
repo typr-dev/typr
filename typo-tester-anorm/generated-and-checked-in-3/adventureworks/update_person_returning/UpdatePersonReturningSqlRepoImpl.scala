@@ -13,7 +13,7 @@ import java.sql.Connection
 import anorm.SqlStringInterpolation
 
 class UpdatePersonReturningSqlRepoImpl extends UpdatePersonReturningSqlRepo {
-  def apply(
+  override def apply(
     suffix: /* nullability unknown */ Option[String],
     cutoff: /* nullability unknown */ Option[TypoLocalDateTime]
   )(using c: Connection): List[UpdatePersonReturningSqlRow] = {

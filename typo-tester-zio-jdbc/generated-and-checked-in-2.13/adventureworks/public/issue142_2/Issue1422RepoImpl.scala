@@ -18,42 +18,42 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class Issue1422RepoImpl extends Issue1422Repo {
-  def delete: DeleteBuilder[Issue1422Fields, Issue1422Row] = DeleteBuilder.of(""""public"."issue142_2"""", Issue1422Fields.structure, Issue1422Row.jdbcDecoder)
+  override def delete: DeleteBuilder[Issue1422Fields, Issue1422Row] = DeleteBuilder.of(""""public"."issue142_2"""", Issue1422Fields.structure, Issue1422Row.jdbcDecoder)
 
-  def deleteById(tabellkode: Issue142Id): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "public"."issue142_2" where "tabellkode" = ${Segment.paramSegment(tabellkode)(Issue142Id.setter)}""".delete.map(_ > 0)
+  override def deleteById(tabellkode: Issue142Id): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "public"."issue142_2" where "tabellkode" = ${Segment.paramSegment(tabellkode)(Issue142Id.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(tabellkodes: Array[Issue142Id]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "public"."issue142_2" where "tabellkode" = ANY(${Segment.paramSegment(tabellkodes)(Issue142Id.arraySetter)})""".delete
+  override def deleteByIds(tabellkodes: Array[Issue142Id]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "public"."issue142_2" where "tabellkode" = ANY(${Segment.paramSegment(tabellkodes)(Issue142Id.arraySetter)})""".delete
 
-  def insert(unsaved: Issue1422Row): ZIO[ZConnection, Throwable, Issue1422Row] = {
+  override def insert(unsaved: Issue1422Row): ZIO[ZConnection, Throwable, Issue1422Row] = {
     sql"""insert into "public"."issue142_2"("tabellkode")
     values (${Segment.paramSegment(unsaved.tabellkode)(Issue142Id.setter)})
     returning "tabellkode"
     """.insertReturning(Issue1422Row.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, Issue1422Row],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "public"."issue142_2"("tabellkode") FROM STDIN""", batchSize, unsaved)(Issue1422Row.pgText)
 
-  def select: SelectBuilder[Issue1422Fields, Issue1422Row] = SelectBuilder.of(""""public"."issue142_2"""", Issue1422Fields.structure, Issue1422Row.jdbcDecoder)
+  override def select: SelectBuilder[Issue1422Fields, Issue1422Row] = SelectBuilder.of(""""public"."issue142_2"""", Issue1422Fields.structure, Issue1422Row.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, Issue1422Row] = sql"""select "tabellkode" from "public"."issue142_2"""".query(Issue1422Row.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, Issue1422Row] = sql"""select "tabellkode" from "public"."issue142_2"""".query(Issue1422Row.jdbcDecoder).selectStream()
 
-  def selectById(tabellkode: Issue142Id): ZIO[ZConnection, Throwable, Option[Issue1422Row]] = sql"""select "tabellkode" from "public"."issue142_2" where "tabellkode" = ${Segment.paramSegment(tabellkode)(Issue142Id.setter)}""".query(Issue1422Row.jdbcDecoder).selectOne
+  override def selectById(tabellkode: Issue142Id): ZIO[ZConnection, Throwable, Option[Issue1422Row]] = sql"""select "tabellkode" from "public"."issue142_2" where "tabellkode" = ${Segment.paramSegment(tabellkode)(Issue142Id.setter)}""".query(Issue1422Row.jdbcDecoder).selectOne
 
-  def selectByIds(tabellkodes: Array[Issue142Id]): ZStream[ZConnection, Throwable, Issue1422Row] = sql"""select "tabellkode" from "public"."issue142_2" where "tabellkode" = ANY(${Segment.paramSegment(tabellkodes)(Issue142Id.arraySetter)})""".query(Issue1422Row.jdbcDecoder).selectStream()
+  override def selectByIds(tabellkodes: Array[Issue142Id]): ZStream[ZConnection, Throwable, Issue1422Row] = sql"""select "tabellkode" from "public"."issue142_2" where "tabellkode" = ANY(${Segment.paramSegment(tabellkodes)(Issue142Id.arraySetter)})""".query(Issue1422Row.jdbcDecoder).selectStream()
 
-  def selectByIdsTracked(tabellkodes: Array[Issue142Id]): ZIO[ZConnection, Throwable, Map[Issue142Id, Issue1422Row]] = {
+  override def selectByIdsTracked(tabellkodes: Array[Issue142Id]): ZIO[ZConnection, Throwable, Map[Issue142Id, Issue1422Row]] = {
     selectByIds(tabellkodes).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.tabellkode, x)).toMap
       tabellkodes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[Issue1422Fields, Issue1422Row] = UpdateBuilder.of(""""public"."issue142_2"""", Issue1422Fields.structure, Issue1422Row.jdbcDecoder)
+  override def update: UpdateBuilder[Issue1422Fields, Issue1422Row] = UpdateBuilder.of(""""public"."issue142_2"""", Issue1422Fields.structure, Issue1422Row.jdbcDecoder)
 
-  def upsert(unsaved: Issue1422Row): ZIO[ZConnection, Throwable, UpdateResult[Issue1422Row]] = {
+  override def upsert(unsaved: Issue1422Row): ZIO[ZConnection, Throwable, UpdateResult[Issue1422Row]] = {
     sql"""insert into "public"."issue142_2"("tabellkode")
     values (
       ${Segment.paramSegment(unsaved.tabellkode)(Issue142Id.setter)}
@@ -64,7 +64,7 @@ class Issue1422RepoImpl extends Issue1422Repo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, Issue1422Row],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

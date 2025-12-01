@@ -76,29 +76,5 @@ case class SpecialofferRowUnsaved(
 }
 
 object SpecialofferRowUnsaved {
-  given pgText: PgText[SpecialofferRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      PgTypes.text.pgText.unsafeEncode(row.description, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.text.pgText.unsafeEncode(row.`type`, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.text.pgText.unsafeEncode(row.category, sb);
-      sb.append(PgText.DELIMETER);
-      TypoLocalDateTime.pgType.pgText.unsafeEncode(row.startdate, sb);
-      sb.append(PgText.DELIMETER);
-      TypoLocalDateTime.pgType.pgText.unsafeEncode(row.enddate, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.int4.opt().pgText.unsafeEncode(row.maxqty, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using SpecialofferId.pgType.pgText).unsafeEncode(row.specialofferid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using PgTypes.numeric.pgText).unsafeEncode(row.discountpct, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using PgTypes.int4.pgText).unsafeEncode(row.minqty, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[SpecialofferRowUnsaved] = PgText.instance((row, sb) => { PgTypes.text.pgText.unsafeEncode(row.description, sb); sb.append(PgText.DELIMETER); PgTypes.text.pgText.unsafeEncode(row.`type`, sb); sb.append(PgText.DELIMETER); PgTypes.text.pgText.unsafeEncode(row.category, sb); sb.append(PgText.DELIMETER); TypoLocalDateTime.pgType.pgText.unsafeEncode(row.startdate, sb); sb.append(PgText.DELIMETER); TypoLocalDateTime.pgType.pgText.unsafeEncode(row.enddate, sb); sb.append(PgText.DELIMETER); PgTypes.int4.opt().pgText.unsafeEncode(row.maxqty, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using SpecialofferId.pgType.pgText).unsafeEncode(row.specialofferid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.numeric.pgText).unsafeEncode(row.discountpct, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.int4.pgText).unsafeEncode(row.minqty, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

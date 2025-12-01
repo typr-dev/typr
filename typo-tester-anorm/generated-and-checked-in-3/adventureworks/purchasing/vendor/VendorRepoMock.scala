@@ -22,13 +22,13 @@ case class VendorRepoMock(
   toRow: VendorRowUnsaved => VendorRow,
   map: scala.collection.mutable.Map[BusinessentityId, VendorRow] = scala.collection.mutable.Map.empty[BusinessentityId, VendorRow]
 ) extends VendorRepo {
-  def delete: DeleteBuilder[VendorFields, VendorRow] = DeleteBuilderMock(DeleteParams.empty, VendorFields.structure, map)
+  override def delete: DeleteBuilder[VendorFields, VendorRow] = DeleteBuilderMock(DeleteParams.empty, VendorFields.structure, map)
 
-  def deleteById(businessentityid: BusinessentityId)(using c: Connection): Boolean = map.remove(businessentityid).isDefined
+  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): Boolean = map.remove(businessentityid).isDefined
 
-  def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Int = businessentityids.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Int = businessentityids.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: VendorRow)(using c: Connection): VendorRow = {
+  override def insert(unsaved: VendorRow)(using c: Connection): VendorRow = {
     val _ = if (map.contains(unsaved.businessentityid))
       sys.error(s"id ${unsaved.businessentityid} already exists")
     else
@@ -37,9 +37,9 @@ case class VendorRepoMock(
     unsaved
   }
 
-  def insert(unsaved: VendorRowUnsaved)(using c: Connection): VendorRow = insert(toRow(unsaved))
+  override def insert(unsaved: VendorRowUnsaved)(using c: Connection): VendorRow = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[VendorRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -50,7 +50,7 @@ case class VendorRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[VendorRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -61,34 +61,34 @@ case class VendorRepoMock(
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[VendorFields, VendorRow] = SelectBuilderMock(VendorFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[VendorFields, VendorRow] = SelectBuilderMock(VendorFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(using c: Connection): List[VendorRow] = map.values.toList
+  override def selectAll(using c: Connection): List[VendorRow] = map.values.toList
 
-  def selectById(businessentityid: BusinessentityId)(using c: Connection): Option[VendorRow] = map.get(businessentityid)
+  override def selectById(businessentityid: BusinessentityId)(using c: Connection): Option[VendorRow] = map.get(businessentityid)
 
-  def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): List[VendorRow] = businessentityids.flatMap(map.get).toList
+  override def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): List[VendorRow] = businessentityids.flatMap(map.get).toList
 
-  def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): Map[BusinessentityId, VendorRow] = {
+  override def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): Map[BusinessentityId, VendorRow] = {
     val byId = selectByIds(businessentityids).view.map(x => (x.businessentityid, x)).toMap
     businessentityids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[VendorFields, VendorRow] = UpdateBuilderMock(UpdateParams.empty, VendorFields.structure, map)
+  override def update: UpdateBuilder[VendorFields, VendorRow] = UpdateBuilderMock(UpdateParams.empty, VendorFields.structure, map)
 
-  def update(row: VendorRow)(using c: Connection): Option[VendorRow] = {
+  override def update(row: VendorRow)(using c: Connection): Option[VendorRow] = {
     map.get(row.businessentityid).map { _ =>
       map.put(row.businessentityid, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: VendorRow)(using c: Connection): VendorRow = {
+  override def upsert(unsaved: VendorRow)(using c: Connection): VendorRow = {
     map.put(unsaved.businessentityid, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[VendorRow])(using c: Connection): List[VendorRow] = {
+  override def upsertBatch(unsaved: Iterable[VendorRow])(using c: Connection): List[VendorRow] = {
     unsaved.map { row =>
       map += (row.businessentityid -> row)
       row
@@ -96,7 +96,7 @@ case class VendorRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[VendorRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

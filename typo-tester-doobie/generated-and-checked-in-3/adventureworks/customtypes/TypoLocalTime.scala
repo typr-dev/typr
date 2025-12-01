@@ -30,7 +30,7 @@ object TypoLocalTime {
 
   given arrayPut: Put[Array[TypoLocalTime]] = {
     Put.Advanced.array[AnyRef](NonEmptyList.one("time[]"), "time")
-      .contramap(_.map(v => v.value.toString))
+      .contramap(_.map(v => v.value.toString()))
   }
 
   given bijection: Bijection[TypoLocalTime, LocalTime] = Bijection.apply[TypoLocalTime, LocalTime](_.value)(TypoLocalTime.apply)
@@ -48,10 +48,10 @@ object TypoLocalTime {
 
   given pgText: Text[TypoLocalTime] = {
     new Text[TypoLocalTime] {
-      override def unsafeEncode(v: TypoLocalTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value.toString, sb)
-      override def unsafeArrayEncode(v: TypoLocalTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value.toString, sb)
+      override def unsafeEncode(v: TypoLocalTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value.toString(), sb)
+      override def unsafeArrayEncode(v: TypoLocalTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value.toString(), sb)
     }
   }
 
-  given put: Put[TypoLocalTime] = Put.Advanced.other[String](NonEmptyList.one("time")).contramap(v => v.value.toString)
+  given put: Put[TypoLocalTime] = Put.Advanced.other[String](NonEmptyList.one("time")).contramap(v => v.value.toString())
 }

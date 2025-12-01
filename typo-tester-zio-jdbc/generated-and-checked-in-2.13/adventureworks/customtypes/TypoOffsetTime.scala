@@ -48,7 +48,7 @@ object TypoOffsetTime {
         ps.getConnection.createArrayOf(
           "timetz",
           v.map { vv =>
-            vv.value.toString
+            vv.value.toString()
           }
         )
       ),
@@ -80,8 +80,8 @@ object TypoOffsetTime {
 
   implicit lazy val pgText: Text[TypoOffsetTime] = {
     new Text[TypoOffsetTime] {
-      override def unsafeEncode(v: TypoOffsetTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value.toString, sb)
-      override def unsafeArrayEncode(v: TypoOffsetTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value.toString, sb)
+      override def unsafeEncode(v: TypoOffsetTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value.toString(), sb)
+      override def unsafeArrayEncode(v: TypoOffsetTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value.toString(), sb)
     }
   }
 
@@ -92,7 +92,7 @@ object TypoOffsetTime {
       (ps, i, v) => {
         ps.setObject(
           i,
-          v.value.toString
+          v.value.toString()
         )
       },
       "timetz"

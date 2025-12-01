@@ -5,6 +5,7 @@
  */
 package adventureworks.production.illustration
 
+import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
@@ -25,7 +26,7 @@ case class IllustrationRepoMock(
   toRow: IllustrationRowUnsaved => IllustrationRow,
   map: HashMap[IllustrationId, IllustrationRow] = new HashMap[IllustrationId, IllustrationRow]()
 ) extends IllustrationRepo {
-  def delete: DeleteBuilder[IllustrationFields, IllustrationRow] = {
+  override def delete: DeleteBuilder[IllustrationFields, IllustrationRow] = {
     new DeleteBuilderMock(
       IllustrationFields.structure,
       () => new ArrayList(map.values()),
@@ -35,27 +36,27 @@ case class IllustrationRepoMock(
     )
   }
 
-  def deleteById(illustrationid: IllustrationId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(illustrationid)).isPresent()
+  override def deleteById(illustrationid: IllustrationId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(illustrationid)).isPresent()
 
-  def deleteByIds(illustrationids: Array[IllustrationId])(using c: Connection): Integer = {
+  override def deleteByIds(illustrationids: Array[IllustrationId])(using c: Connection): Integer = {
     var count = 0
     illustrationids.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
-    count
+    return count
   }
 
-  def insert(unsaved: IllustrationRow)(using c: Connection): IllustrationRow = {
+  override def insert(unsaved: IllustrationRow)(using c: Connection): IllustrationRow = {
     if (map.containsKey(unsaved.illustrationid)) {
       throw new RuntimeException(s"id $unsaved.illustrationid already exists")
     }
     map.put(unsaved.illustrationid, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def insert(unsaved: IllustrationRowUnsaved)(using c: Connection): IllustrationRow = insert(toRow(unsaved))(using c)
+  override def insert(unsaved: IllustrationRowUnsaved)(using c: Connection): IllustrationRow = insert(toRow(unsaved))(using c)
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[IllustrationRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -65,11 +66,11 @@ case class IllustrationRepoMock(
       map.put(row.illustrationid, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[IllustrationRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -80,25 +81,25 @@ case class IllustrationRepoMock(
       map.put(row.illustrationid, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
-  def select: SelectBuilder[IllustrationFields, IllustrationRow] = new SelectBuilderMock(IllustrationFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
+  override def select: SelectBuilder[IllustrationFields, IllustrationRow] = new SelectBuilderMock(IllustrationFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  def selectAll(using c: Connection): java.util.List[IllustrationRow] = new ArrayList(map.values())
+  override def selectAll(using c: Connection): java.util.List[IllustrationRow] = new ArrayList(map.values())
 
-  def selectById(illustrationid: IllustrationId)(using c: Connection): Optional[IllustrationRow] = Optional.ofNullable(map.get(illustrationid))
+  override def selectById(illustrationid: IllustrationId)(using c: Connection): Optional[IllustrationRow] = Optional.ofNullable(map.get(illustrationid))
 
-  def selectByIds(illustrationids: Array[IllustrationId])(using c: Connection): java.util.List[IllustrationRow] = {
+  override def selectByIds(illustrationids: Array[IllustrationId])(using c: Connection): java.util.List[IllustrationRow] = {
     val result = new ArrayList[IllustrationRow]()
     illustrationids.foreach { id => val opt = Optional.ofNullable(map.get(id))
     if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
-    result
+    return result
   }
 
-  def selectByIdsTracked(illustrationids: Array[IllustrationId])(using c: Connection): java.util.Map[IllustrationId, IllustrationRow] = selectByIds(illustrationids)(using c).stream().collect(Collectors.toMap((row: adventureworks.production.illustration.IllustrationRow) => row.illustrationid, Function.identity()))
+  override def selectByIdsTracked(illustrationids: Array[IllustrationId])(using c: Connection): java.util.Map[IllustrationId, IllustrationRow] = selectByIds(illustrationids)(using c).stream().collect(Collectors.toMap((row: IllustrationRow) => row.illustrationid, Function.identity()))
 
-  def update: UpdateBuilder[IllustrationFields, IllustrationRow] = {
+  override def update: UpdateBuilder[IllustrationFields, IllustrationRow] = {
     new UpdateBuilderMock(
       IllustrationFields.structure,
       () => new ArrayList(map.values()),
@@ -107,31 +108,31 @@ case class IllustrationRepoMock(
     )
   }
 
-  def update(row: IllustrationRow)(using c: Connection): java.lang.Boolean = {
-    val shouldUpdate = Optional.ofNullable(map.get(row.illustrationid)).filter(oldRow => !oldRow.equals(row)).isPresent()
+  override def update(row: IllustrationRow)(using c: Connection): java.lang.Boolean = {
+    val shouldUpdate = Optional.ofNullable(map.get(row.illustrationid)).filter(oldRow => (oldRow != row)).isPresent()
     if (shouldUpdate) {
       map.put(row.illustrationid, row): @scala.annotation.nowarn
     }
-    shouldUpdate
+    return shouldUpdate
   }
 
-  def upsert(unsaved: IllustrationRow)(using c: Connection): IllustrationRow = {
+  override def upsert(unsaved: IllustrationRow)(using c: Connection): IllustrationRow = {
     map.put(unsaved.illustrationid, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[IllustrationRow])(using c: Connection): java.util.List[IllustrationRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[IllustrationRow])(using c: Connection): java.util.List[IllustrationRow] = {
     val result = new ArrayList[IllustrationRow]()
     while (unsaved.hasNext()) {
       val row = unsaved.next()
       map.put(row.illustrationid, row): @scala.annotation.nowarn
       result.add(row): @scala.annotation.nowarn
     }
-    result
+    return result
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[IllustrationRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
@@ -141,6 +142,6 @@ case class IllustrationRepoMock(
       map.put(row.illustrationid, row): @scala.annotation.nowarn
       count = count + 1
     }
-    count
+    return count
   }
 }

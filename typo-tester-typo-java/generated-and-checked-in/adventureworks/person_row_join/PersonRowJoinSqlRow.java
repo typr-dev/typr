@@ -10,7 +10,6 @@ import adventureworks.person.businessentity.BusinessentityId;
 import java.util.Optional;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple3;
 
 /** SQL file: person_row_join.sql */
 public record PersonRowJoinSqlRow(
@@ -32,5 +31,5 @@ public record PersonRowJoinSqlRow(
     return new PersonRowJoinSqlRow(businessentityid, email, emails);
   };
 
-  static RowParser<PersonRowJoinSqlRow> _rowParser = RowParsers.of(BusinessentityId.pgType, TypoRecord.pgTypeArray.opt(), TypoRecord.pgTypeArray.opt(), PersonRowJoinSqlRow::new, row -> new Tuple3<>(row.businessentityid(), row.email(), row.emails()));;
+  static RowParser<PersonRowJoinSqlRow> _rowParser = RowParsers.of(BusinessentityId.pgType, TypoRecord.pgTypeArray.opt(), TypoRecord.pgTypeArray.opt(), PersonRowJoinSqlRow::new, row -> new Object[]{row.businessentityid(), row.email(), row.emails()});;
 }

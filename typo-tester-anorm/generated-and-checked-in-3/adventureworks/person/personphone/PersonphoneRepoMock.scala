@@ -21,13 +21,13 @@ case class PersonphoneRepoMock(
   toRow: PersonphoneRowUnsaved => PersonphoneRow,
   map: scala.collection.mutable.Map[PersonphoneId, PersonphoneRow] = scala.collection.mutable.Map.empty[PersonphoneId, PersonphoneRow]
 ) extends PersonphoneRepo {
-  def delete: DeleteBuilder[PersonphoneFields, PersonphoneRow] = DeleteBuilderMock(DeleteParams.empty, PersonphoneFields.structure, map)
+  override def delete: DeleteBuilder[PersonphoneFields, PersonphoneRow] = DeleteBuilderMock(DeleteParams.empty, PersonphoneFields.structure, map)
 
-  def deleteById(compositeId: PersonphoneId)(using c: Connection): Boolean = map.remove(compositeId).isDefined
+  override def deleteById(compositeId: PersonphoneId)(using c: Connection): Boolean = map.remove(compositeId).isDefined
 
-  def deleteByIds(compositeIds: Array[PersonphoneId])(using c: Connection): Int = compositeIds.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(compositeIds: Array[PersonphoneId])(using c: Connection): Int = compositeIds.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: PersonphoneRow)(using c: Connection): PersonphoneRow = {
+  override def insert(unsaved: PersonphoneRow)(using c: Connection): PersonphoneRow = {
     val _ = if (map.contains(unsaved.compositeId))
       sys.error(s"id ${unsaved.compositeId} already exists")
     else
@@ -36,9 +36,9 @@ case class PersonphoneRepoMock(
     unsaved
   }
 
-  def insert(unsaved: PersonphoneRowUnsaved)(using c: Connection): PersonphoneRow = insert(toRow(unsaved))
+  override def insert(unsaved: PersonphoneRowUnsaved)(using c: Connection): PersonphoneRow = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[PersonphoneRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -49,7 +49,7 @@ case class PersonphoneRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[PersonphoneRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -60,34 +60,34 @@ case class PersonphoneRepoMock(
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[PersonphoneFields, PersonphoneRow] = SelectBuilderMock(PersonphoneFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[PersonphoneFields, PersonphoneRow] = SelectBuilderMock(PersonphoneFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(using c: Connection): List[PersonphoneRow] = map.values.toList
+  override def selectAll(using c: Connection): List[PersonphoneRow] = map.values.toList
 
-  def selectById(compositeId: PersonphoneId)(using c: Connection): Option[PersonphoneRow] = map.get(compositeId)
+  override def selectById(compositeId: PersonphoneId)(using c: Connection): Option[PersonphoneRow] = map.get(compositeId)
 
-  def selectByIds(compositeIds: Array[PersonphoneId])(using c: Connection): List[PersonphoneRow] = compositeIds.flatMap(map.get).toList
+  override def selectByIds(compositeIds: Array[PersonphoneId])(using c: Connection): List[PersonphoneRow] = compositeIds.flatMap(map.get).toList
 
-  def selectByIdsTracked(compositeIds: Array[PersonphoneId])(using c: Connection): Map[PersonphoneId, PersonphoneRow] = {
+  override def selectByIdsTracked(compositeIds: Array[PersonphoneId])(using c: Connection): Map[PersonphoneId, PersonphoneRow] = {
     val byId = selectByIds(compositeIds).view.map(x => (x.compositeId, x)).toMap
     compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[PersonphoneFields, PersonphoneRow] = UpdateBuilderMock(UpdateParams.empty, PersonphoneFields.structure, map)
+  override def update: UpdateBuilder[PersonphoneFields, PersonphoneRow] = UpdateBuilderMock(UpdateParams.empty, PersonphoneFields.structure, map)
 
-  def update(row: PersonphoneRow)(using c: Connection): Option[PersonphoneRow] = {
+  override def update(row: PersonphoneRow)(using c: Connection): Option[PersonphoneRow] = {
     map.get(row.compositeId).map { _ =>
       map.put(row.compositeId, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: PersonphoneRow)(using c: Connection): PersonphoneRow = {
+  override def upsert(unsaved: PersonphoneRow)(using c: Connection): PersonphoneRow = {
     map.put(unsaved.compositeId, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[PersonphoneRow])(using c: Connection): List[PersonphoneRow] = {
+  override def upsertBatch(unsaved: Iterable[PersonphoneRow])(using c: Connection): List[PersonphoneRow] = {
     unsaved.map { row =>
       map += (row.compositeId -> row)
       row
@@ -95,7 +95,7 @@ case class PersonphoneRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[PersonphoneRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

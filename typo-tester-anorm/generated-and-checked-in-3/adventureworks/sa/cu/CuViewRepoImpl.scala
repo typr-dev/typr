@@ -10,9 +10,9 @@ import typo.dsl.SelectBuilder
 import anorm.SqlStringInterpolation
 
 class CuViewRepoImpl extends CuViewRepo {
-  def select: SelectBuilder[CuViewFields, CuViewRow] = SelectBuilder.of(""""sa"."cu"""", CuViewFields.structure, CuViewRow.rowParser)
+  override def select: SelectBuilder[CuViewFields, CuViewRow] = SelectBuilder.of(""""sa"."cu"""", CuViewFields.structure, CuViewRow.rowParser)
 
-  def selectAll(using c: Connection): List[CuViewRow] = {
+  override def selectAll(using c: Connection): List[CuViewRow] = {
     SQL"""select "id", "currencycode", "name", "modifieddate"::text
     from "sa"."cu"
     """.as(CuViewRow.rowParser(1).*)

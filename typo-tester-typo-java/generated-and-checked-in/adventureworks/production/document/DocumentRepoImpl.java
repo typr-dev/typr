@@ -11,7 +11,6 @@ import adventureworks.customtypes.TypoShort;
 import adventureworks.customtypes.TypoUUID;
 import adventureworks.person.businessentity.BusinessentityId;
 import adventureworks.public_.Flag;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,12 +28,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class DocumentRepoImpl implements DocumentRepo {
+  @Override
   public DeleteBuilder<DocumentFields, DocumentRow> delete() {
     return DeleteBuilder.of("production.document", DocumentFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     DocumentId documentnode,
     Connection c
@@ -48,6 +48,7 @@ public class DocumentRepoImpl implements DocumentRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     DocumentId[] documentnodes,
     Connection c
@@ -64,6 +65,7 @@ public class DocumentRepoImpl implements DocumentRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public DocumentRow insert(
     DocumentRow unsaved,
     Connection c
@@ -105,124 +107,136 @@ public class DocumentRepoImpl implements DocumentRepo {
       .updateReturning(DocumentRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public DocumentRow insert(
     DocumentRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"title\""));
-      values.add(interpolate(
-        PgTypes.text.encode(unsaved.title()),
-        typo.runtime.Fragment.lit("""
-        """)
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"title\""));
+    values.add(interpolate(
+      PgTypes.text.encode(unsaved.title()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    columns.add(Fragment.lit("\"owner\""));
+    values.add(interpolate(
+      BusinessentityId.pgType.encode(unsaved.owner()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"filename\""));
+    values.add(interpolate(
+      PgTypes.text.encode(unsaved.filename()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    columns.add(Fragment.lit("\"fileextension\""));
+    values.add(interpolate(
+      PgTypes.text.opt().encode(unsaved.fileextension()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    columns.add(Fragment.lit("\"revision\""));
+    values.add(interpolate(
+      PgTypes.text.encode(unsaved.revision()),
+      typo.runtime.Fragment.lit("::bpchar")
+    ));
+    columns.add(Fragment.lit("\"status\""));
+    values.add(interpolate(
+      TypoShort.pgType.encode(unsaved.status()),
+      typo.runtime.Fragment.lit("::int2")
+    ));
+    columns.add(Fragment.lit("\"documentsummary\""));
+    values.add(interpolate(
+      PgTypes.text.opt().encode(unsaved.documentsummary()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    columns.add(Fragment.lit("\"document\""));
+    values.add(interpolate(
+      TypoBytea.pgType.opt().encode(unsaved.document()),
+      typo.runtime.Fragment.lit("::bytea")
+    ));
+    unsaved.folderflag().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"folderflag\""));
+        values.add(interpolate(
+        Flag.pgType.encode(value),
+        typo.runtime.Fragment.lit("::bool")
       ));
-      columns.add(Fragment.lit("\"owner\""));
-      values.add(interpolate(
-        BusinessentityId.pgType.encode(unsaved.owner()),
+      }
+    );;
+    unsaved.changenumber().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"changenumber\""));
+        values.add(interpolate(
+        PgTypes.int4.encode(value),
         typo.runtime.Fragment.lit("::int4")
       ));
-      columns.add(Fragment.lit("\"filename\""));
-      values.add(interpolate(
-        PgTypes.text.encode(unsaved.filename()),
+      }
+    );;
+    unsaved.rowguid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"rowguid\""));
+        values.add(interpolate(
+        TypoUUID.pgType.encode(value),
+        typo.runtime.Fragment.lit("::uuid")
+      ));
+      }
+    );;
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
+      ));
+      }
+    );;
+    unsaved.documentnode().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"documentnode\""));
+        values.add(interpolate(
+        DocumentId.pgType.encode(value),
         typo.runtime.Fragment.lit("""
         """)
       ));
-      columns.add(Fragment.lit("\"fileextension\""));
-      values.add(interpolate(
-        PgTypes.text.opt().encode(unsaved.fileextension()),
-        typo.runtime.Fragment.lit("""
-        """)
-      ));
-      columns.add(Fragment.lit("\"revision\""));
-      values.add(interpolate(
-        PgTypes.text.encode(unsaved.revision()),
-        typo.runtime.Fragment.lit("::bpchar")
-      ));
-      columns.add(Fragment.lit("\"status\""));
-      values.add(interpolate(
-        TypoShort.pgType.encode(unsaved.status()),
-        typo.runtime.Fragment.lit("::int2")
-      ));
-      columns.add(Fragment.lit("\"documentsummary\""));
-      values.add(interpolate(
-        PgTypes.text.opt().encode(unsaved.documentsummary()),
-        typo.runtime.Fragment.lit("""
-        """)
-      ));
-      columns.add(Fragment.lit("\"document\""));
-      values.add(interpolate(
-        TypoBytea.pgType.opt().encode(unsaved.document()),
-        typo.runtime.Fragment.lit("::bytea")
-      ));
-      unsaved.folderflag().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"folderflag\""));
-          values.add(interpolate(
-            Flag.pgType.encode(value),
-            typo.runtime.Fragment.lit("::bool")
-          ));
-        }
-      );;
-      unsaved.changenumber().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"changenumber\""));
-          values.add(interpolate(
-            PgTypes.int4.encode(value),
-            typo.runtime.Fragment.lit("::int4")
-          ));
-        }
-      );;
-      unsaved.rowguid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"rowguid\""));
-          values.add(interpolate(
-            TypoUUID.pgType.encode(value),
-            typo.runtime.Fragment.lit("::uuid")
-          ));
-        }
-      );;
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      unsaved.documentnode().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"documentnode\""));
-          values.add(interpolate(
-            DocumentId.pgType.encode(value),
-            typo.runtime.Fragment.lit("""
-            """)
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "production"."document"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"
-        """)
-      );;
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "production"."document"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"
+      """)
+    );;
     return q.updateReturning(DocumentRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<DocumentRow> unsaved,
     Integer batchSize,
@@ -234,6 +248,7 @@ public class DocumentRepoImpl implements DocumentRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<DocumentRowUnsaved> unsaved,
     Integer batchSize,
@@ -244,17 +259,20 @@ public class DocumentRepoImpl implements DocumentRepo {
     """), batchSize, unsaved, c, DocumentRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<DocumentFields, DocumentRow> select() {
     return SelectBuilder.of("production.document", DocumentFields.structure(), DocumentRow._rowParser);
   };
 
+  @Override
   public List<DocumentRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"
        from "production"."document"
-    """)).as(DocumentRow._rowParser.all()).runUnchecked(c);
+    """)).query(DocumentRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<DocumentRow> selectById(
     DocumentId documentnode,
     Connection c
@@ -266,9 +284,10 @@ public class DocumentRepoImpl implements DocumentRepo {
          where "documentnode" = """),
       DocumentId.pgType.encode(documentnode),
       typo.runtime.Fragment.lit("")
-    ).as(DocumentRow._rowParser.first()).runUnchecked(c);
+    ).query(DocumentRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<DocumentRow> selectByIds(
     DocumentId[] documentnodes,
     Connection c
@@ -280,18 +299,20 @@ public class DocumentRepoImpl implements DocumentRepo {
          where "documentnode" = ANY("""),
       DocumentId.pgTypeArray.encode(documentnodes),
       typo.runtime.Fragment.lit(")")
-    ).as(DocumentRow._rowParser.all()).runUnchecked(c);
+    ).query(DocumentRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<DocumentId, DocumentRow> selectByIdsTracked(
     DocumentId[] documentnodes,
     Connection c
   ) {
-    Map<DocumentId, DocumentRow> ret = new HashMap<>();;
-      selectByIds(documentnodes, c).forEach(row -> ret.put(row.documentnode(), row));
+    HashMap<DocumentId, DocumentRow> ret = new HashMap<DocumentId, DocumentRow>();
+    selectByIds(documentnodes, c).forEach(row -> ret.put(row.documentnode(), row));
     return ret;
   };
 
+  @Override
   public Optional<DocumentRow> selectByUniqueRowguid(
     TypoUUID rowguid,
     Connection c
@@ -306,75 +327,78 @@ public class DocumentRepoImpl implements DocumentRepo {
 
 
       """)
-    ).as(DocumentRow._rowParser.first()).runUnchecked(c);
+    ).query(DocumentRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public UpdateBuilder<DocumentFields, DocumentRow> update() {
     return UpdateBuilder.of("production.document", DocumentFields.structure(), DocumentRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     DocumentRow row,
     Connection c
   ) {
     DocumentId documentnode = row.documentnode();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "production"."document"
-                set "title" = """),
-             PgTypes.text.encode(row.title()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "owner" = """),
-             BusinessentityId.pgType.encode(row.owner()),
-             typo.runtime.Fragment.lit("""
-                ::int4,
-                "folderflag" = """),
-             Flag.pgType.encode(row.folderflag()),
-             typo.runtime.Fragment.lit("""
-                ::bool,
-                "filename" = """),
-             PgTypes.text.encode(row.filename()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "fileextension" = """),
-             PgTypes.text.opt().encode(row.fileextension()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "revision" = """),
-             PgTypes.text.encode(row.revision()),
-             typo.runtime.Fragment.lit("""
-                ::bpchar,
-                "changenumber" = """),
-             PgTypes.int4.encode(row.changenumber()),
-             typo.runtime.Fragment.lit("""
-                ::int4,
-                "status" = """),
-             TypoShort.pgType.encode(row.status()),
-             typo.runtime.Fragment.lit("""
-                ::int2,
-                "documentsummary" = """),
-             PgTypes.text.opt().encode(row.documentsummary()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "document" = """),
-             TypoBytea.pgType.opt().encode(row.document()),
-             typo.runtime.Fragment.lit("""
-                ::bytea,
-                "rowguid" = """),
-             TypoUUID.pgType.encode(row.rowguid()),
-             typo.runtime.Fragment.lit("""
-                ::uuid,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "documentnode" = """),
-             DocumentId.pgType.encode(documentnode),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "production"."document"
+         set "title" = """),
+      PgTypes.text.encode(row.title()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "owner" = """),
+      BusinessentityId.pgType.encode(row.owner()),
+      typo.runtime.Fragment.lit("""
+         ::int4,
+         "folderflag" = """),
+      Flag.pgType.encode(row.folderflag()),
+      typo.runtime.Fragment.lit("""
+         ::bool,
+         "filename" = """),
+      PgTypes.text.encode(row.filename()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "fileextension" = """),
+      PgTypes.text.opt().encode(row.fileextension()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "revision" = """),
+      PgTypes.text.encode(row.revision()),
+      typo.runtime.Fragment.lit("""
+         ::bpchar,
+         "changenumber" = """),
+      PgTypes.int4.encode(row.changenumber()),
+      typo.runtime.Fragment.lit("""
+         ::int4,
+         "status" = """),
+      TypoShort.pgType.encode(row.status()),
+      typo.runtime.Fragment.lit("""
+         ::int2,
+         "documentsummary" = """),
+      PgTypes.text.opt().encode(row.documentsummary()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "document" = """),
+      TypoBytea.pgType.opt().encode(row.document()),
+      typo.runtime.Fragment.lit("""
+         ::bytea,
+         "rowguid" = """),
+      TypoUUID.pgType.encode(row.rowguid()),
+      typo.runtime.Fragment.lit("""
+         ::uuid,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "documentnode" = """),
+      DocumentId.pgType.encode(documentnode),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public DocumentRow upsert(
     DocumentRow unsaved,
     Connection c
@@ -431,6 +455,7 @@ public class DocumentRepoImpl implements DocumentRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<DocumentRow> upsertBatch(
     Iterator<DocumentRow> unsaved,
     Connection c
@@ -459,35 +484,36 @@ public class DocumentRepoImpl implements DocumentRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<DocumentRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table document_TEMP (like "production"."document") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy document_TEMP("title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode") from stdin
-      """), batchSize, unsaved, c, DocumentRow.pgText);
+    create temporary table document_TEMP (like "production"."document") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy document_TEMP("title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode") from stdin
+    """), batchSize, unsaved, c, DocumentRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "production"."document"("title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode")
-              select * from document_TEMP
-              on conflict ("documentnode")
-              do update set
-                "title" = EXCLUDED."title",
-              "owner" = EXCLUDED."owner",
-              "folderflag" = EXCLUDED."folderflag",
-              "filename" = EXCLUDED."filename",
-              "fileextension" = EXCLUDED."fileextension",
-              "revision" = EXCLUDED."revision",
-              "changenumber" = EXCLUDED."changenumber",
-              "status" = EXCLUDED."status",
-              "documentsummary" = EXCLUDED."documentsummary",
-              "document" = EXCLUDED."document",
-              "rowguid" = EXCLUDED."rowguid",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table document_TEMP;""")).update().runUnchecked(c);
+       insert into "production"."document"("title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode")
+       select * from document_TEMP
+       on conflict ("documentnode")
+       do update set
+         "title" = EXCLUDED."title",
+       "owner" = EXCLUDED."owner",
+       "folderflag" = EXCLUDED."folderflag",
+       "filename" = EXCLUDED."filename",
+       "fileextension" = EXCLUDED."fileextension",
+       "revision" = EXCLUDED."revision",
+       "changenumber" = EXCLUDED."changenumber",
+       "status" = EXCLUDED."status",
+       "documentsummary" = EXCLUDED."documentsummary",
+       "document" = EXCLUDED."document",
+       "rowguid" = EXCLUDED."rowguid",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table document_TEMP;""")).update().runUnchecked(c);
   };
 }

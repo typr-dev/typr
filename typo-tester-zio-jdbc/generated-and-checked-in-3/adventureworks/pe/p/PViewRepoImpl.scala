@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class PViewRepoImpl extends PViewRepo {
-  def select: SelectBuilder[PViewFields, PViewRow] = SelectBuilder.of(""""pe"."p"""", PViewFields.structure, PViewRow.jdbcDecoder)
+  override def select: SelectBuilder[PViewFields, PViewRow] = SelectBuilder.of(""""pe"."p"""", PViewFields.structure, PViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, PViewRow] = sql"""select "id", "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text from "pe"."p"""".query(using PViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, PViewRow] = sql"""select "id", "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text from "pe"."p"""".query(using PViewRow.jdbcDecoder).selectStream()
 }

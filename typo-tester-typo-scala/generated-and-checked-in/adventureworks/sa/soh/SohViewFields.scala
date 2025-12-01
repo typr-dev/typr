@@ -86,7 +86,7 @@ object SohViewFields {
 
     override lazy val fields: SohViewFields = {
       new SohViewFields {
-        def id: Field[SalesorderheaderId, SohViewRow] = {
+        override def id: Field[SalesorderheaderId, SohViewRow] = {
           new Field[SalesorderheaderId, SohViewRow](
             _path,
             "id",
@@ -97,7 +97,7 @@ object SohViewFields {
             SalesorderheaderId.pgType
           )
         }
-        def salesorderid: Field[SalesorderheaderId, SohViewRow] = {
+        override def salesorderid: Field[SalesorderheaderId, SohViewRow] = {
           new Field[SalesorderheaderId, SohViewRow](
             _path,
             "salesorderid",
@@ -108,7 +108,7 @@ object SohViewFields {
             SalesorderheaderId.pgType
           )
         }
-        def revisionnumber: Field[TypoShort, SohViewRow] = {
+        override def revisionnumber: Field[TypoShort, SohViewRow] = {
           new Field[TypoShort, SohViewRow](
             _path,
             "revisionnumber",
@@ -119,7 +119,7 @@ object SohViewFields {
             TypoShort.pgType
           )
         }
-        def orderdate: Field[TypoLocalDateTime, SohViewRow] = {
+        override def orderdate: Field[TypoLocalDateTime, SohViewRow] = {
           new Field[TypoLocalDateTime, SohViewRow](
             _path,
             "orderdate",
@@ -130,7 +130,7 @@ object SohViewFields {
             TypoLocalDateTime.pgType
           )
         }
-        def duedate: Field[TypoLocalDateTime, SohViewRow] = {
+        override def duedate: Field[TypoLocalDateTime, SohViewRow] = {
           new Field[TypoLocalDateTime, SohViewRow](
             _path,
             "duedate",
@@ -141,7 +141,7 @@ object SohViewFields {
             TypoLocalDateTime.pgType
           )
         }
-        def shipdate: OptField[TypoLocalDateTime, SohViewRow] = {
+        override def shipdate: OptField[TypoLocalDateTime, SohViewRow] = {
           new OptField[TypoLocalDateTime, SohViewRow](
             _path,
             "shipdate",
@@ -152,7 +152,7 @@ object SohViewFields {
             TypoLocalDateTime.pgType
           )
         }
-        def status: Field[TypoShort, SohViewRow] = {
+        override def status: Field[TypoShort, SohViewRow] = {
           new Field[TypoShort, SohViewRow](
             _path,
             "status",
@@ -163,7 +163,7 @@ object SohViewFields {
             TypoShort.pgType
           )
         }
-        def onlineorderflag: Field[Flag, SohViewRow] = {
+        override def onlineorderflag: Field[Flag, SohViewRow] = {
           new Field[Flag, SohViewRow](
             _path,
             "onlineorderflag",
@@ -174,7 +174,7 @@ object SohViewFields {
             Flag.pgType
           )
         }
-        def purchaseordernumber: OptField[OrderNumber, SohViewRow] = {
+        override def purchaseordernumber: OptField[OrderNumber, SohViewRow] = {
           new OptField[OrderNumber, SohViewRow](
             _path,
             "purchaseordernumber",
@@ -185,7 +185,7 @@ object SohViewFields {
             OrderNumber.pgType
           )
         }
-        def accountnumber: OptField[AccountNumber, SohViewRow] = {
+        override def accountnumber: OptField[AccountNumber, SohViewRow] = {
           new OptField[AccountNumber, SohViewRow](
             _path,
             "accountnumber",
@@ -196,7 +196,7 @@ object SohViewFields {
             AccountNumber.pgType
           )
         }
-        def customerid: Field[CustomerId, SohViewRow] = {
+        override def customerid: Field[CustomerId, SohViewRow] = {
           new Field[CustomerId, SohViewRow](
             _path,
             "customerid",
@@ -207,7 +207,7 @@ object SohViewFields {
             CustomerId.pgType
           )
         }
-        def salespersonid: OptField[BusinessentityId, SohViewRow] = {
+        override def salespersonid: OptField[BusinessentityId, SohViewRow] = {
           new OptField[BusinessentityId, SohViewRow](
             _path,
             "salespersonid",
@@ -218,7 +218,7 @@ object SohViewFields {
             BusinessentityId.pgType
           )
         }
-        def territoryid: OptField[SalesterritoryId, SohViewRow] = {
+        override def territoryid: OptField[SalesterritoryId, SohViewRow] = {
           new OptField[SalesterritoryId, SohViewRow](
             _path,
             "territoryid",
@@ -229,7 +229,7 @@ object SohViewFields {
             SalesterritoryId.pgType
           )
         }
-        def billtoaddressid: Field[AddressId, SohViewRow] = {
+        override def billtoaddressid: Field[AddressId, SohViewRow] = {
           new Field[AddressId, SohViewRow](
             _path,
             "billtoaddressid",
@@ -240,7 +240,7 @@ object SohViewFields {
             AddressId.pgType
           )
         }
-        def shiptoaddressid: Field[AddressId, SohViewRow] = {
+        override def shiptoaddressid: Field[AddressId, SohViewRow] = {
           new Field[AddressId, SohViewRow](
             _path,
             "shiptoaddressid",
@@ -251,7 +251,7 @@ object SohViewFields {
             AddressId.pgType
           )
         }
-        def shipmethodid: Field[ShipmethodId, SohViewRow] = {
+        override def shipmethodid: Field[ShipmethodId, SohViewRow] = {
           new Field[ShipmethodId, SohViewRow](
             _path,
             "shipmethodid",
@@ -262,7 +262,7 @@ object SohViewFields {
             ShipmethodId.pgType
           )
         }
-        def creditcardid: OptField[/* user-picked */ CustomCreditcardId, SohViewRow] = {
+        override def creditcardid: OptField[/* user-picked */ CustomCreditcardId, SohViewRow] = {
           new OptField[/* user-picked */ CustomCreditcardId, SohViewRow](
             _path,
             "creditcardid",
@@ -273,7 +273,7 @@ object SohViewFields {
             /* user-picked */ CustomCreditcardId.pgType
           )
         }
-        def creditcardapprovalcode: OptField[/* max 15 chars */ String, SohViewRow] = {
+        override def creditcardapprovalcode: OptField[/* max 15 chars */ String, SohViewRow] = {
           new OptField[/* max 15 chars */ String, SohViewRow](
             _path,
             "creditcardapprovalcode",
@@ -284,7 +284,7 @@ object SohViewFields {
             PgTypes.text
           )
         }
-        def currencyrateid: OptField[CurrencyrateId, SohViewRow] = {
+        override def currencyrateid: OptField[CurrencyrateId, SohViewRow] = {
           new OptField[CurrencyrateId, SohViewRow](
             _path,
             "currencyrateid",
@@ -295,7 +295,7 @@ object SohViewFields {
             CurrencyrateId.pgType
           )
         }
-        def subtotal: Field[java.math.BigDecimal, SohViewRow] = {
+        override def subtotal: Field[java.math.BigDecimal, SohViewRow] = {
           new Field[java.math.BigDecimal, SohViewRow](
             _path,
             "subtotal",
@@ -306,7 +306,7 @@ object SohViewFields {
             PgTypes.numeric
           )
         }
-        def taxamt: Field[java.math.BigDecimal, SohViewRow] = {
+        override def taxamt: Field[java.math.BigDecimal, SohViewRow] = {
           new Field[java.math.BigDecimal, SohViewRow](
             _path,
             "taxamt",
@@ -317,7 +317,7 @@ object SohViewFields {
             PgTypes.numeric
           )
         }
-        def freight: Field[java.math.BigDecimal, SohViewRow] = {
+        override def freight: Field[java.math.BigDecimal, SohViewRow] = {
           new Field[java.math.BigDecimal, SohViewRow](
             _path,
             "freight",
@@ -328,7 +328,7 @@ object SohViewFields {
             PgTypes.numeric
           )
         }
-        def totaldue: OptField[java.math.BigDecimal, SohViewRow] = {
+        override def totaldue: OptField[java.math.BigDecimal, SohViewRow] = {
           new OptField[java.math.BigDecimal, SohViewRow](
             _path,
             "totaldue",
@@ -339,7 +339,7 @@ object SohViewFields {
             PgTypes.numeric
           )
         }
-        def comment: OptField[/* max 128 chars */ String, SohViewRow] = {
+        override def comment: OptField[/* max 128 chars */ String, SohViewRow] = {
           new OptField[/* max 128 chars */ String, SohViewRow](
             _path,
             "comment",
@@ -350,7 +350,7 @@ object SohViewFields {
             PgTypes.text
           )
         }
-        def rowguid: Field[TypoUUID, SohViewRow] = {
+        override def rowguid: Field[TypoUUID, SohViewRow] = {
           new Field[TypoUUID, SohViewRow](
             _path,
             "rowguid",
@@ -361,7 +361,7 @@ object SohViewFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, SohViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, SohViewRow] = {
           new Field[TypoLocalDateTime, SohViewRow](
             _path,
             "modifieddate",
@@ -377,7 +377,7 @@ object SohViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, SohViewRow]] = java.util.List.of(this.fields.id, this.fields.salesorderid, this.fields.revisionnumber, this.fields.orderdate, this.fields.duedate, this.fields.shipdate, this.fields.status, this.fields.onlineorderflag, this.fields.purchaseordernumber, this.fields.accountnumber, this.fields.customerid, this.fields.salespersonid, this.fields.territoryid, this.fields.billtoaddressid, this.fields.shiptoaddressid, this.fields.shipmethodid, this.fields.creditcardid, this.fields.creditcardapprovalcode, this.fields.currencyrateid, this.fields.subtotal, this.fields.taxamt, this.fields.freight, this.fields.totaldue, this.fields.comment, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[SohViewFields, SohViewRow] = new Impl(java.util.List.of())

@@ -23,13 +23,13 @@ case class DepartmentRepoMock(
   toRow: DepartmentRowUnsaved => DepartmentRow,
   map: scala.collection.mutable.Map[DepartmentId, DepartmentRow] = scala.collection.mutable.Map.empty[DepartmentId, DepartmentRow]
 ) extends DepartmentRepo {
-  def delete: DeleteBuilder[DepartmentFields, DepartmentRow] = DeleteBuilderMock(DeleteParams.empty, DepartmentFields.structure, map)
+  override def delete: DeleteBuilder[DepartmentFields, DepartmentRow] = DeleteBuilderMock(DeleteParams.empty, DepartmentFields.structure, map)
 
-  def deleteById(departmentid: DepartmentId): ConnectionIO[Boolean] = delay(map.remove(departmentid).isDefined)
+  override def deleteById(departmentid: DepartmentId): ConnectionIO[Boolean] = delay(map.remove(departmentid).isDefined)
 
-  def deleteByIds(departmentids: Array[DepartmentId]): ConnectionIO[Int] = delay(departmentids.map(id => map.remove(id)).count(_.isDefined))
+  override def deleteByIds(departmentids: Array[DepartmentId]): ConnectionIO[Int] = delay(departmentids.map(id => map.remove(id)).count(_.isDefined))
 
-  def insert(unsaved: DepartmentRow): ConnectionIO[DepartmentRow] = {
+  override def insert(unsaved: DepartmentRow): ConnectionIO[DepartmentRow] = {
   delay {
     val _ = if (map.contains(unsaved.departmentid))
       sys.error(s"id ${unsaved.departmentid} already exists")
@@ -40,9 +40,9 @@ case class DepartmentRepoMock(
   }
   }
 
-  def insert(unsaved: DepartmentRowUnsaved): ConnectionIO[DepartmentRow] = insert(toRow(unsaved))
+  override def insert(unsaved: DepartmentRowUnsaved): ConnectionIO[DepartmentRow] = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, DepartmentRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = {
@@ -57,7 +57,7 @@ case class DepartmentRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, DepartmentRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = {
@@ -72,24 +72,24 @@ case class DepartmentRepoMock(
     }
   }
 
-  def select: SelectBuilder[DepartmentFields, DepartmentRow] = SelectBuilderMock(DepartmentFields.structure, delay(map.values.toList), SelectParams.empty)
+  override def select: SelectBuilder[DepartmentFields, DepartmentRow] = SelectBuilderMock(DepartmentFields.structure, delay(map.values.toList), SelectParams.empty)
 
-  def selectAll: Stream[ConnectionIO, DepartmentRow] = Stream.emits(map.values.toList)
+  override def selectAll: Stream[ConnectionIO, DepartmentRow] = Stream.emits(map.values.toList)
 
-  def selectById(departmentid: DepartmentId): ConnectionIO[Option[DepartmentRow]] = delay(map.get(departmentid))
+  override def selectById(departmentid: DepartmentId): ConnectionIO[Option[DepartmentRow]] = delay(map.get(departmentid))
 
-  def selectByIds(departmentids: Array[DepartmentId]): Stream[ConnectionIO, DepartmentRow] = Stream.emits(departmentids.flatMap(map.get).toList)
+  override def selectByIds(departmentids: Array[DepartmentId]): Stream[ConnectionIO, DepartmentRow] = Stream.emits(departmentids.flatMap(map.get).toList)
 
-  def selectByIdsTracked(departmentids: Array[DepartmentId]): ConnectionIO[Map[DepartmentId, DepartmentRow]] = {
+  override def selectByIdsTracked(departmentids: Array[DepartmentId]): ConnectionIO[Map[DepartmentId, DepartmentRow]] = {
     selectByIds(departmentids).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.departmentid, x)).toMap
       departmentids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[DepartmentFields, DepartmentRow] = UpdateBuilderMock(UpdateParams.empty, DepartmentFields.structure, map)
+  override def update: UpdateBuilder[DepartmentFields, DepartmentRow] = UpdateBuilderMock(UpdateParams.empty, DepartmentFields.structure, map)
 
-  def update(row: DepartmentRow): ConnectionIO[Option[DepartmentRow]] = {
+  override def update(row: DepartmentRow): ConnectionIO[Option[DepartmentRow]] = {
     delay {
       map.get(row.departmentid).map { _ =>
         map.put(row.departmentid, row): @nowarn
@@ -98,14 +98,14 @@ case class DepartmentRepoMock(
     }
   }
 
-  def upsert(unsaved: DepartmentRow): ConnectionIO[DepartmentRow] = {
+  override def upsert(unsaved: DepartmentRow): ConnectionIO[DepartmentRow] = {
     delay {
       map.put(unsaved.departmentid, unsaved): @nowarn
       unsaved
     }
   }
 
-  def upsertBatch(unsaved: List[DepartmentRow]): Stream[ConnectionIO, DepartmentRow] = {
+  override def upsertBatch(unsaved: List[DepartmentRow]): Stream[ConnectionIO, DepartmentRow] = {
     Stream.emits {
       unsaved.map { row =>
         map += (row.departmentid -> row)
@@ -115,7 +115,7 @@ case class DepartmentRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, DepartmentRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

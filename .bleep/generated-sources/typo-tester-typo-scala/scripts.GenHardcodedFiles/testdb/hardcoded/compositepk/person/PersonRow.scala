@@ -11,7 +11,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple3
 
 /** Table: compositepk.person
  * Composite primary key: one, two
@@ -34,7 +33,7 @@ case class PersonRow(
 }
 
 object PersonRow {
-  val `_rowParser`: RowParser[PersonRow] = RowParsers.of(PgTypes.int8, PgTypes.text.opt(), PgTypes.text.opt(), PersonRow.apply, row => new Tuple3(row.one, row.two, row.name))
+  val `_rowParser`: RowParser[PersonRow] = RowParsers.of(PgTypes.int8, PgTypes.text.opt(), PgTypes.text.opt(), PersonRow.apply, row => Array(row.one, row.two, row.name))
 
   def apply(
     compositeId: PersonId,

@@ -18,13 +18,13 @@ import typo.dsl.UpdateBuilder.UpdateBuilderMock
 import typo.dsl.UpdateParams
 
 case class TestOrganisasjonRepoMock(map: scala.collection.mutable.Map[TestOrganisasjonId, TestOrganisasjonRow] = scala.collection.mutable.Map.empty[TestOrganisasjonId, TestOrganisasjonRow]) extends TestOrganisasjonRepo {
-  def delete: DeleteBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = DeleteBuilderMock(DeleteParams.empty, TestOrganisasjonFields.structure, map)
+  override def delete: DeleteBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = DeleteBuilderMock(DeleteParams.empty, TestOrganisasjonFields.structure, map)
 
-  def deleteById(organisasjonskode: TestOrganisasjonId)(using c: Connection): Boolean = map.remove(organisasjonskode).isDefined
+  override def deleteById(organisasjonskode: TestOrganisasjonId)(using c: Connection): Boolean = map.remove(organisasjonskode).isDefined
 
-  def deleteByIds(organisasjonskodes: Array[TestOrganisasjonId])(using c: Connection): Int = organisasjonskodes.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(organisasjonskodes: Array[TestOrganisasjonId])(using c: Connection): Int = organisasjonskodes.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: TestOrganisasjonRow)(using c: Connection): TestOrganisasjonRow = {
+  override def insert(unsaved: TestOrganisasjonRow)(using c: Connection): TestOrganisasjonRow = {
     val _ = if (map.contains(unsaved.organisasjonskode))
       sys.error(s"id ${unsaved.organisasjonskode} already exists")
     else
@@ -33,7 +33,7 @@ case class TestOrganisasjonRepoMock(map: scala.collection.mutable.Map[TestOrgani
     unsaved
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[TestOrganisasjonRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -43,27 +43,27 @@ case class TestOrganisasjonRepoMock(map: scala.collection.mutable.Map[TestOrgani
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = SelectBuilderMock(TestOrganisasjonFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = SelectBuilderMock(TestOrganisasjonFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(using c: Connection): List[TestOrganisasjonRow] = map.values.toList
+  override def selectAll(using c: Connection): List[TestOrganisasjonRow] = map.values.toList
 
-  def selectById(organisasjonskode: TestOrganisasjonId)(using c: Connection): Option[TestOrganisasjonRow] = map.get(organisasjonskode)
+  override def selectById(organisasjonskode: TestOrganisasjonId)(using c: Connection): Option[TestOrganisasjonRow] = map.get(organisasjonskode)
 
-  def selectByIds(organisasjonskodes: Array[TestOrganisasjonId])(using c: Connection): List[TestOrganisasjonRow] = organisasjonskodes.flatMap(map.get).toList
+  override def selectByIds(organisasjonskodes: Array[TestOrganisasjonId])(using c: Connection): List[TestOrganisasjonRow] = organisasjonskodes.flatMap(map.get).toList
 
-  def selectByIdsTracked(organisasjonskodes: Array[TestOrganisasjonId])(using c: Connection): Map[TestOrganisasjonId, TestOrganisasjonRow] = {
+  override def selectByIdsTracked(organisasjonskodes: Array[TestOrganisasjonId])(using c: Connection): Map[TestOrganisasjonId, TestOrganisasjonRow] = {
     val byId = selectByIds(organisasjonskodes).view.map(x => (x.organisasjonskode, x)).toMap
     organisasjonskodes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = UpdateBuilderMock(UpdateParams.empty, TestOrganisasjonFields.structure, map)
+  override def update: UpdateBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = UpdateBuilderMock(UpdateParams.empty, TestOrganisasjonFields.structure, map)
 
-  def upsert(unsaved: TestOrganisasjonRow)(using c: Connection): TestOrganisasjonRow = {
+  override def upsert(unsaved: TestOrganisasjonRow)(using c: Connection): TestOrganisasjonRow = {
     map.put(unsaved.organisasjonskode, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[TestOrganisasjonRow])(using c: Connection): List[TestOrganisasjonRow] = {
+  override def upsertBatch(unsaved: Iterable[TestOrganisasjonRow])(using c: Connection): List[TestOrganisasjonRow] = {
     unsaved.map { row =>
       map += (row.organisasjonskode -> row)
       row
@@ -71,7 +71,7 @@ case class TestOrganisasjonRepoMock(map: scala.collection.mutable.Map[TestOrgani
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[TestOrganisasjonRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

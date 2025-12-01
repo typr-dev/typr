@@ -10,7 +10,6 @@ import adventureworks.public_.Name;
 import adventureworks.sales.currency.CurrencyId;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple4;
 
 /** View: sa.cu */
 public record CuViewRow(
@@ -43,5 +42,5 @@ public record CuViewRow(
     return new CuViewRow(id, currencycode, name, modifieddate);
   };
 
-  static RowParser<CuViewRow> _rowParser = RowParsers.of(CurrencyId.pgType, CurrencyId.pgType, Name.pgType, TypoLocalDateTime.pgType, CuViewRow::new, row -> new Tuple4<>(row.id(), row.currencycode(), row.name(), row.modifieddate()));;
+  static RowParser<CuViewRow> _rowParser = RowParsers.of(CurrencyId.pgType, CurrencyId.pgType, Name.pgType, TypoLocalDateTime.pgType, CuViewRow::new, row -> new Object[]{row.id(), row.currencycode(), row.name(), row.modifieddate()});;
 }

@@ -20,7 +20,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface VproductmodelinstructionsViewFields {
-  static final class Impl extends Relation<VproductmodelinstructionsViewFields, VproductmodelinstructionsViewRow> {
+  final class Impl extends Relation<VproductmodelinstructionsViewFields, VproductmodelinstructionsViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -28,36 +28,47 @@ public interface VproductmodelinstructionsViewFields {
     @Override
     public VproductmodelinstructionsViewFields fields() {
       return new VproductmodelinstructionsViewFields() {
+               @Override
                public Field<ProductmodelId, VproductmodelinstructionsViewRow> productmodelid() {
                  return new Field<ProductmodelId, VproductmodelinstructionsViewRow>(_path, "productmodelid", VproductmodelinstructionsViewRow::productmodelid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductmodelid(value), ProductmodelId.pgType);
                };
+               @Override
                public Field<Name, VproductmodelinstructionsViewRow> name() {
                  return new Field<Name, VproductmodelinstructionsViewRow>(_path, "name", VproductmodelinstructionsViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public OptField<String, VproductmodelinstructionsViewRow> instructions() {
                  return new OptField<String, VproductmodelinstructionsViewRow>(_path, "instructions", VproductmodelinstructionsViewRow::instructions, Optional.empty(), Optional.empty(), (row, value) -> row.withInstructions(value), PgTypes.text);
                };
+               @Override
                public OptField<Integer, VproductmodelinstructionsViewRow> locationID() {
                  return new OptField<Integer, VproductmodelinstructionsViewRow>(_path, "LocationID", VproductmodelinstructionsViewRow::locationID, Optional.empty(), Optional.empty(), (row, value) -> row.withLocationID(value), PgTypes.int4);
                };
+               @Override
                public OptField<BigDecimal, VproductmodelinstructionsViewRow> setupHours() {
                  return new OptField<BigDecimal, VproductmodelinstructionsViewRow>(_path, "SetupHours", VproductmodelinstructionsViewRow::setupHours, Optional.empty(), Optional.empty(), (row, value) -> row.withSetupHours(value), PgTypes.numeric);
                };
+               @Override
                public OptField<BigDecimal, VproductmodelinstructionsViewRow> machineHours() {
                  return new OptField<BigDecimal, VproductmodelinstructionsViewRow>(_path, "MachineHours", VproductmodelinstructionsViewRow::machineHours, Optional.empty(), Optional.empty(), (row, value) -> row.withMachineHours(value), PgTypes.numeric);
                };
+               @Override
                public OptField<BigDecimal, VproductmodelinstructionsViewRow> laborHours() {
                  return new OptField<BigDecimal, VproductmodelinstructionsViewRow>(_path, "LaborHours", VproductmodelinstructionsViewRow::laborHours, Optional.empty(), Optional.empty(), (row, value) -> row.withLaborHours(value), PgTypes.numeric);
                };
+               @Override
                public OptField<Integer, VproductmodelinstructionsViewRow> lotSize() {
                  return new OptField<Integer, VproductmodelinstructionsViewRow>(_path, "LotSize", VproductmodelinstructionsViewRow::lotSize, Optional.empty(), Optional.empty(), (row, value) -> row.withLotSize(value), PgTypes.int4);
                };
+               @Override
                public OptField</* max 1024 chars */ String, VproductmodelinstructionsViewRow> step() {
                  return new OptField</* max 1024 chars */ String, VproductmodelinstructionsViewRow>(_path, "Step", VproductmodelinstructionsViewRow::step, Optional.empty(), Optional.empty(), (row, value) -> row.withStep(value), PgTypes.text);
                };
+               @Override
                public Field<TypoUUID, VproductmodelinstructionsViewRow> rowguid() {
                  return new Field<TypoUUID, VproductmodelinstructionsViewRow>(_path, "rowguid", VproductmodelinstructionsViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, VproductmodelinstructionsViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, VproductmodelinstructionsViewRow>(_path, "modifieddate", VproductmodelinstructionsViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -69,6 +80,7 @@ public interface VproductmodelinstructionsViewFields {
       return List.of(this.fields().productmodelid(), this.fields().name(), this.fields().instructions(), this.fields().locationID(), this.fields().setupHours(), this.fields().machineHours(), this.fields().laborHours(), this.fields().lotSize(), this.fields().step(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

@@ -5,6 +5,7 @@
  */
 package adventureworks.public.test_sak_soknadsalternativ
 
+import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
@@ -22,7 +23,7 @@ import typo.dsl.UpdateBuilder.UpdateBuilderMock
 import typo.dsl.UpdateParams
 
 case class TestSakSoknadsalternativRepoMock(map: HashMap[TestSakSoknadsalternativId, TestSakSoknadsalternativRow] = new HashMap[TestSakSoknadsalternativId, TestSakSoknadsalternativRow]()) extends TestSakSoknadsalternativRepo {
-  def delete: DeleteBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = {
+  override def delete: DeleteBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = {
     new DeleteBuilderMock(
       TestSakSoknadsalternativFields.structure,
       () => new ArrayList(map.values()),
@@ -32,25 +33,25 @@ case class TestSakSoknadsalternativRepoMock(map: HashMap[TestSakSoknadsalternati
     )
   }
 
-  def deleteById(compositeId: TestSakSoknadsalternativId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(compositeId)).isPresent()
+  override def deleteById(compositeId: TestSakSoknadsalternativId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(compositeId)).isPresent()
 
-  def deleteByIds(compositeIds: Array[TestSakSoknadsalternativId])(using c: Connection): Integer = {
+  override def deleteByIds(compositeIds: Array[TestSakSoknadsalternativId])(using c: Connection): Integer = {
     var count = 0
     compositeIds.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
-    count
+    return count
   }
 
-  def insert(unsaved: TestSakSoknadsalternativRow)(using c: Connection): TestSakSoknadsalternativRow = {
+  override def insert(unsaved: TestSakSoknadsalternativRow)(using c: Connection): TestSakSoknadsalternativRow = {
     if (map.containsKey(unsaved.compositeId)) {
       throw new RuntimeException(s"id $unsaved.compositeId already exists")
     }
     map.put(unsaved.compositeId, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[TestSakSoknadsalternativRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -60,25 +61,25 @@ case class TestSakSoknadsalternativRepoMock(map: HashMap[TestSakSoknadsalternati
       map.put(row.compositeId, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
-  def select: SelectBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = new SelectBuilderMock(TestSakSoknadsalternativFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
+  override def select: SelectBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = new SelectBuilderMock(TestSakSoknadsalternativFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  def selectAll(using c: Connection): java.util.List[TestSakSoknadsalternativRow] = new ArrayList(map.values())
+  override def selectAll(using c: Connection): java.util.List[TestSakSoknadsalternativRow] = new ArrayList(map.values())
 
-  def selectById(compositeId: TestSakSoknadsalternativId)(using c: Connection): Optional[TestSakSoknadsalternativRow] = Optional.ofNullable(map.get(compositeId))
+  override def selectById(compositeId: TestSakSoknadsalternativId)(using c: Connection): Optional[TestSakSoknadsalternativRow] = Optional.ofNullable(map.get(compositeId))
 
-  def selectByIds(compositeIds: Array[TestSakSoknadsalternativId])(using c: Connection): java.util.List[TestSakSoknadsalternativRow] = {
+  override def selectByIds(compositeIds: Array[TestSakSoknadsalternativId])(using c: Connection): java.util.List[TestSakSoknadsalternativRow] = {
     val result = new ArrayList[TestSakSoknadsalternativRow]()
     compositeIds.foreach { id => val opt = Optional.ofNullable(map.get(id))
     if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
-    result
+    return result
   }
 
-  def selectByIdsTracked(compositeIds: Array[TestSakSoknadsalternativId])(using c: Connection): java.util.Map[TestSakSoknadsalternativId, TestSakSoknadsalternativRow] = selectByIds(compositeIds)(using c).stream().collect(Collectors.toMap((row: adventureworks.public.test_sak_soknadsalternativ.TestSakSoknadsalternativRow) => row.compositeId, Function.identity()))
+  override def selectByIdsTracked(compositeIds: Array[TestSakSoknadsalternativId])(using c: Connection): java.util.Map[TestSakSoknadsalternativId, TestSakSoknadsalternativRow] = selectByIds(compositeIds)(using c).stream().collect(Collectors.toMap((row: TestSakSoknadsalternativRow) => row.compositeId, Function.identity()))
 
-  def update: UpdateBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = {
+  override def update: UpdateBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = {
     new UpdateBuilderMock(
       TestSakSoknadsalternativFields.structure,
       () => new ArrayList(map.values()),
@@ -87,31 +88,31 @@ case class TestSakSoknadsalternativRepoMock(map: HashMap[TestSakSoknadsalternati
     )
   }
 
-  def update(row: TestSakSoknadsalternativRow)(using c: Connection): java.lang.Boolean = {
-    val shouldUpdate = Optional.ofNullable(map.get(row.compositeId)).filter(oldRow => !oldRow.equals(row)).isPresent()
+  override def update(row: TestSakSoknadsalternativRow)(using c: Connection): java.lang.Boolean = {
+    val shouldUpdate = Optional.ofNullable(map.get(row.compositeId)).filter(oldRow => (oldRow != row)).isPresent()
     if (shouldUpdate) {
       map.put(row.compositeId, row): @scala.annotation.nowarn
     }
-    shouldUpdate
+    return shouldUpdate
   }
 
-  def upsert(unsaved: TestSakSoknadsalternativRow)(using c: Connection): TestSakSoknadsalternativRow = {
+  override def upsert(unsaved: TestSakSoknadsalternativRow)(using c: Connection): TestSakSoknadsalternativRow = {
     map.put(unsaved.compositeId, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[TestSakSoknadsalternativRow])(using c: Connection): java.util.List[TestSakSoknadsalternativRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[TestSakSoknadsalternativRow])(using c: Connection): java.util.List[TestSakSoknadsalternativRow] = {
     val result = new ArrayList[TestSakSoknadsalternativRow]()
     while (unsaved.hasNext()) {
       val row = unsaved.next()
       map.put(row.compositeId, row): @scala.annotation.nowarn
       result.add(row): @scala.annotation.nowarn
     }
-    result
+    return result
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[TestSakSoknadsalternativRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
@@ -121,6 +122,6 @@ case class TestSakSoknadsalternativRepoMock(map: HashMap[TestSakSoknadsalternati
       map.put(row.compositeId, row): @scala.annotation.nowarn
       count = count + 1
     }
-    count
+    return count
   }
 }

@@ -25,7 +25,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface ProductlistpricehistoryFields {
-  static final class Impl extends Relation<ProductlistpricehistoryFields, ProductlistpricehistoryRow> {
+  final class Impl extends Relation<ProductlistpricehistoryFields, ProductlistpricehistoryRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -33,18 +33,23 @@ public interface ProductlistpricehistoryFields {
     @Override
     public ProductlistpricehistoryFields fields() {
       return new ProductlistpricehistoryFields() {
+               @Override
                public IdField<ProductId, ProductlistpricehistoryRow> productid() {
                  return new IdField<ProductId, ProductlistpricehistoryRow>(_path, "productid", ProductlistpricehistoryRow::productid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductid(value), ProductId.pgType);
                };
+               @Override
                public IdField<TypoLocalDateTime, ProductlistpricehistoryRow> startdate() {
                  return new IdField<TypoLocalDateTime, ProductlistpricehistoryRow>(_path, "startdate", ProductlistpricehistoryRow::startdate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withStartdate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public OptField<TypoLocalDateTime, ProductlistpricehistoryRow> enddate() {
                  return new OptField<TypoLocalDateTime, ProductlistpricehistoryRow>(_path, "enddate", ProductlistpricehistoryRow::enddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withEnddate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public Field<BigDecimal, ProductlistpricehistoryRow> listprice() {
                  return new Field<BigDecimal, ProductlistpricehistoryRow>(_path, "listprice", ProductlistpricehistoryRow::listprice, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withListprice(value), PgTypes.numeric);
                };
+               @Override
                public Field<TypoLocalDateTime, ProductlistpricehistoryRow> modifieddate() {
                  return new Field<TypoLocalDateTime, ProductlistpricehistoryRow>(_path, "modifieddate", ProductlistpricehistoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -56,6 +61,7 @@ public interface ProductlistpricehistoryFields {
       return List.of(this.fields().productid(), this.fields().startdate(), this.fields().enddate(), this.fields().listprice(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

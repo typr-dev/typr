@@ -20,7 +20,7 @@ object TitleDomainFields {
 
     override lazy val fields: TitleDomainFields = {
       new TitleDomainFields {
-        def code: IdField[TitleDomainId, TitleDomainRow] = {
+        override def code: IdField[TitleDomainId, TitleDomainRow] = {
           new IdField[TitleDomainId, TitleDomainRow](
             _path,
             "code",
@@ -36,7 +36,7 @@ object TitleDomainFields {
 
     override lazy val columns: java.util.List[FieldLike[?, TitleDomainRow]] = java.util.List.of(this.fields.code)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[TitleDomainFields, TitleDomainRow] = new Impl(java.util.List.of())

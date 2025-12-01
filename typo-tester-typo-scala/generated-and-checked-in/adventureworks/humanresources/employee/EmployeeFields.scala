@@ -62,7 +62,7 @@ object EmployeeFields {
 
     override lazy val fields: EmployeeFields = {
       new EmployeeFields {
-        def businessentityid: IdField[BusinessentityId, EmployeeRow] = {
+        override def businessentityid: IdField[BusinessentityId, EmployeeRow] = {
           new IdField[BusinessentityId, EmployeeRow](
             _path,
             "businessentityid",
@@ -73,7 +73,7 @@ object EmployeeFields {
             BusinessentityId.pgType
           )
         }
-        def nationalidnumber: Field[/* max 15 chars */ String, EmployeeRow] = {
+        override def nationalidnumber: Field[/* max 15 chars */ String, EmployeeRow] = {
           new Field[/* max 15 chars */ String, EmployeeRow](
             _path,
             "nationalidnumber",
@@ -84,7 +84,7 @@ object EmployeeFields {
             PgTypes.text
           )
         }
-        def loginid: Field[/* max 256 chars */ String, EmployeeRow] = {
+        override def loginid: Field[/* max 256 chars */ String, EmployeeRow] = {
           new Field[/* max 256 chars */ String, EmployeeRow](
             _path,
             "loginid",
@@ -95,7 +95,7 @@ object EmployeeFields {
             PgTypes.text
           )
         }
-        def jobtitle: Field[/* max 50 chars */ String, EmployeeRow] = {
+        override def jobtitle: Field[/* max 50 chars */ String, EmployeeRow] = {
           new Field[/* max 50 chars */ String, EmployeeRow](
             _path,
             "jobtitle",
@@ -106,7 +106,7 @@ object EmployeeFields {
             PgTypes.text
           )
         }
-        def birthdate: Field[TypoLocalDate, EmployeeRow] = {
+        override def birthdate: Field[TypoLocalDate, EmployeeRow] = {
           new Field[TypoLocalDate, EmployeeRow](
             _path,
             "birthdate",
@@ -117,7 +117,7 @@ object EmployeeFields {
             TypoLocalDate.pgType
           )
         }
-        def maritalstatus: Field[/* bpchar, max 1 chars */ String, EmployeeRow] = {
+        override def maritalstatus: Field[/* bpchar, max 1 chars */ String, EmployeeRow] = {
           new Field[/* bpchar, max 1 chars */ String, EmployeeRow](
             _path,
             "maritalstatus",
@@ -128,7 +128,7 @@ object EmployeeFields {
             PgTypes.text
           )
         }
-        def gender: Field[/* bpchar, max 1 chars */ String, EmployeeRow] = {
+        override def gender: Field[/* bpchar, max 1 chars */ String, EmployeeRow] = {
           new Field[/* bpchar, max 1 chars */ String, EmployeeRow](
             _path,
             "gender",
@@ -139,7 +139,7 @@ object EmployeeFields {
             PgTypes.text
           )
         }
-        def hiredate: Field[TypoLocalDate, EmployeeRow] = {
+        override def hiredate: Field[TypoLocalDate, EmployeeRow] = {
           new Field[TypoLocalDate, EmployeeRow](
             _path,
             "hiredate",
@@ -150,7 +150,7 @@ object EmployeeFields {
             TypoLocalDate.pgType
           )
         }
-        def salariedflag: Field[Flag, EmployeeRow] = {
+        override def salariedflag: Field[Flag, EmployeeRow] = {
           new Field[Flag, EmployeeRow](
             _path,
             "salariedflag",
@@ -161,7 +161,7 @@ object EmployeeFields {
             Flag.pgType
           )
         }
-        def vacationhours: Field[TypoShort, EmployeeRow] = {
+        override def vacationhours: Field[TypoShort, EmployeeRow] = {
           new Field[TypoShort, EmployeeRow](
             _path,
             "vacationhours",
@@ -172,7 +172,7 @@ object EmployeeFields {
             TypoShort.pgType
           )
         }
-        def sickleavehours: Field[TypoShort, EmployeeRow] = {
+        override def sickleavehours: Field[TypoShort, EmployeeRow] = {
           new Field[TypoShort, EmployeeRow](
             _path,
             "sickleavehours",
@@ -183,7 +183,7 @@ object EmployeeFields {
             TypoShort.pgType
           )
         }
-        def currentflag: Field[Flag, EmployeeRow] = {
+        override def currentflag: Field[Flag, EmployeeRow] = {
           new Field[Flag, EmployeeRow](
             _path,
             "currentflag",
@@ -194,7 +194,7 @@ object EmployeeFields {
             Flag.pgType
           )
         }
-        def rowguid: Field[TypoUUID, EmployeeRow] = {
+        override def rowguid: Field[TypoUUID, EmployeeRow] = {
           new Field[TypoUUID, EmployeeRow](
             _path,
             "rowguid",
@@ -205,7 +205,7 @@ object EmployeeFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, EmployeeRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, EmployeeRow] = {
           new Field[TypoLocalDateTime, EmployeeRow](
             _path,
             "modifieddate",
@@ -216,7 +216,7 @@ object EmployeeFields {
             TypoLocalDateTime.pgType
           )
         }
-        def organizationnode: OptField[String, EmployeeRow] = {
+        override def organizationnode: OptField[String, EmployeeRow] = {
           new OptField[String, EmployeeRow](
             _path,
             "organizationnode",
@@ -232,7 +232,7 @@ object EmployeeFields {
 
     override lazy val columns: java.util.List[FieldLike[?, EmployeeRow]] = java.util.List.of(this.fields.businessentityid, this.fields.nationalidnumber, this.fields.loginid, this.fields.jobtitle, this.fields.birthdate, this.fields.maritalstatus, this.fields.gender, this.fields.hiredate, this.fields.salariedflag, this.fields.vacationhours, this.fields.sickleavehours, this.fields.currentflag, this.fields.rowguid, this.fields.modifieddate, this.fields.organizationnode)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[EmployeeFields, EmployeeRow] = new Impl(java.util.List.of())

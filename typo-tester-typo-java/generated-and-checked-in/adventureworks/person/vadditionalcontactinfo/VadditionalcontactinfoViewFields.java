@@ -21,7 +21,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface VadditionalcontactinfoViewFields {
-  static final class Impl extends Relation<VadditionalcontactinfoViewFields, VadditionalcontactinfoViewRow> {
+  final class Impl extends Relation<VadditionalcontactinfoViewFields, VadditionalcontactinfoViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -29,54 +29,71 @@ public interface VadditionalcontactinfoViewFields {
     @Override
     public VadditionalcontactinfoViewFields fields() {
       return new VadditionalcontactinfoViewFields() {
+               @Override
                public Field<BusinessentityId, VadditionalcontactinfoViewRow> businessentityid() {
                  return new Field<BusinessentityId, VadditionalcontactinfoViewRow>(_path, "businessentityid", VadditionalcontactinfoViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public Field</* user-picked */ FirstName, VadditionalcontactinfoViewRow> firstname() {
                  return new Field</* user-picked */ FirstName, VadditionalcontactinfoViewRow>(_path, "firstname", VadditionalcontactinfoViewRow::firstname, Optional.empty(), Optional.empty(), (row, value) -> row.withFirstname(value), /* user-picked */ FirstName.pgType);
                };
+               @Override
                public OptField<Name, VadditionalcontactinfoViewRow> middlename() {
                  return new OptField<Name, VadditionalcontactinfoViewRow>(_path, "middlename", VadditionalcontactinfoViewRow::middlename, Optional.empty(), Optional.empty(), (row, value) -> row.withMiddlename(value), Name.pgType);
                };
+               @Override
                public Field<Name, VadditionalcontactinfoViewRow> lastname() {
                  return new Field<Name, VadditionalcontactinfoViewRow>(_path, "lastname", VadditionalcontactinfoViewRow::lastname, Optional.empty(), Optional.empty(), (row, value) -> row.withLastname(value), Name.pgType);
                };
+               @Override
                public OptField<TypoXml, VadditionalcontactinfoViewRow> telephonenumber() {
                  return new OptField<TypoXml, VadditionalcontactinfoViewRow>(_path, "telephonenumber", VadditionalcontactinfoViewRow::telephonenumber, Optional.empty(), Optional.empty(), (row, value) -> row.withTelephonenumber(value), TypoXml.pgType);
                };
+               @Override
                public OptField<String, VadditionalcontactinfoViewRow> telephonespecialinstructions() {
                  return new OptField<String, VadditionalcontactinfoViewRow>(_path, "telephonespecialinstructions", VadditionalcontactinfoViewRow::telephonespecialinstructions, Optional.empty(), Optional.empty(), (row, value) -> row.withTelephonespecialinstructions(value), PgTypes.text);
                };
+               @Override
                public OptField<TypoXml, VadditionalcontactinfoViewRow> street() {
                  return new OptField<TypoXml, VadditionalcontactinfoViewRow>(_path, "street", VadditionalcontactinfoViewRow::street, Optional.empty(), Optional.empty(), (row, value) -> row.withStreet(value), TypoXml.pgType);
                };
+               @Override
                public OptField<TypoXml, VadditionalcontactinfoViewRow> city() {
                  return new OptField<TypoXml, VadditionalcontactinfoViewRow>(_path, "city", VadditionalcontactinfoViewRow::city, Optional.empty(), Optional.empty(), (row, value) -> row.withCity(value), TypoXml.pgType);
                };
+               @Override
                public OptField<TypoXml, VadditionalcontactinfoViewRow> stateprovince() {
                  return new OptField<TypoXml, VadditionalcontactinfoViewRow>(_path, "stateprovince", VadditionalcontactinfoViewRow::stateprovince, Optional.empty(), Optional.empty(), (row, value) -> row.withStateprovince(value), TypoXml.pgType);
                };
+               @Override
                public OptField<TypoXml, VadditionalcontactinfoViewRow> postalcode() {
                  return new OptField<TypoXml, VadditionalcontactinfoViewRow>(_path, "postalcode", VadditionalcontactinfoViewRow::postalcode, Optional.empty(), Optional.empty(), (row, value) -> row.withPostalcode(value), TypoXml.pgType);
                };
+               @Override
                public OptField<TypoXml, VadditionalcontactinfoViewRow> countryregion() {
                  return new OptField<TypoXml, VadditionalcontactinfoViewRow>(_path, "countryregion", VadditionalcontactinfoViewRow::countryregion, Optional.empty(), Optional.empty(), (row, value) -> row.withCountryregion(value), TypoXml.pgType);
                };
+               @Override
                public OptField<TypoXml, VadditionalcontactinfoViewRow> homeaddressspecialinstructions() {
                  return new OptField<TypoXml, VadditionalcontactinfoViewRow>(_path, "homeaddressspecialinstructions", VadditionalcontactinfoViewRow::homeaddressspecialinstructions, Optional.empty(), Optional.empty(), (row, value) -> row.withHomeaddressspecialinstructions(value), TypoXml.pgType);
                };
+               @Override
                public OptField<TypoXml, VadditionalcontactinfoViewRow> emailaddress() {
                  return new OptField<TypoXml, VadditionalcontactinfoViewRow>(_path, "emailaddress", VadditionalcontactinfoViewRow::emailaddress, Optional.empty(), Optional.empty(), (row, value) -> row.withEmailaddress(value), TypoXml.pgType);
                };
+               @Override
                public OptField<String, VadditionalcontactinfoViewRow> emailspecialinstructions() {
                  return new OptField<String, VadditionalcontactinfoViewRow>(_path, "emailspecialinstructions", VadditionalcontactinfoViewRow::emailspecialinstructions, Optional.empty(), Optional.empty(), (row, value) -> row.withEmailspecialinstructions(value), PgTypes.text);
                };
+               @Override
                public OptField<TypoXml, VadditionalcontactinfoViewRow> emailtelephonenumber() {
                  return new OptField<TypoXml, VadditionalcontactinfoViewRow>(_path, "emailtelephonenumber", VadditionalcontactinfoViewRow::emailtelephonenumber, Optional.empty(), Optional.empty(), (row, value) -> row.withEmailtelephonenumber(value), TypoXml.pgType);
                };
+               @Override
                public Field<TypoUUID, VadditionalcontactinfoViewRow> rowguid() {
                  return new Field<TypoUUID, VadditionalcontactinfoViewRow>(_path, "rowguid", VadditionalcontactinfoViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, VadditionalcontactinfoViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, VadditionalcontactinfoViewRow>(_path, "modifieddate", VadditionalcontactinfoViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -88,6 +105,7 @@ public interface VadditionalcontactinfoViewFields {
       return List.of(this.fields().businessentityid(), this.fields().firstname(), this.fields().middlename(), this.fields().lastname(), this.fields().telephonenumber(), this.fields().telephonespecialinstructions(), this.fields().street(), this.fields().city(), this.fields().stateprovince(), this.fields().postalcode(), this.fields().countryregion(), this.fields().homeaddressspecialinstructions(), this.fields().emailaddress(), this.fields().emailspecialinstructions(), this.fields().emailtelephonenumber(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

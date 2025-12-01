@@ -5,22 +5,22 @@
  */
 package adventureworks.sa.cr;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class CrViewRepoImpl implements CrViewRepo {
+  @Override
   public SelectBuilder<CrViewFields, CrViewRow> select() {
     return SelectBuilder.of("sa.cr", CrViewFields.structure(), CrViewRow._rowParser);
   };
 
+  @Override
   public List<CrViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "currencyrateid", "currencyratedate"::text, "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"::text
        from "sa"."cr"
-    """)).as(CrViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(CrViewRow._rowParser.all()).runUnchecked(c);
   };
 }

@@ -12,7 +12,6 @@ import adventureworks.production.productsubcategory.ProductsubcategoryId
 import adventureworks.public.Name
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple6
 
 /** View: pr.psc */
 case class PscViewRow(
@@ -31,14 +30,5 @@ case class PscViewRow(
 )
 
 object PscViewRow {
-  val `_rowParser`: RowParser[PscViewRow] = {
-    RowParsers.of(ProductsubcategoryId.pgType, ProductsubcategoryId.pgType, ProductcategoryId.pgType, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, PscViewRow.apply, row => new Tuple6(
-      row.id,
-      row.productsubcategoryid,
-      row.productcategoryid,
-      row.name,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[PscViewRow] = RowParsers.of(ProductsubcategoryId.pgType, ProductsubcategoryId.pgType, ProductcategoryId.pgType, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, PscViewRow.apply, row => Array(row.id, row.productsubcategoryid, row.productcategoryid, row.name, row.rowguid, row.modifieddate))
 }

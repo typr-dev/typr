@@ -21,11 +21,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class CurrencyrateRepoImpl extends CurrencyrateRepo {
-  def delete: DeleteBuilder[CurrencyrateFields, CurrencyrateRow] = DeleteBuilder.of("sales.currencyrate", CurrencyrateFields.structure)
+  override def delete: DeleteBuilder[CurrencyrateFields, CurrencyrateRow] = DeleteBuilder.of("sales.currencyrate", CurrencyrateFields.structure)
 
-  def deleteById(currencyrateid: CurrencyrateId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."currencyrate" where "currencyrateid" = ${CurrencyrateId.pgType.encode(currencyrateid)}""".update().runUnchecked(c) > 0
+  override def deleteById(currencyrateid: CurrencyrateId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."currencyrate" where "currencyrateid" = ${CurrencyrateId.pgType.encode(currencyrateid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(currencyrateids: Array[CurrencyrateId])(using c: Connection): Integer = {
+  override def deleteByIds(currencyrateids: Array[CurrencyrateId])(using c: Connection): Integer = {
     interpolate"""delete
     from "sales"."currencyrate"
     where "currencyrateid" = ANY(${CurrencyrateId.pgTypeArray.encode(currencyrateids)})"""
@@ -33,7 +33,7 @@ class CurrencyrateRepoImpl extends CurrencyrateRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: CurrencyrateRow)(using c: Connection): CurrencyrateRow = {
+  override def insert(unsaved: CurrencyrateRow)(using c: Connection): CurrencyrateRow = {
   interpolate"""insert into "sales"."currencyrate"("currencyrateid", "currencyratedate", "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate")
     values (${CurrencyrateId.pgType.encode(unsaved.currencyrateid)}::int4, ${TypoLocalDateTime.pgType.encode(unsaved.currencyratedate)}::timestamp, ${CurrencyId.pgType.encode(unsaved.fromcurrencycode)}::bpchar, ${CurrencyId.pgType.encode(unsaved.tocurrencycode)}::bpchar, ${PgTypes.numeric.encode(unsaved.averagerate)}::numeric, ${PgTypes.numeric.encode(unsaved.endofdayrate)}::numeric, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "currencyrateid", "currencyratedate"::text, "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"::text
@@ -41,9 +41,9 @@ class CurrencyrateRepoImpl extends CurrencyrateRepo {
     .updateReturning(CurrencyrateRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: CurrencyrateRowUnsaved)(using c: Connection): CurrencyrateRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: CurrencyrateRowUnsaved)(using c: Connection): CurrencyrateRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""currencyratedate"""")): @scala.annotation.nowarn
     values.add(interpolate"${TypoLocalDateTime.pgType.encode(unsaved.currencyratedate)}::timestamp"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""fromcurrencycode"""")): @scala.annotation.nowarn
@@ -55,18 +55,12 @@ class CurrencyrateRepoImpl extends CurrencyrateRepo {
     columns.add(Fragment.lit(""""endofdayrate"""")): @scala.annotation.nowarn
     values.add(interpolate"${PgTypes.numeric.encode(unsaved.endofdayrate)}::numeric"): @scala.annotation.nowarn
     unsaved.currencyrateid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""currencyrateid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${CurrencyrateId.pgType.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""currencyrateid"""")): @scala.annotation.nowarn; values.add(interpolate"${CurrencyrateId.pgType.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "sales"."currencyrate"(${Fragment.comma(columns)})
@@ -74,51 +68,51 @@ class CurrencyrateRepoImpl extends CurrencyrateRepo {
       returning "currencyrateid", "currencyratedate"::text, "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"::text
       """
     }
-    q.updateReturning(CurrencyrateRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(CurrencyrateRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[CurrencyrateRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."currencyrate"("currencyrateid", "currencyratedate", "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate") FROM STDIN""", batchSize, unsaved, c, CurrencyrateRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[CurrencyrateRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."currencyrate"("currencyratedate", "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "currencyrateid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, CurrencyrateRowUnsaved.pgText)
 
-  def select: SelectBuilder[CurrencyrateFields, CurrencyrateRow] = SelectBuilder.of("sales.currencyrate", CurrencyrateFields.structure, CurrencyrateRow.`_rowParser`)
+  override def select: SelectBuilder[CurrencyrateFields, CurrencyrateRow] = SelectBuilder.of("sales.currencyrate", CurrencyrateFields.structure, CurrencyrateRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[CurrencyrateRow] = {
+  override def selectAll(using c: Connection): java.util.List[CurrencyrateRow] = {
     interpolate"""select "currencyrateid", "currencyratedate"::text, "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"::text
     from "sales"."currencyrate"
-    """.as(CurrencyrateRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(CurrencyrateRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(currencyrateid: CurrencyrateId)(using c: Connection): Optional[CurrencyrateRow] = {
+  override def selectById(currencyrateid: CurrencyrateId)(using c: Connection): Optional[CurrencyrateRow] = {
     interpolate"""select "currencyrateid", "currencyratedate"::text, "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"::text
     from "sales"."currencyrate"
-    where "currencyrateid" = ${CurrencyrateId.pgType.encode(currencyrateid)}""".as(CurrencyrateRow.`_rowParser`.first()).runUnchecked(c)
+    where "currencyrateid" = ${CurrencyrateId.pgType.encode(currencyrateid)}""".query(CurrencyrateRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(currencyrateids: Array[CurrencyrateId])(using c: Connection): java.util.List[CurrencyrateRow] = {
+  override def selectByIds(currencyrateids: Array[CurrencyrateId])(using c: Connection): java.util.List[CurrencyrateRow] = {
     interpolate"""select "currencyrateid", "currencyratedate"::text, "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"::text
     from "sales"."currencyrate"
-    where "currencyrateid" = ANY(${CurrencyrateId.pgTypeArray.encode(currencyrateids)})""".as(CurrencyrateRow.`_rowParser`.all()).runUnchecked(c)
+    where "currencyrateid" = ANY(${CurrencyrateId.pgTypeArray.encode(currencyrateids)})""".query(CurrencyrateRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(currencyrateids: Array[CurrencyrateId])(using c: Connection): java.util.Map[CurrencyrateId, CurrencyrateRow] = {
-    val ret: java.util.Map[CurrencyrateId, CurrencyrateRow] = new HashMap()
+  override def selectByIdsTracked(currencyrateids: Array[CurrencyrateId])(using c: Connection): java.util.Map[CurrencyrateId, CurrencyrateRow] = {
+    val ret: HashMap[CurrencyrateId, CurrencyrateRow] = new HashMap[CurrencyrateId, CurrencyrateRow]()
     selectByIds(currencyrateids)(using c).forEach(row => ret.put(row.currencyrateid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[CurrencyrateFields, CurrencyrateRow] = UpdateBuilder.of("sales.currencyrate", CurrencyrateFields.structure, CurrencyrateRow.`_rowParser`.all())
+  override def update: UpdateBuilder[CurrencyrateFields, CurrencyrateRow] = UpdateBuilder.of("sales.currencyrate", CurrencyrateFields.structure, CurrencyrateRow.`_rowParser`.all())
 
-  def update(row: CurrencyrateRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: CurrencyrateRow)(using c: Connection): java.lang.Boolean = {
     val currencyrateid: CurrencyrateId = row.currencyrateid
-    interpolate"""update "sales"."currencyrate"
+    return interpolate"""update "sales"."currencyrate"
     set "currencyratedate" = ${TypoLocalDateTime.pgType.encode(row.currencyratedate)}::timestamp,
     "fromcurrencycode" = ${CurrencyId.pgType.encode(row.fromcurrencycode)}::bpchar,
     "tocurrencycode" = ${CurrencyId.pgType.encode(row.tocurrencycode)}::bpchar,
@@ -128,7 +122,7 @@ class CurrencyrateRepoImpl extends CurrencyrateRepo {
     where "currencyrateid" = ${CurrencyrateId.pgType.encode(currencyrateid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: CurrencyrateRow)(using c: Connection): CurrencyrateRow = {
+  override def upsert(unsaved: CurrencyrateRow)(using c: Connection): CurrencyrateRow = {
   interpolate"""insert into "sales"."currencyrate"("currencyrateid", "currencyratedate", "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate")
     values (${CurrencyrateId.pgType.encode(unsaved.currencyrateid)}::int4, ${TypoLocalDateTime.pgType.encode(unsaved.currencyratedate)}::timestamp, ${CurrencyId.pgType.encode(unsaved.fromcurrencycode)}::bpchar, ${CurrencyId.pgType.encode(unsaved.tocurrencycode)}::bpchar, ${PgTypes.numeric.encode(unsaved.averagerate)}::numeric, ${PgTypes.numeric.encode(unsaved.endofdayrate)}::numeric, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("currencyrateid")
@@ -145,7 +139,7 @@ class CurrencyrateRepoImpl extends CurrencyrateRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[CurrencyrateRow])(using c: Connection): java.util.List[CurrencyrateRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[CurrencyrateRow])(using c: Connection): java.util.List[CurrencyrateRow] = {
     interpolate"""insert into "sales"."currencyrate"("currencyrateid", "currencyratedate", "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate")
     values (?::int4, ?::timestamp, ?::bpchar, ?::bpchar, ?::numeric, ?::numeric, ?::timestamp)
     on conflict ("currencyrateid")
@@ -163,13 +157,13 @@ class CurrencyrateRepoImpl extends CurrencyrateRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[CurrencyrateRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table currencyrate_TEMP (like "sales"."currencyrate") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy currencyrate_TEMP("currencyrateid", "currencyratedate", "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate") from stdin""", batchSize, unsaved, c, CurrencyrateRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "sales"."currencyrate"("currencyrateid", "currencyratedate", "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate")
+    return interpolate"""insert into "sales"."currencyrate"("currencyrateid", "currencyratedate", "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate")
     select * from currencyrate_TEMP
     on conflict ("currencyrateid")
     do update set

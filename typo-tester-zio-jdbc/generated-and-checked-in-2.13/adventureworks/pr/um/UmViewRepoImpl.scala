@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class UmViewRepoImpl extends UmViewRepo {
-  def select: SelectBuilder[UmViewFields, UmViewRow] = SelectBuilder.of(""""pr"."um"""", UmViewFields.structure, UmViewRow.jdbcDecoder)
+  override def select: SelectBuilder[UmViewFields, UmViewRow] = SelectBuilder.of(""""pr"."um"""", UmViewFields.structure, UmViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, UmViewRow] = sql"""select "id", "unitmeasurecode", "name", "modifieddate"::text from "pr"."um"""".query(UmViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, UmViewRow] = sql"""select "id", "unitmeasurecode", "name", "modifieddate"::text from "pr"."um"""".query(UmViewRow.jdbcDecoder).selectStream()
 }

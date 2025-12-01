@@ -46,8 +46,8 @@ public record TypoOffsetTime(@JsonValue OffsetTime value) {
     PgText.textString.contramap(v -> v.value().toString());
 
   static public PgType<TypoOffsetTime> pgType =
-    PgTypes.text.bimap(v -> new TypoOffsetTime(OffsetTime.parse(v, parser)), v -> v.value().toString()).renamed("timetz");
+    PgTypes.text.bimap((String v) -> new TypoOffsetTime(OffsetTime.parse(v, parser)), (TypoOffsetTime v) -> v.value().toString()).renamed("timetz");
 
   static public PgType<TypoOffsetTime[]> pgTypeArray =
-    TypoOffsetTime.pgType.array(PgRead.massageJdbcArrayTo(String[].class).map(xs -> arrayMap.map(xs, v -> new TypoOffsetTime(OffsetTime.parse(v, parser)), TypoOffsetTime.class)), PgWrite.<String>passObjectToJdbc().array(TypoOffsetTime.pgType.typename().<String>as()).contramap(xs -> arrayMap.map(xs, (TypoOffsetTime v) -> v.value().toString(), String.class)));
+    TypoOffsetTime.pgType.array(PgRead.massageJdbcArrayTo(String[].class).map((String[] xs) -> arrayMap.map(xs, (String v) -> new TypoOffsetTime(OffsetTime.parse(v, parser)), TypoOffsetTime.class)), PgWrite.<String>passObjectToJdbc().array(TypoOffsetTime.pgType.typename().<String>as()).contramap((TypoOffsetTime[] xs) -> arrayMap.map(xs, (TypoOffsetTime v) -> v.value().toString(), String.class)));
 }

@@ -49,7 +49,7 @@ object SalesterritoryFields {
 
     override lazy val fields: SalesterritoryFields = {
       new SalesterritoryFields {
-        def territoryid: IdField[SalesterritoryId, SalesterritoryRow] = {
+        override def territoryid: IdField[SalesterritoryId, SalesterritoryRow] = {
           new IdField[SalesterritoryId, SalesterritoryRow](
             _path,
             "territoryid",
@@ -60,7 +60,7 @@ object SalesterritoryFields {
             SalesterritoryId.pgType
           )
         }
-        def name: Field[Name, SalesterritoryRow] = {
+        override def name: Field[Name, SalesterritoryRow] = {
           new Field[Name, SalesterritoryRow](
             _path,
             "name",
@@ -71,7 +71,7 @@ object SalesterritoryFields {
             Name.pgType
           )
         }
-        def countryregioncode: Field[CountryregionId, SalesterritoryRow] = {
+        override def countryregioncode: Field[CountryregionId, SalesterritoryRow] = {
           new Field[CountryregionId, SalesterritoryRow](
             _path,
             "countryregioncode",
@@ -82,7 +82,7 @@ object SalesterritoryFields {
             CountryregionId.pgType
           )
         }
-        def group: Field[/* max 50 chars */ String, SalesterritoryRow] = {
+        override def group: Field[/* max 50 chars */ String, SalesterritoryRow] = {
           new Field[/* max 50 chars */ String, SalesterritoryRow](
             _path,
             "group",
@@ -93,7 +93,7 @@ object SalesterritoryFields {
             PgTypes.text
           )
         }
-        def salesytd: Field[java.math.BigDecimal, SalesterritoryRow] = {
+        override def salesytd: Field[java.math.BigDecimal, SalesterritoryRow] = {
           new Field[java.math.BigDecimal, SalesterritoryRow](
             _path,
             "salesytd",
@@ -104,7 +104,7 @@ object SalesterritoryFields {
             PgTypes.numeric
           )
         }
-        def saleslastyear: Field[java.math.BigDecimal, SalesterritoryRow] = {
+        override def saleslastyear: Field[java.math.BigDecimal, SalesterritoryRow] = {
           new Field[java.math.BigDecimal, SalesterritoryRow](
             _path,
             "saleslastyear",
@@ -115,7 +115,7 @@ object SalesterritoryFields {
             PgTypes.numeric
           )
         }
-        def costytd: Field[java.math.BigDecimal, SalesterritoryRow] = {
+        override def costytd: Field[java.math.BigDecimal, SalesterritoryRow] = {
           new Field[java.math.BigDecimal, SalesterritoryRow](
             _path,
             "costytd",
@@ -126,7 +126,7 @@ object SalesterritoryFields {
             PgTypes.numeric
           )
         }
-        def costlastyear: Field[java.math.BigDecimal, SalesterritoryRow] = {
+        override def costlastyear: Field[java.math.BigDecimal, SalesterritoryRow] = {
           new Field[java.math.BigDecimal, SalesterritoryRow](
             _path,
             "costlastyear",
@@ -137,7 +137,7 @@ object SalesterritoryFields {
             PgTypes.numeric
           )
         }
-        def rowguid: Field[TypoUUID, SalesterritoryRow] = {
+        override def rowguid: Field[TypoUUID, SalesterritoryRow] = {
           new Field[TypoUUID, SalesterritoryRow](
             _path,
             "rowguid",
@@ -148,7 +148,7 @@ object SalesterritoryFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, SalesterritoryRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, SalesterritoryRow] = {
           new Field[TypoLocalDateTime, SalesterritoryRow](
             _path,
             "modifieddate",
@@ -164,7 +164,7 @@ object SalesterritoryFields {
 
     override lazy val columns: java.util.List[FieldLike[?, SalesterritoryRow]] = java.util.List.of(this.fields.territoryid, this.fields.name, this.fields.countryregioncode, this.fields.group, this.fields.salesytd, this.fields.saleslastyear, this.fields.costytd, this.fields.costlastyear, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[SalesterritoryFields, SalesterritoryRow] = new Impl(java.util.List.of())

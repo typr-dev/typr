@@ -17,7 +17,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple8
 
 /** Table: purchasing.vendor
  * Companies from whom Adventure Works Cycles purchases parts or other goods.
@@ -70,18 +69,7 @@ case class VendorRow(
 }
 
 object VendorRow {
-  val `_rowParser`: RowParser[VendorRow] = {
-    RowParsers.of(BusinessentityId.pgType, AccountNumber.pgType, Name.pgType, TypoShort.pgType, Flag.pgType, Flag.pgType, PgTypes.text.opt(), TypoLocalDateTime.pgType, VendorRow.apply, row => new Tuple8(
-      row.businessentityid,
-      row.accountnumber,
-      row.name,
-      row.creditrating,
-      row.preferredvendorstatus,
-      row.activeflag,
-      row.purchasingwebserviceurl,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[VendorRow] = RowParsers.of(BusinessentityId.pgType, AccountNumber.pgType, Name.pgType, TypoShort.pgType, Flag.pgType, Flag.pgType, PgTypes.text.opt(), TypoLocalDateTime.pgType, VendorRow.apply, row => Array(row.businessentityid, row.accountnumber, row.name, row.creditrating, row.preferredvendorstatus, row.activeflag, row.purchasingwebserviceurl, row.modifieddate))
 
   given pgText: PgText[VendorRow] = PgText.from(`_rowParser`)
 }

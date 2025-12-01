@@ -17,7 +17,7 @@ import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 
 public interface IViewFields {
-  static final class Impl extends Relation<IViewFields, IViewRow> {
+  final class Impl extends Relation<IViewFields, IViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -25,15 +25,19 @@ public interface IViewFields {
     @Override
     public IViewFields fields() {
       return new IViewFields() {
+               @Override
                public Field<IllustrationId, IViewRow> id() {
                  return new Field<IllustrationId, IViewRow>(_path, "id", IViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), IllustrationId.pgType);
                };
+               @Override
                public Field<IllustrationId, IViewRow> illustrationid() {
                  return new Field<IllustrationId, IViewRow>(_path, "illustrationid", IViewRow::illustrationid, Optional.empty(), Optional.empty(), (row, value) -> row.withIllustrationid(value), IllustrationId.pgType);
                };
+               @Override
                public OptField<TypoXml, IViewRow> diagram() {
                  return new OptField<TypoXml, IViewRow>(_path, "diagram", IViewRow::diagram, Optional.empty(), Optional.empty(), (row, value) -> row.withDiagram(value), TypoXml.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, IViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, IViewRow>(_path, "modifieddate", IViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -45,6 +49,7 @@ public interface IViewFields {
       return List.of(this.fields().id(), this.fields().illustrationid(), this.fields().diagram(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

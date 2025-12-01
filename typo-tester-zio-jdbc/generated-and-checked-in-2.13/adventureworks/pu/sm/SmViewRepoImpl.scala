@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class SmViewRepoImpl extends SmViewRepo {
-  def select: SelectBuilder[SmViewFields, SmViewRow] = SelectBuilder.of(""""pu"."sm"""", SmViewFields.structure, SmViewRow.jdbcDecoder)
+  override def select: SelectBuilder[SmViewFields, SmViewRow] = SelectBuilder.of(""""pu"."sm"""", SmViewFields.structure, SmViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, SmViewRow] = sql"""select "id", "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text from "pu"."sm"""".query(SmViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, SmViewRow] = sql"""select "id", "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text from "pu"."sm"""".query(SmViewRow.jdbcDecoder).selectStream()
 }

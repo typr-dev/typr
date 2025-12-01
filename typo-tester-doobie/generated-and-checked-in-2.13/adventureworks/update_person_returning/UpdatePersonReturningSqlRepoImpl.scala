@@ -14,7 +14,7 @@ import fs2.Stream
 import doobie.syntax.string.toSqlInterpolator
 
 class UpdatePersonReturningSqlRepoImpl extends UpdatePersonReturningSqlRepo {
-  def apply(
+  override def apply(
     suffix: /* nullability unknown */ Option[String],
     cutoff: /* nullability unknown */ Option[TypoLocalDateTime]
   ): Stream[ConnectionIO, UpdatePersonReturningSqlRow] = {

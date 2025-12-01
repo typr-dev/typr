@@ -16,7 +16,7 @@ import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 
 public interface CuViewFields {
-  static final class Impl extends Relation<CuViewFields, CuViewRow> {
+  final class Impl extends Relation<CuViewFields, CuViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -24,15 +24,19 @@ public interface CuViewFields {
     @Override
     public CuViewFields fields() {
       return new CuViewFields() {
+               @Override
                public Field<CurrencyId, CuViewRow> id() {
                  return new Field<CurrencyId, CuViewRow>(_path, "id", CuViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), CurrencyId.pgType);
                };
+               @Override
                public Field<CurrencyId, CuViewRow> currencycode() {
                  return new Field<CurrencyId, CuViewRow>(_path, "currencycode", CuViewRow::currencycode, Optional.empty(), Optional.empty(), (row, value) -> row.withCurrencycode(value), CurrencyId.pgType);
                };
+               @Override
                public Field<Name, CuViewRow> name() {
                  return new Field<Name, CuViewRow>(_path, "name", CuViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, CuViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, CuViewRow>(_path, "modifieddate", CuViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -44,6 +48,7 @@ public interface CuViewFields {
       return List.of(this.fields().id(), this.fields().currencycode(), this.fields().name(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

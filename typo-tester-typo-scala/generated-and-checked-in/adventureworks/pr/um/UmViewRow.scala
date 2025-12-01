@@ -10,7 +10,6 @@ import adventureworks.production.unitmeasure.UnitmeasureId
 import adventureworks.public.Name
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple4
 
 /** View: pr.um */
 case class UmViewRow(
@@ -25,12 +24,5 @@ case class UmViewRow(
 )
 
 object UmViewRow {
-  val `_rowParser`: RowParser[UmViewRow] = {
-    RowParsers.of(UnitmeasureId.pgType, UnitmeasureId.pgType, Name.pgType, TypoLocalDateTime.pgType, UmViewRow.apply, row => new Tuple4(
-      row.id,
-      row.unitmeasurecode,
-      row.name,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[UmViewRow] = RowParsers.of(UnitmeasureId.pgType, UnitmeasureId.pgType, Name.pgType, TypoLocalDateTime.pgType, UmViewRow.apply, row => Array(row.id, row.unitmeasurecode, row.name, row.modifieddate))
 }

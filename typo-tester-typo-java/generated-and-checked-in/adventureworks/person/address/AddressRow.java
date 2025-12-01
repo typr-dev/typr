@@ -15,7 +15,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple9;
 
 /** Table: person.address
   * Street address information for customers, employees, and vendors.
@@ -94,7 +93,7 @@ public record AddressRow(
     return new AddressRow(addressid, addressline1, addressline2, city, stateprovinceid, postalcode, spatiallocation, rowguid, modifieddate);
   };
 
-  static RowParser<AddressRow> _rowParser = RowParsers.of(AddressId.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text, StateprovinceId.pgType, PgTypes.text, TypoBytea.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, AddressRow::new, row -> new Tuple9<>(row.addressid(), row.addressline1(), row.addressline2(), row.city(), row.stateprovinceid(), row.postalcode(), row.spatiallocation(), row.rowguid(), row.modifieddate()));;
+  static RowParser<AddressRow> _rowParser = RowParsers.of(AddressId.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text, StateprovinceId.pgType, PgTypes.text, TypoBytea.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, AddressRow::new, row -> new Object[]{row.addressid(), row.addressline1(), row.addressline2(), row.city(), row.stateprovinceid(), row.postalcode(), row.spatiallocation(), row.rowguid(), row.modifieddate()});;
 
   static public PgText<AddressRow> pgText =
     PgText.from(_rowParser);

@@ -15,7 +15,6 @@ import java.util.Optional
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple6
 
 /** Table: humanresources.employeedepartmenthistory
  * Employee department transfers.
@@ -69,16 +68,7 @@ case class EmployeedepartmenthistoryRow(
 }
 
 object EmployeedepartmenthistoryRow {
-  val `_rowParser`: RowParser[EmployeedepartmenthistoryRow] = {
-    RowParsers.of(BusinessentityId.pgType, DepartmentId.pgType, ShiftId.pgType, TypoLocalDate.pgType, TypoLocalDate.pgType.opt(), TypoLocalDateTime.pgType, EmployeedepartmenthistoryRow.apply, row => new Tuple6(
-      row.businessentityid,
-      row.departmentid,
-      row.shiftid,
-      row.startdate,
-      row.enddate,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[EmployeedepartmenthistoryRow] = RowParsers.of(BusinessentityId.pgType, DepartmentId.pgType, ShiftId.pgType, TypoLocalDate.pgType, TypoLocalDate.pgType.opt(), TypoLocalDateTime.pgType, EmployeedepartmenthistoryRow.apply, row => Array(row.businessentityid, row.departmentid, row.shiftid, row.startdate, row.enddate, row.modifieddate))
 
   def apply(
     compositeId: EmployeedepartmenthistoryId,

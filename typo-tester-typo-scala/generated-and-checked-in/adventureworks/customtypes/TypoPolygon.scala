@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes
 
+import com.fasterxml.jackson.annotation.JsonValue
 import java.util.Arrays
 import java.util.stream.Collectors
 import org.postgresql.geometric.PGpoint
@@ -16,7 +17,7 @@ import typo.runtime.PgType
 import typo.runtime.PgWrite
 
 /** Polygon datatype in PostgreSQL */
-case class TypoPolygon(points: java.util.List[TypoPoint])
+case class TypoPolygon(@JsonValue points: java.util.List[TypoPoint])
 
 object TypoPolygon {
   given bijection: Bijection[TypoPolygon, java.util.List[TypoPoint]] = Bijection.apply[TypoPolygon, java.util.List[TypoPoint]](_.points)(TypoPolygon.apply)
@@ -26,11 +27,11 @@ object TypoPolygon {
   given pgType: PgType[TypoPolygon] = {
     PgType.of(
       "polygon",
-      PgRead.castJdbcObjectTo(classOf[PGpolygon]).map(v => new TypoPolygon(Arrays.stream(v.points).map(p => new TypoPoint(p.x, p.y)).toList())),
-      PgWrite.passObjectToJdbc().contramap((v: TypoPolygon) => new PGpolygon(v.points.stream().map(p => new PGpoint(p.x, p.y)).toArray((n => new Array[PGpoint](n))))),
+      PgRead.castJdbcObjectTo(classOf[PGpolygon]).map((v: PGpolygon) => new TypoPolygon(Arrays.stream(v.points).map(p => new TypoPoint(p.x, p.y)).toList())),
+      PgWrite.passObjectToJdbc[PGpolygon]().contramap((v: TypoPolygon) => new PGpolygon(v.points.stream().map(p => new PGpoint(p.x, p.y)).toArray((n => new Array[PGpoint](n))))),
       TypoPolygon.pgText
     )
   }
 
-  given pgTypeArray: PgType[Array[TypoPolygon]] = TypoPolygon.pgType.array(PgRead.castJdbcArrayTo(classOf[PGpolygon]).map(xs => xs.map(v => new TypoPolygon(Arrays.stream(v.points).map(p => new TypoPoint(p.x, p.y)).toList()))), PgWrite.passObjectToJdbc[PGpolygon]().array(TypoPolygon.pgType.typename().as[PGpolygon]()).contramap(xs => xs.map((v: TypoPolygon) => new PGpolygon(v.points.stream().map(p => new PGpoint(p.x, p.y)).toArray((n => new Array[PGpoint](n)))))))
+  given pgTypeArray: PgType[Array[TypoPolygon]] = TypoPolygon.pgType.array(PgRead.castJdbcArrayTo(classOf[PGpolygon]).map((xs: Array[PGpolygon]) => xs.map((v: PGpolygon) => new TypoPolygon(Arrays.stream(v.points).map(p => new TypoPoint(p.x, p.y)).toList()))), PgWrite.passObjectToJdbc[PGpolygon]().array(TypoPolygon.pgType.typename().as[PGpolygon]()).contramap((xs: Array[TypoPolygon]) => xs.map((v: TypoPolygon) => new PGpolygon(v.points.stream().map(p => new PGpoint(p.x, p.y)).toArray((n => new Array[PGpoint](n)))))))
 }

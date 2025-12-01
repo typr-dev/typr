@@ -21,11 +21,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ProductcategoryRepoImpl extends ProductcategoryRepo {
-  def delete: DeleteBuilder[ProductcategoryFields, ProductcategoryRow] = DeleteBuilder.of("production.productcategory", ProductcategoryFields.structure)
+  override def delete: DeleteBuilder[ProductcategoryFields, ProductcategoryRow] = DeleteBuilder.of("production.productcategory", ProductcategoryFields.structure)
 
-  def deleteById(productcategoryid: ProductcategoryId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."productcategory" where "productcategoryid" = ${ProductcategoryId.pgType.encode(productcategoryid)}""".update().runUnchecked(c) > 0
+  override def deleteById(productcategoryid: ProductcategoryId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."productcategory" where "productcategoryid" = ${ProductcategoryId.pgType.encode(productcategoryid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(productcategoryids: Array[ProductcategoryId])(using c: Connection): Integer = {
+  override def deleteByIds(productcategoryids: Array[ProductcategoryId])(using c: Connection): Integer = {
     interpolate"""delete
     from "production"."productcategory"
     where "productcategoryid" = ANY(${ProductcategoryId.pgTypeArray.encode(productcategoryids)})"""
@@ -33,7 +33,7 @@ class ProductcategoryRepoImpl extends ProductcategoryRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: ProductcategoryRow)(using c: Connection): ProductcategoryRow = {
+  override def insert(unsaved: ProductcategoryRow)(using c: Connection): ProductcategoryRow = {
   interpolate"""insert into "production"."productcategory"("productcategoryid", "name", "rowguid", "modifieddate")
     values (${ProductcategoryId.pgType.encode(unsaved.productcategoryid)}::int4, ${Name.pgType.encode(unsaved.name)}::varchar, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "productcategoryid", "name", "rowguid", "modifieddate"::text
@@ -41,31 +41,22 @@ class ProductcategoryRepoImpl extends ProductcategoryRepo {
     .updateReturning(ProductcategoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: ProductcategoryRowUnsaved)(using c: Connection): ProductcategoryRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: ProductcategoryRowUnsaved)(using c: Connection): ProductcategoryRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
     values.add(interpolate"${Name.pgType.encode(unsaved.name)}::varchar"): @scala.annotation.nowarn
     unsaved.productcategoryid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""productcategoryid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${ProductcategoryId.pgType.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""productcategoryid"""")): @scala.annotation.nowarn; values.add(interpolate"${ProductcategoryId.pgType.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "production"."productcategory"(${Fragment.comma(columns)})
@@ -73,58 +64,58 @@ class ProductcategoryRepoImpl extends ProductcategoryRepo {
       returning "productcategoryid", "name", "rowguid", "modifieddate"::text
       """
     }
-    q.updateReturning(ProductcategoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(ProductcategoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[ProductcategoryRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."productcategory"("productcategoryid", "name", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, c, ProductcategoryRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[ProductcategoryRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."productcategory"("name", "productcategoryid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ProductcategoryRowUnsaved.pgText)
 
-  def select: SelectBuilder[ProductcategoryFields, ProductcategoryRow] = SelectBuilder.of("production.productcategory", ProductcategoryFields.structure, ProductcategoryRow.`_rowParser`)
+  override def select: SelectBuilder[ProductcategoryFields, ProductcategoryRow] = SelectBuilder.of("production.productcategory", ProductcategoryFields.structure, ProductcategoryRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[ProductcategoryRow] = {
+  override def selectAll(using c: Connection): java.util.List[ProductcategoryRow] = {
     interpolate"""select "productcategoryid", "name", "rowguid", "modifieddate"::text
     from "production"."productcategory"
-    """.as(ProductcategoryRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(ProductcategoryRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(productcategoryid: ProductcategoryId)(using c: Connection): Optional[ProductcategoryRow] = {
+  override def selectById(productcategoryid: ProductcategoryId)(using c: Connection): Optional[ProductcategoryRow] = {
     interpolate"""select "productcategoryid", "name", "rowguid", "modifieddate"::text
     from "production"."productcategory"
-    where "productcategoryid" = ${ProductcategoryId.pgType.encode(productcategoryid)}""".as(ProductcategoryRow.`_rowParser`.first()).runUnchecked(c)
+    where "productcategoryid" = ${ProductcategoryId.pgType.encode(productcategoryid)}""".query(ProductcategoryRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(productcategoryids: Array[ProductcategoryId])(using c: Connection): java.util.List[ProductcategoryRow] = {
+  override def selectByIds(productcategoryids: Array[ProductcategoryId])(using c: Connection): java.util.List[ProductcategoryRow] = {
     interpolate"""select "productcategoryid", "name", "rowguid", "modifieddate"::text
     from "production"."productcategory"
-    where "productcategoryid" = ANY(${ProductcategoryId.pgTypeArray.encode(productcategoryids)})""".as(ProductcategoryRow.`_rowParser`.all()).runUnchecked(c)
+    where "productcategoryid" = ANY(${ProductcategoryId.pgTypeArray.encode(productcategoryids)})""".query(ProductcategoryRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(productcategoryids: Array[ProductcategoryId])(using c: Connection): java.util.Map[ProductcategoryId, ProductcategoryRow] = {
-    val ret: java.util.Map[ProductcategoryId, ProductcategoryRow] = new HashMap()
+  override def selectByIdsTracked(productcategoryids: Array[ProductcategoryId])(using c: Connection): java.util.Map[ProductcategoryId, ProductcategoryRow] = {
+    val ret: HashMap[ProductcategoryId, ProductcategoryRow] = new HashMap[ProductcategoryId, ProductcategoryRow]()
     selectByIds(productcategoryids)(using c).forEach(row => ret.put(row.productcategoryid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[ProductcategoryFields, ProductcategoryRow] = UpdateBuilder.of("production.productcategory", ProductcategoryFields.structure, ProductcategoryRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ProductcategoryFields, ProductcategoryRow] = UpdateBuilder.of("production.productcategory", ProductcategoryFields.structure, ProductcategoryRow.`_rowParser`.all())
 
-  def update(row: ProductcategoryRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: ProductcategoryRow)(using c: Connection): java.lang.Boolean = {
     val productcategoryid: ProductcategoryId = row.productcategoryid
-    interpolate"""update "production"."productcategory"
+    return interpolate"""update "production"."productcategory"
     set "name" = ${Name.pgType.encode(row.name)}::varchar,
     "rowguid" = ${TypoUUID.pgType.encode(row.rowguid)}::uuid,
     "modifieddate" = ${TypoLocalDateTime.pgType.encode(row.modifieddate)}::timestamp
     where "productcategoryid" = ${ProductcategoryId.pgType.encode(productcategoryid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: ProductcategoryRow)(using c: Connection): ProductcategoryRow = {
+  override def upsert(unsaved: ProductcategoryRow)(using c: Connection): ProductcategoryRow = {
   interpolate"""insert into "production"."productcategory"("productcategoryid", "name", "rowguid", "modifieddate")
     values (${ProductcategoryId.pgType.encode(unsaved.productcategoryid)}::int4, ${Name.pgType.encode(unsaved.name)}::varchar, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("productcategoryid")
@@ -138,7 +129,7 @@ class ProductcategoryRepoImpl extends ProductcategoryRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[ProductcategoryRow])(using c: Connection): java.util.List[ProductcategoryRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[ProductcategoryRow])(using c: Connection): java.util.List[ProductcategoryRow] = {
     interpolate"""insert into "production"."productcategory"("productcategoryid", "name", "rowguid", "modifieddate")
     values (?::int4, ?::varchar, ?::uuid, ?::timestamp)
     on conflict ("productcategoryid")
@@ -153,13 +144,13 @@ class ProductcategoryRepoImpl extends ProductcategoryRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[ProductcategoryRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table productcategory_TEMP (like "production"."productcategory") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy productcategory_TEMP("productcategoryid", "name", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, c, ProductcategoryRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "production"."productcategory"("productcategoryid", "name", "rowguid", "modifieddate")
+    return interpolate"""insert into "production"."productcategory"("productcategoryid", "name", "rowguid", "modifieddate")
     select * from productcategory_TEMP
     on conflict ("productcategoryid")
     do update set

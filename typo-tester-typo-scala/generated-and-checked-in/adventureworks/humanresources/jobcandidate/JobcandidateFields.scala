@@ -36,7 +36,7 @@ object JobcandidateFields {
 
     override lazy val fields: JobcandidateFields = {
       new JobcandidateFields {
-        def jobcandidateid: IdField[JobcandidateId, JobcandidateRow] = {
+        override def jobcandidateid: IdField[JobcandidateId, JobcandidateRow] = {
           new IdField[JobcandidateId, JobcandidateRow](
             _path,
             "jobcandidateid",
@@ -47,7 +47,7 @@ object JobcandidateFields {
             JobcandidateId.pgType
           )
         }
-        def businessentityid: OptField[BusinessentityId, JobcandidateRow] = {
+        override def businessentityid: OptField[BusinessentityId, JobcandidateRow] = {
           new OptField[BusinessentityId, JobcandidateRow](
             _path,
             "businessentityid",
@@ -58,7 +58,7 @@ object JobcandidateFields {
             BusinessentityId.pgType
           )
         }
-        def resume: OptField[TypoXml, JobcandidateRow] = {
+        override def resume: OptField[TypoXml, JobcandidateRow] = {
           new OptField[TypoXml, JobcandidateRow](
             _path,
             "resume",
@@ -69,7 +69,7 @@ object JobcandidateFields {
             TypoXml.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, JobcandidateRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, JobcandidateRow] = {
           new Field[TypoLocalDateTime, JobcandidateRow](
             _path,
             "modifieddate",
@@ -85,7 +85,7 @@ object JobcandidateFields {
 
     override lazy val columns: java.util.List[FieldLike[?, JobcandidateRow]] = java.util.List.of(this.fields.jobcandidateid, this.fields.businessentityid, this.fields.resume, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[JobcandidateFields, JobcandidateRow] = new Impl(java.util.List.of())

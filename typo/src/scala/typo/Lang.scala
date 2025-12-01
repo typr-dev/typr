@@ -39,6 +39,37 @@ trait Lang extends TypeSupport {
 
   /** Array creation: Java: `ClassName[]::new` or `new ClassName[length]`, Scala: `n => new Array[ClassName](n)` or `new Array[ClassName](length)` */
   def newArray(elementType: jvm.Type, length: Option[jvm.Code]): jvm.Code
+
+  /** Byte array creation: Kotlin: `ByteArray(size)`, Scala: `Array.ofDim[Byte](size)`, Java: `new byte[size]` */
+  def newByteArray(size: jvm.Code): jvm.Code
+
+  /** Array fill: Kotlin: `Array(size) { factory }`, Scala: `Array.fill(size)(factory)`, Java: requires stream API */
+  def arrayFill(size: jvm.Code, factory: jvm.Code, elementType: jvm.Type): jvm.Code
+
+  /** Class reference for annotations */
+  def annotationClassRef(tpe: jvm.Type): jvm.Code
+
+  /** Property access on record/data class/case class: Java `()`, Kotlin/Scala no `()` */
+  def propertyGetterAccess(target: jvm.Code, name: jvm.Ident): jvm.Code
+
+  /** Access to lazy val (Scala) / fun (Kotlin/Java) in structures */
+  def overrideValueAccess(target: jvm.Code, name: jvm.Ident): jvm.Code
+
+  /** Zero-arg method call: all languages use `()` */
+  def nullaryMethodCall(target: jvm.Code, name: jvm.Ident): jvm.Code
+
+  /** Array literal */
+  def arrayOf(elements: List[jvm.Code]): jvm.Code
+
+  /** Structural equality check */
+  def equals(left: jvm.Code, right: jvm.Code): jvm.Code
+
+  /** Structural inequality check */
+  def notEquals(left: jvm.Code, right: jvm.Code): jvm.Code
+
+  /** Convenience method for property access on generated data classes */
+  final def prop(target: jvm.Code, field: jvm.Ident): jvm.Code = propertyGetterAccess(target, field)
+  final def prop(target: jvm.Code, field: String): jvm.Code = propertyGetterAccess(target, jvm.Ident(field))
 }
 
 trait ListSupport {
@@ -96,6 +127,7 @@ trait OptionalSupport {
       case jvm.Type.Function0(_)             => None
       case jvm.Type.Function1(_, _)          => None
       case jvm.Type.Function2(_, _, _)       => None
+      case jvm.Type.Primitive(_)             => None
     }
 }
 
@@ -137,8 +169,8 @@ trait MapSupport {
   /** Convert map entries to string with separator (e.g., "k => v, k2 => v2") */
   def mkStringKV(map: jvm.Code, kvSep: String, entrySep: String): jvm.Code
 
-  /** Iterate over map entries with a Lambda2 */
-  def forEach(map: jvm.Code, lambda: jvm.Lambda2): jvm.Code
+  /** Iterate over map entries with a Lambda */
+  def forEach(map: jvm.Code, lambda: jvm.Lambda): jvm.Code
 
   /** Cast a Map<?, ?> to the target map type */
   def castMap(expr: jvm.Code, keyType: jvm.Type, valueType: jvm.Type): jvm.Code

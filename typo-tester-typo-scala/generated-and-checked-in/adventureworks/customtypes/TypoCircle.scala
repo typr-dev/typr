@@ -23,11 +23,11 @@ object TypoCircle {
   given pgType: PgType[TypoCircle] = {
     PgType.of(
       "circle",
-      PgRead.castJdbcObjectTo(classOf[PGcircle]).map(v => new TypoCircle(new TypoPoint(v.center.x, v.center.y), v.radius)),
-      PgWrite.passObjectToJdbc().contramap((v: TypoCircle) => new PGcircle(v.center.x, v.center.y, v.radius)),
+      PgRead.castJdbcObjectTo(classOf[PGcircle]).map((v: PGcircle) => new TypoCircle(new TypoPoint(v.center.x, v.center.y), v.radius)),
+      PgWrite.passObjectToJdbc[PGcircle]().contramap((v: TypoCircle) => new PGcircle(v.center.x, v.center.y, v.radius)),
       TypoCircle.pgText
     )
   }
 
-  given pgTypeArray: PgType[Array[TypoCircle]] = TypoCircle.pgType.array(PgRead.castJdbcArrayTo(classOf[PGcircle]).map(xs => xs.map(v => new TypoCircle(new TypoPoint(v.center.x, v.center.y), v.radius))), PgWrite.passObjectToJdbc[PGcircle]().array(TypoCircle.pgType.typename().as[PGcircle]()).contramap(xs => xs.map((v: TypoCircle) => new PGcircle(v.center.x, v.center.y, v.radius))))
+  given pgTypeArray: PgType[Array[TypoCircle]] = TypoCircle.pgType.array(PgRead.castJdbcArrayTo(classOf[PGcircle]).map((xs: Array[PGcircle]) => xs.map((v: PGcircle) => new TypoCircle(new TypoPoint(v.center.x, v.center.y), v.radius))), PgWrite.passObjectToJdbc[PGcircle]().array(TypoCircle.pgType.typename().as[PGcircle]()).contramap((xs: Array[TypoCircle]) => xs.map((v: TypoCircle) => new PGcircle(v.center.x, v.center.y, v.radius))))
 }

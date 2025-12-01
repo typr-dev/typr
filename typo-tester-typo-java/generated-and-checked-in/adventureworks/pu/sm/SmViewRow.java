@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple7;
 
 /** View: pu.sm */
 public record SmViewRow(
@@ -67,5 +66,5 @@ public record SmViewRow(
     return new SmViewRow(id, shipmethodid, name, shipbase, shiprate, rowguid, modifieddate);
   };
 
-  static RowParser<SmViewRow> _rowParser = RowParsers.of(ShipmethodId.pgType, ShipmethodId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SmViewRow::new, row -> new Tuple7<>(row.id(), row.shipmethodid(), row.name(), row.shipbase(), row.shiprate(), row.rowguid(), row.modifieddate()));;
+  static RowParser<SmViewRow> _rowParser = RowParsers.of(ShipmethodId.pgType, ShipmethodId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SmViewRow::new, row -> new Object[]{row.id(), row.shipmethodid(), row.name(), row.shipbase(), row.shiprate(), row.rowguid(), row.modifieddate()});;
 }

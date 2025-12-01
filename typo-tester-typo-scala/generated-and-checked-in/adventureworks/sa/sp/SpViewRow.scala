@@ -13,7 +13,6 @@ import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple10
 
 /** View: sa.sp */
 case class SpViewRow(
@@ -40,18 +39,5 @@ case class SpViewRow(
 )
 
 object SpViewRow {
-  val `_rowParser`: RowParser[SpViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, SalesterritoryId.pgType.opt(), PgTypes.numeric.opt(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SpViewRow.apply, row => new Tuple10(
-      row.id,
-      row.businessentityid,
-      row.territoryid,
-      row.salesquota,
-      row.bonus,
-      row.commissionpct,
-      row.salesytd,
-      row.saleslastyear,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[SpViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, SalesterritoryId.pgType.opt(), PgTypes.numeric.opt(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SpViewRow.apply, row => Array(row.id, row.businessentityid, row.territoryid, row.salesquota, row.bonus, row.commissionpct, row.salesytd, row.saleslastyear, row.rowguid, row.modifieddate))
 }

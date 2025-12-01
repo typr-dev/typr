@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class PohViewRepoImpl extends PohViewRepo {
-  def select: SelectBuilder[PohViewFields, PohViewRow] = SelectBuilder.of(""""pu"."poh"""", PohViewFields.structure, PohViewRow.jdbcDecoder)
+  override def select: SelectBuilder[PohViewFields, PohViewRow] = SelectBuilder.of(""""pu"."poh"""", PohViewFields.structure, PohViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, PohViewRow] = sql"""select "id", "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text from "pu"."poh"""".query(using PohViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, PohViewRow] = sql"""select "id", "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text from "pu"."poh"""".query(using PohViewRow.jdbcDecoder).selectStream()
 }

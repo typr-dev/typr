@@ -10,9 +10,9 @@ import typo.dsl.SelectBuilder
 import anorm.SqlStringInterpolation
 
 class BecViewRepoImpl extends BecViewRepo {
-  def select: SelectBuilder[BecViewFields, BecViewRow] = SelectBuilder.of(""""pe"."bec"""", BecViewFields.structure, BecViewRow.rowParser)
+  override def select: SelectBuilder[BecViewFields, BecViewRow] = SelectBuilder.of(""""pe"."bec"""", BecViewFields.structure, BecViewRow.rowParser)
 
-  def selectAll(implicit c: Connection): List[BecViewRow] = {
+  override def selectAll(implicit c: Connection): List[BecViewRow] = {
     SQL"""select "id", "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text
     from "pe"."bec"
     """.as(BecViewRow.rowParser(1).*)

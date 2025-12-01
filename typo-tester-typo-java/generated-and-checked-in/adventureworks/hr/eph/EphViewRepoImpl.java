@@ -5,22 +5,22 @@
  */
 package adventureworks.hr.eph;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class EphViewRepoImpl implements EphViewRepo {
+  @Override
   public SelectBuilder<EphViewFields, EphViewRow> select() {
     return SelectBuilder.of("hr.eph", EphViewFields.structure(), EphViewRow._rowParser);
   };
 
+  @Override
   public List<EphViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text
        from "hr"."eph"
-    """)).as(EphViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(EphViewRow._rowParser.all()).runUnchecked(c);
   };
 }

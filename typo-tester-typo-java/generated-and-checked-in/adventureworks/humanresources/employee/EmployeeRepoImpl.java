@@ -11,7 +11,6 @@ import adventureworks.customtypes.TypoShort;
 import adventureworks.customtypes.TypoUUID;
 import adventureworks.person.businessentity.BusinessentityId;
 import adventureworks.public_.Flag;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,12 +28,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class EmployeeRepoImpl implements EmployeeRepo {
+  @Override
   public DeleteBuilder<EmployeeFields, EmployeeRow> delete() {
     return DeleteBuilder.of("humanresources.employee", EmployeeFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     BusinessentityId businessentityid,
     Connection c
@@ -48,6 +48,7 @@ public class EmployeeRepoImpl implements EmployeeRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     BusinessentityId[] businessentityids,
     Connection c
@@ -64,6 +65,7 @@ public class EmployeeRepoImpl implements EmployeeRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public EmployeeRow insert(
     EmployeeRow unsaved,
     Connection c
@@ -109,143 +111,159 @@ public class EmployeeRepoImpl implements EmployeeRepo {
       .updateReturning(EmployeeRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public EmployeeRow insert(
     EmployeeRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"businessentityid\""));
-      values.add(interpolate(
-        BusinessentityId.pgType.encode(unsaved.businessentityid()),
-        typo.runtime.Fragment.lit("::int4")
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"businessentityid\""));
+    values.add(interpolate(
+      BusinessentityId.pgType.encode(unsaved.businessentityid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"nationalidnumber\""));
+    values.add(interpolate(
+      PgTypes.text.encode(unsaved.nationalidnumber()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    columns.add(Fragment.lit("\"loginid\""));
+    values.add(interpolate(
+      PgTypes.text.encode(unsaved.loginid()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    columns.add(Fragment.lit("\"jobtitle\""));
+    values.add(interpolate(
+      PgTypes.text.encode(unsaved.jobtitle()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    columns.add(Fragment.lit("\"birthdate\""));
+    values.add(interpolate(
+      TypoLocalDate.pgType.encode(unsaved.birthdate()),
+      typo.runtime.Fragment.lit("::date")
+    ));
+    columns.add(Fragment.lit("\"maritalstatus\""));
+    values.add(interpolate(
+      PgTypes.text.encode(unsaved.maritalstatus()),
+      typo.runtime.Fragment.lit("::bpchar")
+    ));
+    columns.add(Fragment.lit("\"gender\""));
+    values.add(interpolate(
+      PgTypes.text.encode(unsaved.gender()),
+      typo.runtime.Fragment.lit("::bpchar")
+    ));
+    columns.add(Fragment.lit("\"hiredate\""));
+    values.add(interpolate(
+      TypoLocalDate.pgType.encode(unsaved.hiredate()),
+      typo.runtime.Fragment.lit("::date")
+    ));
+    unsaved.salariedflag().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"salariedflag\""));
+        values.add(interpolate(
+        Flag.pgType.encode(value),
+        typo.runtime.Fragment.lit("::bool")
       ));
-      columns.add(Fragment.lit("\"nationalidnumber\""));
-      values.add(interpolate(
-        PgTypes.text.encode(unsaved.nationalidnumber()),
+      }
+    );;
+    unsaved.vacationhours().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"vacationhours\""));
+        values.add(interpolate(
+        TypoShort.pgType.encode(value),
+        typo.runtime.Fragment.lit("::int2")
+      ));
+      }
+    );;
+    unsaved.sickleavehours().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"sickleavehours\""));
+        values.add(interpolate(
+        TypoShort.pgType.encode(value),
+        typo.runtime.Fragment.lit("::int2")
+      ));
+      }
+    );;
+    unsaved.currentflag().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"currentflag\""));
+        values.add(interpolate(
+        Flag.pgType.encode(value),
+        typo.runtime.Fragment.lit("::bool")
+      ));
+      }
+    );;
+    unsaved.rowguid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"rowguid\""));
+        values.add(interpolate(
+        TypoUUID.pgType.encode(value),
+        typo.runtime.Fragment.lit("::uuid")
+      ));
+      }
+    );;
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
+      ));
+      }
+    );;
+    unsaved.organizationnode().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"organizationnode\""));
+        values.add(interpolate(
+        PgTypes.text.opt().encode(value),
         typo.runtime.Fragment.lit("""
         """)
       ));
-      columns.add(Fragment.lit("\"loginid\""));
-      values.add(interpolate(
-        PgTypes.text.encode(unsaved.loginid()),
-        typo.runtime.Fragment.lit("""
-        """)
-      ));
-      columns.add(Fragment.lit("\"jobtitle\""));
-      values.add(interpolate(
-        PgTypes.text.encode(unsaved.jobtitle()),
-        typo.runtime.Fragment.lit("""
-        """)
-      ));
-      columns.add(Fragment.lit("\"birthdate\""));
-      values.add(interpolate(
-        TypoLocalDate.pgType.encode(unsaved.birthdate()),
-        typo.runtime.Fragment.lit("::date")
-      ));
-      columns.add(Fragment.lit("\"maritalstatus\""));
-      values.add(interpolate(
-        PgTypes.text.encode(unsaved.maritalstatus()),
-        typo.runtime.Fragment.lit("::bpchar")
-      ));
-      columns.add(Fragment.lit("\"gender\""));
-      values.add(interpolate(
-        PgTypes.text.encode(unsaved.gender()),
-        typo.runtime.Fragment.lit("::bpchar")
-      ));
-      columns.add(Fragment.lit("\"hiredate\""));
-      values.add(interpolate(
-        TypoLocalDate.pgType.encode(unsaved.hiredate()),
-        typo.runtime.Fragment.lit("::date")
-      ));
-      unsaved.salariedflag().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"salariedflag\""));
-          values.add(interpolate(
-            Flag.pgType.encode(value),
-            typo.runtime.Fragment.lit("::bool")
-          ));
-        }
-      );;
-      unsaved.vacationhours().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"vacationhours\""));
-          values.add(interpolate(
-            TypoShort.pgType.encode(value),
-            typo.runtime.Fragment.lit("::int2")
-          ));
-        }
-      );;
-      unsaved.sickleavehours().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"sickleavehours\""));
-          values.add(interpolate(
-            TypoShort.pgType.encode(value),
-            typo.runtime.Fragment.lit("::int2")
-          ));
-        }
-      );;
-      unsaved.currentflag().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"currentflag\""));
-          values.add(interpolate(
-            Flag.pgType.encode(value),
-            typo.runtime.Fragment.lit("::bool")
-          ));
-        }
-      );;
-      unsaved.rowguid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"rowguid\""));
-          values.add(interpolate(
-            TypoUUID.pgType.encode(value),
-            typo.runtime.Fragment.lit("::uuid")
-          ));
-        }
-      );;
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      unsaved.organizationnode().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"organizationnode\""));
-          values.add(interpolate(
-            PgTypes.text.opt().encode(value),
-            typo.runtime.Fragment.lit("""
-            """)
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "humanresources"."employee"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode"
-        """)
-      );;
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "humanresources"."employee"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode"
+      """)
+    );;
     return q.updateReturning(EmployeeRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<EmployeeRow> unsaved,
     Integer batchSize,
@@ -257,6 +275,7 @@ public class EmployeeRepoImpl implements EmployeeRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<EmployeeRowUnsaved> unsaved,
     Integer batchSize,
@@ -267,17 +286,20 @@ public class EmployeeRepoImpl implements EmployeeRepo {
     """), batchSize, unsaved, c, EmployeeRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<EmployeeFields, EmployeeRow> select() {
     return SelectBuilder.of("humanresources.employee", EmployeeFields.structure(), EmployeeRow._rowParser);
   };
 
+  @Override
   public List<EmployeeRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode"
        from "humanresources"."employee"
-    """)).as(EmployeeRow._rowParser.all()).runUnchecked(c);
+    """)).query(EmployeeRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<EmployeeRow> selectById(
     BusinessentityId businessentityid,
     Connection c
@@ -289,9 +311,10 @@ public class EmployeeRepoImpl implements EmployeeRepo {
          where "businessentityid" = """),
       BusinessentityId.pgType.encode(businessentityid),
       typo.runtime.Fragment.lit("")
-    ).as(EmployeeRow._rowParser.first()).runUnchecked(c);
+    ).query(EmployeeRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<EmployeeRow> selectByIds(
     BusinessentityId[] businessentityids,
     Connection c
@@ -303,92 +326,96 @@ public class EmployeeRepoImpl implements EmployeeRepo {
          where "businessentityid" = ANY("""),
       BusinessentityId.pgTypeArray.encode(businessentityids),
       typo.runtime.Fragment.lit(")")
-    ).as(EmployeeRow._rowParser.all()).runUnchecked(c);
+    ).query(EmployeeRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<BusinessentityId, EmployeeRow> selectByIdsTracked(
     BusinessentityId[] businessentityids,
     Connection c
   ) {
-    Map<BusinessentityId, EmployeeRow> ret = new HashMap<>();;
-      selectByIds(businessentityids, c).forEach(row -> ret.put(row.businessentityid(), row));
+    HashMap<BusinessentityId, EmployeeRow> ret = new HashMap<BusinessentityId, EmployeeRow>();
+    selectByIds(businessentityids, c).forEach(row -> ret.put(row.businessentityid(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<EmployeeFields, EmployeeRow> update() {
     return UpdateBuilder.of("humanresources.employee", EmployeeFields.structure(), EmployeeRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     EmployeeRow row,
     Connection c
   ) {
     BusinessentityId businessentityid = row.businessentityid();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "humanresources"."employee"
-                set "nationalidnumber" = """),
-             PgTypes.text.encode(row.nationalidnumber()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "loginid" = """),
-             PgTypes.text.encode(row.loginid()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "jobtitle" = """),
-             PgTypes.text.encode(row.jobtitle()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "birthdate" = """),
-             TypoLocalDate.pgType.encode(row.birthdate()),
-             typo.runtime.Fragment.lit("""
-                ::date,
-                "maritalstatus" = """),
-             PgTypes.text.encode(row.maritalstatus()),
-             typo.runtime.Fragment.lit("""
-                ::bpchar,
-                "gender" = """),
-             PgTypes.text.encode(row.gender()),
-             typo.runtime.Fragment.lit("""
-                ::bpchar,
-                "hiredate" = """),
-             TypoLocalDate.pgType.encode(row.hiredate()),
-             typo.runtime.Fragment.lit("""
-                ::date,
-                "salariedflag" = """),
-             Flag.pgType.encode(row.salariedflag()),
-             typo.runtime.Fragment.lit("""
-                ::bool,
-                "vacationhours" = """),
-             TypoShort.pgType.encode(row.vacationhours()),
-             typo.runtime.Fragment.lit("""
-                ::int2,
-                "sickleavehours" = """),
-             TypoShort.pgType.encode(row.sickleavehours()),
-             typo.runtime.Fragment.lit("""
-                ::int2,
-                "currentflag" = """),
-             Flag.pgType.encode(row.currentflag()),
-             typo.runtime.Fragment.lit("""
-                ::bool,
-                "rowguid" = """),
-             TypoUUID.pgType.encode(row.rowguid()),
-             typo.runtime.Fragment.lit("""
-                ::uuid,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp,
-                "organizationnode" = """),
-             PgTypes.text.opt().encode(row.organizationnode()),
-             typo.runtime.Fragment.lit("""
+      typo.runtime.Fragment.lit("""
+         update "humanresources"."employee"
+         set "nationalidnumber" = """),
+      PgTypes.text.encode(row.nationalidnumber()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "loginid" = """),
+      PgTypes.text.encode(row.loginid()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "jobtitle" = """),
+      PgTypes.text.encode(row.jobtitle()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "birthdate" = """),
+      TypoLocalDate.pgType.encode(row.birthdate()),
+      typo.runtime.Fragment.lit("""
+         ::date,
+         "maritalstatus" = """),
+      PgTypes.text.encode(row.maritalstatus()),
+      typo.runtime.Fragment.lit("""
+         ::bpchar,
+         "gender" = """),
+      PgTypes.text.encode(row.gender()),
+      typo.runtime.Fragment.lit("""
+         ::bpchar,
+         "hiredate" = """),
+      TypoLocalDate.pgType.encode(row.hiredate()),
+      typo.runtime.Fragment.lit("""
+         ::date,
+         "salariedflag" = """),
+      Flag.pgType.encode(row.salariedflag()),
+      typo.runtime.Fragment.lit("""
+         ::bool,
+         "vacationhours" = """),
+      TypoShort.pgType.encode(row.vacationhours()),
+      typo.runtime.Fragment.lit("""
+         ::int2,
+         "sickleavehours" = """),
+      TypoShort.pgType.encode(row.sickleavehours()),
+      typo.runtime.Fragment.lit("""
+         ::int2,
+         "currentflag" = """),
+      Flag.pgType.encode(row.currentflag()),
+      typo.runtime.Fragment.lit("""
+         ::bool,
+         "rowguid" = """),
+      TypoUUID.pgType.encode(row.rowguid()),
+      typo.runtime.Fragment.lit("""
+         ::uuid,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp,
+         "organizationnode" = """),
+      PgTypes.text.opt().encode(row.organizationnode()),
+      typo.runtime.Fragment.lit("""
    
-                where "businessentityid" = """),
-             BusinessentityId.pgType.encode(businessentityid),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+         where "businessentityid" = """),
+      BusinessentityId.pgType.encode(businessentityid),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public EmployeeRow upsert(
     EmployeeRow unsaved,
     Connection c
@@ -451,6 +478,7 @@ public class EmployeeRepoImpl implements EmployeeRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<EmployeeRow> upsertBatch(
     Iterator<EmployeeRow> unsaved,
     Connection c
@@ -481,37 +509,38 @@ public class EmployeeRepoImpl implements EmployeeRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<EmployeeRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table employee_TEMP (like "humanresources"."employee") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy employee_TEMP("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode") from stdin
-      """), batchSize, unsaved, c, EmployeeRow.pgText);
+    create temporary table employee_TEMP (like "humanresources"."employee") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy employee_TEMP("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode") from stdin
+    """), batchSize, unsaved, c, EmployeeRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
-              select * from employee_TEMP
-              on conflict ("businessentityid")
-              do update set
-                "nationalidnumber" = EXCLUDED."nationalidnumber",
-              "loginid" = EXCLUDED."loginid",
-              "jobtitle" = EXCLUDED."jobtitle",
-              "birthdate" = EXCLUDED."birthdate",
-              "maritalstatus" = EXCLUDED."maritalstatus",
-              "gender" = EXCLUDED."gender",
-              "hiredate" = EXCLUDED."hiredate",
-              "salariedflag" = EXCLUDED."salariedflag",
-              "vacationhours" = EXCLUDED."vacationhours",
-              "sickleavehours" = EXCLUDED."sickleavehours",
-              "currentflag" = EXCLUDED."currentflag",
-              "rowguid" = EXCLUDED."rowguid",
-              "modifieddate" = EXCLUDED."modifieddate",
-              "organizationnode" = EXCLUDED."organizationnode"
-              ;
-              drop table employee_TEMP;""")).update().runUnchecked(c);
+       insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
+       select * from employee_TEMP
+       on conflict ("businessentityid")
+       do update set
+         "nationalidnumber" = EXCLUDED."nationalidnumber",
+       "loginid" = EXCLUDED."loginid",
+       "jobtitle" = EXCLUDED."jobtitle",
+       "birthdate" = EXCLUDED."birthdate",
+       "maritalstatus" = EXCLUDED."maritalstatus",
+       "gender" = EXCLUDED."gender",
+       "hiredate" = EXCLUDED."hiredate",
+       "salariedflag" = EXCLUDED."salariedflag",
+       "vacationhours" = EXCLUDED."vacationhours",
+       "sickleavehours" = EXCLUDED."sickleavehours",
+       "currentflag" = EXCLUDED."currentflag",
+       "rowguid" = EXCLUDED."rowguid",
+       "modifieddate" = EXCLUDED."modifieddate",
+       "organizationnode" = EXCLUDED."organizationnode"
+       ;
+       drop table employee_TEMP;""")).update().runUnchecked(c);
   };
 }

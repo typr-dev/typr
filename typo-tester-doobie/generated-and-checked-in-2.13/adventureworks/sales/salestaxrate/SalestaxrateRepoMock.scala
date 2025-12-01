@@ -23,13 +23,13 @@ case class SalestaxrateRepoMock(
   toRow: SalestaxrateRowUnsaved => SalestaxrateRow,
   map: scala.collection.mutable.Map[SalestaxrateId, SalestaxrateRow] = scala.collection.mutable.Map.empty[SalestaxrateId, SalestaxrateRow]
 ) extends SalestaxrateRepo {
-  def delete: DeleteBuilder[SalestaxrateFields, SalestaxrateRow] = DeleteBuilderMock(DeleteParams.empty, SalestaxrateFields.structure, map)
+  override def delete: DeleteBuilder[SalestaxrateFields, SalestaxrateRow] = DeleteBuilderMock(DeleteParams.empty, SalestaxrateFields.structure, map)
 
-  def deleteById(salestaxrateid: SalestaxrateId): ConnectionIO[Boolean] = delay(map.remove(salestaxrateid).isDefined)
+  override def deleteById(salestaxrateid: SalestaxrateId): ConnectionIO[Boolean] = delay(map.remove(salestaxrateid).isDefined)
 
-  def deleteByIds(salestaxrateids: Array[SalestaxrateId]): ConnectionIO[Int] = delay(salestaxrateids.map(id => map.remove(id)).count(_.isDefined))
+  override def deleteByIds(salestaxrateids: Array[SalestaxrateId]): ConnectionIO[Int] = delay(salestaxrateids.map(id => map.remove(id)).count(_.isDefined))
 
-  def insert(unsaved: SalestaxrateRow): ConnectionIO[SalestaxrateRow] = {
+  override def insert(unsaved: SalestaxrateRow): ConnectionIO[SalestaxrateRow] = {
   delay {
     val _ = if (map.contains(unsaved.salestaxrateid))
       sys.error(s"id ${unsaved.salestaxrateid} already exists")
@@ -40,9 +40,9 @@ case class SalestaxrateRepoMock(
   }
   }
 
-  def insert(unsaved: SalestaxrateRowUnsaved): ConnectionIO[SalestaxrateRow] = insert(toRow(unsaved))
+  override def insert(unsaved: SalestaxrateRowUnsaved): ConnectionIO[SalestaxrateRow] = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, SalestaxrateRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = {
@@ -57,7 +57,7 @@ case class SalestaxrateRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, SalestaxrateRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = {
@@ -72,24 +72,24 @@ case class SalestaxrateRepoMock(
     }
   }
 
-  def select: SelectBuilder[SalestaxrateFields, SalestaxrateRow] = SelectBuilderMock(SalestaxrateFields.structure, delay(map.values.toList), SelectParams.empty)
+  override def select: SelectBuilder[SalestaxrateFields, SalestaxrateRow] = SelectBuilderMock(SalestaxrateFields.structure, delay(map.values.toList), SelectParams.empty)
 
-  def selectAll: Stream[ConnectionIO, SalestaxrateRow] = Stream.emits(map.values.toList)
+  override def selectAll: Stream[ConnectionIO, SalestaxrateRow] = Stream.emits(map.values.toList)
 
-  def selectById(salestaxrateid: SalestaxrateId): ConnectionIO[Option[SalestaxrateRow]] = delay(map.get(salestaxrateid))
+  override def selectById(salestaxrateid: SalestaxrateId): ConnectionIO[Option[SalestaxrateRow]] = delay(map.get(salestaxrateid))
 
-  def selectByIds(salestaxrateids: Array[SalestaxrateId]): Stream[ConnectionIO, SalestaxrateRow] = Stream.emits(salestaxrateids.flatMap(map.get).toList)
+  override def selectByIds(salestaxrateids: Array[SalestaxrateId]): Stream[ConnectionIO, SalestaxrateRow] = Stream.emits(salestaxrateids.flatMap(map.get).toList)
 
-  def selectByIdsTracked(salestaxrateids: Array[SalestaxrateId]): ConnectionIO[Map[SalestaxrateId, SalestaxrateRow]] = {
+  override def selectByIdsTracked(salestaxrateids: Array[SalestaxrateId]): ConnectionIO[Map[SalestaxrateId, SalestaxrateRow]] = {
     selectByIds(salestaxrateids).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.salestaxrateid, x)).toMap
       salestaxrateids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[SalestaxrateFields, SalestaxrateRow] = UpdateBuilderMock(UpdateParams.empty, SalestaxrateFields.structure, map)
+  override def update: UpdateBuilder[SalestaxrateFields, SalestaxrateRow] = UpdateBuilderMock(UpdateParams.empty, SalestaxrateFields.structure, map)
 
-  def update(row: SalestaxrateRow): ConnectionIO[Option[SalestaxrateRow]] = {
+  override def update(row: SalestaxrateRow): ConnectionIO[Option[SalestaxrateRow]] = {
     delay {
       map.get(row.salestaxrateid).map { _ =>
         map.put(row.salestaxrateid, row): @nowarn
@@ -98,14 +98,14 @@ case class SalestaxrateRepoMock(
     }
   }
 
-  def upsert(unsaved: SalestaxrateRow): ConnectionIO[SalestaxrateRow] = {
+  override def upsert(unsaved: SalestaxrateRow): ConnectionIO[SalestaxrateRow] = {
     delay {
       map.put(unsaved.salestaxrateid, unsaved): @nowarn
       unsaved
     }
   }
 
-  def upsertBatch(unsaved: List[SalestaxrateRow]): Stream[ConnectionIO, SalestaxrateRow] = {
+  override def upsertBatch(unsaved: List[SalestaxrateRow]): Stream[ConnectionIO, SalestaxrateRow] = {
     Stream.emits {
       unsaved.map { row =>
         map += (row.salestaxrateid -> row)
@@ -115,7 +115,7 @@ case class SalestaxrateRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, SalestaxrateRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

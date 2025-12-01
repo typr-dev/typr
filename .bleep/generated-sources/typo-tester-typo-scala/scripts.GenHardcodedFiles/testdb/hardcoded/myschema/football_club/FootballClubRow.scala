@@ -9,7 +9,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple2
 
 /** Table: myschema.football_club
  * football club
@@ -21,7 +20,7 @@ case class FootballClubRow(
 )
 
 object FootballClubRow {
-  val `_rowParser`: RowParser[FootballClubRow] = RowParsers.of(FootballClubId.pgType, PgTypes.text, FootballClubRow.apply, row => new Tuple2(row.id, row.name))
+  val `_rowParser`: RowParser[FootballClubRow] = RowParsers.of(FootballClubId.pgType, PgTypes.text, FootballClubRow.apply, row => Array(row.id, row.name))
 
   given pgText: PgText[FootballClubRow] = PgText.from(`_rowParser`)
 }

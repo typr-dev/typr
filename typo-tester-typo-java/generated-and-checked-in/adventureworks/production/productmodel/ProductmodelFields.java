@@ -19,7 +19,7 @@ import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 
 public interface ProductmodelFields {
-  static final class Impl extends Relation<ProductmodelFields, ProductmodelRow> {
+  final class Impl extends Relation<ProductmodelFields, ProductmodelRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -27,21 +27,27 @@ public interface ProductmodelFields {
     @Override
     public ProductmodelFields fields() {
       return new ProductmodelFields() {
+               @Override
                public IdField<ProductmodelId, ProductmodelRow> productmodelid() {
                  return new IdField<ProductmodelId, ProductmodelRow>(_path, "productmodelid", ProductmodelRow::productmodelid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductmodelid(value), ProductmodelId.pgType);
                };
+               @Override
                public Field<Name, ProductmodelRow> name() {
                  return new Field<Name, ProductmodelRow>(_path, "name", ProductmodelRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public OptField<TypoXml, ProductmodelRow> catalogdescription() {
                  return new OptField<TypoXml, ProductmodelRow>(_path, "catalogdescription", ProductmodelRow::catalogdescription, Optional.empty(), Optional.of("xml"), (row, value) -> row.withCatalogdescription(value), TypoXml.pgType);
                };
+               @Override
                public OptField<TypoXml, ProductmodelRow> instructions() {
                  return new OptField<TypoXml, ProductmodelRow>(_path, "instructions", ProductmodelRow::instructions, Optional.empty(), Optional.of("xml"), (row, value) -> row.withInstructions(value), TypoXml.pgType);
                };
+               @Override
                public Field<TypoUUID, ProductmodelRow> rowguid() {
                  return new Field<TypoUUID, ProductmodelRow>(_path, "rowguid", ProductmodelRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, ProductmodelRow> modifieddate() {
                  return new Field<TypoLocalDateTime, ProductmodelRow>(_path, "modifieddate", ProductmodelRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -53,6 +59,7 @@ public interface ProductmodelFields {
       return List.of(this.fields().productmodelid(), this.fields().name(), this.fields().catalogdescription(), this.fields().instructions(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

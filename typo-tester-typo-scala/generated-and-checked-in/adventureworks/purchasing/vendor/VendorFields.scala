@@ -48,7 +48,7 @@ object VendorFields {
 
     override lazy val fields: VendorFields = {
       new VendorFields {
-        def businessentityid: IdField[BusinessentityId, VendorRow] = {
+        override def businessentityid: IdField[BusinessentityId, VendorRow] = {
           new IdField[BusinessentityId, VendorRow](
             _path,
             "businessentityid",
@@ -59,7 +59,7 @@ object VendorFields {
             BusinessentityId.pgType
           )
         }
-        def accountnumber: Field[AccountNumber, VendorRow] = {
+        override def accountnumber: Field[AccountNumber, VendorRow] = {
           new Field[AccountNumber, VendorRow](
             _path,
             "accountnumber",
@@ -70,7 +70,7 @@ object VendorFields {
             AccountNumber.pgType
           )
         }
-        def name: Field[Name, VendorRow] = {
+        override def name: Field[Name, VendorRow] = {
           new Field[Name, VendorRow](
             _path,
             "name",
@@ -81,7 +81,7 @@ object VendorFields {
             Name.pgType
           )
         }
-        def creditrating: Field[TypoShort, VendorRow] = {
+        override def creditrating: Field[TypoShort, VendorRow] = {
           new Field[TypoShort, VendorRow](
             _path,
             "creditrating",
@@ -92,7 +92,7 @@ object VendorFields {
             TypoShort.pgType
           )
         }
-        def preferredvendorstatus: Field[Flag, VendorRow] = {
+        override def preferredvendorstatus: Field[Flag, VendorRow] = {
           new Field[Flag, VendorRow](
             _path,
             "preferredvendorstatus",
@@ -103,7 +103,7 @@ object VendorFields {
             Flag.pgType
           )
         }
-        def activeflag: Field[Flag, VendorRow] = {
+        override def activeflag: Field[Flag, VendorRow] = {
           new Field[Flag, VendorRow](
             _path,
             "activeflag",
@@ -114,7 +114,7 @@ object VendorFields {
             Flag.pgType
           )
         }
-        def purchasingwebserviceurl: OptField[/* max 1024 chars */ String, VendorRow] = {
+        override def purchasingwebserviceurl: OptField[/* max 1024 chars */ String, VendorRow] = {
           new OptField[/* max 1024 chars */ String, VendorRow](
             _path,
             "purchasingwebserviceurl",
@@ -125,7 +125,7 @@ object VendorFields {
             PgTypes.text
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, VendorRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, VendorRow] = {
           new Field[TypoLocalDateTime, VendorRow](
             _path,
             "modifieddate",
@@ -141,7 +141,7 @@ object VendorFields {
 
     override lazy val columns: java.util.List[FieldLike[?, VendorRow]] = java.util.List.of(this.fields.businessentityid, this.fields.accountnumber, this.fields.name, this.fields.creditrating, this.fields.preferredvendorstatus, this.fields.activeflag, this.fields.purchasingwebserviceurl, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[VendorFields, VendorRow] = new Impl(java.util.List.of())

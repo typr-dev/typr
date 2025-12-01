@@ -42,15 +42,5 @@ case class JobcandidateRowUnsaved(
 }
 
 object JobcandidateRowUnsaved {
-  given pgText: PgText[JobcandidateRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      BusinessentityId.pgType.opt().pgText.unsafeEncode(row.businessentityid, sb);
-      sb.append(PgText.DELIMETER);
-      TypoXml.pgType.opt().pgText.unsafeEncode(row.resume, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using JobcandidateId.pgType.pgText).unsafeEncode(row.jobcandidateid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[JobcandidateRowUnsaved] = PgText.instance((row, sb) => { BusinessentityId.pgType.opt().pgText.unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); TypoXml.pgType.opt().pgText.unsafeEncode(row.resume, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using JobcandidateId.pgType.pgText).unsafeEncode(row.jobcandidateid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

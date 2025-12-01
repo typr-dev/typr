@@ -16,7 +16,7 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 
 public interface PhonenumbertypeFields {
-  static final class Impl extends Relation<PhonenumbertypeFields, PhonenumbertypeRow> {
+  final class Impl extends Relation<PhonenumbertypeFields, PhonenumbertypeRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -24,12 +24,15 @@ public interface PhonenumbertypeFields {
     @Override
     public PhonenumbertypeFields fields() {
       return new PhonenumbertypeFields() {
+               @Override
                public IdField<PhonenumbertypeId, PhonenumbertypeRow> phonenumbertypeid() {
                  return new IdField<PhonenumbertypeId, PhonenumbertypeRow>(_path, "phonenumbertypeid", PhonenumbertypeRow::phonenumbertypeid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withPhonenumbertypeid(value), PhonenumbertypeId.pgType);
                };
+               @Override
                public Field<Name, PhonenumbertypeRow> name() {
                  return new Field<Name, PhonenumbertypeRow>(_path, "name", PhonenumbertypeRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, PhonenumbertypeRow> modifieddate() {
                  return new Field<TypoLocalDateTime, PhonenumbertypeRow>(_path, "modifieddate", PhonenumbertypeRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -41,6 +44,7 @@ public interface PhonenumbertypeFields {
       return List.of(this.fields().phonenumbertypeid(), this.fields().name(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

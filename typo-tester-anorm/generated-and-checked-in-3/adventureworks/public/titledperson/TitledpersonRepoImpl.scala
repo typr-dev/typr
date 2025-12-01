@@ -17,9 +17,9 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class TitledpersonRepoImpl extends TitledpersonRepo {
-  def delete: DeleteBuilder[TitledpersonFields, TitledpersonRow] = DeleteBuilder.of(""""public"."titledperson"""", TitledpersonFields.structure, TitledpersonRow.rowParser(1).*)
+  override def delete: DeleteBuilder[TitledpersonFields, TitledpersonRow] = DeleteBuilder.of(""""public"."titledperson"""", TitledpersonFields.structure, TitledpersonRow.rowParser(1).*)
 
-  def insert(unsaved: TitledpersonRow)(using c: Connection): TitledpersonRow = {
+  override def insert(unsaved: TitledpersonRow)(using c: Connection): TitledpersonRow = {
   SQL"""insert into "public"."titledperson"("title_short", "title", "name")
     values (${ParameterValue(unsaved.titleShort, null, TitleDomainId.toStatement)}::text, ${ParameterValue(unsaved.title, null, TitleId.toStatement)}, ${ParameterValue(unsaved.name, null, ToStatement.stringToStatement)})
     returning "title_short", "title", "name"
@@ -27,18 +27,18 @@ class TitledpersonRepoImpl extends TitledpersonRepo {
     .executeInsert(TitledpersonRow.rowParser(1).single)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[TitledpersonRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "public"."titledperson"("title_short", "title", "name") FROM STDIN""", batchSize, unsaved)(using TitledpersonRow.pgText, c)
 
-  def select: SelectBuilder[TitledpersonFields, TitledpersonRow] = SelectBuilder.of(""""public"."titledperson"""", TitledpersonFields.structure, TitledpersonRow.rowParser)
+  override def select: SelectBuilder[TitledpersonFields, TitledpersonRow] = SelectBuilder.of(""""public"."titledperson"""", TitledpersonFields.structure, TitledpersonRow.rowParser)
 
-  def selectAll(using c: Connection): List[TitledpersonRow] = {
+  override def selectAll(using c: Connection): List[TitledpersonRow] = {
     SQL"""select "title_short", "title", "name"
     from "public"."titledperson"
     """.as(TitledpersonRow.rowParser(1).*)
   }
 
-  def update: UpdateBuilder[TitledpersonFields, TitledpersonRow] = UpdateBuilder.of(""""public"."titledperson"""", TitledpersonFields.structure, TitledpersonRow.rowParser(1).*)
+  override def update: UpdateBuilder[TitledpersonFields, TitledpersonRow] = UpdateBuilder.of(""""public"."titledperson"""", TitledpersonFields.structure, TitledpersonRow.rowParser(1).*)
 }

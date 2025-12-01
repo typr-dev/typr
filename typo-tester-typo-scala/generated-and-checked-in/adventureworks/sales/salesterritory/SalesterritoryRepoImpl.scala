@@ -23,11 +23,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class SalesterritoryRepoImpl extends SalesterritoryRepo {
-  def delete: DeleteBuilder[SalesterritoryFields, SalesterritoryRow] = DeleteBuilder.of("sales.salesterritory", SalesterritoryFields.structure)
+  override def delete: DeleteBuilder[SalesterritoryFields, SalesterritoryRow] = DeleteBuilder.of("sales.salesterritory", SalesterritoryFields.structure)
 
-  def deleteById(territoryid: SalesterritoryId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."salesterritory" where "territoryid" = ${SalesterritoryId.pgType.encode(territoryid)}""".update().runUnchecked(c) > 0
+  override def deleteById(territoryid: SalesterritoryId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."salesterritory" where "territoryid" = ${SalesterritoryId.pgType.encode(territoryid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(territoryids: Array[SalesterritoryId])(using c: Connection): Integer = {
+  override def deleteByIds(territoryids: Array[SalesterritoryId])(using c: Connection): Integer = {
     interpolate"""delete
     from "sales"."salesterritory"
     where "territoryid" = ANY(${SalesterritoryId.pgTypeArray.encode(territoryids)})"""
@@ -35,7 +35,7 @@ class SalesterritoryRepoImpl extends SalesterritoryRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: SalesterritoryRow)(using c: Connection): SalesterritoryRow = {
+  override def insert(unsaved: SalesterritoryRow)(using c: Connection): SalesterritoryRow = {
   interpolate"""insert into "sales"."salesterritory"("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate")
     values (${SalesterritoryId.pgType.encode(unsaved.territoryid)}::int4, ${Name.pgType.encode(unsaved.name)}::varchar, ${CountryregionId.pgType.encode(unsaved.countryregioncode)}, ${PgTypes.text.encode(unsaved.group)}, ${PgTypes.numeric.encode(unsaved.salesytd)}::numeric, ${PgTypes.numeric.encode(unsaved.saleslastyear)}::numeric, ${PgTypes.numeric.encode(unsaved.costytd)}::numeric, ${PgTypes.numeric.encode(unsaved.costlastyear)}::numeric, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"::text
@@ -43,9 +43,9 @@ class SalesterritoryRepoImpl extends SalesterritoryRepo {
     .updateReturning(SalesterritoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: SalesterritoryRowUnsaved)(using c: Connection): SalesterritoryRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: SalesterritoryRowUnsaved)(using c: Connection): SalesterritoryRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
     values.add(interpolate"${Name.pgType.encode(unsaved.name)}::varchar"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""countryregioncode"""")): @scala.annotation.nowarn
@@ -53,53 +53,32 @@ class SalesterritoryRepoImpl extends SalesterritoryRepo {
     columns.add(Fragment.lit(""""group"""")): @scala.annotation.nowarn
     values.add(interpolate"${PgTypes.text.encode(unsaved.group)}"): @scala.annotation.nowarn
     unsaved.territoryid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""territoryid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${SalesterritoryId.pgType.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""territoryid"""")): @scala.annotation.nowarn; values.add(interpolate"${SalesterritoryId.pgType.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.salesytd.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""salesytd"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""salesytd"""")): @scala.annotation.nowarn; values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn }
     );
     unsaved.saleslastyear.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""saleslastyear"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""saleslastyear"""")): @scala.annotation.nowarn; values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn }
     );
     unsaved.costytd.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""costytd"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""costytd"""")): @scala.annotation.nowarn; values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn }
     );
     unsaved.costlastyear.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""costlastyear"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""costlastyear"""")): @scala.annotation.nowarn; values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "sales"."salesterritory"(${Fragment.comma(columns)})
@@ -107,51 +86,51 @@ class SalesterritoryRepoImpl extends SalesterritoryRepo {
       returning "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"::text
       """
     }
-    q.updateReturning(SalesterritoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(SalesterritoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[SalesterritoryRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."salesterritory"("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, c, SalesterritoryRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[SalesterritoryRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."salesterritory"("name", "countryregioncode", "group", "territoryid", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, SalesterritoryRowUnsaved.pgText)
 
-  def select: SelectBuilder[SalesterritoryFields, SalesterritoryRow] = SelectBuilder.of("sales.salesterritory", SalesterritoryFields.structure, SalesterritoryRow.`_rowParser`)
+  override def select: SelectBuilder[SalesterritoryFields, SalesterritoryRow] = SelectBuilder.of("sales.salesterritory", SalesterritoryFields.structure, SalesterritoryRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[SalesterritoryRow] = {
+  override def selectAll(using c: Connection): java.util.List[SalesterritoryRow] = {
     interpolate"""select "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"::text
     from "sales"."salesterritory"
-    """.as(SalesterritoryRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(SalesterritoryRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(territoryid: SalesterritoryId)(using c: Connection): Optional[SalesterritoryRow] = {
+  override def selectById(territoryid: SalesterritoryId)(using c: Connection): Optional[SalesterritoryRow] = {
     interpolate"""select "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"::text
     from "sales"."salesterritory"
-    where "territoryid" = ${SalesterritoryId.pgType.encode(territoryid)}""".as(SalesterritoryRow.`_rowParser`.first()).runUnchecked(c)
+    where "territoryid" = ${SalesterritoryId.pgType.encode(territoryid)}""".query(SalesterritoryRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(territoryids: Array[SalesterritoryId])(using c: Connection): java.util.List[SalesterritoryRow] = {
+  override def selectByIds(territoryids: Array[SalesterritoryId])(using c: Connection): java.util.List[SalesterritoryRow] = {
     interpolate"""select "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"::text
     from "sales"."salesterritory"
-    where "territoryid" = ANY(${SalesterritoryId.pgTypeArray.encode(territoryids)})""".as(SalesterritoryRow.`_rowParser`.all()).runUnchecked(c)
+    where "territoryid" = ANY(${SalesterritoryId.pgTypeArray.encode(territoryids)})""".query(SalesterritoryRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(territoryids: Array[SalesterritoryId])(using c: Connection): java.util.Map[SalesterritoryId, SalesterritoryRow] = {
-    val ret: java.util.Map[SalesterritoryId, SalesterritoryRow] = new HashMap()
+  override def selectByIdsTracked(territoryids: Array[SalesterritoryId])(using c: Connection): java.util.Map[SalesterritoryId, SalesterritoryRow] = {
+    val ret: HashMap[SalesterritoryId, SalesterritoryRow] = new HashMap[SalesterritoryId, SalesterritoryRow]()
     selectByIds(territoryids)(using c).forEach(row => ret.put(row.territoryid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[SalesterritoryFields, SalesterritoryRow] = UpdateBuilder.of("sales.salesterritory", SalesterritoryFields.structure, SalesterritoryRow.`_rowParser`.all())
+  override def update: UpdateBuilder[SalesterritoryFields, SalesterritoryRow] = UpdateBuilder.of("sales.salesterritory", SalesterritoryFields.structure, SalesterritoryRow.`_rowParser`.all())
 
-  def update(row: SalesterritoryRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: SalesterritoryRow)(using c: Connection): java.lang.Boolean = {
     val territoryid: SalesterritoryId = row.territoryid
-    interpolate"""update "sales"."salesterritory"
+    return interpolate"""update "sales"."salesterritory"
     set "name" = ${Name.pgType.encode(row.name)}::varchar,
     "countryregioncode" = ${CountryregionId.pgType.encode(row.countryregioncode)},
     "group" = ${PgTypes.text.encode(row.group)},
@@ -164,7 +143,7 @@ class SalesterritoryRepoImpl extends SalesterritoryRepo {
     where "territoryid" = ${SalesterritoryId.pgType.encode(territoryid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: SalesterritoryRow)(using c: Connection): SalesterritoryRow = {
+  override def upsert(unsaved: SalesterritoryRow)(using c: Connection): SalesterritoryRow = {
   interpolate"""insert into "sales"."salesterritory"("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate")
     values (${SalesterritoryId.pgType.encode(unsaved.territoryid)}::int4, ${Name.pgType.encode(unsaved.name)}::varchar, ${CountryregionId.pgType.encode(unsaved.countryregioncode)}, ${PgTypes.text.encode(unsaved.group)}, ${PgTypes.numeric.encode(unsaved.salesytd)}::numeric, ${PgTypes.numeric.encode(unsaved.saleslastyear)}::numeric, ${PgTypes.numeric.encode(unsaved.costytd)}::numeric, ${PgTypes.numeric.encode(unsaved.costlastyear)}::numeric, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("territoryid")
@@ -184,7 +163,7 @@ class SalesterritoryRepoImpl extends SalesterritoryRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[SalesterritoryRow])(using c: Connection): java.util.List[SalesterritoryRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[SalesterritoryRow])(using c: Connection): java.util.List[SalesterritoryRow] = {
     interpolate"""insert into "sales"."salesterritory"("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate")
     values (?::int4, ?::varchar, ?, ?, ?::numeric, ?::numeric, ?::numeric, ?::numeric, ?::uuid, ?::timestamp)
     on conflict ("territoryid")
@@ -205,13 +184,13 @@ class SalesterritoryRepoImpl extends SalesterritoryRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[SalesterritoryRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table salesterritory_TEMP (like "sales"."salesterritory") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy salesterritory_TEMP("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, c, SalesterritoryRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "sales"."salesterritory"("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate")
+    return interpolate"""insert into "sales"."salesterritory"("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate")
     select * from salesterritory_TEMP
     on conflict ("territoryid")
     do update set

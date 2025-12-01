@@ -16,7 +16,7 @@ import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 
 public interface DViewFields {
-  static final class Impl extends Relation<DViewFields, DViewRow> {
+  final class Impl extends Relation<DViewFields, DViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -24,18 +24,23 @@ public interface DViewFields {
     @Override
     public DViewFields fields() {
       return new DViewFields() {
+               @Override
                public Field<DepartmentId, DViewRow> id() {
                  return new Field<DepartmentId, DViewRow>(_path, "id", DViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), DepartmentId.pgType);
                };
+               @Override
                public Field<DepartmentId, DViewRow> departmentid() {
                  return new Field<DepartmentId, DViewRow>(_path, "departmentid", DViewRow::departmentid, Optional.empty(), Optional.empty(), (row, value) -> row.withDepartmentid(value), DepartmentId.pgType);
                };
+               @Override
                public Field<Name, DViewRow> name() {
                  return new Field<Name, DViewRow>(_path, "name", DViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<Name, DViewRow> groupname() {
                  return new Field<Name, DViewRow>(_path, "groupname", DViewRow::groupname, Optional.empty(), Optional.empty(), (row, value) -> row.withGroupname(value), Name.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, DViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, DViewRow>(_path, "modifieddate", DViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -47,6 +52,7 @@ public interface DViewFields {
       return List.of(this.fields().id(), this.fields().departmentid(), this.fields().name(), this.fields().groupname(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

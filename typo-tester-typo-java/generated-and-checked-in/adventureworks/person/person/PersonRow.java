@@ -18,7 +18,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple13;
 
 /** Table: person.person
   * Human beings involved with AdventureWorks: employees, customer contacts, and vendor contacts.
@@ -135,7 +134,7 @@ public record PersonRow(
     return new PersonRow(businessentityid, persontype, namestyle, title, firstname, middlename, lastname, suffix, emailpromotion, additionalcontactinfo, demographics, rowguid, modifieddate);
   };
 
-  static RowParser<PersonRow> _rowParser = RowParsers.of(BusinessentityId.pgType, PgTypes.text, NameStyle.pgType, PgTypes.text.opt(), /* user-picked */ FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text.opt(), PgTypes.int4, TypoXml.pgType.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, PersonRow::new, row -> new Tuple13<>(row.businessentityid(), row.persontype(), row.namestyle(), row.title(), row.firstname(), row.middlename(), row.lastname(), row.suffix(), row.emailpromotion(), row.additionalcontactinfo(), row.demographics(), row.rowguid(), row.modifieddate()));;
+  static RowParser<PersonRow> _rowParser = RowParsers.of(BusinessentityId.pgType, PgTypes.text, NameStyle.pgType, PgTypes.text.opt(), /* user-picked */ FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text.opt(), PgTypes.int4, TypoXml.pgType.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, PersonRow::new, row -> new Object[]{row.businessentityid(), row.persontype(), row.namestyle(), row.title(), row.firstname(), row.middlename(), row.lastname(), row.suffix(), row.emailpromotion(), row.additionalcontactinfo(), row.demographics(), row.rowguid(), row.modifieddate()});;
 
   static public PgText<PersonRow> pgText =
     PgText.from(_rowParser);

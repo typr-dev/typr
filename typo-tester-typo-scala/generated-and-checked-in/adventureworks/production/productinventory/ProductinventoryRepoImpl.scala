@@ -24,21 +24,21 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ProductinventoryRepoImpl extends ProductinventoryRepo {
-  def delete: DeleteBuilder[ProductinventoryFields, ProductinventoryRow] = DeleteBuilder.of("production.productinventory", ProductinventoryFields.structure)
+  override def delete: DeleteBuilder[ProductinventoryFields, ProductinventoryRow] = DeleteBuilder.of("production.productinventory", ProductinventoryFields.structure)
 
-  def deleteById(compositeId: ProductinventoryId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."productinventory" where "productid" = ${ProductId.pgType.encode(compositeId.productid)} AND "locationid" = ${LocationId.pgType.encode(compositeId.locationid)}""".update().runUnchecked(c) > 0
+  override def deleteById(compositeId: ProductinventoryId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."productinventory" where "productid" = ${ProductId.pgType.encode(compositeId.productid)} AND "locationid" = ${LocationId.pgType.encode(compositeId.locationid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(compositeIds: Array[ProductinventoryId])(using c: Connection): Integer = {
+  override def deleteByIds(compositeIds: Array[ProductinventoryId])(using c: Connection): Integer = {
     val productid: Array[ProductId] = compositeIds.map(_.productid)
     val locationid: Array[LocationId] = compositeIds.map(_.locationid)
-    interpolate"""delete
+    return interpolate"""delete
     from "production"."productinventory"
     where ("productid", "locationid")
     in (select unnest(${ProductId.pgTypeArray.encode(productid)}::int4[]), unnest(${LocationId.pgTypeArray.encode(locationid)}::int2[]))
     """.update().runUnchecked(c)
   }
 
-  def insert(unsaved: ProductinventoryRow)(using c: Connection): ProductinventoryRow = {
+  override def insert(unsaved: ProductinventoryRow)(using c: Connection): ProductinventoryRow = {
   interpolate"""insert into "production"."productinventory"("productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate")
     values (${ProductId.pgType.encode(unsaved.productid)}::int4, ${LocationId.pgType.encode(unsaved.locationid)}::int2, ${PgTypes.text.encode(unsaved.shelf)}, ${TypoShort.pgType.encode(unsaved.bin)}::int2, ${TypoShort.pgType.encode(unsaved.quantity)}::int2, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"::text
@@ -46,9 +46,9 @@ class ProductinventoryRepoImpl extends ProductinventoryRepo {
     .updateReturning(ProductinventoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: ProductinventoryRowUnsaved)(using c: Connection): ProductinventoryRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: ProductinventoryRowUnsaved)(using c: Connection): ProductinventoryRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""productid"""")): @scala.annotation.nowarn
     values.add(interpolate"${ProductId.pgType.encode(unsaved.productid)}::int4"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""locationid"""")): @scala.annotation.nowarn
@@ -58,25 +58,16 @@ class ProductinventoryRepoImpl extends ProductinventoryRepo {
     columns.add(Fragment.lit(""""bin"""")): @scala.annotation.nowarn
     values.add(interpolate"${TypoShort.pgType.encode(unsaved.bin)}::int2"): @scala.annotation.nowarn
     unsaved.quantity.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""quantity"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoShort.pgType.encode(value)}::int2"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""quantity"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoShort.pgType.encode(value)}::int2"): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "production"."productinventory"(${Fragment.comma(columns)})
@@ -84,55 +75,55 @@ class ProductinventoryRepoImpl extends ProductinventoryRepo {
       returning "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"::text
       """
     }
-    q.updateReturning(ProductinventoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(ProductinventoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[ProductinventoryRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."productinventory"("productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, c, ProductinventoryRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[ProductinventoryRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."productinventory"("productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ProductinventoryRowUnsaved.pgText)
 
-  def select: SelectBuilder[ProductinventoryFields, ProductinventoryRow] = SelectBuilder.of("production.productinventory", ProductinventoryFields.structure, ProductinventoryRow.`_rowParser`)
+  override def select: SelectBuilder[ProductinventoryFields, ProductinventoryRow] = SelectBuilder.of("production.productinventory", ProductinventoryFields.structure, ProductinventoryRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[ProductinventoryRow] = {
+  override def selectAll(using c: Connection): java.util.List[ProductinventoryRow] = {
     interpolate"""select "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"::text
     from "production"."productinventory"
-    """.as(ProductinventoryRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(ProductinventoryRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(compositeId: ProductinventoryId)(using c: Connection): Optional[ProductinventoryRow] = {
+  override def selectById(compositeId: ProductinventoryId)(using c: Connection): Optional[ProductinventoryRow] = {
     interpolate"""select "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"::text
     from "production"."productinventory"
-    where "productid" = ${ProductId.pgType.encode(compositeId.productid)} AND "locationid" = ${LocationId.pgType.encode(compositeId.locationid)}""".as(ProductinventoryRow.`_rowParser`.first()).runUnchecked(c)
+    where "productid" = ${ProductId.pgType.encode(compositeId.productid)} AND "locationid" = ${LocationId.pgType.encode(compositeId.locationid)}""".query(ProductinventoryRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(compositeIds: Array[ProductinventoryId])(using c: Connection): java.util.List[ProductinventoryRow] = {
+  override def selectByIds(compositeIds: Array[ProductinventoryId])(using c: Connection): java.util.List[ProductinventoryRow] = {
     val productid: Array[ProductId] = compositeIds.map(_.productid)
     val locationid: Array[LocationId] = compositeIds.map(_.locationid)
-    interpolate"""select "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"::text
+    return interpolate"""select "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"::text
     from "production"."productinventory"
     where ("productid", "locationid")
     in (select unnest(${ProductId.pgTypeArray.encode(productid)}::int4[]), unnest(${LocationId.pgTypeArray.encode(locationid)}::int2[]))
-    """.as(ProductinventoryRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(ProductinventoryRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(compositeIds: Array[ProductinventoryId])(using c: Connection): java.util.Map[ProductinventoryId, ProductinventoryRow] = {
-    val ret: java.util.Map[ProductinventoryId, ProductinventoryRow] = new HashMap()
+  override def selectByIdsTracked(compositeIds: Array[ProductinventoryId])(using c: Connection): java.util.Map[ProductinventoryId, ProductinventoryRow] = {
+    val ret: HashMap[ProductinventoryId, ProductinventoryRow] = new HashMap[ProductinventoryId, ProductinventoryRow]()
     selectByIds(compositeIds)(using c).forEach(row => ret.put(row.compositeId, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[ProductinventoryFields, ProductinventoryRow] = UpdateBuilder.of("production.productinventory", ProductinventoryFields.structure, ProductinventoryRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ProductinventoryFields, ProductinventoryRow] = UpdateBuilder.of("production.productinventory", ProductinventoryFields.structure, ProductinventoryRow.`_rowParser`.all())
 
-  def update(row: ProductinventoryRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: ProductinventoryRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: ProductinventoryId = row.compositeId
-    interpolate"""update "production"."productinventory"
+    return interpolate"""update "production"."productinventory"
     set "shelf" = ${PgTypes.text.encode(row.shelf)},
     "bin" = ${TypoShort.pgType.encode(row.bin)}::int2,
     "quantity" = ${TypoShort.pgType.encode(row.quantity)}::int2,
@@ -141,7 +132,7 @@ class ProductinventoryRepoImpl extends ProductinventoryRepo {
     where "productid" = ${ProductId.pgType.encode(compositeId.productid)} AND "locationid" = ${LocationId.pgType.encode(compositeId.locationid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: ProductinventoryRow)(using c: Connection): ProductinventoryRow = {
+  override def upsert(unsaved: ProductinventoryRow)(using c: Connection): ProductinventoryRow = {
   interpolate"""insert into "production"."productinventory"("productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate")
     values (${ProductId.pgType.encode(unsaved.productid)}::int4, ${LocationId.pgType.encode(unsaved.locationid)}::int2, ${PgTypes.text.encode(unsaved.shelf)}, ${TypoShort.pgType.encode(unsaved.bin)}::int2, ${TypoShort.pgType.encode(unsaved.quantity)}::int2, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("productid", "locationid")
@@ -157,7 +148,7 @@ class ProductinventoryRepoImpl extends ProductinventoryRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[ProductinventoryRow])(using c: Connection): java.util.List[ProductinventoryRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[ProductinventoryRow])(using c: Connection): java.util.List[ProductinventoryRow] = {
     interpolate"""insert into "production"."productinventory"("productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate")
     values (?::int4, ?::int2, ?, ?::int2, ?::int2, ?::uuid, ?::timestamp)
     on conflict ("productid", "locationid")
@@ -174,13 +165,13 @@ class ProductinventoryRepoImpl extends ProductinventoryRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[ProductinventoryRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table productinventory_TEMP (like "production"."productinventory") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy productinventory_TEMP("productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, c, ProductinventoryRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "production"."productinventory"("productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate")
+    return interpolate"""insert into "production"."productinventory"("productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate")
     select * from productinventory_TEMP
     on conflict ("productid", "locationid")
     do update set

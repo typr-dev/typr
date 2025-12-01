@@ -5,15 +5,14 @@
  */
 package adventureworks.person_dynamic;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
 import typo.runtime.PgTypes;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class PersonDynamicSqlRepoImpl implements PersonDynamicSqlRepo {
+  @Override
   public List<PersonDynamicSqlRow> apply(
     Optional<String> firstName,
     Connection c
@@ -30,6 +29,6 @@ public class PersonDynamicSqlRepoImpl implements PersonDynamicSqlRepo {
 
 
       """)
-    ).as(PersonDynamicSqlRow._rowParser.all()).runUnchecked(c);
+    ).query(PersonDynamicSqlRow._rowParser.all()).runUnchecked(c);
   };
 }

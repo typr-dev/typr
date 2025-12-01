@@ -11,7 +11,6 @@ import adventureworks.sales.shoppingcartitem.ShoppingcartitemId
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple7
 
 /** View: sa.sci */
 case class SciViewRow(
@@ -32,15 +31,5 @@ case class SciViewRow(
 )
 
 object SciViewRow {
-  val `_rowParser`: RowParser[SciViewRow] = {
-    RowParsers.of(ShoppingcartitemId.pgType, ShoppingcartitemId.pgType, PgTypes.text, PgTypes.int4, ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, SciViewRow.apply, row => new Tuple7(
-      row.id,
-      row.shoppingcartitemid,
-      row.shoppingcartid,
-      row.quantity,
-      row.productid,
-      row.datecreated,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[SciViewRow] = RowParsers.of(ShoppingcartitemId.pgType, ShoppingcartitemId.pgType, PgTypes.text, PgTypes.int4, ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, SciViewRow.apply, row => Array(row.id, row.shoppingcartitemid, row.shoppingcartid, row.quantity, row.productid, row.datecreated, row.modifieddate))
 }

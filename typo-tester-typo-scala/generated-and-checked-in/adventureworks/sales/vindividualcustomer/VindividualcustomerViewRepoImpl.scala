@@ -10,11 +10,11 @@ import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class VindividualcustomerViewRepoImpl extends VindividualcustomerViewRepo {
-  def select: SelectBuilder[VindividualcustomerViewFields, VindividualcustomerViewRow] = SelectBuilder.of("sales.vindividualcustomer", VindividualcustomerViewFields.structure, VindividualcustomerViewRow.`_rowParser`)
+  override def select: SelectBuilder[VindividualcustomerViewFields, VindividualcustomerViewRow] = SelectBuilder.of("sales.vindividualcustomer", VindividualcustomerViewFields.structure, VindividualcustomerViewRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[VindividualcustomerViewRow] = {
+  override def selectAll(using c: Connection): java.util.List[VindividualcustomerViewRow] = {
     interpolate"""select "businessentityid", "title", "firstname", "middlename", "lastname", "suffix", "phonenumber", "phonenumbertype", "emailaddress", "emailpromotion", "addresstype", "addressline1", "addressline2", "city", "stateprovincename", "postalcode", "countryregionname", "demographics"
     from "sales"."vindividualcustomer"
-    """.as(VindividualcustomerViewRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(VindividualcustomerViewRow.`_rowParser`.all()).runUnchecked(c)
   }
 }

@@ -14,7 +14,6 @@ case class InternalOptions(
     fileHeader: String,
     generateMockRepos: Selector,
     enablePrimaryKeyType: Selector,
-    iocFramework: Option[IocFramework],
     jsonLibs: List[JsonLib],
     keepDependencies: Boolean,
     logger: TypoLogger,

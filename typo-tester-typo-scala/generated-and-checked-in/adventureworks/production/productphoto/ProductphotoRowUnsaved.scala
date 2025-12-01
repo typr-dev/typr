@@ -46,19 +46,5 @@ case class ProductphotoRowUnsaved(
 }
 
 object ProductphotoRowUnsaved {
-  given pgText: PgText[ProductphotoRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      TypoBytea.pgType.opt().pgText.unsafeEncode(row.thumbnailphoto, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.text.opt().pgText.unsafeEncode(row.thumbnailphotofilename, sb);
-      sb.append(PgText.DELIMETER);
-      TypoBytea.pgType.opt().pgText.unsafeEncode(row.largephoto, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.text.opt().pgText.unsafeEncode(row.largephotofilename, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using ProductphotoId.pgType.pgText).unsafeEncode(row.productphotoid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[ProductphotoRowUnsaved] = PgText.instance((row, sb) => { TypoBytea.pgType.opt().pgText.unsafeEncode(row.thumbnailphoto, sb); sb.append(PgText.DELIMETER); PgTypes.text.opt().pgText.unsafeEncode(row.thumbnailphotofilename, sb); sb.append(PgText.DELIMETER); TypoBytea.pgType.opt().pgText.unsafeEncode(row.largephoto, sb); sb.append(PgText.DELIMETER); PgTypes.text.opt().pgText.unsafeEncode(row.largephotofilename, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using ProductphotoId.pgType.pgText).unsafeEncode(row.productphotoid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

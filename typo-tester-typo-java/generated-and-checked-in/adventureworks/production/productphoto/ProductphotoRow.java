@@ -13,7 +13,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple6;
 
 /** Table: production.productphoto
   * Product images.
@@ -67,7 +66,7 @@ public record ProductphotoRow(
     return new ProductphotoRow(productphotoid, thumbnailphoto, thumbnailphotofilename, largephoto, largephotofilename, modifieddate);
   };
 
-  static RowParser<ProductphotoRow> _rowParser = RowParsers.of(ProductphotoId.pgType, TypoBytea.pgType.opt(), PgTypes.text.opt(), TypoBytea.pgType.opt(), PgTypes.text.opt(), TypoLocalDateTime.pgType, ProductphotoRow::new, row -> new Tuple6<>(row.productphotoid(), row.thumbnailphoto(), row.thumbnailphotofilename(), row.largephoto(), row.largephotofilename(), row.modifieddate()));;
+  static RowParser<ProductphotoRow> _rowParser = RowParsers.of(ProductphotoId.pgType, TypoBytea.pgType.opt(), PgTypes.text.opt(), TypoBytea.pgType.opt(), PgTypes.text.opt(), TypoLocalDateTime.pgType, ProductphotoRow::new, row -> new Object[]{row.productphotoid(), row.thumbnailphoto(), row.thumbnailphotofilename(), row.largephoto(), row.largephotofilename(), row.modifieddate()});;
 
   static public PgText<ProductphotoRow> pgText =
     PgText.from(_rowParser);

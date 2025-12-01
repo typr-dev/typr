@@ -11,7 +11,6 @@ import adventureworks.public_.Name;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple3;
 
 /** Table: production.unitmeasure
   * Unit of measure lookup table.
@@ -40,7 +39,7 @@ public record UnitmeasureRow(
     return new UnitmeasureRow(unitmeasurecode, name, modifieddate);
   };
 
-  static RowParser<UnitmeasureRow> _rowParser = RowParsers.of(UnitmeasureId.pgType, Name.pgType, TypoLocalDateTime.pgType, UnitmeasureRow::new, row -> new Tuple3<>(row.unitmeasurecode(), row.name(), row.modifieddate()));;
+  static RowParser<UnitmeasureRow> _rowParser = RowParsers.of(UnitmeasureId.pgType, Name.pgType, TypoLocalDateTime.pgType, UnitmeasureRow::new, row -> new Object[]{row.unitmeasurecode(), row.name(), row.modifieddate()});;
 
   static public PgText<UnitmeasureRow> pgText =
     PgText.from(_rowParser);

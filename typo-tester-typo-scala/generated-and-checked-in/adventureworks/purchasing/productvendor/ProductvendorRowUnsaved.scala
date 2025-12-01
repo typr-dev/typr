@@ -76,29 +76,5 @@ case class ProductvendorRowUnsaved(
 }
 
 object ProductvendorRowUnsaved {
-  given pgText: PgText[ProductvendorRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      ProductId.pgType.pgText.unsafeEncode(row.productid, sb);
-      sb.append(PgText.DELIMETER);
-      BusinessentityId.pgType.pgText.unsafeEncode(row.businessentityid, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.int4.pgText.unsafeEncode(row.averageleadtime, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.numeric.pgText.unsafeEncode(row.standardprice, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.numeric.opt().pgText.unsafeEncode(row.lastreceiptcost, sb);
-      sb.append(PgText.DELIMETER);
-      TypoLocalDateTime.pgType.opt().pgText.unsafeEncode(row.lastreceiptdate, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.int4.pgText.unsafeEncode(row.minorderqty, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.int4.pgText.unsafeEncode(row.maxorderqty, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.int4.opt().pgText.unsafeEncode(row.onorderqty, sb);
-      sb.append(PgText.DELIMETER);
-      UnitmeasureId.pgType.pgText.unsafeEncode(row.unitmeasurecode, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[ProductvendorRowUnsaved] = PgText.instance((row, sb) => { ProductId.pgType.pgText.unsafeEncode(row.productid, sb); sb.append(PgText.DELIMETER); BusinessentityId.pgType.pgText.unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); PgTypes.int4.pgText.unsafeEncode(row.averageleadtime, sb); sb.append(PgText.DELIMETER); PgTypes.numeric.pgText.unsafeEncode(row.standardprice, sb); sb.append(PgText.DELIMETER); PgTypes.numeric.opt().pgText.unsafeEncode(row.lastreceiptcost, sb); sb.append(PgText.DELIMETER); TypoLocalDateTime.pgType.opt().pgText.unsafeEncode(row.lastreceiptdate, sb); sb.append(PgText.DELIMETER); PgTypes.int4.pgText.unsafeEncode(row.minorderqty, sb); sb.append(PgText.DELIMETER); PgTypes.int4.pgText.unsafeEncode(row.maxorderqty, sb); sb.append(PgText.DELIMETER); PgTypes.int4.opt().pgText.unsafeEncode(row.onorderqty, sb); sb.append(PgText.DELIMETER); UnitmeasureId.pgType.pgText.unsafeEncode(row.unitmeasurecode, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

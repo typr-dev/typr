@@ -32,7 +32,7 @@ object ShiftFields {
 
     override lazy val fields: ShiftFields = {
       new ShiftFields {
-        def shiftid: IdField[ShiftId, ShiftRow] = {
+        override def shiftid: IdField[ShiftId, ShiftRow] = {
           new IdField[ShiftId, ShiftRow](
             _path,
             "shiftid",
@@ -43,7 +43,7 @@ object ShiftFields {
             ShiftId.pgType
           )
         }
-        def name: Field[Name, ShiftRow] = {
+        override def name: Field[Name, ShiftRow] = {
           new Field[Name, ShiftRow](
             _path,
             "name",
@@ -54,7 +54,7 @@ object ShiftFields {
             Name.pgType
           )
         }
-        def starttime: Field[TypoLocalTime, ShiftRow] = {
+        override def starttime: Field[TypoLocalTime, ShiftRow] = {
           new Field[TypoLocalTime, ShiftRow](
             _path,
             "starttime",
@@ -65,7 +65,7 @@ object ShiftFields {
             TypoLocalTime.pgType
           )
         }
-        def endtime: Field[TypoLocalTime, ShiftRow] = {
+        override def endtime: Field[TypoLocalTime, ShiftRow] = {
           new Field[TypoLocalTime, ShiftRow](
             _path,
             "endtime",
@@ -76,7 +76,7 @@ object ShiftFields {
             TypoLocalTime.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, ShiftRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, ShiftRow] = {
           new Field[TypoLocalDateTime, ShiftRow](
             _path,
             "modifieddate",
@@ -92,7 +92,7 @@ object ShiftFields {
 
     override lazy val columns: java.util.List[FieldLike[?, ShiftRow]] = java.util.List.of(this.fields.shiftid, this.fields.name, this.fields.starttime, this.fields.endtime, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[ShiftFields, ShiftRow] = new Impl(java.util.List.of())

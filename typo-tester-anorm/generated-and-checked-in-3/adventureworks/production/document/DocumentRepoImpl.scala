@@ -29,18 +29,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class DocumentRepoImpl extends DocumentRepo {
-  def delete: DeleteBuilder[DocumentFields, DocumentRow] = DeleteBuilder.of(""""production"."document"""", DocumentFields.structure, DocumentRow.rowParser(1).*)
+  override def delete: DeleteBuilder[DocumentFields, DocumentRow] = DeleteBuilder.of(""""production"."document"""", DocumentFields.structure, DocumentRow.rowParser(1).*)
 
-  def deleteById(documentnode: DocumentId)(using c: Connection): Boolean = SQL"""delete from "production"."document" where "documentnode" = ${ParameterValue(documentnode, null, DocumentId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(documentnode: DocumentId)(using c: Connection): Boolean = SQL"""delete from "production"."document" where "documentnode" = ${ParameterValue(documentnode, null, DocumentId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(documentnodes: Array[DocumentId])(using c: Connection): Int = {
+  override def deleteByIds(documentnodes: Array[DocumentId])(using c: Connection): Int = {
     SQL"""delete
     from "production"."document"
     where "documentnode" = ANY(${ParameterValue(documentnodes, null, DocumentId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: DocumentRow)(using c: Connection): DocumentRow = {
+  override def insert(unsaved: DocumentRow)(using c: Connection): DocumentRow = {
   SQL"""insert into "production"."document"("title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode")
     values (${ParameterValue(unsaved.title, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.owner, null, BusinessentityId.toStatement)}::int4, ${ParameterValue(unsaved.folderflag, null, Flag.toStatement)}::bool, ${ParameterValue(unsaved.filename, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.fileextension, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}, ${ParameterValue(unsaved.revision, null, ToStatement.stringToStatement)}::bpchar, ${ParameterValue(unsaved.changenumber, null, ToStatement.intToStatement)}::int4, ${ParameterValue(unsaved.status, null, TypoShort.toStatement)}::int2, ${ParameterValue(unsaved.documentsummary, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}, ${ParameterValue(unsaved.document, null, ToStatement.optionToStatement(using TypoBytea.toStatement, TypoBytea.parameterMetadata))}::bytea, ${ParameterValue(unsaved.rowguid, null, TypoUUID.toStatement)}::uuid, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp, ${ParameterValue(unsaved.documentnode, null, DocumentId.toStatement)})
     returning "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"
@@ -48,7 +48,7 @@ class DocumentRepoImpl extends DocumentRepo {
     .executeInsert(DocumentRow.rowParser(1).single)
   }
 
-  def insert(unsaved: DocumentRowUnsaved)(using c: Connection): DocumentRow = {
+  override def insert(unsaved: DocumentRowUnsaved)(using c: Connection): DocumentRow = {
     val namedParameters = List(
       Some((NamedParameter("title", ParameterValue(unsaved.title, null, ToStatement.stringToStatement)), "")),
       Some((NamedParameter("owner", ParameterValue(unsaved.owner, null, BusinessentityId.toStatement)), "::int4")),
@@ -95,54 +95,54 @@ class DocumentRepoImpl extends DocumentRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[DocumentRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "production"."document"("title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode") FROM STDIN""", batchSize, unsaved)(using DocumentRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[DocumentRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "production"."document"("title", "owner", "filename", "fileextension", "revision", "status", "documentsummary", "document", "folderflag", "changenumber", "rowguid", "modifieddate", "documentnode") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using DocumentRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[DocumentFields, DocumentRow] = SelectBuilder.of(""""production"."document"""", DocumentFields.structure, DocumentRow.rowParser)
+  override def select: SelectBuilder[DocumentFields, DocumentRow] = SelectBuilder.of(""""production"."document"""", DocumentFields.structure, DocumentRow.rowParser)
 
-  def selectAll(using c: Connection): List[DocumentRow] = {
+  override def selectAll(using c: Connection): List[DocumentRow] = {
     SQL"""select "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"
     from "production"."document"
     """.as(DocumentRow.rowParser(1).*)
   }
 
-  def selectById(documentnode: DocumentId)(using c: Connection): Option[DocumentRow] = {
+  override def selectById(documentnode: DocumentId)(using c: Connection): Option[DocumentRow] = {
     SQL"""select "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"
     from "production"."document"
     where "documentnode" = ${ParameterValue(documentnode, null, DocumentId.toStatement)}
     """.as(DocumentRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(documentnodes: Array[DocumentId])(using c: Connection): List[DocumentRow] = {
+  override def selectByIds(documentnodes: Array[DocumentId])(using c: Connection): List[DocumentRow] = {
     SQL"""select "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"
     from "production"."document"
     where "documentnode" = ANY(${ParameterValue(documentnodes, null, DocumentId.arrayToStatement)})
     """.as(DocumentRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(documentnodes: Array[DocumentId])(using c: Connection): Map[DocumentId, DocumentRow] = {
+  override def selectByIdsTracked(documentnodes: Array[DocumentId])(using c: Connection): Map[DocumentId, DocumentRow] = {
     val byId = selectByIds(documentnodes).view.map(x => (x.documentnode, x)).toMap
     documentnodes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def selectByUniqueRowguid(rowguid: TypoUUID)(using c: Connection): Option[DocumentRow] = {
+  override def selectByUniqueRowguid(rowguid: TypoUUID)(using c: Connection): Option[DocumentRow] = {
     SQL"""select "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"
     from "production"."document"
     where "rowguid" = ${ParameterValue(rowguid, null, TypoUUID.toStatement)}
     """.as(DocumentRow.rowParser(1).singleOpt)
   }
 
-  def update: UpdateBuilder[DocumentFields, DocumentRow] = UpdateBuilder.of(""""production"."document"""", DocumentFields.structure, DocumentRow.rowParser(1).*)
+  override def update: UpdateBuilder[DocumentFields, DocumentRow] = UpdateBuilder.of(""""production"."document"""", DocumentFields.structure, DocumentRow.rowParser(1).*)
 
-  def update(row: DocumentRow)(using c: Connection): Option[DocumentRow] = {
+  override def update(row: DocumentRow)(using c: Connection): Option[DocumentRow] = {
     val documentnode = row.documentnode
     SQL"""update "production"."document"
     set "title" = ${ParameterValue(row.title, null, ToStatement.stringToStatement)},
@@ -162,7 +162,7 @@ class DocumentRepoImpl extends DocumentRepo {
     """.executeInsert(DocumentRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: DocumentRow)(using c: Connection): DocumentRow = {
+  override def upsert(unsaved: DocumentRow)(using c: Connection): DocumentRow = {
   SQL"""insert into "production"."document"("title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode")
     values (
       ${ParameterValue(unsaved.title, null, ToStatement.stringToStatement)},
@@ -198,7 +198,7 @@ class DocumentRepoImpl extends DocumentRepo {
     .executeInsert(DocumentRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[DocumentRow])(using c: Connection): List[DocumentRow] = {
+  override def upsertBatch(unsaved: Iterable[DocumentRow])(using c: Connection): List[DocumentRow] = {
     def toNamedParameter(row: DocumentRow): List[NamedParameter] = List(
       NamedParameter("title", ParameterValue(row.title, null, ToStatement.stringToStatement)),
       NamedParameter("owner", ParameterValue(row.owner, null, BusinessentityId.toStatement)),
@@ -214,6 +214,7 @@ class DocumentRepoImpl extends DocumentRepo {
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement)),
       NamedParameter("documentnode", ParameterValue(row.documentnode, null, DocumentId.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -245,7 +246,7 @@ class DocumentRepoImpl extends DocumentRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[DocumentRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

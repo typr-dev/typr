@@ -11,7 +11,6 @@ import adventureworks.customtypes.TypoUUID
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple3
 
 /** Table: person.businessentity
  * Source of the ID that connects vendors, customers, and employees with address and contact information.
@@ -37,7 +36,7 @@ case class BusinessentityRow(
 }
 
 object BusinessentityRow {
-  val `_rowParser`: RowParser[BusinessentityRow] = RowParsers.of(BusinessentityId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BusinessentityRow.apply, row => new Tuple3(row.businessentityid, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[BusinessentityRow] = RowParsers.of(BusinessentityId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BusinessentityRow.apply, row => Array(row.businessentityid, row.rowguid, row.modifieddate))
 
   given pgText: PgText[BusinessentityRow] = PgText.from(`_rowParser`)
 }

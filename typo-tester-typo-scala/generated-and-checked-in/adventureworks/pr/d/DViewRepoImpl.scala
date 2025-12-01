@@ -10,11 +10,11 @@ import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class DViewRepoImpl extends DViewRepo {
-  def select: SelectBuilder[DViewFields, DViewRow] = SelectBuilder.of("pr.d", DViewFields.structure, DViewRow.`_rowParser`)
+  override def select: SelectBuilder[DViewFields, DViewRow] = SelectBuilder.of("pr.d", DViewFields.structure, DViewRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[DViewRow] = {
+  override def selectAll(using c: Connection): java.util.List[DViewRow] = {
     interpolate"""select "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"
     from "pr"."d"
-    """.as(DViewRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(DViewRow.`_rowParser`.all()).runUnchecked(c)
   }
 }

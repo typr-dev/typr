@@ -37,7 +37,7 @@ object TypesJava {
   val BigDecimal = Qualified("java.math.BigDecimal")
   val Boolean = Qualified("java.lang.Boolean")
   val Byte = Qualified("java.lang.Byte")
-  val BytePrimitive = Qualified("byte") // Java primitive byte
+  val BytePrimitive = jvm.Type.Primitive("byte") // Java primitive byte
   val ByteArrays = Qualified("typo.runtime.ByteArrays")
   val Character = Qualified("java.lang.Character")
   val ChronoField = jvm.Type.Qualified("java.time.temporal.ChronoField")
@@ -82,21 +82,15 @@ object TypesJava {
   val TypoPGObjectHelper = Qualified("typo.runtime.internal.TypoPGObjectHelper")
   val ResultSet = jvm.Type.Qualified("java.sql.ResultSet")
   val Runnable = jvm.Type.Qualified("java.lang.Runnable")
+  val RuntimeException = Qualified("java.lang.RuntimeException")
+  val Object = Qualified("java.lang.Object")
   val Short = Qualified("java.lang.Short")
   val SqlTypes = Qualified("java.sql.Types")
+  val Stream = Qualified("java.util.stream.Stream")
   val String = Qualified("java.lang.String")
   val StringBuilder = Qualified("scala.collection.mutable.StringBuilder")
   val Supplier = Qualified("java.util.function.Supplier")
   val Throwable = jvm.Type.Qualified("java.lang.Throwable")
   val UUID = Qualified("java.util.UUID")
   val ZoneOffset = Qualified("java.time.ZoneOffset")
-
-  object spring {
-    val Repository = Qualified("org.springframework.stereotype.Repository")
-  }
-
-  object jakarta {
-    val ApplicationScoped = Qualified("jakarta.enterprise.context.ApplicationScoped")
-    val Singleton = Qualified("jakarta.inject.Singleton")
-  }
 }

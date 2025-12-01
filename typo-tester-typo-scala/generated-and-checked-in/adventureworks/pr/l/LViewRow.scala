@@ -11,7 +11,6 @@ import adventureworks.public.Name
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple6
 
 /** View: pr.l */
 case class LViewRow(
@@ -30,14 +29,5 @@ case class LViewRow(
 )
 
 object LViewRow {
-  val `_rowParser`: RowParser[LViewRow] = {
-    RowParsers.of(LocationId.pgType, LocationId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, LViewRow.apply, row => new Tuple6(
-      row.id,
-      row.locationid,
-      row.name,
-      row.costrate,
-      row.availability,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[LViewRow] = RowParsers.of(LocationId.pgType, LocationId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, LViewRow.apply, row => Array(row.id, row.locationid, row.name, row.costrate, row.availability, row.modifieddate))
 }

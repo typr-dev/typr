@@ -11,7 +11,6 @@ import adventureworks.public_.Name;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple4;
 
 /** Table: sales.salesreason
   * Lookup table of customer purchase reasons.
@@ -51,7 +50,7 @@ public record SalesreasonRow(
     return new SalesreasonRow(salesreasonid, name, reasontype, modifieddate);
   };
 
-  static RowParser<SalesreasonRow> _rowParser = RowParsers.of(SalesreasonId.pgType, Name.pgType, Name.pgType, TypoLocalDateTime.pgType, SalesreasonRow::new, row -> new Tuple4<>(row.salesreasonid(), row.name(), row.reasontype(), row.modifieddate()));;
+  static RowParser<SalesreasonRow> _rowParser = RowParsers.of(SalesreasonId.pgType, Name.pgType, Name.pgType, TypoLocalDateTime.pgType, SalesreasonRow::new, row -> new Object[]{row.salesreasonid(), row.name(), row.reasontype(), row.modifieddate()});;
 
   static public PgText<SalesreasonRow> pgText =
     PgText.from(_rowParser);

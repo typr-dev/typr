@@ -19,42 +19,42 @@ import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class Issue1422RepoImpl extends Issue1422Repo {
-  def delete: DeleteBuilder[Issue1422Fields, Issue1422Row] = DeleteBuilder.of(""""public"."issue142_2"""", Issue1422Fields.structure, Issue1422Row.read)
+  override def delete: DeleteBuilder[Issue1422Fields, Issue1422Row] = DeleteBuilder.of(""""public"."issue142_2"""", Issue1422Fields.structure, Issue1422Row.read)
 
-  def deleteById(tabellkode: Issue142Id): ConnectionIO[Boolean] = sql"""delete from "public"."issue142_2" where "tabellkode" = ${fromWrite(tabellkode)(new Write.Single(Issue142Id.put))}""".update.run.map(_ > 0)
+  override def deleteById(tabellkode: Issue142Id): ConnectionIO[Boolean] = sql"""delete from "public"."issue142_2" where "tabellkode" = ${fromWrite(tabellkode)(new Write.Single(Issue142Id.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(tabellkodes: Array[Issue142Id]): ConnectionIO[Int] = sql"""delete from "public"."issue142_2" where "tabellkode" = ANY(${fromWrite(tabellkodes)(new Write.Single(Issue142Id.arrayPut))})""".update.run
+  override def deleteByIds(tabellkodes: Array[Issue142Id]): ConnectionIO[Int] = sql"""delete from "public"."issue142_2" where "tabellkode" = ANY(${fromWrite(tabellkodes)(new Write.Single(Issue142Id.arrayPut))})""".update.run
 
-  def insert(unsaved: Issue1422Row): ConnectionIO[Issue1422Row] = {
+  override def insert(unsaved: Issue1422Row): ConnectionIO[Issue1422Row] = {
     sql"""insert into "public"."issue142_2"("tabellkode")
     values (${fromWrite(unsaved.tabellkode)(new Write.Single(Issue142Id.put))})
     returning "tabellkode"
     """.query(Issue1422Row.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, Issue1422Row],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "public"."issue142_2"("tabellkode") FROM STDIN""").copyIn(unsaved, batchSize)(Issue1422Row.pgText)
 
-  def select: SelectBuilder[Issue1422Fields, Issue1422Row] = SelectBuilder.of(""""public"."issue142_2"""", Issue1422Fields.structure, Issue1422Row.read)
+  override def select: SelectBuilder[Issue1422Fields, Issue1422Row] = SelectBuilder.of(""""public"."issue142_2"""", Issue1422Fields.structure, Issue1422Row.read)
 
-  def selectAll: Stream[ConnectionIO, Issue1422Row] = sql"""select "tabellkode" from "public"."issue142_2"""".query(Issue1422Row.read).stream
+  override def selectAll: Stream[ConnectionIO, Issue1422Row] = sql"""select "tabellkode" from "public"."issue142_2"""".query(Issue1422Row.read).stream
 
-  def selectById(tabellkode: Issue142Id): ConnectionIO[Option[Issue1422Row]] = sql"""select "tabellkode" from "public"."issue142_2" where "tabellkode" = ${fromWrite(tabellkode)(new Write.Single(Issue142Id.put))}""".query(Issue1422Row.read).option
+  override def selectById(tabellkode: Issue142Id): ConnectionIO[Option[Issue1422Row]] = sql"""select "tabellkode" from "public"."issue142_2" where "tabellkode" = ${fromWrite(tabellkode)(new Write.Single(Issue142Id.put))}""".query(Issue1422Row.read).option
 
-  def selectByIds(tabellkodes: Array[Issue142Id]): Stream[ConnectionIO, Issue1422Row] = sql"""select "tabellkode" from "public"."issue142_2" where "tabellkode" = ANY(${fromWrite(tabellkodes)(new Write.Single(Issue142Id.arrayPut))})""".query(Issue1422Row.read).stream
+  override def selectByIds(tabellkodes: Array[Issue142Id]): Stream[ConnectionIO, Issue1422Row] = sql"""select "tabellkode" from "public"."issue142_2" where "tabellkode" = ANY(${fromWrite(tabellkodes)(new Write.Single(Issue142Id.arrayPut))})""".query(Issue1422Row.read).stream
 
-  def selectByIdsTracked(tabellkodes: Array[Issue142Id]): ConnectionIO[Map[Issue142Id, Issue1422Row]] = {
+  override def selectByIdsTracked(tabellkodes: Array[Issue142Id]): ConnectionIO[Map[Issue142Id, Issue1422Row]] = {
     selectByIds(tabellkodes).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.tabellkode, x)).toMap
       tabellkodes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[Issue1422Fields, Issue1422Row] = UpdateBuilder.of(""""public"."issue142_2"""", Issue1422Fields.structure, Issue1422Row.read)
+  override def update: UpdateBuilder[Issue1422Fields, Issue1422Row] = UpdateBuilder.of(""""public"."issue142_2"""", Issue1422Fields.structure, Issue1422Row.read)
 
-  def upsert(unsaved: Issue1422Row): ConnectionIO[Issue1422Row] = {
+  override def upsert(unsaved: Issue1422Row): ConnectionIO[Issue1422Row] = {
     sql"""insert into "public"."issue142_2"("tabellkode")
     values (
       ${fromWrite(unsaved.tabellkode)(new Write.Single(Issue142Id.put))}
@@ -65,7 +65,7 @@ class Issue1422RepoImpl extends Issue1422Repo {
     """.query(Issue1422Row.read).unique
   }
 
-  def upsertBatch(unsaved: List[Issue1422Row]): Stream[ConnectionIO, Issue1422Row] = {
+  override def upsertBatch(unsaved: List[Issue1422Row]): Stream[ConnectionIO, Issue1422Row] = {
     Update[Issue1422Row](
       s"""insert into "public"."issue142_2"("tabellkode")
       values (?)
@@ -77,7 +77,7 @@ class Issue1422RepoImpl extends Issue1422Repo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, Issue1422Row],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

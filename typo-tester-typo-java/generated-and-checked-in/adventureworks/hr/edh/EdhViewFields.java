@@ -19,7 +19,7 @@ import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 
 public interface EdhViewFields {
-  static final class Impl extends Relation<EdhViewFields, EdhViewRow> {
+  final class Impl extends Relation<EdhViewFields, EdhViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -27,24 +27,31 @@ public interface EdhViewFields {
     @Override
     public EdhViewFields fields() {
       return new EdhViewFields() {
+               @Override
                public Field<BusinessentityId, EdhViewRow> id() {
                  return new Field<BusinessentityId, EdhViewRow>(_path, "id", EdhViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
                };
+               @Override
                public Field<BusinessentityId, EdhViewRow> businessentityid() {
                  return new Field<BusinessentityId, EdhViewRow>(_path, "businessentityid", EdhViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public Field<DepartmentId, EdhViewRow> departmentid() {
                  return new Field<DepartmentId, EdhViewRow>(_path, "departmentid", EdhViewRow::departmentid, Optional.empty(), Optional.empty(), (row, value) -> row.withDepartmentid(value), DepartmentId.pgType);
                };
+               @Override
                public Field<ShiftId, EdhViewRow> shiftid() {
                  return new Field<ShiftId, EdhViewRow>(_path, "shiftid", EdhViewRow::shiftid, Optional.empty(), Optional.empty(), (row, value) -> row.withShiftid(value), ShiftId.pgType);
                };
+               @Override
                public Field<TypoLocalDate, EdhViewRow> startdate() {
                  return new Field<TypoLocalDate, EdhViewRow>(_path, "startdate", EdhViewRow::startdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withStartdate(value), TypoLocalDate.pgType);
                };
+               @Override
                public OptField<TypoLocalDate, EdhViewRow> enddate() {
                  return new OptField<TypoLocalDate, EdhViewRow>(_path, "enddate", EdhViewRow::enddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withEnddate(value), TypoLocalDate.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, EdhViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, EdhViewRow>(_path, "modifieddate", EdhViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -56,6 +63,7 @@ public interface EdhViewFields {
       return List.of(this.fields().id(), this.fields().businessentityid(), this.fields().departmentid(), this.fields().shiftid(), this.fields().startdate(), this.fields().enddate(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

@@ -36,7 +36,7 @@ object ProductmodelFields {
 
     override lazy val fields: ProductmodelFields = {
       new ProductmodelFields {
-        def productmodelid: IdField[ProductmodelId, ProductmodelRow] = {
+        override def productmodelid: IdField[ProductmodelId, ProductmodelRow] = {
           new IdField[ProductmodelId, ProductmodelRow](
             _path,
             "productmodelid",
@@ -47,7 +47,7 @@ object ProductmodelFields {
             ProductmodelId.pgType
           )
         }
-        def name: Field[Name, ProductmodelRow] = {
+        override def name: Field[Name, ProductmodelRow] = {
           new Field[Name, ProductmodelRow](
             _path,
             "name",
@@ -58,7 +58,7 @@ object ProductmodelFields {
             Name.pgType
           )
         }
-        def catalogdescription: OptField[TypoXml, ProductmodelRow] = {
+        override def catalogdescription: OptField[TypoXml, ProductmodelRow] = {
           new OptField[TypoXml, ProductmodelRow](
             _path,
             "catalogdescription",
@@ -69,7 +69,7 @@ object ProductmodelFields {
             TypoXml.pgType
           )
         }
-        def instructions: OptField[TypoXml, ProductmodelRow] = {
+        override def instructions: OptField[TypoXml, ProductmodelRow] = {
           new OptField[TypoXml, ProductmodelRow](
             _path,
             "instructions",
@@ -80,7 +80,7 @@ object ProductmodelFields {
             TypoXml.pgType
           )
         }
-        def rowguid: Field[TypoUUID, ProductmodelRow] = {
+        override def rowguid: Field[TypoUUID, ProductmodelRow] = {
           new Field[TypoUUID, ProductmodelRow](
             _path,
             "rowguid",
@@ -91,7 +91,7 @@ object ProductmodelFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, ProductmodelRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, ProductmodelRow] = {
           new Field[TypoLocalDateTime, ProductmodelRow](
             _path,
             "modifieddate",
@@ -107,7 +107,7 @@ object ProductmodelFields {
 
     override lazy val columns: java.util.List[FieldLike[?, ProductmodelRow]] = java.util.List.of(this.fields.productmodelid, this.fields.name, this.fields.catalogdescription, this.fields.instructions, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[ProductmodelFields, ProductmodelRow] = new Impl(java.util.List.of())

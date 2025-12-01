@@ -5,12 +5,13 @@
  */
 package adventureworks.production.workorder
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
 
 /** Type for the primary key of table `production.workorder` */
-case class WorkorderId(value: Integer) extends scala.AnyVal
+case class WorkorderId(@JsonValue value: Integer) extends scala.AnyVal
 
 object WorkorderId {
   given bijection: Bijection[WorkorderId, Integer] = Bijection.apply[WorkorderId, Integer](_.value)(WorkorderId.apply)

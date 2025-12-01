@@ -19,7 +19,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple25
 
 /** Table: production.product
  * Products sold or used in the manfacturing of sold products.
@@ -153,35 +152,7 @@ case class ProductRow(
 }
 
 object ProductRow {
-  val `_rowParser`: RowParser[ProductRow] = {
-    RowParsers.of(ProductId.pgType, Name.pgType, PgTypes.text, Flag.pgType, Flag.pgType, PgTypes.text.opt(), TypoShort.pgType, TypoShort.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.text.opt(), UnitmeasureId.pgType.opt(), UnitmeasureId.pgType.opt(), PgTypes.numeric.opt(), PgTypes.int4, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), ProductsubcategoryId.pgType.opt(), ProductmodelId.pgType.opt(), TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoLocalDateTime.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, ProductRow.apply, row => new Tuple25(
-      row.productid,
-      row.name,
-      row.productnumber,
-      row.makeflag,
-      row.finishedgoodsflag,
-      row.color,
-      row.safetystocklevel,
-      row.reorderpoint,
-      row.standardcost,
-      row.listprice,
-      row.size,
-      row.sizeunitmeasurecode,
-      row.weightunitmeasurecode,
-      row.weight,
-      row.daystomanufacture,
-      row.productline,
-      row.`class`,
-      row.style,
-      row.productsubcategoryid,
-      row.productmodelid,
-      row.sellstartdate,
-      row.sellenddate,
-      row.discontinueddate,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[ProductRow] = RowParsers.of(ProductId.pgType, Name.pgType, PgTypes.text, Flag.pgType, Flag.pgType, PgTypes.text.opt(), TypoShort.pgType, TypoShort.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.text.opt(), UnitmeasureId.pgType.opt(), UnitmeasureId.pgType.opt(), PgTypes.numeric.opt(), PgTypes.int4, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), ProductsubcategoryId.pgType.opt(), ProductmodelId.pgType.opt(), TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoLocalDateTime.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, ProductRow.apply, row => Array(row.productid, row.name, row.productnumber, row.makeflag, row.finishedgoodsflag, row.color, row.safetystocklevel, row.reorderpoint, row.standardcost, row.listprice, row.size, row.sizeunitmeasurecode, row.weightunitmeasurecode, row.weight, row.daystomanufacture, row.productline, row.`class`, row.style, row.productsubcategoryid, row.productmodelid, row.sellstartdate, row.sellenddate, row.discontinueddate, row.rowguid, row.modifieddate))
 
   given pgText: PgText[ProductRow] = PgText.from(`_rowParser`)
 }

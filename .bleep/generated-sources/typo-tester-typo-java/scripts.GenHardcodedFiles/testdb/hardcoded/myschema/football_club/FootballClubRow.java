@@ -9,7 +9,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple2;
 
 /** Table: myschema.football_club
   * football club
@@ -27,7 +26,7 @@ public record FootballClubRow(
     return new FootballClubRow(id, name);
   };
 
-  static RowParser<FootballClubRow> _rowParser = RowParsers.of(FootballClubId.pgType, PgTypes.text, FootballClubRow::new, row -> new Tuple2<>(row.id(), row.name()));;
+  static RowParser<FootballClubRow> _rowParser = RowParsers.of(FootballClubId.pgType, PgTypes.text, FootballClubRow::new, row -> new Object[]{row.id(), row.name()});;
 
   static public PgText<FootballClubRow> pgText =
     PgText.from(_rowParser);

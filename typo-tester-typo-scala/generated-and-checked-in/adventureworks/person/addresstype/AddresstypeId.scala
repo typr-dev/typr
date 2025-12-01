@@ -5,12 +5,13 @@
  */
 package adventureworks.person.addresstype
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
 
 /** Type for the primary key of table `person.addresstype` */
-case class AddresstypeId(value: Integer) extends scala.AnyVal
+case class AddresstypeId(@JsonValue value: Integer) extends scala.AnyVal
 
 object AddresstypeId {
   given bijection: Bijection[AddresstypeId, Integer] = Bijection.apply[AddresstypeId, Integer](_.value)(AddresstypeId.apply)

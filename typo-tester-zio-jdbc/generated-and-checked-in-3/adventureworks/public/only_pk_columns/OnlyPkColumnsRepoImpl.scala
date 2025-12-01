@@ -18,11 +18,11 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class OnlyPkColumnsRepoImpl extends OnlyPkColumnsRepo {
-  def delete: DeleteBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = DeleteBuilder.of(""""public"."only_pk_columns"""", OnlyPkColumnsFields.structure, OnlyPkColumnsRow.jdbcDecoder)
+  override def delete: DeleteBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = DeleteBuilder.of(""""public"."only_pk_columns"""", OnlyPkColumnsFields.structure, OnlyPkColumnsRow.jdbcDecoder)
 
-  def deleteById(compositeId: OnlyPkColumnsId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "public"."only_pk_columns" where "key_column_1" = ${Segment.paramSegment(compositeId.keyColumn1)(using Setter.stringSetter)} AND "key_column_2" = ${Segment.paramSegment(compositeId.keyColumn2)(using Setter.intSetter)}""".delete.map(_ > 0)
+  override def deleteById(compositeId: OnlyPkColumnsId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "public"."only_pk_columns" where "key_column_1" = ${Segment.paramSegment(compositeId.keyColumn1)(using Setter.stringSetter)} AND "key_column_2" = ${Segment.paramSegment(compositeId.keyColumn2)(using Setter.intSetter)}""".delete.map(_ > 0)
 
-  def deleteByIds(compositeIds: Array[OnlyPkColumnsId]): ZIO[ZConnection, Throwable, Long] = {
+  override def deleteByIds(compositeIds: Array[OnlyPkColumnsId]): ZIO[ZConnection, Throwable, Long] = {
     val keyColumn1 = compositeIds.map(_.keyColumn1)
     val keyColumn2 = compositeIds.map(_.keyColumn2)
     sql"""delete
@@ -32,25 +32,25 @@ class OnlyPkColumnsRepoImpl extends OnlyPkColumnsRepo {
     """.delete
   }
 
-  def insert(unsaved: OnlyPkColumnsRow): ZIO[ZConnection, Throwable, OnlyPkColumnsRow] = {
+  override def insert(unsaved: OnlyPkColumnsRow): ZIO[ZConnection, Throwable, OnlyPkColumnsRow] = {
     sql"""insert into "public"."only_pk_columns"("key_column_1", "key_column_2")
     values (${Segment.paramSegment(unsaved.keyColumn1)(using Setter.stringSetter)}, ${Segment.paramSegment(unsaved.keyColumn2)(using Setter.intSetter)}::int4)
     returning "key_column_1", "key_column_2"
     """.insertReturning(using OnlyPkColumnsRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, OnlyPkColumnsRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "public"."only_pk_columns"("key_column_1", "key_column_2") FROM STDIN""", batchSize, unsaved)(using OnlyPkColumnsRow.pgText)
 
-  def select: SelectBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = SelectBuilder.of(""""public"."only_pk_columns"""", OnlyPkColumnsFields.structure, OnlyPkColumnsRow.jdbcDecoder)
+  override def select: SelectBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = SelectBuilder.of(""""public"."only_pk_columns"""", OnlyPkColumnsFields.structure, OnlyPkColumnsRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, OnlyPkColumnsRow] = sql"""select "key_column_1", "key_column_2" from "public"."only_pk_columns"""".query(using OnlyPkColumnsRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, OnlyPkColumnsRow] = sql"""select "key_column_1", "key_column_2" from "public"."only_pk_columns"""".query(using OnlyPkColumnsRow.jdbcDecoder).selectStream()
 
-  def selectById(compositeId: OnlyPkColumnsId): ZIO[ZConnection, Throwable, Option[OnlyPkColumnsRow]] = sql"""select "key_column_1", "key_column_2" from "public"."only_pk_columns" where "key_column_1" = ${Segment.paramSegment(compositeId.keyColumn1)(using Setter.stringSetter)} AND "key_column_2" = ${Segment.paramSegment(compositeId.keyColumn2)(using Setter.intSetter)}""".query(using OnlyPkColumnsRow.jdbcDecoder).selectOne
+  override def selectById(compositeId: OnlyPkColumnsId): ZIO[ZConnection, Throwable, Option[OnlyPkColumnsRow]] = sql"""select "key_column_1", "key_column_2" from "public"."only_pk_columns" where "key_column_1" = ${Segment.paramSegment(compositeId.keyColumn1)(using Setter.stringSetter)} AND "key_column_2" = ${Segment.paramSegment(compositeId.keyColumn2)(using Setter.intSetter)}""".query(using OnlyPkColumnsRow.jdbcDecoder).selectOne
 
-  def selectByIds(compositeIds: Array[OnlyPkColumnsId]): ZStream[ZConnection, Throwable, OnlyPkColumnsRow] = {
+  override def selectByIds(compositeIds: Array[OnlyPkColumnsId]): ZStream[ZConnection, Throwable, OnlyPkColumnsRow] = {
     val keyColumn1 = compositeIds.map(_.keyColumn1)
     val keyColumn2 = compositeIds.map(_.keyColumn2)
     sql"""select "key_column_1", "key_column_2"
@@ -60,16 +60,16 @@ class OnlyPkColumnsRepoImpl extends OnlyPkColumnsRepo {
     """.query(using OnlyPkColumnsRow.jdbcDecoder).selectStream()
   }
 
-  def selectByIdsTracked(compositeIds: Array[OnlyPkColumnsId]): ZIO[ZConnection, Throwable, Map[OnlyPkColumnsId, OnlyPkColumnsRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[OnlyPkColumnsId]): ZIO[ZConnection, Throwable, Map[OnlyPkColumnsId, OnlyPkColumnsRow]] = {
     selectByIds(compositeIds).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = UpdateBuilder.of(""""public"."only_pk_columns"""", OnlyPkColumnsFields.structure, OnlyPkColumnsRow.jdbcDecoder)
+  override def update: UpdateBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = UpdateBuilder.of(""""public"."only_pk_columns"""", OnlyPkColumnsFields.structure, OnlyPkColumnsRow.jdbcDecoder)
 
-  def upsert(unsaved: OnlyPkColumnsRow): ZIO[ZConnection, Throwable, UpdateResult[OnlyPkColumnsRow]] = {
+  override def upsert(unsaved: OnlyPkColumnsRow): ZIO[ZConnection, Throwable, UpdateResult[OnlyPkColumnsRow]] = {
     sql"""insert into "public"."only_pk_columns"("key_column_1", "key_column_2")
     values (
       ${Segment.paramSegment(unsaved.keyColumn1)(using Setter.stringSetter)},
@@ -81,7 +81,7 @@ class OnlyPkColumnsRepoImpl extends OnlyPkColumnsRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, OnlyPkColumnsRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

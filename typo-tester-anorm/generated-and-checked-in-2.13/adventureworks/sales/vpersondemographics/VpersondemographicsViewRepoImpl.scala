@@ -10,9 +10,9 @@ import typo.dsl.SelectBuilder
 import anorm.SqlStringInterpolation
 
 class VpersondemographicsViewRepoImpl extends VpersondemographicsViewRepo {
-  def select: SelectBuilder[VpersondemographicsViewFields, VpersondemographicsViewRow] = SelectBuilder.of(""""sales"."vpersondemographics"""", VpersondemographicsViewFields.structure, VpersondemographicsViewRow.rowParser)
+  override def select: SelectBuilder[VpersondemographicsViewFields, VpersondemographicsViewRow] = SelectBuilder.of(""""sales"."vpersondemographics"""", VpersondemographicsViewFields.structure, VpersondemographicsViewRow.rowParser)
 
-  def selectAll(implicit c: Connection): List[VpersondemographicsViewRow] = {
+  override def selectAll(implicit c: Connection): List[VpersondemographicsViewRow] = {
     SQL"""select "businessentityid", "totalpurchaseytd"::numeric, "datefirstpurchase"::text, "birthdate"::text, "maritalstatus", "yearlyincome", "gender", "totalchildren", "numberchildrenathome", "education", "occupation", "homeownerflag", "numbercarsowned"
     from "sales"."vpersondemographics"
     """.as(VpersondemographicsViewRow.rowParser(1).*)

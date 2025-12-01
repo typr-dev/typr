@@ -22,21 +22,21 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class EmployeepayhistoryRepoImpl extends EmployeepayhistoryRepo {
-  def delete: DeleteBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = DeleteBuilder.of("humanresources.employeepayhistory", EmployeepayhistoryFields.structure)
+  override def delete: DeleteBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = DeleteBuilder.of("humanresources.employeepayhistory", EmployeepayhistoryFields.structure)
 
-  def deleteById(compositeId: EmployeepayhistoryId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "humanresources"."employeepayhistory" where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "ratechangedate" = ${TypoLocalDateTime.pgType.encode(compositeId.ratechangedate)}""".update().runUnchecked(c) > 0
+  override def deleteById(compositeId: EmployeepayhistoryId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "humanresources"."employeepayhistory" where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "ratechangedate" = ${TypoLocalDateTime.pgType.encode(compositeId.ratechangedate)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(compositeIds: Array[EmployeepayhistoryId])(using c: Connection): Integer = {
+  override def deleteByIds(compositeIds: Array[EmployeepayhistoryId])(using c: Connection): Integer = {
     val businessentityid: Array[BusinessentityId] = compositeIds.map(_.businessentityid)
     val ratechangedate: Array[TypoLocalDateTime] = compositeIds.map(_.ratechangedate)
-    interpolate"""delete
+    return interpolate"""delete
     from "humanresources"."employeepayhistory"
     where ("businessentityid", "ratechangedate")
     in (select unnest(${BusinessentityId.pgTypeArray.encode(businessentityid)}::int4[]), unnest(${TypoLocalDateTime.pgTypeArray.encode(ratechangedate)}::timestamp[]))
     """.update().runUnchecked(c)
   }
 
-  def insert(unsaved: EmployeepayhistoryRow)(using c: Connection): EmployeepayhistoryRow = {
+  override def insert(unsaved: EmployeepayhistoryRow)(using c: Connection): EmployeepayhistoryRow = {
   interpolate"""insert into "humanresources"."employeepayhistory"("businessentityid", "ratechangedate", "rate", "payfrequency", "modifieddate")
     values (${BusinessentityId.pgType.encode(unsaved.businessentityid)}::int4, ${TypoLocalDateTime.pgType.encode(unsaved.ratechangedate)}::timestamp, ${PgTypes.numeric.encode(unsaved.rate)}::numeric, ${TypoShort.pgType.encode(unsaved.payfrequency)}::int2, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text
@@ -44,9 +44,9 @@ class EmployeepayhistoryRepoImpl extends EmployeepayhistoryRepo {
     .updateReturning(EmployeepayhistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: EmployeepayhistoryRowUnsaved)(using c: Connection): EmployeepayhistoryRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: EmployeepayhistoryRowUnsaved)(using c: Connection): EmployeepayhistoryRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn
     values.add(interpolate"${BusinessentityId.pgType.encode(unsaved.businessentityid)}::int4"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""ratechangedate"""")): @scala.annotation.nowarn
@@ -56,11 +56,8 @@ class EmployeepayhistoryRepoImpl extends EmployeepayhistoryRepo {
     columns.add(Fragment.lit(""""payfrequency"""")): @scala.annotation.nowarn
     values.add(interpolate"${TypoShort.pgType.encode(unsaved.payfrequency)}::int2"): @scala.annotation.nowarn
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "humanresources"."employeepayhistory"(${Fragment.comma(columns)})
@@ -68,62 +65,62 @@ class EmployeepayhistoryRepoImpl extends EmployeepayhistoryRepo {
       returning "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text
       """
     }
-    q.updateReturning(EmployeepayhistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(EmployeepayhistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[EmployeepayhistoryRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "humanresources"."employeepayhistory"("businessentityid", "ratechangedate", "rate", "payfrequency", "modifieddate") FROM STDIN""", batchSize, unsaved, c, EmployeepayhistoryRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[EmployeepayhistoryRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "humanresources"."employeepayhistory"("businessentityid", "ratechangedate", "rate", "payfrequency", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, EmployeepayhistoryRowUnsaved.pgText)
 
-  def select: SelectBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = SelectBuilder.of("humanresources.employeepayhistory", EmployeepayhistoryFields.structure, EmployeepayhistoryRow.`_rowParser`)
+  override def select: SelectBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = SelectBuilder.of("humanresources.employeepayhistory", EmployeepayhistoryFields.structure, EmployeepayhistoryRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[EmployeepayhistoryRow] = {
+  override def selectAll(using c: Connection): java.util.List[EmployeepayhistoryRow] = {
     interpolate"""select "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text
     from "humanresources"."employeepayhistory"
-    """.as(EmployeepayhistoryRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(EmployeepayhistoryRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(compositeId: EmployeepayhistoryId)(using c: Connection): Optional[EmployeepayhistoryRow] = {
+  override def selectById(compositeId: EmployeepayhistoryId)(using c: Connection): Optional[EmployeepayhistoryRow] = {
     interpolate"""select "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text
     from "humanresources"."employeepayhistory"
-    where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "ratechangedate" = ${TypoLocalDateTime.pgType.encode(compositeId.ratechangedate)}""".as(EmployeepayhistoryRow.`_rowParser`.first()).runUnchecked(c)
+    where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "ratechangedate" = ${TypoLocalDateTime.pgType.encode(compositeId.ratechangedate)}""".query(EmployeepayhistoryRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(compositeIds: Array[EmployeepayhistoryId])(using c: Connection): java.util.List[EmployeepayhistoryRow] = {
+  override def selectByIds(compositeIds: Array[EmployeepayhistoryId])(using c: Connection): java.util.List[EmployeepayhistoryRow] = {
     val businessentityid: Array[BusinessentityId] = compositeIds.map(_.businessentityid)
     val ratechangedate: Array[TypoLocalDateTime] = compositeIds.map(_.ratechangedate)
-    interpolate"""select "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text
+    return interpolate"""select "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text
     from "humanresources"."employeepayhistory"
     where ("businessentityid", "ratechangedate")
     in (select unnest(${BusinessentityId.pgTypeArray.encode(businessentityid)}::int4[]), unnest(${TypoLocalDateTime.pgTypeArray.encode(ratechangedate)}::timestamp[]))
-    """.as(EmployeepayhistoryRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(EmployeepayhistoryRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(compositeIds: Array[EmployeepayhistoryId])(using c: Connection): java.util.Map[EmployeepayhistoryId, EmployeepayhistoryRow] = {
-    val ret: java.util.Map[EmployeepayhistoryId, EmployeepayhistoryRow] = new HashMap()
+  override def selectByIdsTracked(compositeIds: Array[EmployeepayhistoryId])(using c: Connection): java.util.Map[EmployeepayhistoryId, EmployeepayhistoryRow] = {
+    val ret: HashMap[EmployeepayhistoryId, EmployeepayhistoryRow] = new HashMap[EmployeepayhistoryId, EmployeepayhistoryRow]()
     selectByIds(compositeIds)(using c).forEach(row => ret.put(row.compositeId, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = UpdateBuilder.of("humanresources.employeepayhistory", EmployeepayhistoryFields.structure, EmployeepayhistoryRow.`_rowParser`.all())
+  override def update: UpdateBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = UpdateBuilder.of("humanresources.employeepayhistory", EmployeepayhistoryFields.structure, EmployeepayhistoryRow.`_rowParser`.all())
 
-  def update(row: EmployeepayhistoryRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: EmployeepayhistoryRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: EmployeepayhistoryId = row.compositeId
-    interpolate"""update "humanresources"."employeepayhistory"
+    return interpolate"""update "humanresources"."employeepayhistory"
     set "rate" = ${PgTypes.numeric.encode(row.rate)}::numeric,
     "payfrequency" = ${TypoShort.pgType.encode(row.payfrequency)}::int2,
     "modifieddate" = ${TypoLocalDateTime.pgType.encode(row.modifieddate)}::timestamp
     where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "ratechangedate" = ${TypoLocalDateTime.pgType.encode(compositeId.ratechangedate)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: EmployeepayhistoryRow)(using c: Connection): EmployeepayhistoryRow = {
+  override def upsert(unsaved: EmployeepayhistoryRow)(using c: Connection): EmployeepayhistoryRow = {
   interpolate"""insert into "humanresources"."employeepayhistory"("businessentityid", "ratechangedate", "rate", "payfrequency", "modifieddate")
     values (${BusinessentityId.pgType.encode(unsaved.businessentityid)}::int4, ${TypoLocalDateTime.pgType.encode(unsaved.ratechangedate)}::timestamp, ${PgTypes.numeric.encode(unsaved.rate)}::numeric, ${TypoShort.pgType.encode(unsaved.payfrequency)}::int2, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("businessentityid", "ratechangedate")
@@ -137,7 +134,7 @@ class EmployeepayhistoryRepoImpl extends EmployeepayhistoryRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[EmployeepayhistoryRow])(using c: Connection): java.util.List[EmployeepayhistoryRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[EmployeepayhistoryRow])(using c: Connection): java.util.List[EmployeepayhistoryRow] = {
     interpolate"""insert into "humanresources"."employeepayhistory"("businessentityid", "ratechangedate", "rate", "payfrequency", "modifieddate")
     values (?::int4, ?::timestamp, ?::numeric, ?::int2, ?::timestamp)
     on conflict ("businessentityid", "ratechangedate")
@@ -152,13 +149,13 @@ class EmployeepayhistoryRepoImpl extends EmployeepayhistoryRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[EmployeepayhistoryRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table employeepayhistory_TEMP (like "humanresources"."employeepayhistory") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy employeepayhistory_TEMP("businessentityid", "ratechangedate", "rate", "payfrequency", "modifieddate") from stdin""", batchSize, unsaved, c, EmployeepayhistoryRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "humanresources"."employeepayhistory"("businessentityid", "ratechangedate", "rate", "payfrequency", "modifieddate")
+    return interpolate"""insert into "humanresources"."employeepayhistory"("businessentityid", "ratechangedate", "rate", "payfrequency", "modifieddate")
     select * from employeepayhistory_TEMP
     on conflict ("businessentityid", "ratechangedate")
     do update set

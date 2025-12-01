@@ -32,7 +32,7 @@ object SopViewFields {
 
     override lazy val fields: SopViewFields = {
       new SopViewFields {
-        def id: Field[SpecialofferId, SopViewRow] = {
+        override def id: Field[SpecialofferId, SopViewRow] = {
           new Field[SpecialofferId, SopViewRow](
             _path,
             "id",
@@ -43,7 +43,7 @@ object SopViewFields {
             SpecialofferId.pgType
           )
         }
-        def specialofferid: Field[SpecialofferId, SopViewRow] = {
+        override def specialofferid: Field[SpecialofferId, SopViewRow] = {
           new Field[SpecialofferId, SopViewRow](
             _path,
             "specialofferid",
@@ -54,7 +54,7 @@ object SopViewFields {
             SpecialofferId.pgType
           )
         }
-        def productid: Field[ProductId, SopViewRow] = {
+        override def productid: Field[ProductId, SopViewRow] = {
           new Field[ProductId, SopViewRow](
             _path,
             "productid",
@@ -65,7 +65,7 @@ object SopViewFields {
             ProductId.pgType
           )
         }
-        def rowguid: Field[TypoUUID, SopViewRow] = {
+        override def rowguid: Field[TypoUUID, SopViewRow] = {
           new Field[TypoUUID, SopViewRow](
             _path,
             "rowguid",
@@ -76,7 +76,7 @@ object SopViewFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, SopViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, SopViewRow] = {
           new Field[TypoLocalDateTime, SopViewRow](
             _path,
             "modifieddate",
@@ -92,7 +92,7 @@ object SopViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, SopViewRow]] = java.util.List.of(this.fields.id, this.fields.specialofferid, this.fields.productid, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[SopViewFields, SopViewRow] = new Impl(java.util.List.of())

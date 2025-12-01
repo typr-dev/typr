@@ -5,22 +5,22 @@
  */
 package adventureworks.pr.ppp;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class PppViewRepoImpl implements PppViewRepo {
+  @Override
   public SelectBuilder<PppViewFields, PppViewRow> select() {
     return SelectBuilder.of("pr.ppp", PppViewFields.structure(), PppViewRow._rowParser);
   };
 
+  @Override
   public List<PppViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "productid", "productphotoid", "primary", "modifieddate"::text
        from "pr"."ppp"
-    """)).as(PppViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(PppViewRow._rowParser.all()).runUnchecked(c);
   };
 }

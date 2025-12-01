@@ -22,21 +22,21 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class SalespersonquotahistoryRepoImpl extends SalespersonquotahistoryRepo {
-  def delete: DeleteBuilder[SalespersonquotahistoryFields, SalespersonquotahistoryRow] = DeleteBuilder.of("sales.salespersonquotahistory", SalespersonquotahistoryFields.structure)
+  override def delete: DeleteBuilder[SalespersonquotahistoryFields, SalespersonquotahistoryRow] = DeleteBuilder.of("sales.salespersonquotahistory", SalespersonquotahistoryFields.structure)
 
-  def deleteById(compositeId: SalespersonquotahistoryId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."salespersonquotahistory" where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "quotadate" = ${TypoLocalDateTime.pgType.encode(compositeId.quotadate)}""".update().runUnchecked(c) > 0
+  override def deleteById(compositeId: SalespersonquotahistoryId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."salespersonquotahistory" where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "quotadate" = ${TypoLocalDateTime.pgType.encode(compositeId.quotadate)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(compositeIds: Array[SalespersonquotahistoryId])(using c: Connection): Integer = {
+  override def deleteByIds(compositeIds: Array[SalespersonquotahistoryId])(using c: Connection): Integer = {
     val businessentityid: Array[BusinessentityId] = compositeIds.map(_.businessentityid)
     val quotadate: Array[TypoLocalDateTime] = compositeIds.map(_.quotadate)
-    interpolate"""delete
+    return interpolate"""delete
     from "sales"."salespersonquotahistory"
     where ("businessentityid", "quotadate")
     in (select unnest(${BusinessentityId.pgTypeArray.encode(businessentityid)}::int4[]), unnest(${TypoLocalDateTime.pgTypeArray.encode(quotadate)}::timestamp[]))
     """.update().runUnchecked(c)
   }
 
-  def insert(unsaved: SalespersonquotahistoryRow)(using c: Connection): SalespersonquotahistoryRow = {
+  override def insert(unsaved: SalespersonquotahistoryRow)(using c: Connection): SalespersonquotahistoryRow = {
   interpolate"""insert into "sales"."salespersonquotahistory"("businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate")
     values (${BusinessentityId.pgType.encode(unsaved.businessentityid)}::int4, ${TypoLocalDateTime.pgType.encode(unsaved.quotadate)}::timestamp, ${PgTypes.numeric.encode(unsaved.salesquota)}::numeric, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text
@@ -44,9 +44,9 @@ class SalespersonquotahistoryRepoImpl extends SalespersonquotahistoryRepo {
     .updateReturning(SalespersonquotahistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: SalespersonquotahistoryRowUnsaved)(using c: Connection): SalespersonquotahistoryRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: SalespersonquotahistoryRowUnsaved)(using c: Connection): SalespersonquotahistoryRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn
     values.add(interpolate"${BusinessentityId.pgType.encode(unsaved.businessentityid)}::int4"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""quotadate"""")): @scala.annotation.nowarn
@@ -54,18 +54,12 @@ class SalespersonquotahistoryRepoImpl extends SalespersonquotahistoryRepo {
     columns.add(Fragment.lit(""""salesquota"""")): @scala.annotation.nowarn
     values.add(interpolate"${PgTypes.numeric.encode(unsaved.salesquota)}::numeric"): @scala.annotation.nowarn
     unsaved.rowguid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "sales"."salespersonquotahistory"(${Fragment.comma(columns)})
@@ -73,62 +67,62 @@ class SalespersonquotahistoryRepoImpl extends SalespersonquotahistoryRepo {
       returning "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text
       """
     }
-    q.updateReturning(SalespersonquotahistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(SalespersonquotahistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[SalespersonquotahistoryRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."salespersonquotahistory"("businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, c, SalespersonquotahistoryRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[SalespersonquotahistoryRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."salespersonquotahistory"("businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, SalespersonquotahistoryRowUnsaved.pgText)
 
-  def select: SelectBuilder[SalespersonquotahistoryFields, SalespersonquotahistoryRow] = SelectBuilder.of("sales.salespersonquotahistory", SalespersonquotahistoryFields.structure, SalespersonquotahistoryRow.`_rowParser`)
+  override def select: SelectBuilder[SalespersonquotahistoryFields, SalespersonquotahistoryRow] = SelectBuilder.of("sales.salespersonquotahistory", SalespersonquotahistoryFields.structure, SalespersonquotahistoryRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[SalespersonquotahistoryRow] = {
+  override def selectAll(using c: Connection): java.util.List[SalespersonquotahistoryRow] = {
     interpolate"""select "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text
     from "sales"."salespersonquotahistory"
-    """.as(SalespersonquotahistoryRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(SalespersonquotahistoryRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(compositeId: SalespersonquotahistoryId)(using c: Connection): Optional[SalespersonquotahistoryRow] = {
+  override def selectById(compositeId: SalespersonquotahistoryId)(using c: Connection): Optional[SalespersonquotahistoryRow] = {
     interpolate"""select "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text
     from "sales"."salespersonquotahistory"
-    where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "quotadate" = ${TypoLocalDateTime.pgType.encode(compositeId.quotadate)}""".as(SalespersonquotahistoryRow.`_rowParser`.first()).runUnchecked(c)
+    where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "quotadate" = ${TypoLocalDateTime.pgType.encode(compositeId.quotadate)}""".query(SalespersonquotahistoryRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(compositeIds: Array[SalespersonquotahistoryId])(using c: Connection): java.util.List[SalespersonquotahistoryRow] = {
+  override def selectByIds(compositeIds: Array[SalespersonquotahistoryId])(using c: Connection): java.util.List[SalespersonquotahistoryRow] = {
     val businessentityid: Array[BusinessentityId] = compositeIds.map(_.businessentityid)
     val quotadate: Array[TypoLocalDateTime] = compositeIds.map(_.quotadate)
-    interpolate"""select "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text
+    return interpolate"""select "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text
     from "sales"."salespersonquotahistory"
     where ("businessentityid", "quotadate")
     in (select unnest(${BusinessentityId.pgTypeArray.encode(businessentityid)}::int4[]), unnest(${TypoLocalDateTime.pgTypeArray.encode(quotadate)}::timestamp[]))
-    """.as(SalespersonquotahistoryRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(SalespersonquotahistoryRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(compositeIds: Array[SalespersonquotahistoryId])(using c: Connection): java.util.Map[SalespersonquotahistoryId, SalespersonquotahistoryRow] = {
-    val ret: java.util.Map[SalespersonquotahistoryId, SalespersonquotahistoryRow] = new HashMap()
+  override def selectByIdsTracked(compositeIds: Array[SalespersonquotahistoryId])(using c: Connection): java.util.Map[SalespersonquotahistoryId, SalespersonquotahistoryRow] = {
+    val ret: HashMap[SalespersonquotahistoryId, SalespersonquotahistoryRow] = new HashMap[SalespersonquotahistoryId, SalespersonquotahistoryRow]()
     selectByIds(compositeIds)(using c).forEach(row => ret.put(row.compositeId, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[SalespersonquotahistoryFields, SalespersonquotahistoryRow] = UpdateBuilder.of("sales.salespersonquotahistory", SalespersonquotahistoryFields.structure, SalespersonquotahistoryRow.`_rowParser`.all())
+  override def update: UpdateBuilder[SalespersonquotahistoryFields, SalespersonquotahistoryRow] = UpdateBuilder.of("sales.salespersonquotahistory", SalespersonquotahistoryFields.structure, SalespersonquotahistoryRow.`_rowParser`.all())
 
-  def update(row: SalespersonquotahistoryRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: SalespersonquotahistoryRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: SalespersonquotahistoryId = row.compositeId
-    interpolate"""update "sales"."salespersonquotahistory"
+    return interpolate"""update "sales"."salespersonquotahistory"
     set "salesquota" = ${PgTypes.numeric.encode(row.salesquota)}::numeric,
     "rowguid" = ${TypoUUID.pgType.encode(row.rowguid)}::uuid,
     "modifieddate" = ${TypoLocalDateTime.pgType.encode(row.modifieddate)}::timestamp
     where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "quotadate" = ${TypoLocalDateTime.pgType.encode(compositeId.quotadate)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: SalespersonquotahistoryRow)(using c: Connection): SalespersonquotahistoryRow = {
+  override def upsert(unsaved: SalespersonquotahistoryRow)(using c: Connection): SalespersonquotahistoryRow = {
   interpolate"""insert into "sales"."salespersonquotahistory"("businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate")
     values (${BusinessentityId.pgType.encode(unsaved.businessentityid)}::int4, ${TypoLocalDateTime.pgType.encode(unsaved.quotadate)}::timestamp, ${PgTypes.numeric.encode(unsaved.salesquota)}::numeric, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("businessentityid", "quotadate")
@@ -142,7 +136,7 @@ class SalespersonquotahistoryRepoImpl extends SalespersonquotahistoryRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[SalespersonquotahistoryRow])(using c: Connection): java.util.List[SalespersonquotahistoryRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[SalespersonquotahistoryRow])(using c: Connection): java.util.List[SalespersonquotahistoryRow] = {
     interpolate"""insert into "sales"."salespersonquotahistory"("businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate")
     values (?::int4, ?::timestamp, ?::numeric, ?::uuid, ?::timestamp)
     on conflict ("businessentityid", "quotadate")
@@ -157,13 +151,13 @@ class SalespersonquotahistoryRepoImpl extends SalespersonquotahistoryRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[SalespersonquotahistoryRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table salespersonquotahistory_TEMP (like "sales"."salespersonquotahistory") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy salespersonquotahistory_TEMP("businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, c, SalespersonquotahistoryRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "sales"."salespersonquotahistory"("businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate")
+    return interpolate"""insert into "sales"."salespersonquotahistory"("businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate")
     select * from salespersonquotahistory_TEMP
     on conflict ("businessentityid", "quotadate")
     do update set

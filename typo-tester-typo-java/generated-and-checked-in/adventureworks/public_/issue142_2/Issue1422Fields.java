@@ -17,7 +17,7 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 
 public interface Issue1422Fields {
-  static final class Impl extends Relation<Issue1422Fields, Issue1422Row> {
+  final class Impl extends Relation<Issue1422Fields, Issue1422Row> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -25,6 +25,7 @@ public interface Issue1422Fields {
     @Override
     public Issue1422Fields fields() {
       return new Issue1422Fields() {
+               @Override
                public IdField<Issue142Id, Issue1422Row> tabellkode() {
                  return new IdField<Issue142Id, Issue1422Row>(_path, "tabellkode", Issue1422Row::tabellkode, Optional.empty(), Optional.empty(), (row, value) -> row.withTabellkode(value), Issue142Id.pgType);
                };
@@ -36,6 +37,7 @@ public interface Issue1422Fields {
       return List.of(this.fields().tabellkode());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

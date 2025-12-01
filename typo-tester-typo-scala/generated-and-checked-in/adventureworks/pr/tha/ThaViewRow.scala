@@ -10,7 +10,6 @@ import adventureworks.production.transactionhistoryarchive.Transactionhistoryarc
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple10
 
 /** View: pr.tha */
 case class ThaViewRow(
@@ -37,18 +36,5 @@ case class ThaViewRow(
 )
 
 object ThaViewRow {
-  val `_rowParser`: RowParser[ThaViewRow] = {
-    RowParsers.of(TransactionhistoryarchiveId.pgType, TransactionhistoryarchiveId.pgType, PgTypes.int4, PgTypes.int4, PgTypes.int4, TypoLocalDateTime.pgType, PgTypes.text, PgTypes.int4, PgTypes.numeric, TypoLocalDateTime.pgType, ThaViewRow.apply, row => new Tuple10(
-      row.id,
-      row.transactionid,
-      row.productid,
-      row.referenceorderid,
-      row.referenceorderlineid,
-      row.transactiondate,
-      row.transactiontype,
-      row.quantity,
-      row.actualcost,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[ThaViewRow] = RowParsers.of(TransactionhistoryarchiveId.pgType, TransactionhistoryarchiveId.pgType, PgTypes.int4, PgTypes.int4, PgTypes.int4, TypoLocalDateTime.pgType, PgTypes.text, PgTypes.int4, PgTypes.numeric, TypoLocalDateTime.pgType, ThaViewRow.apply, row => Array(row.id, row.transactionid, row.productid, row.referenceorderid, row.referenceorderlineid, row.transactiondate, row.transactiontype, row.quantity, row.actualcost, row.modifieddate))
 }

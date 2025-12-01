@@ -5,22 +5,22 @@
  */
 package adventureworks.pr.d;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class DViewRepoImpl implements DViewRepo {
+  @Override
   public SelectBuilder<DViewFields, DViewRow> select() {
     return SelectBuilder.of("pr.d", DViewFields.structure(), DViewRow._rowParser);
   };
 
+  @Override
   public List<DViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"
        from "pr"."d"
-    """)).as(DViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(DViewRow._rowParser.all()).runUnchecked(c);
   };
 }

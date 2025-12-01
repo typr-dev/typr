@@ -20,11 +20,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class IllustrationRepoImpl extends IllustrationRepo {
-  def delete: DeleteBuilder[IllustrationFields, IllustrationRow] = DeleteBuilder.of("production.illustration", IllustrationFields.structure)
+  override def delete: DeleteBuilder[IllustrationFields, IllustrationRow] = DeleteBuilder.of("production.illustration", IllustrationFields.structure)
 
-  def deleteById(illustrationid: IllustrationId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."illustration" where "illustrationid" = ${IllustrationId.pgType.encode(illustrationid)}""".update().runUnchecked(c) > 0
+  override def deleteById(illustrationid: IllustrationId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."illustration" where "illustrationid" = ${IllustrationId.pgType.encode(illustrationid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(illustrationids: Array[IllustrationId])(using c: Connection): Integer = {
+  override def deleteByIds(illustrationids: Array[IllustrationId])(using c: Connection): Integer = {
     interpolate"""delete
     from "production"."illustration"
     where "illustrationid" = ANY(${IllustrationId.pgTypeArray.encode(illustrationids)})"""
@@ -32,7 +32,7 @@ class IllustrationRepoImpl extends IllustrationRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: IllustrationRow)(using c: Connection): IllustrationRow = {
+  override def insert(unsaved: IllustrationRow)(using c: Connection): IllustrationRow = {
   interpolate"""insert into "production"."illustration"("illustrationid", "diagram", "modifieddate")
     values (${IllustrationId.pgType.encode(unsaved.illustrationid)}::int4, ${TypoXml.pgType.opt().encode(unsaved.diagram)}::xml, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "illustrationid", "diagram", "modifieddate"::text
@@ -40,24 +40,18 @@ class IllustrationRepoImpl extends IllustrationRepo {
     .updateReturning(IllustrationRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: IllustrationRowUnsaved)(using c: Connection): IllustrationRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: IllustrationRowUnsaved)(using c: Connection): IllustrationRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""diagram"""")): @scala.annotation.nowarn
     values.add(interpolate"${TypoXml.pgType.opt().encode(unsaved.diagram)}::xml"): @scala.annotation.nowarn
     unsaved.illustrationid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""illustrationid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${IllustrationId.pgType.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""illustrationid"""")): @scala.annotation.nowarn; values.add(interpolate"${IllustrationId.pgType.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "production"."illustration"(${Fragment.comma(columns)})
@@ -65,57 +59,57 @@ class IllustrationRepoImpl extends IllustrationRepo {
       returning "illustrationid", "diagram", "modifieddate"::text
       """
     }
-    q.updateReturning(IllustrationRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(IllustrationRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[IllustrationRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."illustration"("illustrationid", "diagram", "modifieddate") FROM STDIN""", batchSize, unsaved, c, IllustrationRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[IllustrationRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."illustration"("diagram", "illustrationid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, IllustrationRowUnsaved.pgText)
 
-  def select: SelectBuilder[IllustrationFields, IllustrationRow] = SelectBuilder.of("production.illustration", IllustrationFields.structure, IllustrationRow.`_rowParser`)
+  override def select: SelectBuilder[IllustrationFields, IllustrationRow] = SelectBuilder.of("production.illustration", IllustrationFields.structure, IllustrationRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[IllustrationRow] = {
+  override def selectAll(using c: Connection): java.util.List[IllustrationRow] = {
     interpolate"""select "illustrationid", "diagram", "modifieddate"::text
     from "production"."illustration"
-    """.as(IllustrationRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(IllustrationRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(illustrationid: IllustrationId)(using c: Connection): Optional[IllustrationRow] = {
+  override def selectById(illustrationid: IllustrationId)(using c: Connection): Optional[IllustrationRow] = {
     interpolate"""select "illustrationid", "diagram", "modifieddate"::text
     from "production"."illustration"
-    where "illustrationid" = ${IllustrationId.pgType.encode(illustrationid)}""".as(IllustrationRow.`_rowParser`.first()).runUnchecked(c)
+    where "illustrationid" = ${IllustrationId.pgType.encode(illustrationid)}""".query(IllustrationRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(illustrationids: Array[IllustrationId])(using c: Connection): java.util.List[IllustrationRow] = {
+  override def selectByIds(illustrationids: Array[IllustrationId])(using c: Connection): java.util.List[IllustrationRow] = {
     interpolate"""select "illustrationid", "diagram", "modifieddate"::text
     from "production"."illustration"
-    where "illustrationid" = ANY(${IllustrationId.pgTypeArray.encode(illustrationids)})""".as(IllustrationRow.`_rowParser`.all()).runUnchecked(c)
+    where "illustrationid" = ANY(${IllustrationId.pgTypeArray.encode(illustrationids)})""".query(IllustrationRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(illustrationids: Array[IllustrationId])(using c: Connection): java.util.Map[IllustrationId, IllustrationRow] = {
-    val ret: java.util.Map[IllustrationId, IllustrationRow] = new HashMap()
+  override def selectByIdsTracked(illustrationids: Array[IllustrationId])(using c: Connection): java.util.Map[IllustrationId, IllustrationRow] = {
+    val ret: HashMap[IllustrationId, IllustrationRow] = new HashMap[IllustrationId, IllustrationRow]()
     selectByIds(illustrationids)(using c).forEach(row => ret.put(row.illustrationid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[IllustrationFields, IllustrationRow] = UpdateBuilder.of("production.illustration", IllustrationFields.structure, IllustrationRow.`_rowParser`.all())
+  override def update: UpdateBuilder[IllustrationFields, IllustrationRow] = UpdateBuilder.of("production.illustration", IllustrationFields.structure, IllustrationRow.`_rowParser`.all())
 
-  def update(row: IllustrationRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: IllustrationRow)(using c: Connection): java.lang.Boolean = {
     val illustrationid: IllustrationId = row.illustrationid
-    interpolate"""update "production"."illustration"
+    return interpolate"""update "production"."illustration"
     set "diagram" = ${TypoXml.pgType.opt().encode(row.diagram)}::xml,
     "modifieddate" = ${TypoLocalDateTime.pgType.encode(row.modifieddate)}::timestamp
     where "illustrationid" = ${IllustrationId.pgType.encode(illustrationid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: IllustrationRow)(using c: Connection): IllustrationRow = {
+  override def upsert(unsaved: IllustrationRow)(using c: Connection): IllustrationRow = {
   interpolate"""insert into "production"."illustration"("illustrationid", "diagram", "modifieddate")
     values (${IllustrationId.pgType.encode(unsaved.illustrationid)}::int4, ${TypoXml.pgType.opt().encode(unsaved.diagram)}::xml, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("illustrationid")
@@ -128,7 +122,7 @@ class IllustrationRepoImpl extends IllustrationRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[IllustrationRow])(using c: Connection): java.util.List[IllustrationRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[IllustrationRow])(using c: Connection): java.util.List[IllustrationRow] = {
     interpolate"""insert into "production"."illustration"("illustrationid", "diagram", "modifieddate")
     values (?::int4, ?::xml, ?::timestamp)
     on conflict ("illustrationid")
@@ -142,13 +136,13 @@ class IllustrationRepoImpl extends IllustrationRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[IllustrationRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table illustration_TEMP (like "production"."illustration") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy illustration_TEMP("illustrationid", "diagram", "modifieddate") from stdin""", batchSize, unsaved, c, IllustrationRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "production"."illustration"("illustrationid", "diagram", "modifieddate")
+    return interpolate"""insert into "production"."illustration"("illustrationid", "diagram", "modifieddate")
     select * from illustration_TEMP
     on conflict ("illustrationid")
     do update set

@@ -58,7 +58,7 @@ object DocumentFields {
 
     override lazy val fields: DocumentFields = {
       new DocumentFields {
-        def title: Field[/* max 50 chars */ String, DocumentRow] = {
+        override def title: Field[/* max 50 chars */ String, DocumentRow] = {
           new Field[/* max 50 chars */ String, DocumentRow](
             _path,
             "title",
@@ -69,7 +69,7 @@ object DocumentFields {
             PgTypes.text
           )
         }
-        def owner: Field[BusinessentityId, DocumentRow] = {
+        override def owner: Field[BusinessentityId, DocumentRow] = {
           new Field[BusinessentityId, DocumentRow](
             _path,
             "owner",
@@ -80,7 +80,7 @@ object DocumentFields {
             BusinessentityId.pgType
           )
         }
-        def folderflag: Field[Flag, DocumentRow] = {
+        override def folderflag: Field[Flag, DocumentRow] = {
           new Field[Flag, DocumentRow](
             _path,
             "folderflag",
@@ -91,7 +91,7 @@ object DocumentFields {
             Flag.pgType
           )
         }
-        def filename: Field[/* max 400 chars */ String, DocumentRow] = {
+        override def filename: Field[/* max 400 chars */ String, DocumentRow] = {
           new Field[/* max 400 chars */ String, DocumentRow](
             _path,
             "filename",
@@ -102,7 +102,7 @@ object DocumentFields {
             PgTypes.text
           )
         }
-        def fileextension: OptField[/* max 8 chars */ String, DocumentRow] = {
+        override def fileextension: OptField[/* max 8 chars */ String, DocumentRow] = {
           new OptField[/* max 8 chars */ String, DocumentRow](
             _path,
             "fileextension",
@@ -113,7 +113,7 @@ object DocumentFields {
             PgTypes.text
           )
         }
-        def revision: Field[/* bpchar, max 5 chars */ String, DocumentRow] = {
+        override def revision: Field[/* bpchar, max 5 chars */ String, DocumentRow] = {
           new Field[/* bpchar, max 5 chars */ String, DocumentRow](
             _path,
             "revision",
@@ -124,7 +124,7 @@ object DocumentFields {
             PgTypes.text
           )
         }
-        def changenumber: Field[Integer, DocumentRow] = {
+        override def changenumber: Field[Integer, DocumentRow] = {
           new Field[Integer, DocumentRow](
             _path,
             "changenumber",
@@ -135,7 +135,7 @@ object DocumentFields {
             PgTypes.int4
           )
         }
-        def status: Field[TypoShort, DocumentRow] = {
+        override def status: Field[TypoShort, DocumentRow] = {
           new Field[TypoShort, DocumentRow](
             _path,
             "status",
@@ -146,7 +146,7 @@ object DocumentFields {
             TypoShort.pgType
           )
         }
-        def documentsummary: OptField[String, DocumentRow] = {
+        override def documentsummary: OptField[String, DocumentRow] = {
           new OptField[String, DocumentRow](
             _path,
             "documentsummary",
@@ -157,7 +157,7 @@ object DocumentFields {
             PgTypes.text
           )
         }
-        def document: OptField[TypoBytea, DocumentRow] = {
+        override def document: OptField[TypoBytea, DocumentRow] = {
           new OptField[TypoBytea, DocumentRow](
             _path,
             "document",
@@ -168,7 +168,7 @@ object DocumentFields {
             TypoBytea.pgType
           )
         }
-        def rowguid: Field[TypoUUID, DocumentRow] = {
+        override def rowguid: Field[TypoUUID, DocumentRow] = {
           new Field[TypoUUID, DocumentRow](
             _path,
             "rowguid",
@@ -179,7 +179,7 @@ object DocumentFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, DocumentRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, DocumentRow] = {
           new Field[TypoLocalDateTime, DocumentRow](
             _path,
             "modifieddate",
@@ -190,7 +190,7 @@ object DocumentFields {
             TypoLocalDateTime.pgType
           )
         }
-        def documentnode: IdField[DocumentId, DocumentRow] = {
+        override def documentnode: IdField[DocumentId, DocumentRow] = {
           new IdField[DocumentId, DocumentRow](
             _path,
             "documentnode",
@@ -206,7 +206,7 @@ object DocumentFields {
 
     override lazy val columns: java.util.List[FieldLike[?, DocumentRow]] = java.util.List.of(this.fields.title, this.fields.owner, this.fields.folderflag, this.fields.filename, this.fields.fileextension, this.fields.revision, this.fields.changenumber, this.fields.status, this.fields.documentsummary, this.fields.document, this.fields.rowguid, this.fields.modifieddate, this.fields.documentnode)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[DocumentFields, DocumentRow] = new Impl(java.util.List.of())

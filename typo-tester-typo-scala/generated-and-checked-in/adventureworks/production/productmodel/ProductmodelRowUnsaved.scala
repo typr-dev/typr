@@ -48,19 +48,5 @@ case class ProductmodelRowUnsaved(
 }
 
 object ProductmodelRowUnsaved {
-  given pgText: PgText[ProductmodelRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      Name.pgType.pgText.unsafeEncode(row.name, sb);
-      sb.append(PgText.DELIMETER);
-      TypoXml.pgType.opt().pgText.unsafeEncode(row.catalogdescription, sb);
-      sb.append(PgText.DELIMETER);
-      TypoXml.pgType.opt().pgText.unsafeEncode(row.instructions, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using ProductmodelId.pgType.pgText).unsafeEncode(row.productmodelid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[ProductmodelRowUnsaved] = PgText.instance((row, sb) => { Name.pgType.pgText.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); TypoXml.pgType.opt().pgText.unsafeEncode(row.catalogdescription, sb); sb.append(PgText.DELIMETER); TypoXml.pgType.opt().pgText.unsafeEncode(row.instructions, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using ProductmodelId.pgType.pgText).unsafeEncode(row.productmodelid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

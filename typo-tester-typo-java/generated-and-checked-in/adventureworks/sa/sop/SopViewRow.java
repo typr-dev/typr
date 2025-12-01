@@ -11,7 +11,6 @@ import adventureworks.production.product.ProductId;
 import adventureworks.sales.specialoffer.SpecialofferId;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple5;
 
 /** View: sa.sop */
 public record SopViewRow(
@@ -51,5 +50,5 @@ public record SopViewRow(
     return new SopViewRow(id, specialofferid, productid, rowguid, modifieddate);
   };
 
-  static RowParser<SopViewRow> _rowParser = RowParsers.of(SpecialofferId.pgType, SpecialofferId.pgType, ProductId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, SopViewRow::new, row -> new Tuple5<>(row.id(), row.specialofferid(), row.productid(), row.rowguid(), row.modifieddate()));;
+  static RowParser<SopViewRow> _rowParser = RowParsers.of(SpecialofferId.pgType, SpecialofferId.pgType, ProductId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, SopViewRow::new, row -> new Object[]{row.id(), row.specialofferid(), row.productid(), row.rowguid(), row.modifieddate()});;
 }

@@ -7,13 +7,11 @@ package adventureworks.hr.eph
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class EphViewRepoImpl extends EphViewRepo {
-  def select: SelectBuilder[EphViewFields, EphViewRow] = SelectBuilder.of(""""hr"."eph"""", EphViewFields.structure, EphViewRow.read)
+  override def select: SelectBuilder[EphViewFields, EphViewRow] = SelectBuilder.of(""""hr"."eph"""", EphViewFields.structure, EphViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, EphViewRow] = sql"""select "id", "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text from "hr"."eph"""".query(using EphViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, EphViewRow] = sql"""select "id", "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text from "hr"."eph"""".query(using EphViewRow.read).stream
 }

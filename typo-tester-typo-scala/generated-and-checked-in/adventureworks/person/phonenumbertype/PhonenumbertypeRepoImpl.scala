@@ -20,11 +20,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PhonenumbertypeRepoImpl extends PhonenumbertypeRepo {
-  def delete: DeleteBuilder[PhonenumbertypeFields, PhonenumbertypeRow] = DeleteBuilder.of("person.phonenumbertype", PhonenumbertypeFields.structure)
+  override def delete: DeleteBuilder[PhonenumbertypeFields, PhonenumbertypeRow] = DeleteBuilder.of("person.phonenumbertype", PhonenumbertypeFields.structure)
 
-  def deleteById(phonenumbertypeid: PhonenumbertypeId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "person"."phonenumbertype" where "phonenumbertypeid" = ${PhonenumbertypeId.pgType.encode(phonenumbertypeid)}""".update().runUnchecked(c) > 0
+  override def deleteById(phonenumbertypeid: PhonenumbertypeId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "person"."phonenumbertype" where "phonenumbertypeid" = ${PhonenumbertypeId.pgType.encode(phonenumbertypeid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(phonenumbertypeids: Array[PhonenumbertypeId])(using c: Connection): Integer = {
+  override def deleteByIds(phonenumbertypeids: Array[PhonenumbertypeId])(using c: Connection): Integer = {
     interpolate"""delete
     from "person"."phonenumbertype"
     where "phonenumbertypeid" = ANY(${PhonenumbertypeId.pgTypeArray.encode(phonenumbertypeids)})"""
@@ -32,7 +32,7 @@ class PhonenumbertypeRepoImpl extends PhonenumbertypeRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: PhonenumbertypeRow)(using c: Connection): PhonenumbertypeRow = {
+  override def insert(unsaved: PhonenumbertypeRow)(using c: Connection): PhonenumbertypeRow = {
   interpolate"""insert into "person"."phonenumbertype"("phonenumbertypeid", "name", "modifieddate")
     values (${PhonenumbertypeId.pgType.encode(unsaved.phonenumbertypeid)}::int4, ${Name.pgType.encode(unsaved.name)}::varchar, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "phonenumbertypeid", "name", "modifieddate"::text
@@ -40,24 +40,18 @@ class PhonenumbertypeRepoImpl extends PhonenumbertypeRepo {
     .updateReturning(PhonenumbertypeRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: PhonenumbertypeRowUnsaved)(using c: Connection): PhonenumbertypeRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: PhonenumbertypeRowUnsaved)(using c: Connection): PhonenumbertypeRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
     values.add(interpolate"${Name.pgType.encode(unsaved.name)}::varchar"): @scala.annotation.nowarn
     unsaved.phonenumbertypeid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""phonenumbertypeid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PhonenumbertypeId.pgType.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""phonenumbertypeid"""")): @scala.annotation.nowarn; values.add(interpolate"${PhonenumbertypeId.pgType.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "person"."phonenumbertype"(${Fragment.comma(columns)})
@@ -65,57 +59,57 @@ class PhonenumbertypeRepoImpl extends PhonenumbertypeRepo {
       returning "phonenumbertypeid", "name", "modifieddate"::text
       """
     }
-    q.updateReturning(PhonenumbertypeRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(PhonenumbertypeRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[PhonenumbertypeRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "person"."phonenumbertype"("phonenumbertypeid", "name", "modifieddate") FROM STDIN""", batchSize, unsaved, c, PhonenumbertypeRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[PhonenumbertypeRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "person"."phonenumbertype"("name", "phonenumbertypeid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, PhonenumbertypeRowUnsaved.pgText)
 
-  def select: SelectBuilder[PhonenumbertypeFields, PhonenumbertypeRow] = SelectBuilder.of("person.phonenumbertype", PhonenumbertypeFields.structure, PhonenumbertypeRow.`_rowParser`)
+  override def select: SelectBuilder[PhonenumbertypeFields, PhonenumbertypeRow] = SelectBuilder.of("person.phonenumbertype", PhonenumbertypeFields.structure, PhonenumbertypeRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[PhonenumbertypeRow] = {
+  override def selectAll(using c: Connection): java.util.List[PhonenumbertypeRow] = {
     interpolate"""select "phonenumbertypeid", "name", "modifieddate"::text
     from "person"."phonenumbertype"
-    """.as(PhonenumbertypeRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(PhonenumbertypeRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(phonenumbertypeid: PhonenumbertypeId)(using c: Connection): Optional[PhonenumbertypeRow] = {
+  override def selectById(phonenumbertypeid: PhonenumbertypeId)(using c: Connection): Optional[PhonenumbertypeRow] = {
     interpolate"""select "phonenumbertypeid", "name", "modifieddate"::text
     from "person"."phonenumbertype"
-    where "phonenumbertypeid" = ${PhonenumbertypeId.pgType.encode(phonenumbertypeid)}""".as(PhonenumbertypeRow.`_rowParser`.first()).runUnchecked(c)
+    where "phonenumbertypeid" = ${PhonenumbertypeId.pgType.encode(phonenumbertypeid)}""".query(PhonenumbertypeRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(phonenumbertypeids: Array[PhonenumbertypeId])(using c: Connection): java.util.List[PhonenumbertypeRow] = {
+  override def selectByIds(phonenumbertypeids: Array[PhonenumbertypeId])(using c: Connection): java.util.List[PhonenumbertypeRow] = {
     interpolate"""select "phonenumbertypeid", "name", "modifieddate"::text
     from "person"."phonenumbertype"
-    where "phonenumbertypeid" = ANY(${PhonenumbertypeId.pgTypeArray.encode(phonenumbertypeids)})""".as(PhonenumbertypeRow.`_rowParser`.all()).runUnchecked(c)
+    where "phonenumbertypeid" = ANY(${PhonenumbertypeId.pgTypeArray.encode(phonenumbertypeids)})""".query(PhonenumbertypeRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(phonenumbertypeids: Array[PhonenumbertypeId])(using c: Connection): java.util.Map[PhonenumbertypeId, PhonenumbertypeRow] = {
-    val ret: java.util.Map[PhonenumbertypeId, PhonenumbertypeRow] = new HashMap()
+  override def selectByIdsTracked(phonenumbertypeids: Array[PhonenumbertypeId])(using c: Connection): java.util.Map[PhonenumbertypeId, PhonenumbertypeRow] = {
+    val ret: HashMap[PhonenumbertypeId, PhonenumbertypeRow] = new HashMap[PhonenumbertypeId, PhonenumbertypeRow]()
     selectByIds(phonenumbertypeids)(using c).forEach(row => ret.put(row.phonenumbertypeid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[PhonenumbertypeFields, PhonenumbertypeRow] = UpdateBuilder.of("person.phonenumbertype", PhonenumbertypeFields.structure, PhonenumbertypeRow.`_rowParser`.all())
+  override def update: UpdateBuilder[PhonenumbertypeFields, PhonenumbertypeRow] = UpdateBuilder.of("person.phonenumbertype", PhonenumbertypeFields.structure, PhonenumbertypeRow.`_rowParser`.all())
 
-  def update(row: PhonenumbertypeRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: PhonenumbertypeRow)(using c: Connection): java.lang.Boolean = {
     val phonenumbertypeid: PhonenumbertypeId = row.phonenumbertypeid
-    interpolate"""update "person"."phonenumbertype"
+    return interpolate"""update "person"."phonenumbertype"
     set "name" = ${Name.pgType.encode(row.name)}::varchar,
     "modifieddate" = ${TypoLocalDateTime.pgType.encode(row.modifieddate)}::timestamp
     where "phonenumbertypeid" = ${PhonenumbertypeId.pgType.encode(phonenumbertypeid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: PhonenumbertypeRow)(using c: Connection): PhonenumbertypeRow = {
+  override def upsert(unsaved: PhonenumbertypeRow)(using c: Connection): PhonenumbertypeRow = {
   interpolate"""insert into "person"."phonenumbertype"("phonenumbertypeid", "name", "modifieddate")
     values (${PhonenumbertypeId.pgType.encode(unsaved.phonenumbertypeid)}::int4, ${Name.pgType.encode(unsaved.name)}::varchar, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("phonenumbertypeid")
@@ -128,7 +122,7 @@ class PhonenumbertypeRepoImpl extends PhonenumbertypeRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[PhonenumbertypeRow])(using c: Connection): java.util.List[PhonenumbertypeRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[PhonenumbertypeRow])(using c: Connection): java.util.List[PhonenumbertypeRow] = {
     interpolate"""insert into "person"."phonenumbertype"("phonenumbertypeid", "name", "modifieddate")
     values (?::int4, ?::varchar, ?::timestamp)
     on conflict ("phonenumbertypeid")
@@ -142,13 +136,13 @@ class PhonenumbertypeRepoImpl extends PhonenumbertypeRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[PhonenumbertypeRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table phonenumbertype_TEMP (like "person"."phonenumbertype") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy phonenumbertype_TEMP("phonenumbertypeid", "name", "modifieddate") from stdin""", batchSize, unsaved, c, PhonenumbertypeRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "person"."phonenumbertype"("phonenumbertypeid", "name", "modifieddate")
+    return interpolate"""insert into "person"."phonenumbertype"("phonenumbertypeid", "name", "modifieddate")
     select * from phonenumbertype_TEMP
     on conflict ("phonenumbertypeid")
     do update set

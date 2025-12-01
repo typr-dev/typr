@@ -18,13 +18,13 @@ import typo.dsl.UpdateBuilder.UpdateBuilderMock
 import typo.dsl.UpdateParams
 
 case class MaritalStatusRepoMock(map: scala.collection.mutable.Map[MaritalStatusId, MaritalStatusRow] = scala.collection.mutable.Map.empty[MaritalStatusId, MaritalStatusRow]) extends MaritalStatusRepo {
-  def delete: DeleteBuilder[MaritalStatusFields, MaritalStatusRow] = DeleteBuilderMock(DeleteParams.empty, MaritalStatusFields.structure, map)
+  override def delete: DeleteBuilder[MaritalStatusFields, MaritalStatusRow] = DeleteBuilderMock(DeleteParams.empty, MaritalStatusFields.structure, map)
 
-  def deleteById(id: MaritalStatusId)(using c: Connection): Boolean = map.remove(id).isDefined
+  override def deleteById(id: MaritalStatusId)(using c: Connection): Boolean = map.remove(id).isDefined
 
-  def deleteByIds(ids: Array[MaritalStatusId])(using c: Connection): Int = ids.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(ids: Array[MaritalStatusId])(using c: Connection): Int = ids.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: MaritalStatusRow)(using c: Connection): MaritalStatusRow = {
+  override def insert(unsaved: MaritalStatusRow)(using c: Connection): MaritalStatusRow = {
     val _ = if (map.contains(unsaved.id))
       sys.error(s"id ${unsaved.id} already exists")
     else
@@ -33,7 +33,7 @@ case class MaritalStatusRepoMock(map: scala.collection.mutable.Map[MaritalStatus
     unsaved
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[MaritalStatusRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -43,28 +43,28 @@ case class MaritalStatusRepoMock(map: scala.collection.mutable.Map[MaritalStatus
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[MaritalStatusFields, MaritalStatusRow] = SelectBuilderMock(MaritalStatusFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[MaritalStatusFields, MaritalStatusRow] = SelectBuilderMock(MaritalStatusFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(using c: Connection): List[MaritalStatusRow] = map.values.toList
+  override def selectAll(using c: Connection): List[MaritalStatusRow] = map.values.toList
 
-  def selectByFieldValues(fieldValues: List[MaritalStatusFieldValue[?]])(using c: Connection): List[MaritalStatusRow] = {
+  override def selectByFieldValues(fieldValues: List[MaritalStatusFieldValue[?]])(using c: Connection): List[MaritalStatusRow] = {
     fieldValues.foldLeft(map.values) {
       case (acc, MaritalStatusFieldValue.id(value)) => acc.filter(_.id == value)
     }.toList
   }
 
-  def selectById(id: MaritalStatusId)(using c: Connection): Option[MaritalStatusRow] = map.get(id)
+  override def selectById(id: MaritalStatusId)(using c: Connection): Option[MaritalStatusRow] = map.get(id)
 
-  def selectByIds(ids: Array[MaritalStatusId])(using c: Connection): List[MaritalStatusRow] = ids.flatMap(map.get).toList
+  override def selectByIds(ids: Array[MaritalStatusId])(using c: Connection): List[MaritalStatusRow] = ids.flatMap(map.get).toList
 
-  def selectByIdsTracked(ids: Array[MaritalStatusId])(using c: Connection): Map[MaritalStatusId, MaritalStatusRow] = {
+  override def selectByIdsTracked(ids: Array[MaritalStatusId])(using c: Connection): Map[MaritalStatusId, MaritalStatusRow] = {
     val byId = selectByIds(ids).view.map(x => (x.id, x)).toMap
     ids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[MaritalStatusFields, MaritalStatusRow] = UpdateBuilderMock(UpdateParams.empty, MaritalStatusFields.structure, map)
+  override def update: UpdateBuilder[MaritalStatusFields, MaritalStatusRow] = UpdateBuilderMock(UpdateParams.empty, MaritalStatusFields.structure, map)
 
-  def updateFieldValues(
+  override def updateFieldValues(
     id: MaritalStatusId,
     fieldValues: List[MaritalStatusFieldValue[?]]
   )(using c: Connection): Boolean = {
@@ -83,12 +83,12 @@ case class MaritalStatusRepoMock(map: scala.collection.mutable.Map[MaritalStatus
     }
   }
 
-  def upsert(unsaved: MaritalStatusRow)(using c: Connection): MaritalStatusRow = {
+  override def upsert(unsaved: MaritalStatusRow)(using c: Connection): MaritalStatusRow = {
     map.put(unsaved.id, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[MaritalStatusRow])(using c: Connection): List[MaritalStatusRow] = {
+  override def upsertBatch(unsaved: Iterable[MaritalStatusRow])(using c: Connection): List[MaritalStatusRow] = {
     unsaved.map { row =>
       map += (row.id -> row)
       row
@@ -96,7 +96,7 @@ case class MaritalStatusRepoMock(map: scala.collection.mutable.Map[MaritalStatus
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[MaritalStatusRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

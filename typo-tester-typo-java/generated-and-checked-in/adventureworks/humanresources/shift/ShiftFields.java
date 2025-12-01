@@ -17,7 +17,7 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 
 public interface ShiftFields {
-  static final class Impl extends Relation<ShiftFields, ShiftRow> {
+  final class Impl extends Relation<ShiftFields, ShiftRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -25,18 +25,23 @@ public interface ShiftFields {
     @Override
     public ShiftFields fields() {
       return new ShiftFields() {
+               @Override
                public IdField<ShiftId, ShiftRow> shiftid() {
                  return new IdField<ShiftId, ShiftRow>(_path, "shiftid", ShiftRow::shiftid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withShiftid(value), ShiftId.pgType);
                };
+               @Override
                public Field<Name, ShiftRow> name() {
                  return new Field<Name, ShiftRow>(_path, "name", ShiftRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<TypoLocalTime, ShiftRow> starttime() {
                  return new Field<TypoLocalTime, ShiftRow>(_path, "starttime", ShiftRow::starttime, Optional.of("text"), Optional.of("time"), (row, value) -> row.withStarttime(value), TypoLocalTime.pgType);
                };
+               @Override
                public Field<TypoLocalTime, ShiftRow> endtime() {
                  return new Field<TypoLocalTime, ShiftRow>(_path, "endtime", ShiftRow::endtime, Optional.of("text"), Optional.of("time"), (row, value) -> row.withEndtime(value), TypoLocalTime.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, ShiftRow> modifieddate() {
                  return new Field<TypoLocalDateTime, ShiftRow>(_path, "modifieddate", ShiftRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -48,6 +53,7 @@ public interface ShiftFields {
       return List.of(this.fields().shiftid(), this.fields().name(), this.fields().starttime(), this.fields().endtime(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

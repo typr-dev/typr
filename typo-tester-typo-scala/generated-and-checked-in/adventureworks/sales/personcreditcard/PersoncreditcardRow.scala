@@ -12,7 +12,6 @@ import adventureworks.userdefined.CustomCreditcardId
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple3
 
 /** Table: sales.personcreditcard
  * Cross-reference table mapping people to their credit card information in the CreditCard table.
@@ -38,7 +37,7 @@ case class PersoncreditcardRow(
 }
 
 object PersoncreditcardRow {
-  val `_rowParser`: RowParser[PersoncreditcardRow] = RowParsers.of(BusinessentityId.pgType, /* user-picked */ CustomCreditcardId.pgType, TypoLocalDateTime.pgType, PersoncreditcardRow.apply, row => new Tuple3(row.businessentityid, row.creditcardid, row.modifieddate))
+  val `_rowParser`: RowParser[PersoncreditcardRow] = RowParsers.of(BusinessentityId.pgType, /* user-picked */ CustomCreditcardId.pgType, TypoLocalDateTime.pgType, PersoncreditcardRow.apply, row => Array(row.businessentityid, row.creditcardid, row.modifieddate))
 
   def apply(
     compositeId: PersoncreditcardId,

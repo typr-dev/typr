@@ -5,6 +5,7 @@
  */
 package adventureworks.production.productproductphoto;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record ProductproductphotoRepoMock(
     return new ProductproductphotoRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<ProductproductphotoFields, ProductproductphotoRow> delete() {
     return new DeleteBuilderMock<>(ProductproductphotoFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.compositeId(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     ProductproductphotoId compositeId,
     Connection c
@@ -52,28 +55,31 @@ public record ProductproductphotoRepoMock(
     return Optional.ofNullable(map.remove(compositeId)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     ProductproductphotoId[] compositeIds,
     Connection c
   ) {
     var count = 0;
-      for (var id : compositeIds) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : compositeIds) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public ProductproductphotoRow insert(
     ProductproductphotoRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.compositeId())) {
-        throw new RuntimeException(str("id $unsaved.compositeId() already exists"));
-      };
-      map.put(unsaved.compositeId(), unsaved);
+      throw new RuntimeException(str("id $unsaved.compositeId() already exists"));
+    };
+    map.put(unsaved.compositeId(), unsaved);
     return unsaved;
   };
 
+  @Override
   public ProductproductphotoRow insert(
     ProductproductphotoRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record ProductproductphotoRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<ProductproductphotoRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.compositeId(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.compositeId(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<ProductproductphotoRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.compositeId(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.compositeId(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<ProductproductphotoFields, ProductproductphotoRow> select() {
     return new SelectBuilderMock<>(ProductproductphotoFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<ProductproductphotoRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<ProductproductphotoRow> selectById(
     ProductproductphotoId compositeId,
     Connection c
@@ -126,38 +137,43 @@ public record ProductproductphotoRepoMock(
     return Optional.ofNullable(map.get(compositeId));
   };
 
+  @Override
   public List<ProductproductphotoRow> selectByIds(
     ProductproductphotoId[] compositeIds,
     Connection c
   ) {
     var result = new ArrayList<ProductproductphotoRow>();
-      for (var id : compositeIds) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : compositeIds) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<ProductproductphotoId, ProductproductphotoRow> selectByIdsTracked(
     ProductproductphotoId[] compositeIds,
     Connection c
   ) {
-    return selectByIds(compositeIds, c).stream().collect(Collectors.toMap((adventureworks.production.productproductphoto.ProductproductphotoRow row) -> row.compositeId(), Function.identity()));
+    return selectByIds(compositeIds, c).stream().collect(Collectors.toMap((ProductproductphotoRow row) -> row.compositeId(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<ProductproductphotoFields, ProductproductphotoRow> update() {
     return new UpdateBuilderMock<>(ProductproductphotoFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     ProductproductphotoRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.compositeId())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.compositeId(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.compositeId(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public ProductproductphotoRow upsert(
     ProductproductphotoRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record ProductproductphotoRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<ProductproductphotoRow> upsertBatch(
     Iterator<ProductproductphotoRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<ProductproductphotoRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.compositeId(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.compositeId(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<ProductproductphotoRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.compositeId(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.compositeId(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

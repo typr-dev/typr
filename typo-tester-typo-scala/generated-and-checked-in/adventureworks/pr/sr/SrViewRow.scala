@@ -10,7 +10,6 @@ import adventureworks.production.scrapreason.ScrapreasonId
 import adventureworks.public.Name
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple4
 
 /** View: pr.sr */
 case class SrViewRow(
@@ -25,12 +24,5 @@ case class SrViewRow(
 )
 
 object SrViewRow {
-  val `_rowParser`: RowParser[SrViewRow] = {
-    RowParsers.of(ScrapreasonId.pgType, ScrapreasonId.pgType, Name.pgType, TypoLocalDateTime.pgType, SrViewRow.apply, row => new Tuple4(
-      row.id,
-      row.scrapreasonid,
-      row.name,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[SrViewRow] = RowParsers.of(ScrapreasonId.pgType, ScrapreasonId.pgType, Name.pgType, TypoLocalDateTime.pgType, SrViewRow.apply, row => Array(row.id, row.scrapreasonid, row.name, row.modifieddate))
 }

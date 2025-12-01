@@ -15,7 +15,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple7;
 
 /** Table: production.productinventory
   * Product inventory information.
@@ -88,7 +87,7 @@ public record ProductinventoryRow(
     return new ProductinventoryRow(productid, locationid, shelf, bin, quantity, rowguid, modifieddate);
   };
 
-  static RowParser<ProductinventoryRow> _rowParser = RowParsers.of(ProductId.pgType, LocationId.pgType, PgTypes.text, TypoShort.pgType, TypoShort.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, ProductinventoryRow::new, row -> new Tuple7<>(row.productid(), row.locationid(), row.shelf(), row.bin(), row.quantity(), row.rowguid(), row.modifieddate()));;
+  static RowParser<ProductinventoryRow> _rowParser = RowParsers.of(ProductId.pgType, LocationId.pgType, PgTypes.text, TypoShort.pgType, TypoShort.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, ProductinventoryRow::new, row -> new Object[]{row.productid(), row.locationid(), row.shelf(), row.bin(), row.quantity(), row.rowguid(), row.modifieddate()});;
 
   static public ProductinventoryRow apply(
     ProductinventoryId compositeId,

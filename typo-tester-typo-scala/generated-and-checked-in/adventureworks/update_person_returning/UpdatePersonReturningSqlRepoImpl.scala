@@ -12,7 +12,7 @@ import typo.runtime.PgTypes
 import typo.runtime.FragmentInterpolator.interpolate
 
 class UpdatePersonReturningSqlRepoImpl extends UpdatePersonReturningSqlRepo {
-  def apply(
+  override def apply(
     suffix: /* nullability unknown */ Optional[String],
     cutoff: /* nullability unknown */ Optional[TypoLocalDateTime]
   )(using c: Connection): java.util.List[UpdatePersonReturningSqlRow] = {
@@ -23,6 +23,6 @@ class UpdatePersonReturningSqlRepoImpl extends UpdatePersonReturningSqlRepo {
     returning firstname, modifieddate
     )
     select row."firstname", row."modifieddate"::text
-    from row""".as(UpdatePersonReturningSqlRow.`_rowParser`.all()).runUnchecked(c)
+    from row""".query(UpdatePersonReturningSqlRow.`_rowParser`.all()).runUnchecked(c)
   }
 }

@@ -17,7 +17,7 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 
 public interface ProductcategoryFields {
-  static final class Impl extends Relation<ProductcategoryFields, ProductcategoryRow> {
+  final class Impl extends Relation<ProductcategoryFields, ProductcategoryRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -25,15 +25,19 @@ public interface ProductcategoryFields {
     @Override
     public ProductcategoryFields fields() {
       return new ProductcategoryFields() {
+               @Override
                public IdField<ProductcategoryId, ProductcategoryRow> productcategoryid() {
                  return new IdField<ProductcategoryId, ProductcategoryRow>(_path, "productcategoryid", ProductcategoryRow::productcategoryid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductcategoryid(value), ProductcategoryId.pgType);
                };
+               @Override
                public Field<Name, ProductcategoryRow> name() {
                  return new Field<Name, ProductcategoryRow>(_path, "name", ProductcategoryRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<TypoUUID, ProductcategoryRow> rowguid() {
                  return new Field<TypoUUID, ProductcategoryRow>(_path, "rowguid", ProductcategoryRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, ProductcategoryRow> modifieddate() {
                  return new Field<TypoLocalDateTime, ProductcategoryRow>(_path, "modifieddate", ProductcategoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -45,6 +49,7 @@ public interface ProductcategoryFields {
       return List.of(this.fields().productcategoryid(), this.fields().name(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

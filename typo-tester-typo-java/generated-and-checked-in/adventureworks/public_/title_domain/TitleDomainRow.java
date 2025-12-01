@@ -8,7 +8,6 @@ package adventureworks.public_.title_domain;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple1;
 
 /** Table: public.title_domain
   * Primary key: code
@@ -18,7 +17,7 @@ public record TitleDomainRow(TitleDomainId code) {
     return new TitleDomainRow(code);
   };
 
-  static RowParser<TitleDomainRow> _rowParser = RowParsers.of(TitleDomainId.pgType, TitleDomainRow::new, row -> new Tuple1<>(row.code()));;
+  static RowParser<TitleDomainRow> _rowParser = RowParsers.of(TitleDomainId.pgType, TitleDomainRow::new, row -> new Object[]{row.code()});;
 
   static public PgText<TitleDomainRow> pgText =
     PgText.from(_rowParser);

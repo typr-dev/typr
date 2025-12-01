@@ -5,6 +5,7 @@
  */
 package adventureworks.production.productmodel;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record ProductmodelRepoMock(
     return new ProductmodelRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<ProductmodelFields, ProductmodelRow> delete() {
     return new DeleteBuilderMock<>(ProductmodelFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.productmodelid(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     ProductmodelId productmodelid,
     Connection c
@@ -52,28 +55,31 @@ public record ProductmodelRepoMock(
     return Optional.ofNullable(map.remove(productmodelid)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     ProductmodelId[] productmodelids,
     Connection c
   ) {
     var count = 0;
-      for (var id : productmodelids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : productmodelids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public ProductmodelRow insert(
     ProductmodelRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.productmodelid())) {
-        throw new RuntimeException(str("id $unsaved.productmodelid() already exists"));
-      };
-      map.put(unsaved.productmodelid(), unsaved);
+      throw new RuntimeException(str("id $unsaved.productmodelid() already exists"));
+    };
+    map.put(unsaved.productmodelid(), unsaved);
     return unsaved;
   };
 
+  @Override
   public ProductmodelRow insert(
     ProductmodelRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record ProductmodelRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<ProductmodelRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.productmodelid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.productmodelid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<ProductmodelRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.productmodelid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.productmodelid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<ProductmodelFields, ProductmodelRow> select() {
     return new SelectBuilderMock<>(ProductmodelFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<ProductmodelRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<ProductmodelRow> selectById(
     ProductmodelId productmodelid,
     Connection c
@@ -126,38 +137,43 @@ public record ProductmodelRepoMock(
     return Optional.ofNullable(map.get(productmodelid));
   };
 
+  @Override
   public List<ProductmodelRow> selectByIds(
     ProductmodelId[] productmodelids,
     Connection c
   ) {
     var result = new ArrayList<ProductmodelRow>();
-      for (var id : productmodelids) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : productmodelids) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<ProductmodelId, ProductmodelRow> selectByIdsTracked(
     ProductmodelId[] productmodelids,
     Connection c
   ) {
-    return selectByIds(productmodelids, c).stream().collect(Collectors.toMap((adventureworks.production.productmodel.ProductmodelRow row) -> row.productmodelid(), Function.identity()));
+    return selectByIds(productmodelids, c).stream().collect(Collectors.toMap((ProductmodelRow row) -> row.productmodelid(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<ProductmodelFields, ProductmodelRow> update() {
     return new UpdateBuilderMock<>(ProductmodelFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     ProductmodelRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.productmodelid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.productmodelid(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.productmodelid(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public ProductmodelRow upsert(
     ProductmodelRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record ProductmodelRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<ProductmodelRow> upsertBatch(
     Iterator<ProductmodelRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<ProductmodelRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.productmodelid(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.productmodelid(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<ProductmodelRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.productmodelid(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.productmodelid(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

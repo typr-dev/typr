@@ -26,10 +26,12 @@ import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
 public class PersonRepoImpl implements PersonRepo {
+  @Override
   public DeleteBuilder<PersonFields, PersonRow> delete() {
     return DeleteBuilder.of("myschema.person", PersonFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     PersonId id,
     Connection c
@@ -43,6 +45,7 @@ public class PersonRepoImpl implements PersonRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     PersonId[] ids,
     Connection c
@@ -59,6 +62,7 @@ public class PersonRepoImpl implements PersonRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public PersonRow insert(
     PersonRow unsaved,
     Connection c
@@ -96,108 +100,116 @@ public class PersonRepoImpl implements PersonRepo {
       .updateReturning(PersonRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public PersonRow insert(
     PersonRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"favourite_football_club_id\""));
-      values.add(interpolate(
-        FootballClubId.pgType.encode(unsaved.favouriteFootballClubId()),
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"favourite_football_club_id\""));
+    values.add(interpolate(
+      FootballClubId.pgType.encode(unsaved.favouriteFootballClubId()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    columns.add(Fragment.lit("\"name\""));
+    values.add(interpolate(
+      PgTypes.text.encode(unsaved.name()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    columns.add(Fragment.lit("\"nick_name\""));
+    values.add(interpolate(
+      PgTypes.text.opt().encode(unsaved.nickName()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    columns.add(Fragment.lit("\"blog_url\""));
+    values.add(interpolate(
+      PgTypes.text.opt().encode(unsaved.blogUrl()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    columns.add(Fragment.lit("\"email\""));
+    values.add(interpolate(
+      PgTypes.text.encode(unsaved.email()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    columns.add(Fragment.lit("\"phone\""));
+    values.add(interpolate(
+      PgTypes.text.encode(unsaved.phone()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    columns.add(Fragment.lit("\"likes_pizza\""));
+    values.add(interpolate(
+      PgTypes.bool.encode(unsaved.likesPizza()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    columns.add(Fragment.lit("\"work_email\""));
+    values.add(interpolate(
+      PgTypes.text.opt().encode(unsaved.workEmail()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    unsaved.id().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"id\""));
+        values.add(interpolate(
+        PersonId.pgType.encode(value),
+        typo.runtime.Fragment.lit("::int8")
+      ));
+      }
+    );;
+    unsaved.maritalStatusId().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"marital_status_id\""));
+        values.add(interpolate(
+        MaritalStatusId.pgType.encode(value),
         typo.runtime.Fragment.lit("""
         """)
       ));
-      columns.add(Fragment.lit("\"name\""));
-      values.add(interpolate(
-        PgTypes.text.encode(unsaved.name()),
-        typo.runtime.Fragment.lit("""
-        """)
+      }
+    );;
+    unsaved.favoriteNumber().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"favorite_number\""));
+        values.add(interpolate(
+        Number.pgType.encode(value),
+        typo.runtime.Fragment.lit("::myschema.number")
       ));
-      columns.add(Fragment.lit("\"nick_name\""));
-      values.add(interpolate(
-        PgTypes.text.opt().encode(unsaved.nickName()),
-        typo.runtime.Fragment.lit("""
-        """)
-      ));
-      columns.add(Fragment.lit("\"blog_url\""));
-      values.add(interpolate(
-        PgTypes.text.opt().encode(unsaved.blogUrl()),
-        typo.runtime.Fragment.lit("""
-        """)
-      ));
-      columns.add(Fragment.lit("\"email\""));
-      values.add(interpolate(
-        PgTypes.text.encode(unsaved.email()),
-        typo.runtime.Fragment.lit("""
-        """)
-      ));
-      columns.add(Fragment.lit("\"phone\""));
-      values.add(interpolate(
-        PgTypes.text.encode(unsaved.phone()),
-        typo.runtime.Fragment.lit("""
-        """)
-      ));
-      columns.add(Fragment.lit("\"likes_pizza\""));
-      values.add(interpolate(
-        PgTypes.bool.encode(unsaved.likesPizza()),
-        typo.runtime.Fragment.lit("""
-        """)
-      ));
-      columns.add(Fragment.lit("\"work_email\""));
-      values.add(interpolate(
-        PgTypes.text.opt().encode(unsaved.workEmail()),
-        typo.runtime.Fragment.lit("""
-        """)
-      ));
-      unsaved.id().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"id\""));
-          values.add(interpolate(
-            PersonId.pgType.encode(value),
-            typo.runtime.Fragment.lit("::int8")
-          ));
-        }
-      );;
-      unsaved.maritalStatusId().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"marital_status_id\""));
-          values.add(interpolate(
-            MaritalStatusId.pgType.encode(value),
-            typo.runtime.Fragment.lit("""
-            """)
-          ));
-        }
-      );;
-      unsaved.favoriteNumber().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"favorite_number\""));
-          values.add(interpolate(
-            Number.pgType.encode(value),
-            typo.runtime.Fragment.lit("::myschema.number")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "myschema"."person"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number"
-        """)
-      );;
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "myschema"."person"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number"
+      """)
+    );;
     return q.updateReturning(PersonRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<PersonRow> unsaved,
     Integer batchSize,
@@ -209,6 +221,7 @@ public class PersonRepoImpl implements PersonRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<PersonRowUnsaved> unsaved,
     Integer batchSize,
@@ -219,17 +232,20 @@ public class PersonRepoImpl implements PersonRepo {
     """), batchSize, unsaved, c, PersonRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<PersonFields, PersonRow> select() {
     return SelectBuilder.of("myschema.person", PersonFields.structure(), PersonRow._rowParser);
   };
 
+  @Override
   public List<PersonRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number"
        from "myschema"."person"
-    """)).as(PersonRow._rowParser.all()).runUnchecked(c);
+    """)).query(PersonRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<PersonRow> selectById(
     PersonId id,
     Connection c
@@ -241,9 +257,10 @@ public class PersonRepoImpl implements PersonRepo {
          where "id" = """),
       PersonId.pgType.encode(id),
       typo.runtime.Fragment.lit("")
-    ).as(PersonRow._rowParser.first()).runUnchecked(c);
+    ).query(PersonRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<PersonRow> selectByIds(
     PersonId[] ids,
     Connection c
@@ -255,76 +272,80 @@ public class PersonRepoImpl implements PersonRepo {
          where "id" = ANY("""),
       PersonId.pgTypeArray.encode(ids),
       typo.runtime.Fragment.lit(")")
-    ).as(PersonRow._rowParser.all()).runUnchecked(c);
+    ).query(PersonRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<PersonId, PersonRow> selectByIdsTracked(
     PersonId[] ids,
     Connection c
   ) {
-    Map<PersonId, PersonRow> ret = new HashMap<>();;
-      selectByIds(ids, c).forEach(row -> ret.put(row.id(), row));
+    HashMap<PersonId, PersonRow> ret = new HashMap<PersonId, PersonRow>();
+    selectByIds(ids, c).forEach(row -> ret.put(row.id(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<PersonFields, PersonRow> update() {
     return UpdateBuilder.of("myschema.person", PersonFields.structure(), PersonRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     PersonRow row,
     Connection c
   ) {
     PersonId id = row.id();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "myschema"."person"
-                set "favourite_football_club_id" = """),
-             FootballClubId.pgType.encode(row.favouriteFootballClubId()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "name" = """),
-             PgTypes.text.encode(row.name()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "nick_name" = """),
-             PgTypes.text.opt().encode(row.nickName()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "blog_url" = """),
-             PgTypes.text.opt().encode(row.blogUrl()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "email" = """),
-             PgTypes.text.encode(row.email()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "phone" = """),
-             PgTypes.text.encode(row.phone()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "likes_pizza" = """),
-             PgTypes.bool.encode(row.likesPizza()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "marital_status_id" = """),
-             MaritalStatusId.pgType.encode(row.maritalStatusId()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "work_email" = """),
-             PgTypes.text.opt().encode(row.workEmail()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "favorite_number" = """),
-             Number.pgType.encode(row.favoriteNumber()),
-             typo.runtime.Fragment.lit("""
-                ::myschema.number
-                where "id" = """),
-             PersonId.pgType.encode(id),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "myschema"."person"
+         set "favourite_football_club_id" = """),
+      FootballClubId.pgType.encode(row.favouriteFootballClubId()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "name" = """),
+      PgTypes.text.encode(row.name()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "nick_name" = """),
+      PgTypes.text.opt().encode(row.nickName()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "blog_url" = """),
+      PgTypes.text.opt().encode(row.blogUrl()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "email" = """),
+      PgTypes.text.encode(row.email()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "phone" = """),
+      PgTypes.text.encode(row.phone()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "likes_pizza" = """),
+      PgTypes.bool.encode(row.likesPizza()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "marital_status_id" = """),
+      MaritalStatusId.pgType.encode(row.maritalStatusId()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "work_email" = """),
+      PgTypes.text.opt().encode(row.workEmail()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "favorite_number" = """),
+      Number.pgType.encode(row.favoriteNumber()),
+      typo.runtime.Fragment.lit("""
+         ::myschema.number
+         where "id" = """),
+      PersonId.pgType.encode(id),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public PersonRow upsert(
     PersonRow unsaved,
     Connection c
@@ -375,6 +396,7 @@ public class PersonRepoImpl implements PersonRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<PersonRow> upsertBatch(
     Iterator<PersonRow> unsaved,
     Connection c
@@ -401,33 +423,34 @@ public class PersonRepoImpl implements PersonRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<PersonRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table person_TEMP (like "myschema"."person") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy person_TEMP("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number") from stdin
-      """), batchSize, unsaved, c, PersonRow.pgText);
+    create temporary table person_TEMP (like "myschema"."person") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy person_TEMP("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number") from stdin
+    """), batchSize, unsaved, c, PersonRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "myschema"."person"("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number")
-              select * from person_TEMP
-              on conflict ("id")
-              do update set
-                "favourite_football_club_id" = EXCLUDED."favourite_football_club_id",
-              "name" = EXCLUDED."name",
-              "nick_name" = EXCLUDED."nick_name",
-              "blog_url" = EXCLUDED."blog_url",
-              "email" = EXCLUDED."email",
-              "phone" = EXCLUDED."phone",
-              "likes_pizza" = EXCLUDED."likes_pizza",
-              "marital_status_id" = EXCLUDED."marital_status_id",
-              "work_email" = EXCLUDED."work_email",
-              "favorite_number" = EXCLUDED."favorite_number"
-              ;
-              drop table person_TEMP;""")).update().runUnchecked(c);
+       insert into "myschema"."person"("id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "favorite_number")
+       select * from person_TEMP
+       on conflict ("id")
+       do update set
+         "favourite_football_club_id" = EXCLUDED."favourite_football_club_id",
+       "name" = EXCLUDED."name",
+       "nick_name" = EXCLUDED."nick_name",
+       "blog_url" = EXCLUDED."blog_url",
+       "email" = EXCLUDED."email",
+       "phone" = EXCLUDED."phone",
+       "likes_pizza" = EXCLUDED."likes_pizza",
+       "marital_status_id" = EXCLUDED."marital_status_id",
+       "work_email" = EXCLUDED."work_email",
+       "favorite_number" = EXCLUDED."favorite_number"
+       ;
+       drop table person_TEMP;""")).update().runUnchecked(c);
   };
 }

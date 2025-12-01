@@ -14,7 +14,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple5;
 
 /** Table: production.productlistpricehistory
   * Changes in the list price of a product over time.
@@ -73,7 +72,7 @@ public record ProductlistpricehistoryRow(
     return new ProductlistpricehistoryRow(productid, startdate, enddate, listprice, modifieddate);
   };
 
-  static RowParser<ProductlistpricehistoryRow> _rowParser = RowParsers.of(ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), PgTypes.numeric, TypoLocalDateTime.pgType, ProductlistpricehistoryRow::new, row -> new Tuple5<>(row.productid(), row.startdate(), row.enddate(), row.listprice(), row.modifieddate()));;
+  static RowParser<ProductlistpricehistoryRow> _rowParser = RowParsers.of(ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), PgTypes.numeric, TypoLocalDateTime.pgType, ProductlistpricehistoryRow::new, row -> new Object[]{row.productid(), row.startdate(), row.enddate(), row.listprice(), row.modifieddate()});;
 
   static public ProductlistpricehistoryRow apply(
     ProductlistpricehistoryId compositeId,

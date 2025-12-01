@@ -17,7 +17,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface VjobcandidateeducationViewFields {
-  static final class Impl extends Relation<VjobcandidateeducationViewFields, VjobcandidateeducationViewRow> {
+  final class Impl extends Relation<VjobcandidateeducationViewFields, VjobcandidateeducationViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -25,42 +25,55 @@ public interface VjobcandidateeducationViewFields {
     @Override
     public VjobcandidateeducationViewFields fields() {
       return new VjobcandidateeducationViewFields() {
+               @Override
                public Field<JobcandidateId, VjobcandidateeducationViewRow> jobcandidateid() {
                  return new Field<JobcandidateId, VjobcandidateeducationViewRow>(_path, "jobcandidateid", VjobcandidateeducationViewRow::jobcandidateid, Optional.empty(), Optional.empty(), (row, value) -> row.withJobcandidateid(value), JobcandidateId.pgType);
                };
+               @Override
                public OptField</* max 50 chars */ String, VjobcandidateeducationViewRow> eduLevel() {
                  return new OptField</* max 50 chars */ String, VjobcandidateeducationViewRow>(_path, "Edu.Level", VjobcandidateeducationViewRow::eduLevel, Optional.empty(), Optional.empty(), (row, value) -> row.withEduLevel(value), PgTypes.text);
                };
+               @Override
                public OptField<TypoLocalDate, VjobcandidateeducationViewRow> eduStartDate() {
                  return new OptField<TypoLocalDate, VjobcandidateeducationViewRow>(_path, "Edu.StartDate", VjobcandidateeducationViewRow::eduStartDate, Optional.of("text"), Optional.empty(), (row, value) -> row.withEduStartDate(value), TypoLocalDate.pgType);
                };
+               @Override
                public OptField<TypoLocalDate, VjobcandidateeducationViewRow> eduEndDate() {
                  return new OptField<TypoLocalDate, VjobcandidateeducationViewRow>(_path, "Edu.EndDate", VjobcandidateeducationViewRow::eduEndDate, Optional.of("text"), Optional.empty(), (row, value) -> row.withEduEndDate(value), TypoLocalDate.pgType);
                };
+               @Override
                public OptField</* max 50 chars */ String, VjobcandidateeducationViewRow> eduDegree() {
                  return new OptField</* max 50 chars */ String, VjobcandidateeducationViewRow>(_path, "Edu.Degree", VjobcandidateeducationViewRow::eduDegree, Optional.empty(), Optional.empty(), (row, value) -> row.withEduDegree(value), PgTypes.text);
                };
+               @Override
                public OptField</* max 50 chars */ String, VjobcandidateeducationViewRow> eduMajor() {
                  return new OptField</* max 50 chars */ String, VjobcandidateeducationViewRow>(_path, "Edu.Major", VjobcandidateeducationViewRow::eduMajor, Optional.empty(), Optional.empty(), (row, value) -> row.withEduMajor(value), PgTypes.text);
                };
+               @Override
                public OptField</* max 50 chars */ String, VjobcandidateeducationViewRow> eduMinor() {
                  return new OptField</* max 50 chars */ String, VjobcandidateeducationViewRow>(_path, "Edu.Minor", VjobcandidateeducationViewRow::eduMinor, Optional.empty(), Optional.empty(), (row, value) -> row.withEduMinor(value), PgTypes.text);
                };
+               @Override
                public OptField</* max 5 chars */ String, VjobcandidateeducationViewRow> eduGPA() {
                  return new OptField</* max 5 chars */ String, VjobcandidateeducationViewRow>(_path, "Edu.GPA", VjobcandidateeducationViewRow::eduGPA, Optional.empty(), Optional.empty(), (row, value) -> row.withEduGPA(value), PgTypes.text);
                };
+               @Override
                public OptField</* max 5 chars */ String, VjobcandidateeducationViewRow> eduGPAScale() {
                  return new OptField</* max 5 chars */ String, VjobcandidateeducationViewRow>(_path, "Edu.GPAScale", VjobcandidateeducationViewRow::eduGPAScale, Optional.empty(), Optional.empty(), (row, value) -> row.withEduGPAScale(value), PgTypes.text);
                };
+               @Override
                public OptField</* max 100 chars */ String, VjobcandidateeducationViewRow> eduSchool() {
                  return new OptField</* max 100 chars */ String, VjobcandidateeducationViewRow>(_path, "Edu.School", VjobcandidateeducationViewRow::eduSchool, Optional.empty(), Optional.empty(), (row, value) -> row.withEduSchool(value), PgTypes.text);
                };
+               @Override
                public OptField</* max 100 chars */ String, VjobcandidateeducationViewRow> eduLocCountryRegion() {
                  return new OptField</* max 100 chars */ String, VjobcandidateeducationViewRow>(_path, "Edu.Loc.CountryRegion", VjobcandidateeducationViewRow::eduLocCountryRegion, Optional.empty(), Optional.empty(), (row, value) -> row.withEduLocCountryRegion(value), PgTypes.text);
                };
+               @Override
                public OptField</* max 100 chars */ String, VjobcandidateeducationViewRow> eduLocState() {
                  return new OptField</* max 100 chars */ String, VjobcandidateeducationViewRow>(_path, "Edu.Loc.State", VjobcandidateeducationViewRow::eduLocState, Optional.empty(), Optional.empty(), (row, value) -> row.withEduLocState(value), PgTypes.text);
                };
+               @Override
                public OptField</* max 100 chars */ String, VjobcandidateeducationViewRow> eduLocCity() {
                  return new OptField</* max 100 chars */ String, VjobcandidateeducationViewRow>(_path, "Edu.Loc.City", VjobcandidateeducationViewRow::eduLocCity, Optional.empty(), Optional.empty(), (row, value) -> row.withEduLocCity(value), PgTypes.text);
                };
@@ -72,6 +85,7 @@ public interface VjobcandidateeducationViewFields {
       return List.of(this.fields().jobcandidateid(), this.fields().eduLevel(), this.fields().eduStartDate(), this.fields().eduEndDate(), this.fields().eduDegree(), this.fields().eduMajor(), this.fields().eduMinor(), this.fields().eduGPA(), this.fields().eduGPAScale(), this.fields().eduSchool(), this.fields().eduLocCountryRegion(), this.fields().eduLocState(), this.fields().eduLocCity());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

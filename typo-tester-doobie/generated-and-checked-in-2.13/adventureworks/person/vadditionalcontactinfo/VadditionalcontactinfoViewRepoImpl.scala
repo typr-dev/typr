@@ -11,7 +11,7 @@ import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class VadditionalcontactinfoViewRepoImpl extends VadditionalcontactinfoViewRepo {
-  def select: SelectBuilder[VadditionalcontactinfoViewFields, VadditionalcontactinfoViewRow] = SelectBuilder.of(""""person"."vadditionalcontactinfo"""", VadditionalcontactinfoViewFields.structure, VadditionalcontactinfoViewRow.read)
+  override def select: SelectBuilder[VadditionalcontactinfoViewFields, VadditionalcontactinfoViewRow] = SelectBuilder.of(""""person"."vadditionalcontactinfo"""", VadditionalcontactinfoViewFields.structure, VadditionalcontactinfoViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, VadditionalcontactinfoViewRow] = sql"""select "businessentityid", "firstname", "middlename", "lastname", "telephonenumber", "telephonespecialinstructions", "street", "city", "stateprovince", "postalcode", "countryregion", "homeaddressspecialinstructions", "emailaddress", "emailspecialinstructions", "emailtelephonenumber", "rowguid", "modifieddate"::text from "person"."vadditionalcontactinfo"""".query(VadditionalcontactinfoViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, VadditionalcontactinfoViewRow] = sql"""select "businessentityid", "firstname", "middlename", "lastname", "telephonenumber", "telephonespecialinstructions", "street", "city", "stateprovince", "postalcode", "countryregion", "homeaddressspecialinstructions", "emailaddress", "emailspecialinstructions", "emailtelephonenumber", "rowguid", "modifieddate"::text from "person"."vadditionalcontactinfo"""".query(VadditionalcontactinfoViewRow.read).stream
 }

@@ -33,7 +33,7 @@ object TypoOffsetTime {
 
   implicit lazy val arrayPut: Put[Array[TypoOffsetTime]] = {
     Put.Advanced.array[AnyRef](NonEmptyList.one("timetz[]"), "timetz")
-      .contramap(_.map(v => v.value.toString))
+      .contramap(_.map(v => v.value.toString()))
   }
 
   implicit lazy val bijection: Bijection[TypoOffsetTime, OffsetTime] = Bijection.apply[TypoOffsetTime, OffsetTime](_.value)(TypoOffsetTime.apply)
@@ -53,10 +53,10 @@ object TypoOffsetTime {
 
   implicit lazy val pgText: Text[TypoOffsetTime] = {
     new Text[TypoOffsetTime] {
-      override def unsafeEncode(v: TypoOffsetTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value.toString, sb)
-      override def unsafeArrayEncode(v: TypoOffsetTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value.toString, sb)
+      override def unsafeEncode(v: TypoOffsetTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value.toString(), sb)
+      override def unsafeArrayEncode(v: TypoOffsetTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value.toString(), sb)
     }
   }
 
-  implicit lazy val put: Put[TypoOffsetTime] = Put.Advanced.other[String](NonEmptyList.one("timetz")).contramap(v => v.value.toString)
+  implicit lazy val put: Put[TypoOffsetTime] = Put.Advanced.other[String](NonEmptyList.one("timetz")).contramap(v => v.value.toString())
 }

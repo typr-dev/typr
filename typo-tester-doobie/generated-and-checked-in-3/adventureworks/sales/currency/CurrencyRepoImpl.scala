@@ -16,28 +16,26 @@ import doobie.util.Write
 import doobie.util.fragment.Fragment
 import doobie.util.update.Update
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.DeleteBuilder
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class CurrencyRepoImpl extends CurrencyRepo {
-  def delete: DeleteBuilder[CurrencyFields, CurrencyRow] = DeleteBuilder.of(""""sales"."currency"""", CurrencyFields.structure, CurrencyRow.read)
+  override def delete: DeleteBuilder[CurrencyFields, CurrencyRow] = DeleteBuilder.of(""""sales"."currency"""", CurrencyFields.structure, CurrencyRow.read)
 
-  def deleteById(currencycode: CurrencyId): ConnectionIO[Boolean] = sql"""delete from "sales"."currency" where "currencycode" = ${fromWrite(currencycode)(using new Write.Single(CurrencyId.put))}""".update.run.map(_ > 0)
+  override def deleteById(currencycode: CurrencyId): ConnectionIO[Boolean] = sql"""delete from "sales"."currency" where "currencycode" = ${fromWrite(currencycode)(using new Write.Single(CurrencyId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(currencycodes: Array[CurrencyId]): ConnectionIO[Int] = sql"""delete from "sales"."currency" where "currencycode" = ANY(${fromWrite(currencycodes)(using new Write.Single(CurrencyId.arrayPut))})""".update.run
+  override def deleteByIds(currencycodes: Array[CurrencyId]): ConnectionIO[Int] = sql"""delete from "sales"."currency" where "currencycode" = ANY(${fromWrite(currencycodes)(using new Write.Single(CurrencyId.arrayPut))})""".update.run
 
-  def insert(unsaved: CurrencyRow): ConnectionIO[CurrencyRow] = {
+  override def insert(unsaved: CurrencyRow): ConnectionIO[CurrencyRow] = {
     sql"""insert into "sales"."currency"("currencycode", "name", "modifieddate")
     values (${fromWrite(unsaved.currencycode)(using new Write.Single(CurrencyId.put))}::bpchar, ${fromWrite(unsaved.name)(using new Write.Single(Name.put))}::varchar, ${fromWrite(unsaved.modifieddate)(using new Write.Single(TypoLocalDateTime.put))}::timestamp)
     returning "currencycode", "name", "modifieddate"::text
     """.query(using CurrencyRow.read).unique
   }
 
-  def insert(unsaved: CurrencyRowUnsaved): ConnectionIO[CurrencyRow] = {
+  override def insert(unsaved: CurrencyRowUnsaved): ConnectionIO[CurrencyRow] = {
     val fs = List(
       Some((Fragment.const0(s""""currencycode""""), fr"${fromWrite(unsaved.currencycode)(using new Write.Single(CurrencyId.put))}::bpchar")),
       Some((Fragment.const0(s""""name""""), fr"${fromWrite(unsaved.name)(using new Write.Single(Name.put))}::varchar")),
@@ -60,35 +58,35 @@ class CurrencyRepoImpl extends CurrencyRepo {
     q.query(using CurrencyRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, CurrencyRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "sales"."currency"("currencycode", "name", "modifieddate") FROM STDIN""").copyIn(unsaved, batchSize)(using CurrencyRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, CurrencyRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "sales"."currency"("currencycode", "name", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(using CurrencyRowUnsaved.pgText)
 
-  def select: SelectBuilder[CurrencyFields, CurrencyRow] = SelectBuilder.of(""""sales"."currency"""", CurrencyFields.structure, CurrencyRow.read)
+  override def select: SelectBuilder[CurrencyFields, CurrencyRow] = SelectBuilder.of(""""sales"."currency"""", CurrencyFields.structure, CurrencyRow.read)
 
-  def selectAll: Stream[ConnectionIO, CurrencyRow] = sql"""select "currencycode", "name", "modifieddate"::text from "sales"."currency"""".query(using CurrencyRow.read).stream
+  override def selectAll: Stream[ConnectionIO, CurrencyRow] = sql"""select "currencycode", "name", "modifieddate"::text from "sales"."currency"""".query(using CurrencyRow.read).stream
 
-  def selectById(currencycode: CurrencyId): ConnectionIO[Option[CurrencyRow]] = sql"""select "currencycode", "name", "modifieddate"::text from "sales"."currency" where "currencycode" = ${fromWrite(currencycode)(using new Write.Single(CurrencyId.put))}""".query(using CurrencyRow.read).option
+  override def selectById(currencycode: CurrencyId): ConnectionIO[Option[CurrencyRow]] = sql"""select "currencycode", "name", "modifieddate"::text from "sales"."currency" where "currencycode" = ${fromWrite(currencycode)(using new Write.Single(CurrencyId.put))}""".query(using CurrencyRow.read).option
 
-  def selectByIds(currencycodes: Array[CurrencyId]): Stream[ConnectionIO, CurrencyRow] = sql"""select "currencycode", "name", "modifieddate"::text from "sales"."currency" where "currencycode" = ANY(${fromWrite(currencycodes)(using new Write.Single(CurrencyId.arrayPut))})""".query(using CurrencyRow.read).stream
+  override def selectByIds(currencycodes: Array[CurrencyId]): Stream[ConnectionIO, CurrencyRow] = sql"""select "currencycode", "name", "modifieddate"::text from "sales"."currency" where "currencycode" = ANY(${fromWrite(currencycodes)(using new Write.Single(CurrencyId.arrayPut))})""".query(using CurrencyRow.read).stream
 
-  def selectByIdsTracked(currencycodes: Array[CurrencyId]): ConnectionIO[Map[CurrencyId, CurrencyRow]] = {
+  override def selectByIdsTracked(currencycodes: Array[CurrencyId]): ConnectionIO[Map[CurrencyId, CurrencyRow]] = {
     selectByIds(currencycodes).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.currencycode, x)).toMap
       currencycodes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[CurrencyFields, CurrencyRow] = UpdateBuilder.of(""""sales"."currency"""", CurrencyFields.structure, CurrencyRow.read)
+  override def update: UpdateBuilder[CurrencyFields, CurrencyRow] = UpdateBuilder.of(""""sales"."currency"""", CurrencyFields.structure, CurrencyRow.read)
 
-  def update(row: CurrencyRow): ConnectionIO[Option[CurrencyRow]] = {
+  override def update(row: CurrencyRow): ConnectionIO[Option[CurrencyRow]] = {
     val currencycode = row.currencycode
     sql"""update "sales"."currency"
     set "name" = ${fromWrite(row.name)(using new Write.Single(Name.put))}::varchar,
@@ -97,7 +95,7 @@ class CurrencyRepoImpl extends CurrencyRepo {
     returning "currencycode", "name", "modifieddate"::text""".query(using CurrencyRow.read).option
   }
 
-  def upsert(unsaved: CurrencyRow): ConnectionIO[CurrencyRow] = {
+  override def upsert(unsaved: CurrencyRow): ConnectionIO[CurrencyRow] = {
     sql"""insert into "sales"."currency"("currencycode", "name", "modifieddate")
     values (
       ${fromWrite(unsaved.currencycode)(using new Write.Single(CurrencyId.put))}::bpchar,
@@ -112,7 +110,7 @@ class CurrencyRepoImpl extends CurrencyRepo {
     """.query(using CurrencyRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[CurrencyRow]): Stream[ConnectionIO, CurrencyRow] = {
+  override def upsertBatch(unsaved: List[CurrencyRow]): Stream[ConnectionIO, CurrencyRow] = {
     Update[CurrencyRow](
       s"""insert into "sales"."currency"("currencycode", "name", "modifieddate")
       values (?::bpchar,?::varchar,?::timestamp)
@@ -126,7 +124,7 @@ class CurrencyRepoImpl extends CurrencyRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, CurrencyRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

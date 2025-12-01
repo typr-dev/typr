@@ -16,7 +16,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple11;
 
 /** Table: purchasing.productvendor
   * Cross-reference table mapping vendors with the products they supply.
@@ -137,7 +136,7 @@ public record ProductvendorRow(
     return new ProductvendorRow(productid, businessentityid, averageleadtime, standardprice, lastreceiptcost, lastreceiptdate, minorderqty, maxorderqty, onorderqty, unitmeasurecode, modifieddate);
   };
 
-  static RowParser<ProductvendorRow> _rowParser = RowParsers.of(ProductId.pgType, BusinessentityId.pgType, PgTypes.int4, PgTypes.numeric, PgTypes.numeric.opt(), TypoLocalDateTime.pgType.opt(), PgTypes.int4, PgTypes.int4, PgTypes.int4.opt(), UnitmeasureId.pgType, TypoLocalDateTime.pgType, ProductvendorRow::new, row -> new Tuple11<>(row.productid(), row.businessentityid(), row.averageleadtime(), row.standardprice(), row.lastreceiptcost(), row.lastreceiptdate(), row.minorderqty(), row.maxorderqty(), row.onorderqty(), row.unitmeasurecode(), row.modifieddate()));;
+  static RowParser<ProductvendorRow> _rowParser = RowParsers.of(ProductId.pgType, BusinessentityId.pgType, PgTypes.int4, PgTypes.numeric, PgTypes.numeric.opt(), TypoLocalDateTime.pgType.opt(), PgTypes.int4, PgTypes.int4, PgTypes.int4.opt(), UnitmeasureId.pgType, TypoLocalDateTime.pgType, ProductvendorRow::new, row -> new Object[]{row.productid(), row.businessentityid(), row.averageleadtime(), row.standardprice(), row.lastreceiptcost(), row.lastreceiptdate(), row.minorderqty(), row.maxorderqty(), row.onorderqty(), row.unitmeasurecode(), row.modifieddate()});;
 
   static public ProductvendorRow apply(
     ProductvendorId compositeId,

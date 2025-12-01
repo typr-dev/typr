@@ -32,7 +32,7 @@ object AtViewFields {
 
     override lazy val fields: AtViewFields = {
       new AtViewFields {
-        def id: Field[AddresstypeId, AtViewRow] = {
+        override def id: Field[AddresstypeId, AtViewRow] = {
           new Field[AddresstypeId, AtViewRow](
             _path,
             "id",
@@ -43,7 +43,7 @@ object AtViewFields {
             AddresstypeId.pgType
           )
         }
-        def addresstypeid: Field[AddresstypeId, AtViewRow] = {
+        override def addresstypeid: Field[AddresstypeId, AtViewRow] = {
           new Field[AddresstypeId, AtViewRow](
             _path,
             "addresstypeid",
@@ -54,7 +54,7 @@ object AtViewFields {
             AddresstypeId.pgType
           )
         }
-        def name: Field[Name, AtViewRow] = {
+        override def name: Field[Name, AtViewRow] = {
           new Field[Name, AtViewRow](
             _path,
             "name",
@@ -65,7 +65,7 @@ object AtViewFields {
             Name.pgType
           )
         }
-        def rowguid: Field[TypoUUID, AtViewRow] = {
+        override def rowguid: Field[TypoUUID, AtViewRow] = {
           new Field[TypoUUID, AtViewRow](
             _path,
             "rowguid",
@@ -76,7 +76,7 @@ object AtViewFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, AtViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, AtViewRow] = {
           new Field[TypoLocalDateTime, AtViewRow](
             _path,
             "modifieddate",
@@ -92,7 +92,7 @@ object AtViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, AtViewRow]] = java.util.List.of(this.fields.id, this.fields.addresstypeid, this.fields.name, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[AtViewFields, AtViewRow] = new Impl(java.util.List.of())

@@ -13,7 +13,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple5
 
 /** Table: production.productcosthistory
  * Changes in the cost of a product over time.
@@ -55,15 +54,7 @@ case class ProductcosthistoryRow(
 }
 
 object ProductcosthistoryRow {
-  val `_rowParser`: RowParser[ProductcosthistoryRow] = {
-    RowParsers.of(ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), PgTypes.numeric, TypoLocalDateTime.pgType, ProductcosthistoryRow.apply, row => new Tuple5(
-      row.productid,
-      row.startdate,
-      row.enddate,
-      row.standardcost,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[ProductcosthistoryRow] = RowParsers.of(ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), PgTypes.numeric, TypoLocalDateTime.pgType, ProductcosthistoryRow.apply, row => Array(row.productid, row.startdate, row.enddate, row.standardcost, row.modifieddate))
 
   def apply(
     compositeId: ProductcosthistoryId,

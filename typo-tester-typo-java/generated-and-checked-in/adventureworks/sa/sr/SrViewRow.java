@@ -10,7 +10,6 @@ import adventureworks.public_.Name;
 import adventureworks.sales.salesreason.SalesreasonId;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple5;
 
 /** View: sa.sr */
 public record SrViewRow(
@@ -50,5 +49,5 @@ public record SrViewRow(
     return new SrViewRow(id, salesreasonid, name, reasontype, modifieddate);
   };
 
-  static RowParser<SrViewRow> _rowParser = RowParsers.of(SalesreasonId.pgType, SalesreasonId.pgType, Name.pgType, Name.pgType, TypoLocalDateTime.pgType, SrViewRow::new, row -> new Tuple5<>(row.id(), row.salesreasonid(), row.name(), row.reasontype(), row.modifieddate()));;
+  static RowParser<SrViewRow> _rowParser = RowParsers.of(SalesreasonId.pgType, SalesreasonId.pgType, Name.pgType, Name.pgType, TypoLocalDateTime.pgType, SrViewRow::new, row -> new Object[]{row.id(), row.salesreasonid(), row.name(), row.reasontype(), row.modifieddate()});;
 }

@@ -24,11 +24,11 @@ object TypoLine {
   given pgType: PgType[TypoLine] = {
     PgType.of(
       "line",
-      PgRead.castJdbcObjectTo(classOf[PGline]).map(v => new TypoLine(v.a, v.b, v.c)),
-      PgWrite.passObjectToJdbc().contramap((v: TypoLine) => new PGline(v.a, v.b, v.c)),
+      PgRead.castJdbcObjectTo(classOf[PGline]).map((v: PGline) => new TypoLine(v.a, v.b, v.c)),
+      PgWrite.passObjectToJdbc[PGline]().contramap((v: TypoLine) => new PGline(v.a, v.b, v.c)),
       TypoLine.pgText
     )
   }
 
-  given pgTypeArray: PgType[Array[TypoLine]] = TypoLine.pgType.array(PgRead.castJdbcArrayTo(classOf[PGline]).map(xs => xs.map(v => new TypoLine(v.a, v.b, v.c))), PgWrite.passObjectToJdbc[PGline]().array(TypoLine.pgType.typename().as[PGline]()).contramap(xs => xs.map((v: TypoLine) => new PGline(v.a, v.b, v.c))))
+  given pgTypeArray: PgType[Array[TypoLine]] = TypoLine.pgType.array(PgRead.castJdbcArrayTo(classOf[PGline]).map((xs: Array[PGline]) => xs.map((v: PGline) => new TypoLine(v.a, v.b, v.c))), PgWrite.passObjectToJdbc[PGline]().array(TypoLine.pgType.typename().as[PGline]()).contramap((xs: Array[TypoLine]) => xs.map((v: TypoLine) => new PGline(v.a, v.b, v.c))))
 }

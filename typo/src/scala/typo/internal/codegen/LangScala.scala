@@ -17,6 +17,7 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
   override val IteratorType: jvm.Type = typeSupport.IteratorType
   override val Long: jvm.Type = typeSupport.Long
   override val Short: jvm.Type = typeSupport.Short
+  override val String: jvm.Type = typeSupport.String
   override val Optional: OptionalSupport = typeSupport.Optional
   override val ListType: ListSupport = typeSupport.ListType
   override val Random: RandomSupport = typeSupport.Random
@@ -86,6 +87,7 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
     tree match {
       case jvm.IfExpr(pred, thenp, elsep) => code"if ($pred) $thenp else $elsep"
       case jvm.IgnoreResult(expr)         => code"$expr: @${TypesScala.nowarn}"
+      case jvm.NotNull(expr)              => expr // Scala doesn't need not-null assertions
       case jvm.ConstructorMethodRef(tpe)  => code"$tpe.apply"
       case jvm.ClassOf(tpe)               => code"classOf[$tpe]"
       case jvm.Call(target, argGroups) =>
@@ -119,13 +121,13 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
       case jvm.Type.UserDefined(underlying)                                   => code"/* user-picked */ $underlying"
       case jvm.Type.Void                                                      => code"Unit"
       case jvm.Type.Wildcard                                                  => code"?"
+      case jvm.Type.Primitive(name)                                           => name
       case p: jvm.Param[jvm.Type]                                             => renderParam(p, false)
       case jvm.RuntimeInterpolation(value)                                    => code"$${$value"
-      case jvm.TypeSwitch(value, cases, nullCase, defaultCase) =>
+      case jvm.TypeSwitch(value, cases, nullCase, _) =>
         val nullCaseCode = nullCase.map(body => code"case null => $body").toList
         val typeCases = cases.map { case jvm.TypeSwitch.Case(pat, ident, body) => code"case $ident: $pat => $body" }
-        val defaultCaseCode = defaultCase.map(body => code"case _ => $body").toList
-        val allCases = nullCaseCode ++ typeCases ++ defaultCaseCode
+        val allCases = nullCaseCode ++ typeCases
         code"""|$value match {
                |  ${allCases.mkCode("\n")}
                |}""".stripMargin
@@ -142,13 +144,18 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
         val typeArgStr = if (typeArgs.isEmpty) jvm.Code.Empty else code"[${typeArgs.map(t => renderTree(t, ctx)).mkCode(", ")}]"
         val argStr = if (args.isEmpty) code"()" else code"(${args.map(a => renderTree(a, ctx)).mkCode(", ")})"
         code"$target.$methodName$typeArgStr$argStr"
-      case jvm.Lambda0(body)                        => code"() => $body"
-      case jvm.Lambda1(param, body)                 => code"$param => $body"
-      case jvm.Lambda2(param1, param2, body)        => code"($param1, $param2) => $body"
-      case jvm.ByName(body)                         => body // Scala: by-name is just the body expression
-      case jvm.TypedLambda1(paramType, param, body) =>
-        // Scala: (param: Type) => body
-        code"($param: ${renderTree(paramType, ctx)}) => $body"
+      case jvm.Return(expr) => code"return $expr"
+      case jvm.Throw(expr)  => code"throw $expr"
+      case jvm.Lambda(params, body) =>
+        val paramsCode = params match {
+          case Nil                                    => code"() => "
+          case List(jvm.LambdaParam(name, None))      => code"$name => "
+          case List(jvm.LambdaParam(name, Some(tpe))) => code"($name: $tpe) => "
+          case _ if params.forall(_.tpe.isEmpty)      => code"(${params.map(p => p.name.code).mkCode(", ")}) => "
+          case _                                      => code"(${params.map(p => p.tpe.fold(code"${p.name}")(t => code"${p.name}: $t")).mkCode(", ")}) => "
+        }
+        code"$paramsCode${renderBody(body)}"
+      case jvm.ByName(body)                          => renderBody(body) // Scala: by-name is just the body expression
       case jvm.FieldGetterRef(_, field)              => code"_.$field" // Scala uses underscore syntax
       case jvm.SelfNullary(name)                     => name.code // Scala: just the identifier (nullary methods don't need parens)
       case jvm.TypedFactoryCall(tpe, typeArgs, args) =>
@@ -185,21 +192,36 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
         val overrideMod = if (isOverride) "override " else ""
         val lazyMod = if (isLazy) "lazy " else ""
         withBody(code"$annotationsCode${overrideMod}${lazyMod}val $name: $tpe", body.toList)
-      case jvm.Method(annotations, comments, tparams, name, params, implicitParams, tpe, throws, body) =>
+      case jvm.Method(annotations, comments, tparams, name, params, implicitParams, tpe, throws, body, isOverride, _) =>
         val annotationsCode = renderAnnotations(annotations)
         val throwsCode = throws.map(th => code"@throws[$th]\n").mkCode("")
+        val commentCode = renderComments(comments).getOrElse(jvm.Code.Empty)
+        val overrideMod = if (isOverride) "override " else ""
 
-        withBody(
-          renderWithParams(
-            prefix = code"$throwsCode$annotationsCode${renderComments(comments).getOrElse(jvm.Code.Empty)}def $name${renderTparams(tparams, ctx)}",
-            params = params,
-            implicitParams = implicitParams,
-            isVal = false,
-            forceParenthesis = false,
-            ctx = ctx
-          ) ++ code": $tpe",
-          body
-        )
+        val signature = renderWithParams(
+          prefix = code"$commentCode$annotationsCode$throwsCode${overrideMod}def $name${renderTparams(tparams, ctx)}",
+          params = params,
+          implicitParams = implicitParams,
+          isVal = false,
+          forceParenthesis = false,
+          ctx = ctx
+        ) ++ code": $tpe"
+
+        body match {
+          case jvm.Body.Abstract => signature
+          case jvm.Body.Expr(expr) =>
+            val rendered = expr.render(this)
+            if (rendered.lines.length == 1)
+              code"$signature = ${rendered.asString}"
+            else {
+              val indentedBody = rendered.asString.linesIterator.map("  " + _).mkString("\n")
+              jvm.Code.Combined(List(signature, code" = {\n", jvm.Code.Str(indentedBody), code"\n}"))
+            }
+          case jvm.Body.Stmts(stmts) =>
+            val renderedBody = stmts.mkCode("\n").render(this)
+            val indentedBody = renderedBody.asString.linesIterator.map("  " + _).mkString("\n")
+            jvm.Code.Combined(List(signature, code" = {\n", jvm.Code.Str(indentedBody), code"\n}"))
+        }
       case enm: jvm.Enum =>
         val members = enm.values.map { case (name, expr) => name -> code"case object $name extends ${enm.tpe.name}($expr)" }
         val str = jvm.Ident("str")
@@ -483,6 +505,13 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
   def renderTparams(tparams: List[Type.Abstract], ctx: Ctx) =
     if (tparams.isEmpty) jvm.Code.Empty else code"[${tparams.map(t => renderTree(t, ctx)).mkCode(", ")}]"
 
+  /** Render a Body for lambda expressions */
+  def renderBody(body: jvm.Body): jvm.Code = body match {
+    case jvm.Body.Abstract     => jvm.Code.Empty
+    case jvm.Body.Expr(value)  => value
+    case jvm.Body.Stmts(stmts) => code"{ ${stmts.mkCode("; ")} }"
+  }
+
   def renderImplicitParams(implicitParams: List[jvm.Param[jvm.Type]], ctx: Ctx) =
     if (implicitParams.isEmpty) jvm.Code.Empty else code"(${dialect.implicitParamsPrefix}${implicitParams.map(p => renderTree(p, ctx)).mkCode(", ")})"
 
@@ -545,6 +574,37 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
       case Some(len) => code"new Array[$elementType]($len)"
       case None      => code"(n => new Array[$elementType](n))"
     }
+
+  // Scala: Array.ofDim[Byte](size)
+  override def newByteArray(size: jvm.Code): jvm.Code =
+    code"${TypesScala.Array}.ofDim[${TypesScala.Byte}]($size)"
+
+  // Scala: Array.fill(size)(factory)
+  override def arrayFill(size: jvm.Code, factory: jvm.Code, elementType: jvm.Type): jvm.Code =
+    code"${TypesScala.Array}.fill($size)($factory)"
+
+  // Scala annotations use classOf[T]
+  override def annotationClassRef(tpe: jvm.Type): jvm.Code =
+    code"classOf[$tpe]"
+
+  override def propertyGetterAccess(target: jvm.Code, name: jvm.Ident): jvm.Code =
+    code"$target.$name"
+
+  override def overrideValueAccess(target: jvm.Code, name: jvm.Ident): jvm.Code =
+    code"$target.$name"
+
+  override def nullaryMethodCall(target: jvm.Code, name: jvm.Ident): jvm.Code =
+    code"$target.$name"
+
+  override def arrayOf(elements: List[jvm.Code]): jvm.Code =
+    code"Array(${elements.mkCode(", ")})"
+
+  // Scala: == calls .equals() for structural equality
+  override def equals(left: jvm.Code, right: jvm.Code): jvm.Code =
+    code"($left == $right)"
+
+  override def notEquals(left: jvm.Code, right: jvm.Code): jvm.Code =
+    code"($left != $right)"
 
   override val isKeyword: Set[String] =
     Set(

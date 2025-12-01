@@ -38,7 +38,14 @@ object TypoInterval {
 
   given arrayPut: Put[Array[TypoInterval]] = {
     Put.Advanced.array[AnyRef](NonEmptyList.one("interval[]"), "interval")
-      .contramap(_.map(v => new PGInterval(v.years, v.months, v.days, v.hours, v.minutes, v.seconds)))
+      .contramap(_.map(v => new PGInterval(
+                              v.years,
+                              v.months,
+                              v.days,
+                              v.hours,
+                              v.minutes,
+                              v.seconds
+                            )))
   }
 
   given decoder: Decoder[TypoInterval] = Decoder.forProduct6[TypoInterval, Int, Int, Int, Int, Int, Double]("years", "months", "days", "hours", "minutes", "seconds")(TypoInterval.apply)(using Decoder.decodeInt, Decoder.decodeInt, Decoder.decodeInt, Decoder.decodeInt, Decoder.decodeInt, Decoder.decodeDouble)
@@ -64,5 +71,14 @@ object TypoInterval {
     }
   }
 
-  given put: Put[TypoInterval] = Put.Advanced.other[PGInterval](NonEmptyList.one("interval")).contramap(v => new PGInterval(v.years, v.months, v.days, v.hours, v.minutes, v.seconds))
+  given put: Put[TypoInterval] = {
+    Put.Advanced.other[PGInterval](NonEmptyList.one("interval")).contramap(v => new PGInterval(
+      v.years,
+      v.months,
+      v.days,
+      v.hours,
+      v.minutes,
+      v.seconds
+    ))
+  }
 }

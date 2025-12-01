@@ -27,8 +27,8 @@ public record TypoUnknownCitext(@JsonValue String value) {
     PgText.textString.contramap(v -> v.value().toString());
 
   static public PgType<TypoUnknownCitext> pgType =
-    PgTypes.text.bimap(v -> new TypoUnknownCitext(v), v -> v.value()).renamed("citext");
+    PgTypes.text.bimap((String v) -> new TypoUnknownCitext(v), (TypoUnknownCitext v) -> v.value()).renamed("citext");
 
   static public PgType<TypoUnknownCitext[]> pgTypeArray =
-    TypoUnknownCitext.pgType.array(PgRead.massageJdbcArrayTo(String[].class).map(xs -> arrayMap.map(xs, v -> new TypoUnknownCitext(v), TypoUnknownCitext.class)), PgWrite.<String>passObjectToJdbc().array(TypoUnknownCitext.pgType.typename().<String>as()).contramap(xs -> arrayMap.map(xs, (TypoUnknownCitext v) -> v.value(), String.class)));
+    TypoUnknownCitext.pgType.array(PgRead.massageJdbcArrayTo(String[].class).map((String[] xs) -> arrayMap.map(xs, (String v) -> new TypoUnknownCitext(v), TypoUnknownCitext.class)), PgWrite.<String>passObjectToJdbc().array(TypoUnknownCitext.pgType.typename().<String>as()).contramap((TypoUnknownCitext[] xs) -> arrayMap.map(xs, (TypoUnknownCitext v) -> v.value(), String.class)));
 }

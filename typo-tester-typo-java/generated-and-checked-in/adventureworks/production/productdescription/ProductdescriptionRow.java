@@ -12,7 +12,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple4;
 
 /** Table: production.productdescription
   * Product descriptions in several languages.
@@ -52,7 +51,7 @@ public record ProductdescriptionRow(
     return new ProductdescriptionRow(productdescriptionid, description, rowguid, modifieddate);
   };
 
-  static RowParser<ProductdescriptionRow> _rowParser = RowParsers.of(ProductdescriptionId.pgType, PgTypes.text, TypoUUID.pgType, TypoLocalDateTime.pgType, ProductdescriptionRow::new, row -> new Tuple4<>(row.productdescriptionid(), row.description(), row.rowguid(), row.modifieddate()));;
+  static RowParser<ProductdescriptionRow> _rowParser = RowParsers.of(ProductdescriptionId.pgType, PgTypes.text, TypoUUID.pgType, TypoLocalDateTime.pgType, ProductdescriptionRow::new, row -> new Object[]{row.productdescriptionid(), row.description(), row.rowguid(), row.modifieddate()});;
 
   static public PgText<ProductdescriptionRow> pgText =
     PgText.from(_rowParser);

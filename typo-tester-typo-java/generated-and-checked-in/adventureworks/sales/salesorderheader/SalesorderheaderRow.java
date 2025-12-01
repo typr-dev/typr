@@ -25,7 +25,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple25;
 
 /** Table: sales.salesorderheader
   * General sales order information.
@@ -292,7 +291,7 @@ public record SalesorderheaderRow(
     return new SalesorderheaderRow(salesorderid, revisionnumber, orderdate, duedate, shipdate, status, onlineorderflag, purchaseordernumber, accountnumber, customerid, salespersonid, territoryid, billtoaddressid, shiptoaddressid, shipmethodid, creditcardid, creditcardapprovalcode, currencyrateid, subtotal, taxamt, freight, totaldue, comment, rowguid, modifieddate);
   };
 
-  static RowParser<SalesorderheaderRow> _rowParser = RowParsers.of(SalesorderheaderId.pgType, TypoShort.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoShort.pgType, Flag.pgType, OrderNumber.pgType.opt(), AccountNumber.pgType.opt(), CustomerId.pgType, BusinessentityId.pgType.opt(), SalesterritoryId.pgType.opt(), AddressId.pgType, AddressId.pgType, ShipmethodId.pgType, CustomCreditcardId.pgType.opt(), PgTypes.text.opt(), CurrencyrateId.pgType.opt(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric.opt(), PgTypes.text.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SalesorderheaderRow::new, row -> new Tuple25<>(row.salesorderid(), row.revisionnumber(), row.orderdate(), row.duedate(), row.shipdate(), row.status(), row.onlineorderflag(), row.purchaseordernumber(), row.accountnumber(), row.customerid(), row.salespersonid(), row.territoryid(), row.billtoaddressid(), row.shiptoaddressid(), row.shipmethodid(), row.creditcardid(), row.creditcardapprovalcode(), row.currencyrateid(), row.subtotal(), row.taxamt(), row.freight(), row.totaldue(), row.comment(), row.rowguid(), row.modifieddate()));;
+  static RowParser<SalesorderheaderRow> _rowParser = RowParsers.of(SalesorderheaderId.pgType, TypoShort.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoShort.pgType, Flag.pgType, OrderNumber.pgType.opt(), AccountNumber.pgType.opt(), CustomerId.pgType, BusinessentityId.pgType.opt(), SalesterritoryId.pgType.opt(), AddressId.pgType, AddressId.pgType, ShipmethodId.pgType, CustomCreditcardId.pgType.opt(), PgTypes.text.opt(), CurrencyrateId.pgType.opt(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric.opt(), PgTypes.text.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SalesorderheaderRow::new, row -> new Object[]{row.salesorderid(), row.revisionnumber(), row.orderdate(), row.duedate(), row.shipdate(), row.status(), row.onlineorderflag(), row.purchaseordernumber(), row.accountnumber(), row.customerid(), row.salespersonid(), row.territoryid(), row.billtoaddressid(), row.shiptoaddressid(), row.shipmethodid(), row.creditcardid(), row.creditcardapprovalcode(), row.currencyrateid(), row.subtotal(), row.taxamt(), row.freight(), row.totaldue(), row.comment(), row.rowguid(), row.modifieddate()});;
 
   static public PgText<SalesorderheaderRow> pgText =
     PgText.from(_rowParser);

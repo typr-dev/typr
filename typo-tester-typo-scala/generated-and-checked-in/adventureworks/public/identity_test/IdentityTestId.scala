@@ -5,12 +5,13 @@
  */
 package adventureworks.public.identity_test
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
 
 /** Type for the primary key of table `public.identity-test` */
-case class IdentityTestId(value: /* max 250 chars */ String) extends scala.AnyVal
+case class IdentityTestId(@JsonValue value: /* max 250 chars */ String) extends scala.AnyVal
 
 object IdentityTestId {
   given bijection: Bijection[IdentityTestId, /* max 250 chars */ String] = Bijection.apply[IdentityTestId, /* max 250 chars */ String](_.value)(IdentityTestId.apply)

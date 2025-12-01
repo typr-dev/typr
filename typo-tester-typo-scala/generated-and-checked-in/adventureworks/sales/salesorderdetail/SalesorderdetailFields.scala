@@ -71,7 +71,7 @@ object SalesorderdetailFields {
 
     override lazy val fields: SalesorderdetailFields = {
       new SalesorderdetailFields {
-        def salesorderid: IdField[SalesorderheaderId, SalesorderdetailRow] = {
+        override def salesorderid: IdField[SalesorderheaderId, SalesorderdetailRow] = {
           new IdField[SalesorderheaderId, SalesorderdetailRow](
             _path,
             "salesorderid",
@@ -82,7 +82,7 @@ object SalesorderdetailFields {
             SalesorderheaderId.pgType
           )
         }
-        def salesorderdetailid: IdField[Integer, SalesorderdetailRow] = {
+        override def salesorderdetailid: IdField[Integer, SalesorderdetailRow] = {
           new IdField[Integer, SalesorderdetailRow](
             _path,
             "salesorderdetailid",
@@ -93,7 +93,7 @@ object SalesorderdetailFields {
             PgTypes.int4
           )
         }
-        def carriertrackingnumber: OptField[/* max 25 chars */ String, SalesorderdetailRow] = {
+        override def carriertrackingnumber: OptField[/* max 25 chars */ String, SalesorderdetailRow] = {
           new OptField[/* max 25 chars */ String, SalesorderdetailRow](
             _path,
             "carriertrackingnumber",
@@ -104,7 +104,7 @@ object SalesorderdetailFields {
             PgTypes.text
           )
         }
-        def orderqty: Field[TypoShort, SalesorderdetailRow] = {
+        override def orderqty: Field[TypoShort, SalesorderdetailRow] = {
           new Field[TypoShort, SalesorderdetailRow](
             _path,
             "orderqty",
@@ -115,7 +115,7 @@ object SalesorderdetailFields {
             TypoShort.pgType
           )
         }
-        def productid: Field[ProductId, SalesorderdetailRow] = {
+        override def productid: Field[ProductId, SalesorderdetailRow] = {
           new Field[ProductId, SalesorderdetailRow](
             _path,
             "productid",
@@ -126,7 +126,7 @@ object SalesorderdetailFields {
             ProductId.pgType
           )
         }
-        def specialofferid: Field[SpecialofferId, SalesorderdetailRow] = {
+        override def specialofferid: Field[SpecialofferId, SalesorderdetailRow] = {
           new Field[SpecialofferId, SalesorderdetailRow](
             _path,
             "specialofferid",
@@ -137,7 +137,7 @@ object SalesorderdetailFields {
             SpecialofferId.pgType
           )
         }
-        def unitprice: Field[java.math.BigDecimal, SalesorderdetailRow] = {
+        override def unitprice: Field[java.math.BigDecimal, SalesorderdetailRow] = {
           new Field[java.math.BigDecimal, SalesorderdetailRow](
             _path,
             "unitprice",
@@ -148,7 +148,7 @@ object SalesorderdetailFields {
             PgTypes.numeric
           )
         }
-        def unitpricediscount: Field[java.math.BigDecimal, SalesorderdetailRow] = {
+        override def unitpricediscount: Field[java.math.BigDecimal, SalesorderdetailRow] = {
           new Field[java.math.BigDecimal, SalesorderdetailRow](
             _path,
             "unitpricediscount",
@@ -159,7 +159,7 @@ object SalesorderdetailFields {
             PgTypes.numeric
           )
         }
-        def rowguid: Field[TypoUUID, SalesorderdetailRow] = {
+        override def rowguid: Field[TypoUUID, SalesorderdetailRow] = {
           new Field[TypoUUID, SalesorderdetailRow](
             _path,
             "rowguid",
@@ -170,7 +170,7 @@ object SalesorderdetailFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, SalesorderdetailRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, SalesorderdetailRow] = {
           new Field[TypoLocalDateTime, SalesorderdetailRow](
             _path,
             "modifieddate",
@@ -186,7 +186,7 @@ object SalesorderdetailFields {
 
     override lazy val columns: java.util.List[FieldLike[?, SalesorderdetailRow]] = java.util.List.of(this.fields.salesorderid, this.fields.salesorderdetailid, this.fields.carriertrackingnumber, this.fields.orderqty, this.fields.productid, this.fields.specialofferid, this.fields.unitprice, this.fields.unitpricediscount, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[SalesorderdetailFields, SalesorderdetailRow] = new Impl(java.util.List.of())

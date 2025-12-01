@@ -13,7 +13,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple5
 
 /** Table: humanresources.employeepayhistory
  * Employee pay history.
@@ -53,15 +52,7 @@ case class EmployeepayhistoryRow(
 }
 
 object EmployeepayhistoryRow {
-  val `_rowParser`: RowParser[EmployeepayhistoryRow] = {
-    RowParsers.of(BusinessentityId.pgType, TypoLocalDateTime.pgType, PgTypes.numeric, TypoShort.pgType, TypoLocalDateTime.pgType, EmployeepayhistoryRow.apply, row => new Tuple5(
-      row.businessentityid,
-      row.ratechangedate,
-      row.rate,
-      row.payfrequency,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[EmployeepayhistoryRow] = RowParsers.of(BusinessentityId.pgType, TypoLocalDateTime.pgType, PgTypes.numeric, TypoShort.pgType, TypoLocalDateTime.pgType, EmployeepayhistoryRow.apply, row => Array(row.businessentityid, row.ratechangedate, row.rate, row.payfrequency, row.modifieddate))
 
   def apply(
     compositeId: EmployeepayhistoryId,

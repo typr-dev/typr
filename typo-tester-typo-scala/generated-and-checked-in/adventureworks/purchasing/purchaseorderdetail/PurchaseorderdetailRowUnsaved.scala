@@ -68,25 +68,5 @@ case class PurchaseorderdetailRowUnsaved(
 }
 
 object PurchaseorderdetailRowUnsaved {
-  given pgText: PgText[PurchaseorderdetailRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      PurchaseorderheaderId.pgType.pgText.unsafeEncode(row.purchaseorderid, sb);
-      sb.append(PgText.DELIMETER);
-      TypoLocalDateTime.pgType.pgText.unsafeEncode(row.duedate, sb);
-      sb.append(PgText.DELIMETER);
-      TypoShort.pgType.pgText.unsafeEncode(row.orderqty, sb);
-      sb.append(PgText.DELIMETER);
-      ProductId.pgType.pgText.unsafeEncode(row.productid, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.numeric.pgText.unsafeEncode(row.unitprice, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.numeric.pgText.unsafeEncode(row.receivedqty, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.numeric.pgText.unsafeEncode(row.rejectedqty, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using PgTypes.int4.pgText).unsafeEncode(row.purchaseorderdetailid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[PurchaseorderdetailRowUnsaved] = PgText.instance((row, sb) => { PurchaseorderheaderId.pgType.pgText.unsafeEncode(row.purchaseorderid, sb); sb.append(PgText.DELIMETER); TypoLocalDateTime.pgType.pgText.unsafeEncode(row.duedate, sb); sb.append(PgText.DELIMETER); TypoShort.pgType.pgText.unsafeEncode(row.orderqty, sb); sb.append(PgText.DELIMETER); ProductId.pgType.pgText.unsafeEncode(row.productid, sb); sb.append(PgText.DELIMETER); PgTypes.numeric.pgText.unsafeEncode(row.unitprice, sb); sb.append(PgText.DELIMETER); PgTypes.numeric.pgText.unsafeEncode(row.receivedqty, sb); sb.append(PgText.DELIMETER); PgTypes.numeric.pgText.unsafeEncode(row.rejectedqty, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.int4.pgText).unsafeEncode(row.purchaseorderdetailid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

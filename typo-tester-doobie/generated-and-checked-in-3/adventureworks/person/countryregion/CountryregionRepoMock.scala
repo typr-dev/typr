@@ -23,13 +23,13 @@ case class CountryregionRepoMock(
   toRow: CountryregionRowUnsaved => CountryregionRow,
   map: scala.collection.mutable.Map[CountryregionId, CountryregionRow] = scala.collection.mutable.Map.empty[CountryregionId, CountryregionRow]
 ) extends CountryregionRepo {
-  def delete: DeleteBuilder[CountryregionFields, CountryregionRow] = DeleteBuilderMock(DeleteParams.empty, CountryregionFields.structure, map)
+  override def delete: DeleteBuilder[CountryregionFields, CountryregionRow] = DeleteBuilderMock(DeleteParams.empty, CountryregionFields.structure, map)
 
-  def deleteById(countryregioncode: CountryregionId): ConnectionIO[Boolean] = delay(map.remove(countryregioncode).isDefined)
+  override def deleteById(countryregioncode: CountryregionId): ConnectionIO[Boolean] = delay(map.remove(countryregioncode).isDefined)
 
-  def deleteByIds(countryregioncodes: Array[CountryregionId]): ConnectionIO[Int] = delay(countryregioncodes.map(id => map.remove(id)).count(_.isDefined))
+  override def deleteByIds(countryregioncodes: Array[CountryregionId]): ConnectionIO[Int] = delay(countryregioncodes.map(id => map.remove(id)).count(_.isDefined))
 
-  def insert(unsaved: CountryregionRow): ConnectionIO[CountryregionRow] = {
+  override def insert(unsaved: CountryregionRow): ConnectionIO[CountryregionRow] = {
   delay {
     val _ = if (map.contains(unsaved.countryregioncode))
       sys.error(s"id ${unsaved.countryregioncode} already exists")
@@ -40,9 +40,9 @@ case class CountryregionRepoMock(
   }
   }
 
-  def insert(unsaved: CountryregionRowUnsaved): ConnectionIO[CountryregionRow] = insert(toRow(unsaved))
+  override def insert(unsaved: CountryregionRowUnsaved): ConnectionIO[CountryregionRow] = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, CountryregionRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = {
@@ -57,7 +57,7 @@ case class CountryregionRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, CountryregionRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = {
@@ -72,24 +72,24 @@ case class CountryregionRepoMock(
     }
   }
 
-  def select: SelectBuilder[CountryregionFields, CountryregionRow] = SelectBuilderMock(CountryregionFields.structure, delay(map.values.toList), SelectParams.empty)
+  override def select: SelectBuilder[CountryregionFields, CountryregionRow] = SelectBuilderMock(CountryregionFields.structure, delay(map.values.toList), SelectParams.empty)
 
-  def selectAll: Stream[ConnectionIO, CountryregionRow] = Stream.emits(map.values.toList)
+  override def selectAll: Stream[ConnectionIO, CountryregionRow] = Stream.emits(map.values.toList)
 
-  def selectById(countryregioncode: CountryregionId): ConnectionIO[Option[CountryregionRow]] = delay(map.get(countryregioncode))
+  override def selectById(countryregioncode: CountryregionId): ConnectionIO[Option[CountryregionRow]] = delay(map.get(countryregioncode))
 
-  def selectByIds(countryregioncodes: Array[CountryregionId]): Stream[ConnectionIO, CountryregionRow] = Stream.emits(countryregioncodes.flatMap(map.get).toList)
+  override def selectByIds(countryregioncodes: Array[CountryregionId]): Stream[ConnectionIO, CountryregionRow] = Stream.emits(countryregioncodes.flatMap(map.get).toList)
 
-  def selectByIdsTracked(countryregioncodes: Array[CountryregionId]): ConnectionIO[Map[CountryregionId, CountryregionRow]] = {
+  override def selectByIdsTracked(countryregioncodes: Array[CountryregionId]): ConnectionIO[Map[CountryregionId, CountryregionRow]] = {
     selectByIds(countryregioncodes).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.countryregioncode, x)).toMap
       countryregioncodes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[CountryregionFields, CountryregionRow] = UpdateBuilderMock(UpdateParams.empty, CountryregionFields.structure, map)
+  override def update: UpdateBuilder[CountryregionFields, CountryregionRow] = UpdateBuilderMock(UpdateParams.empty, CountryregionFields.structure, map)
 
-  def update(row: CountryregionRow): ConnectionIO[Option[CountryregionRow]] = {
+  override def update(row: CountryregionRow): ConnectionIO[Option[CountryregionRow]] = {
     delay {
       map.get(row.countryregioncode).map { _ =>
         map.put(row.countryregioncode, row): @nowarn
@@ -98,14 +98,14 @@ case class CountryregionRepoMock(
     }
   }
 
-  def upsert(unsaved: CountryregionRow): ConnectionIO[CountryregionRow] = {
+  override def upsert(unsaved: CountryregionRow): ConnectionIO[CountryregionRow] = {
     delay {
       map.put(unsaved.countryregioncode, unsaved): @nowarn
       unsaved
     }
   }
 
-  def upsertBatch(unsaved: List[CountryregionRow]): Stream[ConnectionIO, CountryregionRow] = {
+  override def upsertBatch(unsaved: List[CountryregionRow]): Stream[ConnectionIO, CountryregionRow] = {
     Stream.emits {
       unsaved.map { row =>
         map += (row.countryregioncode -> row)
@@ -115,7 +115,7 @@ case class CountryregionRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, CountryregionRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

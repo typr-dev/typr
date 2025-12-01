@@ -48,7 +48,7 @@ object TypoLocalDateTime {
         ps.getConnection.createArrayOf(
           "timestamp",
           v.map { vv =>
-            vv.value.toString
+            vv.value.toString()
           }
         )
       ),
@@ -80,8 +80,8 @@ object TypoLocalDateTime {
 
   implicit lazy val pgText: Text[TypoLocalDateTime] = {
     new Text[TypoLocalDateTime] {
-      override def unsafeEncode(v: TypoLocalDateTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value.toString, sb)
-      override def unsafeArrayEncode(v: TypoLocalDateTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value.toString, sb)
+      override def unsafeEncode(v: TypoLocalDateTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value.toString(), sb)
+      override def unsafeArrayEncode(v: TypoLocalDateTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value.toString(), sb)
     }
   }
 
@@ -92,7 +92,7 @@ object TypoLocalDateTime {
       (ps, i, v) => {
         ps.setObject(
           i,
-          v.value.toString
+          v.value.toString()
         )
       },
       "timestamp"

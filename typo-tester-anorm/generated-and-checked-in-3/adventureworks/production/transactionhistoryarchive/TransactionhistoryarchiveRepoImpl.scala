@@ -23,18 +23,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class TransactionhistoryarchiveRepoImpl extends TransactionhistoryarchiveRepo {
-  def delete: DeleteBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = DeleteBuilder.of(""""production"."transactionhistoryarchive"""", TransactionhistoryarchiveFields.structure, TransactionhistoryarchiveRow.rowParser(1).*)
+  override def delete: DeleteBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = DeleteBuilder.of(""""production"."transactionhistoryarchive"""", TransactionhistoryarchiveFields.structure, TransactionhistoryarchiveRow.rowParser(1).*)
 
-  def deleteById(transactionid: TransactionhistoryarchiveId)(using c: Connection): Boolean = SQL"""delete from "production"."transactionhistoryarchive" where "transactionid" = ${ParameterValue(transactionid, null, TransactionhistoryarchiveId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(transactionid: TransactionhistoryarchiveId)(using c: Connection): Boolean = SQL"""delete from "production"."transactionhistoryarchive" where "transactionid" = ${ParameterValue(transactionid, null, TransactionhistoryarchiveId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(transactionids: Array[TransactionhistoryarchiveId])(using c: Connection): Int = {
+  override def deleteByIds(transactionids: Array[TransactionhistoryarchiveId])(using c: Connection): Int = {
     SQL"""delete
     from "production"."transactionhistoryarchive"
     where "transactionid" = ANY(${ParameterValue(transactionids, null, TransactionhistoryarchiveId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: TransactionhistoryarchiveRow)(using c: Connection): TransactionhistoryarchiveRow = {
+  override def insert(unsaved: TransactionhistoryarchiveRow)(using c: Connection): TransactionhistoryarchiveRow = {
   SQL"""insert into "production"."transactionhistoryarchive"("transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate")
     values (${ParameterValue(unsaved.transactionid, null, TransactionhistoryarchiveId.toStatement)}::int4, ${ParameterValue(unsaved.productid, null, ToStatement.intToStatement)}::int4, ${ParameterValue(unsaved.referenceorderid, null, ToStatement.intToStatement)}::int4, ${ParameterValue(unsaved.referenceorderlineid, null, ToStatement.intToStatement)}::int4, ${ParameterValue(unsaved.transactiondate, null, TypoLocalDateTime.toStatement)}::timestamp, ${ParameterValue(unsaved.transactiontype, null, ToStatement.stringToStatement)}::bpchar, ${ParameterValue(unsaved.quantity, null, ToStatement.intToStatement)}::int4, ${ParameterValue(unsaved.actualcost, null, ToStatement.scalaBigDecimalToStatement)}::numeric, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text
@@ -42,7 +42,7 @@ class TransactionhistoryarchiveRepoImpl extends TransactionhistoryarchiveRepo {
     .executeInsert(TransactionhistoryarchiveRow.rowParser(1).single)
   }
 
-  def insert(unsaved: TransactionhistoryarchiveRowUnsaved)(using c: Connection): TransactionhistoryarchiveRow = {
+  override def insert(unsaved: TransactionhistoryarchiveRowUnsaved)(using c: Connection): TransactionhistoryarchiveRow = {
     val namedParameters = List(
       Some((NamedParameter("transactionid", ParameterValue(unsaved.transactionid, null, TransactionhistoryarchiveId.toStatement)), "::int4")),
       Some((NamedParameter("productid", ParameterValue(unsaved.productid, null, ToStatement.intToStatement)), "::int4")),
@@ -79,47 +79,47 @@ class TransactionhistoryarchiveRepoImpl extends TransactionhistoryarchiveRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[TransactionhistoryarchiveRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "production"."transactionhistoryarchive"("transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate") FROM STDIN""", batchSize, unsaved)(using TransactionhistoryarchiveRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[TransactionhistoryarchiveRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "production"."transactionhistoryarchive"("transactionid", "productid", "referenceorderid", "transactiontype", "quantity", "actualcost", "referenceorderlineid", "transactiondate", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using TransactionhistoryarchiveRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = SelectBuilder.of(""""production"."transactionhistoryarchive"""", TransactionhistoryarchiveFields.structure, TransactionhistoryarchiveRow.rowParser)
+  override def select: SelectBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = SelectBuilder.of(""""production"."transactionhistoryarchive"""", TransactionhistoryarchiveFields.structure, TransactionhistoryarchiveRow.rowParser)
 
-  def selectAll(using c: Connection): List[TransactionhistoryarchiveRow] = {
+  override def selectAll(using c: Connection): List[TransactionhistoryarchiveRow] = {
     SQL"""select "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text
     from "production"."transactionhistoryarchive"
     """.as(TransactionhistoryarchiveRow.rowParser(1).*)
   }
 
-  def selectById(transactionid: TransactionhistoryarchiveId)(using c: Connection): Option[TransactionhistoryarchiveRow] = {
+  override def selectById(transactionid: TransactionhistoryarchiveId)(using c: Connection): Option[TransactionhistoryarchiveRow] = {
     SQL"""select "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text
     from "production"."transactionhistoryarchive"
     where "transactionid" = ${ParameterValue(transactionid, null, TransactionhistoryarchiveId.toStatement)}
     """.as(TransactionhistoryarchiveRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(transactionids: Array[TransactionhistoryarchiveId])(using c: Connection): List[TransactionhistoryarchiveRow] = {
+  override def selectByIds(transactionids: Array[TransactionhistoryarchiveId])(using c: Connection): List[TransactionhistoryarchiveRow] = {
     SQL"""select "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text
     from "production"."transactionhistoryarchive"
     where "transactionid" = ANY(${ParameterValue(transactionids, null, TransactionhistoryarchiveId.arrayToStatement)})
     """.as(TransactionhistoryarchiveRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(transactionids: Array[TransactionhistoryarchiveId])(using c: Connection): Map[TransactionhistoryarchiveId, TransactionhistoryarchiveRow] = {
+  override def selectByIdsTracked(transactionids: Array[TransactionhistoryarchiveId])(using c: Connection): Map[TransactionhistoryarchiveId, TransactionhistoryarchiveRow] = {
     val byId = selectByIds(transactionids).view.map(x => (x.transactionid, x)).toMap
     transactionids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = UpdateBuilder.of(""""production"."transactionhistoryarchive"""", TransactionhistoryarchiveFields.structure, TransactionhistoryarchiveRow.rowParser(1).*)
+  override def update: UpdateBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = UpdateBuilder.of(""""production"."transactionhistoryarchive"""", TransactionhistoryarchiveFields.structure, TransactionhistoryarchiveRow.rowParser(1).*)
 
-  def update(row: TransactionhistoryarchiveRow)(using c: Connection): Option[TransactionhistoryarchiveRow] = {
+  override def update(row: TransactionhistoryarchiveRow)(using c: Connection): Option[TransactionhistoryarchiveRow] = {
     val transactionid = row.transactionid
     SQL"""update "production"."transactionhistoryarchive"
     set "productid" = ${ParameterValue(row.productid, null, ToStatement.intToStatement)}::int4,
@@ -135,7 +135,7 @@ class TransactionhistoryarchiveRepoImpl extends TransactionhistoryarchiveRepo {
     """.executeInsert(TransactionhistoryarchiveRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: TransactionhistoryarchiveRow)(using c: Connection): TransactionhistoryarchiveRow = {
+  override def upsert(unsaved: TransactionhistoryarchiveRow)(using c: Connection): TransactionhistoryarchiveRow = {
   SQL"""insert into "production"."transactionhistoryarchive"("transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate")
     values (
       ${ParameterValue(unsaved.transactionid, null, TransactionhistoryarchiveId.toStatement)}::int4,
@@ -163,7 +163,7 @@ class TransactionhistoryarchiveRepoImpl extends TransactionhistoryarchiveRepo {
     .executeInsert(TransactionhistoryarchiveRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[TransactionhistoryarchiveRow])(using c: Connection): List[TransactionhistoryarchiveRow] = {
+  override def upsertBatch(unsaved: Iterable[TransactionhistoryarchiveRow])(using c: Connection): List[TransactionhistoryarchiveRow] = {
     def toNamedParameter(row: TransactionhistoryarchiveRow): List[NamedParameter] = List(
       NamedParameter("transactionid", ParameterValue(row.transactionid, null, TransactionhistoryarchiveId.toStatement)),
       NamedParameter("productid", ParameterValue(row.productid, null, ToStatement.intToStatement)),
@@ -175,6 +175,7 @@ class TransactionhistoryarchiveRepoImpl extends TransactionhistoryarchiveRepo {
       NamedParameter("actualcost", ParameterValue(row.actualcost, null, ToStatement.scalaBigDecimalToStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -202,7 +203,7 @@ class TransactionhistoryarchiveRepoImpl extends TransactionhistoryarchiveRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[TransactionhistoryarchiveRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

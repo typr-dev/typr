@@ -13,7 +13,6 @@ import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple10
 
 /** View: humanresources.vemployeedepartment */
 case class VemployeedepartmentViewRow(
@@ -40,18 +39,5 @@ case class VemployeedepartmentViewRow(
 )
 
 object VemployeedepartmentViewRow {
-  val `_rowParser`: RowParser[VemployeedepartmentViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), /* user-picked */ FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text.opt(), PgTypes.text, Name.pgType, Name.pgType, TypoLocalDate.pgType, VemployeedepartmentViewRow.apply, row => new Tuple10(
-      row.businessentityid,
-      row.title,
-      row.firstname,
-      row.middlename,
-      row.lastname,
-      row.suffix,
-      row.jobtitle,
-      row.department,
-      row.groupname,
-      row.startdate
-    ))
-  }
+  val `_rowParser`: RowParser[VemployeedepartmentViewRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), /* user-picked */ FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text.opt(), PgTypes.text, Name.pgType, Name.pgType, TypoLocalDate.pgType, VemployeedepartmentViewRow.apply, row => Array(row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.jobtitle, row.department, row.groupname, row.startdate))
 }

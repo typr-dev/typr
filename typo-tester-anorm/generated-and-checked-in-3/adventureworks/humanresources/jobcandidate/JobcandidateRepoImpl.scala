@@ -25,18 +25,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class JobcandidateRepoImpl extends JobcandidateRepo {
-  def delete: DeleteBuilder[JobcandidateFields, JobcandidateRow] = DeleteBuilder.of(""""humanresources"."jobcandidate"""", JobcandidateFields.structure, JobcandidateRow.rowParser(1).*)
+  override def delete: DeleteBuilder[JobcandidateFields, JobcandidateRow] = DeleteBuilder.of(""""humanresources"."jobcandidate"""", JobcandidateFields.structure, JobcandidateRow.rowParser(1).*)
 
-  def deleteById(jobcandidateid: JobcandidateId)(using c: Connection): Boolean = SQL"""delete from "humanresources"."jobcandidate" where "jobcandidateid" = ${ParameterValue(jobcandidateid, null, JobcandidateId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(jobcandidateid: JobcandidateId)(using c: Connection): Boolean = SQL"""delete from "humanresources"."jobcandidate" where "jobcandidateid" = ${ParameterValue(jobcandidateid, null, JobcandidateId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(jobcandidateids: Array[JobcandidateId])(using c: Connection): Int = {
+  override def deleteByIds(jobcandidateids: Array[JobcandidateId])(using c: Connection): Int = {
     SQL"""delete
     from "humanresources"."jobcandidate"
     where "jobcandidateid" = ANY(${ParameterValue(jobcandidateids, null, JobcandidateId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: JobcandidateRow)(using c: Connection): JobcandidateRow = {
+  override def insert(unsaved: JobcandidateRow)(using c: Connection): JobcandidateRow = {
   SQL"""insert into "humanresources"."jobcandidate"("jobcandidateid", "businessentityid", "resume", "modifieddate")
     values (${ParameterValue(unsaved.jobcandidateid, null, JobcandidateId.toStatement)}::int4, ${ParameterValue(unsaved.businessentityid, null, ToStatement.optionToStatement(using BusinessentityId.toStatement, BusinessentityId.parameterMetadata))}::int4, ${ParameterValue(unsaved.resume, null, ToStatement.optionToStatement(using TypoXml.toStatement, TypoXml.parameterMetadata))}::xml, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "jobcandidateid", "businessentityid", "resume", "modifieddate"::text
@@ -44,7 +44,7 @@ class JobcandidateRepoImpl extends JobcandidateRepo {
     .executeInsert(JobcandidateRow.rowParser(1).single)
   }
 
-  def insert(unsaved: JobcandidateRowUnsaved)(using c: Connection): JobcandidateRow = {
+  override def insert(unsaved: JobcandidateRowUnsaved)(using c: Connection): JobcandidateRow = {
     val namedParameters = List(
       Some((NamedParameter("businessentityid", ParameterValue(unsaved.businessentityid, null, ToStatement.optionToStatement(using BusinessentityId.toStatement, BusinessentityId.parameterMetadata))), "::int4")),
       Some((NamedParameter("resume", ParameterValue(unsaved.resume, null, ToStatement.optionToStatement(using TypoXml.toStatement, TypoXml.parameterMetadata))), "::xml")),
@@ -73,47 +73,47 @@ class JobcandidateRepoImpl extends JobcandidateRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[JobcandidateRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "humanresources"."jobcandidate"("jobcandidateid", "businessentityid", "resume", "modifieddate") FROM STDIN""", batchSize, unsaved)(using JobcandidateRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[JobcandidateRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "humanresources"."jobcandidate"("businessentityid", "resume", "jobcandidateid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using JobcandidateRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[JobcandidateFields, JobcandidateRow] = SelectBuilder.of(""""humanresources"."jobcandidate"""", JobcandidateFields.structure, JobcandidateRow.rowParser)
+  override def select: SelectBuilder[JobcandidateFields, JobcandidateRow] = SelectBuilder.of(""""humanresources"."jobcandidate"""", JobcandidateFields.structure, JobcandidateRow.rowParser)
 
-  def selectAll(using c: Connection): List[JobcandidateRow] = {
+  override def selectAll(using c: Connection): List[JobcandidateRow] = {
     SQL"""select "jobcandidateid", "businessentityid", "resume", "modifieddate"::text
     from "humanresources"."jobcandidate"
     """.as(JobcandidateRow.rowParser(1).*)
   }
 
-  def selectById(jobcandidateid: JobcandidateId)(using c: Connection): Option[JobcandidateRow] = {
+  override def selectById(jobcandidateid: JobcandidateId)(using c: Connection): Option[JobcandidateRow] = {
     SQL"""select "jobcandidateid", "businessentityid", "resume", "modifieddate"::text
     from "humanresources"."jobcandidate"
     where "jobcandidateid" = ${ParameterValue(jobcandidateid, null, JobcandidateId.toStatement)}
     """.as(JobcandidateRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(jobcandidateids: Array[JobcandidateId])(using c: Connection): List[JobcandidateRow] = {
+  override def selectByIds(jobcandidateids: Array[JobcandidateId])(using c: Connection): List[JobcandidateRow] = {
     SQL"""select "jobcandidateid", "businessentityid", "resume", "modifieddate"::text
     from "humanresources"."jobcandidate"
     where "jobcandidateid" = ANY(${ParameterValue(jobcandidateids, null, JobcandidateId.arrayToStatement)})
     """.as(JobcandidateRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(jobcandidateids: Array[JobcandidateId])(using c: Connection): Map[JobcandidateId, JobcandidateRow] = {
+  override def selectByIdsTracked(jobcandidateids: Array[JobcandidateId])(using c: Connection): Map[JobcandidateId, JobcandidateRow] = {
     val byId = selectByIds(jobcandidateids).view.map(x => (x.jobcandidateid, x)).toMap
     jobcandidateids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[JobcandidateFields, JobcandidateRow] = UpdateBuilder.of(""""humanresources"."jobcandidate"""", JobcandidateFields.structure, JobcandidateRow.rowParser(1).*)
+  override def update: UpdateBuilder[JobcandidateFields, JobcandidateRow] = UpdateBuilder.of(""""humanresources"."jobcandidate"""", JobcandidateFields.structure, JobcandidateRow.rowParser(1).*)
 
-  def update(row: JobcandidateRow)(using c: Connection): Option[JobcandidateRow] = {
+  override def update(row: JobcandidateRow)(using c: Connection): Option[JobcandidateRow] = {
     val jobcandidateid = row.jobcandidateid
     SQL"""update "humanresources"."jobcandidate"
     set "businessentityid" = ${ParameterValue(row.businessentityid, null, ToStatement.optionToStatement(using BusinessentityId.toStatement, BusinessentityId.parameterMetadata))}::int4,
@@ -124,7 +124,7 @@ class JobcandidateRepoImpl extends JobcandidateRepo {
     """.executeInsert(JobcandidateRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: JobcandidateRow)(using c: Connection): JobcandidateRow = {
+  override def upsert(unsaved: JobcandidateRow)(using c: Connection): JobcandidateRow = {
   SQL"""insert into "humanresources"."jobcandidate"("jobcandidateid", "businessentityid", "resume", "modifieddate")
     values (
       ${ParameterValue(unsaved.jobcandidateid, null, JobcandidateId.toStatement)}::int4,
@@ -142,13 +142,14 @@ class JobcandidateRepoImpl extends JobcandidateRepo {
     .executeInsert(JobcandidateRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[JobcandidateRow])(using c: Connection): List[JobcandidateRow] = {
+  override def upsertBatch(unsaved: Iterable[JobcandidateRow])(using c: Connection): List[JobcandidateRow] = {
     def toNamedParameter(row: JobcandidateRow): List[NamedParameter] = List(
       NamedParameter("jobcandidateid", ParameterValue(row.jobcandidateid, null, JobcandidateId.toStatement)),
       NamedParameter("businessentityid", ParameterValue(row.businessentityid, null, ToStatement.optionToStatement(using BusinessentityId.toStatement, BusinessentityId.parameterMetadata))),
       NamedParameter("resume", ParameterValue(row.resume, null, ToStatement.optionToStatement(using TypoXml.toStatement, TypoXml.parameterMetadata))),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -171,7 +172,7 @@ class JobcandidateRepoImpl extends JobcandidateRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[JobcandidateRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

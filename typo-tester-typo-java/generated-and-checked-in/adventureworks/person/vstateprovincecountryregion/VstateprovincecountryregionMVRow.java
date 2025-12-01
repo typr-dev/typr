@@ -13,7 +13,6 @@ import adventureworks.sales.salesterritory.SalesterritoryId;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple7;
 
 /** Materialized View: person.vstateprovincecountryregion */
 public record VstateprovincecountryregionMVRow(
@@ -67,5 +66,5 @@ public record VstateprovincecountryregionMVRow(
     return new VstateprovincecountryregionMVRow(stateprovinceid, stateprovincecode, isonlystateprovinceflag, stateprovincename, territoryid, countryregioncode, countryregionname);
   };
 
-  static RowParser<VstateprovincecountryregionMVRow> _rowParser = RowParsers.of(StateprovinceId.pgType, PgTypes.text, Flag.pgType, Name.pgType, SalesterritoryId.pgType, CountryregionId.pgType, Name.pgType, VstateprovincecountryregionMVRow::new, row -> new Tuple7<>(row.stateprovinceid(), row.stateprovincecode(), row.isonlystateprovinceflag(), row.stateprovincename(), row.territoryid(), row.countryregioncode(), row.countryregionname()));;
+  static RowParser<VstateprovincecountryregionMVRow> _rowParser = RowParsers.of(StateprovinceId.pgType, PgTypes.text, Flag.pgType, Name.pgType, SalesterritoryId.pgType, CountryregionId.pgType, Name.pgType, VstateprovincecountryregionMVRow::new, row -> new Object[]{row.stateprovinceid(), row.stateprovincecode(), row.isonlystateprovinceflag(), row.stateprovincename(), row.territoryid(), row.countryregioncode(), row.countryregionname()});;
 }

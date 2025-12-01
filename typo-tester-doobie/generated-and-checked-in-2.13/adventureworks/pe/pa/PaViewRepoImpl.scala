@@ -11,7 +11,7 @@ import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class PaViewRepoImpl extends PaViewRepo {
-  def select: SelectBuilder[PaViewFields, PaViewRow] = SelectBuilder.of(""""pe"."pa"""", PaViewFields.structure, PaViewRow.read)
+  override def select: SelectBuilder[PaViewFields, PaViewRow] = SelectBuilder.of(""""pe"."pa"""", PaViewFields.structure, PaViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, PaViewRow] = sql"""select "id", "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"::text from "pe"."pa"""".query(PaViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, PaViewRow] = sql"""select "id", "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"::text from "pe"."pa"""".query(PaViewRow.read).stream
 }

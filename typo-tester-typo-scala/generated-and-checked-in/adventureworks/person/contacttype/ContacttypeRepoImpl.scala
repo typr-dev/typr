@@ -20,11 +20,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ContacttypeRepoImpl extends ContacttypeRepo {
-  def delete: DeleteBuilder[ContacttypeFields, ContacttypeRow] = DeleteBuilder.of("person.contacttype", ContacttypeFields.structure)
+  override def delete: DeleteBuilder[ContacttypeFields, ContacttypeRow] = DeleteBuilder.of("person.contacttype", ContacttypeFields.structure)
 
-  def deleteById(contacttypeid: ContacttypeId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "person"."contacttype" where "contacttypeid" = ${ContacttypeId.pgType.encode(contacttypeid)}""".update().runUnchecked(c) > 0
+  override def deleteById(contacttypeid: ContacttypeId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "person"."contacttype" where "contacttypeid" = ${ContacttypeId.pgType.encode(contacttypeid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(contacttypeids: Array[ContacttypeId])(using c: Connection): Integer = {
+  override def deleteByIds(contacttypeids: Array[ContacttypeId])(using c: Connection): Integer = {
     interpolate"""delete
     from "person"."contacttype"
     where "contacttypeid" = ANY(${ContacttypeId.pgTypeArray.encode(contacttypeids)})"""
@@ -32,7 +32,7 @@ class ContacttypeRepoImpl extends ContacttypeRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: ContacttypeRow)(using c: Connection): ContacttypeRow = {
+  override def insert(unsaved: ContacttypeRow)(using c: Connection): ContacttypeRow = {
   interpolate"""insert into "person"."contacttype"("contacttypeid", "name", "modifieddate")
     values (${ContacttypeId.pgType.encode(unsaved.contacttypeid)}::int4, ${Name.pgType.encode(unsaved.name)}::varchar, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "contacttypeid", "name", "modifieddate"::text
@@ -40,24 +40,18 @@ class ContacttypeRepoImpl extends ContacttypeRepo {
     .updateReturning(ContacttypeRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: ContacttypeRowUnsaved)(using c: Connection): ContacttypeRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: ContacttypeRowUnsaved)(using c: Connection): ContacttypeRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
     values.add(interpolate"${Name.pgType.encode(unsaved.name)}::varchar"): @scala.annotation.nowarn
     unsaved.contacttypeid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""contacttypeid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${ContacttypeId.pgType.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""contacttypeid"""")): @scala.annotation.nowarn; values.add(interpolate"${ContacttypeId.pgType.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "person"."contacttype"(${Fragment.comma(columns)})
@@ -65,57 +59,57 @@ class ContacttypeRepoImpl extends ContacttypeRepo {
       returning "contacttypeid", "name", "modifieddate"::text
       """
     }
-    q.updateReturning(ContacttypeRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(ContacttypeRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[ContacttypeRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "person"."contacttype"("contacttypeid", "name", "modifieddate") FROM STDIN""", batchSize, unsaved, c, ContacttypeRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[ContacttypeRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "person"."contacttype"("name", "contacttypeid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ContacttypeRowUnsaved.pgText)
 
-  def select: SelectBuilder[ContacttypeFields, ContacttypeRow] = SelectBuilder.of("person.contacttype", ContacttypeFields.structure, ContacttypeRow.`_rowParser`)
+  override def select: SelectBuilder[ContacttypeFields, ContacttypeRow] = SelectBuilder.of("person.contacttype", ContacttypeFields.structure, ContacttypeRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[ContacttypeRow] = {
+  override def selectAll(using c: Connection): java.util.List[ContacttypeRow] = {
     interpolate"""select "contacttypeid", "name", "modifieddate"::text
     from "person"."contacttype"
-    """.as(ContacttypeRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(ContacttypeRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(contacttypeid: ContacttypeId)(using c: Connection): Optional[ContacttypeRow] = {
+  override def selectById(contacttypeid: ContacttypeId)(using c: Connection): Optional[ContacttypeRow] = {
     interpolate"""select "contacttypeid", "name", "modifieddate"::text
     from "person"."contacttype"
-    where "contacttypeid" = ${ContacttypeId.pgType.encode(contacttypeid)}""".as(ContacttypeRow.`_rowParser`.first()).runUnchecked(c)
+    where "contacttypeid" = ${ContacttypeId.pgType.encode(contacttypeid)}""".query(ContacttypeRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(contacttypeids: Array[ContacttypeId])(using c: Connection): java.util.List[ContacttypeRow] = {
+  override def selectByIds(contacttypeids: Array[ContacttypeId])(using c: Connection): java.util.List[ContacttypeRow] = {
     interpolate"""select "contacttypeid", "name", "modifieddate"::text
     from "person"."contacttype"
-    where "contacttypeid" = ANY(${ContacttypeId.pgTypeArray.encode(contacttypeids)})""".as(ContacttypeRow.`_rowParser`.all()).runUnchecked(c)
+    where "contacttypeid" = ANY(${ContacttypeId.pgTypeArray.encode(contacttypeids)})""".query(ContacttypeRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(contacttypeids: Array[ContacttypeId])(using c: Connection): java.util.Map[ContacttypeId, ContacttypeRow] = {
-    val ret: java.util.Map[ContacttypeId, ContacttypeRow] = new HashMap()
+  override def selectByIdsTracked(contacttypeids: Array[ContacttypeId])(using c: Connection): java.util.Map[ContacttypeId, ContacttypeRow] = {
+    val ret: HashMap[ContacttypeId, ContacttypeRow] = new HashMap[ContacttypeId, ContacttypeRow]()
     selectByIds(contacttypeids)(using c).forEach(row => ret.put(row.contacttypeid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[ContacttypeFields, ContacttypeRow] = UpdateBuilder.of("person.contacttype", ContacttypeFields.structure, ContacttypeRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ContacttypeFields, ContacttypeRow] = UpdateBuilder.of("person.contacttype", ContacttypeFields.structure, ContacttypeRow.`_rowParser`.all())
 
-  def update(row: ContacttypeRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: ContacttypeRow)(using c: Connection): java.lang.Boolean = {
     val contacttypeid: ContacttypeId = row.contacttypeid
-    interpolate"""update "person"."contacttype"
+    return interpolate"""update "person"."contacttype"
     set "name" = ${Name.pgType.encode(row.name)}::varchar,
     "modifieddate" = ${TypoLocalDateTime.pgType.encode(row.modifieddate)}::timestamp
     where "contacttypeid" = ${ContacttypeId.pgType.encode(contacttypeid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: ContacttypeRow)(using c: Connection): ContacttypeRow = {
+  override def upsert(unsaved: ContacttypeRow)(using c: Connection): ContacttypeRow = {
   interpolate"""insert into "person"."contacttype"("contacttypeid", "name", "modifieddate")
     values (${ContacttypeId.pgType.encode(unsaved.contacttypeid)}::int4, ${Name.pgType.encode(unsaved.name)}::varchar, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("contacttypeid")
@@ -128,7 +122,7 @@ class ContacttypeRepoImpl extends ContacttypeRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[ContacttypeRow])(using c: Connection): java.util.List[ContacttypeRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[ContacttypeRow])(using c: Connection): java.util.List[ContacttypeRow] = {
     interpolate"""insert into "person"."contacttype"("contacttypeid", "name", "modifieddate")
     values (?::int4, ?::varchar, ?::timestamp)
     on conflict ("contacttypeid")
@@ -142,13 +136,13 @@ class ContacttypeRepoImpl extends ContacttypeRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[ContacttypeRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table contacttype_TEMP (like "person"."contacttype") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy contacttype_TEMP("contacttypeid", "name", "modifieddate") from stdin""", batchSize, unsaved, c, ContacttypeRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "person"."contacttype"("contacttypeid", "name", "modifieddate")
+    return interpolate"""insert into "person"."contacttype"("contacttypeid", "name", "modifieddate")
     select * from contacttype_TEMP
     on conflict ("contacttypeid")
     do update set

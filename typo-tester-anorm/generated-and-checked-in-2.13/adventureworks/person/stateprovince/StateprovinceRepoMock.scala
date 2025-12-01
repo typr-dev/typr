@@ -21,13 +21,13 @@ case class StateprovinceRepoMock(
   toRow: StateprovinceRowUnsaved => StateprovinceRow,
   map: scala.collection.mutable.Map[StateprovinceId, StateprovinceRow] = scala.collection.mutable.Map.empty[StateprovinceId, StateprovinceRow]
 ) extends StateprovinceRepo {
-  def delete: DeleteBuilder[StateprovinceFields, StateprovinceRow] = DeleteBuilderMock(DeleteParams.empty, StateprovinceFields.structure, map)
+  override def delete: DeleteBuilder[StateprovinceFields, StateprovinceRow] = DeleteBuilderMock(DeleteParams.empty, StateprovinceFields.structure, map)
 
-  def deleteById(stateprovinceid: StateprovinceId)(implicit c: Connection): Boolean = map.remove(stateprovinceid).isDefined
+  override def deleteById(stateprovinceid: StateprovinceId)(implicit c: Connection): Boolean = map.remove(stateprovinceid).isDefined
 
-  def deleteByIds(stateprovinceids: Array[StateprovinceId])(implicit c: Connection): Int = stateprovinceids.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(stateprovinceids: Array[StateprovinceId])(implicit c: Connection): Int = stateprovinceids.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: StateprovinceRow)(implicit c: Connection): StateprovinceRow = {
+  override def insert(unsaved: StateprovinceRow)(implicit c: Connection): StateprovinceRow = {
     val _ = if (map.contains(unsaved.stateprovinceid))
       sys.error(s"id ${unsaved.stateprovinceid} already exists")
     else
@@ -36,9 +36,9 @@ case class StateprovinceRepoMock(
     unsaved
   }
 
-  def insert(unsaved: StateprovinceRowUnsaved)(implicit c: Connection): StateprovinceRow = insert(toRow(unsaved))
+  override def insert(unsaved: StateprovinceRowUnsaved)(implicit c: Connection): StateprovinceRow = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[StateprovinceRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = {
@@ -49,7 +49,7 @@ case class StateprovinceRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[StateprovinceRowUnsaved],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = {
@@ -60,34 +60,34 @@ case class StateprovinceRepoMock(
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[StateprovinceFields, StateprovinceRow] = SelectBuilderMock(StateprovinceFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[StateprovinceFields, StateprovinceRow] = SelectBuilderMock(StateprovinceFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(implicit c: Connection): List[StateprovinceRow] = map.values.toList
+  override def selectAll(implicit c: Connection): List[StateprovinceRow] = map.values.toList
 
-  def selectById(stateprovinceid: StateprovinceId)(implicit c: Connection): Option[StateprovinceRow] = map.get(stateprovinceid)
+  override def selectById(stateprovinceid: StateprovinceId)(implicit c: Connection): Option[StateprovinceRow] = map.get(stateprovinceid)
 
-  def selectByIds(stateprovinceids: Array[StateprovinceId])(implicit c: Connection): List[StateprovinceRow] = stateprovinceids.flatMap(map.get).toList
+  override def selectByIds(stateprovinceids: Array[StateprovinceId])(implicit c: Connection): List[StateprovinceRow] = stateprovinceids.flatMap(map.get).toList
 
-  def selectByIdsTracked(stateprovinceids: Array[StateprovinceId])(implicit c: Connection): Map[StateprovinceId, StateprovinceRow] = {
+  override def selectByIdsTracked(stateprovinceids: Array[StateprovinceId])(implicit c: Connection): Map[StateprovinceId, StateprovinceRow] = {
     val byId = selectByIds(stateprovinceids).view.map(x => (x.stateprovinceid, x)).toMap
     stateprovinceids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[StateprovinceFields, StateprovinceRow] = UpdateBuilderMock(UpdateParams.empty, StateprovinceFields.structure, map)
+  override def update: UpdateBuilder[StateprovinceFields, StateprovinceRow] = UpdateBuilderMock(UpdateParams.empty, StateprovinceFields.structure, map)
 
-  def update(row: StateprovinceRow)(implicit c: Connection): Option[StateprovinceRow] = {
+  override def update(row: StateprovinceRow)(implicit c: Connection): Option[StateprovinceRow] = {
     map.get(row.stateprovinceid).map { _ =>
       map.put(row.stateprovinceid, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: StateprovinceRow)(implicit c: Connection): StateprovinceRow = {
+  override def upsert(unsaved: StateprovinceRow)(implicit c: Connection): StateprovinceRow = {
     map.put(unsaved.stateprovinceid, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[StateprovinceRow])(implicit c: Connection): List[StateprovinceRow] = {
+  override def upsertBatch(unsaved: Iterable[StateprovinceRow])(implicit c: Connection): List[StateprovinceRow] = {
     unsaved.map { row =>
       map += (row.stateprovinceid -> row)
       row
@@ -95,7 +95,7 @@ case class StateprovinceRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[StateprovinceRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

@@ -34,7 +34,7 @@ object PlphViewFields {
 
     override lazy val fields: PlphViewFields = {
       new PlphViewFields {
-        def id: Field[ProductId, PlphViewRow] = {
+        override def id: Field[ProductId, PlphViewRow] = {
           new Field[ProductId, PlphViewRow](
             _path,
             "id",
@@ -45,7 +45,7 @@ object PlphViewFields {
             ProductId.pgType
           )
         }
-        def productid: Field[ProductId, PlphViewRow] = {
+        override def productid: Field[ProductId, PlphViewRow] = {
           new Field[ProductId, PlphViewRow](
             _path,
             "productid",
@@ -56,7 +56,7 @@ object PlphViewFields {
             ProductId.pgType
           )
         }
-        def startdate: Field[TypoLocalDateTime, PlphViewRow] = {
+        override def startdate: Field[TypoLocalDateTime, PlphViewRow] = {
           new Field[TypoLocalDateTime, PlphViewRow](
             _path,
             "startdate",
@@ -67,7 +67,7 @@ object PlphViewFields {
             TypoLocalDateTime.pgType
           )
         }
-        def enddate: OptField[TypoLocalDateTime, PlphViewRow] = {
+        override def enddate: OptField[TypoLocalDateTime, PlphViewRow] = {
           new OptField[TypoLocalDateTime, PlphViewRow](
             _path,
             "enddate",
@@ -78,7 +78,7 @@ object PlphViewFields {
             TypoLocalDateTime.pgType
           )
         }
-        def listprice: Field[java.math.BigDecimal, PlphViewRow] = {
+        override def listprice: Field[java.math.BigDecimal, PlphViewRow] = {
           new Field[java.math.BigDecimal, PlphViewRow](
             _path,
             "listprice",
@@ -89,7 +89,7 @@ object PlphViewFields {
             PgTypes.numeric
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, PlphViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, PlphViewRow] = {
           new Field[TypoLocalDateTime, PlphViewRow](
             _path,
             "modifieddate",
@@ -105,7 +105,7 @@ object PlphViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, PlphViewRow]] = java.util.List.of(this.fields.id, this.fields.productid, this.fields.startdate, this.fields.enddate, this.fields.listprice, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[PlphViewFields, PlphViewRow] = new Impl(java.util.List.of())

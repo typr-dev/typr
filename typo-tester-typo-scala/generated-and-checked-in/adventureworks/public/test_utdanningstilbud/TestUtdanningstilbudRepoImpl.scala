@@ -17,21 +17,21 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class TestUtdanningstilbudRepoImpl extends TestUtdanningstilbudRepo {
-  def delete: DeleteBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = DeleteBuilder.of("public.test_utdanningstilbud", TestUtdanningstilbudFields.structure)
+  override def delete: DeleteBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = DeleteBuilder.of("public.test_utdanningstilbud", TestUtdanningstilbudFields.structure)
 
-  def deleteById(compositeId: TestUtdanningstilbudId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."test_utdanningstilbud" where "organisasjonskode" = ${TestOrganisasjonId.pgType.encode(compositeId.organisasjonskode)} AND "utdanningsmulighet_kode" = ${PgTypes.text.encode(compositeId.utdanningsmulighetKode)}""".update().runUnchecked(c) > 0
+  override def deleteById(compositeId: TestUtdanningstilbudId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."test_utdanningstilbud" where "organisasjonskode" = ${TestOrganisasjonId.pgType.encode(compositeId.organisasjonskode)} AND "utdanningsmulighet_kode" = ${PgTypes.text.encode(compositeId.utdanningsmulighetKode)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(compositeIds: Array[TestUtdanningstilbudId])(using c: Connection): Integer = {
+  override def deleteByIds(compositeIds: Array[TestUtdanningstilbudId])(using c: Connection): Integer = {
     val organisasjonskode: Array[TestOrganisasjonId] = compositeIds.map(_.organisasjonskode)
     val utdanningsmulighetKode: Array[String] = compositeIds.map(_.utdanningsmulighetKode)
-    interpolate"""delete
+    return interpolate"""delete
     from "public"."test_utdanningstilbud"
     where ("organisasjonskode", "utdanningsmulighet_kode")
     in (select unnest(${TestOrganisasjonId.pgTypeArray.encode(organisasjonskode)}::text[]), unnest(${PgTypes.textArray.encode(utdanningsmulighetKode)}::text[]))
     """.update().runUnchecked(c)
   }
 
-  def insert(unsaved: TestUtdanningstilbudRow)(using c: Connection): TestUtdanningstilbudRow = {
+  override def insert(unsaved: TestUtdanningstilbudRow)(using c: Connection): TestUtdanningstilbudRow = {
   interpolate"""insert into "public"."test_utdanningstilbud"("organisasjonskode", "utdanningsmulighet_kode")
     values (${TestOrganisasjonId.pgType.encode(unsaved.organisasjonskode)}, ${PgTypes.text.encode(unsaved.utdanningsmulighetKode)})
     returning "organisasjonskode", "utdanningsmulighet_kode"
@@ -39,44 +39,44 @@ class TestUtdanningstilbudRepoImpl extends TestUtdanningstilbudRepo {
     .updateReturning(TestUtdanningstilbudRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[TestUtdanningstilbudRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."test_utdanningstilbud"("organisasjonskode", "utdanningsmulighet_kode") FROM STDIN""", batchSize, unsaved, c, TestUtdanningstilbudRow.pgText)
 
-  def select: SelectBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = SelectBuilder.of("public.test_utdanningstilbud", TestUtdanningstilbudFields.structure, TestUtdanningstilbudRow.`_rowParser`)
+  override def select: SelectBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = SelectBuilder.of("public.test_utdanningstilbud", TestUtdanningstilbudFields.structure, TestUtdanningstilbudRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[TestUtdanningstilbudRow] = {
+  override def selectAll(using c: Connection): java.util.List[TestUtdanningstilbudRow] = {
     interpolate"""select "organisasjonskode", "utdanningsmulighet_kode"
     from "public"."test_utdanningstilbud"
-    """.as(TestUtdanningstilbudRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(TestUtdanningstilbudRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(compositeId: TestUtdanningstilbudId)(using c: Connection): Optional[TestUtdanningstilbudRow] = {
+  override def selectById(compositeId: TestUtdanningstilbudId)(using c: Connection): Optional[TestUtdanningstilbudRow] = {
     interpolate"""select "organisasjonskode", "utdanningsmulighet_kode"
     from "public"."test_utdanningstilbud"
-    where "organisasjonskode" = ${TestOrganisasjonId.pgType.encode(compositeId.organisasjonskode)} AND "utdanningsmulighet_kode" = ${PgTypes.text.encode(compositeId.utdanningsmulighetKode)}""".as(TestUtdanningstilbudRow.`_rowParser`.first()).runUnchecked(c)
+    where "organisasjonskode" = ${TestOrganisasjonId.pgType.encode(compositeId.organisasjonskode)} AND "utdanningsmulighet_kode" = ${PgTypes.text.encode(compositeId.utdanningsmulighetKode)}""".query(TestUtdanningstilbudRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(compositeIds: Array[TestUtdanningstilbudId])(using c: Connection): java.util.List[TestUtdanningstilbudRow] = {
+  override def selectByIds(compositeIds: Array[TestUtdanningstilbudId])(using c: Connection): java.util.List[TestUtdanningstilbudRow] = {
     val organisasjonskode: Array[TestOrganisasjonId] = compositeIds.map(_.organisasjonskode)
     val utdanningsmulighetKode: Array[String] = compositeIds.map(_.utdanningsmulighetKode)
-    interpolate"""select "organisasjonskode", "utdanningsmulighet_kode"
+    return interpolate"""select "organisasjonskode", "utdanningsmulighet_kode"
     from "public"."test_utdanningstilbud"
     where ("organisasjonskode", "utdanningsmulighet_kode")
     in (select unnest(${TestOrganisasjonId.pgTypeArray.encode(organisasjonskode)}::text[]), unnest(${PgTypes.textArray.encode(utdanningsmulighetKode)}::text[]))
-    """.as(TestUtdanningstilbudRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(TestUtdanningstilbudRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(compositeIds: Array[TestUtdanningstilbudId])(using c: Connection): java.util.Map[TestUtdanningstilbudId, TestUtdanningstilbudRow] = {
-    val ret: java.util.Map[TestUtdanningstilbudId, TestUtdanningstilbudRow] = new HashMap()
+  override def selectByIdsTracked(compositeIds: Array[TestUtdanningstilbudId])(using c: Connection): java.util.Map[TestUtdanningstilbudId, TestUtdanningstilbudRow] = {
+    val ret: HashMap[TestUtdanningstilbudId, TestUtdanningstilbudRow] = new HashMap[TestUtdanningstilbudId, TestUtdanningstilbudRow]()
     selectByIds(compositeIds)(using c).forEach(row => ret.put(row.compositeId, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = UpdateBuilder.of("public.test_utdanningstilbud", TestUtdanningstilbudFields.structure, TestUtdanningstilbudRow.`_rowParser`.all())
+  override def update: UpdateBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = UpdateBuilder.of("public.test_utdanningstilbud", TestUtdanningstilbudFields.structure, TestUtdanningstilbudRow.`_rowParser`.all())
 
-  def upsert(unsaved: TestUtdanningstilbudRow)(using c: Connection): TestUtdanningstilbudRow = {
+  override def upsert(unsaved: TestUtdanningstilbudRow)(using c: Connection): TestUtdanningstilbudRow = {
   interpolate"""insert into "public"."test_utdanningstilbud"("organisasjonskode", "utdanningsmulighet_kode")
     values (${TestOrganisasjonId.pgType.encode(unsaved.organisasjonskode)}, ${PgTypes.text.encode(unsaved.utdanningsmulighetKode)})
     on conflict ("organisasjonskode", "utdanningsmulighet_kode")
@@ -87,7 +87,7 @@ class TestUtdanningstilbudRepoImpl extends TestUtdanningstilbudRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[TestUtdanningstilbudRow])(using c: Connection): java.util.List[TestUtdanningstilbudRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[TestUtdanningstilbudRow])(using c: Connection): java.util.List[TestUtdanningstilbudRow] = {
     interpolate"""insert into "public"."test_utdanningstilbud"("organisasjonskode", "utdanningsmulighet_kode")
     values (?, ?)
     on conflict ("organisasjonskode", "utdanningsmulighet_kode")
@@ -99,13 +99,13 @@ class TestUtdanningstilbudRepoImpl extends TestUtdanningstilbudRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[TestUtdanningstilbudRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table test_utdanningstilbud_TEMP (like "public"."test_utdanningstilbud") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy test_utdanningstilbud_TEMP("organisasjonskode", "utdanningsmulighet_kode") from stdin""", batchSize, unsaved, c, TestUtdanningstilbudRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "public"."test_utdanningstilbud"("organisasjonskode", "utdanningsmulighet_kode")
+    return interpolate"""insert into "public"."test_utdanningstilbud"("organisasjonskode", "utdanningsmulighet_kode")
     select * from test_utdanningstilbud_TEMP
     on conflict ("organisasjonskode", "utdanningsmulighet_kode")
     do nothing

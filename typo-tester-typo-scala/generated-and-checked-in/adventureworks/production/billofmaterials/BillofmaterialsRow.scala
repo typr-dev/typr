@@ -15,7 +15,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple9
 
 /** Table: production.billofmaterials
  * Items required to make bicycles and bicycle subassemblies. It identifies the heirarchical relationship between a parent product and its components.
@@ -86,19 +85,7 @@ case class BillofmaterialsRow(
 }
 
 object BillofmaterialsRow {
-  val `_rowParser`: RowParser[BillofmaterialsRow] = {
-    RowParsers.of(PgTypes.int4, ProductId.pgType.opt(), ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), UnitmeasureId.pgType, TypoShort.pgType, PgTypes.numeric, TypoLocalDateTime.pgType, BillofmaterialsRow.apply, row => new Tuple9(
-      row.billofmaterialsid,
-      row.productassemblyid,
-      row.componentid,
-      row.startdate,
-      row.enddate,
-      row.unitmeasurecode,
-      row.bomlevel,
-      row.perassemblyqty,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[BillofmaterialsRow] = RowParsers.of(PgTypes.int4, ProductId.pgType.opt(), ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), UnitmeasureId.pgType, TypoShort.pgType, PgTypes.numeric, TypoLocalDateTime.pgType, BillofmaterialsRow.apply, row => Array(row.billofmaterialsid, row.productassemblyid, row.componentid, row.startdate, row.enddate, row.unitmeasurecode, row.bomlevel, row.perassemblyqty, row.modifieddate))
 
   given pgText: PgText[BillofmaterialsRow] = PgText.from(`_rowParser`)
 }

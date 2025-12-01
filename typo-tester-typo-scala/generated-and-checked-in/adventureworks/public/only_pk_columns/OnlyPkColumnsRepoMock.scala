@@ -5,6 +5,7 @@
  */
 package adventureworks.public.only_pk_columns
 
+import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
@@ -22,7 +23,7 @@ import typo.dsl.UpdateBuilder.UpdateBuilderMock
 import typo.dsl.UpdateParams
 
 case class OnlyPkColumnsRepoMock(map: HashMap[OnlyPkColumnsId, OnlyPkColumnsRow] = new HashMap[OnlyPkColumnsId, OnlyPkColumnsRow]()) extends OnlyPkColumnsRepo {
-  def delete: DeleteBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = {
+  override def delete: DeleteBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = {
     new DeleteBuilderMock(
       OnlyPkColumnsFields.structure,
       () => new ArrayList(map.values()),
@@ -32,25 +33,25 @@ case class OnlyPkColumnsRepoMock(map: HashMap[OnlyPkColumnsId, OnlyPkColumnsRow]
     )
   }
 
-  def deleteById(compositeId: OnlyPkColumnsId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(compositeId)).isPresent()
+  override def deleteById(compositeId: OnlyPkColumnsId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(compositeId)).isPresent()
 
-  def deleteByIds(compositeIds: Array[OnlyPkColumnsId])(using c: Connection): Integer = {
+  override def deleteByIds(compositeIds: Array[OnlyPkColumnsId])(using c: Connection): Integer = {
     var count = 0
     compositeIds.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
-    count
+    return count
   }
 
-  def insert(unsaved: OnlyPkColumnsRow)(using c: Connection): OnlyPkColumnsRow = {
+  override def insert(unsaved: OnlyPkColumnsRow)(using c: Connection): OnlyPkColumnsRow = {
     if (map.containsKey(unsaved.compositeId)) {
       throw new RuntimeException(s"id $unsaved.compositeId already exists")
     }
     map.put(unsaved.compositeId, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[OnlyPkColumnsRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -60,25 +61,25 @@ case class OnlyPkColumnsRepoMock(map: HashMap[OnlyPkColumnsId, OnlyPkColumnsRow]
       map.put(row.compositeId, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
-  def select: SelectBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = new SelectBuilderMock(OnlyPkColumnsFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
+  override def select: SelectBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = new SelectBuilderMock(OnlyPkColumnsFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  def selectAll(using c: Connection): java.util.List[OnlyPkColumnsRow] = new ArrayList(map.values())
+  override def selectAll(using c: Connection): java.util.List[OnlyPkColumnsRow] = new ArrayList(map.values())
 
-  def selectById(compositeId: OnlyPkColumnsId)(using c: Connection): Optional[OnlyPkColumnsRow] = Optional.ofNullable(map.get(compositeId))
+  override def selectById(compositeId: OnlyPkColumnsId)(using c: Connection): Optional[OnlyPkColumnsRow] = Optional.ofNullable(map.get(compositeId))
 
-  def selectByIds(compositeIds: Array[OnlyPkColumnsId])(using c: Connection): java.util.List[OnlyPkColumnsRow] = {
+  override def selectByIds(compositeIds: Array[OnlyPkColumnsId])(using c: Connection): java.util.List[OnlyPkColumnsRow] = {
     val result = new ArrayList[OnlyPkColumnsRow]()
     compositeIds.foreach { id => val opt = Optional.ofNullable(map.get(id))
     if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
-    result
+    return result
   }
 
-  def selectByIdsTracked(compositeIds: Array[OnlyPkColumnsId])(using c: Connection): java.util.Map[OnlyPkColumnsId, OnlyPkColumnsRow] = selectByIds(compositeIds)(using c).stream().collect(Collectors.toMap((row: adventureworks.public.only_pk_columns.OnlyPkColumnsRow) => row.compositeId, Function.identity()))
+  override def selectByIdsTracked(compositeIds: Array[OnlyPkColumnsId])(using c: Connection): java.util.Map[OnlyPkColumnsId, OnlyPkColumnsRow] = selectByIds(compositeIds)(using c).stream().collect(Collectors.toMap((row: OnlyPkColumnsRow) => row.compositeId, Function.identity()))
 
-  def update: UpdateBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = {
+  override def update: UpdateBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = {
     new UpdateBuilderMock(
       OnlyPkColumnsFields.structure,
       () => new ArrayList(map.values()),
@@ -87,23 +88,23 @@ case class OnlyPkColumnsRepoMock(map: HashMap[OnlyPkColumnsId, OnlyPkColumnsRow]
     )
   }
 
-  def upsert(unsaved: OnlyPkColumnsRow)(using c: Connection): OnlyPkColumnsRow = {
+  override def upsert(unsaved: OnlyPkColumnsRow)(using c: Connection): OnlyPkColumnsRow = {
     map.put(unsaved.compositeId, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[OnlyPkColumnsRow])(using c: Connection): java.util.List[OnlyPkColumnsRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[OnlyPkColumnsRow])(using c: Connection): java.util.List[OnlyPkColumnsRow] = {
     val result = new ArrayList[OnlyPkColumnsRow]()
     while (unsaved.hasNext()) {
       val row = unsaved.next()
       map.put(row.compositeId, row): @scala.annotation.nowarn
       result.add(row): @scala.annotation.nowarn
     }
-    result
+    return result
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[OnlyPkColumnsRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
@@ -113,6 +114,6 @@ case class OnlyPkColumnsRepoMock(map: HashMap[OnlyPkColumnsId, OnlyPkColumnsRow]
       map.put(row.compositeId, row): @scala.annotation.nowarn
       count = count + 1
     }
-    count
+    return count
   }
 }

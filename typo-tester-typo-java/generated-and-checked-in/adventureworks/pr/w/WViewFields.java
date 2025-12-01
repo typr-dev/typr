@@ -20,7 +20,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface WViewFields {
-  static final class Impl extends Relation<WViewFields, WViewRow> {
+  final class Impl extends Relation<WViewFields, WViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -28,33 +28,43 @@ public interface WViewFields {
     @Override
     public WViewFields fields() {
       return new WViewFields() {
+               @Override
                public Field<WorkorderId, WViewRow> id() {
                  return new Field<WorkorderId, WViewRow>(_path, "id", WViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), WorkorderId.pgType);
                };
+               @Override
                public Field<WorkorderId, WViewRow> workorderid() {
                  return new Field<WorkorderId, WViewRow>(_path, "workorderid", WViewRow::workorderid, Optional.empty(), Optional.empty(), (row, value) -> row.withWorkorderid(value), WorkorderId.pgType);
                };
+               @Override
                public Field<ProductId, WViewRow> productid() {
                  return new Field<ProductId, WViewRow>(_path, "productid", WViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
                };
+               @Override
                public Field<Integer, WViewRow> orderqty() {
                  return new Field<Integer, WViewRow>(_path, "orderqty", WViewRow::orderqty, Optional.empty(), Optional.empty(), (row, value) -> row.withOrderqty(value), PgTypes.int4);
                };
+               @Override
                public Field<TypoShort, WViewRow> scrappedqty() {
                  return new Field<TypoShort, WViewRow>(_path, "scrappedqty", WViewRow::scrappedqty, Optional.empty(), Optional.empty(), (row, value) -> row.withScrappedqty(value), TypoShort.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, WViewRow> startdate() {
                  return new Field<TypoLocalDateTime, WViewRow>(_path, "startdate", WViewRow::startdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withStartdate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public OptField<TypoLocalDateTime, WViewRow> enddate() {
                  return new OptField<TypoLocalDateTime, WViewRow>(_path, "enddate", WViewRow::enddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withEnddate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, WViewRow> duedate() {
                  return new Field<TypoLocalDateTime, WViewRow>(_path, "duedate", WViewRow::duedate, Optional.of("text"), Optional.empty(), (row, value) -> row.withDuedate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public OptField<ScrapreasonId, WViewRow> scrapreasonid() {
                  return new OptField<ScrapreasonId, WViewRow>(_path, "scrapreasonid", WViewRow::scrapreasonid, Optional.empty(), Optional.empty(), (row, value) -> row.withScrapreasonid(value), ScrapreasonId.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, WViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, WViewRow>(_path, "modifieddate", WViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -66,6 +76,7 @@ public interface WViewFields {
       return List.of(this.fields().id(), this.fields().workorderid(), this.fields().productid(), this.fields().orderqty(), this.fields().scrappedqty(), this.fields().startdate(), this.fields().enddate(), this.fields().duedate(), this.fields().scrapreasonid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

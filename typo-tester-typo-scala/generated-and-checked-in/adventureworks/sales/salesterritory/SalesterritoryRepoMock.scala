@@ -5,6 +5,7 @@
  */
 package adventureworks.sales.salesterritory
 
+import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
@@ -25,7 +26,7 @@ case class SalesterritoryRepoMock(
   toRow: SalesterritoryRowUnsaved => SalesterritoryRow,
   map: HashMap[SalesterritoryId, SalesterritoryRow] = new HashMap[SalesterritoryId, SalesterritoryRow]()
 ) extends SalesterritoryRepo {
-  def delete: DeleteBuilder[SalesterritoryFields, SalesterritoryRow] = {
+  override def delete: DeleteBuilder[SalesterritoryFields, SalesterritoryRow] = {
     new DeleteBuilderMock(
       SalesterritoryFields.structure,
       () => new ArrayList(map.values()),
@@ -35,27 +36,27 @@ case class SalesterritoryRepoMock(
     )
   }
 
-  def deleteById(territoryid: SalesterritoryId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(territoryid)).isPresent()
+  override def deleteById(territoryid: SalesterritoryId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(territoryid)).isPresent()
 
-  def deleteByIds(territoryids: Array[SalesterritoryId])(using c: Connection): Integer = {
+  override def deleteByIds(territoryids: Array[SalesterritoryId])(using c: Connection): Integer = {
     var count = 0
     territoryids.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
-    count
+    return count
   }
 
-  def insert(unsaved: SalesterritoryRow)(using c: Connection): SalesterritoryRow = {
+  override def insert(unsaved: SalesterritoryRow)(using c: Connection): SalesterritoryRow = {
     if (map.containsKey(unsaved.territoryid)) {
       throw new RuntimeException(s"id $unsaved.territoryid already exists")
     }
     map.put(unsaved.territoryid, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def insert(unsaved: SalesterritoryRowUnsaved)(using c: Connection): SalesterritoryRow = insert(toRow(unsaved))(using c)
+  override def insert(unsaved: SalesterritoryRowUnsaved)(using c: Connection): SalesterritoryRow = insert(toRow(unsaved))(using c)
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[SalesterritoryRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -65,11 +66,11 @@ case class SalesterritoryRepoMock(
       map.put(row.territoryid, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[SalesterritoryRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -80,25 +81,25 @@ case class SalesterritoryRepoMock(
       map.put(row.territoryid, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
-  def select: SelectBuilder[SalesterritoryFields, SalesterritoryRow] = new SelectBuilderMock(SalesterritoryFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
+  override def select: SelectBuilder[SalesterritoryFields, SalesterritoryRow] = new SelectBuilderMock(SalesterritoryFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  def selectAll(using c: Connection): java.util.List[SalesterritoryRow] = new ArrayList(map.values())
+  override def selectAll(using c: Connection): java.util.List[SalesterritoryRow] = new ArrayList(map.values())
 
-  def selectById(territoryid: SalesterritoryId)(using c: Connection): Optional[SalesterritoryRow] = Optional.ofNullable(map.get(territoryid))
+  override def selectById(territoryid: SalesterritoryId)(using c: Connection): Optional[SalesterritoryRow] = Optional.ofNullable(map.get(territoryid))
 
-  def selectByIds(territoryids: Array[SalesterritoryId])(using c: Connection): java.util.List[SalesterritoryRow] = {
+  override def selectByIds(territoryids: Array[SalesterritoryId])(using c: Connection): java.util.List[SalesterritoryRow] = {
     val result = new ArrayList[SalesterritoryRow]()
     territoryids.foreach { id => val opt = Optional.ofNullable(map.get(id))
     if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
-    result
+    return result
   }
 
-  def selectByIdsTracked(territoryids: Array[SalesterritoryId])(using c: Connection): java.util.Map[SalesterritoryId, SalesterritoryRow] = selectByIds(territoryids)(using c).stream().collect(Collectors.toMap((row: adventureworks.sales.salesterritory.SalesterritoryRow) => row.territoryid, Function.identity()))
+  override def selectByIdsTracked(territoryids: Array[SalesterritoryId])(using c: Connection): java.util.Map[SalesterritoryId, SalesterritoryRow] = selectByIds(territoryids)(using c).stream().collect(Collectors.toMap((row: SalesterritoryRow) => row.territoryid, Function.identity()))
 
-  def update: UpdateBuilder[SalesterritoryFields, SalesterritoryRow] = {
+  override def update: UpdateBuilder[SalesterritoryFields, SalesterritoryRow] = {
     new UpdateBuilderMock(
       SalesterritoryFields.structure,
       () => new ArrayList(map.values()),
@@ -107,31 +108,31 @@ case class SalesterritoryRepoMock(
     )
   }
 
-  def update(row: SalesterritoryRow)(using c: Connection): java.lang.Boolean = {
-    val shouldUpdate = Optional.ofNullable(map.get(row.territoryid)).filter(oldRow => !oldRow.equals(row)).isPresent()
+  override def update(row: SalesterritoryRow)(using c: Connection): java.lang.Boolean = {
+    val shouldUpdate = Optional.ofNullable(map.get(row.territoryid)).filter(oldRow => (oldRow != row)).isPresent()
     if (shouldUpdate) {
       map.put(row.territoryid, row): @scala.annotation.nowarn
     }
-    shouldUpdate
+    return shouldUpdate
   }
 
-  def upsert(unsaved: SalesterritoryRow)(using c: Connection): SalesterritoryRow = {
+  override def upsert(unsaved: SalesterritoryRow)(using c: Connection): SalesterritoryRow = {
     map.put(unsaved.territoryid, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[SalesterritoryRow])(using c: Connection): java.util.List[SalesterritoryRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[SalesterritoryRow])(using c: Connection): java.util.List[SalesterritoryRow] = {
     val result = new ArrayList[SalesterritoryRow]()
     while (unsaved.hasNext()) {
       val row = unsaved.next()
       map.put(row.territoryid, row): @scala.annotation.nowarn
       result.add(row): @scala.annotation.nowarn
     }
-    result
+    return result
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[SalesterritoryRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
@@ -141,6 +142,6 @@ case class SalesterritoryRepoMock(
       map.put(row.territoryid, row): @scala.annotation.nowarn
       count = count + 1
     }
-    count
+    return count
   }
 }

@@ -10,9 +10,9 @@ import typo.dsl.SelectBuilder
 import anorm.SqlStringInterpolation
 
 class PlphViewRepoImpl extends PlphViewRepo {
-  def select: SelectBuilder[PlphViewFields, PlphViewRow] = SelectBuilder.of(""""pr"."plph"""", PlphViewFields.structure, PlphViewRow.rowParser)
+  override def select: SelectBuilder[PlphViewFields, PlphViewRow] = SelectBuilder.of(""""pr"."plph"""", PlphViewFields.structure, PlphViewRow.rowParser)
 
-  def selectAll(using c: Connection): List[PlphViewRow] = {
+  override def selectAll(using c: Connection): List[PlphViewRow] = {
     SQL"""select "id", "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text
     from "pr"."plph"
     """.as(PlphViewRow.rowParser(1).*)

@@ -28,7 +28,7 @@ object IllustrationFields {
 
     override lazy val fields: IllustrationFields = {
       new IllustrationFields {
-        def illustrationid: IdField[IllustrationId, IllustrationRow] = {
+        override def illustrationid: IdField[IllustrationId, IllustrationRow] = {
           new IdField[IllustrationId, IllustrationRow](
             _path,
             "illustrationid",
@@ -39,7 +39,7 @@ object IllustrationFields {
             IllustrationId.pgType
           )
         }
-        def diagram: OptField[TypoXml, IllustrationRow] = {
+        override def diagram: OptField[TypoXml, IllustrationRow] = {
           new OptField[TypoXml, IllustrationRow](
             _path,
             "diagram",
@@ -50,7 +50,7 @@ object IllustrationFields {
             TypoXml.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, IllustrationRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, IllustrationRow] = {
           new Field[TypoLocalDateTime, IllustrationRow](
             _path,
             "modifieddate",
@@ -66,7 +66,7 @@ object IllustrationFields {
 
     override lazy val columns: java.util.List[FieldLike[?, IllustrationRow]] = java.util.List.of(this.fields.illustrationid, this.fields.diagram, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[IllustrationFields, IllustrationRow] = new Impl(java.util.List.of())

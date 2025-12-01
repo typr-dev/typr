@@ -5,6 +5,7 @@
  */
 package adventureworks.public_.flaff;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,10 +35,12 @@ public record FlaffRepoMock(HashMap<FlaffId, FlaffRow> map) implements FlaffRepo
     return new FlaffRepoMock(map);
   };
 
+  @Override
   public DeleteBuilder<FlaffFields, FlaffRow> delete() {
     return new DeleteBuilderMock<>(FlaffFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.compositeId(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     FlaffId compositeId,
     Connection c
@@ -45,50 +48,56 @@ public record FlaffRepoMock(HashMap<FlaffId, FlaffRow> map) implements FlaffRepo
     return Optional.ofNullable(map.remove(compositeId)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     FlaffId[] compositeIds,
     Connection c
   ) {
     var count = 0;
-      for (var id : compositeIds) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : compositeIds) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public FlaffRow insert(
     FlaffRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.compositeId())) {
-        throw new RuntimeException(str("id $unsaved.compositeId() already exists"));
-      };
-      map.put(unsaved.compositeId(), unsaved);
+      throw new RuntimeException(str("id $unsaved.compositeId() already exists"));
+    };
+    map.put(unsaved.compositeId(), unsaved);
     return unsaved;
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<FlaffRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.compositeId(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.compositeId(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<FlaffFields, FlaffRow> select() {
     return new SelectBuilderMock<>(FlaffFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<FlaffRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<FlaffRow> selectById(
     FlaffId compositeId,
     Connection c
@@ -96,38 +105,43 @@ public record FlaffRepoMock(HashMap<FlaffId, FlaffRow> map) implements FlaffRepo
     return Optional.ofNullable(map.get(compositeId));
   };
 
+  @Override
   public List<FlaffRow> selectByIds(
     FlaffId[] compositeIds,
     Connection c
   ) {
     var result = new ArrayList<FlaffRow>();
-      for (var id : compositeIds) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : compositeIds) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<FlaffId, FlaffRow> selectByIdsTracked(
     FlaffId[] compositeIds,
     Connection c
   ) {
-    return selectByIds(compositeIds, c).stream().collect(Collectors.toMap((adventureworks.public_.flaff.FlaffRow row) -> row.compositeId(), Function.identity()));
+    return selectByIds(compositeIds, c).stream().collect(Collectors.toMap((FlaffRow row) -> row.compositeId(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<FlaffFields, FlaffRow> update() {
     return new UpdateBuilderMock<>(FlaffFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     FlaffRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.compositeId())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.compositeId(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.compositeId(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public FlaffRow upsert(
     FlaffRow unsaved,
     Connection c
@@ -136,31 +150,33 @@ public record FlaffRepoMock(HashMap<FlaffId, FlaffRow> map) implements FlaffRepo
     return unsaved;
   };
 
+  @Override
   public List<FlaffRow> upsertBatch(
     Iterator<FlaffRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<FlaffRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.compositeId(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.compositeId(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<FlaffRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.compositeId(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.compositeId(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

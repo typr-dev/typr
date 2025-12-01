@@ -13,7 +13,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple5;
 
 /** Table: production.location
   * Product inventory and manufacturing locations.
@@ -72,7 +71,7 @@ public record LocationRow(
     return new LocationRow(locationid, name, costrate, availability, modifieddate);
   };
 
-  static RowParser<LocationRow> _rowParser = RowParsers.of(LocationId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, LocationRow::new, row -> new Tuple5<>(row.locationid(), row.name(), row.costrate(), row.availability(), row.modifieddate()));;
+  static RowParser<LocationRow> _rowParser = RowParsers.of(LocationId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, LocationRow::new, row -> new Object[]{row.locationid(), row.name(), row.costrate(), row.availability(), row.modifieddate()});;
 
   static public PgText<LocationRow> pgText =
     PgText.from(_rowParser);

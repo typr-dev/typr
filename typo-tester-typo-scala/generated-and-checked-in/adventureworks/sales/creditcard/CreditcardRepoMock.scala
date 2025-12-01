@@ -6,6 +6,7 @@
 package adventureworks.sales.creditcard
 
 import adventureworks.userdefined.CustomCreditcardId
+import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
@@ -26,7 +27,7 @@ case class CreditcardRepoMock(
   toRow: CreditcardRowUnsaved => CreditcardRow,
   map: HashMap[/* user-picked */ CustomCreditcardId, CreditcardRow] = new HashMap[/* user-picked */ CustomCreditcardId, CreditcardRow]()
 ) extends CreditcardRepo {
-  def delete: DeleteBuilder[CreditcardFields, CreditcardRow] = {
+  override def delete: DeleteBuilder[CreditcardFields, CreditcardRow] = {
     new DeleteBuilderMock(
       CreditcardFields.structure,
       () => new ArrayList(map.values()),
@@ -36,27 +37,27 @@ case class CreditcardRepoMock(
     )
   }
 
-  def deleteById(creditcardid: /* user-picked */ CustomCreditcardId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(creditcardid)).isPresent()
+  override def deleteById(creditcardid: /* user-picked */ CustomCreditcardId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(creditcardid)).isPresent()
 
-  def deleteByIds(creditcardids: Array[/* user-picked */ CustomCreditcardId])(using c: Connection): Integer = {
+  override def deleteByIds(creditcardids: Array[/* user-picked */ CustomCreditcardId])(using c: Connection): Integer = {
     var count = 0
     creditcardids.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
-    count
+    return count
   }
 
-  def insert(unsaved: CreditcardRow)(using c: Connection): CreditcardRow = {
+  override def insert(unsaved: CreditcardRow)(using c: Connection): CreditcardRow = {
     if (map.containsKey(unsaved.creditcardid)) {
       throw new RuntimeException(s"id $unsaved.creditcardid already exists")
     }
     map.put(unsaved.creditcardid, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def insert(unsaved: CreditcardRowUnsaved)(using c: Connection): CreditcardRow = insert(toRow(unsaved))(using c)
+  override def insert(unsaved: CreditcardRowUnsaved)(using c: Connection): CreditcardRow = insert(toRow(unsaved))(using c)
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[CreditcardRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -66,11 +67,11 @@ case class CreditcardRepoMock(
       map.put(row.creditcardid, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[CreditcardRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -81,25 +82,25 @@ case class CreditcardRepoMock(
       map.put(row.creditcardid, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
-  def select: SelectBuilder[CreditcardFields, CreditcardRow] = new SelectBuilderMock(CreditcardFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
+  override def select: SelectBuilder[CreditcardFields, CreditcardRow] = new SelectBuilderMock(CreditcardFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  def selectAll(using c: Connection): java.util.List[CreditcardRow] = new ArrayList(map.values())
+  override def selectAll(using c: Connection): java.util.List[CreditcardRow] = new ArrayList(map.values())
 
-  def selectById(creditcardid: /* user-picked */ CustomCreditcardId)(using c: Connection): Optional[CreditcardRow] = Optional.ofNullable(map.get(creditcardid))
+  override def selectById(creditcardid: /* user-picked */ CustomCreditcardId)(using c: Connection): Optional[CreditcardRow] = Optional.ofNullable(map.get(creditcardid))
 
-  def selectByIds(creditcardids: Array[/* user-picked */ CustomCreditcardId])(using c: Connection): java.util.List[CreditcardRow] = {
+  override def selectByIds(creditcardids: Array[/* user-picked */ CustomCreditcardId])(using c: Connection): java.util.List[CreditcardRow] = {
     val result = new ArrayList[CreditcardRow]()
     creditcardids.foreach { id => val opt = Optional.ofNullable(map.get(id))
     if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
-    result
+    return result
   }
 
-  def selectByIdsTracked(creditcardids: Array[/* user-picked */ CustomCreditcardId])(using c: Connection): java.util.Map[/* user-picked */ CustomCreditcardId, CreditcardRow] = selectByIds(creditcardids)(using c).stream().collect(Collectors.toMap((row: adventureworks.sales.creditcard.CreditcardRow) => row.creditcardid, Function.identity()))
+  override def selectByIdsTracked(creditcardids: Array[/* user-picked */ CustomCreditcardId])(using c: Connection): java.util.Map[/* user-picked */ CustomCreditcardId, CreditcardRow] = selectByIds(creditcardids)(using c).stream().collect(Collectors.toMap((row: CreditcardRow) => row.creditcardid, Function.identity()))
 
-  def update: UpdateBuilder[CreditcardFields, CreditcardRow] = {
+  override def update: UpdateBuilder[CreditcardFields, CreditcardRow] = {
     new UpdateBuilderMock(
       CreditcardFields.structure,
       () => new ArrayList(map.values()),
@@ -108,31 +109,31 @@ case class CreditcardRepoMock(
     )
   }
 
-  def update(row: CreditcardRow)(using c: Connection): java.lang.Boolean = {
-    val shouldUpdate = Optional.ofNullable(map.get(row.creditcardid)).filter(oldRow => !oldRow.equals(row)).isPresent()
+  override def update(row: CreditcardRow)(using c: Connection): java.lang.Boolean = {
+    val shouldUpdate = Optional.ofNullable(map.get(row.creditcardid)).filter(oldRow => (oldRow != row)).isPresent()
     if (shouldUpdate) {
       map.put(row.creditcardid, row): @scala.annotation.nowarn
     }
-    shouldUpdate
+    return shouldUpdate
   }
 
-  def upsert(unsaved: CreditcardRow)(using c: Connection): CreditcardRow = {
+  override def upsert(unsaved: CreditcardRow)(using c: Connection): CreditcardRow = {
     map.put(unsaved.creditcardid, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[CreditcardRow])(using c: Connection): java.util.List[CreditcardRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[CreditcardRow])(using c: Connection): java.util.List[CreditcardRow] = {
     val result = new ArrayList[CreditcardRow]()
     while (unsaved.hasNext()) {
       val row = unsaved.next()
       map.put(row.creditcardid, row): @scala.annotation.nowarn
       result.add(row): @scala.annotation.nowarn
     }
-    result
+    return result
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[CreditcardRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
@@ -142,6 +143,6 @@ case class CreditcardRepoMock(
       map.put(row.creditcardid, row): @scala.annotation.nowarn
       count = count + 1
     }
-    count
+    return count
   }
 }

@@ -103,7 +103,7 @@ public class UsersRepoTest {
         // Check PostgreSQL version first
         boolean shouldRun = WithConnection.apply(c -> {
             var versionResult = typo.runtime.Fragment.lit("SELECT VERSION()")
-                    .as(typo.runtime.RowParsers.of(typo.runtime.PgTypes.text, s -> s, s -> new typo.runtime.RowParsers.Tuple1<>(s)).first())
+                    .query(typo.runtime.RowParsers.of(typo.runtime.PgTypes.text, s -> s, s -> new Object[]{s}).first())
                     .runUnchecked(c);
 
             if (versionResult.isEmpty()) {

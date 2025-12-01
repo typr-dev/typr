@@ -29,7 +29,7 @@ object DepartmentFields {
 
     override lazy val fields: DepartmentFields = {
       new DepartmentFields {
-        def departmentid: IdField[DepartmentId, DepartmentRow] = {
+        override def departmentid: IdField[DepartmentId, DepartmentRow] = {
           new IdField[DepartmentId, DepartmentRow](
             _path,
             "departmentid",
@@ -40,7 +40,7 @@ object DepartmentFields {
             DepartmentId.pgType
           )
         }
-        def name: Field[Name, DepartmentRow] = {
+        override def name: Field[Name, DepartmentRow] = {
           new Field[Name, DepartmentRow](
             _path,
             "name",
@@ -51,7 +51,7 @@ object DepartmentFields {
             Name.pgType
           )
         }
-        def groupname: Field[Name, DepartmentRow] = {
+        override def groupname: Field[Name, DepartmentRow] = {
           new Field[Name, DepartmentRow](
             _path,
             "groupname",
@@ -62,7 +62,7 @@ object DepartmentFields {
             Name.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, DepartmentRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, DepartmentRow] = {
           new Field[TypoLocalDateTime, DepartmentRow](
             _path,
             "modifieddate",
@@ -78,7 +78,7 @@ object DepartmentFields {
 
     override lazy val columns: java.util.List[FieldLike[?, DepartmentRow]] = java.util.List.of(this.fields.departmentid, this.fields.name, this.fields.groupname, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[DepartmentFields, DepartmentRow] = new Impl(java.util.List.of())

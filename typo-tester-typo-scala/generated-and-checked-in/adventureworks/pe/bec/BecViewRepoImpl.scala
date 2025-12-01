@@ -10,11 +10,11 @@ import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class BecViewRepoImpl extends BecViewRepo {
-  def select: SelectBuilder[BecViewFields, BecViewRow] = SelectBuilder.of("pe.bec", BecViewFields.structure, BecViewRow.`_rowParser`)
+  override def select: SelectBuilder[BecViewFields, BecViewRow] = SelectBuilder.of("pe.bec", BecViewFields.structure, BecViewRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[BecViewRow] = {
+  override def selectAll(using c: Connection): java.util.List[BecViewRow] = {
     interpolate"""select "id", "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text
     from "pe"."bec"
-    """.as(BecViewRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(BecViewRow.`_rowParser`.all()).runUnchecked(c)
   }
 }

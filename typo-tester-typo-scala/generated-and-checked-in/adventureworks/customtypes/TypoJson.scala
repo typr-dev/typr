@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes
 
+import com.fasterxml.jackson.annotation.JsonValue
 import org.postgresql.util.PGobject
 import typo.dsl.Bijection
 import typo.runtime.PgRead
@@ -13,7 +14,7 @@ import typo.runtime.PgType
 import typo.runtime.PgWrite
 
 /** json (via PGObject) */
-case class TypoJson(value: String)
+case class TypoJson(@JsonValue value: String)
 
 object TypoJson {
   given bijection: Bijection[TypoJson, String] = Bijection.apply[TypoJson, String](_.value)(TypoJson.apply)
@@ -23,19 +24,19 @@ object TypoJson {
   given pgType: PgType[TypoJson] = {
     PgType.of(
       "json",
-      PgRead.castJdbcObjectTo(classOf[PGobject]).map(v => new TypoJson(v.getValue)),
-      PgWrite.passObjectToJdbc().contramap((v: TypoJson) => {
-                                             val obj = new PGobject()
-                                             obj.setType("json")
-                                             obj.setValue(v.value)
-                                             obj
-                                           }),
+      PgRead.castJdbcObjectTo(classOf[PGobject]).map((v: PGobject) => new TypoJson(v.getValue)),
+      PgWrite.passObjectToJdbc[PGobject]().contramap((v: TypoJson) => {
+                                                       val obj = new PGobject()
+                                                       obj.setType("json")
+                                                       obj.setValue(v.value)
+                                                       obj
+                                                     }),
       TypoJson.pgText
     )
   }
 
   given pgTypeArray: PgType[Array[TypoJson]] = {
-    TypoJson.pgType.array(PgRead.massageJdbcArrayTo(classOf[Array[String]]).map(xs => xs.map(v => new TypoJson(v))), PgWrite.passObjectToJdbc[PGobject]().array(TypoJson.pgType.typename().as[PGobject]()).contramap(xs => xs.map((v: TypoJson) => {
+    TypoJson.pgType.array(PgRead.massageJdbcArrayTo(classOf[Array[String]]).map((xs: Array[String]) => xs.map((v: String) => new TypoJson(v))), PgWrite.passObjectToJdbc[PGobject]().array(TypoJson.pgType.typename().as[PGobject]()).contramap((xs: Array[TypoJson]) => xs.map((v: TypoJson) => {
       val obj = new PGobject()
       obj.setType("json")
       obj.setValue(v.value)

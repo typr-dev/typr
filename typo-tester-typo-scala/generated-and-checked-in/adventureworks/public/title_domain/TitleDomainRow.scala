@@ -8,7 +8,6 @@ package adventureworks.public.title_domain
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple1
 
 /** Table: public.title_domain
  * Primary key: code
@@ -18,7 +17,7 @@ case class TitleDomainRow(code: TitleDomainId) {
 }
 
 object TitleDomainRow {
-  val `_rowParser`: RowParser[TitleDomainRow] = RowParsers.of(TitleDomainId.pgType, TitleDomainRow.apply, row => new Tuple1(row.code))
+  val `_rowParser`: RowParser[TitleDomainRow] = RowParsers.of(TitleDomainId.pgType, TitleDomainRow.apply, row => Array(row.code))
 
   given pgText: PgText[TitleDomainRow] = PgText.from(`_rowParser`)
 }

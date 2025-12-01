@@ -11,7 +11,6 @@ import adventureworks.public.Name
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple4
 
 /** Table: sales.salesreason
  * Lookup table of customer purchase reasons.
@@ -45,14 +44,7 @@ case class SalesreasonRow(
 }
 
 object SalesreasonRow {
-  val `_rowParser`: RowParser[SalesreasonRow] = {
-    RowParsers.of(SalesreasonId.pgType, Name.pgType, Name.pgType, TypoLocalDateTime.pgType, SalesreasonRow.apply, row => new Tuple4(
-      row.salesreasonid,
-      row.name,
-      row.reasontype,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[SalesreasonRow] = RowParsers.of(SalesreasonId.pgType, Name.pgType, Name.pgType, TypoLocalDateTime.pgType, SalesreasonRow.apply, row => Array(row.salesreasonid, row.name, row.reasontype, row.modifieddate))
 
   given pgText: PgText[SalesreasonRow] = PgText.from(`_rowParser`)
 }

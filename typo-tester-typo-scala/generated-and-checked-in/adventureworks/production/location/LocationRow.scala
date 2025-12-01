@@ -12,7 +12,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple5
 
 /** Table: production.location
  * Product inventory and manufacturing locations.
@@ -57,15 +56,7 @@ case class LocationRow(
 }
 
 object LocationRow {
-  val `_rowParser`: RowParser[LocationRow] = {
-    RowParsers.of(LocationId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, LocationRow.apply, row => new Tuple5(
-      row.locationid,
-      row.name,
-      row.costrate,
-      row.availability,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[LocationRow] = RowParsers.of(LocationId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, LocationRow.apply, row => Array(row.locationid, row.name, row.costrate, row.availability, row.modifieddate))
 
   given pgText: PgText[LocationRow] = PgText.from(`_rowParser`)
 }

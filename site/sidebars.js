@@ -55,7 +55,6 @@ const sidebars = {
                 {type: "doc", id: "other-features/streaming-inserts"},
                 {type: "doc", id: "other-features/generate-into-multiple-projects"},
                 {type: "doc", id: "other-features/json"},
-                {type: "doc", id: "other-features/ioc-frameworks"},
                 {type: "doc", id: "other-features/faster-compilation"},
                 {type: "doc", id: "other-features/flexible"},
                 {type: "doc", id: "other-features/clickable-links"},

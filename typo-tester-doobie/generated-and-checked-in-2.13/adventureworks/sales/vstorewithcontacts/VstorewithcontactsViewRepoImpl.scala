@@ -11,7 +11,7 @@ import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class VstorewithcontactsViewRepoImpl extends VstorewithcontactsViewRepo {
-  def select: SelectBuilder[VstorewithcontactsViewFields, VstorewithcontactsViewRow] = SelectBuilder.of(""""sales"."vstorewithcontacts"""", VstorewithcontactsViewFields.structure, VstorewithcontactsViewRow.read)
+  override def select: SelectBuilder[VstorewithcontactsViewFields, VstorewithcontactsViewRow] = SelectBuilder.of(""""sales"."vstorewithcontacts"""", VstorewithcontactsViewFields.structure, VstorewithcontactsViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, VstorewithcontactsViewRow] = sql"""select "businessentityid", "name", "contacttype", "title", "firstname", "middlename", "lastname", "suffix", "phonenumber", "phonenumbertype", "emailaddress", "emailpromotion" from "sales"."vstorewithcontacts"""".query(VstorewithcontactsViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, VstorewithcontactsViewRow] = sql"""select "businessentityid", "name", "contacttype", "title", "firstname", "middlename", "lastname", "suffix", "phonenumber", "phonenumbertype", "emailaddress", "emailpromotion" from "sales"."vstorewithcontacts"""".query(VstorewithcontactsViewRow.read).stream
 }

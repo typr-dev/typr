@@ -10,9 +10,9 @@ import typo.dsl.SelectBuilder
 import anorm.SqlStringInterpolation
 
 class SViewRepoImpl extends SViewRepo {
-  def select: SelectBuilder[SViewFields, SViewRow] = SelectBuilder.of(""""hr"."s"""", SViewFields.structure, SViewRow.rowParser)
+  override def select: SelectBuilder[SViewFields, SViewRow] = SelectBuilder.of(""""hr"."s"""", SViewFields.structure, SViewRow.rowParser)
 
-  def selectAll(implicit c: Connection): List[SViewRow] = {
+  override def selectAll(implicit c: Connection): List[SViewRow] = {
     SQL"""select "id", "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text
     from "hr"."s"
     """.as(SViewRow.rowParser(1).*)

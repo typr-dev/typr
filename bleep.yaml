@@ -60,6 +60,7 @@ projects:
     dependencies:
       - org.postgresql:postgresql:42.7.3
       - net.hamnaberg.json:immutable-json-ast:7.0.1
+      - org.jetbrains:annotations:26.0.1
     platform:
       name: jvm
   typo-runtime-scala:
@@ -107,8 +108,6 @@ projects:
       jvm213:
         sources: ./generated-and-checked-in-2.13
       jvm3:
-        dependencies:
-        - org.springframework:spring-context:6.1.6
         sources: ./generated-and-checked-in-3
     dependencies:
     - io.circe::circe-core:0.14.7
@@ -128,7 +127,6 @@ projects:
     - com.fasterxml.jackson.core:jackson-databind:2.17.2
     - com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2
     - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2
-    - jakarta.enterprise:jakarta.enterprise.cdi-api:4.0.1
     dependsOn: typo-dsl-java
     isTestProject: true
     java:
@@ -142,6 +140,10 @@ projects:
   typo-tester-typo-scala:
     dependencies:
     - org.scalatest::scalatest:3.2.18
+    - com.fasterxml.jackson.core:jackson-annotations:2.17.2
+    - com.fasterxml.jackson.core:jackson-databind:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2
     dependsOn:
     - typo-dsl-java
     - typo-runtime-scala

@@ -21,13 +21,13 @@ case class CultureRepoMock(
   toRow: CultureRowUnsaved => CultureRow,
   map: scala.collection.mutable.Map[CultureId, CultureRow] = scala.collection.mutable.Map.empty[CultureId, CultureRow]
 ) extends CultureRepo {
-  def delete: DeleteBuilder[CultureFields, CultureRow] = DeleteBuilderMock(DeleteParams.empty, CultureFields.structure, map)
+  override def delete: DeleteBuilder[CultureFields, CultureRow] = DeleteBuilderMock(DeleteParams.empty, CultureFields.structure, map)
 
-  def deleteById(cultureid: CultureId)(using c: Connection): Boolean = map.remove(cultureid).isDefined
+  override def deleteById(cultureid: CultureId)(using c: Connection): Boolean = map.remove(cultureid).isDefined
 
-  def deleteByIds(cultureids: Array[CultureId])(using c: Connection): Int = cultureids.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(cultureids: Array[CultureId])(using c: Connection): Int = cultureids.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: CultureRow)(using c: Connection): CultureRow = {
+  override def insert(unsaved: CultureRow)(using c: Connection): CultureRow = {
     val _ = if (map.contains(unsaved.cultureid))
       sys.error(s"id ${unsaved.cultureid} already exists")
     else
@@ -36,9 +36,9 @@ case class CultureRepoMock(
     unsaved
   }
 
-  def insert(unsaved: CultureRowUnsaved)(using c: Connection): CultureRow = insert(toRow(unsaved))
+  override def insert(unsaved: CultureRowUnsaved)(using c: Connection): CultureRow = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[CultureRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -49,7 +49,7 @@ case class CultureRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[CultureRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -60,34 +60,34 @@ case class CultureRepoMock(
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[CultureFields, CultureRow] = SelectBuilderMock(CultureFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[CultureFields, CultureRow] = SelectBuilderMock(CultureFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(using c: Connection): List[CultureRow] = map.values.toList
+  override def selectAll(using c: Connection): List[CultureRow] = map.values.toList
 
-  def selectById(cultureid: CultureId)(using c: Connection): Option[CultureRow] = map.get(cultureid)
+  override def selectById(cultureid: CultureId)(using c: Connection): Option[CultureRow] = map.get(cultureid)
 
-  def selectByIds(cultureids: Array[CultureId])(using c: Connection): List[CultureRow] = cultureids.flatMap(map.get).toList
+  override def selectByIds(cultureids: Array[CultureId])(using c: Connection): List[CultureRow] = cultureids.flatMap(map.get).toList
 
-  def selectByIdsTracked(cultureids: Array[CultureId])(using c: Connection): Map[CultureId, CultureRow] = {
+  override def selectByIdsTracked(cultureids: Array[CultureId])(using c: Connection): Map[CultureId, CultureRow] = {
     val byId = selectByIds(cultureids).view.map(x => (x.cultureid, x)).toMap
     cultureids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[CultureFields, CultureRow] = UpdateBuilderMock(UpdateParams.empty, CultureFields.structure, map)
+  override def update: UpdateBuilder[CultureFields, CultureRow] = UpdateBuilderMock(UpdateParams.empty, CultureFields.structure, map)
 
-  def update(row: CultureRow)(using c: Connection): Option[CultureRow] = {
+  override def update(row: CultureRow)(using c: Connection): Option[CultureRow] = {
     map.get(row.cultureid).map { _ =>
       map.put(row.cultureid, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: CultureRow)(using c: Connection): CultureRow = {
+  override def upsert(unsaved: CultureRow)(using c: Connection): CultureRow = {
     map.put(unsaved.cultureid, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[CultureRow])(using c: Connection): List[CultureRow] = {
+  override def upsertBatch(unsaved: Iterable[CultureRow])(using c: Connection): List[CultureRow] = {
     unsaved.map { row =>
       map += (row.cultureid -> row)
       row
@@ -95,7 +95,7 @@ case class CultureRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[CultureRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

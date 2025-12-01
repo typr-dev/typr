@@ -33,20 +33,20 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class SalesorderheaderRepoImpl extends SalesorderheaderRepo {
-  def delete: DeleteBuilder[SalesorderheaderFields, SalesorderheaderRow] = DeleteBuilder.of(""""sales"."salesorderheader"""", SalesorderheaderFields.structure, SalesorderheaderRow.jdbcDecoder)
+  override def delete: DeleteBuilder[SalesorderheaderFields, SalesorderheaderRow] = DeleteBuilder.of(""""sales"."salesorderheader"""", SalesorderheaderFields.structure, SalesorderheaderRow.jdbcDecoder)
 
-  def deleteById(salesorderid: SalesorderheaderId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "sales"."salesorderheader" where "salesorderid" = ${Segment.paramSegment(salesorderid)(using SalesorderheaderId.setter)}""".delete.map(_ > 0)
+  override def deleteById(salesorderid: SalesorderheaderId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "sales"."salesorderheader" where "salesorderid" = ${Segment.paramSegment(salesorderid)(using SalesorderheaderId.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(salesorderids: Array[SalesorderheaderId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "sales"."salesorderheader" where "salesorderid" = ANY(${Segment.paramSegment(salesorderids)(using SalesorderheaderId.arraySetter)})""".delete
+  override def deleteByIds(salesorderids: Array[SalesorderheaderId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "sales"."salesorderheader" where "salesorderid" = ANY(${Segment.paramSegment(salesorderids)(using SalesorderheaderId.arraySetter)})""".delete
 
-  def insert(unsaved: SalesorderheaderRow): ZIO[ZConnection, Throwable, SalesorderheaderRow] = {
+  override def insert(unsaved: SalesorderheaderRow): ZIO[ZConnection, Throwable, SalesorderheaderRow] = {
     sql"""insert into "sales"."salesorderheader"("salesorderid", "revisionnumber", "orderdate", "duedate", "shipdate", "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate")
     values (${Segment.paramSegment(unsaved.salesorderid)(using SalesorderheaderId.setter)}::int4, ${Segment.paramSegment(unsaved.revisionnumber)(using TypoShort.setter)}::int2, ${Segment.paramSegment(unsaved.orderdate)(using TypoLocalDateTime.setter)}::timestamp, ${Segment.paramSegment(unsaved.duedate)(using TypoLocalDateTime.setter)}::timestamp, ${Segment.paramSegment(unsaved.shipdate)(using Setter.optionParamSetter(using TypoLocalDateTime.setter))}::timestamp, ${Segment.paramSegment(unsaved.status)(using TypoShort.setter)}::int2, ${Segment.paramSegment(unsaved.onlineorderflag)(using Flag.setter)}::bool, ${Segment.paramSegment(unsaved.purchaseordernumber)(using Setter.optionParamSetter(using OrderNumber.setter))}::varchar, ${Segment.paramSegment(unsaved.accountnumber)(using Setter.optionParamSetter(using AccountNumber.setter))}::varchar, ${Segment.paramSegment(unsaved.customerid)(using CustomerId.setter)}::int4, ${Segment.paramSegment(unsaved.salespersonid)(using Setter.optionParamSetter(using BusinessentityId.setter))}::int4, ${Segment.paramSegment(unsaved.territoryid)(using Setter.optionParamSetter(using SalesterritoryId.setter))}::int4, ${Segment.paramSegment(unsaved.billtoaddressid)(using AddressId.setter)}::int4, ${Segment.paramSegment(unsaved.shiptoaddressid)(using AddressId.setter)}::int4, ${Segment.paramSegment(unsaved.shipmethodid)(using ShipmethodId.setter)}::int4, ${Segment.paramSegment(unsaved.creditcardid)(using Setter.optionParamSetter(using CustomCreditcardId.setter))}::int4, ${Segment.paramSegment(unsaved.creditcardapprovalcode)(using Setter.optionParamSetter(using Setter.stringSetter))}, ${Segment.paramSegment(unsaved.currencyrateid)(using Setter.optionParamSetter(using CurrencyrateId.setter))}::int4, ${Segment.paramSegment(unsaved.subtotal)(using Setter.bigDecimalScalaSetter)}::numeric, ${Segment.paramSegment(unsaved.taxamt)(using Setter.bigDecimalScalaSetter)}::numeric, ${Segment.paramSegment(unsaved.freight)(using Setter.bigDecimalScalaSetter)}::numeric, ${Segment.paramSegment(unsaved.totaldue)(using Setter.optionParamSetter(using Setter.bigDecimalScalaSetter))}::numeric, ${Segment.paramSegment(unsaved.comment)(using Setter.optionParamSetter(using Setter.stringSetter))}, ${Segment.paramSegment(unsaved.rowguid)(using TypoUUID.setter)}::uuid, ${Segment.paramSegment(unsaved.modifieddate)(using TypoLocalDateTime.setter)}::timestamp)
     returning "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text
     """.insertReturning(using SalesorderheaderRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insert(unsaved: SalesorderheaderRowUnsaved): ZIO[ZConnection, Throwable, SalesorderheaderRow] = {
+  override def insert(unsaved: SalesorderheaderRowUnsaved): ZIO[ZConnection, Throwable, SalesorderheaderRow] = {
     val fs = List(
       Some((sql""""duedate"""", sql"${Segment.paramSegment(unsaved.duedate)(using TypoLocalDateTime.setter)}::timestamp")),
       Some((sql""""shipdate"""", sql"${Segment.paramSegment(unsaved.shipdate)(using Setter.optionParamSetter(using TypoLocalDateTime.setter))}::timestamp")),
@@ -116,35 +116,35 @@ class SalesorderheaderRepoImpl extends SalesorderheaderRepo {
     q.insertReturning(using SalesorderheaderRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, SalesorderheaderRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "sales"."salesorderheader"("salesorderid", "revisionnumber", "orderdate", "duedate", "shipdate", "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved)(using SalesorderheaderRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, SalesorderheaderRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "sales"."salesorderheader"("duedate", "shipdate", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "totaldue", "comment", "salesorderid", "revisionnumber", "orderdate", "status", "onlineorderflag", "subtotal", "taxamt", "freight", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using SalesorderheaderRowUnsaved.pgText)
 
-  def select: SelectBuilder[SalesorderheaderFields, SalesorderheaderRow] = SelectBuilder.of(""""sales"."salesorderheader"""", SalesorderheaderFields.structure, SalesorderheaderRow.jdbcDecoder)
+  override def select: SelectBuilder[SalesorderheaderFields, SalesorderheaderRow] = SelectBuilder.of(""""sales"."salesorderheader"""", SalesorderheaderFields.structure, SalesorderheaderRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, SalesorderheaderRow] = sql"""select "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text from "sales"."salesorderheader"""".query(using SalesorderheaderRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, SalesorderheaderRow] = sql"""select "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text from "sales"."salesorderheader"""".query(using SalesorderheaderRow.jdbcDecoder).selectStream()
 
-  def selectById(salesorderid: SalesorderheaderId): ZIO[ZConnection, Throwable, Option[SalesorderheaderRow]] = sql"""select "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text from "sales"."salesorderheader" where "salesorderid" = ${Segment.paramSegment(salesorderid)(using SalesorderheaderId.setter)}""".query(using SalesorderheaderRow.jdbcDecoder).selectOne
+  override def selectById(salesorderid: SalesorderheaderId): ZIO[ZConnection, Throwable, Option[SalesorderheaderRow]] = sql"""select "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text from "sales"."salesorderheader" where "salesorderid" = ${Segment.paramSegment(salesorderid)(using SalesorderheaderId.setter)}""".query(using SalesorderheaderRow.jdbcDecoder).selectOne
 
-  def selectByIds(salesorderids: Array[SalesorderheaderId]): ZStream[ZConnection, Throwable, SalesorderheaderRow] = sql"""select "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text from "sales"."salesorderheader" where "salesorderid" = ANY(${Segment.paramSegment(salesorderids)(using SalesorderheaderId.arraySetter)})""".query(using SalesorderheaderRow.jdbcDecoder).selectStream()
+  override def selectByIds(salesorderids: Array[SalesorderheaderId]): ZStream[ZConnection, Throwable, SalesorderheaderRow] = sql"""select "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text from "sales"."salesorderheader" where "salesorderid" = ANY(${Segment.paramSegment(salesorderids)(using SalesorderheaderId.arraySetter)})""".query(using SalesorderheaderRow.jdbcDecoder).selectStream()
 
-  def selectByIdsTracked(salesorderids: Array[SalesorderheaderId]): ZIO[ZConnection, Throwable, Map[SalesorderheaderId, SalesorderheaderRow]] = {
+  override def selectByIdsTracked(salesorderids: Array[SalesorderheaderId]): ZIO[ZConnection, Throwable, Map[SalesorderheaderId, SalesorderheaderRow]] = {
     selectByIds(salesorderids).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.salesorderid, x)).toMap
       salesorderids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[SalesorderheaderFields, SalesorderheaderRow] = UpdateBuilder.of(""""sales"."salesorderheader"""", SalesorderheaderFields.structure, SalesorderheaderRow.jdbcDecoder)
+  override def update: UpdateBuilder[SalesorderheaderFields, SalesorderheaderRow] = UpdateBuilder.of(""""sales"."salesorderheader"""", SalesorderheaderFields.structure, SalesorderheaderRow.jdbcDecoder)
 
-  def update(row: SalesorderheaderRow): ZIO[ZConnection, Throwable, Option[SalesorderheaderRow]] = {
+  override def update(row: SalesorderheaderRow): ZIO[ZConnection, Throwable, Option[SalesorderheaderRow]] = {
     val salesorderid = row.salesorderid
     sql"""update "sales"."salesorderheader"
     set "revisionnumber" = ${Segment.paramSegment(row.revisionnumber)(using TypoShort.setter)}::int2,
@@ -177,7 +177,7 @@ class SalesorderheaderRepoImpl extends SalesorderheaderRepo {
       .selectOne
   }
 
-  def upsert(unsaved: SalesorderheaderRow): ZIO[ZConnection, Throwable, UpdateResult[SalesorderheaderRow]] = {
+  override def upsert(unsaved: SalesorderheaderRow): ZIO[ZConnection, Throwable, UpdateResult[SalesorderheaderRow]] = {
     sql"""insert into "sales"."salesorderheader"("salesorderid", "revisionnumber", "orderdate", "duedate", "shipdate", "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate")
     values (
       ${Segment.paramSegment(unsaved.salesorderid)(using SalesorderheaderId.setter)}::int4,
@@ -236,7 +236,7 @@ class SalesorderheaderRepoImpl extends SalesorderheaderRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, SalesorderheaderRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

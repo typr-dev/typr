@@ -5,22 +5,22 @@
  */
 package adventureworks.pu.poh;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class PohViewRepoImpl implements PohViewRepo {
+  @Override
   public SelectBuilder<PohViewFields, PohViewRow> select() {
     return SelectBuilder.of("pu.poh", PohViewFields.structure(), PohViewRow._rowParser);
   };
 
+  @Override
   public List<PohViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text
        from "pu"."poh"
-    """)).as(PohViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(PohViewRow._rowParser.all()).runUnchecked(c);
   };
 }

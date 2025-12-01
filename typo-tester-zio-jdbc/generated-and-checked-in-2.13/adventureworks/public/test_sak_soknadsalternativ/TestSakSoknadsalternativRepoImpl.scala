@@ -19,11 +19,11 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class TestSakSoknadsalternativRepoImpl extends TestSakSoknadsalternativRepo {
-  def delete: DeleteBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = DeleteBuilder.of(""""public"."test_sak_soknadsalternativ"""", TestSakSoknadsalternativFields.structure, TestSakSoknadsalternativRow.jdbcDecoder)
+  override def delete: DeleteBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = DeleteBuilder.of(""""public"."test_sak_soknadsalternativ"""", TestSakSoknadsalternativFields.structure, TestSakSoknadsalternativRow.jdbcDecoder)
 
-  def deleteById(compositeId: TestSakSoknadsalternativId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "public"."test_sak_soknadsalternativ" where "organisasjonskode_saksbehandler" = ${Segment.paramSegment(compositeId.organisasjonskodeSaksbehandler)(Setter.stringSetter)} AND "utdanningsmulighet_kode" = ${Segment.paramSegment(compositeId.utdanningsmulighetKode)(Setter.stringSetter)}""".delete.map(_ > 0)
+  override def deleteById(compositeId: TestSakSoknadsalternativId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "public"."test_sak_soknadsalternativ" where "organisasjonskode_saksbehandler" = ${Segment.paramSegment(compositeId.organisasjonskodeSaksbehandler)(Setter.stringSetter)} AND "utdanningsmulighet_kode" = ${Segment.paramSegment(compositeId.utdanningsmulighetKode)(Setter.stringSetter)}""".delete.map(_ > 0)
 
-  def deleteByIds(compositeIds: Array[TestSakSoknadsalternativId]): ZIO[ZConnection, Throwable, Long] = {
+  override def deleteByIds(compositeIds: Array[TestSakSoknadsalternativId]): ZIO[ZConnection, Throwable, Long] = {
     val organisasjonskodeSaksbehandler = compositeIds.map(_.organisasjonskodeSaksbehandler)
     val utdanningsmulighetKode = compositeIds.map(_.utdanningsmulighetKode)
     sql"""delete
@@ -33,25 +33,25 @@ class TestSakSoknadsalternativRepoImpl extends TestSakSoknadsalternativRepo {
     """.delete
   }
 
-  def insert(unsaved: TestSakSoknadsalternativRow): ZIO[ZConnection, Throwable, TestSakSoknadsalternativRow] = {
+  override def insert(unsaved: TestSakSoknadsalternativRow): ZIO[ZConnection, Throwable, TestSakSoknadsalternativRow] = {
     sql"""insert into "public"."test_sak_soknadsalternativ"("organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder")
     values (${Segment.paramSegment(unsaved.organisasjonskodeSaksbehandler)(Setter.stringSetter)}, ${Segment.paramSegment(unsaved.utdanningsmulighetKode)(Setter.stringSetter)}, ${Segment.paramSegment(unsaved.organisasjonskodeTilbyder)(TestOrganisasjonId.setter)})
     returning "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder"
     """.insertReturning(TestSakSoknadsalternativRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, TestSakSoknadsalternativRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "public"."test_sak_soknadsalternativ"("organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder") FROM STDIN""", batchSize, unsaved)(TestSakSoknadsalternativRow.pgText)
 
-  def select: SelectBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = SelectBuilder.of(""""public"."test_sak_soknadsalternativ"""", TestSakSoknadsalternativFields.structure, TestSakSoknadsalternativRow.jdbcDecoder)
+  override def select: SelectBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = SelectBuilder.of(""""public"."test_sak_soknadsalternativ"""", TestSakSoknadsalternativFields.structure, TestSakSoknadsalternativRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, TestSakSoknadsalternativRow] = sql"""select "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder" from "public"."test_sak_soknadsalternativ"""".query(TestSakSoknadsalternativRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, TestSakSoknadsalternativRow] = sql"""select "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder" from "public"."test_sak_soknadsalternativ"""".query(TestSakSoknadsalternativRow.jdbcDecoder).selectStream()
 
-  def selectById(compositeId: TestSakSoknadsalternativId): ZIO[ZConnection, Throwable, Option[TestSakSoknadsalternativRow]] = sql"""select "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder" from "public"."test_sak_soknadsalternativ" where "organisasjonskode_saksbehandler" = ${Segment.paramSegment(compositeId.organisasjonskodeSaksbehandler)(Setter.stringSetter)} AND "utdanningsmulighet_kode" = ${Segment.paramSegment(compositeId.utdanningsmulighetKode)(Setter.stringSetter)}""".query(TestSakSoknadsalternativRow.jdbcDecoder).selectOne
+  override def selectById(compositeId: TestSakSoknadsalternativId): ZIO[ZConnection, Throwable, Option[TestSakSoknadsalternativRow]] = sql"""select "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder" from "public"."test_sak_soknadsalternativ" where "organisasjonskode_saksbehandler" = ${Segment.paramSegment(compositeId.organisasjonskodeSaksbehandler)(Setter.stringSetter)} AND "utdanningsmulighet_kode" = ${Segment.paramSegment(compositeId.utdanningsmulighetKode)(Setter.stringSetter)}""".query(TestSakSoknadsalternativRow.jdbcDecoder).selectOne
 
-  def selectByIds(compositeIds: Array[TestSakSoknadsalternativId]): ZStream[ZConnection, Throwable, TestSakSoknadsalternativRow] = {
+  override def selectByIds(compositeIds: Array[TestSakSoknadsalternativId]): ZStream[ZConnection, Throwable, TestSakSoknadsalternativRow] = {
     val organisasjonskodeSaksbehandler = compositeIds.map(_.organisasjonskodeSaksbehandler)
     val utdanningsmulighetKode = compositeIds.map(_.utdanningsmulighetKode)
     sql"""select "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder"
@@ -61,16 +61,16 @@ class TestSakSoknadsalternativRepoImpl extends TestSakSoknadsalternativRepo {
     """.query(using TestSakSoknadsalternativRow.jdbcDecoder).selectStream()
   }
 
-  def selectByIdsTracked(compositeIds: Array[TestSakSoknadsalternativId]): ZIO[ZConnection, Throwable, Map[TestSakSoknadsalternativId, TestSakSoknadsalternativRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[TestSakSoknadsalternativId]): ZIO[ZConnection, Throwable, Map[TestSakSoknadsalternativId, TestSakSoknadsalternativRow]] = {
     selectByIds(compositeIds).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = UpdateBuilder.of(""""public"."test_sak_soknadsalternativ"""", TestSakSoknadsalternativFields.structure, TestSakSoknadsalternativRow.jdbcDecoder)
+  override def update: UpdateBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = UpdateBuilder.of(""""public"."test_sak_soknadsalternativ"""", TestSakSoknadsalternativFields.structure, TestSakSoknadsalternativRow.jdbcDecoder)
 
-  def update(row: TestSakSoknadsalternativRow): ZIO[ZConnection, Throwable, Option[TestSakSoknadsalternativRow]] = {
+  override def update(row: TestSakSoknadsalternativRow): ZIO[ZConnection, Throwable, Option[TestSakSoknadsalternativRow]] = {
     val compositeId = row.compositeId
     sql"""update "public"."test_sak_soknadsalternativ"
     set "organisasjonskode_tilbyder" = ${Segment.paramSegment(row.organisasjonskodeTilbyder)(TestOrganisasjonId.setter)}
@@ -80,7 +80,7 @@ class TestSakSoknadsalternativRepoImpl extends TestSakSoknadsalternativRepo {
       .selectOne
   }
 
-  def upsert(unsaved: TestSakSoknadsalternativRow): ZIO[ZConnection, Throwable, UpdateResult[TestSakSoknadsalternativRow]] = {
+  override def upsert(unsaved: TestSakSoknadsalternativRow): ZIO[ZConnection, Throwable, UpdateResult[TestSakSoknadsalternativRow]] = {
     sql"""insert into "public"."test_sak_soknadsalternativ"("organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder")
     values (
       ${Segment.paramSegment(unsaved.organisasjonskodeSaksbehandler)(Setter.stringSetter)},
@@ -94,7 +94,7 @@ class TestSakSoknadsalternativRepoImpl extends TestSakSoknadsalternativRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, TestSakSoknadsalternativRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

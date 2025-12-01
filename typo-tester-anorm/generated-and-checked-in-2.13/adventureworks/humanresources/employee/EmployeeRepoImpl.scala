@@ -29,18 +29,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class EmployeeRepoImpl extends EmployeeRepo {
-  def delete: DeleteBuilder[EmployeeFields, EmployeeRow] = DeleteBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, EmployeeRow.rowParser(1).*)
+  override def delete: DeleteBuilder[EmployeeFields, EmployeeRow] = DeleteBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, EmployeeRow.rowParser(1).*)
 
-  def deleteById(businessentityid: BusinessentityId)(implicit c: Connection): Boolean = SQL"""delete from "humanresources"."employee" where "businessentityid" = ${ParameterValue(businessentityid, null, BusinessentityId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(businessentityid: BusinessentityId)(implicit c: Connection): Boolean = SQL"""delete from "humanresources"."employee" where "businessentityid" = ${ParameterValue(businessentityid, null, BusinessentityId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(businessentityids: Array[BusinessentityId])(implicit c: Connection): Int = {
+  override def deleteByIds(businessentityids: Array[BusinessentityId])(implicit c: Connection): Int = {
     SQL"""delete
     from "humanresources"."employee"
     where "businessentityid" = ANY(${ParameterValue(businessentityids, null, BusinessentityId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: EmployeeRow)(implicit c: Connection): EmployeeRow = {
+  override def insert(unsaved: EmployeeRow)(implicit c: Connection): EmployeeRow = {
   SQL"""insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
     values (${ParameterValue(unsaved.businessentityid, null, BusinessentityId.toStatement)}::int4, ${ParameterValue(unsaved.nationalidnumber, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.loginid, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.jobtitle, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.birthdate, null, TypoLocalDate.toStatement)}::date, ${ParameterValue(unsaved.maritalstatus, null, ToStatement.stringToStatement)}::bpchar, ${ParameterValue(unsaved.gender, null, ToStatement.stringToStatement)}::bpchar, ${ParameterValue(unsaved.hiredate, null, TypoLocalDate.toStatement)}::date, ${ParameterValue(unsaved.salariedflag, null, Flag.toStatement)}::bool, ${ParameterValue(unsaved.vacationhours, null, TypoShort.toStatement)}::int2, ${ParameterValue(unsaved.sickleavehours, null, TypoShort.toStatement)}::int2, ${ParameterValue(unsaved.currentflag, null, Flag.toStatement)}::bool, ${ParameterValue(unsaved.rowguid, null, TypoUUID.toStatement)}::uuid, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp, ${ParameterValue(unsaved.organizationnode, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))})
     returning "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode"
@@ -48,7 +48,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
     .executeInsert(EmployeeRow.rowParser(1).single)
   }
 
-  def insert(unsaved: EmployeeRowUnsaved)(implicit c: Connection): EmployeeRow = {
+  override def insert(unsaved: EmployeeRowUnsaved)(implicit c: Connection): EmployeeRow = {
     val namedParameters = List(
       Some((NamedParameter("businessentityid", ParameterValue(unsaved.businessentityid, null, BusinessentityId.toStatement)), "::int4")),
       Some((NamedParameter("nationalidnumber", ParameterValue(unsaved.nationalidnumber, null, ToStatement.stringToStatement)), "")),
@@ -103,47 +103,47 @@ class EmployeeRepoImpl extends EmployeeRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[EmployeeRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode") FROM STDIN""", batchSize, unsaved)(EmployeeRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[EmployeeRowUnsaved],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(EmployeeRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[EmployeeFields, EmployeeRow] = SelectBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, EmployeeRow.rowParser)
+  override def select: SelectBuilder[EmployeeFields, EmployeeRow] = SelectBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, EmployeeRow.rowParser)
 
-  def selectAll(implicit c: Connection): List[EmployeeRow] = {
+  override def selectAll(implicit c: Connection): List[EmployeeRow] = {
     SQL"""select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode"
     from "humanresources"."employee"
     """.as(EmployeeRow.rowParser(1).*)
   }
 
-  def selectById(businessentityid: BusinessentityId)(implicit c: Connection): Option[EmployeeRow] = {
+  override def selectById(businessentityid: BusinessentityId)(implicit c: Connection): Option[EmployeeRow] = {
     SQL"""select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode"
     from "humanresources"."employee"
     where "businessentityid" = ${ParameterValue(businessentityid, null, BusinessentityId.toStatement)}
     """.as(EmployeeRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(businessentityids: Array[BusinessentityId])(implicit c: Connection): List[EmployeeRow] = {
+  override def selectByIds(businessentityids: Array[BusinessentityId])(implicit c: Connection): List[EmployeeRow] = {
     SQL"""select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode"
     from "humanresources"."employee"
     where "businessentityid" = ANY(${ParameterValue(businessentityids, null, BusinessentityId.arrayToStatement)})
     """.as(EmployeeRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(businessentityids: Array[BusinessentityId])(implicit c: Connection): Map[BusinessentityId, EmployeeRow] = {
+  override def selectByIdsTracked(businessentityids: Array[BusinessentityId])(implicit c: Connection): Map[BusinessentityId, EmployeeRow] = {
     val byId = selectByIds(businessentityids).view.map(x => (x.businessentityid, x)).toMap
     businessentityids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[EmployeeFields, EmployeeRow] = UpdateBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, EmployeeRow.rowParser(1).*)
+  override def update: UpdateBuilder[EmployeeFields, EmployeeRow] = UpdateBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, EmployeeRow.rowParser(1).*)
 
-  def update(row: EmployeeRow)(implicit c: Connection): Option[EmployeeRow] = {
+  override def update(row: EmployeeRow)(implicit c: Connection): Option[EmployeeRow] = {
     val businessentityid = row.businessentityid
     SQL"""update "humanresources"."employee"
     set "nationalidnumber" = ${ParameterValue(row.nationalidnumber, null, ToStatement.stringToStatement)},
@@ -165,7 +165,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
     """.executeInsert(EmployeeRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: EmployeeRow)(implicit c: Connection): EmployeeRow = {
+  override def upsert(unsaved: EmployeeRow)(implicit c: Connection): EmployeeRow = {
   SQL"""insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
     values (
       ${ParameterValue(unsaved.businessentityid, null, BusinessentityId.toStatement)}::int4,
@@ -205,7 +205,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
     .executeInsert(EmployeeRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[EmployeeRow])(implicit c: Connection): List[EmployeeRow] = {
+  override def upsertBatch(unsaved: Iterable[EmployeeRow])(implicit c: Connection): List[EmployeeRow] = {
     def toNamedParameter(row: EmployeeRow): List[NamedParameter] = List(
       NamedParameter("businessentityid", ParameterValue(row.businessentityid, null, BusinessentityId.toStatement)),
       NamedParameter("nationalidnumber", ParameterValue(row.nationalidnumber, null, ToStatement.stringToStatement)),
@@ -223,6 +223,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement)),
       NamedParameter("organizationnode", ParameterValue(row.organizationnode, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData)))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -256,7 +257,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[EmployeeRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

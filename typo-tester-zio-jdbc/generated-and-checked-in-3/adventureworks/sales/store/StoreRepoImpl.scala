@@ -25,20 +25,20 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class StoreRepoImpl extends StoreRepo {
-  def delete: DeleteBuilder[StoreFields, StoreRow] = DeleteBuilder.of(""""sales"."store"""", StoreFields.structure, StoreRow.jdbcDecoder)
+  override def delete: DeleteBuilder[StoreFields, StoreRow] = DeleteBuilder.of(""""sales"."store"""", StoreFields.structure, StoreRow.jdbcDecoder)
 
-  def deleteById(businessentityid: BusinessentityId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "sales"."store" where "businessentityid" = ${Segment.paramSegment(businessentityid)(using BusinessentityId.setter)}""".delete.map(_ > 0)
+  override def deleteById(businessentityid: BusinessentityId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "sales"."store" where "businessentityid" = ${Segment.paramSegment(businessentityid)(using BusinessentityId.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(businessentityids: Array[BusinessentityId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "sales"."store" where "businessentityid" = ANY(${Segment.paramSegment(businessentityids)(using BusinessentityId.arraySetter)})""".delete
+  override def deleteByIds(businessentityids: Array[BusinessentityId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "sales"."store" where "businessentityid" = ANY(${Segment.paramSegment(businessentityids)(using BusinessentityId.arraySetter)})""".delete
 
-  def insert(unsaved: StoreRow): ZIO[ZConnection, Throwable, StoreRow] = {
+  override def insert(unsaved: StoreRow): ZIO[ZConnection, Throwable, StoreRow] = {
     sql"""insert into "sales"."store"("businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate")
     values (${Segment.paramSegment(unsaved.businessentityid)(using BusinessentityId.setter)}::int4, ${Segment.paramSegment(unsaved.name)(using Name.setter)}::varchar, ${Segment.paramSegment(unsaved.salespersonid)(using Setter.optionParamSetter(using BusinessentityId.setter))}::int4, ${Segment.paramSegment(unsaved.demographics)(using Setter.optionParamSetter(using TypoXml.setter))}::xml, ${Segment.paramSegment(unsaved.rowguid)(using TypoUUID.setter)}::uuid, ${Segment.paramSegment(unsaved.modifieddate)(using TypoLocalDateTime.setter)}::timestamp)
     returning "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"::text
     """.insertReturning(using StoreRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insert(unsaved: StoreRowUnsaved): ZIO[ZConnection, Throwable, StoreRow] = {
+  override def insert(unsaved: StoreRowUnsaved): ZIO[ZConnection, Throwable, StoreRow] = {
     val fs = List(
       Some((sql""""businessentityid"""", sql"${Segment.paramSegment(unsaved.businessentityid)(using BusinessentityId.setter)}::int4")),
       Some((sql""""name"""", sql"${Segment.paramSegment(unsaved.name)(using Name.setter)}::varchar")),
@@ -65,35 +65,35 @@ class StoreRepoImpl extends StoreRepo {
     q.insertReturning(using StoreRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, StoreRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "sales"."store"("businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved)(using StoreRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, StoreRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "sales"."store"("businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using StoreRowUnsaved.pgText)
 
-  def select: SelectBuilder[StoreFields, StoreRow] = SelectBuilder.of(""""sales"."store"""", StoreFields.structure, StoreRow.jdbcDecoder)
+  override def select: SelectBuilder[StoreFields, StoreRow] = SelectBuilder.of(""""sales"."store"""", StoreFields.structure, StoreRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, StoreRow] = sql"""select "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"::text from "sales"."store"""".query(using StoreRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, StoreRow] = sql"""select "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"::text from "sales"."store"""".query(using StoreRow.jdbcDecoder).selectStream()
 
-  def selectById(businessentityid: BusinessentityId): ZIO[ZConnection, Throwable, Option[StoreRow]] = sql"""select "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"::text from "sales"."store" where "businessentityid" = ${Segment.paramSegment(businessentityid)(using BusinessentityId.setter)}""".query(using StoreRow.jdbcDecoder).selectOne
+  override def selectById(businessentityid: BusinessentityId): ZIO[ZConnection, Throwable, Option[StoreRow]] = sql"""select "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"::text from "sales"."store" where "businessentityid" = ${Segment.paramSegment(businessentityid)(using BusinessentityId.setter)}""".query(using StoreRow.jdbcDecoder).selectOne
 
-  def selectByIds(businessentityids: Array[BusinessentityId]): ZStream[ZConnection, Throwable, StoreRow] = sql"""select "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"::text from "sales"."store" where "businessentityid" = ANY(${Segment.paramSegment(businessentityids)(using BusinessentityId.arraySetter)})""".query(using StoreRow.jdbcDecoder).selectStream()
+  override def selectByIds(businessentityids: Array[BusinessentityId]): ZStream[ZConnection, Throwable, StoreRow] = sql"""select "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"::text from "sales"."store" where "businessentityid" = ANY(${Segment.paramSegment(businessentityids)(using BusinessentityId.arraySetter)})""".query(using StoreRow.jdbcDecoder).selectStream()
 
-  def selectByIdsTracked(businessentityids: Array[BusinessentityId]): ZIO[ZConnection, Throwable, Map[BusinessentityId, StoreRow]] = {
+  override def selectByIdsTracked(businessentityids: Array[BusinessentityId]): ZIO[ZConnection, Throwable, Map[BusinessentityId, StoreRow]] = {
     selectByIds(businessentityids).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.businessentityid, x)).toMap
       businessentityids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[StoreFields, StoreRow] = UpdateBuilder.of(""""sales"."store"""", StoreFields.structure, StoreRow.jdbcDecoder)
+  override def update: UpdateBuilder[StoreFields, StoreRow] = UpdateBuilder.of(""""sales"."store"""", StoreFields.structure, StoreRow.jdbcDecoder)
 
-  def update(row: StoreRow): ZIO[ZConnection, Throwable, Option[StoreRow]] = {
+  override def update(row: StoreRow): ZIO[ZConnection, Throwable, Option[StoreRow]] = {
     val businessentityid = row.businessentityid
     sql"""update "sales"."store"
     set "name" = ${Segment.paramSegment(row.name)(using Name.setter)}::varchar,
@@ -107,7 +107,7 @@ class StoreRepoImpl extends StoreRepo {
       .selectOne
   }
 
-  def upsert(unsaved: StoreRow): ZIO[ZConnection, Throwable, UpdateResult[StoreRow]] = {
+  override def upsert(unsaved: StoreRow): ZIO[ZConnection, Throwable, UpdateResult[StoreRow]] = {
     sql"""insert into "sales"."store"("businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate")
     values (
       ${Segment.paramSegment(unsaved.businessentityid)(using BusinessentityId.setter)}::int4,
@@ -128,7 +128,7 @@ class StoreRepoImpl extends StoreRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, StoreRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

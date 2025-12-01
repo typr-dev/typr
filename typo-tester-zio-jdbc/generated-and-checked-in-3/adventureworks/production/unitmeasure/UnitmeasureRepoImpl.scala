@@ -21,20 +21,20 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class UnitmeasureRepoImpl extends UnitmeasureRepo {
-  def delete: DeleteBuilder[UnitmeasureFields, UnitmeasureRow] = DeleteBuilder.of(""""production"."unitmeasure"""", UnitmeasureFields.structure, UnitmeasureRow.jdbcDecoder)
+  override def delete: DeleteBuilder[UnitmeasureFields, UnitmeasureRow] = DeleteBuilder.of(""""production"."unitmeasure"""", UnitmeasureFields.structure, UnitmeasureRow.jdbcDecoder)
 
-  def deleteById(unitmeasurecode: UnitmeasureId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "production"."unitmeasure" where "unitmeasurecode" = ${Segment.paramSegment(unitmeasurecode)(using UnitmeasureId.setter)}""".delete.map(_ > 0)
+  override def deleteById(unitmeasurecode: UnitmeasureId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "production"."unitmeasure" where "unitmeasurecode" = ${Segment.paramSegment(unitmeasurecode)(using UnitmeasureId.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(unitmeasurecodes: Array[UnitmeasureId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "production"."unitmeasure" where "unitmeasurecode" = ANY(${Segment.paramSegment(unitmeasurecodes)(using UnitmeasureId.arraySetter)})""".delete
+  override def deleteByIds(unitmeasurecodes: Array[UnitmeasureId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "production"."unitmeasure" where "unitmeasurecode" = ANY(${Segment.paramSegment(unitmeasurecodes)(using UnitmeasureId.arraySetter)})""".delete
 
-  def insert(unsaved: UnitmeasureRow): ZIO[ZConnection, Throwable, UnitmeasureRow] = {
+  override def insert(unsaved: UnitmeasureRow): ZIO[ZConnection, Throwable, UnitmeasureRow] = {
     sql"""insert into "production"."unitmeasure"("unitmeasurecode", "name", "modifieddate")
     values (${Segment.paramSegment(unsaved.unitmeasurecode)(using UnitmeasureId.setter)}::bpchar, ${Segment.paramSegment(unsaved.name)(using Name.setter)}::varchar, ${Segment.paramSegment(unsaved.modifieddate)(using TypoLocalDateTime.setter)}::timestamp)
     returning "unitmeasurecode", "name", "modifieddate"::text
     """.insertReturning(using UnitmeasureRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insert(unsaved: UnitmeasureRowUnsaved): ZIO[ZConnection, Throwable, UnitmeasureRow] = {
+  override def insert(unsaved: UnitmeasureRowUnsaved): ZIO[ZConnection, Throwable, UnitmeasureRow] = {
     val fs = List(
       Some((sql""""unitmeasurecode"""", sql"${Segment.paramSegment(unsaved.unitmeasurecode)(using UnitmeasureId.setter)}::bpchar")),
       Some((sql""""name"""", sql"${Segment.paramSegment(unsaved.name)(using Name.setter)}::varchar")),
@@ -55,35 +55,35 @@ class UnitmeasureRepoImpl extends UnitmeasureRepo {
     q.insertReturning(using UnitmeasureRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, UnitmeasureRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "production"."unitmeasure"("unitmeasurecode", "name", "modifieddate") FROM STDIN""", batchSize, unsaved)(using UnitmeasureRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, UnitmeasureRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "production"."unitmeasure"("unitmeasurecode", "name", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using UnitmeasureRowUnsaved.pgText)
 
-  def select: SelectBuilder[UnitmeasureFields, UnitmeasureRow] = SelectBuilder.of(""""production"."unitmeasure"""", UnitmeasureFields.structure, UnitmeasureRow.jdbcDecoder)
+  override def select: SelectBuilder[UnitmeasureFields, UnitmeasureRow] = SelectBuilder.of(""""production"."unitmeasure"""", UnitmeasureFields.structure, UnitmeasureRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, UnitmeasureRow] = sql"""select "unitmeasurecode", "name", "modifieddate"::text from "production"."unitmeasure"""".query(using UnitmeasureRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, UnitmeasureRow] = sql"""select "unitmeasurecode", "name", "modifieddate"::text from "production"."unitmeasure"""".query(using UnitmeasureRow.jdbcDecoder).selectStream()
 
-  def selectById(unitmeasurecode: UnitmeasureId): ZIO[ZConnection, Throwable, Option[UnitmeasureRow]] = sql"""select "unitmeasurecode", "name", "modifieddate"::text from "production"."unitmeasure" where "unitmeasurecode" = ${Segment.paramSegment(unitmeasurecode)(using UnitmeasureId.setter)}""".query(using UnitmeasureRow.jdbcDecoder).selectOne
+  override def selectById(unitmeasurecode: UnitmeasureId): ZIO[ZConnection, Throwable, Option[UnitmeasureRow]] = sql"""select "unitmeasurecode", "name", "modifieddate"::text from "production"."unitmeasure" where "unitmeasurecode" = ${Segment.paramSegment(unitmeasurecode)(using UnitmeasureId.setter)}""".query(using UnitmeasureRow.jdbcDecoder).selectOne
 
-  def selectByIds(unitmeasurecodes: Array[UnitmeasureId]): ZStream[ZConnection, Throwable, UnitmeasureRow] = sql"""select "unitmeasurecode", "name", "modifieddate"::text from "production"."unitmeasure" where "unitmeasurecode" = ANY(${Segment.paramSegment(unitmeasurecodes)(using UnitmeasureId.arraySetter)})""".query(using UnitmeasureRow.jdbcDecoder).selectStream()
+  override def selectByIds(unitmeasurecodes: Array[UnitmeasureId]): ZStream[ZConnection, Throwable, UnitmeasureRow] = sql"""select "unitmeasurecode", "name", "modifieddate"::text from "production"."unitmeasure" where "unitmeasurecode" = ANY(${Segment.paramSegment(unitmeasurecodes)(using UnitmeasureId.arraySetter)})""".query(using UnitmeasureRow.jdbcDecoder).selectStream()
 
-  def selectByIdsTracked(unitmeasurecodes: Array[UnitmeasureId]): ZIO[ZConnection, Throwable, Map[UnitmeasureId, UnitmeasureRow]] = {
+  override def selectByIdsTracked(unitmeasurecodes: Array[UnitmeasureId]): ZIO[ZConnection, Throwable, Map[UnitmeasureId, UnitmeasureRow]] = {
     selectByIds(unitmeasurecodes).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.unitmeasurecode, x)).toMap
       unitmeasurecodes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[UnitmeasureFields, UnitmeasureRow] = UpdateBuilder.of(""""production"."unitmeasure"""", UnitmeasureFields.structure, UnitmeasureRow.jdbcDecoder)
+  override def update: UpdateBuilder[UnitmeasureFields, UnitmeasureRow] = UpdateBuilder.of(""""production"."unitmeasure"""", UnitmeasureFields.structure, UnitmeasureRow.jdbcDecoder)
 
-  def update(row: UnitmeasureRow): ZIO[ZConnection, Throwable, Option[UnitmeasureRow]] = {
+  override def update(row: UnitmeasureRow): ZIO[ZConnection, Throwable, Option[UnitmeasureRow]] = {
     val unitmeasurecode = row.unitmeasurecode
     sql"""update "production"."unitmeasure"
     set "name" = ${Segment.paramSegment(row.name)(using Name.setter)}::varchar,
@@ -94,7 +94,7 @@ class UnitmeasureRepoImpl extends UnitmeasureRepo {
       .selectOne
   }
 
-  def upsert(unsaved: UnitmeasureRow): ZIO[ZConnection, Throwable, UpdateResult[UnitmeasureRow]] = {
+  override def upsert(unsaved: UnitmeasureRow): ZIO[ZConnection, Throwable, UpdateResult[UnitmeasureRow]] = {
     sql"""insert into "production"."unitmeasure"("unitmeasurecode", "name", "modifieddate")
     values (
       ${Segment.paramSegment(unsaved.unitmeasurecode)(using UnitmeasureId.setter)}::bpchar,
@@ -109,7 +109,7 @@ class UnitmeasureRepoImpl extends UnitmeasureRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, UnitmeasureRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

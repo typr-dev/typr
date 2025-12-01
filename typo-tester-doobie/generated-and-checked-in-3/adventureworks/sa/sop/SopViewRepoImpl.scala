@@ -7,13 +7,11 @@ package adventureworks.sa.sop
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class SopViewRepoImpl extends SopViewRepo {
-  def select: SelectBuilder[SopViewFields, SopViewRow] = SelectBuilder.of(""""sa"."sop"""", SopViewFields.structure, SopViewRow.read)
+  override def select: SelectBuilder[SopViewFields, SopViewRow] = SelectBuilder.of(""""sa"."sop"""", SopViewFields.structure, SopViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, SopViewRow] = sql"""select "id", "specialofferid", "productid", "rowguid", "modifieddate"::text from "sa"."sop"""".query(using SopViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, SopViewRow] = sql"""select "id", "specialofferid", "productid", "rowguid", "modifieddate"::text from "sa"."sop"""".query(using SopViewRow.read).stream
 }

@@ -11,7 +11,7 @@ import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class BeViewRepoImpl extends BeViewRepo {
-  def select: SelectBuilder[BeViewFields, BeViewRow] = SelectBuilder.of(""""pe"."be"""", BeViewFields.structure, BeViewRow.read)
+  override def select: SelectBuilder[BeViewFields, BeViewRow] = SelectBuilder.of(""""pe"."be"""", BeViewFields.structure, BeViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, BeViewRow] = sql"""select "id", "businessentityid", "rowguid", "modifieddate"::text from "pe"."be"""".query(BeViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, BeViewRow] = sql"""select "id", "businessentityid", "rowguid", "modifieddate"::text from "pe"."be"""".query(BeViewRow.read).stream
 }

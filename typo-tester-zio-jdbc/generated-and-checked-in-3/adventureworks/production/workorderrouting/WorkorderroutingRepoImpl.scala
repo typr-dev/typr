@@ -24,11 +24,11 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
-  def delete: DeleteBuilder[WorkorderroutingFields, WorkorderroutingRow] = DeleteBuilder.of(""""production"."workorderrouting"""", WorkorderroutingFields.structure, WorkorderroutingRow.jdbcDecoder)
+  override def delete: DeleteBuilder[WorkorderroutingFields, WorkorderroutingRow] = DeleteBuilder.of(""""production"."workorderrouting"""", WorkorderroutingFields.structure, WorkorderroutingRow.jdbcDecoder)
 
-  def deleteById(compositeId: WorkorderroutingId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "production"."workorderrouting" where "workorderid" = ${Segment.paramSegment(compositeId.workorderid)(using WorkorderId.setter)} AND "productid" = ${Segment.paramSegment(compositeId.productid)(using Setter.intSetter)} AND "operationsequence" = ${Segment.paramSegment(compositeId.operationsequence)(using TypoShort.setter)}""".delete.map(_ > 0)
+  override def deleteById(compositeId: WorkorderroutingId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "production"."workorderrouting" where "workorderid" = ${Segment.paramSegment(compositeId.workorderid)(using WorkorderId.setter)} AND "productid" = ${Segment.paramSegment(compositeId.productid)(using Setter.intSetter)} AND "operationsequence" = ${Segment.paramSegment(compositeId.operationsequence)(using TypoShort.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(compositeIds: Array[WorkorderroutingId]): ZIO[ZConnection, Throwable, Long] = {
+  override def deleteByIds(compositeIds: Array[WorkorderroutingId]): ZIO[ZConnection, Throwable, Long] = {
     val workorderid = compositeIds.map(_.workorderid)
     val productid = compositeIds.map(_.productid)
     val operationsequence = compositeIds.map(_.operationsequence)
@@ -39,14 +39,14 @@ class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
     """.delete
   }
 
-  def insert(unsaved: WorkorderroutingRow): ZIO[ZConnection, Throwable, WorkorderroutingRow] = {
+  override def insert(unsaved: WorkorderroutingRow): ZIO[ZConnection, Throwable, WorkorderroutingRow] = {
     sql"""insert into "production"."workorderrouting"("workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate")
     values (${Segment.paramSegment(unsaved.workorderid)(using WorkorderId.setter)}::int4, ${Segment.paramSegment(unsaved.productid)(using Setter.intSetter)}::int4, ${Segment.paramSegment(unsaved.operationsequence)(using TypoShort.setter)}::int2, ${Segment.paramSegment(unsaved.locationid)(using LocationId.setter)}::int2, ${Segment.paramSegment(unsaved.scheduledstartdate)(using TypoLocalDateTime.setter)}::timestamp, ${Segment.paramSegment(unsaved.scheduledenddate)(using TypoLocalDateTime.setter)}::timestamp, ${Segment.paramSegment(unsaved.actualstartdate)(using Setter.optionParamSetter(using TypoLocalDateTime.setter))}::timestamp, ${Segment.paramSegment(unsaved.actualenddate)(using Setter.optionParamSetter(using TypoLocalDateTime.setter))}::timestamp, ${Segment.paramSegment(unsaved.actualresourcehrs)(using Setter.optionParamSetter(using Setter.bigDecimalScalaSetter))}::numeric, ${Segment.paramSegment(unsaved.plannedcost)(using Setter.bigDecimalScalaSetter)}::numeric, ${Segment.paramSegment(unsaved.actualcost)(using Setter.optionParamSetter(using Setter.bigDecimalScalaSetter))}::numeric, ${Segment.paramSegment(unsaved.modifieddate)(using TypoLocalDateTime.setter)}::timestamp)
     returning "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text
     """.insertReturning(using WorkorderroutingRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insert(unsaved: WorkorderroutingRowUnsaved): ZIO[ZConnection, Throwable, WorkorderroutingRow] = {
+  override def insert(unsaved: WorkorderroutingRowUnsaved): ZIO[ZConnection, Throwable, WorkorderroutingRow] = {
     val fs = List(
       Some((sql""""workorderid"""", sql"${Segment.paramSegment(unsaved.workorderid)(using WorkorderId.setter)}::int4")),
       Some((sql""""productid"""", sql"${Segment.paramSegment(unsaved.productid)(using Setter.intSetter)}::int4")),
@@ -76,24 +76,24 @@ class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
     q.insertReturning(using WorkorderroutingRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, WorkorderroutingRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "production"."workorderrouting"("workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate") FROM STDIN""", batchSize, unsaved)(using WorkorderroutingRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, WorkorderroutingRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "production"."workorderrouting"("workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using WorkorderroutingRowUnsaved.pgText)
 
-  def select: SelectBuilder[WorkorderroutingFields, WorkorderroutingRow] = SelectBuilder.of(""""production"."workorderrouting"""", WorkorderroutingFields.structure, WorkorderroutingRow.jdbcDecoder)
+  override def select: SelectBuilder[WorkorderroutingFields, WorkorderroutingRow] = SelectBuilder.of(""""production"."workorderrouting"""", WorkorderroutingFields.structure, WorkorderroutingRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, WorkorderroutingRow] = sql"""select "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text from "production"."workorderrouting"""".query(using WorkorderroutingRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, WorkorderroutingRow] = sql"""select "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text from "production"."workorderrouting"""".query(using WorkorderroutingRow.jdbcDecoder).selectStream()
 
-  def selectById(compositeId: WorkorderroutingId): ZIO[ZConnection, Throwable, Option[WorkorderroutingRow]] = sql"""select "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text from "production"."workorderrouting" where "workorderid" = ${Segment.paramSegment(compositeId.workorderid)(using WorkorderId.setter)} AND "productid" = ${Segment.paramSegment(compositeId.productid)(using Setter.intSetter)} AND "operationsequence" = ${Segment.paramSegment(compositeId.operationsequence)(using TypoShort.setter)}""".query(using WorkorderroutingRow.jdbcDecoder).selectOne
+  override def selectById(compositeId: WorkorderroutingId): ZIO[ZConnection, Throwable, Option[WorkorderroutingRow]] = sql"""select "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text from "production"."workorderrouting" where "workorderid" = ${Segment.paramSegment(compositeId.workorderid)(using WorkorderId.setter)} AND "productid" = ${Segment.paramSegment(compositeId.productid)(using Setter.intSetter)} AND "operationsequence" = ${Segment.paramSegment(compositeId.operationsequence)(using TypoShort.setter)}""".query(using WorkorderroutingRow.jdbcDecoder).selectOne
 
-  def selectByIds(compositeIds: Array[WorkorderroutingId]): ZStream[ZConnection, Throwable, WorkorderroutingRow] = {
+  override def selectByIds(compositeIds: Array[WorkorderroutingId]): ZStream[ZConnection, Throwable, WorkorderroutingRow] = {
     val workorderid = compositeIds.map(_.workorderid)
     val productid = compositeIds.map(_.productid)
     val operationsequence = compositeIds.map(_.operationsequence)
@@ -104,16 +104,16 @@ class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
     """.query(using WorkorderroutingRow.jdbcDecoder).selectStream()
   }
 
-  def selectByIdsTracked(compositeIds: Array[WorkorderroutingId]): ZIO[ZConnection, Throwable, Map[WorkorderroutingId, WorkorderroutingRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[WorkorderroutingId]): ZIO[ZConnection, Throwable, Map[WorkorderroutingId, WorkorderroutingRow]] = {
     selectByIds(compositeIds).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[WorkorderroutingFields, WorkorderroutingRow] = UpdateBuilder.of(""""production"."workorderrouting"""", WorkorderroutingFields.structure, WorkorderroutingRow.jdbcDecoder)
+  override def update: UpdateBuilder[WorkorderroutingFields, WorkorderroutingRow] = UpdateBuilder.of(""""production"."workorderrouting"""", WorkorderroutingFields.structure, WorkorderroutingRow.jdbcDecoder)
 
-  def update(row: WorkorderroutingRow): ZIO[ZConnection, Throwable, Option[WorkorderroutingRow]] = {
+  override def update(row: WorkorderroutingRow): ZIO[ZConnection, Throwable, Option[WorkorderroutingRow]] = {
     val compositeId = row.compositeId
     sql"""update "production"."workorderrouting"
     set "locationid" = ${Segment.paramSegment(row.locationid)(using LocationId.setter)}::int2,
@@ -131,7 +131,7 @@ class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
       .selectOne
   }
 
-  def upsert(unsaved: WorkorderroutingRow): ZIO[ZConnection, Throwable, UpdateResult[WorkorderroutingRow]] = {
+  override def upsert(unsaved: WorkorderroutingRow): ZIO[ZConnection, Throwable, UpdateResult[WorkorderroutingRow]] = {
     sql"""insert into "production"."workorderrouting"("workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate")
     values (
       ${Segment.paramSegment(unsaved.workorderid)(using WorkorderId.setter)}::int4,
@@ -162,7 +162,7 @@ class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, WorkorderroutingRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

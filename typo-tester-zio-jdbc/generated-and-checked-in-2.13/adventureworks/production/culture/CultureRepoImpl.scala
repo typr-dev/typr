@@ -21,20 +21,20 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class CultureRepoImpl extends CultureRepo {
-  def delete: DeleteBuilder[CultureFields, CultureRow] = DeleteBuilder.of(""""production"."culture"""", CultureFields.structure, CultureRow.jdbcDecoder)
+  override def delete: DeleteBuilder[CultureFields, CultureRow] = DeleteBuilder.of(""""production"."culture"""", CultureFields.structure, CultureRow.jdbcDecoder)
 
-  def deleteById(cultureid: CultureId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "production"."culture" where "cultureid" = ${Segment.paramSegment(cultureid)(CultureId.setter)}""".delete.map(_ > 0)
+  override def deleteById(cultureid: CultureId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "production"."culture" where "cultureid" = ${Segment.paramSegment(cultureid)(CultureId.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(cultureids: Array[CultureId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "production"."culture" where "cultureid" = ANY(${Segment.paramSegment(cultureids)(CultureId.arraySetter)})""".delete
+  override def deleteByIds(cultureids: Array[CultureId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "production"."culture" where "cultureid" = ANY(${Segment.paramSegment(cultureids)(CultureId.arraySetter)})""".delete
 
-  def insert(unsaved: CultureRow): ZIO[ZConnection, Throwable, CultureRow] = {
+  override def insert(unsaved: CultureRow): ZIO[ZConnection, Throwable, CultureRow] = {
     sql"""insert into "production"."culture"("cultureid", "name", "modifieddate")
     values (${Segment.paramSegment(unsaved.cultureid)(CultureId.setter)}::bpchar, ${Segment.paramSegment(unsaved.name)(Name.setter)}::varchar, ${Segment.paramSegment(unsaved.modifieddate)(TypoLocalDateTime.setter)}::timestamp)
     returning "cultureid", "name", "modifieddate"::text
     """.insertReturning(CultureRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insert(unsaved: CultureRowUnsaved): ZIO[ZConnection, Throwable, CultureRow] = {
+  override def insert(unsaved: CultureRowUnsaved): ZIO[ZConnection, Throwable, CultureRow] = {
     val fs = List(
       Some((sql""""cultureid"""", sql"${Segment.paramSegment(unsaved.cultureid)(CultureId.setter)}::bpchar")),
       Some((sql""""name"""", sql"${Segment.paramSegment(unsaved.name)(Name.setter)}::varchar")),
@@ -55,35 +55,35 @@ class CultureRepoImpl extends CultureRepo {
     q.insertReturning(CultureRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, CultureRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "production"."culture"("cultureid", "name", "modifieddate") FROM STDIN""", batchSize, unsaved)(CultureRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, CultureRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "production"."culture"("cultureid", "name", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(CultureRowUnsaved.pgText)
 
-  def select: SelectBuilder[CultureFields, CultureRow] = SelectBuilder.of(""""production"."culture"""", CultureFields.structure, CultureRow.jdbcDecoder)
+  override def select: SelectBuilder[CultureFields, CultureRow] = SelectBuilder.of(""""production"."culture"""", CultureFields.structure, CultureRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, CultureRow] = sql"""select "cultureid", "name", "modifieddate"::text from "production"."culture"""".query(CultureRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, CultureRow] = sql"""select "cultureid", "name", "modifieddate"::text from "production"."culture"""".query(CultureRow.jdbcDecoder).selectStream()
 
-  def selectById(cultureid: CultureId): ZIO[ZConnection, Throwable, Option[CultureRow]] = sql"""select "cultureid", "name", "modifieddate"::text from "production"."culture" where "cultureid" = ${Segment.paramSegment(cultureid)(CultureId.setter)}""".query(CultureRow.jdbcDecoder).selectOne
+  override def selectById(cultureid: CultureId): ZIO[ZConnection, Throwable, Option[CultureRow]] = sql"""select "cultureid", "name", "modifieddate"::text from "production"."culture" where "cultureid" = ${Segment.paramSegment(cultureid)(CultureId.setter)}""".query(CultureRow.jdbcDecoder).selectOne
 
-  def selectByIds(cultureids: Array[CultureId]): ZStream[ZConnection, Throwable, CultureRow] = sql"""select "cultureid", "name", "modifieddate"::text from "production"."culture" where "cultureid" = ANY(${Segment.paramSegment(cultureids)(CultureId.arraySetter)})""".query(CultureRow.jdbcDecoder).selectStream()
+  override def selectByIds(cultureids: Array[CultureId]): ZStream[ZConnection, Throwable, CultureRow] = sql"""select "cultureid", "name", "modifieddate"::text from "production"."culture" where "cultureid" = ANY(${Segment.paramSegment(cultureids)(CultureId.arraySetter)})""".query(CultureRow.jdbcDecoder).selectStream()
 
-  def selectByIdsTracked(cultureids: Array[CultureId]): ZIO[ZConnection, Throwable, Map[CultureId, CultureRow]] = {
+  override def selectByIdsTracked(cultureids: Array[CultureId]): ZIO[ZConnection, Throwable, Map[CultureId, CultureRow]] = {
     selectByIds(cultureids).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.cultureid, x)).toMap
       cultureids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[CultureFields, CultureRow] = UpdateBuilder.of(""""production"."culture"""", CultureFields.structure, CultureRow.jdbcDecoder)
+  override def update: UpdateBuilder[CultureFields, CultureRow] = UpdateBuilder.of(""""production"."culture"""", CultureFields.structure, CultureRow.jdbcDecoder)
 
-  def update(row: CultureRow): ZIO[ZConnection, Throwable, Option[CultureRow]] = {
+  override def update(row: CultureRow): ZIO[ZConnection, Throwable, Option[CultureRow]] = {
     val cultureid = row.cultureid
     sql"""update "production"."culture"
     set "name" = ${Segment.paramSegment(row.name)(Name.setter)}::varchar,
@@ -94,7 +94,7 @@ class CultureRepoImpl extends CultureRepo {
       .selectOne
   }
 
-  def upsert(unsaved: CultureRow): ZIO[ZConnection, Throwable, UpdateResult[CultureRow]] = {
+  override def upsert(unsaved: CultureRow): ZIO[ZConnection, Throwable, UpdateResult[CultureRow]] = {
     sql"""insert into "production"."culture"("cultureid", "name", "modifieddate")
     values (
       ${Segment.paramSegment(unsaved.cultureid)(CultureId.setter)}::bpchar,
@@ -109,7 +109,7 @@ class CultureRepoImpl extends CultureRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, CultureRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

@@ -5,6 +5,7 @@
  */
 package adventureworks.person.countryregion;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record CountryregionRepoMock(
     return new CountryregionRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<CountryregionFields, CountryregionRow> delete() {
     return new DeleteBuilderMock<>(CountryregionFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.countryregioncode(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     CountryregionId countryregioncode,
     Connection c
@@ -52,28 +55,31 @@ public record CountryregionRepoMock(
     return Optional.ofNullable(map.remove(countryregioncode)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     CountryregionId[] countryregioncodes,
     Connection c
   ) {
     var count = 0;
-      for (var id : countryregioncodes) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : countryregioncodes) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public CountryregionRow insert(
     CountryregionRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.countryregioncode())) {
-        throw new RuntimeException(str("id $unsaved.countryregioncode() already exists"));
-      };
-      map.put(unsaved.countryregioncode(), unsaved);
+      throw new RuntimeException(str("id $unsaved.countryregioncode() already exists"));
+    };
+    map.put(unsaved.countryregioncode(), unsaved);
     return unsaved;
   };
 
+  @Override
   public CountryregionRow insert(
     CountryregionRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record CountryregionRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<CountryregionRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.countryregioncode(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.countryregioncode(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<CountryregionRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.countryregioncode(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.countryregioncode(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<CountryregionFields, CountryregionRow> select() {
     return new SelectBuilderMock<>(CountryregionFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<CountryregionRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<CountryregionRow> selectById(
     CountryregionId countryregioncode,
     Connection c
@@ -126,38 +137,43 @@ public record CountryregionRepoMock(
     return Optional.ofNullable(map.get(countryregioncode));
   };
 
+  @Override
   public List<CountryregionRow> selectByIds(
     CountryregionId[] countryregioncodes,
     Connection c
   ) {
     var result = new ArrayList<CountryregionRow>();
-      for (var id : countryregioncodes) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : countryregioncodes) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<CountryregionId, CountryregionRow> selectByIdsTracked(
     CountryregionId[] countryregioncodes,
     Connection c
   ) {
-    return selectByIds(countryregioncodes, c).stream().collect(Collectors.toMap((adventureworks.person.countryregion.CountryregionRow row) -> row.countryregioncode(), Function.identity()));
+    return selectByIds(countryregioncodes, c).stream().collect(Collectors.toMap((CountryregionRow row) -> row.countryregioncode(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<CountryregionFields, CountryregionRow> update() {
     return new UpdateBuilderMock<>(CountryregionFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     CountryregionRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.countryregioncode())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.countryregioncode(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.countryregioncode(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public CountryregionRow upsert(
     CountryregionRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record CountryregionRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<CountryregionRow> upsertBatch(
     Iterator<CountryregionRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<CountryregionRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.countryregioncode(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.countryregioncode(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<CountryregionRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.countryregioncode(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.countryregioncode(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

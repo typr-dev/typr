@@ -12,7 +12,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple3;
 
 /** Table: public.titledperson */
 public record TitledpersonRow(
@@ -36,7 +35,7 @@ public record TitledpersonRow(
     return new TitledpersonRow(titleShort, title, name);
   };
 
-  static RowParser<TitledpersonRow> _rowParser = RowParsers.of(TitleDomainId.pgType, TitleId.pgType, PgTypes.text, TitledpersonRow::new, row -> new Tuple3<>(row.titleShort(), row.title(), row.name()));;
+  static RowParser<TitledpersonRow> _rowParser = RowParsers.of(TitleDomainId.pgType, TitleId.pgType, PgTypes.text, TitledpersonRow::new, row -> new Object[]{row.titleShort(), row.title(), row.name()});;
 
   static public PgText<TitledpersonRow> pgText =
     PgText.from(_rowParser);

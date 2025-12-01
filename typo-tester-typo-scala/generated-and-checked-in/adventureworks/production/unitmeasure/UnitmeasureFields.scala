@@ -27,7 +27,7 @@ object UnitmeasureFields {
 
     override lazy val fields: UnitmeasureFields = {
       new UnitmeasureFields {
-        def unitmeasurecode: IdField[UnitmeasureId, UnitmeasureRow] = {
+        override def unitmeasurecode: IdField[UnitmeasureId, UnitmeasureRow] = {
           new IdField[UnitmeasureId, UnitmeasureRow](
             _path,
             "unitmeasurecode",
@@ -38,7 +38,7 @@ object UnitmeasureFields {
             UnitmeasureId.pgType
           )
         }
-        def name: Field[Name, UnitmeasureRow] = {
+        override def name: Field[Name, UnitmeasureRow] = {
           new Field[Name, UnitmeasureRow](
             _path,
             "name",
@@ -49,7 +49,7 @@ object UnitmeasureFields {
             Name.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, UnitmeasureRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, UnitmeasureRow] = {
           new Field[TypoLocalDateTime, UnitmeasureRow](
             _path,
             "modifieddate",
@@ -65,7 +65,7 @@ object UnitmeasureFields {
 
     override lazy val columns: java.util.List[FieldLike[?, UnitmeasureRow]] = java.util.List.of(this.fields.unitmeasurecode, this.fields.name, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[UnitmeasureFields, UnitmeasureRow] = new Impl(java.util.List.of())

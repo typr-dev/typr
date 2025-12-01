@@ -27,7 +27,7 @@ import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 
 public interface SalesterritoryhistoryFields {
-  static final class Impl extends Relation<SalesterritoryhistoryFields, SalesterritoryhistoryRow> {
+  final class Impl extends Relation<SalesterritoryhistoryFields, SalesterritoryhistoryRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -35,21 +35,27 @@ public interface SalesterritoryhistoryFields {
     @Override
     public SalesterritoryhistoryFields fields() {
       return new SalesterritoryhistoryFields() {
+               @Override
                public IdField<BusinessentityId, SalesterritoryhistoryRow> businessentityid() {
                  return new IdField<BusinessentityId, SalesterritoryhistoryRow>(_path, "businessentityid", SalesterritoryhistoryRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public IdField<SalesterritoryId, SalesterritoryhistoryRow> territoryid() {
                  return new IdField<SalesterritoryId, SalesterritoryhistoryRow>(_path, "territoryid", SalesterritoryhistoryRow::territoryid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withTerritoryid(value), SalesterritoryId.pgType);
                };
+               @Override
                public IdField<TypoLocalDateTime, SalesterritoryhistoryRow> startdate() {
                  return new IdField<TypoLocalDateTime, SalesterritoryhistoryRow>(_path, "startdate", SalesterritoryhistoryRow::startdate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withStartdate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public OptField<TypoLocalDateTime, SalesterritoryhistoryRow> enddate() {
                  return new OptField<TypoLocalDateTime, SalesterritoryhistoryRow>(_path, "enddate", SalesterritoryhistoryRow::enddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withEnddate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public Field<TypoUUID, SalesterritoryhistoryRow> rowguid() {
                  return new Field<TypoUUID, SalesterritoryhistoryRow>(_path, "rowguid", SalesterritoryhistoryRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, SalesterritoryhistoryRow> modifieddate() {
                  return new Field<TypoLocalDateTime, SalesterritoryhistoryRow>(_path, "modifieddate", SalesterritoryhistoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -61,6 +67,7 @@ public interface SalesterritoryhistoryFields {
       return List.of(this.fields().businessentityid(), this.fields().territoryid(), this.fields().startdate(), this.fields().enddate(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

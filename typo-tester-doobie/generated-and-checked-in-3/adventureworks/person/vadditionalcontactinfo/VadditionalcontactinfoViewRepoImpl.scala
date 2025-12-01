@@ -7,13 +7,11 @@ package adventureworks.person.vadditionalcontactinfo
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class VadditionalcontactinfoViewRepoImpl extends VadditionalcontactinfoViewRepo {
-  def select: SelectBuilder[VadditionalcontactinfoViewFields, VadditionalcontactinfoViewRow] = SelectBuilder.of(""""person"."vadditionalcontactinfo"""", VadditionalcontactinfoViewFields.structure, VadditionalcontactinfoViewRow.read)
+  override def select: SelectBuilder[VadditionalcontactinfoViewFields, VadditionalcontactinfoViewRow] = SelectBuilder.of(""""person"."vadditionalcontactinfo"""", VadditionalcontactinfoViewFields.structure, VadditionalcontactinfoViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, VadditionalcontactinfoViewRow] = sql"""select "businessentityid", "firstname", "middlename", "lastname", "telephonenumber", "telephonespecialinstructions", "street", "city", "stateprovince", "postalcode", "countryregion", "homeaddressspecialinstructions", "emailaddress", "emailspecialinstructions", "emailtelephonenumber", "rowguid", "modifieddate"::text from "person"."vadditionalcontactinfo"""".query(using VadditionalcontactinfoViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, VadditionalcontactinfoViewRow] = sql"""select "businessentityid", "firstname", "middlename", "lastname", "telephonenumber", "telephonespecialinstructions", "street", "city", "stateprovince", "postalcode", "countryregion", "homeaddressspecialinstructions", "emailaddress", "emailspecialinstructions", "emailtelephonenumber", "rowguid", "modifieddate"::text from "person"."vadditionalcontactinfo"""".query(using VadditionalcontactinfoViewRow.read).stream
 }

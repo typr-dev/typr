@@ -115,7 +115,7 @@ object SalesorderheaderFields {
 
     override lazy val fields: SalesorderheaderFields = {
       new SalesorderheaderFields {
-        def salesorderid: IdField[SalesorderheaderId, SalesorderheaderRow] = {
+        override def salesorderid: IdField[SalesorderheaderId, SalesorderheaderRow] = {
           new IdField[SalesorderheaderId, SalesorderheaderRow](
             _path,
             "salesorderid",
@@ -126,7 +126,7 @@ object SalesorderheaderFields {
             SalesorderheaderId.pgType
           )
         }
-        def revisionnumber: Field[TypoShort, SalesorderheaderRow] = {
+        override def revisionnumber: Field[TypoShort, SalesorderheaderRow] = {
           new Field[TypoShort, SalesorderheaderRow](
             _path,
             "revisionnumber",
@@ -137,7 +137,7 @@ object SalesorderheaderFields {
             TypoShort.pgType
           )
         }
-        def orderdate: Field[TypoLocalDateTime, SalesorderheaderRow] = {
+        override def orderdate: Field[TypoLocalDateTime, SalesorderheaderRow] = {
           new Field[TypoLocalDateTime, SalesorderheaderRow](
             _path,
             "orderdate",
@@ -148,7 +148,7 @@ object SalesorderheaderFields {
             TypoLocalDateTime.pgType
           )
         }
-        def duedate: Field[TypoLocalDateTime, SalesorderheaderRow] = {
+        override def duedate: Field[TypoLocalDateTime, SalesorderheaderRow] = {
           new Field[TypoLocalDateTime, SalesorderheaderRow](
             _path,
             "duedate",
@@ -159,7 +159,7 @@ object SalesorderheaderFields {
             TypoLocalDateTime.pgType
           )
         }
-        def shipdate: OptField[TypoLocalDateTime, SalesorderheaderRow] = {
+        override def shipdate: OptField[TypoLocalDateTime, SalesorderheaderRow] = {
           new OptField[TypoLocalDateTime, SalesorderheaderRow](
             _path,
             "shipdate",
@@ -170,7 +170,7 @@ object SalesorderheaderFields {
             TypoLocalDateTime.pgType
           )
         }
-        def status: Field[TypoShort, SalesorderheaderRow] = {
+        override def status: Field[TypoShort, SalesorderheaderRow] = {
           new Field[TypoShort, SalesorderheaderRow](
             _path,
             "status",
@@ -181,7 +181,7 @@ object SalesorderheaderFields {
             TypoShort.pgType
           )
         }
-        def onlineorderflag: Field[Flag, SalesorderheaderRow] = {
+        override def onlineorderflag: Field[Flag, SalesorderheaderRow] = {
           new Field[Flag, SalesorderheaderRow](
             _path,
             "onlineorderflag",
@@ -192,7 +192,7 @@ object SalesorderheaderFields {
             Flag.pgType
           )
         }
-        def purchaseordernumber: OptField[OrderNumber, SalesorderheaderRow] = {
+        override def purchaseordernumber: OptField[OrderNumber, SalesorderheaderRow] = {
           new OptField[OrderNumber, SalesorderheaderRow](
             _path,
             "purchaseordernumber",
@@ -203,7 +203,7 @@ object SalesorderheaderFields {
             OrderNumber.pgType
           )
         }
-        def accountnumber: OptField[AccountNumber, SalesorderheaderRow] = {
+        override def accountnumber: OptField[AccountNumber, SalesorderheaderRow] = {
           new OptField[AccountNumber, SalesorderheaderRow](
             _path,
             "accountnumber",
@@ -214,7 +214,7 @@ object SalesorderheaderFields {
             AccountNumber.pgType
           )
         }
-        def customerid: Field[CustomerId, SalesorderheaderRow] = {
+        override def customerid: Field[CustomerId, SalesorderheaderRow] = {
           new Field[CustomerId, SalesorderheaderRow](
             _path,
             "customerid",
@@ -225,7 +225,7 @@ object SalesorderheaderFields {
             CustomerId.pgType
           )
         }
-        def salespersonid: OptField[BusinessentityId, SalesorderheaderRow] = {
+        override def salespersonid: OptField[BusinessentityId, SalesorderheaderRow] = {
           new OptField[BusinessentityId, SalesorderheaderRow](
             _path,
             "salespersonid",
@@ -236,7 +236,7 @@ object SalesorderheaderFields {
             BusinessentityId.pgType
           )
         }
-        def territoryid: OptField[SalesterritoryId, SalesorderheaderRow] = {
+        override def territoryid: OptField[SalesterritoryId, SalesorderheaderRow] = {
           new OptField[SalesterritoryId, SalesorderheaderRow](
             _path,
             "territoryid",
@@ -247,7 +247,7 @@ object SalesorderheaderFields {
             SalesterritoryId.pgType
           )
         }
-        def billtoaddressid: Field[AddressId, SalesorderheaderRow] = {
+        override def billtoaddressid: Field[AddressId, SalesorderheaderRow] = {
           new Field[AddressId, SalesorderheaderRow](
             _path,
             "billtoaddressid",
@@ -258,7 +258,7 @@ object SalesorderheaderFields {
             AddressId.pgType
           )
         }
-        def shiptoaddressid: Field[AddressId, SalesorderheaderRow] = {
+        override def shiptoaddressid: Field[AddressId, SalesorderheaderRow] = {
           new Field[AddressId, SalesorderheaderRow](
             _path,
             "shiptoaddressid",
@@ -269,7 +269,7 @@ object SalesorderheaderFields {
             AddressId.pgType
           )
         }
-        def shipmethodid: Field[ShipmethodId, SalesorderheaderRow] = {
+        override def shipmethodid: Field[ShipmethodId, SalesorderheaderRow] = {
           new Field[ShipmethodId, SalesorderheaderRow](
             _path,
             "shipmethodid",
@@ -280,7 +280,7 @@ object SalesorderheaderFields {
             ShipmethodId.pgType
           )
         }
-        def creditcardid: OptField[/* user-picked */ CustomCreditcardId, SalesorderheaderRow] = {
+        override def creditcardid: OptField[/* user-picked */ CustomCreditcardId, SalesorderheaderRow] = {
           new OptField[/* user-picked */ CustomCreditcardId, SalesorderheaderRow](
             _path,
             "creditcardid",
@@ -291,7 +291,7 @@ object SalesorderheaderFields {
             /* user-picked */ CustomCreditcardId.pgType
           )
         }
-        def creditcardapprovalcode: OptField[/* max 15 chars */ String, SalesorderheaderRow] = {
+        override def creditcardapprovalcode: OptField[/* max 15 chars */ String, SalesorderheaderRow] = {
           new OptField[/* max 15 chars */ String, SalesorderheaderRow](
             _path,
             "creditcardapprovalcode",
@@ -302,7 +302,7 @@ object SalesorderheaderFields {
             PgTypes.text
           )
         }
-        def currencyrateid: OptField[CurrencyrateId, SalesorderheaderRow] = {
+        override def currencyrateid: OptField[CurrencyrateId, SalesorderheaderRow] = {
           new OptField[CurrencyrateId, SalesorderheaderRow](
             _path,
             "currencyrateid",
@@ -313,7 +313,7 @@ object SalesorderheaderFields {
             CurrencyrateId.pgType
           )
         }
-        def subtotal: Field[java.math.BigDecimal, SalesorderheaderRow] = {
+        override def subtotal: Field[java.math.BigDecimal, SalesorderheaderRow] = {
           new Field[java.math.BigDecimal, SalesorderheaderRow](
             _path,
             "subtotal",
@@ -324,7 +324,7 @@ object SalesorderheaderFields {
             PgTypes.numeric
           )
         }
-        def taxamt: Field[java.math.BigDecimal, SalesorderheaderRow] = {
+        override def taxamt: Field[java.math.BigDecimal, SalesorderheaderRow] = {
           new Field[java.math.BigDecimal, SalesorderheaderRow](
             _path,
             "taxamt",
@@ -335,7 +335,7 @@ object SalesorderheaderFields {
             PgTypes.numeric
           )
         }
-        def freight: Field[java.math.BigDecimal, SalesorderheaderRow] = {
+        override def freight: Field[java.math.BigDecimal, SalesorderheaderRow] = {
           new Field[java.math.BigDecimal, SalesorderheaderRow](
             _path,
             "freight",
@@ -346,7 +346,7 @@ object SalesorderheaderFields {
             PgTypes.numeric
           )
         }
-        def totaldue: OptField[java.math.BigDecimal, SalesorderheaderRow] = {
+        override def totaldue: OptField[java.math.BigDecimal, SalesorderheaderRow] = {
           new OptField[java.math.BigDecimal, SalesorderheaderRow](
             _path,
             "totaldue",
@@ -357,7 +357,7 @@ object SalesorderheaderFields {
             PgTypes.numeric
           )
         }
-        def comment: OptField[/* max 128 chars */ String, SalesorderheaderRow] = {
+        override def comment: OptField[/* max 128 chars */ String, SalesorderheaderRow] = {
           new OptField[/* max 128 chars */ String, SalesorderheaderRow](
             _path,
             "comment",
@@ -368,7 +368,7 @@ object SalesorderheaderFields {
             PgTypes.text
           )
         }
-        def rowguid: Field[TypoUUID, SalesorderheaderRow] = {
+        override def rowguid: Field[TypoUUID, SalesorderheaderRow] = {
           new Field[TypoUUID, SalesorderheaderRow](
             _path,
             "rowguid",
@@ -379,7 +379,7 @@ object SalesorderheaderFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, SalesorderheaderRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, SalesorderheaderRow] = {
           new Field[TypoLocalDateTime, SalesorderheaderRow](
             _path,
             "modifieddate",
@@ -395,7 +395,7 @@ object SalesorderheaderFields {
 
     override lazy val columns: java.util.List[FieldLike[?, SalesorderheaderRow]] = java.util.List.of(this.fields.salesorderid, this.fields.revisionnumber, this.fields.orderdate, this.fields.duedate, this.fields.shipdate, this.fields.status, this.fields.onlineorderflag, this.fields.purchaseordernumber, this.fields.accountnumber, this.fields.customerid, this.fields.salespersonid, this.fields.territoryid, this.fields.billtoaddressid, this.fields.shiptoaddressid, this.fields.shipmethodid, this.fields.creditcardid, this.fields.creditcardapprovalcode, this.fields.currencyrateid, this.fields.subtotal, this.fields.taxamt, this.fields.freight, this.fields.totaldue, this.fields.comment, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[SalesorderheaderFields, SalesorderheaderRow] = new Impl(java.util.List.of())

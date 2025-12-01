@@ -8,7 +8,6 @@ package adventureworks.humanresources.shift;
 import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.customtypes.TypoLocalTime;
 import adventureworks.public_.Name;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,12 +24,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class ShiftRepoImpl implements ShiftRepo {
+  @Override
   public DeleteBuilder<ShiftFields, ShiftRow> delete() {
     return DeleteBuilder.of("humanresources.shift", ShiftFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     ShiftId shiftid,
     Connection c
@@ -44,6 +44,7 @@ public class ShiftRepoImpl implements ShiftRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     ShiftId[] shiftids,
     Connection c
@@ -60,6 +61,7 @@ public class ShiftRepoImpl implements ShiftRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public ShiftRow insert(
     ShiftRow unsaved,
     Connection c
@@ -85,64 +87,70 @@ public class ShiftRepoImpl implements ShiftRepo {
       .updateReturning(ShiftRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public ShiftRow insert(
     ShiftRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"name\""));
-      values.add(interpolate(
-        Name.pgType.encode(unsaved.name()),
-        typo.runtime.Fragment.lit("::varchar")
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"name\""));
+    values.add(interpolate(
+      Name.pgType.encode(unsaved.name()),
+      typo.runtime.Fragment.lit("::varchar")
+    ));
+    columns.add(Fragment.lit("\"starttime\""));
+    values.add(interpolate(
+      TypoLocalTime.pgType.encode(unsaved.starttime()),
+      typo.runtime.Fragment.lit("::time")
+    ));
+    columns.add(Fragment.lit("\"endtime\""));
+    values.add(interpolate(
+      TypoLocalTime.pgType.encode(unsaved.endtime()),
+      typo.runtime.Fragment.lit("::time")
+    ));
+    unsaved.shiftid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"shiftid\""));
+        values.add(interpolate(
+        ShiftId.pgType.encode(value),
+        typo.runtime.Fragment.lit("::int4")
       ));
-      columns.add(Fragment.lit("\"starttime\""));
-      values.add(interpolate(
-        TypoLocalTime.pgType.encode(unsaved.starttime()),
-        typo.runtime.Fragment.lit("::time")
+      }
+    );;
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
       ));
-      columns.add(Fragment.lit("\"endtime\""));
-      values.add(interpolate(
-        TypoLocalTime.pgType.encode(unsaved.endtime()),
-        typo.runtime.Fragment.lit("::time")
-      ));
-      unsaved.shiftid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"shiftid\""));
-          values.add(interpolate(
-            ShiftId.pgType.encode(value),
-            typo.runtime.Fragment.lit("::int4")
-          ));
-        }
-      );;
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "humanresources"."shift"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "humanresources"."shift"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(ShiftRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<ShiftRow> unsaved,
     Integer batchSize,
@@ -154,6 +162,7 @@ public class ShiftRepoImpl implements ShiftRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<ShiftRowUnsaved> unsaved,
     Integer batchSize,
@@ -164,17 +173,20 @@ public class ShiftRepoImpl implements ShiftRepo {
     """), batchSize, unsaved, c, ShiftRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<ShiftFields, ShiftRow> select() {
     return SelectBuilder.of("humanresources.shift", ShiftFields.structure(), ShiftRow._rowParser);
   };
 
+  @Override
   public List<ShiftRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text
        from "humanresources"."shift"
-    """)).as(ShiftRow._rowParser.all()).runUnchecked(c);
+    """)).query(ShiftRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<ShiftRow> selectById(
     ShiftId shiftid,
     Connection c
@@ -186,9 +198,10 @@ public class ShiftRepoImpl implements ShiftRepo {
          where "shiftid" = """),
       ShiftId.pgType.encode(shiftid),
       typo.runtime.Fragment.lit("")
-    ).as(ShiftRow._rowParser.first()).runUnchecked(c);
+    ).query(ShiftRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<ShiftRow> selectByIds(
     ShiftId[] shiftids,
     Connection c
@@ -200,52 +213,56 @@ public class ShiftRepoImpl implements ShiftRepo {
          where "shiftid" = ANY("""),
       ShiftId.pgTypeArray.encode(shiftids),
       typo.runtime.Fragment.lit(")")
-    ).as(ShiftRow._rowParser.all()).runUnchecked(c);
+    ).query(ShiftRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<ShiftId, ShiftRow> selectByIdsTracked(
     ShiftId[] shiftids,
     Connection c
   ) {
-    Map<ShiftId, ShiftRow> ret = new HashMap<>();;
-      selectByIds(shiftids, c).forEach(row -> ret.put(row.shiftid(), row));
+    HashMap<ShiftId, ShiftRow> ret = new HashMap<ShiftId, ShiftRow>();
+    selectByIds(shiftids, c).forEach(row -> ret.put(row.shiftid(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<ShiftFields, ShiftRow> update() {
     return UpdateBuilder.of("humanresources.shift", ShiftFields.structure(), ShiftRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     ShiftRow row,
     Connection c
   ) {
     ShiftId shiftid = row.shiftid();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "humanresources"."shift"
-                set "name" = """),
-             Name.pgType.encode(row.name()),
-             typo.runtime.Fragment.lit("""
-                ::varchar,
-                "starttime" = """),
-             TypoLocalTime.pgType.encode(row.starttime()),
-             typo.runtime.Fragment.lit("""
-                ::time,
-                "endtime" = """),
-             TypoLocalTime.pgType.encode(row.endtime()),
-             typo.runtime.Fragment.lit("""
-                ::time,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "shiftid" = """),
-             ShiftId.pgType.encode(shiftid),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "humanresources"."shift"
+         set "name" = """),
+      Name.pgType.encode(row.name()),
+      typo.runtime.Fragment.lit("""
+         ::varchar,
+         "starttime" = """),
+      TypoLocalTime.pgType.encode(row.starttime()),
+      typo.runtime.Fragment.lit("""
+         ::time,
+         "endtime" = """),
+      TypoLocalTime.pgType.encode(row.endtime()),
+      typo.runtime.Fragment.lit("""
+         ::time,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "shiftid" = """),
+      ShiftId.pgType.encode(shiftid),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public ShiftRow upsert(
     ShiftRow unsaved,
     Connection c
@@ -278,6 +295,7 @@ public class ShiftRepoImpl implements ShiftRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<ShiftRow> upsertBatch(
     Iterator<ShiftRow> unsaved,
     Connection c
@@ -298,27 +316,28 @@ public class ShiftRepoImpl implements ShiftRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<ShiftRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table shift_TEMP (like "humanresources"."shift") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy shift_TEMP("shiftid", "name", "starttime", "endtime", "modifieddate") from stdin
-      """), batchSize, unsaved, c, ShiftRow.pgText);
+    create temporary table shift_TEMP (like "humanresources"."shift") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy shift_TEMP("shiftid", "name", "starttime", "endtime", "modifieddate") from stdin
+    """), batchSize, unsaved, c, ShiftRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "humanresources"."shift"("shiftid", "name", "starttime", "endtime", "modifieddate")
-              select * from shift_TEMP
-              on conflict ("shiftid")
-              do update set
-                "name" = EXCLUDED."name",
-              "starttime" = EXCLUDED."starttime",
-              "endtime" = EXCLUDED."endtime",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table shift_TEMP;""")).update().runUnchecked(c);
+       insert into "humanresources"."shift"("shiftid", "name", "starttime", "endtime", "modifieddate")
+       select * from shift_TEMP
+       on conflict ("shiftid")
+       do update set
+         "name" = EXCLUDED."name",
+       "starttime" = EXCLUDED."starttime",
+       "endtime" = EXCLUDED."endtime",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table shift_TEMP;""")).update().runUnchecked(c);
   };
 }

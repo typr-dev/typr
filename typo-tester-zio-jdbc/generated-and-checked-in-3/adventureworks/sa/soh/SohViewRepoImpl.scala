@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class SohViewRepoImpl extends SohViewRepo {
-  def select: SelectBuilder[SohViewFields, SohViewRow] = SelectBuilder.of(""""sa"."soh"""", SohViewFields.structure, SohViewRow.jdbcDecoder)
+  override def select: SelectBuilder[SohViewFields, SohViewRow] = SelectBuilder.of(""""sa"."soh"""", SohViewFields.structure, SohViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, SohViewRow] = sql"""select "id", "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text from "sa"."soh"""".query(using SohViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, SohViewRow] = sql"""select "id", "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text from "sa"."soh"""".query(using SohViewRow.jdbcDecoder).selectStream()
 }

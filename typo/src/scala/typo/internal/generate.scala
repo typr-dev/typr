@@ -54,7 +54,6 @@ object generate {
       fileHeader = publicOptions.fileHeader,
       generateMockRepos = publicOptions.generateMockRepos,
       enablePrimaryKeyType = publicOptions.enablePrimaryKeyType,
-      iocFramework = publicOptions.iocFramework,
       jsonLibs = publicOptions.jsonLibs.map {
         case JsonLibName.Circe    => JsonLibCirce(pkg, default, publicOptions.inlineImplicits, requireScala("circe"))
         case JsonLibName.PlayJson => JsonLibPlay(pkg, default, publicOptions.inlineImplicits, requireScala("play-json"))
@@ -152,7 +151,7 @@ object generate {
                 computedRelations.collect { case x: ComputedTable if options.enableTestInserts.include(x.dbTable.name) && keptTypes(x.names.RepoImplName) => x }
               if (keptTables.nonEmpty) {
                 val computed = ComputedTestInserts(project.name, options, language, customTypes, domains, enums, computedRelationsByName, keptTables)
-                FileTestInserts(computed, dbLib, language, options.iocFramework)
+                FileTestInserts(computed, dbLib, language)
               } else Nil
             case _ => Nil
           }

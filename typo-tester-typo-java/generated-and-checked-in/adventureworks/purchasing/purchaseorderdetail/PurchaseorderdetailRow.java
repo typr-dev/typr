@@ -15,7 +15,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple9;
 
 /** Table: purchasing.purchaseorderdetail
   * Individual products associated with a specific purchase order. See PurchaseOrderHeader.
@@ -114,7 +113,7 @@ public record PurchaseorderdetailRow(
     return new PurchaseorderdetailRow(purchaseorderid, purchaseorderdetailid, duedate, orderqty, productid, unitprice, receivedqty, rejectedqty, modifieddate);
   };
 
-  static RowParser<PurchaseorderdetailRow> _rowParser = RowParsers.of(PurchaseorderheaderId.pgType, PgTypes.int4, TypoLocalDateTime.pgType, TypoShort.pgType, ProductId.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, PurchaseorderdetailRow::new, row -> new Tuple9<>(row.purchaseorderid(), row.purchaseorderdetailid(), row.duedate(), row.orderqty(), row.productid(), row.unitprice(), row.receivedqty(), row.rejectedqty(), row.modifieddate()));;
+  static RowParser<PurchaseorderdetailRow> _rowParser = RowParsers.of(PurchaseorderheaderId.pgType, PgTypes.int4, TypoLocalDateTime.pgType, TypoShort.pgType, ProductId.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, PurchaseorderdetailRow::new, row -> new Object[]{row.purchaseorderid(), row.purchaseorderdetailid(), row.duedate(), row.orderqty(), row.productid(), row.unitprice(), row.receivedqty(), row.rejectedqty(), row.modifieddate()});;
 
   static public PurchaseorderdetailRow apply(
     PurchaseorderdetailId compositeId,

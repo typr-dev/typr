@@ -12,7 +12,6 @@ import adventureworks.sales.salesreason.SalesreasonId
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple3
 
 /** Table: sales.salesorderheadersalesreason
  * Cross-reference table mapping sales orders to sales reason codes.
@@ -38,7 +37,7 @@ case class SalesorderheadersalesreasonRow(
 }
 
 object SalesorderheadersalesreasonRow {
-  val `_rowParser`: RowParser[SalesorderheadersalesreasonRow] = RowParsers.of(SalesorderheaderId.pgType, SalesreasonId.pgType, TypoLocalDateTime.pgType, SalesorderheadersalesreasonRow.apply, row => new Tuple3(row.salesorderid, row.salesreasonid, row.modifieddate))
+  val `_rowParser`: RowParser[SalesorderheadersalesreasonRow] = RowParsers.of(SalesorderheaderId.pgType, SalesreasonId.pgType, TypoLocalDateTime.pgType, SalesorderheadersalesreasonRow.apply, row => Array(row.salesorderid, row.salesreasonid, row.modifieddate))
 
   def apply(
     compositeId: SalesorderheadersalesreasonId,

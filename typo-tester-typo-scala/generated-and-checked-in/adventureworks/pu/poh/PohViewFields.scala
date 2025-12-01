@@ -51,7 +51,7 @@ object PohViewFields {
 
     override lazy val fields: PohViewFields = {
       new PohViewFields {
-        def id: Field[PurchaseorderheaderId, PohViewRow] = {
+        override def id: Field[PurchaseorderheaderId, PohViewRow] = {
           new Field[PurchaseorderheaderId, PohViewRow](
             _path,
             "id",
@@ -62,7 +62,7 @@ object PohViewFields {
             PurchaseorderheaderId.pgType
           )
         }
-        def purchaseorderid: Field[PurchaseorderheaderId, PohViewRow] = {
+        override def purchaseorderid: Field[PurchaseorderheaderId, PohViewRow] = {
           new Field[PurchaseorderheaderId, PohViewRow](
             _path,
             "purchaseorderid",
@@ -73,7 +73,7 @@ object PohViewFields {
             PurchaseorderheaderId.pgType
           )
         }
-        def revisionnumber: Field[TypoShort, PohViewRow] = {
+        override def revisionnumber: Field[TypoShort, PohViewRow] = {
           new Field[TypoShort, PohViewRow](
             _path,
             "revisionnumber",
@@ -84,7 +84,7 @@ object PohViewFields {
             TypoShort.pgType
           )
         }
-        def status: Field[TypoShort, PohViewRow] = {
+        override def status: Field[TypoShort, PohViewRow] = {
           new Field[TypoShort, PohViewRow](
             _path,
             "status",
@@ -95,7 +95,7 @@ object PohViewFields {
             TypoShort.pgType
           )
         }
-        def employeeid: Field[BusinessentityId, PohViewRow] = {
+        override def employeeid: Field[BusinessentityId, PohViewRow] = {
           new Field[BusinessentityId, PohViewRow](
             _path,
             "employeeid",
@@ -106,7 +106,7 @@ object PohViewFields {
             BusinessentityId.pgType
           )
         }
-        def vendorid: Field[BusinessentityId, PohViewRow] = {
+        override def vendorid: Field[BusinessentityId, PohViewRow] = {
           new Field[BusinessentityId, PohViewRow](
             _path,
             "vendorid",
@@ -117,7 +117,7 @@ object PohViewFields {
             BusinessentityId.pgType
           )
         }
-        def shipmethodid: Field[ShipmethodId, PohViewRow] = {
+        override def shipmethodid: Field[ShipmethodId, PohViewRow] = {
           new Field[ShipmethodId, PohViewRow](
             _path,
             "shipmethodid",
@@ -128,7 +128,7 @@ object PohViewFields {
             ShipmethodId.pgType
           )
         }
-        def orderdate: Field[TypoLocalDateTime, PohViewRow] = {
+        override def orderdate: Field[TypoLocalDateTime, PohViewRow] = {
           new Field[TypoLocalDateTime, PohViewRow](
             _path,
             "orderdate",
@@ -139,7 +139,7 @@ object PohViewFields {
             TypoLocalDateTime.pgType
           )
         }
-        def shipdate: OptField[TypoLocalDateTime, PohViewRow] = {
+        override def shipdate: OptField[TypoLocalDateTime, PohViewRow] = {
           new OptField[TypoLocalDateTime, PohViewRow](
             _path,
             "shipdate",
@@ -150,7 +150,7 @@ object PohViewFields {
             TypoLocalDateTime.pgType
           )
         }
-        def subtotal: Field[java.math.BigDecimal, PohViewRow] = {
+        override def subtotal: Field[java.math.BigDecimal, PohViewRow] = {
           new Field[java.math.BigDecimal, PohViewRow](
             _path,
             "subtotal",
@@ -161,7 +161,7 @@ object PohViewFields {
             PgTypes.numeric
           )
         }
-        def taxamt: Field[java.math.BigDecimal, PohViewRow] = {
+        override def taxamt: Field[java.math.BigDecimal, PohViewRow] = {
           new Field[java.math.BigDecimal, PohViewRow](
             _path,
             "taxamt",
@@ -172,7 +172,7 @@ object PohViewFields {
             PgTypes.numeric
           )
         }
-        def freight: Field[java.math.BigDecimal, PohViewRow] = {
+        override def freight: Field[java.math.BigDecimal, PohViewRow] = {
           new Field[java.math.BigDecimal, PohViewRow](
             _path,
             "freight",
@@ -183,7 +183,7 @@ object PohViewFields {
             PgTypes.numeric
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, PohViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, PohViewRow] = {
           new Field[TypoLocalDateTime, PohViewRow](
             _path,
             "modifieddate",
@@ -199,7 +199,7 @@ object PohViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, PohViewRow]] = java.util.List.of(this.fields.id, this.fields.purchaseorderid, this.fields.revisionnumber, this.fields.status, this.fields.employeeid, this.fields.vendorid, this.fields.shipmethodid, this.fields.orderdate, this.fields.shipdate, this.fields.subtotal, this.fields.taxamt, this.fields.freight, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[PohViewFields, PohViewRow] = new Impl(java.util.List.of())

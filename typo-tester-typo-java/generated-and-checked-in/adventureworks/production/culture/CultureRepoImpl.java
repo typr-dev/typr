@@ -7,7 +7,6 @@ package adventureworks.production.culture;
 
 import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.public_.Name;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,12 +23,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class CultureRepoImpl implements CultureRepo {
+  @Override
   public DeleteBuilder<CultureFields, CultureRow> delete() {
     return DeleteBuilder.of("production.culture", CultureFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     CultureId cultureid,
     Connection c
@@ -43,6 +43,7 @@ public class CultureRepoImpl implements CultureRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     CultureId[] cultureids,
     Connection c
@@ -59,6 +60,7 @@ public class CultureRepoImpl implements CultureRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public CultureRow insert(
     CultureRow unsaved,
     Connection c
@@ -80,49 +82,53 @@ public class CultureRepoImpl implements CultureRepo {
       .updateReturning(CultureRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public CultureRow insert(
     CultureRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"cultureid\""));
-      values.add(interpolate(
-        CultureId.pgType.encode(unsaved.cultureid()),
-        typo.runtime.Fragment.lit("::bpchar")
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"cultureid\""));
+    values.add(interpolate(
+      CultureId.pgType.encode(unsaved.cultureid()),
+      typo.runtime.Fragment.lit("::bpchar")
+    ));
+    columns.add(Fragment.lit("\"name\""));
+    values.add(interpolate(
+      Name.pgType.encode(unsaved.name()),
+      typo.runtime.Fragment.lit("::varchar")
+    ));
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
       ));
-      columns.add(Fragment.lit("\"name\""));
-      values.add(interpolate(
-        Name.pgType.encode(unsaved.name()),
-        typo.runtime.Fragment.lit("::varchar")
-      ));
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "production"."culture"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "cultureid", "name", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "production"."culture"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "cultureid", "name", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(CultureRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<CultureRow> unsaved,
     Integer batchSize,
@@ -134,6 +140,7 @@ public class CultureRepoImpl implements CultureRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<CultureRowUnsaved> unsaved,
     Integer batchSize,
@@ -144,17 +151,20 @@ public class CultureRepoImpl implements CultureRepo {
     """), batchSize, unsaved, c, CultureRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<CultureFields, CultureRow> select() {
     return SelectBuilder.of("production.culture", CultureFields.structure(), CultureRow._rowParser);
   };
 
+  @Override
   public List<CultureRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "cultureid", "name", "modifieddate"::text
        from "production"."culture"
-    """)).as(CultureRow._rowParser.all()).runUnchecked(c);
+    """)).query(CultureRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<CultureRow> selectById(
     CultureId cultureid,
     Connection c
@@ -166,9 +176,10 @@ public class CultureRepoImpl implements CultureRepo {
          where "cultureid" = """),
       CultureId.pgType.encode(cultureid),
       typo.runtime.Fragment.lit("")
-    ).as(CultureRow._rowParser.first()).runUnchecked(c);
+    ).query(CultureRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<CultureRow> selectByIds(
     CultureId[] cultureids,
     Connection c
@@ -180,44 +191,48 @@ public class CultureRepoImpl implements CultureRepo {
          where "cultureid" = ANY("""),
       CultureId.pgTypeArray.encode(cultureids),
       typo.runtime.Fragment.lit(")")
-    ).as(CultureRow._rowParser.all()).runUnchecked(c);
+    ).query(CultureRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<CultureId, CultureRow> selectByIdsTracked(
     CultureId[] cultureids,
     Connection c
   ) {
-    Map<CultureId, CultureRow> ret = new HashMap<>();;
-      selectByIds(cultureids, c).forEach(row -> ret.put(row.cultureid(), row));
+    HashMap<CultureId, CultureRow> ret = new HashMap<CultureId, CultureRow>();
+    selectByIds(cultureids, c).forEach(row -> ret.put(row.cultureid(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<CultureFields, CultureRow> update() {
     return UpdateBuilder.of("production.culture", CultureFields.structure(), CultureRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     CultureRow row,
     Connection c
   ) {
     CultureId cultureid = row.cultureid();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "production"."culture"
-                set "name" = """),
-             Name.pgType.encode(row.name()),
-             typo.runtime.Fragment.lit("""
-                ::varchar,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "cultureid" = """),
-             CultureId.pgType.encode(cultureid),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "production"."culture"
+         set "name" = """),
+      Name.pgType.encode(row.name()),
+      typo.runtime.Fragment.lit("""
+         ::varchar,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "cultureid" = """),
+      CultureId.pgType.encode(cultureid),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public CultureRow upsert(
     CultureRow unsaved,
     Connection c
@@ -244,6 +259,7 @@ public class CultureRepoImpl implements CultureRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<CultureRow> upsertBatch(
     Iterator<CultureRow> unsaved,
     Connection c
@@ -262,25 +278,26 @@ public class CultureRepoImpl implements CultureRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<CultureRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table culture_TEMP (like "production"."culture") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy culture_TEMP("cultureid", "name", "modifieddate") from stdin
-      """), batchSize, unsaved, c, CultureRow.pgText);
+    create temporary table culture_TEMP (like "production"."culture") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy culture_TEMP("cultureid", "name", "modifieddate") from stdin
+    """), batchSize, unsaved, c, CultureRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "production"."culture"("cultureid", "name", "modifieddate")
-              select * from culture_TEMP
-              on conflict ("cultureid")
-              do update set
-                "name" = EXCLUDED."name",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table culture_TEMP;""")).update().runUnchecked(c);
+       insert into "production"."culture"("cultureid", "name", "modifieddate")
+       select * from culture_TEMP
+       on conflict ("cultureid")
+       do update set
+         "name" = EXCLUDED."name",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table culture_TEMP;""")).update().runUnchecked(c);
   };
 }

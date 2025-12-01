@@ -45,7 +45,7 @@ object ProductlistpricehistoryFields {
 
     override lazy val fields: ProductlistpricehistoryFields = {
       new ProductlistpricehistoryFields {
-        def productid: IdField[ProductId, ProductlistpricehistoryRow] = {
+        override def productid: IdField[ProductId, ProductlistpricehistoryRow] = {
           new IdField[ProductId, ProductlistpricehistoryRow](
             _path,
             "productid",
@@ -56,7 +56,7 @@ object ProductlistpricehistoryFields {
             ProductId.pgType
           )
         }
-        def startdate: IdField[TypoLocalDateTime, ProductlistpricehistoryRow] = {
+        override def startdate: IdField[TypoLocalDateTime, ProductlistpricehistoryRow] = {
           new IdField[TypoLocalDateTime, ProductlistpricehistoryRow](
             _path,
             "startdate",
@@ -67,7 +67,7 @@ object ProductlistpricehistoryFields {
             TypoLocalDateTime.pgType
           )
         }
-        def enddate: OptField[TypoLocalDateTime, ProductlistpricehistoryRow] = {
+        override def enddate: OptField[TypoLocalDateTime, ProductlistpricehistoryRow] = {
           new OptField[TypoLocalDateTime, ProductlistpricehistoryRow](
             _path,
             "enddate",
@@ -78,7 +78,7 @@ object ProductlistpricehistoryFields {
             TypoLocalDateTime.pgType
           )
         }
-        def listprice: Field[java.math.BigDecimal, ProductlistpricehistoryRow] = {
+        override def listprice: Field[java.math.BigDecimal, ProductlistpricehistoryRow] = {
           new Field[java.math.BigDecimal, ProductlistpricehistoryRow](
             _path,
             "listprice",
@@ -89,7 +89,7 @@ object ProductlistpricehistoryFields {
             PgTypes.numeric
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, ProductlistpricehistoryRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, ProductlistpricehistoryRow] = {
           new Field[TypoLocalDateTime, ProductlistpricehistoryRow](
             _path,
             "modifieddate",
@@ -105,7 +105,7 @@ object ProductlistpricehistoryFields {
 
     override lazy val columns: java.util.List[FieldLike[?, ProductlistpricehistoryRow]] = java.util.List.of(this.fields.productid, this.fields.startdate, this.fields.enddate, this.fields.listprice, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[ProductlistpricehistoryFields, ProductlistpricehistoryRow] = new Impl(java.util.List.of())

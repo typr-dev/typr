@@ -47,8 +47,8 @@ public record TypoInstant(@JsonValue Instant value) {
     PgText.textString.contramap(v -> v.value().toString());
 
   static public PgType<TypoInstant> pgType =
-    PgTypes.text.bimap(v -> apply(v), v -> v.value().toString()).renamed("timestamptz");
+    PgTypes.text.bimap((String v) -> apply(v), (TypoInstant v) -> v.value().toString()).renamed("timestamptz");
 
   static public PgType<TypoInstant[]> pgTypeArray =
-    TypoInstant.pgType.array(PgRead.massageJdbcArrayTo(String[].class).map(xs -> arrayMap.map(xs, v -> apply(v), TypoInstant.class)), PgWrite.<String>passObjectToJdbc().array(TypoInstant.pgType.typename().<String>as()).contramap(xs -> arrayMap.map(xs, (TypoInstant v) -> v.value().toString(), String.class)));
+    TypoInstant.pgType.array(PgRead.massageJdbcArrayTo(String[].class).map((String[] xs) -> arrayMap.map(xs, (String v) -> apply(v), TypoInstant.class)), PgWrite.<String>passObjectToJdbc().array(TypoInstant.pgType.typename().<String>as()).contramap((TypoInstant[] xs) -> arrayMap.map(xs, (TypoInstant v) -> v.value().toString(), String.class)));
 }

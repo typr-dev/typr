@@ -14,7 +14,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple5;
 
 /** Table: sales.salespersonquotahistory
   * Sales performance tracking.
@@ -65,7 +64,7 @@ public record SalespersonquotahistoryRow(
     return new SalespersonquotahistoryRow(businessentityid, quotadate, salesquota, rowguid, modifieddate);
   };
 
-  static RowParser<SalespersonquotahistoryRow> _rowParser = RowParsers.of(BusinessentityId.pgType, TypoLocalDateTime.pgType, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SalespersonquotahistoryRow::new, row -> new Tuple5<>(row.businessentityid(), row.quotadate(), row.salesquota(), row.rowguid(), row.modifieddate()));;
+  static RowParser<SalespersonquotahistoryRow> _rowParser = RowParsers.of(BusinessentityId.pgType, TypoLocalDateTime.pgType, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SalespersonquotahistoryRow::new, row -> new Object[]{row.businessentityid(), row.quotadate(), row.salesquota(), row.rowguid(), row.modifieddate()});;
 
   static public SalespersonquotahistoryRow apply(
     SalespersonquotahistoryId compositeId,

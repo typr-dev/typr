@@ -15,7 +15,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple9
 
 /** Table: production.workorder
  * Manufacturing work orders.
@@ -76,19 +75,7 @@ case class WorkorderRow(
 }
 
 object WorkorderRow {
-  val `_rowParser`: RowParser[WorkorderRow] = {
-    RowParsers.of(WorkorderId.pgType, ProductId.pgType, PgTypes.int4, TypoShort.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoLocalDateTime.pgType, ScrapreasonId.pgType.opt(), TypoLocalDateTime.pgType, WorkorderRow.apply, row => new Tuple9(
-      row.workorderid,
-      row.productid,
-      row.orderqty,
-      row.scrappedqty,
-      row.startdate,
-      row.enddate,
-      row.duedate,
-      row.scrapreasonid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[WorkorderRow] = RowParsers.of(WorkorderId.pgType, ProductId.pgType, PgTypes.int4, TypoShort.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoLocalDateTime.pgType, ScrapreasonId.pgType.opt(), TypoLocalDateTime.pgType, WorkorderRow.apply, row => Array(row.workorderid, row.productid, row.orderqty, row.scrappedqty, row.startdate, row.enddate, row.duedate, row.scrapreasonid, row.modifieddate))
 
   given pgText: PgText[WorkorderRow] = PgText.from(`_rowParser`)
 }

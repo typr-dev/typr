@@ -7,13 +7,12 @@ package adventureworks.person_detail;
 
 import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.person.businessentity.BusinessentityId;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class PersonDetailSqlRepoImpl implements PersonDetailSqlRepo {
+  @Override
   public List<PersonDetailSqlRow> apply(
     /* user-picked */ BusinessentityId businessentityid,
     TypoLocalDateTime modifiedAfter,
@@ -43,6 +42,6 @@ public class PersonDetailSqlRepoImpl implements PersonDetailSqlRepo {
            and p.modifieddate > """),
       TypoLocalDateTime.pgType.encode(modifiedAfter),
       typo.runtime.Fragment.lit("::timestamp")
-    ).as(PersonDetailSqlRow._rowParser.all()).runUnchecked(c);
+    ).query(PersonDetailSqlRow._rowParser.all()).runUnchecked(c);
   };
 }

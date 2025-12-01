@@ -12,7 +12,6 @@ import adventureworks.production.productmodel.ProductmodelId;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple3;
 
 /** Table: production.productmodelillustration
   * Cross-reference table mapping product models and illustrations.
@@ -49,7 +48,7 @@ public record ProductmodelillustrationRow(
     return new ProductmodelillustrationRow(productmodelid, illustrationid, modifieddate);
   };
 
-  static RowParser<ProductmodelillustrationRow> _rowParser = RowParsers.of(ProductmodelId.pgType, IllustrationId.pgType, TypoLocalDateTime.pgType, ProductmodelillustrationRow::new, row -> new Tuple3<>(row.productmodelid(), row.illustrationid(), row.modifieddate()));;
+  static RowParser<ProductmodelillustrationRow> _rowParser = RowParsers.of(ProductmodelId.pgType, IllustrationId.pgType, TypoLocalDateTime.pgType, ProductmodelillustrationRow::new, row -> new Object[]{row.productmodelid(), row.illustrationid(), row.modifieddate()});;
 
   static public ProductmodelillustrationRow apply(
     ProductmodelillustrationId compositeId,

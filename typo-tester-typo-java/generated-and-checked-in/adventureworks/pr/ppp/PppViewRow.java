@@ -11,7 +11,6 @@ import adventureworks.production.productphoto.ProductphotoId;
 import adventureworks.public_.Flag;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple4;
 
 /** View: pr.ppp */
 public record PppViewRow(
@@ -44,5 +43,5 @@ public record PppViewRow(
     return new PppViewRow(productid, productphotoid, primary, modifieddate);
   };
 
-  static RowParser<PppViewRow> _rowParser = RowParsers.of(ProductId.pgType, ProductphotoId.pgType, Flag.pgType, TypoLocalDateTime.pgType, PppViewRow::new, row -> new Tuple4<>(row.productid(), row.productphotoid(), row.primary(), row.modifieddate()));;
+  static RowParser<PppViewRow> _rowParser = RowParsers.of(ProductId.pgType, ProductphotoId.pgType, Flag.pgType, TypoLocalDateTime.pgType, PppViewRow::new, row -> new Object[]{row.productid(), row.productphotoid(), row.primary(), row.modifieddate()});;
 }

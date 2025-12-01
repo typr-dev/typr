@@ -44,7 +44,7 @@ object ProductmodelillustrationFields {
 
     override lazy val fields: ProductmodelillustrationFields = {
       new ProductmodelillustrationFields {
-        def productmodelid: IdField[ProductmodelId, ProductmodelillustrationRow] = {
+        override def productmodelid: IdField[ProductmodelId, ProductmodelillustrationRow] = {
           new IdField[ProductmodelId, ProductmodelillustrationRow](
             _path,
             "productmodelid",
@@ -55,7 +55,7 @@ object ProductmodelillustrationFields {
             ProductmodelId.pgType
           )
         }
-        def illustrationid: IdField[IllustrationId, ProductmodelillustrationRow] = {
+        override def illustrationid: IdField[IllustrationId, ProductmodelillustrationRow] = {
           new IdField[IllustrationId, ProductmodelillustrationRow](
             _path,
             "illustrationid",
@@ -66,7 +66,7 @@ object ProductmodelillustrationFields {
             IllustrationId.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, ProductmodelillustrationRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, ProductmodelillustrationRow] = {
           new Field[TypoLocalDateTime, ProductmodelillustrationRow](
             _path,
             "modifieddate",
@@ -82,7 +82,7 @@ object ProductmodelillustrationFields {
 
     override lazy val columns: java.util.List[FieldLike[?, ProductmodelillustrationRow]] = java.util.List.of(this.fields.productmodelid, this.fields.illustrationid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[ProductmodelillustrationFields, ProductmodelillustrationRow] = new Impl(java.util.List.of())

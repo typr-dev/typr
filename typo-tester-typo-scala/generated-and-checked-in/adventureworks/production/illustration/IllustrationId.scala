@@ -5,12 +5,13 @@
  */
 package adventureworks.production.illustration
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
 
 /** Type for the primary key of table `production.illustration` */
-case class IllustrationId(value: Integer) extends scala.AnyVal
+case class IllustrationId(@JsonValue value: Integer) extends scala.AnyVal
 
 object IllustrationId {
   given bijection: Bijection[IllustrationId, Integer] = Bijection.apply[IllustrationId, Integer](_.value)(IllustrationId.apply)

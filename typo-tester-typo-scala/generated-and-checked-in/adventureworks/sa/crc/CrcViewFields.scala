@@ -27,7 +27,7 @@ object CrcViewFields {
 
     override lazy val fields: CrcViewFields = {
       new CrcViewFields {
-        def countryregioncode: Field[CountryregionId, CrcViewRow] = {
+        override def countryregioncode: Field[CountryregionId, CrcViewRow] = {
           new Field[CountryregionId, CrcViewRow](
             _path,
             "countryregioncode",
@@ -38,7 +38,7 @@ object CrcViewFields {
             CountryregionId.pgType
           )
         }
-        def currencycode: Field[CurrencyId, CrcViewRow] = {
+        override def currencycode: Field[CurrencyId, CrcViewRow] = {
           new Field[CurrencyId, CrcViewRow](
             _path,
             "currencycode",
@@ -49,7 +49,7 @@ object CrcViewFields {
             CurrencyId.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, CrcViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, CrcViewRow] = {
           new Field[TypoLocalDateTime, CrcViewRow](
             _path,
             "modifieddate",
@@ -65,7 +65,7 @@ object CrcViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, CrcViewRow]] = java.util.List.of(this.fields.countryregioncode, this.fields.currencycode, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[CrcViewFields, CrcViewRow] = new Impl(java.util.List.of())

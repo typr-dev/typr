@@ -10,9 +10,9 @@ import typo.dsl.SelectBuilder
 import anorm.SqlStringInterpolation
 
 class SoViewRepoImpl extends SoViewRepo {
-  def select: SelectBuilder[SoViewFields, SoViewRow] = SelectBuilder.of(""""sa"."so"""", SoViewFields.structure, SoViewRow.rowParser)
+  override def select: SelectBuilder[SoViewFields, SoViewRow] = SelectBuilder.of(""""sa"."so"""", SoViewFields.structure, SoViewRow.rowParser)
 
-  def selectAll(using c: Connection): List[SoViewRow] = {
+  override def selectAll(using c: Connection): List[SoViewRow] = {
     SQL"""select "id", "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text
     from "sa"."so"
     """.as(SoViewRow.rowParser(1).*)

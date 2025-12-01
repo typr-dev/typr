@@ -45,7 +45,7 @@ object SpecialofferFields {
 
     override lazy val fields: SpecialofferFields = {
       new SpecialofferFields {
-        def specialofferid: IdField[SpecialofferId, SpecialofferRow] = {
+        override def specialofferid: IdField[SpecialofferId, SpecialofferRow] = {
           new IdField[SpecialofferId, SpecialofferRow](
             _path,
             "specialofferid",
@@ -56,7 +56,7 @@ object SpecialofferFields {
             SpecialofferId.pgType
           )
         }
-        def description: Field[/* max 255 chars */ String, SpecialofferRow] = {
+        override def description: Field[/* max 255 chars */ String, SpecialofferRow] = {
           new Field[/* max 255 chars */ String, SpecialofferRow](
             _path,
             "description",
@@ -67,7 +67,7 @@ object SpecialofferFields {
             PgTypes.text
           )
         }
-        def discountpct: Field[java.math.BigDecimal, SpecialofferRow] = {
+        override def discountpct: Field[java.math.BigDecimal, SpecialofferRow] = {
           new Field[java.math.BigDecimal, SpecialofferRow](
             _path,
             "discountpct",
@@ -78,7 +78,7 @@ object SpecialofferFields {
             PgTypes.numeric
           )
         }
-        def `type`: Field[/* max 50 chars */ String, SpecialofferRow] = {
+        override def `type`: Field[/* max 50 chars */ String, SpecialofferRow] = {
           new Field[/* max 50 chars */ String, SpecialofferRow](
             _path,
             "type",
@@ -89,7 +89,7 @@ object SpecialofferFields {
             PgTypes.text
           )
         }
-        def category: Field[/* max 50 chars */ String, SpecialofferRow] = {
+        override def category: Field[/* max 50 chars */ String, SpecialofferRow] = {
           new Field[/* max 50 chars */ String, SpecialofferRow](
             _path,
             "category",
@@ -100,7 +100,7 @@ object SpecialofferFields {
             PgTypes.text
           )
         }
-        def startdate: Field[TypoLocalDateTime, SpecialofferRow] = {
+        override def startdate: Field[TypoLocalDateTime, SpecialofferRow] = {
           new Field[TypoLocalDateTime, SpecialofferRow](
             _path,
             "startdate",
@@ -111,7 +111,7 @@ object SpecialofferFields {
             TypoLocalDateTime.pgType
           )
         }
-        def enddate: Field[TypoLocalDateTime, SpecialofferRow] = {
+        override def enddate: Field[TypoLocalDateTime, SpecialofferRow] = {
           new Field[TypoLocalDateTime, SpecialofferRow](
             _path,
             "enddate",
@@ -122,7 +122,7 @@ object SpecialofferFields {
             TypoLocalDateTime.pgType
           )
         }
-        def minqty: Field[Integer, SpecialofferRow] = {
+        override def minqty: Field[Integer, SpecialofferRow] = {
           new Field[Integer, SpecialofferRow](
             _path,
             "minqty",
@@ -133,7 +133,7 @@ object SpecialofferFields {
             PgTypes.int4
           )
         }
-        def maxqty: OptField[Integer, SpecialofferRow] = {
+        override def maxqty: OptField[Integer, SpecialofferRow] = {
           new OptField[Integer, SpecialofferRow](
             _path,
             "maxqty",
@@ -144,7 +144,7 @@ object SpecialofferFields {
             PgTypes.int4
           )
         }
-        def rowguid: Field[TypoUUID, SpecialofferRow] = {
+        override def rowguid: Field[TypoUUID, SpecialofferRow] = {
           new Field[TypoUUID, SpecialofferRow](
             _path,
             "rowguid",
@@ -155,7 +155,7 @@ object SpecialofferFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, SpecialofferRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, SpecialofferRow] = {
           new Field[TypoLocalDateTime, SpecialofferRow](
             _path,
             "modifieddate",
@@ -171,7 +171,7 @@ object SpecialofferFields {
 
     override lazy val columns: java.util.List[FieldLike[?, SpecialofferRow]] = java.util.List.of(this.fields.specialofferid, this.fields.description, this.fields.discountpct, this.fields.`type`, this.fields.category, this.fields.startdate, this.fields.enddate, this.fields.minqty, this.fields.maxqty, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[SpecialofferFields, SpecialofferRow] = new Impl(java.util.List.of())

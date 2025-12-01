@@ -13,7 +13,6 @@ import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple12
 
 /** View: purchasing.vvendorwithcontacts */
 case class VvendorwithcontactsViewRow(
@@ -44,20 +43,5 @@ case class VvendorwithcontactsViewRow(
 )
 
 object VvendorwithcontactsViewRow {
-  val `_rowParser`: RowParser[VvendorwithcontactsViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, Name.pgType, Name.pgType, PgTypes.text.opt(), /* user-picked */ FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text.opt(), Phone.pgType.opt(), Name.pgType.opt(), PgTypes.text.opt(), PgTypes.int4, VvendorwithcontactsViewRow.apply, row => new Tuple12(
-      row.businessentityid,
-      row.name,
-      row.contacttype,
-      row.title,
-      row.firstname,
-      row.middlename,
-      row.lastname,
-      row.suffix,
-      row.phonenumber,
-      row.phonenumbertype,
-      row.emailaddress,
-      row.emailpromotion
-    ))
-  }
+  val `_rowParser`: RowParser[VvendorwithcontactsViewRow] = RowParsers.of(BusinessentityId.pgType, Name.pgType, Name.pgType, PgTypes.text.opt(), /* user-picked */ FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text.opt(), Phone.pgType.opt(), Name.pgType.opt(), PgTypes.text.opt(), PgTypes.int4, VvendorwithcontactsViewRow.apply, row => Array(row.businessentityid, row.name, row.contacttype, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.phonenumber, row.phonenumbertype, row.emailaddress, row.emailpromotion))
 }

@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes
 
+import com.fasterxml.jackson.annotation.JsonValue
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 import typo.dsl.Bijection
@@ -15,7 +16,7 @@ import typo.runtime.PgTypes
 import typo.runtime.PgWrite
 
 /** This is `java.time.LocalTime`, but with microsecond precision and transferred to and from postgres as strings. The reason is that postgres driver and db libs are broken */
-case class TypoLocalTime(value: LocalTime)
+case class TypoLocalTime(@JsonValue value: LocalTime)
 
 object TypoLocalTime {
   def apply(value: LocalTime): TypoLocalTime = new TypoLocalTime(value.truncatedTo(ChronoUnit.MICROS))
@@ -26,9 +27,9 @@ object TypoLocalTime {
 
   def now: TypoLocalTime = TypoLocalTime.apply(LocalTime.now())
 
-  given pgText: PgText[TypoLocalTime] = PgText.textString.contramap(v => v.value.toString)
+  given pgText: PgText[TypoLocalTime] = PgText.textString.contramap(v => v.value.toString())
 
-  given pgType: PgType[TypoLocalTime] = PgTypes.text.bimap(v => new TypoLocalTime(LocalTime.parse(v)), v => v.value.toString).renamed("time")
+  given pgType: PgType[TypoLocalTime] = PgTypes.text.bimap((v: String) => new TypoLocalTime(LocalTime.parse(v)), (v: TypoLocalTime) => v.value.toString()).renamed("time")
 
-  given pgTypeArray: PgType[Array[TypoLocalTime]] = TypoLocalTime.pgType.array(PgRead.massageJdbcArrayTo(classOf[Array[String]]).map(xs => xs.map(v => new TypoLocalTime(LocalTime.parse(v)))), PgWrite.passObjectToJdbc[String]().array(TypoLocalTime.pgType.typename().as[String]()).contramap(xs => xs.map((v: TypoLocalTime) => v.value.toString)))
+  given pgTypeArray: PgType[Array[TypoLocalTime]] = TypoLocalTime.pgType.array(PgRead.massageJdbcArrayTo(classOf[Array[String]]).map((xs: Array[String]) => xs.map((v: String) => new TypoLocalTime(LocalTime.parse(v)))), PgWrite.passObjectToJdbc[String]().array(TypoLocalTime.pgType.typename().as[String]()).contramap((xs: Array[TypoLocalTime]) => xs.map((v: TypoLocalTime) => v.value.toString())))
 }

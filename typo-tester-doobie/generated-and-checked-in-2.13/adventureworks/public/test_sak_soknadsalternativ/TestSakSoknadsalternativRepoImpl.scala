@@ -20,11 +20,11 @@ import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class TestSakSoknadsalternativRepoImpl extends TestSakSoknadsalternativRepo {
-  def delete: DeleteBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = DeleteBuilder.of(""""public"."test_sak_soknadsalternativ"""", TestSakSoknadsalternativFields.structure, TestSakSoknadsalternativRow.read)
+  override def delete: DeleteBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = DeleteBuilder.of(""""public"."test_sak_soknadsalternativ"""", TestSakSoknadsalternativFields.structure, TestSakSoknadsalternativRow.read)
 
-  def deleteById(compositeId: TestSakSoknadsalternativId): ConnectionIO[Boolean] = sql"""delete from "public"."test_sak_soknadsalternativ" where "organisasjonskode_saksbehandler" = ${fromWrite(compositeId.organisasjonskodeSaksbehandler)(new Write.Single(Meta.StringMeta.put))} AND "utdanningsmulighet_kode" = ${fromWrite(compositeId.utdanningsmulighetKode)(new Write.Single(Meta.StringMeta.put))}""".update.run.map(_ > 0)
+  override def deleteById(compositeId: TestSakSoknadsalternativId): ConnectionIO[Boolean] = sql"""delete from "public"."test_sak_soknadsalternativ" where "organisasjonskode_saksbehandler" = ${fromWrite(compositeId.organisasjonskodeSaksbehandler)(new Write.Single(Meta.StringMeta.put))} AND "utdanningsmulighet_kode" = ${fromWrite(compositeId.utdanningsmulighetKode)(new Write.Single(Meta.StringMeta.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(compositeIds: Array[TestSakSoknadsalternativId]): ConnectionIO[Int] = {
+  override def deleteByIds(compositeIds: Array[TestSakSoknadsalternativId]): ConnectionIO[Int] = {
     val organisasjonskodeSaksbehandler = compositeIds.map(_.organisasjonskodeSaksbehandler)
     val utdanningsmulighetKode = compositeIds.map(_.utdanningsmulighetKode)
     sql"""delete
@@ -34,25 +34,25 @@ class TestSakSoknadsalternativRepoImpl extends TestSakSoknadsalternativRepo {
     """.update.run
   }
 
-  def insert(unsaved: TestSakSoknadsalternativRow): ConnectionIO[TestSakSoknadsalternativRow] = {
+  override def insert(unsaved: TestSakSoknadsalternativRow): ConnectionIO[TestSakSoknadsalternativRow] = {
     sql"""insert into "public"."test_sak_soknadsalternativ"("organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder")
     values (${fromWrite(unsaved.organisasjonskodeSaksbehandler)(new Write.Single(Meta.StringMeta.put))}, ${fromWrite(unsaved.utdanningsmulighetKode)(new Write.Single(Meta.StringMeta.put))}, ${fromWrite(unsaved.organisasjonskodeTilbyder)(new Write.Single(TestOrganisasjonId.put))})
     returning "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder"
     """.query(TestSakSoknadsalternativRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, TestSakSoknadsalternativRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "public"."test_sak_soknadsalternativ"("organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder") FROM STDIN""").copyIn(unsaved, batchSize)(TestSakSoknadsalternativRow.pgText)
 
-  def select: SelectBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = SelectBuilder.of(""""public"."test_sak_soknadsalternativ"""", TestSakSoknadsalternativFields.structure, TestSakSoknadsalternativRow.read)
+  override def select: SelectBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = SelectBuilder.of(""""public"."test_sak_soknadsalternativ"""", TestSakSoknadsalternativFields.structure, TestSakSoknadsalternativRow.read)
 
-  def selectAll: Stream[ConnectionIO, TestSakSoknadsalternativRow] = sql"""select "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder" from "public"."test_sak_soknadsalternativ"""".query(TestSakSoknadsalternativRow.read).stream
+  override def selectAll: Stream[ConnectionIO, TestSakSoknadsalternativRow] = sql"""select "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder" from "public"."test_sak_soknadsalternativ"""".query(TestSakSoknadsalternativRow.read).stream
 
-  def selectById(compositeId: TestSakSoknadsalternativId): ConnectionIO[Option[TestSakSoknadsalternativRow]] = sql"""select "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder" from "public"."test_sak_soknadsalternativ" where "organisasjonskode_saksbehandler" = ${fromWrite(compositeId.organisasjonskodeSaksbehandler)(new Write.Single(Meta.StringMeta.put))} AND "utdanningsmulighet_kode" = ${fromWrite(compositeId.utdanningsmulighetKode)(new Write.Single(Meta.StringMeta.put))}""".query(TestSakSoknadsalternativRow.read).option
+  override def selectById(compositeId: TestSakSoknadsalternativId): ConnectionIO[Option[TestSakSoknadsalternativRow]] = sql"""select "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder" from "public"."test_sak_soknadsalternativ" where "organisasjonskode_saksbehandler" = ${fromWrite(compositeId.organisasjonskodeSaksbehandler)(new Write.Single(Meta.StringMeta.put))} AND "utdanningsmulighet_kode" = ${fromWrite(compositeId.utdanningsmulighetKode)(new Write.Single(Meta.StringMeta.put))}""".query(TestSakSoknadsalternativRow.read).option
 
-  def selectByIds(compositeIds: Array[TestSakSoknadsalternativId]): Stream[ConnectionIO, TestSakSoknadsalternativRow] = {
+  override def selectByIds(compositeIds: Array[TestSakSoknadsalternativId]): Stream[ConnectionIO, TestSakSoknadsalternativRow] = {
     val organisasjonskodeSaksbehandler = compositeIds.map(_.organisasjonskodeSaksbehandler)
     val utdanningsmulighetKode = compositeIds.map(_.utdanningsmulighetKode)
     sql"""select "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder"
@@ -62,16 +62,16 @@ class TestSakSoknadsalternativRepoImpl extends TestSakSoknadsalternativRepo {
     """.query(TestSakSoknadsalternativRow.read).stream
   }
 
-  def selectByIdsTracked(compositeIds: Array[TestSakSoknadsalternativId]): ConnectionIO[Map[TestSakSoknadsalternativId, TestSakSoknadsalternativRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[TestSakSoknadsalternativId]): ConnectionIO[Map[TestSakSoknadsalternativId, TestSakSoknadsalternativRow]] = {
     selectByIds(compositeIds).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = UpdateBuilder.of(""""public"."test_sak_soknadsalternativ"""", TestSakSoknadsalternativFields.structure, TestSakSoknadsalternativRow.read)
+  override def update: UpdateBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = UpdateBuilder.of(""""public"."test_sak_soknadsalternativ"""", TestSakSoknadsalternativFields.structure, TestSakSoknadsalternativRow.read)
 
-  def update(row: TestSakSoknadsalternativRow): ConnectionIO[Option[TestSakSoknadsalternativRow]] = {
+  override def update(row: TestSakSoknadsalternativRow): ConnectionIO[Option[TestSakSoknadsalternativRow]] = {
     val compositeId = row.compositeId
     sql"""update "public"."test_sak_soknadsalternativ"
     set "organisasjonskode_tilbyder" = ${fromWrite(row.organisasjonskodeTilbyder)(new Write.Single(TestOrganisasjonId.put))}
@@ -79,7 +79,7 @@ class TestSakSoknadsalternativRepoImpl extends TestSakSoknadsalternativRepo {
     returning "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder"""".query(TestSakSoknadsalternativRow.read).option
   }
 
-  def upsert(unsaved: TestSakSoknadsalternativRow): ConnectionIO[TestSakSoknadsalternativRow] = {
+  override def upsert(unsaved: TestSakSoknadsalternativRow): ConnectionIO[TestSakSoknadsalternativRow] = {
     sql"""insert into "public"."test_sak_soknadsalternativ"("organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder")
     values (
       ${fromWrite(unsaved.organisasjonskodeSaksbehandler)(new Write.Single(Meta.StringMeta.put))},
@@ -93,7 +93,7 @@ class TestSakSoknadsalternativRepoImpl extends TestSakSoknadsalternativRepo {
     """.query(TestSakSoknadsalternativRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[TestSakSoknadsalternativRow]): Stream[ConnectionIO, TestSakSoknadsalternativRow] = {
+  override def upsertBatch(unsaved: List[TestSakSoknadsalternativRow]): Stream[ConnectionIO, TestSakSoknadsalternativRow] = {
     Update[TestSakSoknadsalternativRow](
       s"""insert into "public"."test_sak_soknadsalternativ"("organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder")
       values (?,?,?)
@@ -106,7 +106,7 @@ class TestSakSoknadsalternativRepoImpl extends TestSakSoknadsalternativRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, TestSakSoknadsalternativRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

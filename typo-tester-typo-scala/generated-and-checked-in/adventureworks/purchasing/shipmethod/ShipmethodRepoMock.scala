@@ -5,6 +5,7 @@
  */
 package adventureworks.purchasing.shipmethod
 
+import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
@@ -25,7 +26,7 @@ case class ShipmethodRepoMock(
   toRow: ShipmethodRowUnsaved => ShipmethodRow,
   map: HashMap[ShipmethodId, ShipmethodRow] = new HashMap[ShipmethodId, ShipmethodRow]()
 ) extends ShipmethodRepo {
-  def delete: DeleteBuilder[ShipmethodFields, ShipmethodRow] = {
+  override def delete: DeleteBuilder[ShipmethodFields, ShipmethodRow] = {
     new DeleteBuilderMock(
       ShipmethodFields.structure,
       () => new ArrayList(map.values()),
@@ -35,27 +36,27 @@ case class ShipmethodRepoMock(
     )
   }
 
-  def deleteById(shipmethodid: ShipmethodId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(shipmethodid)).isPresent()
+  override def deleteById(shipmethodid: ShipmethodId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(shipmethodid)).isPresent()
 
-  def deleteByIds(shipmethodids: Array[ShipmethodId])(using c: Connection): Integer = {
+  override def deleteByIds(shipmethodids: Array[ShipmethodId])(using c: Connection): Integer = {
     var count = 0
     shipmethodids.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
-    count
+    return count
   }
 
-  def insert(unsaved: ShipmethodRow)(using c: Connection): ShipmethodRow = {
+  override def insert(unsaved: ShipmethodRow)(using c: Connection): ShipmethodRow = {
     if (map.containsKey(unsaved.shipmethodid)) {
       throw new RuntimeException(s"id $unsaved.shipmethodid already exists")
     }
     map.put(unsaved.shipmethodid, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def insert(unsaved: ShipmethodRowUnsaved)(using c: Connection): ShipmethodRow = insert(toRow(unsaved))(using c)
+  override def insert(unsaved: ShipmethodRowUnsaved)(using c: Connection): ShipmethodRow = insert(toRow(unsaved))(using c)
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[ShipmethodRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -65,11 +66,11 @@ case class ShipmethodRepoMock(
       map.put(row.shipmethodid, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[ShipmethodRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -80,25 +81,25 @@ case class ShipmethodRepoMock(
       map.put(row.shipmethodid, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
-  def select: SelectBuilder[ShipmethodFields, ShipmethodRow] = new SelectBuilderMock(ShipmethodFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
+  override def select: SelectBuilder[ShipmethodFields, ShipmethodRow] = new SelectBuilderMock(ShipmethodFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  def selectAll(using c: Connection): java.util.List[ShipmethodRow] = new ArrayList(map.values())
+  override def selectAll(using c: Connection): java.util.List[ShipmethodRow] = new ArrayList(map.values())
 
-  def selectById(shipmethodid: ShipmethodId)(using c: Connection): Optional[ShipmethodRow] = Optional.ofNullable(map.get(shipmethodid))
+  override def selectById(shipmethodid: ShipmethodId)(using c: Connection): Optional[ShipmethodRow] = Optional.ofNullable(map.get(shipmethodid))
 
-  def selectByIds(shipmethodids: Array[ShipmethodId])(using c: Connection): java.util.List[ShipmethodRow] = {
+  override def selectByIds(shipmethodids: Array[ShipmethodId])(using c: Connection): java.util.List[ShipmethodRow] = {
     val result = new ArrayList[ShipmethodRow]()
     shipmethodids.foreach { id => val opt = Optional.ofNullable(map.get(id))
     if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
-    result
+    return result
   }
 
-  def selectByIdsTracked(shipmethodids: Array[ShipmethodId])(using c: Connection): java.util.Map[ShipmethodId, ShipmethodRow] = selectByIds(shipmethodids)(using c).stream().collect(Collectors.toMap((row: adventureworks.purchasing.shipmethod.ShipmethodRow) => row.shipmethodid, Function.identity()))
+  override def selectByIdsTracked(shipmethodids: Array[ShipmethodId])(using c: Connection): java.util.Map[ShipmethodId, ShipmethodRow] = selectByIds(shipmethodids)(using c).stream().collect(Collectors.toMap((row: ShipmethodRow) => row.shipmethodid, Function.identity()))
 
-  def update: UpdateBuilder[ShipmethodFields, ShipmethodRow] = {
+  override def update: UpdateBuilder[ShipmethodFields, ShipmethodRow] = {
     new UpdateBuilderMock(
       ShipmethodFields.structure,
       () => new ArrayList(map.values()),
@@ -107,31 +108,31 @@ case class ShipmethodRepoMock(
     )
   }
 
-  def update(row: ShipmethodRow)(using c: Connection): java.lang.Boolean = {
-    val shouldUpdate = Optional.ofNullable(map.get(row.shipmethodid)).filter(oldRow => !oldRow.equals(row)).isPresent()
+  override def update(row: ShipmethodRow)(using c: Connection): java.lang.Boolean = {
+    val shouldUpdate = Optional.ofNullable(map.get(row.shipmethodid)).filter(oldRow => (oldRow != row)).isPresent()
     if (shouldUpdate) {
       map.put(row.shipmethodid, row): @scala.annotation.nowarn
     }
-    shouldUpdate
+    return shouldUpdate
   }
 
-  def upsert(unsaved: ShipmethodRow)(using c: Connection): ShipmethodRow = {
+  override def upsert(unsaved: ShipmethodRow)(using c: Connection): ShipmethodRow = {
     map.put(unsaved.shipmethodid, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[ShipmethodRow])(using c: Connection): java.util.List[ShipmethodRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[ShipmethodRow])(using c: Connection): java.util.List[ShipmethodRow] = {
     val result = new ArrayList[ShipmethodRow]()
     while (unsaved.hasNext()) {
       val row = unsaved.next()
       map.put(row.shipmethodid, row): @scala.annotation.nowarn
       result.add(row): @scala.annotation.nowarn
     }
-    result
+    return result
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[ShipmethodRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
@@ -141,6 +142,6 @@ case class ShipmethodRepoMock(
       map.put(row.shipmethodid, row): @scala.annotation.nowarn
       count = count + 1
     }
-    count
+    return count
   }
 }

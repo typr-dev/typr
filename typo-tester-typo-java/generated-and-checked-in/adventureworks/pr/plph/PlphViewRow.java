@@ -12,7 +12,6 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple6;
 
 /** View: pr.plph */
 public record PlphViewRow(
@@ -59,5 +58,5 @@ public record PlphViewRow(
     return new PlphViewRow(id, productid, startdate, enddate, listprice, modifieddate);
   };
 
-  static RowParser<PlphViewRow> _rowParser = RowParsers.of(ProductId.pgType, ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), PgTypes.numeric, TypoLocalDateTime.pgType, PlphViewRow::new, row -> new Tuple6<>(row.id(), row.productid(), row.startdate(), row.enddate(), row.listprice(), row.modifieddate()));;
+  static RowParser<PlphViewRow> _rowParser = RowParsers.of(ProductId.pgType, ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), PgTypes.numeric, TypoLocalDateTime.pgType, PlphViewRow::new, row -> new Object[]{row.id(), row.productid(), row.startdate(), row.enddate(), row.listprice(), row.modifieddate()});;
 }

@@ -5,22 +5,22 @@
  */
 package adventureworks.person.vadditionalcontactinfo;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class VadditionalcontactinfoViewRepoImpl implements VadditionalcontactinfoViewRepo {
+  @Override
   public SelectBuilder<VadditionalcontactinfoViewFields, VadditionalcontactinfoViewRow> select() {
     return SelectBuilder.of("person.vadditionalcontactinfo", VadditionalcontactinfoViewFields.structure(), VadditionalcontactinfoViewRow._rowParser);
   };
 
+  @Override
   public List<VadditionalcontactinfoViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "businessentityid", "firstname", "middlename", "lastname", "telephonenumber", "telephonespecialinstructions", "street", "city", "stateprovince", "postalcode", "countryregion", "homeaddressspecialinstructions", "emailaddress", "emailspecialinstructions", "emailtelephonenumber", "rowguid", "modifieddate"::text
        from "person"."vadditionalcontactinfo"
-    """)).as(VadditionalcontactinfoViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(VadditionalcontactinfoViewRow._rowParser.all()).runUnchecked(c);
   };
 }

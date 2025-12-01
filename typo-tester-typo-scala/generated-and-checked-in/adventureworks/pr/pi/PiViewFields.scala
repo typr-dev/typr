@@ -40,7 +40,7 @@ object PiViewFields {
 
     override lazy val fields: PiViewFields = {
       new PiViewFields {
-        def id: Field[ProductId, PiViewRow] = {
+        override def id: Field[ProductId, PiViewRow] = {
           new Field[ProductId, PiViewRow](
             _path,
             "id",
@@ -51,7 +51,7 @@ object PiViewFields {
             ProductId.pgType
           )
         }
-        def productid: Field[ProductId, PiViewRow] = {
+        override def productid: Field[ProductId, PiViewRow] = {
           new Field[ProductId, PiViewRow](
             _path,
             "productid",
@@ -62,7 +62,7 @@ object PiViewFields {
             ProductId.pgType
           )
         }
-        def locationid: Field[LocationId, PiViewRow] = {
+        override def locationid: Field[LocationId, PiViewRow] = {
           new Field[LocationId, PiViewRow](
             _path,
             "locationid",
@@ -73,7 +73,7 @@ object PiViewFields {
             LocationId.pgType
           )
         }
-        def shelf: Field[/* max 10 chars */ String, PiViewRow] = {
+        override def shelf: Field[/* max 10 chars */ String, PiViewRow] = {
           new Field[/* max 10 chars */ String, PiViewRow](
             _path,
             "shelf",
@@ -84,7 +84,7 @@ object PiViewFields {
             PgTypes.text
           )
         }
-        def bin: Field[TypoShort, PiViewRow] = {
+        override def bin: Field[TypoShort, PiViewRow] = {
           new Field[TypoShort, PiViewRow](
             _path,
             "bin",
@@ -95,7 +95,7 @@ object PiViewFields {
             TypoShort.pgType
           )
         }
-        def quantity: Field[TypoShort, PiViewRow] = {
+        override def quantity: Field[TypoShort, PiViewRow] = {
           new Field[TypoShort, PiViewRow](
             _path,
             "quantity",
@@ -106,7 +106,7 @@ object PiViewFields {
             TypoShort.pgType
           )
         }
-        def rowguid: Field[TypoUUID, PiViewRow] = {
+        override def rowguid: Field[TypoUUID, PiViewRow] = {
           new Field[TypoUUID, PiViewRow](
             _path,
             "rowguid",
@@ -117,7 +117,7 @@ object PiViewFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, PiViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, PiViewRow] = {
           new Field[TypoLocalDateTime, PiViewRow](
             _path,
             "modifieddate",
@@ -133,7 +133,7 @@ object PiViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, PiViewRow]] = java.util.List.of(this.fields.id, this.fields.productid, this.fields.locationid, this.fields.shelf, this.fields.bin, this.fields.quantity, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[PiViewFields, PiViewRow] = new Impl(java.util.List.of())

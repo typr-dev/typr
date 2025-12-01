@@ -5,6 +5,7 @@
  */
 package adventureworks.public_.table_with_generated_columns;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record TableWithGeneratedColumnsRepoMock(
     return new TableWithGeneratedColumnsRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow> delete() {
     return new DeleteBuilderMock<>(TableWithGeneratedColumnsFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.name(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     TableWithGeneratedColumnsId name,
     Connection c
@@ -52,28 +55,31 @@ public record TableWithGeneratedColumnsRepoMock(
     return Optional.ofNullable(map.remove(name)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     TableWithGeneratedColumnsId[] names,
     Connection c
   ) {
     var count = 0;
-      for (var id : names) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : names) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public TableWithGeneratedColumnsRow insert(
     TableWithGeneratedColumnsRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.name())) {
-        throw new RuntimeException(str("id $unsaved.name() already exists"));
-      };
-      map.put(unsaved.name(), unsaved);
+      throw new RuntimeException(str("id $unsaved.name() already exists"));
+    };
+    map.put(unsaved.name(), unsaved);
     return unsaved;
   };
 
+  @Override
   public TableWithGeneratedColumnsRow insert(
     TableWithGeneratedColumnsRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record TableWithGeneratedColumnsRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<TableWithGeneratedColumnsRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.name(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.name(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<TableWithGeneratedColumnsRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.name(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.name(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow> select() {
     return new SelectBuilderMock<>(TableWithGeneratedColumnsFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<TableWithGeneratedColumnsRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<TableWithGeneratedColumnsRow> selectById(
     TableWithGeneratedColumnsId name,
     Connection c
@@ -126,27 +137,31 @@ public record TableWithGeneratedColumnsRepoMock(
     return Optional.ofNullable(map.get(name));
   };
 
+  @Override
   public List<TableWithGeneratedColumnsRow> selectByIds(
     TableWithGeneratedColumnsId[] names,
     Connection c
   ) {
     var result = new ArrayList<TableWithGeneratedColumnsRow>();
-      for (var id : names) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : names) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow> selectByIdsTracked(
     TableWithGeneratedColumnsId[] names,
     Connection c
   ) {
-    return selectByIds(names, c).stream().collect(Collectors.toMap((adventureworks.public_.table_with_generated_columns.TableWithGeneratedColumnsRow row) -> row.name(), Function.identity()));
+    return selectByIds(names, c).stream().collect(Collectors.toMap((TableWithGeneratedColumnsRow row) -> row.name(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow> update() {
     return new UpdateBuilderMock<>(TableWithGeneratedColumnsFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public TableWithGeneratedColumnsRow upsert(
     TableWithGeneratedColumnsRow unsaved,
     Connection c
@@ -155,31 +170,33 @@ public record TableWithGeneratedColumnsRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<TableWithGeneratedColumnsRow> upsertBatch(
     Iterator<TableWithGeneratedColumnsRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<TableWithGeneratedColumnsRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.name(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.name(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<TableWithGeneratedColumnsRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.name(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.name(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

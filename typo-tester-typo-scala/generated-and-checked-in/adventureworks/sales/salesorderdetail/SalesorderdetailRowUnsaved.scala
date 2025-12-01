@@ -77,27 +77,5 @@ case class SalesorderdetailRowUnsaved(
 }
 
 object SalesorderdetailRowUnsaved {
-  given pgText: PgText[SalesorderdetailRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      SalesorderheaderId.pgType.pgText.unsafeEncode(row.salesorderid, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.text.opt().pgText.unsafeEncode(row.carriertrackingnumber, sb);
-      sb.append(PgText.DELIMETER);
-      TypoShort.pgType.pgText.unsafeEncode(row.orderqty, sb);
-      sb.append(PgText.DELIMETER);
-      ProductId.pgType.pgText.unsafeEncode(row.productid, sb);
-      sb.append(PgText.DELIMETER);
-      SpecialofferId.pgType.pgText.unsafeEncode(row.specialofferid, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.numeric.pgText.unsafeEncode(row.unitprice, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using PgTypes.int4.pgText).unsafeEncode(row.salesorderdetailid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using PgTypes.numeric.pgText).unsafeEncode(row.unitpricediscount, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[SalesorderdetailRowUnsaved] = PgText.instance((row, sb) => { SalesorderheaderId.pgType.pgText.unsafeEncode(row.salesorderid, sb); sb.append(PgText.DELIMETER); PgTypes.text.opt().pgText.unsafeEncode(row.carriertrackingnumber, sb); sb.append(PgText.DELIMETER); TypoShort.pgType.pgText.unsafeEncode(row.orderqty, sb); sb.append(PgText.DELIMETER); ProductId.pgType.pgText.unsafeEncode(row.productid, sb); sb.append(PgText.DELIMETER); SpecialofferId.pgType.pgText.unsafeEncode(row.specialofferid, sb); sb.append(PgText.DELIMETER); PgTypes.numeric.pgText.unsafeEncode(row.unitprice, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.int4.pgText).unsafeEncode(row.salesorderdetailid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.numeric.pgText).unsafeEncode(row.unitpricediscount, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

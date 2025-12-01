@@ -19,7 +19,7 @@ import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 
 public interface PmViewFields {
-  static final class Impl extends Relation<PmViewFields, PmViewRow> {
+  final class Impl extends Relation<PmViewFields, PmViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -27,24 +27,31 @@ public interface PmViewFields {
     @Override
     public PmViewFields fields() {
       return new PmViewFields() {
+               @Override
                public Field<ProductmodelId, PmViewRow> id() {
                  return new Field<ProductmodelId, PmViewRow>(_path, "id", PmViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ProductmodelId.pgType);
                };
+               @Override
                public Field<ProductmodelId, PmViewRow> productmodelid() {
                  return new Field<ProductmodelId, PmViewRow>(_path, "productmodelid", PmViewRow::productmodelid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductmodelid(value), ProductmodelId.pgType);
                };
+               @Override
                public Field<Name, PmViewRow> name() {
                  return new Field<Name, PmViewRow>(_path, "name", PmViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public OptField<TypoXml, PmViewRow> catalogdescription() {
                  return new OptField<TypoXml, PmViewRow>(_path, "catalogdescription", PmViewRow::catalogdescription, Optional.empty(), Optional.empty(), (row, value) -> row.withCatalogdescription(value), TypoXml.pgType);
                };
+               @Override
                public OptField<TypoXml, PmViewRow> instructions() {
                  return new OptField<TypoXml, PmViewRow>(_path, "instructions", PmViewRow::instructions, Optional.empty(), Optional.empty(), (row, value) -> row.withInstructions(value), TypoXml.pgType);
                };
+               @Override
                public Field<TypoUUID, PmViewRow> rowguid() {
                  return new Field<TypoUUID, PmViewRow>(_path, "rowguid", PmViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, PmViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, PmViewRow>(_path, "modifieddate", PmViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -56,6 +63,7 @@ public interface PmViewFields {
       return List.of(this.fields().id(), this.fields().productmodelid(), this.fields().name(), this.fields().catalogdescription(), this.fields().instructions(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

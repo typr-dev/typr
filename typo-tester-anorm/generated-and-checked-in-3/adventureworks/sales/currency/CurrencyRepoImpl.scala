@@ -23,18 +23,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class CurrencyRepoImpl extends CurrencyRepo {
-  def delete: DeleteBuilder[CurrencyFields, CurrencyRow] = DeleteBuilder.of(""""sales"."currency"""", CurrencyFields.structure, CurrencyRow.rowParser(1).*)
+  override def delete: DeleteBuilder[CurrencyFields, CurrencyRow] = DeleteBuilder.of(""""sales"."currency"""", CurrencyFields.structure, CurrencyRow.rowParser(1).*)
 
-  def deleteById(currencycode: CurrencyId)(using c: Connection): Boolean = SQL"""delete from "sales"."currency" where "currencycode" = ${ParameterValue(currencycode, null, CurrencyId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(currencycode: CurrencyId)(using c: Connection): Boolean = SQL"""delete from "sales"."currency" where "currencycode" = ${ParameterValue(currencycode, null, CurrencyId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(currencycodes: Array[CurrencyId])(using c: Connection): Int = {
+  override def deleteByIds(currencycodes: Array[CurrencyId])(using c: Connection): Int = {
     SQL"""delete
     from "sales"."currency"
     where "currencycode" = ANY(${ParameterValue(currencycodes, null, CurrencyId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: CurrencyRow)(using c: Connection): CurrencyRow = {
+  override def insert(unsaved: CurrencyRow)(using c: Connection): CurrencyRow = {
   SQL"""insert into "sales"."currency"("currencycode", "name", "modifieddate")
     values (${ParameterValue(unsaved.currencycode, null, CurrencyId.toStatement)}::bpchar, ${ParameterValue(unsaved.name, null, Name.toStatement)}::varchar, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "currencycode", "name", "modifieddate"::text
@@ -42,7 +42,7 @@ class CurrencyRepoImpl extends CurrencyRepo {
     .executeInsert(CurrencyRow.rowParser(1).single)
   }
 
-  def insert(unsaved: CurrencyRowUnsaved)(using c: Connection): CurrencyRow = {
+  override def insert(unsaved: CurrencyRowUnsaved)(using c: Connection): CurrencyRow = {
     val namedParameters = List(
       Some((NamedParameter("currencycode", ParameterValue(unsaved.currencycode, null, CurrencyId.toStatement)), "::bpchar")),
       Some((NamedParameter("name", ParameterValue(unsaved.name, null, Name.toStatement)), "::varchar")),
@@ -67,47 +67,47 @@ class CurrencyRepoImpl extends CurrencyRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[CurrencyRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "sales"."currency"("currencycode", "name", "modifieddate") FROM STDIN""", batchSize, unsaved)(using CurrencyRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[CurrencyRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "sales"."currency"("currencycode", "name", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using CurrencyRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[CurrencyFields, CurrencyRow] = SelectBuilder.of(""""sales"."currency"""", CurrencyFields.structure, CurrencyRow.rowParser)
+  override def select: SelectBuilder[CurrencyFields, CurrencyRow] = SelectBuilder.of(""""sales"."currency"""", CurrencyFields.structure, CurrencyRow.rowParser)
 
-  def selectAll(using c: Connection): List[CurrencyRow] = {
+  override def selectAll(using c: Connection): List[CurrencyRow] = {
     SQL"""select "currencycode", "name", "modifieddate"::text
     from "sales"."currency"
     """.as(CurrencyRow.rowParser(1).*)
   }
 
-  def selectById(currencycode: CurrencyId)(using c: Connection): Option[CurrencyRow] = {
+  override def selectById(currencycode: CurrencyId)(using c: Connection): Option[CurrencyRow] = {
     SQL"""select "currencycode", "name", "modifieddate"::text
     from "sales"."currency"
     where "currencycode" = ${ParameterValue(currencycode, null, CurrencyId.toStatement)}
     """.as(CurrencyRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(currencycodes: Array[CurrencyId])(using c: Connection): List[CurrencyRow] = {
+  override def selectByIds(currencycodes: Array[CurrencyId])(using c: Connection): List[CurrencyRow] = {
     SQL"""select "currencycode", "name", "modifieddate"::text
     from "sales"."currency"
     where "currencycode" = ANY(${ParameterValue(currencycodes, null, CurrencyId.arrayToStatement)})
     """.as(CurrencyRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(currencycodes: Array[CurrencyId])(using c: Connection): Map[CurrencyId, CurrencyRow] = {
+  override def selectByIdsTracked(currencycodes: Array[CurrencyId])(using c: Connection): Map[CurrencyId, CurrencyRow] = {
     val byId = selectByIds(currencycodes).view.map(x => (x.currencycode, x)).toMap
     currencycodes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[CurrencyFields, CurrencyRow] = UpdateBuilder.of(""""sales"."currency"""", CurrencyFields.structure, CurrencyRow.rowParser(1).*)
+  override def update: UpdateBuilder[CurrencyFields, CurrencyRow] = UpdateBuilder.of(""""sales"."currency"""", CurrencyFields.structure, CurrencyRow.rowParser(1).*)
 
-  def update(row: CurrencyRow)(using c: Connection): Option[CurrencyRow] = {
+  override def update(row: CurrencyRow)(using c: Connection): Option[CurrencyRow] = {
     val currencycode = row.currencycode
     SQL"""update "sales"."currency"
     set "name" = ${ParameterValue(row.name, null, Name.toStatement)}::varchar,
@@ -117,7 +117,7 @@ class CurrencyRepoImpl extends CurrencyRepo {
     """.executeInsert(CurrencyRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: CurrencyRow)(using c: Connection): CurrencyRow = {
+  override def upsert(unsaved: CurrencyRow)(using c: Connection): CurrencyRow = {
   SQL"""insert into "sales"."currency"("currencycode", "name", "modifieddate")
     values (
       ${ParameterValue(unsaved.currencycode, null, CurrencyId.toStatement)}::bpchar,
@@ -133,12 +133,13 @@ class CurrencyRepoImpl extends CurrencyRepo {
     .executeInsert(CurrencyRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[CurrencyRow])(using c: Connection): List[CurrencyRow] = {
+  override def upsertBatch(unsaved: Iterable[CurrencyRow])(using c: Connection): List[CurrencyRow] = {
     def toNamedParameter(row: CurrencyRow): List[NamedParameter] = List(
       NamedParameter("currencycode", ParameterValue(row.currencycode, null, CurrencyId.toStatement)),
       NamedParameter("name", ParameterValue(row.name, null, Name.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -160,7 +161,7 @@ class CurrencyRepoImpl extends CurrencyRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[CurrencyRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

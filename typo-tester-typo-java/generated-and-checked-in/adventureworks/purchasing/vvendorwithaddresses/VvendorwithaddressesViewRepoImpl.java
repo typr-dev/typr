@@ -5,22 +5,22 @@
  */
 package adventureworks.purchasing.vvendorwithaddresses;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class VvendorwithaddressesViewRepoImpl implements VvendorwithaddressesViewRepo {
+  @Override
   public SelectBuilder<VvendorwithaddressesViewFields, VvendorwithaddressesViewRow> select() {
     return SelectBuilder.of("purchasing.vvendorwithaddresses", VvendorwithaddressesViewFields.structure(), VvendorwithaddressesViewRow._rowParser);
   };
 
+  @Override
   public List<VvendorwithaddressesViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "businessentityid", "name", "addresstype", "addressline1", "addressline2", "city", "stateprovincename", "postalcode", "countryregionname"
        from "purchasing"."vvendorwithaddresses"
-    """)).as(VvendorwithaddressesViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(VvendorwithaddressesViewRow._rowParser.all()).runUnchecked(c);
   };
 }

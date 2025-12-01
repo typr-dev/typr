@@ -11,7 +11,6 @@ import adventureworks.person.businessentity.BusinessentityId;
 import adventureworks.person.contacttype.ContacttypeId;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple6;
 
 /** View: pe.bec */
 public record BecViewRow(
@@ -58,5 +57,5 @@ public record BecViewRow(
     return new BecViewRow(id, businessentityid, personid, contacttypeid, rowguid, modifieddate);
   };
 
-  static RowParser<BecViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, BusinessentityId.pgType, ContacttypeId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BecViewRow::new, row -> new Tuple6<>(row.id(), row.businessentityid(), row.personid(), row.contacttypeid(), row.rowguid(), row.modifieddate()));;
+  static RowParser<BecViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, BusinessentityId.pgType, ContacttypeId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BecViewRow::new, row -> new Object[]{row.id(), row.businessentityid(), row.personid(), row.contacttypeid(), row.rowguid(), row.modifieddate()});;
 }

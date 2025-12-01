@@ -21,21 +21,21 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PersoncreditcardRepoImpl extends PersoncreditcardRepo {
-  def delete: DeleteBuilder[PersoncreditcardFields, PersoncreditcardRow] = DeleteBuilder.of("sales.personcreditcard", PersoncreditcardFields.structure)
+  override def delete: DeleteBuilder[PersoncreditcardFields, PersoncreditcardRow] = DeleteBuilder.of("sales.personcreditcard", PersoncreditcardFields.structure)
 
-  def deleteById(compositeId: PersoncreditcardId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."personcreditcard" where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "creditcardid" = ${/* user-picked */ CustomCreditcardId.pgType.encode(compositeId.creditcardid)}""".update().runUnchecked(c) > 0
+  override def deleteById(compositeId: PersoncreditcardId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."personcreditcard" where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "creditcardid" = ${/* user-picked */ CustomCreditcardId.pgType.encode(compositeId.creditcardid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(compositeIds: Array[PersoncreditcardId])(using c: Connection): Integer = {
+  override def deleteByIds(compositeIds: Array[PersoncreditcardId])(using c: Connection): Integer = {
     val businessentityid: Array[BusinessentityId] = compositeIds.map(_.businessentityid)
     val creditcardid: Array[/* user-picked */ CustomCreditcardId] = compositeIds.map(_.creditcardid)
-    interpolate"""delete
+    return interpolate"""delete
     from "sales"."personcreditcard"
     where ("businessentityid", "creditcardid")
     in (select unnest(${BusinessentityId.pgTypeArray.encode(businessentityid)}::int4[]), unnest(${CustomCreditcardId.pgTypeArray.encode(creditcardid)}::int4[]))
     """.update().runUnchecked(c)
   }
 
-  def insert(unsaved: PersoncreditcardRow)(using c: Connection): PersoncreditcardRow = {
+  override def insert(unsaved: PersoncreditcardRow)(using c: Connection): PersoncreditcardRow = {
   interpolate"""insert into "sales"."personcreditcard"("businessentityid", "creditcardid", "modifieddate")
     values (${BusinessentityId.pgType.encode(unsaved.businessentityid)}::int4, ${/* user-picked */ CustomCreditcardId.pgType.encode(unsaved.creditcardid)}::int4, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "businessentityid", "creditcardid", "modifieddate"::text
@@ -43,19 +43,16 @@ class PersoncreditcardRepoImpl extends PersoncreditcardRepo {
     .updateReturning(PersoncreditcardRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: PersoncreditcardRowUnsaved)(using c: Connection): PersoncreditcardRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: PersoncreditcardRowUnsaved)(using c: Connection): PersoncreditcardRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn
     values.add(interpolate"${BusinessentityId.pgType.encode(unsaved.businessentityid)}::int4"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""creditcardid"""")): @scala.annotation.nowarn
     values.add(interpolate"${/* user-picked */ CustomCreditcardId.pgType.encode(unsaved.creditcardid)}::int4"): @scala.annotation.nowarn
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "sales"."personcreditcard"(${Fragment.comma(columns)})
@@ -63,60 +60,60 @@ class PersoncreditcardRepoImpl extends PersoncreditcardRepo {
       returning "businessentityid", "creditcardid", "modifieddate"::text
       """
     }
-    q.updateReturning(PersoncreditcardRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(PersoncreditcardRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[PersoncreditcardRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."personcreditcard"("businessentityid", "creditcardid", "modifieddate") FROM STDIN""", batchSize, unsaved, c, PersoncreditcardRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[PersoncreditcardRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."personcreditcard"("businessentityid", "creditcardid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, PersoncreditcardRowUnsaved.pgText)
 
-  def select: SelectBuilder[PersoncreditcardFields, PersoncreditcardRow] = SelectBuilder.of("sales.personcreditcard", PersoncreditcardFields.structure, PersoncreditcardRow.`_rowParser`)
+  override def select: SelectBuilder[PersoncreditcardFields, PersoncreditcardRow] = SelectBuilder.of("sales.personcreditcard", PersoncreditcardFields.structure, PersoncreditcardRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[PersoncreditcardRow] = {
+  override def selectAll(using c: Connection): java.util.List[PersoncreditcardRow] = {
     interpolate"""select "businessentityid", "creditcardid", "modifieddate"::text
     from "sales"."personcreditcard"
-    """.as(PersoncreditcardRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(PersoncreditcardRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(compositeId: PersoncreditcardId)(using c: Connection): Optional[PersoncreditcardRow] = {
+  override def selectById(compositeId: PersoncreditcardId)(using c: Connection): Optional[PersoncreditcardRow] = {
     interpolate"""select "businessentityid", "creditcardid", "modifieddate"::text
     from "sales"."personcreditcard"
-    where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "creditcardid" = ${/* user-picked */ CustomCreditcardId.pgType.encode(compositeId.creditcardid)}""".as(PersoncreditcardRow.`_rowParser`.first()).runUnchecked(c)
+    where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "creditcardid" = ${/* user-picked */ CustomCreditcardId.pgType.encode(compositeId.creditcardid)}""".query(PersoncreditcardRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(compositeIds: Array[PersoncreditcardId])(using c: Connection): java.util.List[PersoncreditcardRow] = {
+  override def selectByIds(compositeIds: Array[PersoncreditcardId])(using c: Connection): java.util.List[PersoncreditcardRow] = {
     val businessentityid: Array[BusinessentityId] = compositeIds.map(_.businessentityid)
     val creditcardid: Array[/* user-picked */ CustomCreditcardId] = compositeIds.map(_.creditcardid)
-    interpolate"""select "businessentityid", "creditcardid", "modifieddate"::text
+    return interpolate"""select "businessentityid", "creditcardid", "modifieddate"::text
     from "sales"."personcreditcard"
     where ("businessentityid", "creditcardid")
     in (select unnest(${BusinessentityId.pgTypeArray.encode(businessentityid)}::int4[]), unnest(${CustomCreditcardId.pgTypeArray.encode(creditcardid)}::int4[]))
-    """.as(PersoncreditcardRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(PersoncreditcardRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(compositeIds: Array[PersoncreditcardId])(using c: Connection): java.util.Map[PersoncreditcardId, PersoncreditcardRow] = {
-    val ret: java.util.Map[PersoncreditcardId, PersoncreditcardRow] = new HashMap()
+  override def selectByIdsTracked(compositeIds: Array[PersoncreditcardId])(using c: Connection): java.util.Map[PersoncreditcardId, PersoncreditcardRow] = {
+    val ret: HashMap[PersoncreditcardId, PersoncreditcardRow] = new HashMap[PersoncreditcardId, PersoncreditcardRow]()
     selectByIds(compositeIds)(using c).forEach(row => ret.put(row.compositeId, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[PersoncreditcardFields, PersoncreditcardRow] = UpdateBuilder.of("sales.personcreditcard", PersoncreditcardFields.structure, PersoncreditcardRow.`_rowParser`.all())
+  override def update: UpdateBuilder[PersoncreditcardFields, PersoncreditcardRow] = UpdateBuilder.of("sales.personcreditcard", PersoncreditcardFields.structure, PersoncreditcardRow.`_rowParser`.all())
 
-  def update(row: PersoncreditcardRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: PersoncreditcardRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: PersoncreditcardId = row.compositeId
-    interpolate"""update "sales"."personcreditcard"
+    return interpolate"""update "sales"."personcreditcard"
     set "modifieddate" = ${TypoLocalDateTime.pgType.encode(row.modifieddate)}::timestamp
     where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "creditcardid" = ${/* user-picked */ CustomCreditcardId.pgType.encode(compositeId.creditcardid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: PersoncreditcardRow)(using c: Connection): PersoncreditcardRow = {
+  override def upsert(unsaved: PersoncreditcardRow)(using c: Connection): PersoncreditcardRow = {
   interpolate"""insert into "sales"."personcreditcard"("businessentityid", "creditcardid", "modifieddate")
     values (${BusinessentityId.pgType.encode(unsaved.businessentityid)}::int4, ${/* user-picked */ CustomCreditcardId.pgType.encode(unsaved.creditcardid)}::int4, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("businessentityid", "creditcardid")
@@ -128,7 +125,7 @@ class PersoncreditcardRepoImpl extends PersoncreditcardRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[PersoncreditcardRow])(using c: Connection): java.util.List[PersoncreditcardRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[PersoncreditcardRow])(using c: Connection): java.util.List[PersoncreditcardRow] = {
     interpolate"""insert into "sales"."personcreditcard"("businessentityid", "creditcardid", "modifieddate")
     values (?::int4, ?::int4, ?::timestamp)
     on conflict ("businessentityid", "creditcardid")
@@ -141,13 +138,13 @@ class PersoncreditcardRepoImpl extends PersoncreditcardRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[PersoncreditcardRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table personcreditcard_TEMP (like "sales"."personcreditcard") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy personcreditcard_TEMP("businessentityid", "creditcardid", "modifieddate") from stdin""", batchSize, unsaved, c, PersoncreditcardRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "sales"."personcreditcard"("businessentityid", "creditcardid", "modifieddate")
+    return interpolate"""insert into "sales"."personcreditcard"("businessentityid", "creditcardid", "modifieddate")
     select * from personcreditcard_TEMP
     on conflict ("businessentityid", "creditcardid")
     do update set

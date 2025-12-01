@@ -22,20 +22,20 @@ import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class SalesreasonRepoImpl extends SalesreasonRepo {
-  def delete: DeleteBuilder[SalesreasonFields, SalesreasonRow] = DeleteBuilder.of(""""sales"."salesreason"""", SalesreasonFields.structure, SalesreasonRow.read)
+  override def delete: DeleteBuilder[SalesreasonFields, SalesreasonRow] = DeleteBuilder.of(""""sales"."salesreason"""", SalesreasonFields.structure, SalesreasonRow.read)
 
-  def deleteById(salesreasonid: SalesreasonId): ConnectionIO[Boolean] = sql"""delete from "sales"."salesreason" where "salesreasonid" = ${fromWrite(salesreasonid)(new Write.Single(SalesreasonId.put))}""".update.run.map(_ > 0)
+  override def deleteById(salesreasonid: SalesreasonId): ConnectionIO[Boolean] = sql"""delete from "sales"."salesreason" where "salesreasonid" = ${fromWrite(salesreasonid)(new Write.Single(SalesreasonId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(salesreasonids: Array[SalesreasonId]): ConnectionIO[Int] = sql"""delete from "sales"."salesreason" where "salesreasonid" = ANY(${fromWrite(salesreasonids)(new Write.Single(SalesreasonId.arrayPut))})""".update.run
+  override def deleteByIds(salesreasonids: Array[SalesreasonId]): ConnectionIO[Int] = sql"""delete from "sales"."salesreason" where "salesreasonid" = ANY(${fromWrite(salesreasonids)(new Write.Single(SalesreasonId.arrayPut))})""".update.run
 
-  def insert(unsaved: SalesreasonRow): ConnectionIO[SalesreasonRow] = {
+  override def insert(unsaved: SalesreasonRow): ConnectionIO[SalesreasonRow] = {
     sql"""insert into "sales"."salesreason"("salesreasonid", "name", "reasontype", "modifieddate")
     values (${fromWrite(unsaved.salesreasonid)(new Write.Single(SalesreasonId.put))}::int4, ${fromWrite(unsaved.name)(new Write.Single(Name.put))}::varchar, ${fromWrite(unsaved.reasontype)(new Write.Single(Name.put))}::varchar, ${fromWrite(unsaved.modifieddate)(new Write.Single(TypoLocalDateTime.put))}::timestamp)
     returning "salesreasonid", "name", "reasontype", "modifieddate"::text
     """.query(SalesreasonRow.read).unique
   }
 
-  def insert(unsaved: SalesreasonRowUnsaved): ConnectionIO[SalesreasonRow] = {
+  override def insert(unsaved: SalesreasonRowUnsaved): ConnectionIO[SalesreasonRow] = {
     val fs = List(
       Some((Fragment.const0(s""""name""""), fr"${fromWrite(unsaved.name)(new Write.Single(Name.put))}::varchar")),
       Some((Fragment.const0(s""""reasontype""""), fr"${fromWrite(unsaved.reasontype)(new Write.Single(Name.put))}::varchar")),
@@ -62,35 +62,35 @@ class SalesreasonRepoImpl extends SalesreasonRepo {
     q.query(SalesreasonRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, SalesreasonRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "sales"."salesreason"("salesreasonid", "name", "reasontype", "modifieddate") FROM STDIN""").copyIn(unsaved, batchSize)(SalesreasonRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, SalesreasonRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "sales"."salesreason"("name", "reasontype", "salesreasonid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(SalesreasonRowUnsaved.pgText)
 
-  def select: SelectBuilder[SalesreasonFields, SalesreasonRow] = SelectBuilder.of(""""sales"."salesreason"""", SalesreasonFields.structure, SalesreasonRow.read)
+  override def select: SelectBuilder[SalesreasonFields, SalesreasonRow] = SelectBuilder.of(""""sales"."salesreason"""", SalesreasonFields.structure, SalesreasonRow.read)
 
-  def selectAll: Stream[ConnectionIO, SalesreasonRow] = sql"""select "salesreasonid", "name", "reasontype", "modifieddate"::text from "sales"."salesreason"""".query(SalesreasonRow.read).stream
+  override def selectAll: Stream[ConnectionIO, SalesreasonRow] = sql"""select "salesreasonid", "name", "reasontype", "modifieddate"::text from "sales"."salesreason"""".query(SalesreasonRow.read).stream
 
-  def selectById(salesreasonid: SalesreasonId): ConnectionIO[Option[SalesreasonRow]] = sql"""select "salesreasonid", "name", "reasontype", "modifieddate"::text from "sales"."salesreason" where "salesreasonid" = ${fromWrite(salesreasonid)(new Write.Single(SalesreasonId.put))}""".query(SalesreasonRow.read).option
+  override def selectById(salesreasonid: SalesreasonId): ConnectionIO[Option[SalesreasonRow]] = sql"""select "salesreasonid", "name", "reasontype", "modifieddate"::text from "sales"."salesreason" where "salesreasonid" = ${fromWrite(salesreasonid)(new Write.Single(SalesreasonId.put))}""".query(SalesreasonRow.read).option
 
-  def selectByIds(salesreasonids: Array[SalesreasonId]): Stream[ConnectionIO, SalesreasonRow] = sql"""select "salesreasonid", "name", "reasontype", "modifieddate"::text from "sales"."salesreason" where "salesreasonid" = ANY(${fromWrite(salesreasonids)(new Write.Single(SalesreasonId.arrayPut))})""".query(SalesreasonRow.read).stream
+  override def selectByIds(salesreasonids: Array[SalesreasonId]): Stream[ConnectionIO, SalesreasonRow] = sql"""select "salesreasonid", "name", "reasontype", "modifieddate"::text from "sales"."salesreason" where "salesreasonid" = ANY(${fromWrite(salesreasonids)(new Write.Single(SalesreasonId.arrayPut))})""".query(SalesreasonRow.read).stream
 
-  def selectByIdsTracked(salesreasonids: Array[SalesreasonId]): ConnectionIO[Map[SalesreasonId, SalesreasonRow]] = {
+  override def selectByIdsTracked(salesreasonids: Array[SalesreasonId]): ConnectionIO[Map[SalesreasonId, SalesreasonRow]] = {
     selectByIds(salesreasonids).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.salesreasonid, x)).toMap
       salesreasonids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[SalesreasonFields, SalesreasonRow] = UpdateBuilder.of(""""sales"."salesreason"""", SalesreasonFields.structure, SalesreasonRow.read)
+  override def update: UpdateBuilder[SalesreasonFields, SalesreasonRow] = UpdateBuilder.of(""""sales"."salesreason"""", SalesreasonFields.structure, SalesreasonRow.read)
 
-  def update(row: SalesreasonRow): ConnectionIO[Option[SalesreasonRow]] = {
+  override def update(row: SalesreasonRow): ConnectionIO[Option[SalesreasonRow]] = {
     val salesreasonid = row.salesreasonid
     sql"""update "sales"."salesreason"
     set "name" = ${fromWrite(row.name)(new Write.Single(Name.put))}::varchar,
@@ -100,7 +100,7 @@ class SalesreasonRepoImpl extends SalesreasonRepo {
     returning "salesreasonid", "name", "reasontype", "modifieddate"::text""".query(SalesreasonRow.read).option
   }
 
-  def upsert(unsaved: SalesreasonRow): ConnectionIO[SalesreasonRow] = {
+  override def upsert(unsaved: SalesreasonRow): ConnectionIO[SalesreasonRow] = {
     sql"""insert into "sales"."salesreason"("salesreasonid", "name", "reasontype", "modifieddate")
     values (
       ${fromWrite(unsaved.salesreasonid)(new Write.Single(SalesreasonId.put))}::int4,
@@ -117,7 +117,7 @@ class SalesreasonRepoImpl extends SalesreasonRepo {
     """.query(SalesreasonRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[SalesreasonRow]): Stream[ConnectionIO, SalesreasonRow] = {
+  override def upsertBatch(unsaved: List[SalesreasonRow]): Stream[ConnectionIO, SalesreasonRow] = {
     Update[SalesreasonRow](
       s"""insert into "sales"."salesreason"("salesreasonid", "name", "reasontype", "modifieddate")
       values (?::int4,?::varchar,?::varchar,?::timestamp)
@@ -132,7 +132,7 @@ class SalesreasonRepoImpl extends SalesreasonRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, SalesreasonRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

@@ -12,7 +12,7 @@ import java.sql.Connection
 import anorm.SqlStringInterpolation
 
 class UpdatePersonSqlRepoImpl extends UpdatePersonSqlRepo {
-  def apply(
+  override def apply(
     suffix: String,
     cutoff: Option[TypoLocalDateTime]
   )(using c: Connection): Int = {

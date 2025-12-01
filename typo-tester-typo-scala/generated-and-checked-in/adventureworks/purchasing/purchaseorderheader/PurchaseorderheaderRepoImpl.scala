@@ -23,11 +23,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PurchaseorderheaderRepoImpl extends PurchaseorderheaderRepo {
-  def delete: DeleteBuilder[PurchaseorderheaderFields, PurchaseorderheaderRow] = DeleteBuilder.of("purchasing.purchaseorderheader", PurchaseorderheaderFields.structure)
+  override def delete: DeleteBuilder[PurchaseorderheaderFields, PurchaseorderheaderRow] = DeleteBuilder.of("purchasing.purchaseorderheader", PurchaseorderheaderFields.structure)
 
-  def deleteById(purchaseorderid: PurchaseorderheaderId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "purchasing"."purchaseorderheader" where "purchaseorderid" = ${PurchaseorderheaderId.pgType.encode(purchaseorderid)}""".update().runUnchecked(c) > 0
+  override def deleteById(purchaseorderid: PurchaseorderheaderId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "purchasing"."purchaseorderheader" where "purchaseorderid" = ${PurchaseorderheaderId.pgType.encode(purchaseorderid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(purchaseorderids: Array[PurchaseorderheaderId])(using c: Connection): Integer = {
+  override def deleteByIds(purchaseorderids: Array[PurchaseorderheaderId])(using c: Connection): Integer = {
     interpolate"""delete
     from "purchasing"."purchaseorderheader"
     where "purchaseorderid" = ANY(${PurchaseorderheaderId.pgTypeArray.encode(purchaseorderids)})"""
@@ -35,7 +35,7 @@ class PurchaseorderheaderRepoImpl extends PurchaseorderheaderRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: PurchaseorderheaderRow)(using c: Connection): PurchaseorderheaderRow = {
+  override def insert(unsaved: PurchaseorderheaderRow)(using c: Connection): PurchaseorderheaderRow = {
   interpolate"""insert into "purchasing"."purchaseorderheader"("purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate", "shipdate", "subtotal", "taxamt", "freight", "modifieddate")
     values (${PurchaseorderheaderId.pgType.encode(unsaved.purchaseorderid)}::int4, ${TypoShort.pgType.encode(unsaved.revisionnumber)}::int2, ${TypoShort.pgType.encode(unsaved.status)}::int2, ${BusinessentityId.pgType.encode(unsaved.employeeid)}::int4, ${BusinessentityId.pgType.encode(unsaved.vendorid)}::int4, ${ShipmethodId.pgType.encode(unsaved.shipmethodid)}::int4, ${TypoLocalDateTime.pgType.encode(unsaved.orderdate)}::timestamp, ${TypoLocalDateTime.pgType.opt().encode(unsaved.shipdate)}::timestamp, ${PgTypes.numeric.encode(unsaved.subtotal)}::numeric, ${PgTypes.numeric.encode(unsaved.taxamt)}::numeric, ${PgTypes.numeric.encode(unsaved.freight)}::numeric, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text
@@ -43,9 +43,9 @@ class PurchaseorderheaderRepoImpl extends PurchaseorderheaderRepo {
     .updateReturning(PurchaseorderheaderRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: PurchaseorderheaderRowUnsaved)(using c: Connection): PurchaseorderheaderRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: PurchaseorderheaderRowUnsaved)(using c: Connection): PurchaseorderheaderRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""employeeid"""")): @scala.annotation.nowarn
     values.add(interpolate"${BusinessentityId.pgType.encode(unsaved.employeeid)}::int4"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""vendorid"""")): @scala.annotation.nowarn
@@ -55,60 +55,36 @@ class PurchaseorderheaderRepoImpl extends PurchaseorderheaderRepo {
     columns.add(Fragment.lit(""""shipdate"""")): @scala.annotation.nowarn
     values.add(interpolate"${TypoLocalDateTime.pgType.opt().encode(unsaved.shipdate)}::timestamp"): @scala.annotation.nowarn
     unsaved.purchaseorderid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""purchaseorderid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PurchaseorderheaderId.pgType.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""purchaseorderid"""")): @scala.annotation.nowarn; values.add(interpolate"${PurchaseorderheaderId.pgType.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.revisionnumber.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""revisionnumber"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoShort.pgType.encode(value)}::int2"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""revisionnumber"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoShort.pgType.encode(value)}::int2"): @scala.annotation.nowarn }
     );
     unsaved.status.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""status"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoShort.pgType.encode(value)}::int2"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""status"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoShort.pgType.encode(value)}::int2"): @scala.annotation.nowarn }
     );
     unsaved.orderdate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""orderdate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""orderdate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     unsaved.subtotal.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""subtotal"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""subtotal"""")): @scala.annotation.nowarn; values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn }
     );
     unsaved.taxamt.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""taxamt"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""taxamt"""")): @scala.annotation.nowarn; values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn }
     );
     unsaved.freight.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""freight"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""freight"""")): @scala.annotation.nowarn; values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "purchasing"."purchaseorderheader"(${Fragment.comma(columns)})
@@ -116,51 +92,51 @@ class PurchaseorderheaderRepoImpl extends PurchaseorderheaderRepo {
       returning "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text
       """
     }
-    q.updateReturning(PurchaseorderheaderRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(PurchaseorderheaderRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[PurchaseorderheaderRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "purchasing"."purchaseorderheader"("purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate", "shipdate", "subtotal", "taxamt", "freight", "modifieddate") FROM STDIN""", batchSize, unsaved, c, PurchaseorderheaderRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[PurchaseorderheaderRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "purchasing"."purchaseorderheader"("employeeid", "vendorid", "shipmethodid", "shipdate", "purchaseorderid", "revisionnumber", "status", "orderdate", "subtotal", "taxamt", "freight", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, PurchaseorderheaderRowUnsaved.pgText)
 
-  def select: SelectBuilder[PurchaseorderheaderFields, PurchaseorderheaderRow] = SelectBuilder.of("purchasing.purchaseorderheader", PurchaseorderheaderFields.structure, PurchaseorderheaderRow.`_rowParser`)
+  override def select: SelectBuilder[PurchaseorderheaderFields, PurchaseorderheaderRow] = SelectBuilder.of("purchasing.purchaseorderheader", PurchaseorderheaderFields.structure, PurchaseorderheaderRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[PurchaseorderheaderRow] = {
+  override def selectAll(using c: Connection): java.util.List[PurchaseorderheaderRow] = {
     interpolate"""select "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text
     from "purchasing"."purchaseorderheader"
-    """.as(PurchaseorderheaderRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(PurchaseorderheaderRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(purchaseorderid: PurchaseorderheaderId)(using c: Connection): Optional[PurchaseorderheaderRow] = {
+  override def selectById(purchaseorderid: PurchaseorderheaderId)(using c: Connection): Optional[PurchaseorderheaderRow] = {
     interpolate"""select "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text
     from "purchasing"."purchaseorderheader"
-    where "purchaseorderid" = ${PurchaseorderheaderId.pgType.encode(purchaseorderid)}""".as(PurchaseorderheaderRow.`_rowParser`.first()).runUnchecked(c)
+    where "purchaseorderid" = ${PurchaseorderheaderId.pgType.encode(purchaseorderid)}""".query(PurchaseorderheaderRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(purchaseorderids: Array[PurchaseorderheaderId])(using c: Connection): java.util.List[PurchaseorderheaderRow] = {
+  override def selectByIds(purchaseorderids: Array[PurchaseorderheaderId])(using c: Connection): java.util.List[PurchaseorderheaderRow] = {
     interpolate"""select "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text
     from "purchasing"."purchaseorderheader"
-    where "purchaseorderid" = ANY(${PurchaseorderheaderId.pgTypeArray.encode(purchaseorderids)})""".as(PurchaseorderheaderRow.`_rowParser`.all()).runUnchecked(c)
+    where "purchaseorderid" = ANY(${PurchaseorderheaderId.pgTypeArray.encode(purchaseorderids)})""".query(PurchaseorderheaderRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(purchaseorderids: Array[PurchaseorderheaderId])(using c: Connection): java.util.Map[PurchaseorderheaderId, PurchaseorderheaderRow] = {
-    val ret: java.util.Map[PurchaseorderheaderId, PurchaseorderheaderRow] = new HashMap()
+  override def selectByIdsTracked(purchaseorderids: Array[PurchaseorderheaderId])(using c: Connection): java.util.Map[PurchaseorderheaderId, PurchaseorderheaderRow] = {
+    val ret: HashMap[PurchaseorderheaderId, PurchaseorderheaderRow] = new HashMap[PurchaseorderheaderId, PurchaseorderheaderRow]()
     selectByIds(purchaseorderids)(using c).forEach(row => ret.put(row.purchaseorderid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[PurchaseorderheaderFields, PurchaseorderheaderRow] = UpdateBuilder.of("purchasing.purchaseorderheader", PurchaseorderheaderFields.structure, PurchaseorderheaderRow.`_rowParser`.all())
+  override def update: UpdateBuilder[PurchaseorderheaderFields, PurchaseorderheaderRow] = UpdateBuilder.of("purchasing.purchaseorderheader", PurchaseorderheaderFields.structure, PurchaseorderheaderRow.`_rowParser`.all())
 
-  def update(row: PurchaseorderheaderRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: PurchaseorderheaderRow)(using c: Connection): java.lang.Boolean = {
     val purchaseorderid: PurchaseorderheaderId = row.purchaseorderid
-    interpolate"""update "purchasing"."purchaseorderheader"
+    return interpolate"""update "purchasing"."purchaseorderheader"
     set "revisionnumber" = ${TypoShort.pgType.encode(row.revisionnumber)}::int2,
     "status" = ${TypoShort.pgType.encode(row.status)}::int2,
     "employeeid" = ${BusinessentityId.pgType.encode(row.employeeid)}::int4,
@@ -175,7 +151,7 @@ class PurchaseorderheaderRepoImpl extends PurchaseorderheaderRepo {
     where "purchaseorderid" = ${PurchaseorderheaderId.pgType.encode(purchaseorderid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: PurchaseorderheaderRow)(using c: Connection): PurchaseorderheaderRow = {
+  override def upsert(unsaved: PurchaseorderheaderRow)(using c: Connection): PurchaseorderheaderRow = {
   interpolate"""insert into "purchasing"."purchaseorderheader"("purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate", "shipdate", "subtotal", "taxamt", "freight", "modifieddate")
     values (${PurchaseorderheaderId.pgType.encode(unsaved.purchaseorderid)}::int4, ${TypoShort.pgType.encode(unsaved.revisionnumber)}::int2, ${TypoShort.pgType.encode(unsaved.status)}::int2, ${BusinessentityId.pgType.encode(unsaved.employeeid)}::int4, ${BusinessentityId.pgType.encode(unsaved.vendorid)}::int4, ${ShipmethodId.pgType.encode(unsaved.shipmethodid)}::int4, ${TypoLocalDateTime.pgType.encode(unsaved.orderdate)}::timestamp, ${TypoLocalDateTime.pgType.opt().encode(unsaved.shipdate)}::timestamp, ${PgTypes.numeric.encode(unsaved.subtotal)}::numeric, ${PgTypes.numeric.encode(unsaved.taxamt)}::numeric, ${PgTypes.numeric.encode(unsaved.freight)}::numeric, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("purchaseorderid")
@@ -197,7 +173,7 @@ class PurchaseorderheaderRepoImpl extends PurchaseorderheaderRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[PurchaseorderheaderRow])(using c: Connection): java.util.List[PurchaseorderheaderRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[PurchaseorderheaderRow])(using c: Connection): java.util.List[PurchaseorderheaderRow] = {
     interpolate"""insert into "purchasing"."purchaseorderheader"("purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate", "shipdate", "subtotal", "taxamt", "freight", "modifieddate")
     values (?::int4, ?::int2, ?::int2, ?::int4, ?::int4, ?::int4, ?::timestamp, ?::timestamp, ?::numeric, ?::numeric, ?::numeric, ?::timestamp)
     on conflict ("purchaseorderid")
@@ -220,13 +196,13 @@ class PurchaseorderheaderRepoImpl extends PurchaseorderheaderRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[PurchaseorderheaderRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table purchaseorderheader_TEMP (like "purchasing"."purchaseorderheader") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy purchaseorderheader_TEMP("purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate", "shipdate", "subtotal", "taxamt", "freight", "modifieddate") from stdin""", batchSize, unsaved, c, PurchaseorderheaderRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "purchasing"."purchaseorderheader"("purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate", "shipdate", "subtotal", "taxamt", "freight", "modifieddate")
+    return interpolate"""insert into "purchasing"."purchaseorderheader"("purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate", "shipdate", "subtotal", "taxamt", "freight", "modifieddate")
     select * from purchaseorderheader_TEMP
     on conflict ("purchaseorderid")
     do update set

@@ -59,29 +59,5 @@ case class PersonRowUnsaved(
 }
 
 object PersonRowUnsaved {
-  given pgText: PgText[PersonRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      FootballClubId.pgType.pgText.unsafeEncode(row.favouriteFootballClubId, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.text.pgText.unsafeEncode(row.name, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.text.opt().pgText.unsafeEncode(row.nickName, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.text.opt().pgText.unsafeEncode(row.blogUrl, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.text.pgText.unsafeEncode(row.email, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.text.pgText.unsafeEncode(row.phone, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.bool.pgText.unsafeEncode(row.likesPizza, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.text.opt().pgText.unsafeEncode(row.workEmail, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using PersonId.pgType.pgText).unsafeEncode(row.id, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using MaritalStatusId.pgType.pgText).unsafeEncode(row.maritalStatusId, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using Number.pgType.pgText).unsafeEncode(row.favoriteNumber, sb);
-    })
-  }
+  given pgText: PgText[PersonRowUnsaved] = PgText.instance((row, sb) => { FootballClubId.pgType.pgText.unsafeEncode(row.favouriteFootballClubId, sb); sb.append(PgText.DELIMETER); PgTypes.text.pgText.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); PgTypes.text.opt().pgText.unsafeEncode(row.nickName, sb); sb.append(PgText.DELIMETER); PgTypes.text.opt().pgText.unsafeEncode(row.blogUrl, sb); sb.append(PgText.DELIMETER); PgTypes.text.pgText.unsafeEncode(row.email, sb); sb.append(PgText.DELIMETER); PgTypes.text.pgText.unsafeEncode(row.phone, sb); sb.append(PgText.DELIMETER); PgTypes.bool.pgText.unsafeEncode(row.likesPizza, sb); sb.append(PgText.DELIMETER); PgTypes.text.opt().pgText.unsafeEncode(row.workEmail, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PersonId.pgType.pgText).unsafeEncode(row.id, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using MaritalStatusId.pgType.pgText).unsafeEncode(row.maritalStatusId, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using Number.pgType.pgText).unsafeEncode(row.favoriteNumber, sb) })
 }

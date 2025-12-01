@@ -14,7 +14,6 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple10;
 
 /** View: pr.bom */
 public record BomViewRow(
@@ -89,5 +88,5 @@ public record BomViewRow(
     return new BomViewRow(id, billofmaterialsid, productassemblyid, componentid, startdate, enddate, unitmeasurecode, bomlevel, perassemblyqty, modifieddate);
   };
 
-  static RowParser<BomViewRow> _rowParser = RowParsers.of(PgTypes.int4, PgTypes.int4, ProductId.pgType.opt(), ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), UnitmeasureId.pgType, TypoShort.pgType, PgTypes.numeric, TypoLocalDateTime.pgType, BomViewRow::new, row -> new Tuple10<>(row.id(), row.billofmaterialsid(), row.productassemblyid(), row.componentid(), row.startdate(), row.enddate(), row.unitmeasurecode(), row.bomlevel(), row.perassemblyqty(), row.modifieddate()));;
+  static RowParser<BomViewRow> _rowParser = RowParsers.of(PgTypes.int4, PgTypes.int4, ProductId.pgType.opt(), ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), UnitmeasureId.pgType, TypoShort.pgType, PgTypes.numeric, TypoLocalDateTime.pgType, BomViewRow::new, row -> new Object[]{row.id(), row.billofmaterialsid(), row.productassemblyid(), row.componentid(), row.startdate(), row.enddate(), row.unitmeasurecode(), row.bomlevel(), row.perassemblyqty(), row.modifieddate()});;
 }

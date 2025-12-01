@@ -21,21 +21,21 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ProductdocumentRepoImpl extends ProductdocumentRepo {
-  def delete: DeleteBuilder[ProductdocumentFields, ProductdocumentRow] = DeleteBuilder.of("production.productdocument", ProductdocumentFields.structure)
+  override def delete: DeleteBuilder[ProductdocumentFields, ProductdocumentRow] = DeleteBuilder.of("production.productdocument", ProductdocumentFields.structure)
 
-  def deleteById(compositeId: ProductdocumentId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."productdocument" where "productid" = ${ProductId.pgType.encode(compositeId.productid)} AND "documentnode" = ${DocumentId.pgType.encode(compositeId.documentnode)}""".update().runUnchecked(c) > 0
+  override def deleteById(compositeId: ProductdocumentId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."productdocument" where "productid" = ${ProductId.pgType.encode(compositeId.productid)} AND "documentnode" = ${DocumentId.pgType.encode(compositeId.documentnode)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(compositeIds: Array[ProductdocumentId])(using c: Connection): Integer = {
+  override def deleteByIds(compositeIds: Array[ProductdocumentId])(using c: Connection): Integer = {
     val productid: Array[ProductId] = compositeIds.map(_.productid)
     val documentnode: Array[DocumentId] = compositeIds.map(_.documentnode)
-    interpolate"""delete
+    return interpolate"""delete
     from "production"."productdocument"
     where ("productid", "documentnode")
     in (select unnest(${ProductId.pgTypeArray.encode(productid)}::int4[]), unnest(${DocumentId.pgTypeArray.encode(documentnode)}::varchar[]))
     """.update().runUnchecked(c)
   }
 
-  def insert(unsaved: ProductdocumentRow)(using c: Connection): ProductdocumentRow = {
+  override def insert(unsaved: ProductdocumentRow)(using c: Connection): ProductdocumentRow = {
   interpolate"""insert into "production"."productdocument"("productid", "modifieddate", "documentnode")
     values (${ProductId.pgType.encode(unsaved.productid)}::int4, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp, ${DocumentId.pgType.encode(unsaved.documentnode)})
     returning "productid", "modifieddate"::text, "documentnode"
@@ -43,24 +43,18 @@ class ProductdocumentRepoImpl extends ProductdocumentRepo {
     .updateReturning(ProductdocumentRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: ProductdocumentRowUnsaved)(using c: Connection): ProductdocumentRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: ProductdocumentRowUnsaved)(using c: Connection): ProductdocumentRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""productid"""")): @scala.annotation.nowarn
     values.add(interpolate"${ProductId.pgType.encode(unsaved.productid)}::int4"): @scala.annotation.nowarn
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     unsaved.documentnode.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""documentnode"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${DocumentId.pgType.encode(value)}"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""documentnode"""")): @scala.annotation.nowarn; values.add(interpolate"${DocumentId.pgType.encode(value)}"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "production"."productdocument"(${Fragment.comma(columns)})
@@ -68,60 +62,60 @@ class ProductdocumentRepoImpl extends ProductdocumentRepo {
       returning "productid", "modifieddate"::text, "documentnode"
       """
     }
-    q.updateReturning(ProductdocumentRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(ProductdocumentRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[ProductdocumentRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."productdocument"("productid", "modifieddate", "documentnode") FROM STDIN""", batchSize, unsaved, c, ProductdocumentRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[ProductdocumentRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."productdocument"("productid", "modifieddate", "documentnode") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ProductdocumentRowUnsaved.pgText)
 
-  def select: SelectBuilder[ProductdocumentFields, ProductdocumentRow] = SelectBuilder.of("production.productdocument", ProductdocumentFields.structure, ProductdocumentRow.`_rowParser`)
+  override def select: SelectBuilder[ProductdocumentFields, ProductdocumentRow] = SelectBuilder.of("production.productdocument", ProductdocumentFields.structure, ProductdocumentRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[ProductdocumentRow] = {
+  override def selectAll(using c: Connection): java.util.List[ProductdocumentRow] = {
     interpolate"""select "productid", "modifieddate"::text, "documentnode"
     from "production"."productdocument"
-    """.as(ProductdocumentRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(ProductdocumentRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(compositeId: ProductdocumentId)(using c: Connection): Optional[ProductdocumentRow] = {
+  override def selectById(compositeId: ProductdocumentId)(using c: Connection): Optional[ProductdocumentRow] = {
     interpolate"""select "productid", "modifieddate"::text, "documentnode"
     from "production"."productdocument"
-    where "productid" = ${ProductId.pgType.encode(compositeId.productid)} AND "documentnode" = ${DocumentId.pgType.encode(compositeId.documentnode)}""".as(ProductdocumentRow.`_rowParser`.first()).runUnchecked(c)
+    where "productid" = ${ProductId.pgType.encode(compositeId.productid)} AND "documentnode" = ${DocumentId.pgType.encode(compositeId.documentnode)}""".query(ProductdocumentRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(compositeIds: Array[ProductdocumentId])(using c: Connection): java.util.List[ProductdocumentRow] = {
+  override def selectByIds(compositeIds: Array[ProductdocumentId])(using c: Connection): java.util.List[ProductdocumentRow] = {
     val productid: Array[ProductId] = compositeIds.map(_.productid)
     val documentnode: Array[DocumentId] = compositeIds.map(_.documentnode)
-    interpolate"""select "productid", "modifieddate"::text, "documentnode"
+    return interpolate"""select "productid", "modifieddate"::text, "documentnode"
     from "production"."productdocument"
     where ("productid", "documentnode")
     in (select unnest(${ProductId.pgTypeArray.encode(productid)}::int4[]), unnest(${DocumentId.pgTypeArray.encode(documentnode)}::varchar[]))
-    """.as(ProductdocumentRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(ProductdocumentRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(compositeIds: Array[ProductdocumentId])(using c: Connection): java.util.Map[ProductdocumentId, ProductdocumentRow] = {
-    val ret: java.util.Map[ProductdocumentId, ProductdocumentRow] = new HashMap()
+  override def selectByIdsTracked(compositeIds: Array[ProductdocumentId])(using c: Connection): java.util.Map[ProductdocumentId, ProductdocumentRow] = {
+    val ret: HashMap[ProductdocumentId, ProductdocumentRow] = new HashMap[ProductdocumentId, ProductdocumentRow]()
     selectByIds(compositeIds)(using c).forEach(row => ret.put(row.compositeId, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[ProductdocumentFields, ProductdocumentRow] = UpdateBuilder.of("production.productdocument", ProductdocumentFields.structure, ProductdocumentRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ProductdocumentFields, ProductdocumentRow] = UpdateBuilder.of("production.productdocument", ProductdocumentFields.structure, ProductdocumentRow.`_rowParser`.all())
 
-  def update(row: ProductdocumentRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: ProductdocumentRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: ProductdocumentId = row.compositeId
-    interpolate"""update "production"."productdocument"
+    return interpolate"""update "production"."productdocument"
     set "modifieddate" = ${TypoLocalDateTime.pgType.encode(row.modifieddate)}::timestamp
     where "productid" = ${ProductId.pgType.encode(compositeId.productid)} AND "documentnode" = ${DocumentId.pgType.encode(compositeId.documentnode)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: ProductdocumentRow)(using c: Connection): ProductdocumentRow = {
+  override def upsert(unsaved: ProductdocumentRow)(using c: Connection): ProductdocumentRow = {
   interpolate"""insert into "production"."productdocument"("productid", "modifieddate", "documentnode")
     values (${ProductId.pgType.encode(unsaved.productid)}::int4, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp, ${DocumentId.pgType.encode(unsaved.documentnode)})
     on conflict ("productid", "documentnode")
@@ -133,7 +127,7 @@ class ProductdocumentRepoImpl extends ProductdocumentRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[ProductdocumentRow])(using c: Connection): java.util.List[ProductdocumentRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[ProductdocumentRow])(using c: Connection): java.util.List[ProductdocumentRow] = {
     interpolate"""insert into "production"."productdocument"("productid", "modifieddate", "documentnode")
     values (?::int4, ?::timestamp, ?)
     on conflict ("productid", "documentnode")
@@ -146,13 +140,13 @@ class ProductdocumentRepoImpl extends ProductdocumentRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[ProductdocumentRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table productdocument_TEMP (like "production"."productdocument") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy productdocument_TEMP("productid", "modifieddate", "documentnode") from stdin""", batchSize, unsaved, c, ProductdocumentRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "production"."productdocument"("productid", "modifieddate", "documentnode")
+    return interpolate"""insert into "production"."productdocument"("productid", "modifieddate", "documentnode")
     select * from productdocument_TEMP
     on conflict ("productid", "documentnode")
     do update set

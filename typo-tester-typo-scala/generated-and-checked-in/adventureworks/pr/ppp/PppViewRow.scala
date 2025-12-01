@@ -11,7 +11,6 @@ import adventureworks.production.productphoto.ProductphotoId
 import adventureworks.public.Flag
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple4
 
 /** View: pr.ppp */
 case class PppViewRow(
@@ -26,12 +25,5 @@ case class PppViewRow(
 )
 
 object PppViewRow {
-  val `_rowParser`: RowParser[PppViewRow] = {
-    RowParsers.of(ProductId.pgType, ProductphotoId.pgType, Flag.pgType, TypoLocalDateTime.pgType, PppViewRow.apply, row => new Tuple4(
-      row.productid,
-      row.productphotoid,
-      row.primary,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[PppViewRow] = RowParsers.of(ProductId.pgType, ProductphotoId.pgType, Flag.pgType, TypoLocalDateTime.pgType, PppViewRow.apply, row => Array(row.productid, row.productphotoid, row.primary, row.modifieddate))
 }

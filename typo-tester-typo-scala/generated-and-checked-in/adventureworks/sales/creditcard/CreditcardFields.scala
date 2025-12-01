@@ -35,7 +35,7 @@ object CreditcardFields {
 
     override lazy val fields: CreditcardFields = {
       new CreditcardFields {
-        def creditcardid: IdField[/* user-picked */ CustomCreditcardId, CreditcardRow] = {
+        override def creditcardid: IdField[/* user-picked */ CustomCreditcardId, CreditcardRow] = {
           new IdField[/* user-picked */ CustomCreditcardId, CreditcardRow](
             _path,
             "creditcardid",
@@ -46,7 +46,7 @@ object CreditcardFields {
             /* user-picked */ CustomCreditcardId.pgType
           )
         }
-        def cardtype: Field[/* max 50 chars */ String, CreditcardRow] = {
+        override def cardtype: Field[/* max 50 chars */ String, CreditcardRow] = {
           new Field[/* max 50 chars */ String, CreditcardRow](
             _path,
             "cardtype",
@@ -57,7 +57,7 @@ object CreditcardFields {
             PgTypes.text
           )
         }
-        def cardnumber: Field[/* max 25 chars */ String, CreditcardRow] = {
+        override def cardnumber: Field[/* max 25 chars */ String, CreditcardRow] = {
           new Field[/* max 25 chars */ String, CreditcardRow](
             _path,
             "cardnumber",
@@ -68,7 +68,7 @@ object CreditcardFields {
             PgTypes.text
           )
         }
-        def expmonth: Field[TypoShort, CreditcardRow] = {
+        override def expmonth: Field[TypoShort, CreditcardRow] = {
           new Field[TypoShort, CreditcardRow](
             _path,
             "expmonth",
@@ -79,7 +79,7 @@ object CreditcardFields {
             TypoShort.pgType
           )
         }
-        def expyear: Field[TypoShort, CreditcardRow] = {
+        override def expyear: Field[TypoShort, CreditcardRow] = {
           new Field[TypoShort, CreditcardRow](
             _path,
             "expyear",
@@ -90,7 +90,7 @@ object CreditcardFields {
             TypoShort.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, CreditcardRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, CreditcardRow] = {
           new Field[TypoLocalDateTime, CreditcardRow](
             _path,
             "modifieddate",
@@ -106,7 +106,7 @@ object CreditcardFields {
 
     override lazy val columns: java.util.List[FieldLike[?, CreditcardRow]] = java.util.List.of(this.fields.creditcardid, this.fields.cardtype, this.fields.cardnumber, this.fields.expmonth, this.fields.expyear, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[CreditcardFields, CreditcardRow] = new Impl(java.util.List.of())

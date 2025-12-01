@@ -14,7 +14,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple11;
 
 /** Table: sales.specialoffer
   * Sale discounts lookup table.
@@ -127,7 +126,7 @@ public record SpecialofferRow(
     return new SpecialofferRow(specialofferid, description, discountpct, type, category, startdate, enddate, minqty, maxqty, rowguid, modifieddate);
   };
 
-  static RowParser<SpecialofferRow> _rowParser = RowParsers.of(SpecialofferId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.text, PgTypes.text, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, PgTypes.int4, PgTypes.int4.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SpecialofferRow::new, row -> new Tuple11<>(row.specialofferid(), row.description(), row.discountpct(), row.type(), row.category(), row.startdate(), row.enddate(), row.minqty(), row.maxqty(), row.rowguid(), row.modifieddate()));;
+  static RowParser<SpecialofferRow> _rowParser = RowParsers.of(SpecialofferId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.text, PgTypes.text, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, PgTypes.int4, PgTypes.int4.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SpecialofferRow::new, row -> new Object[]{row.specialofferid(), row.description(), row.discountpct(), row.type(), row.category(), row.startdate(), row.enddate(), row.minqty(), row.maxqty(), row.rowguid(), row.modifieddate()});;
 
   static public PgText<SpecialofferRow> pgText =
     PgText.from(_rowParser);

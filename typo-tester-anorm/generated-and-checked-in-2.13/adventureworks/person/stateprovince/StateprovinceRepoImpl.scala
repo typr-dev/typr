@@ -28,18 +28,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class StateprovinceRepoImpl extends StateprovinceRepo {
-  def delete: DeleteBuilder[StateprovinceFields, StateprovinceRow] = DeleteBuilder.of(""""person"."stateprovince"""", StateprovinceFields.structure, StateprovinceRow.rowParser(1).*)
+  override def delete: DeleteBuilder[StateprovinceFields, StateprovinceRow] = DeleteBuilder.of(""""person"."stateprovince"""", StateprovinceFields.structure, StateprovinceRow.rowParser(1).*)
 
-  def deleteById(stateprovinceid: StateprovinceId)(implicit c: Connection): Boolean = SQL"""delete from "person"."stateprovince" where "stateprovinceid" = ${ParameterValue(stateprovinceid, null, StateprovinceId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(stateprovinceid: StateprovinceId)(implicit c: Connection): Boolean = SQL"""delete from "person"."stateprovince" where "stateprovinceid" = ${ParameterValue(stateprovinceid, null, StateprovinceId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(stateprovinceids: Array[StateprovinceId])(implicit c: Connection): Int = {
+  override def deleteByIds(stateprovinceids: Array[StateprovinceId])(implicit c: Connection): Int = {
     SQL"""delete
     from "person"."stateprovince"
     where "stateprovinceid" = ANY(${ParameterValue(stateprovinceids, null, StateprovinceId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: StateprovinceRow)(implicit c: Connection): StateprovinceRow = {
+  override def insert(unsaved: StateprovinceRow)(implicit c: Connection): StateprovinceRow = {
   SQL"""insert into "person"."stateprovince"("stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate")
     values (${ParameterValue(unsaved.stateprovinceid, null, StateprovinceId.toStatement)}::int4, ${ParameterValue(unsaved.stateprovincecode, null, ToStatement.stringToStatement)}::bpchar, ${ParameterValue(unsaved.countryregioncode, null, CountryregionId.toStatement)}, ${ParameterValue(unsaved.isonlystateprovinceflag, null, Flag.toStatement)}::bool, ${ParameterValue(unsaved.name, null, Name.toStatement)}::varchar, ${ParameterValue(unsaved.territoryid, null, SalesterritoryId.toStatement)}::int4, ${ParameterValue(unsaved.rowguid, null, TypoUUID.toStatement)}::uuid, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"::text
@@ -47,7 +47,7 @@ class StateprovinceRepoImpl extends StateprovinceRepo {
     .executeInsert(StateprovinceRow.rowParser(1).single)
   }
 
-  def insert(unsaved: StateprovinceRowUnsaved)(implicit c: Connection): StateprovinceRow = {
+  override def insert(unsaved: StateprovinceRowUnsaved)(implicit c: Connection): StateprovinceRow = {
     val namedParameters = List(
       Some((NamedParameter("stateprovincecode", ParameterValue(unsaved.stateprovincecode, null, ToStatement.stringToStatement)), "::bpchar")),
       Some((NamedParameter("countryregioncode", ParameterValue(unsaved.countryregioncode, null, CountryregionId.toStatement)), "")),
@@ -86,47 +86,47 @@ class StateprovinceRepoImpl extends StateprovinceRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[StateprovinceRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "person"."stateprovince"("stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved)(StateprovinceRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[StateprovinceRowUnsaved],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "person"."stateprovince"("stateprovincecode", "countryregioncode", "name", "territoryid", "stateprovinceid", "isonlystateprovinceflag", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(StateprovinceRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[StateprovinceFields, StateprovinceRow] = SelectBuilder.of(""""person"."stateprovince"""", StateprovinceFields.structure, StateprovinceRow.rowParser)
+  override def select: SelectBuilder[StateprovinceFields, StateprovinceRow] = SelectBuilder.of(""""person"."stateprovince"""", StateprovinceFields.structure, StateprovinceRow.rowParser)
 
-  def selectAll(implicit c: Connection): List[StateprovinceRow] = {
+  override def selectAll(implicit c: Connection): List[StateprovinceRow] = {
     SQL"""select "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"::text
     from "person"."stateprovince"
     """.as(StateprovinceRow.rowParser(1).*)
   }
 
-  def selectById(stateprovinceid: StateprovinceId)(implicit c: Connection): Option[StateprovinceRow] = {
+  override def selectById(stateprovinceid: StateprovinceId)(implicit c: Connection): Option[StateprovinceRow] = {
     SQL"""select "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"::text
     from "person"."stateprovince"
     where "stateprovinceid" = ${ParameterValue(stateprovinceid, null, StateprovinceId.toStatement)}
     """.as(StateprovinceRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(stateprovinceids: Array[StateprovinceId])(implicit c: Connection): List[StateprovinceRow] = {
+  override def selectByIds(stateprovinceids: Array[StateprovinceId])(implicit c: Connection): List[StateprovinceRow] = {
     SQL"""select "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"::text
     from "person"."stateprovince"
     where "stateprovinceid" = ANY(${ParameterValue(stateprovinceids, null, StateprovinceId.arrayToStatement)})
     """.as(StateprovinceRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(stateprovinceids: Array[StateprovinceId])(implicit c: Connection): Map[StateprovinceId, StateprovinceRow] = {
+  override def selectByIdsTracked(stateprovinceids: Array[StateprovinceId])(implicit c: Connection): Map[StateprovinceId, StateprovinceRow] = {
     val byId = selectByIds(stateprovinceids).view.map(x => (x.stateprovinceid, x)).toMap
     stateprovinceids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[StateprovinceFields, StateprovinceRow] = UpdateBuilder.of(""""person"."stateprovince"""", StateprovinceFields.structure, StateprovinceRow.rowParser(1).*)
+  override def update: UpdateBuilder[StateprovinceFields, StateprovinceRow] = UpdateBuilder.of(""""person"."stateprovince"""", StateprovinceFields.structure, StateprovinceRow.rowParser(1).*)
 
-  def update(row: StateprovinceRow)(implicit c: Connection): Option[StateprovinceRow] = {
+  override def update(row: StateprovinceRow)(implicit c: Connection): Option[StateprovinceRow] = {
     val stateprovinceid = row.stateprovinceid
     SQL"""update "person"."stateprovince"
     set "stateprovincecode" = ${ParameterValue(row.stateprovincecode, null, ToStatement.stringToStatement)}::bpchar,
@@ -141,7 +141,7 @@ class StateprovinceRepoImpl extends StateprovinceRepo {
     """.executeInsert(StateprovinceRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: StateprovinceRow)(implicit c: Connection): StateprovinceRow = {
+  override def upsert(unsaved: StateprovinceRow)(implicit c: Connection): StateprovinceRow = {
   SQL"""insert into "person"."stateprovince"("stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate")
     values (
       ${ParameterValue(unsaved.stateprovinceid, null, StateprovinceId.toStatement)}::int4,
@@ -167,7 +167,7 @@ class StateprovinceRepoImpl extends StateprovinceRepo {
     .executeInsert(StateprovinceRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[StateprovinceRow])(implicit c: Connection): List[StateprovinceRow] = {
+  override def upsertBatch(unsaved: Iterable[StateprovinceRow])(implicit c: Connection): List[StateprovinceRow] = {
     def toNamedParameter(row: StateprovinceRow): List[NamedParameter] = List(
       NamedParameter("stateprovinceid", ParameterValue(row.stateprovinceid, null, StateprovinceId.toStatement)),
       NamedParameter("stateprovincecode", ParameterValue(row.stateprovincecode, null, ToStatement.stringToStatement)),
@@ -178,6 +178,7 @@ class StateprovinceRepoImpl extends StateprovinceRepo {
       NamedParameter("rowguid", ParameterValue(row.rowguid, null, TypoUUID.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -204,7 +205,7 @@ class StateprovinceRepoImpl extends StateprovinceRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[StateprovinceRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

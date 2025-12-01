@@ -16,7 +16,7 @@ import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 
 public interface PdocViewFields {
-  static final class Impl extends Relation<PdocViewFields, PdocViewRow> {
+  final class Impl extends Relation<PdocViewFields, PdocViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -24,15 +24,19 @@ public interface PdocViewFields {
     @Override
     public PdocViewFields fields() {
       return new PdocViewFields() {
+               @Override
                public Field<ProductId, PdocViewRow> id() {
                  return new Field<ProductId, PdocViewRow>(_path, "id", PdocViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ProductId.pgType);
                };
+               @Override
                public Field<ProductId, PdocViewRow> productid() {
                  return new Field<ProductId, PdocViewRow>(_path, "productid", PdocViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, PdocViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, PdocViewRow>(_path, "modifieddate", PdocViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public Field<DocumentId, PdocViewRow> documentnode() {
                  return new Field<DocumentId, PdocViewRow>(_path, "documentnode", PdocViewRow::documentnode, Optional.empty(), Optional.empty(), (row, value) -> row.withDocumentnode(value), DocumentId.pgType);
                };
@@ -44,6 +48,7 @@ public interface PdocViewFields {
       return List.of(this.fields().id(), this.fields().productid(), this.fields().modifieddate(), this.fields().documentnode());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

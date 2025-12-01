@@ -5,12 +5,13 @@
  */
 package adventureworks.production.transactionhistoryarchive
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
 
 /** Type for the primary key of table `production.transactionhistoryarchive` */
-case class TransactionhistoryarchiveId(value: Integer) extends scala.AnyVal
+case class TransactionhistoryarchiveId(@JsonValue value: Integer) extends scala.AnyVal
 
 object TransactionhistoryarchiveId {
   given bijection: Bijection[TransactionhistoryarchiveId, Integer] = Bijection.apply[TransactionhistoryarchiveId, Integer](_.value)(TransactionhistoryarchiveId.apply)

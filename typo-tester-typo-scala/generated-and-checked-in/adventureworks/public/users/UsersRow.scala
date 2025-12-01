@@ -8,25 +8,25 @@ package adventureworks.public.users
 import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.TypoInstant
 import adventureworks.customtypes.TypoUnknownCitext
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.util.Optional
 import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple7
 
 /** Table: public.users
  * Primary key: user_id
  */
 case class UsersRow(
-  userId: UsersId,
+  @JsonProperty("user_id") userId: UsersId,
   name: String,
-  lastName: Optional[String],
+  @JsonProperty("last_name") lastName: Optional[String],
   email: TypoUnknownCitext,
   password: String,
   /** Default: now() */
-  createdAt: TypoInstant,
-  verifiedOn: Optional[TypoInstant]
+  @JsonProperty("created_at") createdAt: TypoInstant,
+  @JsonProperty("verified_on") verifiedOn: Optional[TypoInstant]
 ) {
   def id: UsersId = userId
 
@@ -44,17 +44,7 @@ case class UsersRow(
 }
 
 object UsersRow {
-  val `_rowParser`: RowParser[UsersRow] = {
-    RowParsers.of(UsersId.pgType, PgTypes.text, PgTypes.text.opt(), TypoUnknownCitext.pgType, PgTypes.text, TypoInstant.pgType, TypoInstant.pgType.opt(), UsersRow.apply, row => new Tuple7(
-      row.userId,
-      row.name,
-      row.lastName,
-      row.email,
-      row.password,
-      row.createdAt,
-      row.verifiedOn
-    ))
-  }
+  val `_rowParser`: RowParser[UsersRow] = RowParsers.of(UsersId.pgType, PgTypes.text, PgTypes.text.opt(), TypoUnknownCitext.pgType, PgTypes.text, TypoInstant.pgType, TypoInstant.pgType.opt(), UsersRow.apply, row => Array(row.userId, row.name, row.lastName, row.email, row.password, row.createdAt, row.verifiedOn))
 
   given pgText: PgText[UsersRow] = PgText.from(`_rowParser`)
 }

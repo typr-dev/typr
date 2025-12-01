@@ -6,7 +6,6 @@
 package adventureworks.purchasing.purchaseorderdetail;
 
 import adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderId;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.List;
@@ -17,19 +16,21 @@ import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class PurchaseorderdetailRepoImpl implements PurchaseorderdetailRepo {
+  @Override
   public SelectBuilder<PurchaseorderdetailFields, PurchaseorderdetailRow> select() {
     return SelectBuilder.of("purchasing.purchaseorderdetail", PurchaseorderdetailFields.structure(), PurchaseorderdetailRow._rowParser);
   };
 
+  @Override
   public List<PurchaseorderdetailRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text
        from "purchasing"."purchaseorderdetail"
-    """)).as(PurchaseorderdetailRow._rowParser.all()).runUnchecked(c);
+    """)).query(PurchaseorderdetailRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<PurchaseorderdetailRow> selectById(
     PurchaseorderdetailId compositeId,
     Connection c
@@ -45,37 +46,39 @@ public class PurchaseorderdetailRepoImpl implements PurchaseorderdetailRepo {
       """),
       PgTypes.int4.encode(compositeId.purchaseorderdetailid()),
       typo.runtime.Fragment.lit("")
-    ).as(PurchaseorderdetailRow._rowParser.first()).runUnchecked(c);
+    ).query(PurchaseorderdetailRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<PurchaseorderdetailRow> selectByIds(
     PurchaseorderdetailId[] compositeIds,
     Connection c
   ) {
     PurchaseorderheaderId[] purchaseorderid = arrayMap.map(compositeIds, PurchaseorderdetailId::purchaseorderid, PurchaseorderheaderId.class);;
-      Integer[] purchaseorderdetailid = arrayMap.map(compositeIds, PurchaseorderdetailId::purchaseorderdetailid, Integer.class);;
+    Integer[] purchaseorderdetailid = arrayMap.map(compositeIds, PurchaseorderdetailId::purchaseorderdetailid, Integer.class);;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                select "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text
-                from "purchasing"."purchaseorderdetail"
-                where ("purchaseorderid", "purchaseorderdetailid")
-                in (select unnest("""),
-             PurchaseorderheaderId.pgTypeArray.encode(purchaseorderid),
-             typo.runtime.Fragment.lit("::int4[]), unnest("),
-             PgTypes.int4Array.encode(purchaseorderdetailid),
-             typo.runtime.Fragment.lit("""
-             ::int4[]))
+      typo.runtime.Fragment.lit("""
+         select "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text
+         from "purchasing"."purchaseorderdetail"
+         where ("purchaseorderid", "purchaseorderdetailid")
+         in (select unnest("""),
+      PurchaseorderheaderId.pgTypeArray.encode(purchaseorderid),
+      typo.runtime.Fragment.lit("::int4[]), unnest("),
+      PgTypes.int4Array.encode(purchaseorderdetailid),
+      typo.runtime.Fragment.lit("""
+      ::int4[]))
 
-             """)
-           ).as(PurchaseorderdetailRow._rowParser.all()).runUnchecked(c);
+      """)
+    ).query(PurchaseorderdetailRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<PurchaseorderdetailId, PurchaseorderdetailRow> selectByIdsTracked(
     PurchaseorderdetailId[] compositeIds,
     Connection c
   ) {
-    Map<PurchaseorderdetailId, PurchaseorderdetailRow> ret = new HashMap<>();;
-      selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
+    HashMap<PurchaseorderdetailId, PurchaseorderdetailRow> ret = new HashMap<PurchaseorderdetailId, PurchaseorderdetailRow>();
+    selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
     return ret;
   };
 }

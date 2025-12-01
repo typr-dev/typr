@@ -9,7 +9,6 @@ import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.customtypes.TypoUUID;
 import adventureworks.person.businessentity.BusinessentityId;
 import adventureworks.sales.salesterritory.SalesterritoryId;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,12 +25,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class CustomerRepoImpl implements CustomerRepo {
+  @Override
   public DeleteBuilder<CustomerFields, CustomerRow> delete() {
     return DeleteBuilder.of("sales.customer", CustomerFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     CustomerId customerid,
     Connection c
@@ -45,6 +45,7 @@ public class CustomerRepoImpl implements CustomerRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     CustomerId[] customerids,
     Connection c
@@ -61,6 +62,7 @@ public class CustomerRepoImpl implements CustomerRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public CustomerRow insert(
     CustomerRow unsaved,
     Connection c
@@ -88,74 +90,82 @@ public class CustomerRepoImpl implements CustomerRepo {
       .updateReturning(CustomerRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public CustomerRow insert(
     CustomerRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"personid\""));
-      values.add(interpolate(
-        BusinessentityId.pgType.opt().encode(unsaved.personid()),
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"personid\""));
+    values.add(interpolate(
+      BusinessentityId.pgType.opt().encode(unsaved.personid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"storeid\""));
+    values.add(interpolate(
+      BusinessentityId.pgType.opt().encode(unsaved.storeid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"territoryid\""));
+    values.add(interpolate(
+      SalesterritoryId.pgType.opt().encode(unsaved.territoryid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    unsaved.customerid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"customerid\""));
+        values.add(interpolate(
+        CustomerId.pgType.encode(value),
         typo.runtime.Fragment.lit("::int4")
       ));
-      columns.add(Fragment.lit("\"storeid\""));
-      values.add(interpolate(
-        BusinessentityId.pgType.opt().encode(unsaved.storeid()),
-        typo.runtime.Fragment.lit("::int4")
+      }
+    );;
+    unsaved.rowguid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"rowguid\""));
+        values.add(interpolate(
+        TypoUUID.pgType.encode(value),
+        typo.runtime.Fragment.lit("::uuid")
       ));
-      columns.add(Fragment.lit("\"territoryid\""));
-      values.add(interpolate(
-        SalesterritoryId.pgType.opt().encode(unsaved.territoryid()),
-        typo.runtime.Fragment.lit("::int4")
+      }
+    );;
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
       ));
-      unsaved.customerid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"customerid\""));
-          values.add(interpolate(
-            CustomerId.pgType.encode(value),
-            typo.runtime.Fragment.lit("::int4")
-          ));
-        }
-      );;
-      unsaved.rowguid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"rowguid\""));
-          values.add(interpolate(
-            TypoUUID.pgType.encode(value),
-            typo.runtime.Fragment.lit("::uuid")
-          ));
-        }
-      );;
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "sales"."customer"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "sales"."customer"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(CustomerRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<CustomerRow> unsaved,
     Integer batchSize,
@@ -167,6 +177,7 @@ public class CustomerRepoImpl implements CustomerRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<CustomerRowUnsaved> unsaved,
     Integer batchSize,
@@ -177,17 +188,20 @@ public class CustomerRepoImpl implements CustomerRepo {
     """), batchSize, unsaved, c, CustomerRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<CustomerFields, CustomerRow> select() {
     return SelectBuilder.of("sales.customer", CustomerFields.structure(), CustomerRow._rowParser);
   };
 
+  @Override
   public List<CustomerRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text
        from "sales"."customer"
-    """)).as(CustomerRow._rowParser.all()).runUnchecked(c);
+    """)).query(CustomerRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<CustomerRow> selectById(
     CustomerId customerid,
     Connection c
@@ -199,9 +213,10 @@ public class CustomerRepoImpl implements CustomerRepo {
          where "customerid" = """),
       CustomerId.pgType.encode(customerid),
       typo.runtime.Fragment.lit("")
-    ).as(CustomerRow._rowParser.first()).runUnchecked(c);
+    ).query(CustomerRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<CustomerRow> selectByIds(
     CustomerId[] customerids,
     Connection c
@@ -213,56 +228,60 @@ public class CustomerRepoImpl implements CustomerRepo {
          where "customerid" = ANY("""),
       CustomerId.pgTypeArray.encode(customerids),
       typo.runtime.Fragment.lit(")")
-    ).as(CustomerRow._rowParser.all()).runUnchecked(c);
+    ).query(CustomerRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<CustomerId, CustomerRow> selectByIdsTracked(
     CustomerId[] customerids,
     Connection c
   ) {
-    Map<CustomerId, CustomerRow> ret = new HashMap<>();;
-      selectByIds(customerids, c).forEach(row -> ret.put(row.customerid(), row));
+    HashMap<CustomerId, CustomerRow> ret = new HashMap<CustomerId, CustomerRow>();
+    selectByIds(customerids, c).forEach(row -> ret.put(row.customerid(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<CustomerFields, CustomerRow> update() {
     return UpdateBuilder.of("sales.customer", CustomerFields.structure(), CustomerRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     CustomerRow row,
     Connection c
   ) {
     CustomerId customerid = row.customerid();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "sales"."customer"
-                set "personid" = """),
-             BusinessentityId.pgType.opt().encode(row.personid()),
-             typo.runtime.Fragment.lit("""
-                ::int4,
-                "storeid" = """),
-             BusinessentityId.pgType.opt().encode(row.storeid()),
-             typo.runtime.Fragment.lit("""
-                ::int4,
-                "territoryid" = """),
-             SalesterritoryId.pgType.opt().encode(row.territoryid()),
-             typo.runtime.Fragment.lit("""
-                ::int4,
-                "rowguid" = """),
-             TypoUUID.pgType.encode(row.rowguid()),
-             typo.runtime.Fragment.lit("""
-                ::uuid,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "customerid" = """),
-             CustomerId.pgType.encode(customerid),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "sales"."customer"
+         set "personid" = """),
+      BusinessentityId.pgType.opt().encode(row.personid()),
+      typo.runtime.Fragment.lit("""
+         ::int4,
+         "storeid" = """),
+      BusinessentityId.pgType.opt().encode(row.storeid()),
+      typo.runtime.Fragment.lit("""
+         ::int4,
+         "territoryid" = """),
+      SalesterritoryId.pgType.opt().encode(row.territoryid()),
+      typo.runtime.Fragment.lit("""
+         ::int4,
+         "rowguid" = """),
+      TypoUUID.pgType.encode(row.rowguid()),
+      typo.runtime.Fragment.lit("""
+         ::uuid,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "customerid" = """),
+      CustomerId.pgType.encode(customerid),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public CustomerRow upsert(
     CustomerRow unsaved,
     Connection c
@@ -298,6 +317,7 @@ public class CustomerRepoImpl implements CustomerRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<CustomerRow> upsertBatch(
     Iterator<CustomerRow> unsaved,
     Connection c
@@ -319,28 +339,29 @@ public class CustomerRepoImpl implements CustomerRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<CustomerRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table customer_TEMP (like "sales"."customer") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy customer_TEMP("customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate") from stdin
-      """), batchSize, unsaved, c, CustomerRow.pgText);
+    create temporary table customer_TEMP (like "sales"."customer") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy customer_TEMP("customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate") from stdin
+    """), batchSize, unsaved, c, CustomerRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "sales"."customer"("customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate")
-              select * from customer_TEMP
-              on conflict ("customerid")
-              do update set
-                "personid" = EXCLUDED."personid",
-              "storeid" = EXCLUDED."storeid",
-              "territoryid" = EXCLUDED."territoryid",
-              "rowguid" = EXCLUDED."rowguid",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table customer_TEMP;""")).update().runUnchecked(c);
+       insert into "sales"."customer"("customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate")
+       select * from customer_TEMP
+       on conflict ("customerid")
+       do update set
+         "personid" = EXCLUDED."personid",
+       "storeid" = EXCLUDED."storeid",
+       "territoryid" = EXCLUDED."territoryid",
+       "rowguid" = EXCLUDED."rowguid",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table customer_TEMP;""")).update().runUnchecked(c);
   };
 }

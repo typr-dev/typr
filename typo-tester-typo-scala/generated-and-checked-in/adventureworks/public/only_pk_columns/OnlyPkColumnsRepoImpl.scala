@@ -16,21 +16,21 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class OnlyPkColumnsRepoImpl extends OnlyPkColumnsRepo {
-  def delete: DeleteBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = DeleteBuilder.of("public.only_pk_columns", OnlyPkColumnsFields.structure)
+  override def delete: DeleteBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = DeleteBuilder.of("public.only_pk_columns", OnlyPkColumnsFields.structure)
 
-  def deleteById(compositeId: OnlyPkColumnsId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."only_pk_columns" where "key_column_1" = ${PgTypes.text.encode(compositeId.keyColumn1)} AND "key_column_2" = ${PgTypes.int4.encode(compositeId.keyColumn2)}""".update().runUnchecked(c) > 0
+  override def deleteById(compositeId: OnlyPkColumnsId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."only_pk_columns" where "key_column_1" = ${PgTypes.text.encode(compositeId.keyColumn1)} AND "key_column_2" = ${PgTypes.int4.encode(compositeId.keyColumn2)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(compositeIds: Array[OnlyPkColumnsId])(using c: Connection): Integer = {
+  override def deleteByIds(compositeIds: Array[OnlyPkColumnsId])(using c: Connection): Integer = {
     val keyColumn1: Array[String] = compositeIds.map(_.keyColumn1)
     val keyColumn2: Array[Integer] = compositeIds.map(_.keyColumn2)
-    interpolate"""delete
+    return interpolate"""delete
     from "public"."only_pk_columns"
     where ("key_column_1", "key_column_2")
     in (select unnest(${PgTypes.textArray.encode(keyColumn1)}::text[]), unnest(${PgTypes.int4Array.encode(keyColumn2)}::int4[]))
     """.update().runUnchecked(c)
   }
 
-  def insert(unsaved: OnlyPkColumnsRow)(using c: Connection): OnlyPkColumnsRow = {
+  override def insert(unsaved: OnlyPkColumnsRow)(using c: Connection): OnlyPkColumnsRow = {
   interpolate"""insert into "public"."only_pk_columns"("key_column_1", "key_column_2")
     values (${PgTypes.text.encode(unsaved.keyColumn1)}, ${PgTypes.int4.encode(unsaved.keyColumn2)}::int4)
     returning "key_column_1", "key_column_2"
@@ -38,44 +38,44 @@ class OnlyPkColumnsRepoImpl extends OnlyPkColumnsRepo {
     .updateReturning(OnlyPkColumnsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[OnlyPkColumnsRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."only_pk_columns"("key_column_1", "key_column_2") FROM STDIN""", batchSize, unsaved, c, OnlyPkColumnsRow.pgText)
 
-  def select: SelectBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = SelectBuilder.of("public.only_pk_columns", OnlyPkColumnsFields.structure, OnlyPkColumnsRow.`_rowParser`)
+  override def select: SelectBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = SelectBuilder.of("public.only_pk_columns", OnlyPkColumnsFields.structure, OnlyPkColumnsRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[OnlyPkColumnsRow] = {
+  override def selectAll(using c: Connection): java.util.List[OnlyPkColumnsRow] = {
     interpolate"""select "key_column_1", "key_column_2"
     from "public"."only_pk_columns"
-    """.as(OnlyPkColumnsRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(OnlyPkColumnsRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(compositeId: OnlyPkColumnsId)(using c: Connection): Optional[OnlyPkColumnsRow] = {
+  override def selectById(compositeId: OnlyPkColumnsId)(using c: Connection): Optional[OnlyPkColumnsRow] = {
     interpolate"""select "key_column_1", "key_column_2"
     from "public"."only_pk_columns"
-    where "key_column_1" = ${PgTypes.text.encode(compositeId.keyColumn1)} AND "key_column_2" = ${PgTypes.int4.encode(compositeId.keyColumn2)}""".as(OnlyPkColumnsRow.`_rowParser`.first()).runUnchecked(c)
+    where "key_column_1" = ${PgTypes.text.encode(compositeId.keyColumn1)} AND "key_column_2" = ${PgTypes.int4.encode(compositeId.keyColumn2)}""".query(OnlyPkColumnsRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(compositeIds: Array[OnlyPkColumnsId])(using c: Connection): java.util.List[OnlyPkColumnsRow] = {
+  override def selectByIds(compositeIds: Array[OnlyPkColumnsId])(using c: Connection): java.util.List[OnlyPkColumnsRow] = {
     val keyColumn1: Array[String] = compositeIds.map(_.keyColumn1)
     val keyColumn2: Array[Integer] = compositeIds.map(_.keyColumn2)
-    interpolate"""select "key_column_1", "key_column_2"
+    return interpolate"""select "key_column_1", "key_column_2"
     from "public"."only_pk_columns"
     where ("key_column_1", "key_column_2")
     in (select unnest(${PgTypes.textArray.encode(keyColumn1)}::text[]), unnest(${PgTypes.int4Array.encode(keyColumn2)}::int4[]))
-    """.as(OnlyPkColumnsRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(OnlyPkColumnsRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(compositeIds: Array[OnlyPkColumnsId])(using c: Connection): java.util.Map[OnlyPkColumnsId, OnlyPkColumnsRow] = {
-    val ret: java.util.Map[OnlyPkColumnsId, OnlyPkColumnsRow] = new HashMap()
+  override def selectByIdsTracked(compositeIds: Array[OnlyPkColumnsId])(using c: Connection): java.util.Map[OnlyPkColumnsId, OnlyPkColumnsRow] = {
+    val ret: HashMap[OnlyPkColumnsId, OnlyPkColumnsRow] = new HashMap[OnlyPkColumnsId, OnlyPkColumnsRow]()
     selectByIds(compositeIds)(using c).forEach(row => ret.put(row.compositeId, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = UpdateBuilder.of("public.only_pk_columns", OnlyPkColumnsFields.structure, OnlyPkColumnsRow.`_rowParser`.all())
+  override def update: UpdateBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = UpdateBuilder.of("public.only_pk_columns", OnlyPkColumnsFields.structure, OnlyPkColumnsRow.`_rowParser`.all())
 
-  def upsert(unsaved: OnlyPkColumnsRow)(using c: Connection): OnlyPkColumnsRow = {
+  override def upsert(unsaved: OnlyPkColumnsRow)(using c: Connection): OnlyPkColumnsRow = {
   interpolate"""insert into "public"."only_pk_columns"("key_column_1", "key_column_2")
     values (${PgTypes.text.encode(unsaved.keyColumn1)}, ${PgTypes.int4.encode(unsaved.keyColumn2)}::int4)
     on conflict ("key_column_1", "key_column_2")
@@ -86,7 +86,7 @@ class OnlyPkColumnsRepoImpl extends OnlyPkColumnsRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[OnlyPkColumnsRow])(using c: Connection): java.util.List[OnlyPkColumnsRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[OnlyPkColumnsRow])(using c: Connection): java.util.List[OnlyPkColumnsRow] = {
     interpolate"""insert into "public"."only_pk_columns"("key_column_1", "key_column_2")
     values (?, ?::int4)
     on conflict ("key_column_1", "key_column_2")
@@ -98,13 +98,13 @@ class OnlyPkColumnsRepoImpl extends OnlyPkColumnsRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[OnlyPkColumnsRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table only_pk_columns_TEMP (like "public"."only_pk_columns") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy only_pk_columns_TEMP("key_column_1", "key_column_2") from stdin""", batchSize, unsaved, c, OnlyPkColumnsRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "public"."only_pk_columns"("key_column_1", "key_column_2")
+    return interpolate"""insert into "public"."only_pk_columns"("key_column_1", "key_column_2")
     select * from only_pk_columns_TEMP
     on conflict ("key_column_1", "key_column_2")
     do nothing

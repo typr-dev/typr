@@ -18,20 +18,20 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class TableWithGeneratedColumnsRepoImpl extends TableWithGeneratedColumnsRepo {
-  def delete: DeleteBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = DeleteBuilder.of(""""public"."table-with-generated-columns"""", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow.jdbcDecoder)
+  override def delete: DeleteBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = DeleteBuilder.of(""""public"."table-with-generated-columns"""", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow.jdbcDecoder)
 
-  def deleteById(name: TableWithGeneratedColumnsId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "public"."table-with-generated-columns" where "name" = ${Segment.paramSegment(name)(TableWithGeneratedColumnsId.setter)}""".delete.map(_ > 0)
+  override def deleteById(name: TableWithGeneratedColumnsId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "public"."table-with-generated-columns" where "name" = ${Segment.paramSegment(name)(TableWithGeneratedColumnsId.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(names: Array[TableWithGeneratedColumnsId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "public"."table-with-generated-columns" where "name" = ANY(${Segment.paramSegment(names)(TableWithGeneratedColumnsId.arraySetter)})""".delete
+  override def deleteByIds(names: Array[TableWithGeneratedColumnsId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "public"."table-with-generated-columns" where "name" = ANY(${Segment.paramSegment(names)(TableWithGeneratedColumnsId.arraySetter)})""".delete
 
-  def insert(unsaved: TableWithGeneratedColumnsRow): ZIO[ZConnection, Throwable, TableWithGeneratedColumnsRow] = {
+  override def insert(unsaved: TableWithGeneratedColumnsRow): ZIO[ZConnection, Throwable, TableWithGeneratedColumnsRow] = {
     sql"""insert into "public"."table-with-generated-columns"("name")
     values (${Segment.paramSegment(unsaved.name)(TableWithGeneratedColumnsId.setter)})
     returning "name", "name-type-always"
     """.insertReturning(TableWithGeneratedColumnsRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insert(unsaved: TableWithGeneratedColumnsRowUnsaved): ZIO[ZConnection, Throwable, TableWithGeneratedColumnsRow] = {
+  override def insert(unsaved: TableWithGeneratedColumnsRowUnsaved): ZIO[ZConnection, Throwable, TableWithGeneratedColumnsRow] = {
     val fs = List(
       Some((sql""""name"""", sql"${Segment.paramSegment(unsaved.name)(TableWithGeneratedColumnsId.setter)}"))
     ).flatten
@@ -47,35 +47,35 @@ class TableWithGeneratedColumnsRepoImpl extends TableWithGeneratedColumnsRepo {
     q.insertReturning(TableWithGeneratedColumnsRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, TableWithGeneratedColumnsRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "public"."table-with-generated-columns"("name") FROM STDIN""", batchSize, unsaved)(TableWithGeneratedColumnsRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, TableWithGeneratedColumnsRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "public"."table-with-generated-columns"("name") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(TableWithGeneratedColumnsRowUnsaved.pgText)
 
-  def select: SelectBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = SelectBuilder.of(""""public"."table-with-generated-columns"""", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow.jdbcDecoder)
+  override def select: SelectBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = SelectBuilder.of(""""public"."table-with-generated-columns"""", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, TableWithGeneratedColumnsRow] = sql"""select "name", "name-type-always" from "public"."table-with-generated-columns"""".query(TableWithGeneratedColumnsRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, TableWithGeneratedColumnsRow] = sql"""select "name", "name-type-always" from "public"."table-with-generated-columns"""".query(TableWithGeneratedColumnsRow.jdbcDecoder).selectStream()
 
-  def selectById(name: TableWithGeneratedColumnsId): ZIO[ZConnection, Throwable, Option[TableWithGeneratedColumnsRow]] = sql"""select "name", "name-type-always" from "public"."table-with-generated-columns" where "name" = ${Segment.paramSegment(name)(TableWithGeneratedColumnsId.setter)}""".query(TableWithGeneratedColumnsRow.jdbcDecoder).selectOne
+  override def selectById(name: TableWithGeneratedColumnsId): ZIO[ZConnection, Throwable, Option[TableWithGeneratedColumnsRow]] = sql"""select "name", "name-type-always" from "public"."table-with-generated-columns" where "name" = ${Segment.paramSegment(name)(TableWithGeneratedColumnsId.setter)}""".query(TableWithGeneratedColumnsRow.jdbcDecoder).selectOne
 
-  def selectByIds(names: Array[TableWithGeneratedColumnsId]): ZStream[ZConnection, Throwable, TableWithGeneratedColumnsRow] = sql"""select "name", "name-type-always" from "public"."table-with-generated-columns" where "name" = ANY(${Segment.paramSegment(names)(TableWithGeneratedColumnsId.arraySetter)})""".query(TableWithGeneratedColumnsRow.jdbcDecoder).selectStream()
+  override def selectByIds(names: Array[TableWithGeneratedColumnsId]): ZStream[ZConnection, Throwable, TableWithGeneratedColumnsRow] = sql"""select "name", "name-type-always" from "public"."table-with-generated-columns" where "name" = ANY(${Segment.paramSegment(names)(TableWithGeneratedColumnsId.arraySetter)})""".query(TableWithGeneratedColumnsRow.jdbcDecoder).selectStream()
 
-  def selectByIdsTracked(names: Array[TableWithGeneratedColumnsId]): ZIO[ZConnection, Throwable, Map[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow]] = {
+  override def selectByIdsTracked(names: Array[TableWithGeneratedColumnsId]): ZIO[ZConnection, Throwable, Map[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow]] = {
     selectByIds(names).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.name, x)).toMap
       names.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = UpdateBuilder.of(""""public"."table-with-generated-columns"""", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow.jdbcDecoder)
+  override def update: UpdateBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = UpdateBuilder.of(""""public"."table-with-generated-columns"""", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow.jdbcDecoder)
 
-  def upsert(unsaved: TableWithGeneratedColumnsRow): ZIO[ZConnection, Throwable, UpdateResult[TableWithGeneratedColumnsRow]] = {
+  override def upsert(unsaved: TableWithGeneratedColumnsRow): ZIO[ZConnection, Throwable, UpdateResult[TableWithGeneratedColumnsRow]] = {
     sql"""insert into "public"."table-with-generated-columns"("name")
     values (
       ${Segment.paramSegment(unsaved.name)(TableWithGeneratedColumnsId.setter)}
@@ -86,7 +86,7 @@ class TableWithGeneratedColumnsRepoImpl extends TableWithGeneratedColumnsRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, TableWithGeneratedColumnsRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

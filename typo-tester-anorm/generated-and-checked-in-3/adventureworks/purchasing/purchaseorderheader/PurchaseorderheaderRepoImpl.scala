@@ -26,18 +26,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class PurchaseorderheaderRepoImpl extends PurchaseorderheaderRepo {
-  def delete: DeleteBuilder[PurchaseorderheaderFields, PurchaseorderheaderRow] = DeleteBuilder.of(""""purchasing"."purchaseorderheader"""", PurchaseorderheaderFields.structure, PurchaseorderheaderRow.rowParser(1).*)
+  override def delete: DeleteBuilder[PurchaseorderheaderFields, PurchaseorderheaderRow] = DeleteBuilder.of(""""purchasing"."purchaseorderheader"""", PurchaseorderheaderFields.structure, PurchaseorderheaderRow.rowParser(1).*)
 
-  def deleteById(purchaseorderid: PurchaseorderheaderId)(using c: Connection): Boolean = SQL"""delete from "purchasing"."purchaseorderheader" where "purchaseorderid" = ${ParameterValue(purchaseorderid, null, PurchaseorderheaderId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(purchaseorderid: PurchaseorderheaderId)(using c: Connection): Boolean = SQL"""delete from "purchasing"."purchaseorderheader" where "purchaseorderid" = ${ParameterValue(purchaseorderid, null, PurchaseorderheaderId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(purchaseorderids: Array[PurchaseorderheaderId])(using c: Connection): Int = {
+  override def deleteByIds(purchaseorderids: Array[PurchaseorderheaderId])(using c: Connection): Int = {
     SQL"""delete
     from "purchasing"."purchaseorderheader"
     where "purchaseorderid" = ANY(${ParameterValue(purchaseorderids, null, PurchaseorderheaderId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: PurchaseorderheaderRow)(using c: Connection): PurchaseorderheaderRow = {
+  override def insert(unsaved: PurchaseorderheaderRow)(using c: Connection): PurchaseorderheaderRow = {
   SQL"""insert into "purchasing"."purchaseorderheader"("purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate", "shipdate", "subtotal", "taxamt", "freight", "modifieddate")
     values (${ParameterValue(unsaved.purchaseorderid, null, PurchaseorderheaderId.toStatement)}::int4, ${ParameterValue(unsaved.revisionnumber, null, TypoShort.toStatement)}::int2, ${ParameterValue(unsaved.status, null, TypoShort.toStatement)}::int2, ${ParameterValue(unsaved.employeeid, null, BusinessentityId.toStatement)}::int4, ${ParameterValue(unsaved.vendorid, null, BusinessentityId.toStatement)}::int4, ${ParameterValue(unsaved.shipmethodid, null, ShipmethodId.toStatement)}::int4, ${ParameterValue(unsaved.orderdate, null, TypoLocalDateTime.toStatement)}::timestamp, ${ParameterValue(unsaved.shipdate, null, ToStatement.optionToStatement(using TypoLocalDateTime.toStatement, TypoLocalDateTime.parameterMetadata))}::timestamp, ${ParameterValue(unsaved.subtotal, null, ToStatement.scalaBigDecimalToStatement)}::numeric, ${ParameterValue(unsaved.taxamt, null, ToStatement.scalaBigDecimalToStatement)}::numeric, ${ParameterValue(unsaved.freight, null, ToStatement.scalaBigDecimalToStatement)}::numeric, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text
@@ -45,7 +45,7 @@ class PurchaseorderheaderRepoImpl extends PurchaseorderheaderRepo {
     .executeInsert(PurchaseorderheaderRow.rowParser(1).single)
   }
 
-  def insert(unsaved: PurchaseorderheaderRowUnsaved)(using c: Connection): PurchaseorderheaderRow = {
+  override def insert(unsaved: PurchaseorderheaderRowUnsaved)(using c: Connection): PurchaseorderheaderRow = {
     val namedParameters = List(
       Some((NamedParameter("employeeid", ParameterValue(unsaved.employeeid, null, BusinessentityId.toStatement)), "::int4")),
       Some((NamedParameter("vendorid", ParameterValue(unsaved.vendorid, null, BusinessentityId.toStatement)), "::int4")),
@@ -100,47 +100,47 @@ class PurchaseorderheaderRepoImpl extends PurchaseorderheaderRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[PurchaseorderheaderRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "purchasing"."purchaseorderheader"("purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate", "shipdate", "subtotal", "taxamt", "freight", "modifieddate") FROM STDIN""", batchSize, unsaved)(using PurchaseorderheaderRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[PurchaseorderheaderRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "purchasing"."purchaseorderheader"("employeeid", "vendorid", "shipmethodid", "shipdate", "purchaseorderid", "revisionnumber", "status", "orderdate", "subtotal", "taxamt", "freight", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using PurchaseorderheaderRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[PurchaseorderheaderFields, PurchaseorderheaderRow] = SelectBuilder.of(""""purchasing"."purchaseorderheader"""", PurchaseorderheaderFields.structure, PurchaseorderheaderRow.rowParser)
+  override def select: SelectBuilder[PurchaseorderheaderFields, PurchaseorderheaderRow] = SelectBuilder.of(""""purchasing"."purchaseorderheader"""", PurchaseorderheaderFields.structure, PurchaseorderheaderRow.rowParser)
 
-  def selectAll(using c: Connection): List[PurchaseorderheaderRow] = {
+  override def selectAll(using c: Connection): List[PurchaseorderheaderRow] = {
     SQL"""select "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text
     from "purchasing"."purchaseorderheader"
     """.as(PurchaseorderheaderRow.rowParser(1).*)
   }
 
-  def selectById(purchaseorderid: PurchaseorderheaderId)(using c: Connection): Option[PurchaseorderheaderRow] = {
+  override def selectById(purchaseorderid: PurchaseorderheaderId)(using c: Connection): Option[PurchaseorderheaderRow] = {
     SQL"""select "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text
     from "purchasing"."purchaseorderheader"
     where "purchaseorderid" = ${ParameterValue(purchaseorderid, null, PurchaseorderheaderId.toStatement)}
     """.as(PurchaseorderheaderRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(purchaseorderids: Array[PurchaseorderheaderId])(using c: Connection): List[PurchaseorderheaderRow] = {
+  override def selectByIds(purchaseorderids: Array[PurchaseorderheaderId])(using c: Connection): List[PurchaseorderheaderRow] = {
     SQL"""select "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text
     from "purchasing"."purchaseorderheader"
     where "purchaseorderid" = ANY(${ParameterValue(purchaseorderids, null, PurchaseorderheaderId.arrayToStatement)})
     """.as(PurchaseorderheaderRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(purchaseorderids: Array[PurchaseorderheaderId])(using c: Connection): Map[PurchaseorderheaderId, PurchaseorderheaderRow] = {
+  override def selectByIdsTracked(purchaseorderids: Array[PurchaseorderheaderId])(using c: Connection): Map[PurchaseorderheaderId, PurchaseorderheaderRow] = {
     val byId = selectByIds(purchaseorderids).view.map(x => (x.purchaseorderid, x)).toMap
     purchaseorderids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[PurchaseorderheaderFields, PurchaseorderheaderRow] = UpdateBuilder.of(""""purchasing"."purchaseorderheader"""", PurchaseorderheaderFields.structure, PurchaseorderheaderRow.rowParser(1).*)
+  override def update: UpdateBuilder[PurchaseorderheaderFields, PurchaseorderheaderRow] = UpdateBuilder.of(""""purchasing"."purchaseorderheader"""", PurchaseorderheaderFields.structure, PurchaseorderheaderRow.rowParser(1).*)
 
-  def update(row: PurchaseorderheaderRow)(using c: Connection): Option[PurchaseorderheaderRow] = {
+  override def update(row: PurchaseorderheaderRow)(using c: Connection): Option[PurchaseorderheaderRow] = {
     val purchaseorderid = row.purchaseorderid
     SQL"""update "purchasing"."purchaseorderheader"
     set "revisionnumber" = ${ParameterValue(row.revisionnumber, null, TypoShort.toStatement)}::int2,
@@ -159,7 +159,7 @@ class PurchaseorderheaderRepoImpl extends PurchaseorderheaderRepo {
     """.executeInsert(PurchaseorderheaderRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: PurchaseorderheaderRow)(using c: Connection): PurchaseorderheaderRow = {
+  override def upsert(unsaved: PurchaseorderheaderRow)(using c: Connection): PurchaseorderheaderRow = {
   SQL"""insert into "purchasing"."purchaseorderheader"("purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate", "shipdate", "subtotal", "taxamt", "freight", "modifieddate")
     values (
       ${ParameterValue(unsaved.purchaseorderid, null, PurchaseorderheaderId.toStatement)}::int4,
@@ -193,7 +193,7 @@ class PurchaseorderheaderRepoImpl extends PurchaseorderheaderRepo {
     .executeInsert(PurchaseorderheaderRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[PurchaseorderheaderRow])(using c: Connection): List[PurchaseorderheaderRow] = {
+  override def upsertBatch(unsaved: Iterable[PurchaseorderheaderRow])(using c: Connection): List[PurchaseorderheaderRow] = {
     def toNamedParameter(row: PurchaseorderheaderRow): List[NamedParameter] = List(
       NamedParameter("purchaseorderid", ParameterValue(row.purchaseorderid, null, PurchaseorderheaderId.toStatement)),
       NamedParameter("revisionnumber", ParameterValue(row.revisionnumber, null, TypoShort.toStatement)),
@@ -208,6 +208,7 @@ class PurchaseorderheaderRepoImpl extends PurchaseorderheaderRepo {
       NamedParameter("freight", ParameterValue(row.freight, null, ToStatement.scalaBigDecimalToStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -238,7 +239,7 @@ class PurchaseorderheaderRepoImpl extends PurchaseorderheaderRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[PurchaseorderheaderRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

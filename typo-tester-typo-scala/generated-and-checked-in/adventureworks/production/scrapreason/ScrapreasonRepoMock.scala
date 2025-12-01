@@ -5,6 +5,7 @@
  */
 package adventureworks.production.scrapreason
 
+import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
@@ -25,7 +26,7 @@ case class ScrapreasonRepoMock(
   toRow: ScrapreasonRowUnsaved => ScrapreasonRow,
   map: HashMap[ScrapreasonId, ScrapreasonRow] = new HashMap[ScrapreasonId, ScrapreasonRow]()
 ) extends ScrapreasonRepo {
-  def delete: DeleteBuilder[ScrapreasonFields, ScrapreasonRow] = {
+  override def delete: DeleteBuilder[ScrapreasonFields, ScrapreasonRow] = {
     new DeleteBuilderMock(
       ScrapreasonFields.structure,
       () => new ArrayList(map.values()),
@@ -35,27 +36,27 @@ case class ScrapreasonRepoMock(
     )
   }
 
-  def deleteById(scrapreasonid: ScrapreasonId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(scrapreasonid)).isPresent()
+  override def deleteById(scrapreasonid: ScrapreasonId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(scrapreasonid)).isPresent()
 
-  def deleteByIds(scrapreasonids: Array[ScrapreasonId])(using c: Connection): Integer = {
+  override def deleteByIds(scrapreasonids: Array[ScrapreasonId])(using c: Connection): Integer = {
     var count = 0
     scrapreasonids.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
-    count
+    return count
   }
 
-  def insert(unsaved: ScrapreasonRow)(using c: Connection): ScrapreasonRow = {
+  override def insert(unsaved: ScrapreasonRow)(using c: Connection): ScrapreasonRow = {
     if (map.containsKey(unsaved.scrapreasonid)) {
       throw new RuntimeException(s"id $unsaved.scrapreasonid already exists")
     }
     map.put(unsaved.scrapreasonid, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def insert(unsaved: ScrapreasonRowUnsaved)(using c: Connection): ScrapreasonRow = insert(toRow(unsaved))(using c)
+  override def insert(unsaved: ScrapreasonRowUnsaved)(using c: Connection): ScrapreasonRow = insert(toRow(unsaved))(using c)
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[ScrapreasonRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -65,11 +66,11 @@ case class ScrapreasonRepoMock(
       map.put(row.scrapreasonid, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[ScrapreasonRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -80,25 +81,25 @@ case class ScrapreasonRepoMock(
       map.put(row.scrapreasonid, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
-  def select: SelectBuilder[ScrapreasonFields, ScrapreasonRow] = new SelectBuilderMock(ScrapreasonFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
+  override def select: SelectBuilder[ScrapreasonFields, ScrapreasonRow] = new SelectBuilderMock(ScrapreasonFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  def selectAll(using c: Connection): java.util.List[ScrapreasonRow] = new ArrayList(map.values())
+  override def selectAll(using c: Connection): java.util.List[ScrapreasonRow] = new ArrayList(map.values())
 
-  def selectById(scrapreasonid: ScrapreasonId)(using c: Connection): Optional[ScrapreasonRow] = Optional.ofNullable(map.get(scrapreasonid))
+  override def selectById(scrapreasonid: ScrapreasonId)(using c: Connection): Optional[ScrapreasonRow] = Optional.ofNullable(map.get(scrapreasonid))
 
-  def selectByIds(scrapreasonids: Array[ScrapreasonId])(using c: Connection): java.util.List[ScrapreasonRow] = {
+  override def selectByIds(scrapreasonids: Array[ScrapreasonId])(using c: Connection): java.util.List[ScrapreasonRow] = {
     val result = new ArrayList[ScrapreasonRow]()
     scrapreasonids.foreach { id => val opt = Optional.ofNullable(map.get(id))
     if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
-    result
+    return result
   }
 
-  def selectByIdsTracked(scrapreasonids: Array[ScrapreasonId])(using c: Connection): java.util.Map[ScrapreasonId, ScrapreasonRow] = selectByIds(scrapreasonids)(using c).stream().collect(Collectors.toMap((row: adventureworks.production.scrapreason.ScrapreasonRow) => row.scrapreasonid, Function.identity()))
+  override def selectByIdsTracked(scrapreasonids: Array[ScrapreasonId])(using c: Connection): java.util.Map[ScrapreasonId, ScrapreasonRow] = selectByIds(scrapreasonids)(using c).stream().collect(Collectors.toMap((row: ScrapreasonRow) => row.scrapreasonid, Function.identity()))
 
-  def update: UpdateBuilder[ScrapreasonFields, ScrapreasonRow] = {
+  override def update: UpdateBuilder[ScrapreasonFields, ScrapreasonRow] = {
     new UpdateBuilderMock(
       ScrapreasonFields.structure,
       () => new ArrayList(map.values()),
@@ -107,31 +108,31 @@ case class ScrapreasonRepoMock(
     )
   }
 
-  def update(row: ScrapreasonRow)(using c: Connection): java.lang.Boolean = {
-    val shouldUpdate = Optional.ofNullable(map.get(row.scrapreasonid)).filter(oldRow => !oldRow.equals(row)).isPresent()
+  override def update(row: ScrapreasonRow)(using c: Connection): java.lang.Boolean = {
+    val shouldUpdate = Optional.ofNullable(map.get(row.scrapreasonid)).filter(oldRow => (oldRow != row)).isPresent()
     if (shouldUpdate) {
       map.put(row.scrapreasonid, row): @scala.annotation.nowarn
     }
-    shouldUpdate
+    return shouldUpdate
   }
 
-  def upsert(unsaved: ScrapreasonRow)(using c: Connection): ScrapreasonRow = {
+  override def upsert(unsaved: ScrapreasonRow)(using c: Connection): ScrapreasonRow = {
     map.put(unsaved.scrapreasonid, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[ScrapreasonRow])(using c: Connection): java.util.List[ScrapreasonRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[ScrapreasonRow])(using c: Connection): java.util.List[ScrapreasonRow] = {
     val result = new ArrayList[ScrapreasonRow]()
     while (unsaved.hasNext()) {
       val row = unsaved.next()
       map.put(row.scrapreasonid, row): @scala.annotation.nowarn
       result.add(row): @scala.annotation.nowarn
     }
-    result
+    return result
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[ScrapreasonRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
@@ -141,6 +142,6 @@ case class ScrapreasonRepoMock(
       map.put(row.scrapreasonid, row): @scala.annotation.nowarn
       count = count + 1
     }
-    count
+    return count
   }
 }

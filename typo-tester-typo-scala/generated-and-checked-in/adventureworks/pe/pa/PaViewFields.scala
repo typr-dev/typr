@@ -34,7 +34,7 @@ object PaViewFields {
 
     override lazy val fields: PaViewFields = {
       new PaViewFields {
-        def id: Field[BusinessentityId, PaViewRow] = {
+        override def id: Field[BusinessentityId, PaViewRow] = {
           new Field[BusinessentityId, PaViewRow](
             _path,
             "id",
@@ -45,7 +45,7 @@ object PaViewFields {
             BusinessentityId.pgType
           )
         }
-        def businessentityid: Field[BusinessentityId, PaViewRow] = {
+        override def businessentityid: Field[BusinessentityId, PaViewRow] = {
           new Field[BusinessentityId, PaViewRow](
             _path,
             "businessentityid",
@@ -56,7 +56,7 @@ object PaViewFields {
             BusinessentityId.pgType
           )
         }
-        def passwordhash: Field[/* max 128 chars */ String, PaViewRow] = {
+        override def passwordhash: Field[/* max 128 chars */ String, PaViewRow] = {
           new Field[/* max 128 chars */ String, PaViewRow](
             _path,
             "passwordhash",
@@ -67,7 +67,7 @@ object PaViewFields {
             PgTypes.text
           )
         }
-        def passwordsalt: Field[/* max 10 chars */ String, PaViewRow] = {
+        override def passwordsalt: Field[/* max 10 chars */ String, PaViewRow] = {
           new Field[/* max 10 chars */ String, PaViewRow](
             _path,
             "passwordsalt",
@@ -78,7 +78,7 @@ object PaViewFields {
             PgTypes.text
           )
         }
-        def rowguid: Field[TypoUUID, PaViewRow] = {
+        override def rowguid: Field[TypoUUID, PaViewRow] = {
           new Field[TypoUUID, PaViewRow](
             _path,
             "rowguid",
@@ -89,7 +89,7 @@ object PaViewFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, PaViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, PaViewRow] = {
           new Field[TypoLocalDateTime, PaViewRow](
             _path,
             "modifieddate",
@@ -105,7 +105,7 @@ object PaViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, PaViewRow]] = java.util.List.of(this.fields.id, this.fields.businessentityid, this.fields.passwordhash, this.fields.passwordsalt, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[PaViewFields, PaViewRow] = new Impl(java.util.List.of())

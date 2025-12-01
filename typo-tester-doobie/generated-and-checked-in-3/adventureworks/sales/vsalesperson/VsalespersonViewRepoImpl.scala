@@ -7,13 +7,11 @@ package adventureworks.sales.vsalesperson
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class VsalespersonViewRepoImpl extends VsalespersonViewRepo {
-  def select: SelectBuilder[VsalespersonViewFields, VsalespersonViewRow] = SelectBuilder.of(""""sales"."vsalesperson"""", VsalespersonViewFields.structure, VsalespersonViewRow.read)
+  override def select: SelectBuilder[VsalespersonViewFields, VsalespersonViewRow] = SelectBuilder.of(""""sales"."vsalesperson"""", VsalespersonViewFields.structure, VsalespersonViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, VsalespersonViewRow] = sql"""select "businessentityid", "title", "firstname", "middlename", "lastname", "suffix", "jobtitle", "phonenumber", "phonenumbertype", "emailaddress", "emailpromotion", "addressline1", "addressline2", "city", "stateprovincename", "postalcode", "countryregionname", "territoryname", "territorygroup", "salesquota", "salesytd", "saleslastyear" from "sales"."vsalesperson"""".query(using VsalespersonViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, VsalespersonViewRow] = sql"""select "businessentityid", "title", "firstname", "middlename", "lastname", "suffix", "jobtitle", "phonenumber", "phonenumbertype", "emailaddress", "emailpromotion", "addressline1", "addressline2", "city", "stateprovincename", "postalcode", "countryregionname", "territoryname", "territorygroup", "salesquota", "salesytd", "saleslastyear" from "sales"."vsalesperson"""".query(using VsalespersonViewRow.read).stream
 }

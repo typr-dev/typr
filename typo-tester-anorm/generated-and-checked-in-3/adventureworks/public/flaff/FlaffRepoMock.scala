@@ -18,13 +18,13 @@ import typo.dsl.UpdateBuilder.UpdateBuilderMock
 import typo.dsl.UpdateParams
 
 case class FlaffRepoMock(map: scala.collection.mutable.Map[FlaffId, FlaffRow] = scala.collection.mutable.Map.empty[FlaffId, FlaffRow]) extends FlaffRepo {
-  def delete: DeleteBuilder[FlaffFields, FlaffRow] = DeleteBuilderMock(DeleteParams.empty, FlaffFields.structure, map)
+  override def delete: DeleteBuilder[FlaffFields, FlaffRow] = DeleteBuilderMock(DeleteParams.empty, FlaffFields.structure, map)
 
-  def deleteById(compositeId: FlaffId)(using c: Connection): Boolean = map.remove(compositeId).isDefined
+  override def deleteById(compositeId: FlaffId)(using c: Connection): Boolean = map.remove(compositeId).isDefined
 
-  def deleteByIds(compositeIds: Array[FlaffId])(using c: Connection): Int = compositeIds.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(compositeIds: Array[FlaffId])(using c: Connection): Int = compositeIds.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: FlaffRow)(using c: Connection): FlaffRow = {
+  override def insert(unsaved: FlaffRow)(using c: Connection): FlaffRow = {
     val _ = if (map.contains(unsaved.compositeId))
       sys.error(s"id ${unsaved.compositeId} already exists")
     else
@@ -33,7 +33,7 @@ case class FlaffRepoMock(map: scala.collection.mutable.Map[FlaffId, FlaffRow] = 
     unsaved
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[FlaffRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -43,34 +43,34 @@ case class FlaffRepoMock(map: scala.collection.mutable.Map[FlaffId, FlaffRow] = 
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[FlaffFields, FlaffRow] = SelectBuilderMock(FlaffFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[FlaffFields, FlaffRow] = SelectBuilderMock(FlaffFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(using c: Connection): List[FlaffRow] = map.values.toList
+  override def selectAll(using c: Connection): List[FlaffRow] = map.values.toList
 
-  def selectById(compositeId: FlaffId)(using c: Connection): Option[FlaffRow] = map.get(compositeId)
+  override def selectById(compositeId: FlaffId)(using c: Connection): Option[FlaffRow] = map.get(compositeId)
 
-  def selectByIds(compositeIds: Array[FlaffId])(using c: Connection): List[FlaffRow] = compositeIds.flatMap(map.get).toList
+  override def selectByIds(compositeIds: Array[FlaffId])(using c: Connection): List[FlaffRow] = compositeIds.flatMap(map.get).toList
 
-  def selectByIdsTracked(compositeIds: Array[FlaffId])(using c: Connection): Map[FlaffId, FlaffRow] = {
+  override def selectByIdsTracked(compositeIds: Array[FlaffId])(using c: Connection): Map[FlaffId, FlaffRow] = {
     val byId = selectByIds(compositeIds).view.map(x => (x.compositeId, x)).toMap
     compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[FlaffFields, FlaffRow] = UpdateBuilderMock(UpdateParams.empty, FlaffFields.structure, map)
+  override def update: UpdateBuilder[FlaffFields, FlaffRow] = UpdateBuilderMock(UpdateParams.empty, FlaffFields.structure, map)
 
-  def update(row: FlaffRow)(using c: Connection): Option[FlaffRow] = {
+  override def update(row: FlaffRow)(using c: Connection): Option[FlaffRow] = {
     map.get(row.compositeId).map { _ =>
       map.put(row.compositeId, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: FlaffRow)(using c: Connection): FlaffRow = {
+  override def upsert(unsaved: FlaffRow)(using c: Connection): FlaffRow = {
     map.put(unsaved.compositeId, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[FlaffRow])(using c: Connection): List[FlaffRow] = {
+  override def upsertBatch(unsaved: Iterable[FlaffRow])(using c: Connection): List[FlaffRow] = {
     unsaved.map { row =>
       map += (row.compositeId -> row)
       row
@@ -78,7 +78,7 @@ case class FlaffRepoMock(map: scala.collection.mutable.Map[FlaffId, FlaffRow] = 
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[FlaffRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

@@ -10,11 +10,11 @@ import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class SciViewRepoImpl extends SciViewRepo {
-  def select: SelectBuilder[SciViewFields, SciViewRow] = SelectBuilder.of("sa.sci", SciViewFields.structure, SciViewRow.`_rowParser`)
+  override def select: SelectBuilder[SciViewFields, SciViewRow] = SelectBuilder.of("sa.sci", SciViewFields.structure, SciViewRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[SciViewRow] = {
+  override def selectAll(using c: Connection): java.util.List[SciViewRow] = {
     interpolate"""select "id", "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text
     from "sa"."sci"
-    """.as(SciViewRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(SciViewRow.`_rowParser`.all()).runUnchecked(c)
   }
 }

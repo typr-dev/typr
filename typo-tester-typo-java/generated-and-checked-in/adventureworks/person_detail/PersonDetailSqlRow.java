@@ -12,7 +12,6 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple10;
 
 /** SQL file: person_detail.sql */
 public record PersonDetailSqlRow(
@@ -87,5 +86,5 @@ public record PersonDetailSqlRow(
     return new PersonDetailSqlRow(businessentityid, title, firstname, middlename, lastname, jobtitle, addressline1, city, postalcode, rowguid);
   };
 
-  static RowParser<PersonDetailSqlRow> _rowParser = RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), /* user-picked */ FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text, PersonDetailSqlRow::new, row -> new Tuple10<>(row.businessentityid(), row.title(), row.firstname(), row.middlename(), row.lastname(), row.jobtitle(), row.addressline1(), row.city(), row.postalcode(), row.rowguid()));;
+  static RowParser<PersonDetailSqlRow> _rowParser = RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), /* user-picked */ FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text, PersonDetailSqlRow::new, row -> new Object[]{row.businessentityid(), row.title(), row.firstname(), row.middlename(), row.lastname(), row.jobtitle(), row.addressline1(), row.city(), row.postalcode(), row.rowguid()});;
 }

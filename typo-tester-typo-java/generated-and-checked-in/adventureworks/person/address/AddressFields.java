@@ -23,7 +23,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface AddressFields {
-  static final class Impl extends Relation<AddressFields, AddressRow> {
+  final class Impl extends Relation<AddressFields, AddressRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -31,30 +31,39 @@ public interface AddressFields {
     @Override
     public AddressFields fields() {
       return new AddressFields() {
+               @Override
                public IdField<AddressId, AddressRow> addressid() {
                  return new IdField<AddressId, AddressRow>(_path, "addressid", AddressRow::addressid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withAddressid(value), AddressId.pgType);
                };
+               @Override
                public Field</* max 60 chars */ String, AddressRow> addressline1() {
                  return new Field</* max 60 chars */ String, AddressRow>(_path, "addressline1", AddressRow::addressline1, Optional.empty(), Optional.empty(), (row, value) -> row.withAddressline1(value), PgTypes.text);
                };
+               @Override
                public OptField</* max 60 chars */ String, AddressRow> addressline2() {
                  return new OptField</* max 60 chars */ String, AddressRow>(_path, "addressline2", AddressRow::addressline2, Optional.empty(), Optional.empty(), (row, value) -> row.withAddressline2(value), PgTypes.text);
                };
+               @Override
                public Field</* max 30 chars */ String, AddressRow> city() {
                  return new Field</* max 30 chars */ String, AddressRow>(_path, "city", AddressRow::city, Optional.empty(), Optional.empty(), (row, value) -> row.withCity(value), PgTypes.text);
                };
+               @Override
                public Field<StateprovinceId, AddressRow> stateprovinceid() {
                  return new Field<StateprovinceId, AddressRow>(_path, "stateprovinceid", AddressRow::stateprovinceid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withStateprovinceid(value), StateprovinceId.pgType);
                };
+               @Override
                public Field</* max 15 chars */ String, AddressRow> postalcode() {
                  return new Field</* max 15 chars */ String, AddressRow>(_path, "postalcode", AddressRow::postalcode, Optional.empty(), Optional.empty(), (row, value) -> row.withPostalcode(value), PgTypes.text);
                };
+               @Override
                public OptField<TypoBytea, AddressRow> spatiallocation() {
                  return new OptField<TypoBytea, AddressRow>(_path, "spatiallocation", AddressRow::spatiallocation, Optional.empty(), Optional.of("bytea"), (row, value) -> row.withSpatiallocation(value), TypoBytea.pgType);
                };
+               @Override
                public Field<TypoUUID, AddressRow> rowguid() {
                  return new Field<TypoUUID, AddressRow>(_path, "rowguid", AddressRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, AddressRow> modifieddate() {
                  return new Field<TypoLocalDateTime, AddressRow>(_path, "modifieddate", AddressRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -66,6 +75,7 @@ public interface AddressFields {
       return List.of(this.fields().addressid(), this.fields().addressline1(), this.fields().addressline2(), this.fields().city(), this.fields().stateprovinceid(), this.fields().postalcode(), this.fields().spatiallocation(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

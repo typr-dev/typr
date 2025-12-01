@@ -5,22 +5,22 @@
  */
 package adventureworks.pe.p;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class PViewRepoImpl implements PViewRepo {
+  @Override
   public SelectBuilder<PViewFields, PViewRow> select() {
     return SelectBuilder.of("pe.p", PViewFields.structure(), PViewRow._rowParser);
   };
 
+  @Override
   public List<PViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text
        from "pe"."p"
-    """)).as(PViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(PViewRow._rowParser.all()).runUnchecked(c);
   };
 }

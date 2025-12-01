@@ -24,11 +24,11 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class ProductdocumentRepoImpl extends ProductdocumentRepo {
-  def delete: DeleteBuilder[ProductdocumentFields, ProductdocumentRow] = DeleteBuilder.of(""""production"."productdocument"""", ProductdocumentFields.structure, ProductdocumentRow.rowParser(1).*)
+  override def delete: DeleteBuilder[ProductdocumentFields, ProductdocumentRow] = DeleteBuilder.of(""""production"."productdocument"""", ProductdocumentFields.structure, ProductdocumentRow.rowParser(1).*)
 
-  def deleteById(compositeId: ProductdocumentId)(implicit c: Connection): Boolean = SQL"""delete from "production"."productdocument" where "productid" = ${ParameterValue(compositeId.productid, null, ProductId.toStatement)} AND "documentnode" = ${ParameterValue(compositeId.documentnode, null, DocumentId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(compositeId: ProductdocumentId)(implicit c: Connection): Boolean = SQL"""delete from "production"."productdocument" where "productid" = ${ParameterValue(compositeId.productid, null, ProductId.toStatement)} AND "documentnode" = ${ParameterValue(compositeId.documentnode, null, DocumentId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(compositeIds: Array[ProductdocumentId])(implicit c: Connection): Int = {
+  override def deleteByIds(compositeIds: Array[ProductdocumentId])(implicit c: Connection): Int = {
     val productid = compositeIds.map(_.productid)
     val documentnode = compositeIds.map(_.documentnode)
     SQL"""delete
@@ -38,7 +38,7 @@ class ProductdocumentRepoImpl extends ProductdocumentRepo {
     """.executeUpdate()
   }
 
-  def insert(unsaved: ProductdocumentRow)(implicit c: Connection): ProductdocumentRow = {
+  override def insert(unsaved: ProductdocumentRow)(implicit c: Connection): ProductdocumentRow = {
   SQL"""insert into "production"."productdocument"("productid", "modifieddate", "documentnode")
     values (${ParameterValue(unsaved.productid, null, ProductId.toStatement)}::int4, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp, ${ParameterValue(unsaved.documentnode, null, DocumentId.toStatement)})
     returning "productid", "modifieddate"::text, "documentnode"
@@ -46,7 +46,7 @@ class ProductdocumentRepoImpl extends ProductdocumentRepo {
     .executeInsert(ProductdocumentRow.rowParser(1).single)
   }
 
-  def insert(unsaved: ProductdocumentRowUnsaved)(implicit c: Connection): ProductdocumentRow = {
+  override def insert(unsaved: ProductdocumentRowUnsaved)(implicit c: Connection): ProductdocumentRow = {
     val namedParameters = List(
       Some((NamedParameter("productid", ParameterValue(unsaved.productid, null, ProductId.toStatement)), "::int4")),
       unsaved.modifieddate match {
@@ -74,33 +74,33 @@ class ProductdocumentRepoImpl extends ProductdocumentRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[ProductdocumentRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "production"."productdocument"("productid", "modifieddate", "documentnode") FROM STDIN""", batchSize, unsaved)(ProductdocumentRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[ProductdocumentRowUnsaved],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "production"."productdocument"("productid", "modifieddate", "documentnode") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(ProductdocumentRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[ProductdocumentFields, ProductdocumentRow] = SelectBuilder.of(""""production"."productdocument"""", ProductdocumentFields.structure, ProductdocumentRow.rowParser)
+  override def select: SelectBuilder[ProductdocumentFields, ProductdocumentRow] = SelectBuilder.of(""""production"."productdocument"""", ProductdocumentFields.structure, ProductdocumentRow.rowParser)
 
-  def selectAll(implicit c: Connection): List[ProductdocumentRow] = {
+  override def selectAll(implicit c: Connection): List[ProductdocumentRow] = {
     SQL"""select "productid", "modifieddate"::text, "documentnode"
     from "production"."productdocument"
     """.as(ProductdocumentRow.rowParser(1).*)
   }
 
-  def selectById(compositeId: ProductdocumentId)(implicit c: Connection): Option[ProductdocumentRow] = {
+  override def selectById(compositeId: ProductdocumentId)(implicit c: Connection): Option[ProductdocumentRow] = {
     SQL"""select "productid", "modifieddate"::text, "documentnode"
     from "production"."productdocument"
     where "productid" = ${ParameterValue(compositeId.productid, null, ProductId.toStatement)} AND "documentnode" = ${ParameterValue(compositeId.documentnode, null, DocumentId.toStatement)}
     """.as(ProductdocumentRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(compositeIds: Array[ProductdocumentId])(implicit c: Connection): List[ProductdocumentRow] = {
+  override def selectByIds(compositeIds: Array[ProductdocumentId])(implicit c: Connection): List[ProductdocumentRow] = {
     val productid = compositeIds.map(_.productid)
     val documentnode = compositeIds.map(_.documentnode)
     SQL"""select "productid", "modifieddate"::text, "documentnode"
@@ -110,14 +110,14 @@ class ProductdocumentRepoImpl extends ProductdocumentRepo {
     """.as(ProductdocumentRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(compositeIds: Array[ProductdocumentId])(implicit c: Connection): Map[ProductdocumentId, ProductdocumentRow] = {
+  override def selectByIdsTracked(compositeIds: Array[ProductdocumentId])(implicit c: Connection): Map[ProductdocumentId, ProductdocumentRow] = {
     val byId = selectByIds(compositeIds).view.map(x => (x.compositeId, x)).toMap
     compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[ProductdocumentFields, ProductdocumentRow] = UpdateBuilder.of(""""production"."productdocument"""", ProductdocumentFields.structure, ProductdocumentRow.rowParser(1).*)
+  override def update: UpdateBuilder[ProductdocumentFields, ProductdocumentRow] = UpdateBuilder.of(""""production"."productdocument"""", ProductdocumentFields.structure, ProductdocumentRow.rowParser(1).*)
 
-  def update(row: ProductdocumentRow)(implicit c: Connection): Option[ProductdocumentRow] = {
+  override def update(row: ProductdocumentRow)(implicit c: Connection): Option[ProductdocumentRow] = {
     val compositeId = row.compositeId
     SQL"""update "production"."productdocument"
     set "modifieddate" = ${ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp
@@ -126,7 +126,7 @@ class ProductdocumentRepoImpl extends ProductdocumentRepo {
     """.executeInsert(ProductdocumentRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: ProductdocumentRow)(implicit c: Connection): ProductdocumentRow = {
+  override def upsert(unsaved: ProductdocumentRow)(implicit c: Connection): ProductdocumentRow = {
   SQL"""insert into "production"."productdocument"("productid", "modifieddate", "documentnode")
     values (
       ${ParameterValue(unsaved.productid, null, ProductId.toStatement)}::int4,
@@ -141,12 +141,13 @@ class ProductdocumentRepoImpl extends ProductdocumentRepo {
     .executeInsert(ProductdocumentRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[ProductdocumentRow])(implicit c: Connection): List[ProductdocumentRow] = {
+  override def upsertBatch(unsaved: Iterable[ProductdocumentRow])(implicit c: Connection): List[ProductdocumentRow] = {
     def toNamedParameter(row: ProductdocumentRow): List[NamedParameter] = List(
       NamedParameter("productid", ParameterValue(row.productid, null, ProductId.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement)),
       NamedParameter("documentnode", ParameterValue(row.documentnode, null, DocumentId.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -167,7 +168,7 @@ class ProductdocumentRepoImpl extends ProductdocumentRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[ProductdocumentRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

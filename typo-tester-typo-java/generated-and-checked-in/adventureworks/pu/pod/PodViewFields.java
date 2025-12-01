@@ -19,7 +19,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface PodViewFields {
-  static final class Impl extends Relation<PodViewFields, PodViewRow> {
+  final class Impl extends Relation<PodViewFields, PodViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -27,33 +27,43 @@ public interface PodViewFields {
     @Override
     public PodViewFields fields() {
       return new PodViewFields() {
+               @Override
                public Field<Integer, PodViewRow> id() {
                  return new Field<Integer, PodViewRow>(_path, "id", PodViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), PgTypes.int4);
                };
+               @Override
                public Field<PurchaseorderheaderId, PodViewRow> purchaseorderid() {
                  return new Field<PurchaseorderheaderId, PodViewRow>(_path, "purchaseorderid", PodViewRow::purchaseorderid, Optional.empty(), Optional.empty(), (row, value) -> row.withPurchaseorderid(value), PurchaseorderheaderId.pgType);
                };
+               @Override
                public Field<Integer, PodViewRow> purchaseorderdetailid() {
                  return new Field<Integer, PodViewRow>(_path, "purchaseorderdetailid", PodViewRow::purchaseorderdetailid, Optional.empty(), Optional.empty(), (row, value) -> row.withPurchaseorderdetailid(value), PgTypes.int4);
                };
+               @Override
                public Field<TypoLocalDateTime, PodViewRow> duedate() {
                  return new Field<TypoLocalDateTime, PodViewRow>(_path, "duedate", PodViewRow::duedate, Optional.of("text"), Optional.empty(), (row, value) -> row.withDuedate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public Field<TypoShort, PodViewRow> orderqty() {
                  return new Field<TypoShort, PodViewRow>(_path, "orderqty", PodViewRow::orderqty, Optional.empty(), Optional.empty(), (row, value) -> row.withOrderqty(value), TypoShort.pgType);
                };
+               @Override
                public Field<ProductId, PodViewRow> productid() {
                  return new Field<ProductId, PodViewRow>(_path, "productid", PodViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
                };
+               @Override
                public Field<BigDecimal, PodViewRow> unitprice() {
                  return new Field<BigDecimal, PodViewRow>(_path, "unitprice", PodViewRow::unitprice, Optional.empty(), Optional.empty(), (row, value) -> row.withUnitprice(value), PgTypes.numeric);
                };
+               @Override
                public Field<BigDecimal, PodViewRow> receivedqty() {
                  return new Field<BigDecimal, PodViewRow>(_path, "receivedqty", PodViewRow::receivedqty, Optional.empty(), Optional.empty(), (row, value) -> row.withReceivedqty(value), PgTypes.numeric);
                };
+               @Override
                public Field<BigDecimal, PodViewRow> rejectedqty() {
                  return new Field<BigDecimal, PodViewRow>(_path, "rejectedqty", PodViewRow::rejectedqty, Optional.empty(), Optional.empty(), (row, value) -> row.withRejectedqty(value), PgTypes.numeric);
                };
+               @Override
                public Field<TypoLocalDateTime, PodViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, PodViewRow>(_path, "modifieddate", PodViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -65,6 +75,7 @@ public interface PodViewFields {
       return List.of(this.fields().id(), this.fields().purchaseorderid(), this.fields().purchaseorderdetailid(), this.fields().duedate(), this.fields().orderqty(), this.fields().productid(), this.fields().unitprice(), this.fields().receivedqty(), this.fields().rejectedqty(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

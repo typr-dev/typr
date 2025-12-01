@@ -55,7 +55,14 @@ object TypoInterval {
         ps.getConnection.createArrayOf(
           "interval",
           v.map { vv =>
-            new PGInterval(vv.years, vv.months, vv.days, vv.hours, vv.minutes, vv.seconds)
+            new PGInterval(
+              vv.years,
+              vv.months,
+              vv.days,
+              vv.hours,
+              vv.minutes,
+              vv.seconds
+            )
           }
         )
       ),
@@ -136,7 +143,14 @@ object TypoInterval {
       (ps, i, v) => {
         ps.setObject(
           i,
-          new PGInterval(v.years, v.months, v.days, v.hours, v.minutes, v.seconds)
+          new PGInterval(
+            v.years,
+            v.months,
+            v.days,
+            v.hours,
+            v.minutes,
+            v.seconds
+          )
         )
       },
       "interval"

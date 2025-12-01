@@ -11,7 +11,6 @@ import adventureworks.public.Name
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple3
 
 /** Table: production.scrapreason
  * Manufacturing failure reasons lookup table.
@@ -36,7 +35,7 @@ case class ScrapreasonRow(
 }
 
 object ScrapreasonRow {
-  val `_rowParser`: RowParser[ScrapreasonRow] = RowParsers.of(ScrapreasonId.pgType, Name.pgType, TypoLocalDateTime.pgType, ScrapreasonRow.apply, row => new Tuple3(row.scrapreasonid, row.name, row.modifieddate))
+  val `_rowParser`: RowParser[ScrapreasonRow] = RowParsers.of(ScrapreasonId.pgType, Name.pgType, TypoLocalDateTime.pgType, ScrapreasonRow.apply, row => Array(row.scrapreasonid, row.name, row.modifieddate))
 
   given pgText: PgText[ScrapreasonRow] = PgText.from(`_rowParser`)
 }

@@ -29,7 +29,7 @@ object CtViewFields {
 
     override lazy val fields: CtViewFields = {
       new CtViewFields {
-        def id: Field[ContacttypeId, CtViewRow] = {
+        override def id: Field[ContacttypeId, CtViewRow] = {
           new Field[ContacttypeId, CtViewRow](
             _path,
             "id",
@@ -40,7 +40,7 @@ object CtViewFields {
             ContacttypeId.pgType
           )
         }
-        def contacttypeid: Field[ContacttypeId, CtViewRow] = {
+        override def contacttypeid: Field[ContacttypeId, CtViewRow] = {
           new Field[ContacttypeId, CtViewRow](
             _path,
             "contacttypeid",
@@ -51,7 +51,7 @@ object CtViewFields {
             ContacttypeId.pgType
           )
         }
-        def name: Field[Name, CtViewRow] = {
+        override def name: Field[Name, CtViewRow] = {
           new Field[Name, CtViewRow](
             _path,
             "name",
@@ -62,7 +62,7 @@ object CtViewFields {
             Name.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, CtViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, CtViewRow] = {
           new Field[TypoLocalDateTime, CtViewRow](
             _path,
             "modifieddate",
@@ -78,7 +78,7 @@ object CtViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, CtViewRow]] = java.util.List.of(this.fields.id, this.fields.contacttypeid, this.fields.name, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[CtViewFields, CtViewRow] = new Impl(java.util.List.of())

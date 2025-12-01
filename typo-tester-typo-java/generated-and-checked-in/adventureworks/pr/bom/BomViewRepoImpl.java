@@ -5,22 +5,22 @@
  */
 package adventureworks.pr.bom;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class BomViewRepoImpl implements BomViewRepo {
+  @Override
   public SelectBuilder<BomViewFields, BomViewRow> select() {
     return SelectBuilder.of("pr.bom", BomViewFields.structure(), BomViewRow._rowParser);
   };
 
+  @Override
   public List<BomViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text
        from "pr"."bom"
-    """)).as(BomViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(BomViewRow._rowParser.all()).runUnchecked(c);
   };
 }

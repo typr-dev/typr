@@ -25,7 +25,7 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 
 public interface PersoncreditcardFields {
-  static final class Impl extends Relation<PersoncreditcardFields, PersoncreditcardRow> {
+  final class Impl extends Relation<PersoncreditcardFields, PersoncreditcardRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -33,12 +33,15 @@ public interface PersoncreditcardFields {
     @Override
     public PersoncreditcardFields fields() {
       return new PersoncreditcardFields() {
+               @Override
                public IdField<BusinessentityId, PersoncreditcardRow> businessentityid() {
                  return new IdField<BusinessentityId, PersoncreditcardRow>(_path, "businessentityid", PersoncreditcardRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public IdField</* user-picked */ CustomCreditcardId, PersoncreditcardRow> creditcardid() {
                  return new IdField</* user-picked */ CustomCreditcardId, PersoncreditcardRow>(_path, "creditcardid", PersoncreditcardRow::creditcardid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withCreditcardid(value), /* user-picked */ CustomCreditcardId.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, PersoncreditcardRow> modifieddate() {
                  return new Field<TypoLocalDateTime, PersoncreditcardRow>(_path, "modifieddate", PersoncreditcardRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -50,6 +53,7 @@ public interface PersoncreditcardFields {
       return List.of(this.fields().businessentityid(), this.fields().creditcardid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

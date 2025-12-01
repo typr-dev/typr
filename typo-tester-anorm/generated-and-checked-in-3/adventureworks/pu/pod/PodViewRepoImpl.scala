@@ -10,9 +10,9 @@ import typo.dsl.SelectBuilder
 import anorm.SqlStringInterpolation
 
 class PodViewRepoImpl extends PodViewRepo {
-  def select: SelectBuilder[PodViewFields, PodViewRow] = SelectBuilder.of(""""pu"."pod"""", PodViewFields.structure, PodViewRow.rowParser)
+  override def select: SelectBuilder[PodViewFields, PodViewRow] = SelectBuilder.of(""""pu"."pod"""", PodViewFields.structure, PodViewRow.rowParser)
 
-  def selectAll(using c: Connection): List[PodViewRow] = {
+  override def selectAll(using c: Connection): List[PodViewRow] = {
     SQL"""select "id", "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text
     from "pu"."pod"
     """.as(PodViewRow.rowParser(1).*)

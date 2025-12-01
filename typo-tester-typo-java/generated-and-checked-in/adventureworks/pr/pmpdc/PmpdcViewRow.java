@@ -11,7 +11,6 @@ import adventureworks.production.productdescription.ProductdescriptionId;
 import adventureworks.production.productmodel.ProductmodelId;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple4;
 
 /** View: pr.pmpdc */
 public record PmpdcViewRow(
@@ -44,5 +43,5 @@ public record PmpdcViewRow(
     return new PmpdcViewRow(productmodelid, productdescriptionid, cultureid, modifieddate);
   };
 
-  static RowParser<PmpdcViewRow> _rowParser = RowParsers.of(ProductmodelId.pgType, ProductdescriptionId.pgType, CultureId.pgType, TypoLocalDateTime.pgType, PmpdcViewRow::new, row -> new Tuple4<>(row.productmodelid(), row.productdescriptionid(), row.cultureid(), row.modifieddate()));;
+  static RowParser<PmpdcViewRow> _rowParser = RowParsers.of(ProductmodelId.pgType, ProductdescriptionId.pgType, CultureId.pgType, TypoLocalDateTime.pgType, PmpdcViewRow::new, row -> new Object[]{row.productmodelid(), row.productdescriptionid(), row.cultureid(), row.modifieddate()});;
 }

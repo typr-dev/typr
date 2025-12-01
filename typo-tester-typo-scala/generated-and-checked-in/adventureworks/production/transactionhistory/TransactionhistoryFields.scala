@@ -45,7 +45,7 @@ object TransactionhistoryFields {
 
     override lazy val fields: TransactionhistoryFields = {
       new TransactionhistoryFields {
-        def transactionid: IdField[TransactionhistoryId, TransactionhistoryRow] = {
+        override def transactionid: IdField[TransactionhistoryId, TransactionhistoryRow] = {
           new IdField[TransactionhistoryId, TransactionhistoryRow](
             _path,
             "transactionid",
@@ -56,7 +56,7 @@ object TransactionhistoryFields {
             TransactionhistoryId.pgType
           )
         }
-        def productid: Field[ProductId, TransactionhistoryRow] = {
+        override def productid: Field[ProductId, TransactionhistoryRow] = {
           new Field[ProductId, TransactionhistoryRow](
             _path,
             "productid",
@@ -67,7 +67,7 @@ object TransactionhistoryFields {
             ProductId.pgType
           )
         }
-        def referenceorderid: Field[Integer, TransactionhistoryRow] = {
+        override def referenceorderid: Field[Integer, TransactionhistoryRow] = {
           new Field[Integer, TransactionhistoryRow](
             _path,
             "referenceorderid",
@@ -78,7 +78,7 @@ object TransactionhistoryFields {
             PgTypes.int4
           )
         }
-        def referenceorderlineid: Field[Integer, TransactionhistoryRow] = {
+        override def referenceorderlineid: Field[Integer, TransactionhistoryRow] = {
           new Field[Integer, TransactionhistoryRow](
             _path,
             "referenceorderlineid",
@@ -89,7 +89,7 @@ object TransactionhistoryFields {
             PgTypes.int4
           )
         }
-        def transactiondate: Field[TypoLocalDateTime, TransactionhistoryRow] = {
+        override def transactiondate: Field[TypoLocalDateTime, TransactionhistoryRow] = {
           new Field[TypoLocalDateTime, TransactionhistoryRow](
             _path,
             "transactiondate",
@@ -100,7 +100,7 @@ object TransactionhistoryFields {
             TypoLocalDateTime.pgType
           )
         }
-        def transactiontype: Field[/* bpchar, max 1 chars */ String, TransactionhistoryRow] = {
+        override def transactiontype: Field[/* bpchar, max 1 chars */ String, TransactionhistoryRow] = {
           new Field[/* bpchar, max 1 chars */ String, TransactionhistoryRow](
             _path,
             "transactiontype",
@@ -111,7 +111,7 @@ object TransactionhistoryFields {
             PgTypes.text
           )
         }
-        def quantity: Field[Integer, TransactionhistoryRow] = {
+        override def quantity: Field[Integer, TransactionhistoryRow] = {
           new Field[Integer, TransactionhistoryRow](
             _path,
             "quantity",
@@ -122,7 +122,7 @@ object TransactionhistoryFields {
             PgTypes.int4
           )
         }
-        def actualcost: Field[java.math.BigDecimal, TransactionhistoryRow] = {
+        override def actualcost: Field[java.math.BigDecimal, TransactionhistoryRow] = {
           new Field[java.math.BigDecimal, TransactionhistoryRow](
             _path,
             "actualcost",
@@ -133,7 +133,7 @@ object TransactionhistoryFields {
             PgTypes.numeric
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, TransactionhistoryRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, TransactionhistoryRow] = {
           new Field[TypoLocalDateTime, TransactionhistoryRow](
             _path,
             "modifieddate",
@@ -149,7 +149,7 @@ object TransactionhistoryFields {
 
     override lazy val columns: java.util.List[FieldLike[?, TransactionhistoryRow]] = java.util.List.of(this.fields.transactionid, this.fields.productid, this.fields.referenceorderid, this.fields.referenceorderlineid, this.fields.transactiondate, this.fields.transactiontype, this.fields.quantity, this.fields.actualcost, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[TransactionhistoryFields, TransactionhistoryRow] = new Impl(java.util.List.of())

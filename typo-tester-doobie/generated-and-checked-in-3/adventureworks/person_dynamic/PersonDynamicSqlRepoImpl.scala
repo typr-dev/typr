@@ -10,12 +10,10 @@ import doobie.syntax.SqlInterpolator.SingleFragment.fromWrite
 import doobie.util.Write
 import doobie.util.meta.Meta
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class PersonDynamicSqlRepoImpl extends PersonDynamicSqlRepo {
-  def apply(firstName: Option[String]): Stream[ConnectionIO, PersonDynamicSqlRow] = {
+  override def apply(firstName: Option[String]): Stream[ConnectionIO, PersonDynamicSqlRow] = {
     val sql =
       sql"""SELECT p.title, p.firstname, p.middlename, p.lastname
       FROM person.person p

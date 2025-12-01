@@ -30,7 +30,7 @@ object PmpdcViewFields {
 
     override lazy val fields: PmpdcViewFields = {
       new PmpdcViewFields {
-        def productmodelid: Field[ProductmodelId, PmpdcViewRow] = {
+        override def productmodelid: Field[ProductmodelId, PmpdcViewRow] = {
           new Field[ProductmodelId, PmpdcViewRow](
             _path,
             "productmodelid",
@@ -41,7 +41,7 @@ object PmpdcViewFields {
             ProductmodelId.pgType
           )
         }
-        def productdescriptionid: Field[ProductdescriptionId, PmpdcViewRow] = {
+        override def productdescriptionid: Field[ProductdescriptionId, PmpdcViewRow] = {
           new Field[ProductdescriptionId, PmpdcViewRow](
             _path,
             "productdescriptionid",
@@ -52,7 +52,7 @@ object PmpdcViewFields {
             ProductdescriptionId.pgType
           )
         }
-        def cultureid: Field[CultureId, PmpdcViewRow] = {
+        override def cultureid: Field[CultureId, PmpdcViewRow] = {
           new Field[CultureId, PmpdcViewRow](
             _path,
             "cultureid",
@@ -63,7 +63,7 @@ object PmpdcViewFields {
             CultureId.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, PmpdcViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, PmpdcViewRow] = {
           new Field[TypoLocalDateTime, PmpdcViewRow](
             _path,
             "modifieddate",
@@ -79,7 +79,7 @@ object PmpdcViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, PmpdcViewRow]] = java.util.List.of(this.fields.productmodelid, this.fields.productdescriptionid, this.fields.cultureid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[PmpdcViewFields, PmpdcViewRow] = new Impl(java.util.List.of())

@@ -5,12 +5,13 @@
  */
 package adventureworks.sales.salesorderheader
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
 
 /** Type for the primary key of table `sales.salesorderheader` */
-case class SalesorderheaderId(value: Integer) extends scala.AnyVal
+case class SalesorderheaderId(@JsonValue value: Integer) extends scala.AnyVal
 
 object SalesorderheaderId {
   given bijection: Bijection[SalesorderheaderId, Integer] = Bijection.apply[SalesorderheaderId, Integer](_.value)(SalesorderheaderId.apply)

@@ -18,7 +18,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface VsalespersonsalesbyfiscalyearsdataViewFields {
-  static final class Impl extends Relation<VsalespersonsalesbyfiscalyearsdataViewFields, VsalespersonsalesbyfiscalyearsdataViewRow> {
+  final class Impl extends Relation<VsalespersonsalesbyfiscalyearsdataViewFields, VsalespersonsalesbyfiscalyearsdataViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -26,21 +26,27 @@ public interface VsalespersonsalesbyfiscalyearsdataViewFields {
     @Override
     public VsalespersonsalesbyfiscalyearsdataViewFields fields() {
       return new VsalespersonsalesbyfiscalyearsdataViewFields() {
+               @Override
                public OptField<BusinessentityId, VsalespersonsalesbyfiscalyearsdataViewRow> salespersonid() {
                  return new OptField<BusinessentityId, VsalespersonsalesbyfiscalyearsdataViewRow>(_path, "salespersonid", VsalespersonsalesbyfiscalyearsdataViewRow::salespersonid, Optional.empty(), Optional.empty(), (row, value) -> row.withSalespersonid(value), BusinessentityId.pgType);
                };
+               @Override
                public OptField<String, VsalespersonsalesbyfiscalyearsdataViewRow> fullname() {
                  return new OptField<String, VsalespersonsalesbyfiscalyearsdataViewRow>(_path, "fullname", VsalespersonsalesbyfiscalyearsdataViewRow::fullname, Optional.empty(), Optional.empty(), (row, value) -> row.withFullname(value), PgTypes.text);
                };
+               @Override
                public Field</* max 50 chars */ String, VsalespersonsalesbyfiscalyearsdataViewRow> jobtitle() {
                  return new Field</* max 50 chars */ String, VsalespersonsalesbyfiscalyearsdataViewRow>(_path, "jobtitle", VsalespersonsalesbyfiscalyearsdataViewRow::jobtitle, Optional.empty(), Optional.empty(), (row, value) -> row.withJobtitle(value), PgTypes.text);
                };
+               @Override
                public Field<Name, VsalespersonsalesbyfiscalyearsdataViewRow> salesterritory() {
                  return new Field<Name, VsalespersonsalesbyfiscalyearsdataViewRow>(_path, "salesterritory", VsalespersonsalesbyfiscalyearsdataViewRow::salesterritory, Optional.empty(), Optional.empty(), (row, value) -> row.withSalesterritory(value), Name.pgType);
                };
+               @Override
                public OptField<BigDecimal, VsalespersonsalesbyfiscalyearsdataViewRow> salestotal() {
                  return new OptField<BigDecimal, VsalespersonsalesbyfiscalyearsdataViewRow>(_path, "salestotal", VsalespersonsalesbyfiscalyearsdataViewRow::salestotal, Optional.empty(), Optional.empty(), (row, value) -> row.withSalestotal(value), PgTypes.numeric);
                };
+               @Override
                public OptField<BigDecimal, VsalespersonsalesbyfiscalyearsdataViewRow> fiscalyear() {
                  return new OptField<BigDecimal, VsalespersonsalesbyfiscalyearsdataViewRow>(_path, "fiscalyear", VsalespersonsalesbyfiscalyearsdataViewRow::fiscalyear, Optional.empty(), Optional.empty(), (row, value) -> row.withFiscalyear(value), PgTypes.numeric);
                };
@@ -52,6 +58,7 @@ public interface VsalespersonsalesbyfiscalyearsdataViewFields {
       return List.of(this.fields().salespersonid(), this.fields().fullname(), this.fields().jobtitle(), this.fields().salesterritory(), this.fields().salestotal(), this.fields().fiscalyear());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

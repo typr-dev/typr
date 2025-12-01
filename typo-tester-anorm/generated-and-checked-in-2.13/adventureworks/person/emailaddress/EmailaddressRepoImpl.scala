@@ -26,11 +26,11 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class EmailaddressRepoImpl extends EmailaddressRepo {
-  def delete: DeleteBuilder[EmailaddressFields, EmailaddressRow] = DeleteBuilder.of(""""person"."emailaddress"""", EmailaddressFields.structure, EmailaddressRow.rowParser(1).*)
+  override def delete: DeleteBuilder[EmailaddressFields, EmailaddressRow] = DeleteBuilder.of(""""person"."emailaddress"""", EmailaddressFields.structure, EmailaddressRow.rowParser(1).*)
 
-  def deleteById(compositeId: EmailaddressId)(implicit c: Connection): Boolean = SQL"""delete from "person"."emailaddress" where "businessentityid" = ${ParameterValue(compositeId.businessentityid, null, BusinessentityId.toStatement)} AND "emailaddressid" = ${ParameterValue(compositeId.emailaddressid, null, ToStatement.intToStatement)}""".executeUpdate() > 0
+  override def deleteById(compositeId: EmailaddressId)(implicit c: Connection): Boolean = SQL"""delete from "person"."emailaddress" where "businessentityid" = ${ParameterValue(compositeId.businessentityid, null, BusinessentityId.toStatement)} AND "emailaddressid" = ${ParameterValue(compositeId.emailaddressid, null, ToStatement.intToStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(compositeIds: Array[EmailaddressId])(implicit c: Connection): Int = {
+  override def deleteByIds(compositeIds: Array[EmailaddressId])(implicit c: Connection): Int = {
     val businessentityid = compositeIds.map(_.businessentityid)
     val emailaddressid = compositeIds.map(_.emailaddressid)
     SQL"""delete
@@ -40,7 +40,7 @@ class EmailaddressRepoImpl extends EmailaddressRepo {
     """.executeUpdate()
   }
 
-  def insert(unsaved: EmailaddressRow)(implicit c: Connection): EmailaddressRow = {
+  override def insert(unsaved: EmailaddressRow)(implicit c: Connection): EmailaddressRow = {
   SQL"""insert into "person"."emailaddress"("businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate")
     values (${ParameterValue(unsaved.businessentityid, null, BusinessentityId.toStatement)}::int4, ${ParameterValue(unsaved.emailaddressid, null, ToStatement.intToStatement)}::int4, ${ParameterValue(unsaved.emailaddress, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}, ${ParameterValue(unsaved.rowguid, null, TypoUUID.toStatement)}::uuid, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"::text
@@ -48,7 +48,7 @@ class EmailaddressRepoImpl extends EmailaddressRepo {
     .executeInsert(EmailaddressRow.rowParser(1).single)
   }
 
-  def insert(unsaved: EmailaddressRowUnsaved)(implicit c: Connection): EmailaddressRow = {
+  override def insert(unsaved: EmailaddressRowUnsaved)(implicit c: Connection): EmailaddressRow = {
     val namedParameters = List(
       Some((NamedParameter("businessentityid", ParameterValue(unsaved.businessentityid, null, BusinessentityId.toStatement)), "::int4")),
       Some((NamedParameter("emailaddress", ParameterValue(unsaved.emailaddress, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))), "")),
@@ -81,33 +81,33 @@ class EmailaddressRepoImpl extends EmailaddressRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[EmailaddressRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "person"."emailaddress"("businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved)(EmailaddressRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[EmailaddressRowUnsaved],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "person"."emailaddress"("businessentityid", "emailaddress", "emailaddressid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(EmailaddressRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[EmailaddressFields, EmailaddressRow] = SelectBuilder.of(""""person"."emailaddress"""", EmailaddressFields.structure, EmailaddressRow.rowParser)
+  override def select: SelectBuilder[EmailaddressFields, EmailaddressRow] = SelectBuilder.of(""""person"."emailaddress"""", EmailaddressFields.structure, EmailaddressRow.rowParser)
 
-  def selectAll(implicit c: Connection): List[EmailaddressRow] = {
+  override def selectAll(implicit c: Connection): List[EmailaddressRow] = {
     SQL"""select "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"::text
     from "person"."emailaddress"
     """.as(EmailaddressRow.rowParser(1).*)
   }
 
-  def selectById(compositeId: EmailaddressId)(implicit c: Connection): Option[EmailaddressRow] = {
+  override def selectById(compositeId: EmailaddressId)(implicit c: Connection): Option[EmailaddressRow] = {
     SQL"""select "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"::text
     from "person"."emailaddress"
     where "businessentityid" = ${ParameterValue(compositeId.businessentityid, null, BusinessentityId.toStatement)} AND "emailaddressid" = ${ParameterValue(compositeId.emailaddressid, null, ToStatement.intToStatement)}
     """.as(EmailaddressRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(compositeIds: Array[EmailaddressId])(implicit c: Connection): List[EmailaddressRow] = {
+  override def selectByIds(compositeIds: Array[EmailaddressId])(implicit c: Connection): List[EmailaddressRow] = {
     val businessentityid = compositeIds.map(_.businessentityid)
     val emailaddressid = compositeIds.map(_.emailaddressid)
     SQL"""select "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"::text
@@ -117,14 +117,14 @@ class EmailaddressRepoImpl extends EmailaddressRepo {
     """.as(EmailaddressRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(compositeIds: Array[EmailaddressId])(implicit c: Connection): Map[EmailaddressId, EmailaddressRow] = {
+  override def selectByIdsTracked(compositeIds: Array[EmailaddressId])(implicit c: Connection): Map[EmailaddressId, EmailaddressRow] = {
     val byId = selectByIds(compositeIds).view.map(x => (x.compositeId, x)).toMap
     compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[EmailaddressFields, EmailaddressRow] = UpdateBuilder.of(""""person"."emailaddress"""", EmailaddressFields.structure, EmailaddressRow.rowParser(1).*)
+  override def update: UpdateBuilder[EmailaddressFields, EmailaddressRow] = UpdateBuilder.of(""""person"."emailaddress"""", EmailaddressFields.structure, EmailaddressRow.rowParser(1).*)
 
-  def update(row: EmailaddressRow)(implicit c: Connection): Option[EmailaddressRow] = {
+  override def update(row: EmailaddressRow)(implicit c: Connection): Option[EmailaddressRow] = {
     val compositeId = row.compositeId
     SQL"""update "person"."emailaddress"
     set "emailaddress" = ${ParameterValue(row.emailaddress, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))},
@@ -135,7 +135,7 @@ class EmailaddressRepoImpl extends EmailaddressRepo {
     """.executeInsert(EmailaddressRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: EmailaddressRow)(implicit c: Connection): EmailaddressRow = {
+  override def upsert(unsaved: EmailaddressRow)(implicit c: Connection): EmailaddressRow = {
   SQL"""insert into "person"."emailaddress"("businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate")
     values (
       ${ParameterValue(unsaved.businessentityid, null, BusinessentityId.toStatement)}::int4,
@@ -154,7 +154,7 @@ class EmailaddressRepoImpl extends EmailaddressRepo {
     .executeInsert(EmailaddressRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[EmailaddressRow])(implicit c: Connection): List[EmailaddressRow] = {
+  override def upsertBatch(unsaved: Iterable[EmailaddressRow])(implicit c: Connection): List[EmailaddressRow] = {
     def toNamedParameter(row: EmailaddressRow): List[NamedParameter] = List(
       NamedParameter("businessentityid", ParameterValue(row.businessentityid, null, BusinessentityId.toStatement)),
       NamedParameter("emailaddressid", ParameterValue(row.emailaddressid, null, ToStatement.intToStatement)),
@@ -162,6 +162,7 @@ class EmailaddressRepoImpl extends EmailaddressRepo {
       NamedParameter("rowguid", ParameterValue(row.rowguid, null, TypoUUID.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -184,7 +185,7 @@ class EmailaddressRepoImpl extends EmailaddressRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[EmailaddressRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

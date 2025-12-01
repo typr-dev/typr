@@ -44,7 +44,7 @@ object VjobcandidateemploymentViewFields {
 
     override lazy val fields: VjobcandidateemploymentViewFields = {
       new VjobcandidateemploymentViewFields {
-        def jobcandidateid: Field[JobcandidateId, VjobcandidateemploymentViewRow] = {
+        override def jobcandidateid: Field[JobcandidateId, VjobcandidateemploymentViewRow] = {
           new Field[JobcandidateId, VjobcandidateemploymentViewRow](
             _path,
             "jobcandidateid",
@@ -55,7 +55,7 @@ object VjobcandidateemploymentViewFields {
             JobcandidateId.pgType
           )
         }
-        def empStartDate: OptField[TypoLocalDate, VjobcandidateemploymentViewRow] = {
+        override def empStartDate: OptField[TypoLocalDate, VjobcandidateemploymentViewRow] = {
           new OptField[TypoLocalDate, VjobcandidateemploymentViewRow](
             _path,
             "Emp.StartDate",
@@ -66,7 +66,7 @@ object VjobcandidateemploymentViewFields {
             TypoLocalDate.pgType
           )
         }
-        def empEndDate: OptField[TypoLocalDate, VjobcandidateemploymentViewRow] = {
+        override def empEndDate: OptField[TypoLocalDate, VjobcandidateemploymentViewRow] = {
           new OptField[TypoLocalDate, VjobcandidateemploymentViewRow](
             _path,
             "Emp.EndDate",
@@ -77,7 +77,7 @@ object VjobcandidateemploymentViewFields {
             TypoLocalDate.pgType
           )
         }
-        def empOrgName: OptField[/* max 100 chars */ String, VjobcandidateemploymentViewRow] = {
+        override def empOrgName: OptField[/* max 100 chars */ String, VjobcandidateemploymentViewRow] = {
           new OptField[/* max 100 chars */ String, VjobcandidateemploymentViewRow](
             _path,
             "Emp.OrgName",
@@ -88,7 +88,7 @@ object VjobcandidateemploymentViewFields {
             PgTypes.text
           )
         }
-        def empJobTitle: OptField[/* max 100 chars */ String, VjobcandidateemploymentViewRow] = {
+        override def empJobTitle: OptField[/* max 100 chars */ String, VjobcandidateemploymentViewRow] = {
           new OptField[/* max 100 chars */ String, VjobcandidateemploymentViewRow](
             _path,
             "Emp.JobTitle",
@@ -99,7 +99,7 @@ object VjobcandidateemploymentViewFields {
             PgTypes.text
           )
         }
-        def empResponsibility: OptField[String, VjobcandidateemploymentViewRow] = {
+        override def empResponsibility: OptField[String, VjobcandidateemploymentViewRow] = {
           new OptField[String, VjobcandidateemploymentViewRow](
             _path,
             "Emp.Responsibility",
@@ -110,7 +110,7 @@ object VjobcandidateemploymentViewFields {
             PgTypes.text
           )
         }
-        def empFunctionCategory: OptField[String, VjobcandidateemploymentViewRow] = {
+        override def empFunctionCategory: OptField[String, VjobcandidateemploymentViewRow] = {
           new OptField[String, VjobcandidateemploymentViewRow](
             _path,
             "Emp.FunctionCategory",
@@ -121,7 +121,7 @@ object VjobcandidateemploymentViewFields {
             PgTypes.text
           )
         }
-        def empIndustryCategory: OptField[String, VjobcandidateemploymentViewRow] = {
+        override def empIndustryCategory: OptField[String, VjobcandidateemploymentViewRow] = {
           new OptField[String, VjobcandidateemploymentViewRow](
             _path,
             "Emp.IndustryCategory",
@@ -132,7 +132,7 @@ object VjobcandidateemploymentViewFields {
             PgTypes.text
           )
         }
-        def empLocCountryRegion: OptField[String, VjobcandidateemploymentViewRow] = {
+        override def empLocCountryRegion: OptField[String, VjobcandidateemploymentViewRow] = {
           new OptField[String, VjobcandidateemploymentViewRow](
             _path,
             "Emp.Loc.CountryRegion",
@@ -143,7 +143,7 @@ object VjobcandidateemploymentViewFields {
             PgTypes.text
           )
         }
-        def empLocState: OptField[String, VjobcandidateemploymentViewRow] = {
+        override def empLocState: OptField[String, VjobcandidateemploymentViewRow] = {
           new OptField[String, VjobcandidateemploymentViewRow](
             _path,
             "Emp.Loc.State",
@@ -154,7 +154,7 @@ object VjobcandidateemploymentViewFields {
             PgTypes.text
           )
         }
-        def empLocCity: OptField[String, VjobcandidateemploymentViewRow] = {
+        override def empLocCity: OptField[String, VjobcandidateemploymentViewRow] = {
           new OptField[String, VjobcandidateemploymentViewRow](
             _path,
             "Emp.Loc.City",
@@ -170,7 +170,7 @@ object VjobcandidateemploymentViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, VjobcandidateemploymentViewRow]] = java.util.List.of(this.fields.jobcandidateid, this.fields.empStartDate, this.fields.empEndDate, this.fields.empOrgName, this.fields.empJobTitle, this.fields.empResponsibility, this.fields.empFunctionCategory, this.fields.empIndustryCategory, this.fields.empLocCountryRegion, this.fields.empLocState, this.fields.empLocCity)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[VjobcandidateemploymentViewFields, VjobcandidateemploymentViewRow] = new Impl(java.util.List.of())

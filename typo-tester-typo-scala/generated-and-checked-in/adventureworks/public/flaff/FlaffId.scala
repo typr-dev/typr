@@ -6,11 +6,12 @@
 package adventureworks.public.flaff
 
 import adventureworks.public.ShortText
+import com.fasterxml.jackson.annotation.JsonProperty
 
 /** Type for the composite primary key of table `public.flaff` */
 case class FlaffId(
   code: ShortText,
-  anotherCode: /* max 20 chars */ String,
-  someNumber: Integer,
+  @JsonProperty("another_code") anotherCode: /* max 20 chars */ String,
+  @JsonProperty("some_number") someNumber: Integer,
   specifier: ShortText
 )

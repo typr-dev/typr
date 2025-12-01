@@ -27,7 +27,7 @@ object ScrapreasonFields {
 
     override lazy val fields: ScrapreasonFields = {
       new ScrapreasonFields {
-        def scrapreasonid: IdField[ScrapreasonId, ScrapreasonRow] = {
+        override def scrapreasonid: IdField[ScrapreasonId, ScrapreasonRow] = {
           new IdField[ScrapreasonId, ScrapreasonRow](
             _path,
             "scrapreasonid",
@@ -38,7 +38,7 @@ object ScrapreasonFields {
             ScrapreasonId.pgType
           )
         }
-        def name: Field[Name, ScrapreasonRow] = {
+        override def name: Field[Name, ScrapreasonRow] = {
           new Field[Name, ScrapreasonRow](
             _path,
             "name",
@@ -49,7 +49,7 @@ object ScrapreasonFields {
             Name.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, ScrapreasonRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, ScrapreasonRow] = {
           new Field[TypoLocalDateTime, ScrapreasonRow](
             _path,
             "modifieddate",
@@ -65,7 +65,7 @@ object ScrapreasonFields {
 
     override lazy val columns: java.util.List[FieldLike[?, ScrapreasonRow]] = java.util.List.of(this.fields.scrapreasonid, this.fields.name, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[ScrapreasonFields, ScrapreasonRow] = new Impl(java.util.List.of())

@@ -14,7 +14,6 @@ import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple10
 
 /** View: pe.a */
 case class AViewRow(
@@ -41,18 +40,5 @@ case class AViewRow(
 )
 
 object AViewRow {
-  val `_rowParser`: RowParser[AViewRow] = {
-    RowParsers.of(AddressId.pgType, AddressId.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text, StateprovinceId.pgType, PgTypes.text, TypoBytea.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, AViewRow.apply, row => new Tuple10(
-      row.id,
-      row.addressid,
-      row.addressline1,
-      row.addressline2,
-      row.city,
-      row.stateprovinceid,
-      row.postalcode,
-      row.spatiallocation,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[AViewRow] = RowParsers.of(AddressId.pgType, AddressId.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text, StateprovinceId.pgType, PgTypes.text, TypoBytea.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, AViewRow.apply, row => Array(row.id, row.addressid, row.addressline1, row.addressline2, row.city, row.stateprovinceid, row.postalcode, row.spatiallocation, row.rowguid, row.modifieddate))
 }

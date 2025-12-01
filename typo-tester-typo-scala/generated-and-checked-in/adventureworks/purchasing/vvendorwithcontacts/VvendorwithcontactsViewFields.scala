@@ -48,7 +48,7 @@ object VvendorwithcontactsViewFields {
 
     override lazy val fields: VvendorwithcontactsViewFields = {
       new VvendorwithcontactsViewFields {
-        def businessentityid: Field[BusinessentityId, VvendorwithcontactsViewRow] = {
+        override def businessentityid: Field[BusinessentityId, VvendorwithcontactsViewRow] = {
           new Field[BusinessentityId, VvendorwithcontactsViewRow](
             _path,
             "businessentityid",
@@ -59,7 +59,7 @@ object VvendorwithcontactsViewFields {
             BusinessentityId.pgType
           )
         }
-        def name: Field[Name, VvendorwithcontactsViewRow] = {
+        override def name: Field[Name, VvendorwithcontactsViewRow] = {
           new Field[Name, VvendorwithcontactsViewRow](
             _path,
             "name",
@@ -70,7 +70,7 @@ object VvendorwithcontactsViewFields {
             Name.pgType
           )
         }
-        def contacttype: Field[Name, VvendorwithcontactsViewRow] = {
+        override def contacttype: Field[Name, VvendorwithcontactsViewRow] = {
           new Field[Name, VvendorwithcontactsViewRow](
             _path,
             "contacttype",
@@ -81,7 +81,7 @@ object VvendorwithcontactsViewFields {
             Name.pgType
           )
         }
-        def title: OptField[/* max 8 chars */ String, VvendorwithcontactsViewRow] = {
+        override def title: OptField[/* max 8 chars */ String, VvendorwithcontactsViewRow] = {
           new OptField[/* max 8 chars */ String, VvendorwithcontactsViewRow](
             _path,
             "title",
@@ -92,7 +92,7 @@ object VvendorwithcontactsViewFields {
             PgTypes.text
           )
         }
-        def firstname: Field[/* user-picked */ FirstName, VvendorwithcontactsViewRow] = {
+        override def firstname: Field[/* user-picked */ FirstName, VvendorwithcontactsViewRow] = {
           new Field[/* user-picked */ FirstName, VvendorwithcontactsViewRow](
             _path,
             "firstname",
@@ -103,7 +103,7 @@ object VvendorwithcontactsViewFields {
             /* user-picked */ FirstName.pgType
           )
         }
-        def middlename: OptField[Name, VvendorwithcontactsViewRow] = {
+        override def middlename: OptField[Name, VvendorwithcontactsViewRow] = {
           new OptField[Name, VvendorwithcontactsViewRow](
             _path,
             "middlename",
@@ -114,7 +114,7 @@ object VvendorwithcontactsViewFields {
             Name.pgType
           )
         }
-        def lastname: Field[Name, VvendorwithcontactsViewRow] = {
+        override def lastname: Field[Name, VvendorwithcontactsViewRow] = {
           new Field[Name, VvendorwithcontactsViewRow](
             _path,
             "lastname",
@@ -125,7 +125,7 @@ object VvendorwithcontactsViewFields {
             Name.pgType
           )
         }
-        def suffix: OptField[/* max 10 chars */ String, VvendorwithcontactsViewRow] = {
+        override def suffix: OptField[/* max 10 chars */ String, VvendorwithcontactsViewRow] = {
           new OptField[/* max 10 chars */ String, VvendorwithcontactsViewRow](
             _path,
             "suffix",
@@ -136,7 +136,7 @@ object VvendorwithcontactsViewFields {
             PgTypes.text
           )
         }
-        def phonenumber: OptField[Phone, VvendorwithcontactsViewRow] = {
+        override def phonenumber: OptField[Phone, VvendorwithcontactsViewRow] = {
           new OptField[Phone, VvendorwithcontactsViewRow](
             _path,
             "phonenumber",
@@ -147,7 +147,7 @@ object VvendorwithcontactsViewFields {
             Phone.pgType
           )
         }
-        def phonenumbertype: OptField[Name, VvendorwithcontactsViewRow] = {
+        override def phonenumbertype: OptField[Name, VvendorwithcontactsViewRow] = {
           new OptField[Name, VvendorwithcontactsViewRow](
             _path,
             "phonenumbertype",
@@ -158,7 +158,7 @@ object VvendorwithcontactsViewFields {
             Name.pgType
           )
         }
-        def emailaddress: OptField[/* max 50 chars */ String, VvendorwithcontactsViewRow] = {
+        override def emailaddress: OptField[/* max 50 chars */ String, VvendorwithcontactsViewRow] = {
           new OptField[/* max 50 chars */ String, VvendorwithcontactsViewRow](
             _path,
             "emailaddress",
@@ -169,7 +169,7 @@ object VvendorwithcontactsViewFields {
             PgTypes.text
           )
         }
-        def emailpromotion: Field[Integer, VvendorwithcontactsViewRow] = {
+        override def emailpromotion: Field[Integer, VvendorwithcontactsViewRow] = {
           new Field[Integer, VvendorwithcontactsViewRow](
             _path,
             "emailpromotion",
@@ -185,7 +185,7 @@ object VvendorwithcontactsViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, VvendorwithcontactsViewRow]] = java.util.List.of(this.fields.businessentityid, this.fields.name, this.fields.contacttype, this.fields.title, this.fields.firstname, this.fields.middlename, this.fields.lastname, this.fields.suffix, this.fields.phonenumber, this.fields.phonenumbertype, this.fields.emailaddress, this.fields.emailpromotion)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[VvendorwithcontactsViewFields, VvendorwithcontactsViewRow] = new Impl(java.util.List.of())

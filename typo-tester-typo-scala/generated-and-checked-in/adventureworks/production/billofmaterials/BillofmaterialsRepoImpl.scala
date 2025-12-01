@@ -23,11 +23,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class BillofmaterialsRepoImpl extends BillofmaterialsRepo {
-  def delete: DeleteBuilder[BillofmaterialsFields, BillofmaterialsRow] = DeleteBuilder.of("production.billofmaterials", BillofmaterialsFields.structure)
+  override def delete: DeleteBuilder[BillofmaterialsFields, BillofmaterialsRow] = DeleteBuilder.of("production.billofmaterials", BillofmaterialsFields.structure)
 
-  def deleteById(billofmaterialsid: Integer)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."billofmaterials" where "billofmaterialsid" = ${PgTypes.int4.encode(billofmaterialsid)}""".update().runUnchecked(c) > 0
+  override def deleteById(billofmaterialsid: Integer)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."billofmaterials" where "billofmaterialsid" = ${PgTypes.int4.encode(billofmaterialsid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(billofmaterialsids: Array[Integer])(using c: Connection): Integer = {
+  override def deleteByIds(billofmaterialsids: Array[Integer])(using c: Connection): Integer = {
     interpolate"""delete
     from "production"."billofmaterials"
     where "billofmaterialsid" = ANY(${PgTypes.int4Array.encode(billofmaterialsids)})"""
@@ -35,7 +35,7 @@ class BillofmaterialsRepoImpl extends BillofmaterialsRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: BillofmaterialsRow)(using c: Connection): BillofmaterialsRow = {
+  override def insert(unsaved: BillofmaterialsRow)(using c: Connection): BillofmaterialsRow = {
   interpolate"""insert into "production"."billofmaterials"("billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate")
     values (${PgTypes.int4.encode(unsaved.billofmaterialsid)}::int4, ${ProductId.pgType.opt().encode(unsaved.productassemblyid)}::int4, ${ProductId.pgType.encode(unsaved.componentid)}::int4, ${TypoLocalDateTime.pgType.encode(unsaved.startdate)}::timestamp, ${TypoLocalDateTime.pgType.opt().encode(unsaved.enddate)}::timestamp, ${UnitmeasureId.pgType.encode(unsaved.unitmeasurecode)}::bpchar, ${TypoShort.pgType.encode(unsaved.bomlevel)}::int2, ${PgTypes.numeric.encode(unsaved.perassemblyqty)}::numeric, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text
@@ -43,9 +43,9 @@ class BillofmaterialsRepoImpl extends BillofmaterialsRepo {
     .updateReturning(BillofmaterialsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: BillofmaterialsRowUnsaved)(using c: Connection): BillofmaterialsRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: BillofmaterialsRowUnsaved)(using c: Connection): BillofmaterialsRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""productassemblyid"""")): @scala.annotation.nowarn
     values.add(interpolate"${ProductId.pgType.opt().encode(unsaved.productassemblyid)}::int4"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""componentid"""")): @scala.annotation.nowarn
@@ -57,32 +57,20 @@ class BillofmaterialsRepoImpl extends BillofmaterialsRepo {
     columns.add(Fragment.lit(""""bomlevel"""")): @scala.annotation.nowarn
     values.add(interpolate"${TypoShort.pgType.encode(unsaved.bomlevel)}::int2"): @scala.annotation.nowarn
     unsaved.billofmaterialsid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""billofmaterialsid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PgTypes.int4.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""billofmaterialsid"""")): @scala.annotation.nowarn; values.add(interpolate"${PgTypes.int4.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.startdate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""startdate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""startdate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     unsaved.perassemblyqty.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""perassemblyqty"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""perassemblyqty"""")): @scala.annotation.nowarn; values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "production"."billofmaterials"(${Fragment.comma(columns)})
@@ -90,51 +78,51 @@ class BillofmaterialsRepoImpl extends BillofmaterialsRepo {
       returning "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text
       """
     }
-    q.updateReturning(BillofmaterialsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(BillofmaterialsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[BillofmaterialsRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."billofmaterials"("billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate") FROM STDIN""", batchSize, unsaved, c, BillofmaterialsRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[BillofmaterialsRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."billofmaterials"("productassemblyid", "componentid", "enddate", "unitmeasurecode", "bomlevel", "billofmaterialsid", "startdate", "perassemblyqty", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, BillofmaterialsRowUnsaved.pgText)
 
-  def select: SelectBuilder[BillofmaterialsFields, BillofmaterialsRow] = SelectBuilder.of("production.billofmaterials", BillofmaterialsFields.structure, BillofmaterialsRow.`_rowParser`)
+  override def select: SelectBuilder[BillofmaterialsFields, BillofmaterialsRow] = SelectBuilder.of("production.billofmaterials", BillofmaterialsFields.structure, BillofmaterialsRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[BillofmaterialsRow] = {
+  override def selectAll(using c: Connection): java.util.List[BillofmaterialsRow] = {
     interpolate"""select "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text
     from "production"."billofmaterials"
-    """.as(BillofmaterialsRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(BillofmaterialsRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(billofmaterialsid: Integer)(using c: Connection): Optional[BillofmaterialsRow] = {
+  override def selectById(billofmaterialsid: Integer)(using c: Connection): Optional[BillofmaterialsRow] = {
     interpolate"""select "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text
     from "production"."billofmaterials"
-    where "billofmaterialsid" = ${PgTypes.int4.encode(billofmaterialsid)}""".as(BillofmaterialsRow.`_rowParser`.first()).runUnchecked(c)
+    where "billofmaterialsid" = ${PgTypes.int4.encode(billofmaterialsid)}""".query(BillofmaterialsRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(billofmaterialsids: Array[Integer])(using c: Connection): java.util.List[BillofmaterialsRow] = {
+  override def selectByIds(billofmaterialsids: Array[Integer])(using c: Connection): java.util.List[BillofmaterialsRow] = {
     interpolate"""select "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text
     from "production"."billofmaterials"
-    where "billofmaterialsid" = ANY(${PgTypes.int4Array.encode(billofmaterialsids)})""".as(BillofmaterialsRow.`_rowParser`.all()).runUnchecked(c)
+    where "billofmaterialsid" = ANY(${PgTypes.int4Array.encode(billofmaterialsids)})""".query(BillofmaterialsRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(billofmaterialsids: Array[Integer])(using c: Connection): java.util.Map[Integer, BillofmaterialsRow] = {
-    val ret: java.util.Map[Integer, BillofmaterialsRow] = new HashMap()
+  override def selectByIdsTracked(billofmaterialsids: Array[Integer])(using c: Connection): java.util.Map[Integer, BillofmaterialsRow] = {
+    val ret: HashMap[Integer, BillofmaterialsRow] = new HashMap[Integer, BillofmaterialsRow]()
     selectByIds(billofmaterialsids)(using c).forEach(row => ret.put(row.billofmaterialsid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[BillofmaterialsFields, BillofmaterialsRow] = UpdateBuilder.of("production.billofmaterials", BillofmaterialsFields.structure, BillofmaterialsRow.`_rowParser`.all())
+  override def update: UpdateBuilder[BillofmaterialsFields, BillofmaterialsRow] = UpdateBuilder.of("production.billofmaterials", BillofmaterialsFields.structure, BillofmaterialsRow.`_rowParser`.all())
 
-  def update(row: BillofmaterialsRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: BillofmaterialsRow)(using c: Connection): java.lang.Boolean = {
     val billofmaterialsid: Integer = row.billofmaterialsid
-    interpolate"""update "production"."billofmaterials"
+    return interpolate"""update "production"."billofmaterials"
     set "productassemblyid" = ${ProductId.pgType.opt().encode(row.productassemblyid)}::int4,
     "componentid" = ${ProductId.pgType.encode(row.componentid)}::int4,
     "startdate" = ${TypoLocalDateTime.pgType.encode(row.startdate)}::timestamp,
@@ -146,7 +134,7 @@ class BillofmaterialsRepoImpl extends BillofmaterialsRepo {
     where "billofmaterialsid" = ${PgTypes.int4.encode(billofmaterialsid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: BillofmaterialsRow)(using c: Connection): BillofmaterialsRow = {
+  override def upsert(unsaved: BillofmaterialsRow)(using c: Connection): BillofmaterialsRow = {
   interpolate"""insert into "production"."billofmaterials"("billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate")
     values (${PgTypes.int4.encode(unsaved.billofmaterialsid)}::int4, ${ProductId.pgType.opt().encode(unsaved.productassemblyid)}::int4, ${ProductId.pgType.encode(unsaved.componentid)}::int4, ${TypoLocalDateTime.pgType.encode(unsaved.startdate)}::timestamp, ${TypoLocalDateTime.pgType.opt().encode(unsaved.enddate)}::timestamp, ${UnitmeasureId.pgType.encode(unsaved.unitmeasurecode)}::bpchar, ${TypoShort.pgType.encode(unsaved.bomlevel)}::int2, ${PgTypes.numeric.encode(unsaved.perassemblyqty)}::numeric, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("billofmaterialsid")
@@ -165,7 +153,7 @@ class BillofmaterialsRepoImpl extends BillofmaterialsRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[BillofmaterialsRow])(using c: Connection): java.util.List[BillofmaterialsRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[BillofmaterialsRow])(using c: Connection): java.util.List[BillofmaterialsRow] = {
     interpolate"""insert into "production"."billofmaterials"("billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate")
     values (?::int4, ?::int4, ?::int4, ?::timestamp, ?::timestamp, ?::bpchar, ?::int2, ?::numeric, ?::timestamp)
     on conflict ("billofmaterialsid")
@@ -185,13 +173,13 @@ class BillofmaterialsRepoImpl extends BillofmaterialsRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[BillofmaterialsRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table billofmaterials_TEMP (like "production"."billofmaterials") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy billofmaterials_TEMP("billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate") from stdin""", batchSize, unsaved, c, BillofmaterialsRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "production"."billofmaterials"("billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate")
+    return interpolate"""insert into "production"."billofmaterials"("billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate")
     select * from billofmaterials_TEMP
     on conflict ("billofmaterialsid")
     do update set

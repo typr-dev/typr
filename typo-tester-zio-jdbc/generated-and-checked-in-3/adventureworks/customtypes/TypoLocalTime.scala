@@ -45,7 +45,7 @@ object TypoLocalTime {
         ps.getConnection.createArrayOf(
           "time",
           v.map { vv =>
-            vv.value.toString
+            vv.value.toString()
           }
         )
       ),
@@ -75,8 +75,8 @@ object TypoLocalTime {
 
   given pgText: Text[TypoLocalTime] = {
     new Text[TypoLocalTime] {
-      override def unsafeEncode(v: TypoLocalTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value.toString, sb)
-      override def unsafeArrayEncode(v: TypoLocalTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value.toString, sb)
+      override def unsafeEncode(v: TypoLocalTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value.toString(), sb)
+      override def unsafeArrayEncode(v: TypoLocalTime, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value.toString(), sb)
     }
   }
 
@@ -87,7 +87,7 @@ object TypoLocalTime {
       (ps, i, v) => {
         ps.setObject(
           i,
-          v.value.toString
+          v.value.toString()
         )
       },
       "time"

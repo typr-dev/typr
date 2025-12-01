@@ -27,11 +27,11 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
-  def delete: DeleteBuilder[WorkorderroutingFields, WorkorderroutingRow] = DeleteBuilder.of(""""production"."workorderrouting"""", WorkorderroutingFields.structure, WorkorderroutingRow.rowParser(1).*)
+  override def delete: DeleteBuilder[WorkorderroutingFields, WorkorderroutingRow] = DeleteBuilder.of(""""production"."workorderrouting"""", WorkorderroutingFields.structure, WorkorderroutingRow.rowParser(1).*)
 
-  def deleteById(compositeId: WorkorderroutingId)(using c: Connection): Boolean = SQL"""delete from "production"."workorderrouting" where "workorderid" = ${ParameterValue(compositeId.workorderid, null, WorkorderId.toStatement)} AND "productid" = ${ParameterValue(compositeId.productid, null, ToStatement.intToStatement)} AND "operationsequence" = ${ParameterValue(compositeId.operationsequence, null, TypoShort.toStatement)}""".executeUpdate() > 0
+  override def deleteById(compositeId: WorkorderroutingId)(using c: Connection): Boolean = SQL"""delete from "production"."workorderrouting" where "workorderid" = ${ParameterValue(compositeId.workorderid, null, WorkorderId.toStatement)} AND "productid" = ${ParameterValue(compositeId.productid, null, ToStatement.intToStatement)} AND "operationsequence" = ${ParameterValue(compositeId.operationsequence, null, TypoShort.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(compositeIds: Array[WorkorderroutingId])(using c: Connection): Int = {
+  override def deleteByIds(compositeIds: Array[WorkorderroutingId])(using c: Connection): Int = {
     val workorderid = compositeIds.map(_.workorderid)
     val productid = compositeIds.map(_.productid)
     val operationsequence = compositeIds.map(_.operationsequence)
@@ -42,7 +42,7 @@ class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
     """.executeUpdate()
   }
 
-  def insert(unsaved: WorkorderroutingRow)(using c: Connection): WorkorderroutingRow = {
+  override def insert(unsaved: WorkorderroutingRow)(using c: Connection): WorkorderroutingRow = {
   SQL"""insert into "production"."workorderrouting"("workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate")
     values (${ParameterValue(unsaved.workorderid, null, WorkorderId.toStatement)}::int4, ${ParameterValue(unsaved.productid, null, ToStatement.intToStatement)}::int4, ${ParameterValue(unsaved.operationsequence, null, TypoShort.toStatement)}::int2, ${ParameterValue(unsaved.locationid, null, LocationId.toStatement)}::int2, ${ParameterValue(unsaved.scheduledstartdate, null, TypoLocalDateTime.toStatement)}::timestamp, ${ParameterValue(unsaved.scheduledenddate, null, TypoLocalDateTime.toStatement)}::timestamp, ${ParameterValue(unsaved.actualstartdate, null, ToStatement.optionToStatement(using TypoLocalDateTime.toStatement, TypoLocalDateTime.parameterMetadata))}::timestamp, ${ParameterValue(unsaved.actualenddate, null, ToStatement.optionToStatement(using TypoLocalDateTime.toStatement, TypoLocalDateTime.parameterMetadata))}::timestamp, ${ParameterValue(unsaved.actualresourcehrs, null, ToStatement.optionToStatement(using ToStatement.scalaBigDecimalToStatement, ParameterMetaData.BigDecimalParameterMetaData))}::numeric, ${ParameterValue(unsaved.plannedcost, null, ToStatement.scalaBigDecimalToStatement)}::numeric, ${ParameterValue(unsaved.actualcost, null, ToStatement.optionToStatement(using ToStatement.scalaBigDecimalToStatement, ParameterMetaData.BigDecimalParameterMetaData))}::numeric, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text
@@ -50,7 +50,7 @@ class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
     .executeInsert(WorkorderroutingRow.rowParser(1).single)
   }
 
-  def insert(unsaved: WorkorderroutingRowUnsaved)(using c: Connection): WorkorderroutingRow = {
+  override def insert(unsaved: WorkorderroutingRowUnsaved)(using c: Connection): WorkorderroutingRow = {
     val namedParameters = List(
       Some((NamedParameter("workorderid", ParameterValue(unsaved.workorderid, null, WorkorderId.toStatement)), "::int4")),
       Some((NamedParameter("productid", ParameterValue(unsaved.productid, null, ToStatement.intToStatement)), "::int4")),
@@ -84,33 +84,33 @@ class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[WorkorderroutingRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "production"."workorderrouting"("workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate") FROM STDIN""", batchSize, unsaved)(using WorkorderroutingRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[WorkorderroutingRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "production"."workorderrouting"("workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using WorkorderroutingRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[WorkorderroutingFields, WorkorderroutingRow] = SelectBuilder.of(""""production"."workorderrouting"""", WorkorderroutingFields.structure, WorkorderroutingRow.rowParser)
+  override def select: SelectBuilder[WorkorderroutingFields, WorkorderroutingRow] = SelectBuilder.of(""""production"."workorderrouting"""", WorkorderroutingFields.structure, WorkorderroutingRow.rowParser)
 
-  def selectAll(using c: Connection): List[WorkorderroutingRow] = {
+  override def selectAll(using c: Connection): List[WorkorderroutingRow] = {
     SQL"""select "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text
     from "production"."workorderrouting"
     """.as(WorkorderroutingRow.rowParser(1).*)
   }
 
-  def selectById(compositeId: WorkorderroutingId)(using c: Connection): Option[WorkorderroutingRow] = {
+  override def selectById(compositeId: WorkorderroutingId)(using c: Connection): Option[WorkorderroutingRow] = {
     SQL"""select "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text
     from "production"."workorderrouting"
     where "workorderid" = ${ParameterValue(compositeId.workorderid, null, WorkorderId.toStatement)} AND "productid" = ${ParameterValue(compositeId.productid, null, ToStatement.intToStatement)} AND "operationsequence" = ${ParameterValue(compositeId.operationsequence, null, TypoShort.toStatement)}
     """.as(WorkorderroutingRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(compositeIds: Array[WorkorderroutingId])(using c: Connection): List[WorkorderroutingRow] = {
+  override def selectByIds(compositeIds: Array[WorkorderroutingId])(using c: Connection): List[WorkorderroutingRow] = {
     val workorderid = compositeIds.map(_.workorderid)
     val productid = compositeIds.map(_.productid)
     val operationsequence = compositeIds.map(_.operationsequence)
@@ -121,14 +121,14 @@ class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
     """.as(WorkorderroutingRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(compositeIds: Array[WorkorderroutingId])(using c: Connection): Map[WorkorderroutingId, WorkorderroutingRow] = {
+  override def selectByIdsTracked(compositeIds: Array[WorkorderroutingId])(using c: Connection): Map[WorkorderroutingId, WorkorderroutingRow] = {
     val byId = selectByIds(compositeIds).view.map(x => (x.compositeId, x)).toMap
     compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[WorkorderroutingFields, WorkorderroutingRow] = UpdateBuilder.of(""""production"."workorderrouting"""", WorkorderroutingFields.structure, WorkorderroutingRow.rowParser(1).*)
+  override def update: UpdateBuilder[WorkorderroutingFields, WorkorderroutingRow] = UpdateBuilder.of(""""production"."workorderrouting"""", WorkorderroutingFields.structure, WorkorderroutingRow.rowParser(1).*)
 
-  def update(row: WorkorderroutingRow)(using c: Connection): Option[WorkorderroutingRow] = {
+  override def update(row: WorkorderroutingRow)(using c: Connection): Option[WorkorderroutingRow] = {
     val compositeId = row.compositeId
     SQL"""update "production"."workorderrouting"
     set "locationid" = ${ParameterValue(row.locationid, null, LocationId.toStatement)}::int2,
@@ -145,7 +145,7 @@ class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
     """.executeInsert(WorkorderroutingRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: WorkorderroutingRow)(using c: Connection): WorkorderroutingRow = {
+  override def upsert(unsaved: WorkorderroutingRow)(using c: Connection): WorkorderroutingRow = {
   SQL"""insert into "production"."workorderrouting"("workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate")
     values (
       ${ParameterValue(unsaved.workorderid, null, WorkorderId.toStatement)}::int4,
@@ -177,7 +177,7 @@ class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
     .executeInsert(WorkorderroutingRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[WorkorderroutingRow])(using c: Connection): List[WorkorderroutingRow] = {
+  override def upsertBatch(unsaved: Iterable[WorkorderroutingRow])(using c: Connection): List[WorkorderroutingRow] = {
     def toNamedParameter(row: WorkorderroutingRow): List[NamedParameter] = List(
       NamedParameter("workorderid", ParameterValue(row.workorderid, null, WorkorderId.toStatement)),
       NamedParameter("productid", ParameterValue(row.productid, null, ToStatement.intToStatement)),
@@ -192,6 +192,7 @@ class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
       NamedParameter("actualcost", ParameterValue(row.actualcost, null, ToStatement.optionToStatement(using ToStatement.scalaBigDecimalToStatement, ParameterMetaData.BigDecimalParameterMetaData))),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -220,7 +221,7 @@ class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[WorkorderroutingRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

@@ -13,7 +13,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple6
 
 /** Table: purchasing.shipmethod
  * Shipping company lookup table.
@@ -62,16 +61,7 @@ case class ShipmethodRow(
 }
 
 object ShipmethodRow {
-  val `_rowParser`: RowParser[ShipmethodRow] = {
-    RowParsers.of(ShipmethodId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, ShipmethodRow.apply, row => new Tuple6(
-      row.shipmethodid,
-      row.name,
-      row.shipbase,
-      row.shiprate,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[ShipmethodRow] = RowParsers.of(ShipmethodId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, ShipmethodRow.apply, row => Array(row.shipmethodid, row.name, row.shipbase, row.shiprate, row.rowguid, row.modifieddate))
 
   given pgText: PgText[ShipmethodRow] = PgText.from(`_rowParser`)
 }

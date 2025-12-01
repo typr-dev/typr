@@ -21,21 +21,21 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ProductcosthistoryRepoImpl extends ProductcosthistoryRepo {
-  def delete: DeleteBuilder[ProductcosthistoryFields, ProductcosthistoryRow] = DeleteBuilder.of("production.productcosthistory", ProductcosthistoryFields.structure)
+  override def delete: DeleteBuilder[ProductcosthistoryFields, ProductcosthistoryRow] = DeleteBuilder.of("production.productcosthistory", ProductcosthistoryFields.structure)
 
-  def deleteById(compositeId: ProductcosthistoryId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."productcosthistory" where "productid" = ${ProductId.pgType.encode(compositeId.productid)} AND "startdate" = ${TypoLocalDateTime.pgType.encode(compositeId.startdate)}""".update().runUnchecked(c) > 0
+  override def deleteById(compositeId: ProductcosthistoryId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."productcosthistory" where "productid" = ${ProductId.pgType.encode(compositeId.productid)} AND "startdate" = ${TypoLocalDateTime.pgType.encode(compositeId.startdate)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(compositeIds: Array[ProductcosthistoryId])(using c: Connection): Integer = {
+  override def deleteByIds(compositeIds: Array[ProductcosthistoryId])(using c: Connection): Integer = {
     val productid: Array[ProductId] = compositeIds.map(_.productid)
     val startdate: Array[TypoLocalDateTime] = compositeIds.map(_.startdate)
-    interpolate"""delete
+    return interpolate"""delete
     from "production"."productcosthistory"
     where ("productid", "startdate")
     in (select unnest(${ProductId.pgTypeArray.encode(productid)}::int4[]), unnest(${TypoLocalDateTime.pgTypeArray.encode(startdate)}::timestamp[]))
     """.update().runUnchecked(c)
   }
 
-  def insert(unsaved: ProductcosthistoryRow)(using c: Connection): ProductcosthistoryRow = {
+  override def insert(unsaved: ProductcosthistoryRow)(using c: Connection): ProductcosthistoryRow = {
   interpolate"""insert into "production"."productcosthistory"("productid", "startdate", "enddate", "standardcost", "modifieddate")
     values (${ProductId.pgType.encode(unsaved.productid)}::int4, ${TypoLocalDateTime.pgType.encode(unsaved.startdate)}::timestamp, ${TypoLocalDateTime.pgType.opt().encode(unsaved.enddate)}::timestamp, ${PgTypes.numeric.encode(unsaved.standardcost)}::numeric, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text
@@ -43,9 +43,9 @@ class ProductcosthistoryRepoImpl extends ProductcosthistoryRepo {
     .updateReturning(ProductcosthistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: ProductcosthistoryRowUnsaved)(using c: Connection): ProductcosthistoryRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: ProductcosthistoryRowUnsaved)(using c: Connection): ProductcosthistoryRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""productid"""")): @scala.annotation.nowarn
     values.add(interpolate"${ProductId.pgType.encode(unsaved.productid)}::int4"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""startdate"""")): @scala.annotation.nowarn
@@ -55,11 +55,8 @@ class ProductcosthistoryRepoImpl extends ProductcosthistoryRepo {
     columns.add(Fragment.lit(""""standardcost"""")): @scala.annotation.nowarn
     values.add(interpolate"${PgTypes.numeric.encode(unsaved.standardcost)}::numeric"): @scala.annotation.nowarn
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "production"."productcosthistory"(${Fragment.comma(columns)})
@@ -67,62 +64,62 @@ class ProductcosthistoryRepoImpl extends ProductcosthistoryRepo {
       returning "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text
       """
     }
-    q.updateReturning(ProductcosthistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(ProductcosthistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[ProductcosthistoryRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."productcosthistory"("productid", "startdate", "enddate", "standardcost", "modifieddate") FROM STDIN""", batchSize, unsaved, c, ProductcosthistoryRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[ProductcosthistoryRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."productcosthistory"("productid", "startdate", "enddate", "standardcost", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ProductcosthistoryRowUnsaved.pgText)
 
-  def select: SelectBuilder[ProductcosthistoryFields, ProductcosthistoryRow] = SelectBuilder.of("production.productcosthistory", ProductcosthistoryFields.structure, ProductcosthistoryRow.`_rowParser`)
+  override def select: SelectBuilder[ProductcosthistoryFields, ProductcosthistoryRow] = SelectBuilder.of("production.productcosthistory", ProductcosthistoryFields.structure, ProductcosthistoryRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[ProductcosthistoryRow] = {
+  override def selectAll(using c: Connection): java.util.List[ProductcosthistoryRow] = {
     interpolate"""select "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text
     from "production"."productcosthistory"
-    """.as(ProductcosthistoryRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(ProductcosthistoryRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(compositeId: ProductcosthistoryId)(using c: Connection): Optional[ProductcosthistoryRow] = {
+  override def selectById(compositeId: ProductcosthistoryId)(using c: Connection): Optional[ProductcosthistoryRow] = {
     interpolate"""select "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text
     from "production"."productcosthistory"
-    where "productid" = ${ProductId.pgType.encode(compositeId.productid)} AND "startdate" = ${TypoLocalDateTime.pgType.encode(compositeId.startdate)}""".as(ProductcosthistoryRow.`_rowParser`.first()).runUnchecked(c)
+    where "productid" = ${ProductId.pgType.encode(compositeId.productid)} AND "startdate" = ${TypoLocalDateTime.pgType.encode(compositeId.startdate)}""".query(ProductcosthistoryRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(compositeIds: Array[ProductcosthistoryId])(using c: Connection): java.util.List[ProductcosthistoryRow] = {
+  override def selectByIds(compositeIds: Array[ProductcosthistoryId])(using c: Connection): java.util.List[ProductcosthistoryRow] = {
     val productid: Array[ProductId] = compositeIds.map(_.productid)
     val startdate: Array[TypoLocalDateTime] = compositeIds.map(_.startdate)
-    interpolate"""select "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text
+    return interpolate"""select "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text
     from "production"."productcosthistory"
     where ("productid", "startdate")
     in (select unnest(${ProductId.pgTypeArray.encode(productid)}::int4[]), unnest(${TypoLocalDateTime.pgTypeArray.encode(startdate)}::timestamp[]))
-    """.as(ProductcosthistoryRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(ProductcosthistoryRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(compositeIds: Array[ProductcosthistoryId])(using c: Connection): java.util.Map[ProductcosthistoryId, ProductcosthistoryRow] = {
-    val ret: java.util.Map[ProductcosthistoryId, ProductcosthistoryRow] = new HashMap()
+  override def selectByIdsTracked(compositeIds: Array[ProductcosthistoryId])(using c: Connection): java.util.Map[ProductcosthistoryId, ProductcosthistoryRow] = {
+    val ret: HashMap[ProductcosthistoryId, ProductcosthistoryRow] = new HashMap[ProductcosthistoryId, ProductcosthistoryRow]()
     selectByIds(compositeIds)(using c).forEach(row => ret.put(row.compositeId, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[ProductcosthistoryFields, ProductcosthistoryRow] = UpdateBuilder.of("production.productcosthistory", ProductcosthistoryFields.structure, ProductcosthistoryRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ProductcosthistoryFields, ProductcosthistoryRow] = UpdateBuilder.of("production.productcosthistory", ProductcosthistoryFields.structure, ProductcosthistoryRow.`_rowParser`.all())
 
-  def update(row: ProductcosthistoryRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: ProductcosthistoryRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: ProductcosthistoryId = row.compositeId
-    interpolate"""update "production"."productcosthistory"
+    return interpolate"""update "production"."productcosthistory"
     set "enddate" = ${TypoLocalDateTime.pgType.opt().encode(row.enddate)}::timestamp,
     "standardcost" = ${PgTypes.numeric.encode(row.standardcost)}::numeric,
     "modifieddate" = ${TypoLocalDateTime.pgType.encode(row.modifieddate)}::timestamp
     where "productid" = ${ProductId.pgType.encode(compositeId.productid)} AND "startdate" = ${TypoLocalDateTime.pgType.encode(compositeId.startdate)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: ProductcosthistoryRow)(using c: Connection): ProductcosthistoryRow = {
+  override def upsert(unsaved: ProductcosthistoryRow)(using c: Connection): ProductcosthistoryRow = {
   interpolate"""insert into "production"."productcosthistory"("productid", "startdate", "enddate", "standardcost", "modifieddate")
     values (${ProductId.pgType.encode(unsaved.productid)}::int4, ${TypoLocalDateTime.pgType.encode(unsaved.startdate)}::timestamp, ${TypoLocalDateTime.pgType.opt().encode(unsaved.enddate)}::timestamp, ${PgTypes.numeric.encode(unsaved.standardcost)}::numeric, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("productid", "startdate")
@@ -136,7 +133,7 @@ class ProductcosthistoryRepoImpl extends ProductcosthistoryRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[ProductcosthistoryRow])(using c: Connection): java.util.List[ProductcosthistoryRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[ProductcosthistoryRow])(using c: Connection): java.util.List[ProductcosthistoryRow] = {
     interpolate"""insert into "production"."productcosthistory"("productid", "startdate", "enddate", "standardcost", "modifieddate")
     values (?::int4, ?::timestamp, ?::timestamp, ?::numeric, ?::timestamp)
     on conflict ("productid", "startdate")
@@ -151,13 +148,13 @@ class ProductcosthistoryRepoImpl extends ProductcosthistoryRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[ProductcosthistoryRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table productcosthistory_TEMP (like "production"."productcosthistory") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy productcosthistory_TEMP("productid", "startdate", "enddate", "standardcost", "modifieddate") from stdin""", batchSize, unsaved, c, ProductcosthistoryRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "production"."productcosthistory"("productid", "startdate", "enddate", "standardcost", "modifieddate")
+    return interpolate"""insert into "production"."productcosthistory"("productid", "startdate", "enddate", "standardcost", "modifieddate")
     select * from productcosthistory_TEMP
     on conflict ("productid", "startdate")
     do update set

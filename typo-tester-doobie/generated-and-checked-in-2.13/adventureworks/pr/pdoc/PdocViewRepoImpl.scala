@@ -11,7 +11,7 @@ import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class PdocViewRepoImpl extends PdocViewRepo {
-  def select: SelectBuilder[PdocViewFields, PdocViewRow] = SelectBuilder.of(""""pr"."pdoc"""", PdocViewFields.structure, PdocViewRow.read)
+  override def select: SelectBuilder[PdocViewFields, PdocViewRow] = SelectBuilder.of(""""pr"."pdoc"""", PdocViewFields.structure, PdocViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, PdocViewRow] = sql"""select "id", "productid", "modifieddate"::text, "documentnode" from "pr"."pdoc"""".query(PdocViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, PdocViewRow] = sql"""select "id", "productid", "modifieddate"::text, "documentnode" from "pr"."pdoc"""".query(PdocViewRow.read).stream
 }

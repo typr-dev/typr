@@ -16,7 +16,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple9;
 
 /** Table: production.billofmaterials
   * Items required to make bicycles and bicycle subassemblies. It identifies the heirarchical relationship between a parent product and its components.
@@ -131,7 +130,7 @@ public record BillofmaterialsRow(
     return new BillofmaterialsRow(billofmaterialsid, productassemblyid, componentid, startdate, enddate, unitmeasurecode, bomlevel, perassemblyqty, modifieddate);
   };
 
-  static RowParser<BillofmaterialsRow> _rowParser = RowParsers.of(PgTypes.int4, ProductId.pgType.opt(), ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), UnitmeasureId.pgType, TypoShort.pgType, PgTypes.numeric, TypoLocalDateTime.pgType, BillofmaterialsRow::new, row -> new Tuple9<>(row.billofmaterialsid(), row.productassemblyid(), row.componentid(), row.startdate(), row.enddate(), row.unitmeasurecode(), row.bomlevel(), row.perassemblyqty(), row.modifieddate()));;
+  static RowParser<BillofmaterialsRow> _rowParser = RowParsers.of(PgTypes.int4, ProductId.pgType.opt(), ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), UnitmeasureId.pgType, TypoShort.pgType, PgTypes.numeric, TypoLocalDateTime.pgType, BillofmaterialsRow::new, row -> new Object[]{row.billofmaterialsid(), row.productassemblyid(), row.componentid(), row.startdate(), row.enddate(), row.unitmeasurecode(), row.bomlevel(), row.perassemblyqty(), row.modifieddate()});;
 
   static public PgText<BillofmaterialsRow> pgText =
     PgText.from(_rowParser);

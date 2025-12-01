@@ -10,11 +10,11 @@ import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PdocViewRepoImpl extends PdocViewRepo {
-  def select: SelectBuilder[PdocViewFields, PdocViewRow] = SelectBuilder.of("pr.pdoc", PdocViewFields.structure, PdocViewRow.`_rowParser`)
+  override def select: SelectBuilder[PdocViewFields, PdocViewRow] = SelectBuilder.of("pr.pdoc", PdocViewFields.structure, PdocViewRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[PdocViewRow] = {
+  override def selectAll(using c: Connection): java.util.List[PdocViewRow] = {
     interpolate"""select "id", "productid", "modifieddate"::text, "documentnode"
     from "pr"."pdoc"
-    """.as(PdocViewRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(PdocViewRow.`_rowParser`.all()).runUnchecked(c)
   }
 }

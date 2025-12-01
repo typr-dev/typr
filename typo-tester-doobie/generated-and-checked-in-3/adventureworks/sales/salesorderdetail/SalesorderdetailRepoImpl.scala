@@ -21,19 +21,17 @@ import doobie.util.fragment.Fragment
 import doobie.util.meta.Meta
 import doobie.util.update.Update
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.DeleteBuilder
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
-  def delete: DeleteBuilder[SalesorderdetailFields, SalesorderdetailRow] = DeleteBuilder.of(""""sales"."salesorderdetail"""", SalesorderdetailFields.structure, SalesorderdetailRow.read)
+  override def delete: DeleteBuilder[SalesorderdetailFields, SalesorderdetailRow] = DeleteBuilder.of(""""sales"."salesorderdetail"""", SalesorderdetailFields.structure, SalesorderdetailRow.read)
 
-  def deleteById(compositeId: SalesorderdetailId): ConnectionIO[Boolean] = sql"""delete from "sales"."salesorderdetail" where "salesorderid" = ${fromWrite(compositeId.salesorderid)(using new Write.Single(SalesorderheaderId.put))} AND "salesorderdetailid" = ${fromWrite(compositeId.salesorderdetailid)(using new Write.Single(Meta.IntMeta.put))}""".update.run.map(_ > 0)
+  override def deleteById(compositeId: SalesorderdetailId): ConnectionIO[Boolean] = sql"""delete from "sales"."salesorderdetail" where "salesorderid" = ${fromWrite(compositeId.salesorderid)(using new Write.Single(SalesorderheaderId.put))} AND "salesorderdetailid" = ${fromWrite(compositeId.salesorderdetailid)(using new Write.Single(Meta.IntMeta.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(compositeIds: Array[SalesorderdetailId]): ConnectionIO[Int] = {
+  override def deleteByIds(compositeIds: Array[SalesorderdetailId]): ConnectionIO[Int] = {
     val salesorderid = compositeIds.map(_.salesorderid)
     val salesorderdetailid = compositeIds.map(_.salesorderdetailid)
     sql"""delete
@@ -43,14 +41,14 @@ class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
     """.update.run
   }
 
-  def insert(unsaved: SalesorderdetailRow): ConnectionIO[SalesorderdetailRow] = {
+  override def insert(unsaved: SalesorderdetailRow): ConnectionIO[SalesorderdetailRow] = {
     sql"""insert into "sales"."salesorderdetail"("salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate")
     values (${fromWrite(unsaved.salesorderid)(using new Write.Single(SalesorderheaderId.put))}::int4, ${fromWrite(unsaved.salesorderdetailid)(using new Write.Single(Meta.IntMeta.put))}::int4, ${fromWrite(unsaved.carriertrackingnumber)(using new Write.SingleOpt(Meta.StringMeta.put))}, ${fromWrite(unsaved.orderqty)(using new Write.Single(TypoShort.put))}::int2, ${fromWrite(unsaved.productid)(using new Write.Single(ProductId.put))}::int4, ${fromWrite(unsaved.specialofferid)(using new Write.Single(SpecialofferId.put))}::int4, ${fromWrite(unsaved.unitprice)(using new Write.Single(Meta.ScalaBigDecimalMeta.put))}::numeric, ${fromWrite(unsaved.unitpricediscount)(using new Write.Single(Meta.ScalaBigDecimalMeta.put))}::numeric, ${fromWrite(unsaved.rowguid)(using new Write.Single(TypoUUID.put))}::uuid, ${fromWrite(unsaved.modifieddate)(using new Write.Single(TypoLocalDateTime.put))}::timestamp)
     returning "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text
     """.query(using SalesorderdetailRow.read).unique
   }
 
-  def insert(unsaved: SalesorderdetailRowUnsaved): ConnectionIO[SalesorderdetailRow] = {
+  override def insert(unsaved: SalesorderdetailRowUnsaved): ConnectionIO[SalesorderdetailRow] = {
     val fs = List(
       Some((Fragment.const0(s""""salesorderid""""), fr"${fromWrite(unsaved.salesorderid)(using new Write.Single(SalesorderheaderId.put))}::int4")),
       Some((Fragment.const0(s""""carriertrackingnumber""""), fr"${fromWrite(unsaved.carriertrackingnumber)(using new Write.SingleOpt(Meta.StringMeta.put))}")),
@@ -89,24 +87,24 @@ class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
     q.query(using SalesorderdetailRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, SalesorderdetailRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "sales"."salesorderdetail"("salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate") FROM STDIN""").copyIn(unsaved, batchSize)(using SalesorderdetailRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, SalesorderdetailRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "sales"."salesorderdetail"("salesorderid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "salesorderdetailid", "unitpricediscount", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(using SalesorderdetailRowUnsaved.pgText)
 
-  def select: SelectBuilder[SalesorderdetailFields, SalesorderdetailRow] = SelectBuilder.of(""""sales"."salesorderdetail"""", SalesorderdetailFields.structure, SalesorderdetailRow.read)
+  override def select: SelectBuilder[SalesorderdetailFields, SalesorderdetailRow] = SelectBuilder.of(""""sales"."salesorderdetail"""", SalesorderdetailFields.structure, SalesorderdetailRow.read)
 
-  def selectAll: Stream[ConnectionIO, SalesorderdetailRow] = sql"""select "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text from "sales"."salesorderdetail"""".query(using SalesorderdetailRow.read).stream
+  override def selectAll: Stream[ConnectionIO, SalesorderdetailRow] = sql"""select "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text from "sales"."salesorderdetail"""".query(using SalesorderdetailRow.read).stream
 
-  def selectById(compositeId: SalesorderdetailId): ConnectionIO[Option[SalesorderdetailRow]] = sql"""select "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text from "sales"."salesorderdetail" where "salesorderid" = ${fromWrite(compositeId.salesorderid)(using new Write.Single(SalesorderheaderId.put))} AND "salesorderdetailid" = ${fromWrite(compositeId.salesorderdetailid)(using new Write.Single(Meta.IntMeta.put))}""".query(using SalesorderdetailRow.read).option
+  override def selectById(compositeId: SalesorderdetailId): ConnectionIO[Option[SalesorderdetailRow]] = sql"""select "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text from "sales"."salesorderdetail" where "salesorderid" = ${fromWrite(compositeId.salesorderid)(using new Write.Single(SalesorderheaderId.put))} AND "salesorderdetailid" = ${fromWrite(compositeId.salesorderdetailid)(using new Write.Single(Meta.IntMeta.put))}""".query(using SalesorderdetailRow.read).option
 
-  def selectByIds(compositeIds: Array[SalesorderdetailId]): Stream[ConnectionIO, SalesorderdetailRow] = {
+  override def selectByIds(compositeIds: Array[SalesorderdetailId]): Stream[ConnectionIO, SalesorderdetailRow] = {
     val salesorderid = compositeIds.map(_.salesorderid)
     val salesorderdetailid = compositeIds.map(_.salesorderdetailid)
     sql"""select "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text
@@ -116,16 +114,16 @@ class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
     """.query(using SalesorderdetailRow.read).stream
   }
 
-  def selectByIdsTracked(compositeIds: Array[SalesorderdetailId]): ConnectionIO[Map[SalesorderdetailId, SalesorderdetailRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[SalesorderdetailId]): ConnectionIO[Map[SalesorderdetailId, SalesorderdetailRow]] = {
     selectByIds(compositeIds).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[SalesorderdetailFields, SalesorderdetailRow] = UpdateBuilder.of(""""sales"."salesorderdetail"""", SalesorderdetailFields.structure, SalesorderdetailRow.read)
+  override def update: UpdateBuilder[SalesorderdetailFields, SalesorderdetailRow] = UpdateBuilder.of(""""sales"."salesorderdetail"""", SalesorderdetailFields.structure, SalesorderdetailRow.read)
 
-  def update(row: SalesorderdetailRow): ConnectionIO[Option[SalesorderdetailRow]] = {
+  override def update(row: SalesorderdetailRow): ConnectionIO[Option[SalesorderdetailRow]] = {
     val compositeId = row.compositeId
     sql"""update "sales"."salesorderdetail"
     set "carriertrackingnumber" = ${fromWrite(row.carriertrackingnumber)(using new Write.SingleOpt(Meta.StringMeta.put))},
@@ -140,7 +138,7 @@ class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
     returning "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text""".query(using SalesorderdetailRow.read).option
   }
 
-  def upsert(unsaved: SalesorderdetailRow): ConnectionIO[SalesorderdetailRow] = {
+  override def upsert(unsaved: SalesorderdetailRow): ConnectionIO[SalesorderdetailRow] = {
     sql"""insert into "sales"."salesorderdetail"("salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate")
     values (
       ${fromWrite(unsaved.salesorderid)(using new Write.Single(SalesorderheaderId.put))}::int4,
@@ -168,7 +166,7 @@ class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
     """.query(using SalesorderdetailRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[SalesorderdetailRow]): Stream[ConnectionIO, SalesorderdetailRow] = {
+  override def upsertBatch(unsaved: List[SalesorderdetailRow]): Stream[ConnectionIO, SalesorderdetailRow] = {
     Update[SalesorderdetailRow](
       s"""insert into "sales"."salesorderdetail"("salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate")
       values (?::int4,?::int4,?,?::int2,?::int4,?::int4,?::numeric,?::numeric,?::uuid,?::timestamp)
@@ -188,7 +186,7 @@ class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, SalesorderdetailRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

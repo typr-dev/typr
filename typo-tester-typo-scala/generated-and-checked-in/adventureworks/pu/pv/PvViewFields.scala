@@ -48,7 +48,7 @@ object PvViewFields {
 
     override lazy val fields: PvViewFields = {
       new PvViewFields {
-        def id: Field[ProductId, PvViewRow] = {
+        override def id: Field[ProductId, PvViewRow] = {
           new Field[ProductId, PvViewRow](
             _path,
             "id",
@@ -59,7 +59,7 @@ object PvViewFields {
             ProductId.pgType
           )
         }
-        def productid: Field[ProductId, PvViewRow] = {
+        override def productid: Field[ProductId, PvViewRow] = {
           new Field[ProductId, PvViewRow](
             _path,
             "productid",
@@ -70,7 +70,7 @@ object PvViewFields {
             ProductId.pgType
           )
         }
-        def businessentityid: Field[BusinessentityId, PvViewRow] = {
+        override def businessentityid: Field[BusinessentityId, PvViewRow] = {
           new Field[BusinessentityId, PvViewRow](
             _path,
             "businessentityid",
@@ -81,7 +81,7 @@ object PvViewFields {
             BusinessentityId.pgType
           )
         }
-        def averageleadtime: Field[Integer, PvViewRow] = {
+        override def averageleadtime: Field[Integer, PvViewRow] = {
           new Field[Integer, PvViewRow](
             _path,
             "averageleadtime",
@@ -92,7 +92,7 @@ object PvViewFields {
             PgTypes.int4
           )
         }
-        def standardprice: Field[java.math.BigDecimal, PvViewRow] = {
+        override def standardprice: Field[java.math.BigDecimal, PvViewRow] = {
           new Field[java.math.BigDecimal, PvViewRow](
             _path,
             "standardprice",
@@ -103,7 +103,7 @@ object PvViewFields {
             PgTypes.numeric
           )
         }
-        def lastreceiptcost: OptField[java.math.BigDecimal, PvViewRow] = {
+        override def lastreceiptcost: OptField[java.math.BigDecimal, PvViewRow] = {
           new OptField[java.math.BigDecimal, PvViewRow](
             _path,
             "lastreceiptcost",
@@ -114,7 +114,7 @@ object PvViewFields {
             PgTypes.numeric
           )
         }
-        def lastreceiptdate: OptField[TypoLocalDateTime, PvViewRow] = {
+        override def lastreceiptdate: OptField[TypoLocalDateTime, PvViewRow] = {
           new OptField[TypoLocalDateTime, PvViewRow](
             _path,
             "lastreceiptdate",
@@ -125,7 +125,7 @@ object PvViewFields {
             TypoLocalDateTime.pgType
           )
         }
-        def minorderqty: Field[Integer, PvViewRow] = {
+        override def minorderqty: Field[Integer, PvViewRow] = {
           new Field[Integer, PvViewRow](
             _path,
             "minorderqty",
@@ -136,7 +136,7 @@ object PvViewFields {
             PgTypes.int4
           )
         }
-        def maxorderqty: Field[Integer, PvViewRow] = {
+        override def maxorderqty: Field[Integer, PvViewRow] = {
           new Field[Integer, PvViewRow](
             _path,
             "maxorderqty",
@@ -147,7 +147,7 @@ object PvViewFields {
             PgTypes.int4
           )
         }
-        def onorderqty: OptField[Integer, PvViewRow] = {
+        override def onorderqty: OptField[Integer, PvViewRow] = {
           new OptField[Integer, PvViewRow](
             _path,
             "onorderqty",
@@ -158,7 +158,7 @@ object PvViewFields {
             PgTypes.int4
           )
         }
-        def unitmeasurecode: Field[UnitmeasureId, PvViewRow] = {
+        override def unitmeasurecode: Field[UnitmeasureId, PvViewRow] = {
           new Field[UnitmeasureId, PvViewRow](
             _path,
             "unitmeasurecode",
@@ -169,7 +169,7 @@ object PvViewFields {
             UnitmeasureId.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, PvViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, PvViewRow] = {
           new Field[TypoLocalDateTime, PvViewRow](
             _path,
             "modifieddate",
@@ -185,7 +185,7 @@ object PvViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, PvViewRow]] = java.util.List.of(this.fields.id, this.fields.productid, this.fields.businessentityid, this.fields.averageleadtime, this.fields.standardprice, this.fields.lastreceiptcost, this.fields.lastreceiptdate, this.fields.minorderqty, this.fields.maxorderqty, this.fields.onorderqty, this.fields.unitmeasurecode, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[PvViewFields, PvViewRow] = new Impl(java.util.List.of())

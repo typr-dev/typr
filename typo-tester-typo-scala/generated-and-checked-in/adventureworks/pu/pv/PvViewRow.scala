@@ -13,7 +13,6 @@ import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple12
 
 /** View: pu.pv */
 case class PvViewRow(
@@ -44,20 +43,5 @@ case class PvViewRow(
 )
 
 object PvViewRow {
-  val `_rowParser`: RowParser[PvViewRow] = {
-    RowParsers.of(ProductId.pgType, ProductId.pgType, BusinessentityId.pgType, PgTypes.int4, PgTypes.numeric, PgTypes.numeric.opt(), TypoLocalDateTime.pgType.opt(), PgTypes.int4, PgTypes.int4, PgTypes.int4.opt(), UnitmeasureId.pgType, TypoLocalDateTime.pgType, PvViewRow.apply, row => new Tuple12(
-      row.id,
-      row.productid,
-      row.businessentityid,
-      row.averageleadtime,
-      row.standardprice,
-      row.lastreceiptcost,
-      row.lastreceiptdate,
-      row.minorderqty,
-      row.maxorderqty,
-      row.onorderqty,
-      row.unitmeasurecode,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[PvViewRow] = RowParsers.of(ProductId.pgType, ProductId.pgType, BusinessentityId.pgType, PgTypes.int4, PgTypes.numeric, PgTypes.numeric.opt(), TypoLocalDateTime.pgType.opt(), PgTypes.int4, PgTypes.int4, PgTypes.int4.opt(), UnitmeasureId.pgType, TypoLocalDateTime.pgType, PvViewRow.apply, row => Array(row.id, row.productid, row.businessentityid, row.averageleadtime, row.standardprice, row.lastreceiptcost, row.lastreceiptdate, row.minorderqty, row.maxorderqty, row.onorderqty, row.unitmeasurecode, row.modifieddate))
 }

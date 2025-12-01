@@ -2,7 +2,17 @@ package typo
 package internal
 package codegen
 
+import typo.jvm.Code.TypeOps
+
 case class JsonLibJackson(pkg: jvm.QIdent, default: ComputedDefault, lang: Lang) extends JsonLib {
+  // Language-specific top type for instantiation (can't use wildcard to instantiate)
+  val topType: jvm.Type = lang match {
+    case _: LangScala => TypesScala.Any
+    case LangKotlin   => TypesKotlin.Any
+    case LangJava     => TypesJava.Object
+    case other        => sys.error(s"Unsupported language: $other")
+  }
+
   // Jackson annotation types
   val JsonProperty = jvm.Type.Qualified("com.fasterxml.jackson.annotation.JsonProperty")
   val JsonValue = jvm.Type.Qualified("com.fasterxml.jackson.annotation.JsonValue")
@@ -26,8 +36,8 @@ case class JsonLibJackson(pkg: jvm.QIdent, default: ComputedDefault, lang: Lang)
     val serializerType = jvm.Type.Qualified(pkg / default.Defaulted.name.appended("Serializer"))
     val deserializerType = jvm.Type.Qualified(pkg / default.Defaulted.name.appended("Deserializer"))
 
-    val serializeAnn = jvm.Annotation(JsonSerialize, List(jvm.Annotation.Arg.Named(jvm.Ident("using"), jvm.ClassOf(serializerType).code)))
-    val deserializeAnn = jvm.Annotation(JsonDeserialize, List(jvm.Annotation.Arg.Named(jvm.Ident("using"), jvm.ClassOf(deserializerType).code)))
+    val serializeAnn = jvm.Annotation(JsonSerialize, List(jvm.Annotation.Arg.Named(jvm.Ident("using"), lang.annotationClassRef(serializerType))))
+    val deserializeAnn = jvm.Annotation(JsonDeserialize, List(jvm.Annotation.Arg.Named(jvm.Ident("using"), lang.annotationClassRef(deserializerType))))
 
     val serializerFile = generateSerializer(serializerType)
     val deserializerFile = generateDeserializer(deserializerType)
@@ -49,36 +59,45 @@ case class JsonLibJackson(pkg: jvm.QIdent, default: ComputedDefault, lang: Lang)
     val typeSwitch = jvm.TypeSwitch(
       value = value.code,
       cases = List(
-        jvm.TypeSwitch.Case(UseDefault, u, code"$gen.writeString(${jvm.StrLit("defaulted")})"),
+        jvm.TypeSwitch.Case(UseDefault.of(jvm.Type.Wildcard), u, code"$gen.writeString(${jvm.StrLit("defaulted")})"),
         jvm.TypeSwitch.Case(
           Provided.of(jvm.Type.Wildcard),
           p,
           code"""|{
                  |  $gen.writeStartObject();
                  |  $gen.writeFieldName(${jvm.StrLit("provided")});
-                 |  $serializers.defaultSerializeValue($p.value(), $gen);
+                 |  $serializers.defaultSerializeValue(${lang.propertyGetterAccess(p.code, jvm.Ident("value"))}, $gen);
                  |  $gen.writeEndObject();
                  |}""".stripMargin
         )
       ),
       nullCase = Some(code"$gen.writeNull()"),
-      defaultCase = Some(code"throw new $IOException(${jvm.StrLit("Unknown Defaulted subtype: ")} + $value.getClass().getName())")
+      // In Kotlin, use javaClass.name instead of getClass().getName()
+      defaultCase = Some {
+        val className = lang match {
+          case LangKotlin => code"$value.javaClass.name"
+          case _          => code"$value.getClass().getName()"
+        }
+        code"throw ${IOException.construct(code"${jvm.StrLit("Unknown Defaulted subtype: ")} + $className")}"
+      }
     )
 
     val serializeMethod = jvm.Method(
-      annotations = List(jvm.Annotation(jvm.Type.Qualified("java.lang.Override"), Nil)),
+      annotations = Nil,
       comments = jvm.Comments.Empty,
       tparams = Nil,
       name = jvm.Ident("serialize"),
       params = List(
-        jvm.Param(value, default.Defaulted),
+        jvm.Param(value, default.Defaulted.of(jvm.Type.Wildcard)),
         jvm.Param(gen, JsonGenerator),
         jvm.Param(serializers, SerializerProvider)
       ),
       implicitParams = Nil,
       tpe = jvm.Type.Void,
       throws = List(IOException),
-      body = List(typeSwitch.code)
+      body = jvm.Body.Expr(typeSwitch.code),
+      isOverride = true,
+      isDefault = false
     )
 
     val cls = jvm.Class(
@@ -89,7 +108,7 @@ case class JsonLibJackson(pkg: jvm.QIdent, default: ComputedDefault, lang: Lang)
       tparams = Nil,
       params = Nil,
       implicitParams = Nil,
-      `extends` = Some(JsonSerializer.of(default.Defaulted)),
+      `extends` = Some(JsonSerializer.of(default.Defaulted.of(jvm.Type.Wildcard))),
       implements = Nil,
       members = List(serializeMethod),
       staticMembers = Nil
@@ -114,8 +133,9 @@ case class JsonLibJackson(pkg: jvm.QIdent, default: ComputedDefault, lang: Lang)
     val text = jvm.Ident("text")
     val valueIdent = jvm.Ident("value")
 
+    val contextType = jvm.Ident("contextType")
     val createContextualMethod = jvm.Method(
-      annotations = List(jvm.Annotation(jvm.Type.Qualified("java.lang.Override"), Nil)),
+      annotations = Nil,
       comments = jvm.Comments.Empty,
       tparams = Nil,
       name = jvm.Ident("createContextual"),
@@ -126,20 +146,35 @@ case class JsonLibJackson(pkg: jvm.QIdent, default: ComputedDefault, lang: Lang)
       implicitParams = Nil,
       tpe = JsonDeserializerBase.of(jvm.Type.Wildcard),
       throws = Nil,
-      body = List(
-        code"""|$JavaType $tpe = $ctxt.getContextualType();
-               |if ($tpe == null && $property != null) {
-               |  $tpe = $property.getType();
-               |}
-               |if ($tpe != null && $tpe.containedTypeCount() > 0) {
-               |  return new $deserializerType($tpe.containedType(0), $tpe.getRawClass());
+      body = jvm.Body.Stmts(
+        List(
+          jvm.LocalVar(contextType, Some(JavaType), code"$ctxt.getContextualType()"),
+          jvm.LocalVar(
+            tpe,
+            Some(JavaType),
+            jvm
+              .IfExpr(
+                code"$contextType == null && $property != null",
+                code"$property.getType()",
+                contextType.code
+              )
+              .code
+          ),
+          code"""|if ($tpe != null && $tpe.containedTypeCount() > 0) {
+               |  return ${deserializerType.construct(code"$tpe.containedType(0)", code"$tpe.getRawClass()")};
                |}""".stripMargin,
-        code"this"
-      )
+          jvm.Throw(TypesJava.RuntimeException.construct(jvm.StrLit("unexpected")))
+        )
+      ),
+      isOverride = true,
+      isDefault = false
     )
 
+    val textLocalVar = jvm.LocalVar(text, Some(lang.String), code"$p.getText()")
+    val valueLocalVar = jvm.LocalVar(valueIdent, Some(topType), code"$ctxt.readValue($p, $valueType)")
+
     val deserializeMethod = jvm.Method(
-      annotations = List(jvm.Annotation(jvm.Type.Qualified("java.lang.Override"), Nil)),
+      annotations = Nil,
       comments = jvm.Comments.Empty,
       tparams = Nil,
       name = jvm.Ident("deserialize"),
@@ -148,28 +183,32 @@ case class JsonLibJackson(pkg: jvm.QIdent, default: ComputedDefault, lang: Lang)
         jvm.Param(ctxt, DeserializationContext)
       ),
       implicitParams = Nil,
-      tpe = default.Defaulted,
+      tpe = default.Defaulted.of(jvm.Type.Wildcard),
       throws = List(IOException),
-      body = List(
-        code"""|if ($p.currentToken() == $JsonToken.VALUE_STRING) {
-               |  String $text = $p.getText();
+      body = jvm.Body.Stmts(
+        List(
+          code"""|if ($p.currentToken() == $JsonToken.VALUE_STRING) {
+               |  $textLocalVar;
                |  if (${jvm.StrLit("defaulted")}.equals($text)) {
-               |    return new $UseDefault<>();
+               |    return ${UseDefault.of(topType).construct()};
                |  }
-               |  throw new $IOException(${jvm.StrLit("Expected 'defaulted' but got: ")} + $text);
+               |  throw ${IOException.construct(code"${jvm.StrLit("Expected 'defaulted' but got: ")} + $text")};
                |}
                |if ($p.currentToken() == $JsonToken.START_OBJECT) {
                |  $p.nextToken();
                |  if ($p.currentToken() == $JsonToken.FIELD_NAME && ${jvm.StrLit("provided")}.equals($p.currentName())) {
                |    $p.nextToken();
-               |    Object $valueIdent = $ctxt.readValue($p, $valueType);
+               |    $valueLocalVar;
                |    $p.nextToken();
-               |    return new $Provided<>($valueIdent);
+               |    return ${Provided.of(topType).construct(valueIdent.code)};
                |  }
-               |  throw new $IOException(${jvm.StrLit("Expected 'provided' field but got: ")} + $p.currentName());
+               |
                |}""".stripMargin,
-        code"(${default.Defaulted}) null"
-      )
+          jvm.Throw(IOException.construct(code"${jvm.StrLit("Expected 'provided' field but got: ")} + $p.currentName()"))
+        )
+      ),
+      isOverride = true,
+      isDefault = false
     )
 
     val cls = jvm.Class(
@@ -183,7 +222,7 @@ case class JsonLibJackson(pkg: jvm.QIdent, default: ComputedDefault, lang: Lang)
         jvm.Param(defaultedClass, defaultedClassType)
       ),
       implicitParams = Nil,
-      `extends` = Some(JsonDeserializerBase.of(default.Defaulted)),
+      `extends` = Some(JsonDeserializerBase.of(default.Defaulted.of(jvm.Type.Wildcard))),
       implements = List(ContextualDeserializer),
       members = List(createContextualMethod, deserializeMethod),
       staticMembers = Nil

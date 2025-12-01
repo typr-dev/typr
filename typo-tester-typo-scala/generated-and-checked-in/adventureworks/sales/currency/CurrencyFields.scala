@@ -27,7 +27,7 @@ object CurrencyFields {
 
     override lazy val fields: CurrencyFields = {
       new CurrencyFields {
-        def currencycode: IdField[CurrencyId, CurrencyRow] = {
+        override def currencycode: IdField[CurrencyId, CurrencyRow] = {
           new IdField[CurrencyId, CurrencyRow](
             _path,
             "currencycode",
@@ -38,7 +38,7 @@ object CurrencyFields {
             CurrencyId.pgType
           )
         }
-        def name: Field[Name, CurrencyRow] = {
+        override def name: Field[Name, CurrencyRow] = {
           new Field[Name, CurrencyRow](
             _path,
             "name",
@@ -49,7 +49,7 @@ object CurrencyFields {
             Name.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, CurrencyRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, CurrencyRow] = {
           new Field[TypoLocalDateTime, CurrencyRow](
             _path,
             "modifieddate",
@@ -65,7 +65,7 @@ object CurrencyFields {
 
     override lazy val columns: java.util.List[FieldLike[?, CurrencyRow]] = java.util.List.of(this.fields.currencycode, this.fields.name, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[CurrencyFields, CurrencyRow] = new Impl(java.util.List.of())

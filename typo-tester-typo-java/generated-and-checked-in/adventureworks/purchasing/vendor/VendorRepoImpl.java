@@ -11,7 +11,6 @@ import adventureworks.person.businessentity.BusinessentityId;
 import adventureworks.public_.AccountNumber;
 import adventureworks.public_.Flag;
 import adventureworks.public_.Name;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,12 +28,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class VendorRepoImpl implements VendorRepo {
+  @Override
   public DeleteBuilder<VendorFields, VendorRow> delete() {
     return DeleteBuilder.of("purchasing.vendor", VendorFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     BusinessentityId businessentityid,
     Connection c
@@ -48,6 +48,7 @@ public class VendorRepoImpl implements VendorRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     BusinessentityId[] businessentityids,
     Connection c
@@ -64,6 +65,7 @@ public class VendorRepoImpl implements VendorRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public VendorRow insert(
     VendorRow unsaved,
     Connection c
@@ -95,85 +97,93 @@ public class VendorRepoImpl implements VendorRepo {
       .updateReturning(VendorRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public VendorRow insert(
     VendorRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"businessentityid\""));
-      values.add(interpolate(
-        BusinessentityId.pgType.encode(unsaved.businessentityid()),
-        typo.runtime.Fragment.lit("::int4")
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"businessentityid\""));
+    values.add(interpolate(
+      BusinessentityId.pgType.encode(unsaved.businessentityid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"accountnumber\""));
+    values.add(interpolate(
+      AccountNumber.pgType.encode(unsaved.accountnumber()),
+      typo.runtime.Fragment.lit("::varchar")
+    ));
+    columns.add(Fragment.lit("\"name\""));
+    values.add(interpolate(
+      Name.pgType.encode(unsaved.name()),
+      typo.runtime.Fragment.lit("::varchar")
+    ));
+    columns.add(Fragment.lit("\"creditrating\""));
+    values.add(interpolate(
+      TypoShort.pgType.encode(unsaved.creditrating()),
+      typo.runtime.Fragment.lit("::int2")
+    ));
+    columns.add(Fragment.lit("\"purchasingwebserviceurl\""));
+    values.add(interpolate(
+      PgTypes.text.opt().encode(unsaved.purchasingwebserviceurl()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    unsaved.preferredvendorstatus().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"preferredvendorstatus\""));
+        values.add(interpolate(
+        Flag.pgType.encode(value),
+        typo.runtime.Fragment.lit("::bool")
       ));
-      columns.add(Fragment.lit("\"accountnumber\""));
-      values.add(interpolate(
-        AccountNumber.pgType.encode(unsaved.accountnumber()),
-        typo.runtime.Fragment.lit("::varchar")
+      }
+    );;
+    unsaved.activeflag().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"activeflag\""));
+        values.add(interpolate(
+        Flag.pgType.encode(value),
+        typo.runtime.Fragment.lit("::bool")
       ));
-      columns.add(Fragment.lit("\"name\""));
-      values.add(interpolate(
-        Name.pgType.encode(unsaved.name()),
-        typo.runtime.Fragment.lit("::varchar")
+      }
+    );;
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
       ));
-      columns.add(Fragment.lit("\"creditrating\""));
-      values.add(interpolate(
-        TypoShort.pgType.encode(unsaved.creditrating()),
-        typo.runtime.Fragment.lit("::int2")
-      ));
-      columns.add(Fragment.lit("\"purchasingwebserviceurl\""));
-      values.add(interpolate(
-        PgTypes.text.opt().encode(unsaved.purchasingwebserviceurl()),
-        typo.runtime.Fragment.lit("""
-        """)
-      ));
-      unsaved.preferredvendorstatus().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"preferredvendorstatus\""));
-          values.add(interpolate(
-            Flag.pgType.encode(value),
-            typo.runtime.Fragment.lit("::bool")
-          ));
-        }
-      );;
-      unsaved.activeflag().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"activeflag\""));
-          values.add(interpolate(
-            Flag.pgType.encode(value),
-            typo.runtime.Fragment.lit("::bool")
-          ));
-        }
-      );;
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "purchasing"."vendor"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "purchasing"."vendor"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(VendorRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<VendorRow> unsaved,
     Integer batchSize,
@@ -185,6 +195,7 @@ public class VendorRepoImpl implements VendorRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<VendorRowUnsaved> unsaved,
     Integer batchSize,
@@ -195,17 +206,20 @@ public class VendorRepoImpl implements VendorRepo {
     """), batchSize, unsaved, c, VendorRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<VendorFields, VendorRow> select() {
     return SelectBuilder.of("purchasing.vendor", VendorFields.structure(), VendorRow._rowParser);
   };
 
+  @Override
   public List<VendorRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text
        from "purchasing"."vendor"
-    """)).as(VendorRow._rowParser.all()).runUnchecked(c);
+    """)).query(VendorRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<VendorRow> selectById(
     BusinessentityId businessentityid,
     Connection c
@@ -217,9 +231,10 @@ public class VendorRepoImpl implements VendorRepo {
          where "businessentityid" = """),
       BusinessentityId.pgType.encode(businessentityid),
       typo.runtime.Fragment.lit("")
-    ).as(VendorRow._rowParser.first()).runUnchecked(c);
+    ).query(VendorRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<VendorRow> selectByIds(
     BusinessentityId[] businessentityids,
     Connection c
@@ -231,64 +246,68 @@ public class VendorRepoImpl implements VendorRepo {
          where "businessentityid" = ANY("""),
       BusinessentityId.pgTypeArray.encode(businessentityids),
       typo.runtime.Fragment.lit(")")
-    ).as(VendorRow._rowParser.all()).runUnchecked(c);
+    ).query(VendorRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<BusinessentityId, VendorRow> selectByIdsTracked(
     BusinessentityId[] businessentityids,
     Connection c
   ) {
-    Map<BusinessentityId, VendorRow> ret = new HashMap<>();;
-      selectByIds(businessentityids, c).forEach(row -> ret.put(row.businessentityid(), row));
+    HashMap<BusinessentityId, VendorRow> ret = new HashMap<BusinessentityId, VendorRow>();
+    selectByIds(businessentityids, c).forEach(row -> ret.put(row.businessentityid(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<VendorFields, VendorRow> update() {
     return UpdateBuilder.of("purchasing.vendor", VendorFields.structure(), VendorRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     VendorRow row,
     Connection c
   ) {
     BusinessentityId businessentityid = row.businessentityid();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "purchasing"."vendor"
-                set "accountnumber" = """),
-             AccountNumber.pgType.encode(row.accountnumber()),
-             typo.runtime.Fragment.lit("""
-                ::varchar,
-                "name" = """),
-             Name.pgType.encode(row.name()),
-             typo.runtime.Fragment.lit("""
-                ::varchar,
-                "creditrating" = """),
-             TypoShort.pgType.encode(row.creditrating()),
-             typo.runtime.Fragment.lit("""
-                ::int2,
-                "preferredvendorstatus" = """),
-             Flag.pgType.encode(row.preferredvendorstatus()),
-             typo.runtime.Fragment.lit("""
-                ::bool,
-                "activeflag" = """),
-             Flag.pgType.encode(row.activeflag()),
-             typo.runtime.Fragment.lit("""
-                ::bool,
-                "purchasingwebserviceurl" = """),
-             PgTypes.text.opt().encode(row.purchasingwebserviceurl()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "businessentityid" = """),
-             BusinessentityId.pgType.encode(businessentityid),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "purchasing"."vendor"
+         set "accountnumber" = """),
+      AccountNumber.pgType.encode(row.accountnumber()),
+      typo.runtime.Fragment.lit("""
+         ::varchar,
+         "name" = """),
+      Name.pgType.encode(row.name()),
+      typo.runtime.Fragment.lit("""
+         ::varchar,
+         "creditrating" = """),
+      TypoShort.pgType.encode(row.creditrating()),
+      typo.runtime.Fragment.lit("""
+         ::int2,
+         "preferredvendorstatus" = """),
+      Flag.pgType.encode(row.preferredvendorstatus()),
+      typo.runtime.Fragment.lit("""
+         ::bool,
+         "activeflag" = """),
+      Flag.pgType.encode(row.activeflag()),
+      typo.runtime.Fragment.lit("""
+         ::bool,
+         "purchasingwebserviceurl" = """),
+      PgTypes.text.opt().encode(row.purchasingwebserviceurl()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "businessentityid" = """),
+      BusinessentityId.pgType.encode(businessentityid),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public VendorRow upsert(
     VendorRow unsaved,
     Connection c
@@ -330,6 +349,7 @@ public class VendorRepoImpl implements VendorRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<VendorRow> upsertBatch(
     Iterator<VendorRow> unsaved,
     Connection c
@@ -353,30 +373,31 @@ public class VendorRepoImpl implements VendorRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<VendorRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table vendor_TEMP (like "purchasing"."vendor") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy vendor_TEMP("businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate") from stdin
-      """), batchSize, unsaved, c, VendorRow.pgText);
+    create temporary table vendor_TEMP (like "purchasing"."vendor") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy vendor_TEMP("businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate") from stdin
+    """), batchSize, unsaved, c, VendorRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "purchasing"."vendor"("businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate")
-              select * from vendor_TEMP
-              on conflict ("businessentityid")
-              do update set
-                "accountnumber" = EXCLUDED."accountnumber",
-              "name" = EXCLUDED."name",
-              "creditrating" = EXCLUDED."creditrating",
-              "preferredvendorstatus" = EXCLUDED."preferredvendorstatus",
-              "activeflag" = EXCLUDED."activeflag",
-              "purchasingwebserviceurl" = EXCLUDED."purchasingwebserviceurl",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table vendor_TEMP;""")).update().runUnchecked(c);
+       insert into "purchasing"."vendor"("businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate")
+       select * from vendor_TEMP
+       on conflict ("businessentityid")
+       do update set
+         "accountnumber" = EXCLUDED."accountnumber",
+       "name" = EXCLUDED."name",
+       "creditrating" = EXCLUDED."creditrating",
+       "preferredvendorstatus" = EXCLUDED."preferredvendorstatus",
+       "activeflag" = EXCLUDED."activeflag",
+       "purchasingwebserviceurl" = EXCLUDED."purchasingwebserviceurl",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table vendor_TEMP;""")).update().runUnchecked(c);
   };
 }

@@ -5,22 +5,22 @@
  */
 package adventureworks.humanresources.vemployeedepartment;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class VemployeedepartmentViewRepoImpl implements VemployeedepartmentViewRepo {
+  @Override
   public SelectBuilder<VemployeedepartmentViewFields, VemployeedepartmentViewRow> select() {
     return SelectBuilder.of("humanresources.vemployeedepartment", VemployeedepartmentViewFields.structure(), VemployeedepartmentViewRow._rowParser);
   };
 
+  @Override
   public List<VemployeedepartmentViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "businessentityid", "title", "firstname", "middlename", "lastname", "suffix", "jobtitle", "department", "groupname", "startdate"::text
        from "humanresources"."vemployeedepartment"
-    """)).as(VemployeedepartmentViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(VemployeedepartmentViewRow._rowParser.all()).runUnchecked(c);
   };
 }

@@ -5,22 +5,22 @@
  */
 package adventureworks.pe.cr;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class CrViewRepoImpl implements CrViewRepo {
+  @Override
   public SelectBuilder<CrViewFields, CrViewRow> select() {
     return SelectBuilder.of("pe.cr", CrViewFields.structure(), CrViewRow._rowParser);
   };
 
+  @Override
   public List<CrViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "countryregioncode", "name", "modifieddate"::text
        from "pe"."cr"
-    """)).as(CrViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(CrViewRow._rowParser.all()).runUnchecked(c);
   };
 }

@@ -25,29 +25,29 @@ object TypoBox {
   given pgType: PgType[TypoBox] = {
     PgType.of(
       "box",
-      PgRead.castJdbcObjectTo(classOf[PGbox]).map(v => new TypoBox(
+      PgRead.castJdbcObjectTo(classOf[PGbox]).map((v: PGbox) => new TypoBox(
                                                     v.point(0).x,
                                                     v.point(0).y,
                                                     v.point(1).x,
                                                     v.point(1).y
                                                   )),
-      PgWrite.passObjectToJdbc().contramap((v: TypoBox) => new PGbox(
-                                             v.x1,
-                                             v.y1,
-                                             v.x2,
-                                             v.y2
-                                           )),
+      PgWrite.passObjectToJdbc[PGbox]().contramap((v: TypoBox) => new PGbox(
+                                                    v.x1,
+                                                    v.y1,
+                                                    v.x2,
+                                                    v.y2
+                                                  )),
       TypoBox.pgText
     )
   }
 
   given pgTypeArray: PgType[Array[TypoBox]] = {
-    TypoBox.pgType.array(PgRead.castJdbcArrayTo(classOf[PGbox]).map(xs => xs.map(v => new TypoBox(
+    TypoBox.pgType.array(PgRead.castJdbcArrayTo(classOf[PGbox]).map((xs: Array[PGbox]) => xs.map((v: PGbox) => new TypoBox(
       v.point(0).x,
       v.point(0).y,
       v.point(1).x,
       v.point(1).y
-    ))), PgWrite.passObjectToJdbc[PGbox]().array(TypoBox.pgType.typename().as[PGbox]()).contramap(xs => xs.map((v: TypoBox) => new PGbox(
+    ))), PgWrite.passObjectToJdbc[PGbox]().array(TypoBox.pgType.typename().as[PGbox]()).contramap((xs: Array[TypoBox]) => xs.map((v: TypoBox) => new PGbox(
       v.x1,
       v.y1,
       v.x2,

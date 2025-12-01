@@ -7,13 +7,11 @@ package adventureworks.pr.pc
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class PcViewRepoImpl extends PcViewRepo {
-  def select: SelectBuilder[PcViewFields, PcViewRow] = SelectBuilder.of(""""pr"."pc"""", PcViewFields.structure, PcViewRow.read)
+  override def select: SelectBuilder[PcViewFields, PcViewRow] = SelectBuilder.of(""""pr"."pc"""", PcViewFields.structure, PcViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, PcViewRow] = sql"""select "id", "productcategoryid", "name", "rowguid", "modifieddate"::text from "pr"."pc"""".query(using PcViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, PcViewRow] = sql"""select "id", "productcategoryid", "name", "rowguid", "modifieddate"::text from "pr"."pc"""".query(using PcViewRow.read).stream
 }

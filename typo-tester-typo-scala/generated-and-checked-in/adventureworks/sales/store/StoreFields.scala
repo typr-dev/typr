@@ -46,7 +46,7 @@ object StoreFields {
 
     override lazy val fields: StoreFields = {
       new StoreFields {
-        def businessentityid: IdField[BusinessentityId, StoreRow] = {
+        override def businessentityid: IdField[BusinessentityId, StoreRow] = {
           new IdField[BusinessentityId, StoreRow](
             _path,
             "businessentityid",
@@ -57,7 +57,7 @@ object StoreFields {
             BusinessentityId.pgType
           )
         }
-        def name: Field[Name, StoreRow] = {
+        override def name: Field[Name, StoreRow] = {
           new Field[Name, StoreRow](
             _path,
             "name",
@@ -68,7 +68,7 @@ object StoreFields {
             Name.pgType
           )
         }
-        def salespersonid: OptField[BusinessentityId, StoreRow] = {
+        override def salespersonid: OptField[BusinessentityId, StoreRow] = {
           new OptField[BusinessentityId, StoreRow](
             _path,
             "salespersonid",
@@ -79,7 +79,7 @@ object StoreFields {
             BusinessentityId.pgType
           )
         }
-        def demographics: OptField[TypoXml, StoreRow] = {
+        override def demographics: OptField[TypoXml, StoreRow] = {
           new OptField[TypoXml, StoreRow](
             _path,
             "demographics",
@@ -90,7 +90,7 @@ object StoreFields {
             TypoXml.pgType
           )
         }
-        def rowguid: Field[TypoUUID, StoreRow] = {
+        override def rowguid: Field[TypoUUID, StoreRow] = {
           new Field[TypoUUID, StoreRow](
             _path,
             "rowguid",
@@ -101,7 +101,7 @@ object StoreFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, StoreRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, StoreRow] = {
           new Field[TypoLocalDateTime, StoreRow](
             _path,
             "modifieddate",
@@ -117,7 +117,7 @@ object StoreFields {
 
     override lazy val columns: java.util.List[FieldLike[?, StoreRow]] = java.util.List.of(this.fields.businessentityid, this.fields.name, this.fields.salespersonid, this.fields.demographics, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[StoreFields, StoreRow] = new Impl(java.util.List.of())

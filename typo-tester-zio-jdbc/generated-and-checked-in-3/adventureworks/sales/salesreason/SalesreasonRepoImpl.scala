@@ -21,20 +21,20 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class SalesreasonRepoImpl extends SalesreasonRepo {
-  def delete: DeleteBuilder[SalesreasonFields, SalesreasonRow] = DeleteBuilder.of(""""sales"."salesreason"""", SalesreasonFields.structure, SalesreasonRow.jdbcDecoder)
+  override def delete: DeleteBuilder[SalesreasonFields, SalesreasonRow] = DeleteBuilder.of(""""sales"."salesreason"""", SalesreasonFields.structure, SalesreasonRow.jdbcDecoder)
 
-  def deleteById(salesreasonid: SalesreasonId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "sales"."salesreason" where "salesreasonid" = ${Segment.paramSegment(salesreasonid)(using SalesreasonId.setter)}""".delete.map(_ > 0)
+  override def deleteById(salesreasonid: SalesreasonId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "sales"."salesreason" where "salesreasonid" = ${Segment.paramSegment(salesreasonid)(using SalesreasonId.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(salesreasonids: Array[SalesreasonId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "sales"."salesreason" where "salesreasonid" = ANY(${Segment.paramSegment(salesreasonids)(using SalesreasonId.arraySetter)})""".delete
+  override def deleteByIds(salesreasonids: Array[SalesreasonId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "sales"."salesreason" where "salesreasonid" = ANY(${Segment.paramSegment(salesreasonids)(using SalesreasonId.arraySetter)})""".delete
 
-  def insert(unsaved: SalesreasonRow): ZIO[ZConnection, Throwable, SalesreasonRow] = {
+  override def insert(unsaved: SalesreasonRow): ZIO[ZConnection, Throwable, SalesreasonRow] = {
     sql"""insert into "sales"."salesreason"("salesreasonid", "name", "reasontype", "modifieddate")
     values (${Segment.paramSegment(unsaved.salesreasonid)(using SalesreasonId.setter)}::int4, ${Segment.paramSegment(unsaved.name)(using Name.setter)}::varchar, ${Segment.paramSegment(unsaved.reasontype)(using Name.setter)}::varchar, ${Segment.paramSegment(unsaved.modifieddate)(using TypoLocalDateTime.setter)}::timestamp)
     returning "salesreasonid", "name", "reasontype", "modifieddate"::text
     """.insertReturning(using SalesreasonRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insert(unsaved: SalesreasonRowUnsaved): ZIO[ZConnection, Throwable, SalesreasonRow] = {
+  override def insert(unsaved: SalesreasonRowUnsaved): ZIO[ZConnection, Throwable, SalesreasonRow] = {
     val fs = List(
       Some((sql""""name"""", sql"${Segment.paramSegment(unsaved.name)(using Name.setter)}::varchar")),
       Some((sql""""reasontype"""", sql"${Segment.paramSegment(unsaved.reasontype)(using Name.setter)}::varchar")),
@@ -59,35 +59,35 @@ class SalesreasonRepoImpl extends SalesreasonRepo {
     q.insertReturning(using SalesreasonRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, SalesreasonRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "sales"."salesreason"("salesreasonid", "name", "reasontype", "modifieddate") FROM STDIN""", batchSize, unsaved)(using SalesreasonRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, SalesreasonRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "sales"."salesreason"("name", "reasontype", "salesreasonid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using SalesreasonRowUnsaved.pgText)
 
-  def select: SelectBuilder[SalesreasonFields, SalesreasonRow] = SelectBuilder.of(""""sales"."salesreason"""", SalesreasonFields.structure, SalesreasonRow.jdbcDecoder)
+  override def select: SelectBuilder[SalesreasonFields, SalesreasonRow] = SelectBuilder.of(""""sales"."salesreason"""", SalesreasonFields.structure, SalesreasonRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, SalesreasonRow] = sql"""select "salesreasonid", "name", "reasontype", "modifieddate"::text from "sales"."salesreason"""".query(using SalesreasonRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, SalesreasonRow] = sql"""select "salesreasonid", "name", "reasontype", "modifieddate"::text from "sales"."salesreason"""".query(using SalesreasonRow.jdbcDecoder).selectStream()
 
-  def selectById(salesreasonid: SalesreasonId): ZIO[ZConnection, Throwable, Option[SalesreasonRow]] = sql"""select "salesreasonid", "name", "reasontype", "modifieddate"::text from "sales"."salesreason" where "salesreasonid" = ${Segment.paramSegment(salesreasonid)(using SalesreasonId.setter)}""".query(using SalesreasonRow.jdbcDecoder).selectOne
+  override def selectById(salesreasonid: SalesreasonId): ZIO[ZConnection, Throwable, Option[SalesreasonRow]] = sql"""select "salesreasonid", "name", "reasontype", "modifieddate"::text from "sales"."salesreason" where "salesreasonid" = ${Segment.paramSegment(salesreasonid)(using SalesreasonId.setter)}""".query(using SalesreasonRow.jdbcDecoder).selectOne
 
-  def selectByIds(salesreasonids: Array[SalesreasonId]): ZStream[ZConnection, Throwable, SalesreasonRow] = sql"""select "salesreasonid", "name", "reasontype", "modifieddate"::text from "sales"."salesreason" where "salesreasonid" = ANY(${Segment.paramSegment(salesreasonids)(using SalesreasonId.arraySetter)})""".query(using SalesreasonRow.jdbcDecoder).selectStream()
+  override def selectByIds(salesreasonids: Array[SalesreasonId]): ZStream[ZConnection, Throwable, SalesreasonRow] = sql"""select "salesreasonid", "name", "reasontype", "modifieddate"::text from "sales"."salesreason" where "salesreasonid" = ANY(${Segment.paramSegment(salesreasonids)(using SalesreasonId.arraySetter)})""".query(using SalesreasonRow.jdbcDecoder).selectStream()
 
-  def selectByIdsTracked(salesreasonids: Array[SalesreasonId]): ZIO[ZConnection, Throwable, Map[SalesreasonId, SalesreasonRow]] = {
+  override def selectByIdsTracked(salesreasonids: Array[SalesreasonId]): ZIO[ZConnection, Throwable, Map[SalesreasonId, SalesreasonRow]] = {
     selectByIds(salesreasonids).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.salesreasonid, x)).toMap
       salesreasonids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[SalesreasonFields, SalesreasonRow] = UpdateBuilder.of(""""sales"."salesreason"""", SalesreasonFields.structure, SalesreasonRow.jdbcDecoder)
+  override def update: UpdateBuilder[SalesreasonFields, SalesreasonRow] = UpdateBuilder.of(""""sales"."salesreason"""", SalesreasonFields.structure, SalesreasonRow.jdbcDecoder)
 
-  def update(row: SalesreasonRow): ZIO[ZConnection, Throwable, Option[SalesreasonRow]] = {
+  override def update(row: SalesreasonRow): ZIO[ZConnection, Throwable, Option[SalesreasonRow]] = {
     val salesreasonid = row.salesreasonid
     sql"""update "sales"."salesreason"
     set "name" = ${Segment.paramSegment(row.name)(using Name.setter)}::varchar,
@@ -99,7 +99,7 @@ class SalesreasonRepoImpl extends SalesreasonRepo {
       .selectOne
   }
 
-  def upsert(unsaved: SalesreasonRow): ZIO[ZConnection, Throwable, UpdateResult[SalesreasonRow]] = {
+  override def upsert(unsaved: SalesreasonRow): ZIO[ZConnection, Throwable, UpdateResult[SalesreasonRow]] = {
     sql"""insert into "sales"."salesreason"("salesreasonid", "name", "reasontype", "modifieddate")
     values (
       ${Segment.paramSegment(unsaved.salesreasonid)(using SalesreasonId.setter)}::int4,
@@ -116,7 +116,7 @@ class SalesreasonRepoImpl extends SalesreasonRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, SalesreasonRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

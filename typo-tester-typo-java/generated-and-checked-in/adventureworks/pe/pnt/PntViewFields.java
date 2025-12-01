@@ -16,7 +16,7 @@ import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 
 public interface PntViewFields {
-  static final class Impl extends Relation<PntViewFields, PntViewRow> {
+  final class Impl extends Relation<PntViewFields, PntViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -24,15 +24,19 @@ public interface PntViewFields {
     @Override
     public PntViewFields fields() {
       return new PntViewFields() {
+               @Override
                public Field<PhonenumbertypeId, PntViewRow> id() {
                  return new Field<PhonenumbertypeId, PntViewRow>(_path, "id", PntViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), PhonenumbertypeId.pgType);
                };
+               @Override
                public Field<PhonenumbertypeId, PntViewRow> phonenumbertypeid() {
                  return new Field<PhonenumbertypeId, PntViewRow>(_path, "phonenumbertypeid", PntViewRow::phonenumbertypeid, Optional.empty(), Optional.empty(), (row, value) -> row.withPhonenumbertypeid(value), PhonenumbertypeId.pgType);
                };
+               @Override
                public Field<Name, PntViewRow> name() {
                  return new Field<Name, PntViewRow>(_path, "name", PntViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, PntViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, PntViewRow>(_path, "modifieddate", PntViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -44,6 +48,7 @@ public interface PntViewFields {
       return List.of(this.fields().id(), this.fields().phonenumbertypeid(), this.fields().name(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

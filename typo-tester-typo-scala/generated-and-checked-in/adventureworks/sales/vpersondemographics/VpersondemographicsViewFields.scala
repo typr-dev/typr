@@ -49,7 +49,7 @@ object VpersondemographicsViewFields {
 
     override lazy val fields: VpersondemographicsViewFields = {
       new VpersondemographicsViewFields {
-        def businessentityid: Field[BusinessentityId, VpersondemographicsViewRow] = {
+        override def businessentityid: Field[BusinessentityId, VpersondemographicsViewRow] = {
           new Field[BusinessentityId, VpersondemographicsViewRow](
             _path,
             "businessentityid",
@@ -60,7 +60,7 @@ object VpersondemographicsViewFields {
             BusinessentityId.pgType
           )
         }
-        def totalpurchaseytd: OptField[TypoMoney, VpersondemographicsViewRow] = {
+        override def totalpurchaseytd: OptField[TypoMoney, VpersondemographicsViewRow] = {
           new OptField[TypoMoney, VpersondemographicsViewRow](
             _path,
             "totalpurchaseytd",
@@ -71,7 +71,7 @@ object VpersondemographicsViewFields {
             TypoMoney.pgType
           )
         }
-        def datefirstpurchase: OptField[TypoLocalDate, VpersondemographicsViewRow] = {
+        override def datefirstpurchase: OptField[TypoLocalDate, VpersondemographicsViewRow] = {
           new OptField[TypoLocalDate, VpersondemographicsViewRow](
             _path,
             "datefirstpurchase",
@@ -82,7 +82,7 @@ object VpersondemographicsViewFields {
             TypoLocalDate.pgType
           )
         }
-        def birthdate: OptField[TypoLocalDate, VpersondemographicsViewRow] = {
+        override def birthdate: OptField[TypoLocalDate, VpersondemographicsViewRow] = {
           new OptField[TypoLocalDate, VpersondemographicsViewRow](
             _path,
             "birthdate",
@@ -93,7 +93,7 @@ object VpersondemographicsViewFields {
             TypoLocalDate.pgType
           )
         }
-        def maritalstatus: OptField[/* max 1 chars */ String, VpersondemographicsViewRow] = {
+        override def maritalstatus: OptField[/* max 1 chars */ String, VpersondemographicsViewRow] = {
           new OptField[/* max 1 chars */ String, VpersondemographicsViewRow](
             _path,
             "maritalstatus",
@@ -104,7 +104,7 @@ object VpersondemographicsViewFields {
             PgTypes.text
           )
         }
-        def yearlyincome: OptField[/* max 30 chars */ String, VpersondemographicsViewRow] = {
+        override def yearlyincome: OptField[/* max 30 chars */ String, VpersondemographicsViewRow] = {
           new OptField[/* max 30 chars */ String, VpersondemographicsViewRow](
             _path,
             "yearlyincome",
@@ -115,7 +115,7 @@ object VpersondemographicsViewFields {
             PgTypes.text
           )
         }
-        def gender: OptField[/* max 1 chars */ String, VpersondemographicsViewRow] = {
+        override def gender: OptField[/* max 1 chars */ String, VpersondemographicsViewRow] = {
           new OptField[/* max 1 chars */ String, VpersondemographicsViewRow](
             _path,
             "gender",
@@ -126,7 +126,7 @@ object VpersondemographicsViewFields {
             PgTypes.text
           )
         }
-        def totalchildren: OptField[Integer, VpersondemographicsViewRow] = {
+        override def totalchildren: OptField[Integer, VpersondemographicsViewRow] = {
           new OptField[Integer, VpersondemographicsViewRow](
             _path,
             "totalchildren",
@@ -137,7 +137,7 @@ object VpersondemographicsViewFields {
             PgTypes.int4
           )
         }
-        def numberchildrenathome: OptField[Integer, VpersondemographicsViewRow] = {
+        override def numberchildrenathome: OptField[Integer, VpersondemographicsViewRow] = {
           new OptField[Integer, VpersondemographicsViewRow](
             _path,
             "numberchildrenathome",
@@ -148,7 +148,7 @@ object VpersondemographicsViewFields {
             PgTypes.int4
           )
         }
-        def education: OptField[/* max 30 chars */ String, VpersondemographicsViewRow] = {
+        override def education: OptField[/* max 30 chars */ String, VpersondemographicsViewRow] = {
           new OptField[/* max 30 chars */ String, VpersondemographicsViewRow](
             _path,
             "education",
@@ -159,7 +159,7 @@ object VpersondemographicsViewFields {
             PgTypes.text
           )
         }
-        def occupation: OptField[/* max 30 chars */ String, VpersondemographicsViewRow] = {
+        override def occupation: OptField[/* max 30 chars */ String, VpersondemographicsViewRow] = {
           new OptField[/* max 30 chars */ String, VpersondemographicsViewRow](
             _path,
             "occupation",
@@ -170,7 +170,7 @@ object VpersondemographicsViewFields {
             PgTypes.text
           )
         }
-        def homeownerflag: OptField[java.lang.Boolean, VpersondemographicsViewRow] = {
+        override def homeownerflag: OptField[java.lang.Boolean, VpersondemographicsViewRow] = {
           new OptField[java.lang.Boolean, VpersondemographicsViewRow](
             _path,
             "homeownerflag",
@@ -181,7 +181,7 @@ object VpersondemographicsViewFields {
             PgTypes.bool
           )
         }
-        def numbercarsowned: OptField[Integer, VpersondemographicsViewRow] = {
+        override def numbercarsowned: OptField[Integer, VpersondemographicsViewRow] = {
           new OptField[Integer, VpersondemographicsViewRow](
             _path,
             "numbercarsowned",
@@ -197,7 +197,7 @@ object VpersondemographicsViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, VpersondemographicsViewRow]] = java.util.List.of(this.fields.businessentityid, this.fields.totalpurchaseytd, this.fields.datefirstpurchase, this.fields.birthdate, this.fields.maritalstatus, this.fields.yearlyincome, this.fields.gender, this.fields.totalchildren, this.fields.numberchildrenathome, this.fields.education, this.fields.occupation, this.fields.homeownerflag, this.fields.numbercarsowned)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[VpersondemographicsViewFields, VpersondemographicsViewRow] = new Impl(java.util.List.of())

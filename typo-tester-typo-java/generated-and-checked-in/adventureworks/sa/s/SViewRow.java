@@ -13,7 +13,6 @@ import adventureworks.public_.Name;
 import java.util.Optional;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple7;
 
 /** View: sa.s */
 public record SViewRow(
@@ -67,5 +66,5 @@ public record SViewRow(
     return new SViewRow(id, businessentityid, name, salespersonid, demographics, rowguid, modifieddate);
   };
 
-  static RowParser<SViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, Name.pgType, BusinessentityId.pgType.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SViewRow::new, row -> new Tuple7<>(row.id(), row.businessentityid(), row.name(), row.salespersonid(), row.demographics(), row.rowguid(), row.modifieddate()));;
+  static RowParser<SViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, Name.pgType, BusinessentityId.pgType.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SViewRow::new, row -> new Object[]{row.id(), row.businessentityid(), row.name(), row.salespersonid(), row.demographics(), row.rowguid(), row.modifieddate()});;
 }

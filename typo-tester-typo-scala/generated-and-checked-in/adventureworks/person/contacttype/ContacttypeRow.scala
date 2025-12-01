@@ -11,7 +11,6 @@ import adventureworks.public.Name
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple3
 
 /** Table: person.contacttype
  * Lookup table containing the types of business entity contacts.
@@ -36,7 +35,7 @@ case class ContacttypeRow(
 }
 
 object ContacttypeRow {
-  val `_rowParser`: RowParser[ContacttypeRow] = RowParsers.of(ContacttypeId.pgType, Name.pgType, TypoLocalDateTime.pgType, ContacttypeRow.apply, row => new Tuple3(row.contacttypeid, row.name, row.modifieddate))
+  val `_rowParser`: RowParser[ContacttypeRow] = RowParsers.of(ContacttypeId.pgType, Name.pgType, TypoLocalDateTime.pgType, ContacttypeRow.apply, row => Array(row.contacttypeid, row.name, row.modifieddate))
 
   given pgText: PgText[ContacttypeRow] = PgText.from(`_rowParser`)
 }

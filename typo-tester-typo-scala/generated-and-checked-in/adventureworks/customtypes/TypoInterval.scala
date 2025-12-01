@@ -27,7 +27,7 @@ object TypoInterval {
   given pgType: PgType[TypoInterval] = {
     PgType.of(
       "interval",
-      PgRead.castJdbcObjectTo(classOf[PGInterval]).map(v => new TypoInterval(
+      PgRead.castJdbcObjectTo(classOf[PGInterval]).map((v: PGInterval) => new TypoInterval(
                                                          v.getYears,
                                                          v.getMonths,
                                                          v.getDays,
@@ -35,19 +35,33 @@ object TypoInterval {
                                                          v.getMinutes,
                                                          v.getSeconds
                                                        )),
-      PgWrite.passObjectToJdbc().contramap((v: TypoInterval) => new PGInterval(v.years, v.months, v.days, v.hours, v.minutes, v.seconds)),
+      PgWrite.passObjectToJdbc[PGInterval]().contramap((v: TypoInterval) => new PGInterval(
+                                                         v.years,
+                                                         v.months,
+                                                         v.days,
+                                                         v.hours,
+                                                         v.minutes,
+                                                         v.seconds
+                                                       )),
       TypoInterval.pgText
     )
   }
 
   given pgTypeArray: PgType[Array[TypoInterval]] = {
-    TypoInterval.pgType.array(PgRead.castJdbcArrayTo(classOf[PGInterval]).map(xs => xs.map(v => new TypoInterval(
+    TypoInterval.pgType.array(PgRead.castJdbcArrayTo(classOf[PGInterval]).map((xs: Array[PGInterval]) => xs.map((v: PGInterval) => new TypoInterval(
       v.getYears,
       v.getMonths,
       v.getDays,
       v.getHours,
       v.getMinutes,
       v.getSeconds
-    ))), PgWrite.passObjectToJdbc[PGInterval]().array(TypoInterval.pgType.typename().as[PGInterval]()).contramap(xs => xs.map((v: TypoInterval) => new PGInterval(v.years, v.months, v.days, v.hours, v.minutes, v.seconds))))
+    ))), PgWrite.passObjectToJdbc[PGInterval]().array(TypoInterval.pgType.typename().as[PGInterval]()).contramap((xs: Array[TypoInterval]) => xs.map((v: TypoInterval) => new PGInterval(
+      v.years,
+      v.months,
+      v.days,
+      v.hours,
+      v.minutes,
+      v.seconds
+    ))))
   }
 }

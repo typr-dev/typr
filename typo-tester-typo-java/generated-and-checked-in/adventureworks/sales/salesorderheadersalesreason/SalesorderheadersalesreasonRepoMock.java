@@ -5,6 +5,7 @@
  */
 package adventureworks.sales.salesorderheadersalesreason;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record SalesorderheadersalesreasonRepoMock(
     return new SalesorderheadersalesreasonRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow> delete() {
     return new DeleteBuilderMock<>(SalesorderheadersalesreasonFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.compositeId(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     SalesorderheadersalesreasonId compositeId,
     Connection c
@@ -52,28 +55,31 @@ public record SalesorderheadersalesreasonRepoMock(
     return Optional.ofNullable(map.remove(compositeId)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     SalesorderheadersalesreasonId[] compositeIds,
     Connection c
   ) {
     var count = 0;
-      for (var id : compositeIds) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : compositeIds) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public SalesorderheadersalesreasonRow insert(
     SalesorderheadersalesreasonRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.compositeId())) {
-        throw new RuntimeException(str("id $unsaved.compositeId() already exists"));
-      };
-      map.put(unsaved.compositeId(), unsaved);
+      throw new RuntimeException(str("id $unsaved.compositeId() already exists"));
+    };
+    map.put(unsaved.compositeId(), unsaved);
     return unsaved;
   };
 
+  @Override
   public SalesorderheadersalesreasonRow insert(
     SalesorderheadersalesreasonRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record SalesorderheadersalesreasonRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<SalesorderheadersalesreasonRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.compositeId(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.compositeId(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<SalesorderheadersalesreasonRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.compositeId(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.compositeId(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow> select() {
     return new SelectBuilderMock<>(SalesorderheadersalesreasonFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<SalesorderheadersalesreasonRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<SalesorderheadersalesreasonRow> selectById(
     SalesorderheadersalesreasonId compositeId,
     Connection c
@@ -126,38 +137,43 @@ public record SalesorderheadersalesreasonRepoMock(
     return Optional.ofNullable(map.get(compositeId));
   };
 
+  @Override
   public List<SalesorderheadersalesreasonRow> selectByIds(
     SalesorderheadersalesreasonId[] compositeIds,
     Connection c
   ) {
     var result = new ArrayList<SalesorderheadersalesreasonRow>();
-      for (var id : compositeIds) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : compositeIds) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<SalesorderheadersalesreasonId, SalesorderheadersalesreasonRow> selectByIdsTracked(
     SalesorderheadersalesreasonId[] compositeIds,
     Connection c
   ) {
-    return selectByIds(compositeIds, c).stream().collect(Collectors.toMap((adventureworks.sales.salesorderheadersalesreason.SalesorderheadersalesreasonRow row) -> row.compositeId(), Function.identity()));
+    return selectByIds(compositeIds, c).stream().collect(Collectors.toMap((SalesorderheadersalesreasonRow row) -> row.compositeId(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow> update() {
     return new UpdateBuilderMock<>(SalesorderheadersalesreasonFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     SalesorderheadersalesreasonRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.compositeId())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.compositeId(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.compositeId(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public SalesorderheadersalesreasonRow upsert(
     SalesorderheadersalesreasonRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record SalesorderheadersalesreasonRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<SalesorderheadersalesreasonRow> upsertBatch(
     Iterator<SalesorderheadersalesreasonRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<SalesorderheadersalesreasonRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.compositeId(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.compositeId(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<SalesorderheadersalesreasonRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.compositeId(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.compositeId(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

@@ -5,6 +5,7 @@
  */
 package adventureworks.person.contacttype;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record ContacttypeRepoMock(
     return new ContacttypeRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<ContacttypeFields, ContacttypeRow> delete() {
     return new DeleteBuilderMock<>(ContacttypeFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.contacttypeid(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     ContacttypeId contacttypeid,
     Connection c
@@ -52,28 +55,31 @@ public record ContacttypeRepoMock(
     return Optional.ofNullable(map.remove(contacttypeid)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     ContacttypeId[] contacttypeids,
     Connection c
   ) {
     var count = 0;
-      for (var id : contacttypeids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : contacttypeids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public ContacttypeRow insert(
     ContacttypeRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.contacttypeid())) {
-        throw new RuntimeException(str("id $unsaved.contacttypeid() already exists"));
-      };
-      map.put(unsaved.contacttypeid(), unsaved);
+      throw new RuntimeException(str("id $unsaved.contacttypeid() already exists"));
+    };
+    map.put(unsaved.contacttypeid(), unsaved);
     return unsaved;
   };
 
+  @Override
   public ContacttypeRow insert(
     ContacttypeRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record ContacttypeRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<ContacttypeRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.contacttypeid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.contacttypeid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<ContacttypeRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.contacttypeid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.contacttypeid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<ContacttypeFields, ContacttypeRow> select() {
     return new SelectBuilderMock<>(ContacttypeFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<ContacttypeRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<ContacttypeRow> selectById(
     ContacttypeId contacttypeid,
     Connection c
@@ -126,38 +137,43 @@ public record ContacttypeRepoMock(
     return Optional.ofNullable(map.get(contacttypeid));
   };
 
+  @Override
   public List<ContacttypeRow> selectByIds(
     ContacttypeId[] contacttypeids,
     Connection c
   ) {
     var result = new ArrayList<ContacttypeRow>();
-      for (var id : contacttypeids) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : contacttypeids) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<ContacttypeId, ContacttypeRow> selectByIdsTracked(
     ContacttypeId[] contacttypeids,
     Connection c
   ) {
-    return selectByIds(contacttypeids, c).stream().collect(Collectors.toMap((adventureworks.person.contacttype.ContacttypeRow row) -> row.contacttypeid(), Function.identity()));
+    return selectByIds(contacttypeids, c).stream().collect(Collectors.toMap((ContacttypeRow row) -> row.contacttypeid(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<ContacttypeFields, ContacttypeRow> update() {
     return new UpdateBuilderMock<>(ContacttypeFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     ContacttypeRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.contacttypeid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.contacttypeid(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.contacttypeid(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public ContacttypeRow upsert(
     ContacttypeRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record ContacttypeRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<ContacttypeRow> upsertBatch(
     Iterator<ContacttypeRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<ContacttypeRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.contacttypeid(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.contacttypeid(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<ContacttypeRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.contacttypeid(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.contacttypeid(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

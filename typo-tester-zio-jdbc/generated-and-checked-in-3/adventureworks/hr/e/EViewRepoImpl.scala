@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class EViewRepoImpl extends EViewRepo {
-  def select: SelectBuilder[EViewFields, EViewRow] = SelectBuilder.of(""""hr"."e"""", EViewFields.structure, EViewRow.jdbcDecoder)
+  override def select: SelectBuilder[EViewFields, EViewRow] = SelectBuilder.of(""""hr"."e"""", EViewFields.structure, EViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, EViewRow] = sql"""select "id", "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode" from "hr"."e"""".query(using EViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, EViewRow] = sql"""select "id", "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode" from "hr"."e"""".query(using EViewRow.jdbcDecoder).selectStream()
 }

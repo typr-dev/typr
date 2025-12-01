@@ -32,7 +32,7 @@ object LocationFields {
 
     override lazy val fields: LocationFields = {
       new LocationFields {
-        def locationid: IdField[LocationId, LocationRow] = {
+        override def locationid: IdField[LocationId, LocationRow] = {
           new IdField[LocationId, LocationRow](
             _path,
             "locationid",
@@ -43,7 +43,7 @@ object LocationFields {
             LocationId.pgType
           )
         }
-        def name: Field[Name, LocationRow] = {
+        override def name: Field[Name, LocationRow] = {
           new Field[Name, LocationRow](
             _path,
             "name",
@@ -54,7 +54,7 @@ object LocationFields {
             Name.pgType
           )
         }
-        def costrate: Field[java.math.BigDecimal, LocationRow] = {
+        override def costrate: Field[java.math.BigDecimal, LocationRow] = {
           new Field[java.math.BigDecimal, LocationRow](
             _path,
             "costrate",
@@ -65,7 +65,7 @@ object LocationFields {
             PgTypes.numeric
           )
         }
-        def availability: Field[java.math.BigDecimal, LocationRow] = {
+        override def availability: Field[java.math.BigDecimal, LocationRow] = {
           new Field[java.math.BigDecimal, LocationRow](
             _path,
             "availability",
@@ -76,7 +76,7 @@ object LocationFields {
             PgTypes.numeric
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, LocationRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, LocationRow] = {
           new Field[TypoLocalDateTime, LocationRow](
             _path,
             "modifieddate",
@@ -92,7 +92,7 @@ object LocationFields {
 
     override lazy val columns: java.util.List[FieldLike[?, LocationRow]] = java.util.List.of(this.fields.locationid, this.fields.name, this.fields.costrate, this.fields.availability, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[LocationFields, LocationRow] = new Impl(java.util.List.of())

@@ -36,7 +36,7 @@ object TitledpersonFields {
 
     override lazy val fields: TitledpersonFields = {
       new TitledpersonFields {
-        def titleShort: Field[TitleDomainId, TitledpersonRow] = {
+        override def titleShort: Field[TitleDomainId, TitledpersonRow] = {
           new Field[TitleDomainId, TitledpersonRow](
             _path,
             "title_short",
@@ -47,7 +47,7 @@ object TitledpersonFields {
             TitleDomainId.pgType
           )
         }
-        def title: Field[TitleId, TitledpersonRow] = {
+        override def title: Field[TitleId, TitledpersonRow] = {
           new Field[TitleId, TitledpersonRow](
             _path,
             "title",
@@ -58,7 +58,7 @@ object TitledpersonFields {
             TitleId.pgType
           )
         }
-        def name: Field[String, TitledpersonRow] = {
+        override def name: Field[String, TitledpersonRow] = {
           new Field[String, TitledpersonRow](
             _path,
             "name",
@@ -74,7 +74,7 @@ object TitledpersonFields {
 
     override lazy val columns: java.util.List[FieldLike[?, TitledpersonRow]] = java.util.List.of(this.fields.titleShort, this.fields.title, this.fields.name)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[TitledpersonFields, TitledpersonRow] = new Impl(java.util.List.of())

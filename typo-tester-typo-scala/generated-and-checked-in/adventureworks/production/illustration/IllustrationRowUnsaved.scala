@@ -30,13 +30,5 @@ case class IllustrationRowUnsaved(
 }
 
 object IllustrationRowUnsaved {
-  given pgText: PgText[IllustrationRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      TypoXml.pgType.opt().pgText.unsafeEncode(row.diagram, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using IllustrationId.pgType.pgText).unsafeEncode(row.illustrationid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[IllustrationRowUnsaved] = PgText.instance((row, sb) => { TypoXml.pgType.opt().pgText.unsafeEncode(row.diagram, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using IllustrationId.pgType.pgText).unsafeEncode(row.illustrationid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

@@ -5,12 +5,13 @@
  */
 package adventureworks.humanresources.shift
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
 
 /** Type for the primary key of table `humanresources.shift` */
-case class ShiftId(value: Integer) extends scala.AnyVal
+case class ShiftId(@JsonValue value: Integer) extends scala.AnyVal
 
 object ShiftId {
   given bijection: Bijection[ShiftId, Integer] = Bijection.apply[ShiftId, Integer](_.value)(ShiftId.apply)

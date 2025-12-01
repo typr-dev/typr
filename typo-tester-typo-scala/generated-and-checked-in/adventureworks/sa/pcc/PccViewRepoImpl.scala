@@ -10,11 +10,11 @@ import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PccViewRepoImpl extends PccViewRepo {
-  def select: SelectBuilder[PccViewFields, PccViewRow] = SelectBuilder.of("sa.pcc", PccViewFields.structure, PccViewRow.`_rowParser`)
+  override def select: SelectBuilder[PccViewFields, PccViewRow] = SelectBuilder.of("sa.pcc", PccViewFields.structure, PccViewRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[PccViewRow] = {
+  override def selectAll(using c: Connection): java.util.List[PccViewRow] = {
     interpolate"""select "id", "businessentityid", "creditcardid", "modifieddate"::text
     from "sa"."pcc"
-    """.as(PccViewRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(PccViewRow.`_rowParser`.all()).runUnchecked(c)
   }
 }

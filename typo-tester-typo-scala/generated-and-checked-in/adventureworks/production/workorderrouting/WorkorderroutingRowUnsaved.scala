@@ -79,31 +79,5 @@ case class WorkorderroutingRowUnsaved(
 }
 
 object WorkorderroutingRowUnsaved {
-  given pgText: PgText[WorkorderroutingRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      WorkorderId.pgType.pgText.unsafeEncode(row.workorderid, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.int4.pgText.unsafeEncode(row.productid, sb);
-      sb.append(PgText.DELIMETER);
-      TypoShort.pgType.pgText.unsafeEncode(row.operationsequence, sb);
-      sb.append(PgText.DELIMETER);
-      LocationId.pgType.pgText.unsafeEncode(row.locationid, sb);
-      sb.append(PgText.DELIMETER);
-      TypoLocalDateTime.pgType.pgText.unsafeEncode(row.scheduledstartdate, sb);
-      sb.append(PgText.DELIMETER);
-      TypoLocalDateTime.pgType.pgText.unsafeEncode(row.scheduledenddate, sb);
-      sb.append(PgText.DELIMETER);
-      TypoLocalDateTime.pgType.opt().pgText.unsafeEncode(row.actualstartdate, sb);
-      sb.append(PgText.DELIMETER);
-      TypoLocalDateTime.pgType.opt().pgText.unsafeEncode(row.actualenddate, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.numeric.opt().pgText.unsafeEncode(row.actualresourcehrs, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.numeric.pgText.unsafeEncode(row.plannedcost, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.numeric.opt().pgText.unsafeEncode(row.actualcost, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[WorkorderroutingRowUnsaved] = PgText.instance((row, sb) => { WorkorderId.pgType.pgText.unsafeEncode(row.workorderid, sb); sb.append(PgText.DELIMETER); PgTypes.int4.pgText.unsafeEncode(row.productid, sb); sb.append(PgText.DELIMETER); TypoShort.pgType.pgText.unsafeEncode(row.operationsequence, sb); sb.append(PgText.DELIMETER); LocationId.pgType.pgText.unsafeEncode(row.locationid, sb); sb.append(PgText.DELIMETER); TypoLocalDateTime.pgType.pgText.unsafeEncode(row.scheduledstartdate, sb); sb.append(PgText.DELIMETER); TypoLocalDateTime.pgType.pgText.unsafeEncode(row.scheduledenddate, sb); sb.append(PgText.DELIMETER); TypoLocalDateTime.pgType.opt().pgText.unsafeEncode(row.actualstartdate, sb); sb.append(PgText.DELIMETER); TypoLocalDateTime.pgType.opt().pgText.unsafeEncode(row.actualenddate, sb); sb.append(PgText.DELIMETER); PgTypes.numeric.opt().pgText.unsafeEncode(row.actualresourcehrs, sb); sb.append(PgText.DELIMETER); PgTypes.numeric.pgText.unsafeEncode(row.plannedcost, sb); sb.append(PgText.DELIMETER); PgTypes.numeric.opt().pgText.unsafeEncode(row.actualcost, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

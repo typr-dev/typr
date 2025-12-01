@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class VjobcandidateeducationViewRepoImpl extends VjobcandidateeducationViewRepo {
-  def select: SelectBuilder[VjobcandidateeducationViewFields, VjobcandidateeducationViewRow] = SelectBuilder.of(""""humanresources"."vjobcandidateeducation"""", VjobcandidateeducationViewFields.structure, VjobcandidateeducationViewRow.jdbcDecoder)
+  override def select: SelectBuilder[VjobcandidateeducationViewFields, VjobcandidateeducationViewRow] = SelectBuilder.of(""""humanresources"."vjobcandidateeducation"""", VjobcandidateeducationViewFields.structure, VjobcandidateeducationViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, VjobcandidateeducationViewRow] = sql"""select "jobcandidateid", "Edu.Level", "Edu.StartDate"::text, "Edu.EndDate"::text, "Edu.Degree", "Edu.Major", "Edu.Minor", "Edu.GPA", "Edu.GPAScale", "Edu.School", "Edu.Loc.CountryRegion", "Edu.Loc.State", "Edu.Loc.City" from "humanresources"."vjobcandidateeducation"""".query(using VjobcandidateeducationViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, VjobcandidateeducationViewRow] = sql"""select "jobcandidateid", "Edu.Level", "Edu.StartDate"::text, "Edu.EndDate"::text, "Edu.Degree", "Edu.Major", "Edu.Minor", "Edu.GPA", "Edu.GPAScale", "Edu.School", "Edu.Loc.CountryRegion", "Edu.Loc.State", "Edu.Loc.City" from "humanresources"."vjobcandidateeducation"""".query(using VjobcandidateeducationViewRow.jdbcDecoder).selectStream()
 }

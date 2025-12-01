@@ -5,22 +5,22 @@
  */
 package adventureworks.humanresources.vjobcandidateeducation;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class VjobcandidateeducationViewRepoImpl implements VjobcandidateeducationViewRepo {
+  @Override
   public SelectBuilder<VjobcandidateeducationViewFields, VjobcandidateeducationViewRow> select() {
     return SelectBuilder.of("humanresources.vjobcandidateeducation", VjobcandidateeducationViewFields.structure(), VjobcandidateeducationViewRow._rowParser);
   };
 
+  @Override
   public List<VjobcandidateeducationViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "jobcandidateid", "Edu.Level", "Edu.StartDate"::text, "Edu.EndDate"::text, "Edu.Degree", "Edu.Major", "Edu.Minor", "Edu.GPA", "Edu.GPAScale", "Edu.School", "Edu.Loc.CountryRegion", "Edu.Loc.State", "Edu.Loc.City"
        from "humanresources"."vjobcandidateeducation"
-    """)).as(VjobcandidateeducationViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(VjobcandidateeducationViewRow._rowParser.all()).runUnchecked(c);
   };
 }

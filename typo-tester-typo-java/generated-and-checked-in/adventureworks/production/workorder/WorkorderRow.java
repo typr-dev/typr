@@ -15,7 +15,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple9;
 
 /** Table: production.workorder
   * Manufacturing work orders.
@@ -114,7 +113,7 @@ public record WorkorderRow(
     return new WorkorderRow(workorderid, productid, orderqty, scrappedqty, startdate, enddate, duedate, scrapreasonid, modifieddate);
   };
 
-  static RowParser<WorkorderRow> _rowParser = RowParsers.of(WorkorderId.pgType, ProductId.pgType, PgTypes.int4, TypoShort.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoLocalDateTime.pgType, ScrapreasonId.pgType.opt(), TypoLocalDateTime.pgType, WorkorderRow::new, row -> new Tuple9<>(row.workorderid(), row.productid(), row.orderqty(), row.scrappedqty(), row.startdate(), row.enddate(), row.duedate(), row.scrapreasonid(), row.modifieddate()));;
+  static RowParser<WorkorderRow> _rowParser = RowParsers.of(WorkorderId.pgType, ProductId.pgType, PgTypes.int4, TypoShort.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoLocalDateTime.pgType, ScrapreasonId.pgType.opt(), TypoLocalDateTime.pgType, WorkorderRow::new, row -> new Object[]{row.workorderid(), row.productid(), row.orderqty(), row.scrappedqty(), row.startdate(), row.enddate(), row.duedate(), row.scrapreasonid(), row.modifieddate()});;
 
   static public PgText<WorkorderRow> pgText =
     PgText.from(_rowParser);

@@ -14,7 +14,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple8;
 
 /** Table: production.productreview
   * Customer reviews of products they have purchased.
@@ -94,7 +93,7 @@ public record ProductreviewRow(
     return new ProductreviewRow(productreviewid, productid, reviewername, reviewdate, emailaddress, rating, comments, modifieddate);
   };
 
-  static RowParser<ProductreviewRow> _rowParser = RowParsers.of(ProductreviewId.pgType, ProductId.pgType, Name.pgType, TypoLocalDateTime.pgType, PgTypes.text, PgTypes.int4, PgTypes.text.opt(), TypoLocalDateTime.pgType, ProductreviewRow::new, row -> new Tuple8<>(row.productreviewid(), row.productid(), row.reviewername(), row.reviewdate(), row.emailaddress(), row.rating(), row.comments(), row.modifieddate()));;
+  static RowParser<ProductreviewRow> _rowParser = RowParsers.of(ProductreviewId.pgType, ProductId.pgType, Name.pgType, TypoLocalDateTime.pgType, PgTypes.text, PgTypes.int4, PgTypes.text.opt(), TypoLocalDateTime.pgType, ProductreviewRow::new, row -> new Object[]{row.productreviewid(), row.productid(), row.reviewername(), row.reviewdate(), row.emailaddress(), row.rating(), row.comments(), row.modifieddate()});;
 
   static public PgText<ProductreviewRow> pgText =
     PgText.from(_rowParser);

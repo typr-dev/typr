@@ -21,13 +21,13 @@ case class CurrencyRepoMock(
   toRow: CurrencyRowUnsaved => CurrencyRow,
   map: scala.collection.mutable.Map[CurrencyId, CurrencyRow] = scala.collection.mutable.Map.empty[CurrencyId, CurrencyRow]
 ) extends CurrencyRepo {
-  def delete: DeleteBuilder[CurrencyFields, CurrencyRow] = DeleteBuilderMock(DeleteParams.empty, CurrencyFields.structure, map)
+  override def delete: DeleteBuilder[CurrencyFields, CurrencyRow] = DeleteBuilderMock(DeleteParams.empty, CurrencyFields.structure, map)
 
-  def deleteById(currencycode: CurrencyId)(implicit c: Connection): Boolean = map.remove(currencycode).isDefined
+  override def deleteById(currencycode: CurrencyId)(implicit c: Connection): Boolean = map.remove(currencycode).isDefined
 
-  def deleteByIds(currencycodes: Array[CurrencyId])(implicit c: Connection): Int = currencycodes.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(currencycodes: Array[CurrencyId])(implicit c: Connection): Int = currencycodes.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: CurrencyRow)(implicit c: Connection): CurrencyRow = {
+  override def insert(unsaved: CurrencyRow)(implicit c: Connection): CurrencyRow = {
     val _ = if (map.contains(unsaved.currencycode))
       sys.error(s"id ${unsaved.currencycode} already exists")
     else
@@ -36,9 +36,9 @@ case class CurrencyRepoMock(
     unsaved
   }
 
-  def insert(unsaved: CurrencyRowUnsaved)(implicit c: Connection): CurrencyRow = insert(toRow(unsaved))
+  override def insert(unsaved: CurrencyRowUnsaved)(implicit c: Connection): CurrencyRow = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[CurrencyRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = {
@@ -49,7 +49,7 @@ case class CurrencyRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[CurrencyRowUnsaved],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = {
@@ -60,34 +60,34 @@ case class CurrencyRepoMock(
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[CurrencyFields, CurrencyRow] = SelectBuilderMock(CurrencyFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[CurrencyFields, CurrencyRow] = SelectBuilderMock(CurrencyFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(implicit c: Connection): List[CurrencyRow] = map.values.toList
+  override def selectAll(implicit c: Connection): List[CurrencyRow] = map.values.toList
 
-  def selectById(currencycode: CurrencyId)(implicit c: Connection): Option[CurrencyRow] = map.get(currencycode)
+  override def selectById(currencycode: CurrencyId)(implicit c: Connection): Option[CurrencyRow] = map.get(currencycode)
 
-  def selectByIds(currencycodes: Array[CurrencyId])(implicit c: Connection): List[CurrencyRow] = currencycodes.flatMap(map.get).toList
+  override def selectByIds(currencycodes: Array[CurrencyId])(implicit c: Connection): List[CurrencyRow] = currencycodes.flatMap(map.get).toList
 
-  def selectByIdsTracked(currencycodes: Array[CurrencyId])(implicit c: Connection): Map[CurrencyId, CurrencyRow] = {
+  override def selectByIdsTracked(currencycodes: Array[CurrencyId])(implicit c: Connection): Map[CurrencyId, CurrencyRow] = {
     val byId = selectByIds(currencycodes).view.map(x => (x.currencycode, x)).toMap
     currencycodes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[CurrencyFields, CurrencyRow] = UpdateBuilderMock(UpdateParams.empty, CurrencyFields.structure, map)
+  override def update: UpdateBuilder[CurrencyFields, CurrencyRow] = UpdateBuilderMock(UpdateParams.empty, CurrencyFields.structure, map)
 
-  def update(row: CurrencyRow)(implicit c: Connection): Option[CurrencyRow] = {
+  override def update(row: CurrencyRow)(implicit c: Connection): Option[CurrencyRow] = {
     map.get(row.currencycode).map { _ =>
       map.put(row.currencycode, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: CurrencyRow)(implicit c: Connection): CurrencyRow = {
+  override def upsert(unsaved: CurrencyRow)(implicit c: Connection): CurrencyRow = {
     map.put(unsaved.currencycode, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[CurrencyRow])(implicit c: Connection): List[CurrencyRow] = {
+  override def upsertBatch(unsaved: Iterable[CurrencyRow])(implicit c: Connection): List[CurrencyRow] = {
     unsaved.map { row =>
       map += (row.currencycode -> row)
       row
@@ -95,7 +95,7 @@ case class CurrencyRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[CurrencyRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

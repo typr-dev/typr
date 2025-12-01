@@ -5,6 +5,7 @@
  */
 package adventureworks.production.productsubcategory
 
+import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
@@ -25,7 +26,7 @@ case class ProductsubcategoryRepoMock(
   toRow: ProductsubcategoryRowUnsaved => ProductsubcategoryRow,
   map: HashMap[ProductsubcategoryId, ProductsubcategoryRow] = new HashMap[ProductsubcategoryId, ProductsubcategoryRow]()
 ) extends ProductsubcategoryRepo {
-  def delete: DeleteBuilder[ProductsubcategoryFields, ProductsubcategoryRow] = {
+  override def delete: DeleteBuilder[ProductsubcategoryFields, ProductsubcategoryRow] = {
     new DeleteBuilderMock(
       ProductsubcategoryFields.structure,
       () => new ArrayList(map.values()),
@@ -35,27 +36,27 @@ case class ProductsubcategoryRepoMock(
     )
   }
 
-  def deleteById(productsubcategoryid: ProductsubcategoryId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(productsubcategoryid)).isPresent()
+  override def deleteById(productsubcategoryid: ProductsubcategoryId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(productsubcategoryid)).isPresent()
 
-  def deleteByIds(productsubcategoryids: Array[ProductsubcategoryId])(using c: Connection): Integer = {
+  override def deleteByIds(productsubcategoryids: Array[ProductsubcategoryId])(using c: Connection): Integer = {
     var count = 0
     productsubcategoryids.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
-    count
+    return count
   }
 
-  def insert(unsaved: ProductsubcategoryRow)(using c: Connection): ProductsubcategoryRow = {
+  override def insert(unsaved: ProductsubcategoryRow)(using c: Connection): ProductsubcategoryRow = {
     if (map.containsKey(unsaved.productsubcategoryid)) {
       throw new RuntimeException(s"id $unsaved.productsubcategoryid already exists")
     }
     map.put(unsaved.productsubcategoryid, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def insert(unsaved: ProductsubcategoryRowUnsaved)(using c: Connection): ProductsubcategoryRow = insert(toRow(unsaved))(using c)
+  override def insert(unsaved: ProductsubcategoryRowUnsaved)(using c: Connection): ProductsubcategoryRow = insert(toRow(unsaved))(using c)
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[ProductsubcategoryRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -65,11 +66,11 @@ case class ProductsubcategoryRepoMock(
       map.put(row.productsubcategoryid, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[ProductsubcategoryRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -80,25 +81,25 @@ case class ProductsubcategoryRepoMock(
       map.put(row.productsubcategoryid, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
-  def select: SelectBuilder[ProductsubcategoryFields, ProductsubcategoryRow] = new SelectBuilderMock(ProductsubcategoryFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
+  override def select: SelectBuilder[ProductsubcategoryFields, ProductsubcategoryRow] = new SelectBuilderMock(ProductsubcategoryFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  def selectAll(using c: Connection): java.util.List[ProductsubcategoryRow] = new ArrayList(map.values())
+  override def selectAll(using c: Connection): java.util.List[ProductsubcategoryRow] = new ArrayList(map.values())
 
-  def selectById(productsubcategoryid: ProductsubcategoryId)(using c: Connection): Optional[ProductsubcategoryRow] = Optional.ofNullable(map.get(productsubcategoryid))
+  override def selectById(productsubcategoryid: ProductsubcategoryId)(using c: Connection): Optional[ProductsubcategoryRow] = Optional.ofNullable(map.get(productsubcategoryid))
 
-  def selectByIds(productsubcategoryids: Array[ProductsubcategoryId])(using c: Connection): java.util.List[ProductsubcategoryRow] = {
+  override def selectByIds(productsubcategoryids: Array[ProductsubcategoryId])(using c: Connection): java.util.List[ProductsubcategoryRow] = {
     val result = new ArrayList[ProductsubcategoryRow]()
     productsubcategoryids.foreach { id => val opt = Optional.ofNullable(map.get(id))
     if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
-    result
+    return result
   }
 
-  def selectByIdsTracked(productsubcategoryids: Array[ProductsubcategoryId])(using c: Connection): java.util.Map[ProductsubcategoryId, ProductsubcategoryRow] = selectByIds(productsubcategoryids)(using c).stream().collect(Collectors.toMap((row: adventureworks.production.productsubcategory.ProductsubcategoryRow) => row.productsubcategoryid, Function.identity()))
+  override def selectByIdsTracked(productsubcategoryids: Array[ProductsubcategoryId])(using c: Connection): java.util.Map[ProductsubcategoryId, ProductsubcategoryRow] = selectByIds(productsubcategoryids)(using c).stream().collect(Collectors.toMap((row: ProductsubcategoryRow) => row.productsubcategoryid, Function.identity()))
 
-  def update: UpdateBuilder[ProductsubcategoryFields, ProductsubcategoryRow] = {
+  override def update: UpdateBuilder[ProductsubcategoryFields, ProductsubcategoryRow] = {
     new UpdateBuilderMock(
       ProductsubcategoryFields.structure,
       () => new ArrayList(map.values()),
@@ -107,31 +108,31 @@ case class ProductsubcategoryRepoMock(
     )
   }
 
-  def update(row: ProductsubcategoryRow)(using c: Connection): java.lang.Boolean = {
-    val shouldUpdate = Optional.ofNullable(map.get(row.productsubcategoryid)).filter(oldRow => !oldRow.equals(row)).isPresent()
+  override def update(row: ProductsubcategoryRow)(using c: Connection): java.lang.Boolean = {
+    val shouldUpdate = Optional.ofNullable(map.get(row.productsubcategoryid)).filter(oldRow => (oldRow != row)).isPresent()
     if (shouldUpdate) {
       map.put(row.productsubcategoryid, row): @scala.annotation.nowarn
     }
-    shouldUpdate
+    return shouldUpdate
   }
 
-  def upsert(unsaved: ProductsubcategoryRow)(using c: Connection): ProductsubcategoryRow = {
+  override def upsert(unsaved: ProductsubcategoryRow)(using c: Connection): ProductsubcategoryRow = {
     map.put(unsaved.productsubcategoryid, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[ProductsubcategoryRow])(using c: Connection): java.util.List[ProductsubcategoryRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[ProductsubcategoryRow])(using c: Connection): java.util.List[ProductsubcategoryRow] = {
     val result = new ArrayList[ProductsubcategoryRow]()
     while (unsaved.hasNext()) {
       val row = unsaved.next()
       map.put(row.productsubcategoryid, row): @scala.annotation.nowarn
       result.add(row): @scala.annotation.nowarn
     }
-    result
+    return result
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[ProductsubcategoryRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
@@ -141,6 +142,6 @@ case class ProductsubcategoryRepoMock(
       map.put(row.productsubcategoryid, row): @scala.annotation.nowarn
       count = count + 1
     }
-    count
+    return count
   }
 }

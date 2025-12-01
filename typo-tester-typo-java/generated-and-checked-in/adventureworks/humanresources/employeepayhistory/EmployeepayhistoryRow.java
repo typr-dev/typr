@@ -14,7 +14,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple5;
 
 /** Table: humanresources.employeepayhistory
   * Employee pay history.
@@ -69,7 +68,7 @@ public record EmployeepayhistoryRow(
     return new EmployeepayhistoryRow(businessentityid, ratechangedate, rate, payfrequency, modifieddate);
   };
 
-  static RowParser<EmployeepayhistoryRow> _rowParser = RowParsers.of(BusinessentityId.pgType, TypoLocalDateTime.pgType, PgTypes.numeric, TypoShort.pgType, TypoLocalDateTime.pgType, EmployeepayhistoryRow::new, row -> new Tuple5<>(row.businessentityid(), row.ratechangedate(), row.rate(), row.payfrequency(), row.modifieddate()));;
+  static RowParser<EmployeepayhistoryRow> _rowParser = RowParsers.of(BusinessentityId.pgType, TypoLocalDateTime.pgType, PgTypes.numeric, TypoShort.pgType, TypoLocalDateTime.pgType, EmployeepayhistoryRow::new, row -> new Object[]{row.businessentityid(), row.ratechangedate(), row.rate(), row.payfrequency(), row.modifieddate()});;
 
   static public EmployeepayhistoryRow apply(
     EmployeepayhistoryId compositeId,

@@ -10,9 +10,9 @@ import typo.dsl.SelectBuilder
 import anorm.SqlStringInterpolation
 
 class CrViewRepoImpl extends CrViewRepo {
-  def select: SelectBuilder[CrViewFields, CrViewRow] = SelectBuilder.of(""""sa"."cr"""", CrViewFields.structure, CrViewRow.rowParser)
+  override def select: SelectBuilder[CrViewFields, CrViewRow] = SelectBuilder.of(""""sa"."cr"""", CrViewFields.structure, CrViewRow.rowParser)
 
-  def selectAll(implicit c: Connection): List[CrViewRow] = {
+  override def selectAll(implicit c: Connection): List[CrViewRow] = {
     SQL"""select "currencyrateid", "currencyratedate"::text, "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"::text
     from "sa"."cr"
     """.as(CrViewRow.rowParser(1).*)

@@ -58,21 +58,5 @@ case class ProductinventoryRowUnsaved(
 }
 
 object ProductinventoryRowUnsaved {
-  given pgText: PgText[ProductinventoryRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      ProductId.pgType.pgText.unsafeEncode(row.productid, sb);
-      sb.append(PgText.DELIMETER);
-      LocationId.pgType.pgText.unsafeEncode(row.locationid, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.text.pgText.unsafeEncode(row.shelf, sb);
-      sb.append(PgText.DELIMETER);
-      TypoShort.pgType.pgText.unsafeEncode(row.bin, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoShort.pgType.pgText).unsafeEncode(row.quantity, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[ProductinventoryRowUnsaved] = PgText.instance((row, sb) => { ProductId.pgType.pgText.unsafeEncode(row.productid, sb); sb.append(PgText.DELIMETER); LocationId.pgType.pgText.unsafeEncode(row.locationid, sb); sb.append(PgText.DELIMETER); PgTypes.text.pgText.unsafeEncode(row.shelf, sb); sb.append(PgText.DELIMETER); TypoShort.pgType.pgText.unsafeEncode(row.bin, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoShort.pgType.pgText).unsafeEncode(row.quantity, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

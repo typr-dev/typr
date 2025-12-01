@@ -13,7 +13,6 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple12;
 
 /** View: sa.so */
 public record SoViewRow(
@@ -102,5 +101,5 @@ public record SoViewRow(
     return new SoViewRow(id, specialofferid, description, discountpct, type, category, startdate, enddate, minqty, maxqty, rowguid, modifieddate);
   };
 
-  static RowParser<SoViewRow> _rowParser = RowParsers.of(SpecialofferId.pgType, SpecialofferId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.text, PgTypes.text, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, PgTypes.int4, PgTypes.int4.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SoViewRow::new, row -> new Tuple12<>(row.id(), row.specialofferid(), row.description(), row.discountpct(), row.type(), row.category(), row.startdate(), row.enddate(), row.minqty(), row.maxqty(), row.rowguid(), row.modifieddate()));;
+  static RowParser<SoViewRow> _rowParser = RowParsers.of(SpecialofferId.pgType, SpecialofferId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.text, PgTypes.text, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, PgTypes.int4, PgTypes.int4.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SoViewRow::new, row -> new Object[]{row.id(), row.specialofferid(), row.description(), row.discountpct(), row.type(), row.category(), row.startdate(), row.enddate(), row.minqty(), row.maxqty(), row.rowguid(), row.modifieddate()});;
 }

@@ -20,7 +20,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface VsalespersonViewFields {
-  static final class Impl extends Relation<VsalespersonViewFields, VsalespersonViewRow> {
+  final class Impl extends Relation<VsalespersonViewFields, VsalespersonViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -28,69 +28,91 @@ public interface VsalespersonViewFields {
     @Override
     public VsalespersonViewFields fields() {
       return new VsalespersonViewFields() {
+               @Override
                public Field<BusinessentityId, VsalespersonViewRow> businessentityid() {
                  return new Field<BusinessentityId, VsalespersonViewRow>(_path, "businessentityid", VsalespersonViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public OptField</* max 8 chars */ String, VsalespersonViewRow> title() {
                  return new OptField</* max 8 chars */ String, VsalespersonViewRow>(_path, "title", VsalespersonViewRow::title, Optional.empty(), Optional.empty(), (row, value) -> row.withTitle(value), PgTypes.text);
                };
+               @Override
                public Field</* user-picked */ FirstName, VsalespersonViewRow> firstname() {
                  return new Field</* user-picked */ FirstName, VsalespersonViewRow>(_path, "firstname", VsalespersonViewRow::firstname, Optional.empty(), Optional.empty(), (row, value) -> row.withFirstname(value), /* user-picked */ FirstName.pgType);
                };
+               @Override
                public OptField<Name, VsalespersonViewRow> middlename() {
                  return new OptField<Name, VsalespersonViewRow>(_path, "middlename", VsalespersonViewRow::middlename, Optional.empty(), Optional.empty(), (row, value) -> row.withMiddlename(value), Name.pgType);
                };
+               @Override
                public Field<Name, VsalespersonViewRow> lastname() {
                  return new Field<Name, VsalespersonViewRow>(_path, "lastname", VsalespersonViewRow::lastname, Optional.empty(), Optional.empty(), (row, value) -> row.withLastname(value), Name.pgType);
                };
+               @Override
                public OptField</* max 10 chars */ String, VsalespersonViewRow> suffix() {
                  return new OptField</* max 10 chars */ String, VsalespersonViewRow>(_path, "suffix", VsalespersonViewRow::suffix, Optional.empty(), Optional.empty(), (row, value) -> row.withSuffix(value), PgTypes.text);
                };
+               @Override
                public Field</* max 50 chars */ String, VsalespersonViewRow> jobtitle() {
                  return new Field</* max 50 chars */ String, VsalespersonViewRow>(_path, "jobtitle", VsalespersonViewRow::jobtitle, Optional.empty(), Optional.empty(), (row, value) -> row.withJobtitle(value), PgTypes.text);
                };
+               @Override
                public OptField<Phone, VsalespersonViewRow> phonenumber() {
                  return new OptField<Phone, VsalespersonViewRow>(_path, "phonenumber", VsalespersonViewRow::phonenumber, Optional.empty(), Optional.empty(), (row, value) -> row.withPhonenumber(value), Phone.pgType);
                };
+               @Override
                public OptField<Name, VsalespersonViewRow> phonenumbertype() {
                  return new OptField<Name, VsalespersonViewRow>(_path, "phonenumbertype", VsalespersonViewRow::phonenumbertype, Optional.empty(), Optional.empty(), (row, value) -> row.withPhonenumbertype(value), Name.pgType);
                };
+               @Override
                public OptField</* max 50 chars */ String, VsalespersonViewRow> emailaddress() {
                  return new OptField</* max 50 chars */ String, VsalespersonViewRow>(_path, "emailaddress", VsalespersonViewRow::emailaddress, Optional.empty(), Optional.empty(), (row, value) -> row.withEmailaddress(value), PgTypes.text);
                };
+               @Override
                public Field<Integer, VsalespersonViewRow> emailpromotion() {
                  return new Field<Integer, VsalespersonViewRow>(_path, "emailpromotion", VsalespersonViewRow::emailpromotion, Optional.empty(), Optional.empty(), (row, value) -> row.withEmailpromotion(value), PgTypes.int4);
                };
+               @Override
                public Field</* max 60 chars */ String, VsalespersonViewRow> addressline1() {
                  return new Field</* max 60 chars */ String, VsalespersonViewRow>(_path, "addressline1", VsalespersonViewRow::addressline1, Optional.empty(), Optional.empty(), (row, value) -> row.withAddressline1(value), PgTypes.text);
                };
+               @Override
                public OptField</* max 60 chars */ String, VsalespersonViewRow> addressline2() {
                  return new OptField</* max 60 chars */ String, VsalespersonViewRow>(_path, "addressline2", VsalespersonViewRow::addressline2, Optional.empty(), Optional.empty(), (row, value) -> row.withAddressline2(value), PgTypes.text);
                };
+               @Override
                public Field</* max 30 chars */ String, VsalespersonViewRow> city() {
                  return new Field</* max 30 chars */ String, VsalespersonViewRow>(_path, "city", VsalespersonViewRow::city, Optional.empty(), Optional.empty(), (row, value) -> row.withCity(value), PgTypes.text);
                };
+               @Override
                public Field<Name, VsalespersonViewRow> stateprovincename() {
                  return new Field<Name, VsalespersonViewRow>(_path, "stateprovincename", VsalespersonViewRow::stateprovincename, Optional.empty(), Optional.empty(), (row, value) -> row.withStateprovincename(value), Name.pgType);
                };
+               @Override
                public Field</* max 15 chars */ String, VsalespersonViewRow> postalcode() {
                  return new Field</* max 15 chars */ String, VsalespersonViewRow>(_path, "postalcode", VsalespersonViewRow::postalcode, Optional.empty(), Optional.empty(), (row, value) -> row.withPostalcode(value), PgTypes.text);
                };
+               @Override
                public Field<Name, VsalespersonViewRow> countryregionname() {
                  return new Field<Name, VsalespersonViewRow>(_path, "countryregionname", VsalespersonViewRow::countryregionname, Optional.empty(), Optional.empty(), (row, value) -> row.withCountryregionname(value), Name.pgType);
                };
+               @Override
                public OptField<Name, VsalespersonViewRow> territoryname() {
                  return new OptField<Name, VsalespersonViewRow>(_path, "territoryname", VsalespersonViewRow::territoryname, Optional.empty(), Optional.empty(), (row, value) -> row.withTerritoryname(value), Name.pgType);
                };
+               @Override
                public OptField</* max 50 chars */ String, VsalespersonViewRow> territorygroup() {
                  return new OptField</* max 50 chars */ String, VsalespersonViewRow>(_path, "territorygroup", VsalespersonViewRow::territorygroup, Optional.empty(), Optional.empty(), (row, value) -> row.withTerritorygroup(value), PgTypes.text);
                };
+               @Override
                public OptField<BigDecimal, VsalespersonViewRow> salesquota() {
                  return new OptField<BigDecimal, VsalespersonViewRow>(_path, "salesquota", VsalespersonViewRow::salesquota, Optional.empty(), Optional.empty(), (row, value) -> row.withSalesquota(value), PgTypes.numeric);
                };
+               @Override
                public Field<BigDecimal, VsalespersonViewRow> salesytd() {
                  return new Field<BigDecimal, VsalespersonViewRow>(_path, "salesytd", VsalespersonViewRow::salesytd, Optional.empty(), Optional.empty(), (row, value) -> row.withSalesytd(value), PgTypes.numeric);
                };
+               @Override
                public Field<BigDecimal, VsalespersonViewRow> saleslastyear() {
                  return new Field<BigDecimal, VsalespersonViewRow>(_path, "saleslastyear", VsalespersonViewRow::saleslastyear, Optional.empty(), Optional.empty(), (row, value) -> row.withSaleslastyear(value), PgTypes.numeric);
                };
@@ -102,6 +124,7 @@ public interface VsalespersonViewFields {
       return List.of(this.fields().businessentityid(), this.fields().title(), this.fields().firstname(), this.fields().middlename(), this.fields().lastname(), this.fields().suffix(), this.fields().jobtitle(), this.fields().phonenumber(), this.fields().phonenumbertype(), this.fields().emailaddress(), this.fields().emailpromotion(), this.fields().addressline1(), this.fields().addressline2(), this.fields().city(), this.fields().stateprovincename(), this.fields().postalcode(), this.fields().countryregionname(), this.fields().territoryname(), this.fields().territorygroup(), this.fields().salesquota(), this.fields().salesytd(), this.fields().saleslastyear());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

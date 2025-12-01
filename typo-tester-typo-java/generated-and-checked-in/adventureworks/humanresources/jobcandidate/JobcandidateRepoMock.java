@@ -5,6 +5,7 @@
  */
 package adventureworks.humanresources.jobcandidate;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record JobcandidateRepoMock(
     return new JobcandidateRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<JobcandidateFields, JobcandidateRow> delete() {
     return new DeleteBuilderMock<>(JobcandidateFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.jobcandidateid(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     JobcandidateId jobcandidateid,
     Connection c
@@ -52,28 +55,31 @@ public record JobcandidateRepoMock(
     return Optional.ofNullable(map.remove(jobcandidateid)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     JobcandidateId[] jobcandidateids,
     Connection c
   ) {
     var count = 0;
-      for (var id : jobcandidateids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : jobcandidateids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public JobcandidateRow insert(
     JobcandidateRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.jobcandidateid())) {
-        throw new RuntimeException(str("id $unsaved.jobcandidateid() already exists"));
-      };
-      map.put(unsaved.jobcandidateid(), unsaved);
+      throw new RuntimeException(str("id $unsaved.jobcandidateid() already exists"));
+    };
+    map.put(unsaved.jobcandidateid(), unsaved);
     return unsaved;
   };
 
+  @Override
   public JobcandidateRow insert(
     JobcandidateRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record JobcandidateRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<JobcandidateRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.jobcandidateid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.jobcandidateid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<JobcandidateRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.jobcandidateid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.jobcandidateid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<JobcandidateFields, JobcandidateRow> select() {
     return new SelectBuilderMock<>(JobcandidateFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<JobcandidateRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<JobcandidateRow> selectById(
     JobcandidateId jobcandidateid,
     Connection c
@@ -126,38 +137,43 @@ public record JobcandidateRepoMock(
     return Optional.ofNullable(map.get(jobcandidateid));
   };
 
+  @Override
   public List<JobcandidateRow> selectByIds(
     JobcandidateId[] jobcandidateids,
     Connection c
   ) {
     var result = new ArrayList<JobcandidateRow>();
-      for (var id : jobcandidateids) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : jobcandidateids) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<JobcandidateId, JobcandidateRow> selectByIdsTracked(
     JobcandidateId[] jobcandidateids,
     Connection c
   ) {
-    return selectByIds(jobcandidateids, c).stream().collect(Collectors.toMap((adventureworks.humanresources.jobcandidate.JobcandidateRow row) -> row.jobcandidateid(), Function.identity()));
+    return selectByIds(jobcandidateids, c).stream().collect(Collectors.toMap((JobcandidateRow row) -> row.jobcandidateid(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<JobcandidateFields, JobcandidateRow> update() {
     return new UpdateBuilderMock<>(JobcandidateFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     JobcandidateRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.jobcandidateid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.jobcandidateid(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.jobcandidateid(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public JobcandidateRow upsert(
     JobcandidateRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record JobcandidateRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<JobcandidateRow> upsertBatch(
     Iterator<JobcandidateRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<JobcandidateRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.jobcandidateid(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.jobcandidateid(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<JobcandidateRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.jobcandidateid(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.jobcandidateid(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

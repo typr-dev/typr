@@ -8,7 +8,6 @@ package adventureworks.sales.countryregioncurrency;
 import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.person.countryregion.CountryregionId;
 import adventureworks.sales.currency.CurrencyId;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,12 +25,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class CountryregioncurrencyRepoImpl implements CountryregioncurrencyRepo {
+  @Override
   public DeleteBuilder<CountryregioncurrencyFields, CountryregioncurrencyRow> delete() {
     return DeleteBuilder.of("sales.countryregioncurrency", CountryregioncurrencyFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     CountryregioncurrencyId compositeId,
     Connection c
@@ -49,28 +49,30 @@ public class CountryregioncurrencyRepoImpl implements CountryregioncurrencyRepo 
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     CountryregioncurrencyId[] compositeIds,
     Connection c
   ) {
     CountryregionId[] countryregioncode = arrayMap.map(compositeIds, CountryregioncurrencyId::countryregioncode, CountryregionId.class);;
-      CurrencyId[] currencycode = arrayMap.map(compositeIds, CountryregioncurrencyId::currencycode, CurrencyId.class);;
+    CurrencyId[] currencycode = arrayMap.map(compositeIds, CountryregioncurrencyId::currencycode, CurrencyId.class);;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                delete
-                from "sales"."countryregioncurrency"
-                where ("countryregioncode", "currencycode")
-                in (select unnest("""),
-             CountryregionId.pgTypeArray.encode(countryregioncode),
-             typo.runtime.Fragment.lit("::varchar[]), unnest("),
-             CurrencyId.pgTypeArray.encode(currencycode),
-             typo.runtime.Fragment.lit("""
-             ::bpchar[]))
+      typo.runtime.Fragment.lit("""
+         delete
+         from "sales"."countryregioncurrency"
+         where ("countryregioncode", "currencycode")
+         in (select unnest("""),
+      CountryregionId.pgTypeArray.encode(countryregioncode),
+      typo.runtime.Fragment.lit("::varchar[]), unnest("),
+      CurrencyId.pgTypeArray.encode(currencycode),
+      typo.runtime.Fragment.lit("""
+      ::bpchar[]))
 
-             """)
-           ).update().runUnchecked(c);
+      """)
+    ).update().runUnchecked(c);
   };
 
+  @Override
   public CountryregioncurrencyRow insert(
     CountryregioncurrencyRow unsaved,
     Connection c
@@ -92,50 +94,54 @@ public class CountryregioncurrencyRepoImpl implements CountryregioncurrencyRepo 
       .updateReturning(CountryregioncurrencyRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public CountryregioncurrencyRow insert(
     CountryregioncurrencyRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"countryregioncode\""));
-      values.add(interpolate(
-        CountryregionId.pgType.encode(unsaved.countryregioncode()),
-        typo.runtime.Fragment.lit("""
-        """)
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"countryregioncode\""));
+    values.add(interpolate(
+      CountryregionId.pgType.encode(unsaved.countryregioncode()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    columns.add(Fragment.lit("\"currencycode\""));
+    values.add(interpolate(
+      CurrencyId.pgType.encode(unsaved.currencycode()),
+      typo.runtime.Fragment.lit("::bpchar")
+    ));
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
       ));
-      columns.add(Fragment.lit("\"currencycode\""));
-      values.add(interpolate(
-        CurrencyId.pgType.encode(unsaved.currencycode()),
-        typo.runtime.Fragment.lit("::bpchar")
-      ));
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "sales"."countryregioncurrency"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "countryregioncode", "currencycode", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "sales"."countryregioncurrency"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "countryregioncode", "currencycode", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(CountryregioncurrencyRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<CountryregioncurrencyRow> unsaved,
     Integer batchSize,
@@ -147,6 +153,7 @@ public class CountryregioncurrencyRepoImpl implements CountryregioncurrencyRepo 
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<CountryregioncurrencyRowUnsaved> unsaved,
     Integer batchSize,
@@ -157,17 +164,20 @@ public class CountryregioncurrencyRepoImpl implements CountryregioncurrencyRepo 
     """), batchSize, unsaved, c, CountryregioncurrencyRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<CountryregioncurrencyFields, CountryregioncurrencyRow> select() {
     return SelectBuilder.of("sales.countryregioncurrency", CountryregioncurrencyFields.structure(), CountryregioncurrencyRow._rowParser);
   };
 
+  @Override
   public List<CountryregioncurrencyRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "countryregioncode", "currencycode", "modifieddate"::text
        from "sales"."countryregioncurrency"
-    """)).as(CountryregioncurrencyRow._rowParser.all()).runUnchecked(c);
+    """)).query(CountryregioncurrencyRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<CountryregioncurrencyRow> selectById(
     CountryregioncurrencyId compositeId,
     Connection c
@@ -183,66 +193,71 @@ public class CountryregioncurrencyRepoImpl implements CountryregioncurrencyRepo 
       """),
       CurrencyId.pgType.encode(compositeId.currencycode()),
       typo.runtime.Fragment.lit("")
-    ).as(CountryregioncurrencyRow._rowParser.first()).runUnchecked(c);
+    ).query(CountryregioncurrencyRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<CountryregioncurrencyRow> selectByIds(
     CountryregioncurrencyId[] compositeIds,
     Connection c
   ) {
     CountryregionId[] countryregioncode = arrayMap.map(compositeIds, CountryregioncurrencyId::countryregioncode, CountryregionId.class);;
-      CurrencyId[] currencycode = arrayMap.map(compositeIds, CountryregioncurrencyId::currencycode, CurrencyId.class);;
+    CurrencyId[] currencycode = arrayMap.map(compositeIds, CountryregioncurrencyId::currencycode, CurrencyId.class);;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                select "countryregioncode", "currencycode", "modifieddate"::text
-                from "sales"."countryregioncurrency"
-                where ("countryregioncode", "currencycode")
-                in (select unnest("""),
-             CountryregionId.pgTypeArray.encode(countryregioncode),
-             typo.runtime.Fragment.lit("::varchar[]), unnest("),
-             CurrencyId.pgTypeArray.encode(currencycode),
-             typo.runtime.Fragment.lit("""
-             ::bpchar[]))
+      typo.runtime.Fragment.lit("""
+         select "countryregioncode", "currencycode", "modifieddate"::text
+         from "sales"."countryregioncurrency"
+         where ("countryregioncode", "currencycode")
+         in (select unnest("""),
+      CountryregionId.pgTypeArray.encode(countryregioncode),
+      typo.runtime.Fragment.lit("::varchar[]), unnest("),
+      CurrencyId.pgTypeArray.encode(currencycode),
+      typo.runtime.Fragment.lit("""
+      ::bpchar[]))
 
-             """)
-           ).as(CountryregioncurrencyRow._rowParser.all()).runUnchecked(c);
+      """)
+    ).query(CountryregioncurrencyRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<CountryregioncurrencyId, CountryregioncurrencyRow> selectByIdsTracked(
     CountryregioncurrencyId[] compositeIds,
     Connection c
   ) {
-    Map<CountryregioncurrencyId, CountryregioncurrencyRow> ret = new HashMap<>();;
-      selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
+    HashMap<CountryregioncurrencyId, CountryregioncurrencyRow> ret = new HashMap<CountryregioncurrencyId, CountryregioncurrencyRow>();
+    selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<CountryregioncurrencyFields, CountryregioncurrencyRow> update() {
     return UpdateBuilder.of("sales.countryregioncurrency", CountryregioncurrencyFields.structure(), CountryregioncurrencyRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     CountryregioncurrencyRow row,
     Connection c
   ) {
     CountryregioncurrencyId compositeId = row.compositeId();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "sales"."countryregioncurrency"
-                set "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "countryregioncode" = """),
-             CountryregionId.pgType.encode(compositeId.countryregioncode()),
-             typo.runtime.Fragment.lit("""
-              AND "currencycode" = 
-             """),
-             CurrencyId.pgType.encode(compositeId.currencycode()),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "sales"."countryregioncurrency"
+         set "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "countryregioncode" = """),
+      CountryregionId.pgType.encode(compositeId.countryregioncode()),
+      typo.runtime.Fragment.lit("""
+       AND "currencycode" = 
+      """),
+      CurrencyId.pgType.encode(compositeId.currencycode()),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public CountryregioncurrencyRow upsert(
     CountryregioncurrencyRow unsaved,
     Connection c
@@ -268,6 +283,7 @@ public class CountryregioncurrencyRepoImpl implements CountryregioncurrencyRepo 
       .runUnchecked(c);
   };
 
+  @Override
   public List<CountryregioncurrencyRow> upsertBatch(
     Iterator<CountryregioncurrencyRow> unsaved,
     Connection c
@@ -285,24 +301,25 @@ public class CountryregioncurrencyRepoImpl implements CountryregioncurrencyRepo 
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<CountryregioncurrencyRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table countryregioncurrency_TEMP (like "sales"."countryregioncurrency") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy countryregioncurrency_TEMP("countryregioncode", "currencycode", "modifieddate") from stdin
-      """), batchSize, unsaved, c, CountryregioncurrencyRow.pgText);
+    create temporary table countryregioncurrency_TEMP (like "sales"."countryregioncurrency") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy countryregioncurrency_TEMP("countryregioncode", "currencycode", "modifieddate") from stdin
+    """), batchSize, unsaved, c, CountryregioncurrencyRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "sales"."countryregioncurrency"("countryregioncode", "currencycode", "modifieddate")
-              select * from countryregioncurrency_TEMP
-              on conflict ("countryregioncode", "currencycode")
-              do update set
-                "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table countryregioncurrency_TEMP;""")).update().runUnchecked(c);
+       insert into "sales"."countryregioncurrency"("countryregioncode", "currencycode", "modifieddate")
+       select * from countryregioncurrency_TEMP
+       on conflict ("countryregioncode", "currencycode")
+       do update set
+         "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table countryregioncurrency_TEMP;""")).update().runUnchecked(c);
   };
 }

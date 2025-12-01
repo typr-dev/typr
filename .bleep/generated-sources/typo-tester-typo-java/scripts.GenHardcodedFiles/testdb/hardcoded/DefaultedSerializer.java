@@ -14,15 +14,16 @@ import testdb.hardcoded.customtypes.Defaulted.Provided;
 import testdb.hardcoded.customtypes.Defaulted.UseDefault;
 
 /** Jackson serializer for Defaulted types */
-public class DefaultedSerializer extends JsonSerializer<Defaulted> {
+public class DefaultedSerializer extends JsonSerializer<Defaulted<?>> {
+  @Override
   public void serialize(
-    Defaulted value,
+    Defaulted<?> value,
     JsonGenerator gen,
     SerializerProvider serializers
   ) throws IOException {
     switch (value) {
       case null -> gen.writeNull();
-      case UseDefault u -> gen.writeString("defaulted");
+      case UseDefault<?> u -> gen.writeString("defaulted");
       case Provided<?> p -> {
         gen.writeStartObject();
         gen.writeFieldName("provided");

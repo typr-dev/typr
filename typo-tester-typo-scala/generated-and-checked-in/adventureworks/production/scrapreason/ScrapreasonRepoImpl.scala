@@ -20,11 +20,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ScrapreasonRepoImpl extends ScrapreasonRepo {
-  def delete: DeleteBuilder[ScrapreasonFields, ScrapreasonRow] = DeleteBuilder.of("production.scrapreason", ScrapreasonFields.structure)
+  override def delete: DeleteBuilder[ScrapreasonFields, ScrapreasonRow] = DeleteBuilder.of("production.scrapreason", ScrapreasonFields.structure)
 
-  def deleteById(scrapreasonid: ScrapreasonId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."scrapreason" where "scrapreasonid" = ${ScrapreasonId.pgType.encode(scrapreasonid)}""".update().runUnchecked(c) > 0
+  override def deleteById(scrapreasonid: ScrapreasonId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."scrapreason" where "scrapreasonid" = ${ScrapreasonId.pgType.encode(scrapreasonid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(scrapreasonids: Array[ScrapreasonId])(using c: Connection): Integer = {
+  override def deleteByIds(scrapreasonids: Array[ScrapreasonId])(using c: Connection): Integer = {
     interpolate"""delete
     from "production"."scrapreason"
     where "scrapreasonid" = ANY(${ScrapreasonId.pgTypeArray.encode(scrapreasonids)})"""
@@ -32,7 +32,7 @@ class ScrapreasonRepoImpl extends ScrapreasonRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: ScrapreasonRow)(using c: Connection): ScrapreasonRow = {
+  override def insert(unsaved: ScrapreasonRow)(using c: Connection): ScrapreasonRow = {
   interpolate"""insert into "production"."scrapreason"("scrapreasonid", "name", "modifieddate")
     values (${ScrapreasonId.pgType.encode(unsaved.scrapreasonid)}::int4, ${Name.pgType.encode(unsaved.name)}::varchar, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "scrapreasonid", "name", "modifieddate"::text
@@ -40,24 +40,18 @@ class ScrapreasonRepoImpl extends ScrapreasonRepo {
     .updateReturning(ScrapreasonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: ScrapreasonRowUnsaved)(using c: Connection): ScrapreasonRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: ScrapreasonRowUnsaved)(using c: Connection): ScrapreasonRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
     values.add(interpolate"${Name.pgType.encode(unsaved.name)}::varchar"): @scala.annotation.nowarn
     unsaved.scrapreasonid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""scrapreasonid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${ScrapreasonId.pgType.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""scrapreasonid"""")): @scala.annotation.nowarn; values.add(interpolate"${ScrapreasonId.pgType.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "production"."scrapreason"(${Fragment.comma(columns)})
@@ -65,57 +59,57 @@ class ScrapreasonRepoImpl extends ScrapreasonRepo {
       returning "scrapreasonid", "name", "modifieddate"::text
       """
     }
-    q.updateReturning(ScrapreasonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(ScrapreasonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[ScrapreasonRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."scrapreason"("scrapreasonid", "name", "modifieddate") FROM STDIN""", batchSize, unsaved, c, ScrapreasonRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[ScrapreasonRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."scrapreason"("name", "scrapreasonid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ScrapreasonRowUnsaved.pgText)
 
-  def select: SelectBuilder[ScrapreasonFields, ScrapreasonRow] = SelectBuilder.of("production.scrapreason", ScrapreasonFields.structure, ScrapreasonRow.`_rowParser`)
+  override def select: SelectBuilder[ScrapreasonFields, ScrapreasonRow] = SelectBuilder.of("production.scrapreason", ScrapreasonFields.structure, ScrapreasonRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[ScrapreasonRow] = {
+  override def selectAll(using c: Connection): java.util.List[ScrapreasonRow] = {
     interpolate"""select "scrapreasonid", "name", "modifieddate"::text
     from "production"."scrapreason"
-    """.as(ScrapreasonRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(ScrapreasonRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(scrapreasonid: ScrapreasonId)(using c: Connection): Optional[ScrapreasonRow] = {
+  override def selectById(scrapreasonid: ScrapreasonId)(using c: Connection): Optional[ScrapreasonRow] = {
     interpolate"""select "scrapreasonid", "name", "modifieddate"::text
     from "production"."scrapreason"
-    where "scrapreasonid" = ${ScrapreasonId.pgType.encode(scrapreasonid)}""".as(ScrapreasonRow.`_rowParser`.first()).runUnchecked(c)
+    where "scrapreasonid" = ${ScrapreasonId.pgType.encode(scrapreasonid)}""".query(ScrapreasonRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(scrapreasonids: Array[ScrapreasonId])(using c: Connection): java.util.List[ScrapreasonRow] = {
+  override def selectByIds(scrapreasonids: Array[ScrapreasonId])(using c: Connection): java.util.List[ScrapreasonRow] = {
     interpolate"""select "scrapreasonid", "name", "modifieddate"::text
     from "production"."scrapreason"
-    where "scrapreasonid" = ANY(${ScrapreasonId.pgTypeArray.encode(scrapreasonids)})""".as(ScrapreasonRow.`_rowParser`.all()).runUnchecked(c)
+    where "scrapreasonid" = ANY(${ScrapreasonId.pgTypeArray.encode(scrapreasonids)})""".query(ScrapreasonRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(scrapreasonids: Array[ScrapreasonId])(using c: Connection): java.util.Map[ScrapreasonId, ScrapreasonRow] = {
-    val ret: java.util.Map[ScrapreasonId, ScrapreasonRow] = new HashMap()
+  override def selectByIdsTracked(scrapreasonids: Array[ScrapreasonId])(using c: Connection): java.util.Map[ScrapreasonId, ScrapreasonRow] = {
+    val ret: HashMap[ScrapreasonId, ScrapreasonRow] = new HashMap[ScrapreasonId, ScrapreasonRow]()
     selectByIds(scrapreasonids)(using c).forEach(row => ret.put(row.scrapreasonid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[ScrapreasonFields, ScrapreasonRow] = UpdateBuilder.of("production.scrapreason", ScrapreasonFields.structure, ScrapreasonRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ScrapreasonFields, ScrapreasonRow] = UpdateBuilder.of("production.scrapreason", ScrapreasonFields.structure, ScrapreasonRow.`_rowParser`.all())
 
-  def update(row: ScrapreasonRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: ScrapreasonRow)(using c: Connection): java.lang.Boolean = {
     val scrapreasonid: ScrapreasonId = row.scrapreasonid
-    interpolate"""update "production"."scrapreason"
+    return interpolate"""update "production"."scrapreason"
     set "name" = ${Name.pgType.encode(row.name)}::varchar,
     "modifieddate" = ${TypoLocalDateTime.pgType.encode(row.modifieddate)}::timestamp
     where "scrapreasonid" = ${ScrapreasonId.pgType.encode(scrapreasonid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: ScrapreasonRow)(using c: Connection): ScrapreasonRow = {
+  override def upsert(unsaved: ScrapreasonRow)(using c: Connection): ScrapreasonRow = {
   interpolate"""insert into "production"."scrapreason"("scrapreasonid", "name", "modifieddate")
     values (${ScrapreasonId.pgType.encode(unsaved.scrapreasonid)}::int4, ${Name.pgType.encode(unsaved.name)}::varchar, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("scrapreasonid")
@@ -128,7 +122,7 @@ class ScrapreasonRepoImpl extends ScrapreasonRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[ScrapreasonRow])(using c: Connection): java.util.List[ScrapreasonRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[ScrapreasonRow])(using c: Connection): java.util.List[ScrapreasonRow] = {
     interpolate"""insert into "production"."scrapreason"("scrapreasonid", "name", "modifieddate")
     values (?::int4, ?::varchar, ?::timestamp)
     on conflict ("scrapreasonid")
@@ -142,13 +136,13 @@ class ScrapreasonRepoImpl extends ScrapreasonRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[ScrapreasonRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table scrapreason_TEMP (like "production"."scrapreason") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy scrapreason_TEMP("scrapreasonid", "name", "modifieddate") from stdin""", batchSize, unsaved, c, ScrapreasonRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "production"."scrapreason"("scrapreasonid", "name", "modifieddate")
+    return interpolate"""insert into "production"."scrapreason"("scrapreasonid", "name", "modifieddate")
     select * from scrapreason_TEMP
     on conflict ("scrapreasonid")
     do update set

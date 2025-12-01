@@ -15,7 +15,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple12
 
 /** Table: myschema.person
  * person table
@@ -66,22 +65,7 @@ case class PersonRow(
 }
 
 object PersonRow {
-  val `_rowParser`: RowParser[PersonRow] = {
-    RowParsers.of(PersonId.pgType, FootballClubId.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text, PgTypes.text, PgTypes.bool, MaritalStatusId.pgType, PgTypes.text.opt(), Sector.pgType, Number.pgType, PersonRow.apply, row => new Tuple12(
-      row.id,
-      row.favouriteFootballClubId,
-      row.name,
-      row.nickName,
-      row.blogUrl,
-      row.email,
-      row.phone,
-      row.likesPizza,
-      row.maritalStatusId,
-      row.workEmail,
-      row.sector,
-      row.favoriteNumber
-    ))
-  }
+  val `_rowParser`: RowParser[PersonRow] = RowParsers.of(PersonId.pgType, FootballClubId.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text, PgTypes.text, PgTypes.bool, MaritalStatusId.pgType, PgTypes.text.opt(), Sector.pgType, Number.pgType, PersonRow.apply, row => Array(row.id, row.favouriteFootballClubId, row.name, row.nickName, row.blogUrl, row.email, row.phone, row.likesPizza, row.maritalStatusId, row.workEmail, row.sector, row.favoriteNumber))
 
   given pgText: PgText[PersonRow] = PgText.from(`_rowParser`)
 }

@@ -34,7 +34,7 @@ object SpqhViewFields {
 
     override lazy val fields: SpqhViewFields = {
       new SpqhViewFields {
-        def id: Field[BusinessentityId, SpqhViewRow] = {
+        override def id: Field[BusinessentityId, SpqhViewRow] = {
           new Field[BusinessentityId, SpqhViewRow](
             _path,
             "id",
@@ -45,7 +45,7 @@ object SpqhViewFields {
             BusinessentityId.pgType
           )
         }
-        def businessentityid: Field[BusinessentityId, SpqhViewRow] = {
+        override def businessentityid: Field[BusinessentityId, SpqhViewRow] = {
           new Field[BusinessentityId, SpqhViewRow](
             _path,
             "businessentityid",
@@ -56,7 +56,7 @@ object SpqhViewFields {
             BusinessentityId.pgType
           )
         }
-        def quotadate: Field[TypoLocalDateTime, SpqhViewRow] = {
+        override def quotadate: Field[TypoLocalDateTime, SpqhViewRow] = {
           new Field[TypoLocalDateTime, SpqhViewRow](
             _path,
             "quotadate",
@@ -67,7 +67,7 @@ object SpqhViewFields {
             TypoLocalDateTime.pgType
           )
         }
-        def salesquota: Field[java.math.BigDecimal, SpqhViewRow] = {
+        override def salesquota: Field[java.math.BigDecimal, SpqhViewRow] = {
           new Field[java.math.BigDecimal, SpqhViewRow](
             _path,
             "salesquota",
@@ -78,7 +78,7 @@ object SpqhViewFields {
             PgTypes.numeric
           )
         }
-        def rowguid: Field[TypoUUID, SpqhViewRow] = {
+        override def rowguid: Field[TypoUUID, SpqhViewRow] = {
           new Field[TypoUUID, SpqhViewRow](
             _path,
             "rowguid",
@@ -89,7 +89,7 @@ object SpqhViewFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, SpqhViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, SpqhViewRow] = {
           new Field[TypoLocalDateTime, SpqhViewRow](
             _path,
             "modifieddate",
@@ -105,7 +105,7 @@ object SpqhViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, SpqhViewRow]] = java.util.List.of(this.fields.id, this.fields.businessentityid, this.fields.quotadate, this.fields.salesquota, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[SpqhViewFields, SpqhViewRow] = new Impl(java.util.List.of())

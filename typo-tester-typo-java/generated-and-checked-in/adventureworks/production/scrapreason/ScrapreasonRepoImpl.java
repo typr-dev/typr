@@ -7,7 +7,6 @@ package adventureworks.production.scrapreason;
 
 import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.public_.Name;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,12 +23,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class ScrapreasonRepoImpl implements ScrapreasonRepo {
+  @Override
   public DeleteBuilder<ScrapreasonFields, ScrapreasonRow> delete() {
     return DeleteBuilder.of("production.scrapreason", ScrapreasonFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     ScrapreasonId scrapreasonid,
     Connection c
@@ -43,6 +43,7 @@ public class ScrapreasonRepoImpl implements ScrapreasonRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     ScrapreasonId[] scrapreasonids,
     Connection c
@@ -59,6 +60,7 @@ public class ScrapreasonRepoImpl implements ScrapreasonRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public ScrapreasonRow insert(
     ScrapreasonRow unsaved,
     Connection c
@@ -80,54 +82,60 @@ public class ScrapreasonRepoImpl implements ScrapreasonRepo {
       .updateReturning(ScrapreasonRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public ScrapreasonRow insert(
     ScrapreasonRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"name\""));
-      values.add(interpolate(
-        Name.pgType.encode(unsaved.name()),
-        typo.runtime.Fragment.lit("::varchar")
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"name\""));
+    values.add(interpolate(
+      Name.pgType.encode(unsaved.name()),
+      typo.runtime.Fragment.lit("::varchar")
+    ));
+    unsaved.scrapreasonid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"scrapreasonid\""));
+        values.add(interpolate(
+        ScrapreasonId.pgType.encode(value),
+        typo.runtime.Fragment.lit("::int4")
       ));
-      unsaved.scrapreasonid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"scrapreasonid\""));
-          values.add(interpolate(
-            ScrapreasonId.pgType.encode(value),
-            typo.runtime.Fragment.lit("::int4")
-          ));
-        }
-      );;
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "production"."scrapreason"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "scrapreasonid", "name", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
+      ));
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "production"."scrapreason"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "scrapreasonid", "name", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(ScrapreasonRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<ScrapreasonRow> unsaved,
     Integer batchSize,
@@ -139,6 +147,7 @@ public class ScrapreasonRepoImpl implements ScrapreasonRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<ScrapreasonRowUnsaved> unsaved,
     Integer batchSize,
@@ -149,17 +158,20 @@ public class ScrapreasonRepoImpl implements ScrapreasonRepo {
     """), batchSize, unsaved, c, ScrapreasonRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<ScrapreasonFields, ScrapreasonRow> select() {
     return SelectBuilder.of("production.scrapreason", ScrapreasonFields.structure(), ScrapreasonRow._rowParser);
   };
 
+  @Override
   public List<ScrapreasonRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "scrapreasonid", "name", "modifieddate"::text
        from "production"."scrapreason"
-    """)).as(ScrapreasonRow._rowParser.all()).runUnchecked(c);
+    """)).query(ScrapreasonRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<ScrapreasonRow> selectById(
     ScrapreasonId scrapreasonid,
     Connection c
@@ -171,9 +183,10 @@ public class ScrapreasonRepoImpl implements ScrapreasonRepo {
          where "scrapreasonid" = """),
       ScrapreasonId.pgType.encode(scrapreasonid),
       typo.runtime.Fragment.lit("")
-    ).as(ScrapreasonRow._rowParser.first()).runUnchecked(c);
+    ).query(ScrapreasonRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<ScrapreasonRow> selectByIds(
     ScrapreasonId[] scrapreasonids,
     Connection c
@@ -185,44 +198,48 @@ public class ScrapreasonRepoImpl implements ScrapreasonRepo {
          where "scrapreasonid" = ANY("""),
       ScrapreasonId.pgTypeArray.encode(scrapreasonids),
       typo.runtime.Fragment.lit(")")
-    ).as(ScrapreasonRow._rowParser.all()).runUnchecked(c);
+    ).query(ScrapreasonRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<ScrapreasonId, ScrapreasonRow> selectByIdsTracked(
     ScrapreasonId[] scrapreasonids,
     Connection c
   ) {
-    Map<ScrapreasonId, ScrapreasonRow> ret = new HashMap<>();;
-      selectByIds(scrapreasonids, c).forEach(row -> ret.put(row.scrapreasonid(), row));
+    HashMap<ScrapreasonId, ScrapreasonRow> ret = new HashMap<ScrapreasonId, ScrapreasonRow>();
+    selectByIds(scrapreasonids, c).forEach(row -> ret.put(row.scrapreasonid(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<ScrapreasonFields, ScrapreasonRow> update() {
     return UpdateBuilder.of("production.scrapreason", ScrapreasonFields.structure(), ScrapreasonRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     ScrapreasonRow row,
     Connection c
   ) {
     ScrapreasonId scrapreasonid = row.scrapreasonid();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "production"."scrapreason"
-                set "name" = """),
-             Name.pgType.encode(row.name()),
-             typo.runtime.Fragment.lit("""
-                ::varchar,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "scrapreasonid" = """),
-             ScrapreasonId.pgType.encode(scrapreasonid),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "production"."scrapreason"
+         set "name" = """),
+      Name.pgType.encode(row.name()),
+      typo.runtime.Fragment.lit("""
+         ::varchar,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "scrapreasonid" = """),
+      ScrapreasonId.pgType.encode(scrapreasonid),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public ScrapreasonRow upsert(
     ScrapreasonRow unsaved,
     Connection c
@@ -249,6 +266,7 @@ public class ScrapreasonRepoImpl implements ScrapreasonRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<ScrapreasonRow> upsertBatch(
     Iterator<ScrapreasonRow> unsaved,
     Connection c
@@ -267,25 +285,26 @@ public class ScrapreasonRepoImpl implements ScrapreasonRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<ScrapreasonRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table scrapreason_TEMP (like "production"."scrapreason") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy scrapreason_TEMP("scrapreasonid", "name", "modifieddate") from stdin
-      """), batchSize, unsaved, c, ScrapreasonRow.pgText);
+    create temporary table scrapreason_TEMP (like "production"."scrapreason") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy scrapreason_TEMP("scrapreasonid", "name", "modifieddate") from stdin
+    """), batchSize, unsaved, c, ScrapreasonRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "production"."scrapreason"("scrapreasonid", "name", "modifieddate")
-              select * from scrapreason_TEMP
-              on conflict ("scrapreasonid")
-              do update set
-                "name" = EXCLUDED."name",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table scrapreason_TEMP;""")).update().runUnchecked(c);
+       insert into "production"."scrapreason"("scrapreasonid", "name", "modifieddate")
+       select * from scrapreason_TEMP
+       on conflict ("scrapreasonid")
+       do update set
+         "name" = EXCLUDED."name",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table scrapreason_TEMP;""")).update().runUnchecked(c);
   };
 }

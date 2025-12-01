@@ -17,7 +17,7 @@ import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 
 public interface PpViewFields {
-  static final class Impl extends Relation<PpViewFields, PpViewRow> {
+  final class Impl extends Relation<PpViewFields, PpViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -25,18 +25,23 @@ public interface PpViewFields {
     @Override
     public PpViewFields fields() {
       return new PpViewFields() {
+               @Override
                public Field<BusinessentityId, PpViewRow> id() {
                  return new Field<BusinessentityId, PpViewRow>(_path, "id", PpViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
                };
+               @Override
                public Field<BusinessentityId, PpViewRow> businessentityid() {
                  return new Field<BusinessentityId, PpViewRow>(_path, "businessentityid", PpViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public Field<Phone, PpViewRow> phonenumber() {
                  return new Field<Phone, PpViewRow>(_path, "phonenumber", PpViewRow::phonenumber, Optional.empty(), Optional.empty(), (row, value) -> row.withPhonenumber(value), Phone.pgType);
                };
+               @Override
                public Field<PhonenumbertypeId, PpViewRow> phonenumbertypeid() {
                  return new Field<PhonenumbertypeId, PpViewRow>(_path, "phonenumbertypeid", PpViewRow::phonenumbertypeid, Optional.empty(), Optional.empty(), (row, value) -> row.withPhonenumbertypeid(value), PhonenumbertypeId.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, PpViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, PpViewRow>(_path, "modifieddate", PpViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -48,6 +53,7 @@ public interface PpViewFields {
       return List.of(this.fields().id(), this.fields().businessentityid(), this.fields().phonenumber(), this.fields().phonenumbertypeid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

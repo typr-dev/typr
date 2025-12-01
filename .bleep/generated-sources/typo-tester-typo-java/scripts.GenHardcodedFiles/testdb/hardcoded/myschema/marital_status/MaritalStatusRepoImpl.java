@@ -19,10 +19,12 @@ import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
 public class MaritalStatusRepoImpl implements MaritalStatusRepo {
+  @Override
   public DeleteBuilder<MaritalStatusFields, MaritalStatusRow> delete() {
     return DeleteBuilder.of("myschema.marital_status", MaritalStatusFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     MaritalStatusId id,
     Connection c
@@ -36,6 +38,7 @@ public class MaritalStatusRepoImpl implements MaritalStatusRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     MaritalStatusId[] ids,
     Connection c
@@ -52,6 +55,7 @@ public class MaritalStatusRepoImpl implements MaritalStatusRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public MaritalStatusRow insert(
     MaritalStatusRow unsaved,
     Connection c
@@ -69,6 +73,7 @@ public class MaritalStatusRepoImpl implements MaritalStatusRepo {
       .updateReturning(MaritalStatusRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<MaritalStatusRow> unsaved,
     Integer batchSize,
@@ -79,17 +84,20 @@ public class MaritalStatusRepoImpl implements MaritalStatusRepo {
     """), batchSize, unsaved, c, MaritalStatusRow.pgText);
   };
 
+  @Override
   public SelectBuilder<MaritalStatusFields, MaritalStatusRow> select() {
     return SelectBuilder.of("myschema.marital_status", MaritalStatusFields.structure(), MaritalStatusRow._rowParser);
   };
 
+  @Override
   public List<MaritalStatusRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id"
        from "myschema"."marital_status"
-    """)).as(MaritalStatusRow._rowParser.all()).runUnchecked(c);
+    """)).query(MaritalStatusRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<MaritalStatusRow> selectById(
     MaritalStatusId id,
     Connection c
@@ -101,9 +109,10 @@ public class MaritalStatusRepoImpl implements MaritalStatusRepo {
          where "id" = """),
       MaritalStatusId.pgType.encode(id),
       typo.runtime.Fragment.lit("")
-    ).as(MaritalStatusRow._rowParser.first()).runUnchecked(c);
+    ).query(MaritalStatusRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<MaritalStatusRow> selectByIds(
     MaritalStatusId[] ids,
     Connection c
@@ -115,22 +124,25 @@ public class MaritalStatusRepoImpl implements MaritalStatusRepo {
          where "id" = ANY("""),
       MaritalStatusId.pgTypeArray.encode(ids),
       typo.runtime.Fragment.lit(")")
-    ).as(MaritalStatusRow._rowParser.all()).runUnchecked(c);
+    ).query(MaritalStatusRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<MaritalStatusId, MaritalStatusRow> selectByIdsTracked(
     MaritalStatusId[] ids,
     Connection c
   ) {
-    Map<MaritalStatusId, MaritalStatusRow> ret = new HashMap<>();;
-      selectByIds(ids, c).forEach(row -> ret.put(row.id(), row));
+    HashMap<MaritalStatusId, MaritalStatusRow> ret = new HashMap<MaritalStatusId, MaritalStatusRow>();
+    selectByIds(ids, c).forEach(row -> ret.put(row.id(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<MaritalStatusFields, MaritalStatusRow> update() {
     return UpdateBuilder.of("myschema.marital_status", MaritalStatusFields.structure(), MaritalStatusRow._rowParser.all());
   };
 
+  @Override
   public MaritalStatusRow upsert(
     MaritalStatusRow unsaved,
     Connection c
@@ -151,6 +163,7 @@ public class MaritalStatusRepoImpl implements MaritalStatusRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<MaritalStatusRow> upsertBatch(
     Iterator<MaritalStatusRow> unsaved,
     Connection c
@@ -167,23 +180,24 @@ public class MaritalStatusRepoImpl implements MaritalStatusRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<MaritalStatusRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table marital_status_TEMP (like "myschema"."marital_status") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy marital_status_TEMP("id") from stdin
-      """), batchSize, unsaved, c, MaritalStatusRow.pgText);
+    create temporary table marital_status_TEMP (like "myschema"."marital_status") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy marital_status_TEMP("id") from stdin
+    """), batchSize, unsaved, c, MaritalStatusRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "myschema"."marital_status"("id")
-              select * from marital_status_TEMP
-              on conflict ("id")
-              do nothing
-              ;
-              drop table marital_status_TEMP;""")).update().runUnchecked(c);
+       insert into "myschema"."marital_status"("id")
+       select * from marital_status_TEMP
+       on conflict ("id")
+       do nothing
+       ;
+       drop table marital_status_TEMP;""")).update().runUnchecked(c);
   };
 }

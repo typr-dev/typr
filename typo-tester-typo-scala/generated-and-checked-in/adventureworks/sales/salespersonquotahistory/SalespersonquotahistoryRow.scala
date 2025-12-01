@@ -13,7 +13,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple5
 
 /** Table: sales.salespersonquotahistory
  * Sales performance tracking.
@@ -54,15 +53,7 @@ case class SalespersonquotahistoryRow(
 }
 
 object SalespersonquotahistoryRow {
-  val `_rowParser`: RowParser[SalespersonquotahistoryRow] = {
-    RowParsers.of(BusinessentityId.pgType, TypoLocalDateTime.pgType, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SalespersonquotahistoryRow.apply, row => new Tuple5(
-      row.businessentityid,
-      row.quotadate,
-      row.salesquota,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[SalespersonquotahistoryRow] = RowParsers.of(BusinessentityId.pgType, TypoLocalDateTime.pgType, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SalespersonquotahistoryRow.apply, row => Array(row.businessentityid, row.quotadate, row.salesquota, row.rowguid, row.modifieddate))
 
   def apply(
     compositeId: SalespersonquotahistoryId,

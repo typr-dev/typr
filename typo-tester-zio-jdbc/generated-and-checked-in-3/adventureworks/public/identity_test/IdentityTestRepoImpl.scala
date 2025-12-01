@@ -20,20 +20,20 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class IdentityTestRepoImpl extends IdentityTestRepo {
-  def delete: DeleteBuilder[IdentityTestFields, IdentityTestRow] = DeleteBuilder.of(""""public"."identity-test"""", IdentityTestFields.structure, IdentityTestRow.jdbcDecoder)
+  override def delete: DeleteBuilder[IdentityTestFields, IdentityTestRow] = DeleteBuilder.of(""""public"."identity-test"""", IdentityTestFields.structure, IdentityTestRow.jdbcDecoder)
 
-  def deleteById(name: IdentityTestId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "public"."identity-test" where "name" = ${Segment.paramSegment(name)(using IdentityTestId.setter)}""".delete.map(_ > 0)
+  override def deleteById(name: IdentityTestId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "public"."identity-test" where "name" = ${Segment.paramSegment(name)(using IdentityTestId.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(names: Array[IdentityTestId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "public"."identity-test" where "name" = ANY(${Segment.paramSegment(names)(using IdentityTestId.arraySetter)})""".delete
+  override def deleteByIds(names: Array[IdentityTestId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "public"."identity-test" where "name" = ANY(${Segment.paramSegment(names)(using IdentityTestId.arraySetter)})""".delete
 
-  def insert(unsaved: IdentityTestRow): ZIO[ZConnection, Throwable, IdentityTestRow] = {
+  override def insert(unsaved: IdentityTestRow): ZIO[ZConnection, Throwable, IdentityTestRow] = {
     sql"""insert into "public"."identity-test"("default_generated", "name")
     values (${Segment.paramSegment(unsaved.defaultGenerated)(using Setter.intSetter)}::int4, ${Segment.paramSegment(unsaved.name)(using IdentityTestId.setter)})
     returning "always_generated", "default_generated", "name"
     """.insertReturning(using IdentityTestRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insert(unsaved: IdentityTestRowUnsaved): ZIO[ZConnection, Throwable, IdentityTestRow] = {
+  override def insert(unsaved: IdentityTestRowUnsaved): ZIO[ZConnection, Throwable, IdentityTestRow] = {
     val fs = List(
       Some((sql""""name"""", sql"${Segment.paramSegment(unsaved.name)(using IdentityTestId.setter)}")),
       unsaved.defaultGenerated match {
@@ -53,35 +53,35 @@ class IdentityTestRepoImpl extends IdentityTestRepo {
     q.insertReturning(using IdentityTestRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, IdentityTestRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "public"."identity-test"("default_generated", "name") FROM STDIN""", batchSize, unsaved)(using IdentityTestRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, IdentityTestRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "public"."identity-test"("name", "default_generated") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using IdentityTestRowUnsaved.pgText)
 
-  def select: SelectBuilder[IdentityTestFields, IdentityTestRow] = SelectBuilder.of(""""public"."identity-test"""", IdentityTestFields.structure, IdentityTestRow.jdbcDecoder)
+  override def select: SelectBuilder[IdentityTestFields, IdentityTestRow] = SelectBuilder.of(""""public"."identity-test"""", IdentityTestFields.structure, IdentityTestRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, IdentityTestRow] = sql"""select "always_generated", "default_generated", "name" from "public"."identity-test"""".query(using IdentityTestRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, IdentityTestRow] = sql"""select "always_generated", "default_generated", "name" from "public"."identity-test"""".query(using IdentityTestRow.jdbcDecoder).selectStream()
 
-  def selectById(name: IdentityTestId): ZIO[ZConnection, Throwable, Option[IdentityTestRow]] = sql"""select "always_generated", "default_generated", "name" from "public"."identity-test" where "name" = ${Segment.paramSegment(name)(using IdentityTestId.setter)}""".query(using IdentityTestRow.jdbcDecoder).selectOne
+  override def selectById(name: IdentityTestId): ZIO[ZConnection, Throwable, Option[IdentityTestRow]] = sql"""select "always_generated", "default_generated", "name" from "public"."identity-test" where "name" = ${Segment.paramSegment(name)(using IdentityTestId.setter)}""".query(using IdentityTestRow.jdbcDecoder).selectOne
 
-  def selectByIds(names: Array[IdentityTestId]): ZStream[ZConnection, Throwable, IdentityTestRow] = sql"""select "always_generated", "default_generated", "name" from "public"."identity-test" where "name" = ANY(${Segment.paramSegment(names)(using IdentityTestId.arraySetter)})""".query(using IdentityTestRow.jdbcDecoder).selectStream()
+  override def selectByIds(names: Array[IdentityTestId]): ZStream[ZConnection, Throwable, IdentityTestRow] = sql"""select "always_generated", "default_generated", "name" from "public"."identity-test" where "name" = ANY(${Segment.paramSegment(names)(using IdentityTestId.arraySetter)})""".query(using IdentityTestRow.jdbcDecoder).selectStream()
 
-  def selectByIdsTracked(names: Array[IdentityTestId]): ZIO[ZConnection, Throwable, Map[IdentityTestId, IdentityTestRow]] = {
+  override def selectByIdsTracked(names: Array[IdentityTestId]): ZIO[ZConnection, Throwable, Map[IdentityTestId, IdentityTestRow]] = {
     selectByIds(names).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.name, x)).toMap
       names.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[IdentityTestFields, IdentityTestRow] = UpdateBuilder.of(""""public"."identity-test"""", IdentityTestFields.structure, IdentityTestRow.jdbcDecoder)
+  override def update: UpdateBuilder[IdentityTestFields, IdentityTestRow] = UpdateBuilder.of(""""public"."identity-test"""", IdentityTestFields.structure, IdentityTestRow.jdbcDecoder)
 
-  def update(row: IdentityTestRow): ZIO[ZConnection, Throwable, Option[IdentityTestRow]] = {
+  override def update(row: IdentityTestRow): ZIO[ZConnection, Throwable, Option[IdentityTestRow]] = {
     val name = row.name
     sql"""update "public"."identity-test"
     set "default_generated" = ${Segment.paramSegment(row.defaultGenerated)(using Setter.intSetter)}::int4
@@ -91,7 +91,7 @@ class IdentityTestRepoImpl extends IdentityTestRepo {
       .selectOne
   }
 
-  def upsert(unsaved: IdentityTestRow): ZIO[ZConnection, Throwable, UpdateResult[IdentityTestRow]] = {
+  override def upsert(unsaved: IdentityTestRow): ZIO[ZConnection, Throwable, UpdateResult[IdentityTestRow]] = {
     sql"""insert into "public"."identity-test"("default_generated", "name")
     values (
       ${Segment.paramSegment(unsaved.defaultGenerated)(using Setter.intSetter)}::int4,
@@ -104,7 +104,7 @@ class IdentityTestRepoImpl extends IdentityTestRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, IdentityTestRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

@@ -5,12 +5,13 @@
  */
 package adventureworks.sales.salestaxrate
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
 
 /** Type for the primary key of table `sales.salestaxrate` */
-case class SalestaxrateId(value: Integer) extends scala.AnyVal
+case class SalestaxrateId(@JsonValue value: Integer) extends scala.AnyVal
 
 object SalestaxrateId {
   given bijection: Bijection[SalestaxrateId, Integer] = Bijection.apply[SalestaxrateId, Integer](_.value)(SalestaxrateId.apply)

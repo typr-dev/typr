@@ -94,7 +94,7 @@ object ProductFields {
 
     override lazy val fields: ProductFields = {
       new ProductFields {
-        def productid: IdField[ProductId, ProductRow] = {
+        override def productid: IdField[ProductId, ProductRow] = {
           new IdField[ProductId, ProductRow](
             _path,
             "productid",
@@ -105,7 +105,7 @@ object ProductFields {
             ProductId.pgType
           )
         }
-        def name: Field[Name, ProductRow] = {
+        override def name: Field[Name, ProductRow] = {
           new Field[Name, ProductRow](
             _path,
             "name",
@@ -116,7 +116,7 @@ object ProductFields {
             Name.pgType
           )
         }
-        def productnumber: Field[/* max 25 chars */ String, ProductRow] = {
+        override def productnumber: Field[/* max 25 chars */ String, ProductRow] = {
           new Field[/* max 25 chars */ String, ProductRow](
             _path,
             "productnumber",
@@ -127,7 +127,7 @@ object ProductFields {
             PgTypes.text
           )
         }
-        def makeflag: Field[Flag, ProductRow] = {
+        override def makeflag: Field[Flag, ProductRow] = {
           new Field[Flag, ProductRow](
             _path,
             "makeflag",
@@ -138,7 +138,7 @@ object ProductFields {
             Flag.pgType
           )
         }
-        def finishedgoodsflag: Field[Flag, ProductRow] = {
+        override def finishedgoodsflag: Field[Flag, ProductRow] = {
           new Field[Flag, ProductRow](
             _path,
             "finishedgoodsflag",
@@ -149,7 +149,7 @@ object ProductFields {
             Flag.pgType
           )
         }
-        def color: OptField[/* max 15 chars */ String, ProductRow] = {
+        override def color: OptField[/* max 15 chars */ String, ProductRow] = {
           new OptField[/* max 15 chars */ String, ProductRow](
             _path,
             "color",
@@ -160,7 +160,7 @@ object ProductFields {
             PgTypes.text
           )
         }
-        def safetystocklevel: Field[TypoShort, ProductRow] = {
+        override def safetystocklevel: Field[TypoShort, ProductRow] = {
           new Field[TypoShort, ProductRow](
             _path,
             "safetystocklevel",
@@ -171,7 +171,7 @@ object ProductFields {
             TypoShort.pgType
           )
         }
-        def reorderpoint: Field[TypoShort, ProductRow] = {
+        override def reorderpoint: Field[TypoShort, ProductRow] = {
           new Field[TypoShort, ProductRow](
             _path,
             "reorderpoint",
@@ -182,7 +182,7 @@ object ProductFields {
             TypoShort.pgType
           )
         }
-        def standardcost: Field[java.math.BigDecimal, ProductRow] = {
+        override def standardcost: Field[java.math.BigDecimal, ProductRow] = {
           new Field[java.math.BigDecimal, ProductRow](
             _path,
             "standardcost",
@@ -193,7 +193,7 @@ object ProductFields {
             PgTypes.numeric
           )
         }
-        def listprice: Field[java.math.BigDecimal, ProductRow] = {
+        override def listprice: Field[java.math.BigDecimal, ProductRow] = {
           new Field[java.math.BigDecimal, ProductRow](
             _path,
             "listprice",
@@ -204,7 +204,7 @@ object ProductFields {
             PgTypes.numeric
           )
         }
-        def size: OptField[/* max 5 chars */ String, ProductRow] = {
+        override def size: OptField[/* max 5 chars */ String, ProductRow] = {
           new OptField[/* max 5 chars */ String, ProductRow](
             _path,
             "size",
@@ -215,7 +215,7 @@ object ProductFields {
             PgTypes.text
           )
         }
-        def sizeunitmeasurecode: OptField[UnitmeasureId, ProductRow] = {
+        override def sizeunitmeasurecode: OptField[UnitmeasureId, ProductRow] = {
           new OptField[UnitmeasureId, ProductRow](
             _path,
             "sizeunitmeasurecode",
@@ -226,7 +226,7 @@ object ProductFields {
             UnitmeasureId.pgType
           )
         }
-        def weightunitmeasurecode: OptField[UnitmeasureId, ProductRow] = {
+        override def weightunitmeasurecode: OptField[UnitmeasureId, ProductRow] = {
           new OptField[UnitmeasureId, ProductRow](
             _path,
             "weightunitmeasurecode",
@@ -237,7 +237,7 @@ object ProductFields {
             UnitmeasureId.pgType
           )
         }
-        def weight: OptField[java.math.BigDecimal, ProductRow] = {
+        override def weight: OptField[java.math.BigDecimal, ProductRow] = {
           new OptField[java.math.BigDecimal, ProductRow](
             _path,
             "weight",
@@ -248,7 +248,7 @@ object ProductFields {
             PgTypes.numeric
           )
         }
-        def daystomanufacture: Field[Integer, ProductRow] = {
+        override def daystomanufacture: Field[Integer, ProductRow] = {
           new Field[Integer, ProductRow](
             _path,
             "daystomanufacture",
@@ -259,7 +259,7 @@ object ProductFields {
             PgTypes.int4
           )
         }
-        def productline: OptField[/* bpchar, max 2 chars */ String, ProductRow] = {
+        override def productline: OptField[/* bpchar, max 2 chars */ String, ProductRow] = {
           new OptField[/* bpchar, max 2 chars */ String, ProductRow](
             _path,
             "productline",
@@ -270,7 +270,7 @@ object ProductFields {
             PgTypes.text
           )
         }
-        def `class`: OptField[/* bpchar, max 2 chars */ String, ProductRow] = {
+        override def `class`: OptField[/* bpchar, max 2 chars */ String, ProductRow] = {
           new OptField[/* bpchar, max 2 chars */ String, ProductRow](
             _path,
             "class",
@@ -281,7 +281,7 @@ object ProductFields {
             PgTypes.text
           )
         }
-        def style: OptField[/* bpchar, max 2 chars */ String, ProductRow] = {
+        override def style: OptField[/* bpchar, max 2 chars */ String, ProductRow] = {
           new OptField[/* bpchar, max 2 chars */ String, ProductRow](
             _path,
             "style",
@@ -292,7 +292,7 @@ object ProductFields {
             PgTypes.text
           )
         }
-        def productsubcategoryid: OptField[ProductsubcategoryId, ProductRow] = {
+        override def productsubcategoryid: OptField[ProductsubcategoryId, ProductRow] = {
           new OptField[ProductsubcategoryId, ProductRow](
             _path,
             "productsubcategoryid",
@@ -303,7 +303,7 @@ object ProductFields {
             ProductsubcategoryId.pgType
           )
         }
-        def productmodelid: OptField[ProductmodelId, ProductRow] = {
+        override def productmodelid: OptField[ProductmodelId, ProductRow] = {
           new OptField[ProductmodelId, ProductRow](
             _path,
             "productmodelid",
@@ -314,7 +314,7 @@ object ProductFields {
             ProductmodelId.pgType
           )
         }
-        def sellstartdate: Field[TypoLocalDateTime, ProductRow] = {
+        override def sellstartdate: Field[TypoLocalDateTime, ProductRow] = {
           new Field[TypoLocalDateTime, ProductRow](
             _path,
             "sellstartdate",
@@ -325,7 +325,7 @@ object ProductFields {
             TypoLocalDateTime.pgType
           )
         }
-        def sellenddate: OptField[TypoLocalDateTime, ProductRow] = {
+        override def sellenddate: OptField[TypoLocalDateTime, ProductRow] = {
           new OptField[TypoLocalDateTime, ProductRow](
             _path,
             "sellenddate",
@@ -336,7 +336,7 @@ object ProductFields {
             TypoLocalDateTime.pgType
           )
         }
-        def discontinueddate: OptField[TypoLocalDateTime, ProductRow] = {
+        override def discontinueddate: OptField[TypoLocalDateTime, ProductRow] = {
           new OptField[TypoLocalDateTime, ProductRow](
             _path,
             "discontinueddate",
@@ -347,7 +347,7 @@ object ProductFields {
             TypoLocalDateTime.pgType
           )
         }
-        def rowguid: Field[TypoUUID, ProductRow] = {
+        override def rowguid: Field[TypoUUID, ProductRow] = {
           new Field[TypoUUID, ProductRow](
             _path,
             "rowguid",
@@ -358,7 +358,7 @@ object ProductFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, ProductRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, ProductRow] = {
           new Field[TypoLocalDateTime, ProductRow](
             _path,
             "modifieddate",
@@ -374,7 +374,7 @@ object ProductFields {
 
     override lazy val columns: java.util.List[FieldLike[?, ProductRow]] = java.util.List.of(this.fields.productid, this.fields.name, this.fields.productnumber, this.fields.makeflag, this.fields.finishedgoodsflag, this.fields.color, this.fields.safetystocklevel, this.fields.reorderpoint, this.fields.standardcost, this.fields.listprice, this.fields.size, this.fields.sizeunitmeasurecode, this.fields.weightunitmeasurecode, this.fields.weight, this.fields.daystomanufacture, this.fields.productline, this.fields.`class`, this.fields.style, this.fields.productsubcategoryid, this.fields.productmodelid, this.fields.sellstartdate, this.fields.sellenddate, this.fields.discontinueddate, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[ProductFields, ProductRow] = new Impl(java.util.List.of())

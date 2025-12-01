@@ -23,13 +23,13 @@ case class SalesorderheaderRepoMock(
   toRow: SalesorderheaderRowUnsaved => SalesorderheaderRow,
   map: scala.collection.mutable.Map[SalesorderheaderId, SalesorderheaderRow] = scala.collection.mutable.Map.empty[SalesorderheaderId, SalesorderheaderRow]
 ) extends SalesorderheaderRepo {
-  def delete: DeleteBuilder[SalesorderheaderFields, SalesorderheaderRow] = DeleteBuilderMock(DeleteParams.empty, SalesorderheaderFields.structure, map)
+  override def delete: DeleteBuilder[SalesorderheaderFields, SalesorderheaderRow] = DeleteBuilderMock(DeleteParams.empty, SalesorderheaderFields.structure, map)
 
-  def deleteById(salesorderid: SalesorderheaderId): ConnectionIO[Boolean] = delay(map.remove(salesorderid).isDefined)
+  override def deleteById(salesorderid: SalesorderheaderId): ConnectionIO[Boolean] = delay(map.remove(salesorderid).isDefined)
 
-  def deleteByIds(salesorderids: Array[SalesorderheaderId]): ConnectionIO[Int] = delay(salesorderids.map(id => map.remove(id)).count(_.isDefined))
+  override def deleteByIds(salesorderids: Array[SalesorderheaderId]): ConnectionIO[Int] = delay(salesorderids.map(id => map.remove(id)).count(_.isDefined))
 
-  def insert(unsaved: SalesorderheaderRow): ConnectionIO[SalesorderheaderRow] = {
+  override def insert(unsaved: SalesorderheaderRow): ConnectionIO[SalesorderheaderRow] = {
   delay {
     val _ = if (map.contains(unsaved.salesorderid))
       sys.error(s"id ${unsaved.salesorderid} already exists")
@@ -40,9 +40,9 @@ case class SalesorderheaderRepoMock(
   }
   }
 
-  def insert(unsaved: SalesorderheaderRowUnsaved): ConnectionIO[SalesorderheaderRow] = insert(toRow(unsaved))
+  override def insert(unsaved: SalesorderheaderRowUnsaved): ConnectionIO[SalesorderheaderRow] = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, SalesorderheaderRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = {
@@ -57,7 +57,7 @@ case class SalesorderheaderRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, SalesorderheaderRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = {
@@ -72,24 +72,24 @@ case class SalesorderheaderRepoMock(
     }
   }
 
-  def select: SelectBuilder[SalesorderheaderFields, SalesorderheaderRow] = SelectBuilderMock(SalesorderheaderFields.structure, delay(map.values.toList), SelectParams.empty)
+  override def select: SelectBuilder[SalesorderheaderFields, SalesorderheaderRow] = SelectBuilderMock(SalesorderheaderFields.structure, delay(map.values.toList), SelectParams.empty)
 
-  def selectAll: Stream[ConnectionIO, SalesorderheaderRow] = Stream.emits(map.values.toList)
+  override def selectAll: Stream[ConnectionIO, SalesorderheaderRow] = Stream.emits(map.values.toList)
 
-  def selectById(salesorderid: SalesorderheaderId): ConnectionIO[Option[SalesorderheaderRow]] = delay(map.get(salesorderid))
+  override def selectById(salesorderid: SalesorderheaderId): ConnectionIO[Option[SalesorderheaderRow]] = delay(map.get(salesorderid))
 
-  def selectByIds(salesorderids: Array[SalesorderheaderId]): Stream[ConnectionIO, SalesorderheaderRow] = Stream.emits(salesorderids.flatMap(map.get).toList)
+  override def selectByIds(salesorderids: Array[SalesorderheaderId]): Stream[ConnectionIO, SalesorderheaderRow] = Stream.emits(salesorderids.flatMap(map.get).toList)
 
-  def selectByIdsTracked(salesorderids: Array[SalesorderheaderId]): ConnectionIO[Map[SalesorderheaderId, SalesorderheaderRow]] = {
+  override def selectByIdsTracked(salesorderids: Array[SalesorderheaderId]): ConnectionIO[Map[SalesorderheaderId, SalesorderheaderRow]] = {
     selectByIds(salesorderids).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.salesorderid, x)).toMap
       salesorderids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[SalesorderheaderFields, SalesorderheaderRow] = UpdateBuilderMock(UpdateParams.empty, SalesorderheaderFields.structure, map)
+  override def update: UpdateBuilder[SalesorderheaderFields, SalesorderheaderRow] = UpdateBuilderMock(UpdateParams.empty, SalesorderheaderFields.structure, map)
 
-  def update(row: SalesorderheaderRow): ConnectionIO[Option[SalesorderheaderRow]] = {
+  override def update(row: SalesorderheaderRow): ConnectionIO[Option[SalesorderheaderRow]] = {
     delay {
       map.get(row.salesorderid).map { _ =>
         map.put(row.salesorderid, row): @nowarn
@@ -98,14 +98,14 @@ case class SalesorderheaderRepoMock(
     }
   }
 
-  def upsert(unsaved: SalesorderheaderRow): ConnectionIO[SalesorderheaderRow] = {
+  override def upsert(unsaved: SalesorderheaderRow): ConnectionIO[SalesorderheaderRow] = {
     delay {
       map.put(unsaved.salesorderid, unsaved): @nowarn
       unsaved
     }
   }
 
-  def upsertBatch(unsaved: List[SalesorderheaderRow]): Stream[ConnectionIO, SalesorderheaderRow] = {
+  override def upsertBatch(unsaved: List[SalesorderheaderRow]): Stream[ConnectionIO, SalesorderheaderRow] = {
     Stream.emits {
       unsaved.map { row =>
         map += (row.salesorderid -> row)
@@ -115,7 +115,7 @@ case class SalesorderheaderRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, SalesorderheaderRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

@@ -38,7 +38,7 @@ object SViewFields {
 
     override lazy val fields: SViewFields = {
       new SViewFields {
-        def id: Field[BusinessentityId, SViewRow] = {
+        override def id: Field[BusinessentityId, SViewRow] = {
           new Field[BusinessentityId, SViewRow](
             _path,
             "id",
@@ -49,7 +49,7 @@ object SViewFields {
             BusinessentityId.pgType
           )
         }
-        def businessentityid: Field[BusinessentityId, SViewRow] = {
+        override def businessentityid: Field[BusinessentityId, SViewRow] = {
           new Field[BusinessentityId, SViewRow](
             _path,
             "businessentityid",
@@ -60,7 +60,7 @@ object SViewFields {
             BusinessentityId.pgType
           )
         }
-        def name: Field[Name, SViewRow] = {
+        override def name: Field[Name, SViewRow] = {
           new Field[Name, SViewRow](
             _path,
             "name",
@@ -71,7 +71,7 @@ object SViewFields {
             Name.pgType
           )
         }
-        def salespersonid: OptField[BusinessentityId, SViewRow] = {
+        override def salespersonid: OptField[BusinessentityId, SViewRow] = {
           new OptField[BusinessentityId, SViewRow](
             _path,
             "salespersonid",
@@ -82,7 +82,7 @@ object SViewFields {
             BusinessentityId.pgType
           )
         }
-        def demographics: OptField[TypoXml, SViewRow] = {
+        override def demographics: OptField[TypoXml, SViewRow] = {
           new OptField[TypoXml, SViewRow](
             _path,
             "demographics",
@@ -93,7 +93,7 @@ object SViewFields {
             TypoXml.pgType
           )
         }
-        def rowguid: Field[TypoUUID, SViewRow] = {
+        override def rowguid: Field[TypoUUID, SViewRow] = {
           new Field[TypoUUID, SViewRow](
             _path,
             "rowguid",
@@ -104,7 +104,7 @@ object SViewFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, SViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, SViewRow] = {
           new Field[TypoLocalDateTime, SViewRow](
             _path,
             "modifieddate",
@@ -120,7 +120,7 @@ object SViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, SViewRow]] = java.util.List.of(this.fields.id, this.fields.businessentityid, this.fields.name, this.fields.salespersonid, this.fields.demographics, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[SViewFields, SViewRow] = new Impl(java.util.List.of())

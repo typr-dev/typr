@@ -31,11 +31,11 @@ public record TypoXml(@JsonValue String value) {
   static public PgType<TypoXml> pgType =
     PgType.of(
       "xml",
-      PgRead.castJdbcObjectTo(PgSQLXML.class).map(v -> new TypoXml(v.getString())),
-      PgWrite.passObjectToJdbc().contramap((TypoXml v) -> v.value()),
+      PgRead.castJdbcObjectTo(PgSQLXML.class).map((PgSQLXML v) -> new TypoXml(v.getString())),
+      PgWrite.<String>passObjectToJdbc().contramap((TypoXml v) -> v.value()),
       TypoXml.pgText
     );
 
   static public PgType<TypoXml[]> pgTypeArray =
-    TypoXml.pgType.array(PgRead.castJdbcArrayTo(PGobject.class).map(xs -> arrayMap.map(xs, v -> new TypoXml(v.getValue()), TypoXml.class)), PgWrite.<PGobject>passObjectToJdbc().array(TypoXml.pgType.typename().<PGobject>as()).contramap(xs -> arrayMap.map(xs, (TypoXml v) -> TypoPGObjectHelper.create("xml", v.value()), PGobject.class)));
+    TypoXml.pgType.array(PgRead.castJdbcArrayTo(PGobject.class).map((PGobject[] xs) -> arrayMap.map(xs, (PGobject v) -> new TypoXml(v.getValue()), TypoXml.class)), PgWrite.<PGobject>passObjectToJdbc().array(TypoXml.pgType.typename().<PGobject>as()).contramap((TypoXml[] xs) -> arrayMap.map(xs, (TypoXml v) -> TypoPGObjectHelper.create("xml", v.value()), PGobject.class)));
 }

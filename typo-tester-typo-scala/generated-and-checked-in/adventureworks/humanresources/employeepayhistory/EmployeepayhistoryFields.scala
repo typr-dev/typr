@@ -45,7 +45,7 @@ object EmployeepayhistoryFields {
 
     override lazy val fields: EmployeepayhistoryFields = {
       new EmployeepayhistoryFields {
-        def businessentityid: IdField[BusinessentityId, EmployeepayhistoryRow] = {
+        override def businessentityid: IdField[BusinessentityId, EmployeepayhistoryRow] = {
           new IdField[BusinessentityId, EmployeepayhistoryRow](
             _path,
             "businessentityid",
@@ -56,7 +56,7 @@ object EmployeepayhistoryFields {
             BusinessentityId.pgType
           )
         }
-        def ratechangedate: IdField[TypoLocalDateTime, EmployeepayhistoryRow] = {
+        override def ratechangedate: IdField[TypoLocalDateTime, EmployeepayhistoryRow] = {
           new IdField[TypoLocalDateTime, EmployeepayhistoryRow](
             _path,
             "ratechangedate",
@@ -67,7 +67,7 @@ object EmployeepayhistoryFields {
             TypoLocalDateTime.pgType
           )
         }
-        def rate: Field[java.math.BigDecimal, EmployeepayhistoryRow] = {
+        override def rate: Field[java.math.BigDecimal, EmployeepayhistoryRow] = {
           new Field[java.math.BigDecimal, EmployeepayhistoryRow](
             _path,
             "rate",
@@ -78,7 +78,7 @@ object EmployeepayhistoryFields {
             PgTypes.numeric
           )
         }
-        def payfrequency: Field[TypoShort, EmployeepayhistoryRow] = {
+        override def payfrequency: Field[TypoShort, EmployeepayhistoryRow] = {
           new Field[TypoShort, EmployeepayhistoryRow](
             _path,
             "payfrequency",
@@ -89,7 +89,7 @@ object EmployeepayhistoryFields {
             TypoShort.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, EmployeepayhistoryRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, EmployeepayhistoryRow] = {
           new Field[TypoLocalDateTime, EmployeepayhistoryRow](
             _path,
             "modifieddate",
@@ -105,7 +105,7 @@ object EmployeepayhistoryFields {
 
     override lazy val columns: java.util.List[FieldLike[?, EmployeepayhistoryRow]] = java.util.List.of(this.fields.businessentityid, this.fields.ratechangedate, this.fields.rate, this.fields.payfrequency, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[EmployeepayhistoryFields, EmployeepayhistoryRow] = new Impl(java.util.List.of())

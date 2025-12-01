@@ -18,7 +18,7 @@ import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 
 public interface JcViewFields {
-  static final class Impl extends Relation<JcViewFields, JcViewRow> {
+  final class Impl extends Relation<JcViewFields, JcViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -26,18 +26,23 @@ public interface JcViewFields {
     @Override
     public JcViewFields fields() {
       return new JcViewFields() {
+               @Override
                public Field<JobcandidateId, JcViewRow> id() {
                  return new Field<JobcandidateId, JcViewRow>(_path, "id", JcViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), JobcandidateId.pgType);
                };
+               @Override
                public Field<JobcandidateId, JcViewRow> jobcandidateid() {
                  return new Field<JobcandidateId, JcViewRow>(_path, "jobcandidateid", JcViewRow::jobcandidateid, Optional.empty(), Optional.empty(), (row, value) -> row.withJobcandidateid(value), JobcandidateId.pgType);
                };
+               @Override
                public OptField<BusinessentityId, JcViewRow> businessentityid() {
                  return new OptField<BusinessentityId, JcViewRow>(_path, "businessentityid", JcViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public OptField<TypoXml, JcViewRow> resume() {
                  return new OptField<TypoXml, JcViewRow>(_path, "resume", JcViewRow::resume, Optional.empty(), Optional.empty(), (row, value) -> row.withResume(value), TypoXml.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, JcViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, JcViewRow>(_path, "modifieddate", JcViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -49,6 +54,7 @@ public interface JcViewFields {
       return List.of(this.fields().id(), this.fields().jobcandidateid(), this.fields().businessentityid(), this.fields().resume(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

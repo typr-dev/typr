@@ -11,7 +11,6 @@ import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple6
 
 /** View: pr.pch */
 case class PchViewRow(
@@ -30,14 +29,5 @@ case class PchViewRow(
 )
 
 object PchViewRow {
-  val `_rowParser`: RowParser[PchViewRow] = {
-    RowParsers.of(ProductId.pgType, ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), PgTypes.numeric, TypoLocalDateTime.pgType, PchViewRow.apply, row => new Tuple6(
-      row.id,
-      row.productid,
-      row.startdate,
-      row.enddate,
-      row.standardcost,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[PchViewRow] = RowParsers.of(ProductId.pgType, ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), PgTypes.numeric, TypoLocalDateTime.pgType, PchViewRow.apply, row => Array(row.id, row.productid, row.startdate, row.enddate, row.standardcost, row.modifieddate))
 }

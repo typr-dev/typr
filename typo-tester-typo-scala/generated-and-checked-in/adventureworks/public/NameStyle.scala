@@ -5,6 +5,7 @@
  */
 package adventureworks.public
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
@@ -12,7 +13,7 @@ import typo.runtime.PgTypes
 /** Domain `public.NameStyle`
  * No constraint
  */
-case class NameStyle(value: java.lang.Boolean)
+case class NameStyle(@JsonValue value: java.lang.Boolean)
 
 object NameStyle {
   given bijection: Bijection[NameStyle, java.lang.Boolean] = Bijection.apply[NameStyle, java.lang.Boolean](_.value)(NameStyle.apply)

@@ -5,22 +5,22 @@
  */
 package adventureworks.pr.pm;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class PmViewRepoImpl implements PmViewRepo {
+  @Override
   public SelectBuilder<PmViewFields, PmViewRow> select() {
     return SelectBuilder.of("pr.pm", PmViewFields.structure(), PmViewRow._rowParser);
   };
 
+  @Override
   public List<PmViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate"::text
        from "pr"."pm"
-    """)).as(PmViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(PmViewRow._rowParser.all()).runUnchecked(c);
   };
 }

@@ -17,7 +17,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface ProductdescriptionFields {
-  static final class Impl extends Relation<ProductdescriptionFields, ProductdescriptionRow> {
+  final class Impl extends Relation<ProductdescriptionFields, ProductdescriptionRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -25,15 +25,19 @@ public interface ProductdescriptionFields {
     @Override
     public ProductdescriptionFields fields() {
       return new ProductdescriptionFields() {
+               @Override
                public IdField<ProductdescriptionId, ProductdescriptionRow> productdescriptionid() {
                  return new IdField<ProductdescriptionId, ProductdescriptionRow>(_path, "productdescriptionid", ProductdescriptionRow::productdescriptionid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductdescriptionid(value), ProductdescriptionId.pgType);
                };
+               @Override
                public Field</* max 400 chars */ String, ProductdescriptionRow> description() {
                  return new Field</* max 400 chars */ String, ProductdescriptionRow>(_path, "description", ProductdescriptionRow::description, Optional.empty(), Optional.empty(), (row, value) -> row.withDescription(value), PgTypes.text);
                };
+               @Override
                public Field<TypoUUID, ProductdescriptionRow> rowguid() {
                  return new Field<TypoUUID, ProductdescriptionRow>(_path, "rowguid", ProductdescriptionRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, ProductdescriptionRow> modifieddate() {
                  return new Field<TypoLocalDateTime, ProductdescriptionRow>(_path, "modifieddate", ProductdescriptionRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -45,6 +49,7 @@ public interface ProductdescriptionFields {
       return List.of(this.fields().productdescriptionid(), this.fields().description(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

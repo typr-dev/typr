@@ -11,7 +11,6 @@ import adventureworks.person.businessentity.BusinessentityId;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple6;
 
 /** View: pe.pa */
 public record PaViewRow(
@@ -58,5 +57,5 @@ public record PaViewRow(
     return new PaViewRow(id, businessentityid, passwordhash, passwordsalt, rowguid, modifieddate);
   };
 
-  static RowParser<PaViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, PgTypes.text, PgTypes.text, TypoUUID.pgType, TypoLocalDateTime.pgType, PaViewRow::new, row -> new Tuple6<>(row.id(), row.businessentityid(), row.passwordhash(), row.passwordsalt(), row.rowguid(), row.modifieddate()));;
+  static RowParser<PaViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, PgTypes.text, PgTypes.text, TypoUUID.pgType, TypoLocalDateTime.pgType, PaViewRow::new, row -> new Object[]{row.id(), row.businessentityid(), row.passwordhash(), row.passwordsalt(), row.rowguid(), row.modifieddate()});;
 }

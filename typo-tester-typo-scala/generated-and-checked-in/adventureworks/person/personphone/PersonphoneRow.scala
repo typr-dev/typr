@@ -13,7 +13,6 @@ import adventureworks.public.Phone
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple4
 
 /** Table: person.personphone
  * Telephone number and type of a person.
@@ -48,14 +47,7 @@ case class PersonphoneRow(
 }
 
 object PersonphoneRow {
-  val `_rowParser`: RowParser[PersonphoneRow] = {
-    RowParsers.of(BusinessentityId.pgType, Phone.pgType, PhonenumbertypeId.pgType, TypoLocalDateTime.pgType, PersonphoneRow.apply, row => new Tuple4(
-      row.businessentityid,
-      row.phonenumber,
-      row.phonenumbertypeid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[PersonphoneRow] = RowParsers.of(BusinessentityId.pgType, Phone.pgType, PhonenumbertypeId.pgType, TypoLocalDateTime.pgType, PersonphoneRow.apply, row => Array(row.businessentityid, row.phonenumber, row.phonenumbertypeid, row.modifieddate))
 
   def apply(
     compositeId: PersonphoneId,

@@ -10,9 +10,9 @@ import typo.dsl.SelectBuilder
 import anorm.SqlStringInterpolation
 
 class BomViewRepoImpl extends BomViewRepo {
-  def select: SelectBuilder[BomViewFields, BomViewRow] = SelectBuilder.of(""""pr"."bom"""", BomViewFields.structure, BomViewRow.rowParser)
+  override def select: SelectBuilder[BomViewFields, BomViewRow] = SelectBuilder.of(""""pr"."bom"""", BomViewFields.structure, BomViewRow.rowParser)
 
-  def selectAll(using c: Connection): List[BomViewRow] = {
+  override def selectAll(using c: Connection): List[BomViewRow] = {
     SQL"""select "id", "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text
     from "pr"."bom"
     """.as(BomViewRow.rowParser(1).*)

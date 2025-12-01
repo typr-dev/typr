@@ -44,7 +44,7 @@ object VemployeedepartmentViewFields {
 
     override lazy val fields: VemployeedepartmentViewFields = {
       new VemployeedepartmentViewFields {
-        def businessentityid: Field[BusinessentityId, VemployeedepartmentViewRow] = {
+        override def businessentityid: Field[BusinessentityId, VemployeedepartmentViewRow] = {
           new Field[BusinessentityId, VemployeedepartmentViewRow](
             _path,
             "businessentityid",
@@ -55,7 +55,7 @@ object VemployeedepartmentViewFields {
             BusinessentityId.pgType
           )
         }
-        def title: OptField[/* max 8 chars */ String, VemployeedepartmentViewRow] = {
+        override def title: OptField[/* max 8 chars */ String, VemployeedepartmentViewRow] = {
           new OptField[/* max 8 chars */ String, VemployeedepartmentViewRow](
             _path,
             "title",
@@ -66,7 +66,7 @@ object VemployeedepartmentViewFields {
             PgTypes.text
           )
         }
-        def firstname: Field[/* user-picked */ FirstName, VemployeedepartmentViewRow] = {
+        override def firstname: Field[/* user-picked */ FirstName, VemployeedepartmentViewRow] = {
           new Field[/* user-picked */ FirstName, VemployeedepartmentViewRow](
             _path,
             "firstname",
@@ -77,7 +77,7 @@ object VemployeedepartmentViewFields {
             /* user-picked */ FirstName.pgType
           )
         }
-        def middlename: OptField[Name, VemployeedepartmentViewRow] = {
+        override def middlename: OptField[Name, VemployeedepartmentViewRow] = {
           new OptField[Name, VemployeedepartmentViewRow](
             _path,
             "middlename",
@@ -88,7 +88,7 @@ object VemployeedepartmentViewFields {
             Name.pgType
           )
         }
-        def lastname: Field[Name, VemployeedepartmentViewRow] = {
+        override def lastname: Field[Name, VemployeedepartmentViewRow] = {
           new Field[Name, VemployeedepartmentViewRow](
             _path,
             "lastname",
@@ -99,7 +99,7 @@ object VemployeedepartmentViewFields {
             Name.pgType
           )
         }
-        def suffix: OptField[/* max 10 chars */ String, VemployeedepartmentViewRow] = {
+        override def suffix: OptField[/* max 10 chars */ String, VemployeedepartmentViewRow] = {
           new OptField[/* max 10 chars */ String, VemployeedepartmentViewRow](
             _path,
             "suffix",
@@ -110,7 +110,7 @@ object VemployeedepartmentViewFields {
             PgTypes.text
           )
         }
-        def jobtitle: Field[/* max 50 chars */ String, VemployeedepartmentViewRow] = {
+        override def jobtitle: Field[/* max 50 chars */ String, VemployeedepartmentViewRow] = {
           new Field[/* max 50 chars */ String, VemployeedepartmentViewRow](
             _path,
             "jobtitle",
@@ -121,7 +121,7 @@ object VemployeedepartmentViewFields {
             PgTypes.text
           )
         }
-        def department: Field[Name, VemployeedepartmentViewRow] = {
+        override def department: Field[Name, VemployeedepartmentViewRow] = {
           new Field[Name, VemployeedepartmentViewRow](
             _path,
             "department",
@@ -132,7 +132,7 @@ object VemployeedepartmentViewFields {
             Name.pgType
           )
         }
-        def groupname: Field[Name, VemployeedepartmentViewRow] = {
+        override def groupname: Field[Name, VemployeedepartmentViewRow] = {
           new Field[Name, VemployeedepartmentViewRow](
             _path,
             "groupname",
@@ -143,7 +143,7 @@ object VemployeedepartmentViewFields {
             Name.pgType
           )
         }
-        def startdate: Field[TypoLocalDate, VemployeedepartmentViewRow] = {
+        override def startdate: Field[TypoLocalDate, VemployeedepartmentViewRow] = {
           new Field[TypoLocalDate, VemployeedepartmentViewRow](
             _path,
             "startdate",
@@ -159,7 +159,7 @@ object VemployeedepartmentViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, VemployeedepartmentViewRow]] = java.util.List.of(this.fields.businessentityid, this.fields.title, this.fields.firstname, this.fields.middlename, this.fields.lastname, this.fields.suffix, this.fields.jobtitle, this.fields.department, this.fields.groupname, this.fields.startdate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[VemployeedepartmentViewFields, VemployeedepartmentViewRow] = new Impl(java.util.List.of())

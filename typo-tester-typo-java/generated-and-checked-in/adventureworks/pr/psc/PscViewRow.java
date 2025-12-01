@@ -12,7 +12,6 @@ import adventureworks.production.productsubcategory.ProductsubcategoryId;
 import adventureworks.public_.Name;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple6;
 
 /** View: pr.psc */
 public record PscViewRow(
@@ -59,5 +58,5 @@ public record PscViewRow(
     return new PscViewRow(id, productsubcategoryid, productcategoryid, name, rowguid, modifieddate);
   };
 
-  static RowParser<PscViewRow> _rowParser = RowParsers.of(ProductsubcategoryId.pgType, ProductsubcategoryId.pgType, ProductcategoryId.pgType, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, PscViewRow::new, row -> new Tuple6<>(row.id(), row.productsubcategoryid(), row.productcategoryid(), row.name(), row.rowguid(), row.modifieddate()));;
+  static RowParser<PscViewRow> _rowParser = RowParsers.of(ProductsubcategoryId.pgType, ProductsubcategoryId.pgType, ProductcategoryId.pgType, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, PscViewRow::new, row -> new Object[]{row.id(), row.productsubcategoryid(), row.productcategoryid(), row.name(), row.rowguid(), row.modifieddate()});;
 }

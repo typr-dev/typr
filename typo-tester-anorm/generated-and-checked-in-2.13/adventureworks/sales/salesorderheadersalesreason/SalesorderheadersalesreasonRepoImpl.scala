@@ -24,11 +24,11 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class SalesorderheadersalesreasonRepoImpl extends SalesorderheadersalesreasonRepo {
-  def delete: DeleteBuilder[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow] = DeleteBuilder.of(""""sales"."salesorderheadersalesreason"""", SalesorderheadersalesreasonFields.structure, SalesorderheadersalesreasonRow.rowParser(1).*)
+  override def delete: DeleteBuilder[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow] = DeleteBuilder.of(""""sales"."salesorderheadersalesreason"""", SalesorderheadersalesreasonFields.structure, SalesorderheadersalesreasonRow.rowParser(1).*)
 
-  def deleteById(compositeId: SalesorderheadersalesreasonId)(implicit c: Connection): Boolean = SQL"""delete from "sales"."salesorderheadersalesreason" where "salesorderid" = ${ParameterValue(compositeId.salesorderid, null, SalesorderheaderId.toStatement)} AND "salesreasonid" = ${ParameterValue(compositeId.salesreasonid, null, SalesreasonId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(compositeId: SalesorderheadersalesreasonId)(implicit c: Connection): Boolean = SQL"""delete from "sales"."salesorderheadersalesreason" where "salesorderid" = ${ParameterValue(compositeId.salesorderid, null, SalesorderheaderId.toStatement)} AND "salesreasonid" = ${ParameterValue(compositeId.salesreasonid, null, SalesreasonId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(compositeIds: Array[SalesorderheadersalesreasonId])(implicit c: Connection): Int = {
+  override def deleteByIds(compositeIds: Array[SalesorderheadersalesreasonId])(implicit c: Connection): Int = {
     val salesorderid = compositeIds.map(_.salesorderid)
     val salesreasonid = compositeIds.map(_.salesreasonid)
     SQL"""delete
@@ -38,7 +38,7 @@ class SalesorderheadersalesreasonRepoImpl extends SalesorderheadersalesreasonRep
     """.executeUpdate()
   }
 
-  def insert(unsaved: SalesorderheadersalesreasonRow)(implicit c: Connection): SalesorderheadersalesreasonRow = {
+  override def insert(unsaved: SalesorderheadersalesreasonRow)(implicit c: Connection): SalesorderheadersalesreasonRow = {
   SQL"""insert into "sales"."salesorderheadersalesreason"("salesorderid", "salesreasonid", "modifieddate")
     values (${ParameterValue(unsaved.salesorderid, null, SalesorderheaderId.toStatement)}::int4, ${ParameterValue(unsaved.salesreasonid, null, SalesreasonId.toStatement)}::int4, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "salesorderid", "salesreasonid", "modifieddate"::text
@@ -46,7 +46,7 @@ class SalesorderheadersalesreasonRepoImpl extends SalesorderheadersalesreasonRep
     .executeInsert(SalesorderheadersalesreasonRow.rowParser(1).single)
   }
 
-  def insert(unsaved: SalesorderheadersalesreasonRowUnsaved)(implicit c: Connection): SalesorderheadersalesreasonRow = {
+  override def insert(unsaved: SalesorderheadersalesreasonRowUnsaved)(implicit c: Connection): SalesorderheadersalesreasonRow = {
     val namedParameters = List(
       Some((NamedParameter("salesorderid", ParameterValue(unsaved.salesorderid, null, SalesorderheaderId.toStatement)), "::int4")),
       Some((NamedParameter("salesreasonid", ParameterValue(unsaved.salesreasonid, null, SalesreasonId.toStatement)), "::int4")),
@@ -71,33 +71,33 @@ class SalesorderheadersalesreasonRepoImpl extends SalesorderheadersalesreasonRep
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[SalesorderheadersalesreasonRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "sales"."salesorderheadersalesreason"("salesorderid", "salesreasonid", "modifieddate") FROM STDIN""", batchSize, unsaved)(SalesorderheadersalesreasonRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[SalesorderheadersalesreasonRowUnsaved],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "sales"."salesorderheadersalesreason"("salesorderid", "salesreasonid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(SalesorderheadersalesreasonRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow] = SelectBuilder.of(""""sales"."salesorderheadersalesreason"""", SalesorderheadersalesreasonFields.structure, SalesorderheadersalesreasonRow.rowParser)
+  override def select: SelectBuilder[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow] = SelectBuilder.of(""""sales"."salesorderheadersalesreason"""", SalesorderheadersalesreasonFields.structure, SalesorderheadersalesreasonRow.rowParser)
 
-  def selectAll(implicit c: Connection): List[SalesorderheadersalesreasonRow] = {
+  override def selectAll(implicit c: Connection): List[SalesorderheadersalesreasonRow] = {
     SQL"""select "salesorderid", "salesreasonid", "modifieddate"::text
     from "sales"."salesorderheadersalesreason"
     """.as(SalesorderheadersalesreasonRow.rowParser(1).*)
   }
 
-  def selectById(compositeId: SalesorderheadersalesreasonId)(implicit c: Connection): Option[SalesorderheadersalesreasonRow] = {
+  override def selectById(compositeId: SalesorderheadersalesreasonId)(implicit c: Connection): Option[SalesorderheadersalesreasonRow] = {
     SQL"""select "salesorderid", "salesreasonid", "modifieddate"::text
     from "sales"."salesorderheadersalesreason"
     where "salesorderid" = ${ParameterValue(compositeId.salesorderid, null, SalesorderheaderId.toStatement)} AND "salesreasonid" = ${ParameterValue(compositeId.salesreasonid, null, SalesreasonId.toStatement)}
     """.as(SalesorderheadersalesreasonRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(compositeIds: Array[SalesorderheadersalesreasonId])(implicit c: Connection): List[SalesorderheadersalesreasonRow] = {
+  override def selectByIds(compositeIds: Array[SalesorderheadersalesreasonId])(implicit c: Connection): List[SalesorderheadersalesreasonRow] = {
     val salesorderid = compositeIds.map(_.salesorderid)
     val salesreasonid = compositeIds.map(_.salesreasonid)
     SQL"""select "salesorderid", "salesreasonid", "modifieddate"::text
@@ -107,14 +107,14 @@ class SalesorderheadersalesreasonRepoImpl extends SalesorderheadersalesreasonRep
     """.as(SalesorderheadersalesreasonRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(compositeIds: Array[SalesorderheadersalesreasonId])(implicit c: Connection): Map[SalesorderheadersalesreasonId, SalesorderheadersalesreasonRow] = {
+  override def selectByIdsTracked(compositeIds: Array[SalesorderheadersalesreasonId])(implicit c: Connection): Map[SalesorderheadersalesreasonId, SalesorderheadersalesreasonRow] = {
     val byId = selectByIds(compositeIds).view.map(x => (x.compositeId, x)).toMap
     compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow] = UpdateBuilder.of(""""sales"."salesorderheadersalesreason"""", SalesorderheadersalesreasonFields.structure, SalesorderheadersalesreasonRow.rowParser(1).*)
+  override def update: UpdateBuilder[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow] = UpdateBuilder.of(""""sales"."salesorderheadersalesreason"""", SalesorderheadersalesreasonFields.structure, SalesorderheadersalesreasonRow.rowParser(1).*)
 
-  def update(row: SalesorderheadersalesreasonRow)(implicit c: Connection): Option[SalesorderheadersalesreasonRow] = {
+  override def update(row: SalesorderheadersalesreasonRow)(implicit c: Connection): Option[SalesorderheadersalesreasonRow] = {
     val compositeId = row.compositeId
     SQL"""update "sales"."salesorderheadersalesreason"
     set "modifieddate" = ${ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp
@@ -123,7 +123,7 @@ class SalesorderheadersalesreasonRepoImpl extends SalesorderheadersalesreasonRep
     """.executeInsert(SalesorderheadersalesreasonRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: SalesorderheadersalesreasonRow)(implicit c: Connection): SalesorderheadersalesreasonRow = {
+  override def upsert(unsaved: SalesorderheadersalesreasonRow)(implicit c: Connection): SalesorderheadersalesreasonRow = {
   SQL"""insert into "sales"."salesorderheadersalesreason"("salesorderid", "salesreasonid", "modifieddate")
     values (
       ${ParameterValue(unsaved.salesorderid, null, SalesorderheaderId.toStatement)}::int4,
@@ -138,12 +138,13 @@ class SalesorderheadersalesreasonRepoImpl extends SalesorderheadersalesreasonRep
     .executeInsert(SalesorderheadersalesreasonRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[SalesorderheadersalesreasonRow])(implicit c: Connection): List[SalesorderheadersalesreasonRow] = {
+  override def upsertBatch(unsaved: Iterable[SalesorderheadersalesreasonRow])(implicit c: Connection): List[SalesorderheadersalesreasonRow] = {
     def toNamedParameter(row: SalesorderheadersalesreasonRow): List[NamedParameter] = List(
       NamedParameter("salesorderid", ParameterValue(row.salesorderid, null, SalesorderheaderId.toStatement)),
       NamedParameter("salesreasonid", ParameterValue(row.salesreasonid, null, SalesreasonId.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -164,7 +165,7 @@ class SalesorderheadersalesreasonRepoImpl extends SalesorderheadersalesreasonRep
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[SalesorderheadersalesreasonRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

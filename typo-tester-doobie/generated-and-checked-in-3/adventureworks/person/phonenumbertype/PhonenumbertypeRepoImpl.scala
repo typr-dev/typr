@@ -16,28 +16,26 @@ import doobie.util.Write
 import doobie.util.fragment.Fragment
 import doobie.util.update.Update
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.DeleteBuilder
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class PhonenumbertypeRepoImpl extends PhonenumbertypeRepo {
-  def delete: DeleteBuilder[PhonenumbertypeFields, PhonenumbertypeRow] = DeleteBuilder.of(""""person"."phonenumbertype"""", PhonenumbertypeFields.structure, PhonenumbertypeRow.read)
+  override def delete: DeleteBuilder[PhonenumbertypeFields, PhonenumbertypeRow] = DeleteBuilder.of(""""person"."phonenumbertype"""", PhonenumbertypeFields.structure, PhonenumbertypeRow.read)
 
-  def deleteById(phonenumbertypeid: PhonenumbertypeId): ConnectionIO[Boolean] = sql"""delete from "person"."phonenumbertype" where "phonenumbertypeid" = ${fromWrite(phonenumbertypeid)(using new Write.Single(PhonenumbertypeId.put))}""".update.run.map(_ > 0)
+  override def deleteById(phonenumbertypeid: PhonenumbertypeId): ConnectionIO[Boolean] = sql"""delete from "person"."phonenumbertype" where "phonenumbertypeid" = ${fromWrite(phonenumbertypeid)(using new Write.Single(PhonenumbertypeId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(phonenumbertypeids: Array[PhonenumbertypeId]): ConnectionIO[Int] = sql"""delete from "person"."phonenumbertype" where "phonenumbertypeid" = ANY(${fromWrite(phonenumbertypeids)(using new Write.Single(PhonenumbertypeId.arrayPut))})""".update.run
+  override def deleteByIds(phonenumbertypeids: Array[PhonenumbertypeId]): ConnectionIO[Int] = sql"""delete from "person"."phonenumbertype" where "phonenumbertypeid" = ANY(${fromWrite(phonenumbertypeids)(using new Write.Single(PhonenumbertypeId.arrayPut))})""".update.run
 
-  def insert(unsaved: PhonenumbertypeRow): ConnectionIO[PhonenumbertypeRow] = {
+  override def insert(unsaved: PhonenumbertypeRow): ConnectionIO[PhonenumbertypeRow] = {
     sql"""insert into "person"."phonenumbertype"("phonenumbertypeid", "name", "modifieddate")
     values (${fromWrite(unsaved.phonenumbertypeid)(using new Write.Single(PhonenumbertypeId.put))}::int4, ${fromWrite(unsaved.name)(using new Write.Single(Name.put))}::varchar, ${fromWrite(unsaved.modifieddate)(using new Write.Single(TypoLocalDateTime.put))}::timestamp)
     returning "phonenumbertypeid", "name", "modifieddate"::text
     """.query(using PhonenumbertypeRow.read).unique
   }
 
-  def insert(unsaved: PhonenumbertypeRowUnsaved): ConnectionIO[PhonenumbertypeRow] = {
+  override def insert(unsaved: PhonenumbertypeRowUnsaved): ConnectionIO[PhonenumbertypeRow] = {
     val fs = List(
       Some((Fragment.const0(s""""name""""), fr"${fromWrite(unsaved.name)(using new Write.Single(Name.put))}::varchar")),
       unsaved.phonenumbertypeid match {
@@ -63,35 +61,35 @@ class PhonenumbertypeRepoImpl extends PhonenumbertypeRepo {
     q.query(using PhonenumbertypeRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, PhonenumbertypeRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "person"."phonenumbertype"("phonenumbertypeid", "name", "modifieddate") FROM STDIN""").copyIn(unsaved, batchSize)(using PhonenumbertypeRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, PhonenumbertypeRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "person"."phonenumbertype"("name", "phonenumbertypeid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(using PhonenumbertypeRowUnsaved.pgText)
 
-  def select: SelectBuilder[PhonenumbertypeFields, PhonenumbertypeRow] = SelectBuilder.of(""""person"."phonenumbertype"""", PhonenumbertypeFields.structure, PhonenumbertypeRow.read)
+  override def select: SelectBuilder[PhonenumbertypeFields, PhonenumbertypeRow] = SelectBuilder.of(""""person"."phonenumbertype"""", PhonenumbertypeFields.structure, PhonenumbertypeRow.read)
 
-  def selectAll: Stream[ConnectionIO, PhonenumbertypeRow] = sql"""select "phonenumbertypeid", "name", "modifieddate"::text from "person"."phonenumbertype"""".query(using PhonenumbertypeRow.read).stream
+  override def selectAll: Stream[ConnectionIO, PhonenumbertypeRow] = sql"""select "phonenumbertypeid", "name", "modifieddate"::text from "person"."phonenumbertype"""".query(using PhonenumbertypeRow.read).stream
 
-  def selectById(phonenumbertypeid: PhonenumbertypeId): ConnectionIO[Option[PhonenumbertypeRow]] = sql"""select "phonenumbertypeid", "name", "modifieddate"::text from "person"."phonenumbertype" where "phonenumbertypeid" = ${fromWrite(phonenumbertypeid)(using new Write.Single(PhonenumbertypeId.put))}""".query(using PhonenumbertypeRow.read).option
+  override def selectById(phonenumbertypeid: PhonenumbertypeId): ConnectionIO[Option[PhonenumbertypeRow]] = sql"""select "phonenumbertypeid", "name", "modifieddate"::text from "person"."phonenumbertype" where "phonenumbertypeid" = ${fromWrite(phonenumbertypeid)(using new Write.Single(PhonenumbertypeId.put))}""".query(using PhonenumbertypeRow.read).option
 
-  def selectByIds(phonenumbertypeids: Array[PhonenumbertypeId]): Stream[ConnectionIO, PhonenumbertypeRow] = sql"""select "phonenumbertypeid", "name", "modifieddate"::text from "person"."phonenumbertype" where "phonenumbertypeid" = ANY(${fromWrite(phonenumbertypeids)(using new Write.Single(PhonenumbertypeId.arrayPut))})""".query(using PhonenumbertypeRow.read).stream
+  override def selectByIds(phonenumbertypeids: Array[PhonenumbertypeId]): Stream[ConnectionIO, PhonenumbertypeRow] = sql"""select "phonenumbertypeid", "name", "modifieddate"::text from "person"."phonenumbertype" where "phonenumbertypeid" = ANY(${fromWrite(phonenumbertypeids)(using new Write.Single(PhonenumbertypeId.arrayPut))})""".query(using PhonenumbertypeRow.read).stream
 
-  def selectByIdsTracked(phonenumbertypeids: Array[PhonenumbertypeId]): ConnectionIO[Map[PhonenumbertypeId, PhonenumbertypeRow]] = {
+  override def selectByIdsTracked(phonenumbertypeids: Array[PhonenumbertypeId]): ConnectionIO[Map[PhonenumbertypeId, PhonenumbertypeRow]] = {
     selectByIds(phonenumbertypeids).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.phonenumbertypeid, x)).toMap
       phonenumbertypeids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[PhonenumbertypeFields, PhonenumbertypeRow] = UpdateBuilder.of(""""person"."phonenumbertype"""", PhonenumbertypeFields.structure, PhonenumbertypeRow.read)
+  override def update: UpdateBuilder[PhonenumbertypeFields, PhonenumbertypeRow] = UpdateBuilder.of(""""person"."phonenumbertype"""", PhonenumbertypeFields.structure, PhonenumbertypeRow.read)
 
-  def update(row: PhonenumbertypeRow): ConnectionIO[Option[PhonenumbertypeRow]] = {
+  override def update(row: PhonenumbertypeRow): ConnectionIO[Option[PhonenumbertypeRow]] = {
     val phonenumbertypeid = row.phonenumbertypeid
     sql"""update "person"."phonenumbertype"
     set "name" = ${fromWrite(row.name)(using new Write.Single(Name.put))}::varchar,
@@ -100,7 +98,7 @@ class PhonenumbertypeRepoImpl extends PhonenumbertypeRepo {
     returning "phonenumbertypeid", "name", "modifieddate"::text""".query(using PhonenumbertypeRow.read).option
   }
 
-  def upsert(unsaved: PhonenumbertypeRow): ConnectionIO[PhonenumbertypeRow] = {
+  override def upsert(unsaved: PhonenumbertypeRow): ConnectionIO[PhonenumbertypeRow] = {
     sql"""insert into "person"."phonenumbertype"("phonenumbertypeid", "name", "modifieddate")
     values (
       ${fromWrite(unsaved.phonenumbertypeid)(using new Write.Single(PhonenumbertypeId.put))}::int4,
@@ -115,7 +113,7 @@ class PhonenumbertypeRepoImpl extends PhonenumbertypeRepo {
     """.query(using PhonenumbertypeRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[PhonenumbertypeRow]): Stream[ConnectionIO, PhonenumbertypeRow] = {
+  override def upsertBatch(unsaved: List[PhonenumbertypeRow]): Stream[ConnectionIO, PhonenumbertypeRow] = {
     Update[PhonenumbertypeRow](
       s"""insert into "person"."phonenumbertype"("phonenumbertypeid", "name", "modifieddate")
       values (?::int4,?::varchar,?::timestamp)
@@ -129,7 +127,7 @@ class PhonenumbertypeRepoImpl extends PhonenumbertypeRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, PhonenumbertypeRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

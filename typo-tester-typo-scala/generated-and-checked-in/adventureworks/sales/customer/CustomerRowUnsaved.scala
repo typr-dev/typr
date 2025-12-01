@@ -54,19 +54,5 @@ case class CustomerRowUnsaved(
 }
 
 object CustomerRowUnsaved {
-  given pgText: PgText[CustomerRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      BusinessentityId.pgType.opt().pgText.unsafeEncode(row.personid, sb);
-      sb.append(PgText.DELIMETER);
-      BusinessentityId.pgType.opt().pgText.unsafeEncode(row.storeid, sb);
-      sb.append(PgText.DELIMETER);
-      SalesterritoryId.pgType.opt().pgText.unsafeEncode(row.territoryid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using CustomerId.pgType.pgText).unsafeEncode(row.customerid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[CustomerRowUnsaved] = PgText.instance((row, sb) => { BusinessentityId.pgType.opt().pgText.unsafeEncode(row.personid, sb); sb.append(PgText.DELIMETER); BusinessentityId.pgType.opt().pgText.unsafeEncode(row.storeid, sb); sb.append(PgText.DELIMETER); SalesterritoryId.pgType.opt().pgText.unsafeEncode(row.territoryid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using CustomerId.pgType.pgText).unsafeEncode(row.customerid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

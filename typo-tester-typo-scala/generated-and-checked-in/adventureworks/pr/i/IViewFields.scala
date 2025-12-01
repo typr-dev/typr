@@ -30,7 +30,7 @@ object IViewFields {
 
     override lazy val fields: IViewFields = {
       new IViewFields {
-        def id: Field[IllustrationId, IViewRow] = {
+        override def id: Field[IllustrationId, IViewRow] = {
           new Field[IllustrationId, IViewRow](
             _path,
             "id",
@@ -41,7 +41,7 @@ object IViewFields {
             IllustrationId.pgType
           )
         }
-        def illustrationid: Field[IllustrationId, IViewRow] = {
+        override def illustrationid: Field[IllustrationId, IViewRow] = {
           new Field[IllustrationId, IViewRow](
             _path,
             "illustrationid",
@@ -52,7 +52,7 @@ object IViewFields {
             IllustrationId.pgType
           )
         }
-        def diagram: OptField[TypoXml, IViewRow] = {
+        override def diagram: OptField[TypoXml, IViewRow] = {
           new OptField[TypoXml, IViewRow](
             _path,
             "diagram",
@@ -63,7 +63,7 @@ object IViewFields {
             TypoXml.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, IViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, IViewRow] = {
           new Field[TypoLocalDateTime, IViewRow](
             _path,
             "modifieddate",
@@ -79,7 +79,7 @@ object IViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, IViewRow]] = java.util.List.of(this.fields.id, this.fields.illustrationid, this.fields.diagram, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[IViewFields, IViewRow] = new Impl(java.util.List.of())

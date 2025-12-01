@@ -22,11 +22,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class CustomerRepoImpl extends CustomerRepo {
-  def delete: DeleteBuilder[CustomerFields, CustomerRow] = DeleteBuilder.of("sales.customer", CustomerFields.structure)
+  override def delete: DeleteBuilder[CustomerFields, CustomerRow] = DeleteBuilder.of("sales.customer", CustomerFields.structure)
 
-  def deleteById(customerid: CustomerId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."customer" where "customerid" = ${CustomerId.pgType.encode(customerid)}""".update().runUnchecked(c) > 0
+  override def deleteById(customerid: CustomerId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."customer" where "customerid" = ${CustomerId.pgType.encode(customerid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(customerids: Array[CustomerId])(using c: Connection): Integer = {
+  override def deleteByIds(customerids: Array[CustomerId])(using c: Connection): Integer = {
     interpolate"""delete
     from "sales"."customer"
     where "customerid" = ANY(${CustomerId.pgTypeArray.encode(customerids)})"""
@@ -34,7 +34,7 @@ class CustomerRepoImpl extends CustomerRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: CustomerRow)(using c: Connection): CustomerRow = {
+  override def insert(unsaved: CustomerRow)(using c: Connection): CustomerRow = {
   interpolate"""insert into "sales"."customer"("customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate")
     values (${CustomerId.pgType.encode(unsaved.customerid)}::int4, ${BusinessentityId.pgType.opt().encode(unsaved.personid)}::int4, ${BusinessentityId.pgType.opt().encode(unsaved.storeid)}::int4, ${SalesterritoryId.pgType.opt().encode(unsaved.territoryid)}::int4, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text
@@ -42,9 +42,9 @@ class CustomerRepoImpl extends CustomerRepo {
     .updateReturning(CustomerRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: CustomerRowUnsaved)(using c: Connection): CustomerRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: CustomerRowUnsaved)(using c: Connection): CustomerRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""personid"""")): @scala.annotation.nowarn
     values.add(interpolate"${BusinessentityId.pgType.opt().encode(unsaved.personid)}::int4"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""storeid"""")): @scala.annotation.nowarn
@@ -52,25 +52,16 @@ class CustomerRepoImpl extends CustomerRepo {
     columns.add(Fragment.lit(""""territoryid"""")): @scala.annotation.nowarn
     values.add(interpolate"${SalesterritoryId.pgType.opt().encode(unsaved.territoryid)}::int4"): @scala.annotation.nowarn
     unsaved.customerid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""customerid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${CustomerId.pgType.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""customerid"""")): @scala.annotation.nowarn; values.add(interpolate"${CustomerId.pgType.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "sales"."customer"(${Fragment.comma(columns)})
@@ -78,51 +69,51 @@ class CustomerRepoImpl extends CustomerRepo {
       returning "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text
       """
     }
-    q.updateReturning(CustomerRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(CustomerRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[CustomerRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."customer"("customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, c, CustomerRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[CustomerRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."customer"("personid", "storeid", "territoryid", "customerid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, CustomerRowUnsaved.pgText)
 
-  def select: SelectBuilder[CustomerFields, CustomerRow] = SelectBuilder.of("sales.customer", CustomerFields.structure, CustomerRow.`_rowParser`)
+  override def select: SelectBuilder[CustomerFields, CustomerRow] = SelectBuilder.of("sales.customer", CustomerFields.structure, CustomerRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[CustomerRow] = {
+  override def selectAll(using c: Connection): java.util.List[CustomerRow] = {
     interpolate"""select "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text
     from "sales"."customer"
-    """.as(CustomerRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(CustomerRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(customerid: CustomerId)(using c: Connection): Optional[CustomerRow] = {
+  override def selectById(customerid: CustomerId)(using c: Connection): Optional[CustomerRow] = {
     interpolate"""select "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text
     from "sales"."customer"
-    where "customerid" = ${CustomerId.pgType.encode(customerid)}""".as(CustomerRow.`_rowParser`.first()).runUnchecked(c)
+    where "customerid" = ${CustomerId.pgType.encode(customerid)}""".query(CustomerRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(customerids: Array[CustomerId])(using c: Connection): java.util.List[CustomerRow] = {
+  override def selectByIds(customerids: Array[CustomerId])(using c: Connection): java.util.List[CustomerRow] = {
     interpolate"""select "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text
     from "sales"."customer"
-    where "customerid" = ANY(${CustomerId.pgTypeArray.encode(customerids)})""".as(CustomerRow.`_rowParser`.all()).runUnchecked(c)
+    where "customerid" = ANY(${CustomerId.pgTypeArray.encode(customerids)})""".query(CustomerRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(customerids: Array[CustomerId])(using c: Connection): java.util.Map[CustomerId, CustomerRow] = {
-    val ret: java.util.Map[CustomerId, CustomerRow] = new HashMap()
+  override def selectByIdsTracked(customerids: Array[CustomerId])(using c: Connection): java.util.Map[CustomerId, CustomerRow] = {
+    val ret: HashMap[CustomerId, CustomerRow] = new HashMap[CustomerId, CustomerRow]()
     selectByIds(customerids)(using c).forEach(row => ret.put(row.customerid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[CustomerFields, CustomerRow] = UpdateBuilder.of("sales.customer", CustomerFields.structure, CustomerRow.`_rowParser`.all())
+  override def update: UpdateBuilder[CustomerFields, CustomerRow] = UpdateBuilder.of("sales.customer", CustomerFields.structure, CustomerRow.`_rowParser`.all())
 
-  def update(row: CustomerRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: CustomerRow)(using c: Connection): java.lang.Boolean = {
     val customerid: CustomerId = row.customerid
-    interpolate"""update "sales"."customer"
+    return interpolate"""update "sales"."customer"
     set "personid" = ${BusinessentityId.pgType.opt().encode(row.personid)}::int4,
     "storeid" = ${BusinessentityId.pgType.opt().encode(row.storeid)}::int4,
     "territoryid" = ${SalesterritoryId.pgType.opt().encode(row.territoryid)}::int4,
@@ -131,7 +122,7 @@ class CustomerRepoImpl extends CustomerRepo {
     where "customerid" = ${CustomerId.pgType.encode(customerid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: CustomerRow)(using c: Connection): CustomerRow = {
+  override def upsert(unsaved: CustomerRow)(using c: Connection): CustomerRow = {
   interpolate"""insert into "sales"."customer"("customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate")
     values (${CustomerId.pgType.encode(unsaved.customerid)}::int4, ${BusinessentityId.pgType.opt().encode(unsaved.personid)}::int4, ${BusinessentityId.pgType.opt().encode(unsaved.storeid)}::int4, ${SalesterritoryId.pgType.opt().encode(unsaved.territoryid)}::int4, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("customerid")
@@ -147,7 +138,7 @@ class CustomerRepoImpl extends CustomerRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[CustomerRow])(using c: Connection): java.util.List[CustomerRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[CustomerRow])(using c: Connection): java.util.List[CustomerRow] = {
     interpolate"""insert into "sales"."customer"("customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate")
     values (?::int4, ?::int4, ?::int4, ?::int4, ?::uuid, ?::timestamp)
     on conflict ("customerid")
@@ -164,13 +155,13 @@ class CustomerRepoImpl extends CustomerRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[CustomerRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table customer_TEMP (like "sales"."customer") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy customer_TEMP("customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, c, CustomerRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "sales"."customer"("customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate")
+    return interpolate"""insert into "sales"."customer"("customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate")
     select * from customer_TEMP
     on conflict ("customerid")
     do update set

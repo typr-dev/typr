@@ -35,7 +35,7 @@ object PscViewFields {
 
     override lazy val fields: PscViewFields = {
       new PscViewFields {
-        def id: Field[ProductsubcategoryId, PscViewRow] = {
+        override def id: Field[ProductsubcategoryId, PscViewRow] = {
           new Field[ProductsubcategoryId, PscViewRow](
             _path,
             "id",
@@ -46,7 +46,7 @@ object PscViewFields {
             ProductsubcategoryId.pgType
           )
         }
-        def productsubcategoryid: Field[ProductsubcategoryId, PscViewRow] = {
+        override def productsubcategoryid: Field[ProductsubcategoryId, PscViewRow] = {
           new Field[ProductsubcategoryId, PscViewRow](
             _path,
             "productsubcategoryid",
@@ -57,7 +57,7 @@ object PscViewFields {
             ProductsubcategoryId.pgType
           )
         }
-        def productcategoryid: Field[ProductcategoryId, PscViewRow] = {
+        override def productcategoryid: Field[ProductcategoryId, PscViewRow] = {
           new Field[ProductcategoryId, PscViewRow](
             _path,
             "productcategoryid",
@@ -68,7 +68,7 @@ object PscViewFields {
             ProductcategoryId.pgType
           )
         }
-        def name: Field[Name, PscViewRow] = {
+        override def name: Field[Name, PscViewRow] = {
           new Field[Name, PscViewRow](
             _path,
             "name",
@@ -79,7 +79,7 @@ object PscViewFields {
             Name.pgType
           )
         }
-        def rowguid: Field[TypoUUID, PscViewRow] = {
+        override def rowguid: Field[TypoUUID, PscViewRow] = {
           new Field[TypoUUID, PscViewRow](
             _path,
             "rowguid",
@@ -90,7 +90,7 @@ object PscViewFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, PscViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, PscViewRow] = {
           new Field[TypoLocalDateTime, PscViewRow](
             _path,
             "modifieddate",
@@ -106,7 +106,7 @@ object PscViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, PscViewRow]] = java.util.List.of(this.fields.id, this.fields.productsubcategoryid, this.fields.productcategoryid, this.fields.name, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[PscViewFields, PscViewRow] = new Impl(java.util.List.of())

@@ -24,18 +24,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class IllustrationRepoImpl extends IllustrationRepo {
-  def delete: DeleteBuilder[IllustrationFields, IllustrationRow] = DeleteBuilder.of(""""production"."illustration"""", IllustrationFields.structure, IllustrationRow.rowParser(1).*)
+  override def delete: DeleteBuilder[IllustrationFields, IllustrationRow] = DeleteBuilder.of(""""production"."illustration"""", IllustrationFields.structure, IllustrationRow.rowParser(1).*)
 
-  def deleteById(illustrationid: IllustrationId)(using c: Connection): Boolean = SQL"""delete from "production"."illustration" where "illustrationid" = ${ParameterValue(illustrationid, null, IllustrationId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(illustrationid: IllustrationId)(using c: Connection): Boolean = SQL"""delete from "production"."illustration" where "illustrationid" = ${ParameterValue(illustrationid, null, IllustrationId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(illustrationids: Array[IllustrationId])(using c: Connection): Int = {
+  override def deleteByIds(illustrationids: Array[IllustrationId])(using c: Connection): Int = {
     SQL"""delete
     from "production"."illustration"
     where "illustrationid" = ANY(${ParameterValue(illustrationids, null, IllustrationId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: IllustrationRow)(using c: Connection): IllustrationRow = {
+  override def insert(unsaved: IllustrationRow)(using c: Connection): IllustrationRow = {
   SQL"""insert into "production"."illustration"("illustrationid", "diagram", "modifieddate")
     values (${ParameterValue(unsaved.illustrationid, null, IllustrationId.toStatement)}::int4, ${ParameterValue(unsaved.diagram, null, ToStatement.optionToStatement(using TypoXml.toStatement, TypoXml.parameterMetadata))}::xml, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "illustrationid", "diagram", "modifieddate"::text
@@ -43,7 +43,7 @@ class IllustrationRepoImpl extends IllustrationRepo {
     .executeInsert(IllustrationRow.rowParser(1).single)
   }
 
-  def insert(unsaved: IllustrationRowUnsaved)(using c: Connection): IllustrationRow = {
+  override def insert(unsaved: IllustrationRowUnsaved)(using c: Connection): IllustrationRow = {
     val namedParameters = List(
       Some((NamedParameter("diagram", ParameterValue(unsaved.diagram, null, ToStatement.optionToStatement(using TypoXml.toStatement, TypoXml.parameterMetadata))), "::xml")),
       unsaved.illustrationid match {
@@ -71,47 +71,47 @@ class IllustrationRepoImpl extends IllustrationRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[IllustrationRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "production"."illustration"("illustrationid", "diagram", "modifieddate") FROM STDIN""", batchSize, unsaved)(using IllustrationRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[IllustrationRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "production"."illustration"("diagram", "illustrationid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using IllustrationRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[IllustrationFields, IllustrationRow] = SelectBuilder.of(""""production"."illustration"""", IllustrationFields.structure, IllustrationRow.rowParser)
+  override def select: SelectBuilder[IllustrationFields, IllustrationRow] = SelectBuilder.of(""""production"."illustration"""", IllustrationFields.structure, IllustrationRow.rowParser)
 
-  def selectAll(using c: Connection): List[IllustrationRow] = {
+  override def selectAll(using c: Connection): List[IllustrationRow] = {
     SQL"""select "illustrationid", "diagram", "modifieddate"::text
     from "production"."illustration"
     """.as(IllustrationRow.rowParser(1).*)
   }
 
-  def selectById(illustrationid: IllustrationId)(using c: Connection): Option[IllustrationRow] = {
+  override def selectById(illustrationid: IllustrationId)(using c: Connection): Option[IllustrationRow] = {
     SQL"""select "illustrationid", "diagram", "modifieddate"::text
     from "production"."illustration"
     where "illustrationid" = ${ParameterValue(illustrationid, null, IllustrationId.toStatement)}
     """.as(IllustrationRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(illustrationids: Array[IllustrationId])(using c: Connection): List[IllustrationRow] = {
+  override def selectByIds(illustrationids: Array[IllustrationId])(using c: Connection): List[IllustrationRow] = {
     SQL"""select "illustrationid", "diagram", "modifieddate"::text
     from "production"."illustration"
     where "illustrationid" = ANY(${ParameterValue(illustrationids, null, IllustrationId.arrayToStatement)})
     """.as(IllustrationRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(illustrationids: Array[IllustrationId])(using c: Connection): Map[IllustrationId, IllustrationRow] = {
+  override def selectByIdsTracked(illustrationids: Array[IllustrationId])(using c: Connection): Map[IllustrationId, IllustrationRow] = {
     val byId = selectByIds(illustrationids).view.map(x => (x.illustrationid, x)).toMap
     illustrationids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[IllustrationFields, IllustrationRow] = UpdateBuilder.of(""""production"."illustration"""", IllustrationFields.structure, IllustrationRow.rowParser(1).*)
+  override def update: UpdateBuilder[IllustrationFields, IllustrationRow] = UpdateBuilder.of(""""production"."illustration"""", IllustrationFields.structure, IllustrationRow.rowParser(1).*)
 
-  def update(row: IllustrationRow)(using c: Connection): Option[IllustrationRow] = {
+  override def update(row: IllustrationRow)(using c: Connection): Option[IllustrationRow] = {
     val illustrationid = row.illustrationid
     SQL"""update "production"."illustration"
     set "diagram" = ${ParameterValue(row.diagram, null, ToStatement.optionToStatement(using TypoXml.toStatement, TypoXml.parameterMetadata))}::xml,
@@ -121,7 +121,7 @@ class IllustrationRepoImpl extends IllustrationRepo {
     """.executeInsert(IllustrationRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: IllustrationRow)(using c: Connection): IllustrationRow = {
+  override def upsert(unsaved: IllustrationRow)(using c: Connection): IllustrationRow = {
   SQL"""insert into "production"."illustration"("illustrationid", "diagram", "modifieddate")
     values (
       ${ParameterValue(unsaved.illustrationid, null, IllustrationId.toStatement)}::int4,
@@ -137,12 +137,13 @@ class IllustrationRepoImpl extends IllustrationRepo {
     .executeInsert(IllustrationRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[IllustrationRow])(using c: Connection): List[IllustrationRow] = {
+  override def upsertBatch(unsaved: Iterable[IllustrationRow])(using c: Connection): List[IllustrationRow] = {
     def toNamedParameter(row: IllustrationRow): List[NamedParameter] = List(
       NamedParameter("illustrationid", ParameterValue(row.illustrationid, null, IllustrationId.toStatement)),
       NamedParameter("diagram", ParameterValue(row.diagram, null, ToStatement.optionToStatement(using TypoXml.toStatement, TypoXml.parameterMetadata))),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -164,7 +165,7 @@ class IllustrationRepoImpl extends IllustrationRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[IllustrationRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

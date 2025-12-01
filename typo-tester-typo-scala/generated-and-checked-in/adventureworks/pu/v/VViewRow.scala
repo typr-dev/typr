@@ -15,7 +15,6 @@ import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple9
 
 /** View: pu.v */
 case class VViewRow(
@@ -40,17 +39,5 @@ case class VViewRow(
 )
 
 object VViewRow {
-  val `_rowParser`: RowParser[VViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, AccountNumber.pgType, Name.pgType, TypoShort.pgType, Flag.pgType, Flag.pgType, PgTypes.text.opt(), TypoLocalDateTime.pgType, VViewRow.apply, row => new Tuple9(
-      row.id,
-      row.businessentityid,
-      row.accountnumber,
-      row.name,
-      row.creditrating,
-      row.preferredvendorstatus,
-      row.activeflag,
-      row.purchasingwebserviceurl,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[VViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, AccountNumber.pgType, Name.pgType, TypoShort.pgType, Flag.pgType, Flag.pgType, PgTypes.text.opt(), TypoLocalDateTime.pgType, VViewRow.apply, row => Array(row.id, row.businessentityid, row.accountnumber, row.name, row.creditrating, row.preferredvendorstatus, row.activeflag, row.purchasingwebserviceurl, row.modifieddate))
 }

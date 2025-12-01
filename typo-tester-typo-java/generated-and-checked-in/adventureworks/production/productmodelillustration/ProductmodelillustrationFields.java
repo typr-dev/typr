@@ -25,7 +25,7 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 
 public interface ProductmodelillustrationFields {
-  static final class Impl extends Relation<ProductmodelillustrationFields, ProductmodelillustrationRow> {
+  final class Impl extends Relation<ProductmodelillustrationFields, ProductmodelillustrationRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -33,12 +33,15 @@ public interface ProductmodelillustrationFields {
     @Override
     public ProductmodelillustrationFields fields() {
       return new ProductmodelillustrationFields() {
+               @Override
                public IdField<ProductmodelId, ProductmodelillustrationRow> productmodelid() {
                  return new IdField<ProductmodelId, ProductmodelillustrationRow>(_path, "productmodelid", ProductmodelillustrationRow::productmodelid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductmodelid(value), ProductmodelId.pgType);
                };
+               @Override
                public IdField<IllustrationId, ProductmodelillustrationRow> illustrationid() {
                  return new IdField<IllustrationId, ProductmodelillustrationRow>(_path, "illustrationid", ProductmodelillustrationRow::illustrationid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withIllustrationid(value), IllustrationId.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, ProductmodelillustrationRow> modifieddate() {
                  return new Field<TypoLocalDateTime, ProductmodelillustrationRow>(_path, "modifieddate", ProductmodelillustrationRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -50,6 +53,7 @@ public interface ProductmodelillustrationFields {
       return List.of(this.fields().productmodelid(), this.fields().illustrationid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

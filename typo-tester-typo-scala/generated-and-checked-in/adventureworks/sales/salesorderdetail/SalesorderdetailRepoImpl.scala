@@ -25,21 +25,21 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
-  def delete: DeleteBuilder[SalesorderdetailFields, SalesorderdetailRow] = DeleteBuilder.of("sales.salesorderdetail", SalesorderdetailFields.structure)
+  override def delete: DeleteBuilder[SalesorderdetailFields, SalesorderdetailRow] = DeleteBuilder.of("sales.salesorderdetail", SalesorderdetailFields.structure)
 
-  def deleteById(compositeId: SalesorderdetailId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."salesorderdetail" where "salesorderid" = ${SalesorderheaderId.pgType.encode(compositeId.salesorderid)} AND "salesorderdetailid" = ${PgTypes.int4.encode(compositeId.salesorderdetailid)}""".update().runUnchecked(c) > 0
+  override def deleteById(compositeId: SalesorderdetailId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."salesorderdetail" where "salesorderid" = ${SalesorderheaderId.pgType.encode(compositeId.salesorderid)} AND "salesorderdetailid" = ${PgTypes.int4.encode(compositeId.salesorderdetailid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(compositeIds: Array[SalesorderdetailId])(using c: Connection): Integer = {
+  override def deleteByIds(compositeIds: Array[SalesorderdetailId])(using c: Connection): Integer = {
     val salesorderid: Array[SalesorderheaderId] = compositeIds.map(_.salesorderid)
     val salesorderdetailid: Array[Integer] = compositeIds.map(_.salesorderdetailid)
-    interpolate"""delete
+    return interpolate"""delete
     from "sales"."salesorderdetail"
     where ("salesorderid", "salesorderdetailid")
     in (select unnest(${SalesorderheaderId.pgTypeArray.encode(salesorderid)}::int4[]), unnest(${PgTypes.int4Array.encode(salesorderdetailid)}::int4[]))
     """.update().runUnchecked(c)
   }
 
-  def insert(unsaved: SalesorderdetailRow)(using c: Connection): SalesorderdetailRow = {
+  override def insert(unsaved: SalesorderdetailRow)(using c: Connection): SalesorderdetailRow = {
   interpolate"""insert into "sales"."salesorderdetail"("salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate")
     values (${SalesorderheaderId.pgType.encode(unsaved.salesorderid)}::int4, ${PgTypes.int4.encode(unsaved.salesorderdetailid)}::int4, ${PgTypes.text.opt().encode(unsaved.carriertrackingnumber)}, ${TypoShort.pgType.encode(unsaved.orderqty)}::int2, ${ProductId.pgType.encode(unsaved.productid)}::int4, ${SpecialofferId.pgType.encode(unsaved.specialofferid)}::int4, ${PgTypes.numeric.encode(unsaved.unitprice)}::numeric, ${PgTypes.numeric.encode(unsaved.unitpricediscount)}::numeric, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text
@@ -47,9 +47,9 @@ class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
     .updateReturning(SalesorderdetailRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: SalesorderdetailRowUnsaved)(using c: Connection): SalesorderdetailRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: SalesorderdetailRowUnsaved)(using c: Connection): SalesorderdetailRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""salesorderid"""")): @scala.annotation.nowarn
     values.add(interpolate"${SalesorderheaderId.pgType.encode(unsaved.salesorderid)}::int4"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""carriertrackingnumber"""")): @scala.annotation.nowarn
@@ -63,32 +63,20 @@ class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
     columns.add(Fragment.lit(""""unitprice"""")): @scala.annotation.nowarn
     values.add(interpolate"${PgTypes.numeric.encode(unsaved.unitprice)}::numeric"): @scala.annotation.nowarn
     unsaved.salesorderdetailid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""salesorderdetailid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PgTypes.int4.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""salesorderdetailid"""")): @scala.annotation.nowarn; values.add(interpolate"${PgTypes.int4.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.unitpricediscount.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""unitpricediscount"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""unitpricediscount"""")): @scala.annotation.nowarn; values.add(interpolate"${PgTypes.numeric.encode(value)}::numeric"): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "sales"."salesorderdetail"(${Fragment.comma(columns)})
@@ -96,55 +84,55 @@ class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
       returning "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text
       """
     }
-    q.updateReturning(SalesorderdetailRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(SalesorderdetailRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[SalesorderdetailRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."salesorderdetail"("salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, c, SalesorderdetailRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[SalesorderdetailRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."salesorderdetail"("salesorderid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "salesorderdetailid", "unitpricediscount", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, SalesorderdetailRowUnsaved.pgText)
 
-  def select: SelectBuilder[SalesorderdetailFields, SalesorderdetailRow] = SelectBuilder.of("sales.salesorderdetail", SalesorderdetailFields.structure, SalesorderdetailRow.`_rowParser`)
+  override def select: SelectBuilder[SalesorderdetailFields, SalesorderdetailRow] = SelectBuilder.of("sales.salesorderdetail", SalesorderdetailFields.structure, SalesorderdetailRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[SalesorderdetailRow] = {
+  override def selectAll(using c: Connection): java.util.List[SalesorderdetailRow] = {
     interpolate"""select "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text
     from "sales"."salesorderdetail"
-    """.as(SalesorderdetailRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(SalesorderdetailRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(compositeId: SalesorderdetailId)(using c: Connection): Optional[SalesorderdetailRow] = {
+  override def selectById(compositeId: SalesorderdetailId)(using c: Connection): Optional[SalesorderdetailRow] = {
     interpolate"""select "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text
     from "sales"."salesorderdetail"
-    where "salesorderid" = ${SalesorderheaderId.pgType.encode(compositeId.salesorderid)} AND "salesorderdetailid" = ${PgTypes.int4.encode(compositeId.salesorderdetailid)}""".as(SalesorderdetailRow.`_rowParser`.first()).runUnchecked(c)
+    where "salesorderid" = ${SalesorderheaderId.pgType.encode(compositeId.salesorderid)} AND "salesorderdetailid" = ${PgTypes.int4.encode(compositeId.salesorderdetailid)}""".query(SalesorderdetailRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(compositeIds: Array[SalesorderdetailId])(using c: Connection): java.util.List[SalesorderdetailRow] = {
+  override def selectByIds(compositeIds: Array[SalesorderdetailId])(using c: Connection): java.util.List[SalesorderdetailRow] = {
     val salesorderid: Array[SalesorderheaderId] = compositeIds.map(_.salesorderid)
     val salesorderdetailid: Array[Integer] = compositeIds.map(_.salesorderdetailid)
-    interpolate"""select "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text
+    return interpolate"""select "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text
     from "sales"."salesorderdetail"
     where ("salesorderid", "salesorderdetailid")
     in (select unnest(${SalesorderheaderId.pgTypeArray.encode(salesorderid)}::int4[]), unnest(${PgTypes.int4Array.encode(salesorderdetailid)}::int4[]))
-    """.as(SalesorderdetailRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(SalesorderdetailRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(compositeIds: Array[SalesorderdetailId])(using c: Connection): java.util.Map[SalesorderdetailId, SalesorderdetailRow] = {
-    val ret: java.util.Map[SalesorderdetailId, SalesorderdetailRow] = new HashMap()
+  override def selectByIdsTracked(compositeIds: Array[SalesorderdetailId])(using c: Connection): java.util.Map[SalesorderdetailId, SalesorderdetailRow] = {
+    val ret: HashMap[SalesorderdetailId, SalesorderdetailRow] = new HashMap[SalesorderdetailId, SalesorderdetailRow]()
     selectByIds(compositeIds)(using c).forEach(row => ret.put(row.compositeId, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[SalesorderdetailFields, SalesorderdetailRow] = UpdateBuilder.of("sales.salesorderdetail", SalesorderdetailFields.structure, SalesorderdetailRow.`_rowParser`.all())
+  override def update: UpdateBuilder[SalesorderdetailFields, SalesorderdetailRow] = UpdateBuilder.of("sales.salesorderdetail", SalesorderdetailFields.structure, SalesorderdetailRow.`_rowParser`.all())
 
-  def update(row: SalesorderdetailRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: SalesorderdetailRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: SalesorderdetailId = row.compositeId
-    interpolate"""update "sales"."salesorderdetail"
+    return interpolate"""update "sales"."salesorderdetail"
     set "carriertrackingnumber" = ${PgTypes.text.opt().encode(row.carriertrackingnumber)},
     "orderqty" = ${TypoShort.pgType.encode(row.orderqty)}::int2,
     "productid" = ${ProductId.pgType.encode(row.productid)}::int4,
@@ -156,7 +144,7 @@ class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
     where "salesorderid" = ${SalesorderheaderId.pgType.encode(compositeId.salesorderid)} AND "salesorderdetailid" = ${PgTypes.int4.encode(compositeId.salesorderdetailid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: SalesorderdetailRow)(using c: Connection): SalesorderdetailRow = {
+  override def upsert(unsaved: SalesorderdetailRow)(using c: Connection): SalesorderdetailRow = {
   interpolate"""insert into "sales"."salesorderdetail"("salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate")
     values (${SalesorderheaderId.pgType.encode(unsaved.salesorderid)}::int4, ${PgTypes.int4.encode(unsaved.salesorderdetailid)}::int4, ${PgTypes.text.opt().encode(unsaved.carriertrackingnumber)}, ${TypoShort.pgType.encode(unsaved.orderqty)}::int2, ${ProductId.pgType.encode(unsaved.productid)}::int4, ${SpecialofferId.pgType.encode(unsaved.specialofferid)}::int4, ${PgTypes.numeric.encode(unsaved.unitprice)}::numeric, ${PgTypes.numeric.encode(unsaved.unitpricediscount)}::numeric, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("salesorderid", "salesorderdetailid")
@@ -175,7 +163,7 @@ class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[SalesorderdetailRow])(using c: Connection): java.util.List[SalesorderdetailRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[SalesorderdetailRow])(using c: Connection): java.util.List[SalesorderdetailRow] = {
     interpolate"""insert into "sales"."salesorderdetail"("salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate")
     values (?::int4, ?::int4, ?, ?::int2, ?::int4, ?::int4, ?::numeric, ?::numeric, ?::uuid, ?::timestamp)
     on conflict ("salesorderid", "salesorderdetailid")
@@ -195,13 +183,13 @@ class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[SalesorderdetailRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table salesorderdetail_TEMP (like "sales"."salesorderdetail") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy salesorderdetail_TEMP("salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, c, SalesorderdetailRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "sales"."salesorderdetail"("salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate")
+    return interpolate"""insert into "sales"."salesorderdetail"("salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate")
     select * from salesorderdetail_TEMP
     on conflict ("salesorderid", "salesorderdetailid")
     do update set

@@ -63,23 +63,5 @@ case class VendorRowUnsaved(
 }
 
 object VendorRowUnsaved {
-  given pgText: PgText[VendorRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      BusinessentityId.pgType.pgText.unsafeEncode(row.businessentityid, sb);
-      sb.append(PgText.DELIMETER);
-      AccountNumber.pgType.pgText.unsafeEncode(row.accountnumber, sb);
-      sb.append(PgText.DELIMETER);
-      Name.pgType.pgText.unsafeEncode(row.name, sb);
-      sb.append(PgText.DELIMETER);
-      TypoShort.pgType.pgText.unsafeEncode(row.creditrating, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.text.opt().pgText.unsafeEncode(row.purchasingwebserviceurl, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using Flag.pgType.pgText).unsafeEncode(row.preferredvendorstatus, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using Flag.pgType.pgText).unsafeEncode(row.activeflag, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[VendorRowUnsaved] = PgText.instance((row, sb) => { BusinessentityId.pgType.pgText.unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); AccountNumber.pgType.pgText.unsafeEncode(row.accountnumber, sb); sb.append(PgText.DELIMETER); Name.pgType.pgText.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); TypoShort.pgType.pgText.unsafeEncode(row.creditrating, sb); sb.append(PgText.DELIMETER); PgTypes.text.opt().pgText.unsafeEncode(row.purchasingwebserviceurl, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using Flag.pgType.pgText).unsafeEncode(row.preferredvendorstatus, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using Flag.pgType.pgText).unsafeEncode(row.activeflag, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

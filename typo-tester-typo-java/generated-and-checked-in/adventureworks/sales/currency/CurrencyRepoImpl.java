@@ -7,7 +7,6 @@ package adventureworks.sales.currency;
 
 import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.public_.Name;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,12 +23,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class CurrencyRepoImpl implements CurrencyRepo {
+  @Override
   public DeleteBuilder<CurrencyFields, CurrencyRow> delete() {
     return DeleteBuilder.of("sales.currency", CurrencyFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     CurrencyId currencycode,
     Connection c
@@ -43,6 +43,7 @@ public class CurrencyRepoImpl implements CurrencyRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     CurrencyId[] currencycodes,
     Connection c
@@ -59,6 +60,7 @@ public class CurrencyRepoImpl implements CurrencyRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public CurrencyRow insert(
     CurrencyRow unsaved,
     Connection c
@@ -80,49 +82,53 @@ public class CurrencyRepoImpl implements CurrencyRepo {
       .updateReturning(CurrencyRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public CurrencyRow insert(
     CurrencyRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"currencycode\""));
-      values.add(interpolate(
-        CurrencyId.pgType.encode(unsaved.currencycode()),
-        typo.runtime.Fragment.lit("::bpchar")
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"currencycode\""));
+    values.add(interpolate(
+      CurrencyId.pgType.encode(unsaved.currencycode()),
+      typo.runtime.Fragment.lit("::bpchar")
+    ));
+    columns.add(Fragment.lit("\"name\""));
+    values.add(interpolate(
+      Name.pgType.encode(unsaved.name()),
+      typo.runtime.Fragment.lit("::varchar")
+    ));
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
       ));
-      columns.add(Fragment.lit("\"name\""));
-      values.add(interpolate(
-        Name.pgType.encode(unsaved.name()),
-        typo.runtime.Fragment.lit("::varchar")
-      ));
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "sales"."currency"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "currencycode", "name", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "sales"."currency"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "currencycode", "name", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(CurrencyRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<CurrencyRow> unsaved,
     Integer batchSize,
@@ -134,6 +140,7 @@ public class CurrencyRepoImpl implements CurrencyRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<CurrencyRowUnsaved> unsaved,
     Integer batchSize,
@@ -144,17 +151,20 @@ public class CurrencyRepoImpl implements CurrencyRepo {
     """), batchSize, unsaved, c, CurrencyRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<CurrencyFields, CurrencyRow> select() {
     return SelectBuilder.of("sales.currency", CurrencyFields.structure(), CurrencyRow._rowParser);
   };
 
+  @Override
   public List<CurrencyRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "currencycode", "name", "modifieddate"::text
        from "sales"."currency"
-    """)).as(CurrencyRow._rowParser.all()).runUnchecked(c);
+    """)).query(CurrencyRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<CurrencyRow> selectById(
     CurrencyId currencycode,
     Connection c
@@ -166,9 +176,10 @@ public class CurrencyRepoImpl implements CurrencyRepo {
          where "currencycode" = """),
       CurrencyId.pgType.encode(currencycode),
       typo.runtime.Fragment.lit("")
-    ).as(CurrencyRow._rowParser.first()).runUnchecked(c);
+    ).query(CurrencyRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<CurrencyRow> selectByIds(
     CurrencyId[] currencycodes,
     Connection c
@@ -180,44 +191,48 @@ public class CurrencyRepoImpl implements CurrencyRepo {
          where "currencycode" = ANY("""),
       CurrencyId.pgTypeArray.encode(currencycodes),
       typo.runtime.Fragment.lit(")")
-    ).as(CurrencyRow._rowParser.all()).runUnchecked(c);
+    ).query(CurrencyRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<CurrencyId, CurrencyRow> selectByIdsTracked(
     CurrencyId[] currencycodes,
     Connection c
   ) {
-    Map<CurrencyId, CurrencyRow> ret = new HashMap<>();;
-      selectByIds(currencycodes, c).forEach(row -> ret.put(row.currencycode(), row));
+    HashMap<CurrencyId, CurrencyRow> ret = new HashMap<CurrencyId, CurrencyRow>();
+    selectByIds(currencycodes, c).forEach(row -> ret.put(row.currencycode(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<CurrencyFields, CurrencyRow> update() {
     return UpdateBuilder.of("sales.currency", CurrencyFields.structure(), CurrencyRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     CurrencyRow row,
     Connection c
   ) {
     CurrencyId currencycode = row.currencycode();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "sales"."currency"
-                set "name" = """),
-             Name.pgType.encode(row.name()),
-             typo.runtime.Fragment.lit("""
-                ::varchar,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "currencycode" = """),
-             CurrencyId.pgType.encode(currencycode),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "sales"."currency"
+         set "name" = """),
+      Name.pgType.encode(row.name()),
+      typo.runtime.Fragment.lit("""
+         ::varchar,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "currencycode" = """),
+      CurrencyId.pgType.encode(currencycode),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public CurrencyRow upsert(
     CurrencyRow unsaved,
     Connection c
@@ -244,6 +259,7 @@ public class CurrencyRepoImpl implements CurrencyRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<CurrencyRow> upsertBatch(
     Iterator<CurrencyRow> unsaved,
     Connection c
@@ -262,25 +278,26 @@ public class CurrencyRepoImpl implements CurrencyRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<CurrencyRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table currency_TEMP (like "sales"."currency") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy currency_TEMP("currencycode", "name", "modifieddate") from stdin
-      """), batchSize, unsaved, c, CurrencyRow.pgText);
+    create temporary table currency_TEMP (like "sales"."currency") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy currency_TEMP("currencycode", "name", "modifieddate") from stdin
+    """), batchSize, unsaved, c, CurrencyRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "sales"."currency"("currencycode", "name", "modifieddate")
-              select * from currency_TEMP
-              on conflict ("currencycode")
-              do update set
-                "name" = EXCLUDED."name",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table currency_TEMP;""")).update().runUnchecked(c);
+       insert into "sales"."currency"("currencycode", "name", "modifieddate")
+       select * from currency_TEMP
+       on conflict ("currencycode")
+       do update set
+         "name" = EXCLUDED."name",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table currency_TEMP;""")).update().runUnchecked(c);
   };
 }

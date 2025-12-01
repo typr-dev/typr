@@ -11,7 +11,6 @@ import adventureworks.public.Name
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple3
 
 /** Table: production.unitmeasure
  * Unit of measure lookup table.
@@ -31,7 +30,7 @@ case class UnitmeasureRow(
 }
 
 object UnitmeasureRow {
-  val `_rowParser`: RowParser[UnitmeasureRow] = RowParsers.of(UnitmeasureId.pgType, Name.pgType, TypoLocalDateTime.pgType, UnitmeasureRow.apply, row => new Tuple3(row.unitmeasurecode, row.name, row.modifieddate))
+  val `_rowParser`: RowParser[UnitmeasureRow] = RowParsers.of(UnitmeasureId.pgType, Name.pgType, TypoLocalDateTime.pgType, UnitmeasureRow.apply, row => Array(row.unitmeasurecode, row.name, row.modifieddate))
 
   given pgText: PgText[UnitmeasureRow] = PgText.from(`_rowParser`)
 }

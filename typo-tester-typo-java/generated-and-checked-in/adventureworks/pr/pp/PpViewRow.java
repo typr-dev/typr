@@ -12,7 +12,6 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple7;
 
 /** View: pr.pp */
 public record PpViewRow(
@@ -66,5 +65,5 @@ public record PpViewRow(
     return new PpViewRow(id, productphotoid, thumbnailphoto, thumbnailphotofilename, largephoto, largephotofilename, modifieddate);
   };
 
-  static RowParser<PpViewRow> _rowParser = RowParsers.of(ProductphotoId.pgType, ProductphotoId.pgType, TypoBytea.pgType.opt(), PgTypes.text.opt(), TypoBytea.pgType.opt(), PgTypes.text.opt(), TypoLocalDateTime.pgType, PpViewRow::new, row -> new Tuple7<>(row.id(), row.productphotoid(), row.thumbnailphoto(), row.thumbnailphotofilename(), row.largephoto(), row.largephotofilename(), row.modifieddate()));;
+  static RowParser<PpViewRow> _rowParser = RowParsers.of(ProductphotoId.pgType, ProductphotoId.pgType, TypoBytea.pgType.opt(), PgTypes.text.opt(), TypoBytea.pgType.opt(), PgTypes.text.opt(), TypoLocalDateTime.pgType, PpViewRow::new, row -> new Object[]{row.id(), row.productphotoid(), row.thumbnailphoto(), row.thumbnailphotofilename(), row.largephoto(), row.largephotofilename(), row.modifieddate()});;
 }

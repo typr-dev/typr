@@ -25,18 +25,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class ProductsubcategoryRepoImpl extends ProductsubcategoryRepo {
-  def delete: DeleteBuilder[ProductsubcategoryFields, ProductsubcategoryRow] = DeleteBuilder.of(""""production"."productsubcategory"""", ProductsubcategoryFields.structure, ProductsubcategoryRow.rowParser(1).*)
+  override def delete: DeleteBuilder[ProductsubcategoryFields, ProductsubcategoryRow] = DeleteBuilder.of(""""production"."productsubcategory"""", ProductsubcategoryFields.structure, ProductsubcategoryRow.rowParser(1).*)
 
-  def deleteById(productsubcategoryid: ProductsubcategoryId)(using c: Connection): Boolean = SQL"""delete from "production"."productsubcategory" where "productsubcategoryid" = ${ParameterValue(productsubcategoryid, null, ProductsubcategoryId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(productsubcategoryid: ProductsubcategoryId)(using c: Connection): Boolean = SQL"""delete from "production"."productsubcategory" where "productsubcategoryid" = ${ParameterValue(productsubcategoryid, null, ProductsubcategoryId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(productsubcategoryids: Array[ProductsubcategoryId])(using c: Connection): Int = {
+  override def deleteByIds(productsubcategoryids: Array[ProductsubcategoryId])(using c: Connection): Int = {
     SQL"""delete
     from "production"."productsubcategory"
     where "productsubcategoryid" = ANY(${ParameterValue(productsubcategoryids, null, ProductsubcategoryId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: ProductsubcategoryRow)(using c: Connection): ProductsubcategoryRow = {
+  override def insert(unsaved: ProductsubcategoryRow)(using c: Connection): ProductsubcategoryRow = {
   SQL"""insert into "production"."productsubcategory"("productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate")
     values (${ParameterValue(unsaved.productsubcategoryid, null, ProductsubcategoryId.toStatement)}::int4, ${ParameterValue(unsaved.productcategoryid, null, ProductcategoryId.toStatement)}::int4, ${ParameterValue(unsaved.name, null, Name.toStatement)}::varchar, ${ParameterValue(unsaved.rowguid, null, TypoUUID.toStatement)}::uuid, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate"::text
@@ -44,7 +44,7 @@ class ProductsubcategoryRepoImpl extends ProductsubcategoryRepo {
     .executeInsert(ProductsubcategoryRow.rowParser(1).single)
   }
 
-  def insert(unsaved: ProductsubcategoryRowUnsaved)(using c: Connection): ProductsubcategoryRow = {
+  override def insert(unsaved: ProductsubcategoryRowUnsaved)(using c: Connection): ProductsubcategoryRow = {
     val namedParameters = List(
       Some((NamedParameter("productcategoryid", ParameterValue(unsaved.productcategoryid, null, ProductcategoryId.toStatement)), "::int4")),
       Some((NamedParameter("name", ParameterValue(unsaved.name, null, Name.toStatement)), "::varchar")),
@@ -77,47 +77,47 @@ class ProductsubcategoryRepoImpl extends ProductsubcategoryRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[ProductsubcategoryRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "production"."productsubcategory"("productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved)(using ProductsubcategoryRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[ProductsubcategoryRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "production"."productsubcategory"("productcategoryid", "name", "productsubcategoryid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using ProductsubcategoryRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[ProductsubcategoryFields, ProductsubcategoryRow] = SelectBuilder.of(""""production"."productsubcategory"""", ProductsubcategoryFields.structure, ProductsubcategoryRow.rowParser)
+  override def select: SelectBuilder[ProductsubcategoryFields, ProductsubcategoryRow] = SelectBuilder.of(""""production"."productsubcategory"""", ProductsubcategoryFields.structure, ProductsubcategoryRow.rowParser)
 
-  def selectAll(using c: Connection): List[ProductsubcategoryRow] = {
+  override def selectAll(using c: Connection): List[ProductsubcategoryRow] = {
     SQL"""select "productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate"::text
     from "production"."productsubcategory"
     """.as(ProductsubcategoryRow.rowParser(1).*)
   }
 
-  def selectById(productsubcategoryid: ProductsubcategoryId)(using c: Connection): Option[ProductsubcategoryRow] = {
+  override def selectById(productsubcategoryid: ProductsubcategoryId)(using c: Connection): Option[ProductsubcategoryRow] = {
     SQL"""select "productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate"::text
     from "production"."productsubcategory"
     where "productsubcategoryid" = ${ParameterValue(productsubcategoryid, null, ProductsubcategoryId.toStatement)}
     """.as(ProductsubcategoryRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(productsubcategoryids: Array[ProductsubcategoryId])(using c: Connection): List[ProductsubcategoryRow] = {
+  override def selectByIds(productsubcategoryids: Array[ProductsubcategoryId])(using c: Connection): List[ProductsubcategoryRow] = {
     SQL"""select "productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate"::text
     from "production"."productsubcategory"
     where "productsubcategoryid" = ANY(${ParameterValue(productsubcategoryids, null, ProductsubcategoryId.arrayToStatement)})
     """.as(ProductsubcategoryRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(productsubcategoryids: Array[ProductsubcategoryId])(using c: Connection): Map[ProductsubcategoryId, ProductsubcategoryRow] = {
+  override def selectByIdsTracked(productsubcategoryids: Array[ProductsubcategoryId])(using c: Connection): Map[ProductsubcategoryId, ProductsubcategoryRow] = {
     val byId = selectByIds(productsubcategoryids).view.map(x => (x.productsubcategoryid, x)).toMap
     productsubcategoryids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[ProductsubcategoryFields, ProductsubcategoryRow] = UpdateBuilder.of(""""production"."productsubcategory"""", ProductsubcategoryFields.structure, ProductsubcategoryRow.rowParser(1).*)
+  override def update: UpdateBuilder[ProductsubcategoryFields, ProductsubcategoryRow] = UpdateBuilder.of(""""production"."productsubcategory"""", ProductsubcategoryFields.structure, ProductsubcategoryRow.rowParser(1).*)
 
-  def update(row: ProductsubcategoryRow)(using c: Connection): Option[ProductsubcategoryRow] = {
+  override def update(row: ProductsubcategoryRow)(using c: Connection): Option[ProductsubcategoryRow] = {
     val productsubcategoryid = row.productsubcategoryid
     SQL"""update "production"."productsubcategory"
     set "productcategoryid" = ${ParameterValue(row.productcategoryid, null, ProductcategoryId.toStatement)}::int4,
@@ -129,7 +129,7 @@ class ProductsubcategoryRepoImpl extends ProductsubcategoryRepo {
     """.executeInsert(ProductsubcategoryRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: ProductsubcategoryRow)(using c: Connection): ProductsubcategoryRow = {
+  override def upsert(unsaved: ProductsubcategoryRow)(using c: Connection): ProductsubcategoryRow = {
   SQL"""insert into "production"."productsubcategory"("productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate")
     values (
       ${ParameterValue(unsaved.productsubcategoryid, null, ProductsubcategoryId.toStatement)}::int4,
@@ -149,7 +149,7 @@ class ProductsubcategoryRepoImpl extends ProductsubcategoryRepo {
     .executeInsert(ProductsubcategoryRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[ProductsubcategoryRow])(using c: Connection): List[ProductsubcategoryRow] = {
+  override def upsertBatch(unsaved: Iterable[ProductsubcategoryRow])(using c: Connection): List[ProductsubcategoryRow] = {
     def toNamedParameter(row: ProductsubcategoryRow): List[NamedParameter] = List(
       NamedParameter("productsubcategoryid", ParameterValue(row.productsubcategoryid, null, ProductsubcategoryId.toStatement)),
       NamedParameter("productcategoryid", ParameterValue(row.productcategoryid, null, ProductcategoryId.toStatement)),
@@ -157,6 +157,7 @@ class ProductsubcategoryRepoImpl extends ProductsubcategoryRepo {
       NamedParameter("rowguid", ParameterValue(row.rowguid, null, TypoUUID.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -180,7 +181,7 @@ class ProductsubcategoryRepoImpl extends ProductsubcategoryRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[ProductsubcategoryRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

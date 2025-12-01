@@ -12,7 +12,6 @@ import adventureworks.public.Name
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple4
 
 /** Table: person.addresstype
  * Types of addresses stored in the Address table.
@@ -47,14 +46,7 @@ case class AddresstypeRow(
 }
 
 object AddresstypeRow {
-  val `_rowParser`: RowParser[AddresstypeRow] = {
-    RowParsers.of(AddresstypeId.pgType, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, AddresstypeRow.apply, row => new Tuple4(
-      row.addresstypeid,
-      row.name,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[AddresstypeRow] = RowParsers.of(AddresstypeId.pgType, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, AddresstypeRow.apply, row => Array(row.addresstypeid, row.name, row.rowguid, row.modifieddate))
 
   given pgText: PgText[AddresstypeRow] = PgText.from(`_rowParser`)
 }

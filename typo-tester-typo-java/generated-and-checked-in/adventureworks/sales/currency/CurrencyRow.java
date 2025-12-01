@@ -11,7 +11,6 @@ import adventureworks.public_.Name;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple3;
 
 /** Table: sales.currency
   * Lookup table containing standard ISO currencies.
@@ -40,7 +39,7 @@ public record CurrencyRow(
     return new CurrencyRow(currencycode, name, modifieddate);
   };
 
-  static RowParser<CurrencyRow> _rowParser = RowParsers.of(CurrencyId.pgType, Name.pgType, TypoLocalDateTime.pgType, CurrencyRow::new, row -> new Tuple3<>(row.currencycode(), row.name(), row.modifieddate()));;
+  static RowParser<CurrencyRow> _rowParser = RowParsers.of(CurrencyId.pgType, Name.pgType, TypoLocalDateTime.pgType, CurrencyRow::new, row -> new Object[]{row.currencycode(), row.name(), row.modifieddate()});;
 
   static public PgText<CurrencyRow> pgText =
     PgText.from(_rowParser);

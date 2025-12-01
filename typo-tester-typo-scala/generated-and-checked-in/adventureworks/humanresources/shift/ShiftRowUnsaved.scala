@@ -42,17 +42,5 @@ case class ShiftRowUnsaved(
 }
 
 object ShiftRowUnsaved {
-  given pgText: PgText[ShiftRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      Name.pgType.pgText.unsafeEncode(row.name, sb);
-      sb.append(PgText.DELIMETER);
-      TypoLocalTime.pgType.pgText.unsafeEncode(row.starttime, sb);
-      sb.append(PgText.DELIMETER);
-      TypoLocalTime.pgType.pgText.unsafeEncode(row.endtime, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using ShiftId.pgType.pgText).unsafeEncode(row.shiftid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[ShiftRowUnsaved] = PgText.instance((row, sb) => { Name.pgType.pgText.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); TypoLocalTime.pgType.pgText.unsafeEncode(row.starttime, sb); sb.append(PgText.DELIMETER); TypoLocalTime.pgType.pgText.unsafeEncode(row.endtime, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using ShiftId.pgType.pgText).unsafeEncode(row.shiftid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

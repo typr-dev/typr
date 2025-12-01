@@ -5,6 +5,7 @@
  */
 package adventureworks.sales.salestaxrate;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record SalestaxrateRepoMock(
     return new SalestaxrateRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<SalestaxrateFields, SalestaxrateRow> delete() {
     return new DeleteBuilderMock<>(SalestaxrateFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.salestaxrateid(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     SalestaxrateId salestaxrateid,
     Connection c
@@ -52,28 +55,31 @@ public record SalestaxrateRepoMock(
     return Optional.ofNullable(map.remove(salestaxrateid)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     SalestaxrateId[] salestaxrateids,
     Connection c
   ) {
     var count = 0;
-      for (var id : salestaxrateids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : salestaxrateids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public SalestaxrateRow insert(
     SalestaxrateRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.salestaxrateid())) {
-        throw new RuntimeException(str("id $unsaved.salestaxrateid() already exists"));
-      };
-      map.put(unsaved.salestaxrateid(), unsaved);
+      throw new RuntimeException(str("id $unsaved.salestaxrateid() already exists"));
+    };
+    map.put(unsaved.salestaxrateid(), unsaved);
     return unsaved;
   };
 
+  @Override
   public SalestaxrateRow insert(
     SalestaxrateRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record SalestaxrateRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<SalestaxrateRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.salestaxrateid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.salestaxrateid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<SalestaxrateRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.salestaxrateid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.salestaxrateid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<SalestaxrateFields, SalestaxrateRow> select() {
     return new SelectBuilderMock<>(SalestaxrateFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<SalestaxrateRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<SalestaxrateRow> selectById(
     SalestaxrateId salestaxrateid,
     Connection c
@@ -126,38 +137,43 @@ public record SalestaxrateRepoMock(
     return Optional.ofNullable(map.get(salestaxrateid));
   };
 
+  @Override
   public List<SalestaxrateRow> selectByIds(
     SalestaxrateId[] salestaxrateids,
     Connection c
   ) {
     var result = new ArrayList<SalestaxrateRow>();
-      for (var id : salestaxrateids) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : salestaxrateids) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<SalestaxrateId, SalestaxrateRow> selectByIdsTracked(
     SalestaxrateId[] salestaxrateids,
     Connection c
   ) {
-    return selectByIds(salestaxrateids, c).stream().collect(Collectors.toMap((adventureworks.sales.salestaxrate.SalestaxrateRow row) -> row.salestaxrateid(), Function.identity()));
+    return selectByIds(salestaxrateids, c).stream().collect(Collectors.toMap((SalestaxrateRow row) -> row.salestaxrateid(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<SalestaxrateFields, SalestaxrateRow> update() {
     return new UpdateBuilderMock<>(SalestaxrateFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     SalestaxrateRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.salestaxrateid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.salestaxrateid(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.salestaxrateid(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public SalestaxrateRow upsert(
     SalestaxrateRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record SalestaxrateRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<SalestaxrateRow> upsertBatch(
     Iterator<SalestaxrateRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<SalestaxrateRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.salestaxrateid(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.salestaxrateid(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<SalestaxrateRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.salestaxrateid(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.salestaxrateid(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple6;
 
 /** View: hr.eph */
 public record EphViewRow(
@@ -59,5 +58,5 @@ public record EphViewRow(
     return new EphViewRow(id, businessentityid, ratechangedate, rate, payfrequency, modifieddate);
   };
 
-  static RowParser<EphViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, TypoLocalDateTime.pgType, PgTypes.numeric, TypoShort.pgType, TypoLocalDateTime.pgType, EphViewRow::new, row -> new Tuple6<>(row.id(), row.businessentityid(), row.ratechangedate(), row.rate(), row.payfrequency(), row.modifieddate()));;
+  static RowParser<EphViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, TypoLocalDateTime.pgType, PgTypes.numeric, TypoShort.pgType, TypoLocalDateTime.pgType, EphViewRow::new, row -> new Object[]{row.id(), row.businessentityid(), row.ratechangedate(), row.rate(), row.payfrequency(), row.modifieddate()});;
 }

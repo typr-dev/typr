@@ -22,13 +22,13 @@ import zio.jdbc.ZConnection
 import zio.stream.ZStream
 
 case class Issue142RepoMock(map: scala.collection.mutable.Map[Issue142Id, Issue142Row] = scala.collection.mutable.Map.empty[Issue142Id, Issue142Row]) extends Issue142Repo {
-  def delete: DeleteBuilder[Issue142Fields, Issue142Row] = DeleteBuilderMock(DeleteParams.empty, Issue142Fields.structure, map)
+  override def delete: DeleteBuilder[Issue142Fields, Issue142Row] = DeleteBuilderMock(DeleteParams.empty, Issue142Fields.structure, map)
 
-  def deleteById(tabellkode: Issue142Id): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(tabellkode).isDefined)
+  override def deleteById(tabellkode: Issue142Id): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(tabellkode).isDefined)
 
-  def deleteByIds(tabellkodes: Array[Issue142Id]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(tabellkodes.map(id => map.remove(id)).count(_.isDefined).toLong)
+  override def deleteByIds(tabellkodes: Array[Issue142Id]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(tabellkodes.map(id => map.remove(id)).count(_.isDefined).toLong)
 
-  def insert(unsaved: Issue142Row): ZIO[ZConnection, Throwable, Issue142Row] = {
+  override def insert(unsaved: Issue142Row): ZIO[ZConnection, Throwable, Issue142Row] = {
   ZIO.succeed {
     val _ =
       if (map.contains(unsaved.tabellkode))
@@ -40,7 +40,7 @@ case class Issue142RepoMock(map: scala.collection.mutable.Map[Issue142Id, Issue1
   }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, Issue142Row],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {
@@ -52,24 +52,24 @@ case class Issue142RepoMock(map: scala.collection.mutable.Map[Issue142Id, Issue1
     }.runLast.map(_.getOrElse(0L))
   }
 
-  def select: SelectBuilder[Issue142Fields, Issue142Row] = SelectBuilderMock(Issue142Fields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
+  override def select: SelectBuilder[Issue142Fields, Issue142Row] = SelectBuilderMock(Issue142Fields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
 
-  def selectAll: ZStream[ZConnection, Throwable, Issue142Row] = ZStream.fromIterable(map.values)
+  override def selectAll: ZStream[ZConnection, Throwable, Issue142Row] = ZStream.fromIterable(map.values)
 
-  def selectById(tabellkode: Issue142Id): ZIO[ZConnection, Throwable, Option[Issue142Row]] = ZIO.succeed(map.get(tabellkode))
+  override def selectById(tabellkode: Issue142Id): ZIO[ZConnection, Throwable, Option[Issue142Row]] = ZIO.succeed(map.get(tabellkode))
 
-  def selectByIds(tabellkodes: Array[Issue142Id]): ZStream[ZConnection, Throwable, Issue142Row] = ZStream.fromIterable(tabellkodes.flatMap(map.get))
+  override def selectByIds(tabellkodes: Array[Issue142Id]): ZStream[ZConnection, Throwable, Issue142Row] = ZStream.fromIterable(tabellkodes.flatMap(map.get))
 
-  def selectByIdsTracked(tabellkodes: Array[Issue142Id]): ZIO[ZConnection, Throwable, Map[Issue142Id, Issue142Row]] = {
+  override def selectByIdsTracked(tabellkodes: Array[Issue142Id]): ZIO[ZConnection, Throwable, Map[Issue142Id, Issue142Row]] = {
     selectByIds(tabellkodes).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.tabellkode, x)).toMap
       tabellkodes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[Issue142Fields, Issue142Row] = UpdateBuilderMock(UpdateParams.empty, Issue142Fields.structure, map)
+  override def update: UpdateBuilder[Issue142Fields, Issue142Row] = UpdateBuilderMock(UpdateParams.empty, Issue142Fields.structure, map)
 
-  def upsert(unsaved: Issue142Row): ZIO[ZConnection, Throwable, UpdateResult[Issue142Row]] = {
+  override def upsert(unsaved: Issue142Row): ZIO[ZConnection, Throwable, UpdateResult[Issue142Row]] = {
     ZIO.succeed {
       map.put(unsaved.tabellkode, unsaved): @nowarn
       UpdateResult(1, Chunk.single(unsaved))
@@ -77,7 +77,7 @@ case class Issue142RepoMock(map: scala.collection.mutable.Map[Issue142Id, Issue1
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, Issue142Row],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

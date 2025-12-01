@@ -26,11 +26,11 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class BusinessentityaddressRepoImpl extends BusinessentityaddressRepo {
-  def delete: DeleteBuilder[BusinessentityaddressFields, BusinessentityaddressRow] = DeleteBuilder.of(""""person"."businessentityaddress"""", BusinessentityaddressFields.structure, BusinessentityaddressRow.rowParser(1).*)
+  override def delete: DeleteBuilder[BusinessentityaddressFields, BusinessentityaddressRow] = DeleteBuilder.of(""""person"."businessentityaddress"""", BusinessentityaddressFields.structure, BusinessentityaddressRow.rowParser(1).*)
 
-  def deleteById(compositeId: BusinessentityaddressId)(using c: Connection): Boolean = SQL"""delete from "person"."businessentityaddress" where "businessentityid" = ${ParameterValue(compositeId.businessentityid, null, BusinessentityId.toStatement)} AND "addressid" = ${ParameterValue(compositeId.addressid, null, AddressId.toStatement)} AND "addresstypeid" = ${ParameterValue(compositeId.addresstypeid, null, AddresstypeId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(compositeId: BusinessentityaddressId)(using c: Connection): Boolean = SQL"""delete from "person"."businessentityaddress" where "businessentityid" = ${ParameterValue(compositeId.businessentityid, null, BusinessentityId.toStatement)} AND "addressid" = ${ParameterValue(compositeId.addressid, null, AddressId.toStatement)} AND "addresstypeid" = ${ParameterValue(compositeId.addresstypeid, null, AddresstypeId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(compositeIds: Array[BusinessentityaddressId])(using c: Connection): Int = {
+  override def deleteByIds(compositeIds: Array[BusinessentityaddressId])(using c: Connection): Int = {
     val businessentityid = compositeIds.map(_.businessentityid)
     val addressid = compositeIds.map(_.addressid)
     val addresstypeid = compositeIds.map(_.addresstypeid)
@@ -41,7 +41,7 @@ class BusinessentityaddressRepoImpl extends BusinessentityaddressRepo {
     """.executeUpdate()
   }
 
-  def insert(unsaved: BusinessentityaddressRow)(using c: Connection): BusinessentityaddressRow = {
+  override def insert(unsaved: BusinessentityaddressRow)(using c: Connection): BusinessentityaddressRow = {
   SQL"""insert into "person"."businessentityaddress"("businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate")
     values (${ParameterValue(unsaved.businessentityid, null, BusinessentityId.toStatement)}::int4, ${ParameterValue(unsaved.addressid, null, AddressId.toStatement)}::int4, ${ParameterValue(unsaved.addresstypeid, null, AddresstypeId.toStatement)}::int4, ${ParameterValue(unsaved.rowguid, null, TypoUUID.toStatement)}::uuid, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate"::text
@@ -49,7 +49,7 @@ class BusinessentityaddressRepoImpl extends BusinessentityaddressRepo {
     .executeInsert(BusinessentityaddressRow.rowParser(1).single)
   }
 
-  def insert(unsaved: BusinessentityaddressRowUnsaved)(using c: Connection): BusinessentityaddressRow = {
+  override def insert(unsaved: BusinessentityaddressRowUnsaved)(using c: Connection): BusinessentityaddressRow = {
     val namedParameters = List(
       Some((NamedParameter("businessentityid", ParameterValue(unsaved.businessentityid, null, BusinessentityId.toStatement)), "::int4")),
       Some((NamedParameter("addressid", ParameterValue(unsaved.addressid, null, AddressId.toStatement)), "::int4")),
@@ -79,33 +79,33 @@ class BusinessentityaddressRepoImpl extends BusinessentityaddressRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[BusinessentityaddressRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "person"."businessentityaddress"("businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved)(using BusinessentityaddressRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[BusinessentityaddressRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "person"."businessentityaddress"("businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using BusinessentityaddressRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[BusinessentityaddressFields, BusinessentityaddressRow] = SelectBuilder.of(""""person"."businessentityaddress"""", BusinessentityaddressFields.structure, BusinessentityaddressRow.rowParser)
+  override def select: SelectBuilder[BusinessentityaddressFields, BusinessentityaddressRow] = SelectBuilder.of(""""person"."businessentityaddress"""", BusinessentityaddressFields.structure, BusinessentityaddressRow.rowParser)
 
-  def selectAll(using c: Connection): List[BusinessentityaddressRow] = {
+  override def selectAll(using c: Connection): List[BusinessentityaddressRow] = {
     SQL"""select "businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate"::text
     from "person"."businessentityaddress"
     """.as(BusinessentityaddressRow.rowParser(1).*)
   }
 
-  def selectById(compositeId: BusinessentityaddressId)(using c: Connection): Option[BusinessentityaddressRow] = {
+  override def selectById(compositeId: BusinessentityaddressId)(using c: Connection): Option[BusinessentityaddressRow] = {
     SQL"""select "businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate"::text
     from "person"."businessentityaddress"
     where "businessentityid" = ${ParameterValue(compositeId.businessentityid, null, BusinessentityId.toStatement)} AND "addressid" = ${ParameterValue(compositeId.addressid, null, AddressId.toStatement)} AND "addresstypeid" = ${ParameterValue(compositeId.addresstypeid, null, AddresstypeId.toStatement)}
     """.as(BusinessentityaddressRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(compositeIds: Array[BusinessentityaddressId])(using c: Connection): List[BusinessentityaddressRow] = {
+  override def selectByIds(compositeIds: Array[BusinessentityaddressId])(using c: Connection): List[BusinessentityaddressRow] = {
     val businessentityid = compositeIds.map(_.businessentityid)
     val addressid = compositeIds.map(_.addressid)
     val addresstypeid = compositeIds.map(_.addresstypeid)
@@ -116,14 +116,14 @@ class BusinessentityaddressRepoImpl extends BusinessentityaddressRepo {
     """.as(BusinessentityaddressRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(compositeIds: Array[BusinessentityaddressId])(using c: Connection): Map[BusinessentityaddressId, BusinessentityaddressRow] = {
+  override def selectByIdsTracked(compositeIds: Array[BusinessentityaddressId])(using c: Connection): Map[BusinessentityaddressId, BusinessentityaddressRow] = {
     val byId = selectByIds(compositeIds).view.map(x => (x.compositeId, x)).toMap
     compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[BusinessentityaddressFields, BusinessentityaddressRow] = UpdateBuilder.of(""""person"."businessentityaddress"""", BusinessentityaddressFields.structure, BusinessentityaddressRow.rowParser(1).*)
+  override def update: UpdateBuilder[BusinessentityaddressFields, BusinessentityaddressRow] = UpdateBuilder.of(""""person"."businessentityaddress"""", BusinessentityaddressFields.structure, BusinessentityaddressRow.rowParser(1).*)
 
-  def update(row: BusinessentityaddressRow)(using c: Connection): Option[BusinessentityaddressRow] = {
+  override def update(row: BusinessentityaddressRow)(using c: Connection): Option[BusinessentityaddressRow] = {
     val compositeId = row.compositeId
     SQL"""update "person"."businessentityaddress"
     set "rowguid" = ${ParameterValue(row.rowguid, null, TypoUUID.toStatement)}::uuid,
@@ -133,7 +133,7 @@ class BusinessentityaddressRepoImpl extends BusinessentityaddressRepo {
     """.executeInsert(BusinessentityaddressRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: BusinessentityaddressRow)(using c: Connection): BusinessentityaddressRow = {
+  override def upsert(unsaved: BusinessentityaddressRow)(using c: Connection): BusinessentityaddressRow = {
   SQL"""insert into "person"."businessentityaddress"("businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate")
     values (
       ${ParameterValue(unsaved.businessentityid, null, BusinessentityId.toStatement)}::int4,
@@ -151,7 +151,7 @@ class BusinessentityaddressRepoImpl extends BusinessentityaddressRepo {
     .executeInsert(BusinessentityaddressRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[BusinessentityaddressRow])(using c: Connection): List[BusinessentityaddressRow] = {
+  override def upsertBatch(unsaved: Iterable[BusinessentityaddressRow])(using c: Connection): List[BusinessentityaddressRow] = {
     def toNamedParameter(row: BusinessentityaddressRow): List[NamedParameter] = List(
       NamedParameter("businessentityid", ParameterValue(row.businessentityid, null, BusinessentityId.toStatement)),
       NamedParameter("addressid", ParameterValue(row.addressid, null, AddressId.toStatement)),
@@ -159,6 +159,7 @@ class BusinessentityaddressRepoImpl extends BusinessentityaddressRepo {
       NamedParameter("rowguid", ParameterValue(row.rowguid, null, TypoUUID.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -180,7 +181,7 @@ class BusinessentityaddressRepoImpl extends BusinessentityaddressRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[BusinessentityaddressRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

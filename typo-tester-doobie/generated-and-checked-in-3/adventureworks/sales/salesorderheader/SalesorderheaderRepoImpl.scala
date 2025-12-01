@@ -28,28 +28,26 @@ import doobie.util.fragment.Fragment
 import doobie.util.meta.Meta
 import doobie.util.update.Update
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.DeleteBuilder
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class SalesorderheaderRepoImpl extends SalesorderheaderRepo {
-  def delete: DeleteBuilder[SalesorderheaderFields, SalesorderheaderRow] = DeleteBuilder.of(""""sales"."salesorderheader"""", SalesorderheaderFields.structure, SalesorderheaderRow.read)
+  override def delete: DeleteBuilder[SalesorderheaderFields, SalesorderheaderRow] = DeleteBuilder.of(""""sales"."salesorderheader"""", SalesorderheaderFields.structure, SalesorderheaderRow.read)
 
-  def deleteById(salesorderid: SalesorderheaderId): ConnectionIO[Boolean] = sql"""delete from "sales"."salesorderheader" where "salesorderid" = ${fromWrite(salesorderid)(using new Write.Single(SalesorderheaderId.put))}""".update.run.map(_ > 0)
+  override def deleteById(salesorderid: SalesorderheaderId): ConnectionIO[Boolean] = sql"""delete from "sales"."salesorderheader" where "salesorderid" = ${fromWrite(salesorderid)(using new Write.Single(SalesorderheaderId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(salesorderids: Array[SalesorderheaderId]): ConnectionIO[Int] = sql"""delete from "sales"."salesorderheader" where "salesorderid" = ANY(${fromWrite(salesorderids)(using new Write.Single(SalesorderheaderId.arrayPut))})""".update.run
+  override def deleteByIds(salesorderids: Array[SalesorderheaderId]): ConnectionIO[Int] = sql"""delete from "sales"."salesorderheader" where "salesorderid" = ANY(${fromWrite(salesorderids)(using new Write.Single(SalesorderheaderId.arrayPut))})""".update.run
 
-  def insert(unsaved: SalesorderheaderRow): ConnectionIO[SalesorderheaderRow] = {
+  override def insert(unsaved: SalesorderheaderRow): ConnectionIO[SalesorderheaderRow] = {
     sql"""insert into "sales"."salesorderheader"("salesorderid", "revisionnumber", "orderdate", "duedate", "shipdate", "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate")
     values (${fromWrite(unsaved.salesorderid)(using new Write.Single(SalesorderheaderId.put))}::int4, ${fromWrite(unsaved.revisionnumber)(using new Write.Single(TypoShort.put))}::int2, ${fromWrite(unsaved.orderdate)(using new Write.Single(TypoLocalDateTime.put))}::timestamp, ${fromWrite(unsaved.duedate)(using new Write.Single(TypoLocalDateTime.put))}::timestamp, ${fromWrite(unsaved.shipdate)(using new Write.SingleOpt(TypoLocalDateTime.put))}::timestamp, ${fromWrite(unsaved.status)(using new Write.Single(TypoShort.put))}::int2, ${fromWrite(unsaved.onlineorderflag)(using new Write.Single(Flag.put))}::bool, ${fromWrite(unsaved.purchaseordernumber)(using new Write.SingleOpt(OrderNumber.put))}::varchar, ${fromWrite(unsaved.accountnumber)(using new Write.SingleOpt(AccountNumber.put))}::varchar, ${fromWrite(unsaved.customerid)(using new Write.Single(CustomerId.put))}::int4, ${fromWrite(unsaved.salespersonid)(using new Write.SingleOpt(BusinessentityId.put))}::int4, ${fromWrite(unsaved.territoryid)(using new Write.SingleOpt(SalesterritoryId.put))}::int4, ${fromWrite(unsaved.billtoaddressid)(using new Write.Single(AddressId.put))}::int4, ${fromWrite(unsaved.shiptoaddressid)(using new Write.Single(AddressId.put))}::int4, ${fromWrite(unsaved.shipmethodid)(using new Write.Single(ShipmethodId.put))}::int4, ${fromWrite(unsaved.creditcardid)(using new Write.SingleOpt(/* user-picked */ CustomCreditcardId.put))}::int4, ${fromWrite(unsaved.creditcardapprovalcode)(using new Write.SingleOpt(Meta.StringMeta.put))}, ${fromWrite(unsaved.currencyrateid)(using new Write.SingleOpt(CurrencyrateId.put))}::int4, ${fromWrite(unsaved.subtotal)(using new Write.Single(Meta.ScalaBigDecimalMeta.put))}::numeric, ${fromWrite(unsaved.taxamt)(using new Write.Single(Meta.ScalaBigDecimalMeta.put))}::numeric, ${fromWrite(unsaved.freight)(using new Write.Single(Meta.ScalaBigDecimalMeta.put))}::numeric, ${fromWrite(unsaved.totaldue)(using new Write.SingleOpt(Meta.ScalaBigDecimalMeta.put))}::numeric, ${fromWrite(unsaved.comment)(using new Write.SingleOpt(Meta.StringMeta.put))}, ${fromWrite(unsaved.rowguid)(using new Write.Single(TypoUUID.put))}::uuid, ${fromWrite(unsaved.modifieddate)(using new Write.Single(TypoLocalDateTime.put))}::timestamp)
     returning "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text
     """.query(using SalesorderheaderRow.read).unique
   }
 
-  def insert(unsaved: SalesorderheaderRowUnsaved): ConnectionIO[SalesorderheaderRow] = {
+  override def insert(unsaved: SalesorderheaderRowUnsaved): ConnectionIO[SalesorderheaderRow] = {
     val fs = List(
       Some((Fragment.const0(s""""duedate""""), fr"${fromWrite(unsaved.duedate)(using new Write.Single(TypoLocalDateTime.put))}::timestamp")),
       Some((Fragment.const0(s""""shipdate""""), fr"${fromWrite(unsaved.shipdate)(using new Write.SingleOpt(TypoLocalDateTime.put))}::timestamp")),
@@ -121,35 +119,35 @@ class SalesorderheaderRepoImpl extends SalesorderheaderRepo {
     q.query(using SalesorderheaderRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, SalesorderheaderRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "sales"."salesorderheader"("salesorderid", "revisionnumber", "orderdate", "duedate", "shipdate", "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate") FROM STDIN""").copyIn(unsaved, batchSize)(using SalesorderheaderRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, SalesorderheaderRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "sales"."salesorderheader"("duedate", "shipdate", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "totaldue", "comment", "salesorderid", "revisionnumber", "orderdate", "status", "onlineorderflag", "subtotal", "taxamt", "freight", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(using SalesorderheaderRowUnsaved.pgText)
 
-  def select: SelectBuilder[SalesorderheaderFields, SalesorderheaderRow] = SelectBuilder.of(""""sales"."salesorderheader"""", SalesorderheaderFields.structure, SalesorderheaderRow.read)
+  override def select: SelectBuilder[SalesorderheaderFields, SalesorderheaderRow] = SelectBuilder.of(""""sales"."salesorderheader"""", SalesorderheaderFields.structure, SalesorderheaderRow.read)
 
-  def selectAll: Stream[ConnectionIO, SalesorderheaderRow] = sql"""select "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text from "sales"."salesorderheader"""".query(using SalesorderheaderRow.read).stream
+  override def selectAll: Stream[ConnectionIO, SalesorderheaderRow] = sql"""select "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text from "sales"."salesorderheader"""".query(using SalesorderheaderRow.read).stream
 
-  def selectById(salesorderid: SalesorderheaderId): ConnectionIO[Option[SalesorderheaderRow]] = sql"""select "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text from "sales"."salesorderheader" where "salesorderid" = ${fromWrite(salesorderid)(using new Write.Single(SalesorderheaderId.put))}""".query(using SalesorderheaderRow.read).option
+  override def selectById(salesorderid: SalesorderheaderId): ConnectionIO[Option[SalesorderheaderRow]] = sql"""select "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text from "sales"."salesorderheader" where "salesorderid" = ${fromWrite(salesorderid)(using new Write.Single(SalesorderheaderId.put))}""".query(using SalesorderheaderRow.read).option
 
-  def selectByIds(salesorderids: Array[SalesorderheaderId]): Stream[ConnectionIO, SalesorderheaderRow] = sql"""select "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text from "sales"."salesorderheader" where "salesorderid" = ANY(${fromWrite(salesorderids)(using new Write.Single(SalesorderheaderId.arrayPut))})""".query(using SalesorderheaderRow.read).stream
+  override def selectByIds(salesorderids: Array[SalesorderheaderId]): Stream[ConnectionIO, SalesorderheaderRow] = sql"""select "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text from "sales"."salesorderheader" where "salesorderid" = ANY(${fromWrite(salesorderids)(using new Write.Single(SalesorderheaderId.arrayPut))})""".query(using SalesorderheaderRow.read).stream
 
-  def selectByIdsTracked(salesorderids: Array[SalesorderheaderId]): ConnectionIO[Map[SalesorderheaderId, SalesorderheaderRow]] = {
+  override def selectByIdsTracked(salesorderids: Array[SalesorderheaderId]): ConnectionIO[Map[SalesorderheaderId, SalesorderheaderRow]] = {
     selectByIds(salesorderids).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.salesorderid, x)).toMap
       salesorderids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[SalesorderheaderFields, SalesorderheaderRow] = UpdateBuilder.of(""""sales"."salesorderheader"""", SalesorderheaderFields.structure, SalesorderheaderRow.read)
+  override def update: UpdateBuilder[SalesorderheaderFields, SalesorderheaderRow] = UpdateBuilder.of(""""sales"."salesorderheader"""", SalesorderheaderFields.structure, SalesorderheaderRow.read)
 
-  def update(row: SalesorderheaderRow): ConnectionIO[Option[SalesorderheaderRow]] = {
+  override def update(row: SalesorderheaderRow): ConnectionIO[Option[SalesorderheaderRow]] = {
     val salesorderid = row.salesorderid
     sql"""update "sales"."salesorderheader"
     set "revisionnumber" = ${fromWrite(row.revisionnumber)(using new Write.Single(TypoShort.put))}::int2,
@@ -180,7 +178,7 @@ class SalesorderheaderRepoImpl extends SalesorderheaderRepo {
     returning "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text""".query(using SalesorderheaderRow.read).option
   }
 
-  def upsert(unsaved: SalesorderheaderRow): ConnectionIO[SalesorderheaderRow] = {
+  override def upsert(unsaved: SalesorderheaderRow): ConnectionIO[SalesorderheaderRow] = {
     sql"""insert into "sales"."salesorderheader"("salesorderid", "revisionnumber", "orderdate", "duedate", "shipdate", "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate")
     values (
       ${fromWrite(unsaved.salesorderid)(using new Write.Single(SalesorderheaderId.put))}::int4,
@@ -239,7 +237,7 @@ class SalesorderheaderRepoImpl extends SalesorderheaderRepo {
     """.query(using SalesorderheaderRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[SalesorderheaderRow]): Stream[ConnectionIO, SalesorderheaderRow] = {
+  override def upsertBatch(unsaved: List[SalesorderheaderRow]): Stream[ConnectionIO, SalesorderheaderRow] = {
     Update[SalesorderheaderRow](
       s"""insert into "sales"."salesorderheader"("salesorderid", "revisionnumber", "orderdate", "duedate", "shipdate", "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate")
       values (?::int4,?::int2,?::timestamp,?::timestamp,?::timestamp,?::int2,?::bool,?::varchar,?::varchar,?::int4,?::int4,?::int4,?::int4,?::int4,?::int4,?::int4,?,?::int4,?::numeric,?::numeric,?::numeric,?::numeric,?,?::uuid,?::timestamp)
@@ -275,7 +273,7 @@ class SalesorderheaderRepoImpl extends SalesorderheaderRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, SalesorderheaderRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

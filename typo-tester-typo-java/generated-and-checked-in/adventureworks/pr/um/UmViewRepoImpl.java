@@ -5,22 +5,22 @@
  */
 package adventureworks.pr.um;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class UmViewRepoImpl implements UmViewRepo {
+  @Override
   public SelectBuilder<UmViewFields, UmViewRow> select() {
     return SelectBuilder.of("pr.um", UmViewFields.structure(), UmViewRow._rowParser);
   };
 
+  @Override
   public List<UmViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "unitmeasurecode", "name", "modifieddate"::text
        from "pr"."um"
-    """)).as(UmViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(UmViewRow._rowParser.all()).runUnchecked(c);
   };
 }

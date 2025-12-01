@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class PiViewRepoImpl extends PiViewRepo {
-  def select: SelectBuilder[PiViewFields, PiViewRow] = SelectBuilder.of(""""pr"."pi"""", PiViewFields.structure, PiViewRow.jdbcDecoder)
+  override def select: SelectBuilder[PiViewFields, PiViewRow] = SelectBuilder.of(""""pr"."pi"""", PiViewFields.structure, PiViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, PiViewRow] = sql"""select "id", "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"::text from "pr"."pi"""".query(PiViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, PiViewRow] = sql"""select "id", "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"::text from "pr"."pi"""".query(PiViewRow.jdbcDecoder).selectStream()
 }

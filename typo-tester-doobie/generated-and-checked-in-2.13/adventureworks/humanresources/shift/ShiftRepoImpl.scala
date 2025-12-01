@@ -23,20 +23,20 @@ import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class ShiftRepoImpl extends ShiftRepo {
-  def delete: DeleteBuilder[ShiftFields, ShiftRow] = DeleteBuilder.of(""""humanresources"."shift"""", ShiftFields.structure, ShiftRow.read)
+  override def delete: DeleteBuilder[ShiftFields, ShiftRow] = DeleteBuilder.of(""""humanresources"."shift"""", ShiftFields.structure, ShiftRow.read)
 
-  def deleteById(shiftid: ShiftId): ConnectionIO[Boolean] = sql"""delete from "humanresources"."shift" where "shiftid" = ${fromWrite(shiftid)(new Write.Single(ShiftId.put))}""".update.run.map(_ > 0)
+  override def deleteById(shiftid: ShiftId): ConnectionIO[Boolean] = sql"""delete from "humanresources"."shift" where "shiftid" = ${fromWrite(shiftid)(new Write.Single(ShiftId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(shiftids: Array[ShiftId]): ConnectionIO[Int] = sql"""delete from "humanresources"."shift" where "shiftid" = ANY(${fromWrite(shiftids)(new Write.Single(ShiftId.arrayPut))})""".update.run
+  override def deleteByIds(shiftids: Array[ShiftId]): ConnectionIO[Int] = sql"""delete from "humanresources"."shift" where "shiftid" = ANY(${fromWrite(shiftids)(new Write.Single(ShiftId.arrayPut))})""".update.run
 
-  def insert(unsaved: ShiftRow): ConnectionIO[ShiftRow] = {
+  override def insert(unsaved: ShiftRow): ConnectionIO[ShiftRow] = {
     sql"""insert into "humanresources"."shift"("shiftid", "name", "starttime", "endtime", "modifieddate")
     values (${fromWrite(unsaved.shiftid)(new Write.Single(ShiftId.put))}::int4, ${fromWrite(unsaved.name)(new Write.Single(Name.put))}::varchar, ${fromWrite(unsaved.starttime)(new Write.Single(TypoLocalTime.put))}::time, ${fromWrite(unsaved.endtime)(new Write.Single(TypoLocalTime.put))}::time, ${fromWrite(unsaved.modifieddate)(new Write.Single(TypoLocalDateTime.put))}::timestamp)
     returning "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text
     """.query(ShiftRow.read).unique
   }
 
-  def insert(unsaved: ShiftRowUnsaved): ConnectionIO[ShiftRow] = {
+  override def insert(unsaved: ShiftRowUnsaved): ConnectionIO[ShiftRow] = {
     val fs = List(
       Some((Fragment.const0(s""""name""""), fr"${fromWrite(unsaved.name)(new Write.Single(Name.put))}::varchar")),
       Some((Fragment.const0(s""""starttime""""), fr"${fromWrite(unsaved.starttime)(new Write.Single(TypoLocalTime.put))}::time")),
@@ -64,35 +64,35 @@ class ShiftRepoImpl extends ShiftRepo {
     q.query(ShiftRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, ShiftRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "humanresources"."shift"("shiftid", "name", "starttime", "endtime", "modifieddate") FROM STDIN""").copyIn(unsaved, batchSize)(ShiftRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, ShiftRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "humanresources"."shift"("name", "starttime", "endtime", "shiftid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(ShiftRowUnsaved.pgText)
 
-  def select: SelectBuilder[ShiftFields, ShiftRow] = SelectBuilder.of(""""humanresources"."shift"""", ShiftFields.structure, ShiftRow.read)
+  override def select: SelectBuilder[ShiftFields, ShiftRow] = SelectBuilder.of(""""humanresources"."shift"""", ShiftFields.structure, ShiftRow.read)
 
-  def selectAll: Stream[ConnectionIO, ShiftRow] = sql"""select "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text from "humanresources"."shift"""".query(ShiftRow.read).stream
+  override def selectAll: Stream[ConnectionIO, ShiftRow] = sql"""select "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text from "humanresources"."shift"""".query(ShiftRow.read).stream
 
-  def selectById(shiftid: ShiftId): ConnectionIO[Option[ShiftRow]] = sql"""select "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text from "humanresources"."shift" where "shiftid" = ${fromWrite(shiftid)(new Write.Single(ShiftId.put))}""".query(ShiftRow.read).option
+  override def selectById(shiftid: ShiftId): ConnectionIO[Option[ShiftRow]] = sql"""select "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text from "humanresources"."shift" where "shiftid" = ${fromWrite(shiftid)(new Write.Single(ShiftId.put))}""".query(ShiftRow.read).option
 
-  def selectByIds(shiftids: Array[ShiftId]): Stream[ConnectionIO, ShiftRow] = sql"""select "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text from "humanresources"."shift" where "shiftid" = ANY(${fromWrite(shiftids)(new Write.Single(ShiftId.arrayPut))})""".query(ShiftRow.read).stream
+  override def selectByIds(shiftids: Array[ShiftId]): Stream[ConnectionIO, ShiftRow] = sql"""select "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text from "humanresources"."shift" where "shiftid" = ANY(${fromWrite(shiftids)(new Write.Single(ShiftId.arrayPut))})""".query(ShiftRow.read).stream
 
-  def selectByIdsTracked(shiftids: Array[ShiftId]): ConnectionIO[Map[ShiftId, ShiftRow]] = {
+  override def selectByIdsTracked(shiftids: Array[ShiftId]): ConnectionIO[Map[ShiftId, ShiftRow]] = {
     selectByIds(shiftids).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.shiftid, x)).toMap
       shiftids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[ShiftFields, ShiftRow] = UpdateBuilder.of(""""humanresources"."shift"""", ShiftFields.structure, ShiftRow.read)
+  override def update: UpdateBuilder[ShiftFields, ShiftRow] = UpdateBuilder.of(""""humanresources"."shift"""", ShiftFields.structure, ShiftRow.read)
 
-  def update(row: ShiftRow): ConnectionIO[Option[ShiftRow]] = {
+  override def update(row: ShiftRow): ConnectionIO[Option[ShiftRow]] = {
     val shiftid = row.shiftid
     sql"""update "humanresources"."shift"
     set "name" = ${fromWrite(row.name)(new Write.Single(Name.put))}::varchar,
@@ -103,7 +103,7 @@ class ShiftRepoImpl extends ShiftRepo {
     returning "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text""".query(ShiftRow.read).option
   }
 
-  def upsert(unsaved: ShiftRow): ConnectionIO[ShiftRow] = {
+  override def upsert(unsaved: ShiftRow): ConnectionIO[ShiftRow] = {
     sql"""insert into "humanresources"."shift"("shiftid", "name", "starttime", "endtime", "modifieddate")
     values (
       ${fromWrite(unsaved.shiftid)(new Write.Single(ShiftId.put))}::int4,
@@ -122,7 +122,7 @@ class ShiftRepoImpl extends ShiftRepo {
     """.query(ShiftRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[ShiftRow]): Stream[ConnectionIO, ShiftRow] = {
+  override def upsertBatch(unsaved: List[ShiftRow]): Stream[ConnectionIO, ShiftRow] = {
     Update[ShiftRow](
       s"""insert into "humanresources"."shift"("shiftid", "name", "starttime", "endtime", "modifieddate")
       values (?::int4,?::varchar,?::time,?::time,?::timestamp)
@@ -138,7 +138,7 @@ class ShiftRepoImpl extends ShiftRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, ShiftRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

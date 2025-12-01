@@ -26,11 +26,11 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
-  def delete: DeleteBuilder[SalesorderdetailFields, SalesorderdetailRow] = DeleteBuilder.of(""""sales"."salesorderdetail"""", SalesorderdetailFields.structure, SalesorderdetailRow.jdbcDecoder)
+  override def delete: DeleteBuilder[SalesorderdetailFields, SalesorderdetailRow] = DeleteBuilder.of(""""sales"."salesorderdetail"""", SalesorderdetailFields.structure, SalesorderdetailRow.jdbcDecoder)
 
-  def deleteById(compositeId: SalesorderdetailId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "sales"."salesorderdetail" where "salesorderid" = ${Segment.paramSegment(compositeId.salesorderid)(using SalesorderheaderId.setter)} AND "salesorderdetailid" = ${Segment.paramSegment(compositeId.salesorderdetailid)(using Setter.intSetter)}""".delete.map(_ > 0)
+  override def deleteById(compositeId: SalesorderdetailId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "sales"."salesorderdetail" where "salesorderid" = ${Segment.paramSegment(compositeId.salesorderid)(using SalesorderheaderId.setter)} AND "salesorderdetailid" = ${Segment.paramSegment(compositeId.salesorderdetailid)(using Setter.intSetter)}""".delete.map(_ > 0)
 
-  def deleteByIds(compositeIds: Array[SalesorderdetailId]): ZIO[ZConnection, Throwable, Long] = {
+  override def deleteByIds(compositeIds: Array[SalesorderdetailId]): ZIO[ZConnection, Throwable, Long] = {
     val salesorderid = compositeIds.map(_.salesorderid)
     val salesorderdetailid = compositeIds.map(_.salesorderdetailid)
     sql"""delete
@@ -40,14 +40,14 @@ class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
     """.delete
   }
 
-  def insert(unsaved: SalesorderdetailRow): ZIO[ZConnection, Throwable, SalesorderdetailRow] = {
+  override def insert(unsaved: SalesorderdetailRow): ZIO[ZConnection, Throwable, SalesorderdetailRow] = {
     sql"""insert into "sales"."salesorderdetail"("salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate")
     values (${Segment.paramSegment(unsaved.salesorderid)(using SalesorderheaderId.setter)}::int4, ${Segment.paramSegment(unsaved.salesorderdetailid)(using Setter.intSetter)}::int4, ${Segment.paramSegment(unsaved.carriertrackingnumber)(using Setter.optionParamSetter(using Setter.stringSetter))}, ${Segment.paramSegment(unsaved.orderqty)(using TypoShort.setter)}::int2, ${Segment.paramSegment(unsaved.productid)(using ProductId.setter)}::int4, ${Segment.paramSegment(unsaved.specialofferid)(using SpecialofferId.setter)}::int4, ${Segment.paramSegment(unsaved.unitprice)(using Setter.bigDecimalScalaSetter)}::numeric, ${Segment.paramSegment(unsaved.unitpricediscount)(using Setter.bigDecimalScalaSetter)}::numeric, ${Segment.paramSegment(unsaved.rowguid)(using TypoUUID.setter)}::uuid, ${Segment.paramSegment(unsaved.modifieddate)(using TypoLocalDateTime.setter)}::timestamp)
     returning "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text
     """.insertReturning(using SalesorderdetailRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insert(unsaved: SalesorderdetailRowUnsaved): ZIO[ZConnection, Throwable, SalesorderdetailRow] = {
+  override def insert(unsaved: SalesorderdetailRowUnsaved): ZIO[ZConnection, Throwable, SalesorderdetailRow] = {
     val fs = List(
       Some((sql""""salesorderid"""", sql"${Segment.paramSegment(unsaved.salesorderid)(using SalesorderheaderId.setter)}::int4")),
       Some((sql""""carriertrackingnumber"""", sql"${Segment.paramSegment(unsaved.carriertrackingnumber)(using Setter.optionParamSetter(using Setter.stringSetter))}")),
@@ -84,24 +84,24 @@ class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
     q.insertReturning(using SalesorderdetailRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, SalesorderdetailRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "sales"."salesorderdetail"("salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved)(using SalesorderdetailRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, SalesorderdetailRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "sales"."salesorderdetail"("salesorderid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "salesorderdetailid", "unitpricediscount", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using SalesorderdetailRowUnsaved.pgText)
 
-  def select: SelectBuilder[SalesorderdetailFields, SalesorderdetailRow] = SelectBuilder.of(""""sales"."salesorderdetail"""", SalesorderdetailFields.structure, SalesorderdetailRow.jdbcDecoder)
+  override def select: SelectBuilder[SalesorderdetailFields, SalesorderdetailRow] = SelectBuilder.of(""""sales"."salesorderdetail"""", SalesorderdetailFields.structure, SalesorderdetailRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, SalesorderdetailRow] = sql"""select "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text from "sales"."salesorderdetail"""".query(using SalesorderdetailRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, SalesorderdetailRow] = sql"""select "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text from "sales"."salesorderdetail"""".query(using SalesorderdetailRow.jdbcDecoder).selectStream()
 
-  def selectById(compositeId: SalesorderdetailId): ZIO[ZConnection, Throwable, Option[SalesorderdetailRow]] = sql"""select "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text from "sales"."salesorderdetail" where "salesorderid" = ${Segment.paramSegment(compositeId.salesorderid)(using SalesorderheaderId.setter)} AND "salesorderdetailid" = ${Segment.paramSegment(compositeId.salesorderdetailid)(using Setter.intSetter)}""".query(using SalesorderdetailRow.jdbcDecoder).selectOne
+  override def selectById(compositeId: SalesorderdetailId): ZIO[ZConnection, Throwable, Option[SalesorderdetailRow]] = sql"""select "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text from "sales"."salesorderdetail" where "salesorderid" = ${Segment.paramSegment(compositeId.salesorderid)(using SalesorderheaderId.setter)} AND "salesorderdetailid" = ${Segment.paramSegment(compositeId.salesorderdetailid)(using Setter.intSetter)}""".query(using SalesorderdetailRow.jdbcDecoder).selectOne
 
-  def selectByIds(compositeIds: Array[SalesorderdetailId]): ZStream[ZConnection, Throwable, SalesorderdetailRow] = {
+  override def selectByIds(compositeIds: Array[SalesorderdetailId]): ZStream[ZConnection, Throwable, SalesorderdetailRow] = {
     val salesorderid = compositeIds.map(_.salesorderid)
     val salesorderdetailid = compositeIds.map(_.salesorderdetailid)
     sql"""select "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text
@@ -111,16 +111,16 @@ class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
     """.query(using SalesorderdetailRow.jdbcDecoder).selectStream()
   }
 
-  def selectByIdsTracked(compositeIds: Array[SalesorderdetailId]): ZIO[ZConnection, Throwable, Map[SalesorderdetailId, SalesorderdetailRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[SalesorderdetailId]): ZIO[ZConnection, Throwable, Map[SalesorderdetailId, SalesorderdetailRow]] = {
     selectByIds(compositeIds).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[SalesorderdetailFields, SalesorderdetailRow] = UpdateBuilder.of(""""sales"."salesorderdetail"""", SalesorderdetailFields.structure, SalesorderdetailRow.jdbcDecoder)
+  override def update: UpdateBuilder[SalesorderdetailFields, SalesorderdetailRow] = UpdateBuilder.of(""""sales"."salesorderdetail"""", SalesorderdetailFields.structure, SalesorderdetailRow.jdbcDecoder)
 
-  def update(row: SalesorderdetailRow): ZIO[ZConnection, Throwable, Option[SalesorderdetailRow]] = {
+  override def update(row: SalesorderdetailRow): ZIO[ZConnection, Throwable, Option[SalesorderdetailRow]] = {
     val compositeId = row.compositeId
     sql"""update "sales"."salesorderdetail"
     set "carriertrackingnumber" = ${Segment.paramSegment(row.carriertrackingnumber)(using Setter.optionParamSetter(using Setter.stringSetter))},
@@ -137,7 +137,7 @@ class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
       .selectOne
   }
 
-  def upsert(unsaved: SalesorderdetailRow): ZIO[ZConnection, Throwable, UpdateResult[SalesorderdetailRow]] = {
+  override def upsert(unsaved: SalesorderdetailRow): ZIO[ZConnection, Throwable, UpdateResult[SalesorderdetailRow]] = {
     sql"""insert into "sales"."salesorderdetail"("salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate")
     values (
       ${Segment.paramSegment(unsaved.salesorderid)(using SalesorderheaderId.setter)}::int4,
@@ -165,7 +165,7 @@ class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, SalesorderdetailRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

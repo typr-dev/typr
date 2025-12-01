@@ -18,13 +18,13 @@ import typo.dsl.UpdateBuilder.UpdateBuilderMock
 import typo.dsl.UpdateParams
 
 case class OnlyPkColumnsRepoMock(map: scala.collection.mutable.Map[OnlyPkColumnsId, OnlyPkColumnsRow] = scala.collection.mutable.Map.empty[OnlyPkColumnsId, OnlyPkColumnsRow]) extends OnlyPkColumnsRepo {
-  def delete: DeleteBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = DeleteBuilderMock(DeleteParams.empty, OnlyPkColumnsFields.structure, map)
+  override def delete: DeleteBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = DeleteBuilderMock(DeleteParams.empty, OnlyPkColumnsFields.structure, map)
 
-  def deleteById(compositeId: OnlyPkColumnsId)(using c: Connection): Boolean = map.remove(compositeId).isDefined
+  override def deleteById(compositeId: OnlyPkColumnsId)(using c: Connection): Boolean = map.remove(compositeId).isDefined
 
-  def deleteByIds(compositeIds: Array[OnlyPkColumnsId])(using c: Connection): Int = compositeIds.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(compositeIds: Array[OnlyPkColumnsId])(using c: Connection): Int = compositeIds.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: OnlyPkColumnsRow)(using c: Connection): OnlyPkColumnsRow = {
+  override def insert(unsaved: OnlyPkColumnsRow)(using c: Connection): OnlyPkColumnsRow = {
     val _ = if (map.contains(unsaved.compositeId))
       sys.error(s"id ${unsaved.compositeId} already exists")
     else
@@ -33,7 +33,7 @@ case class OnlyPkColumnsRepoMock(map: scala.collection.mutable.Map[OnlyPkColumns
     unsaved
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[OnlyPkColumnsRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -43,27 +43,27 @@ case class OnlyPkColumnsRepoMock(map: scala.collection.mutable.Map[OnlyPkColumns
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = SelectBuilderMock(OnlyPkColumnsFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = SelectBuilderMock(OnlyPkColumnsFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(using c: Connection): List[OnlyPkColumnsRow] = map.values.toList
+  override def selectAll(using c: Connection): List[OnlyPkColumnsRow] = map.values.toList
 
-  def selectById(compositeId: OnlyPkColumnsId)(using c: Connection): Option[OnlyPkColumnsRow] = map.get(compositeId)
+  override def selectById(compositeId: OnlyPkColumnsId)(using c: Connection): Option[OnlyPkColumnsRow] = map.get(compositeId)
 
-  def selectByIds(compositeIds: Array[OnlyPkColumnsId])(using c: Connection): List[OnlyPkColumnsRow] = compositeIds.flatMap(map.get).toList
+  override def selectByIds(compositeIds: Array[OnlyPkColumnsId])(using c: Connection): List[OnlyPkColumnsRow] = compositeIds.flatMap(map.get).toList
 
-  def selectByIdsTracked(compositeIds: Array[OnlyPkColumnsId])(using c: Connection): Map[OnlyPkColumnsId, OnlyPkColumnsRow] = {
+  override def selectByIdsTracked(compositeIds: Array[OnlyPkColumnsId])(using c: Connection): Map[OnlyPkColumnsId, OnlyPkColumnsRow] = {
     val byId = selectByIds(compositeIds).view.map(x => (x.compositeId, x)).toMap
     compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = UpdateBuilderMock(UpdateParams.empty, OnlyPkColumnsFields.structure, map)
+  override def update: UpdateBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = UpdateBuilderMock(UpdateParams.empty, OnlyPkColumnsFields.structure, map)
 
-  def upsert(unsaved: OnlyPkColumnsRow)(using c: Connection): OnlyPkColumnsRow = {
+  override def upsert(unsaved: OnlyPkColumnsRow)(using c: Connection): OnlyPkColumnsRow = {
     map.put(unsaved.compositeId, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[OnlyPkColumnsRow])(using c: Connection): List[OnlyPkColumnsRow] = {
+  override def upsertBatch(unsaved: Iterable[OnlyPkColumnsRow])(using c: Connection): List[OnlyPkColumnsRow] = {
     unsaved.map { row =>
       map += (row.compositeId -> row)
       row
@@ -71,7 +71,7 @@ case class OnlyPkColumnsRepoMock(map: scala.collection.mutable.Map[OnlyPkColumns
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[OnlyPkColumnsRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

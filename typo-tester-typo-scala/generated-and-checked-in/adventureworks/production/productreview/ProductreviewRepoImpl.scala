@@ -22,11 +22,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ProductreviewRepoImpl extends ProductreviewRepo {
-  def delete: DeleteBuilder[ProductreviewFields, ProductreviewRow] = DeleteBuilder.of("production.productreview", ProductreviewFields.structure)
+  override def delete: DeleteBuilder[ProductreviewFields, ProductreviewRow] = DeleteBuilder.of("production.productreview", ProductreviewFields.structure)
 
-  def deleteById(productreviewid: ProductreviewId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."productreview" where "productreviewid" = ${ProductreviewId.pgType.encode(productreviewid)}""".update().runUnchecked(c) > 0
+  override def deleteById(productreviewid: ProductreviewId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."productreview" where "productreviewid" = ${ProductreviewId.pgType.encode(productreviewid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(productreviewids: Array[ProductreviewId])(using c: Connection): Integer = {
+  override def deleteByIds(productreviewids: Array[ProductreviewId])(using c: Connection): Integer = {
     interpolate"""delete
     from "production"."productreview"
     where "productreviewid" = ANY(${ProductreviewId.pgTypeArray.encode(productreviewids)})"""
@@ -34,7 +34,7 @@ class ProductreviewRepoImpl extends ProductreviewRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: ProductreviewRow)(using c: Connection): ProductreviewRow = {
+  override def insert(unsaved: ProductreviewRow)(using c: Connection): ProductreviewRow = {
   interpolate"""insert into "production"."productreview"("productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate")
     values (${ProductreviewId.pgType.encode(unsaved.productreviewid)}::int4, ${ProductId.pgType.encode(unsaved.productid)}::int4, ${Name.pgType.encode(unsaved.reviewername)}::varchar, ${TypoLocalDateTime.pgType.encode(unsaved.reviewdate)}::timestamp, ${PgTypes.text.encode(unsaved.emailaddress)}, ${PgTypes.int4.encode(unsaved.rating)}::int4, ${PgTypes.text.opt().encode(unsaved.comments)}, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text
@@ -42,9 +42,9 @@ class ProductreviewRepoImpl extends ProductreviewRepo {
     .updateReturning(ProductreviewRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: ProductreviewRowUnsaved)(using c: Connection): ProductreviewRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: ProductreviewRowUnsaved)(using c: Connection): ProductreviewRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""productid"""")): @scala.annotation.nowarn
     values.add(interpolate"${ProductId.pgType.encode(unsaved.productid)}::int4"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""reviewername"""")): @scala.annotation.nowarn
@@ -56,25 +56,16 @@ class ProductreviewRepoImpl extends ProductreviewRepo {
     columns.add(Fragment.lit(""""comments"""")): @scala.annotation.nowarn
     values.add(interpolate"${PgTypes.text.opt().encode(unsaved.comments)}"): @scala.annotation.nowarn
     unsaved.productreviewid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""productreviewid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${ProductreviewId.pgType.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""productreviewid"""")): @scala.annotation.nowarn; values.add(interpolate"${ProductreviewId.pgType.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.reviewdate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""reviewdate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""reviewdate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "production"."productreview"(${Fragment.comma(columns)})
@@ -82,51 +73,51 @@ class ProductreviewRepoImpl extends ProductreviewRepo {
       returning "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text
       """
     }
-    q.updateReturning(ProductreviewRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(ProductreviewRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[ProductreviewRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."productreview"("productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate") FROM STDIN""", batchSize, unsaved, c, ProductreviewRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[ProductreviewRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."productreview"("productid", "reviewername", "emailaddress", "rating", "comments", "productreviewid", "reviewdate", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ProductreviewRowUnsaved.pgText)
 
-  def select: SelectBuilder[ProductreviewFields, ProductreviewRow] = SelectBuilder.of("production.productreview", ProductreviewFields.structure, ProductreviewRow.`_rowParser`)
+  override def select: SelectBuilder[ProductreviewFields, ProductreviewRow] = SelectBuilder.of("production.productreview", ProductreviewFields.structure, ProductreviewRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[ProductreviewRow] = {
+  override def selectAll(using c: Connection): java.util.List[ProductreviewRow] = {
     interpolate"""select "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text
     from "production"."productreview"
-    """.as(ProductreviewRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(ProductreviewRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(productreviewid: ProductreviewId)(using c: Connection): Optional[ProductreviewRow] = {
+  override def selectById(productreviewid: ProductreviewId)(using c: Connection): Optional[ProductreviewRow] = {
     interpolate"""select "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text
     from "production"."productreview"
-    where "productreviewid" = ${ProductreviewId.pgType.encode(productreviewid)}""".as(ProductreviewRow.`_rowParser`.first()).runUnchecked(c)
+    where "productreviewid" = ${ProductreviewId.pgType.encode(productreviewid)}""".query(ProductreviewRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(productreviewids: Array[ProductreviewId])(using c: Connection): java.util.List[ProductreviewRow] = {
+  override def selectByIds(productreviewids: Array[ProductreviewId])(using c: Connection): java.util.List[ProductreviewRow] = {
     interpolate"""select "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text
     from "production"."productreview"
-    where "productreviewid" = ANY(${ProductreviewId.pgTypeArray.encode(productreviewids)})""".as(ProductreviewRow.`_rowParser`.all()).runUnchecked(c)
+    where "productreviewid" = ANY(${ProductreviewId.pgTypeArray.encode(productreviewids)})""".query(ProductreviewRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(productreviewids: Array[ProductreviewId])(using c: Connection): java.util.Map[ProductreviewId, ProductreviewRow] = {
-    val ret: java.util.Map[ProductreviewId, ProductreviewRow] = new HashMap()
+  override def selectByIdsTracked(productreviewids: Array[ProductreviewId])(using c: Connection): java.util.Map[ProductreviewId, ProductreviewRow] = {
+    val ret: HashMap[ProductreviewId, ProductreviewRow] = new HashMap[ProductreviewId, ProductreviewRow]()
     selectByIds(productreviewids)(using c).forEach(row => ret.put(row.productreviewid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[ProductreviewFields, ProductreviewRow] = UpdateBuilder.of("production.productreview", ProductreviewFields.structure, ProductreviewRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ProductreviewFields, ProductreviewRow] = UpdateBuilder.of("production.productreview", ProductreviewFields.structure, ProductreviewRow.`_rowParser`.all())
 
-  def update(row: ProductreviewRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: ProductreviewRow)(using c: Connection): java.lang.Boolean = {
     val productreviewid: ProductreviewId = row.productreviewid
-    interpolate"""update "production"."productreview"
+    return interpolate"""update "production"."productreview"
     set "productid" = ${ProductId.pgType.encode(row.productid)}::int4,
     "reviewername" = ${Name.pgType.encode(row.reviewername)}::varchar,
     "reviewdate" = ${TypoLocalDateTime.pgType.encode(row.reviewdate)}::timestamp,
@@ -137,7 +128,7 @@ class ProductreviewRepoImpl extends ProductreviewRepo {
     where "productreviewid" = ${ProductreviewId.pgType.encode(productreviewid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: ProductreviewRow)(using c: Connection): ProductreviewRow = {
+  override def upsert(unsaved: ProductreviewRow)(using c: Connection): ProductreviewRow = {
   interpolate"""insert into "production"."productreview"("productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate")
     values (${ProductreviewId.pgType.encode(unsaved.productreviewid)}::int4, ${ProductId.pgType.encode(unsaved.productid)}::int4, ${Name.pgType.encode(unsaved.reviewername)}::varchar, ${TypoLocalDateTime.pgType.encode(unsaved.reviewdate)}::timestamp, ${PgTypes.text.encode(unsaved.emailaddress)}, ${PgTypes.int4.encode(unsaved.rating)}::int4, ${PgTypes.text.opt().encode(unsaved.comments)}, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("productreviewid")
@@ -155,7 +146,7 @@ class ProductreviewRepoImpl extends ProductreviewRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[ProductreviewRow])(using c: Connection): java.util.List[ProductreviewRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[ProductreviewRow])(using c: Connection): java.util.List[ProductreviewRow] = {
     interpolate"""insert into "production"."productreview"("productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate")
     values (?::int4, ?::int4, ?::varchar, ?::timestamp, ?, ?::int4, ?, ?::timestamp)
     on conflict ("productreviewid")
@@ -174,13 +165,13 @@ class ProductreviewRepoImpl extends ProductreviewRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[ProductreviewRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table productreview_TEMP (like "production"."productreview") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy productreview_TEMP("productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate") from stdin""", batchSize, unsaved, c, ProductreviewRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "production"."productreview"("productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate")
+    return interpolate"""insert into "production"."productreview"("productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate")
     select * from productreview_TEMP
     on conflict ("productreviewid")
     do update set

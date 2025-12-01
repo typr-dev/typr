@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes
 
+import com.fasterxml.jackson.annotation.JsonValue
 import java.util.UUID
 import typo.dsl.Bijection
 import typo.runtime.PgRead
@@ -14,18 +15,18 @@ import typo.runtime.PgTypes
 import typo.runtime.PgWrite
 
 /** UUID */
-case class TypoUUID(value: UUID)
+case class TypoUUID(@JsonValue value: UUID)
 
 object TypoUUID {
   def apply(str: String): TypoUUID = new TypoUUID(UUID.fromString(str))
 
   given bijection: Bijection[TypoUUID, UUID] = Bijection.apply[TypoUUID, UUID](_.value)(TypoUUID.apply)
 
-  given pgText: PgText[TypoUUID] = PgText.textString.contramap(v => v.value.toString)
+  given pgText: PgText[TypoUUID] = PgText.textString.contramap(v => v.value.toString())
 
-  given pgType: PgType[TypoUUID] = PgTypes.uuid.bimap(v => new TypoUUID(v), v => v.value).renamed("uuid")
+  given pgType: PgType[TypoUUID] = PgTypes.uuid.bimap((v: UUID) => new TypoUUID(v), (v: TypoUUID) => v.value).renamed("uuid")
 
-  given pgTypeArray: PgType[Array[TypoUUID]] = TypoUUID.pgType.array(PgRead.massageJdbcArrayTo(classOf[Array[UUID]]).map(xs => xs.map(v => new TypoUUID(v))), PgWrite.passObjectToJdbc[UUID]().array(TypoUUID.pgType.typename().as[UUID]()).contramap(xs => xs.map((v: TypoUUID) => v.value)))
+  given pgTypeArray: PgType[Array[TypoUUID]] = TypoUUID.pgType.array(PgRead.massageJdbcArrayTo(classOf[Array[UUID]]).map((xs: Array[UUID]) => xs.map((v: UUID) => new TypoUUID(v))), PgWrite.passObjectToJdbc[UUID]().array(TypoUUID.pgType.typename().as[UUID]()).contramap((xs: Array[TypoUUID]) => xs.map((v: TypoUUID) => v.value)))
 
   def randomUUID: TypoUUID = new TypoUUID(UUID.randomUUID())
 }

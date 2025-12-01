@@ -18,13 +18,13 @@ import typo.dsl.UpdateBuilder.UpdateBuilderMock
 import typo.dsl.UpdateParams
 
 case class TitleRepoMock(map: scala.collection.mutable.Map[TitleId, TitleRow] = scala.collection.mutable.Map.empty[TitleId, TitleRow]) extends TitleRepo {
-  def delete: DeleteBuilder[TitleFields, TitleRow] = DeleteBuilderMock(DeleteParams.empty, TitleFields.structure, map)
+  override def delete: DeleteBuilder[TitleFields, TitleRow] = DeleteBuilderMock(DeleteParams.empty, TitleFields.structure, map)
 
-  def deleteById(code: TitleId)(using c: Connection): Boolean = map.remove(code).isDefined
+  override def deleteById(code: TitleId)(using c: Connection): Boolean = map.remove(code).isDefined
 
-  def deleteByIds(codes: Array[TitleId])(using c: Connection): Int = codes.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(codes: Array[TitleId])(using c: Connection): Int = codes.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: TitleRow)(using c: Connection): TitleRow = {
+  override def insert(unsaved: TitleRow)(using c: Connection): TitleRow = {
     val _ = if (map.contains(unsaved.code))
       sys.error(s"id ${unsaved.code} already exists")
     else
@@ -33,7 +33,7 @@ case class TitleRepoMock(map: scala.collection.mutable.Map[TitleId, TitleRow] = 
     unsaved
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[TitleRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -43,27 +43,27 @@ case class TitleRepoMock(map: scala.collection.mutable.Map[TitleId, TitleRow] = 
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[TitleFields, TitleRow] = SelectBuilderMock(TitleFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[TitleFields, TitleRow] = SelectBuilderMock(TitleFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(using c: Connection): List[TitleRow] = map.values.toList
+  override def selectAll(using c: Connection): List[TitleRow] = map.values.toList
 
-  def selectById(code: TitleId)(using c: Connection): Option[TitleRow] = map.get(code)
+  override def selectById(code: TitleId)(using c: Connection): Option[TitleRow] = map.get(code)
 
-  def selectByIds(codes: Array[TitleId])(using c: Connection): List[TitleRow] = codes.flatMap(map.get).toList
+  override def selectByIds(codes: Array[TitleId])(using c: Connection): List[TitleRow] = codes.flatMap(map.get).toList
 
-  def selectByIdsTracked(codes: Array[TitleId])(using c: Connection): Map[TitleId, TitleRow] = {
+  override def selectByIdsTracked(codes: Array[TitleId])(using c: Connection): Map[TitleId, TitleRow] = {
     val byId = selectByIds(codes).view.map(x => (x.code, x)).toMap
     codes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[TitleFields, TitleRow] = UpdateBuilderMock(UpdateParams.empty, TitleFields.structure, map)
+  override def update: UpdateBuilder[TitleFields, TitleRow] = UpdateBuilderMock(UpdateParams.empty, TitleFields.structure, map)
 
-  def upsert(unsaved: TitleRow)(using c: Connection): TitleRow = {
+  override def upsert(unsaved: TitleRow)(using c: Connection): TitleRow = {
     map.put(unsaved.code, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[TitleRow])(using c: Connection): List[TitleRow] = {
+  override def upsertBatch(unsaved: Iterable[TitleRow])(using c: Connection): List[TitleRow] = {
     unsaved.map { row =>
       map += (row.code -> row)
       row
@@ -71,7 +71,7 @@ case class TitleRepoMock(map: scala.collection.mutable.Map[TitleId, TitleRow] = 
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[TitleRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

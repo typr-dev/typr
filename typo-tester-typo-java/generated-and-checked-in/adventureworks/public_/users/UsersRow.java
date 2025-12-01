@@ -14,7 +14,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple7;
 
 /** Table: public.users
   * Primary key: user_id
@@ -58,7 +57,7 @@ public record UsersRow(
     return new UsersRow(userId, name, lastName, email, password, createdAt, verifiedOn);
   };
 
-  static RowParser<UsersRow> _rowParser = RowParsers.of(UsersId.pgType, PgTypes.text, PgTypes.text.opt(), TypoUnknownCitext.pgType, PgTypes.text, TypoInstant.pgType, TypoInstant.pgType.opt(), UsersRow::new, row -> new Tuple7<>(row.userId(), row.name(), row.lastName(), row.email(), row.password(), row.createdAt(), row.verifiedOn()));;
+  static RowParser<UsersRow> _rowParser = RowParsers.of(UsersId.pgType, PgTypes.text, PgTypes.text.opt(), TypoUnknownCitext.pgType, PgTypes.text, TypoInstant.pgType, TypoInstant.pgType.opt(), UsersRow::new, row -> new Object[]{row.userId(), row.name(), row.lastName(), row.email(), row.password(), row.createdAt(), row.verifiedOn()});;
 
   static public PgText<UsersRow> pgText =
     PgText.from(_rowParser);

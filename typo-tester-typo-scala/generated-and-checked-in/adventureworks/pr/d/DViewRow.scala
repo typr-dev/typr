@@ -16,7 +16,6 @@ import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple13
 
 /** View: pr.d */
 case class DViewRow(
@@ -49,21 +48,5 @@ case class DViewRow(
 )
 
 object DViewRow {
-  val `_rowParser`: RowParser[DViewRow] = {
-    RowParsers.of(PgTypes.text, BusinessentityId.pgType, Flag.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text, PgTypes.int4, TypoShort.pgType, PgTypes.text.opt(), TypoBytea.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, DocumentId.pgType, DViewRow.apply, row => new Tuple13(
-      row.title,
-      row.owner,
-      row.folderflag,
-      row.filename,
-      row.fileextension,
-      row.revision,
-      row.changenumber,
-      row.status,
-      row.documentsummary,
-      row.document,
-      row.rowguid,
-      row.modifieddate,
-      row.documentnode
-    ))
-  }
+  val `_rowParser`: RowParser[DViewRow] = RowParsers.of(PgTypes.text, BusinessentityId.pgType, Flag.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text, PgTypes.int4, TypoShort.pgType, PgTypes.text.opt(), TypoBytea.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, DocumentId.pgType, DViewRow.apply, row => Array(row.title, row.owner, row.folderflag, row.filename, row.fileextension, row.revision, row.changenumber, row.status, row.documentsummary, row.document, row.rowguid, row.modifieddate, row.documentnode))
 }

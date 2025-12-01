@@ -5,22 +5,22 @@
  */
 package adventureworks.pe.bec;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class BecViewRepoImpl implements BecViewRepo {
+  @Override
   public SelectBuilder<BecViewFields, BecViewRow> select() {
     return SelectBuilder.of("pe.bec", BecViewFields.structure(), BecViewRow._rowParser);
   };
 
+  @Override
   public List<BecViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text
        from "pe"."bec"
-    """)).as(BecViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(BecViewRow._rowParser.all()).runUnchecked(c);
   };
 }

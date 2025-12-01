@@ -42,7 +42,7 @@ object ThViewFields {
 
     override lazy val fields: ThViewFields = {
       new ThViewFields {
-        def id: Field[TransactionhistoryId, ThViewRow] = {
+        override def id: Field[TransactionhistoryId, ThViewRow] = {
           new Field[TransactionhistoryId, ThViewRow](
             _path,
             "id",
@@ -53,7 +53,7 @@ object ThViewFields {
             TransactionhistoryId.pgType
           )
         }
-        def transactionid: Field[TransactionhistoryId, ThViewRow] = {
+        override def transactionid: Field[TransactionhistoryId, ThViewRow] = {
           new Field[TransactionhistoryId, ThViewRow](
             _path,
             "transactionid",
@@ -64,7 +64,7 @@ object ThViewFields {
             TransactionhistoryId.pgType
           )
         }
-        def productid: Field[ProductId, ThViewRow] = {
+        override def productid: Field[ProductId, ThViewRow] = {
           new Field[ProductId, ThViewRow](
             _path,
             "productid",
@@ -75,7 +75,7 @@ object ThViewFields {
             ProductId.pgType
           )
         }
-        def referenceorderid: Field[Integer, ThViewRow] = {
+        override def referenceorderid: Field[Integer, ThViewRow] = {
           new Field[Integer, ThViewRow](
             _path,
             "referenceorderid",
@@ -86,7 +86,7 @@ object ThViewFields {
             PgTypes.int4
           )
         }
-        def referenceorderlineid: Field[Integer, ThViewRow] = {
+        override def referenceorderlineid: Field[Integer, ThViewRow] = {
           new Field[Integer, ThViewRow](
             _path,
             "referenceorderlineid",
@@ -97,7 +97,7 @@ object ThViewFields {
             PgTypes.int4
           )
         }
-        def transactiondate: Field[TypoLocalDateTime, ThViewRow] = {
+        override def transactiondate: Field[TypoLocalDateTime, ThViewRow] = {
           new Field[TypoLocalDateTime, ThViewRow](
             _path,
             "transactiondate",
@@ -108,7 +108,7 @@ object ThViewFields {
             TypoLocalDateTime.pgType
           )
         }
-        def transactiontype: Field[/* bpchar, max 1 chars */ String, ThViewRow] = {
+        override def transactiontype: Field[/* bpchar, max 1 chars */ String, ThViewRow] = {
           new Field[/* bpchar, max 1 chars */ String, ThViewRow](
             _path,
             "transactiontype",
@@ -119,7 +119,7 @@ object ThViewFields {
             PgTypes.text
           )
         }
-        def quantity: Field[Integer, ThViewRow] = {
+        override def quantity: Field[Integer, ThViewRow] = {
           new Field[Integer, ThViewRow](
             _path,
             "quantity",
@@ -130,7 +130,7 @@ object ThViewFields {
             PgTypes.int4
           )
         }
-        def actualcost: Field[java.math.BigDecimal, ThViewRow] = {
+        override def actualcost: Field[java.math.BigDecimal, ThViewRow] = {
           new Field[java.math.BigDecimal, ThViewRow](
             _path,
             "actualcost",
@@ -141,7 +141,7 @@ object ThViewFields {
             PgTypes.numeric
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, ThViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, ThViewRow] = {
           new Field[TypoLocalDateTime, ThViewRow](
             _path,
             "modifieddate",
@@ -157,7 +157,7 @@ object ThViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, ThViewRow]] = java.util.List.of(this.fields.id, this.fields.transactionid, this.fields.productid, this.fields.referenceorderid, this.fields.referenceorderlineid, this.fields.transactiondate, this.fields.transactiontype, this.fields.quantity, this.fields.actualcost, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[ThViewFields, ThViewRow] = new Impl(java.util.List.of())

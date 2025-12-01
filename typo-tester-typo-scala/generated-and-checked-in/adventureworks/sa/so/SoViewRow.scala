@@ -12,7 +12,6 @@ import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple12
 
 /** View: sa.so */
 case class SoViewRow(
@@ -43,20 +42,5 @@ case class SoViewRow(
 )
 
 object SoViewRow {
-  val `_rowParser`: RowParser[SoViewRow] = {
-    RowParsers.of(SpecialofferId.pgType, SpecialofferId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.text, PgTypes.text, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, PgTypes.int4, PgTypes.int4.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SoViewRow.apply, row => new Tuple12(
-      row.id,
-      row.specialofferid,
-      row.description,
-      row.discountpct,
-      row.`type`,
-      row.category,
-      row.startdate,
-      row.enddate,
-      row.minqty,
-      row.maxqty,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[SoViewRow] = RowParsers.of(SpecialofferId.pgType, SpecialofferId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.text, PgTypes.text, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, PgTypes.int4, PgTypes.int4.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SoViewRow.apply, row => Array(row.id, row.specialofferid, row.description, row.discountpct, row.`type`, row.category, row.startdate, row.enddate, row.minqty, row.maxqty, row.rowguid, row.modifieddate))
 }

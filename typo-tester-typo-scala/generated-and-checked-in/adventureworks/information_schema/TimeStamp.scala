@@ -6,13 +6,14 @@
 package adventureworks.information_schema
 
 import adventureworks.customtypes.TypoInstant
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 
 /** Domain `information_schema.time_stamp`
  * No constraint
  */
-case class TimeStamp(value: TypoInstant)
+case class TimeStamp(@JsonValue value: TypoInstant)
 
 object TimeStamp {
   given bijection: Bijection[TimeStamp, TypoInstant] = Bijection.apply[TimeStamp, TypoInstant](_.value)(TimeStamp.apply)

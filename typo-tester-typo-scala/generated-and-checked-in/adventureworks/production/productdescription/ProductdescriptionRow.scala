@@ -12,7 +12,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple4
 
 /** Table: production.productdescription
  * Product descriptions in several languages.
@@ -47,14 +46,7 @@ case class ProductdescriptionRow(
 }
 
 object ProductdescriptionRow {
-  val `_rowParser`: RowParser[ProductdescriptionRow] = {
-    RowParsers.of(ProductdescriptionId.pgType, PgTypes.text, TypoUUID.pgType, TypoLocalDateTime.pgType, ProductdescriptionRow.apply, row => new Tuple4(
-      row.productdescriptionid,
-      row.description,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[ProductdescriptionRow] = RowParsers.of(ProductdescriptionId.pgType, PgTypes.text, TypoUUID.pgType, TypoLocalDateTime.pgType, ProductdescriptionRow.apply, row => Array(row.productdescriptionid, row.description, row.rowguid, row.modifieddate))
 
   given pgText: PgText[ProductdescriptionRow] = PgText.from(`_rowParser`)
 }

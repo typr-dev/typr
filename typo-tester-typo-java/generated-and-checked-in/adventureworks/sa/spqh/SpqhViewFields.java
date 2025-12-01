@@ -18,7 +18,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface SpqhViewFields {
-  static final class Impl extends Relation<SpqhViewFields, SpqhViewRow> {
+  final class Impl extends Relation<SpqhViewFields, SpqhViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -26,21 +26,27 @@ public interface SpqhViewFields {
     @Override
     public SpqhViewFields fields() {
       return new SpqhViewFields() {
+               @Override
                public Field<BusinessentityId, SpqhViewRow> id() {
                  return new Field<BusinessentityId, SpqhViewRow>(_path, "id", SpqhViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
                };
+               @Override
                public Field<BusinessentityId, SpqhViewRow> businessentityid() {
                  return new Field<BusinessentityId, SpqhViewRow>(_path, "businessentityid", SpqhViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, SpqhViewRow> quotadate() {
                  return new Field<TypoLocalDateTime, SpqhViewRow>(_path, "quotadate", SpqhViewRow::quotadate, Optional.of("text"), Optional.empty(), (row, value) -> row.withQuotadate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public Field<BigDecimal, SpqhViewRow> salesquota() {
                  return new Field<BigDecimal, SpqhViewRow>(_path, "salesquota", SpqhViewRow::salesquota, Optional.empty(), Optional.empty(), (row, value) -> row.withSalesquota(value), PgTypes.numeric);
                };
+               @Override
                public Field<TypoUUID, SpqhViewRow> rowguid() {
                  return new Field<TypoUUID, SpqhViewRow>(_path, "rowguid", SpqhViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, SpqhViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, SpqhViewRow>(_path, "modifieddate", SpqhViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -52,6 +58,7 @@ public interface SpqhViewFields {
       return List.of(this.fields().id(), this.fields().businessentityid(), this.fields().quotadate(), this.fields().salesquota(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

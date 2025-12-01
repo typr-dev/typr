@@ -10,9 +10,9 @@ import typo.dsl.SelectBuilder
 import anorm.SqlStringInterpolation
 
 class PiViewRepoImpl extends PiViewRepo {
-  def select: SelectBuilder[PiViewFields, PiViewRow] = SelectBuilder.of(""""pr"."pi"""", PiViewFields.structure, PiViewRow.rowParser)
+  override def select: SelectBuilder[PiViewFields, PiViewRow] = SelectBuilder.of(""""pr"."pi"""", PiViewFields.structure, PiViewRow.rowParser)
 
-  def selectAll(using c: Connection): List[PiViewRow] = {
+  override def selectAll(using c: Connection): List[PiViewRow] = {
     SQL"""select "id", "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"::text
     from "pr"."pi"
     """.as(PiViewRow.rowParser(1).*)

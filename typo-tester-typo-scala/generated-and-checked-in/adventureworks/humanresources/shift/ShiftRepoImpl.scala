@@ -21,11 +21,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ShiftRepoImpl extends ShiftRepo {
-  def delete: DeleteBuilder[ShiftFields, ShiftRow] = DeleteBuilder.of("humanresources.shift", ShiftFields.structure)
+  override def delete: DeleteBuilder[ShiftFields, ShiftRow] = DeleteBuilder.of("humanresources.shift", ShiftFields.structure)
 
-  def deleteById(shiftid: ShiftId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "humanresources"."shift" where "shiftid" = ${ShiftId.pgType.encode(shiftid)}""".update().runUnchecked(c) > 0
+  override def deleteById(shiftid: ShiftId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "humanresources"."shift" where "shiftid" = ${ShiftId.pgType.encode(shiftid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(shiftids: Array[ShiftId])(using c: Connection): Integer = {
+  override def deleteByIds(shiftids: Array[ShiftId])(using c: Connection): Integer = {
     interpolate"""delete
     from "humanresources"."shift"
     where "shiftid" = ANY(${ShiftId.pgTypeArray.encode(shiftids)})"""
@@ -33,7 +33,7 @@ class ShiftRepoImpl extends ShiftRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: ShiftRow)(using c: Connection): ShiftRow = {
+  override def insert(unsaved: ShiftRow)(using c: Connection): ShiftRow = {
   interpolate"""insert into "humanresources"."shift"("shiftid", "name", "starttime", "endtime", "modifieddate")
     values (${ShiftId.pgType.encode(unsaved.shiftid)}::int4, ${Name.pgType.encode(unsaved.name)}::varchar, ${TypoLocalTime.pgType.encode(unsaved.starttime)}::time, ${TypoLocalTime.pgType.encode(unsaved.endtime)}::time, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text
@@ -41,9 +41,9 @@ class ShiftRepoImpl extends ShiftRepo {
     .updateReturning(ShiftRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: ShiftRowUnsaved)(using c: Connection): ShiftRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: ShiftRowUnsaved)(using c: Connection): ShiftRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
     values.add(interpolate"${Name.pgType.encode(unsaved.name)}::varchar"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""starttime"""")): @scala.annotation.nowarn
@@ -51,18 +51,12 @@ class ShiftRepoImpl extends ShiftRepo {
     columns.add(Fragment.lit(""""endtime"""")): @scala.annotation.nowarn
     values.add(interpolate"${TypoLocalTime.pgType.encode(unsaved.endtime)}::time"): @scala.annotation.nowarn
     unsaved.shiftid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""shiftid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${ShiftId.pgType.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""shiftid"""")): @scala.annotation.nowarn; values.add(interpolate"${ShiftId.pgType.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "humanresources"."shift"(${Fragment.comma(columns)})
@@ -70,51 +64,51 @@ class ShiftRepoImpl extends ShiftRepo {
       returning "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text
       """
     }
-    q.updateReturning(ShiftRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(ShiftRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[ShiftRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "humanresources"."shift"("shiftid", "name", "starttime", "endtime", "modifieddate") FROM STDIN""", batchSize, unsaved, c, ShiftRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[ShiftRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "humanresources"."shift"("name", "starttime", "endtime", "shiftid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ShiftRowUnsaved.pgText)
 
-  def select: SelectBuilder[ShiftFields, ShiftRow] = SelectBuilder.of("humanresources.shift", ShiftFields.structure, ShiftRow.`_rowParser`)
+  override def select: SelectBuilder[ShiftFields, ShiftRow] = SelectBuilder.of("humanresources.shift", ShiftFields.structure, ShiftRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[ShiftRow] = {
+  override def selectAll(using c: Connection): java.util.List[ShiftRow] = {
     interpolate"""select "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text
     from "humanresources"."shift"
-    """.as(ShiftRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(ShiftRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(shiftid: ShiftId)(using c: Connection): Optional[ShiftRow] = {
+  override def selectById(shiftid: ShiftId)(using c: Connection): Optional[ShiftRow] = {
     interpolate"""select "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text
     from "humanresources"."shift"
-    where "shiftid" = ${ShiftId.pgType.encode(shiftid)}""".as(ShiftRow.`_rowParser`.first()).runUnchecked(c)
+    where "shiftid" = ${ShiftId.pgType.encode(shiftid)}""".query(ShiftRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(shiftids: Array[ShiftId])(using c: Connection): java.util.List[ShiftRow] = {
+  override def selectByIds(shiftids: Array[ShiftId])(using c: Connection): java.util.List[ShiftRow] = {
     interpolate"""select "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text
     from "humanresources"."shift"
-    where "shiftid" = ANY(${ShiftId.pgTypeArray.encode(shiftids)})""".as(ShiftRow.`_rowParser`.all()).runUnchecked(c)
+    where "shiftid" = ANY(${ShiftId.pgTypeArray.encode(shiftids)})""".query(ShiftRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(shiftids: Array[ShiftId])(using c: Connection): java.util.Map[ShiftId, ShiftRow] = {
-    val ret: java.util.Map[ShiftId, ShiftRow] = new HashMap()
+  override def selectByIdsTracked(shiftids: Array[ShiftId])(using c: Connection): java.util.Map[ShiftId, ShiftRow] = {
+    val ret: HashMap[ShiftId, ShiftRow] = new HashMap[ShiftId, ShiftRow]()
     selectByIds(shiftids)(using c).forEach(row => ret.put(row.shiftid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[ShiftFields, ShiftRow] = UpdateBuilder.of("humanresources.shift", ShiftFields.structure, ShiftRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ShiftFields, ShiftRow] = UpdateBuilder.of("humanresources.shift", ShiftFields.structure, ShiftRow.`_rowParser`.all())
 
-  def update(row: ShiftRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: ShiftRow)(using c: Connection): java.lang.Boolean = {
     val shiftid: ShiftId = row.shiftid
-    interpolate"""update "humanresources"."shift"
+    return interpolate"""update "humanresources"."shift"
     set "name" = ${Name.pgType.encode(row.name)}::varchar,
     "starttime" = ${TypoLocalTime.pgType.encode(row.starttime)}::time,
     "endtime" = ${TypoLocalTime.pgType.encode(row.endtime)}::time,
@@ -122,7 +116,7 @@ class ShiftRepoImpl extends ShiftRepo {
     where "shiftid" = ${ShiftId.pgType.encode(shiftid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: ShiftRow)(using c: Connection): ShiftRow = {
+  override def upsert(unsaved: ShiftRow)(using c: Connection): ShiftRow = {
   interpolate"""insert into "humanresources"."shift"("shiftid", "name", "starttime", "endtime", "modifieddate")
     values (${ShiftId.pgType.encode(unsaved.shiftid)}::int4, ${Name.pgType.encode(unsaved.name)}::varchar, ${TypoLocalTime.pgType.encode(unsaved.starttime)}::time, ${TypoLocalTime.pgType.encode(unsaved.endtime)}::time, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("shiftid")
@@ -137,7 +131,7 @@ class ShiftRepoImpl extends ShiftRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[ShiftRow])(using c: Connection): java.util.List[ShiftRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[ShiftRow])(using c: Connection): java.util.List[ShiftRow] = {
     interpolate"""insert into "humanresources"."shift"("shiftid", "name", "starttime", "endtime", "modifieddate")
     values (?::int4, ?::varchar, ?::time, ?::time, ?::timestamp)
     on conflict ("shiftid")
@@ -153,13 +147,13 @@ class ShiftRepoImpl extends ShiftRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[ShiftRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table shift_TEMP (like "humanresources"."shift") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy shift_TEMP("shiftid", "name", "starttime", "endtime", "modifieddate") from stdin""", batchSize, unsaved, c, ShiftRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "humanresources"."shift"("shiftid", "name", "starttime", "endtime", "modifieddate")
+    return interpolate"""insert into "humanresources"."shift"("shiftid", "name", "starttime", "endtime", "modifieddate")
     select * from shift_TEMP
     on conflict ("shiftid")
     do update set

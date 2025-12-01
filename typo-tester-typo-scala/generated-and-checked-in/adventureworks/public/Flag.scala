@@ -5,6 +5,7 @@
  */
 package adventureworks.public
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
@@ -12,7 +13,7 @@ import typo.runtime.PgTypes
 /** Domain `public.Flag`
  * No constraint
  */
-case class Flag(value: java.lang.Boolean)
+case class Flag(@JsonValue value: java.lang.Boolean)
 
 object Flag {
   given bijection: Bijection[Flag, java.lang.Boolean] = Bijection.apply[Flag, java.lang.Boolean](_.value)(Flag.apply)

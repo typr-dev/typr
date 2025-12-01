@@ -21,13 +21,13 @@ case class TableWithGeneratedColumnsRepoMock(
   toRow: TableWithGeneratedColumnsRowUnsaved => TableWithGeneratedColumnsRow,
   map: scala.collection.mutable.Map[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow] = scala.collection.mutable.Map.empty[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow]
 ) extends TableWithGeneratedColumnsRepo {
-  def delete: DeleteBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = DeleteBuilderMock(DeleteParams.empty, TableWithGeneratedColumnsFields.structure, map)
+  override def delete: DeleteBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = DeleteBuilderMock(DeleteParams.empty, TableWithGeneratedColumnsFields.structure, map)
 
-  def deleteById(name: TableWithGeneratedColumnsId)(using c: Connection): Boolean = map.remove(name).isDefined
+  override def deleteById(name: TableWithGeneratedColumnsId)(using c: Connection): Boolean = map.remove(name).isDefined
 
-  def deleteByIds(names: Array[TableWithGeneratedColumnsId])(using c: Connection): Int = names.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(names: Array[TableWithGeneratedColumnsId])(using c: Connection): Int = names.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: TableWithGeneratedColumnsRow)(using c: Connection): TableWithGeneratedColumnsRow = {
+  override def insert(unsaved: TableWithGeneratedColumnsRow)(using c: Connection): TableWithGeneratedColumnsRow = {
     val _ = if (map.contains(unsaved.name))
       sys.error(s"id ${unsaved.name} already exists")
     else
@@ -36,9 +36,9 @@ case class TableWithGeneratedColumnsRepoMock(
     unsaved
   }
 
-  def insert(unsaved: TableWithGeneratedColumnsRowUnsaved)(using c: Connection): TableWithGeneratedColumnsRow = insert(toRow(unsaved))
+  override def insert(unsaved: TableWithGeneratedColumnsRowUnsaved)(using c: Connection): TableWithGeneratedColumnsRow = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[TableWithGeneratedColumnsRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -49,7 +49,7 @@ case class TableWithGeneratedColumnsRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[TableWithGeneratedColumnsRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -60,27 +60,27 @@ case class TableWithGeneratedColumnsRepoMock(
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = SelectBuilderMock(TableWithGeneratedColumnsFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = SelectBuilderMock(TableWithGeneratedColumnsFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(using c: Connection): List[TableWithGeneratedColumnsRow] = map.values.toList
+  override def selectAll(using c: Connection): List[TableWithGeneratedColumnsRow] = map.values.toList
 
-  def selectById(name: TableWithGeneratedColumnsId)(using c: Connection): Option[TableWithGeneratedColumnsRow] = map.get(name)
+  override def selectById(name: TableWithGeneratedColumnsId)(using c: Connection): Option[TableWithGeneratedColumnsRow] = map.get(name)
 
-  def selectByIds(names: Array[TableWithGeneratedColumnsId])(using c: Connection): List[TableWithGeneratedColumnsRow] = names.flatMap(map.get).toList
+  override def selectByIds(names: Array[TableWithGeneratedColumnsId])(using c: Connection): List[TableWithGeneratedColumnsRow] = names.flatMap(map.get).toList
 
-  def selectByIdsTracked(names: Array[TableWithGeneratedColumnsId])(using c: Connection): Map[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow] = {
+  override def selectByIdsTracked(names: Array[TableWithGeneratedColumnsId])(using c: Connection): Map[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow] = {
     val byId = selectByIds(names).view.map(x => (x.name, x)).toMap
     names.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = UpdateBuilderMock(UpdateParams.empty, TableWithGeneratedColumnsFields.structure, map)
+  override def update: UpdateBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = UpdateBuilderMock(UpdateParams.empty, TableWithGeneratedColumnsFields.structure, map)
 
-  def upsert(unsaved: TableWithGeneratedColumnsRow)(using c: Connection): TableWithGeneratedColumnsRow = {
+  override def upsert(unsaved: TableWithGeneratedColumnsRow)(using c: Connection): TableWithGeneratedColumnsRow = {
     map.put(unsaved.name, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[TableWithGeneratedColumnsRow])(using c: Connection): List[TableWithGeneratedColumnsRow] = {
+  override def upsertBatch(unsaved: Iterable[TableWithGeneratedColumnsRow])(using c: Connection): List[TableWithGeneratedColumnsRow] = {
     unsaved.map { row =>
       map += (row.name -> row)
       row
@@ -88,7 +88,7 @@ case class TableWithGeneratedColumnsRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[TableWithGeneratedColumnsRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

@@ -10,7 +10,6 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.userdefined.CustomCreditcardId
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple4
 
 /** View: sa.pcc */
 case class PccViewRow(
@@ -25,12 +24,5 @@ case class PccViewRow(
 )
 
 object PccViewRow {
-  val `_rowParser`: RowParser[PccViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, /* user-picked */ CustomCreditcardId.pgType, TypoLocalDateTime.pgType, PccViewRow.apply, row => new Tuple4(
-      row.id,
-      row.businessentityid,
-      row.creditcardid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[PccViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, /* user-picked */ CustomCreditcardId.pgType, TypoLocalDateTime.pgType, PccViewRow.apply, row => Array(row.id, row.businessentityid, row.creditcardid, row.modifieddate))
 }

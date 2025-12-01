@@ -15,7 +15,6 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple13;
 
 /** View: pu.poh */
 public record PohViewRow(
@@ -111,5 +110,5 @@ public record PohViewRow(
     return new PohViewRow(id, purchaseorderid, revisionnumber, status, employeeid, vendorid, shipmethodid, orderdate, shipdate, subtotal, taxamt, freight, modifieddate);
   };
 
-  static RowParser<PohViewRow> _rowParser = RowParsers.of(PurchaseorderheaderId.pgType, PurchaseorderheaderId.pgType, TypoShort.pgType, TypoShort.pgType, BusinessentityId.pgType, BusinessentityId.pgType, ShipmethodId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, PohViewRow::new, row -> new Tuple13<>(row.id(), row.purchaseorderid(), row.revisionnumber(), row.status(), row.employeeid(), row.vendorid(), row.shipmethodid(), row.orderdate(), row.shipdate(), row.subtotal(), row.taxamt(), row.freight(), row.modifieddate()));;
+  static RowParser<PohViewRow> _rowParser = RowParsers.of(PurchaseorderheaderId.pgType, PurchaseorderheaderId.pgType, TypoShort.pgType, TypoShort.pgType, BusinessentityId.pgType, BusinessentityId.pgType, ShipmethodId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, PohViewRow::new, row -> new Object[]{row.id(), row.purchaseorderid(), row.revisionnumber(), row.status(), row.employeeid(), row.vendorid(), row.shipmethodid(), row.orderdate(), row.shipdate(), row.subtotal(), row.taxamt(), row.freight(), row.modifieddate()});;
 }

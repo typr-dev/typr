@@ -7,7 +7,6 @@ package adventureworks.production.unitmeasure;
 
 import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.public_.Name;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,12 +23,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class UnitmeasureRepoImpl implements UnitmeasureRepo {
+  @Override
   public DeleteBuilder<UnitmeasureFields, UnitmeasureRow> delete() {
     return DeleteBuilder.of("production.unitmeasure", UnitmeasureFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     UnitmeasureId unitmeasurecode,
     Connection c
@@ -43,6 +43,7 @@ public class UnitmeasureRepoImpl implements UnitmeasureRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     UnitmeasureId[] unitmeasurecodes,
     Connection c
@@ -59,6 +60,7 @@ public class UnitmeasureRepoImpl implements UnitmeasureRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public UnitmeasureRow insert(
     UnitmeasureRow unsaved,
     Connection c
@@ -80,49 +82,53 @@ public class UnitmeasureRepoImpl implements UnitmeasureRepo {
       .updateReturning(UnitmeasureRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public UnitmeasureRow insert(
     UnitmeasureRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"unitmeasurecode\""));
-      values.add(interpolate(
-        UnitmeasureId.pgType.encode(unsaved.unitmeasurecode()),
-        typo.runtime.Fragment.lit("::bpchar")
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"unitmeasurecode\""));
+    values.add(interpolate(
+      UnitmeasureId.pgType.encode(unsaved.unitmeasurecode()),
+      typo.runtime.Fragment.lit("::bpchar")
+    ));
+    columns.add(Fragment.lit("\"name\""));
+    values.add(interpolate(
+      Name.pgType.encode(unsaved.name()),
+      typo.runtime.Fragment.lit("::varchar")
+    ));
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
       ));
-      columns.add(Fragment.lit("\"name\""));
-      values.add(interpolate(
-        Name.pgType.encode(unsaved.name()),
-        typo.runtime.Fragment.lit("::varchar")
-      ));
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "production"."unitmeasure"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "unitmeasurecode", "name", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "production"."unitmeasure"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "unitmeasurecode", "name", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(UnitmeasureRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<UnitmeasureRow> unsaved,
     Integer batchSize,
@@ -134,6 +140,7 @@ public class UnitmeasureRepoImpl implements UnitmeasureRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<UnitmeasureRowUnsaved> unsaved,
     Integer batchSize,
@@ -144,17 +151,20 @@ public class UnitmeasureRepoImpl implements UnitmeasureRepo {
     """), batchSize, unsaved, c, UnitmeasureRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<UnitmeasureFields, UnitmeasureRow> select() {
     return SelectBuilder.of("production.unitmeasure", UnitmeasureFields.structure(), UnitmeasureRow._rowParser);
   };
 
+  @Override
   public List<UnitmeasureRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "unitmeasurecode", "name", "modifieddate"::text
        from "production"."unitmeasure"
-    """)).as(UnitmeasureRow._rowParser.all()).runUnchecked(c);
+    """)).query(UnitmeasureRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<UnitmeasureRow> selectById(
     UnitmeasureId unitmeasurecode,
     Connection c
@@ -166,9 +176,10 @@ public class UnitmeasureRepoImpl implements UnitmeasureRepo {
          where "unitmeasurecode" = """),
       UnitmeasureId.pgType.encode(unitmeasurecode),
       typo.runtime.Fragment.lit("")
-    ).as(UnitmeasureRow._rowParser.first()).runUnchecked(c);
+    ).query(UnitmeasureRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<UnitmeasureRow> selectByIds(
     UnitmeasureId[] unitmeasurecodes,
     Connection c
@@ -180,44 +191,48 @@ public class UnitmeasureRepoImpl implements UnitmeasureRepo {
          where "unitmeasurecode" = ANY("""),
       UnitmeasureId.pgTypeArray.encode(unitmeasurecodes),
       typo.runtime.Fragment.lit(")")
-    ).as(UnitmeasureRow._rowParser.all()).runUnchecked(c);
+    ).query(UnitmeasureRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<UnitmeasureId, UnitmeasureRow> selectByIdsTracked(
     UnitmeasureId[] unitmeasurecodes,
     Connection c
   ) {
-    Map<UnitmeasureId, UnitmeasureRow> ret = new HashMap<>();;
-      selectByIds(unitmeasurecodes, c).forEach(row -> ret.put(row.unitmeasurecode(), row));
+    HashMap<UnitmeasureId, UnitmeasureRow> ret = new HashMap<UnitmeasureId, UnitmeasureRow>();
+    selectByIds(unitmeasurecodes, c).forEach(row -> ret.put(row.unitmeasurecode(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<UnitmeasureFields, UnitmeasureRow> update() {
     return UpdateBuilder.of("production.unitmeasure", UnitmeasureFields.structure(), UnitmeasureRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     UnitmeasureRow row,
     Connection c
   ) {
     UnitmeasureId unitmeasurecode = row.unitmeasurecode();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "production"."unitmeasure"
-                set "name" = """),
-             Name.pgType.encode(row.name()),
-             typo.runtime.Fragment.lit("""
-                ::varchar,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "unitmeasurecode" = """),
-             UnitmeasureId.pgType.encode(unitmeasurecode),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "production"."unitmeasure"
+         set "name" = """),
+      Name.pgType.encode(row.name()),
+      typo.runtime.Fragment.lit("""
+         ::varchar,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "unitmeasurecode" = """),
+      UnitmeasureId.pgType.encode(unitmeasurecode),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public UnitmeasureRow upsert(
     UnitmeasureRow unsaved,
     Connection c
@@ -244,6 +259,7 @@ public class UnitmeasureRepoImpl implements UnitmeasureRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<UnitmeasureRow> upsertBatch(
     Iterator<UnitmeasureRow> unsaved,
     Connection c
@@ -262,25 +278,26 @@ public class UnitmeasureRepoImpl implements UnitmeasureRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<UnitmeasureRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table unitmeasure_TEMP (like "production"."unitmeasure") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy unitmeasure_TEMP("unitmeasurecode", "name", "modifieddate") from stdin
-      """), batchSize, unsaved, c, UnitmeasureRow.pgText);
+    create temporary table unitmeasure_TEMP (like "production"."unitmeasure") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy unitmeasure_TEMP("unitmeasurecode", "name", "modifieddate") from stdin
+    """), batchSize, unsaved, c, UnitmeasureRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "production"."unitmeasure"("unitmeasurecode", "name", "modifieddate")
-              select * from unitmeasure_TEMP
-              on conflict ("unitmeasurecode")
-              do update set
-                "name" = EXCLUDED."name",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table unitmeasure_TEMP;""")).update().runUnchecked(c);
+       insert into "production"."unitmeasure"("unitmeasurecode", "name", "modifieddate")
+       select * from unitmeasure_TEMP
+       on conflict ("unitmeasurecode")
+       do update set
+         "name" = EXCLUDED."name",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table unitmeasure_TEMP;""")).update().runUnchecked(c);
   };
 }

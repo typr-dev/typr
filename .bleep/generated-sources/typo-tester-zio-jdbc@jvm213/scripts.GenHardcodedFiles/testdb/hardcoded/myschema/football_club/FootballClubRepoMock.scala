@@ -22,13 +22,13 @@ import zio.jdbc.ZConnection
 import zio.stream.ZStream
 
 case class FootballClubRepoMock(map: scala.collection.mutable.Map[FootballClubId, FootballClubRow] = scala.collection.mutable.Map.empty[FootballClubId, FootballClubRow]) extends FootballClubRepo {
-  def delete: DeleteBuilder[FootballClubFields, FootballClubRow] = DeleteBuilderMock(DeleteParams.empty, FootballClubFields.structure, map)
+  override def delete: DeleteBuilder[FootballClubFields, FootballClubRow] = DeleteBuilderMock(DeleteParams.empty, FootballClubFields.structure, map)
 
-  def deleteById(id: FootballClubId): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(id).isDefined)
+  override def deleteById(id: FootballClubId): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(id).isDefined)
 
-  def deleteByIds(ids: Array[FootballClubId]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(ids.map(id => map.remove(id)).count(_.isDefined).toLong)
+  override def deleteByIds(ids: Array[FootballClubId]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(ids.map(id => map.remove(id)).count(_.isDefined).toLong)
 
-  def insert(unsaved: FootballClubRow): ZIO[ZConnection, Throwable, FootballClubRow] = {
+  override def insert(unsaved: FootballClubRow): ZIO[ZConnection, Throwable, FootballClubRow] = {
   ZIO.succeed {
     val _ =
       if (map.contains(unsaved.id))
@@ -40,7 +40,7 @@ case class FootballClubRepoMock(map: scala.collection.mutable.Map[FootballClubId
   }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, FootballClubRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {
@@ -52,11 +52,11 @@ case class FootballClubRepoMock(map: scala.collection.mutable.Map[FootballClubId
     }.runLast.map(_.getOrElse(0L))
   }
 
-  def select: SelectBuilder[FootballClubFields, FootballClubRow] = SelectBuilderMock(FootballClubFields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
+  override def select: SelectBuilder[FootballClubFields, FootballClubRow] = SelectBuilderMock(FootballClubFields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
 
-  def selectAll: ZStream[ZConnection, Throwable, FootballClubRow] = ZStream.fromIterable(map.values)
+  override def selectAll: ZStream[ZConnection, Throwable, FootballClubRow] = ZStream.fromIterable(map.values)
 
-  def selectByFieldValues(fieldValues: List[FootballClubFieldValue[?]]): ZStream[ZConnection, Throwable, FootballClubRow] = {
+  override def selectByFieldValues(fieldValues: List[FootballClubFieldValue[?]]): ZStream[ZConnection, Throwable, FootballClubRow] = {
     ZStream.fromIterable {
       fieldValues.foldLeft(map.values) {
         case (acc, FootballClubFieldValue.id(value)) => acc.filter(_.id == value)
@@ -65,20 +65,20 @@ case class FootballClubRepoMock(map: scala.collection.mutable.Map[FootballClubId
     }
   }
 
-  def selectById(id: FootballClubId): ZIO[ZConnection, Throwable, Option[FootballClubRow]] = ZIO.succeed(map.get(id))
+  override def selectById(id: FootballClubId): ZIO[ZConnection, Throwable, Option[FootballClubRow]] = ZIO.succeed(map.get(id))
 
-  def selectByIds(ids: Array[FootballClubId]): ZStream[ZConnection, Throwable, FootballClubRow] = ZStream.fromIterable(ids.flatMap(map.get))
+  override def selectByIds(ids: Array[FootballClubId]): ZStream[ZConnection, Throwable, FootballClubRow] = ZStream.fromIterable(ids.flatMap(map.get))
 
-  def selectByIdsTracked(ids: Array[FootballClubId]): ZIO[ZConnection, Throwable, Map[FootballClubId, FootballClubRow]] = {
+  override def selectByIdsTracked(ids: Array[FootballClubId]): ZIO[ZConnection, Throwable, Map[FootballClubId, FootballClubRow]] = {
     selectByIds(ids).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.id, x)).toMap
       ids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[FootballClubFields, FootballClubRow] = UpdateBuilderMock(UpdateParams.empty, FootballClubFields.structure, map)
+  override def update: UpdateBuilder[FootballClubFields, FootballClubRow] = UpdateBuilderMock(UpdateParams.empty, FootballClubFields.structure, map)
 
-  def update(row: FootballClubRow): ZIO[ZConnection, Throwable, Option[FootballClubRow]] = {
+  override def update(row: FootballClubRow): ZIO[ZConnection, Throwable, Option[FootballClubRow]] = {
     ZIO.succeed {
       map.get(row.id).map { _ =>
         map.put(row.id, row): @nowarn
@@ -87,7 +87,7 @@ case class FootballClubRepoMock(map: scala.collection.mutable.Map[FootballClubId
     }
   }
 
-  def updateFieldValues(
+  override def updateFieldValues(
     id: FootballClubId,
     fieldValues: List[FootballClubFieldValue[?]]
   ): ZIO[ZConnection, Throwable, Boolean] = {
@@ -109,7 +109,7 @@ case class FootballClubRepoMock(map: scala.collection.mutable.Map[FootballClubId
     }
   }
 
-  def upsert(unsaved: FootballClubRow): ZIO[ZConnection, Throwable, UpdateResult[FootballClubRow]] = {
+  override def upsert(unsaved: FootballClubRow): ZIO[ZConnection, Throwable, UpdateResult[FootballClubRow]] = {
     ZIO.succeed {
       map.put(unsaved.id, unsaved): @nowarn
       UpdateResult(1, Chunk.single(unsaved))
@@ -117,7 +117,7 @@ case class FootballClubRepoMock(map: scala.collection.mutable.Map[FootballClubId
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, FootballClubRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

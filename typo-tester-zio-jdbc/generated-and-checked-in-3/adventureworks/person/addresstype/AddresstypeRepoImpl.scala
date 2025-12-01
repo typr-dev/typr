@@ -22,20 +22,20 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class AddresstypeRepoImpl extends AddresstypeRepo {
-  def delete: DeleteBuilder[AddresstypeFields, AddresstypeRow] = DeleteBuilder.of(""""person"."addresstype"""", AddresstypeFields.structure, AddresstypeRow.jdbcDecoder)
+  override def delete: DeleteBuilder[AddresstypeFields, AddresstypeRow] = DeleteBuilder.of(""""person"."addresstype"""", AddresstypeFields.structure, AddresstypeRow.jdbcDecoder)
 
-  def deleteById(addresstypeid: AddresstypeId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "person"."addresstype" where "addresstypeid" = ${Segment.paramSegment(addresstypeid)(using AddresstypeId.setter)}""".delete.map(_ > 0)
+  override def deleteById(addresstypeid: AddresstypeId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "person"."addresstype" where "addresstypeid" = ${Segment.paramSegment(addresstypeid)(using AddresstypeId.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(addresstypeids: Array[AddresstypeId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "person"."addresstype" where "addresstypeid" = ANY(${Segment.paramSegment(addresstypeids)(using AddresstypeId.arraySetter)})""".delete
+  override def deleteByIds(addresstypeids: Array[AddresstypeId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "person"."addresstype" where "addresstypeid" = ANY(${Segment.paramSegment(addresstypeids)(using AddresstypeId.arraySetter)})""".delete
 
-  def insert(unsaved: AddresstypeRow): ZIO[ZConnection, Throwable, AddresstypeRow] = {
+  override def insert(unsaved: AddresstypeRow): ZIO[ZConnection, Throwable, AddresstypeRow] = {
     sql"""insert into "person"."addresstype"("addresstypeid", "name", "rowguid", "modifieddate")
     values (${Segment.paramSegment(unsaved.addresstypeid)(using AddresstypeId.setter)}::int4, ${Segment.paramSegment(unsaved.name)(using Name.setter)}::varchar, ${Segment.paramSegment(unsaved.rowguid)(using TypoUUID.setter)}::uuid, ${Segment.paramSegment(unsaved.modifieddate)(using TypoLocalDateTime.setter)}::timestamp)
     returning "addresstypeid", "name", "rowguid", "modifieddate"::text
     """.insertReturning(using AddresstypeRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insert(unsaved: AddresstypeRowUnsaved): ZIO[ZConnection, Throwable, AddresstypeRow] = {
+  override def insert(unsaved: AddresstypeRowUnsaved): ZIO[ZConnection, Throwable, AddresstypeRow] = {
     val fs = List(
       Some((sql""""name"""", sql"${Segment.paramSegment(unsaved.name)(using Name.setter)}::varchar")),
       unsaved.addresstypeid match {
@@ -63,35 +63,35 @@ class AddresstypeRepoImpl extends AddresstypeRepo {
     q.insertReturning(using AddresstypeRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, AddresstypeRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "person"."addresstype"("addresstypeid", "name", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved)(using AddresstypeRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, AddresstypeRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "person"."addresstype"("name", "addresstypeid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using AddresstypeRowUnsaved.pgText)
 
-  def select: SelectBuilder[AddresstypeFields, AddresstypeRow] = SelectBuilder.of(""""person"."addresstype"""", AddresstypeFields.structure, AddresstypeRow.jdbcDecoder)
+  override def select: SelectBuilder[AddresstypeFields, AddresstypeRow] = SelectBuilder.of(""""person"."addresstype"""", AddresstypeFields.structure, AddresstypeRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, AddresstypeRow] = sql"""select "addresstypeid", "name", "rowguid", "modifieddate"::text from "person"."addresstype"""".query(using AddresstypeRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, AddresstypeRow] = sql"""select "addresstypeid", "name", "rowguid", "modifieddate"::text from "person"."addresstype"""".query(using AddresstypeRow.jdbcDecoder).selectStream()
 
-  def selectById(addresstypeid: AddresstypeId): ZIO[ZConnection, Throwable, Option[AddresstypeRow]] = sql"""select "addresstypeid", "name", "rowguid", "modifieddate"::text from "person"."addresstype" where "addresstypeid" = ${Segment.paramSegment(addresstypeid)(using AddresstypeId.setter)}""".query(using AddresstypeRow.jdbcDecoder).selectOne
+  override def selectById(addresstypeid: AddresstypeId): ZIO[ZConnection, Throwable, Option[AddresstypeRow]] = sql"""select "addresstypeid", "name", "rowguid", "modifieddate"::text from "person"."addresstype" where "addresstypeid" = ${Segment.paramSegment(addresstypeid)(using AddresstypeId.setter)}""".query(using AddresstypeRow.jdbcDecoder).selectOne
 
-  def selectByIds(addresstypeids: Array[AddresstypeId]): ZStream[ZConnection, Throwable, AddresstypeRow] = sql"""select "addresstypeid", "name", "rowguid", "modifieddate"::text from "person"."addresstype" where "addresstypeid" = ANY(${Segment.paramSegment(addresstypeids)(using AddresstypeId.arraySetter)})""".query(using AddresstypeRow.jdbcDecoder).selectStream()
+  override def selectByIds(addresstypeids: Array[AddresstypeId]): ZStream[ZConnection, Throwable, AddresstypeRow] = sql"""select "addresstypeid", "name", "rowguid", "modifieddate"::text from "person"."addresstype" where "addresstypeid" = ANY(${Segment.paramSegment(addresstypeids)(using AddresstypeId.arraySetter)})""".query(using AddresstypeRow.jdbcDecoder).selectStream()
 
-  def selectByIdsTracked(addresstypeids: Array[AddresstypeId]): ZIO[ZConnection, Throwable, Map[AddresstypeId, AddresstypeRow]] = {
+  override def selectByIdsTracked(addresstypeids: Array[AddresstypeId]): ZIO[ZConnection, Throwable, Map[AddresstypeId, AddresstypeRow]] = {
     selectByIds(addresstypeids).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.addresstypeid, x)).toMap
       addresstypeids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[AddresstypeFields, AddresstypeRow] = UpdateBuilder.of(""""person"."addresstype"""", AddresstypeFields.structure, AddresstypeRow.jdbcDecoder)
+  override def update: UpdateBuilder[AddresstypeFields, AddresstypeRow] = UpdateBuilder.of(""""person"."addresstype"""", AddresstypeFields.structure, AddresstypeRow.jdbcDecoder)
 
-  def update(row: AddresstypeRow): ZIO[ZConnection, Throwable, Option[AddresstypeRow]] = {
+  override def update(row: AddresstypeRow): ZIO[ZConnection, Throwable, Option[AddresstypeRow]] = {
     val addresstypeid = row.addresstypeid
     sql"""update "person"."addresstype"
     set "name" = ${Segment.paramSegment(row.name)(using Name.setter)}::varchar,
@@ -103,7 +103,7 @@ class AddresstypeRepoImpl extends AddresstypeRepo {
       .selectOne
   }
 
-  def upsert(unsaved: AddresstypeRow): ZIO[ZConnection, Throwable, UpdateResult[AddresstypeRow]] = {
+  override def upsert(unsaved: AddresstypeRow): ZIO[ZConnection, Throwable, UpdateResult[AddresstypeRow]] = {
     sql"""insert into "person"."addresstype"("addresstypeid", "name", "rowguid", "modifieddate")
     values (
       ${Segment.paramSegment(unsaved.addresstypeid)(using AddresstypeId.setter)}::int4,
@@ -120,7 +120,7 @@ class AddresstypeRepoImpl extends AddresstypeRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, AddresstypeRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

@@ -47,7 +47,7 @@ object PersonphoneFields {
 
     override lazy val fields: PersonphoneFields = {
       new PersonphoneFields {
-        def businessentityid: IdField[BusinessentityId, PersonphoneRow] = {
+        override def businessentityid: IdField[BusinessentityId, PersonphoneRow] = {
           new IdField[BusinessentityId, PersonphoneRow](
             _path,
             "businessentityid",
@@ -58,7 +58,7 @@ object PersonphoneFields {
             BusinessentityId.pgType
           )
         }
-        def phonenumber: IdField[Phone, PersonphoneRow] = {
+        override def phonenumber: IdField[Phone, PersonphoneRow] = {
           new IdField[Phone, PersonphoneRow](
             _path,
             "phonenumber",
@@ -69,7 +69,7 @@ object PersonphoneFields {
             Phone.pgType
           )
         }
-        def phonenumbertypeid: IdField[PhonenumbertypeId, PersonphoneRow] = {
+        override def phonenumbertypeid: IdField[PhonenumbertypeId, PersonphoneRow] = {
           new IdField[PhonenumbertypeId, PersonphoneRow](
             _path,
             "phonenumbertypeid",
@@ -80,7 +80,7 @@ object PersonphoneFields {
             PhonenumbertypeId.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, PersonphoneRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, PersonphoneRow] = {
           new Field[TypoLocalDateTime, PersonphoneRow](
             _path,
             "modifieddate",
@@ -96,7 +96,7 @@ object PersonphoneFields {
 
     override lazy val columns: java.util.List[FieldLike[?, PersonphoneRow]] = java.util.List.of(this.fields.businessentityid, this.fields.phonenumber, this.fields.phonenumbertypeid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[PersonphoneFields, PersonphoneRow] = new Impl(java.util.List.of())

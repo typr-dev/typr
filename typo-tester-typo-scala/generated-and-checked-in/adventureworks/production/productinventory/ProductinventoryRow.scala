@@ -15,7 +15,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple7
 
 /** Table: production.productinventory
  * Product inventory information.
@@ -67,17 +66,7 @@ case class ProductinventoryRow(
 }
 
 object ProductinventoryRow {
-  val `_rowParser`: RowParser[ProductinventoryRow] = {
-    RowParsers.of(ProductId.pgType, LocationId.pgType, PgTypes.text, TypoShort.pgType, TypoShort.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, ProductinventoryRow.apply, row => new Tuple7(
-      row.productid,
-      row.locationid,
-      row.shelf,
-      row.bin,
-      row.quantity,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[ProductinventoryRow] = RowParsers.of(ProductId.pgType, LocationId.pgType, PgTypes.text, TypoShort.pgType, TypoShort.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, ProductinventoryRow.apply, row => Array(row.productid, row.locationid, row.shelf, row.bin, row.quantity, row.rowguid, row.modifieddate))
 
   def apply(
     compositeId: ProductinventoryId,

@@ -45,7 +45,7 @@ object SalespersonquotahistoryFields {
 
     override lazy val fields: SalespersonquotahistoryFields = {
       new SalespersonquotahistoryFields {
-        def businessentityid: IdField[BusinessentityId, SalespersonquotahistoryRow] = {
+        override def businessentityid: IdField[BusinessentityId, SalespersonquotahistoryRow] = {
           new IdField[BusinessentityId, SalespersonquotahistoryRow](
             _path,
             "businessentityid",
@@ -56,7 +56,7 @@ object SalespersonquotahistoryFields {
             BusinessentityId.pgType
           )
         }
-        def quotadate: IdField[TypoLocalDateTime, SalespersonquotahistoryRow] = {
+        override def quotadate: IdField[TypoLocalDateTime, SalespersonquotahistoryRow] = {
           new IdField[TypoLocalDateTime, SalespersonquotahistoryRow](
             _path,
             "quotadate",
@@ -67,7 +67,7 @@ object SalespersonquotahistoryFields {
             TypoLocalDateTime.pgType
           )
         }
-        def salesquota: Field[java.math.BigDecimal, SalespersonquotahistoryRow] = {
+        override def salesquota: Field[java.math.BigDecimal, SalespersonquotahistoryRow] = {
           new Field[java.math.BigDecimal, SalespersonquotahistoryRow](
             _path,
             "salesquota",
@@ -78,7 +78,7 @@ object SalespersonquotahistoryFields {
             PgTypes.numeric
           )
         }
-        def rowguid: Field[TypoUUID, SalespersonquotahistoryRow] = {
+        override def rowguid: Field[TypoUUID, SalespersonquotahistoryRow] = {
           new Field[TypoUUID, SalespersonquotahistoryRow](
             _path,
             "rowguid",
@@ -89,7 +89,7 @@ object SalespersonquotahistoryFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, SalespersonquotahistoryRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, SalespersonquotahistoryRow] = {
           new Field[TypoLocalDateTime, SalespersonquotahistoryRow](
             _path,
             "modifieddate",
@@ -105,7 +105,7 @@ object SalespersonquotahistoryFields {
 
     override lazy val columns: java.util.List[FieldLike[?, SalespersonquotahistoryRow]] = java.util.List.of(this.fields.businessentityid, this.fields.quotadate, this.fields.salesquota, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[SalespersonquotahistoryFields, SalespersonquotahistoryRow] = new Impl(java.util.List.of())

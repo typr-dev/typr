@@ -10,7 +10,6 @@ import adventureworks.person.countryregion.CountryregionId;
 import adventureworks.sales.currency.CurrencyId;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple3;
 
 /** View: sa.crc */
 public record CrcViewRow(
@@ -36,5 +35,5 @@ public record CrcViewRow(
     return new CrcViewRow(countryregioncode, currencycode, modifieddate);
   };
 
-  static RowParser<CrcViewRow> _rowParser = RowParsers.of(CountryregionId.pgType, CurrencyId.pgType, TypoLocalDateTime.pgType, CrcViewRow::new, row -> new Tuple3<>(row.countryregioncode(), row.currencycode(), row.modifieddate()));;
+  static RowParser<CrcViewRow> _rowParser = RowParsers.of(CountryregionId.pgType, CurrencyId.pgType, TypoLocalDateTime.pgType, CrcViewRow::new, row -> new Object[]{row.countryregioncode(), row.currencycode(), row.modifieddate()});;
 }

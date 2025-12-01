@@ -8,11 +8,11 @@ package adventureworks.sales.vstorewithdemographics
 import adventureworks.customtypes.TypoMoney
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.public.Name
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple12
 
 /** View: sales.vstorewithdemographics */
 case class VstorewithdemographicsViewRow(
@@ -20,33 +20,18 @@ case class VstorewithdemographicsViewRow(
   businessentityid: BusinessentityId,
   /** Points to [[adventureworks.sales.store.StoreRow.name]] */
   name: Name,
-  annualSales: /* nullability unknown */ Optional[TypoMoney],
-  annualRevenue: /* nullability unknown */ Optional[TypoMoney],
-  bankName: /* nullability unknown */ Optional[/* max 50 chars */ String],
-  businessType: /* nullability unknown */ Optional[/* max 5 chars */ String],
-  yearOpened: /* nullability unknown */ Optional[Integer],
-  specialty: /* nullability unknown */ Optional[/* max 50 chars */ String],
-  squareFeet: /* nullability unknown */ Optional[Integer],
-  brands: /* nullability unknown */ Optional[/* max 30 chars */ String],
-  internet: /* nullability unknown */ Optional[/* max 30 chars */ String],
-  numberEmployees: /* nullability unknown */ Optional[Integer]
+  @JsonProperty("AnnualSales") annualSales: /* nullability unknown */ Optional[TypoMoney],
+  @JsonProperty("AnnualRevenue") annualRevenue: /* nullability unknown */ Optional[TypoMoney],
+  @JsonProperty("BankName") bankName: /* nullability unknown */ Optional[/* max 50 chars */ String],
+  @JsonProperty("BusinessType") businessType: /* nullability unknown */ Optional[/* max 5 chars */ String],
+  @JsonProperty("YearOpened") yearOpened: /* nullability unknown */ Optional[Integer],
+  @JsonProperty("Specialty") specialty: /* nullability unknown */ Optional[/* max 50 chars */ String],
+  @JsonProperty("SquareFeet") squareFeet: /* nullability unknown */ Optional[Integer],
+  @JsonProperty("Brands") brands: /* nullability unknown */ Optional[/* max 30 chars */ String],
+  @JsonProperty("Internet") internet: /* nullability unknown */ Optional[/* max 30 chars */ String],
+  @JsonProperty("NumberEmployees") numberEmployees: /* nullability unknown */ Optional[Integer]
 )
 
 object VstorewithdemographicsViewRow {
-  val `_rowParser`: RowParser[VstorewithdemographicsViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, Name.pgType, TypoMoney.pgType.opt(), TypoMoney.pgType.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.int4.opt(), PgTypes.text.opt(), PgTypes.int4.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.int4.opt(), VstorewithdemographicsViewRow.apply, row => new Tuple12(
-      row.businessentityid,
-      row.name,
-      row.annualSales,
-      row.annualRevenue,
-      row.bankName,
-      row.businessType,
-      row.yearOpened,
-      row.specialty,
-      row.squareFeet,
-      row.brands,
-      row.internet,
-      row.numberEmployees
-    ))
-  }
+  val `_rowParser`: RowParser[VstorewithdemographicsViewRow] = RowParsers.of(BusinessentityId.pgType, Name.pgType, TypoMoney.pgType.opt(), TypoMoney.pgType.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.int4.opt(), PgTypes.text.opt(), PgTypes.int4.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.int4.opt(), VstorewithdemographicsViewRow.apply, row => Array(row.businessentityid, row.name, row.annualSales, row.annualRevenue, row.bankName, row.businessType, row.yearOpened, row.specialty, row.squareFeet, row.brands, row.internet, row.numberEmployees))
 }

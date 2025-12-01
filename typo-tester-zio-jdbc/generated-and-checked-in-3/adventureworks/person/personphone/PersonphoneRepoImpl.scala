@@ -23,11 +23,11 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class PersonphoneRepoImpl extends PersonphoneRepo {
-  def delete: DeleteBuilder[PersonphoneFields, PersonphoneRow] = DeleteBuilder.of(""""person"."personphone"""", PersonphoneFields.structure, PersonphoneRow.jdbcDecoder)
+  override def delete: DeleteBuilder[PersonphoneFields, PersonphoneRow] = DeleteBuilder.of(""""person"."personphone"""", PersonphoneFields.structure, PersonphoneRow.jdbcDecoder)
 
-  def deleteById(compositeId: PersonphoneId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "person"."personphone" where "businessentityid" = ${Segment.paramSegment(compositeId.businessentityid)(using BusinessentityId.setter)} AND "phonenumber" = ${Segment.paramSegment(compositeId.phonenumber)(using Phone.setter)} AND "phonenumbertypeid" = ${Segment.paramSegment(compositeId.phonenumbertypeid)(using PhonenumbertypeId.setter)}""".delete.map(_ > 0)
+  override def deleteById(compositeId: PersonphoneId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "person"."personphone" where "businessentityid" = ${Segment.paramSegment(compositeId.businessentityid)(using BusinessentityId.setter)} AND "phonenumber" = ${Segment.paramSegment(compositeId.phonenumber)(using Phone.setter)} AND "phonenumbertypeid" = ${Segment.paramSegment(compositeId.phonenumbertypeid)(using PhonenumbertypeId.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(compositeIds: Array[PersonphoneId]): ZIO[ZConnection, Throwable, Long] = {
+  override def deleteByIds(compositeIds: Array[PersonphoneId]): ZIO[ZConnection, Throwable, Long] = {
     val businessentityid = compositeIds.map(_.businessentityid)
     val phonenumber = compositeIds.map(_.phonenumber)
     val phonenumbertypeid = compositeIds.map(_.phonenumbertypeid)
@@ -38,14 +38,14 @@ class PersonphoneRepoImpl extends PersonphoneRepo {
     """.delete
   }
 
-  def insert(unsaved: PersonphoneRow): ZIO[ZConnection, Throwable, PersonphoneRow] = {
+  override def insert(unsaved: PersonphoneRow): ZIO[ZConnection, Throwable, PersonphoneRow] = {
     sql"""insert into "person"."personphone"("businessentityid", "phonenumber", "phonenumbertypeid", "modifieddate")
     values (${Segment.paramSegment(unsaved.businessentityid)(using BusinessentityId.setter)}::int4, ${Segment.paramSegment(unsaved.phonenumber)(using Phone.setter)}::varchar, ${Segment.paramSegment(unsaved.phonenumbertypeid)(using PhonenumbertypeId.setter)}::int4, ${Segment.paramSegment(unsaved.modifieddate)(using TypoLocalDateTime.setter)}::timestamp)
     returning "businessentityid", "phonenumber", "phonenumbertypeid", "modifieddate"::text
     """.insertReturning(using PersonphoneRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insert(unsaved: PersonphoneRowUnsaved): ZIO[ZConnection, Throwable, PersonphoneRow] = {
+  override def insert(unsaved: PersonphoneRowUnsaved): ZIO[ZConnection, Throwable, PersonphoneRow] = {
     val fs = List(
       Some((sql""""businessentityid"""", sql"${Segment.paramSegment(unsaved.businessentityid)(using BusinessentityId.setter)}::int4")),
       Some((sql""""phonenumber"""", sql"${Segment.paramSegment(unsaved.phonenumber)(using Phone.setter)}::varchar")),
@@ -67,24 +67,24 @@ class PersonphoneRepoImpl extends PersonphoneRepo {
     q.insertReturning(using PersonphoneRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, PersonphoneRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "person"."personphone"("businessentityid", "phonenumber", "phonenumbertypeid", "modifieddate") FROM STDIN""", batchSize, unsaved)(using PersonphoneRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, PersonphoneRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "person"."personphone"("businessentityid", "phonenumber", "phonenumbertypeid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using PersonphoneRowUnsaved.pgText)
 
-  def select: SelectBuilder[PersonphoneFields, PersonphoneRow] = SelectBuilder.of(""""person"."personphone"""", PersonphoneFields.structure, PersonphoneRow.jdbcDecoder)
+  override def select: SelectBuilder[PersonphoneFields, PersonphoneRow] = SelectBuilder.of(""""person"."personphone"""", PersonphoneFields.structure, PersonphoneRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, PersonphoneRow] = sql"""select "businessentityid", "phonenumber", "phonenumbertypeid", "modifieddate"::text from "person"."personphone"""".query(using PersonphoneRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, PersonphoneRow] = sql"""select "businessentityid", "phonenumber", "phonenumbertypeid", "modifieddate"::text from "person"."personphone"""".query(using PersonphoneRow.jdbcDecoder).selectStream()
 
-  def selectById(compositeId: PersonphoneId): ZIO[ZConnection, Throwable, Option[PersonphoneRow]] = sql"""select "businessentityid", "phonenumber", "phonenumbertypeid", "modifieddate"::text from "person"."personphone" where "businessentityid" = ${Segment.paramSegment(compositeId.businessentityid)(using BusinessentityId.setter)} AND "phonenumber" = ${Segment.paramSegment(compositeId.phonenumber)(using Phone.setter)} AND "phonenumbertypeid" = ${Segment.paramSegment(compositeId.phonenumbertypeid)(using PhonenumbertypeId.setter)}""".query(using PersonphoneRow.jdbcDecoder).selectOne
+  override def selectById(compositeId: PersonphoneId): ZIO[ZConnection, Throwable, Option[PersonphoneRow]] = sql"""select "businessentityid", "phonenumber", "phonenumbertypeid", "modifieddate"::text from "person"."personphone" where "businessentityid" = ${Segment.paramSegment(compositeId.businessentityid)(using BusinessentityId.setter)} AND "phonenumber" = ${Segment.paramSegment(compositeId.phonenumber)(using Phone.setter)} AND "phonenumbertypeid" = ${Segment.paramSegment(compositeId.phonenumbertypeid)(using PhonenumbertypeId.setter)}""".query(using PersonphoneRow.jdbcDecoder).selectOne
 
-  def selectByIds(compositeIds: Array[PersonphoneId]): ZStream[ZConnection, Throwable, PersonphoneRow] = {
+  override def selectByIds(compositeIds: Array[PersonphoneId]): ZStream[ZConnection, Throwable, PersonphoneRow] = {
     val businessentityid = compositeIds.map(_.businessentityid)
     val phonenumber = compositeIds.map(_.phonenumber)
     val phonenumbertypeid = compositeIds.map(_.phonenumbertypeid)
@@ -95,16 +95,16 @@ class PersonphoneRepoImpl extends PersonphoneRepo {
     """.query(using PersonphoneRow.jdbcDecoder).selectStream()
   }
 
-  def selectByIdsTracked(compositeIds: Array[PersonphoneId]): ZIO[ZConnection, Throwable, Map[PersonphoneId, PersonphoneRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[PersonphoneId]): ZIO[ZConnection, Throwable, Map[PersonphoneId, PersonphoneRow]] = {
     selectByIds(compositeIds).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[PersonphoneFields, PersonphoneRow] = UpdateBuilder.of(""""person"."personphone"""", PersonphoneFields.structure, PersonphoneRow.jdbcDecoder)
+  override def update: UpdateBuilder[PersonphoneFields, PersonphoneRow] = UpdateBuilder.of(""""person"."personphone"""", PersonphoneFields.structure, PersonphoneRow.jdbcDecoder)
 
-  def update(row: PersonphoneRow): ZIO[ZConnection, Throwable, Option[PersonphoneRow]] = {
+  override def update(row: PersonphoneRow): ZIO[ZConnection, Throwable, Option[PersonphoneRow]] = {
     val compositeId = row.compositeId
     sql"""update "person"."personphone"
     set "modifieddate" = ${Segment.paramSegment(row.modifieddate)(using TypoLocalDateTime.setter)}::timestamp
@@ -114,7 +114,7 @@ class PersonphoneRepoImpl extends PersonphoneRepo {
       .selectOne
   }
 
-  def upsert(unsaved: PersonphoneRow): ZIO[ZConnection, Throwable, UpdateResult[PersonphoneRow]] = {
+  override def upsert(unsaved: PersonphoneRow): ZIO[ZConnection, Throwable, UpdateResult[PersonphoneRow]] = {
     sql"""insert into "person"."personphone"("businessentityid", "phonenumber", "phonenumbertypeid", "modifieddate")
     values (
       ${Segment.paramSegment(unsaved.businessentityid)(using BusinessentityId.setter)}::int4,
@@ -129,7 +129,7 @@ class PersonphoneRepoImpl extends PersonphoneRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, PersonphoneRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

@@ -18,7 +18,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface ThViewFields {
-  static final class Impl extends Relation<ThViewFields, ThViewRow> {
+  final class Impl extends Relation<ThViewFields, ThViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -26,33 +26,43 @@ public interface ThViewFields {
     @Override
     public ThViewFields fields() {
       return new ThViewFields() {
+               @Override
                public Field<TransactionhistoryId, ThViewRow> id() {
                  return new Field<TransactionhistoryId, ThViewRow>(_path, "id", ThViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), TransactionhistoryId.pgType);
                };
+               @Override
                public Field<TransactionhistoryId, ThViewRow> transactionid() {
                  return new Field<TransactionhistoryId, ThViewRow>(_path, "transactionid", ThViewRow::transactionid, Optional.empty(), Optional.empty(), (row, value) -> row.withTransactionid(value), TransactionhistoryId.pgType);
                };
+               @Override
                public Field<ProductId, ThViewRow> productid() {
                  return new Field<ProductId, ThViewRow>(_path, "productid", ThViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
                };
+               @Override
                public Field<Integer, ThViewRow> referenceorderid() {
                  return new Field<Integer, ThViewRow>(_path, "referenceorderid", ThViewRow::referenceorderid, Optional.empty(), Optional.empty(), (row, value) -> row.withReferenceorderid(value), PgTypes.int4);
                };
+               @Override
                public Field<Integer, ThViewRow> referenceorderlineid() {
                  return new Field<Integer, ThViewRow>(_path, "referenceorderlineid", ThViewRow::referenceorderlineid, Optional.empty(), Optional.empty(), (row, value) -> row.withReferenceorderlineid(value), PgTypes.int4);
                };
+               @Override
                public Field<TypoLocalDateTime, ThViewRow> transactiondate() {
                  return new Field<TypoLocalDateTime, ThViewRow>(_path, "transactiondate", ThViewRow::transactiondate, Optional.of("text"), Optional.empty(), (row, value) -> row.withTransactiondate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public Field</* bpchar, max 1 chars */ String, ThViewRow> transactiontype() {
                  return new Field</* bpchar, max 1 chars */ String, ThViewRow>(_path, "transactiontype", ThViewRow::transactiontype, Optional.empty(), Optional.empty(), (row, value) -> row.withTransactiontype(value), PgTypes.text);
                };
+               @Override
                public Field<Integer, ThViewRow> quantity() {
                  return new Field<Integer, ThViewRow>(_path, "quantity", ThViewRow::quantity, Optional.empty(), Optional.empty(), (row, value) -> row.withQuantity(value), PgTypes.int4);
                };
+               @Override
                public Field<BigDecimal, ThViewRow> actualcost() {
                  return new Field<BigDecimal, ThViewRow>(_path, "actualcost", ThViewRow::actualcost, Optional.empty(), Optional.empty(), (row, value) -> row.withActualcost(value), PgTypes.numeric);
                };
+               @Override
                public Field<TypoLocalDateTime, ThViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, ThViewRow>(_path, "modifieddate", ThViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -64,6 +74,7 @@ public interface ThViewFields {
       return List.of(this.fields().id(), this.fields().transactionid(), this.fields().productid(), this.fields().referenceorderid(), this.fields().referenceorderlineid(), this.fields().transactiondate(), this.fields().transactiontype(), this.fields().quantity(), this.fields().actualcost(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

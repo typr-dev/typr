@@ -7,21 +7,21 @@ package adventureworks.public.test_sak_soknadsalternativ
 
 import adventureworks.public.test_organisasjon.TestOrganisasjonId
 import adventureworks.public.test_utdanningstilbud.TestUtdanningstilbudId
+import com.fasterxml.jackson.annotation.JsonProperty
 import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple3
 
 /** Table: public.test_sak_soknadsalternativ
  * Composite primary key: organisasjonskode_saksbehandler, utdanningsmulighet_kode
  */
 case class TestSakSoknadsalternativRow(
-  organisasjonskodeSaksbehandler: String,
+  @JsonProperty("organisasjonskode_saksbehandler") organisasjonskodeSaksbehandler: String,
   /** Points to [[adventureworks.public.test_utdanningstilbud.TestUtdanningstilbudRow.utdanningsmulighetKode]] */
-  utdanningsmulighetKode: String,
+  @JsonProperty("utdanningsmulighet_kode") utdanningsmulighetKode: String,
   /** Points to [[adventureworks.public.test_utdanningstilbud.TestUtdanningstilbudRow.organisasjonskode]] */
-  organisasjonskodeTilbyder: TestOrganisasjonId
+  @JsonProperty("organisasjonskode_tilbyder") organisasjonskodeTilbyder: TestOrganisasjonId
 ) {
   def compositeId: TestSakSoknadsalternativId = new TestSakSoknadsalternativId(organisasjonskodeSaksbehandler, utdanningsmulighetKode)
 
@@ -31,7 +31,7 @@ case class TestSakSoknadsalternativRow(
 }
 
 object TestSakSoknadsalternativRow {
-  val `_rowParser`: RowParser[TestSakSoknadsalternativRow] = RowParsers.of(PgTypes.text, PgTypes.text, TestOrganisasjonId.pgType, TestSakSoknadsalternativRow.apply, row => new Tuple3(row.organisasjonskodeSaksbehandler, row.utdanningsmulighetKode, row.organisasjonskodeTilbyder))
+  val `_rowParser`: RowParser[TestSakSoknadsalternativRow] = RowParsers.of(PgTypes.text, PgTypes.text, TestOrganisasjonId.pgType, TestSakSoknadsalternativRow.apply, row => Array(row.organisasjonskodeSaksbehandler, row.utdanningsmulighetKode, row.organisasjonskodeTilbyder))
 
   def apply(
     compositeId: TestSakSoknadsalternativId,

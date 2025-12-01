@@ -5,6 +5,7 @@
  */
 package adventureworks.production.illustration;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record IllustrationRepoMock(
     return new IllustrationRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<IllustrationFields, IllustrationRow> delete() {
     return new DeleteBuilderMock<>(IllustrationFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.illustrationid(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     IllustrationId illustrationid,
     Connection c
@@ -52,28 +55,31 @@ public record IllustrationRepoMock(
     return Optional.ofNullable(map.remove(illustrationid)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     IllustrationId[] illustrationids,
     Connection c
   ) {
     var count = 0;
-      for (var id : illustrationids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : illustrationids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public IllustrationRow insert(
     IllustrationRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.illustrationid())) {
-        throw new RuntimeException(str("id $unsaved.illustrationid() already exists"));
-      };
-      map.put(unsaved.illustrationid(), unsaved);
+      throw new RuntimeException(str("id $unsaved.illustrationid() already exists"));
+    };
+    map.put(unsaved.illustrationid(), unsaved);
     return unsaved;
   };
 
+  @Override
   public IllustrationRow insert(
     IllustrationRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record IllustrationRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<IllustrationRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.illustrationid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.illustrationid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<IllustrationRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.illustrationid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.illustrationid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<IllustrationFields, IllustrationRow> select() {
     return new SelectBuilderMock<>(IllustrationFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<IllustrationRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<IllustrationRow> selectById(
     IllustrationId illustrationid,
     Connection c
@@ -126,38 +137,43 @@ public record IllustrationRepoMock(
     return Optional.ofNullable(map.get(illustrationid));
   };
 
+  @Override
   public List<IllustrationRow> selectByIds(
     IllustrationId[] illustrationids,
     Connection c
   ) {
     var result = new ArrayList<IllustrationRow>();
-      for (var id : illustrationids) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : illustrationids) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<IllustrationId, IllustrationRow> selectByIdsTracked(
     IllustrationId[] illustrationids,
     Connection c
   ) {
-    return selectByIds(illustrationids, c).stream().collect(Collectors.toMap((adventureworks.production.illustration.IllustrationRow row) -> row.illustrationid(), Function.identity()));
+    return selectByIds(illustrationids, c).stream().collect(Collectors.toMap((IllustrationRow row) -> row.illustrationid(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<IllustrationFields, IllustrationRow> update() {
     return new UpdateBuilderMock<>(IllustrationFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     IllustrationRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.illustrationid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.illustrationid(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.illustrationid(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public IllustrationRow upsert(
     IllustrationRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record IllustrationRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<IllustrationRow> upsertBatch(
     Iterator<IllustrationRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<IllustrationRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.illustrationid(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.illustrationid(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<IllustrationRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.illustrationid(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.illustrationid(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

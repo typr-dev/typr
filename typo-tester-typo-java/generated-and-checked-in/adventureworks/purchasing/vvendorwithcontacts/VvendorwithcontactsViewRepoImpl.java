@@ -5,22 +5,22 @@
  */
 package adventureworks.purchasing.vvendorwithcontacts;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class VvendorwithcontactsViewRepoImpl implements VvendorwithcontactsViewRepo {
+  @Override
   public SelectBuilder<VvendorwithcontactsViewFields, VvendorwithcontactsViewRow> select() {
     return SelectBuilder.of("purchasing.vvendorwithcontacts", VvendorwithcontactsViewFields.structure(), VvendorwithcontactsViewRow._rowParser);
   };
 
+  @Override
   public List<VvendorwithcontactsViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "businessentityid", "name", "contacttype", "title", "firstname", "middlename", "lastname", "suffix", "phonenumber", "phonenumbertype", "emailaddress", "emailpromotion"
        from "purchasing"."vvendorwithcontacts"
-    """)).as(VvendorwithcontactsViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(VvendorwithcontactsViewRow._rowParser.all()).runUnchecked(c);
   };
 }

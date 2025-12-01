@@ -49,7 +49,7 @@ object CustomerFields {
 
     override lazy val fields: CustomerFields = {
       new CustomerFields {
-        def customerid: IdField[CustomerId, CustomerRow] = {
+        override def customerid: IdField[CustomerId, CustomerRow] = {
           new IdField[CustomerId, CustomerRow](
             _path,
             "customerid",
@@ -60,7 +60,7 @@ object CustomerFields {
             CustomerId.pgType
           )
         }
-        def personid: OptField[BusinessentityId, CustomerRow] = {
+        override def personid: OptField[BusinessentityId, CustomerRow] = {
           new OptField[BusinessentityId, CustomerRow](
             _path,
             "personid",
@@ -71,7 +71,7 @@ object CustomerFields {
             BusinessentityId.pgType
           )
         }
-        def storeid: OptField[BusinessentityId, CustomerRow] = {
+        override def storeid: OptField[BusinessentityId, CustomerRow] = {
           new OptField[BusinessentityId, CustomerRow](
             _path,
             "storeid",
@@ -82,7 +82,7 @@ object CustomerFields {
             BusinessentityId.pgType
           )
         }
-        def territoryid: OptField[SalesterritoryId, CustomerRow] = {
+        override def territoryid: OptField[SalesterritoryId, CustomerRow] = {
           new OptField[SalesterritoryId, CustomerRow](
             _path,
             "territoryid",
@@ -93,7 +93,7 @@ object CustomerFields {
             SalesterritoryId.pgType
           )
         }
-        def rowguid: Field[TypoUUID, CustomerRow] = {
+        override def rowguid: Field[TypoUUID, CustomerRow] = {
           new Field[TypoUUID, CustomerRow](
             _path,
             "rowguid",
@@ -104,7 +104,7 @@ object CustomerFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, CustomerRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, CustomerRow] = {
           new Field[TypoLocalDateTime, CustomerRow](
             _path,
             "modifieddate",
@@ -120,7 +120,7 @@ object CustomerFields {
 
     override lazy val columns: java.util.List[FieldLike[?, CustomerRow]] = java.util.List.of(this.fields.customerid, this.fields.personid, this.fields.storeid, this.fields.territoryid, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[CustomerFields, CustomerRow] = new Impl(java.util.List.of())

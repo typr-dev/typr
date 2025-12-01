@@ -25,7 +25,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface EmployeepayhistoryFields {
-  static final class Impl extends Relation<EmployeepayhistoryFields, EmployeepayhistoryRow> {
+  final class Impl extends Relation<EmployeepayhistoryFields, EmployeepayhistoryRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -33,18 +33,23 @@ public interface EmployeepayhistoryFields {
     @Override
     public EmployeepayhistoryFields fields() {
       return new EmployeepayhistoryFields() {
+               @Override
                public IdField<BusinessentityId, EmployeepayhistoryRow> businessentityid() {
                  return new IdField<BusinessentityId, EmployeepayhistoryRow>(_path, "businessentityid", EmployeepayhistoryRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public IdField<TypoLocalDateTime, EmployeepayhistoryRow> ratechangedate() {
                  return new IdField<TypoLocalDateTime, EmployeepayhistoryRow>(_path, "ratechangedate", EmployeepayhistoryRow::ratechangedate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withRatechangedate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public Field<BigDecimal, EmployeepayhistoryRow> rate() {
                  return new Field<BigDecimal, EmployeepayhistoryRow>(_path, "rate", EmployeepayhistoryRow::rate, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withRate(value), PgTypes.numeric);
                };
+               @Override
                public Field<TypoShort, EmployeepayhistoryRow> payfrequency() {
                  return new Field<TypoShort, EmployeepayhistoryRow>(_path, "payfrequency", EmployeepayhistoryRow::payfrequency, Optional.empty(), Optional.of("int2"), (row, value) -> row.withPayfrequency(value), TypoShort.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, EmployeepayhistoryRow> modifieddate() {
                  return new Field<TypoLocalDateTime, EmployeepayhistoryRow>(_path, "modifieddate", EmployeepayhistoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -56,6 +61,7 @@ public interface EmployeepayhistoryFields {
       return List.of(this.fields().businessentityid(), this.fields().ratechangedate(), this.fields().rate(), this.fields().payfrequency(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

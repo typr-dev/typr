@@ -13,7 +13,6 @@ import adventureworks.sales.specialoffer.SpecialofferId
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple4
 
 /** Table: sales.specialofferproduct
  * Cross-reference table mapping products to special offer discounts.
@@ -51,14 +50,7 @@ case class SpecialofferproductRow(
 }
 
 object SpecialofferproductRow {
-  val `_rowParser`: RowParser[SpecialofferproductRow] = {
-    RowParsers.of(SpecialofferId.pgType, ProductId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, SpecialofferproductRow.apply, row => new Tuple4(
-      row.specialofferid,
-      row.productid,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[SpecialofferproductRow] = RowParsers.of(SpecialofferId.pgType, ProductId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, SpecialofferproductRow.apply, row => Array(row.specialofferid, row.productid, row.rowguid, row.modifieddate))
 
   def apply(
     compositeId: SpecialofferproductId,

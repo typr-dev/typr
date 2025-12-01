@@ -36,7 +36,7 @@ object SciViewFields {
 
     override lazy val fields: SciViewFields = {
       new SciViewFields {
-        def id: Field[ShoppingcartitemId, SciViewRow] = {
+        override def id: Field[ShoppingcartitemId, SciViewRow] = {
           new Field[ShoppingcartitemId, SciViewRow](
             _path,
             "id",
@@ -47,7 +47,7 @@ object SciViewFields {
             ShoppingcartitemId.pgType
           )
         }
-        def shoppingcartitemid: Field[ShoppingcartitemId, SciViewRow] = {
+        override def shoppingcartitemid: Field[ShoppingcartitemId, SciViewRow] = {
           new Field[ShoppingcartitemId, SciViewRow](
             _path,
             "shoppingcartitemid",
@@ -58,7 +58,7 @@ object SciViewFields {
             ShoppingcartitemId.pgType
           )
         }
-        def shoppingcartid: Field[/* max 50 chars */ String, SciViewRow] = {
+        override def shoppingcartid: Field[/* max 50 chars */ String, SciViewRow] = {
           new Field[/* max 50 chars */ String, SciViewRow](
             _path,
             "shoppingcartid",
@@ -69,7 +69,7 @@ object SciViewFields {
             PgTypes.text
           )
         }
-        def quantity: Field[Integer, SciViewRow] = {
+        override def quantity: Field[Integer, SciViewRow] = {
           new Field[Integer, SciViewRow](
             _path,
             "quantity",
@@ -80,7 +80,7 @@ object SciViewFields {
             PgTypes.int4
           )
         }
-        def productid: Field[ProductId, SciViewRow] = {
+        override def productid: Field[ProductId, SciViewRow] = {
           new Field[ProductId, SciViewRow](
             _path,
             "productid",
@@ -91,7 +91,7 @@ object SciViewFields {
             ProductId.pgType
           )
         }
-        def datecreated: Field[TypoLocalDateTime, SciViewRow] = {
+        override def datecreated: Field[TypoLocalDateTime, SciViewRow] = {
           new Field[TypoLocalDateTime, SciViewRow](
             _path,
             "datecreated",
@@ -102,7 +102,7 @@ object SciViewFields {
             TypoLocalDateTime.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, SciViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, SciViewRow] = {
           new Field[TypoLocalDateTime, SciViewRow](
             _path,
             "modifieddate",
@@ -118,7 +118,7 @@ object SciViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, SciViewRow]] = java.util.List.of(this.fields.id, this.fields.shoppingcartitemid, this.fields.shoppingcartid, this.fields.quantity, this.fields.productid, this.fields.datecreated, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[SciViewFields, SciViewRow] = new Impl(java.util.List.of())

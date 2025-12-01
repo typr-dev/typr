@@ -33,7 +33,7 @@ object JcViewFields {
 
     override lazy val fields: JcViewFields = {
       new JcViewFields {
-        def id: Field[JobcandidateId, JcViewRow] = {
+        override def id: Field[JobcandidateId, JcViewRow] = {
           new Field[JobcandidateId, JcViewRow](
             _path,
             "id",
@@ -44,7 +44,7 @@ object JcViewFields {
             JobcandidateId.pgType
           )
         }
-        def jobcandidateid: Field[JobcandidateId, JcViewRow] = {
+        override def jobcandidateid: Field[JobcandidateId, JcViewRow] = {
           new Field[JobcandidateId, JcViewRow](
             _path,
             "jobcandidateid",
@@ -55,7 +55,7 @@ object JcViewFields {
             JobcandidateId.pgType
           )
         }
-        def businessentityid: OptField[BusinessentityId, JcViewRow] = {
+        override def businessentityid: OptField[BusinessentityId, JcViewRow] = {
           new OptField[BusinessentityId, JcViewRow](
             _path,
             "businessentityid",
@@ -66,7 +66,7 @@ object JcViewFields {
             BusinessentityId.pgType
           )
         }
-        def resume: OptField[TypoXml, JcViewRow] = {
+        override def resume: OptField[TypoXml, JcViewRow] = {
           new OptField[TypoXml, JcViewRow](
             _path,
             "resume",
@@ -77,7 +77,7 @@ object JcViewFields {
             TypoXml.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, JcViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, JcViewRow] = {
           new Field[TypoLocalDateTime, JcViewRow](
             _path,
             "modifieddate",
@@ -93,7 +93,7 @@ object JcViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, JcViewRow]] = java.util.List.of(this.fields.id, this.fields.jobcandidateid, this.fields.businessentityid, this.fields.resume, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[JcViewFields, JcViewRow] = new Impl(java.util.List.of())

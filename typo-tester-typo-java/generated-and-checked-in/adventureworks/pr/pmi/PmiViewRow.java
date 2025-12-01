@@ -10,7 +10,6 @@ import adventureworks.production.illustration.IllustrationId;
 import adventureworks.production.productmodel.ProductmodelId;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple3;
 
 /** View: pr.pmi */
 public record PmiViewRow(
@@ -36,5 +35,5 @@ public record PmiViewRow(
     return new PmiViewRow(productmodelid, illustrationid, modifieddate);
   };
 
-  static RowParser<PmiViewRow> _rowParser = RowParsers.of(ProductmodelId.pgType, IllustrationId.pgType, TypoLocalDateTime.pgType, PmiViewRow::new, row -> new Tuple3<>(row.productmodelid(), row.illustrationid(), row.modifieddate()));;
+  static RowParser<PmiViewRow> _rowParser = RowParsers.of(ProductmodelId.pgType, IllustrationId.pgType, TypoLocalDateTime.pgType, PmiViewRow::new, row -> new Object[]{row.productmodelid(), row.illustrationid(), row.modifieddate()});;
 }

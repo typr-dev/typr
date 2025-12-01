@@ -11,7 +11,6 @@ import adventureworks.userdefined.CustomCreditcardId;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple7;
 
 /** View: sa.cc */
 public record CcViewRow(
@@ -65,5 +64,5 @@ public record CcViewRow(
     return new CcViewRow(id, creditcardid, cardtype, cardnumber, expmonth, expyear, modifieddate);
   };
 
-  static RowParser<CcViewRow> _rowParser = RowParsers.of(/* user-picked */ CustomCreditcardId.pgType, /* user-picked */ CustomCreditcardId.pgType, PgTypes.text, PgTypes.text, TypoShort.pgType, TypoShort.pgType, TypoLocalDateTime.pgType, CcViewRow::new, row -> new Tuple7<>(row.id(), row.creditcardid(), row.cardtype(), row.cardnumber(), row.expmonth(), row.expyear(), row.modifieddate()));;
+  static RowParser<CcViewRow> _rowParser = RowParsers.of(/* user-picked */ CustomCreditcardId.pgType, /* user-picked */ CustomCreditcardId.pgType, PgTypes.text, PgTypes.text, TypoShort.pgType, TypoShort.pgType, TypoLocalDateTime.pgType, CcViewRow::new, row -> new Object[]{row.id(), row.creditcardid(), row.cardtype(), row.cardnumber(), row.expmonth(), row.expyear(), row.modifieddate()});;
 }

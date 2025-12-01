@@ -13,7 +13,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple11
 
 /** Table: sales.specialoffer
  * Sale discounts lookup table.
@@ -83,21 +82,7 @@ case class SpecialofferRow(
 }
 
 object SpecialofferRow {
-  val `_rowParser`: RowParser[SpecialofferRow] = {
-    RowParsers.of(SpecialofferId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.text, PgTypes.text, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, PgTypes.int4, PgTypes.int4.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SpecialofferRow.apply, row => new Tuple11(
-      row.specialofferid,
-      row.description,
-      row.discountpct,
-      row.`type`,
-      row.category,
-      row.startdate,
-      row.enddate,
-      row.minqty,
-      row.maxqty,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[SpecialofferRow] = RowParsers.of(SpecialofferId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.text, PgTypes.text, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, PgTypes.int4, PgTypes.int4.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SpecialofferRow.apply, row => Array(row.specialofferid, row.description, row.discountpct, row.`type`, row.category, row.startdate, row.enddate, row.minqty, row.maxqty, row.rowguid, row.modifieddate))
 
   given pgText: PgText[SpecialofferRow] = PgText.from(`_rowParser`)
 }

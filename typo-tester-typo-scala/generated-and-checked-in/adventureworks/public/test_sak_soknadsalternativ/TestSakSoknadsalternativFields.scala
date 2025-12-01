@@ -47,7 +47,7 @@ object TestSakSoknadsalternativFields {
 
     override lazy val fields: TestSakSoknadsalternativFields = {
       new TestSakSoknadsalternativFields {
-        def organisasjonskodeSaksbehandler: IdField[String, TestSakSoknadsalternativRow] = {
+        override def organisasjonskodeSaksbehandler: IdField[String, TestSakSoknadsalternativRow] = {
           new IdField[String, TestSakSoknadsalternativRow](
             _path,
             "organisasjonskode_saksbehandler",
@@ -58,7 +58,7 @@ object TestSakSoknadsalternativFields {
             PgTypes.text
           )
         }
-        def utdanningsmulighetKode: IdField[String, TestSakSoknadsalternativRow] = {
+        override def utdanningsmulighetKode: IdField[String, TestSakSoknadsalternativRow] = {
           new IdField[String, TestSakSoknadsalternativRow](
             _path,
             "utdanningsmulighet_kode",
@@ -69,7 +69,7 @@ object TestSakSoknadsalternativFields {
             PgTypes.text
           )
         }
-        def organisasjonskodeTilbyder: Field[TestOrganisasjonId, TestSakSoknadsalternativRow] = {
+        override def organisasjonskodeTilbyder: Field[TestOrganisasjonId, TestSakSoknadsalternativRow] = {
           new Field[TestOrganisasjonId, TestSakSoknadsalternativRow](
             _path,
             "organisasjonskode_tilbyder",
@@ -85,7 +85,7 @@ object TestSakSoknadsalternativFields {
 
     override lazy val columns: java.util.List[FieldLike[?, TestSakSoknadsalternativRow]] = java.util.List.of(this.fields.organisasjonskodeSaksbehandler, this.fields.utdanningsmulighetKode, this.fields.organisasjonskodeTilbyder)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = new Impl(java.util.List.of())

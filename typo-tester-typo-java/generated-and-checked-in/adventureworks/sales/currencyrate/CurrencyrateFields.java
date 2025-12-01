@@ -21,7 +21,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface CurrencyrateFields {
-  static final class Impl extends Relation<CurrencyrateFields, CurrencyrateRow> {
+  final class Impl extends Relation<CurrencyrateFields, CurrencyrateRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -29,24 +29,31 @@ public interface CurrencyrateFields {
     @Override
     public CurrencyrateFields fields() {
       return new CurrencyrateFields() {
+               @Override
                public IdField<CurrencyrateId, CurrencyrateRow> currencyrateid() {
                  return new IdField<CurrencyrateId, CurrencyrateRow>(_path, "currencyrateid", CurrencyrateRow::currencyrateid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withCurrencyrateid(value), CurrencyrateId.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, CurrencyrateRow> currencyratedate() {
                  return new Field<TypoLocalDateTime, CurrencyrateRow>(_path, "currencyratedate", CurrencyrateRow::currencyratedate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withCurrencyratedate(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public Field<CurrencyId, CurrencyrateRow> fromcurrencycode() {
                  return new Field<CurrencyId, CurrencyrateRow>(_path, "fromcurrencycode", CurrencyrateRow::fromcurrencycode, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withFromcurrencycode(value), CurrencyId.pgType);
                };
+               @Override
                public Field<CurrencyId, CurrencyrateRow> tocurrencycode() {
                  return new Field<CurrencyId, CurrencyrateRow>(_path, "tocurrencycode", CurrencyrateRow::tocurrencycode, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withTocurrencycode(value), CurrencyId.pgType);
                };
+               @Override
                public Field<BigDecimal, CurrencyrateRow> averagerate() {
                  return new Field<BigDecimal, CurrencyrateRow>(_path, "averagerate", CurrencyrateRow::averagerate, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withAveragerate(value), PgTypes.numeric);
                };
+               @Override
                public Field<BigDecimal, CurrencyrateRow> endofdayrate() {
                  return new Field<BigDecimal, CurrencyrateRow>(_path, "endofdayrate", CurrencyrateRow::endofdayrate, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withEndofdayrate(value), PgTypes.numeric);
                };
+               @Override
                public Field<TypoLocalDateTime, CurrencyrateRow> modifieddate() {
                  return new Field<TypoLocalDateTime, CurrencyrateRow>(_path, "modifieddate", CurrencyrateRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -58,6 +65,7 @@ public interface CurrencyrateFields {
       return List.of(this.fields().currencyrateid(), this.fields().currencyratedate(), this.fields().fromcurrencycode(), this.fields().tocurrencycode(), this.fields().averagerate(), this.fields().endofdayrate(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

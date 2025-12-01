@@ -10,9 +10,9 @@ import typo.dsl.SelectBuilder
 import anorm.SqlStringInterpolation
 
 class PViewRepoImpl extends PViewRepo {
-  def select: SelectBuilder[PViewFields, PViewRow] = SelectBuilder.of(""""pr"."p"""", PViewFields.structure, PViewRow.rowParser)
+  override def select: SelectBuilder[PViewFields, PViewRow] = SelectBuilder.of(""""pr"."p"""", PViewFields.structure, PViewRow.rowParser)
 
-  def selectAll(using c: Connection): List[PViewRow] = {
+  override def selectAll(using c: Connection): List[PViewRow] = {
     SQL"""select "id", "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text
     from "pr"."p"
     """.as(PViewRow.rowParser(1).*)

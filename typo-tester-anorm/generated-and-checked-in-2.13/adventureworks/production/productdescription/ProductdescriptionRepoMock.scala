@@ -21,13 +21,13 @@ case class ProductdescriptionRepoMock(
   toRow: ProductdescriptionRowUnsaved => ProductdescriptionRow,
   map: scala.collection.mutable.Map[ProductdescriptionId, ProductdescriptionRow] = scala.collection.mutable.Map.empty[ProductdescriptionId, ProductdescriptionRow]
 ) extends ProductdescriptionRepo {
-  def delete: DeleteBuilder[ProductdescriptionFields, ProductdescriptionRow] = DeleteBuilderMock(DeleteParams.empty, ProductdescriptionFields.structure, map)
+  override def delete: DeleteBuilder[ProductdescriptionFields, ProductdescriptionRow] = DeleteBuilderMock(DeleteParams.empty, ProductdescriptionFields.structure, map)
 
-  def deleteById(productdescriptionid: ProductdescriptionId)(implicit c: Connection): Boolean = map.remove(productdescriptionid).isDefined
+  override def deleteById(productdescriptionid: ProductdescriptionId)(implicit c: Connection): Boolean = map.remove(productdescriptionid).isDefined
 
-  def deleteByIds(productdescriptionids: Array[ProductdescriptionId])(implicit c: Connection): Int = productdescriptionids.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(productdescriptionids: Array[ProductdescriptionId])(implicit c: Connection): Int = productdescriptionids.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: ProductdescriptionRow)(implicit c: Connection): ProductdescriptionRow = {
+  override def insert(unsaved: ProductdescriptionRow)(implicit c: Connection): ProductdescriptionRow = {
     val _ = if (map.contains(unsaved.productdescriptionid))
       sys.error(s"id ${unsaved.productdescriptionid} already exists")
     else
@@ -36,9 +36,9 @@ case class ProductdescriptionRepoMock(
     unsaved
   }
 
-  def insert(unsaved: ProductdescriptionRowUnsaved)(implicit c: Connection): ProductdescriptionRow = insert(toRow(unsaved))
+  override def insert(unsaved: ProductdescriptionRowUnsaved)(implicit c: Connection): ProductdescriptionRow = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[ProductdescriptionRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = {
@@ -49,7 +49,7 @@ case class ProductdescriptionRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[ProductdescriptionRowUnsaved],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = {
@@ -60,34 +60,34 @@ case class ProductdescriptionRepoMock(
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[ProductdescriptionFields, ProductdescriptionRow] = SelectBuilderMock(ProductdescriptionFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[ProductdescriptionFields, ProductdescriptionRow] = SelectBuilderMock(ProductdescriptionFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(implicit c: Connection): List[ProductdescriptionRow] = map.values.toList
+  override def selectAll(implicit c: Connection): List[ProductdescriptionRow] = map.values.toList
 
-  def selectById(productdescriptionid: ProductdescriptionId)(implicit c: Connection): Option[ProductdescriptionRow] = map.get(productdescriptionid)
+  override def selectById(productdescriptionid: ProductdescriptionId)(implicit c: Connection): Option[ProductdescriptionRow] = map.get(productdescriptionid)
 
-  def selectByIds(productdescriptionids: Array[ProductdescriptionId])(implicit c: Connection): List[ProductdescriptionRow] = productdescriptionids.flatMap(map.get).toList
+  override def selectByIds(productdescriptionids: Array[ProductdescriptionId])(implicit c: Connection): List[ProductdescriptionRow] = productdescriptionids.flatMap(map.get).toList
 
-  def selectByIdsTracked(productdescriptionids: Array[ProductdescriptionId])(implicit c: Connection): Map[ProductdescriptionId, ProductdescriptionRow] = {
+  override def selectByIdsTracked(productdescriptionids: Array[ProductdescriptionId])(implicit c: Connection): Map[ProductdescriptionId, ProductdescriptionRow] = {
     val byId = selectByIds(productdescriptionids).view.map(x => (x.productdescriptionid, x)).toMap
     productdescriptionids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[ProductdescriptionFields, ProductdescriptionRow] = UpdateBuilderMock(UpdateParams.empty, ProductdescriptionFields.structure, map)
+  override def update: UpdateBuilder[ProductdescriptionFields, ProductdescriptionRow] = UpdateBuilderMock(UpdateParams.empty, ProductdescriptionFields.structure, map)
 
-  def update(row: ProductdescriptionRow)(implicit c: Connection): Option[ProductdescriptionRow] = {
+  override def update(row: ProductdescriptionRow)(implicit c: Connection): Option[ProductdescriptionRow] = {
     map.get(row.productdescriptionid).map { _ =>
       map.put(row.productdescriptionid, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: ProductdescriptionRow)(implicit c: Connection): ProductdescriptionRow = {
+  override def upsert(unsaved: ProductdescriptionRow)(implicit c: Connection): ProductdescriptionRow = {
     map.put(unsaved.productdescriptionid, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[ProductdescriptionRow])(implicit c: Connection): List[ProductdescriptionRow] = {
+  override def upsertBatch(unsaved: Iterable[ProductdescriptionRow])(implicit c: Connection): List[ProductdescriptionRow] = {
     unsaved.map { row =>
       map += (row.productdescriptionid -> row)
       row
@@ -95,7 +95,7 @@ case class ProductdescriptionRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[ProductdescriptionRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

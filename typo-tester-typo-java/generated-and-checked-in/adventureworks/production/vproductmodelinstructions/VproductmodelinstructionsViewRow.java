@@ -15,7 +15,6 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple11;
 
 /** View: production.vproductmodelinstructions */
 public record VproductmodelinstructionsViewRow(
@@ -83,5 +82,5 @@ public record VproductmodelinstructionsViewRow(
     return new VproductmodelinstructionsViewRow(productmodelid, name, instructions, locationID, setupHours, machineHours, laborHours, lotSize, step, rowguid, modifieddate);
   };
 
-  static RowParser<VproductmodelinstructionsViewRow> _rowParser = RowParsers.of(ProductmodelId.pgType, Name.pgType, PgTypes.text.opt(), PgTypes.int4.opt(), PgTypes.numeric.opt(), PgTypes.numeric.opt(), PgTypes.numeric.opt(), PgTypes.int4.opt(), PgTypes.text.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, VproductmodelinstructionsViewRow::new, row -> new Tuple11<>(row.productmodelid(), row.name(), row.instructions(), row.locationID(), row.setupHours(), row.machineHours(), row.laborHours(), row.lotSize(), row.step(), row.rowguid(), row.modifieddate()));;
+  static RowParser<VproductmodelinstructionsViewRow> _rowParser = RowParsers.of(ProductmodelId.pgType, Name.pgType, PgTypes.text.opt(), PgTypes.int4.opt(), PgTypes.numeric.opt(), PgTypes.numeric.opt(), PgTypes.numeric.opt(), PgTypes.int4.opt(), PgTypes.text.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, VproductmodelinstructionsViewRow::new, row -> new Object[]{row.productmodelid(), row.name(), row.instructions(), row.locationID(), row.setupHours(), row.machineHours(), row.laborHours(), row.lotSize(), row.step(), row.rowguid(), row.modifieddate()});;
 }

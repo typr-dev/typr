@@ -26,11 +26,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PersonRepoImpl extends PersonRepo {
-  def delete: DeleteBuilder[PersonFields, PersonRow] = DeleteBuilder.of("person.person", PersonFields.structure)
+  override def delete: DeleteBuilder[PersonFields, PersonRow] = DeleteBuilder.of("person.person", PersonFields.structure)
 
-  def deleteById(businessentityid: BusinessentityId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "person"."person" where "businessentityid" = ${BusinessentityId.pgType.encode(businessentityid)}""".update().runUnchecked(c) > 0
+  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "person"."person" where "businessentityid" = ${BusinessentityId.pgType.encode(businessentityid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Integer = {
+  override def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Integer = {
     interpolate"""delete
     from "person"."person"
     where "businessentityid" = ANY(${BusinessentityId.pgTypeArray.encode(businessentityids)})"""
@@ -38,7 +38,7 @@ class PersonRepoImpl extends PersonRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: PersonRow)(using c: Connection): PersonRow = {
+  override def insert(unsaved: PersonRow)(using c: Connection): PersonRow = {
   interpolate"""insert into "person"."person"("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate")
     values (${BusinessentityId.pgType.encode(unsaved.businessentityid)}::int4, ${PgTypes.text.encode(unsaved.persontype)}::bpchar, ${NameStyle.pgType.encode(unsaved.namestyle)}::bool, ${PgTypes.text.opt().encode(unsaved.title)}, ${/* user-picked */ FirstName.pgType.encode(unsaved.firstname)}::varchar, ${Name.pgType.opt().encode(unsaved.middlename)}::varchar, ${Name.pgType.encode(unsaved.lastname)}::varchar, ${PgTypes.text.opt().encode(unsaved.suffix)}, ${PgTypes.int4.encode(unsaved.emailpromotion)}::int4, ${TypoXml.pgType.opt().encode(unsaved.additionalcontactinfo)}::xml, ${TypoXml.pgType.opt().encode(unsaved.demographics)}::xml, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text
@@ -46,9 +46,9 @@ class PersonRepoImpl extends PersonRepo {
     .updateReturning(PersonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: PersonRowUnsaved)(using c: Connection): PersonRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: PersonRowUnsaved)(using c: Connection): PersonRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn
     values.add(interpolate"${BusinessentityId.pgType.encode(unsaved.businessentityid)}::int4"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""persontype"""")): @scala.annotation.nowarn
@@ -68,32 +68,20 @@ class PersonRepoImpl extends PersonRepo {
     columns.add(Fragment.lit(""""demographics"""")): @scala.annotation.nowarn
     values.add(interpolate"${TypoXml.pgType.opt().encode(unsaved.demographics)}::xml"): @scala.annotation.nowarn
     unsaved.namestyle.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""namestyle"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${NameStyle.pgType.encode(value)}::bool"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""namestyle"""")): @scala.annotation.nowarn; values.add(interpolate"${NameStyle.pgType.encode(value)}::bool"): @scala.annotation.nowarn }
     );
     unsaved.emailpromotion.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""emailpromotion"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PgTypes.int4.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""emailpromotion"""")): @scala.annotation.nowarn; values.add(interpolate"${PgTypes.int4.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "person"."person"(${Fragment.comma(columns)})
@@ -101,51 +89,51 @@ class PersonRepoImpl extends PersonRepo {
       returning "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text
       """
     }
-    q.updateReturning(PersonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(PersonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[PersonRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "person"."person"("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, c, PersonRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[PersonRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "person"."person"("businessentityid", "persontype", "title", "firstname", "middlename", "lastname", "suffix", "additionalcontactinfo", "demographics", "namestyle", "emailpromotion", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, PersonRowUnsaved.pgText)
 
-  def select: SelectBuilder[PersonFields, PersonRow] = SelectBuilder.of("person.person", PersonFields.structure, PersonRow.`_rowParser`)
+  override def select: SelectBuilder[PersonFields, PersonRow] = SelectBuilder.of("person.person", PersonFields.structure, PersonRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[PersonRow] = {
+  override def selectAll(using c: Connection): java.util.List[PersonRow] = {
     interpolate"""select "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text
     from "person"."person"
-    """.as(PersonRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(PersonRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(businessentityid: BusinessentityId)(using c: Connection): Optional[PersonRow] = {
+  override def selectById(businessentityid: BusinessentityId)(using c: Connection): Optional[PersonRow] = {
     interpolate"""select "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text
     from "person"."person"
-    where "businessentityid" = ${BusinessentityId.pgType.encode(businessentityid)}""".as(PersonRow.`_rowParser`.first()).runUnchecked(c)
+    where "businessentityid" = ${BusinessentityId.pgType.encode(businessentityid)}""".query(PersonRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.List[PersonRow] = {
+  override def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.List[PersonRow] = {
     interpolate"""select "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text
     from "person"."person"
-    where "businessentityid" = ANY(${BusinessentityId.pgTypeArray.encode(businessentityids)})""".as(PersonRow.`_rowParser`.all()).runUnchecked(c)
+    where "businessentityid" = ANY(${BusinessentityId.pgTypeArray.encode(businessentityids)})""".query(PersonRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.Map[BusinessentityId, PersonRow] = {
-    val ret: java.util.Map[BusinessentityId, PersonRow] = new HashMap()
+  override def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.Map[BusinessentityId, PersonRow] = {
+    val ret: HashMap[BusinessentityId, PersonRow] = new HashMap[BusinessentityId, PersonRow]()
     selectByIds(businessentityids)(using c).forEach(row => ret.put(row.businessentityid, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[PersonFields, PersonRow] = UpdateBuilder.of("person.person", PersonFields.structure, PersonRow.`_rowParser`.all())
+  override def update: UpdateBuilder[PersonFields, PersonRow] = UpdateBuilder.of("person.person", PersonFields.structure, PersonRow.`_rowParser`.all())
 
-  def update(row: PersonRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: PersonRow)(using c: Connection): java.lang.Boolean = {
     val businessentityid: BusinessentityId = row.businessentityid
-    interpolate"""update "person"."person"
+    return interpolate"""update "person"."person"
     set "persontype" = ${PgTypes.text.encode(row.persontype)}::bpchar,
     "namestyle" = ${NameStyle.pgType.encode(row.namestyle)}::bool,
     "title" = ${PgTypes.text.opt().encode(row.title)},
@@ -161,7 +149,7 @@ class PersonRepoImpl extends PersonRepo {
     where "businessentityid" = ${BusinessentityId.pgType.encode(businessentityid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: PersonRow)(using c: Connection): PersonRow = {
+  override def upsert(unsaved: PersonRow)(using c: Connection): PersonRow = {
   interpolate"""insert into "person"."person"("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate")
     values (${BusinessentityId.pgType.encode(unsaved.businessentityid)}::int4, ${PgTypes.text.encode(unsaved.persontype)}::bpchar, ${NameStyle.pgType.encode(unsaved.namestyle)}::bool, ${PgTypes.text.opt().encode(unsaved.title)}, ${/* user-picked */ FirstName.pgType.encode(unsaved.firstname)}::varchar, ${Name.pgType.opt().encode(unsaved.middlename)}::varchar, ${Name.pgType.encode(unsaved.lastname)}::varchar, ${PgTypes.text.opt().encode(unsaved.suffix)}, ${PgTypes.int4.encode(unsaved.emailpromotion)}::int4, ${TypoXml.pgType.opt().encode(unsaved.additionalcontactinfo)}::xml, ${TypoXml.pgType.opt().encode(unsaved.demographics)}::xml, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("businessentityid")
@@ -184,7 +172,7 @@ class PersonRepoImpl extends PersonRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[PersonRow])(using c: Connection): java.util.List[PersonRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[PersonRow])(using c: Connection): java.util.List[PersonRow] = {
     interpolate"""insert into "person"."person"("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate")
     values (?::int4, ?::bpchar, ?::bool, ?, ?::varchar, ?::varchar, ?::varchar, ?, ?::int4, ?::xml, ?::xml, ?::uuid, ?::timestamp)
     on conflict ("businessentityid")
@@ -208,13 +196,13 @@ class PersonRepoImpl extends PersonRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[PersonRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table person_TEMP (like "person"."person") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy person_TEMP("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, c, PersonRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "person"."person"("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate")
+    return interpolate"""insert into "person"."person"("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate")
     select * from person_TEMP
     on conflict ("businessentityid")
     do update set

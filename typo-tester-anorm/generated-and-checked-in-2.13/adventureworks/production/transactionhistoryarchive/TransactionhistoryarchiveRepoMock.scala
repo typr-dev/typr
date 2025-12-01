@@ -21,13 +21,13 @@ case class TransactionhistoryarchiveRepoMock(
   toRow: TransactionhistoryarchiveRowUnsaved => TransactionhistoryarchiveRow,
   map: scala.collection.mutable.Map[TransactionhistoryarchiveId, TransactionhistoryarchiveRow] = scala.collection.mutable.Map.empty[TransactionhistoryarchiveId, TransactionhistoryarchiveRow]
 ) extends TransactionhistoryarchiveRepo {
-  def delete: DeleteBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = DeleteBuilderMock(DeleteParams.empty, TransactionhistoryarchiveFields.structure, map)
+  override def delete: DeleteBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = DeleteBuilderMock(DeleteParams.empty, TransactionhistoryarchiveFields.structure, map)
 
-  def deleteById(transactionid: TransactionhistoryarchiveId)(implicit c: Connection): Boolean = map.remove(transactionid).isDefined
+  override def deleteById(transactionid: TransactionhistoryarchiveId)(implicit c: Connection): Boolean = map.remove(transactionid).isDefined
 
-  def deleteByIds(transactionids: Array[TransactionhistoryarchiveId])(implicit c: Connection): Int = transactionids.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(transactionids: Array[TransactionhistoryarchiveId])(implicit c: Connection): Int = transactionids.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: TransactionhistoryarchiveRow)(implicit c: Connection): TransactionhistoryarchiveRow = {
+  override def insert(unsaved: TransactionhistoryarchiveRow)(implicit c: Connection): TransactionhistoryarchiveRow = {
     val _ = if (map.contains(unsaved.transactionid))
       sys.error(s"id ${unsaved.transactionid} already exists")
     else
@@ -36,9 +36,9 @@ case class TransactionhistoryarchiveRepoMock(
     unsaved
   }
 
-  def insert(unsaved: TransactionhistoryarchiveRowUnsaved)(implicit c: Connection): TransactionhistoryarchiveRow = insert(toRow(unsaved))
+  override def insert(unsaved: TransactionhistoryarchiveRowUnsaved)(implicit c: Connection): TransactionhistoryarchiveRow = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[TransactionhistoryarchiveRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = {
@@ -49,7 +49,7 @@ case class TransactionhistoryarchiveRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[TransactionhistoryarchiveRowUnsaved],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = {
@@ -60,34 +60,34 @@ case class TransactionhistoryarchiveRepoMock(
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = SelectBuilderMock(TransactionhistoryarchiveFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = SelectBuilderMock(TransactionhistoryarchiveFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(implicit c: Connection): List[TransactionhistoryarchiveRow] = map.values.toList
+  override def selectAll(implicit c: Connection): List[TransactionhistoryarchiveRow] = map.values.toList
 
-  def selectById(transactionid: TransactionhistoryarchiveId)(implicit c: Connection): Option[TransactionhistoryarchiveRow] = map.get(transactionid)
+  override def selectById(transactionid: TransactionhistoryarchiveId)(implicit c: Connection): Option[TransactionhistoryarchiveRow] = map.get(transactionid)
 
-  def selectByIds(transactionids: Array[TransactionhistoryarchiveId])(implicit c: Connection): List[TransactionhistoryarchiveRow] = transactionids.flatMap(map.get).toList
+  override def selectByIds(transactionids: Array[TransactionhistoryarchiveId])(implicit c: Connection): List[TransactionhistoryarchiveRow] = transactionids.flatMap(map.get).toList
 
-  def selectByIdsTracked(transactionids: Array[TransactionhistoryarchiveId])(implicit c: Connection): Map[TransactionhistoryarchiveId, TransactionhistoryarchiveRow] = {
+  override def selectByIdsTracked(transactionids: Array[TransactionhistoryarchiveId])(implicit c: Connection): Map[TransactionhistoryarchiveId, TransactionhistoryarchiveRow] = {
     val byId = selectByIds(transactionids).view.map(x => (x.transactionid, x)).toMap
     transactionids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = UpdateBuilderMock(UpdateParams.empty, TransactionhistoryarchiveFields.structure, map)
+  override def update: UpdateBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = UpdateBuilderMock(UpdateParams.empty, TransactionhistoryarchiveFields.structure, map)
 
-  def update(row: TransactionhistoryarchiveRow)(implicit c: Connection): Option[TransactionhistoryarchiveRow] = {
+  override def update(row: TransactionhistoryarchiveRow)(implicit c: Connection): Option[TransactionhistoryarchiveRow] = {
     map.get(row.transactionid).map { _ =>
       map.put(row.transactionid, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: TransactionhistoryarchiveRow)(implicit c: Connection): TransactionhistoryarchiveRow = {
+  override def upsert(unsaved: TransactionhistoryarchiveRow)(implicit c: Connection): TransactionhistoryarchiveRow = {
     map.put(unsaved.transactionid, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[TransactionhistoryarchiveRow])(implicit c: Connection): List[TransactionhistoryarchiveRow] = {
+  override def upsertBatch(unsaved: Iterable[TransactionhistoryarchiveRow])(implicit c: Connection): List[TransactionhistoryarchiveRow] = {
     unsaved.map { row =>
       map += (row.transactionid -> row)
       row
@@ -95,7 +95,7 @@ case class TransactionhistoryarchiveRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[TransactionhistoryarchiveRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

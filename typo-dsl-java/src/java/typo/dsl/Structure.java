@@ -259,7 +259,7 @@ public interface Structure<Fields, Row> {
 
         @Override
         public <T> Optional<T> untypedGet(SqlExpr.FieldLike<T, ?> field, Tuple2<Row1, Row2> row) {
-            if (left.columns().contains(field)) {
+            if (containsField(left.columns(), field)) {
                 return left.untypedGet(field, row._1());
             } else {
                 return right.untypedGet(field, row._2());
@@ -312,12 +312,23 @@ public interface Structure<Fields, Row> {
         
         @Override
         public <T> Optional<T> untypedGet(SqlExpr.FieldLike<T, ?> field, Tuple2<Row1, Optional<Row2>> row) {
-            if (left.columns().contains(field)) {
+            if (containsField(left.columns(), field)) {
                 return left.untypedGet(field, row._1());
             } else {
                 return row._2().flatMap(r2 -> right.untypedGet(field, r2));
             }
         }
+    }
+
+    // Helper method to check if a field exists in a columns list by path and column name
+    // This is needed because Field records contain Function/BiFunction which don't have structural equality
+    private static boolean containsField(List<? extends SqlExpr.FieldLike<?, ?>> columns, SqlExpr.FieldLike<?, ?> field) {
+        for (var col : columns) {
+            if (col.path().equals(field.path()) && col.column().equals(field.column())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // Helper methods for type-safe boolean expression evaluation

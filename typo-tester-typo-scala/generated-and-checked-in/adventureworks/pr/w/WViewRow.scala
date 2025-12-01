@@ -14,7 +14,6 @@ import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple10
 
 /** View: pr.w */
 case class WViewRow(
@@ -41,18 +40,5 @@ case class WViewRow(
 )
 
 object WViewRow {
-  val `_rowParser`: RowParser[WViewRow] = {
-    RowParsers.of(WorkorderId.pgType, WorkorderId.pgType, ProductId.pgType, PgTypes.int4, TypoShort.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoLocalDateTime.pgType, ScrapreasonId.pgType.opt(), TypoLocalDateTime.pgType, WViewRow.apply, row => new Tuple10(
-      row.id,
-      row.workorderid,
-      row.productid,
-      row.orderqty,
-      row.scrappedqty,
-      row.startdate,
-      row.enddate,
-      row.duedate,
-      row.scrapreasonid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[WViewRow] = RowParsers.of(WorkorderId.pgType, WorkorderId.pgType, ProductId.pgType, PgTypes.int4, TypoShort.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoLocalDateTime.pgType, ScrapreasonId.pgType.opt(), TypoLocalDateTime.pgType, WViewRow.apply, row => Array(row.id, row.workorderid, row.productid, row.orderqty, row.scrappedqty, row.startdate, row.enddate, row.duedate, row.scrapreasonid, row.modifieddate))
 }

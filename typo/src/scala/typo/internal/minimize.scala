@@ -13,6 +13,8 @@ object minimize {
           tree match {
             case jvm.IgnoreResult(expr) =>
               go(expr)
+            case jvm.NotNull(expr) =>
+              go(expr)
             case jvm.TypeSwitch(value, cases, nullCase, defaultCase) =>
               go(value)
               cases.foreach { c =>
@@ -51,17 +53,11 @@ object minimize {
               go(target)
               typeArgs.foreach(goTree)
               args.foreach(goTree)
-            case jvm.Lambda0(body) =>
-              go(body)
-            case jvm.Lambda1(_, body) =>
-              go(body)
-            case jvm.Lambda2(_, _, body) =>
-              go(body)
+            case jvm.Lambda(params, body) =>
+              params.foreach(p => p.tpe.foreach(goTree))
+              goBody(body)
             case jvm.ByName(body) =>
-              go(body)
-            case jvm.TypedLambda1(paramType, _, body) =>
-              goTree(paramType)
-              go(body)
+              goBody(body)
             case jvm.FieldGetterRef(rowType, _) =>
               goTree(rowType)
             case jvm.SelfNullary(_) =>
@@ -109,14 +105,14 @@ object minimize {
               goTree(name)
               goTree(tpe)
               body.foreach(go)
-            case jvm.Method(_, _, tparams, name, params, implicitParams, tpe, throws, body) =>
+            case jvm.Method(_, _, tparams, name, params, implicitParams, tpe, throws, body, _, _) =>
               tparams.foreach(goTree)
               goTree(name)
               params.foreach(goTree)
               implicitParams.foreach(goTree)
               goTree(tpe)
               throws.foreach(goTree)
-              body.foreach(go)
+              goBody(body)
             case jvm.Enum(_, _, tpe, _, instances) =>
               goTree(tpe)
               instances.foreach(goTree)
@@ -165,6 +161,8 @@ object minimize {
               goTree(underlying)
             case jvm.Type.Void =>
               ()
+            case jvm.Type.Primitive(_) =>
+              ()
             case jvm.Apply0(f) =>
               goTree(f)
             case jvm.Apply1(f, arg1) =>
@@ -197,7 +195,17 @@ object minimize {
                 case jvm.Annotation.Arg.Named(_, value)   => go(value)
                 case jvm.Annotation.Arg.Positional(value) => go(value)
               }
+            case jvm.Return(value) =>
+              go(value)
+            case jvm.Throw(value) =>
+              go(value)
           }
+        }
+
+        def goBody(body: jvm.Body): Unit = body match {
+          case jvm.Body.Abstract     => ()
+          case jvm.Body.Expr(value)  => go(value)
+          case jvm.Body.Stmts(stmts) => stmts.foreach(go)
         }
 
         def go(code: jvm.Code): Unit = {

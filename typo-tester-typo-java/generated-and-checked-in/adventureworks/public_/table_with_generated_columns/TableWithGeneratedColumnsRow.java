@@ -10,7 +10,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple2;
 
 /** Table: public.table-with-generated-columns
   * Primary key: name
@@ -39,7 +38,7 @@ public record TableWithGeneratedColumnsRow(
     return new TableWithGeneratedColumnsRow(name, nameTypeAlways);
   };
 
-  static RowParser<TableWithGeneratedColumnsRow> _rowParser = RowParsers.of(TableWithGeneratedColumnsId.pgType, PgTypes.text, TableWithGeneratedColumnsRow::new, row -> new Tuple2<>(row.name(), row.nameTypeAlways()));;
+  static RowParser<TableWithGeneratedColumnsRow> _rowParser = RowParsers.of(TableWithGeneratedColumnsId.pgType, PgTypes.text, TableWithGeneratedColumnsRow::new, row -> new Object[]{row.name(), row.nameTypeAlways()});;
 
   static public PgText<TableWithGeneratedColumnsRow> pgText =
     PgText.from(_rowParser);

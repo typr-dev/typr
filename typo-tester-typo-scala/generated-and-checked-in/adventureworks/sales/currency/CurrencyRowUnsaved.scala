@@ -24,13 +24,5 @@ case class CurrencyRowUnsaved(
 }
 
 object CurrencyRowUnsaved {
-  given pgText: PgText[CurrencyRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      CurrencyId.pgType.pgText.unsafeEncode(row.currencycode, sb);
-      sb.append(PgText.DELIMETER);
-      Name.pgType.pgText.unsafeEncode(row.name, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[CurrencyRowUnsaved] = PgText.instance((row, sb) => { CurrencyId.pgType.pgText.unsafeEncode(row.currencycode, sb); sb.append(PgText.DELIMETER); Name.pgType.pgText.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

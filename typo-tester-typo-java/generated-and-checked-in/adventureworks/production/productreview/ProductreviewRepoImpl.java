@@ -8,7 +8,6 @@ package adventureworks.production.productreview;
 import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.production.product.ProductId;
 import adventureworks.public_.Name;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,12 +25,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class ProductreviewRepoImpl implements ProductreviewRepo {
+  @Override
   public DeleteBuilder<ProductreviewFields, ProductreviewRow> delete() {
     return DeleteBuilder.of("production.productreview", ProductreviewFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     ProductreviewId productreviewid,
     Connection c
@@ -45,6 +45,7 @@ public class ProductreviewRepoImpl implements ProductreviewRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     ProductreviewId[] productreviewids,
     Connection c
@@ -61,6 +62,7 @@ public class ProductreviewRepoImpl implements ProductreviewRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public ProductreviewRow insert(
     ProductreviewRow unsaved,
     Connection c
@@ -92,86 +94,94 @@ public class ProductreviewRepoImpl implements ProductreviewRepo {
       .updateReturning(ProductreviewRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public ProductreviewRow insert(
     ProductreviewRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"productid\""));
-      values.add(interpolate(
-        ProductId.pgType.encode(unsaved.productid()),
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"productid\""));
+    values.add(interpolate(
+      ProductId.pgType.encode(unsaved.productid()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"reviewername\""));
+    values.add(interpolate(
+      Name.pgType.encode(unsaved.reviewername()),
+      typo.runtime.Fragment.lit("::varchar")
+    ));
+    columns.add(Fragment.lit("\"emailaddress\""));
+    values.add(interpolate(
+      PgTypes.text.encode(unsaved.emailaddress()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    columns.add(Fragment.lit("\"rating\""));
+    values.add(interpolate(
+      PgTypes.int4.encode(unsaved.rating()),
+      typo.runtime.Fragment.lit("::int4")
+    ));
+    columns.add(Fragment.lit("\"comments\""));
+    values.add(interpolate(
+      PgTypes.text.opt().encode(unsaved.comments()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    unsaved.productreviewid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"productreviewid\""));
+        values.add(interpolate(
+        ProductreviewId.pgType.encode(value),
         typo.runtime.Fragment.lit("::int4")
       ));
-      columns.add(Fragment.lit("\"reviewername\""));
-      values.add(interpolate(
-        Name.pgType.encode(unsaved.reviewername()),
-        typo.runtime.Fragment.lit("::varchar")
+      }
+    );;
+    unsaved.reviewdate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"reviewdate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
       ));
-      columns.add(Fragment.lit("\"emailaddress\""));
-      values.add(interpolate(
-        PgTypes.text.encode(unsaved.emailaddress()),
-        typo.runtime.Fragment.lit("""
-        """)
+      }
+    );;
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
       ));
-      columns.add(Fragment.lit("\"rating\""));
-      values.add(interpolate(
-        PgTypes.int4.encode(unsaved.rating()),
-        typo.runtime.Fragment.lit("::int4")
-      ));
-      columns.add(Fragment.lit("\"comments\""));
-      values.add(interpolate(
-        PgTypes.text.opt().encode(unsaved.comments()),
-        typo.runtime.Fragment.lit("""
-        """)
-      ));
-      unsaved.productreviewid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"productreviewid\""));
-          values.add(interpolate(
-            ProductreviewId.pgType.encode(value),
-            typo.runtime.Fragment.lit("::int4")
-          ));
-        }
-      );;
-      unsaved.reviewdate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"reviewdate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "production"."productreview"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "production"."productreview"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(ProductreviewRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<ProductreviewRow> unsaved,
     Integer batchSize,
@@ -183,6 +193,7 @@ public class ProductreviewRepoImpl implements ProductreviewRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<ProductreviewRowUnsaved> unsaved,
     Integer batchSize,
@@ -193,17 +204,20 @@ public class ProductreviewRepoImpl implements ProductreviewRepo {
     """), batchSize, unsaved, c, ProductreviewRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<ProductreviewFields, ProductreviewRow> select() {
     return SelectBuilder.of("production.productreview", ProductreviewFields.structure(), ProductreviewRow._rowParser);
   };
 
+  @Override
   public List<ProductreviewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text
        from "production"."productreview"
-    """)).as(ProductreviewRow._rowParser.all()).runUnchecked(c);
+    """)).query(ProductreviewRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<ProductreviewRow> selectById(
     ProductreviewId productreviewid,
     Connection c
@@ -215,9 +229,10 @@ public class ProductreviewRepoImpl implements ProductreviewRepo {
          where "productreviewid" = """),
       ProductreviewId.pgType.encode(productreviewid),
       typo.runtime.Fragment.lit("")
-    ).as(ProductreviewRow._rowParser.first()).runUnchecked(c);
+    ).query(ProductreviewRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<ProductreviewRow> selectByIds(
     ProductreviewId[] productreviewids,
     Connection c
@@ -229,64 +244,68 @@ public class ProductreviewRepoImpl implements ProductreviewRepo {
          where "productreviewid" = ANY("""),
       ProductreviewId.pgTypeArray.encode(productreviewids),
       typo.runtime.Fragment.lit(")")
-    ).as(ProductreviewRow._rowParser.all()).runUnchecked(c);
+    ).query(ProductreviewRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<ProductreviewId, ProductreviewRow> selectByIdsTracked(
     ProductreviewId[] productreviewids,
     Connection c
   ) {
-    Map<ProductreviewId, ProductreviewRow> ret = new HashMap<>();;
-      selectByIds(productreviewids, c).forEach(row -> ret.put(row.productreviewid(), row));
+    HashMap<ProductreviewId, ProductreviewRow> ret = new HashMap<ProductreviewId, ProductreviewRow>();
+    selectByIds(productreviewids, c).forEach(row -> ret.put(row.productreviewid(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<ProductreviewFields, ProductreviewRow> update() {
     return UpdateBuilder.of("production.productreview", ProductreviewFields.structure(), ProductreviewRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     ProductreviewRow row,
     Connection c
   ) {
     ProductreviewId productreviewid = row.productreviewid();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "production"."productreview"
-                set "productid" = """),
-             ProductId.pgType.encode(row.productid()),
-             typo.runtime.Fragment.lit("""
-                ::int4,
-                "reviewername" = """),
-             Name.pgType.encode(row.reviewername()),
-             typo.runtime.Fragment.lit("""
-                ::varchar,
-                "reviewdate" = """),
-             TypoLocalDateTime.pgType.encode(row.reviewdate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp,
-                "emailaddress" = """),
-             PgTypes.text.encode(row.emailaddress()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "rating" = """),
-             PgTypes.int4.encode(row.rating()),
-             typo.runtime.Fragment.lit("""
-                ::int4,
-                "comments" = """),
-             PgTypes.text.opt().encode(row.comments()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "productreviewid" = """),
-             ProductreviewId.pgType.encode(productreviewid),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "production"."productreview"
+         set "productid" = """),
+      ProductId.pgType.encode(row.productid()),
+      typo.runtime.Fragment.lit("""
+         ::int4,
+         "reviewername" = """),
+      Name.pgType.encode(row.reviewername()),
+      typo.runtime.Fragment.lit("""
+         ::varchar,
+         "reviewdate" = """),
+      TypoLocalDateTime.pgType.encode(row.reviewdate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp,
+         "emailaddress" = """),
+      PgTypes.text.encode(row.emailaddress()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "rating" = """),
+      PgTypes.int4.encode(row.rating()),
+      typo.runtime.Fragment.lit("""
+         ::int4,
+         "comments" = """),
+      PgTypes.text.opt().encode(row.comments()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "productreviewid" = """),
+      ProductreviewId.pgType.encode(productreviewid),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public ProductreviewRow upsert(
     ProductreviewRow unsaved,
     Connection c
@@ -328,6 +347,7 @@ public class ProductreviewRepoImpl implements ProductreviewRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<ProductreviewRow> upsertBatch(
     Iterator<ProductreviewRow> unsaved,
     Connection c
@@ -351,30 +371,31 @@ public class ProductreviewRepoImpl implements ProductreviewRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<ProductreviewRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table productreview_TEMP (like "production"."productreview") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy productreview_TEMP("productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate") from stdin
-      """), batchSize, unsaved, c, ProductreviewRow.pgText);
+    create temporary table productreview_TEMP (like "production"."productreview") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy productreview_TEMP("productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate") from stdin
+    """), batchSize, unsaved, c, ProductreviewRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "production"."productreview"("productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate")
-              select * from productreview_TEMP
-              on conflict ("productreviewid")
-              do update set
-                "productid" = EXCLUDED."productid",
-              "reviewername" = EXCLUDED."reviewername",
-              "reviewdate" = EXCLUDED."reviewdate",
-              "emailaddress" = EXCLUDED."emailaddress",
-              "rating" = EXCLUDED."rating",
-              "comments" = EXCLUDED."comments",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table productreview_TEMP;""")).update().runUnchecked(c);
+       insert into "production"."productreview"("productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate")
+       select * from productreview_TEMP
+       on conflict ("productreviewid")
+       do update set
+         "productid" = EXCLUDED."productid",
+       "reviewername" = EXCLUDED."reviewername",
+       "reviewdate" = EXCLUDED."reviewdate",
+       "emailaddress" = EXCLUDED."emailaddress",
+       "rating" = EXCLUDED."rating",
+       "comments" = EXCLUDED."comments",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table productreview_TEMP;""")).update().runUnchecked(c);
   };
 }

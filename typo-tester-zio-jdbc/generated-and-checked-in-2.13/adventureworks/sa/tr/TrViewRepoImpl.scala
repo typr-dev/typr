@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class TrViewRepoImpl extends TrViewRepo {
-  def select: SelectBuilder[TrViewFields, TrViewRow] = SelectBuilder.of(""""sa"."tr"""", TrViewFields.structure, TrViewRow.jdbcDecoder)
+  override def select: SelectBuilder[TrViewFields, TrViewRow] = SelectBuilder.of(""""sa"."tr"""", TrViewFields.structure, TrViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, TrViewRow] = sql"""select "id", "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"::text from "sa"."tr"""".query(TrViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, TrViewRow] = sql"""select "id", "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"::text from "sa"."tr"""".query(TrViewRow.jdbcDecoder).selectStream()
 }

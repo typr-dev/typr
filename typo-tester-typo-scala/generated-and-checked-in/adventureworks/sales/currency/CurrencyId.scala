@@ -5,12 +5,13 @@
  */
 package adventureworks.sales.currency
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
 
 /** Type for the primary key of table `sales.currency` */
-case class CurrencyId(value: /* bpchar, max 3 chars */ String) extends scala.AnyVal
+case class CurrencyId(@JsonValue value: /* bpchar, max 3 chars */ String) extends scala.AnyVal
 
 object CurrencyId {
   given bijection: Bijection[CurrencyId, /* bpchar, max 3 chars */ String] = Bijection.apply[CurrencyId, /* bpchar, max 3 chars */ String](_.value)(CurrencyId.apply)

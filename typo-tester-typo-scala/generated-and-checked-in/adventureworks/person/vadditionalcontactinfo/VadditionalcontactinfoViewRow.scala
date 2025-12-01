@@ -15,7 +15,6 @@ import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple17
 
 /** View: person.vadditionalcontactinfo */
 case class VadditionalcontactinfoViewRow(
@@ -45,25 +44,5 @@ case class VadditionalcontactinfoViewRow(
 )
 
 object VadditionalcontactinfoViewRow {
-  val `_rowParser`: RowParser[VadditionalcontactinfoViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, /* user-picked */ FirstName.pgType, Name.pgType.opt(), Name.pgType, TypoXml.pgType.opt(), PgTypes.text.opt(), TypoXml.pgType.opt(), TypoXml.pgType.opt(), TypoXml.pgType.opt(), TypoXml.pgType.opt(), TypoXml.pgType.opt(), TypoXml.pgType.opt(), TypoXml.pgType.opt(), PgTypes.text.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, VadditionalcontactinfoViewRow.apply, row => new Tuple17(
-      row.businessentityid,
-      row.firstname,
-      row.middlename,
-      row.lastname,
-      row.telephonenumber,
-      row.telephonespecialinstructions,
-      row.street,
-      row.city,
-      row.stateprovince,
-      row.postalcode,
-      row.countryregion,
-      row.homeaddressspecialinstructions,
-      row.emailaddress,
-      row.emailspecialinstructions,
-      row.emailtelephonenumber,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[VadditionalcontactinfoViewRow] = RowParsers.of(BusinessentityId.pgType, /* user-picked */ FirstName.pgType, Name.pgType.opt(), Name.pgType, TypoXml.pgType.opt(), PgTypes.text.opt(), TypoXml.pgType.opt(), TypoXml.pgType.opt(), TypoXml.pgType.opt(), TypoXml.pgType.opt(), TypoXml.pgType.opt(), TypoXml.pgType.opt(), TypoXml.pgType.opt(), PgTypes.text.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, VadditionalcontactinfoViewRow.apply, row => Array(row.businessentityid, row.firstname, row.middlename, row.lastname, row.telephonenumber, row.telephonespecialinstructions, row.street, row.city, row.stateprovince, row.postalcode, row.countryregion, row.homeaddressspecialinstructions, row.emailaddress, row.emailspecialinstructions, row.emailtelephonenumber, row.rowguid, row.modifieddate))
 }

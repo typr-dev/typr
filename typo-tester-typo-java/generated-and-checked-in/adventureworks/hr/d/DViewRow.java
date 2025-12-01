@@ -10,7 +10,6 @@ import adventureworks.humanresources.department.DepartmentId;
 import adventureworks.public_.Name;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple5;
 
 /** View: hr.d */
 public record DViewRow(
@@ -50,5 +49,5 @@ public record DViewRow(
     return new DViewRow(id, departmentid, name, groupname, modifieddate);
   };
 
-  static RowParser<DViewRow> _rowParser = RowParsers.of(DepartmentId.pgType, DepartmentId.pgType, Name.pgType, Name.pgType, TypoLocalDateTime.pgType, DViewRow::new, row -> new Tuple5<>(row.id(), row.departmentid(), row.name(), row.groupname(), row.modifieddate()));;
+  static RowParser<DViewRow> _rowParser = RowParsers.of(DepartmentId.pgType, DepartmentId.pgType, Name.pgType, Name.pgType, TypoLocalDateTime.pgType, DViewRow::new, row -> new Object[]{row.id(), row.departmentid(), row.name(), row.groupname(), row.modifieddate()});;
 }

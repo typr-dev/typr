@@ -11,7 +11,6 @@ import adventureworks.person.businessentity.BusinessentityId
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple6
 
 /** View: pe.pa */
 case class PaViewRow(
@@ -30,14 +29,5 @@ case class PaViewRow(
 )
 
 object PaViewRow {
-  val `_rowParser`: RowParser[PaViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, PgTypes.text, PgTypes.text, TypoUUID.pgType, TypoLocalDateTime.pgType, PaViewRow.apply, row => new Tuple6(
-      row.id,
-      row.businessentityid,
-      row.passwordhash,
-      row.passwordsalt,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[PaViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, PgTypes.text, PgTypes.text, TypoUUID.pgType, TypoLocalDateTime.pgType, PaViewRow.apply, row => Array(row.id, row.businessentityid, row.passwordhash, row.passwordsalt, row.rowguid, row.modifieddate))
 }

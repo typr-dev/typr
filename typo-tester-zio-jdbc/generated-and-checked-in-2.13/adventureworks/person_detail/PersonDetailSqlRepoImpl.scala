@@ -13,7 +13,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class PersonDetailSqlRepoImpl extends PersonDetailSqlRepo {
-  def apply(
+  override def apply(
     businessentityid: /* user-picked */ BusinessentityId,
     modifiedAfter: TypoLocalDateTime
   ): ZStream[ZConnection, Throwable, PersonDetailSqlRow] = {

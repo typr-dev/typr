@@ -54,7 +54,7 @@ object BillofmaterialsFields {
 
     override lazy val fields: BillofmaterialsFields = {
       new BillofmaterialsFields {
-        def billofmaterialsid: IdField[Integer, BillofmaterialsRow] = {
+        override def billofmaterialsid: IdField[Integer, BillofmaterialsRow] = {
           new IdField[Integer, BillofmaterialsRow](
             _path,
             "billofmaterialsid",
@@ -65,7 +65,7 @@ object BillofmaterialsFields {
             PgTypes.int4
           )
         }
-        def productassemblyid: OptField[ProductId, BillofmaterialsRow] = {
+        override def productassemblyid: OptField[ProductId, BillofmaterialsRow] = {
           new OptField[ProductId, BillofmaterialsRow](
             _path,
             "productassemblyid",
@@ -76,7 +76,7 @@ object BillofmaterialsFields {
             ProductId.pgType
           )
         }
-        def componentid: Field[ProductId, BillofmaterialsRow] = {
+        override def componentid: Field[ProductId, BillofmaterialsRow] = {
           new Field[ProductId, BillofmaterialsRow](
             _path,
             "componentid",
@@ -87,7 +87,7 @@ object BillofmaterialsFields {
             ProductId.pgType
           )
         }
-        def startdate: Field[TypoLocalDateTime, BillofmaterialsRow] = {
+        override def startdate: Field[TypoLocalDateTime, BillofmaterialsRow] = {
           new Field[TypoLocalDateTime, BillofmaterialsRow](
             _path,
             "startdate",
@@ -98,7 +98,7 @@ object BillofmaterialsFields {
             TypoLocalDateTime.pgType
           )
         }
-        def enddate: OptField[TypoLocalDateTime, BillofmaterialsRow] = {
+        override def enddate: OptField[TypoLocalDateTime, BillofmaterialsRow] = {
           new OptField[TypoLocalDateTime, BillofmaterialsRow](
             _path,
             "enddate",
@@ -109,7 +109,7 @@ object BillofmaterialsFields {
             TypoLocalDateTime.pgType
           )
         }
-        def unitmeasurecode: Field[UnitmeasureId, BillofmaterialsRow] = {
+        override def unitmeasurecode: Field[UnitmeasureId, BillofmaterialsRow] = {
           new Field[UnitmeasureId, BillofmaterialsRow](
             _path,
             "unitmeasurecode",
@@ -120,7 +120,7 @@ object BillofmaterialsFields {
             UnitmeasureId.pgType
           )
         }
-        def bomlevel: Field[TypoShort, BillofmaterialsRow] = {
+        override def bomlevel: Field[TypoShort, BillofmaterialsRow] = {
           new Field[TypoShort, BillofmaterialsRow](
             _path,
             "bomlevel",
@@ -131,7 +131,7 @@ object BillofmaterialsFields {
             TypoShort.pgType
           )
         }
-        def perassemblyqty: Field[java.math.BigDecimal, BillofmaterialsRow] = {
+        override def perassemblyqty: Field[java.math.BigDecimal, BillofmaterialsRow] = {
           new Field[java.math.BigDecimal, BillofmaterialsRow](
             _path,
             "perassemblyqty",
@@ -142,7 +142,7 @@ object BillofmaterialsFields {
             PgTypes.numeric
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, BillofmaterialsRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, BillofmaterialsRow] = {
           new Field[TypoLocalDateTime, BillofmaterialsRow](
             _path,
             "modifieddate",
@@ -158,7 +158,7 @@ object BillofmaterialsFields {
 
     override lazy val columns: java.util.List[FieldLike[?, BillofmaterialsRow]] = java.util.List.of(this.fields.billofmaterialsid, this.fields.productassemblyid, this.fields.componentid, this.fields.startdate, this.fields.enddate, this.fields.unitmeasurecode, this.fields.bomlevel, this.fields.perassemblyqty, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[BillofmaterialsFields, BillofmaterialsRow] = new Impl(java.util.List.of())

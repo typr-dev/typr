@@ -79,6 +79,12 @@ object Structure {
     val prefix = left.zip(right).takeWhile { case (a, b) => a == b }
     prefix.map(_._1)
   }
+
+  // Check if a field exists in a columns list by path and name
+  // This is more robust than using contains() which relies on object equality
+  private def containsField(columns: List[SqlExpr.FieldLike[?, ?]], field: SqlExpr.FieldLike[?, ?]): Boolean =
+    columns.exists(col => col.path == field.path && col.name == field.name)
+
   // some of the row types are discarded, exchanging some type-safety for a cleaner API
   implicit class FieldOps[T, R0](private val field: SqlExpr.FieldLike[T, R0]) extends AnyVal {
     def castRow[R1]: SqlExpr.FieldLike[T, R1] = field.asInstanceOf[SqlExpr.FieldLike[T, R1]]
@@ -102,7 +108,7 @@ object Structure {
       left.columns ++ right.columns
 
     override def untypedGet[T](field: SqlExpr.FieldLike[T, ?], row: Row1 ~ Row2): Option[T] =
-      if (left.columns.contains(field)) left.untypedGet(field.castRow, row._1)
+      if (containsField(left.columns, field)) left.untypedGet(field.castRow, row._1)
       else right.untypedGet(field.castRow, row._2)
 
     override def withPath(newPath: Path): Tupled[Fields1, Fields2, Row1, Row2] =
@@ -119,7 +125,7 @@ object Structure {
       left.columns ++ right.columns
 
     override def untypedGet[T](field: SqlExpr.FieldLike[T, ?], row: Row1 ~ Option[Row2]): Option[T] =
-      if (left.columns.contains(field)) left.untypedGet(field, row._1)
+      if (containsField(left.columns, field)) left.untypedGet(field, row._1)
       else row._2.flatMap(v => right.untypedGet(field, v))
 
     override def withPath(newPath: Path): LeftTupled[Fields1, Fields2, Row1, Row2] =

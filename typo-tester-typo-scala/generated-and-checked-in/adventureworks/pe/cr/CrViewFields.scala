@@ -27,7 +27,7 @@ object CrViewFields {
 
     override lazy val fields: CrViewFields = {
       new CrViewFields {
-        def countryregioncode: Field[CountryregionId, CrViewRow] = {
+        override def countryregioncode: Field[CountryregionId, CrViewRow] = {
           new Field[CountryregionId, CrViewRow](
             _path,
             "countryregioncode",
@@ -38,7 +38,7 @@ object CrViewFields {
             CountryregionId.pgType
           )
         }
-        def name: Field[Name, CrViewRow] = {
+        override def name: Field[Name, CrViewRow] = {
           new Field[Name, CrViewRow](
             _path,
             "name",
@@ -49,7 +49,7 @@ object CrViewFields {
             Name.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, CrViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, CrViewRow] = {
           new Field[TypoLocalDateTime, CrViewRow](
             _path,
             "modifieddate",
@@ -65,7 +65,7 @@ object CrViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, CrViewRow]] = java.util.List.of(this.fields.countryregioncode, this.fields.name, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[CrViewFields, CrViewRow] = new Impl(java.util.List.of())

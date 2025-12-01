@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class CuViewRepoImpl extends CuViewRepo {
-  def select: SelectBuilder[CuViewFields, CuViewRow] = SelectBuilder.of(""""sa"."cu"""", CuViewFields.structure, CuViewRow.jdbcDecoder)
+  override def select: SelectBuilder[CuViewFields, CuViewRow] = SelectBuilder.of(""""sa"."cu"""", CuViewFields.structure, CuViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, CuViewRow] = sql"""select "id", "currencycode", "name", "modifieddate"::text from "sa"."cu"""".query(CuViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, CuViewRow] = sql"""select "id", "currencycode", "name", "modifieddate"::text from "sa"."cu"""".query(CuViewRow.jdbcDecoder).selectStream()
 }

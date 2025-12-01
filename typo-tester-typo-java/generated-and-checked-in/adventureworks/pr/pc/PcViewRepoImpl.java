@@ -5,22 +5,22 @@
  */
 package adventureworks.pr.pc;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class PcViewRepoImpl implements PcViewRepo {
+  @Override
   public SelectBuilder<PcViewFields, PcViewRow> select() {
     return SelectBuilder.of("pr.pc", PcViewFields.structure(), PcViewRow._rowParser);
   };
 
+  @Override
   public List<PcViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "productcategoryid", "name", "rowguid", "modifieddate"::text
        from "pr"."pc"
-    """)).as(PcViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(PcViewRow._rowParser.all()).runUnchecked(c);
   };
 }

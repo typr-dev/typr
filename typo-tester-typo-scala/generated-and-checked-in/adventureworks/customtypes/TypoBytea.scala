@@ -5,18 +5,19 @@
  */
 package adventureworks.customtypes
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgText
 import typo.runtime.PgType
 import typo.runtime.PgTypes
 
 /** This represents the bytea datatype in PostgreSQL */
-case class TypoBytea(value: Array[Byte])
+case class TypoBytea(@JsonValue value: Array[Byte])
 
 object TypoBytea {
   given bijection: Bijection[TypoBytea, Array[Byte]] = Bijection.apply[TypoBytea, Array[Byte]](_.value)(TypoBytea.apply)
 
   given pgText: PgText[TypoBytea] = PgText.textByteArray.contramap(v => v.value)
 
-  given pgType: PgType[TypoBytea] = PgTypes.bytea.bimap(v => new TypoBytea(v), v => v.value).renamed("bytea")
+  given pgType: PgType[TypoBytea] = PgTypes.bytea.bimap((v: Array[Byte]) => new TypoBytea(v), (v: TypoBytea) => v.value).renamed("bytea")
 }

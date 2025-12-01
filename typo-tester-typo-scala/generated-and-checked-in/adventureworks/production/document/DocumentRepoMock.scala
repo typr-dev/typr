@@ -6,6 +6,7 @@
 package adventureworks.production.document
 
 import adventureworks.customtypes.TypoUUID
+import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
@@ -26,7 +27,7 @@ case class DocumentRepoMock(
   toRow: DocumentRowUnsaved => DocumentRow,
   map: HashMap[DocumentId, DocumentRow] = new HashMap[DocumentId, DocumentRow]()
 ) extends DocumentRepo {
-  def delete: DeleteBuilder[DocumentFields, DocumentRow] = {
+  override def delete: DeleteBuilder[DocumentFields, DocumentRow] = {
     new DeleteBuilderMock(
       DocumentFields.structure,
       () => new ArrayList(map.values()),
@@ -36,27 +37,27 @@ case class DocumentRepoMock(
     )
   }
 
-  def deleteById(documentnode: DocumentId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(documentnode)).isPresent()
+  override def deleteById(documentnode: DocumentId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(documentnode)).isPresent()
 
-  def deleteByIds(documentnodes: Array[DocumentId])(using c: Connection): Integer = {
+  override def deleteByIds(documentnodes: Array[DocumentId])(using c: Connection): Integer = {
     var count = 0
     documentnodes.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
-    count
+    return count
   }
 
-  def insert(unsaved: DocumentRow)(using c: Connection): DocumentRow = {
+  override def insert(unsaved: DocumentRow)(using c: Connection): DocumentRow = {
     if (map.containsKey(unsaved.documentnode)) {
       throw new RuntimeException(s"id $unsaved.documentnode already exists")
     }
     map.put(unsaved.documentnode, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def insert(unsaved: DocumentRowUnsaved)(using c: Connection): DocumentRow = insert(toRow(unsaved))(using c)
+  override def insert(unsaved: DocumentRowUnsaved)(using c: Connection): DocumentRow = insert(toRow(unsaved))(using c)
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[DocumentRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -66,11 +67,11 @@ case class DocumentRepoMock(
       map.put(row.documentnode, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[DocumentRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -81,27 +82,27 @@ case class DocumentRepoMock(
       map.put(row.documentnode, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
-  def select: SelectBuilder[DocumentFields, DocumentRow] = new SelectBuilderMock(DocumentFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
+  override def select: SelectBuilder[DocumentFields, DocumentRow] = new SelectBuilderMock(DocumentFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  def selectAll(using c: Connection): java.util.List[DocumentRow] = new ArrayList(map.values())
+  override def selectAll(using c: Connection): java.util.List[DocumentRow] = new ArrayList(map.values())
 
-  def selectById(documentnode: DocumentId)(using c: Connection): Optional[DocumentRow] = Optional.ofNullable(map.get(documentnode))
+  override def selectById(documentnode: DocumentId)(using c: Connection): Optional[DocumentRow] = Optional.ofNullable(map.get(documentnode))
 
-  def selectByIds(documentnodes: Array[DocumentId])(using c: Connection): java.util.List[DocumentRow] = {
+  override def selectByIds(documentnodes: Array[DocumentId])(using c: Connection): java.util.List[DocumentRow] = {
     val result = new ArrayList[DocumentRow]()
     documentnodes.foreach { id => val opt = Optional.ofNullable(map.get(id))
     if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
-    result
+    return result
   }
 
-  def selectByIdsTracked(documentnodes: Array[DocumentId])(using c: Connection): java.util.Map[DocumentId, DocumentRow] = selectByIds(documentnodes)(using c).stream().collect(Collectors.toMap((row: adventureworks.production.document.DocumentRow) => row.documentnode, Function.identity()))
+  override def selectByIdsTracked(documentnodes: Array[DocumentId])(using c: Connection): java.util.Map[DocumentId, DocumentRow] = selectByIds(documentnodes)(using c).stream().collect(Collectors.toMap((row: DocumentRow) => row.documentnode, Function.identity()))
 
-  def selectByUniqueRowguid(rowguid: TypoUUID)(using c: Connection): Optional[DocumentRow] = new ArrayList(map.values()).stream().filter(v => rowguid.equals(v.rowguid)).findFirst()
+  override def selectByUniqueRowguid(rowguid: TypoUUID)(using c: Connection): Optional[DocumentRow] = new ArrayList(map.values()).stream().filter(v => (rowguid == v.rowguid)).findFirst()
 
-  def update: UpdateBuilder[DocumentFields, DocumentRow] = {
+  override def update: UpdateBuilder[DocumentFields, DocumentRow] = {
     new UpdateBuilderMock(
       DocumentFields.structure,
       () => new ArrayList(map.values()),
@@ -110,31 +111,31 @@ case class DocumentRepoMock(
     )
   }
 
-  def update(row: DocumentRow)(using c: Connection): java.lang.Boolean = {
-    val shouldUpdate = Optional.ofNullable(map.get(row.documentnode)).filter(oldRow => !oldRow.equals(row)).isPresent()
+  override def update(row: DocumentRow)(using c: Connection): java.lang.Boolean = {
+    val shouldUpdate = Optional.ofNullable(map.get(row.documentnode)).filter(oldRow => (oldRow != row)).isPresent()
     if (shouldUpdate) {
       map.put(row.documentnode, row): @scala.annotation.nowarn
     }
-    shouldUpdate
+    return shouldUpdate
   }
 
-  def upsert(unsaved: DocumentRow)(using c: Connection): DocumentRow = {
+  override def upsert(unsaved: DocumentRow)(using c: Connection): DocumentRow = {
     map.put(unsaved.documentnode, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[DocumentRow])(using c: Connection): java.util.List[DocumentRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[DocumentRow])(using c: Connection): java.util.List[DocumentRow] = {
     val result = new ArrayList[DocumentRow]()
     while (unsaved.hasNext()) {
       val row = unsaved.next()
       map.put(row.documentnode, row): @scala.annotation.nowarn
       result.add(row): @scala.annotation.nowarn
     }
-    result
+    return result
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[DocumentRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
@@ -144,6 +145,6 @@ case class DocumentRepoMock(
       map.put(row.documentnode, row): @scala.annotation.nowarn
       count = count + 1
     }
-    count
+    return count
   }
 }

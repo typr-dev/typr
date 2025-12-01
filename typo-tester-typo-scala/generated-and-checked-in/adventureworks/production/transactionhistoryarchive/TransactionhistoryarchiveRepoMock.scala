@@ -5,6 +5,7 @@
  */
 package adventureworks.production.transactionhistoryarchive
 
+import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
@@ -25,7 +26,7 @@ case class TransactionhistoryarchiveRepoMock(
   toRow: TransactionhistoryarchiveRowUnsaved => TransactionhistoryarchiveRow,
   map: HashMap[TransactionhistoryarchiveId, TransactionhistoryarchiveRow] = new HashMap[TransactionhistoryarchiveId, TransactionhistoryarchiveRow]()
 ) extends TransactionhistoryarchiveRepo {
-  def delete: DeleteBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = {
+  override def delete: DeleteBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = {
     new DeleteBuilderMock(
       TransactionhistoryarchiveFields.structure,
       () => new ArrayList(map.values()),
@@ -35,27 +36,27 @@ case class TransactionhistoryarchiveRepoMock(
     )
   }
 
-  def deleteById(transactionid: TransactionhistoryarchiveId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(transactionid)).isPresent()
+  override def deleteById(transactionid: TransactionhistoryarchiveId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(transactionid)).isPresent()
 
-  def deleteByIds(transactionids: Array[TransactionhistoryarchiveId])(using c: Connection): Integer = {
+  override def deleteByIds(transactionids: Array[TransactionhistoryarchiveId])(using c: Connection): Integer = {
     var count = 0
     transactionids.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
-    count
+    return count
   }
 
-  def insert(unsaved: TransactionhistoryarchiveRow)(using c: Connection): TransactionhistoryarchiveRow = {
+  override def insert(unsaved: TransactionhistoryarchiveRow)(using c: Connection): TransactionhistoryarchiveRow = {
     if (map.containsKey(unsaved.transactionid)) {
       throw new RuntimeException(s"id $unsaved.transactionid already exists")
     }
     map.put(unsaved.transactionid, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def insert(unsaved: TransactionhistoryarchiveRowUnsaved)(using c: Connection): TransactionhistoryarchiveRow = insert(toRow(unsaved))(using c)
+  override def insert(unsaved: TransactionhistoryarchiveRowUnsaved)(using c: Connection): TransactionhistoryarchiveRow = insert(toRow(unsaved))(using c)
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[TransactionhistoryarchiveRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -65,11 +66,11 @@ case class TransactionhistoryarchiveRepoMock(
       map.put(row.transactionid, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[TransactionhistoryarchiveRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -80,25 +81,25 @@ case class TransactionhistoryarchiveRepoMock(
       map.put(row.transactionid, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
-  def select: SelectBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = new SelectBuilderMock(TransactionhistoryarchiveFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
+  override def select: SelectBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = new SelectBuilderMock(TransactionhistoryarchiveFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  def selectAll(using c: Connection): java.util.List[TransactionhistoryarchiveRow] = new ArrayList(map.values())
+  override def selectAll(using c: Connection): java.util.List[TransactionhistoryarchiveRow] = new ArrayList(map.values())
 
-  def selectById(transactionid: TransactionhistoryarchiveId)(using c: Connection): Optional[TransactionhistoryarchiveRow] = Optional.ofNullable(map.get(transactionid))
+  override def selectById(transactionid: TransactionhistoryarchiveId)(using c: Connection): Optional[TransactionhistoryarchiveRow] = Optional.ofNullable(map.get(transactionid))
 
-  def selectByIds(transactionids: Array[TransactionhistoryarchiveId])(using c: Connection): java.util.List[TransactionhistoryarchiveRow] = {
+  override def selectByIds(transactionids: Array[TransactionhistoryarchiveId])(using c: Connection): java.util.List[TransactionhistoryarchiveRow] = {
     val result = new ArrayList[TransactionhistoryarchiveRow]()
     transactionids.foreach { id => val opt = Optional.ofNullable(map.get(id))
     if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
-    result
+    return result
   }
 
-  def selectByIdsTracked(transactionids: Array[TransactionhistoryarchiveId])(using c: Connection): java.util.Map[TransactionhistoryarchiveId, TransactionhistoryarchiveRow] = selectByIds(transactionids)(using c).stream().collect(Collectors.toMap((row: adventureworks.production.transactionhistoryarchive.TransactionhistoryarchiveRow) => row.transactionid, Function.identity()))
+  override def selectByIdsTracked(transactionids: Array[TransactionhistoryarchiveId])(using c: Connection): java.util.Map[TransactionhistoryarchiveId, TransactionhistoryarchiveRow] = selectByIds(transactionids)(using c).stream().collect(Collectors.toMap((row: TransactionhistoryarchiveRow) => row.transactionid, Function.identity()))
 
-  def update: UpdateBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = {
+  override def update: UpdateBuilder[TransactionhistoryarchiveFields, TransactionhistoryarchiveRow] = {
     new UpdateBuilderMock(
       TransactionhistoryarchiveFields.structure,
       () => new ArrayList(map.values()),
@@ -107,31 +108,31 @@ case class TransactionhistoryarchiveRepoMock(
     )
   }
 
-  def update(row: TransactionhistoryarchiveRow)(using c: Connection): java.lang.Boolean = {
-    val shouldUpdate = Optional.ofNullable(map.get(row.transactionid)).filter(oldRow => !oldRow.equals(row)).isPresent()
+  override def update(row: TransactionhistoryarchiveRow)(using c: Connection): java.lang.Boolean = {
+    val shouldUpdate = Optional.ofNullable(map.get(row.transactionid)).filter(oldRow => (oldRow != row)).isPresent()
     if (shouldUpdate) {
       map.put(row.transactionid, row): @scala.annotation.nowarn
     }
-    shouldUpdate
+    return shouldUpdate
   }
 
-  def upsert(unsaved: TransactionhistoryarchiveRow)(using c: Connection): TransactionhistoryarchiveRow = {
+  override def upsert(unsaved: TransactionhistoryarchiveRow)(using c: Connection): TransactionhistoryarchiveRow = {
     map.put(unsaved.transactionid, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[TransactionhistoryarchiveRow])(using c: Connection): java.util.List[TransactionhistoryarchiveRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[TransactionhistoryarchiveRow])(using c: Connection): java.util.List[TransactionhistoryarchiveRow] = {
     val result = new ArrayList[TransactionhistoryarchiveRow]()
     while (unsaved.hasNext()) {
       val row = unsaved.next()
       map.put(row.transactionid, row): @scala.annotation.nowarn
       result.add(row): @scala.annotation.nowarn
     }
-    result
+    return result
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[TransactionhistoryarchiveRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
@@ -141,6 +142,6 @@ case class TransactionhistoryarchiveRepoMock(
       map.put(row.transactionid, row): @scala.annotation.nowarn
       count = count + 1
     }
-    count
+    return count
   }
 }

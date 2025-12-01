@@ -26,7 +26,7 @@ object PersonFields {
 
     override lazy val fields: PersonFields = {
       new PersonFields {
-        def one: IdField[java.lang.Long, PersonRow] = {
+        override def one: IdField[java.lang.Long, PersonRow] = {
           new IdField[java.lang.Long, PersonRow](
             _path,
             "one",
@@ -37,7 +37,7 @@ object PersonFields {
             PgTypes.int8
           )
         }
-        def two: IdField[Optional[String], PersonRow] = {
+        override def two: IdField[Optional[String], PersonRow] = {
           new IdField[Optional[String], PersonRow](
             _path,
             "two",
@@ -48,7 +48,7 @@ object PersonFields {
             PgTypes.text.opt()
           )
         }
-        def name: OptField[String, PersonRow] = {
+        override def name: OptField[String, PersonRow] = {
           new OptField[String, PersonRow](
             _path,
             "name",
@@ -64,7 +64,7 @@ object PersonFields {
 
     override lazy val columns: java.util.List[FieldLike[?, PersonRow]] = java.util.List.of(this.fields.one, this.fields.two, this.fields.name)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[PersonFields, PersonRow] = new Impl(java.util.List.of())

@@ -15,7 +15,6 @@ import java.math.BigDecimal;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple8;
 
 /** View: sa.tr */
 public record TrViewRow(
@@ -76,5 +75,5 @@ public record TrViewRow(
     return new TrViewRow(id, salestaxrateid, stateprovinceid, taxtype, taxrate, name, rowguid, modifieddate);
   };
 
-  static RowParser<TrViewRow> _rowParser = RowParsers.of(SalestaxrateId.pgType, SalestaxrateId.pgType, StateprovinceId.pgType, TypoShort.pgType, PgTypes.numeric, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, TrViewRow::new, row -> new Tuple8<>(row.id(), row.salestaxrateid(), row.stateprovinceid(), row.taxtype(), row.taxrate(), row.name(), row.rowguid(), row.modifieddate()));;
+  static RowParser<TrViewRow> _rowParser = RowParsers.of(SalestaxrateId.pgType, SalestaxrateId.pgType, StateprovinceId.pgType, TypoShort.pgType, PgTypes.numeric, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, TrViewRow::new, row -> new Object[]{row.id(), row.salestaxrateid(), row.stateprovinceid(), row.taxtype(), row.taxrate(), row.name(), row.rowguid(), row.modifieddate()});;
 }

@@ -14,7 +14,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple6;
 
 /** Table: purchasing.shipmethod
   * Shipping company lookup table.
@@ -80,7 +79,7 @@ public record ShipmethodRow(
     return new ShipmethodRow(shipmethodid, name, shipbase, shiprate, rowguid, modifieddate);
   };
 
-  static RowParser<ShipmethodRow> _rowParser = RowParsers.of(ShipmethodId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, ShipmethodRow::new, row -> new Tuple6<>(row.shipmethodid(), row.name(), row.shipbase(), row.shiprate(), row.rowguid(), row.modifieddate()));;
+  static RowParser<ShipmethodRow> _rowParser = RowParsers.of(ShipmethodId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, ShipmethodRow::new, row -> new Object[]{row.shipmethodid(), row.name(), row.shipbase(), row.shiprate(), row.rowguid(), row.modifieddate()});;
 
   static public PgText<ShipmethodRow> pgText =
     PgText.from(_rowParser);

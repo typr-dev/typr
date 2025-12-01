@@ -21,13 +21,13 @@ case class AddresstypeRepoMock(
   toRow: AddresstypeRowUnsaved => AddresstypeRow,
   map: scala.collection.mutable.Map[AddresstypeId, AddresstypeRow] = scala.collection.mutable.Map.empty[AddresstypeId, AddresstypeRow]
 ) extends AddresstypeRepo {
-  def delete: DeleteBuilder[AddresstypeFields, AddresstypeRow] = DeleteBuilderMock(DeleteParams.empty, AddresstypeFields.structure, map)
+  override def delete: DeleteBuilder[AddresstypeFields, AddresstypeRow] = DeleteBuilderMock(DeleteParams.empty, AddresstypeFields.structure, map)
 
-  def deleteById(addresstypeid: AddresstypeId)(using c: Connection): Boolean = map.remove(addresstypeid).isDefined
+  override def deleteById(addresstypeid: AddresstypeId)(using c: Connection): Boolean = map.remove(addresstypeid).isDefined
 
-  def deleteByIds(addresstypeids: Array[AddresstypeId])(using c: Connection): Int = addresstypeids.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(addresstypeids: Array[AddresstypeId])(using c: Connection): Int = addresstypeids.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: AddresstypeRow)(using c: Connection): AddresstypeRow = {
+  override def insert(unsaved: AddresstypeRow)(using c: Connection): AddresstypeRow = {
     val _ = if (map.contains(unsaved.addresstypeid))
       sys.error(s"id ${unsaved.addresstypeid} already exists")
     else
@@ -36,9 +36,9 @@ case class AddresstypeRepoMock(
     unsaved
   }
 
-  def insert(unsaved: AddresstypeRowUnsaved)(using c: Connection): AddresstypeRow = insert(toRow(unsaved))
+  override def insert(unsaved: AddresstypeRowUnsaved)(using c: Connection): AddresstypeRow = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[AddresstypeRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -49,7 +49,7 @@ case class AddresstypeRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[AddresstypeRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = {
@@ -60,34 +60,34 @@ case class AddresstypeRepoMock(
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[AddresstypeFields, AddresstypeRow] = SelectBuilderMock(AddresstypeFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[AddresstypeFields, AddresstypeRow] = SelectBuilderMock(AddresstypeFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(using c: Connection): List[AddresstypeRow] = map.values.toList
+  override def selectAll(using c: Connection): List[AddresstypeRow] = map.values.toList
 
-  def selectById(addresstypeid: AddresstypeId)(using c: Connection): Option[AddresstypeRow] = map.get(addresstypeid)
+  override def selectById(addresstypeid: AddresstypeId)(using c: Connection): Option[AddresstypeRow] = map.get(addresstypeid)
 
-  def selectByIds(addresstypeids: Array[AddresstypeId])(using c: Connection): List[AddresstypeRow] = addresstypeids.flatMap(map.get).toList
+  override def selectByIds(addresstypeids: Array[AddresstypeId])(using c: Connection): List[AddresstypeRow] = addresstypeids.flatMap(map.get).toList
 
-  def selectByIdsTracked(addresstypeids: Array[AddresstypeId])(using c: Connection): Map[AddresstypeId, AddresstypeRow] = {
+  override def selectByIdsTracked(addresstypeids: Array[AddresstypeId])(using c: Connection): Map[AddresstypeId, AddresstypeRow] = {
     val byId = selectByIds(addresstypeids).view.map(x => (x.addresstypeid, x)).toMap
     addresstypeids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[AddresstypeFields, AddresstypeRow] = UpdateBuilderMock(UpdateParams.empty, AddresstypeFields.structure, map)
+  override def update: UpdateBuilder[AddresstypeFields, AddresstypeRow] = UpdateBuilderMock(UpdateParams.empty, AddresstypeFields.structure, map)
 
-  def update(row: AddresstypeRow)(using c: Connection): Option[AddresstypeRow] = {
+  override def update(row: AddresstypeRow)(using c: Connection): Option[AddresstypeRow] = {
     map.get(row.addresstypeid).map { _ =>
       map.put(row.addresstypeid, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: AddresstypeRow)(using c: Connection): AddresstypeRow = {
+  override def upsert(unsaved: AddresstypeRow)(using c: Connection): AddresstypeRow = {
     map.put(unsaved.addresstypeid, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[AddresstypeRow])(using c: Connection): List[AddresstypeRow] = {
+  override def upsertBatch(unsaved: Iterable[AddresstypeRow])(using c: Connection): List[AddresstypeRow] = {
     unsaved.map { row =>
       map += (row.addresstypeid -> row)
       row
@@ -95,7 +95,7 @@ case class AddresstypeRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[AddresstypeRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

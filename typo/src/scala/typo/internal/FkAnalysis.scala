@@ -44,7 +44,7 @@ object FkAnalysis {
     /** a given column may appear in more than one foreign key value extraction expression */
     lazy val exprsForColumn: Map[jvm.Ident, List[jvm.Code]] =
       byFks.toList
-        .flatMap(colsFromFk => colsFromFk.colPairs.map { case (_, col) => (col.name, colsFromFk.expr(col.name)) })
+        .flatMap(colsFromFk => colsFromFk.colPairs.map { case (_, col) => (col.name, colsFromFk.expr(lang)(col.name)) })
         .groupBy { case (colName, _) => colName }
         .map { case (k, tuples) => (k, tuples.map { case (_, expr) => expr }) }
 
@@ -125,8 +125,8 @@ object FkAnalysis {
         (otherCol, thisCol)
       }
     }
-    lazy val expr: Map[jvm.Ident, jvm.Code] =
-      colPairs.map { case (fromId, col) => (col.name, jvm.ApplyNullary(param.name, fromId.name).code) }.toMap
+    def expr(lang: Lang): Map[jvm.Ident, jvm.Code] =
+      colPairs.map { case (fromId, col) => (col.name, lang.prop(param.name.code, fromId.name)) }.toMap
   }
 
   object ColsFromFk {

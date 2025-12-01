@@ -7,13 +7,11 @@ package adventureworks.humanresources.vjobcandidateemployment
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class VjobcandidateemploymentViewRepoImpl extends VjobcandidateemploymentViewRepo {
-  def select: SelectBuilder[VjobcandidateemploymentViewFields, VjobcandidateemploymentViewRow] = SelectBuilder.of(""""humanresources"."vjobcandidateemployment"""", VjobcandidateemploymentViewFields.structure, VjobcandidateemploymentViewRow.read)
+  override def select: SelectBuilder[VjobcandidateemploymentViewFields, VjobcandidateemploymentViewRow] = SelectBuilder.of(""""humanresources"."vjobcandidateemployment"""", VjobcandidateemploymentViewFields.structure, VjobcandidateemploymentViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, VjobcandidateemploymentViewRow] = sql"""select "jobcandidateid", "Emp.StartDate"::text, "Emp.EndDate"::text, "Emp.OrgName", "Emp.JobTitle", "Emp.Responsibility", "Emp.FunctionCategory", "Emp.IndustryCategory", "Emp.Loc.CountryRegion", "Emp.Loc.State", "Emp.Loc.City" from "humanresources"."vjobcandidateemployment"""".query(using VjobcandidateemploymentViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, VjobcandidateemploymentViewRow] = sql"""select "jobcandidateid", "Emp.StartDate"::text, "Emp.EndDate"::text, "Emp.OrgName", "Emp.JobTitle", "Emp.Responsibility", "Emp.FunctionCategory", "Emp.IndustryCategory", "Emp.Loc.CountryRegion", "Emp.Loc.State", "Emp.Loc.City" from "humanresources"."vjobcandidateemployment"""".query(using VjobcandidateemploymentViewRow.read).stream
 }

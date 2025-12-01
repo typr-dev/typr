@@ -18,19 +18,17 @@ import doobie.util.Write
 import doobie.util.fragment.Fragment
 import doobie.util.update.Update
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.DeleteBuilder
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class ProductproductphotoRepoImpl extends ProductproductphotoRepo {
-  def delete: DeleteBuilder[ProductproductphotoFields, ProductproductphotoRow] = DeleteBuilder.of(""""production"."productproductphoto"""", ProductproductphotoFields.structure, ProductproductphotoRow.read)
+  override def delete: DeleteBuilder[ProductproductphotoFields, ProductproductphotoRow] = DeleteBuilder.of(""""production"."productproductphoto"""", ProductproductphotoFields.structure, ProductproductphotoRow.read)
 
-  def deleteById(compositeId: ProductproductphotoId): ConnectionIO[Boolean] = sql"""delete from "production"."productproductphoto" where "productid" = ${fromWrite(compositeId.productid)(using new Write.Single(ProductId.put))} AND "productphotoid" = ${fromWrite(compositeId.productphotoid)(using new Write.Single(ProductphotoId.put))}""".update.run.map(_ > 0)
+  override def deleteById(compositeId: ProductproductphotoId): ConnectionIO[Boolean] = sql"""delete from "production"."productproductphoto" where "productid" = ${fromWrite(compositeId.productid)(using new Write.Single(ProductId.put))} AND "productphotoid" = ${fromWrite(compositeId.productphotoid)(using new Write.Single(ProductphotoId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(compositeIds: Array[ProductproductphotoId]): ConnectionIO[Int] = {
+  override def deleteByIds(compositeIds: Array[ProductproductphotoId]): ConnectionIO[Int] = {
     val productid = compositeIds.map(_.productid)
     val productphotoid = compositeIds.map(_.productphotoid)
     sql"""delete
@@ -40,14 +38,14 @@ class ProductproductphotoRepoImpl extends ProductproductphotoRepo {
     """.update.run
   }
 
-  def insert(unsaved: ProductproductphotoRow): ConnectionIO[ProductproductphotoRow] = {
+  override def insert(unsaved: ProductproductphotoRow): ConnectionIO[ProductproductphotoRow] = {
     sql"""insert into "production"."productproductphoto"("productid", "productphotoid", "primary", "modifieddate")
     values (${fromWrite(unsaved.productid)(using new Write.Single(ProductId.put))}::int4, ${fromWrite(unsaved.productphotoid)(using new Write.Single(ProductphotoId.put))}::int4, ${fromWrite(unsaved.primary)(using new Write.Single(Flag.put))}::bool, ${fromWrite(unsaved.modifieddate)(using new Write.Single(TypoLocalDateTime.put))}::timestamp)
     returning "productid", "productphotoid", "primary", "modifieddate"::text
     """.query(using ProductproductphotoRow.read).unique
   }
 
-  def insert(unsaved: ProductproductphotoRowUnsaved): ConnectionIO[ProductproductphotoRow] = {
+  override def insert(unsaved: ProductproductphotoRowUnsaved): ConnectionIO[ProductproductphotoRow] = {
     val fs = List(
       Some((Fragment.const0(s""""productid""""), fr"${fromWrite(unsaved.productid)(using new Write.Single(ProductId.put))}::int4")),
       Some((Fragment.const0(s""""productphotoid""""), fr"${fromWrite(unsaved.productphotoid)(using new Write.Single(ProductphotoId.put))}::int4")),
@@ -74,24 +72,24 @@ class ProductproductphotoRepoImpl extends ProductproductphotoRepo {
     q.query(using ProductproductphotoRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, ProductproductphotoRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "production"."productproductphoto"("productid", "productphotoid", "primary", "modifieddate") FROM STDIN""").copyIn(unsaved, batchSize)(using ProductproductphotoRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, ProductproductphotoRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "production"."productproductphoto"("productid", "productphotoid", "primary", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(using ProductproductphotoRowUnsaved.pgText)
 
-  def select: SelectBuilder[ProductproductphotoFields, ProductproductphotoRow] = SelectBuilder.of(""""production"."productproductphoto"""", ProductproductphotoFields.structure, ProductproductphotoRow.read)
+  override def select: SelectBuilder[ProductproductphotoFields, ProductproductphotoRow] = SelectBuilder.of(""""production"."productproductphoto"""", ProductproductphotoFields.structure, ProductproductphotoRow.read)
 
-  def selectAll: Stream[ConnectionIO, ProductproductphotoRow] = sql"""select "productid", "productphotoid", "primary", "modifieddate"::text from "production"."productproductphoto"""".query(using ProductproductphotoRow.read).stream
+  override def selectAll: Stream[ConnectionIO, ProductproductphotoRow] = sql"""select "productid", "productphotoid", "primary", "modifieddate"::text from "production"."productproductphoto"""".query(using ProductproductphotoRow.read).stream
 
-  def selectById(compositeId: ProductproductphotoId): ConnectionIO[Option[ProductproductphotoRow]] = sql"""select "productid", "productphotoid", "primary", "modifieddate"::text from "production"."productproductphoto" where "productid" = ${fromWrite(compositeId.productid)(using new Write.Single(ProductId.put))} AND "productphotoid" = ${fromWrite(compositeId.productphotoid)(using new Write.Single(ProductphotoId.put))}""".query(using ProductproductphotoRow.read).option
+  override def selectById(compositeId: ProductproductphotoId): ConnectionIO[Option[ProductproductphotoRow]] = sql"""select "productid", "productphotoid", "primary", "modifieddate"::text from "production"."productproductphoto" where "productid" = ${fromWrite(compositeId.productid)(using new Write.Single(ProductId.put))} AND "productphotoid" = ${fromWrite(compositeId.productphotoid)(using new Write.Single(ProductphotoId.put))}""".query(using ProductproductphotoRow.read).option
 
-  def selectByIds(compositeIds: Array[ProductproductphotoId]): Stream[ConnectionIO, ProductproductphotoRow] = {
+  override def selectByIds(compositeIds: Array[ProductproductphotoId]): Stream[ConnectionIO, ProductproductphotoRow] = {
     val productid = compositeIds.map(_.productid)
     val productphotoid = compositeIds.map(_.productphotoid)
     sql"""select "productid", "productphotoid", "primary", "modifieddate"::text
@@ -101,16 +99,16 @@ class ProductproductphotoRepoImpl extends ProductproductphotoRepo {
     """.query(using ProductproductphotoRow.read).stream
   }
 
-  def selectByIdsTracked(compositeIds: Array[ProductproductphotoId]): ConnectionIO[Map[ProductproductphotoId, ProductproductphotoRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[ProductproductphotoId]): ConnectionIO[Map[ProductproductphotoId, ProductproductphotoRow]] = {
     selectByIds(compositeIds).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[ProductproductphotoFields, ProductproductphotoRow] = UpdateBuilder.of(""""production"."productproductphoto"""", ProductproductphotoFields.structure, ProductproductphotoRow.read)
+  override def update: UpdateBuilder[ProductproductphotoFields, ProductproductphotoRow] = UpdateBuilder.of(""""production"."productproductphoto"""", ProductproductphotoFields.structure, ProductproductphotoRow.read)
 
-  def update(row: ProductproductphotoRow): ConnectionIO[Option[ProductproductphotoRow]] = {
+  override def update(row: ProductproductphotoRow): ConnectionIO[Option[ProductproductphotoRow]] = {
     val compositeId = row.compositeId
     sql"""update "production"."productproductphoto"
     set "primary" = ${fromWrite(row.primary)(using new Write.Single(Flag.put))}::bool,
@@ -119,7 +117,7 @@ class ProductproductphotoRepoImpl extends ProductproductphotoRepo {
     returning "productid", "productphotoid", "primary", "modifieddate"::text""".query(using ProductproductphotoRow.read).option
   }
 
-  def upsert(unsaved: ProductproductphotoRow): ConnectionIO[ProductproductphotoRow] = {
+  override def upsert(unsaved: ProductproductphotoRow): ConnectionIO[ProductproductphotoRow] = {
     sql"""insert into "production"."productproductphoto"("productid", "productphotoid", "primary", "modifieddate")
     values (
       ${fromWrite(unsaved.productid)(using new Write.Single(ProductId.put))}::int4,
@@ -135,7 +133,7 @@ class ProductproductphotoRepoImpl extends ProductproductphotoRepo {
     """.query(using ProductproductphotoRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[ProductproductphotoRow]): Stream[ConnectionIO, ProductproductphotoRow] = {
+  override def upsertBatch(unsaved: List[ProductproductphotoRow]): Stream[ConnectionIO, ProductproductphotoRow] = {
     Update[ProductproductphotoRow](
       s"""insert into "production"."productproductphoto"("productid", "productphotoid", "primary", "modifieddate")
       values (?::int4,?::int4,?::bool,?::timestamp)
@@ -149,7 +147,7 @@ class ProductproductphotoRepoImpl extends ProductproductphotoRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, ProductproductphotoRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

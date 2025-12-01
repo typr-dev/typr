@@ -5,22 +5,22 @@
  */
 package adventureworks.person.vstateprovincecountryregion;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class VstateprovincecountryregionMVRepoImpl implements VstateprovincecountryregionMVRepo {
+  @Override
   public SelectBuilder<VstateprovincecountryregionMVFields, VstateprovincecountryregionMVRow> select() {
     return SelectBuilder.of("person.vstateprovincecountryregion", VstateprovincecountryregionMVFields.structure(), VstateprovincecountryregionMVRow._rowParser);
   };
 
+  @Override
   public List<VstateprovincecountryregionMVRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "stateprovinceid", "stateprovincecode", "isonlystateprovinceflag", "stateprovincename", "territoryid", "countryregioncode", "countryregionname"
        from "person"."vstateprovincecountryregion"
-    """)).as(VstateprovincecountryregionMVRow._rowParser.all()).runUnchecked(c);
+    """)).query(VstateprovincecountryregionMVRow._rowParser.all()).runUnchecked(c);
   };
 }

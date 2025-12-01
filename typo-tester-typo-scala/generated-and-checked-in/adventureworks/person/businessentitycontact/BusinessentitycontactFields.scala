@@ -53,7 +53,7 @@ object BusinessentitycontactFields {
 
     override lazy val fields: BusinessentitycontactFields = {
       new BusinessentitycontactFields {
-        def businessentityid: IdField[BusinessentityId, BusinessentitycontactRow] = {
+        override def businessentityid: IdField[BusinessentityId, BusinessentitycontactRow] = {
           new IdField[BusinessentityId, BusinessentitycontactRow](
             _path,
             "businessentityid",
@@ -64,7 +64,7 @@ object BusinessentitycontactFields {
             BusinessentityId.pgType
           )
         }
-        def personid: IdField[BusinessentityId, BusinessentitycontactRow] = {
+        override def personid: IdField[BusinessentityId, BusinessentitycontactRow] = {
           new IdField[BusinessentityId, BusinessentitycontactRow](
             _path,
             "personid",
@@ -75,7 +75,7 @@ object BusinessentitycontactFields {
             BusinessentityId.pgType
           )
         }
-        def contacttypeid: IdField[ContacttypeId, BusinessentitycontactRow] = {
+        override def contacttypeid: IdField[ContacttypeId, BusinessentitycontactRow] = {
           new IdField[ContacttypeId, BusinessentitycontactRow](
             _path,
             "contacttypeid",
@@ -86,7 +86,7 @@ object BusinessentitycontactFields {
             ContacttypeId.pgType
           )
         }
-        def rowguid: Field[TypoUUID, BusinessentitycontactRow] = {
+        override def rowguid: Field[TypoUUID, BusinessentitycontactRow] = {
           new Field[TypoUUID, BusinessentitycontactRow](
             _path,
             "rowguid",
@@ -97,7 +97,7 @@ object BusinessentitycontactFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, BusinessentitycontactRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, BusinessentitycontactRow] = {
           new Field[TypoLocalDateTime, BusinessentitycontactRow](
             _path,
             "modifieddate",
@@ -113,7 +113,7 @@ object BusinessentitycontactFields {
 
     override lazy val columns: java.util.List[FieldLike[?, BusinessentitycontactRow]] = java.util.List.of(this.fields.businessentityid, this.fields.personid, this.fields.contacttypeid, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[BusinessentitycontactFields, BusinessentitycontactRow] = new Impl(java.util.List.of())

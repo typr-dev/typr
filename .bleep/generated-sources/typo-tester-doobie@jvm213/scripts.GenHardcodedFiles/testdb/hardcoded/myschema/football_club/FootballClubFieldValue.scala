@@ -15,10 +15,10 @@ sealed trait FootballClubFieldValue[T] {
 
 object FootballClubFieldValue {
   case class id(value: FootballClubId) extends FootballClubFieldValue[FootballClubId] {
-    def name: String = "id"
+    override def name: String = "id"
   }
 
   case class name(value: /* max 100 chars */ String) extends FootballClubFieldValue[/* max 100 chars */ String] {
-    def name: String = "name"
+    override def name: String = "name"
   }
 }

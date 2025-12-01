@@ -20,10 +20,12 @@ import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
 public class FootballClubRepoImpl implements FootballClubRepo {
+  @Override
   public DeleteBuilder<FootballClubFields, FootballClubRow> delete() {
     return DeleteBuilder.of("myschema.football_club", FootballClubFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     FootballClubId id,
     Connection c
@@ -37,6 +39,7 @@ public class FootballClubRepoImpl implements FootballClubRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     FootballClubId[] ids,
     Connection c
@@ -53,6 +56,7 @@ public class FootballClubRepoImpl implements FootballClubRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public FootballClubRow insert(
     FootballClubRow unsaved,
     Connection c
@@ -72,6 +76,7 @@ public class FootballClubRepoImpl implements FootballClubRepo {
       .updateReturning(FootballClubRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<FootballClubRow> unsaved,
     Integer batchSize,
@@ -82,17 +87,20 @@ public class FootballClubRepoImpl implements FootballClubRepo {
     """), batchSize, unsaved, c, FootballClubRow.pgText);
   };
 
+  @Override
   public SelectBuilder<FootballClubFields, FootballClubRow> select() {
     return SelectBuilder.of("myschema.football_club", FootballClubFields.structure(), FootballClubRow._rowParser);
   };
 
+  @Override
   public List<FootballClubRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "name"
        from "myschema"."football_club"
-    """)).as(FootballClubRow._rowParser.all()).runUnchecked(c);
+    """)).query(FootballClubRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<FootballClubRow> selectById(
     FootballClubId id,
     Connection c
@@ -104,9 +112,10 @@ public class FootballClubRepoImpl implements FootballClubRepo {
          where "id" = """),
       FootballClubId.pgType.encode(id),
       typo.runtime.Fragment.lit("")
-    ).as(FootballClubRow._rowParser.first()).runUnchecked(c);
+    ).query(FootballClubRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<FootballClubRow> selectByIds(
     FootballClubId[] ids,
     Connection c
@@ -118,40 +127,44 @@ public class FootballClubRepoImpl implements FootballClubRepo {
          where "id" = ANY("""),
       FootballClubId.pgTypeArray.encode(ids),
       typo.runtime.Fragment.lit(")")
-    ).as(FootballClubRow._rowParser.all()).runUnchecked(c);
+    ).query(FootballClubRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<FootballClubId, FootballClubRow> selectByIdsTracked(
     FootballClubId[] ids,
     Connection c
   ) {
-    Map<FootballClubId, FootballClubRow> ret = new HashMap<>();;
-      selectByIds(ids, c).forEach(row -> ret.put(row.id(), row));
+    HashMap<FootballClubId, FootballClubRow> ret = new HashMap<FootballClubId, FootballClubRow>();
+    selectByIds(ids, c).forEach(row -> ret.put(row.id(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<FootballClubFields, FootballClubRow> update() {
     return UpdateBuilder.of("myschema.football_club", FootballClubFields.structure(), FootballClubRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     FootballClubRow row,
     Connection c
   ) {
     FootballClubId id = row.id();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "myschema"."football_club"
-                set "name" = """),
-             PgTypes.text.encode(row.name()),
-             typo.runtime.Fragment.lit("""
+      typo.runtime.Fragment.lit("""
+         update "myschema"."football_club"
+         set "name" = """),
+      PgTypes.text.encode(row.name()),
+      typo.runtime.Fragment.lit("""
    
-                where "id" = """),
-             FootballClubId.pgType.encode(id),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+         where "id" = """),
+      FootballClubId.pgType.encode(id),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public FootballClubRow upsert(
     FootballClubRow unsaved,
     Connection c
@@ -175,6 +188,7 @@ public class FootballClubRepoImpl implements FootballClubRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<FootballClubRow> upsertBatch(
     Iterator<FootballClubRow> unsaved,
     Connection c
@@ -192,24 +206,25 @@ public class FootballClubRepoImpl implements FootballClubRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<FootballClubRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table football_club_TEMP (like "myschema"."football_club") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy football_club_TEMP("id", "name") from stdin
-      """), batchSize, unsaved, c, FootballClubRow.pgText);
+    create temporary table football_club_TEMP (like "myschema"."football_club") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy football_club_TEMP("id", "name") from stdin
+    """), batchSize, unsaved, c, FootballClubRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "myschema"."football_club"("id", "name")
-              select * from football_club_TEMP
-              on conflict ("id")
-              do update set
-                "name" = EXCLUDED."name"
-              ;
-              drop table football_club_TEMP;""")).update().runUnchecked(c);
+       insert into "myschema"."football_club"("id", "name")
+       select * from football_club_TEMP
+       on conflict ("id")
+       do update set
+         "name" = EXCLUDED."name"
+       ;
+       drop table football_club_TEMP;""")).update().runUnchecked(c);
   };
 }

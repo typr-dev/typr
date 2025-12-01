@@ -9,11 +9,11 @@ import java.sql.Connection
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PersonRowJoinSqlRepoImpl extends PersonRowJoinSqlRepo {
-  def apply(using c: Connection): java.util.List[PersonRowJoinSqlRow] = {
+  override def apply(using c: Connection): java.util.List[PersonRowJoinSqlRow] = {
     interpolate"""SELECT s.businessentityid,
            (select array_agg(ROW(a.emailaddress, a.rowguid)) from person.emailaddress a where a.businessentityid = s.businessentityid) as email,
            (select ARRAY[ROW(a.emailaddress, a.rowguid)] from person.emailaddress a where a.businessentityid = s.businessentityid) as emails
     FROM sales.salesperson s
-    """.as(PersonRowJoinSqlRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(PersonRowJoinSqlRow.`_rowParser`.all()).runUnchecked(c)
   }
 }

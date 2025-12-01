@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class CrcViewRepoImpl extends CrcViewRepo {
-  def select: SelectBuilder[CrcViewFields, CrcViewRow] = SelectBuilder.of(""""sa"."crc"""", CrcViewFields.structure, CrcViewRow.jdbcDecoder)
+  override def select: SelectBuilder[CrcViewFields, CrcViewRow] = SelectBuilder.of(""""sa"."crc"""", CrcViewFields.structure, CrcViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, CrcViewRow] = sql"""select "countryregioncode", "currencycode", "modifieddate"::text from "sa"."crc"""".query(CrcViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, CrcViewRow] = sql"""select "countryregioncode", "currencycode", "modifieddate"::text from "sa"."crc"""".query(CrcViewRow.jdbcDecoder).selectStream()
 }

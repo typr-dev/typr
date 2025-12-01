@@ -16,9 +16,9 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class TitledpersonRepoImpl extends TitledpersonRepo {
-  def delete: DeleteBuilder[TitledpersonFields, TitledpersonRow] = DeleteBuilder.of("public.titledperson", TitledpersonFields.structure)
+  override def delete: DeleteBuilder[TitledpersonFields, TitledpersonRow] = DeleteBuilder.of("public.titledperson", TitledpersonFields.structure)
 
-  def insert(unsaved: TitledpersonRow)(using c: Connection): TitledpersonRow = {
+  override def insert(unsaved: TitledpersonRow)(using c: Connection): TitledpersonRow = {
   interpolate"""insert into "public"."titledperson"("title_short", "title", "name")
     values (${TitleDomainId.pgType.encode(unsaved.titleShort)}::text, ${TitleId.pgType.encode(unsaved.title)}, ${PgTypes.text.encode(unsaved.name)})
     returning "title_short", "title", "name"
@@ -26,18 +26,18 @@ class TitledpersonRepoImpl extends TitledpersonRepo {
     .updateReturning(TitledpersonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[TitledpersonRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."titledperson"("title_short", "title", "name") FROM STDIN""", batchSize, unsaved, c, TitledpersonRow.pgText)
 
-  def select: SelectBuilder[TitledpersonFields, TitledpersonRow] = SelectBuilder.of("public.titledperson", TitledpersonFields.structure, TitledpersonRow.`_rowParser`)
+  override def select: SelectBuilder[TitledpersonFields, TitledpersonRow] = SelectBuilder.of("public.titledperson", TitledpersonFields.structure, TitledpersonRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[TitledpersonRow] = {
+  override def selectAll(using c: Connection): java.util.List[TitledpersonRow] = {
     interpolate"""select "title_short", "title", "name"
     from "public"."titledperson"
-    """.as(TitledpersonRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(TitledpersonRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def update: UpdateBuilder[TitledpersonFields, TitledpersonRow] = UpdateBuilder.of("public.titledperson", TitledpersonFields.structure, TitledpersonRow.`_rowParser`.all())
+  override def update: UpdateBuilder[TitledpersonFields, TitledpersonRow] = UpdateBuilder.of("public.titledperson", TitledpersonFields.structure, TitledpersonRow.`_rowParser`.all())
 }

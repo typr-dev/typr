@@ -5,12 +5,13 @@
  */
 package adventureworks.public.table_with_generated_columns
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
 
 /** Type for the primary key of table `public.table-with-generated-columns` */
-case class TableWithGeneratedColumnsId(value: String) extends scala.AnyVal
+case class TableWithGeneratedColumnsId(@JsonValue value: String) extends scala.AnyVal
 
 object TableWithGeneratedColumnsId {
   given bijection: Bijection[TableWithGeneratedColumnsId, String] = Bijection.apply[TableWithGeneratedColumnsId, String](_.value)(TableWithGeneratedColumnsId.apply)

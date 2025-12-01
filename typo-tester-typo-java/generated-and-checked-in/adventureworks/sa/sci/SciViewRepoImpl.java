@@ -5,22 +5,22 @@
  */
 package adventureworks.sa.sci;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class SciViewRepoImpl implements SciViewRepo {
+  @Override
   public SelectBuilder<SciViewFields, SciViewRow> select() {
     return SelectBuilder.of("sa.sci", SciViewFields.structure(), SciViewRow._rowParser);
   };
 
+  @Override
   public List<SciViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text
        from "sa"."sci"
-    """)).as(SciViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(SciViewRow._rowParser.all()).runUnchecked(c);
   };
 }

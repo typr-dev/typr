@@ -10,7 +10,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class PersonRowJoinSqlRepoImpl extends PersonRowJoinSqlRepo {
-  def apply: ZStream[ZConnection, Throwable, PersonRowJoinSqlRow] = {
+  override def apply: ZStream[ZConnection, Throwable, PersonRowJoinSqlRow] = {
     val sql =
       sql"""SELECT s.businessentityid,
              (select array_agg(ROW(a.emailaddress, a.rowguid)) from person.emailaddress a where a.businessentityid = s.businessentityid) as email,

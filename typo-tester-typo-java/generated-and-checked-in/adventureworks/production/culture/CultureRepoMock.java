@@ -5,6 +5,7 @@
  */
 package adventureworks.production.culture;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record CultureRepoMock(
     return new CultureRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<CultureFields, CultureRow> delete() {
     return new DeleteBuilderMock<>(CultureFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.cultureid(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     CultureId cultureid,
     Connection c
@@ -52,28 +55,31 @@ public record CultureRepoMock(
     return Optional.ofNullable(map.remove(cultureid)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     CultureId[] cultureids,
     Connection c
   ) {
     var count = 0;
-      for (var id : cultureids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : cultureids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public CultureRow insert(
     CultureRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.cultureid())) {
-        throw new RuntimeException(str("id $unsaved.cultureid() already exists"));
-      };
-      map.put(unsaved.cultureid(), unsaved);
+      throw new RuntimeException(str("id $unsaved.cultureid() already exists"));
+    };
+    map.put(unsaved.cultureid(), unsaved);
     return unsaved;
   };
 
+  @Override
   public CultureRow insert(
     CultureRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record CultureRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<CultureRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.cultureid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.cultureid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<CultureRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.cultureid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.cultureid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<CultureFields, CultureRow> select() {
     return new SelectBuilderMock<>(CultureFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<CultureRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<CultureRow> selectById(
     CultureId cultureid,
     Connection c
@@ -126,38 +137,43 @@ public record CultureRepoMock(
     return Optional.ofNullable(map.get(cultureid));
   };
 
+  @Override
   public List<CultureRow> selectByIds(
     CultureId[] cultureids,
     Connection c
   ) {
     var result = new ArrayList<CultureRow>();
-      for (var id : cultureids) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : cultureids) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<CultureId, CultureRow> selectByIdsTracked(
     CultureId[] cultureids,
     Connection c
   ) {
-    return selectByIds(cultureids, c).stream().collect(Collectors.toMap((adventureworks.production.culture.CultureRow row) -> row.cultureid(), Function.identity()));
+    return selectByIds(cultureids, c).stream().collect(Collectors.toMap((CultureRow row) -> row.cultureid(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<CultureFields, CultureRow> update() {
     return new UpdateBuilderMock<>(CultureFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     CultureRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.cultureid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.cultureid(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.cultureid(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public CultureRow upsert(
     CultureRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record CultureRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<CultureRow> upsertBatch(
     Iterator<CultureRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<CultureRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.cultureid(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.cultureid(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<CultureRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.cultureid(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.cultureid(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

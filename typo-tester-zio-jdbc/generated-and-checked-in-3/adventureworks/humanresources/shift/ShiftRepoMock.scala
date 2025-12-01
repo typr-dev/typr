@@ -25,13 +25,13 @@ case class ShiftRepoMock(
   toRow: ShiftRowUnsaved => ShiftRow,
   map: scala.collection.mutable.Map[ShiftId, ShiftRow] = scala.collection.mutable.Map.empty[ShiftId, ShiftRow]
 ) extends ShiftRepo {
-  def delete: DeleteBuilder[ShiftFields, ShiftRow] = DeleteBuilderMock(DeleteParams.empty, ShiftFields.structure, map)
+  override def delete: DeleteBuilder[ShiftFields, ShiftRow] = DeleteBuilderMock(DeleteParams.empty, ShiftFields.structure, map)
 
-  def deleteById(shiftid: ShiftId): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(shiftid).isDefined)
+  override def deleteById(shiftid: ShiftId): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(shiftid).isDefined)
 
-  def deleteByIds(shiftids: Array[ShiftId]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(shiftids.map(id => map.remove(id)).count(_.isDefined).toLong)
+  override def deleteByIds(shiftids: Array[ShiftId]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(shiftids.map(id => map.remove(id)).count(_.isDefined).toLong)
 
-  def insert(unsaved: ShiftRow): ZIO[ZConnection, Throwable, ShiftRow] = {
+  override def insert(unsaved: ShiftRow): ZIO[ZConnection, Throwable, ShiftRow] = {
   ZIO.succeed {
     val _ =
       if (map.contains(unsaved.shiftid))
@@ -43,9 +43,9 @@ case class ShiftRepoMock(
   }
   }
 
-  def insert(unsaved: ShiftRowUnsaved): ZIO[ZConnection, Throwable, ShiftRow] = insert(toRow(unsaved))
+  override def insert(unsaved: ShiftRowUnsaved): ZIO[ZConnection, Throwable, ShiftRow] = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, ShiftRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {
@@ -58,7 +58,7 @@ case class ShiftRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, ShiftRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {
@@ -71,24 +71,24 @@ case class ShiftRepoMock(
     }.runLast.map(_.getOrElse(0L))
   }
 
-  def select: SelectBuilder[ShiftFields, ShiftRow] = SelectBuilderMock(ShiftFields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
+  override def select: SelectBuilder[ShiftFields, ShiftRow] = SelectBuilderMock(ShiftFields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
 
-  def selectAll: ZStream[ZConnection, Throwable, ShiftRow] = ZStream.fromIterable(map.values)
+  override def selectAll: ZStream[ZConnection, Throwable, ShiftRow] = ZStream.fromIterable(map.values)
 
-  def selectById(shiftid: ShiftId): ZIO[ZConnection, Throwable, Option[ShiftRow]] = ZIO.succeed(map.get(shiftid))
+  override def selectById(shiftid: ShiftId): ZIO[ZConnection, Throwable, Option[ShiftRow]] = ZIO.succeed(map.get(shiftid))
 
-  def selectByIds(shiftids: Array[ShiftId]): ZStream[ZConnection, Throwable, ShiftRow] = ZStream.fromIterable(shiftids.flatMap(map.get))
+  override def selectByIds(shiftids: Array[ShiftId]): ZStream[ZConnection, Throwable, ShiftRow] = ZStream.fromIterable(shiftids.flatMap(map.get))
 
-  def selectByIdsTracked(shiftids: Array[ShiftId]): ZIO[ZConnection, Throwable, Map[ShiftId, ShiftRow]] = {
+  override def selectByIdsTracked(shiftids: Array[ShiftId]): ZIO[ZConnection, Throwable, Map[ShiftId, ShiftRow]] = {
     selectByIds(shiftids).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.shiftid, x)).toMap
       shiftids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[ShiftFields, ShiftRow] = UpdateBuilderMock(UpdateParams.empty, ShiftFields.structure, map)
+  override def update: UpdateBuilder[ShiftFields, ShiftRow] = UpdateBuilderMock(UpdateParams.empty, ShiftFields.structure, map)
 
-  def update(row: ShiftRow): ZIO[ZConnection, Throwable, Option[ShiftRow]] = {
+  override def update(row: ShiftRow): ZIO[ZConnection, Throwable, Option[ShiftRow]] = {
     ZIO.succeed {
       map.get(row.shiftid).map { _ =>
         map.put(row.shiftid, row): @nowarn
@@ -97,7 +97,7 @@ case class ShiftRepoMock(
     }
   }
 
-  def upsert(unsaved: ShiftRow): ZIO[ZConnection, Throwable, UpdateResult[ShiftRow]] = {
+  override def upsert(unsaved: ShiftRow): ZIO[ZConnection, Throwable, UpdateResult[ShiftRow]] = {
     ZIO.succeed {
       map.put(unsaved.shiftid, unsaved): @nowarn
       UpdateResult(1, Chunk.single(unsaved))
@@ -105,7 +105,7 @@ case class ShiftRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, ShiftRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

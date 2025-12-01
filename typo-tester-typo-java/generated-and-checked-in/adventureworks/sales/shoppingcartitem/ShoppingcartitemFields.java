@@ -20,7 +20,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface ShoppingcartitemFields {
-  static final class Impl extends Relation<ShoppingcartitemFields, ShoppingcartitemRow> {
+  final class Impl extends Relation<ShoppingcartitemFields, ShoppingcartitemRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -28,21 +28,27 @@ public interface ShoppingcartitemFields {
     @Override
     public ShoppingcartitemFields fields() {
       return new ShoppingcartitemFields() {
+               @Override
                public IdField<ShoppingcartitemId, ShoppingcartitemRow> shoppingcartitemid() {
                  return new IdField<ShoppingcartitemId, ShoppingcartitemRow>(_path, "shoppingcartitemid", ShoppingcartitemRow::shoppingcartitemid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withShoppingcartitemid(value), ShoppingcartitemId.pgType);
                };
+               @Override
                public Field</* max 50 chars */ String, ShoppingcartitemRow> shoppingcartid() {
                  return new Field</* max 50 chars */ String, ShoppingcartitemRow>(_path, "shoppingcartid", ShoppingcartitemRow::shoppingcartid, Optional.empty(), Optional.empty(), (row, value) -> row.withShoppingcartid(value), PgTypes.text);
                };
+               @Override
                public Field<Integer, ShoppingcartitemRow> quantity() {
                  return new Field<Integer, ShoppingcartitemRow>(_path, "quantity", ShoppingcartitemRow::quantity, Optional.empty(), Optional.of("int4"), (row, value) -> row.withQuantity(value), PgTypes.int4);
                };
+               @Override
                public Field<ProductId, ShoppingcartitemRow> productid() {
                  return new Field<ProductId, ShoppingcartitemRow>(_path, "productid", ShoppingcartitemRow::productid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductid(value), ProductId.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, ShoppingcartitemRow> datecreated() {
                  return new Field<TypoLocalDateTime, ShoppingcartitemRow>(_path, "datecreated", ShoppingcartitemRow::datecreated, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withDatecreated(value), TypoLocalDateTime.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, ShoppingcartitemRow> modifieddate() {
                  return new Field<TypoLocalDateTime, ShoppingcartitemRow>(_path, "modifieddate", ShoppingcartitemRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -54,6 +60,7 @@ public interface ShoppingcartitemFields {
       return List.of(this.fields().shoppingcartitemid(), this.fields().shoppingcartid(), this.fields().quantity(), this.fields().productid(), this.fields().datecreated(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

@@ -13,7 +13,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple6
 
 /** Table: production.productphoto
  * Product images.
@@ -53,16 +52,7 @@ case class ProductphotoRow(
 }
 
 object ProductphotoRow {
-  val `_rowParser`: RowParser[ProductphotoRow] = {
-    RowParsers.of(ProductphotoId.pgType, TypoBytea.pgType.opt(), PgTypes.text.opt(), TypoBytea.pgType.opt(), PgTypes.text.opt(), TypoLocalDateTime.pgType, ProductphotoRow.apply, row => new Tuple6(
-      row.productphotoid,
-      row.thumbnailphoto,
-      row.thumbnailphotofilename,
-      row.largephoto,
-      row.largephotofilename,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[ProductphotoRow] = RowParsers.of(ProductphotoId.pgType, TypoBytea.pgType.opt(), PgTypes.text.opt(), TypoBytea.pgType.opt(), PgTypes.text.opt(), TypoLocalDateTime.pgType, ProductphotoRow.apply, row => Array(row.productphotoid, row.thumbnailphoto, row.thumbnailphotofilename, row.largephoto, row.largephotofilename, row.modifieddate))
 
   given pgText: PgText[ProductphotoRow] = PgText.from(`_rowParser`)
 }

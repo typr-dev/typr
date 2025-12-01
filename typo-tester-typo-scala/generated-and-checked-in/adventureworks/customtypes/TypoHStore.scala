@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes
 
+import com.fasterxml.jackson.annotation.JsonValue
 import java.util.HashMap
 import typo.dsl.Bijection
 import typo.runtime.PgRead
@@ -13,7 +14,7 @@ import typo.runtime.PgType
 import typo.runtime.PgWrite
 
 /** The text representation of an hstore, used for input and output, includes zero or more key => value pairs separated by commas */
-case class TypoHStore(value: Map[String, String])
+case class TypoHStore(@JsonValue value: Map[String, String])
 
 object TypoHStore {
   given bijection: Bijection[TypoHStore, Map[String, String]] = Bijection.apply[TypoHStore, Map[String, String]](_.value)(TypoHStore.apply)
@@ -23,16 +24,16 @@ object TypoHStore {
   given pgType: PgType[TypoHStore] = {
     PgType.of(
       "hstore",
-      PgRead.castJdbcObjectTo(classOf[java.util.Map[?, ?]]).map(v => {
+      PgRead.castJdbcObjectTo(classOf[java.util.Map[?, ?]]).map((v: java.util.Map[?, ?]) => {
                                                                   val b = Map.newBuilder[String, String]
                                                                   v.forEach { case (k, v) => b += k.asInstanceOf[String] -> v.asInstanceOf[String]}
                                                                   TypoHStore(b.result())
                                                                 }),
-      PgWrite.passObjectToJdbc().contramap((v: TypoHStore) => {
-                                             val b = new HashMap[String, String]
-                                             v.value.foreach { case (k, v) => b.put(k, v)}
-                                             b
-                                           }),
+      PgWrite.passObjectToJdbc[java.util.Map[String, String]]().contramap((v: TypoHStore) => {
+                                                                            val b = new HashMap[String, String]
+                                                                            v.value.foreach { case (k, v) => b.put(k, v)}
+                                                                            b
+                                                                          }),
       TypoHStore.pgText
     )
   }

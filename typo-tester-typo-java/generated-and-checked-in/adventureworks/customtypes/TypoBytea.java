@@ -25,5 +25,5 @@ public record TypoBytea(@JsonValue Byte[] value) {
     PgText.textByteArray.contramap(v -> ByteArrays.unbox(v.value()));
 
   static public PgType<TypoBytea> pgType =
-    PgTypes.bytea.bimap(v -> new TypoBytea(ByteArrays.box(v)), v -> ByteArrays.unbox(v.value())).renamed("bytea");
+    PgTypes.bytea.bimap((byte[] v) -> new TypoBytea(ByteArrays.box(v)), (TypoBytea v) -> ByteArrays.unbox(v.value())).renamed("bytea");
 }

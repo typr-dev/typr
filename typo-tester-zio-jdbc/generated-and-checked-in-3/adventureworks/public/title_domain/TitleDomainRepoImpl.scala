@@ -17,42 +17,42 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class TitleDomainRepoImpl extends TitleDomainRepo {
-  def delete: DeleteBuilder[TitleDomainFields, TitleDomainRow] = DeleteBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, TitleDomainRow.jdbcDecoder)
+  override def delete: DeleteBuilder[TitleDomainFields, TitleDomainRow] = DeleteBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, TitleDomainRow.jdbcDecoder)
 
-  def deleteById(code: TitleDomainId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "public"."title_domain" where "code" = ${Segment.paramSegment(code)(using TitleDomainId.setter)}""".delete.map(_ > 0)
+  override def deleteById(code: TitleDomainId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "public"."title_domain" where "code" = ${Segment.paramSegment(code)(using TitleDomainId.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(codes: Array[TitleDomainId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "public"."title_domain" where "code" = ANY(${Segment.paramSegment(codes)(using TitleDomainId.arraySetter)})""".delete
+  override def deleteByIds(codes: Array[TitleDomainId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "public"."title_domain" where "code" = ANY(${Segment.paramSegment(codes)(using TitleDomainId.arraySetter)})""".delete
 
-  def insert(unsaved: TitleDomainRow): ZIO[ZConnection, Throwable, TitleDomainRow] = {
+  override def insert(unsaved: TitleDomainRow): ZIO[ZConnection, Throwable, TitleDomainRow] = {
     sql"""insert into "public"."title_domain"("code")
     values (${Segment.paramSegment(unsaved.code)(using TitleDomainId.setter)}::text)
     returning "code"
     """.insertReturning(using TitleDomainRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, TitleDomainRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "public"."title_domain"("code") FROM STDIN""", batchSize, unsaved)(using TitleDomainRow.pgText)
 
-  def select: SelectBuilder[TitleDomainFields, TitleDomainRow] = SelectBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, TitleDomainRow.jdbcDecoder)
+  override def select: SelectBuilder[TitleDomainFields, TitleDomainRow] = SelectBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, TitleDomainRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, TitleDomainRow] = sql"""select "code" from "public"."title_domain"""".query(using TitleDomainRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, TitleDomainRow] = sql"""select "code" from "public"."title_domain"""".query(using TitleDomainRow.jdbcDecoder).selectStream()
 
-  def selectById(code: TitleDomainId): ZIO[ZConnection, Throwable, Option[TitleDomainRow]] = sql"""select "code" from "public"."title_domain" where "code" = ${Segment.paramSegment(code)(using TitleDomainId.setter)}""".query(using TitleDomainRow.jdbcDecoder).selectOne
+  override def selectById(code: TitleDomainId): ZIO[ZConnection, Throwable, Option[TitleDomainRow]] = sql"""select "code" from "public"."title_domain" where "code" = ${Segment.paramSegment(code)(using TitleDomainId.setter)}""".query(using TitleDomainRow.jdbcDecoder).selectOne
 
-  def selectByIds(codes: Array[TitleDomainId]): ZStream[ZConnection, Throwable, TitleDomainRow] = sql"""select "code" from "public"."title_domain" where "code" = ANY(${Segment.paramSegment(codes)(using TitleDomainId.arraySetter)})""".query(using TitleDomainRow.jdbcDecoder).selectStream()
+  override def selectByIds(codes: Array[TitleDomainId]): ZStream[ZConnection, Throwable, TitleDomainRow] = sql"""select "code" from "public"."title_domain" where "code" = ANY(${Segment.paramSegment(codes)(using TitleDomainId.arraySetter)})""".query(using TitleDomainRow.jdbcDecoder).selectStream()
 
-  def selectByIdsTracked(codes: Array[TitleDomainId]): ZIO[ZConnection, Throwable, Map[TitleDomainId, TitleDomainRow]] = {
+  override def selectByIdsTracked(codes: Array[TitleDomainId]): ZIO[ZConnection, Throwable, Map[TitleDomainId, TitleDomainRow]] = {
     selectByIds(codes).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.code, x)).toMap
       codes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[TitleDomainFields, TitleDomainRow] = UpdateBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, TitleDomainRow.jdbcDecoder)
+  override def update: UpdateBuilder[TitleDomainFields, TitleDomainRow] = UpdateBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, TitleDomainRow.jdbcDecoder)
 
-  def upsert(unsaved: TitleDomainRow): ZIO[ZConnection, Throwable, UpdateResult[TitleDomainRow]] = {
+  override def upsert(unsaved: TitleDomainRow): ZIO[ZConnection, Throwable, UpdateResult[TitleDomainRow]] = {
     sql"""insert into "public"."title_domain"("code")
     values (
       ${Segment.paramSegment(unsaved.code)(using TitleDomainId.setter)}::text
@@ -63,7 +63,7 @@ class TitleDomainRepoImpl extends TitleDomainRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, TitleDomainRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

@@ -17,7 +17,7 @@ import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 
 public interface PmpdcViewFields {
-  static final class Impl extends Relation<PmpdcViewFields, PmpdcViewRow> {
+  final class Impl extends Relation<PmpdcViewFields, PmpdcViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -25,15 +25,19 @@ public interface PmpdcViewFields {
     @Override
     public PmpdcViewFields fields() {
       return new PmpdcViewFields() {
+               @Override
                public Field<ProductmodelId, PmpdcViewRow> productmodelid() {
                  return new Field<ProductmodelId, PmpdcViewRow>(_path, "productmodelid", PmpdcViewRow::productmodelid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductmodelid(value), ProductmodelId.pgType);
                };
+               @Override
                public Field<ProductdescriptionId, PmpdcViewRow> productdescriptionid() {
                  return new Field<ProductdescriptionId, PmpdcViewRow>(_path, "productdescriptionid", PmpdcViewRow::productdescriptionid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductdescriptionid(value), ProductdescriptionId.pgType);
                };
+               @Override
                public Field<CultureId, PmpdcViewRow> cultureid() {
                  return new Field<CultureId, PmpdcViewRow>(_path, "cultureid", PmpdcViewRow::cultureid, Optional.empty(), Optional.empty(), (row, value) -> row.withCultureid(value), CultureId.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, PmpdcViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, PmpdcViewRow>(_path, "modifieddate", PmpdcViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -45,6 +49,7 @@ public interface PmpdcViewFields {
       return List.of(this.fields().productmodelid(), this.fields().productdescriptionid(), this.fields().cultureid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

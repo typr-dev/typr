@@ -17,7 +17,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple8;
 
 /** Table: purchasing.vendor
   * Companies from whom Adventure Works Cycles purchases parts or other goods.
@@ -97,7 +96,7 @@ public record VendorRow(
     return new VendorRow(businessentityid, accountnumber, name, creditrating, preferredvendorstatus, activeflag, purchasingwebserviceurl, modifieddate);
   };
 
-  static RowParser<VendorRow> _rowParser = RowParsers.of(BusinessentityId.pgType, AccountNumber.pgType, Name.pgType, TypoShort.pgType, Flag.pgType, Flag.pgType, PgTypes.text.opt(), TypoLocalDateTime.pgType, VendorRow::new, row -> new Tuple8<>(row.businessentityid(), row.accountnumber(), row.name(), row.creditrating(), row.preferredvendorstatus(), row.activeflag(), row.purchasingwebserviceurl(), row.modifieddate()));;
+  static RowParser<VendorRow> _rowParser = RowParsers.of(BusinessentityId.pgType, AccountNumber.pgType, Name.pgType, TypoShort.pgType, Flag.pgType, Flag.pgType, PgTypes.text.opt(), TypoLocalDateTime.pgType, VendorRow::new, row -> new Object[]{row.businessentityid(), row.accountnumber(), row.name(), row.creditrating(), row.preferredvendorstatus(), row.activeflag(), row.purchasingwebserviceurl(), row.modifieddate()});;
 
   static public PgText<VendorRow> pgText =
     PgText.from(_rowParser);

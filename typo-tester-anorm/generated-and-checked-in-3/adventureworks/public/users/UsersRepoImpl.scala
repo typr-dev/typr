@@ -25,18 +25,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class UsersRepoImpl extends UsersRepo {
-  def delete: DeleteBuilder[UsersFields, UsersRow] = DeleteBuilder.of(""""public"."users"""", UsersFields.structure, UsersRow.rowParser(1).*)
+  override def delete: DeleteBuilder[UsersFields, UsersRow] = DeleteBuilder.of(""""public"."users"""", UsersFields.structure, UsersRow.rowParser(1).*)
 
-  def deleteById(userId: UsersId)(using c: Connection): Boolean = SQL"""delete from "public"."users" where "user_id" = ${ParameterValue(userId, null, UsersId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(userId: UsersId)(using c: Connection): Boolean = SQL"""delete from "public"."users" where "user_id" = ${ParameterValue(userId, null, UsersId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(userIds: Array[UsersId])(using c: Connection): Int = {
+  override def deleteByIds(userIds: Array[UsersId])(using c: Connection): Int = {
     SQL"""delete
     from "public"."users"
     where "user_id" = ANY(${ParameterValue(userIds, null, UsersId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: UsersRow)(using c: Connection): UsersRow = {
+  override def insert(unsaved: UsersRow)(using c: Connection): UsersRow = {
   SQL"""insert into "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on")
     values (${ParameterValue(unsaved.userId, null, UsersId.toStatement)}::uuid, ${ParameterValue(unsaved.name, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.lastName, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}, ${ParameterValue(unsaved.email, null, TypoUnknownCitext.toStatement)}::citext, ${ParameterValue(unsaved.password, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.createdAt, null, TypoInstant.toStatement)}::timestamptz, ${ParameterValue(unsaved.verifiedOn, null, ToStatement.optionToStatement(using TypoInstant.toStatement, TypoInstant.parameterMetadata))}::timestamptz)
     returning "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text
@@ -44,7 +44,7 @@ class UsersRepoImpl extends UsersRepo {
     .executeInsert(UsersRow.rowParser(1).single)
   }
 
-  def insert(unsaved: UsersRowUnsaved)(using c: Connection): UsersRow = {
+  override def insert(unsaved: UsersRowUnsaved)(using c: Connection): UsersRow = {
     val namedParameters = List(
       Some((NamedParameter("user_id", ParameterValue(unsaved.userId, null, UsersId.toStatement)), "::uuid")),
       Some((NamedParameter("name", ParameterValue(unsaved.name, null, ToStatement.stringToStatement)), "")),
@@ -73,54 +73,54 @@ class UsersRepoImpl extends UsersRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[UsersRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on") FROM STDIN""", batchSize, unsaved)(using UsersRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[UsersRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "public"."users"("user_id", "name", "last_name", "email", "password", "verified_on", "created_at") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using UsersRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[UsersFields, UsersRow] = SelectBuilder.of(""""public"."users"""", UsersFields.structure, UsersRow.rowParser)
+  override def select: SelectBuilder[UsersFields, UsersRow] = SelectBuilder.of(""""public"."users"""", UsersFields.structure, UsersRow.rowParser)
 
-  def selectAll(using c: Connection): List[UsersRow] = {
+  override def selectAll(using c: Connection): List[UsersRow] = {
     SQL"""select "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text
     from "public"."users"
     """.as(UsersRow.rowParser(1).*)
   }
 
-  def selectById(userId: UsersId)(using c: Connection): Option[UsersRow] = {
+  override def selectById(userId: UsersId)(using c: Connection): Option[UsersRow] = {
     SQL"""select "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text
     from "public"."users"
     where "user_id" = ${ParameterValue(userId, null, UsersId.toStatement)}
     """.as(UsersRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(userIds: Array[UsersId])(using c: Connection): List[UsersRow] = {
+  override def selectByIds(userIds: Array[UsersId])(using c: Connection): List[UsersRow] = {
     SQL"""select "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text
     from "public"."users"
     where "user_id" = ANY(${ParameterValue(userIds, null, UsersId.arrayToStatement)})
     """.as(UsersRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(userIds: Array[UsersId])(using c: Connection): Map[UsersId, UsersRow] = {
+  override def selectByIdsTracked(userIds: Array[UsersId])(using c: Connection): Map[UsersId, UsersRow] = {
     val byId = selectByIds(userIds).view.map(x => (x.userId, x)).toMap
     userIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def selectByUniqueEmail(email: TypoUnknownCitext)(using c: Connection): Option[UsersRow] = {
+  override def selectByUniqueEmail(email: TypoUnknownCitext)(using c: Connection): Option[UsersRow] = {
     SQL"""select "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text
     from "public"."users"
     where "email" = ${ParameterValue(email, null, TypoUnknownCitext.toStatement)}
     """.as(UsersRow.rowParser(1).singleOpt)
   }
 
-  def update: UpdateBuilder[UsersFields, UsersRow] = UpdateBuilder.of(""""public"."users"""", UsersFields.structure, UsersRow.rowParser(1).*)
+  override def update: UpdateBuilder[UsersFields, UsersRow] = UpdateBuilder.of(""""public"."users"""", UsersFields.structure, UsersRow.rowParser(1).*)
 
-  def update(row: UsersRow)(using c: Connection): Option[UsersRow] = {
+  override def update(row: UsersRow)(using c: Connection): Option[UsersRow] = {
     val userId = row.userId
     SQL"""update "public"."users"
     set "name" = ${ParameterValue(row.name, null, ToStatement.stringToStatement)},
@@ -134,7 +134,7 @@ class UsersRepoImpl extends UsersRepo {
     """.executeInsert(UsersRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: UsersRow)(using c: Connection): UsersRow = {
+  override def upsert(unsaved: UsersRow)(using c: Connection): UsersRow = {
   SQL"""insert into "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on")
     values (
       ${ParameterValue(unsaved.userId, null, UsersId.toStatement)}::uuid,
@@ -158,7 +158,7 @@ class UsersRepoImpl extends UsersRepo {
     .executeInsert(UsersRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[UsersRow])(using c: Connection): List[UsersRow] = {
+  override def upsertBatch(unsaved: Iterable[UsersRow])(using c: Connection): List[UsersRow] = {
     def toNamedParameter(row: UsersRow): List[NamedParameter] = List(
       NamedParameter("user_id", ParameterValue(row.userId, null, UsersId.toStatement)),
       NamedParameter("name", ParameterValue(row.name, null, ToStatement.stringToStatement)),
@@ -168,6 +168,7 @@ class UsersRepoImpl extends UsersRepo {
       NamedParameter("created_at", ParameterValue(row.createdAt, null, TypoInstant.toStatement)),
       NamedParameter("verified_on", ParameterValue(row.verifiedOn, null, ToStatement.optionToStatement(using TypoInstant.toStatement, TypoInstant.parameterMetadata)))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -193,7 +194,7 @@ class UsersRepoImpl extends UsersRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[UsersRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

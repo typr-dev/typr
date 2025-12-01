@@ -7,7 +7,6 @@ package adventureworks.public_.titledperson;
 
 import adventureworks.public_.title.TitleId;
 import adventureworks.public_.title_domain.TitleDomainId;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.Iterator;
 import java.util.List;
@@ -19,12 +18,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class TitledpersonRepoImpl implements TitledpersonRepo {
+  @Override
   public DeleteBuilder<TitledpersonFields, TitledpersonRow> delete() {
     return DeleteBuilder.of("public.titledperson", TitledpersonFields.structure());
   };
 
+  @Override
   public TitledpersonRow insert(
     TitledpersonRow unsaved,
     Connection c
@@ -46,6 +46,7 @@ public class TitledpersonRepoImpl implements TitledpersonRepo {
       .updateReturning(TitledpersonRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<TitledpersonRow> unsaved,
     Integer batchSize,
@@ -56,17 +57,20 @@ public class TitledpersonRepoImpl implements TitledpersonRepo {
     """), batchSize, unsaved, c, TitledpersonRow.pgText);
   };
 
+  @Override
   public SelectBuilder<TitledpersonFields, TitledpersonRow> select() {
     return SelectBuilder.of("public.titledperson", TitledpersonFields.structure(), TitledpersonRow._rowParser);
   };
 
+  @Override
   public List<TitledpersonRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "title_short", "title", "name"
        from "public"."titledperson"
-    """)).as(TitledpersonRow._rowParser.all()).runUnchecked(c);
+    """)).query(TitledpersonRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public UpdateBuilder<TitledpersonFields, TitledpersonRow> update() {
     return UpdateBuilder.of("public.titledperson", TitledpersonFields.structure(), TitledpersonRow._rowParser.all());
   };

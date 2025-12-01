@@ -10,7 +10,6 @@ import adventureworks.humanresources.department.DepartmentId
 import adventureworks.public.Name
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple5
 
 /** View: hr.d */
 case class DViewRow(
@@ -27,13 +26,5 @@ case class DViewRow(
 )
 
 object DViewRow {
-  val `_rowParser`: RowParser[DViewRow] = {
-    RowParsers.of(DepartmentId.pgType, DepartmentId.pgType, Name.pgType, Name.pgType, TypoLocalDateTime.pgType, DViewRow.apply, row => new Tuple5(
-      row.id,
-      row.departmentid,
-      row.name,
-      row.groupname,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[DViewRow] = RowParsers.of(DepartmentId.pgType, DepartmentId.pgType, Name.pgType, Name.pgType, TypoLocalDateTime.pgType, DViewRow.apply, row => Array(row.id, row.departmentid, row.name, row.groupname, row.modifieddate))
 }

@@ -30,7 +30,7 @@ object OnlyPkColumnsFields {
 
     override lazy val fields: OnlyPkColumnsFields = {
       new OnlyPkColumnsFields {
-        def keyColumn1: IdField[String, OnlyPkColumnsRow] = {
+        override def keyColumn1: IdField[String, OnlyPkColumnsRow] = {
           new IdField[String, OnlyPkColumnsRow](
             _path,
             "key_column_1",
@@ -41,7 +41,7 @@ object OnlyPkColumnsFields {
             PgTypes.text
           )
         }
-        def keyColumn2: IdField[Integer, OnlyPkColumnsRow] = {
+        override def keyColumn2: IdField[Integer, OnlyPkColumnsRow] = {
           new IdField[Integer, OnlyPkColumnsRow](
             _path,
             "key_column_2",
@@ -57,7 +57,7 @@ object OnlyPkColumnsFields {
 
     override lazy val columns: java.util.List[FieldLike[?, OnlyPkColumnsRow]] = java.util.List.of(this.fields.keyColumn1, this.fields.keyColumn2)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[OnlyPkColumnsFields, OnlyPkColumnsRow] = new Impl(java.util.List.of())

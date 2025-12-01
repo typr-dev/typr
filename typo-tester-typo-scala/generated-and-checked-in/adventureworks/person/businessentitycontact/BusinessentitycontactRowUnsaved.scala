@@ -47,17 +47,5 @@ case class BusinessentitycontactRowUnsaved(
 }
 
 object BusinessentitycontactRowUnsaved {
-  given pgText: PgText[BusinessentitycontactRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      BusinessentityId.pgType.pgText.unsafeEncode(row.businessentityid, sb);
-      sb.append(PgText.DELIMETER);
-      BusinessentityId.pgType.pgText.unsafeEncode(row.personid, sb);
-      sb.append(PgText.DELIMETER);
-      ContacttypeId.pgType.pgText.unsafeEncode(row.contacttypeid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[BusinessentitycontactRowUnsaved] = PgText.instance((row, sb) => { BusinessentityId.pgType.pgText.unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); BusinessentityId.pgType.pgText.unsafeEncode(row.personid, sb); sb.append(PgText.DELIMETER); ContacttypeId.pgType.pgText.unsafeEncode(row.contacttypeid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

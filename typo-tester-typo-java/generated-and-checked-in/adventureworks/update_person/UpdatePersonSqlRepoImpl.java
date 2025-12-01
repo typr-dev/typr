@@ -6,14 +6,13 @@
 package adventureworks.update_person;
 
 import adventureworks.customtypes.TypoLocalDateTime;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.Optional;
 import typo.runtime.PgTypes;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class UpdatePersonSqlRepoImpl implements UpdatePersonSqlRepo {
+  @Override
   public Integer apply(
     String suffix,
     Optional<TypoLocalDateTime> cutoff,

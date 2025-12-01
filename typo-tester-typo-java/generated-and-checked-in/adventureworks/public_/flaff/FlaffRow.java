@@ -12,7 +12,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple5;
 
 /** Table: public.flaff
   * Composite primary key: code, another_code, some_number, specifier
@@ -52,7 +51,7 @@ public record FlaffRow(
     return new FlaffRow(code, anotherCode, someNumber, specifier, parentspecifier);
   };
 
-  static RowParser<FlaffRow> _rowParser = RowParsers.of(ShortText.pgType, PgTypes.text, PgTypes.int4, ShortText.pgType, ShortText.pgType.opt(), FlaffRow::new, row -> new Tuple5<>(row.code(), row.anotherCode(), row.someNumber(), row.specifier(), row.parentspecifier()));;
+  static RowParser<FlaffRow> _rowParser = RowParsers.of(ShortText.pgType, PgTypes.text, PgTypes.int4, ShortText.pgType, ShortText.pgType.opt(), FlaffRow::new, row -> new Object[]{row.code(), row.anotherCode(), row.someNumber(), row.specifier(), row.parentspecifier()});;
 
   static public FlaffRow apply(
     FlaffId compositeId,

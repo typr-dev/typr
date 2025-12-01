@@ -31,18 +31,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class ProductRepoImpl extends ProductRepo {
-  def delete: DeleteBuilder[ProductFields, ProductRow] = DeleteBuilder.of(""""production"."product"""", ProductFields.structure, ProductRow.rowParser(1).*)
+  override def delete: DeleteBuilder[ProductFields, ProductRow] = DeleteBuilder.of(""""production"."product"""", ProductFields.structure, ProductRow.rowParser(1).*)
 
-  def deleteById(productid: ProductId)(using c: Connection): Boolean = SQL"""delete from "production"."product" where "productid" = ${ParameterValue(productid, null, ProductId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(productid: ProductId)(using c: Connection): Boolean = SQL"""delete from "production"."product" where "productid" = ${ParameterValue(productid, null, ProductId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(productids: Array[ProductId])(using c: Connection): Int = {
+  override def deleteByIds(productids: Array[ProductId])(using c: Connection): Int = {
     SQL"""delete
     from "production"."product"
     where "productid" = ANY(${ParameterValue(productids, null, ProductId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: ProductRow)(using c: Connection): ProductRow = {
+  override def insert(unsaved: ProductRow)(using c: Connection): ProductRow = {
   SQL"""insert into "production"."product"("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate")
     values (${ParameterValue(unsaved.productid, null, ProductId.toStatement)}::int4, ${ParameterValue(unsaved.name, null, Name.toStatement)}::varchar, ${ParameterValue(unsaved.productnumber, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.makeflag, null, Flag.toStatement)}::bool, ${ParameterValue(unsaved.finishedgoodsflag, null, Flag.toStatement)}::bool, ${ParameterValue(unsaved.color, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}, ${ParameterValue(unsaved.safetystocklevel, null, TypoShort.toStatement)}::int2, ${ParameterValue(unsaved.reorderpoint, null, TypoShort.toStatement)}::int2, ${ParameterValue(unsaved.standardcost, null, ToStatement.scalaBigDecimalToStatement)}::numeric, ${ParameterValue(unsaved.listprice, null, ToStatement.scalaBigDecimalToStatement)}::numeric, ${ParameterValue(unsaved.size, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}, ${ParameterValue(unsaved.sizeunitmeasurecode, null, ToStatement.optionToStatement(using UnitmeasureId.toStatement, UnitmeasureId.parameterMetadata))}::bpchar, ${ParameterValue(unsaved.weightunitmeasurecode, null, ToStatement.optionToStatement(using UnitmeasureId.toStatement, UnitmeasureId.parameterMetadata))}::bpchar, ${ParameterValue(unsaved.weight, null, ToStatement.optionToStatement(using ToStatement.scalaBigDecimalToStatement, ParameterMetaData.BigDecimalParameterMetaData))}::numeric, ${ParameterValue(unsaved.daystomanufacture, null, ToStatement.intToStatement)}::int4, ${ParameterValue(unsaved.productline, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}::bpchar, ${ParameterValue(unsaved.`class`, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}::bpchar, ${ParameterValue(unsaved.style, null, ToStatement.optionToStatement(using ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}::bpchar, ${ParameterValue(unsaved.productsubcategoryid, null, ToStatement.optionToStatement(using ProductsubcategoryId.toStatement, ProductsubcategoryId.parameterMetadata))}::int4, ${ParameterValue(unsaved.productmodelid, null, ToStatement.optionToStatement(using ProductmodelId.toStatement, ProductmodelId.parameterMetadata))}::int4, ${ParameterValue(unsaved.sellstartdate, null, TypoLocalDateTime.toStatement)}::timestamp, ${ParameterValue(unsaved.sellenddate, null, ToStatement.optionToStatement(using TypoLocalDateTime.toStatement, TypoLocalDateTime.parameterMetadata))}::timestamp, ${ParameterValue(unsaved.discontinueddate, null, ToStatement.optionToStatement(using TypoLocalDateTime.toStatement, TypoLocalDateTime.parameterMetadata))}::timestamp, ${ParameterValue(unsaved.rowguid, null, TypoUUID.toStatement)}::uuid, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text
@@ -50,7 +50,7 @@ class ProductRepoImpl extends ProductRepo {
     .executeInsert(ProductRow.rowParser(1).single)
   }
 
-  def insert(unsaved: ProductRowUnsaved)(using c: Connection): ProductRow = {
+  override def insert(unsaved: ProductRowUnsaved)(using c: Connection): ProductRow = {
     val namedParameters = List(
       Some((NamedParameter("name", ParameterValue(unsaved.name, null, Name.toStatement)), "::varchar")),
       Some((NamedParameter("productnumber", ParameterValue(unsaved.productnumber, null, ToStatement.stringToStatement)), "")),
@@ -109,47 +109,47 @@ class ProductRepoImpl extends ProductRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[ProductRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "production"."product"("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved)(using ProductRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[ProductRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "production"."product"("name", "productnumber", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "productid", "makeflag", "finishedgoodsflag", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using ProductRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[ProductFields, ProductRow] = SelectBuilder.of(""""production"."product"""", ProductFields.structure, ProductRow.rowParser)
+  override def select: SelectBuilder[ProductFields, ProductRow] = SelectBuilder.of(""""production"."product"""", ProductFields.structure, ProductRow.rowParser)
 
-  def selectAll(using c: Connection): List[ProductRow] = {
+  override def selectAll(using c: Connection): List[ProductRow] = {
     SQL"""select "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text
     from "production"."product"
     """.as(ProductRow.rowParser(1).*)
   }
 
-  def selectById(productid: ProductId)(using c: Connection): Option[ProductRow] = {
+  override def selectById(productid: ProductId)(using c: Connection): Option[ProductRow] = {
     SQL"""select "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text
     from "production"."product"
     where "productid" = ${ParameterValue(productid, null, ProductId.toStatement)}
     """.as(ProductRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(productids: Array[ProductId])(using c: Connection): List[ProductRow] = {
+  override def selectByIds(productids: Array[ProductId])(using c: Connection): List[ProductRow] = {
     SQL"""select "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text
     from "production"."product"
     where "productid" = ANY(${ParameterValue(productids, null, ProductId.arrayToStatement)})
     """.as(ProductRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(productids: Array[ProductId])(using c: Connection): Map[ProductId, ProductRow] = {
+  override def selectByIdsTracked(productids: Array[ProductId])(using c: Connection): Map[ProductId, ProductRow] = {
     val byId = selectByIds(productids).view.map(x => (x.productid, x)).toMap
     productids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[ProductFields, ProductRow] = UpdateBuilder.of(""""production"."product"""", ProductFields.structure, ProductRow.rowParser(1).*)
+  override def update: UpdateBuilder[ProductFields, ProductRow] = UpdateBuilder.of(""""production"."product"""", ProductFields.structure, ProductRow.rowParser(1).*)
 
-  def update(row: ProductRow)(using c: Connection): Option[ProductRow] = {
+  override def update(row: ProductRow)(using c: Connection): Option[ProductRow] = {
     val productid = row.productid
     SQL"""update "production"."product"
     set "name" = ${ParameterValue(row.name, null, Name.toStatement)}::varchar,
@@ -181,7 +181,7 @@ class ProductRepoImpl extends ProductRepo {
     """.executeInsert(ProductRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: ProductRow)(using c: Connection): ProductRow = {
+  override def upsert(unsaved: ProductRow)(using c: Connection): ProductRow = {
   SQL"""insert into "production"."product"("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate")
     values (
       ${ParameterValue(unsaved.productid, null, ProductId.toStatement)}::int4,
@@ -241,7 +241,7 @@ class ProductRepoImpl extends ProductRepo {
     .executeInsert(ProductRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[ProductRow])(using c: Connection): List[ProductRow] = {
+  override def upsertBatch(unsaved: Iterable[ProductRow])(using c: Connection): List[ProductRow] = {
     def toNamedParameter(row: ProductRow): List[NamedParameter] = List(
       NamedParameter("productid", ParameterValue(row.productid, null, ProductId.toStatement)),
       NamedParameter("name", ParameterValue(row.name, null, Name.toStatement)),
@@ -269,6 +269,7 @@ class ProductRepoImpl extends ProductRepo {
       NamedParameter("rowguid", ParameterValue(row.rowguid, null, TypoUUID.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -312,7 +313,7 @@ class ProductRepoImpl extends ProductRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[ProductRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

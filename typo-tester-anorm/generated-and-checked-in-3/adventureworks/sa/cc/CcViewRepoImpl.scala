@@ -10,9 +10,9 @@ import typo.dsl.SelectBuilder
 import anorm.SqlStringInterpolation
 
 class CcViewRepoImpl extends CcViewRepo {
-  def select: SelectBuilder[CcViewFields, CcViewRow] = SelectBuilder.of(""""sa"."cc"""", CcViewFields.structure, CcViewRow.rowParser)
+  override def select: SelectBuilder[CcViewFields, CcViewRow] = SelectBuilder.of(""""sa"."cc"""", CcViewFields.structure, CcViewRow.rowParser)
 
-  def selectAll(using c: Connection): List[CcViewRow] = {
+  override def selectAll(using c: Connection): List[CcViewRow] = {
     SQL"""select "id", "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"::text
     from "sa"."cc"
     """.as(CcViewRow.rowParser(1).*)

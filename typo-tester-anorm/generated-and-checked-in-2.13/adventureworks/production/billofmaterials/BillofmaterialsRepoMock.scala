@@ -21,13 +21,13 @@ case class BillofmaterialsRepoMock(
   toRow: BillofmaterialsRowUnsaved => BillofmaterialsRow,
   map: scala.collection.mutable.Map[Int, BillofmaterialsRow] = scala.collection.mutable.Map.empty[Int, BillofmaterialsRow]
 ) extends BillofmaterialsRepo {
-  def delete: DeleteBuilder[BillofmaterialsFields, BillofmaterialsRow] = DeleteBuilderMock(DeleteParams.empty, BillofmaterialsFields.structure, map)
+  override def delete: DeleteBuilder[BillofmaterialsFields, BillofmaterialsRow] = DeleteBuilderMock(DeleteParams.empty, BillofmaterialsFields.structure, map)
 
-  def deleteById(billofmaterialsid: Int)(implicit c: Connection): Boolean = map.remove(billofmaterialsid).isDefined
+  override def deleteById(billofmaterialsid: Int)(implicit c: Connection): Boolean = map.remove(billofmaterialsid).isDefined
 
-  def deleteByIds(billofmaterialsids: Array[Int])(implicit c: Connection): Int = billofmaterialsids.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(billofmaterialsids: Array[Int])(implicit c: Connection): Int = billofmaterialsids.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: BillofmaterialsRow)(implicit c: Connection): BillofmaterialsRow = {
+  override def insert(unsaved: BillofmaterialsRow)(implicit c: Connection): BillofmaterialsRow = {
     val _ = if (map.contains(unsaved.billofmaterialsid))
       sys.error(s"id ${unsaved.billofmaterialsid} already exists")
     else
@@ -36,9 +36,9 @@ case class BillofmaterialsRepoMock(
     unsaved
   }
 
-  def insert(unsaved: BillofmaterialsRowUnsaved)(implicit c: Connection): BillofmaterialsRow = insert(toRow(unsaved))
+  override def insert(unsaved: BillofmaterialsRowUnsaved)(implicit c: Connection): BillofmaterialsRow = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[BillofmaterialsRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = {
@@ -49,7 +49,7 @@ case class BillofmaterialsRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[BillofmaterialsRowUnsaved],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = {
@@ -60,34 +60,34 @@ case class BillofmaterialsRepoMock(
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[BillofmaterialsFields, BillofmaterialsRow] = SelectBuilderMock(BillofmaterialsFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[BillofmaterialsFields, BillofmaterialsRow] = SelectBuilderMock(BillofmaterialsFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(implicit c: Connection): List[BillofmaterialsRow] = map.values.toList
+  override def selectAll(implicit c: Connection): List[BillofmaterialsRow] = map.values.toList
 
-  def selectById(billofmaterialsid: Int)(implicit c: Connection): Option[BillofmaterialsRow] = map.get(billofmaterialsid)
+  override def selectById(billofmaterialsid: Int)(implicit c: Connection): Option[BillofmaterialsRow] = map.get(billofmaterialsid)
 
-  def selectByIds(billofmaterialsids: Array[Int])(implicit c: Connection): List[BillofmaterialsRow] = billofmaterialsids.flatMap(map.get).toList
+  override def selectByIds(billofmaterialsids: Array[Int])(implicit c: Connection): List[BillofmaterialsRow] = billofmaterialsids.flatMap(map.get).toList
 
-  def selectByIdsTracked(billofmaterialsids: Array[Int])(implicit c: Connection): Map[Int, BillofmaterialsRow] = {
+  override def selectByIdsTracked(billofmaterialsids: Array[Int])(implicit c: Connection): Map[Int, BillofmaterialsRow] = {
     val byId = selectByIds(billofmaterialsids).view.map(x => (x.billofmaterialsid, x)).toMap
     billofmaterialsids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[BillofmaterialsFields, BillofmaterialsRow] = UpdateBuilderMock(UpdateParams.empty, BillofmaterialsFields.structure, map)
+  override def update: UpdateBuilder[BillofmaterialsFields, BillofmaterialsRow] = UpdateBuilderMock(UpdateParams.empty, BillofmaterialsFields.structure, map)
 
-  def update(row: BillofmaterialsRow)(implicit c: Connection): Option[BillofmaterialsRow] = {
+  override def update(row: BillofmaterialsRow)(implicit c: Connection): Option[BillofmaterialsRow] = {
     map.get(row.billofmaterialsid).map { _ =>
       map.put(row.billofmaterialsid, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: BillofmaterialsRow)(implicit c: Connection): BillofmaterialsRow = {
+  override def upsert(unsaved: BillofmaterialsRow)(implicit c: Connection): BillofmaterialsRow = {
     map.put(unsaved.billofmaterialsid, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[BillofmaterialsRow])(implicit c: Connection): List[BillofmaterialsRow] = {
+  override def upsertBatch(unsaved: Iterable[BillofmaterialsRow])(implicit c: Connection): List[BillofmaterialsRow] = {
     unsaved.map { row =>
       map += (row.billofmaterialsid -> row)
       row
@@ -95,7 +95,7 @@ case class BillofmaterialsRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[BillofmaterialsRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

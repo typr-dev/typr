@@ -12,7 +12,6 @@ import adventureworks.person.businessentity.BusinessentityId;
 import java.util.Optional;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple5;
 
 /** View: hr.jc */
 public record JcViewRow(
@@ -52,5 +51,5 @@ public record JcViewRow(
     return new JcViewRow(id, jobcandidateid, businessentityid, resume, modifieddate);
   };
 
-  static RowParser<JcViewRow> _rowParser = RowParsers.of(JobcandidateId.pgType, JobcandidateId.pgType, BusinessentityId.pgType.opt(), TypoXml.pgType.opt(), TypoLocalDateTime.pgType, JcViewRow::new, row -> new Tuple5<>(row.id(), row.jobcandidateid(), row.businessentityid(), row.resume(), row.modifieddate()));;
+  static RowParser<JcViewRow> _rowParser = RowParsers.of(JobcandidateId.pgType, JobcandidateId.pgType, BusinessentityId.pgType.opt(), TypoXml.pgType.opt(), TypoLocalDateTime.pgType, JcViewRow::new, row -> new Object[]{row.id(), row.jobcandidateid(), row.businessentityid(), row.resume(), row.modifieddate()});;
 }

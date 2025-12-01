@@ -5,6 +5,7 @@
  */
 package adventureworks.public
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
@@ -12,7 +13,7 @@ import typo.runtime.PgTypes
 /** Domain `public.Phone`
  * No constraint
  */
-case class Phone(value: String)
+case class Phone(@JsonValue value: String)
 
 object Phone {
   given bijection: Bijection[Phone, String] = Bijection.apply[Phone, String](_.value)(Phone.apply)

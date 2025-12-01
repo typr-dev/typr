@@ -5,22 +5,22 @@
  */
 package adventureworks.production.vproductanddescription;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class VproductanddescriptionMVRepoImpl implements VproductanddescriptionMVRepo {
+  @Override
   public SelectBuilder<VproductanddescriptionMVFields, VproductanddescriptionMVRow> select() {
     return SelectBuilder.of("production.vproductanddescription", VproductanddescriptionMVFields.structure(), VproductanddescriptionMVRow._rowParser);
   };
 
+  @Override
   public List<VproductanddescriptionMVRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "productid", "name", "productmodel", "cultureid", "description"
        from "production"."vproductanddescription"
-    """)).as(VproductanddescriptionMVRow._rowParser.all()).runUnchecked(c);
+    """)).query(VproductanddescriptionMVRow._rowParser.all()).runUnchecked(c);
   };
 }

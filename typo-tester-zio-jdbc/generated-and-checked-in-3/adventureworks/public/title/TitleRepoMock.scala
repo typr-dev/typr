@@ -22,13 +22,13 @@ import zio.jdbc.ZConnection
 import zio.stream.ZStream
 
 case class TitleRepoMock(map: scala.collection.mutable.Map[TitleId, TitleRow] = scala.collection.mutable.Map.empty[TitleId, TitleRow]) extends TitleRepo {
-  def delete: DeleteBuilder[TitleFields, TitleRow] = DeleteBuilderMock(DeleteParams.empty, TitleFields.structure, map)
+  override def delete: DeleteBuilder[TitleFields, TitleRow] = DeleteBuilderMock(DeleteParams.empty, TitleFields.structure, map)
 
-  def deleteById(code: TitleId): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(code).isDefined)
+  override def deleteById(code: TitleId): ZIO[ZConnection, Throwable, Boolean] = ZIO.succeed(map.remove(code).isDefined)
 
-  def deleteByIds(codes: Array[TitleId]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(codes.map(id => map.remove(id)).count(_.isDefined).toLong)
+  override def deleteByIds(codes: Array[TitleId]): ZIO[ZConnection, Throwable, Long] = ZIO.succeed(codes.map(id => map.remove(id)).count(_.isDefined).toLong)
 
-  def insert(unsaved: TitleRow): ZIO[ZConnection, Throwable, TitleRow] = {
+  override def insert(unsaved: TitleRow): ZIO[ZConnection, Throwable, TitleRow] = {
   ZIO.succeed {
     val _ =
       if (map.contains(unsaved.code))
@@ -40,7 +40,7 @@ case class TitleRepoMock(map: scala.collection.mutable.Map[TitleId, TitleRow] = 
   }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, TitleRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {
@@ -52,24 +52,24 @@ case class TitleRepoMock(map: scala.collection.mutable.Map[TitleId, TitleRow] = 
     }.runLast.map(_.getOrElse(0L))
   }
 
-  def select: SelectBuilder[TitleFields, TitleRow] = SelectBuilderMock(TitleFields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
+  override def select: SelectBuilder[TitleFields, TitleRow] = SelectBuilderMock(TitleFields.structure, ZIO.succeed(Chunk.fromIterable(map.values)), SelectParams.empty)
 
-  def selectAll: ZStream[ZConnection, Throwable, TitleRow] = ZStream.fromIterable(map.values)
+  override def selectAll: ZStream[ZConnection, Throwable, TitleRow] = ZStream.fromIterable(map.values)
 
-  def selectById(code: TitleId): ZIO[ZConnection, Throwable, Option[TitleRow]] = ZIO.succeed(map.get(code))
+  override def selectById(code: TitleId): ZIO[ZConnection, Throwable, Option[TitleRow]] = ZIO.succeed(map.get(code))
 
-  def selectByIds(codes: Array[TitleId]): ZStream[ZConnection, Throwable, TitleRow] = ZStream.fromIterable(codes.flatMap(map.get))
+  override def selectByIds(codes: Array[TitleId]): ZStream[ZConnection, Throwable, TitleRow] = ZStream.fromIterable(codes.flatMap(map.get))
 
-  def selectByIdsTracked(codes: Array[TitleId]): ZIO[ZConnection, Throwable, Map[TitleId, TitleRow]] = {
+  override def selectByIdsTracked(codes: Array[TitleId]): ZIO[ZConnection, Throwable, Map[TitleId, TitleRow]] = {
     selectByIds(codes).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.code, x)).toMap
       codes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[TitleFields, TitleRow] = UpdateBuilderMock(UpdateParams.empty, TitleFields.structure, map)
+  override def update: UpdateBuilder[TitleFields, TitleRow] = UpdateBuilderMock(UpdateParams.empty, TitleFields.structure, map)
 
-  def upsert(unsaved: TitleRow): ZIO[ZConnection, Throwable, UpdateResult[TitleRow]] = {
+  override def upsert(unsaved: TitleRow): ZIO[ZConnection, Throwable, UpdateResult[TitleRow]] = {
     ZIO.succeed {
       map.put(unsaved.code, unsaved): @nowarn
       UpdateResult(1, Chunk.single(unsaved))
@@ -77,7 +77,7 @@ case class TitleRepoMock(map: scala.collection.mutable.Map[TitleId, TitleRow] = 
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, TitleRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

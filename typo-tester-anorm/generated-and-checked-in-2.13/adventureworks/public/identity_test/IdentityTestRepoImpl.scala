@@ -22,18 +22,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class IdentityTestRepoImpl extends IdentityTestRepo {
-  def delete: DeleteBuilder[IdentityTestFields, IdentityTestRow] = DeleteBuilder.of(""""public"."identity-test"""", IdentityTestFields.structure, IdentityTestRow.rowParser(1).*)
+  override def delete: DeleteBuilder[IdentityTestFields, IdentityTestRow] = DeleteBuilder.of(""""public"."identity-test"""", IdentityTestFields.structure, IdentityTestRow.rowParser(1).*)
 
-  def deleteById(name: IdentityTestId)(implicit c: Connection): Boolean = SQL"""delete from "public"."identity-test" where "name" = ${ParameterValue(name, null, IdentityTestId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(name: IdentityTestId)(implicit c: Connection): Boolean = SQL"""delete from "public"."identity-test" where "name" = ${ParameterValue(name, null, IdentityTestId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(names: Array[IdentityTestId])(implicit c: Connection): Int = {
+  override def deleteByIds(names: Array[IdentityTestId])(implicit c: Connection): Int = {
     SQL"""delete
     from "public"."identity-test"
     where "name" = ANY(${ParameterValue(names, null, IdentityTestId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: IdentityTestRow)(implicit c: Connection): IdentityTestRow = {
+  override def insert(unsaved: IdentityTestRow)(implicit c: Connection): IdentityTestRow = {
   SQL"""insert into "public"."identity-test"("default_generated", "name")
     values (${ParameterValue(unsaved.defaultGenerated, null, ToStatement.intToStatement)}::int4, ${ParameterValue(unsaved.name, null, IdentityTestId.toStatement)})
     returning "always_generated", "default_generated", "name"
@@ -41,7 +41,7 @@ class IdentityTestRepoImpl extends IdentityTestRepo {
     .executeInsert(IdentityTestRow.rowParser(1).single)
   }
 
-  def insert(unsaved: IdentityTestRowUnsaved)(implicit c: Connection): IdentityTestRow = {
+  override def insert(unsaved: IdentityTestRowUnsaved)(implicit c: Connection): IdentityTestRow = {
     val namedParameters = List(
       Some((NamedParameter("name", ParameterValue(unsaved.name, null, IdentityTestId.toStatement)), "")),
       unsaved.defaultGenerated match {
@@ -65,47 +65,47 @@ class IdentityTestRepoImpl extends IdentityTestRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[IdentityTestRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "public"."identity-test"("default_generated", "name") FROM STDIN""", batchSize, unsaved)(IdentityTestRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[IdentityTestRowUnsaved],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "public"."identity-test"("name", "default_generated") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(IdentityTestRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[IdentityTestFields, IdentityTestRow] = SelectBuilder.of(""""public"."identity-test"""", IdentityTestFields.structure, IdentityTestRow.rowParser)
+  override def select: SelectBuilder[IdentityTestFields, IdentityTestRow] = SelectBuilder.of(""""public"."identity-test"""", IdentityTestFields.structure, IdentityTestRow.rowParser)
 
-  def selectAll(implicit c: Connection): List[IdentityTestRow] = {
+  override def selectAll(implicit c: Connection): List[IdentityTestRow] = {
     SQL"""select "always_generated", "default_generated", "name"
     from "public"."identity-test"
     """.as(IdentityTestRow.rowParser(1).*)
   }
 
-  def selectById(name: IdentityTestId)(implicit c: Connection): Option[IdentityTestRow] = {
+  override def selectById(name: IdentityTestId)(implicit c: Connection): Option[IdentityTestRow] = {
     SQL"""select "always_generated", "default_generated", "name"
     from "public"."identity-test"
     where "name" = ${ParameterValue(name, null, IdentityTestId.toStatement)}
     """.as(IdentityTestRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(names: Array[IdentityTestId])(implicit c: Connection): List[IdentityTestRow] = {
+  override def selectByIds(names: Array[IdentityTestId])(implicit c: Connection): List[IdentityTestRow] = {
     SQL"""select "always_generated", "default_generated", "name"
     from "public"."identity-test"
     where "name" = ANY(${ParameterValue(names, null, IdentityTestId.arrayToStatement)})
     """.as(IdentityTestRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(names: Array[IdentityTestId])(implicit c: Connection): Map[IdentityTestId, IdentityTestRow] = {
+  override def selectByIdsTracked(names: Array[IdentityTestId])(implicit c: Connection): Map[IdentityTestId, IdentityTestRow] = {
     val byId = selectByIds(names).view.map(x => (x.name, x)).toMap
     names.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[IdentityTestFields, IdentityTestRow] = UpdateBuilder.of(""""public"."identity-test"""", IdentityTestFields.structure, IdentityTestRow.rowParser(1).*)
+  override def update: UpdateBuilder[IdentityTestFields, IdentityTestRow] = UpdateBuilder.of(""""public"."identity-test"""", IdentityTestFields.structure, IdentityTestRow.rowParser(1).*)
 
-  def update(row: IdentityTestRow)(implicit c: Connection): Option[IdentityTestRow] = {
+  override def update(row: IdentityTestRow)(implicit c: Connection): Option[IdentityTestRow] = {
     val name = row.name
     SQL"""update "public"."identity-test"
     set "default_generated" = ${ParameterValue(row.defaultGenerated, null, ToStatement.intToStatement)}::int4
@@ -114,7 +114,7 @@ class IdentityTestRepoImpl extends IdentityTestRepo {
     """.executeInsert(IdentityTestRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: IdentityTestRow)(implicit c: Connection): IdentityTestRow = {
+  override def upsert(unsaved: IdentityTestRow)(implicit c: Connection): IdentityTestRow = {
   SQL"""insert into "public"."identity-test"("default_generated", "name")
     values (
       ${ParameterValue(unsaved.defaultGenerated, null, ToStatement.intToStatement)}::int4,
@@ -128,11 +128,12 @@ class IdentityTestRepoImpl extends IdentityTestRepo {
     .executeInsert(IdentityTestRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[IdentityTestRow])(implicit c: Connection): List[IdentityTestRow] = {
+  override def upsertBatch(unsaved: Iterable[IdentityTestRow])(implicit c: Connection): List[IdentityTestRow] = {
     def toNamedParameter(row: IdentityTestRow): List[NamedParameter] = List(
       NamedParameter("default_generated", ParameterValue(row.defaultGenerated, null, ToStatement.intToStatement)),
       NamedParameter("name", ParameterValue(row.name, null, IdentityTestId.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -153,7 +154,7 @@ class IdentityTestRepoImpl extends IdentityTestRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[IdentityTestRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

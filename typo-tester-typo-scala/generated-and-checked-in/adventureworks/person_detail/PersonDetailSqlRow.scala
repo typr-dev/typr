@@ -12,7 +12,6 @@ import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple10
 
 /** SQL file: person_detail.sql */
 case class PersonDetailSqlRow(
@@ -39,18 +38,5 @@ case class PersonDetailSqlRow(
 )
 
 object PersonDetailSqlRow {
-  val `_rowParser`: RowParser[PersonDetailSqlRow] = {
-    RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), /* user-picked */ FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text, PersonDetailSqlRow.apply, row => new Tuple10(
-      row.businessentityid,
-      row.title,
-      row.firstname,
-      row.middlename,
-      row.lastname,
-      row.jobtitle,
-      row.addressline1,
-      row.city,
-      row.postalcode,
-      row.rowguid
-    ))
-  }
+  val `_rowParser`: RowParser[PersonDetailSqlRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), /* user-picked */ FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text, PersonDetailSqlRow.apply, row => Array(row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.jobtitle, row.addressline1, row.city, row.postalcode, row.rowguid))
 }

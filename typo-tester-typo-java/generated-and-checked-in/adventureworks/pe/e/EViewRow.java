@@ -12,7 +12,6 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple6;
 
 /** View: pe.e */
 public record EViewRow(
@@ -59,5 +58,5 @@ public record EViewRow(
     return new EViewRow(id, businessentityid, emailaddressid, emailaddress, rowguid, modifieddate);
   };
 
-  static RowParser<EViewRow> _rowParser = RowParsers.of(PgTypes.int4, BusinessentityId.pgType, PgTypes.int4, PgTypes.text.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, EViewRow::new, row -> new Tuple6<>(row.id(), row.businessentityid(), row.emailaddressid(), row.emailaddress(), row.rowguid(), row.modifieddate()));;
+  static RowParser<EViewRow> _rowParser = RowParsers.of(PgTypes.int4, BusinessentityId.pgType, PgTypes.int4, PgTypes.text.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, EViewRow::new, row -> new Object[]{row.id(), row.businessentityid(), row.emailaddressid(), row.emailaddress(), row.rowguid(), row.modifieddate()});;
 }

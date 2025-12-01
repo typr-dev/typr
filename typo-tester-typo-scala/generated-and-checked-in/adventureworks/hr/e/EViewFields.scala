@@ -58,7 +58,7 @@ object EViewFields {
 
     override lazy val fields: EViewFields = {
       new EViewFields {
-        def id: Field[BusinessentityId, EViewRow] = {
+        override def id: Field[BusinessentityId, EViewRow] = {
           new Field[BusinessentityId, EViewRow](
             _path,
             "id",
@@ -69,7 +69,7 @@ object EViewFields {
             BusinessentityId.pgType
           )
         }
-        def businessentityid: Field[BusinessentityId, EViewRow] = {
+        override def businessentityid: Field[BusinessentityId, EViewRow] = {
           new Field[BusinessentityId, EViewRow](
             _path,
             "businessentityid",
@@ -80,7 +80,7 @@ object EViewFields {
             BusinessentityId.pgType
           )
         }
-        def nationalidnumber: Field[/* max 15 chars */ String, EViewRow] = {
+        override def nationalidnumber: Field[/* max 15 chars */ String, EViewRow] = {
           new Field[/* max 15 chars */ String, EViewRow](
             _path,
             "nationalidnumber",
@@ -91,7 +91,7 @@ object EViewFields {
             PgTypes.text
           )
         }
-        def loginid: Field[/* max 256 chars */ String, EViewRow] = {
+        override def loginid: Field[/* max 256 chars */ String, EViewRow] = {
           new Field[/* max 256 chars */ String, EViewRow](
             _path,
             "loginid",
@@ -102,7 +102,7 @@ object EViewFields {
             PgTypes.text
           )
         }
-        def jobtitle: Field[/* max 50 chars */ String, EViewRow] = {
+        override def jobtitle: Field[/* max 50 chars */ String, EViewRow] = {
           new Field[/* max 50 chars */ String, EViewRow](
             _path,
             "jobtitle",
@@ -113,7 +113,7 @@ object EViewFields {
             PgTypes.text
           )
         }
-        def birthdate: Field[TypoLocalDate, EViewRow] = {
+        override def birthdate: Field[TypoLocalDate, EViewRow] = {
           new Field[TypoLocalDate, EViewRow](
             _path,
             "birthdate",
@@ -124,7 +124,7 @@ object EViewFields {
             TypoLocalDate.pgType
           )
         }
-        def maritalstatus: Field[/* bpchar, max 1 chars */ String, EViewRow] = {
+        override def maritalstatus: Field[/* bpchar, max 1 chars */ String, EViewRow] = {
           new Field[/* bpchar, max 1 chars */ String, EViewRow](
             _path,
             "maritalstatus",
@@ -135,7 +135,7 @@ object EViewFields {
             PgTypes.text
           )
         }
-        def gender: Field[/* bpchar, max 1 chars */ String, EViewRow] = {
+        override def gender: Field[/* bpchar, max 1 chars */ String, EViewRow] = {
           new Field[/* bpchar, max 1 chars */ String, EViewRow](
             _path,
             "gender",
@@ -146,7 +146,7 @@ object EViewFields {
             PgTypes.text
           )
         }
-        def hiredate: Field[TypoLocalDate, EViewRow] = {
+        override def hiredate: Field[TypoLocalDate, EViewRow] = {
           new Field[TypoLocalDate, EViewRow](
             _path,
             "hiredate",
@@ -157,7 +157,7 @@ object EViewFields {
             TypoLocalDate.pgType
           )
         }
-        def salariedflag: Field[Flag, EViewRow] = {
+        override def salariedflag: Field[Flag, EViewRow] = {
           new Field[Flag, EViewRow](
             _path,
             "salariedflag",
@@ -168,7 +168,7 @@ object EViewFields {
             Flag.pgType
           )
         }
-        def vacationhours: Field[TypoShort, EViewRow] = {
+        override def vacationhours: Field[TypoShort, EViewRow] = {
           new Field[TypoShort, EViewRow](
             _path,
             "vacationhours",
@@ -179,7 +179,7 @@ object EViewFields {
             TypoShort.pgType
           )
         }
-        def sickleavehours: Field[TypoShort, EViewRow] = {
+        override def sickleavehours: Field[TypoShort, EViewRow] = {
           new Field[TypoShort, EViewRow](
             _path,
             "sickleavehours",
@@ -190,7 +190,7 @@ object EViewFields {
             TypoShort.pgType
           )
         }
-        def currentflag: Field[Flag, EViewRow] = {
+        override def currentflag: Field[Flag, EViewRow] = {
           new Field[Flag, EViewRow](
             _path,
             "currentflag",
@@ -201,7 +201,7 @@ object EViewFields {
             Flag.pgType
           )
         }
-        def rowguid: Field[TypoUUID, EViewRow] = {
+        override def rowguid: Field[TypoUUID, EViewRow] = {
           new Field[TypoUUID, EViewRow](
             _path,
             "rowguid",
@@ -212,7 +212,7 @@ object EViewFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, EViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, EViewRow] = {
           new Field[TypoLocalDateTime, EViewRow](
             _path,
             "modifieddate",
@@ -223,7 +223,7 @@ object EViewFields {
             TypoLocalDateTime.pgType
           )
         }
-        def organizationnode: OptField[String, EViewRow] = {
+        override def organizationnode: OptField[String, EViewRow] = {
           new OptField[String, EViewRow](
             _path,
             "organizationnode",
@@ -239,7 +239,7 @@ object EViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, EViewRow]] = java.util.List.of(this.fields.id, this.fields.businessentityid, this.fields.nationalidnumber, this.fields.loginid, this.fields.jobtitle, this.fields.birthdate, this.fields.maritalstatus, this.fields.gender, this.fields.hiredate, this.fields.salariedflag, this.fields.vacationhours, this.fields.sickleavehours, this.fields.currentflag, this.fields.rowguid, this.fields.modifieddate, this.fields.organizationnode)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[EViewFields, EViewRow] = new Impl(java.util.List.of())

@@ -9,11 +9,11 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoUUID
 import adventureworks.production.productmodel.ProductmodelId
 import adventureworks.public.Name
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple11
 
 /** View: production.vproductmodelinstructions */
 case class VproductmodelinstructionsViewRow(
@@ -22,12 +22,12 @@ case class VproductmodelinstructionsViewRow(
   /** Points to [[adventureworks.production.productmodel.ProductmodelRow.name]] */
   name: Name,
   instructions: /* nullability unknown */ Optional[String],
-  locationID: /* nullability unknown */ Optional[Integer],
-  setupHours: /* nullability unknown */ Optional[java.math.BigDecimal],
-  machineHours: /* nullability unknown */ Optional[java.math.BigDecimal],
-  laborHours: /* nullability unknown */ Optional[java.math.BigDecimal],
-  lotSize: /* nullability unknown */ Optional[Integer],
-  step: /* nullability unknown */ Optional[/* max 1024 chars */ String],
+  @JsonProperty("LocationID") locationID: /* nullability unknown */ Optional[Integer],
+  @JsonProperty("SetupHours") setupHours: /* nullability unknown */ Optional[java.math.BigDecimal],
+  @JsonProperty("MachineHours") machineHours: /* nullability unknown */ Optional[java.math.BigDecimal],
+  @JsonProperty("LaborHours") laborHours: /* nullability unknown */ Optional[java.math.BigDecimal],
+  @JsonProperty("LotSize") lotSize: /* nullability unknown */ Optional[Integer],
+  @JsonProperty("Step") step: /* nullability unknown */ Optional[/* max 1024 chars */ String],
   /** Points to [[adventureworks.production.productmodel.ProductmodelRow.rowguid]] */
   rowguid: TypoUUID,
   /** Points to [[adventureworks.production.productmodel.ProductmodelRow.modifieddate]] */
@@ -35,19 +35,5 @@ case class VproductmodelinstructionsViewRow(
 )
 
 object VproductmodelinstructionsViewRow {
-  val `_rowParser`: RowParser[VproductmodelinstructionsViewRow] = {
-    RowParsers.of(ProductmodelId.pgType, Name.pgType, PgTypes.text.opt(), PgTypes.int4.opt(), PgTypes.numeric.opt(), PgTypes.numeric.opt(), PgTypes.numeric.opt(), PgTypes.int4.opt(), PgTypes.text.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, VproductmodelinstructionsViewRow.apply, row => new Tuple11(
-      row.productmodelid,
-      row.name,
-      row.instructions,
-      row.locationID,
-      row.setupHours,
-      row.machineHours,
-      row.laborHours,
-      row.lotSize,
-      row.step,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[VproductmodelinstructionsViewRow] = RowParsers.of(ProductmodelId.pgType, Name.pgType, PgTypes.text.opt(), PgTypes.int4.opt(), PgTypes.numeric.opt(), PgTypes.numeric.opt(), PgTypes.numeric.opt(), PgTypes.int4.opt(), PgTypes.text.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, VproductmodelinstructionsViewRow.apply, row => Array(row.productmodelid, row.name, row.instructions, row.locationID, row.setupHours, row.machineHours, row.laborHours, row.lotSize, row.step, row.rowguid, row.modifieddate))
 }

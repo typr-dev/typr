@@ -10,7 +10,6 @@ import adventureworks.person.countryregion.CountryregionId;
 import adventureworks.public_.Name;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple3;
 
 /** View: pe.cr */
 public record CrViewRow(
@@ -36,5 +35,5 @@ public record CrViewRow(
     return new CrViewRow(countryregioncode, name, modifieddate);
   };
 
-  static RowParser<CrViewRow> _rowParser = RowParsers.of(CountryregionId.pgType, Name.pgType, TypoLocalDateTime.pgType, CrViewRow::new, row -> new Tuple3<>(row.countryregioncode(), row.name(), row.modifieddate()));;
+  static RowParser<CrViewRow> _rowParser = RowParsers.of(CountryregionId.pgType, Name.pgType, TypoLocalDateTime.pgType, CrViewRow::new, row -> new Object[]{row.countryregioncode(), row.name(), row.modifieddate()});;
 }

@@ -20,18 +20,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class TableWithGeneratedColumnsRepoImpl extends TableWithGeneratedColumnsRepo {
-  def delete: DeleteBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = DeleteBuilder.of(""""public"."table-with-generated-columns"""", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow.rowParser(1).*)
+  override def delete: DeleteBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = DeleteBuilder.of(""""public"."table-with-generated-columns"""", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow.rowParser(1).*)
 
-  def deleteById(name: TableWithGeneratedColumnsId)(using c: Connection): Boolean = SQL"""delete from "public"."table-with-generated-columns" where "name" = ${ParameterValue(name, null, TableWithGeneratedColumnsId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(name: TableWithGeneratedColumnsId)(using c: Connection): Boolean = SQL"""delete from "public"."table-with-generated-columns" where "name" = ${ParameterValue(name, null, TableWithGeneratedColumnsId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(names: Array[TableWithGeneratedColumnsId])(using c: Connection): Int = {
+  override def deleteByIds(names: Array[TableWithGeneratedColumnsId])(using c: Connection): Int = {
     SQL"""delete
     from "public"."table-with-generated-columns"
     where "name" = ANY(${ParameterValue(names, null, TableWithGeneratedColumnsId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: TableWithGeneratedColumnsRow)(using c: Connection): TableWithGeneratedColumnsRow = {
+  override def insert(unsaved: TableWithGeneratedColumnsRow)(using c: Connection): TableWithGeneratedColumnsRow = {
   SQL"""insert into "public"."table-with-generated-columns"("name")
     values (${ParameterValue(unsaved.name, null, TableWithGeneratedColumnsId.toStatement)})
     returning "name", "name-type-always"
@@ -39,7 +39,7 @@ class TableWithGeneratedColumnsRepoImpl extends TableWithGeneratedColumnsRepo {
     .executeInsert(TableWithGeneratedColumnsRow.rowParser(1).single)
   }
 
-  def insert(unsaved: TableWithGeneratedColumnsRowUnsaved)(using c: Connection): TableWithGeneratedColumnsRow = {
+  override def insert(unsaved: TableWithGeneratedColumnsRowUnsaved)(using c: Connection): TableWithGeneratedColumnsRow = {
     val namedParameters = List(
       Some((NamedParameter("name", ParameterValue(unsaved.name, null, TableWithGeneratedColumnsId.toStatement)), ""))
     ).flatten
@@ -59,47 +59,47 @@ class TableWithGeneratedColumnsRepoImpl extends TableWithGeneratedColumnsRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[TableWithGeneratedColumnsRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "public"."table-with-generated-columns"("name") FROM STDIN""", batchSize, unsaved)(using TableWithGeneratedColumnsRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[TableWithGeneratedColumnsRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "public"."table-with-generated-columns"("name") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using TableWithGeneratedColumnsRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = SelectBuilder.of(""""public"."table-with-generated-columns"""", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow.rowParser)
+  override def select: SelectBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = SelectBuilder.of(""""public"."table-with-generated-columns"""", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow.rowParser)
 
-  def selectAll(using c: Connection): List[TableWithGeneratedColumnsRow] = {
+  override def selectAll(using c: Connection): List[TableWithGeneratedColumnsRow] = {
     SQL"""select "name", "name-type-always"
     from "public"."table-with-generated-columns"
     """.as(TableWithGeneratedColumnsRow.rowParser(1).*)
   }
 
-  def selectById(name: TableWithGeneratedColumnsId)(using c: Connection): Option[TableWithGeneratedColumnsRow] = {
+  override def selectById(name: TableWithGeneratedColumnsId)(using c: Connection): Option[TableWithGeneratedColumnsRow] = {
     SQL"""select "name", "name-type-always"
     from "public"."table-with-generated-columns"
     where "name" = ${ParameterValue(name, null, TableWithGeneratedColumnsId.toStatement)}
     """.as(TableWithGeneratedColumnsRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(names: Array[TableWithGeneratedColumnsId])(using c: Connection): List[TableWithGeneratedColumnsRow] = {
+  override def selectByIds(names: Array[TableWithGeneratedColumnsId])(using c: Connection): List[TableWithGeneratedColumnsRow] = {
     SQL"""select "name", "name-type-always"
     from "public"."table-with-generated-columns"
     where "name" = ANY(${ParameterValue(names, null, TableWithGeneratedColumnsId.arrayToStatement)})
     """.as(TableWithGeneratedColumnsRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(names: Array[TableWithGeneratedColumnsId])(using c: Connection): Map[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow] = {
+  override def selectByIdsTracked(names: Array[TableWithGeneratedColumnsId])(using c: Connection): Map[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow] = {
     val byId = selectByIds(names).view.map(x => (x.name, x)).toMap
     names.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = UpdateBuilder.of(""""public"."table-with-generated-columns"""", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow.rowParser(1).*)
+  override def update: UpdateBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = UpdateBuilder.of(""""public"."table-with-generated-columns"""", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow.rowParser(1).*)
 
-  def upsert(unsaved: TableWithGeneratedColumnsRow)(using c: Connection): TableWithGeneratedColumnsRow = {
+  override def upsert(unsaved: TableWithGeneratedColumnsRow)(using c: Connection): TableWithGeneratedColumnsRow = {
   SQL"""insert into "public"."table-with-generated-columns"("name")
     values (
       ${ParameterValue(unsaved.name, null, TableWithGeneratedColumnsId.toStatement)}
@@ -111,10 +111,11 @@ class TableWithGeneratedColumnsRepoImpl extends TableWithGeneratedColumnsRepo {
     .executeInsert(TableWithGeneratedColumnsRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[TableWithGeneratedColumnsRow])(using c: Connection): List[TableWithGeneratedColumnsRow] = {
+  override def upsertBatch(unsaved: Iterable[TableWithGeneratedColumnsRow])(using c: Connection): List[TableWithGeneratedColumnsRow] = {
     def toNamedParameter(row: TableWithGeneratedColumnsRow): List[NamedParameter] = List(
       NamedParameter("name", ParameterValue(row.name, null, TableWithGeneratedColumnsId.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -134,7 +135,7 @@ class TableWithGeneratedColumnsRepoImpl extends TableWithGeneratedColumnsRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[TableWithGeneratedColumnsRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

@@ -12,50 +12,48 @@ import doobie.syntax.SqlInterpolator.SingleFragment.fromWrite
 import doobie.util.Write
 import doobie.util.update.Update
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.DeleteBuilder
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class TitleDomainRepoImpl extends TitleDomainRepo {
-  def delete: DeleteBuilder[TitleDomainFields, TitleDomainRow] = DeleteBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, TitleDomainRow.read)
+  override def delete: DeleteBuilder[TitleDomainFields, TitleDomainRow] = DeleteBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, TitleDomainRow.read)
 
-  def deleteById(code: TitleDomainId): ConnectionIO[Boolean] = sql"""delete from "public"."title_domain" where "code" = ${fromWrite(code)(using new Write.Single(TitleDomainId.put))}""".update.run.map(_ > 0)
+  override def deleteById(code: TitleDomainId): ConnectionIO[Boolean] = sql"""delete from "public"."title_domain" where "code" = ${fromWrite(code)(using new Write.Single(TitleDomainId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(codes: Array[TitleDomainId]): ConnectionIO[Int] = sql"""delete from "public"."title_domain" where "code" = ANY(${fromWrite(codes)(using new Write.Single(TitleDomainId.arrayPut))})""".update.run
+  override def deleteByIds(codes: Array[TitleDomainId]): ConnectionIO[Int] = sql"""delete from "public"."title_domain" where "code" = ANY(${fromWrite(codes)(using new Write.Single(TitleDomainId.arrayPut))})""".update.run
 
-  def insert(unsaved: TitleDomainRow): ConnectionIO[TitleDomainRow] = {
+  override def insert(unsaved: TitleDomainRow): ConnectionIO[TitleDomainRow] = {
     sql"""insert into "public"."title_domain"("code")
     values (${fromWrite(unsaved.code)(using new Write.Single(TitleDomainId.put))}::text)
     returning "code"
     """.query(using TitleDomainRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, TitleDomainRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "public"."title_domain"("code") FROM STDIN""").copyIn(unsaved, batchSize)(using TitleDomainRow.pgText)
 
-  def select: SelectBuilder[TitleDomainFields, TitleDomainRow] = SelectBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, TitleDomainRow.read)
+  override def select: SelectBuilder[TitleDomainFields, TitleDomainRow] = SelectBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, TitleDomainRow.read)
 
-  def selectAll: Stream[ConnectionIO, TitleDomainRow] = sql"""select "code" from "public"."title_domain"""".query(using TitleDomainRow.read).stream
+  override def selectAll: Stream[ConnectionIO, TitleDomainRow] = sql"""select "code" from "public"."title_domain"""".query(using TitleDomainRow.read).stream
 
-  def selectById(code: TitleDomainId): ConnectionIO[Option[TitleDomainRow]] = sql"""select "code" from "public"."title_domain" where "code" = ${fromWrite(code)(using new Write.Single(TitleDomainId.put))}""".query(using TitleDomainRow.read).option
+  override def selectById(code: TitleDomainId): ConnectionIO[Option[TitleDomainRow]] = sql"""select "code" from "public"."title_domain" where "code" = ${fromWrite(code)(using new Write.Single(TitleDomainId.put))}""".query(using TitleDomainRow.read).option
 
-  def selectByIds(codes: Array[TitleDomainId]): Stream[ConnectionIO, TitleDomainRow] = sql"""select "code" from "public"."title_domain" where "code" = ANY(${fromWrite(codes)(using new Write.Single(TitleDomainId.arrayPut))})""".query(using TitleDomainRow.read).stream
+  override def selectByIds(codes: Array[TitleDomainId]): Stream[ConnectionIO, TitleDomainRow] = sql"""select "code" from "public"."title_domain" where "code" = ANY(${fromWrite(codes)(using new Write.Single(TitleDomainId.arrayPut))})""".query(using TitleDomainRow.read).stream
 
-  def selectByIdsTracked(codes: Array[TitleDomainId]): ConnectionIO[Map[TitleDomainId, TitleDomainRow]] = {
+  override def selectByIdsTracked(codes: Array[TitleDomainId]): ConnectionIO[Map[TitleDomainId, TitleDomainRow]] = {
     selectByIds(codes).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.code, x)).toMap
       codes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[TitleDomainFields, TitleDomainRow] = UpdateBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, TitleDomainRow.read)
+  override def update: UpdateBuilder[TitleDomainFields, TitleDomainRow] = UpdateBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, TitleDomainRow.read)
 
-  def upsert(unsaved: TitleDomainRow): ConnectionIO[TitleDomainRow] = {
+  override def upsert(unsaved: TitleDomainRow): ConnectionIO[TitleDomainRow] = {
     sql"""insert into "public"."title_domain"("code")
     values (
       ${fromWrite(unsaved.code)(using new Write.Single(TitleDomainId.put))}::text
@@ -66,7 +64,7 @@ class TitleDomainRepoImpl extends TitleDomainRepo {
     """.query(using TitleDomainRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[TitleDomainRow]): Stream[ConnectionIO, TitleDomainRow] = {
+  override def upsertBatch(unsaved: List[TitleDomainRow]): Stream[ConnectionIO, TitleDomainRow] = {
     Update[TitleDomainRow](
       s"""insert into "public"."title_domain"("code")
       values (?::text)
@@ -78,7 +76,7 @@ class TitleDomainRepoImpl extends TitleDomainRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, TitleDomainRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

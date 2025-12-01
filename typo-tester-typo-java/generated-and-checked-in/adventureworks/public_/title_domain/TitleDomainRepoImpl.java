@@ -5,7 +5,6 @@
  */
 package adventureworks.public_.title_domain;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -19,12 +18,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class TitleDomainRepoImpl implements TitleDomainRepo {
+  @Override
   public DeleteBuilder<TitleDomainFields, TitleDomainRow> delete() {
     return DeleteBuilder.of("public.title_domain", TitleDomainFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     TitleDomainId code,
     Connection c
@@ -38,6 +38,7 @@ public class TitleDomainRepoImpl implements TitleDomainRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     TitleDomainId[] codes,
     Connection c
@@ -54,6 +55,7 @@ public class TitleDomainRepoImpl implements TitleDomainRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public TitleDomainRow insert(
     TitleDomainRow unsaved,
     Connection c
@@ -71,6 +73,7 @@ public class TitleDomainRepoImpl implements TitleDomainRepo {
       .updateReturning(TitleDomainRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<TitleDomainRow> unsaved,
     Integer batchSize,
@@ -81,17 +84,20 @@ public class TitleDomainRepoImpl implements TitleDomainRepo {
     """), batchSize, unsaved, c, TitleDomainRow.pgText);
   };
 
+  @Override
   public SelectBuilder<TitleDomainFields, TitleDomainRow> select() {
     return SelectBuilder.of("public.title_domain", TitleDomainFields.structure(), TitleDomainRow._rowParser);
   };
 
+  @Override
   public List<TitleDomainRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "code"
        from "public"."title_domain"
-    """)).as(TitleDomainRow._rowParser.all()).runUnchecked(c);
+    """)).query(TitleDomainRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<TitleDomainRow> selectById(
     TitleDomainId code,
     Connection c
@@ -103,9 +109,10 @@ public class TitleDomainRepoImpl implements TitleDomainRepo {
          where "code" = """),
       TitleDomainId.pgType.encode(code),
       typo.runtime.Fragment.lit("")
-    ).as(TitleDomainRow._rowParser.first()).runUnchecked(c);
+    ).query(TitleDomainRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<TitleDomainRow> selectByIds(
     TitleDomainId[] codes,
     Connection c
@@ -117,22 +124,25 @@ public class TitleDomainRepoImpl implements TitleDomainRepo {
          where "code" = ANY("""),
       TitleDomainId.pgTypeArray.encode(codes),
       typo.runtime.Fragment.lit(")")
-    ).as(TitleDomainRow._rowParser.all()).runUnchecked(c);
+    ).query(TitleDomainRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<TitleDomainId, TitleDomainRow> selectByIdsTracked(
     TitleDomainId[] codes,
     Connection c
   ) {
-    Map<TitleDomainId, TitleDomainRow> ret = new HashMap<>();;
-      selectByIds(codes, c).forEach(row -> ret.put(row.code(), row));
+    HashMap<TitleDomainId, TitleDomainRow> ret = new HashMap<TitleDomainId, TitleDomainRow>();
+    selectByIds(codes, c).forEach(row -> ret.put(row.code(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<TitleDomainFields, TitleDomainRow> update() {
     return UpdateBuilder.of("public.title_domain", TitleDomainFields.structure(), TitleDomainRow._rowParser.all());
   };
 
+  @Override
   public TitleDomainRow upsert(
     TitleDomainRow unsaved,
     Connection c
@@ -153,6 +163,7 @@ public class TitleDomainRepoImpl implements TitleDomainRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<TitleDomainRow> upsertBatch(
     Iterator<TitleDomainRow> unsaved,
     Connection c
@@ -169,23 +180,24 @@ public class TitleDomainRepoImpl implements TitleDomainRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<TitleDomainRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table title_domain_TEMP (like "public"."title_domain") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy title_domain_TEMP("code") from stdin
-      """), batchSize, unsaved, c, TitleDomainRow.pgText);
+    create temporary table title_domain_TEMP (like "public"."title_domain") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy title_domain_TEMP("code") from stdin
+    """), batchSize, unsaved, c, TitleDomainRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "public"."title_domain"("code")
-              select * from title_domain_TEMP
-              on conflict ("code")
-              do nothing
-              ;
-              drop table title_domain_TEMP;""")).update().runUnchecked(c);
+       insert into "public"."title_domain"("code")
+       select * from title_domain_TEMP
+       on conflict ("code")
+       do nothing
+       ;
+       drop table title_domain_TEMP;""")).update().runUnchecked(c);
   };
 }

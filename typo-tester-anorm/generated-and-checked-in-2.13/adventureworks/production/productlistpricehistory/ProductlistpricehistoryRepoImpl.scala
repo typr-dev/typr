@@ -24,11 +24,11 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class ProductlistpricehistoryRepoImpl extends ProductlistpricehistoryRepo {
-  def delete: DeleteBuilder[ProductlistpricehistoryFields, ProductlistpricehistoryRow] = DeleteBuilder.of(""""production"."productlistpricehistory"""", ProductlistpricehistoryFields.structure, ProductlistpricehistoryRow.rowParser(1).*)
+  override def delete: DeleteBuilder[ProductlistpricehistoryFields, ProductlistpricehistoryRow] = DeleteBuilder.of(""""production"."productlistpricehistory"""", ProductlistpricehistoryFields.structure, ProductlistpricehistoryRow.rowParser(1).*)
 
-  def deleteById(compositeId: ProductlistpricehistoryId)(implicit c: Connection): Boolean = SQL"""delete from "production"."productlistpricehistory" where "productid" = ${ParameterValue(compositeId.productid, null, ProductId.toStatement)} AND "startdate" = ${ParameterValue(compositeId.startdate, null, TypoLocalDateTime.toStatement)}""".executeUpdate() > 0
+  override def deleteById(compositeId: ProductlistpricehistoryId)(implicit c: Connection): Boolean = SQL"""delete from "production"."productlistpricehistory" where "productid" = ${ParameterValue(compositeId.productid, null, ProductId.toStatement)} AND "startdate" = ${ParameterValue(compositeId.startdate, null, TypoLocalDateTime.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(compositeIds: Array[ProductlistpricehistoryId])(implicit c: Connection): Int = {
+  override def deleteByIds(compositeIds: Array[ProductlistpricehistoryId])(implicit c: Connection): Int = {
     val productid = compositeIds.map(_.productid)
     val startdate = compositeIds.map(_.startdate)
     SQL"""delete
@@ -38,7 +38,7 @@ class ProductlistpricehistoryRepoImpl extends ProductlistpricehistoryRepo {
     """.executeUpdate()
   }
 
-  def insert(unsaved: ProductlistpricehistoryRow)(implicit c: Connection): ProductlistpricehistoryRow = {
+  override def insert(unsaved: ProductlistpricehistoryRow)(implicit c: Connection): ProductlistpricehistoryRow = {
   SQL"""insert into "production"."productlistpricehistory"("productid", "startdate", "enddate", "listprice", "modifieddate")
     values (${ParameterValue(unsaved.productid, null, ProductId.toStatement)}::int4, ${ParameterValue(unsaved.startdate, null, TypoLocalDateTime.toStatement)}::timestamp, ${ParameterValue(unsaved.enddate, null, ToStatement.optionToStatement(TypoLocalDateTime.toStatement, TypoLocalDateTime.parameterMetadata))}::timestamp, ${ParameterValue(unsaved.listprice, null, ToStatement.scalaBigDecimalToStatement)}::numeric, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text
@@ -46,7 +46,7 @@ class ProductlistpricehistoryRepoImpl extends ProductlistpricehistoryRepo {
     .executeInsert(ProductlistpricehistoryRow.rowParser(1).single)
   }
 
-  def insert(unsaved: ProductlistpricehistoryRowUnsaved)(implicit c: Connection): ProductlistpricehistoryRow = {
+  override def insert(unsaved: ProductlistpricehistoryRowUnsaved)(implicit c: Connection): ProductlistpricehistoryRow = {
     val namedParameters = List(
       Some((NamedParameter("productid", ParameterValue(unsaved.productid, null, ProductId.toStatement)), "::int4")),
       Some((NamedParameter("startdate", ParameterValue(unsaved.startdate, null, TypoLocalDateTime.toStatement)), "::timestamp")),
@@ -73,33 +73,33 @@ class ProductlistpricehistoryRepoImpl extends ProductlistpricehistoryRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[ProductlistpricehistoryRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "production"."productlistpricehistory"("productid", "startdate", "enddate", "listprice", "modifieddate") FROM STDIN""", batchSize, unsaved)(ProductlistpricehistoryRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[ProductlistpricehistoryRowUnsaved],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "production"."productlistpricehistory"("productid", "startdate", "enddate", "listprice", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(ProductlistpricehistoryRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[ProductlistpricehistoryFields, ProductlistpricehistoryRow] = SelectBuilder.of(""""production"."productlistpricehistory"""", ProductlistpricehistoryFields.structure, ProductlistpricehistoryRow.rowParser)
+  override def select: SelectBuilder[ProductlistpricehistoryFields, ProductlistpricehistoryRow] = SelectBuilder.of(""""production"."productlistpricehistory"""", ProductlistpricehistoryFields.structure, ProductlistpricehistoryRow.rowParser)
 
-  def selectAll(implicit c: Connection): List[ProductlistpricehistoryRow] = {
+  override def selectAll(implicit c: Connection): List[ProductlistpricehistoryRow] = {
     SQL"""select "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text
     from "production"."productlistpricehistory"
     """.as(ProductlistpricehistoryRow.rowParser(1).*)
   }
 
-  def selectById(compositeId: ProductlistpricehistoryId)(implicit c: Connection): Option[ProductlistpricehistoryRow] = {
+  override def selectById(compositeId: ProductlistpricehistoryId)(implicit c: Connection): Option[ProductlistpricehistoryRow] = {
     SQL"""select "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text
     from "production"."productlistpricehistory"
     where "productid" = ${ParameterValue(compositeId.productid, null, ProductId.toStatement)} AND "startdate" = ${ParameterValue(compositeId.startdate, null, TypoLocalDateTime.toStatement)}
     """.as(ProductlistpricehistoryRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(compositeIds: Array[ProductlistpricehistoryId])(implicit c: Connection): List[ProductlistpricehistoryRow] = {
+  override def selectByIds(compositeIds: Array[ProductlistpricehistoryId])(implicit c: Connection): List[ProductlistpricehistoryRow] = {
     val productid = compositeIds.map(_.productid)
     val startdate = compositeIds.map(_.startdate)
     SQL"""select "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text
@@ -109,14 +109,14 @@ class ProductlistpricehistoryRepoImpl extends ProductlistpricehistoryRepo {
     """.as(ProductlistpricehistoryRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(compositeIds: Array[ProductlistpricehistoryId])(implicit c: Connection): Map[ProductlistpricehistoryId, ProductlistpricehistoryRow] = {
+  override def selectByIdsTracked(compositeIds: Array[ProductlistpricehistoryId])(implicit c: Connection): Map[ProductlistpricehistoryId, ProductlistpricehistoryRow] = {
     val byId = selectByIds(compositeIds).view.map(x => (x.compositeId, x)).toMap
     compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[ProductlistpricehistoryFields, ProductlistpricehistoryRow] = UpdateBuilder.of(""""production"."productlistpricehistory"""", ProductlistpricehistoryFields.structure, ProductlistpricehistoryRow.rowParser(1).*)
+  override def update: UpdateBuilder[ProductlistpricehistoryFields, ProductlistpricehistoryRow] = UpdateBuilder.of(""""production"."productlistpricehistory"""", ProductlistpricehistoryFields.structure, ProductlistpricehistoryRow.rowParser(1).*)
 
-  def update(row: ProductlistpricehistoryRow)(implicit c: Connection): Option[ProductlistpricehistoryRow] = {
+  override def update(row: ProductlistpricehistoryRow)(implicit c: Connection): Option[ProductlistpricehistoryRow] = {
     val compositeId = row.compositeId
     SQL"""update "production"."productlistpricehistory"
     set "enddate" = ${ParameterValue(row.enddate, null, ToStatement.optionToStatement(TypoLocalDateTime.toStatement, TypoLocalDateTime.parameterMetadata))}::timestamp,
@@ -127,7 +127,7 @@ class ProductlistpricehistoryRepoImpl extends ProductlistpricehistoryRepo {
     """.executeInsert(ProductlistpricehistoryRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: ProductlistpricehistoryRow)(implicit c: Connection): ProductlistpricehistoryRow = {
+  override def upsert(unsaved: ProductlistpricehistoryRow)(implicit c: Connection): ProductlistpricehistoryRow = {
   SQL"""insert into "production"."productlistpricehistory"("productid", "startdate", "enddate", "listprice", "modifieddate")
     values (
       ${ParameterValue(unsaved.productid, null, ProductId.toStatement)}::int4,
@@ -146,7 +146,7 @@ class ProductlistpricehistoryRepoImpl extends ProductlistpricehistoryRepo {
     .executeInsert(ProductlistpricehistoryRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[ProductlistpricehistoryRow])(implicit c: Connection): List[ProductlistpricehistoryRow] = {
+  override def upsertBatch(unsaved: Iterable[ProductlistpricehistoryRow])(implicit c: Connection): List[ProductlistpricehistoryRow] = {
     def toNamedParameter(row: ProductlistpricehistoryRow): List[NamedParameter] = List(
       NamedParameter("productid", ParameterValue(row.productid, null, ProductId.toStatement)),
       NamedParameter("startdate", ParameterValue(row.startdate, null, TypoLocalDateTime.toStatement)),
@@ -154,6 +154,7 @@ class ProductlistpricehistoryRepoImpl extends ProductlistpricehistoryRepo {
       NamedParameter("listprice", ParameterValue(row.listprice, null, ToStatement.scalaBigDecimalToStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -176,7 +177,7 @@ class ProductlistpricehistoryRepoImpl extends ProductlistpricehistoryRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[ProductlistpricehistoryRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

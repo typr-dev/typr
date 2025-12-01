@@ -46,7 +46,9 @@ case class FilesTable(lang: Lang, table: ComputedTable, fkAnalysis: FkAnalysis, 
           implicitParams = Nil,
           tpe = table.names.RowName,
           throws = Nil,
-          body = List(jvm.New(table.names.RowName, keyValues.toList))
+          body = jvm.Body.Expr(jvm.New(table.names.RowName, keyValues.toList)),
+          isOverride = false,
+          isDefault = false
         )
       }
 
@@ -129,7 +131,9 @@ case class FilesTable(lang: Lang, table: ComputedTable, fkAnalysis: FkAnalysis, 
                   implicitParams = Nil,
                   tpe = id.tpe,
                   throws = Nil,
-                  body = List(jvm.New(id.tpe, List(jvm.Arg.Pos(jvm.New(domain.tpe, List(jvm.Arg.Pos(value)))))))
+                  body = jvm.Body.Expr(jvm.New(id.tpe, List(jvm.Arg.Pos(jvm.New(domain.tpe, List(jvm.Arg.Pos(value))))))),
+                  isOverride = false,
+                  isDefault = false
                 )
               }
             case _ => None
@@ -178,7 +182,10 @@ case class FilesTable(lang: Lang, table: ComputedTable, fkAnalysis: FkAnalysis, 
         val underlyingType: jvm.Type.Qualified =
           x.openEnum match {
             case OpenEnum.Text(_) =>
-              TypesJava.String
+              lang match {
+                case LangKotlin => TypesKotlin.String
+                case _          => TypesJava.String
+              }
             case OpenEnum.TextDomain(domainRef, _) =>
               jvm.Type.Qualified(options.naming.domainName(domainRef.name))
           }
@@ -215,15 +222,17 @@ case class FilesTable(lang: Lang, table: ComputedTable, fkAnalysis: FkAnalysis, 
                 }
                 val value = jvm.Ident("value")
                 jvm.Method(
-                  Nil,
-                  jvm.Comments.Empty,
-                  Nil,
-                  name,
-                  List(jvm.Param(value, domain.underlyingType)),
-                  Nil,
-                  x.tpe,
-                  Nil,
-                  List(code"apply(${jvm.New(x.underlying, List(jvm.Arg.Pos(value)))})")
+                  annotations = Nil,
+                  comments = jvm.Comments.Empty,
+                  tparams = Nil,
+                  name = name,
+                  params = List(jvm.Param(value, domain.underlyingType)),
+                  implicitParams = Nil,
+                  tpe = x.tpe,
+                  throws = Nil,
+                  body = jvm.Body.Expr(code"apply(${jvm.New(x.underlying, List(jvm.Arg.Pos(value)))})"),
+                  isOverride = false,
+                  isDefault = false
                 )
               }
           }
@@ -245,7 +254,9 @@ case class FilesTable(lang: Lang, table: ComputedTable, fkAnalysis: FkAnalysis, 
               implicitParams = Nil,
               tpe = tpe,
               throws = Nil,
-              body = List(jvm.New(tpe, colsFromFks.allExpr.map { case (colName, expr) => jvm.Arg.Named(colName, expr) }))
+              body = jvm.Body.Expr(jvm.New(tpe, colsFromFks.allExpr.map { case (colName, expr) => jvm.Arg.Named(colName, expr) })),
+              isOverride = false,
+              isDefault = false
             )
           }
 
@@ -260,7 +271,9 @@ case class FilesTable(lang: Lang, table: ComputedTable, fkAnalysis: FkAnalysis, 
               implicitParams = Nil,
               tpe = colsToFk.otherCompositeIdType,
               throws = Nil,
-              body = List(jvm.New(colsToFk.otherCompositeIdType, colsToFk.colPairs.map { case (inComposite, inId) => jvm.Arg.Named(inComposite.name, inId.name) }))
+              body = jvm.Body.Expr(jvm.New(colsToFk.otherCompositeIdType, colsToFk.colPairs.map { case (inComposite, inId) => jvm.Arg.Named(inComposite.name, inId.name) })),
+              isOverride = false,
+              isDefault = false
             )
           }
 

@@ -41,7 +41,7 @@ object ThaViewFields {
 
     override lazy val fields: ThaViewFields = {
       new ThaViewFields {
-        def id: Field[TransactionhistoryarchiveId, ThaViewRow] = {
+        override def id: Field[TransactionhistoryarchiveId, ThaViewRow] = {
           new Field[TransactionhistoryarchiveId, ThaViewRow](
             _path,
             "id",
@@ -52,7 +52,7 @@ object ThaViewFields {
             TransactionhistoryarchiveId.pgType
           )
         }
-        def transactionid: Field[TransactionhistoryarchiveId, ThaViewRow] = {
+        override def transactionid: Field[TransactionhistoryarchiveId, ThaViewRow] = {
           new Field[TransactionhistoryarchiveId, ThaViewRow](
             _path,
             "transactionid",
@@ -63,7 +63,7 @@ object ThaViewFields {
             TransactionhistoryarchiveId.pgType
           )
         }
-        def productid: Field[Integer, ThaViewRow] = {
+        override def productid: Field[Integer, ThaViewRow] = {
           new Field[Integer, ThaViewRow](
             _path,
             "productid",
@@ -74,7 +74,7 @@ object ThaViewFields {
             PgTypes.int4
           )
         }
-        def referenceorderid: Field[Integer, ThaViewRow] = {
+        override def referenceorderid: Field[Integer, ThaViewRow] = {
           new Field[Integer, ThaViewRow](
             _path,
             "referenceorderid",
@@ -85,7 +85,7 @@ object ThaViewFields {
             PgTypes.int4
           )
         }
-        def referenceorderlineid: Field[Integer, ThaViewRow] = {
+        override def referenceorderlineid: Field[Integer, ThaViewRow] = {
           new Field[Integer, ThaViewRow](
             _path,
             "referenceorderlineid",
@@ -96,7 +96,7 @@ object ThaViewFields {
             PgTypes.int4
           )
         }
-        def transactiondate: Field[TypoLocalDateTime, ThaViewRow] = {
+        override def transactiondate: Field[TypoLocalDateTime, ThaViewRow] = {
           new Field[TypoLocalDateTime, ThaViewRow](
             _path,
             "transactiondate",
@@ -107,7 +107,7 @@ object ThaViewFields {
             TypoLocalDateTime.pgType
           )
         }
-        def transactiontype: Field[/* bpchar, max 1 chars */ String, ThaViewRow] = {
+        override def transactiontype: Field[/* bpchar, max 1 chars */ String, ThaViewRow] = {
           new Field[/* bpchar, max 1 chars */ String, ThaViewRow](
             _path,
             "transactiontype",
@@ -118,7 +118,7 @@ object ThaViewFields {
             PgTypes.text
           )
         }
-        def quantity: Field[Integer, ThaViewRow] = {
+        override def quantity: Field[Integer, ThaViewRow] = {
           new Field[Integer, ThaViewRow](
             _path,
             "quantity",
@@ -129,7 +129,7 @@ object ThaViewFields {
             PgTypes.int4
           )
         }
-        def actualcost: Field[java.math.BigDecimal, ThaViewRow] = {
+        override def actualcost: Field[java.math.BigDecimal, ThaViewRow] = {
           new Field[java.math.BigDecimal, ThaViewRow](
             _path,
             "actualcost",
@@ -140,7 +140,7 @@ object ThaViewFields {
             PgTypes.numeric
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, ThaViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, ThaViewRow] = {
           new Field[TypoLocalDateTime, ThaViewRow](
             _path,
             "modifieddate",
@@ -156,7 +156,7 @@ object ThaViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, ThaViewRow]] = java.util.List.of(this.fields.id, this.fields.transactionid, this.fields.productid, this.fields.referenceorderid, this.fields.referenceorderlineid, this.fields.transactiondate, this.fields.transactiontype, this.fields.quantity, this.fields.actualcost, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[ThaViewFields, ThaViewRow] = new Impl(java.util.List.of())

@@ -5,6 +5,7 @@
  */
 package adventureworks.purchasing.shipmethod;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record ShipmethodRepoMock(
     return new ShipmethodRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<ShipmethodFields, ShipmethodRow> delete() {
     return new DeleteBuilderMock<>(ShipmethodFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.shipmethodid(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     ShipmethodId shipmethodid,
     Connection c
@@ -52,28 +55,31 @@ public record ShipmethodRepoMock(
     return Optional.ofNullable(map.remove(shipmethodid)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     ShipmethodId[] shipmethodids,
     Connection c
   ) {
     var count = 0;
-      for (var id : shipmethodids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : shipmethodids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public ShipmethodRow insert(
     ShipmethodRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.shipmethodid())) {
-        throw new RuntimeException(str("id $unsaved.shipmethodid() already exists"));
-      };
-      map.put(unsaved.shipmethodid(), unsaved);
+      throw new RuntimeException(str("id $unsaved.shipmethodid() already exists"));
+    };
+    map.put(unsaved.shipmethodid(), unsaved);
     return unsaved;
   };
 
+  @Override
   public ShipmethodRow insert(
     ShipmethodRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record ShipmethodRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<ShipmethodRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.shipmethodid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.shipmethodid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<ShipmethodRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.shipmethodid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.shipmethodid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<ShipmethodFields, ShipmethodRow> select() {
     return new SelectBuilderMock<>(ShipmethodFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<ShipmethodRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<ShipmethodRow> selectById(
     ShipmethodId shipmethodid,
     Connection c
@@ -126,38 +137,43 @@ public record ShipmethodRepoMock(
     return Optional.ofNullable(map.get(shipmethodid));
   };
 
+  @Override
   public List<ShipmethodRow> selectByIds(
     ShipmethodId[] shipmethodids,
     Connection c
   ) {
     var result = new ArrayList<ShipmethodRow>();
-      for (var id : shipmethodids) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : shipmethodids) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<ShipmethodId, ShipmethodRow> selectByIdsTracked(
     ShipmethodId[] shipmethodids,
     Connection c
   ) {
-    return selectByIds(shipmethodids, c).stream().collect(Collectors.toMap((adventureworks.purchasing.shipmethod.ShipmethodRow row) -> row.shipmethodid(), Function.identity()));
+    return selectByIds(shipmethodids, c).stream().collect(Collectors.toMap((ShipmethodRow row) -> row.shipmethodid(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<ShipmethodFields, ShipmethodRow> update() {
     return new UpdateBuilderMock<>(ShipmethodFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     ShipmethodRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.shipmethodid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.shipmethodid(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.shipmethodid(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public ShipmethodRow upsert(
     ShipmethodRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record ShipmethodRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<ShipmethodRow> upsertBatch(
     Iterator<ShipmethodRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<ShipmethodRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.shipmethodid(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.shipmethodid(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<ShipmethodRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.shipmethodid(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.shipmethodid(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

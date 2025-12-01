@@ -6,11 +6,11 @@
 package adventureworks.public.test_utdanningstilbud
 
 import adventureworks.public.test_organisasjon.TestOrganisasjonId
+import com.fasterxml.jackson.annotation.JsonProperty
 import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple2
 
 /** Table: public.test_utdanningstilbud
  * Composite primary key: organisasjonskode, utdanningsmulighet_kode
@@ -18,7 +18,7 @@ import typo.runtime.RowParsers.Tuple2
 case class TestUtdanningstilbudRow(
   /** Points to [[adventureworks.public.test_organisasjon.TestOrganisasjonRow.organisasjonskode]] */
   organisasjonskode: TestOrganisasjonId,
-  utdanningsmulighetKode: String
+  @JsonProperty("utdanningsmulighet_kode") utdanningsmulighetKode: String
 ) {
   def compositeId: TestUtdanningstilbudId = new TestUtdanningstilbudId(organisasjonskode, utdanningsmulighetKode)
 
@@ -26,7 +26,7 @@ case class TestUtdanningstilbudRow(
 }
 
 object TestUtdanningstilbudRow {
-  val `_rowParser`: RowParser[TestUtdanningstilbudRow] = RowParsers.of(TestOrganisasjonId.pgType, PgTypes.text, TestUtdanningstilbudRow.apply, row => new Tuple2(row.organisasjonskode, row.utdanningsmulighetKode))
+  val `_rowParser`: RowParser[TestUtdanningstilbudRow] = RowParsers.of(TestOrganisasjonId.pgType, PgTypes.text, TestUtdanningstilbudRow.apply, row => Array(row.organisasjonskode, row.utdanningsmulighetKode))
 
   def apply(compositeId: TestUtdanningstilbudId): TestUtdanningstilbudRow = new TestUtdanningstilbudRow(compositeId.organisasjonskode, compositeId.utdanningsmulighetKode)
 

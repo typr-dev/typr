@@ -11,7 +11,6 @@ import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple6
 
 /** View: sales.vsalespersonsalesbyfiscalyearsdata */
 case class VsalespersonsalesbyfiscalyearsdataViewRow(
@@ -27,14 +26,5 @@ case class VsalespersonsalesbyfiscalyearsdataViewRow(
 )
 
 object VsalespersonsalesbyfiscalyearsdataViewRow {
-  val `_rowParser`: RowParser[VsalespersonsalesbyfiscalyearsdataViewRow] = {
-    RowParsers.of(BusinessentityId.pgType.opt(), PgTypes.text.opt(), PgTypes.text, Name.pgType, PgTypes.numeric.opt(), PgTypes.numeric.opt(), VsalespersonsalesbyfiscalyearsdataViewRow.apply, row => new Tuple6(
-      row.salespersonid,
-      row.fullname,
-      row.jobtitle,
-      row.salesterritory,
-      row.salestotal,
-      row.fiscalyear
-    ))
-  }
+  val `_rowParser`: RowParser[VsalespersonsalesbyfiscalyearsdataViewRow] = RowParsers.of(BusinessentityId.pgType.opt(), PgTypes.text.opt(), PgTypes.text, Name.pgType, PgTypes.numeric.opt(), PgTypes.numeric.opt(), VsalespersonsalesbyfiscalyearsdataViewRow.apply, row => Array(row.salespersonid, row.fullname, row.jobtitle, row.salesterritory, row.salestotal, row.fiscalyear))
 }

@@ -5,6 +5,7 @@
  */
 package adventureworks.production.workorder
 
+import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
@@ -25,7 +26,7 @@ case class WorkorderRepoMock(
   toRow: WorkorderRowUnsaved => WorkorderRow,
   map: HashMap[WorkorderId, WorkorderRow] = new HashMap[WorkorderId, WorkorderRow]()
 ) extends WorkorderRepo {
-  def delete: DeleteBuilder[WorkorderFields, WorkorderRow] = {
+  override def delete: DeleteBuilder[WorkorderFields, WorkorderRow] = {
     new DeleteBuilderMock(
       WorkorderFields.structure,
       () => new ArrayList(map.values()),
@@ -35,27 +36,27 @@ case class WorkorderRepoMock(
     )
   }
 
-  def deleteById(workorderid: WorkorderId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(workorderid)).isPresent()
+  override def deleteById(workorderid: WorkorderId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(workorderid)).isPresent()
 
-  def deleteByIds(workorderids: Array[WorkorderId])(using c: Connection): Integer = {
+  override def deleteByIds(workorderids: Array[WorkorderId])(using c: Connection): Integer = {
     var count = 0
     workorderids.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
-    count
+    return count
   }
 
-  def insert(unsaved: WorkorderRow)(using c: Connection): WorkorderRow = {
+  override def insert(unsaved: WorkorderRow)(using c: Connection): WorkorderRow = {
     if (map.containsKey(unsaved.workorderid)) {
       throw new RuntimeException(s"id $unsaved.workorderid already exists")
     }
     map.put(unsaved.workorderid, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def insert(unsaved: WorkorderRowUnsaved)(using c: Connection): WorkorderRow = insert(toRow(unsaved))(using c)
+  override def insert(unsaved: WorkorderRowUnsaved)(using c: Connection): WorkorderRow = insert(toRow(unsaved))(using c)
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[WorkorderRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -65,11 +66,11 @@ case class WorkorderRepoMock(
       map.put(row.workorderid, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[WorkorderRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = {
@@ -80,25 +81,25 @@ case class WorkorderRepoMock(
       map.put(row.workorderid, row): @scala.annotation.nowarn
       count = count + 1L
     }
-    count
+    return count
   }
 
-  def select: SelectBuilder[WorkorderFields, WorkorderRow] = new SelectBuilderMock(WorkorderFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
+  override def select: SelectBuilder[WorkorderFields, WorkorderRow] = new SelectBuilderMock(WorkorderFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  def selectAll(using c: Connection): java.util.List[WorkorderRow] = new ArrayList(map.values())
+  override def selectAll(using c: Connection): java.util.List[WorkorderRow] = new ArrayList(map.values())
 
-  def selectById(workorderid: WorkorderId)(using c: Connection): Optional[WorkorderRow] = Optional.ofNullable(map.get(workorderid))
+  override def selectById(workorderid: WorkorderId)(using c: Connection): Optional[WorkorderRow] = Optional.ofNullable(map.get(workorderid))
 
-  def selectByIds(workorderids: Array[WorkorderId])(using c: Connection): java.util.List[WorkorderRow] = {
+  override def selectByIds(workorderids: Array[WorkorderId])(using c: Connection): java.util.List[WorkorderRow] = {
     val result = new ArrayList[WorkorderRow]()
     workorderids.foreach { id => val opt = Optional.ofNullable(map.get(id))
     if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
-    result
+    return result
   }
 
-  def selectByIdsTracked(workorderids: Array[WorkorderId])(using c: Connection): java.util.Map[WorkorderId, WorkorderRow] = selectByIds(workorderids)(using c).stream().collect(Collectors.toMap((row: adventureworks.production.workorder.WorkorderRow) => row.workorderid, Function.identity()))
+  override def selectByIdsTracked(workorderids: Array[WorkorderId])(using c: Connection): java.util.Map[WorkorderId, WorkorderRow] = selectByIds(workorderids)(using c).stream().collect(Collectors.toMap((row: WorkorderRow) => row.workorderid, Function.identity()))
 
-  def update: UpdateBuilder[WorkorderFields, WorkorderRow] = {
+  override def update: UpdateBuilder[WorkorderFields, WorkorderRow] = {
     new UpdateBuilderMock(
       WorkorderFields.structure,
       () => new ArrayList(map.values()),
@@ -107,31 +108,31 @@ case class WorkorderRepoMock(
     )
   }
 
-  def update(row: WorkorderRow)(using c: Connection): java.lang.Boolean = {
-    val shouldUpdate = Optional.ofNullable(map.get(row.workorderid)).filter(oldRow => !oldRow.equals(row)).isPresent()
+  override def update(row: WorkorderRow)(using c: Connection): java.lang.Boolean = {
+    val shouldUpdate = Optional.ofNullable(map.get(row.workorderid)).filter(oldRow => (oldRow != row)).isPresent()
     if (shouldUpdate) {
       map.put(row.workorderid, row): @scala.annotation.nowarn
     }
-    shouldUpdate
+    return shouldUpdate
   }
 
-  def upsert(unsaved: WorkorderRow)(using c: Connection): WorkorderRow = {
+  override def upsert(unsaved: WorkorderRow)(using c: Connection): WorkorderRow = {
     map.put(unsaved.workorderid, unsaved): @scala.annotation.nowarn
-    unsaved
+    return unsaved
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[WorkorderRow])(using c: Connection): java.util.List[WorkorderRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[WorkorderRow])(using c: Connection): java.util.List[WorkorderRow] = {
     val result = new ArrayList[WorkorderRow]()
     while (unsaved.hasNext()) {
       val row = unsaved.next()
       map.put(row.workorderid, row): @scala.annotation.nowarn
       result.add(row): @scala.annotation.nowarn
     }
-    result
+    return result
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[WorkorderRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
@@ -141,6 +142,6 @@ case class WorkorderRepoMock(
       map.put(row.workorderid, row): @scala.annotation.nowarn
       count = count + 1
     }
-    count
+    return count
   }
 }

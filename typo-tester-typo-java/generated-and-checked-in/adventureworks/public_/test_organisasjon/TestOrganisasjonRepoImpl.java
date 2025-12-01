@@ -5,7 +5,6 @@
  */
 package adventureworks.public_.test_organisasjon;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -19,12 +18,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class TestOrganisasjonRepoImpl implements TestOrganisasjonRepo {
+  @Override
   public DeleteBuilder<TestOrganisasjonFields, TestOrganisasjonRow> delete() {
     return DeleteBuilder.of("public.test_organisasjon", TestOrganisasjonFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     TestOrganisasjonId organisasjonskode,
     Connection c
@@ -38,6 +38,7 @@ public class TestOrganisasjonRepoImpl implements TestOrganisasjonRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     TestOrganisasjonId[] organisasjonskodes,
     Connection c
@@ -54,6 +55,7 @@ public class TestOrganisasjonRepoImpl implements TestOrganisasjonRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public TestOrganisasjonRow insert(
     TestOrganisasjonRow unsaved,
     Connection c
@@ -71,6 +73,7 @@ public class TestOrganisasjonRepoImpl implements TestOrganisasjonRepo {
       .updateReturning(TestOrganisasjonRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<TestOrganisasjonRow> unsaved,
     Integer batchSize,
@@ -81,17 +84,20 @@ public class TestOrganisasjonRepoImpl implements TestOrganisasjonRepo {
     """), batchSize, unsaved, c, TestOrganisasjonRow.pgText);
   };
 
+  @Override
   public SelectBuilder<TestOrganisasjonFields, TestOrganisasjonRow> select() {
     return SelectBuilder.of("public.test_organisasjon", TestOrganisasjonFields.structure(), TestOrganisasjonRow._rowParser);
   };
 
+  @Override
   public List<TestOrganisasjonRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "organisasjonskode"
        from "public"."test_organisasjon"
-    """)).as(TestOrganisasjonRow._rowParser.all()).runUnchecked(c);
+    """)).query(TestOrganisasjonRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<TestOrganisasjonRow> selectById(
     TestOrganisasjonId organisasjonskode,
     Connection c
@@ -103,9 +109,10 @@ public class TestOrganisasjonRepoImpl implements TestOrganisasjonRepo {
          where "organisasjonskode" = """),
       TestOrganisasjonId.pgType.encode(organisasjonskode),
       typo.runtime.Fragment.lit("")
-    ).as(TestOrganisasjonRow._rowParser.first()).runUnchecked(c);
+    ).query(TestOrganisasjonRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<TestOrganisasjonRow> selectByIds(
     TestOrganisasjonId[] organisasjonskodes,
     Connection c
@@ -117,22 +124,25 @@ public class TestOrganisasjonRepoImpl implements TestOrganisasjonRepo {
          where "organisasjonskode" = ANY("""),
       TestOrganisasjonId.pgTypeArray.encode(organisasjonskodes),
       typo.runtime.Fragment.lit(")")
-    ).as(TestOrganisasjonRow._rowParser.all()).runUnchecked(c);
+    ).query(TestOrganisasjonRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<TestOrganisasjonId, TestOrganisasjonRow> selectByIdsTracked(
     TestOrganisasjonId[] organisasjonskodes,
     Connection c
   ) {
-    Map<TestOrganisasjonId, TestOrganisasjonRow> ret = new HashMap<>();;
-      selectByIds(organisasjonskodes, c).forEach(row -> ret.put(row.organisasjonskode(), row));
+    HashMap<TestOrganisasjonId, TestOrganisasjonRow> ret = new HashMap<TestOrganisasjonId, TestOrganisasjonRow>();
+    selectByIds(organisasjonskodes, c).forEach(row -> ret.put(row.organisasjonskode(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<TestOrganisasjonFields, TestOrganisasjonRow> update() {
     return UpdateBuilder.of("public.test_organisasjon", TestOrganisasjonFields.structure(), TestOrganisasjonRow._rowParser.all());
   };
 
+  @Override
   public TestOrganisasjonRow upsert(
     TestOrganisasjonRow unsaved,
     Connection c
@@ -153,6 +163,7 @@ public class TestOrganisasjonRepoImpl implements TestOrganisasjonRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<TestOrganisasjonRow> upsertBatch(
     Iterator<TestOrganisasjonRow> unsaved,
     Connection c
@@ -169,23 +180,24 @@ public class TestOrganisasjonRepoImpl implements TestOrganisasjonRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<TestOrganisasjonRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table test_organisasjon_TEMP (like "public"."test_organisasjon") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy test_organisasjon_TEMP("organisasjonskode") from stdin
-      """), batchSize, unsaved, c, TestOrganisasjonRow.pgText);
+    create temporary table test_organisasjon_TEMP (like "public"."test_organisasjon") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy test_organisasjon_TEMP("organisasjonskode") from stdin
+    """), batchSize, unsaved, c, TestOrganisasjonRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "public"."test_organisasjon"("organisasjonskode")
-              select * from test_organisasjon_TEMP
-              on conflict ("organisasjonskode")
-              do nothing
-              ;
-              drop table test_organisasjon_TEMP;""")).update().runUnchecked(c);
+       insert into "public"."test_organisasjon"("organisasjonskode")
+       select * from test_organisasjon_TEMP
+       on conflict ("organisasjonskode")
+       do nothing
+       ;
+       drop table test_organisasjon_TEMP;""")).update().runUnchecked(c);
   };
 }

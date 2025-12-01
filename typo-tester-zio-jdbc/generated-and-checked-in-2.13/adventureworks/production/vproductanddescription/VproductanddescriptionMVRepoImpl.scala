@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class VproductanddescriptionMVRepoImpl extends VproductanddescriptionMVRepo {
-  def select: SelectBuilder[VproductanddescriptionMVFields, VproductanddescriptionMVRow] = SelectBuilder.of(""""production"."vproductanddescription"""", VproductanddescriptionMVFields.structure, VproductanddescriptionMVRow.jdbcDecoder)
+  override def select: SelectBuilder[VproductanddescriptionMVFields, VproductanddescriptionMVRow] = SelectBuilder.of(""""production"."vproductanddescription"""", VproductanddescriptionMVFields.structure, VproductanddescriptionMVRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, VproductanddescriptionMVRow] = sql"""select "productid", "name", "productmodel", "cultureid", "description" from "production"."vproductanddescription"""".query(VproductanddescriptionMVRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, VproductanddescriptionMVRow] = sql"""select "productid", "name", "productmodel", "cultureid", "description" from "production"."vproductanddescription"""".query(VproductanddescriptionMVRow.jdbcDecoder).selectStream()
 }

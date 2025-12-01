@@ -5,12 +5,13 @@
  */
 package adventureworks.production.culture
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
 
 /** Type for the primary key of table `production.culture` */
-case class CultureId(value: /* bpchar, max 6 chars */ String) extends scala.AnyVal
+case class CultureId(@JsonValue value: /* bpchar, max 6 chars */ String) extends scala.AnyVal
 
 object CultureId {
   given bijection: Bijection[CultureId, /* bpchar, max 6 chars */ String] = Bijection.apply[CultureId, /* bpchar, max 6 chars */ String](_.value)(CultureId.apply)

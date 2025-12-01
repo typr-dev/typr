@@ -31,7 +31,6 @@ import adventureworks.customtypes.TypoVector;
 import adventureworks.customtypes.TypoXml;
 import adventureworks.public_.Mydomain;
 import adventureworks.public_.Myenum;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.Iterator;
 import java.util.List;
@@ -43,12 +42,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class PgtestnullRepoImpl implements PgtestnullRepo {
+  @Override
   public DeleteBuilder<PgtestnullFields, PgtestnullRow> delete() {
     return DeleteBuilder.of("public.pgtestnull", PgtestnullFields.structure());
   };
 
+  @Override
   public PgtestnullRow insert(
     PgtestnullRow unsaved,
     Connection c
@@ -204,6 +204,7 @@ public class PgtestnullRepoImpl implements PgtestnullRepo {
       .updateReturning(PgtestnullRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<PgtestnullRow> unsaved,
     Integer batchSize,
@@ -214,17 +215,20 @@ public class PgtestnullRepoImpl implements PgtestnullRepo {
     """), batchSize, unsaved, c, PgtestnullRow.pgText);
   };
 
+  @Override
   public SelectBuilder<PgtestnullFields, PgtestnullRow> select() {
     return SelectBuilder.of("public.pgtestnull", PgtestnullFields.structure(), PgtestnullRow._rowParser);
   };
 
+  @Override
   public List<PgtestnullRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "bool", "box", "bpchar", "bytea", "char", "circle", "date"::text, "float4", "float8", "hstore", "inet", "int2", "int2vector", "int4", "int8", "interval", "json", "jsonb", "line", "lseg", "money"::numeric, "mydomain", "myenum", "name", "numeric", "path", "point", "polygon", "text", "time"::text, "timestamp"::text, "timestampz"::text, "timez"::text, "uuid", "varchar", "vector"::float4[], "xml", "boxes", "bpchares", "chares", "circlees", "datees"::text[], "float4es", "float8es", "inetes", "int2es", "int2vectores", "int4es", "int8es", "intervales", "jsones", "jsonbes", "linees", "lseges", "moneyes"::numeric[], "mydomaines"::text[], "myenumes", "namees", "numerices", "pathes", "pointes", "polygones", "textes", "timees"::text[], "timestampes"::text[], "timestampzes"::text[], "timezes"::text[], "uuides", "varchares", "xmles"
        from "public"."pgtestnull"
-    """)).as(PgtestnullRow._rowParser.all()).runUnchecked(c);
+    """)).query(PgtestnullRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public UpdateBuilder<PgtestnullFields, PgtestnullRow> update() {
     return UpdateBuilder.of("public.pgtestnull", PgtestnullFields.structure(), PgtestnullRow._rowParser.all());
   };

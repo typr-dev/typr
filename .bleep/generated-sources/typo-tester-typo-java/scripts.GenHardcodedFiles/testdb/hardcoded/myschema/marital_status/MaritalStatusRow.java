@@ -8,7 +8,6 @@ package testdb.hardcoded.myschema.marital_status;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple1;
 
 /** Table: myschema.marital_status
   * Primary key: id
@@ -18,7 +17,7 @@ public record MaritalStatusRow(MaritalStatusId id) {
     return new MaritalStatusRow(id);
   };
 
-  static RowParser<MaritalStatusRow> _rowParser = RowParsers.of(MaritalStatusId.pgType, MaritalStatusRow::new, row -> new Tuple1<>(row.id()));;
+  static RowParser<MaritalStatusRow> _rowParser = RowParsers.of(MaritalStatusId.pgType, MaritalStatusRow::new, row -> new Object[]{row.id()});;
 
   static public PgText<MaritalStatusRow> pgText =
     PgText.from(_rowParser);

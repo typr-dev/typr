@@ -13,7 +13,6 @@ import adventureworks.sales.salesterritory.SalesterritoryId
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple11
 
 /** View: sa.st */
 case class StViewRow(
@@ -42,19 +41,5 @@ case class StViewRow(
 )
 
 object StViewRow {
-  val `_rowParser`: RowParser[StViewRow] = {
-    RowParsers.of(SalesterritoryId.pgType, SalesterritoryId.pgType, Name.pgType, CountryregionId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, StViewRow.apply, row => new Tuple11(
-      row.id,
-      row.territoryid,
-      row.name,
-      row.countryregioncode,
-      row.group,
-      row.salesytd,
-      row.saleslastyear,
-      row.costytd,
-      row.costlastyear,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[StViewRow] = RowParsers.of(SalesterritoryId.pgType, SalesterritoryId.pgType, Name.pgType, CountryregionId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, StViewRow.apply, row => Array(row.id, row.territoryid, row.name, row.countryregioncode, row.group, row.salesytd, row.saleslastyear, row.costytd, row.costlastyear, row.rowguid, row.modifieddate))
 }

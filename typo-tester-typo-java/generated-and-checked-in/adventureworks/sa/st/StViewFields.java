@@ -20,7 +20,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface StViewFields {
-  static final class Impl extends Relation<StViewFields, StViewRow> {
+  final class Impl extends Relation<StViewFields, StViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -28,36 +28,47 @@ public interface StViewFields {
     @Override
     public StViewFields fields() {
       return new StViewFields() {
+               @Override
                public Field<SalesterritoryId, StViewRow> id() {
                  return new Field<SalesterritoryId, StViewRow>(_path, "id", StViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), SalesterritoryId.pgType);
                };
+               @Override
                public Field<SalesterritoryId, StViewRow> territoryid() {
                  return new Field<SalesterritoryId, StViewRow>(_path, "territoryid", StViewRow::territoryid, Optional.empty(), Optional.empty(), (row, value) -> row.withTerritoryid(value), SalesterritoryId.pgType);
                };
+               @Override
                public Field<Name, StViewRow> name() {
                  return new Field<Name, StViewRow>(_path, "name", StViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<CountryregionId, StViewRow> countryregioncode() {
                  return new Field<CountryregionId, StViewRow>(_path, "countryregioncode", StViewRow::countryregioncode, Optional.empty(), Optional.empty(), (row, value) -> row.withCountryregioncode(value), CountryregionId.pgType);
                };
+               @Override
                public Field</* max 50 chars */ String, StViewRow> group() {
                  return new Field</* max 50 chars */ String, StViewRow>(_path, "group", StViewRow::group, Optional.empty(), Optional.empty(), (row, value) -> row.withGroup(value), PgTypes.text);
                };
+               @Override
                public Field<BigDecimal, StViewRow> salesytd() {
                  return new Field<BigDecimal, StViewRow>(_path, "salesytd", StViewRow::salesytd, Optional.empty(), Optional.empty(), (row, value) -> row.withSalesytd(value), PgTypes.numeric);
                };
+               @Override
                public Field<BigDecimal, StViewRow> saleslastyear() {
                  return new Field<BigDecimal, StViewRow>(_path, "saleslastyear", StViewRow::saleslastyear, Optional.empty(), Optional.empty(), (row, value) -> row.withSaleslastyear(value), PgTypes.numeric);
                };
+               @Override
                public Field<BigDecimal, StViewRow> costytd() {
                  return new Field<BigDecimal, StViewRow>(_path, "costytd", StViewRow::costytd, Optional.empty(), Optional.empty(), (row, value) -> row.withCostytd(value), PgTypes.numeric);
                };
+               @Override
                public Field<BigDecimal, StViewRow> costlastyear() {
                  return new Field<BigDecimal, StViewRow>(_path, "costlastyear", StViewRow::costlastyear, Optional.empty(), Optional.empty(), (row, value) -> row.withCostlastyear(value), PgTypes.numeric);
                };
+               @Override
                public Field<TypoUUID, StViewRow> rowguid() {
                  return new Field<TypoUUID, StViewRow>(_path, "rowguid", StViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, StViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, StViewRow>(_path, "modifieddate", StViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -69,6 +80,7 @@ public interface StViewFields {
       return List.of(this.fields().id(), this.fields().territoryid(), this.fields().name(), this.fields().countryregioncode(), this.fields().group(), this.fields().salesytd(), this.fields().saleslastyear(), this.fields().costytd(), this.fields().costlastyear(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

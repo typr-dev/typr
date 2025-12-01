@@ -30,7 +30,7 @@ object AddresstypeFields {
 
     override lazy val fields: AddresstypeFields = {
       new AddresstypeFields {
-        def addresstypeid: IdField[AddresstypeId, AddresstypeRow] = {
+        override def addresstypeid: IdField[AddresstypeId, AddresstypeRow] = {
           new IdField[AddresstypeId, AddresstypeRow](
             _path,
             "addresstypeid",
@@ -41,7 +41,7 @@ object AddresstypeFields {
             AddresstypeId.pgType
           )
         }
-        def name: Field[Name, AddresstypeRow] = {
+        override def name: Field[Name, AddresstypeRow] = {
           new Field[Name, AddresstypeRow](
             _path,
             "name",
@@ -52,7 +52,7 @@ object AddresstypeFields {
             Name.pgType
           )
         }
-        def rowguid: Field[TypoUUID, AddresstypeRow] = {
+        override def rowguid: Field[TypoUUID, AddresstypeRow] = {
           new Field[TypoUUID, AddresstypeRow](
             _path,
             "rowguid",
@@ -63,7 +63,7 @@ object AddresstypeFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, AddresstypeRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, AddresstypeRow] = {
           new Field[TypoLocalDateTime, AddresstypeRow](
             _path,
             "modifieddate",
@@ -79,7 +79,7 @@ object AddresstypeFields {
 
     override lazy val columns: java.util.List[FieldLike[?, AddresstypeRow]] = java.util.List.of(this.fields.addresstypeid, this.fields.name, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[AddresstypeFields, AddresstypeRow] = new Impl(java.util.List.of())

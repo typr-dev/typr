@@ -17,18 +17,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class TitleDomainRepoImpl extends TitleDomainRepo {
-  def delete: DeleteBuilder[TitleDomainFields, TitleDomainRow] = DeleteBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, TitleDomainRow.rowParser(1).*)
+  override def delete: DeleteBuilder[TitleDomainFields, TitleDomainRow] = DeleteBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, TitleDomainRow.rowParser(1).*)
 
-  def deleteById(code: TitleDomainId)(implicit c: Connection): Boolean = SQL"""delete from "public"."title_domain" where "code" = ${ParameterValue(code, null, TitleDomainId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(code: TitleDomainId)(implicit c: Connection): Boolean = SQL"""delete from "public"."title_domain" where "code" = ${ParameterValue(code, null, TitleDomainId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(codes: Array[TitleDomainId])(implicit c: Connection): Int = {
+  override def deleteByIds(codes: Array[TitleDomainId])(implicit c: Connection): Int = {
     SQL"""delete
     from "public"."title_domain"
     where "code" = ANY(${ParameterValue(codes, null, TitleDomainId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: TitleDomainRow)(implicit c: Connection): TitleDomainRow = {
+  override def insert(unsaved: TitleDomainRow)(implicit c: Connection): TitleDomainRow = {
   SQL"""insert into "public"."title_domain"("code")
     values (${ParameterValue(unsaved.code, null, TitleDomainId.toStatement)}::text)
     returning "code"
@@ -36,41 +36,41 @@ class TitleDomainRepoImpl extends TitleDomainRepo {
     .executeInsert(TitleDomainRow.rowParser(1).single)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[TitleDomainRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = streamingInsert(s"""COPY "public"."title_domain"("code") FROM STDIN""", batchSize, unsaved)(TitleDomainRow.pgText, c)
 
-  def select: SelectBuilder[TitleDomainFields, TitleDomainRow] = SelectBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, TitleDomainRow.rowParser)
+  override def select: SelectBuilder[TitleDomainFields, TitleDomainRow] = SelectBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, TitleDomainRow.rowParser)
 
-  def selectAll(implicit c: Connection): List[TitleDomainRow] = {
+  override def selectAll(implicit c: Connection): List[TitleDomainRow] = {
     SQL"""select "code"
     from "public"."title_domain"
     """.as(TitleDomainRow.rowParser(1).*)
   }
 
-  def selectById(code: TitleDomainId)(implicit c: Connection): Option[TitleDomainRow] = {
+  override def selectById(code: TitleDomainId)(implicit c: Connection): Option[TitleDomainRow] = {
     SQL"""select "code"
     from "public"."title_domain"
     where "code" = ${ParameterValue(code, null, TitleDomainId.toStatement)}
     """.as(TitleDomainRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(codes: Array[TitleDomainId])(implicit c: Connection): List[TitleDomainRow] = {
+  override def selectByIds(codes: Array[TitleDomainId])(implicit c: Connection): List[TitleDomainRow] = {
     SQL"""select "code"
     from "public"."title_domain"
     where "code" = ANY(${ParameterValue(codes, null, TitleDomainId.arrayToStatement)})
     """.as(TitleDomainRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(codes: Array[TitleDomainId])(implicit c: Connection): Map[TitleDomainId, TitleDomainRow] = {
+  override def selectByIdsTracked(codes: Array[TitleDomainId])(implicit c: Connection): Map[TitleDomainId, TitleDomainRow] = {
     val byId = selectByIds(codes).view.map(x => (x.code, x)).toMap
     codes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[TitleDomainFields, TitleDomainRow] = UpdateBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, TitleDomainRow.rowParser(1).*)
+  override def update: UpdateBuilder[TitleDomainFields, TitleDomainRow] = UpdateBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, TitleDomainRow.rowParser(1).*)
 
-  def upsert(unsaved: TitleDomainRow)(implicit c: Connection): TitleDomainRow = {
+  override def upsert(unsaved: TitleDomainRow)(implicit c: Connection): TitleDomainRow = {
   SQL"""insert into "public"."title_domain"("code")
     values (
       ${ParameterValue(unsaved.code, null, TitleDomainId.toStatement)}::text
@@ -82,10 +82,11 @@ class TitleDomainRepoImpl extends TitleDomainRepo {
     .executeInsert(TitleDomainRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[TitleDomainRow])(implicit c: Connection): List[TitleDomainRow] = {
+  override def upsertBatch(unsaved: Iterable[TitleDomainRow])(implicit c: Connection): List[TitleDomainRow] = {
     def toNamedParameter(row: TitleDomainRow): List[NamedParameter] = List(
       NamedParameter("code", ParameterValue(row.code, null, TitleDomainId.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -105,7 +106,7 @@ class TitleDomainRepoImpl extends TitleDomainRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[TitleDomainRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

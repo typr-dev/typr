@@ -20,13 +20,13 @@ import typo.dsl.UpdateBuilder.UpdateBuilderMock
 import typo.dsl.UpdateParams
 
 case class TestUtdanningstilbudRepoMock(map: scala.collection.mutable.Map[TestUtdanningstilbudId, TestUtdanningstilbudRow] = scala.collection.mutable.Map.empty[TestUtdanningstilbudId, TestUtdanningstilbudRow]) extends TestUtdanningstilbudRepo {
-  def delete: DeleteBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = DeleteBuilderMock(DeleteParams.empty, TestUtdanningstilbudFields.structure, map)
+  override def delete: DeleteBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = DeleteBuilderMock(DeleteParams.empty, TestUtdanningstilbudFields.structure, map)
 
-  def deleteById(compositeId: TestUtdanningstilbudId): ConnectionIO[Boolean] = delay(map.remove(compositeId).isDefined)
+  override def deleteById(compositeId: TestUtdanningstilbudId): ConnectionIO[Boolean] = delay(map.remove(compositeId).isDefined)
 
-  def deleteByIds(compositeIds: Array[TestUtdanningstilbudId]): ConnectionIO[Int] = delay(compositeIds.map(id => map.remove(id)).count(_.isDefined))
+  override def deleteByIds(compositeIds: Array[TestUtdanningstilbudId]): ConnectionIO[Int] = delay(compositeIds.map(id => map.remove(id)).count(_.isDefined))
 
-  def insert(unsaved: TestUtdanningstilbudRow): ConnectionIO[TestUtdanningstilbudRow] = {
+  override def insert(unsaved: TestUtdanningstilbudRow): ConnectionIO[TestUtdanningstilbudRow] = {
   delay {
     val _ = if (map.contains(unsaved.compositeId))
       sys.error(s"id ${unsaved.compositeId} already exists")
@@ -37,7 +37,7 @@ case class TestUtdanningstilbudRepoMock(map: scala.collection.mutable.Map[TestUt
   }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, TestUtdanningstilbudRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = {
@@ -51,31 +51,31 @@ case class TestUtdanningstilbudRepoMock(map: scala.collection.mutable.Map[TestUt
     }
   }
 
-  def select: SelectBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = SelectBuilderMock(TestUtdanningstilbudFields.structure, delay(map.values.toList), SelectParams.empty)
+  override def select: SelectBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = SelectBuilderMock(TestUtdanningstilbudFields.structure, delay(map.values.toList), SelectParams.empty)
 
-  def selectAll: Stream[ConnectionIO, TestUtdanningstilbudRow] = Stream.emits(map.values.toList)
+  override def selectAll: Stream[ConnectionIO, TestUtdanningstilbudRow] = Stream.emits(map.values.toList)
 
-  def selectById(compositeId: TestUtdanningstilbudId): ConnectionIO[Option[TestUtdanningstilbudRow]] = delay(map.get(compositeId))
+  override def selectById(compositeId: TestUtdanningstilbudId): ConnectionIO[Option[TestUtdanningstilbudRow]] = delay(map.get(compositeId))
 
-  def selectByIds(compositeIds: Array[TestUtdanningstilbudId]): Stream[ConnectionIO, TestUtdanningstilbudRow] = Stream.emits(compositeIds.flatMap(map.get).toList)
+  override def selectByIds(compositeIds: Array[TestUtdanningstilbudId]): Stream[ConnectionIO, TestUtdanningstilbudRow] = Stream.emits(compositeIds.flatMap(map.get).toList)
 
-  def selectByIdsTracked(compositeIds: Array[TestUtdanningstilbudId]): ConnectionIO[Map[TestUtdanningstilbudId, TestUtdanningstilbudRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[TestUtdanningstilbudId]): ConnectionIO[Map[TestUtdanningstilbudId, TestUtdanningstilbudRow]] = {
     selectByIds(compositeIds).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = UpdateBuilderMock(UpdateParams.empty, TestUtdanningstilbudFields.structure, map)
+  override def update: UpdateBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = UpdateBuilderMock(UpdateParams.empty, TestUtdanningstilbudFields.structure, map)
 
-  def upsert(unsaved: TestUtdanningstilbudRow): ConnectionIO[TestUtdanningstilbudRow] = {
+  override def upsert(unsaved: TestUtdanningstilbudRow): ConnectionIO[TestUtdanningstilbudRow] = {
     delay {
       map.put(unsaved.compositeId, unsaved): @nowarn
       unsaved
     }
   }
 
-  def upsertBatch(unsaved: List[TestUtdanningstilbudRow]): Stream[ConnectionIO, TestUtdanningstilbudRow] = {
+  override def upsertBatch(unsaved: List[TestUtdanningstilbudRow]): Stream[ConnectionIO, TestUtdanningstilbudRow] = {
     Stream.emits {
       unsaved.map { row =>
         map += (row.compositeId -> row)
@@ -85,7 +85,7 @@ case class TestUtdanningstilbudRepoMock(map: scala.collection.mutable.Map[TestUt
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, TestUtdanningstilbudRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

@@ -21,21 +21,21 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class CountryregioncurrencyRepoImpl extends CountryregioncurrencyRepo {
-  def delete: DeleteBuilder[CountryregioncurrencyFields, CountryregioncurrencyRow] = DeleteBuilder.of("sales.countryregioncurrency", CountryregioncurrencyFields.structure)
+  override def delete: DeleteBuilder[CountryregioncurrencyFields, CountryregioncurrencyRow] = DeleteBuilder.of("sales.countryregioncurrency", CountryregioncurrencyFields.structure)
 
-  def deleteById(compositeId: CountryregioncurrencyId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."countryregioncurrency" where "countryregioncode" = ${CountryregionId.pgType.encode(compositeId.countryregioncode)} AND "currencycode" = ${CurrencyId.pgType.encode(compositeId.currencycode)}""".update().runUnchecked(c) > 0
+  override def deleteById(compositeId: CountryregioncurrencyId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."countryregioncurrency" where "countryregioncode" = ${CountryregionId.pgType.encode(compositeId.countryregioncode)} AND "currencycode" = ${CurrencyId.pgType.encode(compositeId.currencycode)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(compositeIds: Array[CountryregioncurrencyId])(using c: Connection): Integer = {
+  override def deleteByIds(compositeIds: Array[CountryregioncurrencyId])(using c: Connection): Integer = {
     val countryregioncode: Array[CountryregionId] = compositeIds.map(_.countryregioncode)
     val currencycode: Array[CurrencyId] = compositeIds.map(_.currencycode)
-    interpolate"""delete
+    return interpolate"""delete
     from "sales"."countryregioncurrency"
     where ("countryregioncode", "currencycode")
     in (select unnest(${CountryregionId.pgTypeArray.encode(countryregioncode)}::varchar[]), unnest(${CurrencyId.pgTypeArray.encode(currencycode)}::bpchar[]))
     """.update().runUnchecked(c)
   }
 
-  def insert(unsaved: CountryregioncurrencyRow)(using c: Connection): CountryregioncurrencyRow = {
+  override def insert(unsaved: CountryregioncurrencyRow)(using c: Connection): CountryregioncurrencyRow = {
   interpolate"""insert into "sales"."countryregioncurrency"("countryregioncode", "currencycode", "modifieddate")
     values (${CountryregionId.pgType.encode(unsaved.countryregioncode)}, ${CurrencyId.pgType.encode(unsaved.currencycode)}::bpchar, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "countryregioncode", "currencycode", "modifieddate"::text
@@ -43,19 +43,16 @@ class CountryregioncurrencyRepoImpl extends CountryregioncurrencyRepo {
     .updateReturning(CountryregioncurrencyRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: CountryregioncurrencyRowUnsaved)(using c: Connection): CountryregioncurrencyRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: CountryregioncurrencyRowUnsaved)(using c: Connection): CountryregioncurrencyRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""countryregioncode"""")): @scala.annotation.nowarn
     values.add(interpolate"${CountryregionId.pgType.encode(unsaved.countryregioncode)}"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""currencycode"""")): @scala.annotation.nowarn
     values.add(interpolate"${CurrencyId.pgType.encode(unsaved.currencycode)}::bpchar"): @scala.annotation.nowarn
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "sales"."countryregioncurrency"(${Fragment.comma(columns)})
@@ -63,60 +60,60 @@ class CountryregioncurrencyRepoImpl extends CountryregioncurrencyRepo {
       returning "countryregioncode", "currencycode", "modifieddate"::text
       """
     }
-    q.updateReturning(CountryregioncurrencyRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(CountryregioncurrencyRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[CountryregioncurrencyRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."countryregioncurrency"("countryregioncode", "currencycode", "modifieddate") FROM STDIN""", batchSize, unsaved, c, CountryregioncurrencyRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[CountryregioncurrencyRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."countryregioncurrency"("countryregioncode", "currencycode", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, CountryregioncurrencyRowUnsaved.pgText)
 
-  def select: SelectBuilder[CountryregioncurrencyFields, CountryregioncurrencyRow] = SelectBuilder.of("sales.countryregioncurrency", CountryregioncurrencyFields.structure, CountryregioncurrencyRow.`_rowParser`)
+  override def select: SelectBuilder[CountryregioncurrencyFields, CountryregioncurrencyRow] = SelectBuilder.of("sales.countryregioncurrency", CountryregioncurrencyFields.structure, CountryregioncurrencyRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[CountryregioncurrencyRow] = {
+  override def selectAll(using c: Connection): java.util.List[CountryregioncurrencyRow] = {
     interpolate"""select "countryregioncode", "currencycode", "modifieddate"::text
     from "sales"."countryregioncurrency"
-    """.as(CountryregioncurrencyRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(CountryregioncurrencyRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(compositeId: CountryregioncurrencyId)(using c: Connection): Optional[CountryregioncurrencyRow] = {
+  override def selectById(compositeId: CountryregioncurrencyId)(using c: Connection): Optional[CountryregioncurrencyRow] = {
     interpolate"""select "countryregioncode", "currencycode", "modifieddate"::text
     from "sales"."countryregioncurrency"
-    where "countryregioncode" = ${CountryregionId.pgType.encode(compositeId.countryregioncode)} AND "currencycode" = ${CurrencyId.pgType.encode(compositeId.currencycode)}""".as(CountryregioncurrencyRow.`_rowParser`.first()).runUnchecked(c)
+    where "countryregioncode" = ${CountryregionId.pgType.encode(compositeId.countryregioncode)} AND "currencycode" = ${CurrencyId.pgType.encode(compositeId.currencycode)}""".query(CountryregioncurrencyRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(compositeIds: Array[CountryregioncurrencyId])(using c: Connection): java.util.List[CountryregioncurrencyRow] = {
+  override def selectByIds(compositeIds: Array[CountryregioncurrencyId])(using c: Connection): java.util.List[CountryregioncurrencyRow] = {
     val countryregioncode: Array[CountryregionId] = compositeIds.map(_.countryregioncode)
     val currencycode: Array[CurrencyId] = compositeIds.map(_.currencycode)
-    interpolate"""select "countryregioncode", "currencycode", "modifieddate"::text
+    return interpolate"""select "countryregioncode", "currencycode", "modifieddate"::text
     from "sales"."countryregioncurrency"
     where ("countryregioncode", "currencycode")
     in (select unnest(${CountryregionId.pgTypeArray.encode(countryregioncode)}::varchar[]), unnest(${CurrencyId.pgTypeArray.encode(currencycode)}::bpchar[]))
-    """.as(CountryregioncurrencyRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(CountryregioncurrencyRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(compositeIds: Array[CountryregioncurrencyId])(using c: Connection): java.util.Map[CountryregioncurrencyId, CountryregioncurrencyRow] = {
-    val ret: java.util.Map[CountryregioncurrencyId, CountryregioncurrencyRow] = new HashMap()
+  override def selectByIdsTracked(compositeIds: Array[CountryregioncurrencyId])(using c: Connection): java.util.Map[CountryregioncurrencyId, CountryregioncurrencyRow] = {
+    val ret: HashMap[CountryregioncurrencyId, CountryregioncurrencyRow] = new HashMap[CountryregioncurrencyId, CountryregioncurrencyRow]()
     selectByIds(compositeIds)(using c).forEach(row => ret.put(row.compositeId, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[CountryregioncurrencyFields, CountryregioncurrencyRow] = UpdateBuilder.of("sales.countryregioncurrency", CountryregioncurrencyFields.structure, CountryregioncurrencyRow.`_rowParser`.all())
+  override def update: UpdateBuilder[CountryregioncurrencyFields, CountryregioncurrencyRow] = UpdateBuilder.of("sales.countryregioncurrency", CountryregioncurrencyFields.structure, CountryregioncurrencyRow.`_rowParser`.all())
 
-  def update(row: CountryregioncurrencyRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: CountryregioncurrencyRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: CountryregioncurrencyId = row.compositeId
-    interpolate"""update "sales"."countryregioncurrency"
+    return interpolate"""update "sales"."countryregioncurrency"
     set "modifieddate" = ${TypoLocalDateTime.pgType.encode(row.modifieddate)}::timestamp
     where "countryregioncode" = ${CountryregionId.pgType.encode(compositeId.countryregioncode)} AND "currencycode" = ${CurrencyId.pgType.encode(compositeId.currencycode)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: CountryregioncurrencyRow)(using c: Connection): CountryregioncurrencyRow = {
+  override def upsert(unsaved: CountryregioncurrencyRow)(using c: Connection): CountryregioncurrencyRow = {
   interpolate"""insert into "sales"."countryregioncurrency"("countryregioncode", "currencycode", "modifieddate")
     values (${CountryregionId.pgType.encode(unsaved.countryregioncode)}, ${CurrencyId.pgType.encode(unsaved.currencycode)}::bpchar, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("countryregioncode", "currencycode")
@@ -128,7 +125,7 @@ class CountryregioncurrencyRepoImpl extends CountryregioncurrencyRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[CountryregioncurrencyRow])(using c: Connection): java.util.List[CountryregioncurrencyRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[CountryregioncurrencyRow])(using c: Connection): java.util.List[CountryregioncurrencyRow] = {
     interpolate"""insert into "sales"."countryregioncurrency"("countryregioncode", "currencycode", "modifieddate")
     values (?, ?::bpchar, ?::timestamp)
     on conflict ("countryregioncode", "currencycode")
@@ -141,13 +138,13 @@ class CountryregioncurrencyRepoImpl extends CountryregioncurrencyRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[CountryregioncurrencyRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table countryregioncurrency_TEMP (like "sales"."countryregioncurrency") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy countryregioncurrency_TEMP("countryregioncode", "currencycode", "modifieddate") from stdin""", batchSize, unsaved, c, CountryregioncurrencyRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "sales"."countryregioncurrency"("countryregioncode", "currencycode", "modifieddate")
+    return interpolate"""insert into "sales"."countryregioncurrency"("countryregioncode", "currencycode", "modifieddate")
     select * from countryregioncurrency_TEMP
     on conflict ("countryregioncode", "currencycode")
     do update set

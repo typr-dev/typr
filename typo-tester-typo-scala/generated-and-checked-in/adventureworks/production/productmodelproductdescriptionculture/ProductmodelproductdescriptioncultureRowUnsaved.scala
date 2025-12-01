@@ -41,15 +41,5 @@ case class ProductmodelproductdescriptioncultureRowUnsaved(
 }
 
 object ProductmodelproductdescriptioncultureRowUnsaved {
-  given pgText: PgText[ProductmodelproductdescriptioncultureRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      ProductmodelId.pgType.pgText.unsafeEncode(row.productmodelid, sb);
-      sb.append(PgText.DELIMETER);
-      ProductdescriptionId.pgType.pgText.unsafeEncode(row.productdescriptionid, sb);
-      sb.append(PgText.DELIMETER);
-      CultureId.pgType.pgText.unsafeEncode(row.cultureid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[ProductmodelproductdescriptioncultureRowUnsaved] = PgText.instance((row, sb) => { ProductmodelId.pgType.pgText.unsafeEncode(row.productmodelid, sb); sb.append(PgText.DELIMETER); ProductdescriptionId.pgType.pgText.unsafeEncode(row.productdescriptionid, sb); sb.append(PgText.DELIMETER); CultureId.pgType.pgText.unsafeEncode(row.cultureid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

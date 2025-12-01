@@ -10,11 +10,11 @@ import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class EdhViewRepoImpl extends EdhViewRepo {
-  def select: SelectBuilder[EdhViewFields, EdhViewRow] = SelectBuilder.of("hr.edh", EdhViewFields.structure, EdhViewRow.`_rowParser`)
+  override def select: SelectBuilder[EdhViewFields, EdhViewRow] = SelectBuilder.of("hr.edh", EdhViewFields.structure, EdhViewRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[EdhViewRow] = {
+  override def selectAll(using c: Connection): java.util.List[EdhViewRow] = {
     interpolate"""select "id", "businessentityid", "departmentid", "shiftid", "startdate"::text, "enddate"::text, "modifieddate"::text
     from "hr"."edh"
-    """.as(EdhViewRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(EdhViewRow.`_rowParser`.all()).runUnchecked(c)
   }
 }

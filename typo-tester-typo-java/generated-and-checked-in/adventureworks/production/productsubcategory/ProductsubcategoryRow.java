@@ -13,7 +13,6 @@ import adventureworks.public_.Name;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple5;
 
 /** Table: production.productsubcategory
   * Product subcategories. See ProductCategory table.
@@ -64,7 +63,7 @@ public record ProductsubcategoryRow(
     return new ProductsubcategoryRow(productsubcategoryid, productcategoryid, name, rowguid, modifieddate);
   };
 
-  static RowParser<ProductsubcategoryRow> _rowParser = RowParsers.of(ProductsubcategoryId.pgType, ProductcategoryId.pgType, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, ProductsubcategoryRow::new, row -> new Tuple5<>(row.productsubcategoryid(), row.productcategoryid(), row.name(), row.rowguid(), row.modifieddate()));;
+  static RowParser<ProductsubcategoryRow> _rowParser = RowParsers.of(ProductsubcategoryId.pgType, ProductcategoryId.pgType, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, ProductsubcategoryRow::new, row -> new Object[]{row.productsubcategoryid(), row.productcategoryid(), row.name(), row.rowguid(), row.modifieddate()});;
 
   static public PgText<ProductsubcategoryRow> pgText =
     PgText.from(_rowParser);

@@ -14,7 +14,6 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple12;
 
 /** View: pu.pv */
 public record PvViewRow(
@@ -103,5 +102,5 @@ public record PvViewRow(
     return new PvViewRow(id, productid, businessentityid, averageleadtime, standardprice, lastreceiptcost, lastreceiptdate, minorderqty, maxorderqty, onorderqty, unitmeasurecode, modifieddate);
   };
 
-  static RowParser<PvViewRow> _rowParser = RowParsers.of(ProductId.pgType, ProductId.pgType, BusinessentityId.pgType, PgTypes.int4, PgTypes.numeric, PgTypes.numeric.opt(), TypoLocalDateTime.pgType.opt(), PgTypes.int4, PgTypes.int4, PgTypes.int4.opt(), UnitmeasureId.pgType, TypoLocalDateTime.pgType, PvViewRow::new, row -> new Tuple12<>(row.id(), row.productid(), row.businessentityid(), row.averageleadtime(), row.standardprice(), row.lastreceiptcost(), row.lastreceiptdate(), row.minorderqty(), row.maxorderqty(), row.onorderqty(), row.unitmeasurecode(), row.modifieddate()));;
+  static RowParser<PvViewRow> _rowParser = RowParsers.of(ProductId.pgType, ProductId.pgType, BusinessentityId.pgType, PgTypes.int4, PgTypes.numeric, PgTypes.numeric.opt(), TypoLocalDateTime.pgType.opt(), PgTypes.int4, PgTypes.int4, PgTypes.int4.opt(), UnitmeasureId.pgType, TypoLocalDateTime.pgType, PvViewRow::new, row -> new Object[]{row.id(), row.productid(), row.businessentityid(), row.averageleadtime(), row.standardprice(), row.lastreceiptcost(), row.lastreceiptdate(), row.minorderqty(), row.maxorderqty(), row.onorderqty(), row.unitmeasurecode(), row.modifieddate()});;
 }

@@ -5,22 +5,22 @@
  */
 package adventureworks.hr.e;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class EViewRepoImpl implements EViewRepo {
+  @Override
   public SelectBuilder<EViewFields, EViewRow> select() {
     return SelectBuilder.of("hr.e", EViewFields.structure(), EViewRow._rowParser);
   };
 
+  @Override
   public List<EViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode"
        from "hr"."e"
-    """)).as(EViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(EViewRow._rowParser.all()).runUnchecked(c);
   };
 }

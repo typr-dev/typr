@@ -13,7 +13,6 @@ import adventureworks.person.businessentity.BusinessentityId;
 import java.util.Optional;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple7;
 
 /** View: hr.edh */
 public record EdhViewRow(
@@ -67,5 +66,5 @@ public record EdhViewRow(
     return new EdhViewRow(id, businessentityid, departmentid, shiftid, startdate, enddate, modifieddate);
   };
 
-  static RowParser<EdhViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, DepartmentId.pgType, ShiftId.pgType, TypoLocalDate.pgType, TypoLocalDate.pgType.opt(), TypoLocalDateTime.pgType, EdhViewRow::new, row -> new Tuple7<>(row.id(), row.businessentityid(), row.departmentid(), row.shiftid(), row.startdate(), row.enddate(), row.modifieddate()));;
+  static RowParser<EdhViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, DepartmentId.pgType, ShiftId.pgType, TypoLocalDate.pgType, TypoLocalDate.pgType.opt(), TypoLocalDateTime.pgType, EdhViewRow::new, row -> new Object[]{row.id(), row.businessentityid(), row.departmentid(), row.shiftid(), row.startdate(), row.enddate(), row.modifieddate()});;
 }

@@ -16,7 +16,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple7;
 
 /** Table: sales.salestaxrate
   * Tax rate lookup table.
@@ -89,7 +88,7 @@ public record SalestaxrateRow(
     return new SalestaxrateRow(salestaxrateid, stateprovinceid, taxtype, taxrate, name, rowguid, modifieddate);
   };
 
-  static RowParser<SalestaxrateRow> _rowParser = RowParsers.of(SalestaxrateId.pgType, StateprovinceId.pgType, TypoShort.pgType, PgTypes.numeric, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, SalestaxrateRow::new, row -> new Tuple7<>(row.salestaxrateid(), row.stateprovinceid(), row.taxtype(), row.taxrate(), row.name(), row.rowguid(), row.modifieddate()));;
+  static RowParser<SalestaxrateRow> _rowParser = RowParsers.of(SalestaxrateId.pgType, StateprovinceId.pgType, TypoShort.pgType, PgTypes.numeric, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, SalestaxrateRow::new, row -> new Object[]{row.salestaxrateid(), row.stateprovinceid(), row.taxtype(), row.taxrate(), row.name(), row.rowguid(), row.modifieddate()});;
 
   static public PgText<SalestaxrateRow> pgText =
     PgText.from(_rowParser);

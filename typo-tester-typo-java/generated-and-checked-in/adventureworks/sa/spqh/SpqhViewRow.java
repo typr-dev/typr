@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple6;
 
 /** View: sa.spqh */
 public record SpqhViewRow(
@@ -59,5 +58,5 @@ public record SpqhViewRow(
     return new SpqhViewRow(id, businessentityid, quotadate, salesquota, rowguid, modifieddate);
   };
 
-  static RowParser<SpqhViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, TypoLocalDateTime.pgType, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SpqhViewRow::new, row -> new Tuple6<>(row.id(), row.businessentityid(), row.quotadate(), row.salesquota(), row.rowguid(), row.modifieddate()));;
+  static RowParser<SpqhViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, TypoLocalDateTime.pgType, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SpqhViewRow::new, row -> new Object[]{row.id(), row.businessentityid(), row.quotadate(), row.salesquota(), row.rowguid(), row.modifieddate()});;
 }

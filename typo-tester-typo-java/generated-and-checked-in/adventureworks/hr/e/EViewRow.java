@@ -15,7 +15,6 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple16;
 
 /** View: hr.e */
 public record EViewRow(
@@ -132,5 +131,5 @@ public record EViewRow(
     return new EViewRow(id, businessentityid, nationalidnumber, loginid, jobtitle, birthdate, maritalstatus, gender, hiredate, salariedflag, vacationhours, sickleavehours, currentflag, rowguid, modifieddate, organizationnode);
   };
 
-  static RowParser<EViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.text, TypoLocalDate.pgType, PgTypes.text, PgTypes.text, TypoLocalDate.pgType, Flag.pgType, TypoShort.pgType, TypoShort.pgType, Flag.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, PgTypes.text.opt(), EViewRow::new, row -> new Tuple16<>(row.id(), row.businessentityid(), row.nationalidnumber(), row.loginid(), row.jobtitle(), row.birthdate(), row.maritalstatus(), row.gender(), row.hiredate(), row.salariedflag(), row.vacationhours(), row.sickleavehours(), row.currentflag(), row.rowguid(), row.modifieddate(), row.organizationnode()));;
+  static RowParser<EViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.text, TypoLocalDate.pgType, PgTypes.text, PgTypes.text, TypoLocalDate.pgType, Flag.pgType, TypoShort.pgType, TypoShort.pgType, Flag.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, PgTypes.text.opt(), EViewRow::new, row -> new Object[]{row.id(), row.businessentityid(), row.nationalidnumber(), row.loginid(), row.jobtitle(), row.birthdate(), row.maritalstatus(), row.gender(), row.hiredate(), row.salariedflag(), row.vacationhours(), row.sickleavehours(), row.currentflag(), row.rowguid(), row.modifieddate(), row.organizationnode()});;
 }

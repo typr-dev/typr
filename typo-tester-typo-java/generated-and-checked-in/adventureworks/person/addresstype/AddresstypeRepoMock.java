@@ -5,6 +5,7 @@
  */
 package adventureworks.person.addresstype;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record AddresstypeRepoMock(
     return new AddresstypeRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<AddresstypeFields, AddresstypeRow> delete() {
     return new DeleteBuilderMock<>(AddresstypeFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.addresstypeid(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     AddresstypeId addresstypeid,
     Connection c
@@ -52,28 +55,31 @@ public record AddresstypeRepoMock(
     return Optional.ofNullable(map.remove(addresstypeid)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     AddresstypeId[] addresstypeids,
     Connection c
   ) {
     var count = 0;
-      for (var id : addresstypeids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : addresstypeids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public AddresstypeRow insert(
     AddresstypeRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.addresstypeid())) {
-        throw new RuntimeException(str("id $unsaved.addresstypeid() already exists"));
-      };
-      map.put(unsaved.addresstypeid(), unsaved);
+      throw new RuntimeException(str("id $unsaved.addresstypeid() already exists"));
+    };
+    map.put(unsaved.addresstypeid(), unsaved);
     return unsaved;
   };
 
+  @Override
   public AddresstypeRow insert(
     AddresstypeRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record AddresstypeRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<AddresstypeRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.addresstypeid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.addresstypeid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<AddresstypeRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.addresstypeid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.addresstypeid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<AddresstypeFields, AddresstypeRow> select() {
     return new SelectBuilderMock<>(AddresstypeFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<AddresstypeRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<AddresstypeRow> selectById(
     AddresstypeId addresstypeid,
     Connection c
@@ -126,38 +137,43 @@ public record AddresstypeRepoMock(
     return Optional.ofNullable(map.get(addresstypeid));
   };
 
+  @Override
   public List<AddresstypeRow> selectByIds(
     AddresstypeId[] addresstypeids,
     Connection c
   ) {
     var result = new ArrayList<AddresstypeRow>();
-      for (var id : addresstypeids) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : addresstypeids) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<AddresstypeId, AddresstypeRow> selectByIdsTracked(
     AddresstypeId[] addresstypeids,
     Connection c
   ) {
-    return selectByIds(addresstypeids, c).stream().collect(Collectors.toMap((adventureworks.person.addresstype.AddresstypeRow row) -> row.addresstypeid(), Function.identity()));
+    return selectByIds(addresstypeids, c).stream().collect(Collectors.toMap((AddresstypeRow row) -> row.addresstypeid(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<AddresstypeFields, AddresstypeRow> update() {
     return new UpdateBuilderMock<>(AddresstypeFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     AddresstypeRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.addresstypeid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.addresstypeid(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.addresstypeid(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public AddresstypeRow upsert(
     AddresstypeRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record AddresstypeRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<AddresstypeRow> upsertBatch(
     Iterator<AddresstypeRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<AddresstypeRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.addresstypeid(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.addresstypeid(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<AddresstypeRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.addresstypeid(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.addresstypeid(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

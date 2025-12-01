@@ -17,18 +17,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class TitleRepoImpl extends TitleRepo {
-  def delete: DeleteBuilder[TitleFields, TitleRow] = DeleteBuilder.of(""""public"."title"""", TitleFields.structure, TitleRow.rowParser(1).*)
+  override def delete: DeleteBuilder[TitleFields, TitleRow] = DeleteBuilder.of(""""public"."title"""", TitleFields.structure, TitleRow.rowParser(1).*)
 
-  def deleteById(code: TitleId)(using c: Connection): Boolean = SQL"""delete from "public"."title" where "code" = ${ParameterValue(code, null, TitleId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(code: TitleId)(using c: Connection): Boolean = SQL"""delete from "public"."title" where "code" = ${ParameterValue(code, null, TitleId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(codes: Array[TitleId])(using c: Connection): Int = {
+  override def deleteByIds(codes: Array[TitleId])(using c: Connection): Int = {
     SQL"""delete
     from "public"."title"
     where "code" = ANY(${ParameterValue(codes, null, TitleId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: TitleRow)(using c: Connection): TitleRow = {
+  override def insert(unsaved: TitleRow)(using c: Connection): TitleRow = {
   SQL"""insert into "public"."title"("code")
     values (${ParameterValue(unsaved.code, null, TitleId.toStatement)})
     returning "code"
@@ -36,41 +36,41 @@ class TitleRepoImpl extends TitleRepo {
     .executeInsert(TitleRow.rowParser(1).single)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[TitleRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "public"."title"("code") FROM STDIN""", batchSize, unsaved)(using TitleRow.pgText, c)
 
-  def select: SelectBuilder[TitleFields, TitleRow] = SelectBuilder.of(""""public"."title"""", TitleFields.structure, TitleRow.rowParser)
+  override def select: SelectBuilder[TitleFields, TitleRow] = SelectBuilder.of(""""public"."title"""", TitleFields.structure, TitleRow.rowParser)
 
-  def selectAll(using c: Connection): List[TitleRow] = {
+  override def selectAll(using c: Connection): List[TitleRow] = {
     SQL"""select "code"
     from "public"."title"
     """.as(TitleRow.rowParser(1).*)
   }
 
-  def selectById(code: TitleId)(using c: Connection): Option[TitleRow] = {
+  override def selectById(code: TitleId)(using c: Connection): Option[TitleRow] = {
     SQL"""select "code"
     from "public"."title"
     where "code" = ${ParameterValue(code, null, TitleId.toStatement)}
     """.as(TitleRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(codes: Array[TitleId])(using c: Connection): List[TitleRow] = {
+  override def selectByIds(codes: Array[TitleId])(using c: Connection): List[TitleRow] = {
     SQL"""select "code"
     from "public"."title"
     where "code" = ANY(${ParameterValue(codes, null, TitleId.arrayToStatement)})
     """.as(TitleRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(codes: Array[TitleId])(using c: Connection): Map[TitleId, TitleRow] = {
+  override def selectByIdsTracked(codes: Array[TitleId])(using c: Connection): Map[TitleId, TitleRow] = {
     val byId = selectByIds(codes).view.map(x => (x.code, x)).toMap
     codes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[TitleFields, TitleRow] = UpdateBuilder.of(""""public"."title"""", TitleFields.structure, TitleRow.rowParser(1).*)
+  override def update: UpdateBuilder[TitleFields, TitleRow] = UpdateBuilder.of(""""public"."title"""", TitleFields.structure, TitleRow.rowParser(1).*)
 
-  def upsert(unsaved: TitleRow)(using c: Connection): TitleRow = {
+  override def upsert(unsaved: TitleRow)(using c: Connection): TitleRow = {
   SQL"""insert into "public"."title"("code")
     values (
       ${ParameterValue(unsaved.code, null, TitleId.toStatement)}
@@ -82,10 +82,11 @@ class TitleRepoImpl extends TitleRepo {
     .executeInsert(TitleRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[TitleRow])(using c: Connection): List[TitleRow] = {
+  override def upsertBatch(unsaved: Iterable[TitleRow])(using c: Connection): List[TitleRow] = {
     def toNamedParameter(row: TitleRow): List[NamedParameter] = List(
       NamedParameter("code", ParameterValue(row.code, null, TitleId.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -105,7 +106,7 @@ class TitleRepoImpl extends TitleRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[TitleRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

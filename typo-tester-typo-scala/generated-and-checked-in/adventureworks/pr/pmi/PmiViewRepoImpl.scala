@@ -10,11 +10,11 @@ import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PmiViewRepoImpl extends PmiViewRepo {
-  def select: SelectBuilder[PmiViewFields, PmiViewRow] = SelectBuilder.of("pr.pmi", PmiViewFields.structure, PmiViewRow.`_rowParser`)
+  override def select: SelectBuilder[PmiViewFields, PmiViewRow] = SelectBuilder.of("pr.pmi", PmiViewFields.structure, PmiViewRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[PmiViewRow] = {
+  override def selectAll(using c: Connection): java.util.List[PmiViewRow] = {
     interpolate"""select "productmodelid", "illustrationid", "modifieddate"::text
     from "pr"."pmi"
-    """.as(PmiViewRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(PmiViewRow.`_rowParser`.all()).runUnchecked(c)
   }
 }

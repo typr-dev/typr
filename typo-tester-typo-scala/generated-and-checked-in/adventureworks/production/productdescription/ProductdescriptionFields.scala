@@ -30,7 +30,7 @@ object ProductdescriptionFields {
 
     override lazy val fields: ProductdescriptionFields = {
       new ProductdescriptionFields {
-        def productdescriptionid: IdField[ProductdescriptionId, ProductdescriptionRow] = {
+        override def productdescriptionid: IdField[ProductdescriptionId, ProductdescriptionRow] = {
           new IdField[ProductdescriptionId, ProductdescriptionRow](
             _path,
             "productdescriptionid",
@@ -41,7 +41,7 @@ object ProductdescriptionFields {
             ProductdescriptionId.pgType
           )
         }
-        def description: Field[/* max 400 chars */ String, ProductdescriptionRow] = {
+        override def description: Field[/* max 400 chars */ String, ProductdescriptionRow] = {
           new Field[/* max 400 chars */ String, ProductdescriptionRow](
             _path,
             "description",
@@ -52,7 +52,7 @@ object ProductdescriptionFields {
             PgTypes.text
           )
         }
-        def rowguid: Field[TypoUUID, ProductdescriptionRow] = {
+        override def rowguid: Field[TypoUUID, ProductdescriptionRow] = {
           new Field[TypoUUID, ProductdescriptionRow](
             _path,
             "rowguid",
@@ -63,7 +63,7 @@ object ProductdescriptionFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, ProductdescriptionRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, ProductdescriptionRow] = {
           new Field[TypoLocalDateTime, ProductdescriptionRow](
             _path,
             "modifieddate",
@@ -79,7 +79,7 @@ object ProductdescriptionFields {
 
     override lazy val columns: java.util.List[FieldLike[?, ProductdescriptionRow]] = java.util.List.of(this.fields.productdescriptionid, this.fields.description, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[ProductdescriptionFields, ProductdescriptionRow] = new Impl(java.util.List.of())

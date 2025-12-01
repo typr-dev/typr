@@ -38,7 +38,7 @@ object PasswordFields {
 
     override lazy val fields: PasswordFields = {
       new PasswordFields {
-        def businessentityid: IdField[BusinessentityId, PasswordRow] = {
+        override def businessentityid: IdField[BusinessentityId, PasswordRow] = {
           new IdField[BusinessentityId, PasswordRow](
             _path,
             "businessentityid",
@@ -49,7 +49,7 @@ object PasswordFields {
             BusinessentityId.pgType
           )
         }
-        def passwordhash: Field[/* max 128 chars */ String, PasswordRow] = {
+        override def passwordhash: Field[/* max 128 chars */ String, PasswordRow] = {
           new Field[/* max 128 chars */ String, PasswordRow](
             _path,
             "passwordhash",
@@ -60,7 +60,7 @@ object PasswordFields {
             PgTypes.text
           )
         }
-        def passwordsalt: Field[/* max 10 chars */ String, PasswordRow] = {
+        override def passwordsalt: Field[/* max 10 chars */ String, PasswordRow] = {
           new Field[/* max 10 chars */ String, PasswordRow](
             _path,
             "passwordsalt",
@@ -71,7 +71,7 @@ object PasswordFields {
             PgTypes.text
           )
         }
-        def rowguid: Field[TypoUUID, PasswordRow] = {
+        override def rowguid: Field[TypoUUID, PasswordRow] = {
           new Field[TypoUUID, PasswordRow](
             _path,
             "rowguid",
@@ -82,7 +82,7 @@ object PasswordFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, PasswordRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, PasswordRow] = {
           new Field[TypoLocalDateTime, PasswordRow](
             _path,
             "modifieddate",
@@ -98,7 +98,7 @@ object PasswordFields {
 
     override lazy val columns: java.util.List[FieldLike[?, PasswordRow]] = java.util.List.of(this.fields.businessentityid, this.fields.passwordhash, this.fields.passwordsalt, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[PasswordFields, PasswordRow] = new Impl(java.util.List.of())

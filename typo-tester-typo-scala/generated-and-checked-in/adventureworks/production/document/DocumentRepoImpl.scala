@@ -25,11 +25,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class DocumentRepoImpl extends DocumentRepo {
-  def delete: DeleteBuilder[DocumentFields, DocumentRow] = DeleteBuilder.of("production.document", DocumentFields.structure)
+  override def delete: DeleteBuilder[DocumentFields, DocumentRow] = DeleteBuilder.of("production.document", DocumentFields.structure)
 
-  def deleteById(documentnode: DocumentId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."document" where "documentnode" = ${DocumentId.pgType.encode(documentnode)}""".update().runUnchecked(c) > 0
+  override def deleteById(documentnode: DocumentId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."document" where "documentnode" = ${DocumentId.pgType.encode(documentnode)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(documentnodes: Array[DocumentId])(using c: Connection): Integer = {
+  override def deleteByIds(documentnodes: Array[DocumentId])(using c: Connection): Integer = {
     interpolate"""delete
     from "production"."document"
     where "documentnode" = ANY(${DocumentId.pgTypeArray.encode(documentnodes)})"""
@@ -37,7 +37,7 @@ class DocumentRepoImpl extends DocumentRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: DocumentRow)(using c: Connection): DocumentRow = {
+  override def insert(unsaved: DocumentRow)(using c: Connection): DocumentRow = {
   interpolate"""insert into "production"."document"("title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode")
     values (${PgTypes.text.encode(unsaved.title)}, ${BusinessentityId.pgType.encode(unsaved.owner)}::int4, ${Flag.pgType.encode(unsaved.folderflag)}::bool, ${PgTypes.text.encode(unsaved.filename)}, ${PgTypes.text.opt().encode(unsaved.fileextension)}, ${PgTypes.text.encode(unsaved.revision)}::bpchar, ${PgTypes.int4.encode(unsaved.changenumber)}::int4, ${TypoShort.pgType.encode(unsaved.status)}::int2, ${PgTypes.text.opt().encode(unsaved.documentsummary)}, ${TypoBytea.pgType.opt().encode(unsaved.document)}::bytea, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp, ${DocumentId.pgType.encode(unsaved.documentnode)})
     returning "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"
@@ -45,9 +45,9 @@ class DocumentRepoImpl extends DocumentRepo {
     .updateReturning(DocumentRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: DocumentRowUnsaved)(using c: Connection): DocumentRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: DocumentRowUnsaved)(using c: Connection): DocumentRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""title"""")): @scala.annotation.nowarn
     values.add(interpolate"${PgTypes.text.encode(unsaved.title)}"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""owner"""")): @scala.annotation.nowarn
@@ -65,39 +65,24 @@ class DocumentRepoImpl extends DocumentRepo {
     columns.add(Fragment.lit(""""document"""")): @scala.annotation.nowarn
     values.add(interpolate"${TypoBytea.pgType.opt().encode(unsaved.document)}::bytea"): @scala.annotation.nowarn
     unsaved.folderflag.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""folderflag"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${Flag.pgType.encode(value)}::bool"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""folderflag"""")): @scala.annotation.nowarn; values.add(interpolate"${Flag.pgType.encode(value)}::bool"): @scala.annotation.nowarn }
     );
     unsaved.changenumber.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""changenumber"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${PgTypes.int4.encode(value)}::int4"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""changenumber"""")): @scala.annotation.nowarn; values.add(interpolate"${PgTypes.int4.encode(value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoUUID.pgType.encode(value)}::uuid"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     unsaved.documentnode.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""documentnode"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${DocumentId.pgType.encode(value)}"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""documentnode"""")): @scala.annotation.nowarn; values.add(interpolate"${DocumentId.pgType.encode(value)}"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "production"."document"(${Fragment.comma(columns)})
@@ -105,58 +90,58 @@ class DocumentRepoImpl extends DocumentRepo {
       returning "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"
       """
     }
-    q.updateReturning(DocumentRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(DocumentRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[DocumentRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."document"("title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode") FROM STDIN""", batchSize, unsaved, c, DocumentRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[DocumentRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."document"("title", "owner", "filename", "fileextension", "revision", "status", "documentsummary", "document", "folderflag", "changenumber", "rowguid", "modifieddate", "documentnode") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, DocumentRowUnsaved.pgText)
 
-  def select: SelectBuilder[DocumentFields, DocumentRow] = SelectBuilder.of("production.document", DocumentFields.structure, DocumentRow.`_rowParser`)
+  override def select: SelectBuilder[DocumentFields, DocumentRow] = SelectBuilder.of("production.document", DocumentFields.structure, DocumentRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[DocumentRow] = {
+  override def selectAll(using c: Connection): java.util.List[DocumentRow] = {
     interpolate"""select "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"
     from "production"."document"
-    """.as(DocumentRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(DocumentRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(documentnode: DocumentId)(using c: Connection): Optional[DocumentRow] = {
+  override def selectById(documentnode: DocumentId)(using c: Connection): Optional[DocumentRow] = {
     interpolate"""select "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"
     from "production"."document"
-    where "documentnode" = ${DocumentId.pgType.encode(documentnode)}""".as(DocumentRow.`_rowParser`.first()).runUnchecked(c)
+    where "documentnode" = ${DocumentId.pgType.encode(documentnode)}""".query(DocumentRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(documentnodes: Array[DocumentId])(using c: Connection): java.util.List[DocumentRow] = {
+  override def selectByIds(documentnodes: Array[DocumentId])(using c: Connection): java.util.List[DocumentRow] = {
     interpolate"""select "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"
     from "production"."document"
-    where "documentnode" = ANY(${DocumentId.pgTypeArray.encode(documentnodes)})""".as(DocumentRow.`_rowParser`.all()).runUnchecked(c)
+    where "documentnode" = ANY(${DocumentId.pgTypeArray.encode(documentnodes)})""".query(DocumentRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(documentnodes: Array[DocumentId])(using c: Connection): java.util.Map[DocumentId, DocumentRow] = {
-    val ret: java.util.Map[DocumentId, DocumentRow] = new HashMap()
+  override def selectByIdsTracked(documentnodes: Array[DocumentId])(using c: Connection): java.util.Map[DocumentId, DocumentRow] = {
+    val ret: HashMap[DocumentId, DocumentRow] = new HashMap[DocumentId, DocumentRow]()
     selectByIds(documentnodes)(using c).forEach(row => ret.put(row.documentnode, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def selectByUniqueRowguid(rowguid: TypoUUID)(using c: Connection): Optional[DocumentRow] = {
+  override def selectByUniqueRowguid(rowguid: TypoUUID)(using c: Connection): Optional[DocumentRow] = {
     interpolate"""select "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"
     from "production"."document"
     where "rowguid" = ${TypoUUID.pgType.encode(rowguid)}
-    """.as(DocumentRow.`_rowParser`.first()).runUnchecked(c)
+    """.query(DocumentRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def update: UpdateBuilder[DocumentFields, DocumentRow] = UpdateBuilder.of("production.document", DocumentFields.structure, DocumentRow.`_rowParser`.all())
+  override def update: UpdateBuilder[DocumentFields, DocumentRow] = UpdateBuilder.of("production.document", DocumentFields.structure, DocumentRow.`_rowParser`.all())
 
-  def update(row: DocumentRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: DocumentRow)(using c: Connection): java.lang.Boolean = {
     val documentnode: DocumentId = row.documentnode
-    interpolate"""update "production"."document"
+    return interpolate"""update "production"."document"
     set "title" = ${PgTypes.text.encode(row.title)},
     "owner" = ${BusinessentityId.pgType.encode(row.owner)}::int4,
     "folderflag" = ${Flag.pgType.encode(row.folderflag)}::bool,
@@ -172,7 +157,7 @@ class DocumentRepoImpl extends DocumentRepo {
     where "documentnode" = ${DocumentId.pgType.encode(documentnode)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: DocumentRow)(using c: Connection): DocumentRow = {
+  override def upsert(unsaved: DocumentRow)(using c: Connection): DocumentRow = {
   interpolate"""insert into "production"."document"("title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode")
     values (${PgTypes.text.encode(unsaved.title)}, ${BusinessentityId.pgType.encode(unsaved.owner)}::int4, ${Flag.pgType.encode(unsaved.folderflag)}::bool, ${PgTypes.text.encode(unsaved.filename)}, ${PgTypes.text.opt().encode(unsaved.fileextension)}, ${PgTypes.text.encode(unsaved.revision)}::bpchar, ${PgTypes.int4.encode(unsaved.changenumber)}::int4, ${TypoShort.pgType.encode(unsaved.status)}::int2, ${PgTypes.text.opt().encode(unsaved.documentsummary)}, ${TypoBytea.pgType.opt().encode(unsaved.document)}::bytea, ${TypoUUID.pgType.encode(unsaved.rowguid)}::uuid, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp, ${DocumentId.pgType.encode(unsaved.documentnode)})
     on conflict ("documentnode")
@@ -195,7 +180,7 @@ class DocumentRepoImpl extends DocumentRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[DocumentRow])(using c: Connection): java.util.List[DocumentRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[DocumentRow])(using c: Connection): java.util.List[DocumentRow] = {
     interpolate"""insert into "production"."document"("title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode")
     values (?, ?::int4, ?::bool, ?, ?, ?::bpchar, ?::int4, ?::int2, ?, ?::bytea, ?::uuid, ?::timestamp, ?)
     on conflict ("documentnode")
@@ -219,13 +204,13 @@ class DocumentRepoImpl extends DocumentRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[DocumentRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table document_TEMP (like "production"."document") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy document_TEMP("title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode") from stdin""", batchSize, unsaved, c, DocumentRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "production"."document"("title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode")
+    return interpolate"""insert into "production"."document"("title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode")
     select * from document_TEMP
     on conflict ("documentnode")
     do update set

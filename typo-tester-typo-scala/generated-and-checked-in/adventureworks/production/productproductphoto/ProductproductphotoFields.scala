@@ -47,7 +47,7 @@ object ProductproductphotoFields {
 
     override lazy val fields: ProductproductphotoFields = {
       new ProductproductphotoFields {
-        def productid: IdField[ProductId, ProductproductphotoRow] = {
+        override def productid: IdField[ProductId, ProductproductphotoRow] = {
           new IdField[ProductId, ProductproductphotoRow](
             _path,
             "productid",
@@ -58,7 +58,7 @@ object ProductproductphotoFields {
             ProductId.pgType
           )
         }
-        def productphotoid: IdField[ProductphotoId, ProductproductphotoRow] = {
+        override def productphotoid: IdField[ProductphotoId, ProductproductphotoRow] = {
           new IdField[ProductphotoId, ProductproductphotoRow](
             _path,
             "productphotoid",
@@ -69,7 +69,7 @@ object ProductproductphotoFields {
             ProductphotoId.pgType
           )
         }
-        def primary: Field[Flag, ProductproductphotoRow] = {
+        override def primary: Field[Flag, ProductproductphotoRow] = {
           new Field[Flag, ProductproductphotoRow](
             _path,
             "primary",
@@ -80,7 +80,7 @@ object ProductproductphotoFields {
             Flag.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, ProductproductphotoRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, ProductproductphotoRow] = {
           new Field[TypoLocalDateTime, ProductproductphotoRow](
             _path,
             "modifieddate",
@@ -96,7 +96,7 @@ object ProductproductphotoFields {
 
     override lazy val columns: java.util.List[FieldLike[?, ProductproductphotoRow]] = java.util.List.of(this.fields.productid, this.fields.productphotoid, this.fields.primary, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[ProductproductphotoFields, ProductproductphotoRow] = new Impl(java.util.List.of())

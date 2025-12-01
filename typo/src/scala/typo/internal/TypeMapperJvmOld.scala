@@ -10,10 +10,10 @@ case class TypeMapperJvmOld(lang: Lang, typeOverride: TypeOverride, nullabilityO
       case db.Type.Bytea    => customTypes.TypoBytea.typoType
       case db.Type.Bpchar(maybeN) =>
         maybeN match {
-          case Some(n) if n != 2147483647 => TypesJava.String.withComment(s"bpchar, max $n chars")
-          case _                          => TypesJava.String.withComment(s"bpchar")
+          case Some(n) if n != 2147483647 => lang.String.withComment(s"bpchar, max $n chars")
+          case _                          => lang.String.withComment(s"bpchar")
         }
-      case db.Type.Char                  => TypesJava.String
+      case db.Type.Char                  => lang.String
       case db.Type.Date                  => customTypes.TypoLocalDate.typoType
       case db.Type.DomainRef(name, _, _) => jvm.Type.Qualified(naming.domainName(name))
       case db.Type.Float4                => lang.Float
@@ -25,7 +25,7 @@ case class TypeMapperJvmOld(lang: Lang, typeOverride: TypeOverride, nullabilityO
       case db.Type.Int8                  => lang.Long
       case db.Type.Json                  => customTypes.TypoJson.typoType
       case db.Type.Jsonb                 => customTypes.TypoJsonb.typoType
-      case db.Type.Name                  => TypesJava.String
+      case db.Type.Name                  => lang.String
       case db.Type.Numeric               => lang.BigDecimal
       case db.Type.Oid                   => lang.Long.withComment("oid")
       case db.Type.PGInterval            => customTypes.TypoInterval.typoType
@@ -56,7 +56,7 @@ case class TypeMapperJvmOld(lang: Lang, typeOverride: TypeOverride, nullabilityO
       case db.Type.regtype               => customTypes.TypoRegtype.typoType
       case db.Type.xid                   => customTypes.TypoXid.typoType
       case db.Type.EnumRef(enm)          => jvm.Type.Qualified(naming.enumName(enm.name))
-      case db.Type.Text                  => TypesJava.String
+      case db.Type.Text                  => lang.String
       case db.Type.Time                  => customTypes.TypoLocalTime.typoType
       case db.Type.TimeTz                => customTypes.TypoOffsetTime.typoType
       case db.Type.Timestamp             => customTypes.TypoLocalDateTime.typoType
@@ -65,8 +65,8 @@ case class TypeMapperJvmOld(lang: Lang, typeOverride: TypeOverride, nullabilityO
       case db.Type.Xml                   => customTypes.TypoXml.typoType
       case db.Type.VarChar(maybeN) =>
         maybeN match {
-          case Some(n) if n != 2147483647 => TypesJava.String.withComment(s"max $n chars")
-          case _                          => TypesJava.String
+          case Some(n) if n != 2147483647 => lang.String.withComment(s"max $n chars")
+          case _                          => lang.String
         }
       case db.Type.Vector           => customTypes.TypoVector.typoType
       case db.Type.Unknown(sqlType) => customTypes.TypoUnknown(sqlType).typoType

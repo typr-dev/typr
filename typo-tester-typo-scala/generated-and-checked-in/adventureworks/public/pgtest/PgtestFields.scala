@@ -185,7 +185,7 @@ object PgtestFields {
 
     override lazy val fields: PgtestFields = {
       new PgtestFields {
-        def bool: Field[java.lang.Boolean, PgtestRow] = {
+        override def bool: Field[java.lang.Boolean, PgtestRow] = {
           new Field[java.lang.Boolean, PgtestRow](
             _path,
             "bool",
@@ -196,7 +196,7 @@ object PgtestFields {
             PgTypes.bool
           )
         }
-        def box: Field[TypoBox, PgtestRow] = {
+        override def box: Field[TypoBox, PgtestRow] = {
           new Field[TypoBox, PgtestRow](
             _path,
             "box",
@@ -207,7 +207,7 @@ object PgtestFields {
             TypoBox.pgType
           )
         }
-        def bpchar: Field[/* bpchar, max 3 chars */ String, PgtestRow] = {
+        override def bpchar: Field[/* bpchar, max 3 chars */ String, PgtestRow] = {
           new Field[/* bpchar, max 3 chars */ String, PgtestRow](
             _path,
             "bpchar",
@@ -218,7 +218,7 @@ object PgtestFields {
             PgTypes.text
           )
         }
-        def bytea: Field[TypoBytea, PgtestRow] = {
+        override def bytea: Field[TypoBytea, PgtestRow] = {
           new Field[TypoBytea, PgtestRow](
             _path,
             "bytea",
@@ -229,7 +229,7 @@ object PgtestFields {
             TypoBytea.pgType
           )
         }
-        def char: Field[/* bpchar, max 1 chars */ String, PgtestRow] = {
+        override def char: Field[/* bpchar, max 1 chars */ String, PgtestRow] = {
           new Field[/* bpchar, max 1 chars */ String, PgtestRow](
             _path,
             "char",
@@ -240,7 +240,7 @@ object PgtestFields {
             PgTypes.text
           )
         }
-        def circle: Field[TypoCircle, PgtestRow] = {
+        override def circle: Field[TypoCircle, PgtestRow] = {
           new Field[TypoCircle, PgtestRow](
             _path,
             "circle",
@@ -251,7 +251,7 @@ object PgtestFields {
             TypoCircle.pgType
           )
         }
-        def date: Field[TypoLocalDate, PgtestRow] = {
+        override def date: Field[TypoLocalDate, PgtestRow] = {
           new Field[TypoLocalDate, PgtestRow](
             _path,
             "date",
@@ -262,7 +262,7 @@ object PgtestFields {
             TypoLocalDate.pgType
           )
         }
-        def float4: Field[java.lang.Float, PgtestRow] = {
+        override def float4: Field[java.lang.Float, PgtestRow] = {
           new Field[java.lang.Float, PgtestRow](
             _path,
             "float4",
@@ -273,7 +273,7 @@ object PgtestFields {
             PgTypes.float4
           )
         }
-        def float8: Field[java.lang.Double, PgtestRow] = {
+        override def float8: Field[java.lang.Double, PgtestRow] = {
           new Field[java.lang.Double, PgtestRow](
             _path,
             "float8",
@@ -284,7 +284,7 @@ object PgtestFields {
             PgTypes.float8
           )
         }
-        def hstore: Field[TypoHStore, PgtestRow] = {
+        override def hstore: Field[TypoHStore, PgtestRow] = {
           new Field[TypoHStore, PgtestRow](
             _path,
             "hstore",
@@ -295,7 +295,7 @@ object PgtestFields {
             TypoHStore.pgType
           )
         }
-        def inet: Field[TypoInet, PgtestRow] = {
+        override def inet: Field[TypoInet, PgtestRow] = {
           new Field[TypoInet, PgtestRow](
             _path,
             "inet",
@@ -306,7 +306,7 @@ object PgtestFields {
             TypoInet.pgType
           )
         }
-        def int2: Field[TypoShort, PgtestRow] = {
+        override def int2: Field[TypoShort, PgtestRow] = {
           new Field[TypoShort, PgtestRow](
             _path,
             "int2",
@@ -317,7 +317,7 @@ object PgtestFields {
             TypoShort.pgType
           )
         }
-        def int2vector: Field[TypoInt2Vector, PgtestRow] = {
+        override def int2vector: Field[TypoInt2Vector, PgtestRow] = {
           new Field[TypoInt2Vector, PgtestRow](
             _path,
             "int2vector",
@@ -328,7 +328,7 @@ object PgtestFields {
             TypoInt2Vector.pgType
           )
         }
-        def int4: Field[Integer, PgtestRow] = {
+        override def int4: Field[Integer, PgtestRow] = {
           new Field[Integer, PgtestRow](
             _path,
             "int4",
@@ -339,7 +339,7 @@ object PgtestFields {
             PgTypes.int4
           )
         }
-        def int8: Field[java.lang.Long, PgtestRow] = {
+        override def int8: Field[java.lang.Long, PgtestRow] = {
           new Field[java.lang.Long, PgtestRow](
             _path,
             "int8",
@@ -350,7 +350,7 @@ object PgtestFields {
             PgTypes.int8
           )
         }
-        def interval: Field[TypoInterval, PgtestRow] = {
+        override def interval: Field[TypoInterval, PgtestRow] = {
           new Field[TypoInterval, PgtestRow](
             _path,
             "interval",
@@ -361,7 +361,7 @@ object PgtestFields {
             TypoInterval.pgType
           )
         }
-        def json: Field[TypoJson, PgtestRow] = {
+        override def json: Field[TypoJson, PgtestRow] = {
           new Field[TypoJson, PgtestRow](
             _path,
             "json",
@@ -372,7 +372,7 @@ object PgtestFields {
             TypoJson.pgType
           )
         }
-        def jsonb: Field[TypoJsonb, PgtestRow] = {
+        override def jsonb: Field[TypoJsonb, PgtestRow] = {
           new Field[TypoJsonb, PgtestRow](
             _path,
             "jsonb",
@@ -383,7 +383,7 @@ object PgtestFields {
             TypoJsonb.pgType
           )
         }
-        def line: Field[TypoLine, PgtestRow] = {
+        override def line: Field[TypoLine, PgtestRow] = {
           new Field[TypoLine, PgtestRow](
             _path,
             "line",
@@ -394,7 +394,7 @@ object PgtestFields {
             TypoLine.pgType
           )
         }
-        def lseg: Field[TypoLineSegment, PgtestRow] = {
+        override def lseg: Field[TypoLineSegment, PgtestRow] = {
           new Field[TypoLineSegment, PgtestRow](
             _path,
             "lseg",
@@ -405,7 +405,7 @@ object PgtestFields {
             TypoLineSegment.pgType
           )
         }
-        def money: Field[TypoMoney, PgtestRow] = {
+        override def money: Field[TypoMoney, PgtestRow] = {
           new Field[TypoMoney, PgtestRow](
             _path,
             "money",
@@ -416,7 +416,7 @@ object PgtestFields {
             TypoMoney.pgType
           )
         }
-        def mydomain: Field[Mydomain, PgtestRow] = {
+        override def mydomain: Field[Mydomain, PgtestRow] = {
           new Field[Mydomain, PgtestRow](
             _path,
             "mydomain",
@@ -427,7 +427,7 @@ object PgtestFields {
             Mydomain.pgType
           )
         }
-        def myenum: Field[Myenum, PgtestRow] = {
+        override def myenum: Field[Myenum, PgtestRow] = {
           new Field[Myenum, PgtestRow](
             _path,
             "myenum",
@@ -438,7 +438,7 @@ object PgtestFields {
             Myenum.pgType
           )
         }
-        def name: Field[String, PgtestRow] = {
+        override def name: Field[String, PgtestRow] = {
           new Field[String, PgtestRow](
             _path,
             "name",
@@ -449,7 +449,7 @@ object PgtestFields {
             PgTypes.text
           )
         }
-        def numeric: Field[java.math.BigDecimal, PgtestRow] = {
+        override def numeric: Field[java.math.BigDecimal, PgtestRow] = {
           new Field[java.math.BigDecimal, PgtestRow](
             _path,
             "numeric",
@@ -460,7 +460,7 @@ object PgtestFields {
             PgTypes.numeric
           )
         }
-        def path: Field[TypoPath, PgtestRow] = {
+        override def path: Field[TypoPath, PgtestRow] = {
           new Field[TypoPath, PgtestRow](
             _path,
             "path",
@@ -471,7 +471,7 @@ object PgtestFields {
             TypoPath.pgType
           )
         }
-        def point: Field[TypoPoint, PgtestRow] = {
+        override def point: Field[TypoPoint, PgtestRow] = {
           new Field[TypoPoint, PgtestRow](
             _path,
             "point",
@@ -482,7 +482,7 @@ object PgtestFields {
             TypoPoint.pgType
           )
         }
-        def polygon: Field[TypoPolygon, PgtestRow] = {
+        override def polygon: Field[TypoPolygon, PgtestRow] = {
           new Field[TypoPolygon, PgtestRow](
             _path,
             "polygon",
@@ -493,7 +493,7 @@ object PgtestFields {
             TypoPolygon.pgType
           )
         }
-        def text: Field[String, PgtestRow] = {
+        override def text: Field[String, PgtestRow] = {
           new Field[String, PgtestRow](
             _path,
             "text",
@@ -504,7 +504,7 @@ object PgtestFields {
             PgTypes.text
           )
         }
-        def time: Field[TypoLocalTime, PgtestRow] = {
+        override def time: Field[TypoLocalTime, PgtestRow] = {
           new Field[TypoLocalTime, PgtestRow](
             _path,
             "time",
@@ -515,7 +515,7 @@ object PgtestFields {
             TypoLocalTime.pgType
           )
         }
-        def timestamp: Field[TypoLocalDateTime, PgtestRow] = {
+        override def timestamp: Field[TypoLocalDateTime, PgtestRow] = {
           new Field[TypoLocalDateTime, PgtestRow](
             _path,
             "timestamp",
@@ -526,7 +526,7 @@ object PgtestFields {
             TypoLocalDateTime.pgType
           )
         }
-        def timestampz: Field[TypoInstant, PgtestRow] = {
+        override def timestampz: Field[TypoInstant, PgtestRow] = {
           new Field[TypoInstant, PgtestRow](
             _path,
             "timestampz",
@@ -537,7 +537,7 @@ object PgtestFields {
             TypoInstant.pgType
           )
         }
-        def timez: Field[TypoOffsetTime, PgtestRow] = {
+        override def timez: Field[TypoOffsetTime, PgtestRow] = {
           new Field[TypoOffsetTime, PgtestRow](
             _path,
             "timez",
@@ -548,7 +548,7 @@ object PgtestFields {
             TypoOffsetTime.pgType
           )
         }
-        def uuid: Field[TypoUUID, PgtestRow] = {
+        override def uuid: Field[TypoUUID, PgtestRow] = {
           new Field[TypoUUID, PgtestRow](
             _path,
             "uuid",
@@ -559,7 +559,7 @@ object PgtestFields {
             TypoUUID.pgType
           )
         }
-        def varchar: Field[String, PgtestRow] = {
+        override def varchar: Field[String, PgtestRow] = {
           new Field[String, PgtestRow](
             _path,
             "varchar",
@@ -570,7 +570,7 @@ object PgtestFields {
             PgTypes.text
           )
         }
-        def vector: Field[TypoVector, PgtestRow] = {
+        override def vector: Field[TypoVector, PgtestRow] = {
           new Field[TypoVector, PgtestRow](
             _path,
             "vector",
@@ -581,7 +581,7 @@ object PgtestFields {
             TypoVector.pgType
           )
         }
-        def xml: Field[TypoXml, PgtestRow] = {
+        override def xml: Field[TypoXml, PgtestRow] = {
           new Field[TypoXml, PgtestRow](
             _path,
             "xml",
@@ -592,7 +592,7 @@ object PgtestFields {
             TypoXml.pgType
           )
         }
-        def boxes: Field[Array[TypoBox], PgtestRow] = {
+        override def boxes: Field[Array[TypoBox], PgtestRow] = {
           new Field[Array[TypoBox], PgtestRow](
             _path,
             "boxes",
@@ -603,7 +603,7 @@ object PgtestFields {
             TypoBox.pgTypeArray
           )
         }
-        def bpchares: Field[Array[/* bpchar */ String], PgtestRow] = {
+        override def bpchares: Field[Array[/* bpchar */ String], PgtestRow] = {
           new Field[Array[/* bpchar */ String], PgtestRow](
             _path,
             "bpchares",
@@ -614,7 +614,7 @@ object PgtestFields {
             PgTypes.textArray
           )
         }
-        def chares: Field[Array[/* bpchar */ String], PgtestRow] = {
+        override def chares: Field[Array[/* bpchar */ String], PgtestRow] = {
           new Field[Array[/* bpchar */ String], PgtestRow](
             _path,
             "chares",
@@ -625,7 +625,7 @@ object PgtestFields {
             PgTypes.textArray
           )
         }
-        def circlees: Field[Array[TypoCircle], PgtestRow] = {
+        override def circlees: Field[Array[TypoCircle], PgtestRow] = {
           new Field[Array[TypoCircle], PgtestRow](
             _path,
             "circlees",
@@ -636,7 +636,7 @@ object PgtestFields {
             TypoCircle.pgTypeArray
           )
         }
-        def datees: Field[Array[TypoLocalDate], PgtestRow] = {
+        override def datees: Field[Array[TypoLocalDate], PgtestRow] = {
           new Field[Array[TypoLocalDate], PgtestRow](
             _path,
             "datees",
@@ -647,7 +647,7 @@ object PgtestFields {
             TypoLocalDate.pgTypeArray
           )
         }
-        def float4es: Field[Array[java.lang.Float], PgtestRow] = {
+        override def float4es: Field[Array[java.lang.Float], PgtestRow] = {
           new Field[Array[java.lang.Float], PgtestRow](
             _path,
             "float4es",
@@ -658,7 +658,7 @@ object PgtestFields {
             PgTypes.float4Array
           )
         }
-        def float8es: Field[Array[java.lang.Double], PgtestRow] = {
+        override def float8es: Field[Array[java.lang.Double], PgtestRow] = {
           new Field[Array[java.lang.Double], PgtestRow](
             _path,
             "float8es",
@@ -669,7 +669,7 @@ object PgtestFields {
             PgTypes.float8Array
           )
         }
-        def inetes: Field[Array[TypoInet], PgtestRow] = {
+        override def inetes: Field[Array[TypoInet], PgtestRow] = {
           new Field[Array[TypoInet], PgtestRow](
             _path,
             "inetes",
@@ -680,7 +680,7 @@ object PgtestFields {
             TypoInet.pgTypeArray
           )
         }
-        def int2es: Field[Array[TypoShort], PgtestRow] = {
+        override def int2es: Field[Array[TypoShort], PgtestRow] = {
           new Field[Array[TypoShort], PgtestRow](
             _path,
             "int2es",
@@ -691,7 +691,7 @@ object PgtestFields {
             TypoShort.pgTypeArray
           )
         }
-        def int2vectores: Field[Array[TypoInt2Vector], PgtestRow] = {
+        override def int2vectores: Field[Array[TypoInt2Vector], PgtestRow] = {
           new Field[Array[TypoInt2Vector], PgtestRow](
             _path,
             "int2vectores",
@@ -702,7 +702,7 @@ object PgtestFields {
             TypoInt2Vector.pgTypeArray
           )
         }
-        def int4es: Field[Array[Integer], PgtestRow] = {
+        override def int4es: Field[Array[Integer], PgtestRow] = {
           new Field[Array[Integer], PgtestRow](
             _path,
             "int4es",
@@ -713,7 +713,7 @@ object PgtestFields {
             PgTypes.int4Array
           )
         }
-        def int8es: Field[Array[java.lang.Long], PgtestRow] = {
+        override def int8es: Field[Array[java.lang.Long], PgtestRow] = {
           new Field[Array[java.lang.Long], PgtestRow](
             _path,
             "int8es",
@@ -724,7 +724,7 @@ object PgtestFields {
             PgTypes.int8Array
           )
         }
-        def intervales: Field[Array[TypoInterval], PgtestRow] = {
+        override def intervales: Field[Array[TypoInterval], PgtestRow] = {
           new Field[Array[TypoInterval], PgtestRow](
             _path,
             "intervales",
@@ -735,7 +735,7 @@ object PgtestFields {
             TypoInterval.pgTypeArray
           )
         }
-        def jsones: Field[Array[TypoJson], PgtestRow] = {
+        override def jsones: Field[Array[TypoJson], PgtestRow] = {
           new Field[Array[TypoJson], PgtestRow](
             _path,
             "jsones",
@@ -746,7 +746,7 @@ object PgtestFields {
             TypoJson.pgTypeArray
           )
         }
-        def jsonbes: Field[Array[TypoJsonb], PgtestRow] = {
+        override def jsonbes: Field[Array[TypoJsonb], PgtestRow] = {
           new Field[Array[TypoJsonb], PgtestRow](
             _path,
             "jsonbes",
@@ -757,7 +757,7 @@ object PgtestFields {
             TypoJsonb.pgTypeArray
           )
         }
-        def linees: Field[Array[TypoLine], PgtestRow] = {
+        override def linees: Field[Array[TypoLine], PgtestRow] = {
           new Field[Array[TypoLine], PgtestRow](
             _path,
             "linees",
@@ -768,7 +768,7 @@ object PgtestFields {
             TypoLine.pgTypeArray
           )
         }
-        def lseges: Field[Array[TypoLineSegment], PgtestRow] = {
+        override def lseges: Field[Array[TypoLineSegment], PgtestRow] = {
           new Field[Array[TypoLineSegment], PgtestRow](
             _path,
             "lseges",
@@ -779,7 +779,7 @@ object PgtestFields {
             TypoLineSegment.pgTypeArray
           )
         }
-        def moneyes: Field[Array[TypoMoney], PgtestRow] = {
+        override def moneyes: Field[Array[TypoMoney], PgtestRow] = {
           new Field[Array[TypoMoney], PgtestRow](
             _path,
             "moneyes",
@@ -790,7 +790,7 @@ object PgtestFields {
             TypoMoney.pgTypeArray
           )
         }
-        def mydomaines: Field[Array[Mydomain], PgtestRow] = {
+        override def mydomaines: Field[Array[Mydomain], PgtestRow] = {
           new Field[Array[Mydomain], PgtestRow](
             _path,
             "mydomaines",
@@ -801,7 +801,7 @@ object PgtestFields {
             Mydomain.pgTypeArray
           )
         }
-        def myenumes: Field[Array[Myenum], PgtestRow] = {
+        override def myenumes: Field[Array[Myenum], PgtestRow] = {
           new Field[Array[Myenum], PgtestRow](
             _path,
             "myenumes",
@@ -812,7 +812,7 @@ object PgtestFields {
             Myenum.pgTypeArray
           )
         }
-        def namees: Field[Array[String], PgtestRow] = {
+        override def namees: Field[Array[String], PgtestRow] = {
           new Field[Array[String], PgtestRow](
             _path,
             "namees",
@@ -823,7 +823,7 @@ object PgtestFields {
             PgTypes.textArray
           )
         }
-        def numerices: Field[Array[java.math.BigDecimal], PgtestRow] = {
+        override def numerices: Field[Array[java.math.BigDecimal], PgtestRow] = {
           new Field[Array[java.math.BigDecimal], PgtestRow](
             _path,
             "numerices",
@@ -834,7 +834,7 @@ object PgtestFields {
             PgTypes.numericArray
           )
         }
-        def pathes: Field[Array[TypoPath], PgtestRow] = {
+        override def pathes: Field[Array[TypoPath], PgtestRow] = {
           new Field[Array[TypoPath], PgtestRow](
             _path,
             "pathes",
@@ -845,7 +845,7 @@ object PgtestFields {
             TypoPath.pgTypeArray
           )
         }
-        def pointes: Field[Array[TypoPoint], PgtestRow] = {
+        override def pointes: Field[Array[TypoPoint], PgtestRow] = {
           new Field[Array[TypoPoint], PgtestRow](
             _path,
             "pointes",
@@ -856,7 +856,7 @@ object PgtestFields {
             TypoPoint.pgTypeArray
           )
         }
-        def polygones: Field[Array[TypoPolygon], PgtestRow] = {
+        override def polygones: Field[Array[TypoPolygon], PgtestRow] = {
           new Field[Array[TypoPolygon], PgtestRow](
             _path,
             "polygones",
@@ -867,7 +867,7 @@ object PgtestFields {
             TypoPolygon.pgTypeArray
           )
         }
-        def textes: Field[Array[String], PgtestRow] = {
+        override def textes: Field[Array[String], PgtestRow] = {
           new Field[Array[String], PgtestRow](
             _path,
             "textes",
@@ -878,7 +878,7 @@ object PgtestFields {
             PgTypes.textArray
           )
         }
-        def timees: Field[Array[TypoLocalTime], PgtestRow] = {
+        override def timees: Field[Array[TypoLocalTime], PgtestRow] = {
           new Field[Array[TypoLocalTime], PgtestRow](
             _path,
             "timees",
@@ -889,7 +889,7 @@ object PgtestFields {
             TypoLocalTime.pgTypeArray
           )
         }
-        def timestampes: Field[Array[TypoLocalDateTime], PgtestRow] = {
+        override def timestampes: Field[Array[TypoLocalDateTime], PgtestRow] = {
           new Field[Array[TypoLocalDateTime], PgtestRow](
             _path,
             "timestampes",
@@ -900,7 +900,7 @@ object PgtestFields {
             TypoLocalDateTime.pgTypeArray
           )
         }
-        def timestampzes: Field[Array[TypoInstant], PgtestRow] = {
+        override def timestampzes: Field[Array[TypoInstant], PgtestRow] = {
           new Field[Array[TypoInstant], PgtestRow](
             _path,
             "timestampzes",
@@ -911,7 +911,7 @@ object PgtestFields {
             TypoInstant.pgTypeArray
           )
         }
-        def timezes: Field[Array[TypoOffsetTime], PgtestRow] = {
+        override def timezes: Field[Array[TypoOffsetTime], PgtestRow] = {
           new Field[Array[TypoOffsetTime], PgtestRow](
             _path,
             "timezes",
@@ -922,7 +922,7 @@ object PgtestFields {
             TypoOffsetTime.pgTypeArray
           )
         }
-        def uuides: Field[Array[TypoUUID], PgtestRow] = {
+        override def uuides: Field[Array[TypoUUID], PgtestRow] = {
           new Field[Array[TypoUUID], PgtestRow](
             _path,
             "uuides",
@@ -933,7 +933,7 @@ object PgtestFields {
             TypoUUID.pgTypeArray
           )
         }
-        def varchares: Field[Array[String], PgtestRow] = {
+        override def varchares: Field[Array[String], PgtestRow] = {
           new Field[Array[String], PgtestRow](
             _path,
             "varchares",
@@ -944,7 +944,7 @@ object PgtestFields {
             PgTypes.textArray
           )
         }
-        def xmles: Field[Array[TypoXml], PgtestRow] = {
+        override def xmles: Field[Array[TypoXml], PgtestRow] = {
           new Field[Array[TypoXml], PgtestRow](
             _path,
             "xmles",
@@ -960,7 +960,7 @@ object PgtestFields {
 
     override lazy val columns: java.util.List[FieldLike[?, PgtestRow]] = java.util.List.of(this.fields.bool, this.fields.box, this.fields.bpchar, this.fields.bytea, this.fields.char, this.fields.circle, this.fields.date, this.fields.float4, this.fields.float8, this.fields.hstore, this.fields.inet, this.fields.int2, this.fields.int2vector, this.fields.int4, this.fields.int8, this.fields.interval, this.fields.json, this.fields.jsonb, this.fields.line, this.fields.lseg, this.fields.money, this.fields.mydomain, this.fields.myenum, this.fields.name, this.fields.numeric, this.fields.path, this.fields.point, this.fields.polygon, this.fields.text, this.fields.time, this.fields.timestamp, this.fields.timestampz, this.fields.timez, this.fields.uuid, this.fields.varchar, this.fields.vector, this.fields.xml, this.fields.boxes, this.fields.bpchares, this.fields.chares, this.fields.circlees, this.fields.datees, this.fields.float4es, this.fields.float8es, this.fields.inetes, this.fields.int2es, this.fields.int2vectores, this.fields.int4es, this.fields.int8es, this.fields.intervales, this.fields.jsones, this.fields.jsonbes, this.fields.linees, this.fields.lseges, this.fields.moneyes, this.fields.mydomaines, this.fields.myenumes, this.fields.namees, this.fields.numerices, this.fields.pathes, this.fields.pointes, this.fields.polygones, this.fields.textes, this.fields.timees, this.fields.timestampes, this.fields.timestampzes, this.fields.timezes, this.fields.uuides, this.fields.varchares, this.fields.xmles)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[PgtestFields, PgtestRow] = new Impl(java.util.List.of())

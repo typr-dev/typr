@@ -30,7 +30,7 @@ import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 
 public interface EmployeedepartmenthistoryFields {
-  static final class Impl extends Relation<EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow> {
+  final class Impl extends Relation<EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -38,21 +38,27 @@ public interface EmployeedepartmenthistoryFields {
     @Override
     public EmployeedepartmenthistoryFields fields() {
       return new EmployeedepartmenthistoryFields() {
+               @Override
                public IdField<BusinessentityId, EmployeedepartmenthistoryRow> businessentityid() {
                  return new IdField<BusinessentityId, EmployeedepartmenthistoryRow>(_path, "businessentityid", EmployeedepartmenthistoryRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public IdField<DepartmentId, EmployeedepartmenthistoryRow> departmentid() {
                  return new IdField<DepartmentId, EmployeedepartmenthistoryRow>(_path, "departmentid", EmployeedepartmenthistoryRow::departmentid, Optional.empty(), Optional.of("int2"), (row, value) -> row.withDepartmentid(value), DepartmentId.pgType);
                };
+               @Override
                public IdField<ShiftId, EmployeedepartmenthistoryRow> shiftid() {
                  return new IdField<ShiftId, EmployeedepartmenthistoryRow>(_path, "shiftid", EmployeedepartmenthistoryRow::shiftid, Optional.empty(), Optional.of("int2"), (row, value) -> row.withShiftid(value), ShiftId.pgType);
                };
+               @Override
                public IdField<TypoLocalDate, EmployeedepartmenthistoryRow> startdate() {
                  return new IdField<TypoLocalDate, EmployeedepartmenthistoryRow>(_path, "startdate", EmployeedepartmenthistoryRow::startdate, Optional.of("text"), Optional.of("date"), (row, value) -> row.withStartdate(value), TypoLocalDate.pgType);
                };
+               @Override
                public OptField<TypoLocalDate, EmployeedepartmenthistoryRow> enddate() {
                  return new OptField<TypoLocalDate, EmployeedepartmenthistoryRow>(_path, "enddate", EmployeedepartmenthistoryRow::enddate, Optional.of("text"), Optional.of("date"), (row, value) -> row.withEnddate(value), TypoLocalDate.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, EmployeedepartmenthistoryRow> modifieddate() {
                  return new Field<TypoLocalDateTime, EmployeedepartmenthistoryRow>(_path, "modifieddate", EmployeedepartmenthistoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -64,6 +70,7 @@ public interface EmployeedepartmenthistoryFields {
       return List.of(this.fields().businessentityid(), this.fields().departmentid(), this.fields().shiftid(), this.fields().startdate(), this.fields().enddate(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

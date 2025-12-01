@@ -26,20 +26,20 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class DocumentRepoImpl extends DocumentRepo {
-  def delete: DeleteBuilder[DocumentFields, DocumentRow] = DeleteBuilder.of(""""production"."document"""", DocumentFields.structure, DocumentRow.jdbcDecoder)
+  override def delete: DeleteBuilder[DocumentFields, DocumentRow] = DeleteBuilder.of(""""production"."document"""", DocumentFields.structure, DocumentRow.jdbcDecoder)
 
-  def deleteById(documentnode: DocumentId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "production"."document" where "documentnode" = ${Segment.paramSegment(documentnode)(DocumentId.setter)}""".delete.map(_ > 0)
+  override def deleteById(documentnode: DocumentId): ZIO[ZConnection, Throwable, Boolean] = sql"""delete from "production"."document" where "documentnode" = ${Segment.paramSegment(documentnode)(DocumentId.setter)}""".delete.map(_ > 0)
 
-  def deleteByIds(documentnodes: Array[DocumentId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "production"."document" where "documentnode" = ANY(${Segment.paramSegment(documentnodes)(DocumentId.arraySetter)})""".delete
+  override def deleteByIds(documentnodes: Array[DocumentId]): ZIO[ZConnection, Throwable, Long] = sql"""delete from "production"."document" where "documentnode" = ANY(${Segment.paramSegment(documentnodes)(DocumentId.arraySetter)})""".delete
 
-  def insert(unsaved: DocumentRow): ZIO[ZConnection, Throwable, DocumentRow] = {
+  override def insert(unsaved: DocumentRow): ZIO[ZConnection, Throwable, DocumentRow] = {
     sql"""insert into "production"."document"("title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode")
     values (${Segment.paramSegment(unsaved.title)(Setter.stringSetter)}, ${Segment.paramSegment(unsaved.owner)(BusinessentityId.setter)}::int4, ${Segment.paramSegment(unsaved.folderflag)(Flag.setter)}::bool, ${Segment.paramSegment(unsaved.filename)(Setter.stringSetter)}, ${Segment.paramSegment(unsaved.fileextension)(Setter.optionParamSetter(Setter.stringSetter))}, ${Segment.paramSegment(unsaved.revision)(Setter.stringSetter)}::bpchar, ${Segment.paramSegment(unsaved.changenumber)(Setter.intSetter)}::int4, ${Segment.paramSegment(unsaved.status)(TypoShort.setter)}::int2, ${Segment.paramSegment(unsaved.documentsummary)(Setter.optionParamSetter(Setter.stringSetter))}, ${Segment.paramSegment(unsaved.document)(Setter.optionParamSetter(TypoBytea.setter))}::bytea, ${Segment.paramSegment(unsaved.rowguid)(TypoUUID.setter)}::uuid, ${Segment.paramSegment(unsaved.modifieddate)(TypoLocalDateTime.setter)}::timestamp, ${Segment.paramSegment(unsaved.documentnode)(DocumentId.setter)})
     returning "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"
     """.insertReturning(DocumentRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insert(unsaved: DocumentRowUnsaved): ZIO[ZConnection, Throwable, DocumentRow] = {
+  override def insert(unsaved: DocumentRowUnsaved): ZIO[ZConnection, Throwable, DocumentRow] = {
     val fs = List(
       Some((sql""""title"""", sql"${Segment.paramSegment(unsaved.title)(Setter.stringSetter)}")),
       Some((sql""""owner"""", sql"${Segment.paramSegment(unsaved.owner)(BusinessentityId.setter)}::int4")),
@@ -82,42 +82,42 @@ class DocumentRepoImpl extends DocumentRepo {
     q.insertReturning(DocumentRow.jdbcDecoder).map(_.updatedKeys.head)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: ZStream[ZConnection, Throwable, DocumentRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "production"."document"("title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode") FROM STDIN""", batchSize, unsaved)(DocumentRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: ZStream[ZConnection, Throwable, DocumentRowUnsaved],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = streamingInsert(s"""COPY "production"."document"("title", "owner", "filename", "fileextension", "revision", "status", "documentsummary", "document", "folderflag", "changenumber", "rowguid", "modifieddate", "documentnode") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(DocumentRowUnsaved.pgText)
 
-  def select: SelectBuilder[DocumentFields, DocumentRow] = SelectBuilder.of(""""production"."document"""", DocumentFields.structure, DocumentRow.jdbcDecoder)
+  override def select: SelectBuilder[DocumentFields, DocumentRow] = SelectBuilder.of(""""production"."document"""", DocumentFields.structure, DocumentRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, DocumentRow] = sql"""select "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode" from "production"."document"""".query(DocumentRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, DocumentRow] = sql"""select "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode" from "production"."document"""".query(DocumentRow.jdbcDecoder).selectStream()
 
-  def selectById(documentnode: DocumentId): ZIO[ZConnection, Throwable, Option[DocumentRow]] = sql"""select "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode" from "production"."document" where "documentnode" = ${Segment.paramSegment(documentnode)(DocumentId.setter)}""".query(DocumentRow.jdbcDecoder).selectOne
+  override def selectById(documentnode: DocumentId): ZIO[ZConnection, Throwable, Option[DocumentRow]] = sql"""select "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode" from "production"."document" where "documentnode" = ${Segment.paramSegment(documentnode)(DocumentId.setter)}""".query(DocumentRow.jdbcDecoder).selectOne
 
-  def selectByIds(documentnodes: Array[DocumentId]): ZStream[ZConnection, Throwable, DocumentRow] = sql"""select "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode" from "production"."document" where "documentnode" = ANY(${Segment.paramSegment(documentnodes)(DocumentId.arraySetter)})""".query(DocumentRow.jdbcDecoder).selectStream()
+  override def selectByIds(documentnodes: Array[DocumentId]): ZStream[ZConnection, Throwable, DocumentRow] = sql"""select "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode" from "production"."document" where "documentnode" = ANY(${Segment.paramSegment(documentnodes)(DocumentId.arraySetter)})""".query(DocumentRow.jdbcDecoder).selectStream()
 
-  def selectByIdsTracked(documentnodes: Array[DocumentId]): ZIO[ZConnection, Throwable, Map[DocumentId, DocumentRow]] = {
+  override def selectByIdsTracked(documentnodes: Array[DocumentId]): ZIO[ZConnection, Throwable, Map[DocumentId, DocumentRow]] = {
     selectByIds(documentnodes).runCollect.map { rows =>
       val byId = rows.view.map(x => (x.documentnode, x)).toMap
       documentnodes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def selectByUniqueRowguid(rowguid: TypoUUID): ZIO[ZConnection, Throwable, Option[DocumentRow]] = {
+  override def selectByUniqueRowguid(rowguid: TypoUUID): ZIO[ZConnection, Throwable, Option[DocumentRow]] = {
     sql"""select "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"
     from "production"."document"
     where "rowguid" = ${Segment.paramSegment(rowguid)(TypoUUID.setter)}
     """.query(DocumentRow.jdbcDecoder).selectOne
   }
 
-  def update: UpdateBuilder[DocumentFields, DocumentRow] = UpdateBuilder.of(""""production"."document"""", DocumentFields.structure, DocumentRow.jdbcDecoder)
+  override def update: UpdateBuilder[DocumentFields, DocumentRow] = UpdateBuilder.of(""""production"."document"""", DocumentFields.structure, DocumentRow.jdbcDecoder)
 
-  def update(row: DocumentRow): ZIO[ZConnection, Throwable, Option[DocumentRow]] = {
+  override def update(row: DocumentRow): ZIO[ZConnection, Throwable, Option[DocumentRow]] = {
     val documentnode = row.documentnode
     sql"""update "production"."document"
     set "title" = ${Segment.paramSegment(row.title)(Setter.stringSetter)},
@@ -138,7 +138,7 @@ class DocumentRepoImpl extends DocumentRepo {
       .selectOne
   }
 
-  def upsert(unsaved: DocumentRow): ZIO[ZConnection, Throwable, UpdateResult[DocumentRow]] = {
+  override def upsert(unsaved: DocumentRow): ZIO[ZConnection, Throwable, UpdateResult[DocumentRow]] = {
     sql"""insert into "production"."document"("title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode")
     values (
       ${Segment.paramSegment(unsaved.title)(Setter.stringSetter)},
@@ -173,7 +173,7 @@ class DocumentRepoImpl extends DocumentRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: ZStream[ZConnection, Throwable, DocumentRow],
     batchSize: Int = 10000
   ): ZIO[ZConnection, Throwable, Long] = {

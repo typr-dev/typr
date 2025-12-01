@@ -17,7 +17,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface CcViewFields {
-  static final class Impl extends Relation<CcViewFields, CcViewRow> {
+  final class Impl extends Relation<CcViewFields, CcViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -25,24 +25,31 @@ public interface CcViewFields {
     @Override
     public CcViewFields fields() {
       return new CcViewFields() {
+               @Override
                public Field</* user-picked */ CustomCreditcardId, CcViewRow> id() {
                  return new Field</* user-picked */ CustomCreditcardId, CcViewRow>(_path, "id", CcViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), /* user-picked */ CustomCreditcardId.pgType);
                };
+               @Override
                public Field</* user-picked */ CustomCreditcardId, CcViewRow> creditcardid() {
                  return new Field</* user-picked */ CustomCreditcardId, CcViewRow>(_path, "creditcardid", CcViewRow::creditcardid, Optional.empty(), Optional.empty(), (row, value) -> row.withCreditcardid(value), /* user-picked */ CustomCreditcardId.pgType);
                };
+               @Override
                public Field</* max 50 chars */ String, CcViewRow> cardtype() {
                  return new Field</* max 50 chars */ String, CcViewRow>(_path, "cardtype", CcViewRow::cardtype, Optional.empty(), Optional.empty(), (row, value) -> row.withCardtype(value), PgTypes.text);
                };
+               @Override
                public Field</* max 25 chars */ String, CcViewRow> cardnumber() {
                  return new Field</* max 25 chars */ String, CcViewRow>(_path, "cardnumber", CcViewRow::cardnumber, Optional.empty(), Optional.empty(), (row, value) -> row.withCardnumber(value), PgTypes.text);
                };
+               @Override
                public Field<TypoShort, CcViewRow> expmonth() {
                  return new Field<TypoShort, CcViewRow>(_path, "expmonth", CcViewRow::expmonth, Optional.empty(), Optional.empty(), (row, value) -> row.withExpmonth(value), TypoShort.pgType);
                };
+               @Override
                public Field<TypoShort, CcViewRow> expyear() {
                  return new Field<TypoShort, CcViewRow>(_path, "expyear", CcViewRow::expyear, Optional.empty(), Optional.empty(), (row, value) -> row.withExpyear(value), TypoShort.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, CcViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, CcViewRow>(_path, "modifieddate", CcViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -54,6 +61,7 @@ public interface CcViewFields {
       return List.of(this.fields().id(), this.fields().creditcardid(), this.fields().cardtype(), this.fields().cardnumber(), this.fields().expmonth(), this.fields().expyear(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

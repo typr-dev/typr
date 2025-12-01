@@ -11,7 +11,6 @@ import adventureworks.public_.Name;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple3;
 
 /** Table: production.culture
   * Lookup table containing the languages in which some AdventureWorks data is stored.
@@ -40,7 +39,7 @@ public record CultureRow(
     return new CultureRow(cultureid, name, modifieddate);
   };
 
-  static RowParser<CultureRow> _rowParser = RowParsers.of(CultureId.pgType, Name.pgType, TypoLocalDateTime.pgType, CultureRow::new, row -> new Tuple3<>(row.cultureid(), row.name(), row.modifieddate()));;
+  static RowParser<CultureRow> _rowParser = RowParsers.of(CultureId.pgType, Name.pgType, TypoLocalDateTime.pgType, CultureRow::new, row -> new Object[]{row.cultureid(), row.name(), row.modifieddate()});;
 
   static public PgText<CultureRow> pgText =
     PgText.from(_rowParser);

@@ -36,11 +36,11 @@ public record TypoPath(
   static public PgType<TypoPath> pgType =
     PgType.of(
       "path",
-      PgRead.castJdbcObjectTo(PGpath.class).map(v -> new TypoPath(v.isOpen(), Arrays.stream(v.points).map(p -> new TypoPoint(p.x, p.y)).toList())),
-      PgWrite.passObjectToJdbc().contramap((TypoPath v) -> new PGpath(v.points().stream().map(p -> new PGpoint(p.x(), p.y())).toArray(PGpoint[]::new), v.open())),
+      PgRead.castJdbcObjectTo(PGpath.class).map((PGpath v) -> new TypoPath(v.isOpen(), Arrays.stream(v.points).map(p -> new TypoPoint(p.x, p.y)).toList())),
+      PgWrite.<PGpath>passObjectToJdbc().contramap((TypoPath v) -> new PGpath(v.points().stream().map(p -> new PGpoint(p.x(), p.y())).toArray(PGpoint[]::new), v.open())),
       TypoPath.pgText
     );
 
   static public PgType<TypoPath[]> pgTypeArray =
-    TypoPath.pgType.array(PgRead.castJdbcArrayTo(PGpath.class).map(xs -> arrayMap.map(xs, v -> new TypoPath(v.isOpen(), Arrays.stream(v.points).map(p -> new TypoPoint(p.x, p.y)).toList()), TypoPath.class)), PgWrite.<PGpath>passObjectToJdbc().array(TypoPath.pgType.typename().<PGpath>as()).contramap(xs -> arrayMap.map(xs, (TypoPath v) -> new PGpath(v.points().stream().map(p -> new PGpoint(p.x(), p.y())).toArray(PGpoint[]::new), v.open()), PGpath.class)));
+    TypoPath.pgType.array(PgRead.castJdbcArrayTo(PGpath.class).map((PGpath[] xs) -> arrayMap.map(xs, (PGpath v) -> new TypoPath(v.isOpen(), Arrays.stream(v.points).map(p -> new TypoPoint(p.x, p.y)).toList()), TypoPath.class)), PgWrite.<PGpath>passObjectToJdbc().array(TypoPath.pgType.typename().<PGpath>as()).contramap((TypoPath[] xs) -> arrayMap.map(xs, (TypoPath v) -> new PGpath(v.points().stream().map(p -> new PGpoint(p.x(), p.y())).toArray(PGpoint[]::new), v.open()), PGpath.class)));
 }

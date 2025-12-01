@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes
 
+import com.fasterxml.jackson.annotation.JsonValue
 import org.postgresql.jdbc.PgSQLXML
 import org.postgresql.util.PGobject
 import typo.dsl.Bijection
@@ -14,7 +15,7 @@ import typo.runtime.PgType
 import typo.runtime.PgWrite
 
 /** XML */
-case class TypoXml(value: String)
+case class TypoXml(@JsonValue value: String)
 
 object TypoXml {
   given bijection: Bijection[TypoXml, String] = Bijection.apply[TypoXml, String](_.value)(TypoXml.apply)
@@ -24,14 +25,14 @@ object TypoXml {
   given pgType: PgType[TypoXml] = {
     PgType.of(
       "xml",
-      PgRead.castJdbcObjectTo(classOf[PgSQLXML]).map(v => new TypoXml(v.getString)),
-      PgWrite.passObjectToJdbc().contramap((v: TypoXml) => v.value),
+      PgRead.castJdbcObjectTo(classOf[PgSQLXML]).map((v: PgSQLXML) => new TypoXml(v.getString)),
+      PgWrite.passObjectToJdbc[String]().contramap((v: TypoXml) => v.value),
       TypoXml.pgText
     )
   }
 
   given pgTypeArray: PgType[Array[TypoXml]] = {
-    TypoXml.pgType.array(PgRead.castJdbcArrayTo(classOf[PGobject]).map(xs => xs.map(v => new TypoXml(v.getValue))), PgWrite.passObjectToJdbc[PGobject]().array(TypoXml.pgType.typename().as[PGobject]()).contramap(xs => xs.map((v: TypoXml) => {
+    TypoXml.pgType.array(PgRead.castJdbcArrayTo(classOf[PGobject]).map((xs: Array[PGobject]) => xs.map((v: PGobject) => new TypoXml(v.getValue))), PgWrite.passObjectToJdbc[PGobject]().array(TypoXml.pgType.typename().as[PGobject]()).contramap((xs: Array[TypoXml]) => xs.map((v: TypoXml) => {
       val obj = new PGobject()
       obj.setType("xml")
       obj.setValue(v.value)

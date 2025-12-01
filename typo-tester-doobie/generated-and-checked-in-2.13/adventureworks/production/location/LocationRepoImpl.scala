@@ -23,20 +23,20 @@ import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class LocationRepoImpl extends LocationRepo {
-  def delete: DeleteBuilder[LocationFields, LocationRow] = DeleteBuilder.of(""""production"."location"""", LocationFields.structure, LocationRow.read)
+  override def delete: DeleteBuilder[LocationFields, LocationRow] = DeleteBuilder.of(""""production"."location"""", LocationFields.structure, LocationRow.read)
 
-  def deleteById(locationid: LocationId): ConnectionIO[Boolean] = sql"""delete from "production"."location" where "locationid" = ${fromWrite(locationid)(new Write.Single(LocationId.put))}""".update.run.map(_ > 0)
+  override def deleteById(locationid: LocationId): ConnectionIO[Boolean] = sql"""delete from "production"."location" where "locationid" = ${fromWrite(locationid)(new Write.Single(LocationId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(locationids: Array[LocationId]): ConnectionIO[Int] = sql"""delete from "production"."location" where "locationid" = ANY(${fromWrite(locationids)(new Write.Single(LocationId.arrayPut))})""".update.run
+  override def deleteByIds(locationids: Array[LocationId]): ConnectionIO[Int] = sql"""delete from "production"."location" where "locationid" = ANY(${fromWrite(locationids)(new Write.Single(LocationId.arrayPut))})""".update.run
 
-  def insert(unsaved: LocationRow): ConnectionIO[LocationRow] = {
+  override def insert(unsaved: LocationRow): ConnectionIO[LocationRow] = {
     sql"""insert into "production"."location"("locationid", "name", "costrate", "availability", "modifieddate")
     values (${fromWrite(unsaved.locationid)(new Write.Single(LocationId.put))}::int4, ${fromWrite(unsaved.name)(new Write.Single(Name.put))}::varchar, ${fromWrite(unsaved.costrate)(new Write.Single(Meta.ScalaBigDecimalMeta.put))}::numeric, ${fromWrite(unsaved.availability)(new Write.Single(Meta.ScalaBigDecimalMeta.put))}::numeric, ${fromWrite(unsaved.modifieddate)(new Write.Single(TypoLocalDateTime.put))}::timestamp)
     returning "locationid", "name", "costrate", "availability", "modifieddate"::text
     """.query(LocationRow.read).unique
   }
 
-  def insert(unsaved: LocationRowUnsaved): ConnectionIO[LocationRow] = {
+  override def insert(unsaved: LocationRowUnsaved): ConnectionIO[LocationRow] = {
     val fs = List(
       Some((Fragment.const0(s""""name""""), fr"${fromWrite(unsaved.name)(new Write.Single(Name.put))}::varchar")),
       unsaved.locationid match {
@@ -70,35 +70,35 @@ class LocationRepoImpl extends LocationRepo {
     q.query(LocationRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, LocationRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "production"."location"("locationid", "name", "costrate", "availability", "modifieddate") FROM STDIN""").copyIn(unsaved, batchSize)(LocationRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, LocationRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "production"."location"("name", "locationid", "costrate", "availability", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(LocationRowUnsaved.pgText)
 
-  def select: SelectBuilder[LocationFields, LocationRow] = SelectBuilder.of(""""production"."location"""", LocationFields.structure, LocationRow.read)
+  override def select: SelectBuilder[LocationFields, LocationRow] = SelectBuilder.of(""""production"."location"""", LocationFields.structure, LocationRow.read)
 
-  def selectAll: Stream[ConnectionIO, LocationRow] = sql"""select "locationid", "name", "costrate", "availability", "modifieddate"::text from "production"."location"""".query(LocationRow.read).stream
+  override def selectAll: Stream[ConnectionIO, LocationRow] = sql"""select "locationid", "name", "costrate", "availability", "modifieddate"::text from "production"."location"""".query(LocationRow.read).stream
 
-  def selectById(locationid: LocationId): ConnectionIO[Option[LocationRow]] = sql"""select "locationid", "name", "costrate", "availability", "modifieddate"::text from "production"."location" where "locationid" = ${fromWrite(locationid)(new Write.Single(LocationId.put))}""".query(LocationRow.read).option
+  override def selectById(locationid: LocationId): ConnectionIO[Option[LocationRow]] = sql"""select "locationid", "name", "costrate", "availability", "modifieddate"::text from "production"."location" where "locationid" = ${fromWrite(locationid)(new Write.Single(LocationId.put))}""".query(LocationRow.read).option
 
-  def selectByIds(locationids: Array[LocationId]): Stream[ConnectionIO, LocationRow] = sql"""select "locationid", "name", "costrate", "availability", "modifieddate"::text from "production"."location" where "locationid" = ANY(${fromWrite(locationids)(new Write.Single(LocationId.arrayPut))})""".query(LocationRow.read).stream
+  override def selectByIds(locationids: Array[LocationId]): Stream[ConnectionIO, LocationRow] = sql"""select "locationid", "name", "costrate", "availability", "modifieddate"::text from "production"."location" where "locationid" = ANY(${fromWrite(locationids)(new Write.Single(LocationId.arrayPut))})""".query(LocationRow.read).stream
 
-  def selectByIdsTracked(locationids: Array[LocationId]): ConnectionIO[Map[LocationId, LocationRow]] = {
+  override def selectByIdsTracked(locationids: Array[LocationId]): ConnectionIO[Map[LocationId, LocationRow]] = {
     selectByIds(locationids).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.locationid, x)).toMap
       locationids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[LocationFields, LocationRow] = UpdateBuilder.of(""""production"."location"""", LocationFields.structure, LocationRow.read)
+  override def update: UpdateBuilder[LocationFields, LocationRow] = UpdateBuilder.of(""""production"."location"""", LocationFields.structure, LocationRow.read)
 
-  def update(row: LocationRow): ConnectionIO[Option[LocationRow]] = {
+  override def update(row: LocationRow): ConnectionIO[Option[LocationRow]] = {
     val locationid = row.locationid
     sql"""update "production"."location"
     set "name" = ${fromWrite(row.name)(new Write.Single(Name.put))}::varchar,
@@ -109,7 +109,7 @@ class LocationRepoImpl extends LocationRepo {
     returning "locationid", "name", "costrate", "availability", "modifieddate"::text""".query(LocationRow.read).option
   }
 
-  def upsert(unsaved: LocationRow): ConnectionIO[LocationRow] = {
+  override def upsert(unsaved: LocationRow): ConnectionIO[LocationRow] = {
     sql"""insert into "production"."location"("locationid", "name", "costrate", "availability", "modifieddate")
     values (
       ${fromWrite(unsaved.locationid)(new Write.Single(LocationId.put))}::int4,
@@ -128,7 +128,7 @@ class LocationRepoImpl extends LocationRepo {
     """.query(LocationRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[LocationRow]): Stream[ConnectionIO, LocationRow] = {
+  override def upsertBatch(unsaved: List[LocationRow]): Stream[ConnectionIO, LocationRow] = {
     Update[LocationRow](
       s"""insert into "production"."location"("locationid", "name", "costrate", "availability", "modifieddate")
       values (?::int4,?::varchar,?::numeric,?::numeric,?::timestamp)
@@ -144,7 +144,7 @@ class LocationRepoImpl extends LocationRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, LocationRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

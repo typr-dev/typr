@@ -23,20 +23,20 @@ import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
 class UsersRepoImpl extends UsersRepo {
-  def delete: DeleteBuilder[UsersFields, UsersRow] = DeleteBuilder.of(""""public"."users"""", UsersFields.structure, UsersRow.read)
+  override def delete: DeleteBuilder[UsersFields, UsersRow] = DeleteBuilder.of(""""public"."users"""", UsersFields.structure, UsersRow.read)
 
-  def deleteById(userId: UsersId): ConnectionIO[Boolean] = sql"""delete from "public"."users" where "user_id" = ${fromWrite(userId)(new Write.Single(UsersId.put))}""".update.run.map(_ > 0)
+  override def deleteById(userId: UsersId): ConnectionIO[Boolean] = sql"""delete from "public"."users" where "user_id" = ${fromWrite(userId)(new Write.Single(UsersId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(userIds: Array[UsersId]): ConnectionIO[Int] = sql"""delete from "public"."users" where "user_id" = ANY(${fromWrite(userIds)(new Write.Single(UsersId.arrayPut))})""".update.run
+  override def deleteByIds(userIds: Array[UsersId]): ConnectionIO[Int] = sql"""delete from "public"."users" where "user_id" = ANY(${fromWrite(userIds)(new Write.Single(UsersId.arrayPut))})""".update.run
 
-  def insert(unsaved: UsersRow): ConnectionIO[UsersRow] = {
+  override def insert(unsaved: UsersRow): ConnectionIO[UsersRow] = {
     sql"""insert into "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on")
     values (${fromWrite(unsaved.userId)(new Write.Single(UsersId.put))}::uuid, ${fromWrite(unsaved.name)(new Write.Single(Meta.StringMeta.put))}, ${fromWrite(unsaved.lastName)(new Write.SingleOpt(Meta.StringMeta.put))}, ${fromWrite(unsaved.email)(new Write.Single(TypoUnknownCitext.put))}::citext, ${fromWrite(unsaved.password)(new Write.Single(Meta.StringMeta.put))}, ${fromWrite(unsaved.createdAt)(new Write.Single(TypoInstant.put))}::timestamptz, ${fromWrite(unsaved.verifiedOn)(new Write.SingleOpt(TypoInstant.put))}::timestamptz)
     returning "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text
     """.query(UsersRow.read).unique
   }
 
-  def insert(unsaved: UsersRowUnsaved): ConnectionIO[UsersRow] = {
+  override def insert(unsaved: UsersRowUnsaved): ConnectionIO[UsersRow] = {
     val fs = List(
       Some((Fragment.const0(s""""user_id""""), fr"${fromWrite(unsaved.userId)(new Write.Single(UsersId.put))}::uuid")),
       Some((Fragment.const0(s""""name""""), fr"${fromWrite(unsaved.name)(new Write.Single(Meta.StringMeta.put))}")),
@@ -63,42 +63,42 @@ class UsersRepoImpl extends UsersRepo {
     q.query(UsersRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, UsersRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on") FROM STDIN""").copyIn(unsaved, batchSize)(UsersRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, UsersRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "public"."users"("user_id", "name", "last_name", "email", "password", "verified_on", "created_at") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(UsersRowUnsaved.pgText)
 
-  def select: SelectBuilder[UsersFields, UsersRow] = SelectBuilder.of(""""public"."users"""", UsersFields.structure, UsersRow.read)
+  override def select: SelectBuilder[UsersFields, UsersRow] = SelectBuilder.of(""""public"."users"""", UsersFields.structure, UsersRow.read)
 
-  def selectAll: Stream[ConnectionIO, UsersRow] = sql"""select "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text from "public"."users"""".query(UsersRow.read).stream
+  override def selectAll: Stream[ConnectionIO, UsersRow] = sql"""select "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text from "public"."users"""".query(UsersRow.read).stream
 
-  def selectById(userId: UsersId): ConnectionIO[Option[UsersRow]] = sql"""select "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text from "public"."users" where "user_id" = ${fromWrite(userId)(new Write.Single(UsersId.put))}""".query(UsersRow.read).option
+  override def selectById(userId: UsersId): ConnectionIO[Option[UsersRow]] = sql"""select "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text from "public"."users" where "user_id" = ${fromWrite(userId)(new Write.Single(UsersId.put))}""".query(UsersRow.read).option
 
-  def selectByIds(userIds: Array[UsersId]): Stream[ConnectionIO, UsersRow] = sql"""select "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text from "public"."users" where "user_id" = ANY(${fromWrite(userIds)(new Write.Single(UsersId.arrayPut))})""".query(UsersRow.read).stream
+  override def selectByIds(userIds: Array[UsersId]): Stream[ConnectionIO, UsersRow] = sql"""select "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text from "public"."users" where "user_id" = ANY(${fromWrite(userIds)(new Write.Single(UsersId.arrayPut))})""".query(UsersRow.read).stream
 
-  def selectByIdsTracked(userIds: Array[UsersId]): ConnectionIO[Map[UsersId, UsersRow]] = {
+  override def selectByIdsTracked(userIds: Array[UsersId]): ConnectionIO[Map[UsersId, UsersRow]] = {
     selectByIds(userIds).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.userId, x)).toMap
       userIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def selectByUniqueEmail(email: TypoUnknownCitext): ConnectionIO[Option[UsersRow]] = {
+  override def selectByUniqueEmail(email: TypoUnknownCitext): ConnectionIO[Option[UsersRow]] = {
     sql"""select "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text
     from "public"."users"
     where "email" = ${fromWrite(email)(new Write.Single(TypoUnknownCitext.put))}
     """.query(UsersRow.read).option
   }
 
-  def update: UpdateBuilder[UsersFields, UsersRow] = UpdateBuilder.of(""""public"."users"""", UsersFields.structure, UsersRow.read)
+  override def update: UpdateBuilder[UsersFields, UsersRow] = UpdateBuilder.of(""""public"."users"""", UsersFields.structure, UsersRow.read)
 
-  def update(row: UsersRow): ConnectionIO[Option[UsersRow]] = {
+  override def update(row: UsersRow): ConnectionIO[Option[UsersRow]] = {
     val userId = row.userId
     sql"""update "public"."users"
     set "name" = ${fromWrite(row.name)(new Write.Single(Meta.StringMeta.put))},
@@ -111,7 +111,7 @@ class UsersRepoImpl extends UsersRepo {
     returning "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text""".query(UsersRow.read).option
   }
 
-  def upsert(unsaved: UsersRow): ConnectionIO[UsersRow] = {
+  override def upsert(unsaved: UsersRow): ConnectionIO[UsersRow] = {
     sql"""insert into "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on")
     values (
       ${fromWrite(unsaved.userId)(new Write.Single(UsersId.put))}::uuid,
@@ -134,7 +134,7 @@ class UsersRepoImpl extends UsersRepo {
     """.query(UsersRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[UsersRow]): Stream[ConnectionIO, UsersRow] = {
+  override def upsertBatch(unsaved: List[UsersRow]): Stream[ConnectionIO, UsersRow] = {
     Update[UsersRow](
       s"""insert into "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on")
       values (?::uuid,?,?,?::citext,?,?::timestamptz,?::timestamptz)
@@ -152,7 +152,7 @@ class UsersRepoImpl extends UsersRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, UsersRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {

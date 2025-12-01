@@ -6,6 +6,7 @@
 package adventureworks.public_.users;
 
 import adventureworks.customtypes.TypoUnknownCitext;
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,10 +43,12 @@ public record UsersRepoMock(
     return new UsersRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<UsersFields, UsersRow> delete() {
     return new DeleteBuilderMock<>(UsersFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.userId(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     UsersId userId,
     Connection c
@@ -53,28 +56,31 @@ public record UsersRepoMock(
     return Optional.ofNullable(map.remove(userId)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     UsersId[] userIds,
     Connection c
   ) {
     var count = 0;
-      for (var id : userIds) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : userIds) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public UsersRow insert(
     UsersRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.userId())) {
-        throw new RuntimeException(str("id $unsaved.userId() already exists"));
-      };
-      map.put(unsaved.userId(), unsaved);
+      throw new RuntimeException(str("id $unsaved.userId() already exists"));
+    };
+    map.put(unsaved.userId(), unsaved);
     return unsaved;
   };
 
+  @Override
   public UsersRow insert(
     UsersRowUnsaved unsaved,
     Connection c
@@ -82,44 +88,49 @@ public record UsersRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<UsersRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.userId(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.userId(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<UsersRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.userId(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.userId(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<UsersFields, UsersRow> select() {
     return new SelectBuilderMock<>(UsersFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<UsersRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<UsersRow> selectById(
     UsersId userId,
     Connection c
@@ -127,23 +138,26 @@ public record UsersRepoMock(
     return Optional.ofNullable(map.get(userId));
   };
 
+  @Override
   public List<UsersRow> selectByIds(
     UsersId[] userIds,
     Connection c
   ) {
     var result = new ArrayList<UsersRow>();
-      for (var id : userIds) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : userIds) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<UsersId, UsersRow> selectByIdsTracked(
     UsersId[] userIds,
     Connection c
   ) {
-    return selectByIds(userIds, c).stream().collect(Collectors.toMap((adventureworks.public_.users.UsersRow row) -> row.userId(), Function.identity()));
+    return selectByIds(userIds, c).stream().collect(Collectors.toMap((UsersRow row) -> row.userId(), Function.identity()));
   };
 
+  @Override
   public Optional<UsersRow> selectByUniqueEmail(
     TypoUnknownCitext email,
     Connection c
@@ -151,21 +165,24 @@ public record UsersRepoMock(
     return new ArrayList<>(map.values()).stream().filter(v -> email.equals(v.email())).findFirst();
   };
 
+  @Override
   public UpdateBuilder<UsersFields, UsersRow> update() {
     return new UpdateBuilderMock<>(UsersFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     UsersRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.userId())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.userId(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.userId(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public UsersRow upsert(
     UsersRow unsaved,
     Connection c
@@ -174,31 +191,33 @@ public record UsersRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<UsersRow> upsertBatch(
     Iterator<UsersRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<UsersRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.userId(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.userId(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<UsersRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.userId(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.userId(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

@@ -47,7 +47,7 @@ object SoViewFields {
 
     override lazy val fields: SoViewFields = {
       new SoViewFields {
-        def id: Field[SpecialofferId, SoViewRow] = {
+        override def id: Field[SpecialofferId, SoViewRow] = {
           new Field[SpecialofferId, SoViewRow](
             _path,
             "id",
@@ -58,7 +58,7 @@ object SoViewFields {
             SpecialofferId.pgType
           )
         }
-        def specialofferid: Field[SpecialofferId, SoViewRow] = {
+        override def specialofferid: Field[SpecialofferId, SoViewRow] = {
           new Field[SpecialofferId, SoViewRow](
             _path,
             "specialofferid",
@@ -69,7 +69,7 @@ object SoViewFields {
             SpecialofferId.pgType
           )
         }
-        def description: Field[/* max 255 chars */ String, SoViewRow] = {
+        override def description: Field[/* max 255 chars */ String, SoViewRow] = {
           new Field[/* max 255 chars */ String, SoViewRow](
             _path,
             "description",
@@ -80,7 +80,7 @@ object SoViewFields {
             PgTypes.text
           )
         }
-        def discountpct: Field[java.math.BigDecimal, SoViewRow] = {
+        override def discountpct: Field[java.math.BigDecimal, SoViewRow] = {
           new Field[java.math.BigDecimal, SoViewRow](
             _path,
             "discountpct",
@@ -91,7 +91,7 @@ object SoViewFields {
             PgTypes.numeric
           )
         }
-        def `type`: Field[/* max 50 chars */ String, SoViewRow] = {
+        override def `type`: Field[/* max 50 chars */ String, SoViewRow] = {
           new Field[/* max 50 chars */ String, SoViewRow](
             _path,
             "type",
@@ -102,7 +102,7 @@ object SoViewFields {
             PgTypes.text
           )
         }
-        def category: Field[/* max 50 chars */ String, SoViewRow] = {
+        override def category: Field[/* max 50 chars */ String, SoViewRow] = {
           new Field[/* max 50 chars */ String, SoViewRow](
             _path,
             "category",
@@ -113,7 +113,7 @@ object SoViewFields {
             PgTypes.text
           )
         }
-        def startdate: Field[TypoLocalDateTime, SoViewRow] = {
+        override def startdate: Field[TypoLocalDateTime, SoViewRow] = {
           new Field[TypoLocalDateTime, SoViewRow](
             _path,
             "startdate",
@@ -124,7 +124,7 @@ object SoViewFields {
             TypoLocalDateTime.pgType
           )
         }
-        def enddate: Field[TypoLocalDateTime, SoViewRow] = {
+        override def enddate: Field[TypoLocalDateTime, SoViewRow] = {
           new Field[TypoLocalDateTime, SoViewRow](
             _path,
             "enddate",
@@ -135,7 +135,7 @@ object SoViewFields {
             TypoLocalDateTime.pgType
           )
         }
-        def minqty: Field[Integer, SoViewRow] = {
+        override def minqty: Field[Integer, SoViewRow] = {
           new Field[Integer, SoViewRow](
             _path,
             "minqty",
@@ -146,7 +146,7 @@ object SoViewFields {
             PgTypes.int4
           )
         }
-        def maxqty: OptField[Integer, SoViewRow] = {
+        override def maxqty: OptField[Integer, SoViewRow] = {
           new OptField[Integer, SoViewRow](
             _path,
             "maxqty",
@@ -157,7 +157,7 @@ object SoViewFields {
             PgTypes.int4
           )
         }
-        def rowguid: Field[TypoUUID, SoViewRow] = {
+        override def rowguid: Field[TypoUUID, SoViewRow] = {
           new Field[TypoUUID, SoViewRow](
             _path,
             "rowguid",
@@ -168,7 +168,7 @@ object SoViewFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, SoViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, SoViewRow] = {
           new Field[TypoLocalDateTime, SoViewRow](
             _path,
             "modifieddate",
@@ -184,7 +184,7 @@ object SoViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, SoViewRow]] = java.util.List.of(this.fields.id, this.fields.specialofferid, this.fields.description, this.fields.discountpct, this.fields.`type`, this.fields.category, this.fields.startdate, this.fields.enddate, this.fields.minqty, this.fields.maxqty, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[SoViewFields, SoViewRow] = new Impl(java.util.List.of())

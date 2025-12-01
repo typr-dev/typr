@@ -6,6 +6,7 @@
 package adventureworks.customtypes;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import java.lang.SuppressWarnings;
 import java.util.HashMap;
 import java.util.Map;
 import typo.dsl.Bijection;
@@ -26,11 +27,12 @@ public record TypoHStore(@JsonValue Map<String, String> value) {
   static public PgText<TypoHStore> pgText =
     PgText.textString.contramap(v -> String.join(",", v.value().entrySet().stream().map(e -> e.getKey() + " => " + e.getValue()).toList()));
 
+  @SuppressWarnings("unchecked")
   static public PgType<TypoHStore> pgType =
     PgType.of(
       "hstore",
-      PgRead.castJdbcObjectTo(Map.class).map(v -> new TypoHStore((Map<String, String>) v)),
-      PgWrite.passObjectToJdbc().contramap((TypoHStore v) -> new HashMap<String, String>(v.value())),
+      PgRead.castJdbcObjectTo(Map.class).map((Map v) -> new TypoHStore((Map<String, String>) v)),
+      PgWrite.<Map<String, String>>passObjectToJdbc().contramap((TypoHStore v) -> new HashMap<String, String>(v.value())),
       TypoHStore.pgText
     );
 }

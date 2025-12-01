@@ -8,7 +8,6 @@ package testdb.hardcoded.myschema.marital_status
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple1
 
 /** Table: myschema.marital_status
  * Primary key: id
@@ -16,7 +15,7 @@ import typo.runtime.RowParsers.Tuple1
 case class MaritalStatusRow(id: MaritalStatusId)
 
 object MaritalStatusRow {
-  val `_rowParser`: RowParser[MaritalStatusRow] = RowParsers.of(MaritalStatusId.pgType, MaritalStatusRow.apply, row => new Tuple1(row.id))
+  val `_rowParser`: RowParser[MaritalStatusRow] = RowParsers.of(MaritalStatusId.pgType, MaritalStatusRow.apply, row => Array(row.id))
 
   given pgText: PgText[MaritalStatusRow] = PgText.from(`_rowParser`)
 }

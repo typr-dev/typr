@@ -60,7 +60,7 @@ object VadditionalcontactinfoViewFields {
 
     override lazy val fields: VadditionalcontactinfoViewFields = {
       new VadditionalcontactinfoViewFields {
-        def businessentityid: Field[BusinessentityId, VadditionalcontactinfoViewRow] = {
+        override def businessentityid: Field[BusinessentityId, VadditionalcontactinfoViewRow] = {
           new Field[BusinessentityId, VadditionalcontactinfoViewRow](
             _path,
             "businessentityid",
@@ -71,7 +71,7 @@ object VadditionalcontactinfoViewFields {
             BusinessentityId.pgType
           )
         }
-        def firstname: Field[/* user-picked */ FirstName, VadditionalcontactinfoViewRow] = {
+        override def firstname: Field[/* user-picked */ FirstName, VadditionalcontactinfoViewRow] = {
           new Field[/* user-picked */ FirstName, VadditionalcontactinfoViewRow](
             _path,
             "firstname",
@@ -82,7 +82,7 @@ object VadditionalcontactinfoViewFields {
             /* user-picked */ FirstName.pgType
           )
         }
-        def middlename: OptField[Name, VadditionalcontactinfoViewRow] = {
+        override def middlename: OptField[Name, VadditionalcontactinfoViewRow] = {
           new OptField[Name, VadditionalcontactinfoViewRow](
             _path,
             "middlename",
@@ -93,7 +93,7 @@ object VadditionalcontactinfoViewFields {
             Name.pgType
           )
         }
-        def lastname: Field[Name, VadditionalcontactinfoViewRow] = {
+        override def lastname: Field[Name, VadditionalcontactinfoViewRow] = {
           new Field[Name, VadditionalcontactinfoViewRow](
             _path,
             "lastname",
@@ -104,7 +104,7 @@ object VadditionalcontactinfoViewFields {
             Name.pgType
           )
         }
-        def telephonenumber: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
+        override def telephonenumber: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
           new OptField[TypoXml, VadditionalcontactinfoViewRow](
             _path,
             "telephonenumber",
@@ -115,7 +115,7 @@ object VadditionalcontactinfoViewFields {
             TypoXml.pgType
           )
         }
-        def telephonespecialinstructions: OptField[String, VadditionalcontactinfoViewRow] = {
+        override def telephonespecialinstructions: OptField[String, VadditionalcontactinfoViewRow] = {
           new OptField[String, VadditionalcontactinfoViewRow](
             _path,
             "telephonespecialinstructions",
@@ -126,7 +126,7 @@ object VadditionalcontactinfoViewFields {
             PgTypes.text
           )
         }
-        def street: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
+        override def street: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
           new OptField[TypoXml, VadditionalcontactinfoViewRow](
             _path,
             "street",
@@ -137,7 +137,7 @@ object VadditionalcontactinfoViewFields {
             TypoXml.pgType
           )
         }
-        def city: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
+        override def city: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
           new OptField[TypoXml, VadditionalcontactinfoViewRow](
             _path,
             "city",
@@ -148,7 +148,7 @@ object VadditionalcontactinfoViewFields {
             TypoXml.pgType
           )
         }
-        def stateprovince: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
+        override def stateprovince: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
           new OptField[TypoXml, VadditionalcontactinfoViewRow](
             _path,
             "stateprovince",
@@ -159,7 +159,7 @@ object VadditionalcontactinfoViewFields {
             TypoXml.pgType
           )
         }
-        def postalcode: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
+        override def postalcode: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
           new OptField[TypoXml, VadditionalcontactinfoViewRow](
             _path,
             "postalcode",
@@ -170,7 +170,7 @@ object VadditionalcontactinfoViewFields {
             TypoXml.pgType
           )
         }
-        def countryregion: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
+        override def countryregion: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
           new OptField[TypoXml, VadditionalcontactinfoViewRow](
             _path,
             "countryregion",
@@ -181,7 +181,7 @@ object VadditionalcontactinfoViewFields {
             TypoXml.pgType
           )
         }
-        def homeaddressspecialinstructions: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
+        override def homeaddressspecialinstructions: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
           new OptField[TypoXml, VadditionalcontactinfoViewRow](
             _path,
             "homeaddressspecialinstructions",
@@ -192,7 +192,7 @@ object VadditionalcontactinfoViewFields {
             TypoXml.pgType
           )
         }
-        def emailaddress: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
+        override def emailaddress: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
           new OptField[TypoXml, VadditionalcontactinfoViewRow](
             _path,
             "emailaddress",
@@ -203,7 +203,7 @@ object VadditionalcontactinfoViewFields {
             TypoXml.pgType
           )
         }
-        def emailspecialinstructions: OptField[String, VadditionalcontactinfoViewRow] = {
+        override def emailspecialinstructions: OptField[String, VadditionalcontactinfoViewRow] = {
           new OptField[String, VadditionalcontactinfoViewRow](
             _path,
             "emailspecialinstructions",
@@ -214,7 +214,7 @@ object VadditionalcontactinfoViewFields {
             PgTypes.text
           )
         }
-        def emailtelephonenumber: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
+        override def emailtelephonenumber: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
           new OptField[TypoXml, VadditionalcontactinfoViewRow](
             _path,
             "emailtelephonenumber",
@@ -225,7 +225,7 @@ object VadditionalcontactinfoViewFields {
             TypoXml.pgType
           )
         }
-        def rowguid: Field[TypoUUID, VadditionalcontactinfoViewRow] = {
+        override def rowguid: Field[TypoUUID, VadditionalcontactinfoViewRow] = {
           new Field[TypoUUID, VadditionalcontactinfoViewRow](
             _path,
             "rowguid",
@@ -236,7 +236,7 @@ object VadditionalcontactinfoViewFields {
             TypoUUID.pgType
           )
         }
-        def modifieddate: Field[TypoLocalDateTime, VadditionalcontactinfoViewRow] = {
+        override def modifieddate: Field[TypoLocalDateTime, VadditionalcontactinfoViewRow] = {
           new Field[TypoLocalDateTime, VadditionalcontactinfoViewRow](
             _path,
             "modifieddate",
@@ -252,7 +252,7 @@ object VadditionalcontactinfoViewFields {
 
     override lazy val columns: java.util.List[FieldLike[?, VadditionalcontactinfoViewRow]] = java.util.List.of(this.fields.businessentityid, this.fields.firstname, this.fields.middlename, this.fields.lastname, this.fields.telephonenumber, this.fields.telephonespecialinstructions, this.fields.street, this.fields.city, this.fields.stateprovince, this.fields.postalcode, this.fields.countryregion, this.fields.homeaddressspecialinstructions, this.fields.emailaddress, this.fields.emailspecialinstructions, this.fields.emailtelephonenumber, this.fields.rowguid, this.fields.modifieddate)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[VadditionalcontactinfoViewFields, VadditionalcontactinfoViewRow] = new Impl(java.util.List.of())

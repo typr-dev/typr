@@ -11,7 +11,6 @@ import adventureworks.humanresources.shift.ShiftId
 import adventureworks.public.Name
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple6
 
 /** View: hr.s */
 case class SViewRow(
@@ -30,14 +29,5 @@ case class SViewRow(
 )
 
 object SViewRow {
-  val `_rowParser`: RowParser[SViewRow] = {
-    RowParsers.of(ShiftId.pgType, ShiftId.pgType, Name.pgType, TypoLocalTime.pgType, TypoLocalTime.pgType, TypoLocalDateTime.pgType, SViewRow.apply, row => new Tuple6(
-      row.id,
-      row.shiftid,
-      row.name,
-      row.starttime,
-      row.endtime,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[SViewRow] = RowParsers.of(ShiftId.pgType, ShiftId.pgType, Name.pgType, TypoLocalTime.pgType, TypoLocalTime.pgType, TypoLocalDateTime.pgType, SViewRow.apply, row => Array(row.id, row.shiftid, row.name, row.starttime, row.endtime, row.modifieddate))
 }

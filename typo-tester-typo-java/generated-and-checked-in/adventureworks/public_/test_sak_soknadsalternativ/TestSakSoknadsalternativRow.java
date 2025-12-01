@@ -12,7 +12,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple3;
 
 /** Table: public.test_sak_soknadsalternativ
   * Composite primary key: organisasjonskode_saksbehandler, utdanningsmulighet_kode
@@ -38,7 +37,7 @@ public record TestSakSoknadsalternativRow(
     return new TestSakSoknadsalternativRow(organisasjonskodeSaksbehandler, utdanningsmulighetKode, organisasjonskodeTilbyder);
   };
 
-  static RowParser<TestSakSoknadsalternativRow> _rowParser = RowParsers.of(PgTypes.text, PgTypes.text, TestOrganisasjonId.pgType, TestSakSoknadsalternativRow::new, row -> new Tuple3<>(row.organisasjonskodeSaksbehandler(), row.utdanningsmulighetKode(), row.organisasjonskodeTilbyder()));;
+  static RowParser<TestSakSoknadsalternativRow> _rowParser = RowParsers.of(PgTypes.text, PgTypes.text, TestOrganisasjonId.pgType, TestSakSoknadsalternativRow::new, row -> new Object[]{row.organisasjonskodeSaksbehandler(), row.utdanningsmulighetKode(), row.organisasjonskodeTilbyder()});;
 
   static public TestSakSoknadsalternativRow apply(
     TestSakSoknadsalternativId compositeId,

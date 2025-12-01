@@ -5,7 +5,6 @@
  */
 package adventureworks.public_.only_pk_columns;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,12 +20,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class OnlyPkColumnsRepoImpl implements OnlyPkColumnsRepo {
+  @Override
   public DeleteBuilder<OnlyPkColumnsFields, OnlyPkColumnsRow> delete() {
     return DeleteBuilder.of("public.only_pk_columns", OnlyPkColumnsFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     OnlyPkColumnsId compositeId,
     Connection c
@@ -44,28 +44,30 @@ public class OnlyPkColumnsRepoImpl implements OnlyPkColumnsRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     OnlyPkColumnsId[] compositeIds,
     Connection c
   ) {
     String[] keyColumn1 = arrayMap.map(compositeIds, OnlyPkColumnsId::keyColumn1, String.class);;
-      Integer[] keyColumn2 = arrayMap.map(compositeIds, OnlyPkColumnsId::keyColumn2, Integer.class);;
+    Integer[] keyColumn2 = arrayMap.map(compositeIds, OnlyPkColumnsId::keyColumn2, Integer.class);;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                delete
-                from "public"."only_pk_columns"
-                where ("key_column_1", "key_column_2")
-                in (select unnest("""),
-             PgTypes.textArray.encode(keyColumn1),
-             typo.runtime.Fragment.lit("::text[]), unnest("),
-             PgTypes.int4Array.encode(keyColumn2),
-             typo.runtime.Fragment.lit("""
-             ::int4[]))
+      typo.runtime.Fragment.lit("""
+         delete
+         from "public"."only_pk_columns"
+         where ("key_column_1", "key_column_2")
+         in (select unnest("""),
+      PgTypes.textArray.encode(keyColumn1),
+      typo.runtime.Fragment.lit("::text[]), unnest("),
+      PgTypes.int4Array.encode(keyColumn2),
+      typo.runtime.Fragment.lit("""
+      ::int4[]))
 
-             """)
-           ).update().runUnchecked(c);
+      """)
+    ).update().runUnchecked(c);
   };
 
+  @Override
   public OnlyPkColumnsRow insert(
     OnlyPkColumnsRow unsaved,
     Connection c
@@ -85,6 +87,7 @@ public class OnlyPkColumnsRepoImpl implements OnlyPkColumnsRepo {
       .updateReturning(OnlyPkColumnsRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<OnlyPkColumnsRow> unsaved,
     Integer batchSize,
@@ -95,17 +98,20 @@ public class OnlyPkColumnsRepoImpl implements OnlyPkColumnsRepo {
     """), batchSize, unsaved, c, OnlyPkColumnsRow.pgText);
   };
 
+  @Override
   public SelectBuilder<OnlyPkColumnsFields, OnlyPkColumnsRow> select() {
     return SelectBuilder.of("public.only_pk_columns", OnlyPkColumnsFields.structure(), OnlyPkColumnsRow._rowParser);
   };
 
+  @Override
   public List<OnlyPkColumnsRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "key_column_1", "key_column_2"
        from "public"."only_pk_columns"
-    """)).as(OnlyPkColumnsRow._rowParser.all()).runUnchecked(c);
+    """)).query(OnlyPkColumnsRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<OnlyPkColumnsRow> selectById(
     OnlyPkColumnsId compositeId,
     Connection c
@@ -121,44 +127,48 @@ public class OnlyPkColumnsRepoImpl implements OnlyPkColumnsRepo {
       """),
       PgTypes.int4.encode(compositeId.keyColumn2()),
       typo.runtime.Fragment.lit("")
-    ).as(OnlyPkColumnsRow._rowParser.first()).runUnchecked(c);
+    ).query(OnlyPkColumnsRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<OnlyPkColumnsRow> selectByIds(
     OnlyPkColumnsId[] compositeIds,
     Connection c
   ) {
     String[] keyColumn1 = arrayMap.map(compositeIds, OnlyPkColumnsId::keyColumn1, String.class);;
-      Integer[] keyColumn2 = arrayMap.map(compositeIds, OnlyPkColumnsId::keyColumn2, Integer.class);;
+    Integer[] keyColumn2 = arrayMap.map(compositeIds, OnlyPkColumnsId::keyColumn2, Integer.class);;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                select "key_column_1", "key_column_2"
-                from "public"."only_pk_columns"
-                where ("key_column_1", "key_column_2")
-                in (select unnest("""),
-             PgTypes.textArray.encode(keyColumn1),
-             typo.runtime.Fragment.lit("::text[]), unnest("),
-             PgTypes.int4Array.encode(keyColumn2),
-             typo.runtime.Fragment.lit("""
-             ::int4[]))
+      typo.runtime.Fragment.lit("""
+         select "key_column_1", "key_column_2"
+         from "public"."only_pk_columns"
+         where ("key_column_1", "key_column_2")
+         in (select unnest("""),
+      PgTypes.textArray.encode(keyColumn1),
+      typo.runtime.Fragment.lit("::text[]), unnest("),
+      PgTypes.int4Array.encode(keyColumn2),
+      typo.runtime.Fragment.lit("""
+      ::int4[]))
 
-             """)
-           ).as(OnlyPkColumnsRow._rowParser.all()).runUnchecked(c);
+      """)
+    ).query(OnlyPkColumnsRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<OnlyPkColumnsId, OnlyPkColumnsRow> selectByIdsTracked(
     OnlyPkColumnsId[] compositeIds,
     Connection c
   ) {
-    Map<OnlyPkColumnsId, OnlyPkColumnsRow> ret = new HashMap<>();;
-      selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
+    HashMap<OnlyPkColumnsId, OnlyPkColumnsRow> ret = new HashMap<OnlyPkColumnsId, OnlyPkColumnsRow>();
+    selectByIds(compositeIds, c).forEach(row -> ret.put(row.compositeId(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<OnlyPkColumnsFields, OnlyPkColumnsRow> update() {
     return UpdateBuilder.of("public.only_pk_columns", OnlyPkColumnsFields.structure(), OnlyPkColumnsRow._rowParser.all());
   };
 
+  @Override
   public OnlyPkColumnsRow upsert(
     OnlyPkColumnsRow unsaved,
     Connection c
@@ -181,6 +191,7 @@ public class OnlyPkColumnsRepoImpl implements OnlyPkColumnsRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<OnlyPkColumnsRow> upsertBatch(
     Iterator<OnlyPkColumnsRow> unsaved,
     Connection c
@@ -197,23 +208,24 @@ public class OnlyPkColumnsRepoImpl implements OnlyPkColumnsRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<OnlyPkColumnsRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table only_pk_columns_TEMP (like "public"."only_pk_columns") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy only_pk_columns_TEMP("key_column_1", "key_column_2") from stdin
-      """), batchSize, unsaved, c, OnlyPkColumnsRow.pgText);
+    create temporary table only_pk_columns_TEMP (like "public"."only_pk_columns") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy only_pk_columns_TEMP("key_column_1", "key_column_2") from stdin
+    """), batchSize, unsaved, c, OnlyPkColumnsRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "public"."only_pk_columns"("key_column_1", "key_column_2")
-              select * from only_pk_columns_TEMP
-              on conflict ("key_column_1", "key_column_2")
-              do nothing
-              ;
-              drop table only_pk_columns_TEMP;""")).update().runUnchecked(c);
+       insert into "public"."only_pk_columns"("key_column_1", "key_column_2")
+       select * from only_pk_columns_TEMP
+       on conflict ("key_column_1", "key_column_2")
+       do nothing
+       ;
+       drop table only_pk_columns_TEMP;""")).update().runUnchecked(c);
   };
 }

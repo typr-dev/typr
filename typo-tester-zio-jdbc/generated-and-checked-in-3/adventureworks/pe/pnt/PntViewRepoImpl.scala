@@ -11,7 +11,7 @@ import zio.stream.ZStream
 import zio.jdbc.sqlInterpolator
 
 class PntViewRepoImpl extends PntViewRepo {
-  def select: SelectBuilder[PntViewFields, PntViewRow] = SelectBuilder.of(""""pe"."pnt"""", PntViewFields.structure, PntViewRow.jdbcDecoder)
+  override def select: SelectBuilder[PntViewFields, PntViewRow] = SelectBuilder.of(""""pe"."pnt"""", PntViewFields.structure, PntViewRow.jdbcDecoder)
 
-  def selectAll: ZStream[ZConnection, Throwable, PntViewRow] = sql"""select "id", "phonenumbertypeid", "name", "modifieddate"::text from "pe"."pnt"""".query(using PntViewRow.jdbcDecoder).selectStream()
+  override def selectAll: ZStream[ZConnection, Throwable, PntViewRow] = sql"""select "id", "phonenumbertypeid", "name", "modifieddate"::text from "pe"."pnt"""".query(using PntViewRow.jdbcDecoder).selectStream()
 }

@@ -17,7 +17,7 @@ import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 
 public interface IllustrationFields {
-  static final class Impl extends Relation<IllustrationFields, IllustrationRow> {
+  final class Impl extends Relation<IllustrationFields, IllustrationRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -25,12 +25,15 @@ public interface IllustrationFields {
     @Override
     public IllustrationFields fields() {
       return new IllustrationFields() {
+               @Override
                public IdField<IllustrationId, IllustrationRow> illustrationid() {
                  return new IdField<IllustrationId, IllustrationRow>(_path, "illustrationid", IllustrationRow::illustrationid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withIllustrationid(value), IllustrationId.pgType);
                };
+               @Override
                public OptField<TypoXml, IllustrationRow> diagram() {
                  return new OptField<TypoXml, IllustrationRow>(_path, "diagram", IllustrationRow::diagram, Optional.empty(), Optional.of("xml"), (row, value) -> row.withDiagram(value), TypoXml.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, IllustrationRow> modifieddate() {
                  return new Field<TypoLocalDateTime, IllustrationRow>(_path, "modifieddate", IllustrationRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -42,6 +45,7 @@ public interface IllustrationFields {
       return List.of(this.fields().illustrationid(), this.fields().diagram(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

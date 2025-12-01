@@ -5,22 +5,22 @@
  */
 package adventureworks.pr.pmpdc;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class PmpdcViewRepoImpl implements PmpdcViewRepo {
+  @Override
   public SelectBuilder<PmpdcViewFields, PmpdcViewRow> select() {
     return SelectBuilder.of("pr.pmpdc", PmpdcViewFields.structure(), PmpdcViewRow._rowParser);
   };
 
+  @Override
   public List<PmpdcViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "productmodelid", "productdescriptionid", "cultureid", "modifieddate"::text
        from "pr"."pmpdc"
-    """)).as(PmpdcViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(PmpdcViewRow._rowParser.all()).runUnchecked(c);
   };
 }

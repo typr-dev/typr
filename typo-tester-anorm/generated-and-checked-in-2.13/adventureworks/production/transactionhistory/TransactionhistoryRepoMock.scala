@@ -21,13 +21,13 @@ case class TransactionhistoryRepoMock(
   toRow: TransactionhistoryRowUnsaved => TransactionhistoryRow,
   map: scala.collection.mutable.Map[TransactionhistoryId, TransactionhistoryRow] = scala.collection.mutable.Map.empty[TransactionhistoryId, TransactionhistoryRow]
 ) extends TransactionhistoryRepo {
-  def delete: DeleteBuilder[TransactionhistoryFields, TransactionhistoryRow] = DeleteBuilderMock(DeleteParams.empty, TransactionhistoryFields.structure, map)
+  override def delete: DeleteBuilder[TransactionhistoryFields, TransactionhistoryRow] = DeleteBuilderMock(DeleteParams.empty, TransactionhistoryFields.structure, map)
 
-  def deleteById(transactionid: TransactionhistoryId)(implicit c: Connection): Boolean = map.remove(transactionid).isDefined
+  override def deleteById(transactionid: TransactionhistoryId)(implicit c: Connection): Boolean = map.remove(transactionid).isDefined
 
-  def deleteByIds(transactionids: Array[TransactionhistoryId])(implicit c: Connection): Int = transactionids.map(id => map.remove(id)).count(_.isDefined)
+  override def deleteByIds(transactionids: Array[TransactionhistoryId])(implicit c: Connection): Int = transactionids.map(id => map.remove(id)).count(_.isDefined)
 
-  def insert(unsaved: TransactionhistoryRow)(implicit c: Connection): TransactionhistoryRow = {
+  override def insert(unsaved: TransactionhistoryRow)(implicit c: Connection): TransactionhistoryRow = {
     val _ = if (map.contains(unsaved.transactionid))
       sys.error(s"id ${unsaved.transactionid} already exists")
     else
@@ -36,9 +36,9 @@ case class TransactionhistoryRepoMock(
     unsaved
   }
 
-  def insert(unsaved: TransactionhistoryRowUnsaved)(implicit c: Connection): TransactionhistoryRow = insert(toRow(unsaved))
+  override def insert(unsaved: TransactionhistoryRowUnsaved)(implicit c: Connection): TransactionhistoryRow = insert(toRow(unsaved))
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[TransactionhistoryRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = {
@@ -49,7 +49,7 @@ case class TransactionhistoryRepoMock(
   }
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[TransactionhistoryRowUnsaved],
     batchSize: Int = 10000
   )(implicit c: Connection): Long = {
@@ -60,34 +60,34 @@ case class TransactionhistoryRepoMock(
     unsaved.size.toLong
   }
 
-  def select: SelectBuilder[TransactionhistoryFields, TransactionhistoryRow] = SelectBuilderMock(TransactionhistoryFields.structure, () => map.values.toList, SelectParams.empty)
+  override def select: SelectBuilder[TransactionhistoryFields, TransactionhistoryRow] = SelectBuilderMock(TransactionhistoryFields.structure, () => map.values.toList, SelectParams.empty)
 
-  def selectAll(implicit c: Connection): List[TransactionhistoryRow] = map.values.toList
+  override def selectAll(implicit c: Connection): List[TransactionhistoryRow] = map.values.toList
 
-  def selectById(transactionid: TransactionhistoryId)(implicit c: Connection): Option[TransactionhistoryRow] = map.get(transactionid)
+  override def selectById(transactionid: TransactionhistoryId)(implicit c: Connection): Option[TransactionhistoryRow] = map.get(transactionid)
 
-  def selectByIds(transactionids: Array[TransactionhistoryId])(implicit c: Connection): List[TransactionhistoryRow] = transactionids.flatMap(map.get).toList
+  override def selectByIds(transactionids: Array[TransactionhistoryId])(implicit c: Connection): List[TransactionhistoryRow] = transactionids.flatMap(map.get).toList
 
-  def selectByIdsTracked(transactionids: Array[TransactionhistoryId])(implicit c: Connection): Map[TransactionhistoryId, TransactionhistoryRow] = {
+  override def selectByIdsTracked(transactionids: Array[TransactionhistoryId])(implicit c: Connection): Map[TransactionhistoryId, TransactionhistoryRow] = {
     val byId = selectByIds(transactionids).view.map(x => (x.transactionid, x)).toMap
     transactionids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[TransactionhistoryFields, TransactionhistoryRow] = UpdateBuilderMock(UpdateParams.empty, TransactionhistoryFields.structure, map)
+  override def update: UpdateBuilder[TransactionhistoryFields, TransactionhistoryRow] = UpdateBuilderMock(UpdateParams.empty, TransactionhistoryFields.structure, map)
 
-  def update(row: TransactionhistoryRow)(implicit c: Connection): Option[TransactionhistoryRow] = {
+  override def update(row: TransactionhistoryRow)(implicit c: Connection): Option[TransactionhistoryRow] = {
     map.get(row.transactionid).map { _ =>
       map.put(row.transactionid, row): @nowarn
       row
     }
   }
 
-  def upsert(unsaved: TransactionhistoryRow)(implicit c: Connection): TransactionhistoryRow = {
+  override def upsert(unsaved: TransactionhistoryRow)(implicit c: Connection): TransactionhistoryRow = {
     map.put(unsaved.transactionid, unsaved): @nowarn
     unsaved
   }
 
-  def upsertBatch(unsaved: Iterable[TransactionhistoryRow])(implicit c: Connection): List[TransactionhistoryRow] = {
+  override def upsertBatch(unsaved: Iterable[TransactionhistoryRow])(implicit c: Connection): List[TransactionhistoryRow] = {
     unsaved.map { row =>
       map += (row.transactionid -> row)
       row
@@ -95,7 +95,7 @@ case class TransactionhistoryRepoMock(
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[TransactionhistoryRow],
     batchSize: Int = 10000
   )(implicit c: Connection): Int = {

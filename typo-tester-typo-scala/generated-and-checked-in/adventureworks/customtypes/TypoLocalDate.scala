@@ -5,6 +5,7 @@
  */
 package adventureworks.customtypes
 
+import com.fasterxml.jackson.annotation.JsonValue
 import java.time.LocalDate
 import typo.dsl.Bijection
 import typo.runtime.PgRead
@@ -14,7 +15,7 @@ import typo.runtime.PgTypes
 import typo.runtime.PgWrite
 
 /** This is `java.time.LocalDate`, but transferred to and from postgres as strings. The reason is that postgres driver and db libs are broken */
-case class TypoLocalDate(value: LocalDate)
+case class TypoLocalDate(@JsonValue value: LocalDate)
 
 object TypoLocalDate {
   def apply(str: String): TypoLocalDate = new TypoLocalDate(LocalDate.parse(str))
@@ -25,7 +26,7 @@ object TypoLocalDate {
 
   given pgText: PgText[TypoLocalDate] = PgText.textString.contramap(v => v.value.toString())
 
-  given pgType: PgType[TypoLocalDate] = PgTypes.text.bimap(v => new TypoLocalDate(LocalDate.parse(v)), v => v.value.toString()).renamed("date")
+  given pgType: PgType[TypoLocalDate] = PgTypes.text.bimap((v: String) => new TypoLocalDate(LocalDate.parse(v)), (v: TypoLocalDate) => v.value.toString()).renamed("date")
 
-  given pgTypeArray: PgType[Array[TypoLocalDate]] = TypoLocalDate.pgType.array(PgRead.massageJdbcArrayTo(classOf[Array[String]]).map(xs => xs.map(v => new TypoLocalDate(LocalDate.parse(v)))), PgWrite.passObjectToJdbc[String]().array(TypoLocalDate.pgType.typename().as[String]()).contramap(xs => xs.map((v: TypoLocalDate) => v.value.toString())))
+  given pgTypeArray: PgType[Array[TypoLocalDate]] = TypoLocalDate.pgType.array(PgRead.massageJdbcArrayTo(classOf[Array[String]]).map((xs: Array[String]) => xs.map((v: String) => new TypoLocalDate(LocalDate.parse(v)))), PgWrite.passObjectToJdbc[String]().array(TypoLocalDate.pgType.typename().as[String]()).contramap((xs: Array[TypoLocalDate]) => xs.map((v: TypoLocalDate) => v.value.toString())))
 }

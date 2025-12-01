@@ -17,7 +17,6 @@ import typo.runtime.PgText;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple15;
 
 /** Table: humanresources.employee
   * Employee information such as salary, department, and title.
@@ -174,7 +173,7 @@ public record EmployeeRow(
     return new EmployeeRow(businessentityid, nationalidnumber, loginid, jobtitle, birthdate, maritalstatus, gender, hiredate, salariedflag, vacationhours, sickleavehours, currentflag, rowguid, modifieddate, organizationnode);
   };
 
-  static RowParser<EmployeeRow> _rowParser = RowParsers.of(BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.text, TypoLocalDate.pgType, PgTypes.text, PgTypes.text, TypoLocalDate.pgType, Flag.pgType, TypoShort.pgType, TypoShort.pgType, Flag.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, PgTypes.text.opt(), EmployeeRow::new, row -> new Tuple15<>(row.businessentityid(), row.nationalidnumber(), row.loginid(), row.jobtitle(), row.birthdate(), row.maritalstatus(), row.gender(), row.hiredate(), row.salariedflag(), row.vacationhours(), row.sickleavehours(), row.currentflag(), row.rowguid(), row.modifieddate(), row.organizationnode()));;
+  static RowParser<EmployeeRow> _rowParser = RowParsers.of(BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.text, TypoLocalDate.pgType, PgTypes.text, PgTypes.text, TypoLocalDate.pgType, Flag.pgType, TypoShort.pgType, TypoShort.pgType, Flag.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, PgTypes.text.opt(), EmployeeRow::new, row -> new Object[]{row.businessentityid(), row.nationalidnumber(), row.loginid(), row.jobtitle(), row.birthdate(), row.maritalstatus(), row.gender(), row.hiredate(), row.salariedflag(), row.vacationhours(), row.sickleavehours(), row.currentflag(), row.rowguid(), row.modifieddate(), row.organizationnode()});;
 
   static public PgText<EmployeeRow> pgText =
     PgText.from(_rowParser);

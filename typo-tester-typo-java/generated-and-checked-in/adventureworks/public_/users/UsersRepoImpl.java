@@ -7,7 +7,6 @@ package adventureworks.public_.users;
 
 import adventureworks.customtypes.TypoInstant;
 import adventureworks.customtypes.TypoUnknownCitext;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,12 +24,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class UsersRepoImpl implements UsersRepo {
+  @Override
   public DeleteBuilder<UsersFields, UsersRow> delete() {
     return DeleteBuilder.of("public.users", UsersFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     UsersId userId,
     Connection c
@@ -44,6 +44,7 @@ public class UsersRepoImpl implements UsersRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     UsersId[] userIds,
     Connection c
@@ -60,6 +61,7 @@ public class UsersRepoImpl implements UsersRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public UsersRow insert(
     UsersRow unsaved,
     Connection c
@@ -89,72 +91,76 @@ public class UsersRepoImpl implements UsersRepo {
       .updateReturning(UsersRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public UsersRow insert(
     UsersRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"user_id\""));
-      values.add(interpolate(
-        UsersId.pgType.encode(unsaved.userId()),
-        typo.runtime.Fragment.lit("::uuid")
-      ));
-      columns.add(Fragment.lit("\"name\""));
-      values.add(interpolate(
-        PgTypes.text.encode(unsaved.name()),
-        typo.runtime.Fragment.lit("""
-        """)
-      ));
-      columns.add(Fragment.lit("\"last_name\""));
-      values.add(interpolate(
-        PgTypes.text.opt().encode(unsaved.lastName()),
-        typo.runtime.Fragment.lit("""
-        """)
-      ));
-      columns.add(Fragment.lit("\"email\""));
-      values.add(interpolate(
-        TypoUnknownCitext.pgType.encode(unsaved.email()),
-        typo.runtime.Fragment.lit("::citext")
-      ));
-      columns.add(Fragment.lit("\"password\""));
-      values.add(interpolate(
-        PgTypes.text.encode(unsaved.password()),
-        typo.runtime.Fragment.lit("""
-        """)
-      ));
-      columns.add(Fragment.lit("\"verified_on\""));
-      values.add(interpolate(
-        TypoInstant.pgType.opt().encode(unsaved.verifiedOn()),
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"user_id\""));
+    values.add(interpolate(
+      UsersId.pgType.encode(unsaved.userId()),
+      typo.runtime.Fragment.lit("::uuid")
+    ));
+    columns.add(Fragment.lit("\"name\""));
+    values.add(interpolate(
+      PgTypes.text.encode(unsaved.name()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    columns.add(Fragment.lit("\"last_name\""));
+    values.add(interpolate(
+      PgTypes.text.opt().encode(unsaved.lastName()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    columns.add(Fragment.lit("\"email\""));
+    values.add(interpolate(
+      TypoUnknownCitext.pgType.encode(unsaved.email()),
+      typo.runtime.Fragment.lit("::citext")
+    ));
+    columns.add(Fragment.lit("\"password\""));
+    values.add(interpolate(
+      PgTypes.text.encode(unsaved.password()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    columns.add(Fragment.lit("\"verified_on\""));
+    values.add(interpolate(
+      TypoInstant.pgType.opt().encode(unsaved.verifiedOn()),
+      typo.runtime.Fragment.lit("::timestamptz")
+    ));
+    unsaved.createdAt().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"created_at\""));
+        values.add(interpolate(
+        TypoInstant.pgType.encode(value),
         typo.runtime.Fragment.lit("::timestamptz")
       ));
-      unsaved.createdAt().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"created_at\""));
-          values.add(interpolate(
-            TypoInstant.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamptz")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "public"."users"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text
-        """)
-      );;
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "public"."users"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text
+      """)
+    );;
     return q.updateReturning(UsersRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<UsersRow> unsaved,
     Integer batchSize,
@@ -166,6 +172,7 @@ public class UsersRepoImpl implements UsersRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<UsersRowUnsaved> unsaved,
     Integer batchSize,
@@ -176,17 +183,20 @@ public class UsersRepoImpl implements UsersRepo {
     """), batchSize, unsaved, c, UsersRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<UsersFields, UsersRow> select() {
     return SelectBuilder.of("public.users", UsersFields.structure(), UsersRow._rowParser);
   };
 
+  @Override
   public List<UsersRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text
        from "public"."users"
-    """)).as(UsersRow._rowParser.all()).runUnchecked(c);
+    """)).query(UsersRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<UsersRow> selectById(
     UsersId userId,
     Connection c
@@ -198,9 +208,10 @@ public class UsersRepoImpl implements UsersRepo {
          where "user_id" = """),
       UsersId.pgType.encode(userId),
       typo.runtime.Fragment.lit("")
-    ).as(UsersRow._rowParser.first()).runUnchecked(c);
+    ).query(UsersRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<UsersRow> selectByIds(
     UsersId[] userIds,
     Connection c
@@ -212,18 +223,20 @@ public class UsersRepoImpl implements UsersRepo {
          where "user_id" = ANY("""),
       UsersId.pgTypeArray.encode(userIds),
       typo.runtime.Fragment.lit(")")
-    ).as(UsersRow._rowParser.all()).runUnchecked(c);
+    ).query(UsersRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<UsersId, UsersRow> selectByIdsTracked(
     UsersId[] userIds,
     Connection c
   ) {
-    Map<UsersId, UsersRow> ret = new HashMap<>();;
-      selectByIds(userIds, c).forEach(row -> ret.put(row.userId(), row));
+    HashMap<UsersId, UsersRow> ret = new HashMap<UsersId, UsersRow>();
+    selectByIds(userIds, c).forEach(row -> ret.put(row.userId(), row));
     return ret;
   };
 
+  @Override
   public Optional<UsersRow> selectByUniqueEmail(
     TypoUnknownCitext email,
     Connection c
@@ -238,51 +251,54 @@ public class UsersRepoImpl implements UsersRepo {
 
 
       """)
-    ).as(UsersRow._rowParser.first()).runUnchecked(c);
+    ).query(UsersRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public UpdateBuilder<UsersFields, UsersRow> update() {
     return UpdateBuilder.of("public.users", UsersFields.structure(), UsersRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     UsersRow row,
     Connection c
   ) {
     UsersId userId = row.userId();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "public"."users"
-                set "name" = """),
-             PgTypes.text.encode(row.name()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "last_name" = """),
-             PgTypes.text.opt().encode(row.lastName()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "email" = """),
-             TypoUnknownCitext.pgType.encode(row.email()),
-             typo.runtime.Fragment.lit("""
-                ::citext,
-                "password" = """),
-             PgTypes.text.encode(row.password()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "created_at" = """),
-             TypoInstant.pgType.encode(row.createdAt()),
-             typo.runtime.Fragment.lit("""
-                ::timestamptz,
-                "verified_on" = """),
-             TypoInstant.pgType.opt().encode(row.verifiedOn()),
-             typo.runtime.Fragment.lit("""
-                ::timestamptz
-                where "user_id" = """),
-             UsersId.pgType.encode(userId),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "public"."users"
+         set "name" = """),
+      PgTypes.text.encode(row.name()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "last_name" = """),
+      PgTypes.text.opt().encode(row.lastName()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "email" = """),
+      TypoUnknownCitext.pgType.encode(row.email()),
+      typo.runtime.Fragment.lit("""
+         ::citext,
+         "password" = """),
+      PgTypes.text.encode(row.password()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "created_at" = """),
+      TypoInstant.pgType.encode(row.createdAt()),
+      typo.runtime.Fragment.lit("""
+         ::timestamptz,
+         "verified_on" = """),
+      TypoInstant.pgType.opt().encode(row.verifiedOn()),
+      typo.runtime.Fragment.lit("""
+         ::timestamptz
+         where "user_id" = """),
+      UsersId.pgType.encode(userId),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public UsersRow upsert(
     UsersRow unsaved,
     Connection c
@@ -321,6 +337,7 @@ public class UsersRepoImpl implements UsersRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<UsersRow> upsertBatch(
     Iterator<UsersRow> unsaved,
     Connection c
@@ -343,29 +360,30 @@ public class UsersRepoImpl implements UsersRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<UsersRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table users_TEMP (like "public"."users") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy users_TEMP("user_id", "name", "last_name", "email", "password", "created_at", "verified_on") from stdin
-      """), batchSize, unsaved, c, UsersRow.pgText);
+    create temporary table users_TEMP (like "public"."users") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy users_TEMP("user_id", "name", "last_name", "email", "password", "created_at", "verified_on") from stdin
+    """), batchSize, unsaved, c, UsersRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on")
-              select * from users_TEMP
-              on conflict ("user_id")
-              do update set
-                "name" = EXCLUDED."name",
-              "last_name" = EXCLUDED."last_name",
-              "email" = EXCLUDED."email",
-              "password" = EXCLUDED."password",
-              "created_at" = EXCLUDED."created_at",
-              "verified_on" = EXCLUDED."verified_on"
-              ;
-              drop table users_TEMP;""")).update().runUnchecked(c);
+       insert into "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on")
+       select * from users_TEMP
+       on conflict ("user_id")
+       do update set
+         "name" = EXCLUDED."name",
+       "last_name" = EXCLUDED."last_name",
+       "email" = EXCLUDED."email",
+       "password" = EXCLUDED."password",
+       "created_at" = EXCLUDED."created_at",
+       "verified_on" = EXCLUDED."verified_on"
+       ;
+       drop table users_TEMP;""")).update().runUnchecked(c);
   };
 }

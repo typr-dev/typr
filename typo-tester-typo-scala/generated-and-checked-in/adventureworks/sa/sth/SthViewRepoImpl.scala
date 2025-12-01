@@ -10,11 +10,11 @@ import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class SthViewRepoImpl extends SthViewRepo {
-  def select: SelectBuilder[SthViewFields, SthViewRow] = SelectBuilder.of("sa.sth", SthViewFields.structure, SthViewRow.`_rowParser`)
+  override def select: SelectBuilder[SthViewFields, SthViewRow] = SelectBuilder.of("sa.sth", SthViewFields.structure, SthViewRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[SthViewRow] = {
+  override def selectAll(using c: Connection): java.util.List[SthViewRow] = {
     interpolate"""select "id", "businessentityid", "territoryid", "startdate"::text, "enddate"::text, "rowguid", "modifieddate"::text
     from "sa"."sth"
-    """.as(SthViewRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(SthViewRow.`_rowParser`.all()).runUnchecked(c)
   }
 }

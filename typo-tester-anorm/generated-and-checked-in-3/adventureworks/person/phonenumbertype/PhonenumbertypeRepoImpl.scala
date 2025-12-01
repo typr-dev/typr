@@ -23,18 +23,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class PhonenumbertypeRepoImpl extends PhonenumbertypeRepo {
-  def delete: DeleteBuilder[PhonenumbertypeFields, PhonenumbertypeRow] = DeleteBuilder.of(""""person"."phonenumbertype"""", PhonenumbertypeFields.structure, PhonenumbertypeRow.rowParser(1).*)
+  override def delete: DeleteBuilder[PhonenumbertypeFields, PhonenumbertypeRow] = DeleteBuilder.of(""""person"."phonenumbertype"""", PhonenumbertypeFields.structure, PhonenumbertypeRow.rowParser(1).*)
 
-  def deleteById(phonenumbertypeid: PhonenumbertypeId)(using c: Connection): Boolean = SQL"""delete from "person"."phonenumbertype" where "phonenumbertypeid" = ${ParameterValue(phonenumbertypeid, null, PhonenumbertypeId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(phonenumbertypeid: PhonenumbertypeId)(using c: Connection): Boolean = SQL"""delete from "person"."phonenumbertype" where "phonenumbertypeid" = ${ParameterValue(phonenumbertypeid, null, PhonenumbertypeId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(phonenumbertypeids: Array[PhonenumbertypeId])(using c: Connection): Int = {
+  override def deleteByIds(phonenumbertypeids: Array[PhonenumbertypeId])(using c: Connection): Int = {
     SQL"""delete
     from "person"."phonenumbertype"
     where "phonenumbertypeid" = ANY(${ParameterValue(phonenumbertypeids, null, PhonenumbertypeId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: PhonenumbertypeRow)(using c: Connection): PhonenumbertypeRow = {
+  override def insert(unsaved: PhonenumbertypeRow)(using c: Connection): PhonenumbertypeRow = {
   SQL"""insert into "person"."phonenumbertype"("phonenumbertypeid", "name", "modifieddate")
     values (${ParameterValue(unsaved.phonenumbertypeid, null, PhonenumbertypeId.toStatement)}::int4, ${ParameterValue(unsaved.name, null, Name.toStatement)}::varchar, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "phonenumbertypeid", "name", "modifieddate"::text
@@ -42,7 +42,7 @@ class PhonenumbertypeRepoImpl extends PhonenumbertypeRepo {
     .executeInsert(PhonenumbertypeRow.rowParser(1).single)
   }
 
-  def insert(unsaved: PhonenumbertypeRowUnsaved)(using c: Connection): PhonenumbertypeRow = {
+  override def insert(unsaved: PhonenumbertypeRowUnsaved)(using c: Connection): PhonenumbertypeRow = {
     val namedParameters = List(
       Some((NamedParameter("name", ParameterValue(unsaved.name, null, Name.toStatement)), "::varchar")),
       unsaved.phonenumbertypeid match {
@@ -70,47 +70,47 @@ class PhonenumbertypeRepoImpl extends PhonenumbertypeRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[PhonenumbertypeRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "person"."phonenumbertype"("phonenumbertypeid", "name", "modifieddate") FROM STDIN""", batchSize, unsaved)(using PhonenumbertypeRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[PhonenumbertypeRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "person"."phonenumbertype"("name", "phonenumbertypeid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using PhonenumbertypeRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[PhonenumbertypeFields, PhonenumbertypeRow] = SelectBuilder.of(""""person"."phonenumbertype"""", PhonenumbertypeFields.structure, PhonenumbertypeRow.rowParser)
+  override def select: SelectBuilder[PhonenumbertypeFields, PhonenumbertypeRow] = SelectBuilder.of(""""person"."phonenumbertype"""", PhonenumbertypeFields.structure, PhonenumbertypeRow.rowParser)
 
-  def selectAll(using c: Connection): List[PhonenumbertypeRow] = {
+  override def selectAll(using c: Connection): List[PhonenumbertypeRow] = {
     SQL"""select "phonenumbertypeid", "name", "modifieddate"::text
     from "person"."phonenumbertype"
     """.as(PhonenumbertypeRow.rowParser(1).*)
   }
 
-  def selectById(phonenumbertypeid: PhonenumbertypeId)(using c: Connection): Option[PhonenumbertypeRow] = {
+  override def selectById(phonenumbertypeid: PhonenumbertypeId)(using c: Connection): Option[PhonenumbertypeRow] = {
     SQL"""select "phonenumbertypeid", "name", "modifieddate"::text
     from "person"."phonenumbertype"
     where "phonenumbertypeid" = ${ParameterValue(phonenumbertypeid, null, PhonenumbertypeId.toStatement)}
     """.as(PhonenumbertypeRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(phonenumbertypeids: Array[PhonenumbertypeId])(using c: Connection): List[PhonenumbertypeRow] = {
+  override def selectByIds(phonenumbertypeids: Array[PhonenumbertypeId])(using c: Connection): List[PhonenumbertypeRow] = {
     SQL"""select "phonenumbertypeid", "name", "modifieddate"::text
     from "person"."phonenumbertype"
     where "phonenumbertypeid" = ANY(${ParameterValue(phonenumbertypeids, null, PhonenumbertypeId.arrayToStatement)})
     """.as(PhonenumbertypeRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(phonenumbertypeids: Array[PhonenumbertypeId])(using c: Connection): Map[PhonenumbertypeId, PhonenumbertypeRow] = {
+  override def selectByIdsTracked(phonenumbertypeids: Array[PhonenumbertypeId])(using c: Connection): Map[PhonenumbertypeId, PhonenumbertypeRow] = {
     val byId = selectByIds(phonenumbertypeids).view.map(x => (x.phonenumbertypeid, x)).toMap
     phonenumbertypeids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[PhonenumbertypeFields, PhonenumbertypeRow] = UpdateBuilder.of(""""person"."phonenumbertype"""", PhonenumbertypeFields.structure, PhonenumbertypeRow.rowParser(1).*)
+  override def update: UpdateBuilder[PhonenumbertypeFields, PhonenumbertypeRow] = UpdateBuilder.of(""""person"."phonenumbertype"""", PhonenumbertypeFields.structure, PhonenumbertypeRow.rowParser(1).*)
 
-  def update(row: PhonenumbertypeRow)(using c: Connection): Option[PhonenumbertypeRow] = {
+  override def update(row: PhonenumbertypeRow)(using c: Connection): Option[PhonenumbertypeRow] = {
     val phonenumbertypeid = row.phonenumbertypeid
     SQL"""update "person"."phonenumbertype"
     set "name" = ${ParameterValue(row.name, null, Name.toStatement)}::varchar,
@@ -120,7 +120,7 @@ class PhonenumbertypeRepoImpl extends PhonenumbertypeRepo {
     """.executeInsert(PhonenumbertypeRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: PhonenumbertypeRow)(using c: Connection): PhonenumbertypeRow = {
+  override def upsert(unsaved: PhonenumbertypeRow)(using c: Connection): PhonenumbertypeRow = {
   SQL"""insert into "person"."phonenumbertype"("phonenumbertypeid", "name", "modifieddate")
     values (
       ${ParameterValue(unsaved.phonenumbertypeid, null, PhonenumbertypeId.toStatement)}::int4,
@@ -136,12 +136,13 @@ class PhonenumbertypeRepoImpl extends PhonenumbertypeRepo {
     .executeInsert(PhonenumbertypeRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[PhonenumbertypeRow])(using c: Connection): List[PhonenumbertypeRow] = {
+  override def upsertBatch(unsaved: Iterable[PhonenumbertypeRow])(using c: Connection): List[PhonenumbertypeRow] = {
     def toNamedParameter(row: PhonenumbertypeRow): List[NamedParameter] = List(
       NamedParameter("phonenumbertypeid", ParameterValue(row.phonenumbertypeid, null, PhonenumbertypeId.toStatement)),
       NamedParameter("name", ParameterValue(row.name, null, Name.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -163,7 +164,7 @@ class PhonenumbertypeRepoImpl extends PhonenumbertypeRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[PhonenumbertypeRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

@@ -12,7 +12,6 @@ import java.util.Optional;
 import typo.runtime.PgTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple6;
 
 /** View: sales.vsalespersonsalesbyfiscalyearsdata */
 public record VsalespersonsalesbyfiscalyearsdataViewRow(
@@ -53,5 +52,5 @@ public record VsalespersonsalesbyfiscalyearsdataViewRow(
     return new VsalespersonsalesbyfiscalyearsdataViewRow(salespersonid, fullname, jobtitle, salesterritory, salestotal, fiscalyear);
   };
 
-  static RowParser<VsalespersonsalesbyfiscalyearsdataViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType.opt(), PgTypes.text.opt(), PgTypes.text, Name.pgType, PgTypes.numeric.opt(), PgTypes.numeric.opt(), VsalespersonsalesbyfiscalyearsdataViewRow::new, row -> new Tuple6<>(row.salespersonid(), row.fullname(), row.jobtitle(), row.salesterritory(), row.salestotal(), row.fiscalyear()));;
+  static RowParser<VsalespersonsalesbyfiscalyearsdataViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType.opt(), PgTypes.text.opt(), PgTypes.text, Name.pgType, PgTypes.numeric.opt(), PgTypes.numeric.opt(), VsalespersonsalesbyfiscalyearsdataViewRow::new, row -> new Object[]{row.salespersonid(), row.fullname(), row.jobtitle(), row.salesterritory(), row.salestotal(), row.fiscalyear()});;
 }

@@ -7,13 +7,11 @@ package adventureworks.sa.cc
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.SelectBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class CcViewRepoImpl extends CcViewRepo {
-  def select: SelectBuilder[CcViewFields, CcViewRow] = SelectBuilder.of(""""sa"."cc"""", CcViewFields.structure, CcViewRow.read)
+  override def select: SelectBuilder[CcViewFields, CcViewRow] = SelectBuilder.of(""""sa"."cc"""", CcViewFields.structure, CcViewRow.read)
 
-  def selectAll: Stream[ConnectionIO, CcViewRow] = sql"""select "id", "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"::text from "sa"."cc"""".query(using CcViewRow.read).stream
+  override def selectAll: Stream[ConnectionIO, CcViewRow] = sql"""select "id", "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"::text from "sa"."cc"""".query(using CcViewRow.read).stream
 }

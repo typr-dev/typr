@@ -18,7 +18,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface EViewFields {
-  static final class Impl extends Relation<EViewFields, EViewRow> {
+  final class Impl extends Relation<EViewFields, EViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -26,21 +26,27 @@ public interface EViewFields {
     @Override
     public EViewFields fields() {
       return new EViewFields() {
+               @Override
                public Field<Integer, EViewRow> id() {
                  return new Field<Integer, EViewRow>(_path, "id", EViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), PgTypes.int4);
                };
+               @Override
                public Field<BusinessentityId, EViewRow> businessentityid() {
                  return new Field<BusinessentityId, EViewRow>(_path, "businessentityid", EViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public Field<Integer, EViewRow> emailaddressid() {
                  return new Field<Integer, EViewRow>(_path, "emailaddressid", EViewRow::emailaddressid, Optional.empty(), Optional.empty(), (row, value) -> row.withEmailaddressid(value), PgTypes.int4);
                };
+               @Override
                public OptField</* max 50 chars */ String, EViewRow> emailaddress() {
                  return new OptField</* max 50 chars */ String, EViewRow>(_path, "emailaddress", EViewRow::emailaddress, Optional.empty(), Optional.empty(), (row, value) -> row.withEmailaddress(value), PgTypes.text);
                };
+               @Override
                public Field<TypoUUID, EViewRow> rowguid() {
                  return new Field<TypoUUID, EViewRow>(_path, "rowguid", EViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, EViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, EViewRow>(_path, "modifieddate", EViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -52,6 +58,7 @@ public interface EViewFields {
       return List.of(this.fields().id(), this.fields().businessentityid(), this.fields().emailaddressid(), this.fields().emailaddress(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

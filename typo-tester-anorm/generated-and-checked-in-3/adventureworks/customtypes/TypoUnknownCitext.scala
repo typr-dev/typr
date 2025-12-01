@@ -56,8 +56,8 @@ object TypoUnknownCitext {
 
   given pgText: Text[TypoUnknownCitext] = {
     new Text[TypoUnknownCitext] {
-      override def unsafeEncode(v: TypoUnknownCitext, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value.toString, sb)
-      override def unsafeArrayEncode(v: TypoUnknownCitext, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value.toString, sb)
+      override def unsafeEncode(v: TypoUnknownCitext, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value.toString(), sb)
+      override def unsafeArrayEncode(v: TypoUnknownCitext, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value.toString(), sb)
     }
   }
 

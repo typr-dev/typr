@@ -15,7 +15,7 @@ import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
 
 public interface TableWithGeneratedColumnsFields {
-  static final class Impl extends Relation<TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow> {
+  final class Impl extends Relation<TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -23,9 +23,11 @@ public interface TableWithGeneratedColumnsFields {
     @Override
     public TableWithGeneratedColumnsFields fields() {
       return new TableWithGeneratedColumnsFields() {
+               @Override
                public IdField<TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow> name() {
                  return new IdField<TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow>(_path, "name", TableWithGeneratedColumnsRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), TableWithGeneratedColumnsId.pgType);
                };
+               @Override
                public Field<String, TableWithGeneratedColumnsRow> nameTypeAlways() {
                  return new Field<String, TableWithGeneratedColumnsRow>(_path, "name-type-always", TableWithGeneratedColumnsRow::nameTypeAlways, Optional.empty(), Optional.empty(), (row, value) -> row.withNameTypeAlways(value), PgTypes.text);
                };
@@ -37,6 +39,7 @@ public interface TableWithGeneratedColumnsFields {
       return List.of(this.fields().name(), this.fields().nameTypeAlways());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

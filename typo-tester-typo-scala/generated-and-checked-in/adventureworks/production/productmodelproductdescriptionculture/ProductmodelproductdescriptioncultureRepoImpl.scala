@@ -22,22 +22,22 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ProductmodelproductdescriptioncultureRepoImpl extends ProductmodelproductdescriptioncultureRepo {
-  def delete: DeleteBuilder[ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow] = DeleteBuilder.of("production.productmodelproductdescriptionculture", ProductmodelproductdescriptioncultureFields.structure)
+  override def delete: DeleteBuilder[ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow] = DeleteBuilder.of("production.productmodelproductdescriptionculture", ProductmodelproductdescriptioncultureFields.structure)
 
-  def deleteById(compositeId: ProductmodelproductdescriptioncultureId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."productmodelproductdescriptionculture" where "productmodelid" = ${ProductmodelId.pgType.encode(compositeId.productmodelid)} AND "productdescriptionid" = ${ProductdescriptionId.pgType.encode(compositeId.productdescriptionid)} AND "cultureid" = ${CultureId.pgType.encode(compositeId.cultureid)}""".update().runUnchecked(c) > 0
+  override def deleteById(compositeId: ProductmodelproductdescriptioncultureId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."productmodelproductdescriptionculture" where "productmodelid" = ${ProductmodelId.pgType.encode(compositeId.productmodelid)} AND "productdescriptionid" = ${ProductdescriptionId.pgType.encode(compositeId.productdescriptionid)} AND "cultureid" = ${CultureId.pgType.encode(compositeId.cultureid)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(compositeIds: Array[ProductmodelproductdescriptioncultureId])(using c: Connection): Integer = {
+  override def deleteByIds(compositeIds: Array[ProductmodelproductdescriptioncultureId])(using c: Connection): Integer = {
     val productmodelid: Array[ProductmodelId] = compositeIds.map(_.productmodelid)
     val productdescriptionid: Array[ProductdescriptionId] = compositeIds.map(_.productdescriptionid)
     val cultureid: Array[CultureId] = compositeIds.map(_.cultureid)
-    interpolate"""delete
+    return interpolate"""delete
     from "production"."productmodelproductdescriptionculture"
     where ("productmodelid", "productdescriptionid", "cultureid")
     in (select unnest(${ProductmodelId.pgTypeArray.encode(productmodelid)}::int4[]), unnest(${ProductdescriptionId.pgTypeArray.encode(productdescriptionid)}::int4[]), unnest(${CultureId.pgTypeArray.encode(cultureid)}::bpchar[]))
     """.update().runUnchecked(c)
   }
 
-  def insert(unsaved: ProductmodelproductdescriptioncultureRow)(using c: Connection): ProductmodelproductdescriptioncultureRow = {
+  override def insert(unsaved: ProductmodelproductdescriptioncultureRow)(using c: Connection): ProductmodelproductdescriptioncultureRow = {
   interpolate"""insert into "production"."productmodelproductdescriptionculture"("productmodelid", "productdescriptionid", "cultureid", "modifieddate")
     values (${ProductmodelId.pgType.encode(unsaved.productmodelid)}::int4, ${ProductdescriptionId.pgType.encode(unsaved.productdescriptionid)}::int4, ${CultureId.pgType.encode(unsaved.cultureid)}::bpchar, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     returning "productmodelid", "productdescriptionid", "cultureid", "modifieddate"::text
@@ -45,9 +45,9 @@ class ProductmodelproductdescriptioncultureRepoImpl extends Productmodelproductd
     .updateReturning(ProductmodelproductdescriptioncultureRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insert(unsaved: ProductmodelproductdescriptioncultureRowUnsaved)(using c: Connection): ProductmodelproductdescriptioncultureRow = {
-    val columns: java.util.List[Literal] = new ArrayList()
-    val values: java.util.List[Fragment] = new ArrayList()
+  override def insert(unsaved: ProductmodelproductdescriptioncultureRowUnsaved)(using c: Connection): ProductmodelproductdescriptioncultureRow = {
+    val columns: ArrayList[Literal] = new ArrayList[Literal]()
+    val values: ArrayList[Fragment] = new ArrayList[Fragment]()
     columns.add(Fragment.lit(""""productmodelid"""")): @scala.annotation.nowarn
     values.add(interpolate"${ProductmodelId.pgType.encode(unsaved.productmodelid)}::int4"): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""productdescriptionid"""")): @scala.annotation.nowarn
@@ -55,11 +55,8 @@ class ProductmodelproductdescriptioncultureRepoImpl extends Productmodelproductd
     columns.add(Fragment.lit(""""cultureid"""")): @scala.annotation.nowarn
     values.add(interpolate"${CultureId.pgType.encode(unsaved.cultureid)}::bpchar"): @scala.annotation.nowarn
     unsaved.modifieddate.visit(
-      (),
-      value => {
-        columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn;
-        values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn;
-      }
+      {  },
+      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate"${TypoLocalDateTime.pgType.encode(value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate"""insert into "production"."productmodelproductdescriptionculture"(${Fragment.comma(columns)})
@@ -67,61 +64,61 @@ class ProductmodelproductdescriptioncultureRepoImpl extends Productmodelproductd
       returning "productmodelid", "productdescriptionid", "cultureid", "modifieddate"::text
       """
     }
-    q.updateReturning(ProductmodelproductdescriptioncultureRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(ProductmodelproductdescriptioncultureRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[ProductmodelproductdescriptioncultureRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."productmodelproductdescriptionculture"("productmodelid", "productdescriptionid", "cultureid", "modifieddate") FROM STDIN""", batchSize, unsaved, c, ProductmodelproductdescriptioncultureRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[ProductmodelproductdescriptioncultureRowUnsaved],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."productmodelproductdescriptionculture"("productmodelid", "productdescriptionid", "cultureid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ProductmodelproductdescriptioncultureRowUnsaved.pgText)
 
-  def select: SelectBuilder[ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow] = SelectBuilder.of("production.productmodelproductdescriptionculture", ProductmodelproductdescriptioncultureFields.structure, ProductmodelproductdescriptioncultureRow.`_rowParser`)
+  override def select: SelectBuilder[ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow] = SelectBuilder.of("production.productmodelproductdescriptionculture", ProductmodelproductdescriptioncultureFields.structure, ProductmodelproductdescriptioncultureRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[ProductmodelproductdescriptioncultureRow] = {
+  override def selectAll(using c: Connection): java.util.List[ProductmodelproductdescriptioncultureRow] = {
     interpolate"""select "productmodelid", "productdescriptionid", "cultureid", "modifieddate"::text
     from "production"."productmodelproductdescriptionculture"
-    """.as(ProductmodelproductdescriptioncultureRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(ProductmodelproductdescriptioncultureRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(compositeId: ProductmodelproductdescriptioncultureId)(using c: Connection): Optional[ProductmodelproductdescriptioncultureRow] = {
+  override def selectById(compositeId: ProductmodelproductdescriptioncultureId)(using c: Connection): Optional[ProductmodelproductdescriptioncultureRow] = {
     interpolate"""select "productmodelid", "productdescriptionid", "cultureid", "modifieddate"::text
     from "production"."productmodelproductdescriptionculture"
-    where "productmodelid" = ${ProductmodelId.pgType.encode(compositeId.productmodelid)} AND "productdescriptionid" = ${ProductdescriptionId.pgType.encode(compositeId.productdescriptionid)} AND "cultureid" = ${CultureId.pgType.encode(compositeId.cultureid)}""".as(ProductmodelproductdescriptioncultureRow.`_rowParser`.first()).runUnchecked(c)
+    where "productmodelid" = ${ProductmodelId.pgType.encode(compositeId.productmodelid)} AND "productdescriptionid" = ${ProductdescriptionId.pgType.encode(compositeId.productdescriptionid)} AND "cultureid" = ${CultureId.pgType.encode(compositeId.cultureid)}""".query(ProductmodelproductdescriptioncultureRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(compositeIds: Array[ProductmodelproductdescriptioncultureId])(using c: Connection): java.util.List[ProductmodelproductdescriptioncultureRow] = {
+  override def selectByIds(compositeIds: Array[ProductmodelproductdescriptioncultureId])(using c: Connection): java.util.List[ProductmodelproductdescriptioncultureRow] = {
     val productmodelid: Array[ProductmodelId] = compositeIds.map(_.productmodelid)
     val productdescriptionid: Array[ProductdescriptionId] = compositeIds.map(_.productdescriptionid)
     val cultureid: Array[CultureId] = compositeIds.map(_.cultureid)
-    interpolate"""select "productmodelid", "productdescriptionid", "cultureid", "modifieddate"::text
+    return interpolate"""select "productmodelid", "productdescriptionid", "cultureid", "modifieddate"::text
     from "production"."productmodelproductdescriptionculture"
     where ("productmodelid", "productdescriptionid", "cultureid")
     in (select unnest(${ProductmodelId.pgTypeArray.encode(productmodelid)}::int4[]), unnest(${ProductdescriptionId.pgTypeArray.encode(productdescriptionid)}::int4[]), unnest(${CultureId.pgTypeArray.encode(cultureid)}::bpchar[]))
-    """.as(ProductmodelproductdescriptioncultureRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(ProductmodelproductdescriptioncultureRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(compositeIds: Array[ProductmodelproductdescriptioncultureId])(using c: Connection): java.util.Map[ProductmodelproductdescriptioncultureId, ProductmodelproductdescriptioncultureRow] = {
-    val ret: java.util.Map[ProductmodelproductdescriptioncultureId, ProductmodelproductdescriptioncultureRow] = new HashMap()
+  override def selectByIdsTracked(compositeIds: Array[ProductmodelproductdescriptioncultureId])(using c: Connection): java.util.Map[ProductmodelproductdescriptioncultureId, ProductmodelproductdescriptioncultureRow] = {
+    val ret: HashMap[ProductmodelproductdescriptioncultureId, ProductmodelproductdescriptioncultureRow] = new HashMap[ProductmodelproductdescriptioncultureId, ProductmodelproductdescriptioncultureRow]()
     selectByIds(compositeIds)(using c).forEach(row => ret.put(row.compositeId, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow] = UpdateBuilder.of("production.productmodelproductdescriptionculture", ProductmodelproductdescriptioncultureFields.structure, ProductmodelproductdescriptioncultureRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow] = UpdateBuilder.of("production.productmodelproductdescriptionculture", ProductmodelproductdescriptioncultureFields.structure, ProductmodelproductdescriptioncultureRow.`_rowParser`.all())
 
-  def update(row: ProductmodelproductdescriptioncultureRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: ProductmodelproductdescriptioncultureRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: ProductmodelproductdescriptioncultureId = row.compositeId
-    interpolate"""update "production"."productmodelproductdescriptionculture"
+    return interpolate"""update "production"."productmodelproductdescriptionculture"
     set "modifieddate" = ${TypoLocalDateTime.pgType.encode(row.modifieddate)}::timestamp
     where "productmodelid" = ${ProductmodelId.pgType.encode(compositeId.productmodelid)} AND "productdescriptionid" = ${ProductdescriptionId.pgType.encode(compositeId.productdescriptionid)} AND "cultureid" = ${CultureId.pgType.encode(compositeId.cultureid)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: ProductmodelproductdescriptioncultureRow)(using c: Connection): ProductmodelproductdescriptioncultureRow = {
+  override def upsert(unsaved: ProductmodelproductdescriptioncultureRow)(using c: Connection): ProductmodelproductdescriptioncultureRow = {
   interpolate"""insert into "production"."productmodelproductdescriptionculture"("productmodelid", "productdescriptionid", "cultureid", "modifieddate")
     values (${ProductmodelId.pgType.encode(unsaved.productmodelid)}::int4, ${ProductdescriptionId.pgType.encode(unsaved.productdescriptionid)}::int4, ${CultureId.pgType.encode(unsaved.cultureid)}::bpchar, ${TypoLocalDateTime.pgType.encode(unsaved.modifieddate)}::timestamp)
     on conflict ("productmodelid", "productdescriptionid", "cultureid")
@@ -133,7 +130,7 @@ class ProductmodelproductdescriptioncultureRepoImpl extends Productmodelproductd
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[ProductmodelproductdescriptioncultureRow])(using c: Connection): java.util.List[ProductmodelproductdescriptioncultureRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[ProductmodelproductdescriptioncultureRow])(using c: Connection): java.util.List[ProductmodelproductdescriptioncultureRow] = {
     interpolate"""insert into "production"."productmodelproductdescriptionculture"("productmodelid", "productdescriptionid", "cultureid", "modifieddate")
     values (?::int4, ?::int4, ?::bpchar, ?::timestamp)
     on conflict ("productmodelid", "productdescriptionid", "cultureid")
@@ -146,13 +143,13 @@ class ProductmodelproductdescriptioncultureRepoImpl extends Productmodelproductd
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[ProductmodelproductdescriptioncultureRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table productmodelproductdescriptionculture_TEMP (like "production"."productmodelproductdescriptionculture") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy productmodelproductdescriptionculture_TEMP("productmodelid", "productdescriptionid", "cultureid", "modifieddate") from stdin""", batchSize, unsaved, c, ProductmodelproductdescriptioncultureRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "production"."productmodelproductdescriptionculture"("productmodelid", "productdescriptionid", "cultureid", "modifieddate")
+    return interpolate"""insert into "production"."productmodelproductdescriptionculture"("productmodelid", "productdescriptionid", "cultureid", "modifieddate")
     select * from productmodelproductdescriptionculture_TEMP
     on conflict ("productmodelid", "productdescriptionid", "cultureid")
     do update set

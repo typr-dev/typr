@@ -26,18 +26,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class ProductmodelRepoImpl extends ProductmodelRepo {
-  def delete: DeleteBuilder[ProductmodelFields, ProductmodelRow] = DeleteBuilder.of(""""production"."productmodel"""", ProductmodelFields.structure, ProductmodelRow.rowParser(1).*)
+  override def delete: DeleteBuilder[ProductmodelFields, ProductmodelRow] = DeleteBuilder.of(""""production"."productmodel"""", ProductmodelFields.structure, ProductmodelRow.rowParser(1).*)
 
-  def deleteById(productmodelid: ProductmodelId)(using c: Connection): Boolean = SQL"""delete from "production"."productmodel" where "productmodelid" = ${ParameterValue(productmodelid, null, ProductmodelId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(productmodelid: ProductmodelId)(using c: Connection): Boolean = SQL"""delete from "production"."productmodel" where "productmodelid" = ${ParameterValue(productmodelid, null, ProductmodelId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(productmodelids: Array[ProductmodelId])(using c: Connection): Int = {
+  override def deleteByIds(productmodelids: Array[ProductmodelId])(using c: Connection): Int = {
     SQL"""delete
     from "production"."productmodel"
     where "productmodelid" = ANY(${ParameterValue(productmodelids, null, ProductmodelId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: ProductmodelRow)(using c: Connection): ProductmodelRow = {
+  override def insert(unsaved: ProductmodelRow)(using c: Connection): ProductmodelRow = {
   SQL"""insert into "production"."productmodel"("productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate")
     values (${ParameterValue(unsaved.productmodelid, null, ProductmodelId.toStatement)}::int4, ${ParameterValue(unsaved.name, null, Name.toStatement)}::varchar, ${ParameterValue(unsaved.catalogdescription, null, ToStatement.optionToStatement(using TypoXml.toStatement, TypoXml.parameterMetadata))}::xml, ${ParameterValue(unsaved.instructions, null, ToStatement.optionToStatement(using TypoXml.toStatement, TypoXml.parameterMetadata))}::xml, ${ParameterValue(unsaved.rowguid, null, TypoUUID.toStatement)}::uuid, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp)
     returning "productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate"::text
@@ -45,7 +45,7 @@ class ProductmodelRepoImpl extends ProductmodelRepo {
     .executeInsert(ProductmodelRow.rowParser(1).single)
   }
 
-  def insert(unsaved: ProductmodelRowUnsaved)(using c: Connection): ProductmodelRow = {
+  override def insert(unsaved: ProductmodelRowUnsaved)(using c: Connection): ProductmodelRow = {
     val namedParameters = List(
       Some((NamedParameter("name", ParameterValue(unsaved.name, null, Name.toStatement)), "::varchar")),
       Some((NamedParameter("catalogdescription", ParameterValue(unsaved.catalogdescription, null, ToStatement.optionToStatement(using TypoXml.toStatement, TypoXml.parameterMetadata))), "::xml")),
@@ -79,47 +79,47 @@ class ProductmodelRepoImpl extends ProductmodelRepo {
     }
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[ProductmodelRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "production"."productmodel"("productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved)(using ProductmodelRow.pgText, c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Iterator[ProductmodelRowUnsaved],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "production"."productmodel"("name", "catalogdescription", "instructions", "productmodelid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved)(using ProductmodelRowUnsaved.pgText, c)
 
-  def select: SelectBuilder[ProductmodelFields, ProductmodelRow] = SelectBuilder.of(""""production"."productmodel"""", ProductmodelFields.structure, ProductmodelRow.rowParser)
+  override def select: SelectBuilder[ProductmodelFields, ProductmodelRow] = SelectBuilder.of(""""production"."productmodel"""", ProductmodelFields.structure, ProductmodelRow.rowParser)
 
-  def selectAll(using c: Connection): List[ProductmodelRow] = {
+  override def selectAll(using c: Connection): List[ProductmodelRow] = {
     SQL"""select "productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate"::text
     from "production"."productmodel"
     """.as(ProductmodelRow.rowParser(1).*)
   }
 
-  def selectById(productmodelid: ProductmodelId)(using c: Connection): Option[ProductmodelRow] = {
+  override def selectById(productmodelid: ProductmodelId)(using c: Connection): Option[ProductmodelRow] = {
     SQL"""select "productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate"::text
     from "production"."productmodel"
     where "productmodelid" = ${ParameterValue(productmodelid, null, ProductmodelId.toStatement)}
     """.as(ProductmodelRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(productmodelids: Array[ProductmodelId])(using c: Connection): List[ProductmodelRow] = {
+  override def selectByIds(productmodelids: Array[ProductmodelId])(using c: Connection): List[ProductmodelRow] = {
     SQL"""select "productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate"::text
     from "production"."productmodel"
     where "productmodelid" = ANY(${ParameterValue(productmodelids, null, ProductmodelId.arrayToStatement)})
     """.as(ProductmodelRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(productmodelids: Array[ProductmodelId])(using c: Connection): Map[ProductmodelId, ProductmodelRow] = {
+  override def selectByIdsTracked(productmodelids: Array[ProductmodelId])(using c: Connection): Map[ProductmodelId, ProductmodelRow] = {
     val byId = selectByIds(productmodelids).view.map(x => (x.productmodelid, x)).toMap
     productmodelids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[ProductmodelFields, ProductmodelRow] = UpdateBuilder.of(""""production"."productmodel"""", ProductmodelFields.structure, ProductmodelRow.rowParser(1).*)
+  override def update: UpdateBuilder[ProductmodelFields, ProductmodelRow] = UpdateBuilder.of(""""production"."productmodel"""", ProductmodelFields.structure, ProductmodelRow.rowParser(1).*)
 
-  def update(row: ProductmodelRow)(using c: Connection): Option[ProductmodelRow] = {
+  override def update(row: ProductmodelRow)(using c: Connection): Option[ProductmodelRow] = {
     val productmodelid = row.productmodelid
     SQL"""update "production"."productmodel"
     set "name" = ${ParameterValue(row.name, null, Name.toStatement)}::varchar,
@@ -132,7 +132,7 @@ class ProductmodelRepoImpl extends ProductmodelRepo {
     """.executeInsert(ProductmodelRow.rowParser(1).singleOpt)
   }
 
-  def upsert(unsaved: ProductmodelRow)(using c: Connection): ProductmodelRow = {
+  override def upsert(unsaved: ProductmodelRow)(using c: Connection): ProductmodelRow = {
   SQL"""insert into "production"."productmodel"("productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate")
     values (
       ${ParameterValue(unsaved.productmodelid, null, ProductmodelId.toStatement)}::int4,
@@ -154,7 +154,7 @@ class ProductmodelRepoImpl extends ProductmodelRepo {
     .executeInsert(ProductmodelRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[ProductmodelRow])(using c: Connection): List[ProductmodelRow] = {
+  override def upsertBatch(unsaved: Iterable[ProductmodelRow])(using c: Connection): List[ProductmodelRow] = {
     def toNamedParameter(row: ProductmodelRow): List[NamedParameter] = List(
       NamedParameter("productmodelid", ParameterValue(row.productmodelid, null, ProductmodelId.toStatement)),
       NamedParameter("name", ParameterValue(row.name, null, Name.toStatement)),
@@ -163,6 +163,7 @@ class ProductmodelRepoImpl extends ProductmodelRepo {
       NamedParameter("rowguid", ParameterValue(row.rowguid, null, TypoUUID.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -187,7 +188,7 @@ class ProductmodelRepoImpl extends ProductmodelRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[ProductmodelRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

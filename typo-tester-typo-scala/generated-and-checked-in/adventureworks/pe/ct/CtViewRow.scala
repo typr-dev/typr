@@ -10,7 +10,6 @@ import adventureworks.person.contacttype.ContacttypeId
 import adventureworks.public.Name
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple4
 
 /** View: pe.ct */
 case class CtViewRow(
@@ -25,12 +24,5 @@ case class CtViewRow(
 )
 
 object CtViewRow {
-  val `_rowParser`: RowParser[CtViewRow] = {
-    RowParsers.of(ContacttypeId.pgType, ContacttypeId.pgType, Name.pgType, TypoLocalDateTime.pgType, CtViewRow.apply, row => new Tuple4(
-      row.id,
-      row.contacttypeid,
-      row.name,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[CtViewRow] = RowParsers.of(ContacttypeId.pgType, ContacttypeId.pgType, Name.pgType, TypoLocalDateTime.pgType, CtViewRow.apply, row => Array(row.id, row.contacttypeid, row.name, row.modifieddate))
 }

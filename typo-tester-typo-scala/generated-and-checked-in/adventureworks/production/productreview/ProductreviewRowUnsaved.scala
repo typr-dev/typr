@@ -60,23 +60,5 @@ case class ProductreviewRowUnsaved(
 }
 
 object ProductreviewRowUnsaved {
-  given pgText: PgText[ProductreviewRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      ProductId.pgType.pgText.unsafeEncode(row.productid, sb);
-      sb.append(PgText.DELIMETER);
-      Name.pgType.pgText.unsafeEncode(row.reviewername, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.text.pgText.unsafeEncode(row.emailaddress, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.int4.pgText.unsafeEncode(row.rating, sb);
-      sb.append(PgText.DELIMETER);
-      PgTypes.text.opt().pgText.unsafeEncode(row.comments, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using ProductreviewId.pgType.pgText).unsafeEncode(row.productreviewid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.reviewdate, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[ProductreviewRowUnsaved] = PgText.instance((row, sb) => { ProductId.pgType.pgText.unsafeEncode(row.productid, sb); sb.append(PgText.DELIMETER); Name.pgType.pgText.unsafeEncode(row.reviewername, sb); sb.append(PgText.DELIMETER); PgTypes.text.pgText.unsafeEncode(row.emailaddress, sb); sb.append(PgText.DELIMETER); PgTypes.int4.pgText.unsafeEncode(row.rating, sb); sb.append(PgText.DELIMETER); PgTypes.text.opt().pgText.unsafeEncode(row.comments, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using ProductreviewId.pgType.pgText).unsafeEncode(row.productreviewid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.reviewdate, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

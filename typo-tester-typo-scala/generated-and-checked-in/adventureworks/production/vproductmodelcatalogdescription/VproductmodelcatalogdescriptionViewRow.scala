@@ -9,11 +9,11 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoUUID
 import adventureworks.production.productmodel.ProductmodelId
 import adventureworks.public.Name
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.util.Optional
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple25
 
 /** View: production.vproductmodelcatalogdescription */
 case class VproductmodelcatalogdescriptionViewRow(
@@ -21,7 +21,7 @@ case class VproductmodelcatalogdescriptionViewRow(
   productmodelid: ProductmodelId,
   /** Points to [[adventureworks.production.productmodel.ProductmodelRow.name]] */
   name: Name,
-  summary: /* nullability unknown */ Optional[String],
+  @JsonProperty("Summary") summary: /* nullability unknown */ Optional[String],
   manufacturer: /* nullability unknown */ Optional[String],
   copyright: /* nullability unknown */ Optional[/* max 30 chars */ String],
   producturl: /* nullability unknown */ Optional[/* max 256 chars */ String],
@@ -49,33 +49,5 @@ case class VproductmodelcatalogdescriptionViewRow(
 )
 
 object VproductmodelcatalogdescriptionViewRow {
-  val `_rowParser`: RowParser[VproductmodelcatalogdescriptionViewRow] = {
-    RowParsers.of(ProductmodelId.pgType, Name.pgType, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, VproductmodelcatalogdescriptionViewRow.apply, row => new Tuple25(
-      row.productmodelid,
-      row.name,
-      row.summary,
-      row.manufacturer,
-      row.copyright,
-      row.producturl,
-      row.warrantyperiod,
-      row.warrantydescription,
-      row.noofyears,
-      row.maintenancedescription,
-      row.wheel,
-      row.saddle,
-      row.pedal,
-      row.bikeframe,
-      row.crankset,
-      row.pictureangle,
-      row.picturesize,
-      row.productphotoid,
-      row.material,
-      row.color,
-      row.productline,
-      row.style,
-      row.riderexperience,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[VproductmodelcatalogdescriptionViewRow] = RowParsers.of(ProductmodelId.pgType, Name.pgType, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, VproductmodelcatalogdescriptionViewRow.apply, row => Array(row.productmodelid, row.name, row.summary, row.manufacturer, row.copyright, row.producturl, row.warrantyperiod, row.warrantydescription, row.noofyears, row.maintenancedescription, row.wheel, row.saddle, row.pedal, row.bikeframe, row.crankset, row.pictureangle, row.picturesize, row.productphotoid, row.material, row.color, row.productline, row.style, row.riderexperience, row.rowguid, row.modifieddate))
 }

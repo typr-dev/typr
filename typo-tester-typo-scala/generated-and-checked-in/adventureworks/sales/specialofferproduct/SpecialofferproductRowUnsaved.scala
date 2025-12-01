@@ -42,15 +42,5 @@ case class SpecialofferproductRowUnsaved(
 }
 
 object SpecialofferproductRowUnsaved {
-  given pgText: PgText[SpecialofferproductRowUnsaved] = {
-    PgText.instance((row, sb) => {
-      SpecialofferId.pgType.pgText.unsafeEncode(row.specialofferid, sb);
-      sb.append(PgText.DELIMETER);
-      ProductId.pgType.pgText.unsafeEncode(row.productid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb);
-      sb.append(PgText.DELIMETER);
-      Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb);
-    })
-  }
+  given pgText: PgText[SpecialofferproductRowUnsaved] = PgText.instance((row, sb) => { SpecialofferId.pgType.pgText.unsafeEncode(row.specialofferid, sb); sb.append(PgText.DELIMETER); ProductId.pgType.pgText.unsafeEncode(row.productid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoUUID.pgType.pgText).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

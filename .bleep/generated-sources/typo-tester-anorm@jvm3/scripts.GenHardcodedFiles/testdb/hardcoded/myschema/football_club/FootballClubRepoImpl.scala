@@ -21,18 +21,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class FootballClubRepoImpl extends FootballClubRepo {
-  def delete: DeleteBuilder[FootballClubFields, FootballClubRow] = DeleteBuilder.of(""""myschema"."football_club"""", FootballClubFields.structure, FootballClubRow.rowParser(1).*)
+  override def delete: DeleteBuilder[FootballClubFields, FootballClubRow] = DeleteBuilder.of(""""myschema"."football_club"""", FootballClubFields.structure, FootballClubRow.rowParser(1).*)
 
-  def deleteById(id: FootballClubId)(using c: Connection): Boolean = SQL"""delete from "myschema"."football_club" where "id" = ${ParameterValue(id, null, FootballClubId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(id: FootballClubId)(using c: Connection): Boolean = SQL"""delete from "myschema"."football_club" where "id" = ${ParameterValue(id, null, FootballClubId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(ids: Array[FootballClubId])(using c: Connection): Int = {
+  override def deleteByIds(ids: Array[FootballClubId])(using c: Connection): Int = {
     SQL"""delete
     from "myschema"."football_club"
     where "id" = ANY(${ParameterValue(ids, null, FootballClubId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: FootballClubRow)(using c: Connection): FootballClubRow = {
+  override def insert(unsaved: FootballClubRow)(using c: Connection): FootballClubRow = {
   SQL"""insert into "myschema"."football_club"("id", "name")
     values (${ParameterValue(unsaved.id, null, FootballClubId.toStatement)}::int8, ${ParameterValue(unsaved.name, null, ToStatement.stringToStatement)})
     returning "id", "name"
@@ -40,20 +40,20 @@ class FootballClubRepoImpl extends FootballClubRepo {
     .executeInsert(FootballClubRow.rowParser(1).single)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[FootballClubRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "myschema"."football_club"("id", "name") FROM STDIN""", batchSize, unsaved)(using FootballClubRow.pgText, c)
 
-  def select: SelectBuilder[FootballClubFields, FootballClubRow] = SelectBuilder.of(""""myschema"."football_club"""", FootballClubFields.structure, FootballClubRow.rowParser)
+  override def select: SelectBuilder[FootballClubFields, FootballClubRow] = SelectBuilder.of(""""myschema"."football_club"""", FootballClubFields.structure, FootballClubRow.rowParser)
 
-  def selectAll(using c: Connection): List[FootballClubRow] = {
+  override def selectAll(using c: Connection): List[FootballClubRow] = {
     SQL"""select "id", "name"
     from "myschema"."football_club"
     """.as(FootballClubRow.rowParser(1).*)
   }
 
-  def selectByFieldValues(fieldValues: List[FootballClubFieldValue[?]])(using c: Connection): List[FootballClubRow] = {
+  override def selectByFieldValues(fieldValues: List[FootballClubFieldValue[?]])(using c: Connection): List[FootballClubRow] = {
     fieldValues match {
       case Nil => selectAll
       case nonEmpty =>
@@ -71,28 +71,28 @@ class FootballClubRepoImpl extends FootballClubRepo {
     }
   }
 
-  def selectById(id: FootballClubId)(using c: Connection): Option[FootballClubRow] = {
+  override def selectById(id: FootballClubId)(using c: Connection): Option[FootballClubRow] = {
     SQL"""select "id", "name"
     from "myschema"."football_club"
     where "id" = ${ParameterValue(id, null, FootballClubId.toStatement)}
     """.as(FootballClubRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(ids: Array[FootballClubId])(using c: Connection): List[FootballClubRow] = {
+  override def selectByIds(ids: Array[FootballClubId])(using c: Connection): List[FootballClubRow] = {
     SQL"""select "id", "name"
     from "myschema"."football_club"
     where "id" = ANY(${ParameterValue(ids, null, FootballClubId.arrayToStatement)})
     """.as(FootballClubRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(ids: Array[FootballClubId])(using c: Connection): Map[FootballClubId, FootballClubRow] = {
+  override def selectByIdsTracked(ids: Array[FootballClubId])(using c: Connection): Map[FootballClubId, FootballClubRow] = {
     val byId = selectByIds(ids).view.map(x => (x.id, x)).toMap
     ids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[FootballClubFields, FootballClubRow] = UpdateBuilder.of(""""myschema"."football_club"""", FootballClubFields.structure, FootballClubRow.rowParser(1).*)
+  override def update: UpdateBuilder[FootballClubFields, FootballClubRow] = UpdateBuilder.of(""""myschema"."football_club"""", FootballClubFields.structure, FootballClubRow.rowParser(1).*)
 
-  def update(row: FootballClubRow)(using c: Connection): Option[FootballClubRow] = {
+  override def update(row: FootballClubRow)(using c: Connection): Option[FootballClubRow] = {
     val id = row.id
     SQL"""update "myschema"."football_club"
     set "name" = ${ParameterValue(row.name, null, ToStatement.stringToStatement)}
@@ -101,7 +101,7 @@ class FootballClubRepoImpl extends FootballClubRepo {
     """.executeInsert(FootballClubRow.rowParser(1).singleOpt)
   }
 
-  def updateFieldValues(
+  override def updateFieldValues(
     id: FootballClubId,
     fieldValues: List[FootballClubFieldValue[?]]
   )(using c: Connection): Boolean = {
@@ -122,7 +122,7 @@ class FootballClubRepoImpl extends FootballClubRepo {
     }
   }
 
-  def upsert(unsaved: FootballClubRow)(using c: Connection): FootballClubRow = {
+  override def upsert(unsaved: FootballClubRow)(using c: Connection): FootballClubRow = {
   SQL"""insert into "myschema"."football_club"("id", "name")
     values (
       ${ParameterValue(unsaved.id, null, FootballClubId.toStatement)}::int8,
@@ -136,11 +136,12 @@ class FootballClubRepoImpl extends FootballClubRepo {
     .executeInsert(FootballClubRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[FootballClubRow])(using c: Connection): List[FootballClubRow] = {
+  override def upsertBatch(unsaved: Iterable[FootballClubRow])(using c: Connection): List[FootballClubRow] = {
     def toNamedParameter(row: FootballClubRow): List[NamedParameter] = List(
       NamedParameter("id", ParameterValue(row.id, null, FootballClubId.toStatement)),
       NamedParameter("name", ParameterValue(row.name, null, ToStatement.stringToStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -161,7 +162,7 @@ class FootballClubRepoImpl extends FootballClubRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[FootballClubRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

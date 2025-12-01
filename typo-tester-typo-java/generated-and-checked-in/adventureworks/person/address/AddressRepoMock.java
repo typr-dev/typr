@@ -5,6 +5,7 @@
  */
 package adventureworks.person.address;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,12 @@ public record AddressRepoMock(
     return new AddressRepoMock(toRow, map);
   };
 
+  @Override
   public DeleteBuilder<AddressFields, AddressRow> delete() {
     return new DeleteBuilderMock<>(AddressFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.addressid(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     AddressId addressid,
     Connection c
@@ -52,28 +55,31 @@ public record AddressRepoMock(
     return Optional.ofNullable(map.remove(addressid)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     AddressId[] addressids,
     Connection c
   ) {
     var count = 0;
-      for (var id : addressids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : addressids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public AddressRow insert(
     AddressRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.addressid())) {
-        throw new RuntimeException(str("id $unsaved.addressid() already exists"));
-      };
-      map.put(unsaved.addressid(), unsaved);
+      throw new RuntimeException(str("id $unsaved.addressid() already exists"));
+    };
+    map.put(unsaved.addressid(), unsaved);
     return unsaved;
   };
 
+  @Override
   public AddressRow insert(
     AddressRowUnsaved unsaved,
     Connection c
@@ -81,44 +87,49 @@ public record AddressRepoMock(
     return insert(toRow.apply(unsaved), c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<AddressRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.addressid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.addressid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<AddressRowUnsaved> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var unsavedRow = unsaved.next();
-        var row = toRow.apply(unsavedRow);
-        map.put(row.addressid(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var unsavedRow = unsaved.next();
+      var row = toRow.apply(unsavedRow);
+      map.put(row.addressid(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<AddressFields, AddressRow> select() {
     return new SelectBuilderMock<>(AddressFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<AddressRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<AddressRow> selectById(
     AddressId addressid,
     Connection c
@@ -126,38 +137,43 @@ public record AddressRepoMock(
     return Optional.ofNullable(map.get(addressid));
   };
 
+  @Override
   public List<AddressRow> selectByIds(
     AddressId[] addressids,
     Connection c
   ) {
     var result = new ArrayList<AddressRow>();
-      for (var id : addressids) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : addressids) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<AddressId, AddressRow> selectByIdsTracked(
     AddressId[] addressids,
     Connection c
   ) {
-    return selectByIds(addressids, c).stream().collect(Collectors.toMap((adventureworks.person.address.AddressRow row) -> row.addressid(), Function.identity()));
+    return selectByIds(addressids, c).stream().collect(Collectors.toMap((AddressRow row) -> row.addressid(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<AddressFields, AddressRow> update() {
     return new UpdateBuilderMock<>(AddressFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     AddressRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.addressid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.addressid(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.addressid(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public AddressRow upsert(
     AddressRow unsaved,
     Connection c
@@ -166,31 +182,33 @@ public record AddressRepoMock(
     return unsaved;
   };
 
+  @Override
   public List<AddressRow> upsertBatch(
     Iterator<AddressRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<AddressRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.addressid(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.addressid(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<AddressRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.addressid(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.addressid(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

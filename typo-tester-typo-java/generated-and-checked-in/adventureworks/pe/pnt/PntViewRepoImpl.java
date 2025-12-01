@@ -5,22 +5,22 @@
  */
 package adventureworks.pe.pnt;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class PntViewRepoImpl implements PntViewRepo {
+  @Override
   public SelectBuilder<PntViewFields, PntViewRow> select() {
     return SelectBuilder.of("pe.pnt", PntViewFields.structure(), PntViewRow._rowParser);
   };
 
+  @Override
   public List<PntViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "phonenumbertypeid", "name", "modifieddate"::text
        from "pe"."pnt"
-    """)).as(PntViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(PntViewRow._rowParser.all()).runUnchecked(c);
   };
 }

@@ -9,7 +9,6 @@ import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.customtypes.TypoUUID;
 import adventureworks.person.countryregion.CountryregionId;
 import adventureworks.public_.Name;
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,12 +26,13 @@ import typo.runtime.streamingInsert;
 import static typo.runtime.Fragment.interpolate;
 import static typo.runtime.internal.stringInterpolator.str;
 
-@ApplicationScoped
 public class SalesterritoryRepoImpl implements SalesterritoryRepo {
+  @Override
   public DeleteBuilder<SalesterritoryFields, SalesterritoryRow> delete() {
     return DeleteBuilder.of("sales.salesterritory", SalesterritoryFields.structure());
   };
 
+  @Override
   public Boolean deleteById(
     SalesterritoryId territoryid,
     Connection c
@@ -46,6 +46,7 @@ public class SalesterritoryRepoImpl implements SalesterritoryRepo {
     ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public Integer deleteByIds(
     SalesterritoryId[] territoryids,
     Connection c
@@ -62,6 +63,7 @@ public class SalesterritoryRepoImpl implements SalesterritoryRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public SalesterritoryRow insert(
     SalesterritoryRow unsaved,
     Connection c
@@ -97,116 +99,132 @@ public class SalesterritoryRepoImpl implements SalesterritoryRepo {
       .updateReturning(SalesterritoryRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public SalesterritoryRow insert(
     SalesterritoryRowUnsaved unsaved,
     Connection c
   ) {
-    List<Literal> columns = new ArrayList<>();;
-      List<Fragment> values = new ArrayList<>();;
-      columns.add(Fragment.lit("\"name\""));
-      values.add(interpolate(
-        Name.pgType.encode(unsaved.name()),
-        typo.runtime.Fragment.lit("::varchar")
+    ArrayList<Literal> columns = new ArrayList<Literal>();;
+    ArrayList<Fragment> values = new ArrayList<Fragment>();;
+    columns.add(Fragment.lit("\"name\""));
+    values.add(interpolate(
+      Name.pgType.encode(unsaved.name()),
+      typo.runtime.Fragment.lit("::varchar")
+    ));
+    columns.add(Fragment.lit("\"countryregioncode\""));
+    values.add(interpolate(
+      CountryregionId.pgType.encode(unsaved.countryregioncode()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    columns.add(Fragment.lit("\"group\""));
+    values.add(interpolate(
+      PgTypes.text.encode(unsaved.group()),
+      typo.runtime.Fragment.lit("""
+      """)
+    ));
+    unsaved.territoryid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"territoryid\""));
+        values.add(interpolate(
+        SalesterritoryId.pgType.encode(value),
+        typo.runtime.Fragment.lit("::int4")
       ));
-      columns.add(Fragment.lit("\"countryregioncode\""));
-      values.add(interpolate(
-        CountryregionId.pgType.encode(unsaved.countryregioncode()),
-        typo.runtime.Fragment.lit("""
-        """)
+      }
+    );;
+    unsaved.salesytd().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"salesytd\""));
+        values.add(interpolate(
+        PgTypes.numeric.encode(value),
+        typo.runtime.Fragment.lit("::numeric")
       ));
-      columns.add(Fragment.lit("\"group\""));
-      values.add(interpolate(
-        PgTypes.text.encode(unsaved.group()),
-        typo.runtime.Fragment.lit("""
-        """)
+      }
+    );;
+    unsaved.saleslastyear().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"saleslastyear\""));
+        values.add(interpolate(
+        PgTypes.numeric.encode(value),
+        typo.runtime.Fragment.lit("::numeric")
       ));
-      unsaved.territoryid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"territoryid\""));
-          values.add(interpolate(
-            SalesterritoryId.pgType.encode(value),
-            typo.runtime.Fragment.lit("::int4")
-          ));
-        }
-      );;
-      unsaved.salesytd().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"salesytd\""));
-          values.add(interpolate(
-            PgTypes.numeric.encode(value),
-            typo.runtime.Fragment.lit("::numeric")
-          ));
-        }
-      );;
-      unsaved.saleslastyear().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"saleslastyear\""));
-          values.add(interpolate(
-            PgTypes.numeric.encode(value),
-            typo.runtime.Fragment.lit("::numeric")
-          ));
-        }
-      );;
-      unsaved.costytd().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"costytd\""));
-          values.add(interpolate(
-            PgTypes.numeric.encode(value),
-            typo.runtime.Fragment.lit("::numeric")
-          ));
-        }
-      );;
-      unsaved.costlastyear().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"costlastyear\""));
-          values.add(interpolate(
-            PgTypes.numeric.encode(value),
-            typo.runtime.Fragment.lit("::numeric")
-          ));
-        }
-      );;
-      unsaved.rowguid().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"rowguid\""));
-          values.add(interpolate(
-            TypoUUID.pgType.encode(value),
-            typo.runtime.Fragment.lit("::uuid")
-          ));
-        }
-      );;
-      unsaved.modifieddate().visit(
-        () -> {},
-        value -> {
-          columns.add(Fragment.lit("\"modifieddate\""));
-          values.add(interpolate(
-            TypoLocalDateTime.pgType.encode(value),
-            typo.runtime.Fragment.lit("::timestamp")
-          ));
-        }
-      );;
-      Fragment q = interpolate(
-        typo.runtime.Fragment.lit("""
-        insert into "sales"."salesterritory"(
-        """),
-        Fragment.comma(columns),
-        typo.runtime.Fragment.lit("""
-           )
-           values ("""),
-        Fragment.comma(values),
-        typo.runtime.Fragment.lit("""
-           )
-           returning "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"::text
-        """)
-      );;
+      }
+    );;
+    unsaved.costytd().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"costytd\""));
+        values.add(interpolate(
+        PgTypes.numeric.encode(value),
+        typo.runtime.Fragment.lit("::numeric")
+      ));
+      }
+    );;
+    unsaved.costlastyear().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"costlastyear\""));
+        values.add(interpolate(
+        PgTypes.numeric.encode(value),
+        typo.runtime.Fragment.lit("::numeric")
+      ));
+      }
+    );;
+    unsaved.rowguid().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"rowguid\""));
+        values.add(interpolate(
+        TypoUUID.pgType.encode(value),
+        typo.runtime.Fragment.lit("::uuid")
+      ));
+      }
+    );;
+    unsaved.modifieddate().visit(
+      () -> {
+  
+      },
+      value -> {
+        columns.add(Fragment.lit("\"modifieddate\""));
+        values.add(interpolate(
+        TypoLocalDateTime.pgType.encode(value),
+        typo.runtime.Fragment.lit("::timestamp")
+      ));
+      }
+    );;
+    Fragment q = interpolate(
+      typo.runtime.Fragment.lit("""
+      insert into "sales"."salesterritory"(
+      """),
+      Fragment.comma(columns),
+      typo.runtime.Fragment.lit("""
+         )
+         values ("""),
+      Fragment.comma(values),
+      typo.runtime.Fragment.lit("""
+         )
+         returning "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"::text
+      """)
+    );;
     return q.updateReturning(SalesterritoryRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<SalesterritoryRow> unsaved,
     Integer batchSize,
@@ -218,6 +236,7 @@ public class SalesterritoryRepoImpl implements SalesterritoryRepo {
   };
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
+  @Override
   public Long insertUnsavedStreaming(
     Iterator<SalesterritoryRowUnsaved> unsaved,
     Integer batchSize,
@@ -228,17 +247,20 @@ public class SalesterritoryRepoImpl implements SalesterritoryRepo {
     """), batchSize, unsaved, c, SalesterritoryRowUnsaved.pgText);
   };
 
+  @Override
   public SelectBuilder<SalesterritoryFields, SalesterritoryRow> select() {
     return SelectBuilder.of("sales.salesterritory", SalesterritoryFields.structure(), SalesterritoryRow._rowParser);
   };
 
+  @Override
   public List<SalesterritoryRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"::text
        from "sales"."salesterritory"
-    """)).as(SalesterritoryRow._rowParser.all()).runUnchecked(c);
+    """)).query(SalesterritoryRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Optional<SalesterritoryRow> selectById(
     SalesterritoryId territoryid,
     Connection c
@@ -250,9 +272,10 @@ public class SalesterritoryRepoImpl implements SalesterritoryRepo {
          where "territoryid" = """),
       SalesterritoryId.pgType.encode(territoryid),
       typo.runtime.Fragment.lit("")
-    ).as(SalesterritoryRow._rowParser.first()).runUnchecked(c);
+    ).query(SalesterritoryRow._rowParser.first()).runUnchecked(c);
   };
 
+  @Override
   public List<SalesterritoryRow> selectByIds(
     SalesterritoryId[] territoryids,
     Connection c
@@ -264,72 +287,76 @@ public class SalesterritoryRepoImpl implements SalesterritoryRepo {
          where "territoryid" = ANY("""),
       SalesterritoryId.pgTypeArray.encode(territoryids),
       typo.runtime.Fragment.lit(")")
-    ).as(SalesterritoryRow._rowParser.all()).runUnchecked(c);
+    ).query(SalesterritoryRow._rowParser.all()).runUnchecked(c);
   };
 
+  @Override
   public Map<SalesterritoryId, SalesterritoryRow> selectByIdsTracked(
     SalesterritoryId[] territoryids,
     Connection c
   ) {
-    Map<SalesterritoryId, SalesterritoryRow> ret = new HashMap<>();;
-      selectByIds(territoryids, c).forEach(row -> ret.put(row.territoryid(), row));
+    HashMap<SalesterritoryId, SalesterritoryRow> ret = new HashMap<SalesterritoryId, SalesterritoryRow>();
+    selectByIds(territoryids, c).forEach(row -> ret.put(row.territoryid(), row));
     return ret;
   };
 
+  @Override
   public UpdateBuilder<SalesterritoryFields, SalesterritoryRow> update() {
     return UpdateBuilder.of("sales.salesterritory", SalesterritoryFields.structure(), SalesterritoryRow._rowParser.all());
   };
 
+  @Override
   public Boolean update(
     SalesterritoryRow row,
     Connection c
   ) {
     SalesterritoryId territoryid = row.territoryid();;
     return interpolate(
-             typo.runtime.Fragment.lit("""
-                update "sales"."salesterritory"
-                set "name" = """),
-             Name.pgType.encode(row.name()),
-             typo.runtime.Fragment.lit("""
-                ::varchar,
-                "countryregioncode" = """),
-             CountryregionId.pgType.encode(row.countryregioncode()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "group" = """),
-             PgTypes.text.encode(row.group()),
-             typo.runtime.Fragment.lit("""
-                ,
-                "salesytd" = """),
-             PgTypes.numeric.encode(row.salesytd()),
-             typo.runtime.Fragment.lit("""
-                ::numeric,
-                "saleslastyear" = """),
-             PgTypes.numeric.encode(row.saleslastyear()),
-             typo.runtime.Fragment.lit("""
-                ::numeric,
-                "costytd" = """),
-             PgTypes.numeric.encode(row.costytd()),
-             typo.runtime.Fragment.lit("""
-                ::numeric,
-                "costlastyear" = """),
-             PgTypes.numeric.encode(row.costlastyear()),
-             typo.runtime.Fragment.lit("""
-                ::numeric,
-                "rowguid" = """),
-             TypoUUID.pgType.encode(row.rowguid()),
-             typo.runtime.Fragment.lit("""
-                ::uuid,
-                "modifieddate" = """),
-             TypoLocalDateTime.pgType.encode(row.modifieddate()),
-             typo.runtime.Fragment.lit("""
-                ::timestamp
-                where "territoryid" = """),
-             SalesterritoryId.pgType.encode(territoryid),
-             typo.runtime.Fragment.lit("")
-           ).update().runUnchecked(c) > 0;
+      typo.runtime.Fragment.lit("""
+         update "sales"."salesterritory"
+         set "name" = """),
+      Name.pgType.encode(row.name()),
+      typo.runtime.Fragment.lit("""
+         ::varchar,
+         "countryregioncode" = """),
+      CountryregionId.pgType.encode(row.countryregioncode()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "group" = """),
+      PgTypes.text.encode(row.group()),
+      typo.runtime.Fragment.lit("""
+         ,
+         "salesytd" = """),
+      PgTypes.numeric.encode(row.salesytd()),
+      typo.runtime.Fragment.lit("""
+         ::numeric,
+         "saleslastyear" = """),
+      PgTypes.numeric.encode(row.saleslastyear()),
+      typo.runtime.Fragment.lit("""
+         ::numeric,
+         "costytd" = """),
+      PgTypes.numeric.encode(row.costytd()),
+      typo.runtime.Fragment.lit("""
+         ::numeric,
+         "costlastyear" = """),
+      PgTypes.numeric.encode(row.costlastyear()),
+      typo.runtime.Fragment.lit("""
+         ::numeric,
+         "rowguid" = """),
+      TypoUUID.pgType.encode(row.rowguid()),
+      typo.runtime.Fragment.lit("""
+         ::uuid,
+         "modifieddate" = """),
+      TypoLocalDateTime.pgType.encode(row.modifieddate()),
+      typo.runtime.Fragment.lit("""
+         ::timestamp
+         where "territoryid" = """),
+      SalesterritoryId.pgType.encode(territoryid),
+      typo.runtime.Fragment.lit("")
+    ).update().runUnchecked(c) > 0;
   };
 
+  @Override
   public SalesterritoryRow upsert(
     SalesterritoryRow unsaved,
     Connection c
@@ -377,6 +404,7 @@ public class SalesterritoryRepoImpl implements SalesterritoryRepo {
       .runUnchecked(c);
   };
 
+  @Override
   public List<SalesterritoryRow> upsertBatch(
     Iterator<SalesterritoryRow> unsaved,
     Connection c
@@ -402,32 +430,33 @@ public class SalesterritoryRepoImpl implements SalesterritoryRepo {
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<SalesterritoryRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     interpolate(typo.runtime.Fragment.lit("""
-      create temporary table salesterritory_TEMP (like "sales"."salesterritory") on commit drop
-      """)).update().runUnchecked(c);
-      streamingInsert.insertUnchecked(str("""
-      copy salesterritory_TEMP("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate") from stdin
-      """), batchSize, unsaved, c, SalesterritoryRow.pgText);
+    create temporary table salesterritory_TEMP (like "sales"."salesterritory") on commit drop
+    """)).update().runUnchecked(c);
+    streamingInsert.insertUnchecked(str("""
+    copy salesterritory_TEMP("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate") from stdin
+    """), batchSize, unsaved, c, SalesterritoryRow.pgText);
     return interpolate(typo.runtime.Fragment.lit("""
-              insert into "sales"."salesterritory"("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate")
-              select * from salesterritory_TEMP
-              on conflict ("territoryid")
-              do update set
-                "name" = EXCLUDED."name",
-              "countryregioncode" = EXCLUDED."countryregioncode",
-              "group" = EXCLUDED."group",
-              "salesytd" = EXCLUDED."salesytd",
-              "saleslastyear" = EXCLUDED."saleslastyear",
-              "costytd" = EXCLUDED."costytd",
-              "costlastyear" = EXCLUDED."costlastyear",
-              "rowguid" = EXCLUDED."rowguid",
-              "modifieddate" = EXCLUDED."modifieddate"
-              ;
-              drop table salesterritory_TEMP;""")).update().runUnchecked(c);
+       insert into "sales"."salesterritory"("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate")
+       select * from salesterritory_TEMP
+       on conflict ("territoryid")
+       do update set
+         "name" = EXCLUDED."name",
+       "countryregioncode" = EXCLUDED."countryregioncode",
+       "group" = EXCLUDED."group",
+       "salesytd" = EXCLUDED."salesytd",
+       "saleslastyear" = EXCLUDED."saleslastyear",
+       "costytd" = EXCLUDED."costytd",
+       "costlastyear" = EXCLUDED."costlastyear",
+       "rowguid" = EXCLUDED."rowguid",
+       "modifieddate" = EXCLUDED."modifieddate"
+       ;
+       drop table salesterritory_TEMP;""")).update().runUnchecked(c);
   };
 }

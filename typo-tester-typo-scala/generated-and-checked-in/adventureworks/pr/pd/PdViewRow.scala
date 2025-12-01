@@ -11,7 +11,6 @@ import adventureworks.production.productdescription.ProductdescriptionId
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple5
 
 /** View: pr.pd */
 case class PdViewRow(
@@ -28,13 +27,5 @@ case class PdViewRow(
 )
 
 object PdViewRow {
-  val `_rowParser`: RowParser[PdViewRow] = {
-    RowParsers.of(ProductdescriptionId.pgType, ProductdescriptionId.pgType, PgTypes.text, TypoUUID.pgType, TypoLocalDateTime.pgType, PdViewRow.apply, row => new Tuple5(
-      row.id,
-      row.productdescriptionid,
-      row.description,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[PdViewRow] = RowParsers.of(ProductdescriptionId.pgType, ProductdescriptionId.pgType, PgTypes.text, TypoUUID.pgType, TypoLocalDateTime.pgType, PdViewRow.apply, row => Array(row.id, row.productdescriptionid, row.description, row.rowguid, row.modifieddate))
 }

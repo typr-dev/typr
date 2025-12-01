@@ -17,21 +17,21 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class TestSakSoknadsalternativRepoImpl extends TestSakSoknadsalternativRepo {
-  def delete: DeleteBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = DeleteBuilder.of("public.test_sak_soknadsalternativ", TestSakSoknadsalternativFields.structure)
+  override def delete: DeleteBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = DeleteBuilder.of("public.test_sak_soknadsalternativ", TestSakSoknadsalternativFields.structure)
 
-  def deleteById(compositeId: TestSakSoknadsalternativId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."test_sak_soknadsalternativ" where "organisasjonskode_saksbehandler" = ${PgTypes.text.encode(compositeId.organisasjonskodeSaksbehandler)} AND "utdanningsmulighet_kode" = ${PgTypes.text.encode(compositeId.utdanningsmulighetKode)}""".update().runUnchecked(c) > 0
+  override def deleteById(compositeId: TestSakSoknadsalternativId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."test_sak_soknadsalternativ" where "organisasjonskode_saksbehandler" = ${PgTypes.text.encode(compositeId.organisasjonskodeSaksbehandler)} AND "utdanningsmulighet_kode" = ${PgTypes.text.encode(compositeId.utdanningsmulighetKode)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(compositeIds: Array[TestSakSoknadsalternativId])(using c: Connection): Integer = {
+  override def deleteByIds(compositeIds: Array[TestSakSoknadsalternativId])(using c: Connection): Integer = {
     val organisasjonskodeSaksbehandler: Array[String] = compositeIds.map(_.organisasjonskodeSaksbehandler)
     val utdanningsmulighetKode: Array[String] = compositeIds.map(_.utdanningsmulighetKode)
-    interpolate"""delete
+    return interpolate"""delete
     from "public"."test_sak_soknadsalternativ"
     where ("organisasjonskode_saksbehandler", "utdanningsmulighet_kode")
     in (select unnest(${PgTypes.textArray.encode(organisasjonskodeSaksbehandler)}::text[]), unnest(${PgTypes.textArray.encode(utdanningsmulighetKode)}::text[]))
     """.update().runUnchecked(c)
   }
 
-  def insert(unsaved: TestSakSoknadsalternativRow)(using c: Connection): TestSakSoknadsalternativRow = {
+  override def insert(unsaved: TestSakSoknadsalternativRow)(using c: Connection): TestSakSoknadsalternativRow = {
   interpolate"""insert into "public"."test_sak_soknadsalternativ"("organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder")
     values (${PgTypes.text.encode(unsaved.organisasjonskodeSaksbehandler)}, ${PgTypes.text.encode(unsaved.utdanningsmulighetKode)}, ${TestOrganisasjonId.pgType.encode(unsaved.organisasjonskodeTilbyder)})
     returning "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder"
@@ -39,51 +39,51 @@ class TestSakSoknadsalternativRepoImpl extends TestSakSoknadsalternativRepo {
     .updateReturning(TestSakSoknadsalternativRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[TestSakSoknadsalternativRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."test_sak_soknadsalternativ"("organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder") FROM STDIN""", batchSize, unsaved, c, TestSakSoknadsalternativRow.pgText)
 
-  def select: SelectBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = SelectBuilder.of("public.test_sak_soknadsalternativ", TestSakSoknadsalternativFields.structure, TestSakSoknadsalternativRow.`_rowParser`)
+  override def select: SelectBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = SelectBuilder.of("public.test_sak_soknadsalternativ", TestSakSoknadsalternativFields.structure, TestSakSoknadsalternativRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[TestSakSoknadsalternativRow] = {
+  override def selectAll(using c: Connection): java.util.List[TestSakSoknadsalternativRow] = {
     interpolate"""select "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder"
     from "public"."test_sak_soknadsalternativ"
-    """.as(TestSakSoknadsalternativRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(TestSakSoknadsalternativRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(compositeId: TestSakSoknadsalternativId)(using c: Connection): Optional[TestSakSoknadsalternativRow] = {
+  override def selectById(compositeId: TestSakSoknadsalternativId)(using c: Connection): Optional[TestSakSoknadsalternativRow] = {
     interpolate"""select "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder"
     from "public"."test_sak_soknadsalternativ"
-    where "organisasjonskode_saksbehandler" = ${PgTypes.text.encode(compositeId.organisasjonskodeSaksbehandler)} AND "utdanningsmulighet_kode" = ${PgTypes.text.encode(compositeId.utdanningsmulighetKode)}""".as(TestSakSoknadsalternativRow.`_rowParser`.first()).runUnchecked(c)
+    where "organisasjonskode_saksbehandler" = ${PgTypes.text.encode(compositeId.organisasjonskodeSaksbehandler)} AND "utdanningsmulighet_kode" = ${PgTypes.text.encode(compositeId.utdanningsmulighetKode)}""".query(TestSakSoknadsalternativRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(compositeIds: Array[TestSakSoknadsalternativId])(using c: Connection): java.util.List[TestSakSoknadsalternativRow] = {
+  override def selectByIds(compositeIds: Array[TestSakSoknadsalternativId])(using c: Connection): java.util.List[TestSakSoknadsalternativRow] = {
     val organisasjonskodeSaksbehandler: Array[String] = compositeIds.map(_.organisasjonskodeSaksbehandler)
     val utdanningsmulighetKode: Array[String] = compositeIds.map(_.utdanningsmulighetKode)
-    interpolate"""select "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder"
+    return interpolate"""select "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder"
     from "public"."test_sak_soknadsalternativ"
     where ("organisasjonskode_saksbehandler", "utdanningsmulighet_kode")
     in (select unnest(${PgTypes.textArray.encode(organisasjonskodeSaksbehandler)}::text[]), unnest(${PgTypes.textArray.encode(utdanningsmulighetKode)}::text[]))
-    """.as(TestSakSoknadsalternativRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(TestSakSoknadsalternativRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(compositeIds: Array[TestSakSoknadsalternativId])(using c: Connection): java.util.Map[TestSakSoknadsalternativId, TestSakSoknadsalternativRow] = {
-    val ret: java.util.Map[TestSakSoknadsalternativId, TestSakSoknadsalternativRow] = new HashMap()
+  override def selectByIdsTracked(compositeIds: Array[TestSakSoknadsalternativId])(using c: Connection): java.util.Map[TestSakSoknadsalternativId, TestSakSoknadsalternativRow] = {
+    val ret: HashMap[TestSakSoknadsalternativId, TestSakSoknadsalternativRow] = new HashMap[TestSakSoknadsalternativId, TestSakSoknadsalternativRow]()
     selectByIds(compositeIds)(using c).forEach(row => ret.put(row.compositeId, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = UpdateBuilder.of("public.test_sak_soknadsalternativ", TestSakSoknadsalternativFields.structure, TestSakSoknadsalternativRow.`_rowParser`.all())
+  override def update: UpdateBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = UpdateBuilder.of("public.test_sak_soknadsalternativ", TestSakSoknadsalternativFields.structure, TestSakSoknadsalternativRow.`_rowParser`.all())
 
-  def update(row: TestSakSoknadsalternativRow)(using c: Connection): java.lang.Boolean = {
+  override def update(row: TestSakSoknadsalternativRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: TestSakSoknadsalternativId = row.compositeId
-    interpolate"""update "public"."test_sak_soknadsalternativ"
+    return interpolate"""update "public"."test_sak_soknadsalternativ"
     set "organisasjonskode_tilbyder" = ${TestOrganisasjonId.pgType.encode(row.organisasjonskodeTilbyder)}
     where "organisasjonskode_saksbehandler" = ${PgTypes.text.encode(compositeId.organisasjonskodeSaksbehandler)} AND "utdanningsmulighet_kode" = ${PgTypes.text.encode(compositeId.utdanningsmulighetKode)}""".update().runUnchecked(c) > 0
   }
 
-  def upsert(unsaved: TestSakSoknadsalternativRow)(using c: Connection): TestSakSoknadsalternativRow = {
+  override def upsert(unsaved: TestSakSoknadsalternativRow)(using c: Connection): TestSakSoknadsalternativRow = {
   interpolate"""insert into "public"."test_sak_soknadsalternativ"("organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder")
     values (${PgTypes.text.encode(unsaved.organisasjonskodeSaksbehandler)}, ${PgTypes.text.encode(unsaved.utdanningsmulighetKode)}, ${TestOrganisasjonId.pgType.encode(unsaved.organisasjonskodeTilbyder)})
     on conflict ("organisasjonskode_saksbehandler", "utdanningsmulighet_kode")
@@ -95,7 +95,7 @@ class TestSakSoknadsalternativRepoImpl extends TestSakSoknadsalternativRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[TestSakSoknadsalternativRow])(using c: Connection): java.util.List[TestSakSoknadsalternativRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[TestSakSoknadsalternativRow])(using c: Connection): java.util.List[TestSakSoknadsalternativRow] = {
     interpolate"""insert into "public"."test_sak_soknadsalternativ"("organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder")
     values (?, ?, ?)
     on conflict ("organisasjonskode_saksbehandler", "utdanningsmulighet_kode")
@@ -108,13 +108,13 @@ class TestSakSoknadsalternativRepoImpl extends TestSakSoknadsalternativRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[TestSakSoknadsalternativRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table test_sak_soknadsalternativ_TEMP (like "public"."test_sak_soknadsalternativ") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy test_sak_soknadsalternativ_TEMP("organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder") from stdin""", batchSize, unsaved, c, TestSakSoknadsalternativRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "public"."test_sak_soknadsalternativ"("organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder")
+    return interpolate"""insert into "public"."test_sak_soknadsalternativ"("organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder")
     select * from test_sak_soknadsalternativ_TEMP
     on conflict ("organisasjonskode_saksbehandler", "utdanningsmulighet_kode")
     do update set

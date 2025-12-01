@@ -5,6 +5,7 @@
  */
 package testdb.hardcoded.myschema.football_club;
 
+import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,10 +35,12 @@ public record FootballClubRepoMock(HashMap<FootballClubId, FootballClubRow> map)
     return new FootballClubRepoMock(map);
   };
 
+  @Override
   public DeleteBuilder<FootballClubFields, FootballClubRow> delete() {
     return new DeleteBuilderMock<>(FootballClubFields.structure(), () -> new ArrayList<>(map.values()), DeleteParams.empty(), row -> row.id(), id -> map.remove(id));
   };
 
+  @Override
   public Boolean deleteById(
     FootballClubId id,
     Connection c
@@ -45,50 +48,56 @@ public record FootballClubRepoMock(HashMap<FootballClubId, FootballClubRow> map)
     return Optional.ofNullable(map.remove(id)).isPresent();
   };
 
+  @Override
   public Integer deleteByIds(
     FootballClubId[] ids,
     Connection c
   ) {
     var count = 0;
-      for (var id : ids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-        count = count + 1;
-      } };
+    for (var id : ids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;
+    } };
     return count;
   };
 
+  @Override
   public FootballClubRow insert(
     FootballClubRow unsaved,
     Connection c
   ) {
     if (map.containsKey(unsaved.id())) {
-        throw new RuntimeException(str("id $unsaved.id() already exists"));
-      };
-      map.put(unsaved.id(), unsaved);
+      throw new RuntimeException(str("id $unsaved.id() already exists"));
+    };
+    map.put(unsaved.id(), unsaved);
     return unsaved;
   };
 
+  @Override
   public Long insertStreaming(
     Iterator<FootballClubRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0L;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.id(), row);
-        count = count + 1L;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.id(), row);
+      count = count + 1L;
+    };
     return count;
   };
 
+  @Override
   public SelectBuilder<FootballClubFields, FootballClubRow> select() {
     return new SelectBuilderMock<>(FootballClubFields.structure(), () -> new ArrayList<>(map.values()), SelectParams.empty());
   };
 
+  @Override
   public List<FootballClubRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   };
 
+  @Override
   public Optional<FootballClubRow> selectById(
     FootballClubId id,
     Connection c
@@ -96,38 +105,43 @@ public record FootballClubRepoMock(HashMap<FootballClubId, FootballClubRow> map)
     return Optional.ofNullable(map.get(id));
   };
 
+  @Override
   public List<FootballClubRow> selectByIds(
     FootballClubId[] ids,
     Connection c
   ) {
     var result = new ArrayList<FootballClubRow>();
-      for (var id : ids) { var opt = Optional.ofNullable(map.get(id));
-      if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : ids) { var opt = Optional.ofNullable(map.get(id));
+    if (opt.isPresent()) result.add(opt.get()); };
     return result;
   };
 
+  @Override
   public Map<FootballClubId, FootballClubRow> selectByIdsTracked(
     FootballClubId[] ids,
     Connection c
   ) {
-    return selectByIds(ids, c).stream().collect(Collectors.toMap((testdb.hardcoded.myschema.football_club.FootballClubRow row) -> row.id(), Function.identity()));
+    return selectByIds(ids, c).stream().collect(Collectors.toMap((FootballClubRow row) -> row.id(), Function.identity()));
   };
 
+  @Override
   public UpdateBuilder<FootballClubFields, FootballClubRow> update() {
     return new UpdateBuilderMock<>(FootballClubFields.structure(), () -> new ArrayList<>(map.values()), UpdateParams.empty(), row -> row);
   };
 
+  @Override
   public Boolean update(
     FootballClubRow row,
     Connection c
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.id())).filter(oldRow -> !oldRow.equals(row)).isPresent();
-      if (shouldUpdate) {
-        map.put(row.id(), row);
-      };
+    if (shouldUpdate) {
+      map.put(row.id(), row);
+    };
     return shouldUpdate;
   };
 
+  @Override
   public FootballClubRow upsert(
     FootballClubRow unsaved,
     Connection c
@@ -136,31 +150,33 @@ public record FootballClubRepoMock(HashMap<FootballClubId, FootballClubRow> map)
     return unsaved;
   };
 
+  @Override
   public List<FootballClubRow> upsertBatch(
     Iterator<FootballClubRow> unsaved,
     Connection c
   ) {
     var result = new ArrayList<FootballClubRow>();
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.id(), row);
-        result.add(row);
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.id(), row);
+      result.add(row);
+    };
     return result;
   };
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
+  @Override
   public Integer upsertStreaming(
     Iterator<FootballClubRow> unsaved,
     Integer batchSize,
     Connection c
   ) {
     var count = 0;
-      while (unsaved.hasNext()) {
-        var row = unsaved.next();
-        map.put(row.id(), row);
-        count = count + 1;
-      };
+    while (unsaved.hasNext()) {
+      var row = unsaved.next();
+      map.put(row.id(), row);
+      count = count + 1;
+    };
     return count;
   };
 }

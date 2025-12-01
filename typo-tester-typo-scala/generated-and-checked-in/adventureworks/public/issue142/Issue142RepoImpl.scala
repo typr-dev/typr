@@ -15,11 +15,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class Issue142RepoImpl extends Issue142Repo {
-  def delete: DeleteBuilder[Issue142Fields, Issue142Row] = DeleteBuilder.of("public.issue142", Issue142Fields.structure)
+  override def delete: DeleteBuilder[Issue142Fields, Issue142Row] = DeleteBuilder.of("public.issue142", Issue142Fields.structure)
 
-  def deleteById(tabellkode: Issue142Id)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."issue142" where "tabellkode" = ${Issue142Id.pgType.encode(tabellkode)}""".update().runUnchecked(c) > 0
+  override def deleteById(tabellkode: Issue142Id)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."issue142" where "tabellkode" = ${Issue142Id.pgType.encode(tabellkode)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(tabellkodes: Array[Issue142Id])(using c: Connection): Integer = {
+  override def deleteByIds(tabellkodes: Array[Issue142Id])(using c: Connection): Integer = {
     interpolate"""delete
     from "public"."issue142"
     where "tabellkode" = ANY(${Issue142Id.pgTypeArray.encode(tabellkodes)})"""
@@ -27,7 +27,7 @@ class Issue142RepoImpl extends Issue142Repo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: Issue142Row)(using c: Connection): Issue142Row = {
+  override def insert(unsaved: Issue142Row)(using c: Connection): Issue142Row = {
   interpolate"""insert into "public"."issue142"("tabellkode")
     values (${Issue142Id.pgType.encode(unsaved.tabellkode)})
     returning "tabellkode"
@@ -35,40 +35,40 @@ class Issue142RepoImpl extends Issue142Repo {
     .updateReturning(Issue142Row.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[Issue142Row],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."issue142"("tabellkode") FROM STDIN""", batchSize, unsaved, c, Issue142Row.pgText)
 
-  def select: SelectBuilder[Issue142Fields, Issue142Row] = SelectBuilder.of("public.issue142", Issue142Fields.structure, Issue142Row.`_rowParser`)
+  override def select: SelectBuilder[Issue142Fields, Issue142Row] = SelectBuilder.of("public.issue142", Issue142Fields.structure, Issue142Row.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[Issue142Row] = {
+  override def selectAll(using c: Connection): java.util.List[Issue142Row] = {
     interpolate"""select "tabellkode"
     from "public"."issue142"
-    """.as(Issue142Row.`_rowParser`.all()).runUnchecked(c)
+    """.query(Issue142Row.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(tabellkode: Issue142Id)(using c: Connection): Optional[Issue142Row] = {
+  override def selectById(tabellkode: Issue142Id)(using c: Connection): Optional[Issue142Row] = {
     interpolate"""select "tabellkode"
     from "public"."issue142"
-    where "tabellkode" = ${Issue142Id.pgType.encode(tabellkode)}""".as(Issue142Row.`_rowParser`.first()).runUnchecked(c)
+    where "tabellkode" = ${Issue142Id.pgType.encode(tabellkode)}""".query(Issue142Row.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(tabellkodes: Array[Issue142Id])(using c: Connection): java.util.List[Issue142Row] = {
+  override def selectByIds(tabellkodes: Array[Issue142Id])(using c: Connection): java.util.List[Issue142Row] = {
     interpolate"""select "tabellkode"
     from "public"."issue142"
-    where "tabellkode" = ANY(${Issue142Id.pgTypeArray.encode(tabellkodes)})""".as(Issue142Row.`_rowParser`.all()).runUnchecked(c)
+    where "tabellkode" = ANY(${Issue142Id.pgTypeArray.encode(tabellkodes)})""".query(Issue142Row.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(tabellkodes: Array[Issue142Id])(using c: Connection): java.util.Map[Issue142Id, Issue142Row] = {
-    val ret: java.util.Map[Issue142Id, Issue142Row] = new HashMap()
+  override def selectByIdsTracked(tabellkodes: Array[Issue142Id])(using c: Connection): java.util.Map[Issue142Id, Issue142Row] = {
+    val ret: HashMap[Issue142Id, Issue142Row] = new HashMap[Issue142Id, Issue142Row]()
     selectByIds(tabellkodes)(using c).forEach(row => ret.put(row.tabellkode, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[Issue142Fields, Issue142Row] = UpdateBuilder.of("public.issue142", Issue142Fields.structure, Issue142Row.`_rowParser`.all())
+  override def update: UpdateBuilder[Issue142Fields, Issue142Row] = UpdateBuilder.of("public.issue142", Issue142Fields.structure, Issue142Row.`_rowParser`.all())
 
-  def upsert(unsaved: Issue142Row)(using c: Connection): Issue142Row = {
+  override def upsert(unsaved: Issue142Row)(using c: Connection): Issue142Row = {
   interpolate"""insert into "public"."issue142"("tabellkode")
     values (${Issue142Id.pgType.encode(unsaved.tabellkode)})
     on conflict ("tabellkode")
@@ -79,7 +79,7 @@ class Issue142RepoImpl extends Issue142Repo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[Issue142Row])(using c: Connection): java.util.List[Issue142Row] = {
+  override def upsertBatch(unsaved: java.util.Iterator[Issue142Row])(using c: Connection): java.util.List[Issue142Row] = {
     interpolate"""insert into "public"."issue142"("tabellkode")
     values (?)
     on conflict ("tabellkode")
@@ -91,13 +91,13 @@ class Issue142RepoImpl extends Issue142Repo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[Issue142Row],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table issue142_TEMP (like "public"."issue142") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy issue142_TEMP("tabellkode") from stdin""", batchSize, unsaved, c, Issue142Row.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "public"."issue142"("tabellkode")
+    return interpolate"""insert into "public"."issue142"("tabellkode")
     select * from issue142_TEMP
     on conflict ("tabellkode")
     do nothing

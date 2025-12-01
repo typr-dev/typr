@@ -13,7 +13,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple5
 
 /** Table: person.password
  * One way hashed authentication information
@@ -48,15 +47,7 @@ case class PasswordRow(
 }
 
 object PasswordRow {
-  val `_rowParser`: RowParser[PasswordRow] = {
-    RowParsers.of(BusinessentityId.pgType, PgTypes.text, PgTypes.text, TypoUUID.pgType, TypoLocalDateTime.pgType, PasswordRow.apply, row => new Tuple5(
-      row.businessentityid,
-      row.passwordhash,
-      row.passwordsalt,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[PasswordRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text, PgTypes.text, TypoUUID.pgType, TypoLocalDateTime.pgType, PasswordRow.apply, row => Array(row.businessentityid, row.passwordhash, row.passwordsalt, row.rowguid, row.modifieddate))
 
   given pgText: PgText[PasswordRow] = PgText.from(`_rowParser`)
 }

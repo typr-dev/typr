@@ -15,11 +15,11 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class TitleRepoImpl extends TitleRepo {
-  def delete: DeleteBuilder[TitleFields, TitleRow] = DeleteBuilder.of("public.title", TitleFields.structure)
+  override def delete: DeleteBuilder[TitleFields, TitleRow] = DeleteBuilder.of("public.title", TitleFields.structure)
 
-  def deleteById(code: TitleId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."title" where "code" = ${TitleId.pgType.encode(code)}""".update().runUnchecked(c) > 0
+  override def deleteById(code: TitleId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."title" where "code" = ${TitleId.pgType.encode(code)}""".update().runUnchecked(c) > 0
 
-  def deleteByIds(codes: Array[TitleId])(using c: Connection): Integer = {
+  override def deleteByIds(codes: Array[TitleId])(using c: Connection): Integer = {
     interpolate"""delete
     from "public"."title"
     where "code" = ANY(${TitleId.pgTypeArray.encode(codes)})"""
@@ -27,7 +27,7 @@ class TitleRepoImpl extends TitleRepo {
       .runUnchecked(c)
   }
 
-  def insert(unsaved: TitleRow)(using c: Connection): TitleRow = {
+  override def insert(unsaved: TitleRow)(using c: Connection): TitleRow = {
   interpolate"""insert into "public"."title"("code")
     values (${TitleId.pgType.encode(unsaved.code)})
     returning "code"
@@ -35,40 +35,40 @@ class TitleRepoImpl extends TitleRepo {
     .updateReturning(TitleRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: java.util.Iterator[TitleRow],
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."title"("code") FROM STDIN""", batchSize, unsaved, c, TitleRow.pgText)
 
-  def select: SelectBuilder[TitleFields, TitleRow] = SelectBuilder.of("public.title", TitleFields.structure, TitleRow.`_rowParser`)
+  override def select: SelectBuilder[TitleFields, TitleRow] = SelectBuilder.of("public.title", TitleFields.structure, TitleRow.`_rowParser`)
 
-  def selectAll(using c: Connection): java.util.List[TitleRow] = {
+  override def selectAll(using c: Connection): java.util.List[TitleRow] = {
     interpolate"""select "code"
     from "public"."title"
-    """.as(TitleRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(TitleRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectById(code: TitleId)(using c: Connection): Optional[TitleRow] = {
+  override def selectById(code: TitleId)(using c: Connection): Optional[TitleRow] = {
     interpolate"""select "code"
     from "public"."title"
-    where "code" = ${TitleId.pgType.encode(code)}""".as(TitleRow.`_rowParser`.first()).runUnchecked(c)
+    where "code" = ${TitleId.pgType.encode(code)}""".query(TitleRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  def selectByIds(codes: Array[TitleId])(using c: Connection): java.util.List[TitleRow] = {
+  override def selectByIds(codes: Array[TitleId])(using c: Connection): java.util.List[TitleRow] = {
     interpolate"""select "code"
     from "public"."title"
-    where "code" = ANY(${TitleId.pgTypeArray.encode(codes)})""".as(TitleRow.`_rowParser`.all()).runUnchecked(c)
+    where "code" = ANY(${TitleId.pgTypeArray.encode(codes)})""".query(TitleRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  def selectByIdsTracked(codes: Array[TitleId])(using c: Connection): java.util.Map[TitleId, TitleRow] = {
-    val ret: java.util.Map[TitleId, TitleRow] = new HashMap()
+  override def selectByIdsTracked(codes: Array[TitleId])(using c: Connection): java.util.Map[TitleId, TitleRow] = {
+    val ret: HashMap[TitleId, TitleRow] = new HashMap[TitleId, TitleRow]()
     selectByIds(codes)(using c).forEach(row => ret.put(row.code, row): @scala.annotation.nowarn)
-    ret
+    return ret
   }
 
-  def update: UpdateBuilder[TitleFields, TitleRow] = UpdateBuilder.of("public.title", TitleFields.structure, TitleRow.`_rowParser`.all())
+  override def update: UpdateBuilder[TitleFields, TitleRow] = UpdateBuilder.of("public.title", TitleFields.structure, TitleRow.`_rowParser`.all())
 
-  def upsert(unsaved: TitleRow)(using c: Connection): TitleRow = {
+  override def upsert(unsaved: TitleRow)(using c: Connection): TitleRow = {
   interpolate"""insert into "public"."title"("code")
     values (${TitleId.pgType.encode(unsaved.code)})
     on conflict ("code")
@@ -79,7 +79,7 @@ class TitleRepoImpl extends TitleRepo {
     .runUnchecked(c)
   }
 
-  def upsertBatch(unsaved: java.util.Iterator[TitleRow])(using c: Connection): java.util.List[TitleRow] = {
+  override def upsertBatch(unsaved: java.util.Iterator[TitleRow])(using c: Connection): java.util.List[TitleRow] = {
     interpolate"""insert into "public"."title"("code")
     values (?)
     on conflict ("code")
@@ -91,13 +91,13 @@ class TitleRepoImpl extends TitleRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: java.util.Iterator[TitleRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
     interpolate"""create temporary table title_TEMP (like "public"."title") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
     streamingInsert.insertUnchecked(s"""copy title_TEMP("code") from stdin""", batchSize, unsaved, c, TitleRow.pgText): @scala.annotation.nowarn
-    interpolate"""insert into "public"."title"("code")
+    return interpolate"""insert into "public"."title"("code")
     select * from title_TEMP
     on conflict ("code")
     do nothing

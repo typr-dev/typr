@@ -26,7 +26,7 @@ object Issue1422Fields {
 
     override lazy val fields: Issue1422Fields = {
       new Issue1422Fields {
-        def tabellkode: IdField[Issue142Id, Issue1422Row] = {
+        override def tabellkode: IdField[Issue142Id, Issue1422Row] = {
           new IdField[Issue142Id, Issue1422Row](
             _path,
             "tabellkode",
@@ -42,7 +42,7 @@ object Issue1422Fields {
 
     override lazy val columns: java.util.List[FieldLike[?, Issue1422Row]] = java.util.List.of(this.fields.tabellkode)
 
-    def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
   }
 
   lazy val structure: Relation[Issue1422Fields, Issue1422Row] = new Impl(java.util.List.of())

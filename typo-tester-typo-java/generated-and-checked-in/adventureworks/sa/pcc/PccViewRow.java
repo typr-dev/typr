@@ -10,7 +10,6 @@ import adventureworks.person.businessentity.BusinessentityId;
 import adventureworks.userdefined.CustomCreditcardId;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple4;
 
 /** View: sa.pcc */
 public record PccViewRow(
@@ -43,5 +42,5 @@ public record PccViewRow(
     return new PccViewRow(id, businessentityid, creditcardid, modifieddate);
   };
 
-  static RowParser<PccViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, /* user-picked */ CustomCreditcardId.pgType, TypoLocalDateTime.pgType, PccViewRow::new, row -> new Tuple4<>(row.id(), row.businessentityid(), row.creditcardid(), row.modifieddate()));;
+  static RowParser<PccViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, /* user-picked */ CustomCreditcardId.pgType, TypoLocalDateTime.pgType, PccViewRow::new, row -> new Object[]{row.id(), row.businessentityid(), row.creditcardid(), row.modifieddate()});;
 }

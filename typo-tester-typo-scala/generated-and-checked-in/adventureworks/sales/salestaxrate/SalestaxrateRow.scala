@@ -15,7 +15,6 @@ import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple7
 
 /** Table: sales.salestaxrate
  * Tax rate lookup table.
@@ -66,17 +65,7 @@ case class SalestaxrateRow(
 }
 
 object SalestaxrateRow {
-  val `_rowParser`: RowParser[SalestaxrateRow] = {
-    RowParsers.of(SalestaxrateId.pgType, StateprovinceId.pgType, TypoShort.pgType, PgTypes.numeric, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, SalestaxrateRow.apply, row => new Tuple7(
-      row.salestaxrateid,
-      row.stateprovinceid,
-      row.taxtype,
-      row.taxrate,
-      row.name,
-      row.rowguid,
-      row.modifieddate
-    ))
-  }
+  val `_rowParser`: RowParser[SalestaxrateRow] = RowParsers.of(SalestaxrateId.pgType, StateprovinceId.pgType, TypoShort.pgType, PgTypes.numeric, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, SalestaxrateRow.apply, row => Array(row.salestaxrateid, row.stateprovinceid, row.taxtype, row.taxrate, row.name, row.rowguid, row.modifieddate))
 
   given pgText: PgText[SalestaxrateRow] = PgText.from(`_rowParser`)
 }

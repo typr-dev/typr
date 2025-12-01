@@ -16,7 +16,7 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 
 public interface UnitmeasureFields {
-  static final class Impl extends Relation<UnitmeasureFields, UnitmeasureRow> {
+  final class Impl extends Relation<UnitmeasureFields, UnitmeasureRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -24,12 +24,15 @@ public interface UnitmeasureFields {
     @Override
     public UnitmeasureFields fields() {
       return new UnitmeasureFields() {
+               @Override
                public IdField<UnitmeasureId, UnitmeasureRow> unitmeasurecode() {
                  return new IdField<UnitmeasureId, UnitmeasureRow>(_path, "unitmeasurecode", UnitmeasureRow::unitmeasurecode, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withUnitmeasurecode(value), UnitmeasureId.pgType);
                };
+               @Override
                public Field<Name, UnitmeasureRow> name() {
                  return new Field<Name, UnitmeasureRow>(_path, "name", UnitmeasureRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, UnitmeasureRow> modifieddate() {
                  return new Field<TypoLocalDateTime, UnitmeasureRow>(_path, "modifieddate", UnitmeasureRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -41,6 +44,7 @@ public interface UnitmeasureFields {
       return List.of(this.fields().unitmeasurecode(), this.fields().name(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

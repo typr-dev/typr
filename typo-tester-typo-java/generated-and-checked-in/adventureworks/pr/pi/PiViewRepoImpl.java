@@ -5,22 +5,22 @@
  */
 package adventureworks.pr.pi;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.Connection;
 import java.util.List;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
-@ApplicationScoped
 public class PiViewRepoImpl implements PiViewRepo {
+  @Override
   public SelectBuilder<PiViewFields, PiViewRow> select() {
     return SelectBuilder.of("pr.pi", PiViewFields.structure(), PiViewRow._rowParser);
   };
 
+  @Override
   public List<PiViewRow> selectAll(Connection c) {
     return interpolate(typo.runtime.Fragment.lit("""
        select "id", "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"::text
        from "pr"."pi"
-    """)).as(PiViewRow._rowParser.all()).runUnchecked(c);
+    """)).query(PiViewRow._rowParser.all()).runUnchecked(c);
   };
 }

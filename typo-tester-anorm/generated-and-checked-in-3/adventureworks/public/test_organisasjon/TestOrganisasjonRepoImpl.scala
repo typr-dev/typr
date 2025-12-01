@@ -17,18 +17,18 @@ import typo.dsl.UpdateBuilder
 import anorm.SqlStringInterpolation
 
 class TestOrganisasjonRepoImpl extends TestOrganisasjonRepo {
-  def delete: DeleteBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = DeleteBuilder.of(""""public"."test_organisasjon"""", TestOrganisasjonFields.structure, TestOrganisasjonRow.rowParser(1).*)
+  override def delete: DeleteBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = DeleteBuilder.of(""""public"."test_organisasjon"""", TestOrganisasjonFields.structure, TestOrganisasjonRow.rowParser(1).*)
 
-  def deleteById(organisasjonskode: TestOrganisasjonId)(using c: Connection): Boolean = SQL"""delete from "public"."test_organisasjon" where "organisasjonskode" = ${ParameterValue(organisasjonskode, null, TestOrganisasjonId.toStatement)}""".executeUpdate() > 0
+  override def deleteById(organisasjonskode: TestOrganisasjonId)(using c: Connection): Boolean = SQL"""delete from "public"."test_organisasjon" where "organisasjonskode" = ${ParameterValue(organisasjonskode, null, TestOrganisasjonId.toStatement)}""".executeUpdate() > 0
 
-  def deleteByIds(organisasjonskodes: Array[TestOrganisasjonId])(using c: Connection): Int = {
+  override def deleteByIds(organisasjonskodes: Array[TestOrganisasjonId])(using c: Connection): Int = {
     SQL"""delete
     from "public"."test_organisasjon"
     where "organisasjonskode" = ANY(${ParameterValue(organisasjonskodes, null, TestOrganisasjonId.arrayToStatement)})
     """.executeUpdate()
   }
 
-  def insert(unsaved: TestOrganisasjonRow)(using c: Connection): TestOrganisasjonRow = {
+  override def insert(unsaved: TestOrganisasjonRow)(using c: Connection): TestOrganisasjonRow = {
   SQL"""insert into "public"."test_organisasjon"("organisasjonskode")
     values (${ParameterValue(unsaved.organisasjonskode, null, TestOrganisasjonId.toStatement)})
     returning "organisasjonskode"
@@ -36,41 +36,41 @@ class TestOrganisasjonRepoImpl extends TestOrganisasjonRepo {
     .executeInsert(TestOrganisasjonRow.rowParser(1).single)
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Iterator[TestOrganisasjonRow],
     batchSize: Int = 10000
   )(using c: Connection): Long = streamingInsert(s"""COPY "public"."test_organisasjon"("organisasjonskode") FROM STDIN""", batchSize, unsaved)(using TestOrganisasjonRow.pgText, c)
 
-  def select: SelectBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = SelectBuilder.of(""""public"."test_organisasjon"""", TestOrganisasjonFields.structure, TestOrganisasjonRow.rowParser)
+  override def select: SelectBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = SelectBuilder.of(""""public"."test_organisasjon"""", TestOrganisasjonFields.structure, TestOrganisasjonRow.rowParser)
 
-  def selectAll(using c: Connection): List[TestOrganisasjonRow] = {
+  override def selectAll(using c: Connection): List[TestOrganisasjonRow] = {
     SQL"""select "organisasjonskode"
     from "public"."test_organisasjon"
     """.as(TestOrganisasjonRow.rowParser(1).*)
   }
 
-  def selectById(organisasjonskode: TestOrganisasjonId)(using c: Connection): Option[TestOrganisasjonRow] = {
+  override def selectById(organisasjonskode: TestOrganisasjonId)(using c: Connection): Option[TestOrganisasjonRow] = {
     SQL"""select "organisasjonskode"
     from "public"."test_organisasjon"
     where "organisasjonskode" = ${ParameterValue(organisasjonskode, null, TestOrganisasjonId.toStatement)}
     """.as(TestOrganisasjonRow.rowParser(1).singleOpt)
   }
 
-  def selectByIds(organisasjonskodes: Array[TestOrganisasjonId])(using c: Connection): List[TestOrganisasjonRow] = {
+  override def selectByIds(organisasjonskodes: Array[TestOrganisasjonId])(using c: Connection): List[TestOrganisasjonRow] = {
     SQL"""select "organisasjonskode"
     from "public"."test_organisasjon"
     where "organisasjonskode" = ANY(${ParameterValue(organisasjonskodes, null, TestOrganisasjonId.arrayToStatement)})
     """.as(TestOrganisasjonRow.rowParser(1).*)
   }
 
-  def selectByIdsTracked(organisasjonskodes: Array[TestOrganisasjonId])(using c: Connection): Map[TestOrganisasjonId, TestOrganisasjonRow] = {
+  override def selectByIdsTracked(organisasjonskodes: Array[TestOrganisasjonId])(using c: Connection): Map[TestOrganisasjonId, TestOrganisasjonRow] = {
     val byId = selectByIds(organisasjonskodes).view.map(x => (x.organisasjonskode, x)).toMap
     organisasjonskodes.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
   }
 
-  def update: UpdateBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = UpdateBuilder.of(""""public"."test_organisasjon"""", TestOrganisasjonFields.structure, TestOrganisasjonRow.rowParser(1).*)
+  override def update: UpdateBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = UpdateBuilder.of(""""public"."test_organisasjon"""", TestOrganisasjonFields.structure, TestOrganisasjonRow.rowParser(1).*)
 
-  def upsert(unsaved: TestOrganisasjonRow)(using c: Connection): TestOrganisasjonRow = {
+  override def upsert(unsaved: TestOrganisasjonRow)(using c: Connection): TestOrganisasjonRow = {
   SQL"""insert into "public"."test_organisasjon"("organisasjonskode")
     values (
       ${ParameterValue(unsaved.organisasjonskode, null, TestOrganisasjonId.toStatement)}
@@ -82,10 +82,11 @@ class TestOrganisasjonRepoImpl extends TestOrganisasjonRepo {
     .executeInsert(TestOrganisasjonRow.rowParser(1).single)
   }
 
-  def upsertBatch(unsaved: Iterable[TestOrganisasjonRow])(using c: Connection): List[TestOrganisasjonRow] = {
+  override def upsertBatch(unsaved: Iterable[TestOrganisasjonRow])(using c: Connection): List[TestOrganisasjonRow] = {
     def toNamedParameter(row: TestOrganisasjonRow): List[NamedParameter] = List(
       NamedParameter("organisasjonskode", ParameterValue(row.organisasjonskode, null, TestOrganisasjonId.toStatement))
     )
+  
     unsaved.toList match {
       case Nil => Nil
       case head :: rest =>
@@ -105,7 +106,7 @@ class TestOrganisasjonRepoImpl extends TestOrganisasjonRepo {
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Iterator[TestOrganisasjonRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {

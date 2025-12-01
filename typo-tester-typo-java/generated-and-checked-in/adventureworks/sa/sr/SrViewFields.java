@@ -16,7 +16,7 @@ import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 
 public interface SrViewFields {
-  static final class Impl extends Relation<SrViewFields, SrViewRow> {
+  final class Impl extends Relation<SrViewFields, SrViewRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -24,18 +24,23 @@ public interface SrViewFields {
     @Override
     public SrViewFields fields() {
       return new SrViewFields() {
+               @Override
                public Field<SalesreasonId, SrViewRow> id() {
                  return new Field<SalesreasonId, SrViewRow>(_path, "id", SrViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), SalesreasonId.pgType);
                };
+               @Override
                public Field<SalesreasonId, SrViewRow> salesreasonid() {
                  return new Field<SalesreasonId, SrViewRow>(_path, "salesreasonid", SrViewRow::salesreasonid, Optional.empty(), Optional.empty(), (row, value) -> row.withSalesreasonid(value), SalesreasonId.pgType);
                };
+               @Override
                public Field<Name, SrViewRow> name() {
                  return new Field<Name, SrViewRow>(_path, "name", SrViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
                };
+               @Override
                public Field<Name, SrViewRow> reasontype() {
                  return new Field<Name, SrViewRow>(_path, "reasontype", SrViewRow::reasontype, Optional.empty(), Optional.empty(), (row, value) -> row.withReasontype(value), Name.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, SrViewRow> modifieddate() {
                  return new Field<TypoLocalDateTime, SrViewRow>(_path, "modifieddate", SrViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -47,6 +52,7 @@ public interface SrViewFields {
       return List.of(this.fields().id(), this.fields().salesreasonid(), this.fields().name(), this.fields().reasontype(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

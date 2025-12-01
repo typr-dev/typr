@@ -11,7 +11,6 @@ import adventureworks.customtypes.TypoUUID;
 import typo.runtime.PgText;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
-import typo.runtime.RowParsers.Tuple3;
 
 /** Table: person.businessentity
   * Source of the ID that connects vendors, customers, and employees with address and contact information.
@@ -44,7 +43,7 @@ public record BusinessentityRow(
     return new BusinessentityRow(businessentityid, rowguid, modifieddate);
   };
 
-  static RowParser<BusinessentityRow> _rowParser = RowParsers.of(BusinessentityId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BusinessentityRow::new, row -> new Tuple3<>(row.businessentityid(), row.rowguid(), row.modifieddate()));;
+  static RowParser<BusinessentityRow> _rowParser = RowParsers.of(BusinessentityId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BusinessentityRow::new, row -> new Object[]{row.businessentityid(), row.rowguid(), row.modifieddate()});;
 
   static public PgText<BusinessentityRow> pgText =
     PgText.from(_rowParser);

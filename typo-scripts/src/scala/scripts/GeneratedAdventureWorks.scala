@@ -40,21 +40,22 @@ object GeneratedAdventureWorks {
           ),
           Duration.Inf
         )
-        val variants: Seq[(Lang, DbLibName, Option[JsonLibName], Option[IocFramework], String, String)] = List(
-          (LangScala(Dialect.Scala2XSource3, TypeSupportScala), DbLibName.Anorm, Some(JsonLibName.PlayJson), None, "typo-tester-anorm", "-2.13"),
-          (LangScala(Dialect.Scala3, TypeSupportScala), DbLibName.Anorm, Some(JsonLibName.PlayJson), None, "typo-tester-anorm", "-3"),
-          (LangScala(Dialect.Scala2XSource3, TypeSupportScala), DbLibName.Doobie, Some(JsonLibName.Circe), None, "typo-tester-doobie", "-2.13"),
-          (LangScala(Dialect.Scala3, TypeSupportScala), DbLibName.Doobie, Some(JsonLibName.Circe), Some(IocFramework.Spring), "typo-tester-doobie", "-3"),
-          (LangScala(Dialect.Scala2XSource3, TypeSupportScala), DbLibName.ZioJdbc, Some(JsonLibName.ZioJson), None, "typo-tester-zio-jdbc", "-2.13"),
-          (LangScala(Dialect.Scala3, TypeSupportScala), DbLibName.ZioJdbc, Some(JsonLibName.ZioJson), None, "typo-tester-zio-jdbc", "-3"),
-          (LangJava, DbLibName.Typo, Some(JsonLibName.Jackson), Some(IocFramework.JakartaCdi), "typo-tester-typo-java", ""),
-          (LangScala(Dialect.Scala3, TypeSupportJava), DbLibName.Typo, None, None, "typo-tester-typo-scala", "")
+        val variants: Seq[(Lang, DbLibName, Option[JsonLibName], String, String)] = List(
+          (LangScala(Dialect.Scala2XSource3, TypeSupportScala), DbLibName.Anorm, Some(JsonLibName.PlayJson), "typo-tester-anorm", "-2.13"),
+          (LangScala(Dialect.Scala3, TypeSupportScala), DbLibName.Anorm, Some(JsonLibName.PlayJson), "typo-tester-anorm", "-3"),
+          (LangScala(Dialect.Scala2XSource3, TypeSupportScala), DbLibName.Doobie, Some(JsonLibName.Circe), "typo-tester-doobie", "-2.13"),
+          (LangScala(Dialect.Scala3, TypeSupportScala), DbLibName.Doobie, Some(JsonLibName.Circe), "typo-tester-doobie", "-3"),
+          (LangScala(Dialect.Scala2XSource3, TypeSupportScala), DbLibName.ZioJdbc, Some(JsonLibName.ZioJson), "typo-tester-zio-jdbc", "-2.13"),
+          (LangScala(Dialect.Scala3, TypeSupportScala), DbLibName.ZioJdbc, Some(JsonLibName.ZioJson), "typo-tester-zio-jdbc", "-3"),
+          (LangJava, DbLibName.Typo, Some(JsonLibName.Jackson), "typo-tester-typo-java", ""),
+          (LangScala(Dialect.Scala3, TypeSupportJava), DbLibName.Typo, Some(JsonLibName.Jackson), "typo-tester-typo-scala", ""),
+          (LangKotlin, DbLibName.Typo, Some(JsonLibName.Jackson), "typo-tester-typo-kotlin", "")
         )
 
         def go(): Unit = {
           val newSqlScripts = Await.result(readSqlFileDirectories(typoLogger, scriptsPath, ds), Duration.Inf)
 
-          variants.foreach { case (lang, dbLib, jsonLib, iocFramework, projectPath, suffix) =>
+          variants.foreach { case (lang, dbLib, jsonLib, projectPath, suffix) =>
             val options = Options(
               pkg = "adventureworks",
               lang = lang,
@@ -69,8 +70,7 @@ object GeneratedAdventureWorks {
               enablePrimaryKeyType = !Selector.relationNames("billofmaterials"),
               enableTestInserts = Selector.All,
               readonlyRepo = Selector.relationNames("purchaseorderdetail"),
-              enableDsl = true,
-              iocFramework = iocFramework
+              enableDsl = true
             )
             val targetSources = buildDir.resolve(s"$projectPath/generated-and-checked-in$suffix")
 

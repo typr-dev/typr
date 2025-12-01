@@ -5,6 +5,7 @@
  */
 package adventureworks.information_schema
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
@@ -12,7 +13,7 @@ import typo.runtime.PgTypes
 /** Domain `information_schema.character_data`
  * No constraint
  */
-case class CharacterData(value: String)
+case class CharacterData(@JsonValue value: String)
 
 object CharacterData {
   given bijection: Bijection[CharacterData, String] = Bijection.apply[CharacterData, String](_.value)(CharacterData.apply)

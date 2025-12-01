@@ -16,7 +16,7 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 
 public interface BusinessentityFields {
-  static final class Impl extends Relation<BusinessentityFields, BusinessentityRow> {
+  final class Impl extends Relation<BusinessentityFields, BusinessentityRow> {
     Impl(List<Path> path) {
       super(path);
     }
@@ -24,12 +24,15 @@ public interface BusinessentityFields {
     @Override
     public BusinessentityFields fields() {
       return new BusinessentityFields() {
+               @Override
                public IdField<BusinessentityId, BusinessentityRow> businessentityid() {
                  return new IdField<BusinessentityId, BusinessentityRow>(_path, "businessentityid", BusinessentityRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
                };
+               @Override
                public Field<TypoUUID, BusinessentityRow> rowguid() {
                  return new Field<TypoUUID, BusinessentityRow>(_path, "rowguid", BusinessentityRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
                };
+               @Override
                public Field<TypoLocalDateTime, BusinessentityRow> modifieddate() {
                  return new Field<TypoLocalDateTime, BusinessentityRow>(_path, "modifieddate", BusinessentityRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
                };
@@ -41,6 +44,7 @@ public interface BusinessentityFields {
       return List.of(this.fields().businessentityid(), this.fields().rowguid(), this.fields().modifieddate());
     };
 
+    @Override
     public Impl copy(List<Path> path) {
       return new Impl(path);
     };

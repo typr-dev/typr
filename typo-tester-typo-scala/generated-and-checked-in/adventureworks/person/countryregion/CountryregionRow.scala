@@ -11,7 +11,6 @@ import adventureworks.public.Name
 import typo.runtime.PgText
 import typo.runtime.RowParser
 import typo.runtime.RowParsers
-import typo.runtime.RowParsers.Tuple3
 
 /** Table: person.countryregion
  * Lookup table containing the ISO standard codes for countries and regions.
@@ -31,7 +30,7 @@ case class CountryregionRow(
 }
 
 object CountryregionRow {
-  val `_rowParser`: RowParser[CountryregionRow] = RowParsers.of(CountryregionId.pgType, Name.pgType, TypoLocalDateTime.pgType, CountryregionRow.apply, row => new Tuple3(row.countryregioncode, row.name, row.modifieddate))
+  val `_rowParser`: RowParser[CountryregionRow] = RowParsers.of(CountryregionId.pgType, Name.pgType, TypoLocalDateTime.pgType, CountryregionRow.apply, row => Array(row.countryregioncode, row.name, row.modifieddate))
 
   given pgText: PgText[CountryregionRow] = PgText.from(`_rowParser`)
 }

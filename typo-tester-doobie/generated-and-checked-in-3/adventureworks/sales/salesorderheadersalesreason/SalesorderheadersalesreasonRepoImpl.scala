@@ -17,19 +17,17 @@ import doobie.util.Write
 import doobie.util.fragment.Fragment
 import doobie.util.update.Update
 import fs2.Stream
-import org.springframework.stereotype.Repository
 import typo.dsl.DeleteBuilder
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import doobie.syntax.string.toSqlInterpolator
 
-@Repository
 class SalesorderheadersalesreasonRepoImpl extends SalesorderheadersalesreasonRepo {
-  def delete: DeleteBuilder[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow] = DeleteBuilder.of(""""sales"."salesorderheadersalesreason"""", SalesorderheadersalesreasonFields.structure, SalesorderheadersalesreasonRow.read)
+  override def delete: DeleteBuilder[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow] = DeleteBuilder.of(""""sales"."salesorderheadersalesreason"""", SalesorderheadersalesreasonFields.structure, SalesorderheadersalesreasonRow.read)
 
-  def deleteById(compositeId: SalesorderheadersalesreasonId): ConnectionIO[Boolean] = sql"""delete from "sales"."salesorderheadersalesreason" where "salesorderid" = ${fromWrite(compositeId.salesorderid)(using new Write.Single(SalesorderheaderId.put))} AND "salesreasonid" = ${fromWrite(compositeId.salesreasonid)(using new Write.Single(SalesreasonId.put))}""".update.run.map(_ > 0)
+  override def deleteById(compositeId: SalesorderheadersalesreasonId): ConnectionIO[Boolean] = sql"""delete from "sales"."salesorderheadersalesreason" where "salesorderid" = ${fromWrite(compositeId.salesorderid)(using new Write.Single(SalesorderheaderId.put))} AND "salesreasonid" = ${fromWrite(compositeId.salesreasonid)(using new Write.Single(SalesreasonId.put))}""".update.run.map(_ > 0)
 
-  def deleteByIds(compositeIds: Array[SalesorderheadersalesreasonId]): ConnectionIO[Int] = {
+  override def deleteByIds(compositeIds: Array[SalesorderheadersalesreasonId]): ConnectionIO[Int] = {
     val salesorderid = compositeIds.map(_.salesorderid)
     val salesreasonid = compositeIds.map(_.salesreasonid)
     sql"""delete
@@ -39,14 +37,14 @@ class SalesorderheadersalesreasonRepoImpl extends SalesorderheadersalesreasonRep
     """.update.run
   }
 
-  def insert(unsaved: SalesorderheadersalesreasonRow): ConnectionIO[SalesorderheadersalesreasonRow] = {
+  override def insert(unsaved: SalesorderheadersalesreasonRow): ConnectionIO[SalesorderheadersalesreasonRow] = {
     sql"""insert into "sales"."salesorderheadersalesreason"("salesorderid", "salesreasonid", "modifieddate")
     values (${fromWrite(unsaved.salesorderid)(using new Write.Single(SalesorderheaderId.put))}::int4, ${fromWrite(unsaved.salesreasonid)(using new Write.Single(SalesreasonId.put))}::int4, ${fromWrite(unsaved.modifieddate)(using new Write.Single(TypoLocalDateTime.put))}::timestamp)
     returning "salesorderid", "salesreasonid", "modifieddate"::text
     """.query(using SalesorderheadersalesreasonRow.read).unique
   }
 
-  def insert(unsaved: SalesorderheadersalesreasonRowUnsaved): ConnectionIO[SalesorderheadersalesreasonRow] = {
+  override def insert(unsaved: SalesorderheadersalesreasonRowUnsaved): ConnectionIO[SalesorderheadersalesreasonRow] = {
     val fs = List(
       Some((Fragment.const0(s""""salesorderid""""), fr"${fromWrite(unsaved.salesorderid)(using new Write.Single(SalesorderheaderId.put))}::int4")),
       Some((Fragment.const0(s""""salesreasonid""""), fr"${fromWrite(unsaved.salesreasonid)(using new Write.Single(SalesreasonId.put))}::int4")),
@@ -69,24 +67,24 @@ class SalesorderheadersalesreasonRepoImpl extends SalesorderheadersalesreasonRep
     q.query(using SalesorderheadersalesreasonRow.read).unique
   }
 
-  def insertStreaming(
+  override def insertStreaming(
     unsaved: Stream[ConnectionIO, SalesorderheadersalesreasonRow],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "sales"."salesorderheadersalesreason"("salesorderid", "salesreasonid", "modifieddate") FROM STDIN""").copyIn(unsaved, batchSize)(using SalesorderheadersalesreasonRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
-  def insertUnsavedStreaming(
+  override def insertUnsavedStreaming(
     unsaved: Stream[ConnectionIO, SalesorderheadersalesreasonRowUnsaved],
     batchSize: Int = 10000
   ): ConnectionIO[Long] = new FragmentOps(sql"""COPY "sales"."salesorderheadersalesreason"("salesorderid", "salesreasonid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""").copyIn(unsaved, batchSize)(using SalesorderheadersalesreasonRowUnsaved.pgText)
 
-  def select: SelectBuilder[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow] = SelectBuilder.of(""""sales"."salesorderheadersalesreason"""", SalesorderheadersalesreasonFields.structure, SalesorderheadersalesreasonRow.read)
+  override def select: SelectBuilder[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow] = SelectBuilder.of(""""sales"."salesorderheadersalesreason"""", SalesorderheadersalesreasonFields.structure, SalesorderheadersalesreasonRow.read)
 
-  def selectAll: Stream[ConnectionIO, SalesorderheadersalesreasonRow] = sql"""select "salesorderid", "salesreasonid", "modifieddate"::text from "sales"."salesorderheadersalesreason"""".query(using SalesorderheadersalesreasonRow.read).stream
+  override def selectAll: Stream[ConnectionIO, SalesorderheadersalesreasonRow] = sql"""select "salesorderid", "salesreasonid", "modifieddate"::text from "sales"."salesorderheadersalesreason"""".query(using SalesorderheadersalesreasonRow.read).stream
 
-  def selectById(compositeId: SalesorderheadersalesreasonId): ConnectionIO[Option[SalesorderheadersalesreasonRow]] = sql"""select "salesorderid", "salesreasonid", "modifieddate"::text from "sales"."salesorderheadersalesreason" where "salesorderid" = ${fromWrite(compositeId.salesorderid)(using new Write.Single(SalesorderheaderId.put))} AND "salesreasonid" = ${fromWrite(compositeId.salesreasonid)(using new Write.Single(SalesreasonId.put))}""".query(using SalesorderheadersalesreasonRow.read).option
+  override def selectById(compositeId: SalesorderheadersalesreasonId): ConnectionIO[Option[SalesorderheadersalesreasonRow]] = sql"""select "salesorderid", "salesreasonid", "modifieddate"::text from "sales"."salesorderheadersalesreason" where "salesorderid" = ${fromWrite(compositeId.salesorderid)(using new Write.Single(SalesorderheaderId.put))} AND "salesreasonid" = ${fromWrite(compositeId.salesreasonid)(using new Write.Single(SalesreasonId.put))}""".query(using SalesorderheadersalesreasonRow.read).option
 
-  def selectByIds(compositeIds: Array[SalesorderheadersalesreasonId]): Stream[ConnectionIO, SalesorderheadersalesreasonRow] = {
+  override def selectByIds(compositeIds: Array[SalesorderheadersalesreasonId]): Stream[ConnectionIO, SalesorderheadersalesreasonRow] = {
     val salesorderid = compositeIds.map(_.salesorderid)
     val salesreasonid = compositeIds.map(_.salesreasonid)
     sql"""select "salesorderid", "salesreasonid", "modifieddate"::text
@@ -96,16 +94,16 @@ class SalesorderheadersalesreasonRepoImpl extends SalesorderheadersalesreasonRep
     """.query(using SalesorderheadersalesreasonRow.read).stream
   }
 
-  def selectByIdsTracked(compositeIds: Array[SalesorderheadersalesreasonId]): ConnectionIO[Map[SalesorderheadersalesreasonId, SalesorderheadersalesreasonRow]] = {
+  override def selectByIdsTracked(compositeIds: Array[SalesorderheadersalesreasonId]): ConnectionIO[Map[SalesorderheadersalesreasonId, SalesorderheadersalesreasonRow]] = {
     selectByIds(compositeIds).compile.toList.map { rows =>
       val byId = rows.view.map(x => (x.compositeId, x)).toMap
       compositeIds.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
     }
   }
 
-  def update: UpdateBuilder[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow] = UpdateBuilder.of(""""sales"."salesorderheadersalesreason"""", SalesorderheadersalesreasonFields.structure, SalesorderheadersalesreasonRow.read)
+  override def update: UpdateBuilder[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow] = UpdateBuilder.of(""""sales"."salesorderheadersalesreason"""", SalesorderheadersalesreasonFields.structure, SalesorderheadersalesreasonRow.read)
 
-  def update(row: SalesorderheadersalesreasonRow): ConnectionIO[Option[SalesorderheadersalesreasonRow]] = {
+  override def update(row: SalesorderheadersalesreasonRow): ConnectionIO[Option[SalesorderheadersalesreasonRow]] = {
     val compositeId = row.compositeId
     sql"""update "sales"."salesorderheadersalesreason"
     set "modifieddate" = ${fromWrite(row.modifieddate)(using new Write.Single(TypoLocalDateTime.put))}::timestamp
@@ -113,7 +111,7 @@ class SalesorderheadersalesreasonRepoImpl extends SalesorderheadersalesreasonRep
     returning "salesorderid", "salesreasonid", "modifieddate"::text""".query(using SalesorderheadersalesreasonRow.read).option
   }
 
-  def upsert(unsaved: SalesorderheadersalesreasonRow): ConnectionIO[SalesorderheadersalesreasonRow] = {
+  override def upsert(unsaved: SalesorderheadersalesreasonRow): ConnectionIO[SalesorderheadersalesreasonRow] = {
     sql"""insert into "sales"."salesorderheadersalesreason"("salesorderid", "salesreasonid", "modifieddate")
     values (
       ${fromWrite(unsaved.salesorderid)(using new Write.Single(SalesorderheaderId.put))}::int4,
@@ -127,7 +125,7 @@ class SalesorderheadersalesreasonRepoImpl extends SalesorderheadersalesreasonRep
     """.query(using SalesorderheadersalesreasonRow.read).unique
   }
 
-  def upsertBatch(unsaved: List[SalesorderheadersalesreasonRow]): Stream[ConnectionIO, SalesorderheadersalesreasonRow] = {
+  override def upsertBatch(unsaved: List[SalesorderheadersalesreasonRow]): Stream[ConnectionIO, SalesorderheadersalesreasonRow] = {
     Update[SalesorderheadersalesreasonRow](
       s"""insert into "sales"."salesorderheadersalesreason"("salesorderid", "salesreasonid", "modifieddate")
       values (?::int4,?::int4,?::timestamp)
@@ -140,7 +138,7 @@ class SalesorderheadersalesreasonRepoImpl extends SalesorderheadersalesreasonRep
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
+  override def upsertStreaming(
     unsaved: Stream[ConnectionIO, SalesorderheadersalesreasonRow],
     batchSize: Int = 10000
   ): ConnectionIO[Int] = {
