@@ -160,13 +160,14 @@ object minimize {
               implements.foreach(goTree)
               members.foreach(goTree)
               staticMembers.foreach(goTree)
-            case jvm.Adt.Sum(annotations, _, _, tparams, members, implements, subtypes, staticMembers) =>
+            case jvm.Adt.Sum(annotations, _, _, tparams, members, implements, subtypes, staticMembers, permittedSubtypes) =>
               annotations.foreach(goTree)
               tparams.foreach(goTree)
               members.foreach(goTree)
               implements.foreach(goTree)
               subtypes.foreach(goTree)
               staticMembers.foreach(goTree)
+              permittedSubtypes.foreach(goTree)
             case jvm.Type.Wildcard =>
               ()
             case jvm.Type.TApply(underlying, targs) =>

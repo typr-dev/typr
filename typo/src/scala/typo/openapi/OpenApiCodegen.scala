@@ -144,6 +144,13 @@ object OpenApiCodegen {
       Map.empty
     }
 
+    // Build mapping of status code -> list of shapes that contain it
+    val statusCodeToShapes: Map[String, List[ResponseShape]] = if (options.useGenericResponseTypes) {
+      buildStatusCodeToShapesMapping(responseShapes.values.toList)
+    } else {
+      Map.empty
+    }
+
     val typeMapper: TypeMapper = if (isScala) {
       new ScalaTypeMapper(modelPkg, options.typeOverrides, lang)
     } else {
@@ -176,10 +183,9 @@ object OpenApiCodegen {
     }
 
     // Generate generic response types if enabled
-    if (options.useGenericResponseTypes) {
-      responseShapes.values.foreach { shape =>
-        files += apiCodegen.generateGenericResponseType(shape)
-      }
+    // All response interfaces and leaf classes must be in one file for sealed type compatibility
+    if (options.useGenericResponseTypes && responseShapes.nonEmpty) {
+      files += apiCodegen.generateAllResponseTypes(responseShapes.values.toList, statusCodeToShapes)
     }
 
     // Generate API interfaces (base, server, client, and response sum types)
@@ -222,5 +228,13 @@ object OpenApiCodegen {
       .map(ResponseShape.fromVariants)
       .groupBy(_.shapeId)
       .map { case (k, v) => (k, v.head) }
+  }
+
+  /** Build mapping of status code -> list of shapes that contain it */
+  private def buildStatusCodeToShapesMapping(shapes: List[ResponseShape]): Map[String, List[ResponseShape]] = {
+    shapes
+      .flatMap(shape => shape.statusCodes.map(code => (code, shape)))
+      .groupBy(_._1)
+      .map { case (code, pairs) => (code, pairs.map(_._2)) }
   }
 }

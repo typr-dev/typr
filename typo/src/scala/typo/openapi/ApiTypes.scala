@@ -167,6 +167,36 @@ object ResponseShape {
     case s         => s
   }
 
+  /** Get human-readable HTTP status class name from status code */
+  def httpStatusClassName(statusCode: String): String = statusCode.toLowerCase match {
+    case "200"     => "Ok"
+    case "201"     => "Created"
+    case "202"     => "Accepted"
+    case "204"     => "NoContent"
+    case "301"     => "MovedPermanently"
+    case "302"     => "Found"
+    case "304"     => "NotModified"
+    case "400"     => "BadRequest"
+    case "401"     => "Unauthorized"
+    case "403"     => "Forbidden"
+    case "404"     => "NotFound"
+    case "405"     => "MethodNotAllowed"
+    case "409"     => "Conflict"
+    case "410"     => "Gone"
+    case "422"     => "UnprocessableEntity"
+    case "429"     => "TooManyRequests"
+    case "500"     => "InternalServerError"
+    case "501"     => "NotImplemented"
+    case "502"     => "BadGateway"
+    case "503"     => "ServiceUnavailable"
+    case "504"     => "GatewayTimeout"
+    case "2xx"     => "Success2XX"
+    case "4xx"     => "ClientError4XX"
+    case "5xx"     => "ServerError5XX"
+    case "default" => "Default"
+    case s         => s"Status$s" // Fallback for unknown codes
+  }
+
   /** Check if a status code is a range status (needs statusCode field) */
   def isRangeStatus(statusCode: String): Boolean = statusCode.toLowerCase match {
     case "4xx" | "5xx" | "default" | "2xx" => true

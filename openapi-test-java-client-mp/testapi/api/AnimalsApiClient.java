@@ -11,9 +11,6 @@ import java.lang.IllegalStateException;
 import java.util.List;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import testapi.api.ListAnimalsResponse;
-import testapi.api.Response2004XX5XX.Status200;
-import testapi.api.Response2004XX5XX.Status4XX;
-import testapi.api.Response2004XX5XX.Status5XX;
 import testapi.model.Animal;
 import testapi.model.Error;
 
@@ -31,14 +28,14 @@ public interface AnimalsApiClient extends AnimalsApi {
   default ListAnimalsResponse listAnimals() {
     try {
       Response response = listAnimalsRaw();
-      if (response.getStatus() == 200) { new Status200(response.readEntity(new GenericType<List<Animal>>() {})) }
-      else if (response.getStatus() >= 400 && response.getStatus() < 500) { new Status4XX(response.getStatus(), response.readEntity(Error.class)) }
-      else if (response.getStatus() >= 500 && response.getStatus() < 600) { new Status5XX(response.getStatus(), response.readEntity(Error.class)) }
+      if (response.getStatus() == 200) { new Ok(response.readEntity(new GenericType<List<Animal>>() {})) }
+      else if (response.getStatus() >= 400 && response.getStatus() < 500) { new ClientError4XX(response.getStatus(), response.readEntity(Error.class)) }
+      else if (response.getStatus() >= 500 && response.getStatus() < 600) { new ServerError5XX(response.getStatus(), response.readEntity(Error.class)) }
       else { throw new IllegalStateException("Unexpected status code: " + response.getStatus()) }
     } catch (WebApplicationException e) {
-      if (e.getResponse().getStatus() == 200) { new Status200(e.getResponse().readEntity(new GenericType<List<Animal>>() {})) }
-      else if (e.getResponse().getStatus() >= 400 && e.getResponse().getStatus() < 500) { new Status4XX(e.getResponse().getStatus(), e.getResponse().readEntity(Error.class)) }
-      else if (e.getResponse().getStatus() >= 500 && e.getResponse().getStatus() < 600) { new Status5XX(e.getResponse().getStatus(), e.getResponse().readEntity(Error.class)) }
+      if (e.getResponse().getStatus() == 200) { new Ok(e.getResponse().readEntity(new GenericType<List<Animal>>() {})) }
+      else if (e.getResponse().getStatus() >= 400 && e.getResponse().getStatus() < 500) { new ClientError4XX(e.getResponse().getStatus(), e.getResponse().readEntity(Error.class)) }
+      else if (e.getResponse().getStatus() >= 500 && e.getResponse().getStatus() < 600) { new ServerError5XX(e.getResponse().getStatus(), e.getResponse().readEntity(Error.class)) }
       else { throw new IllegalStateException("Unexpected status code: " + e.getResponse().getStatus()) }
     } ;
     null;

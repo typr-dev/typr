@@ -20,11 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import testapi.api.Response200404.Status200;
-import testapi.api.Response201400.Status201;
-import testapi.api.Response201400.Status400;
-import testapi.api.Response404Default.Status404;
-import testapi.api.Response404Default.StatusDefault;
 import testapi.model.Error;
 import testapi.model.Pet;
 import testapi.model.PetCreate;
@@ -46,8 +41,8 @@ public interface PetsApiServer extends PetsApi {
   @SecurityRequirement(name = "apiKeyHeader")
   default ResponseEntity<?> createPetEndpoint(@RequestBody PetCreate body) {
     return switch (createPet(body)) {
-      case Status201 r -> ResponseEntity.ok(r.value());
-      case Status400 r -> ResponseEntity.status(400).body(r.value());
+      case Created r -> ResponseEntity.ok(r.value());
+      case BadRequest r -> ResponseEntity.status(400).body(r.value());
       default -> throw new IllegalStateException("Unexpected response type");
     };
   };
@@ -68,8 +63,8 @@ public interface PetsApiServer extends PetsApi {
     @PathVariable("petId") String petId
   ) {
     return switch (deletePet(petId)) {
-      case Status404 r -> ResponseEntity.status(404).body(r.value());
-      case StatusDefault r -> ResponseEntity.status(r.statusCode()).body(r.value());
+      case NotFound r -> ResponseEntity.status(404).body(r.value());
+      case Default r -> ResponseEntity.status(r.statusCode()).body(r.value());
       default -> throw new IllegalStateException("Unexpected response type");
     };
   };
@@ -90,8 +85,8 @@ public interface PetsApiServer extends PetsApi {
     @PathVariable("petId") String petId
   ) {
     return switch (getPet(petId)) {
-      case Status200 r -> ResponseEntity.ok(r.value());
-      case testapi.api.Response200404.Status404 r -> ResponseEntity.status(404).body(r.value());
+      case Ok r -> ResponseEntity.ok(r.value());
+      case NotFound r -> ResponseEntity.status(404).body(r.value());
       default -> throw new IllegalStateException("Unexpected response type");
     };
   };

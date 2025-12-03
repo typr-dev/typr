@@ -15,8 +15,8 @@ trait PetsApiServer extends PetsApi {
   /** Endpoint wrapper for createPet - handles response status codes */
   def createPetEndpoint(body: PetCreate): IO[Response] = {
     createPet(body).map((response: testapi.api.Response201400) => response match {
-      case r: testapi.api.Response201400.Status201 => org.http4s.Response.apply(org.http4s.Status.Ok).withEntity(r.value)
-      case r: testapi.api.Response201400.Status400 => org.http4s.Response.apply(org.http4s.Status.fromInt(400).getOrElse(org.http4s.Status.InternalServerError)).withEntity(r.value)
+      case r: testapi.api.Created => org.http4s.Response.apply(org.http4s.Status.Ok).withEntity(r.value)
+      case r: testapi.api.BadRequest => org.http4s.Response.apply(org.http4s.Status.fromInt(400).getOrElse(org.http4s.Status.InternalServerError)).withEntity(r.value)
     })
   }
 
@@ -32,8 +32,8 @@ trait PetsApiServer extends PetsApi {
     petId: String
   ): IO[Response] = {
     deletePet(petId).map((response: testapi.api.Response404Default) => response match {
-      case r: testapi.api.Response404Default.Status404 => org.http4s.Response.apply(org.http4s.Status.fromInt(404).getOrElse(org.http4s.Status.InternalServerError)).withEntity(r.value)
-      case r: testapi.api.Response404Default.StatusDefault => org.http4s.Response.apply(org.http4s.Status.fromInt(r.statusCode).getOrElse(org.http4s.Status.InternalServerError)).withEntity(r.value)
+      case r: testapi.api.NotFound => org.http4s.Response.apply(org.http4s.Status.fromInt(404).getOrElse(org.http4s.Status.InternalServerError)).withEntity(r.value)
+      case r: testapi.api.Default => org.http4s.Response.apply(org.http4s.Status.fromInt(r.statusCode).getOrElse(org.http4s.Status.InternalServerError)).withEntity(r.value)
     })
   }
 
@@ -49,8 +49,8 @@ trait PetsApiServer extends PetsApi {
     petId: String
   ): IO[Response] = {
     getPet(petId).map((response: testapi.api.Response200404) => response match {
-      case r: testapi.api.Response200404.Status200 => org.http4s.Response.apply(org.http4s.Status.Ok).withEntity(r.value)
-      case r: testapi.api.Response200404.Status404 => org.http4s.Response.apply(org.http4s.Status.fromInt(404).getOrElse(org.http4s.Status.InternalServerError)).withEntity(r.value)
+      case r: testapi.api.Ok => org.http4s.Response.apply(org.http4s.Status.Ok).withEntity(r.value)
+      case r: testapi.api.NotFound => org.http4s.Response.apply(org.http4s.Status.fromInt(404).getOrElse(org.http4s.Status.InternalServerError)).withEntity(r.value)
     })
   }
 

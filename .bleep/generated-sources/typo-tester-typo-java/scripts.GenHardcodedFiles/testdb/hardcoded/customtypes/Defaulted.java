@@ -14,7 +14,7 @@ import typo.runtime.PgText;
 /** This signals a value where if you don't provide it, postgres will generate it for you */
 @JsonSerialize(using = DefaultedSerializer.class)
 @JsonDeserialize(using = DefaultedDeserializer.class)
-public sealed interface Defaulted<T> {
+public sealed interface Defaulted<T> permits Defaulted.Provided, Defaulted.UseDefault {
   record Provided<T>(T value) implements Defaulted<T> {
     public Provided<T> withValue(T value) {
       return new Provided<>(value);

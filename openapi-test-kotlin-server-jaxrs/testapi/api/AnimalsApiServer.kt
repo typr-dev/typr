@@ -7,9 +7,6 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import java.lang.IllegalStateException
 import kotlin.collections.List
-import testapi.api.Response2004XX5XX.Status200
-import testapi.api.Response2004XX5XX.Status4XX
-import testapi.api.Response2004XX5XX.Status5XX
 import testapi.model.Animal
 
 interface AnimalsApiServer : AnimalsApi {
@@ -21,9 +18,9 @@ interface AnimalsApiServer : AnimalsApi {
   @Path("/")
   @Produces(MediaType.APPLICATION_JSON)
   fun listAnimalsEndpoint(): Response = when (val __r = listAnimals()) {
-    is Status200 -> { val r = __r as Status200; Response.ok(r.value).build() }
-    is Status4XX -> { val r = __r as Status4XX; Response.status(r.statusCode).entity(r.value).build() }
-    is Status5XX -> { val r = __r as Status5XX; Response.status(r.statusCode).entity(r.value).build() }
+    is Ok -> { val r = __r as Ok; Response.ok(r.value).build() }
+    is ClientError4XX -> { val r = __r as ClientError4XX; Response.status(r.statusCode).entity(r.value).build() }
+    is ServerError5XX -> { val r = __r as ServerError5XX; Response.status(r.statusCode).entity(r.value).build() }
     else -> throw IllegalStateException("Unexpected response type")
   }
 }

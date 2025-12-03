@@ -416,7 +416,7 @@ case object LangJava extends Lang {
           Some(renderParams(cls.params, ctx)),
           cls.implements match {
             case Nil      => None
-            case nonEmpty => Some(nonEmpty.map(x => code" implements $x").mkCode(" "))
+            case nonEmpty => Some(code" implements ${nonEmpty.map(x => code"$x").mkCode(", ")}")
           },
           Some(code"""| {
                       |  ${(shortConstructor.toList ++ withers ++ body).map(_ ++ code";").mkCode("\n\n")}
@@ -433,6 +433,25 @@ case object LangJava extends Lang {
             sum.members.sortBy(_.name).map(m => renderTree(m, memberCtx))
           ).flatten
 
+        // Java sealed interfaces need a 'permits' clause listing all permitted subtypes
+        // If permittedSubtypes is provided, use those; otherwise derive from nested subtypes
+        val permitsClause: Option[jvm.Code] = sum.permittedSubtypes match {
+          case Nil if sum.subtypes.isEmpty => None // No subtypes at all - this would be a compile error in Java
+          case Nil                         =>
+            // Use nested subtypes - for nested types, use simple name (Parent.Child format)
+            val subtypeNames = sum.flattenedSubtypes.map { subtype =>
+              // Get relative name from parent type
+              val parentName = sum.name.name.value
+              val childName = subtype.name.name.value
+              code"$parentName.$childName"
+            }
+            Some(code" permits ${subtypeNames.mkCode(", ")}")
+          case nonEmpty =>
+            // Use explicitly provided permitted subtypes (for top-level classes in same file)
+            val subtypeNames = nonEmpty.map(_.name.value).map(n => code"$n")
+            Some(code" permits ${subtypeNames.mkCode(", ")}")
+        }
+
         val annotationsCode = if (sum.annotations.isEmpty) None else Some(renderAnnotations(sum.annotations))
         List[Option[jvm.Code]](
           renderComments(sum.comments),
@@ -443,6 +462,7 @@ case object LangJava extends Lang {
             case Nil      => None
             case nonEmpty => Some(renderTparams(nonEmpty))
           },
+          permitsClause,
           sum.implements match {
             case Nil      => None
             case nonEmpty => Some(nonEmpty.map(x => code" extends $x").mkCode(" "))
@@ -496,7 +516,7 @@ case object LangJava extends Lang {
           cls.`extends`.map(x => code" extends $x"),
           cls.implements match {
             case Nil      => None
-            case nonEmpty => Some(nonEmpty.map(x => code" implements $x").mkCode(" "))
+            case nonEmpty => Some(code" implements ${nonEmpty.map(x => code"$x").mkCode(", ")}")
           },
           Some {
             val allBody = fieldsCode ++ constructorCode ++ body

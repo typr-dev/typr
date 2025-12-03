@@ -522,7 +522,7 @@ case object LangKotlin extends Lang {
             },
             cls.implements match {
               case Nil      => None
-              case nonEmpty => Some(nonEmpty.map(x => code" : $x").mkCode(", "))
+              case nonEmpty => Some(code" : " ++ nonEmpty.map(x => code"$x").mkCode(", "))
             },
             if (allBody.nonEmpty)
               Some(code"""| {
@@ -558,7 +558,7 @@ case object LangKotlin extends Lang {
             Some(renderDataClassParams(cls.params, ctx)),
             cls.implements match {
               case Nil      => None
-              case nonEmpty => Some(nonEmpty.map(x => code" : $x").mkCode(", "))
+              case nonEmpty => Some(code" : " ++ nonEmpty.map(x => code"$x").mkCode(", "))
             },
             if (allBody.nonEmpty)
               Some(code"""| {
@@ -696,7 +696,7 @@ case object LangKotlin extends Lang {
           case (Some(ext), Nil) =>
             if (isInterface) Some(code" : $ext")
             else Some(code" : $ext()")
-          case (None, impls) => Some(impls.map(x => code" : $x").mkCode(", "))
+          case (None, impls) => Some(code" : " ++ impls.map(x => code"$x").mkCode(", "))
           case (Some(ext), impls) =>
             if (isInterface) Some(code" : $ext, " ++ impls.map(x => code"$x").mkCode(", "))
             else Some(code" : $ext(), " ++ impls.map(x => code"$x").mkCode(", "))

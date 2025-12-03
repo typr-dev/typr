@@ -18,8 +18,8 @@ trait PetsApiClient extends PetsApi {
   override def createPet(body: PetCreate): IO[CreatePetResponse] = {
     createPetRaw(body).flatMap { response => {
       val statusCode = response.status.code
-      if (statusCode == 201) response.as[testapi.model.Pet].map(v => testapi.api.Response201400.Status201(v))
-    else if (statusCode == 400) response.as[testapi.model.Error].map(v => testapi.api.Response201400.Status400(v))
+      if (statusCode == 201) response.as[testapi.model.Pet].map(v => testapi.api.Created(v))
+    else if (statusCode == 400) response.as[testapi.model.Error].map(v => testapi.api.BadRequest(v))
     else cats.effect.IO.raiseError(new java.lang.IllegalStateException(s"Unexpected status code: statusCode"))
     } }
   }
@@ -37,8 +37,8 @@ trait PetsApiClient extends PetsApi {
   ): IO[DeletePetResponse] = {
     deletePetRaw(petId).flatMap { response => {
       val statusCode = response.status.code
-      if (statusCode == 404) response.as[testapi.model.Error].map(v => testapi.api.Response404Default.Status404(v))
-    else response.as[testapi.model.Error].map(v => testapi.api.Response404Default.StatusDefault(statusCode, v))
+      if (statusCode == 404) response.as[testapi.model.Error].map(v => testapi.api.NotFound(v))
+    else response.as[testapi.model.Error].map(v => testapi.api.Default(statusCode, v))
     } }
   }
 
@@ -55,8 +55,8 @@ trait PetsApiClient extends PetsApi {
   ): IO[GetPetResponse] = {
     getPetRaw(petId).flatMap { response => {
       val statusCode = response.status.code
-      if (statusCode == 200) response.as[testapi.model.Pet].map(v => testapi.api.Response200404.Status200(v))
-    else if (statusCode == 404) response.as[testapi.model.Error].map(v => testapi.api.Response200404.Status404(v))
+      if (statusCode == 200) response.as[testapi.model.Pet].map(v => testapi.api.Ok(v))
+    else if (statusCode == 404) response.as[testapi.model.Error].map(v => testapi.api.NotFound(v))
     else cats.effect.IO.raiseError(new java.lang.IllegalStateException(s"Unexpected status code: statusCode"))
     } }
   }

@@ -21,6 +21,13 @@ class ApiCodegen(
   private val effectType: Option[jvm.Type.Qualified] = effectTypeWithOps.map(_._1)
   private val effectOps: Option[EffectTypeOps] = effectTypeWithOps.map(_._2)
 
+  /** The "Nothing" type for this language - represents an impossible value in type parameters */
+  private val nothingType: jvm.Type = (lang: @unchecked) match {
+    case _: LangScala => jvm.Type.Qualified("scala.Nothing")
+    case LangKotlin   => jvm.Type.Qualified("kotlin.Nothing")
+    case LangJava     => jvm.Type.Qualified("java.lang.Void")
+  }
+
   /** Generate API interface files: base trait, optional server trait, optional client trait, and response sum types */
   def generate(api: ApiInterface): List[jvm.File] = {
     val baseTpe = jvm.Type.Qualified(apiPkg / jvm.Ident(api.name))
@@ -358,100 +365,63 @@ class ApiCodegen(
     List(typeInfoAnnotation, subTypesAnnotation)
   }
 
-  /** Generate a generic response type for a given shape.
-    * For example, shape with status codes ["200", "default"] generates:
+  /** Generate all response types in a single file.
+    * This is required because sealed types in Scala/Java/Kotlin require all implementations
+    * to be in the same compilation unit (same file).
+    *
+    * The file contains:
+    * 1. Sealed interfaces for each response shape (e.g., Response200404, Response200Default)
+    * 2. Leaf classes for each status code (e.g., Ok, NotFound, Default)
+    *
+    * Example output:
     * ```
-    * sealed interface Response200Default<T200> {
-    *   data class Status200<T200>(val value: T200) : Response200Default<T200>
-    *   data class StatusDefault<T200>(val statusCode: Int, val value: Error) : Response200Default<T200>
-    *   fun status(): String
-    * }
+    * sealed interface Response200404<T200, T404> { fun status(): String }
+    * sealed interface Response200Default<T200> { fun status(): String }
+    * data class Ok<T>(val value: T) : Response200404<T, Nothing>, Response200Default<T> { ... }
+    * data class NotFound<T>(val value: T) : Response200404<Nothing, T> { ... }
     * ```
     */
-  def generateGenericResponseType(shape: ResponseShape): jvm.File = {
+  def generateAllResponseTypes(
+      shapes: List[ResponseShape],
+      statusCodeToShapes: Map[String, List[ResponseShape]]
+  ): jvm.File = {
+    // Use "Responses" as the primary type name for the file
+    val primaryTpe = jvm.Type.Qualified(apiPkg / jvm.Ident("Responses"))
+
+    // Generate all response interfaces as subtypes
+    val responseInterfaces: List[jvm.Adt.Sum] = shapes.map { shape =>
+      buildResponseInterface(shape)
+    }
+
+    // Generate all leaf classes
+    val leafClasses: List[jvm.Adt.Record] = statusCodeToShapes.toList.map { case (statusCode, shapesForCode) =>
+      buildStatusLeafClass(statusCode, shapesForCode)
+    }
+
+    // Combine all into a single file
+    // The primary type is just a marker, all actual types are secondary
+    val allTypes: List[jvm.Tree] = responseInterfaces ++ leafClasses
+    val allCode = allTypes.map(t => lang.renderTree(t, lang.Ctx.Empty)).mkCode("\n\n")
+
+    // Secondary types are all the response interfaces and leaf classes
+    val secondaryTypes: List[jvm.Type.Qualified] =
+      shapes.map(s => jvm.Type.Qualified(apiPkg / jvm.Ident(s.typeName))) ++
+        statusCodeToShapes.keys.map(code => jvm.Type.Qualified(apiPkg / jvm.Ident(ResponseShape.httpStatusClassName(code))))
+
+    jvm.File(primaryTpe, allCode, secondaryTypes = secondaryTypes, scope = Scope.Main)
+  }
+
+  /** Build a response interface AST (for use in generateAllResponseTypes) */
+  private def buildResponseInterface(shape: ResponseShape): jvm.Adt.Sum = {
     val typeName = shape.typeName
     val tpe = jvm.Type.Qualified(apiPkg / jvm.Ident(typeName))
 
-    // Create type parameters for non-range status codes (each gets its own T)
-    // Range statuses (default, 4xx, 5xx) use Error type by convention
+    // Create type parameters for non-range status codes
     val nonRangeStatuses = shape.statusCodes.filterNot(ResponseShape.isRangeStatus)
     val typeParamNames = nonRangeStatuses.map(s => "T" + normalizeStatusCode(s))
     val tparams = typeParamNames.map(name => jvm.Type.Abstract(jvm.Ident(name)))
 
-    // Build subtypes for each status code
-    val subtypes = shape.statusCodes.map { statusCode =>
-      val statusName = "Status" + normalizeStatusCode(statusCode)
-      val subtypeTpe = jvm.Type.Qualified(apiPkg / jvm.Ident(typeName) / jvm.Ident(statusName))
-
-      val isRangeStatus = ResponseShape.isRangeStatus(statusCode)
-
-      // Determine the value type for this status
-      // Non-range statuses use type parameter, range statuses use Error
-      val valueType: jvm.Type = if (isRangeStatus) {
-        // Range statuses (default, 4xx, 5xx) use Error type from model package
-        Types.Error(apiPkg)
-      } else {
-        // Non-range statuses use their corresponding type parameter
-        val tparamName = "T" + normalizeStatusCode(statusCode)
-        jvm.Type.Abstract(jvm.Ident(tparamName))
-      }
-
-      val valueParam = jvm.Param[jvm.Type](
-        annotations = jsonLib.propertyAnnotations("value"),
-        comments = jvm.Comments.Empty,
-        name = jvm.Ident("value"),
-        tpe = valueType,
-        default = None
-      )
-
-      // For range status codes, include statusCode field
-      val params = if (isRangeStatus) {
-        val statusCodeParam = jvm.Param[jvm.Type](
-          annotations = jsonLib.propertyAnnotations("statusCode"),
-          comments = jvm.Comments(List("HTTP status code")),
-          name = jvm.Ident("statusCode"),
-          tpe = lang.Int,
-          default = None
-        )
-        List(statusCodeParam, valueParam)
-      } else {
-        List(valueParam)
-      }
-
-      // Override status() method
-      val statusOverride = jvm.Value(
-        annotations = Nil,
-        name = jvm.Ident("status"),
-        tpe = Types.String,
-        body = Some(jvm.StrLit(statusCode).code),
-        isLazy = true,
-        isOverride = true
-      )
-
-      // Subtype implements the parent type with its own type params
-      val implementsType: jvm.Type = if (tparams.nonEmpty) {
-        jvm.Type.TApply(tpe, tparams)
-      } else {
-        tpe
-      }
-
-      jvm.Adt.Record(
-        annotations = Nil,
-        constructorAnnotations = Nil,
-        isWrapper = false,
-        comments = jvm.Comments.Empty,
-        name = subtypeTpe,
-        tparams = tparams, // Subtypes also have the type params
-        params = params,
-        implicitParams = Nil,
-        `extends` = None,
-        implements = List(implementsType),
-        members = List(statusOverride),
-        staticMembers = Nil
-      )
-    }
-
-    // Abstract status method in the sealed interface
+    // Abstract status method
     val statusMethod = jvm.Method(
       annotations = jsonLib.methodPropertyAnnotations("status"),
       comments = jvm.Comments.Empty,
@@ -466,20 +436,92 @@ class ApiCodegen(
       isDefault = false
     )
 
-    // No Jackson annotations for generic types - they can't use @JsonSubTypes with generics
-    val sumAdt = jvm.Adt.Sum(
+    // Find all leaf classes that implement this interface (for Java permits clause)
+    val permittedSubtypes: List[jvm.Type.Qualified] = shape.statusCodes.map { statusCode =>
+      jvm.Type.Qualified(apiPkg / jvm.Ident(ResponseShape.httpStatusClassName(statusCode)))
+    }
+
+    jvm.Adt.Sum(
       annotations = Nil,
-      comments = jvm.Comments(List(s"Generic response type for shape: ${shape.statusCodes.mkString(", ")}")),
+      comments = jvm.Comments(List(s"Response type for: ${shape.statusCodes.mkString(", ")}")),
       name = tpe,
       tparams = tparams,
       members = List(statusMethod),
       implements = Nil,
-      subtypes = subtypes,
-      staticMembers = Nil
+      subtypes = Nil, // Leaf classes are separate top-level types in same file
+      staticMembers = Nil,
+      permittedSubtypes = permittedSubtypes // For Java sealed interface permits clause
+    )
+  }
+
+  /** Build a status leaf class AST (for use in generateAllResponseTypes) */
+  private def buildStatusLeafClass(statusCode: String, shapes: List[ResponseShape]): jvm.Adt.Record = {
+    val className = ResponseShape.httpStatusClassName(statusCode)
+    val classTpe = jvm.Type.Qualified(apiPkg / jvm.Ident(className))
+
+    val isRangeStatus = ResponseShape.isRangeStatus(statusCode)
+
+    val tparams: List[jvm.Type.Abstract] = if (isRangeStatus) Nil else List(jvm.Type.Abstract(jvm.Ident("T")))
+
+    val valueType: jvm.Type = if (isRangeStatus) Types.Error(apiPkg) else jvm.Type.Abstract(jvm.Ident("T"))
+
+    val valueParam = jvm.Param[jvm.Type](
+      annotations = jsonLib.propertyAnnotations("value"),
+      comments = jvm.Comments.Empty,
+      name = jvm.Ident("value"),
+      tpe = valueType,
+      default = None
     )
 
-    val generatedCode = lang.renderTree(sumAdt, lang.Ctx.Empty)
-    jvm.File(tpe, generatedCode, secondaryTypes = Nil, scope = Scope.Main)
+    val params = if (isRangeStatus) {
+      val statusCodeParam = jvm.Param[jvm.Type](
+        annotations = jsonLib.propertyAnnotations("statusCode"),
+        comments = jvm.Comments(List("HTTP status code")),
+        name = jvm.Ident("statusCode"),
+        tpe = lang.Int,
+        default = None
+      )
+      List(statusCodeParam, valueParam)
+    } else {
+      List(valueParam)
+    }
+
+    val statusOverride = jvm.Value(
+      annotations = Nil,
+      name = jvm.Ident("status"),
+      tpe = Types.String,
+      body = Some(jvm.StrLit(statusCode).code),
+      isLazy = true,
+      isOverride = true
+    )
+
+    val implementsList: List[jvm.Type] = shapes.map { shape =>
+      val responseTpe = jvm.Type.Qualified(apiPkg / jvm.Ident(shape.typeName))
+      val nonRangeStatuses = shape.statusCodes.filterNot(ResponseShape.isRangeStatus)
+      val typeArgs: List[jvm.Type] = nonRangeStatuses.map { shapeStatusCode =>
+        if (shapeStatusCode == statusCode) {
+          if (isRangeStatus) Types.Error(apiPkg) else jvm.Type.Abstract(jvm.Ident("T"))
+        } else {
+          nothingType
+        }
+      }
+      if (typeArgs.nonEmpty) jvm.Type.TApply(responseTpe, typeArgs) else responseTpe
+    }
+
+    jvm.Adt.Record(
+      annotations = Nil,
+      constructorAnnotations = Nil,
+      isWrapper = false,
+      comments = jvm.Comments(List(s"HTTP $statusCode response")),
+      name = classTpe,
+      tparams = tparams,
+      params = params,
+      implicitParams = Nil,
+      `extends` = None,
+      implements = implementsList,
+      members = List(statusOverride),
+      staticMembers = Nil
+    )
   }
 
   private def normalizeStatusCode(statusCode: String): String = {
@@ -490,6 +532,21 @@ class ApiCodegen(
       case "4xx"     => "4XX"
       case "5xx"     => "5XX"
       case s         => s
+    }
+  }
+
+  /** Get the type reference to the status subtype.
+    * When using generic response types, this returns the shared leaf class (e.g., Ok, NotFound).
+    * Otherwise, it returns the nested subtype (e.g., Response200404.Status200).
+    */
+  private def statusSubtypeTpe(statusCode: String, responseName: String): jvm.Type.Qualified = {
+    if (useGenericResponseTypes) {
+      // Use shared leaf class like Ok, NotFound, Default
+      jvm.Type.Qualified(apiPkg / jvm.Ident(ResponseShape.httpStatusClassName(statusCode)))
+    } else {
+      // Use nested subtype like Response200404.Status200
+      val statusName = "Status" + normalizeStatusCode(statusCode)
+      jvm.Type.Qualified(apiPkg / jvm.Ident(responseName) / jvm.Ident(statusName))
     }
   }
 
@@ -777,8 +834,7 @@ class ApiCodegen(
 
     // Build if-else chain for each variant, using response.as[T].map for entity reading
     val ifElseCases = variants.map { variant =>
-      val statusName = "Status" + normalizeStatusCode(variant.statusCode)
-      val subtypeTpe = jvm.Type.Qualified(apiPkg / jvm.Ident(responseName) / jvm.Ident(statusName))
+      val subtypeTpe = statusSubtypeTpe(variant.statusCode, responseName)
       val bodyType = typeMapper.map(variant.typeInfo)
       val readEntityCode = clientSupport.readEntity(responseIdent.code, bodyType)
 
@@ -928,8 +984,7 @@ class ApiCodegen(
 
     // Build if-else chain for each variant
     val ifElseCases = variants.map { variant =>
-      val statusName = "Status" + normalizeStatusCode(variant.statusCode)
-      val subtypeTpe = jvm.Type.Qualified(apiPkg / jvm.Ident(responseName) / jvm.Ident(statusName))
+      val subtypeTpe = statusSubtypeTpe(variant.statusCode, responseName)
       val bodyType = typeMapper.map(variant.typeInfo)
       val readEntityCode = clientSupport.readEntity(responseExpr, bodyType)
 
@@ -1246,8 +1301,7 @@ class ApiCodegen(
 
     // Generate the type switch cases for each variant
     val switchCases = variants.map { variant =>
-      val statusName = "Status" + normalizeStatusCode(variant.statusCode)
-      val subtypeTpe = jvm.Type.Qualified(apiPkg / jvm.Ident(responseName) / jvm.Ident(statusName))
+      val subtypeTpe = statusSubtypeTpe(variant.statusCode, responseName)
       val defaultStatusCode = statusCodeToInt(variant.statusCode)
       val bindingIdent = jvm.Ident("r")
 

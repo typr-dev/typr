@@ -21,11 +21,6 @@ import java.lang.Void;
 import java.util.List;
 import java.util.Optional;
 import org.glassfish.jersey.media.multipart.FormDataParam;
-import testapi.api.Response200404.Status200;
-import testapi.api.Response201400.Status201;
-import testapi.api.Response201400.Status400;
-import testapi.api.Response404Default.Status404;
-import testapi.api.Response404Default.StatusDefault;
 import testapi.model.Error;
 import testapi.model.Pet;
 import testapi.model.PetCreate;
@@ -49,8 +44,8 @@ public interface PetsApiServer extends PetsApi {
   @SecurityRequirement(name = "apiKeyHeader")
   default Response createPetEndpoint(PetCreate body) {
     return switch (createPet(body)) {
-      case Status201 r -> Response.ok(r.value()).build();
-      case Status400 r -> Response.status(400).entity(r.value()).build();
+      case Created r -> Response.ok(r.value()).build();
+      case BadRequest r -> Response.status(400).entity(r.value()).build();
       default -> throw new IllegalStateException("Unexpected response type");
     };
   };
@@ -72,8 +67,8 @@ public interface PetsApiServer extends PetsApi {
     @PathParam("petId") String petId
   ) {
     return switch (deletePet(petId)) {
-      case Status404 r -> Response.status(404).entity(r.value()).build();
-      case StatusDefault r -> Response.status(r.statusCode()).entity(r.value()).build();
+      case NotFound r -> Response.status(404).entity(r.value()).build();
+      case Default r -> Response.status(r.statusCode()).entity(r.value()).build();
       default -> throw new IllegalStateException("Unexpected response type");
     };
   };
@@ -96,8 +91,8 @@ public interface PetsApiServer extends PetsApi {
     @PathParam("petId") String petId
   ) {
     return switch (getPet(petId)) {
-      case Status200 r -> Response.ok(r.value()).build();
-      case testapi.api.Response200404.Status404 r -> Response.status(404).entity(r.value()).build();
+      case Ok r -> Response.ok(r.value()).build();
+      case NotFound r -> Response.status(404).entity(r.value()).build();
       default -> throw new IllegalStateException("Unexpected response type");
     };
   };

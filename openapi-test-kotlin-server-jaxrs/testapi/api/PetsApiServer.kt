@@ -14,11 +14,6 @@ import java.lang.IllegalStateException
 import java.lang.Void
 import java.util.Optional
 import kotlin.collections.List
-import testapi.api.Response200404.Status200
-import testapi.api.Response201400.Status201
-import testapi.api.Response201400.Status400
-import testapi.api.Response404Default.Status404
-import testapi.api.Response404Default.StatusDefault
 import testapi.model.Error
 import testapi.model.Pet
 import testapi.model.PetCreate
@@ -35,8 +30,8 @@ interface PetsApiServer : PetsApi {
   @SecurityRequirement(name = "oauth2", scopes = ["write:pets"])
   @SecurityRequirement(name = "apiKeyHeader")
   fun createPetEndpoint(body: PetCreate): Response = when (val __r = createPet(body)) {
-    is Status201 -> { val r = __r as Status201; Response.ok(r.value).build() }
-    is Status400 -> { val r = __r as Status400; Response.status(400).entity(r.value).build() }
+    is Created -> { val r = __r as Created; Response.ok(r.value).build() }
+    is BadRequest -> { val r = __r as BadRequest; Response.status(400).entity(r.value).build() }
     else -> throw IllegalStateException("Unexpected response type")
   }
 
@@ -53,8 +48,8 @@ interface PetsApiServer : PetsApi {
     /** The pet ID */
     petId: String
   ): Response = when (val __r = deletePet(petId)) {
-    is Status404 -> { val r = __r as Status404; Response.status(404).entity(r.value).build() }
-    is StatusDefault -> { val r = __r as StatusDefault; Response.status(r.statusCode).entity(r.value).build() }
+    is NotFound -> { val r = __r as NotFound; Response.status(404).entity(r.value).build() }
+    is Default -> { val r = __r as Default; Response.status(r.statusCode).entity(r.value).build() }
     else -> throw IllegalStateException("Unexpected response type")
   }
 
@@ -72,8 +67,8 @@ interface PetsApiServer : PetsApi {
     /** The pet ID */
     petId: String
   ): Response = when (val __r = getPet(petId)) {
-    is Status200 -> { val r = __r as Status200; Response.ok(r.value).build() }
-    is testapi.api.Response200404.Status404 -> { val r = __r as testapi.api.Response200404.Status404; Response.status(404).entity(r.value).build() }
+    is Ok -> { val r = __r as Ok; Response.ok(r.value).build() }
+    is NotFound -> { val r = __r as NotFound; Response.status(404).entity(r.value).build() }
     else -> throw IllegalStateException("Unexpected response type")
   }
 

@@ -10,9 +10,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.lang.IllegalStateException;
 import java.util.List;
-import testapi.api.Response2004XX5XX.Status200;
-import testapi.api.Response2004XX5XX.Status4XX;
-import testapi.api.Response2004XX5XX.Status5XX;
 import testapi.model.Animal;
 
 @Path("/animals")
@@ -31,9 +28,9 @@ public interface AnimalsApiServer extends AnimalsApi {
   @Produces(MediaType.APPLICATION_JSON)
   default Response listAnimalsEndpoint() {
     return switch (listAnimals()) {
-      case Status200 r -> Response.ok(r.value()).build();
-      case Status4XX r -> Response.status(r.statusCode()).entity(r.value()).build();
-      case Status5XX r -> Response.status(r.statusCode()).entity(r.value()).build();
+      case Ok r -> Response.ok(r.value()).build();
+      case ClientError4XX r -> Response.status(r.statusCode()).entity(r.value()).build();
+      case ServerError5XX r -> Response.status(r.statusCode()).entity(r.value()).build();
       default -> throw new IllegalStateException("Unexpected response type");
     };
   };

@@ -301,7 +301,9 @@ object jvm {
         members: List[Method],
         implements: List[Type],
         subtypes: List[Adt],
-        staticMembers: List[ClassMember]
+        staticMembers: List[ClassMember],
+        /** For Java sealed interfaces: explicitly permitted subtypes (empty means nested subtypes are used) */
+        permittedSubtypes: List[Type.Qualified] = Nil
     ) extends Adt {
       def flattenedSubtypes: List[Adt] = {
         val b = List.newBuilder[Adt]

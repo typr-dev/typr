@@ -13,9 +13,6 @@ import java.util.List;
 import java.util.function.Function;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import testapi.api.ListAnimalsResponse;
-import testapi.api.Response2004XX5XX.Status200;
-import testapi.api.Response2004XX5XX.Status4XX;
-import testapi.api.Response2004XX5XX.Status5XX;
 import testapi.model.Animal;
 import testapi.model.Error;
 
@@ -31,9 +28,9 @@ public interface AnimalsApiClient extends AnimalsApi {
   /** List all animals (polymorphic) - handles response status codes */
   @Override
   default Uni<ListAnimalsResponse> listAnimals() {
-    return listAnimalsRaw().onFailure(WebApplicationException.class).recoverWithItem((Throwable e) -> ((WebApplicationException) e).getResponse()).map((Response response) -> if (response.getStatus() == 200) { new Status200(response.readEntity(new GenericType<List<Animal>>() {})) }
-    else if (response.getStatus() >= 400 && response.getStatus() < 500) { new Status4XX(response.getStatus(), response.readEntity(Error.class)) }
-    else if (response.getStatus() >= 500 && response.getStatus() < 600) { new Status5XX(response.getStatus(), response.readEntity(Error.class)) }
+    return listAnimalsRaw().onFailure(WebApplicationException.class).recoverWithItem((Throwable e) -> ((WebApplicationException) e).getResponse()).map((Response response) -> if (response.getStatus() == 200) { new Ok(response.readEntity(new GenericType<List<Animal>>() {})) }
+    else if (response.getStatus() >= 400 && response.getStatus() < 500) { new ClientError4XX(response.getStatus(), response.readEntity(Error.class)) }
+    else if (response.getStatus() >= 500 && response.getStatus() < 600) { new ServerError5XX(response.getStatus(), response.readEntity(Error.class)) }
     else { throw new IllegalStateException("Unexpected status code: " + response.getStatus()) });
   };
 }

@@ -24,11 +24,6 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 import testapi.api.CreatePetResponse;
 import testapi.api.DeletePetResponse;
 import testapi.api.GetPetResponse;
-import testapi.api.Response200404.Status200;
-import testapi.api.Response201400.Status201;
-import testapi.api.Response201400.Status400;
-import testapi.api.Response404Default.Status404;
-import testapi.api.Response404Default.StatusDefault;
 import testapi.model.Error;
 import testapi.model.Pet;
 import testapi.model.PetCreate;
@@ -50,12 +45,12 @@ public interface PetsApiClient extends PetsApi {
   default CreatePetResponse createPet(PetCreate body) {
     try {
       Response response = createPetRaw(body);
-      if (response.getStatus() == 201) { new Status201(response.readEntity(Pet.class)) }
-      else if (response.getStatus() == 400) { new Status400(response.readEntity(Error.class)) }
+      if (response.getStatus() == 201) { new Created(response.readEntity(Pet.class)) }
+      else if (response.getStatus() == 400) { new BadRequest(response.readEntity(Error.class)) }
       else { throw new IllegalStateException("Unexpected status code: " + response.getStatus()) }
     } catch (WebApplicationException e) {
-      if (e.getResponse().getStatus() == 201) { new Status201(e.getResponse().readEntity(Pet.class)) }
-      else if (e.getResponse().getStatus() == 400) { new Status400(e.getResponse().readEntity(Error.class)) }
+      if (e.getResponse().getStatus() == 201) { new Created(e.getResponse().readEntity(Pet.class)) }
+      else if (e.getResponse().getStatus() == 400) { new BadRequest(e.getResponse().readEntity(Error.class)) }
       else { throw new IllegalStateException("Unexpected status code: " + e.getResponse().getStatus()) }
     } ;
     null;
@@ -79,11 +74,11 @@ public interface PetsApiClient extends PetsApi {
   ) {
     try {
       Response response = deletePetRaw(petId);
-      if (response.getStatus() == 404) { new Status404(response.readEntity(Error.class)) }
-      else { new StatusDefault(response.getStatus(), response.readEntity(Error.class)) }
+      if (response.getStatus() == 404) { new NotFound(response.readEntity(Error.class)) }
+      else { new Default(response.getStatus(), response.readEntity(Error.class)) }
     } catch (WebApplicationException e) {
-      if (e.getResponse().getStatus() == 404) { new Status404(e.getResponse().readEntity(Error.class)) }
-      else { new StatusDefault(e.getResponse().getStatus(), e.getResponse().readEntity(Error.class)) }
+      if (e.getResponse().getStatus() == 404) { new NotFound(e.getResponse().readEntity(Error.class)) }
+      else { new Default(e.getResponse().getStatus(), e.getResponse().readEntity(Error.class)) }
     } ;
     null;
   };
@@ -107,12 +102,12 @@ public interface PetsApiClient extends PetsApi {
   ) {
     try {
       Response response = getPetRaw(petId);
-      if (response.getStatus() == 200) { new Status200(response.readEntity(Pet.class), Optional.ofNullable(response.getHeaderString("X-Cache-Status")), UUID.fromString(response.getHeaderString("X-Request-Id"))) }
-      else if (response.getStatus() == 404) { new testapi.api.Response200404.Status404(response.readEntity(Error.class), UUID.fromString(response.getHeaderString("X-Request-Id"))) }
+      if (response.getStatus() == 200) { new Ok(response.readEntity(Pet.class), Optional.ofNullable(response.getHeaderString("X-Cache-Status")), UUID.fromString(response.getHeaderString("X-Request-Id"))) }
+      else if (response.getStatus() == 404) { new NotFound(response.readEntity(Error.class), UUID.fromString(response.getHeaderString("X-Request-Id"))) }
       else { throw new IllegalStateException("Unexpected status code: " + response.getStatus()) }
     } catch (WebApplicationException e) {
-      if (e.getResponse().getStatus() == 200) { new Status200(e.getResponse().readEntity(Pet.class), Optional.ofNullable(e.getResponse().getHeaderString("X-Cache-Status")), UUID.fromString(e.getResponse().getHeaderString("X-Request-Id"))) }
-      else if (e.getResponse().getStatus() == 404) { new testapi.api.Response200404.Status404(e.getResponse().readEntity(Error.class), UUID.fromString(e.getResponse().getHeaderString("X-Request-Id"))) }
+      if (e.getResponse().getStatus() == 200) { new Ok(e.getResponse().readEntity(Pet.class), Optional.ofNullable(e.getResponse().getHeaderString("X-Cache-Status")), UUID.fromString(e.getResponse().getHeaderString("X-Request-Id"))) }
+      else if (e.getResponse().getStatus() == 404) { new NotFound(e.getResponse().readEntity(Error.class), UUID.fromString(e.getResponse().getHeaderString("X-Request-Id"))) }
       else { throw new IllegalStateException("Unexpected status code: " + e.getResponse().getStatus()) }
     } ;
     null;

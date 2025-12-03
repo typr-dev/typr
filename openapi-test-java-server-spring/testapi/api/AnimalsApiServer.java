@@ -10,9 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import testapi.api.Response2004XX5XX.Status200;
-import testapi.api.Response2004XX5XX.Status4XX;
-import testapi.api.Response2004XX5XX.Status5XX;
 import testapi.model.Animal;
 
 @RestController
@@ -30,9 +27,9 @@ public interface AnimalsApiServer extends AnimalsApi {
   @GetMapping(value = { "/" }, produces = { MediaType.APPLICATION_JSON_VALUE })
   default ResponseEntity<?> listAnimalsEndpoint() {
     return switch (listAnimals()) {
-      case Status200 r -> ResponseEntity.ok(r.value());
-      case Status4XX r -> ResponseEntity.status(r.statusCode()).body(r.value());
-      case Status5XX r -> ResponseEntity.status(r.statusCode()).body(r.value());
+      case Ok r -> ResponseEntity.ok(r.value());
+      case ClientError4XX r -> ResponseEntity.status(r.statusCode()).body(r.value());
+      case ServerError5XX r -> ResponseEntity.status(r.statusCode()).body(r.value());
       default -> throw new IllegalStateException("Unexpected response type");
     };
   };
