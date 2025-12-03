@@ -1095,9 +1095,12 @@ class ApiCodegen(
         val exceptionClassLiteral = jvm.JavaClassOf(exceptionType).code
         val recoveredCall = code"$rawMethodCall.onFailure($exceptionClassLiteral).recoverWithItem(${recoverLambda.code})"
 
+        // Generate status code handling for lambda context (no return statements in Kotlin lambdas)
+        val asyncStatusCodeHandlingCode = generateStatusCodeHandling(responseIdent, responseName, variants, clientSupport, inLambdaContext = true)
+
         // Now map the recovered Uni<Response> to handle status codes
         // Use Body.Stmts - the IfElseChain will be recognized as compound statement (no semicolon)
-        val mapLambda = jvm.Lambda(List(jvm.LambdaParam.typed(responseIdent, clientSupport.responseType)), jvm.Body.Stmts(List(statusCodeHandlingCode)))
+        val mapLambda = jvm.Lambda(List(jvm.LambdaParam.typed(responseIdent, clientSupport.responseType)), jvm.Body.Stmts(List(asyncStatusCodeHandlingCode)))
         val mappedCall = ops.map(recoveredCall, mapLambda.code)
 
         List(mappedCall)
@@ -1113,9 +1116,10 @@ class ApiCodegen(
         val exceptionHandlingCode = generateStatusCodeHandlingFromResponse(exceptionResponseCode, responseName, variants, clientSupport)
 
         // Generate try-catch block
+        val responseLocalVar = jvm.LocalVar(responseIdent, Some(rawResponseType), rawMethodCall)
         val tryCatch = jvm.TryCatch(
           tryBlock = List(
-            code"$rawResponseType ${responseIdent.code} = $rawMethodCall;",
+            code"${responseLocalVar.code};",
             statusCodeHandlingCode
           ),
           catches = List(
@@ -1127,22 +1131,30 @@ class ApiCodegen(
     }
   }
 
-  /** Generate if-else chain for handling different status codes from a response variable */
+  /** Generate if-else chain for handling different status codes from a response variable
+    * @param inLambdaContext
+    *   whether this code is inside a lambda (affects return statement usage)
+    */
   private def generateStatusCodeHandling(
       responseIdent: jvm.Ident,
       responseName: String,
       variants: List[ResponseVariant],
-      clientSupport: FrameworkSupport
+      clientSupport: FrameworkSupport,
+      inLambdaContext: Boolean = false
   ): jvm.Code = {
-    generateStatusCodeHandlingFromResponse(responseIdent.code, responseName, variants, clientSupport)
+    generateStatusCodeHandlingFromResponse(responseIdent.code, responseName, variants, clientSupport, inLambdaContext)
   }
 
-  /** Generate if-else chain for handling different status codes from a response expression */
+  /** Generate if-else chain for handling different status codes from a response expression
+    * @param inLambdaContext
+    *   whether this code is inside a lambda (affects return statement usage)
+    */
   private def generateStatusCodeHandlingFromResponse(
       responseExpr: jvm.Code,
       responseName: String,
       variants: List[ResponseVariant],
-      clientSupport: FrameworkSupport
+      clientSupport: FrameworkSupport,
+      inLambdaContext: Boolean = false
   ): jvm.Code = {
     val statusCodeExpr = clientSupport.getStatusCode(responseExpr)
 
@@ -1189,11 +1201,14 @@ class ApiCodegen(
       }
       val constructorCall = subtypeCtorTpe.construct(allArgs: _*)
 
-      // For Java: wrap in return for block lambdas
-      // For Kotlin/Scala: if-else is an expression, so just use the constructor call directly
+      // Determine whether to use return statements:
+      // - Scala: if-else is an expression, never needs return
+      // - Java: always needs return in block contexts
+      // - Kotlin: needs return in try-catch blocks, but NOT in lambdas (last expression is implicit return)
       val resultExpr = lang match {
-        case LangJava => jvm.Return(constructorCall).code
-        case _        => constructorCall
+        case _: LangScala                  => constructorCall // Scala: expression-based
+        case LangKotlin if inLambdaContext => constructorCall // Kotlin lambdas: implicit return of last expression
+        case _                             => jvm.Return(constructorCall).code // Java and Kotlin try-catch: explicit return
       }
 
       (condition, resultExpr, variant.statusCode.toLowerCase == "default")

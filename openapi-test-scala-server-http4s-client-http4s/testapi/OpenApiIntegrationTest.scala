@@ -16,14 +16,11 @@ import org.http4s.circe.CirceEntityEncoder.circeEntityEncoder
 
 import java.time.OffsetDateTime
 
-/**
- * Integration tests for the OpenAPI generated Scala HTTP4s server code.
- *
- * These tests verify that:
- * 1. The generated server trait can be implemented
- * 2. The generated response types work correctly
- * 3. Routes are correctly wired to handler methods
- */
+/** Integration tests for the OpenAPI generated Scala HTTP4s server code.
+  *
+  * These tests verify that:
+  *   1. The generated server trait can be implemented 2. The generated response types work correctly 3. Routes are correctly wired to handler methods
+  */
 class OpenApiIntegrationTest extends AnyFunSuite with Matchers {
 
   private val TestTime = OffsetDateTime.parse("2024-01-01T12:00:00Z")
@@ -67,7 +64,7 @@ class OpenApiIntegrationTest extends AnyFunSuite with Matchers {
     override def getPet(petId: String): IO[Response200404[Pet, Error]] = {
       pets.get(petId) match {
         case Some(foundPet) => IO.pure(Ok(foundPet))
-        case None => IO.pure(NotFound(Error("NOT_FOUND", None, "Pet not found")))
+        case None           => IO.pure(NotFound(Error("NOT_FOUND", None, "Pet not found")))
       }
     }
 
@@ -78,11 +75,11 @@ class OpenApiIntegrationTest extends AnyFunSuite with Matchers {
     override def listPets(limit: Option[Int], status: Option[String]): IO[List[Pet]] = {
       val filtered = status match {
         case Some(s) => pets.values.filter(_.status.value == s).toList
-        case None => pets.values.toList
+        case None    => pets.values.toList
       }
       val limited = limit match {
         case Some(l) => filtered.take(l)
-        case None => filtered
+        case None    => filtered
       }
       IO.pure(limited)
     }

@@ -4,8 +4,8 @@ import io.circe.Decoder
 import io.circe.Encoder
 
 case class Money(
-  amount: Double,
-  currency: Currency
+    amount: Double,
+    currency: Currency
 )
 
 object Money {

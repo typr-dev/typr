@@ -4,10 +4,10 @@ import io.circe.Decoder
 import io.circe.Encoder
 
 case class Owner(
-  address: Option[Address],
-  email: Option[String],
-  id: String,
-  name: String
+    address: Option[Address],
+    email: Option[String],
+    id: String,
+    name: String
 )
 
 object Owner {

@@ -4,10 +4,10 @@ import io.circe.Decoder
 import io.circe.Encoder
 
 case class Address(
-  city: Option[String],
-  country: Option[String],
-  street: Option[String],
-  zipCode: Option[String]
+    city: Option[String],
+    country: Option[String],
+    street: Option[String],
+    zipCode: Option[String]
 )
 
 object Address {

@@ -16,22 +16,22 @@ object GenerateOpenApiTest {
 
     println(s"Generating code from: $specPath")
 
-    // Java with JAX-RS server only (blocking)
+    // Java with JAX-RS server + MicroProfile client (blocking)
     generateCode(
       specPath = specPath,
       language = "java",
       serverLib = Some(OpenApiServerLib.JaxRsSync),
-      clientLib = None,
+      clientLib = Some(OpenApiClientLib.MicroProfileBlocking),
       lang = LangJava,
       generateValidation = true
     )
 
-    // Java with Spring server only (blocking)
+    // Java with Spring server + MicroProfile client (blocking)
     generateCode(
       specPath = specPath,
       language = "java",
       serverLib = Some(OpenApiServerLib.SpringMvc),
-      clientLib = None,
+      clientLib = Some(OpenApiClientLib.MicroProfileBlocking),
       lang = LangJava,
       generateValidation = true
     )
@@ -77,22 +77,22 @@ object GenerateOpenApiTest {
       generateValidation = false
     )
 
-    // Kotlin with JAX-RS server only (blocking)
+    // Kotlin with JAX-RS server + MicroProfile client (blocking)
     generateCode(
       specPath = specPath,
       language = "kotlin",
       serverLib = Some(OpenApiServerLib.JaxRsSync),
-      clientLib = None,
+      clientLib = Some(OpenApiClientLib.MicroProfileBlocking),
       lang = LangKotlin,
       generateValidation = true
     )
 
-    // Kotlin with Spring server only (blocking)
+    // Kotlin with Spring server + MicroProfile client (blocking)
     generateCode(
       specPath = specPath,
       language = "kotlin",
       serverLib = Some(OpenApiServerLib.SpringMvc),
-      clientLib = None,
+      clientLib = Some(OpenApiClientLib.MicroProfileBlocking),
       lang = LangKotlin,
       generateValidation = true
     )
@@ -198,10 +198,11 @@ object GenerateOpenApiTest {
     }.toMap
 
     // Use FileSync to write files - this only touches the sourceDir, not project root
+    // Preserve test files by excluding them from deletion
     val synced = FileSync.syncStrings(
       folder = sourceDir,
       fileRelMap = fileMap,
-      deleteUnknowns = FileSync.DeleteUnknowns.Yes(maxDepth = None),
+      deleteUnknowns = FileSync.DeleteUnknowns.No,
       softWrite = FileSync.SoftWrite.Yes(Set.empty)
     )
 
