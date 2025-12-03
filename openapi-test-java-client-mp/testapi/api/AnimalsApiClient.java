@@ -26,17 +26,16 @@ public interface AnimalsApiClient extends AnimalsApi {
   @Override
   default Response2004XX5XX<List<Animal>> listAnimals() {
     try {
-      Response response = listAnimalsRaw;
-      if (response.getStatus() == 200) { new Ok(response.readEntity(new GenericType<List<Animal>>() {})) }
-      else if (response.getStatus() >= 400 && response.getStatus() < 500) { new ClientError4XX(response.getStatus(), response.readEntity(Error.class)) }
-      else if (response.getStatus() >= 500 && response.getStatus() < 600) { new ServerError5XX(response.getStatus(), response.readEntity(Error.class)) }
-      else { throw new IllegalStateException("Unexpected status code: " + response.getStatus()) }
+      Response response = listAnimalsRaw();
+      if (response.getStatus() == 200) { return new Ok(response.readEntity(new GenericType<List<Animal>>() {})); }
+      else if (response.getStatus() >= 400 && response.getStatus() < 500) { return new ClientError4XX(response.getStatus(), response.readEntity(Error.class)); }
+      else if (response.getStatus() >= 500 && response.getStatus() < 600) { return new ServerError5XX(response.getStatus(), response.readEntity(Error.class)); }
+      else { throw new IllegalStateException("Unexpected status code: " + response.getStatus()); }
     } catch (WebApplicationException e) {
-      if (e.getResponse().getStatus() == 200) { new Ok(e.getResponse().readEntity(new GenericType<List<Animal>>() {})) }
-      else if (e.getResponse().getStatus() >= 400 && e.getResponse().getStatus() < 500) { new ClientError4XX(e.getResponse().getStatus(), e.getResponse().readEntity(Error.class)) }
-      else if (e.getResponse().getStatus() >= 500 && e.getResponse().getStatus() < 600) { new ServerError5XX(e.getResponse().getStatus(), e.getResponse().readEntity(Error.class)) }
-      else { throw new IllegalStateException("Unexpected status code: " + e.getResponse().getStatus()) }
-    } ;
-    null;
+      if (e.getResponse().getStatus() == 200) { return new Ok(e.getResponse().readEntity(new GenericType<List<Animal>>() {})); }
+      else if (e.getResponse().getStatus() >= 400 && e.getResponse().getStatus() < 500) { return new ClientError4XX(e.getResponse().getStatus(), e.getResponse().readEntity(Error.class)); }
+      else if (e.getResponse().getStatus() >= 500 && e.getResponse().getStatus() < 600) { return new ServerError5XX(e.getResponse().getStatus(), e.getResponse().readEntity(Error.class)); }
+      else { throw new IllegalStateException("Unexpected status code: " + e.getResponse().getStatus()); }
+    } 
   };
 }

@@ -19,7 +19,6 @@ import java.lang.IllegalStateException;
 import java.lang.Void;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.function.Function;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -42,9 +41,11 @@ public interface PetsApiClient extends PetsApi {
   /** Create a pet - handles response status codes */
   @Override
   default Uni<Response201400<Pet, Error>> createPet(PetCreate body) {
-    return createPetRaw(body).onFailure(WebApplicationException.class).recoverWithItem((Throwable e) -> ((WebApplicationException) e).getResponse()).map((Response response) -> if (response.getStatus() == 201) { new Created(response.readEntity(Pet.class)) }
-    else if (response.getStatus() == 400) { new BadRequest(response.readEntity(Error.class)) }
-    else { throw new IllegalStateException("Unexpected status code: " + response.getStatus()) });
+    return createPetRaw(body).onFailure(WebApplicationException.class).recoverWithItem((Throwable e) -> ((WebApplicationException) e).getResponse()).map((Response response) -> {
+      if (response.getStatus() == 201) { return new Created(response.readEntity(Pet.class)); }
+    else if (response.getStatus() == 400) { return new BadRequest(response.readEntity(Error.class)); }
+    else { throw new IllegalStateException("Unexpected status code: " + response.getStatus()); }
+    });
   };
 
   /** Delete a pet */
@@ -63,8 +64,10 @@ public interface PetsApiClient extends PetsApi {
     /** The pet ID */
     String petId
   ) {
-    return deletePetRaw(petId).onFailure(WebApplicationException.class).recoverWithItem((Throwable e) -> ((WebApplicationException) e).getResponse()).map((Response response) -> if (response.getStatus() == 404) { new NotFound(response.readEntity(Error.class)) }
-    else { new Default(response.getStatus(), response.readEntity(Error.class)) });
+    return deletePetRaw(petId).onFailure(WebApplicationException.class).recoverWithItem((Throwable e) -> ((WebApplicationException) e).getResponse()).map((Response response) -> {
+      if (response.getStatus() == 404) { return new NotFound(response.readEntity(Error.class)); }
+    else { return new Default(response.getStatus(), response.readEntity(Error.class)); }
+    });
   };
 
   /** Get a pet by ID */
@@ -84,9 +87,11 @@ public interface PetsApiClient extends PetsApi {
     /** The pet ID */
     String petId
   ) {
-    return getPetRaw(petId).onFailure(WebApplicationException.class).recoverWithItem((Throwable e) -> ((WebApplicationException) e).getResponse()).map((Response response) -> if (response.getStatus() == 200) { new Ok(response.readEntity(Pet.class), Optional.ofNullable(response.getHeaderString("X-Cache-Status")), UUID.fromString(response.getHeaderString("X-Request-Id"))) }
-    else if (response.getStatus() == 404) { new NotFound(response.readEntity(Error.class), UUID.fromString(response.getHeaderString("X-Request-Id"))) }
-    else { throw new IllegalStateException("Unexpected status code: " + response.getStatus()) });
+    return getPetRaw(petId).onFailure(WebApplicationException.class).recoverWithItem((Throwable e) -> ((WebApplicationException) e).getResponse()).map((Response response) -> {
+      if (response.getStatus() == 200) { return new Ok(response.readEntity(Pet.class)); }
+    else if (response.getStatus() == 404) { return new NotFound(response.readEntity(Error.class)); }
+    else { throw new IllegalStateException("Unexpected status code: " + response.getStatus()); }
+    });
   };
 
   /** Get pet photo */

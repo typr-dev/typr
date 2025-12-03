@@ -28,7 +28,7 @@ public interface AnimalsApiServer extends AnimalsApi {
   @Path("/")
   @Produces(MediaType.APPLICATION_JSON)
   default Uni<Response> listAnimalsEndpoint() {
-    return listAnimals.map((Response2004XX5XX response) -> switch (response) {
+    return listAnimals().map((Response2004XX5XX response) -> switch (response) {
       case Ok r -> Response.ok(r.value()).build();
       case ClientError4XX r -> Response.status(r.statusCode()).entity(r.value()).build();
       case ServerError5XX r -> Response.status(r.statusCode()).entity(r.value()).build();

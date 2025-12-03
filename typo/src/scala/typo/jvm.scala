@@ -221,10 +221,17 @@ object jvm {
     /** Statement body - explicit statements with control flow (Return/Throw) */
     case class Stmts(stmts: List[Code]) extends Body
 
-    /** Convert a list of statements to Body - single element becomes Expr, multiple becomes Stmts */
+    /** Convert a list of code to Body - single element becomes Expr (unless it's a statement construct), multiple becomes Stmts */
     def apply(stmts: List[Code]): Body = stmts match {
-      case List(single) => Expr(single)
-      case multiple     => Stmts(multiple)
+      case List(single) =>
+        // TryCatch and IfElseChain are statement constructs in Java/Kotlin - they must remain as Stmts
+        // so they get rendered as block bodies, not expression bodies
+        single match {
+          case Code.Tree(_: TryCatch)    => Stmts(stmts)
+          case Code.Tree(_: IfElseChain) => Stmts(stmts)
+          case _                         => Expr(single)
+        }
+      case multiple => Stmts(multiple)
     }
   }
 
@@ -297,6 +304,14 @@ object jvm {
 
   /** If-else chain */
   case class IfElseChain(cases: List[(Code, Code)], elseCase: Code) extends Tree
+
+  /** Statement wrapper - indicates whether semicolon is needed in Java/Kotlin. Compound statements (if/try/while) don't need semicolons, simple statements do.
+    */
+  case class Stmt(code: Code, needsSemicolon: Boolean) extends Tree
+  object Stmt {
+    def simple(code: Code): Stmt = Stmt(code, needsSemicolon = true)
+    def compound(code: Code): Stmt = Stmt(code, needsSemicolon = false)
+  }
 
   sealed trait Adt extends Tree {
     def name: Type.Qualified

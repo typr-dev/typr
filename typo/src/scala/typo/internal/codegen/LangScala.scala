@@ -167,6 +167,7 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
         }
         val elseCode = code"else $elseCase"
         (ifCases :+ elseCode).mkCode("\n")
+      case jvm.Stmt(inner, _) => inner // Scala doesn't need semicolons, just render inner code
       case jvm.New(target, args) =>
         if (args.length > breakAfter)
           code"""|new $target(

@@ -15,7 +15,6 @@ import jakarta.ws.rs.core.Response
 import java.lang.IllegalStateException
 import java.lang.Void
 import java.util.Optional
-import java.util.UUID
 import java.util.function.Function
 import kotlin.collections.List
 import testapi.model.Error
@@ -56,8 +55,8 @@ interface PetsApiClient : PetsApi {
   override fun getPet(
     /** The pet ID */
     petId: String
-  ): Uni<Response200404<Pet, Error>> = getPetRaw(petId).onFailure(WebApplicationException::class.java).recoverWithItem(object : Function<Throwable, Response> { override fun apply(e: Throwable): Response = (e as WebApplicationException).getResponse() }).map({ response: Response -> if (response.getStatus() == 200) { Ok(response.readEntity(Pet::class.java), Optional.ofNullable(response.getHeaderString("X-Cache-Status")), UUID.fromString(response.getHeaderString("X-Request-Id"))) }
-  else if (response.getStatus() == 404) { NotFound(response.readEntity(Error::class.java), UUID.fromString(response.getHeaderString("X-Request-Id"))) }
+  ): Uni<Response200404<Pet, Error>> = getPetRaw(petId).onFailure(WebApplicationException::class.java).recoverWithItem(object : Function<Throwable, Response> { override fun apply(e: Throwable): Response = (e as WebApplicationException).getResponse() }).map({ response: Response -> if (response.getStatus() == 200) { Ok(response.readEntity(Pet::class.java)) }
+  else if (response.getStatus() == 404) { NotFound(response.readEntity(Error::class.java)) }
   else { throw IllegalStateException("Unexpected status code: " + response.getStatus()) } })
 
   /** Get pet photo */

@@ -5,9 +5,9 @@ import io.circe.Encoder
 import java.time.OffsetDateTime
 
 case class BaseEntity(
-    createdAt: OffsetDateTime,
-    id: String,
-    updatedAt: Option[OffsetDateTime]
+  createdAt: OffsetDateTime,
+  id: String,
+  updatedAt: Option[OffsetDateTime]
 )
 
 object BaseEntity {

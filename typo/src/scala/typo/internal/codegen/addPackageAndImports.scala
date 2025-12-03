@@ -217,6 +217,8 @@ object addPackageAndImports {
           },
           elseCase.mapTrees(t => shortenNames(t, typeImport, staticImport))
         )
+      case jvm.Stmt(inner, needsSemicolon) =>
+        jvm.Stmt(inner.mapTrees(t => shortenNames(t, typeImport, staticImport)), needsSemicolon)
       case jvm.Annotation(tpe, args, useTarget) =>
         jvm.Annotation(
           typeImport(tpe),

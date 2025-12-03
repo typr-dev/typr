@@ -4,12 +4,12 @@ import io.circe.Decoder
 import io.circe.Encoder
 
 case class PetCreate(
-    age: Option[Long],
-    email: Option[String],
-    name: String,
-    status: Option[PetStatus],
-    tags: Option[List[String]],
-    website: Option[String]
+  age: Option[Long],
+  email: Option[String],
+  name: String,
+  status: Option[PetStatus],
+  tags: Option[List[String]],
+  website: Option[String]
 )
 
 object PetCreate {

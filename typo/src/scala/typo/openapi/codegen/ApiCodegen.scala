@@ -393,26 +393,15 @@ class ApiCodegen(
     List(typeInfoAnnotation, subTypesAnnotation)
   }
 
-  /** Generate all response types in a single file. This is required because sealed types in Scala/Java/Kotlin require all implementations to be in the same compilation unit (same file).
+  /** Generate all response types. For Java: generates each type in its own file (Java requires one public type per file). For Scala/Kotlin: generates all types in a single file (allowed by language).
     *
-    * The file contains:
+    * The types include:
     *   1. Sealed interfaces for each response shape (e.g., Response200404, Response200Default) 2. Leaf classes for each status code (e.g., Ok, NotFound, Default)
-    *
-    * Example output:
-    * ```
-    * sealed interface Response200404<T200, T404> { fun status(): String }
-    * sealed interface Response200Default<T200> { fun status(): String }
-    * data class Ok<T>(val value: T) : Response200404<T, Nothing>, Response200Default<T> { ... }
-    * data class NotFound<T>(val value: T) : Response200404<Nothing, T> { ... }
-    * ```
     */
   def generateAllResponseTypes(
       shapes: List[ResponseShape],
       statusCodeToShapes: Map[String, List[ResponseShape]]
-  ): jvm.File = {
-    // Use "Responses" as the primary type name for the file
-    val primaryTpe = jvm.Type.Qualified(apiPkg / jvm.Ident("Responses"))
-
+  ): List[jvm.File] = {
     // Generate all response interfaces as subtypes
     val responseInterfaces: List[jvm.Adt.Sum] = shapes.map { shape =>
       buildResponseInterface(shape)
@@ -423,17 +412,29 @@ class ApiCodegen(
       buildStatusLeafClass(statusCode, shapesForCode)
     }
 
-    // Combine all into a single file
-    // The primary type is just a marker, all actual types are secondary
     val allTypes: List[jvm.Tree] = responseInterfaces ++ leafClasses
-    val allCode = allTypes.map(t => lang.renderTree(t, lang.Ctx.Empty)).mkCode("\n\n")
 
-    // Secondary types are all the response interfaces and leaf classes
-    val secondaryTypes: List[jvm.Type.Qualified] =
-      shapes.map(s => jvm.Type.Qualified(apiPkg / jvm.Ident(s.typeName))) ++
-        statusCodeToShapes.keys.map(code => jvm.Type.Qualified(apiPkg / jvm.Ident(ResponseShape.httpStatusClassName(code))))
-
-    jvm.File(primaryTpe, allCode, secondaryTypes = secondaryTypes, scope = Scope.Main)
+    if (lang == LangJava) {
+      // Java requires each public type to be in its own file
+      allTypes.map { tree =>
+        val tpe = tree match {
+          case sum: jvm.Adt.Sum    => sum.name
+          case rec: jvm.Adt.Record => rec.name
+          case cls: jvm.Class      => cls.name
+          case _                   => throw new IllegalStateException(s"Unexpected tree type: $tree")
+        }
+        val code = lang.renderTree(tree, lang.Ctx.Empty)
+        jvm.File(tpe, code, secondaryTypes = Nil, scope = Scope.Main)
+      }
+    } else {
+      // Scala/Kotlin can have multiple types in one file
+      val primaryTpe = jvm.Type.Qualified(apiPkg / jvm.Ident("Responses"))
+      val allCode = allTypes.map(t => lang.renderTree(t, lang.Ctx.Empty)).mkCode("\n\n")
+      val secondaryTypes: List[jvm.Type.Qualified] =
+        shapes.map(s => jvm.Type.Qualified(apiPkg / jvm.Ident(s.typeName))) ++
+          statusCodeToShapes.keys.map(code => jvm.Type.Qualified(apiPkg / jvm.Ident(ResponseShape.httpStatusClassName(code))))
+      List(jvm.File(primaryTpe, allCode, secondaryTypes = secondaryTypes, scope = Scope.Main))
+    }
   }
 
   /** Build a response interface AST (for use in generateAllResponseTypes) */
@@ -487,10 +488,36 @@ class ApiCodegen(
 
     val isRangeStatus = ResponseShape.isRangeStatus(statusCode)
 
-    // Leaf classes also need covariant type parameters to match the interface
-    val tparams: List[jvm.Type.Abstract] = if (isRangeStatus) Nil else List(jvm.Type.Abstract(jvm.Ident("T"), jvm.Variance.Covariant))
+    // Collect all unique type parameter names needed across all shapes this status implements
+    // For Java, we need separate type params for each position because Java lacks declaration-site variance
+    val allNonRangeStatuses: List[String] = shapes.flatMap(_.statusCodes.filterNot(ResponseShape.isRangeStatus)).distinct.sorted
 
-    val valueType: jvm.Type = if (isRangeStatus) Types.Error(apiPkg) else jvm.Type.Abstract(jvm.Ident("T"))
+    // For Java: Need a type parameter for each distinct status position across all implemented interfaces
+    // E.g., if Created implements Response201400[T201, T400], it needs both T201 and T400 params
+    // For Scala/Kotlin: Single type parameter with variance handles compatibility
+    val (tparams, valueTypeParam) = if (lang == LangJava && !isRangeStatus) {
+      // Build type params: T201, T404, etc. for each unique status code
+      val allTParams = allNonRangeStatuses.map { sc =>
+        jvm.Type.Abstract(jvm.Ident(s"T$sc"), jvm.Variance.Invariant)
+      }
+      // The value type is the type param matching this status code
+      val valueT = jvm.Type.Abstract(jvm.Ident(s"T$statusCode"))
+      (allTParams, valueT)
+    } else if (isRangeStatus && lang == LangJava) {
+      // Java range statuses need a phantom type param to match the interface
+      // E.g., ClientError4XX<T> implements Response2004XX5XX<T>
+      val phantomT = jvm.Type.Abstract(jvm.Ident("T"), jvm.Variance.Invariant)
+      (List(phantomT), Types.Error(apiPkg))
+    } else if (isRangeStatus) {
+      // Scala/Kotlin range statuses don't need type params
+      (Nil, Types.Error(apiPkg))
+    } else {
+      // Scala/Kotlin: single covariant T
+      (List(jvm.Type.Abstract(jvm.Ident("T"), jvm.Variance.Covariant)), jvm.Type.Abstract(jvm.Ident("T")))
+    }
+
+    // The value type is always Error for range statuses, otherwise the corresponding type param
+    val valueType: jvm.Type = valueTypeParam
 
     val valueParam = jvm.Param[jvm.Type](
       annotations = jsonLib.propertyAnnotations("value"),
@@ -582,9 +609,17 @@ class ApiCodegen(
       val responseTpe = jvm.Type.Qualified(apiPkg / jvm.Ident(shape.typeName))
       val nonRangeStatuses = shape.statusCodes.filterNot(ResponseShape.isRangeStatus)
       val typeArgs: List[jvm.Type] = nonRangeStatuses.map { shapeStatusCode =>
-        if (shapeStatusCode == statusCode) {
-          if (isRangeStatus) Types.Error(apiPkg) else jvm.Type.Abstract(jvm.Ident("T"))
+        if (lang == LangJava && !isRangeStatus) {
+          // For Java non-range types, use the corresponding type parameter (T201, T404, etc.)
+          jvm.Type.Abstract(jvm.Ident(s"T$shapeStatusCode"))
+        } else if (lang == LangJava && isRangeStatus) {
+          // For Java range types, use the phantom T for all positions
+          jvm.Type.Abstract(jvm.Ident("T"))
+        } else if (shapeStatusCode == statusCode) {
+          // For Scala/Kotlin non-range, use T for matching status
+          jvm.Type.Abstract(jvm.Ident("T"))
         } else {
+          // For Scala/Kotlin, use Void/Nothing (variance handles compatibility)
           nothingType
         }
       }
@@ -625,16 +660,24 @@ class ApiCodegen(
     if (useGenericResponseTypes) {
       // Use shared leaf class like Ok, NotFound, Default
       val baseTpe = jvm.Type.Qualified(apiPkg / jvm.Ident(ResponseShape.httpStatusClassName(statusCode)))
-      // Ok[T], NotFound[T], Created[T], BadRequest[T] are generic
-      // Default, ServerError5XX, ClientError4XX are not generic (they have fixed Error type)
-      val isGenericType = statusCode.toLowerCase match {
-        case "default" | "4xx" | "5xx" => false
-        case _                         => true
+
+      // For Java: All types are generic (including range types with phantom parameter)
+      // For Scala/Kotlin: Only non-range types are generic
+      val isRangeType = statusCode.toLowerCase match {
+        case "default" | "4xx" | "5xx" => true
+        case _                         => false
       }
-      if (isGenericType && lang.isInstanceOf[LangScala]) {
-        // Use wildcard for pattern matching to avoid Scala 3 type erasure warnings
+
+      val isGenericType = lang match {
+        case LangJava => true // All types are generic in Java (range types have phantom parameter)
+        case _        => !isRangeType // Scala/Kotlin: only non-range types are generic
+      }
+
+      if (isGenericType && (lang.isInstanceOf[LangScala] || lang == LangKotlin)) {
+        // Use wildcard for pattern matching to avoid type erasure warnings in Scala/Kotlin
         jvm.Type.TApply(baseTpe, List(jvm.Type.Wildcard))
       } else {
+        // For Java: use raw type for pattern matching (no type parameters needed in case clause)
         baseTpe
       }
     } else {
@@ -906,7 +949,7 @@ class ApiCodegen(
         }
       }
 
-    val rawMethodCall = if (argNames.isEmpty) {
+    val rawMethodCall = if (argNames.isEmpty && lang.isInstanceOf[LangScala]) {
       // For Scala, parameterless methods should be called without parentheses
       jvm.Ident(method.name + "Raw").code
     } else {
@@ -1053,7 +1096,8 @@ class ApiCodegen(
         val recoveredCall = code"$rawMethodCall.onFailure($exceptionClassLiteral).recoverWithItem(${recoverLambda.code})"
 
         // Now map the recovered Uni<Response> to handle status codes
-        val mapLambda = jvm.Lambda(List(jvm.LambdaParam.typed(responseIdent, clientSupport.responseType)), jvm.Body.Expr(statusCodeHandlingCode))
+        // Use Body.Stmts - the IfElseChain will be recognized as compound statement (no semicolon)
+        val mapLambda = jvm.Lambda(List(jvm.LambdaParam.typed(responseIdent, clientSupport.responseType)), jvm.Body.Stmts(List(statusCodeHandlingCode)))
         val mappedCall = ops.map(recoveredCall, mapLambda.code)
 
         List(mappedCall)
@@ -1079,8 +1123,7 @@ class ApiCodegen(
           ),
           finallyBlock = Nil
         )
-        // Add null at the end so the method generates "return null;" (unreachable but satisfies compiler)
-        List(tryCatch.code, code"null")
+        List(tryCatch.code)
     }
   }
 
@@ -1126,14 +1169,18 @@ class ApiCodegen(
           code"$statusCodeExpr == $statusInt"
       }
 
-      // Extract header values for this variant
-      val headerValues = variant.headers.map { header =>
-        val headerType = typeMapper.map(header.typeInfo)
-        extractHeaderValue(responseExpr, header.name, headerType, clientSupport)
+      // Extract header values for this variant (only when NOT using generic response types)
+      // Generic response types like Ok<T> don't have header fields - headers are per-method specific
+      val headerValues = if (useGenericResponseTypes) {
+        Nil
+      } else {
+        variant.headers.map { header =>
+          val headerType = typeMapper.map(header.typeInfo)
+          extractHeaderValue(responseExpr, header.name, headerType, clientSupport)
+        }
       }
 
       // Use AST construct method for cross-language compatibility (no `new` in Kotlin)
-      // Don't include `return` - in Kotlin lambdas, the last expression is the return value
       // Constructor order: [statusCode], value, headers...
       val allArgs = if (isRangeStatus) {
         List(statusCodeExpr, readEntityCode) ++ headerValues
@@ -1142,7 +1189,14 @@ class ApiCodegen(
       }
       val constructorCall = subtypeCtorTpe.construct(allArgs: _*)
 
-      (condition, constructorCall, variant.statusCode.toLowerCase == "default")
+      // For Java: wrap in return for block lambdas
+      // For Kotlin/Scala: if-else is an expression, so just use the constructor call directly
+      val resultExpr = lang match {
+        case LangJava => jvm.Return(constructorCall).code
+        case _        => constructorCall
+      }
+
+      (condition, resultExpr, variant.statusCode.toLowerCase == "default")
     }
 
     // Generate if-else chain, putting default case last
@@ -1407,7 +1461,7 @@ class ApiCodegen(
         }
       }
 
-    val methodCall = if (argNames.isEmpty) {
+    val methodCall = if (argNames.isEmpty && lang.isInstanceOf[LangScala]) {
       // For Scala, parameterless methods should be called without parentheses
       jvm.Ident(method.name).code
     } else {
@@ -1425,8 +1479,9 @@ class ApiCodegen(
       (capitalize(method.name) + "Response", 0)
     }
     val baseResponseTpe = jvm.Type.Qualified(apiPkg / jvm.Ident(responseName))
-    // For Scala, add wildcards for the type parameters in lambda types
-    val responseTpe: jvm.Type = if (numTypeParams > 0 && lang.isInstanceOf[LangScala]) {
+    // For Scala/Kotlin, add wildcards for the type parameters in lambda types
+    // Java doesn't need this because the type is inferred
+    val responseTpe: jvm.Type = if (numTypeParams > 0 && (lang.isInstanceOf[LangScala] || lang == LangKotlin)) {
       jvm.Type.TApply(baseResponseTpe, List.fill(numTypeParams)(jvm.Type.Wildcard))
     } else {
       baseResponseTpe

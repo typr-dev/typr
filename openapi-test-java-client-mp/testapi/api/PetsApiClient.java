@@ -18,7 +18,6 @@ import java.lang.IllegalStateException;
 import java.lang.Void;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import testapi.model.Error;
@@ -42,15 +41,14 @@ public interface PetsApiClient extends PetsApi {
   default Response201400<Pet, Error> createPet(PetCreate body) {
     try {
       Response response = createPetRaw(body);
-      if (response.getStatus() == 201) { new Created(response.readEntity(Pet.class)) }
-      else if (response.getStatus() == 400) { new BadRequest(response.readEntity(Error.class)) }
-      else { throw new IllegalStateException("Unexpected status code: " + response.getStatus()) }
+      if (response.getStatus() == 201) { return new Created(response.readEntity(Pet.class)); }
+      else if (response.getStatus() == 400) { return new BadRequest(response.readEntity(Error.class)); }
+      else { throw new IllegalStateException("Unexpected status code: " + response.getStatus()); }
     } catch (WebApplicationException e) {
-      if (e.getResponse().getStatus() == 201) { new Created(e.getResponse().readEntity(Pet.class)) }
-      else if (e.getResponse().getStatus() == 400) { new BadRequest(e.getResponse().readEntity(Error.class)) }
-      else { throw new IllegalStateException("Unexpected status code: " + e.getResponse().getStatus()) }
-    } ;
-    null;
+      if (e.getResponse().getStatus() == 201) { return new Created(e.getResponse().readEntity(Pet.class)); }
+      else if (e.getResponse().getStatus() == 400) { return new BadRequest(e.getResponse().readEntity(Error.class)); }
+      else { throw new IllegalStateException("Unexpected status code: " + e.getResponse().getStatus()); }
+    } 
   };
 
   /** Delete a pet */
@@ -71,13 +69,12 @@ public interface PetsApiClient extends PetsApi {
   ) {
     try {
       Response response = deletePetRaw(petId);
-      if (response.getStatus() == 404) { new NotFound(response.readEntity(Error.class)) }
-      else { new Default(response.getStatus(), response.readEntity(Error.class)) }
+      if (response.getStatus() == 404) { return new NotFound(response.readEntity(Error.class)); }
+      else { return new Default(response.getStatus(), response.readEntity(Error.class)); }
     } catch (WebApplicationException e) {
-      if (e.getResponse().getStatus() == 404) { new NotFound(e.getResponse().readEntity(Error.class)) }
-      else { new Default(e.getResponse().getStatus(), e.getResponse().readEntity(Error.class)) }
-    } ;
-    null;
+      if (e.getResponse().getStatus() == 404) { return new NotFound(e.getResponse().readEntity(Error.class)); }
+      else { return new Default(e.getResponse().getStatus(), e.getResponse().readEntity(Error.class)); }
+    } 
   };
 
   /** Get a pet by ID */
@@ -99,15 +96,14 @@ public interface PetsApiClient extends PetsApi {
   ) {
     try {
       Response response = getPetRaw(petId);
-      if (response.getStatus() == 200) { new Ok(response.readEntity(Pet.class), Optional.ofNullable(response.getHeaderString("X-Cache-Status")), UUID.fromString(response.getHeaderString("X-Request-Id"))) }
-      else if (response.getStatus() == 404) { new NotFound(response.readEntity(Error.class), UUID.fromString(response.getHeaderString("X-Request-Id"))) }
-      else { throw new IllegalStateException("Unexpected status code: " + response.getStatus()) }
+      if (response.getStatus() == 200) { return new Ok(response.readEntity(Pet.class)); }
+      else if (response.getStatus() == 404) { return new NotFound(response.readEntity(Error.class)); }
+      else { throw new IllegalStateException("Unexpected status code: " + response.getStatus()); }
     } catch (WebApplicationException e) {
-      if (e.getResponse().getStatus() == 200) { new Ok(e.getResponse().readEntity(Pet.class), Optional.ofNullable(e.getResponse().getHeaderString("X-Cache-Status")), UUID.fromString(e.getResponse().getHeaderString("X-Request-Id"))) }
-      else if (e.getResponse().getStatus() == 404) { new NotFound(e.getResponse().readEntity(Error.class), UUID.fromString(e.getResponse().getHeaderString("X-Request-Id"))) }
-      else { throw new IllegalStateException("Unexpected status code: " + e.getResponse().getStatus()) }
-    } ;
-    null;
+      if (e.getResponse().getStatus() == 200) { return new Ok(e.getResponse().readEntity(Pet.class)); }
+      else if (e.getResponse().getStatus() == 404) { return new NotFound(e.getResponse().readEntity(Error.class)); }
+      else { throw new IllegalStateException("Unexpected status code: " + e.getResponse().getStatus()); }
+    } 
   };
 
   /** Get pet photo */

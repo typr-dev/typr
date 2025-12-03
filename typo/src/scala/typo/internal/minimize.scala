@@ -38,6 +38,8 @@ object minimize {
                 go(body)
               }
               go(elseCase)
+            case jvm.Stmt(inner, _) =>
+              go(inner)
             case jvm.IfExpr(pred, thenp, elsep) =>
               go(pred)
               go(thenp)

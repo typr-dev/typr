@@ -184,9 +184,10 @@ object OpenApiCodegen {
     }
 
     // Generate generic response types if enabled
-    // All response interfaces and leaf classes must be in one file for sealed type compatibility
+    // For Java: each type in its own file (Java requires one public type per file)
+    // For Scala/Kotlin: all types in one file (allowed by language)
     if (options.useGenericResponseTypes && responseShapes.nonEmpty) {
-      files += apiCodegen.generateAllResponseTypes(responseShapes.values.toList, statusCodeToShapes)
+      files ++= apiCodegen.generateAllResponseTypes(responseShapes.values.toList, statusCodeToShapes)
     }
 
     // Generate API interfaces (base, server, client, and response sum types)

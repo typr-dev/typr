@@ -107,8 +107,9 @@ case object LangJava extends Lang {
         val typeArgStr = if (typeArgs.isEmpty) jvm.Code.Empty else code"<${typeArgs.map(t => renderTree(t, ctx)).mkCode(", ")}>"
         val argStr = if (args.isEmpty) code"()" else code"(${args.map(a => renderTree(a, ctx)).mkCode(", ")})"
         code"$target.$typeArgStr$methodName$argStr"
-      case jvm.Return(expr) => code"return $expr"
-      case jvm.Throw(expr)  => code"throw $expr"
+      case jvm.Return(expr)                   => code"return $expr"
+      case jvm.Throw(expr)                    => code"throw $expr"
+      case jvm.Stmt(stmtCode, needsSemicolon) => if (needsSemicolon) code"$stmtCode;" else stmtCode
       case jvm.Lambda(params, body) =>
         val paramsCode = params match {
           case Nil                                    => code"()"
@@ -190,12 +191,12 @@ case object LangJava extends Lang {
                  |}""".stripMargin
         code"$tryCode ${catchCodes.mkCode(" ")} $finallyCode"
       case jvm.IfElseChain(cases, elseCase) =>
-        // IfElseChain bodies should include their own return/throw statements
+        // IfElseChain bodies are statements that need semicolons in Java
         val ifCases = cases.zipWithIndex.map { case ((cond, body), idx) =>
-          if (idx == 0) code"if ($cond) { $body }"
-          else code"else if ($cond) { $body }"
+          if (idx == 0) code"if ($cond) { $body; }"
+          else code"else if ($cond) { $body; }"
         }
-        val elseCode = code"else { $elseCase }"
+        val elseCode = code"else { $elseCase; }"
         (ifCases :+ elseCode).mkCode("\n")
       case jvm.StringInterpolate(_, prefix, content) =>
         // For Java, determine if we need Fragment.lit() wrapping
@@ -297,7 +298,7 @@ case object LangJava extends Lang {
                   |}""".stripMargin
           case jvm.Body.Stmts(stmts) =>
             signature ++ code"""| {
-                  |  ${stmts.map(s => code"$s;").mkCode("\n")}
+                  |  ${stmts.map(s => renderStmt(s)).mkCode("\n")}
                   |}""".stripMargin
         }
       case enm: jvm.Enum =>
@@ -596,10 +597,17 @@ case object LangJava extends Lang {
 
   /** Render a Body for lambda expressions */
   def renderBody(body: jvm.Body): jvm.Code = body match {
-    case jvm.Body.Abstract    => jvm.Code.Empty
-    case jvm.Body.Expr(value) => value
-    case jvm.Body.Stmts(stmts) =>
-      code"{\n  ${stmts.map(s => code"$s;").mkCode("\n  ")}\n}"
+    case jvm.Body.Abstract     => jvm.Code.Empty
+    case jvm.Body.Expr(value)  => value
+    case jvm.Body.Stmts(stmts) => code"{\n  ${stmts.map(s => renderStmt(s)).mkCode("\n  ")}\n}"
+  }
+
+  /** Render a statement with semicolon if needed. Compound statements (if/try) don't need semicolons. */
+  def renderStmt(stmt: jvm.Code): jvm.Code = stmt match {
+    case jvm.Code.Tree(jvm.Stmt(inner, needsSemi)) => if (needsSemi) code"$inner;" else inner
+    case jvm.Code.Tree(_: jvm.IfElseChain)         => stmt
+    case jvm.Code.Tree(_: jvm.TryCatch)            => stmt
+    case _                                         => code"$stmt;"
   }
 
   def renderComments(comments: jvm.Comments): Option[jvm.Code] = {

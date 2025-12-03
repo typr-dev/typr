@@ -32,8 +32,7 @@ case class BadRequest[+T](value: T) extends Response201400[Nothing, T] {
   override lazy val status: String = "400"
 
   /** Convert this response to an HTTP4s Response */
-  def toResponse(using encoder: EntityEncoder[IO, T @uncheckedVariance]): IO[Response[IO]] =
-    cats.effect.IO.pure(org.http4s.Response.apply(org.http4s.Status.fromInt(400).getOrElse(org.http4s.Status.InternalServerError)).withEntity(value))
+  def toResponse(using encoder: EntityEncoder[IO, T @uncheckedVariance]): IO[Response[IO]] = cats.effect.IO.pure(org.http4s.Response.apply(org.http4s.Status.fromInt(400).getOrElse(org.http4s.Status.InternalServerError)).withEntity(value))
 }
 
 /** HTTP 201 response */
@@ -41,34 +40,31 @@ case class Created[+T](value: T) extends Response201400[T, Nothing] {
   override lazy val status: String = "201"
 
   /** Convert this response to an HTTP4s Response */
-  def toResponse(using encoder: EntityEncoder[IO, T @uncheckedVariance]): IO[Response[IO]] =
-    cats.effect.IO.pure(org.http4s.Response.apply(org.http4s.Status.fromInt(201).getOrElse(org.http4s.Status.InternalServerError)).withEntity(value))
+  def toResponse(using encoder: EntityEncoder[IO, T @uncheckedVariance]): IO[Response[IO]] = cats.effect.IO.pure(org.http4s.Response.apply(org.http4s.Status.fromInt(201).getOrElse(org.http4s.Status.InternalServerError)).withEntity(value))
 }
 
 /** HTTP default response */
 case class Default(
-    /** HTTP status code */
-    statusCode: Int,
-    value: Error
+  /** HTTP status code */
+  statusCode: Int,
+  value: Error
 ) extends Response404Default[Nothing] {
   override lazy val status: String = "default"
 
   /** Convert this response to an HTTP4s Response */
-  def toResponse(using encoder: EntityEncoder[IO, Error]): IO[Response[IO]] =
-    cats.effect.IO.pure(org.http4s.Response.apply(org.http4s.Status.fromInt(statusCode).getOrElse(org.http4s.Status.InternalServerError)).withEntity(value))
+  def toResponse(using encoder: EntityEncoder[IO, Error]): IO[Response[IO]] = cats.effect.IO.pure(org.http4s.Response.apply(org.http4s.Status.fromInt(statusCode).getOrElse(org.http4s.Status.InternalServerError)).withEntity(value))
 }
 
 /** HTTP 5XX response */
 case class ServerError5XX(
-    /** HTTP status code */
-    statusCode: Int,
-    value: Error
+  /** HTTP status code */
+  statusCode: Int,
+  value: Error
 ) extends Response2004XX5XX[Nothing] {
   override lazy val status: String = "5XX"
 
   /** Convert this response to an HTTP4s Response */
-  def toResponse(using encoder: EntityEncoder[IO, Error]): IO[Response[IO]] =
-    cats.effect.IO.pure(org.http4s.Response.apply(org.http4s.Status.fromInt(statusCode).getOrElse(org.http4s.Status.InternalServerError)).withEntity(value))
+  def toResponse(using encoder: EntityEncoder[IO, Error]): IO[Response[IO]] = cats.effect.IO.pure(org.http4s.Response.apply(org.http4s.Status.fromInt(statusCode).getOrElse(org.http4s.Status.InternalServerError)).withEntity(value))
 }
 
 /** HTTP 200 response */
@@ -84,19 +80,17 @@ case class NotFound[+T](value: T) extends Response404Default[T] with Response200
   override lazy val status: String = "404"
 
   /** Convert this response to an HTTP4s Response */
-  def toResponse(using encoder: EntityEncoder[IO, T @uncheckedVariance]): IO[Response[IO]] =
-    cats.effect.IO.pure(org.http4s.Response.apply(org.http4s.Status.fromInt(404).getOrElse(org.http4s.Status.InternalServerError)).withEntity(value))
+  def toResponse(using encoder: EntityEncoder[IO, T @uncheckedVariance]): IO[Response[IO]] = cats.effect.IO.pure(org.http4s.Response.apply(org.http4s.Status.fromInt(404).getOrElse(org.http4s.Status.InternalServerError)).withEntity(value))
 }
 
 /** HTTP 4XX response */
 case class ClientError4XX(
-    /** HTTP status code */
-    statusCode: Int,
-    value: Error
+  /** HTTP status code */
+  statusCode: Int,
+  value: Error
 ) extends Response2004XX5XX[Nothing] {
   override lazy val status: String = "4XX"
 
   /** Convert this response to an HTTP4s Response */
-  def toResponse(using encoder: EntityEncoder[IO, Error]): IO[Response[IO]] =
-    cats.effect.IO.pure(org.http4s.Response.apply(org.http4s.Status.fromInt(statusCode).getOrElse(org.http4s.Status.InternalServerError)).withEntity(value))
+  def toResponse(using encoder: EntityEncoder[IO, Error]): IO[Response[IO]] = cats.effect.IO.pure(org.http4s.Response.apply(org.http4s.Status.fromInt(statusCode).getOrElse(org.http4s.Status.InternalServerError)).withEntity(value))
 }

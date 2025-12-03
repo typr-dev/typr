@@ -271,8 +271,9 @@ case object LangKotlin extends Lang {
         val typeArgStr = if (typeArgs.isEmpty) jvm.Code.Empty else code"<${typeArgs.map(t => renderTree(t, ctx)).mkCode(", ")}>"
         val argStr = if (args.isEmpty) code"()" else code"(${args.map(a => renderTree(a, ctx)).mkCode(", ")})"
         code"$target.$methodName$typeArgStr$argStr"
-      case jvm.Return(expr) => code"return $expr"
-      case jvm.Throw(expr)  => code"throw $expr"
+      case jvm.Return(expr)                   => code"return $expr"
+      case jvm.Throw(expr)                    => code"throw $expr"
+      case jvm.Stmt(stmtCode, needsSemicolon) => if (needsSemicolon) code"$stmtCode;" else stmtCode
       case jvm.Lambda(params, body) =>
         val paramsCode = params match {
           case Nil                                    => jvm.Code.Empty
@@ -357,16 +358,19 @@ case object LangKotlin extends Lang {
         val boundIdent = jvm.Ident("__r")
         val nullCaseCode = nullCase.map(body => code"null -> $body").toList
         val typeCases = cases.map { case jvm.TypeSwitch.Case(pat, ident, body) =>
+          // Convert type to wildcard version for pattern matching and cast
+          // Ok<T> -> Ok<*>, Response2004XX5XX<T> -> Response2004XX5XX<*>
+          val wildcardPat = toWildcardType(pat)
           // If body starts with {, unwrap it and merge with cast assignment
           val bodyStr = body.render(LangKotlin).asString.trim
           if (bodyStr.startsWith("{") && bodyStr.endsWith("}")) {
             val innerBody = bodyStr.drop(1).dropRight(1).trim
-            code"""|is $pat -> {
-                   |  val $ident = $boundIdent as $pat
+            code"""|is $wildcardPat -> {
+                   |  val $ident = $boundIdent as $wildcardPat
                    |  $innerBody
                    |}""".stripMargin
           } else {
-            code"is $pat -> { val $ident = $boundIdent as $pat; $body }"
+            code"is $wildcardPat -> { val $ident = $boundIdent as $wildcardPat; $body }"
           }
         }
         val defaultCaseCode = defaultCase.map(body => code"else -> $body").toList
@@ -459,7 +463,7 @@ case object LangKotlin extends Lang {
             signature ++ code" = $expr"
           case jvm.Body.Stmts(stmts) =>
             signature ++ code"""| {
-                  |  ${stmts.mkCode("\n")}
+                  |  ${stmts.map(s => renderStmt(s)).mkCode("\n")}
                   |}""".stripMargin
         }
       case enm: jvm.Enum =>
@@ -812,7 +816,13 @@ case object LangKotlin extends Lang {
   def renderBody(body: jvm.Body): jvm.Code = body match {
     case jvm.Body.Abstract     => jvm.Code.Empty
     case jvm.Body.Expr(value)  => value
-    case jvm.Body.Stmts(stmts) => stmts.mkCode("\n")
+    case jvm.Body.Stmts(stmts) => stmts.map(s => renderStmt(s)).mkCode("\n")
+  }
+
+  /** Render a statement. Kotlin doesn't require semicolons, but we still handle Stmt wrapper. */
+  def renderStmt(stmt: jvm.Code): jvm.Code = stmt match {
+    case jvm.Code.Tree(jvm.Stmt(inner, _)) => inner // Kotlin doesn't need semicolons
+    case _                                 => stmt
   }
 
   def renderComments(comments: jvm.Comments): Option[jvm.Code] = {
@@ -907,4 +917,12 @@ case object LangKotlin extends Lang {
       "when",
       "while"
     )
+
+  /** Convert a type to wildcard version for pattern matching. Ok<T> -> Ok<*>, Response2004XX5XX<T> -> Response2004XX5XX<*> Non-generic types are returned unchanged.
+    */
+  private def toWildcardType(tpe: jvm.Type): jvm.Type = tpe match {
+    case jvm.Type.TApply(underlying, targs) =>
+      jvm.Type.TApply(underlying, targs.map(_ => jvm.Type.Wildcard))
+    case other => other
+  }
 }

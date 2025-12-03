@@ -24,8 +24,8 @@ interface PetsApiServer : PetsApi {
   @SecurityRequirement(name = "oauth2", scopes = ["write:pets"])
   @SecurityRequirement(name = "apiKeyHeader")
   fun createPetEndpoint(body: PetCreate): ResponseEntity<*> = when (val __r = createPet(body)) {
-    is Created -> { val r = __r as Created; ResponseEntity.ok(r.value) }
-    is BadRequest -> { val r = __r as BadRequest; ResponseEntity.status(400).body(r.value) }
+    is Created<*> -> { val r = __r as Created<*>; ResponseEntity.ok(r.value) }
+    is BadRequest<*> -> { val r = __r as BadRequest<*>; ResponseEntity.status(400).body(r.value) }
     else -> throw IllegalStateException("Unexpected response type")
   }
 
@@ -41,7 +41,7 @@ interface PetsApiServer : PetsApi {
     /** The pet ID */
     petId: String
   ): ResponseEntity<*> = when (val __r = deletePet(petId)) {
-    is NotFound -> { val r = __r as NotFound; ResponseEntity.status(404).body(r.value) }
+    is NotFound<*> -> { val r = __r as NotFound<*>; ResponseEntity.status(404).body(r.value) }
     is Default -> { val r = __r as Default; ResponseEntity.status(r.statusCode).body(r.value) }
     else -> throw IllegalStateException("Unexpected response type")
   }
@@ -58,8 +58,8 @@ interface PetsApiServer : PetsApi {
     /** The pet ID */
     petId: String
   ): ResponseEntity<*> = when (val __r = getPet(petId)) {
-    is Ok -> { val r = __r as Ok; ResponseEntity.ok(r.value) }
-    is NotFound -> { val r = __r as NotFound; ResponseEntity.status(404).body(r.value) }
+    is Ok<*> -> { val r = __r as Ok<*>; ResponseEntity.ok(r.value) }
+    is NotFound<*> -> { val r = __r as NotFound<*>; ResponseEntity.status(404).body(r.value) }
     else -> throw IllegalStateException("Unexpected response type")
   }
 

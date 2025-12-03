@@ -211,6 +211,11 @@ class ModelCodegen(
     // Get static members for companion object (e.g., Circe codecs)
     val staticMembers = jsonLib.sumTypeStaticMembers(tpe, sumType)
 
+    // Generate permitted subtypes for Java sealed interfaces
+    val permittedSubtypes = sumType.subtypeNames.map { subtypeName =>
+      jvm.Type.Qualified(modelPkg / jvm.Ident(subtypeName))
+    }
+
     val sumAdt = jvm.Adt.Sum(
       annotations = jsonLib.sumTypeAnnotations(sumType),
       comments = comments,
@@ -219,7 +224,8 @@ class ModelCodegen(
       members = discriminatorMethod :: commonMethods,
       implements = Nil,
       subtypes = Nil, // Subtypes are separate model classes
-      staticMembers = staticMembers
+      staticMembers = staticMembers,
+      permittedSubtypes = permittedSubtypes
     )
 
     val generatedCode = lang.renderTree(sumAdt, lang.Ctx.Empty)

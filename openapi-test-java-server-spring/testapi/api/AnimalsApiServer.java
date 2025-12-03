@@ -26,7 +26,7 @@ public interface AnimalsApiServer extends AnimalsApi {
   /** Endpoint wrapper for listAnimals - handles response status codes */
   @GetMapping(value = { "/" }, produces = { MediaType.APPLICATION_JSON_VALUE })
   default ResponseEntity<?> listAnimalsEndpoint() {
-    return switch (listAnimals) {
+    return switch (listAnimals()) {
       case Ok r -> ResponseEntity.ok(r.value());
       case ClientError4XX r -> ResponseEntity.status(r.statusCode()).body(r.value());
       case ServerError5XX r -> ResponseEntity.status(r.statusCode()).body(r.value());
