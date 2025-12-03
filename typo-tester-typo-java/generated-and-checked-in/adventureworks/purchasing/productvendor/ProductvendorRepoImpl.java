@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -30,7 +31,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class ProductvendorRepoImpl implements ProductvendorRepo {
   @Override
   public DeleteBuilder<ProductvendorFields, ProductvendorRow> delete() {
-    return DeleteBuilder.of("purchasing.productvendor", ProductvendorFields.structure());
+    return DeleteBuilder.of("\"purchasing\".\"productvendor\"", ProductvendorFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -223,7 +224,7 @@ public class ProductvendorRepoImpl implements ProductvendorRepo {
 
   @Override
   public SelectBuilder<ProductvendorFields, ProductvendorRow> select() {
-    return SelectBuilder.of("purchasing.productvendor", ProductvendorFields.structure(), ProductvendorRow._rowParser);
+    return SelectBuilder.of("\"purchasing\".\"productvendor\"", ProductvendorFields.structure(), ProductvendorRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -288,7 +289,7 @@ public class ProductvendorRepoImpl implements ProductvendorRepo {
 
   @Override
   public UpdateBuilder<ProductvendorFields, ProductvendorRow> update() {
-    return UpdateBuilder.of("purchasing.productvendor", ProductvendorFields.structure(), ProductvendorRow._rowParser.all());
+    return UpdateBuilder.of("\"purchasing\".\"productvendor\"", ProductvendorFields.structure(), ProductvendorRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -389,8 +390,7 @@ public class ProductvendorRepoImpl implements ProductvendorRepo {
          "onorderqty" = EXCLUDED."onorderqty",
          "unitmeasurecode" = EXCLUDED."unitmeasurecode",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text
-      """)
+         returning "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text""")
     )
       .updateReturning(ProductvendorRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -415,8 +415,7 @@ public class ProductvendorRepoImpl implements ProductvendorRepo {
                 "onorderqty" = EXCLUDED."onorderqty",
                 "unitmeasurecode" = EXCLUDED."unitmeasurecode",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text
-             """))
+                returning "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text"""))
       .updateManyReturning(ProductvendorRow._rowParser, unsaved)
       .runUnchecked(c);
   };

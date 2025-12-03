@@ -11,6 +11,7 @@ import java.util.Optional
 import testdb.hardcoded.myschema.football_club.FootballClubFieldValue.id
 import testdb.hardcoded.myschema.football_club.FootballClubFieldValue.name
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -19,7 +20,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class FootballClubRepoImpl extends FootballClubRepo {
-  override def delete: DeleteBuilder[FootballClubFields, FootballClubRow] = DeleteBuilder.of("myschema.football_club", FootballClubFields.structure)
+  override def delete: DeleteBuilder[FootballClubFields, FootballClubRow] = DeleteBuilder.of(""""myschema"."football_club"""", FootballClubFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(id: FootballClubId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "myschema"."football_club" where "id" = ${FootballClubId.pgType.encode(id)}""".update().runUnchecked(c) > 0
 
@@ -44,7 +45,7 @@ class FootballClubRepoImpl extends FootballClubRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "myschema"."football_club"("id", "name") FROM STDIN""", batchSize, unsaved, c, FootballClubRow.pgText)
 
-  override def select: SelectBuilder[FootballClubFields, FootballClubRow] = SelectBuilder.of("myschema.football_club", FootballClubFields.structure, FootballClubRow.`_rowParser`)
+  override def select: SelectBuilder[FootballClubFields, FootballClubRow] = SelectBuilder.of(""""myschema"."football_club"""", FootballClubFields.structure, FootballClubRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[FootballClubRow] = {
     interpolate"""select "id", "name"
@@ -82,7 +83,7 @@ class FootballClubRepoImpl extends FootballClubRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[FootballClubFields, FootballClubRow] = UpdateBuilder.of("myschema.football_club", FootballClubFields.structure, FootballClubRow.`_rowParser`.all())
+  override def update: UpdateBuilder[FootballClubFields, FootballClubRow] = UpdateBuilder.of(""""myschema"."football_club"""", FootballClubFields.structure, FootballClubRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: FootballClubRow)(using c: Connection): java.lang.Boolean = {
     val id: FootballClubId = row.id
@@ -113,8 +114,7 @@ class FootballClubRepoImpl extends FootballClubRepo {
     on conflict ("id")
     do update set
       "name" = EXCLUDED."name"
-    returning "id", "name"
-    """
+    returning "id", "name""""
     .updateReturning(FootballClubRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -125,8 +125,7 @@ class FootballClubRepoImpl extends FootballClubRepo {
     on conflict ("id")
     do update set
       "name" = EXCLUDED."name"
-    returning "id", "name"
-    """
+    returning "id", "name""""
       .updateManyReturning(FootballClubRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

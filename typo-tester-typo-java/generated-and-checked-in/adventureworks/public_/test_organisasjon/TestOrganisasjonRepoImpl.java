@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.streamingInsert;
@@ -21,7 +22,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class TestOrganisasjonRepoImpl implements TestOrganisasjonRepo {
   @Override
   public DeleteBuilder<TestOrganisasjonFields, TestOrganisasjonRow> delete() {
-    return DeleteBuilder.of("public.test_organisasjon", TestOrganisasjonFields.structure());
+    return DeleteBuilder.of("\"public\".\"test_organisasjon\"", TestOrganisasjonFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -86,7 +87,7 @@ public class TestOrganisasjonRepoImpl implements TestOrganisasjonRepo {
 
   @Override
   public SelectBuilder<TestOrganisasjonFields, TestOrganisasjonRow> select() {
-    return SelectBuilder.of("public.test_organisasjon", TestOrganisasjonFields.structure(), TestOrganisasjonRow._rowParser);
+    return SelectBuilder.of("\"public\".\"test_organisasjon\"", TestOrganisasjonFields.structure(), TestOrganisasjonRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -139,7 +140,7 @@ public class TestOrganisasjonRepoImpl implements TestOrganisasjonRepo {
 
   @Override
   public UpdateBuilder<TestOrganisasjonFields, TestOrganisasjonRow> update() {
-    return UpdateBuilder.of("public.test_organisasjon", TestOrganisasjonFields.structure(), TestOrganisasjonRow._rowParser.all());
+    return UpdateBuilder.of("\"public\".\"test_organisasjon\"", TestOrganisasjonFields.structure(), TestOrganisasjonRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -156,8 +157,7 @@ public class TestOrganisasjonRepoImpl implements TestOrganisasjonRepo {
          )
          on conflict ("organisasjonskode")
          do update set "organisasjonskode" = EXCLUDED."organisasjonskode"
-         returning "organisasjonskode"
-      """)
+         returning "organisasjonskode\"""")
     )
       .updateReturning(TestOrganisasjonRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -172,9 +172,8 @@ public class TestOrganisasjonRepoImpl implements TestOrganisasjonRepo {
                 insert into "public"."test_organisasjon"("organisasjonskode")
                 values (?)
                 on conflict ("organisasjonskode")
-                do nothing
-                returning "organisasjonskode"
-             """))
+                do update set "organisasjonskode" = EXCLUDED."organisasjonskode"
+                returning "organisasjonskode\""""))
       .updateManyReturning(TestOrganisasjonRow._rowParser, unsaved)
       .runUnchecked(c);
   };

@@ -6,11 +6,12 @@
 package adventureworks.pr.plph
 
 import java.sql.Connection
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PlphViewRepoImpl extends PlphViewRepo {
-  override def select: SelectBuilder[PlphViewFields, PlphViewRow] = SelectBuilder.of("pr.plph", PlphViewFields.structure, PlphViewRow.`_rowParser`)
+  override def select: SelectBuilder[PlphViewFields, PlphViewRow] = SelectBuilder.of(""""pr"."plph"""", PlphViewFields.structure, PlphViewRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[PlphViewRow] = {
     interpolate"""select "id", "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text

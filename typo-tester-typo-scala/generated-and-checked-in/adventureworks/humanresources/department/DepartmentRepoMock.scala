@@ -92,8 +92,9 @@ case class DepartmentRepoMock(
 
   override def selectByIds(departmentids: Array[DepartmentId])(using c: Connection): java.util.List[DepartmentRow] = {
     val result = new ArrayList[DepartmentRow]()
-    departmentids.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    departmentids.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

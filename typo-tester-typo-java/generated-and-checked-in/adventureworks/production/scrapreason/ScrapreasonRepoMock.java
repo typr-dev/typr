@@ -61,9 +61,11 @@ public record ScrapreasonRepoMock(
     Connection c
   ) {
     var count = 0;
-    for (var id : scrapreasonids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : scrapreasonids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -143,8 +145,12 @@ public record ScrapreasonRepoMock(
     Connection c
   ) {
     var result = new ArrayList<ScrapreasonRow>();
-    for (var id : scrapreasonids) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : scrapreasonids) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 
@@ -168,7 +174,7 @@ public record ScrapreasonRepoMock(
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.scrapreasonid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
     if (shouldUpdate) {
-      map.put(row.scrapreasonid(), row);
+      map.put(row.scrapreasonid(), row);;
     };
     return shouldUpdate;
   };

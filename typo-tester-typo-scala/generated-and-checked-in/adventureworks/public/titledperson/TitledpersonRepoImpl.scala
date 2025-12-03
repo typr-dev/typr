@@ -9,6 +9,7 @@ import adventureworks.public.title.TitleId
 import adventureworks.public.title_domain.TitleDomainId
 import java.sql.Connection
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.PgTypes
@@ -16,7 +17,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class TitledpersonRepoImpl extends TitledpersonRepo {
-  override def delete: DeleteBuilder[TitledpersonFields, TitledpersonRow] = DeleteBuilder.of("public.titledperson", TitledpersonFields.structure)
+  override def delete: DeleteBuilder[TitledpersonFields, TitledpersonRow] = DeleteBuilder.of(""""public"."titledperson"""", TitledpersonFields.structure, Dialect.POSTGRESQL)
 
   override def insert(unsaved: TitledpersonRow)(using c: Connection): TitledpersonRow = {
   interpolate"""insert into "public"."titledperson"("title_short", "title", "name")
@@ -31,7 +32,7 @@ class TitledpersonRepoImpl extends TitledpersonRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."titledperson"("title_short", "title", "name") FROM STDIN""", batchSize, unsaved, c, TitledpersonRow.pgText)
 
-  override def select: SelectBuilder[TitledpersonFields, TitledpersonRow] = SelectBuilder.of("public.titledperson", TitledpersonFields.structure, TitledpersonRow.`_rowParser`)
+  override def select: SelectBuilder[TitledpersonFields, TitledpersonRow] = SelectBuilder.of(""""public"."titledperson"""", TitledpersonFields.structure, TitledpersonRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[TitledpersonRow] = {
     interpolate"""select "title_short", "title", "name"
@@ -39,5 +40,5 @@ class TitledpersonRepoImpl extends TitledpersonRepo {
     """.query(TitledpersonRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  override def update: UpdateBuilder[TitledpersonFields, TitledpersonRow] = UpdateBuilder.of("public.titledperson", TitledpersonFields.structure, TitledpersonRow.`_rowParser`.all())
+  override def update: UpdateBuilder[TitledpersonFields, TitledpersonRow] = UpdateBuilder.of(""""public"."titledperson"""", TitledpersonFields.structure, TitledpersonRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 }

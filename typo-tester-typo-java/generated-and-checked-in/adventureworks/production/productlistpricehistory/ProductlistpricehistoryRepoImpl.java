@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -28,7 +29,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class ProductlistpricehistoryRepoImpl implements ProductlistpricehistoryRepo {
   @Override
   public DeleteBuilder<ProductlistpricehistoryFields, ProductlistpricehistoryRow> delete() {
-    return DeleteBuilder.of("production.productlistpricehistory", ProductlistpricehistoryFields.structure());
+    return DeleteBuilder.of("\"production\".\"productlistpricehistory\"", ProductlistpricehistoryFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -179,7 +180,7 @@ public class ProductlistpricehistoryRepoImpl implements ProductlistpricehistoryR
 
   @Override
   public SelectBuilder<ProductlistpricehistoryFields, ProductlistpricehistoryRow> select() {
-    return SelectBuilder.of("production.productlistpricehistory", ProductlistpricehistoryFields.structure(), ProductlistpricehistoryRow._rowParser);
+    return SelectBuilder.of("\"production\".\"productlistpricehistory\"", ProductlistpricehistoryFields.structure(), ProductlistpricehistoryRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -244,7 +245,7 @@ public class ProductlistpricehistoryRepoImpl implements ProductlistpricehistoryR
 
   @Override
   public UpdateBuilder<ProductlistpricehistoryFields, ProductlistpricehistoryRow> update() {
-    return UpdateBuilder.of("production.productlistpricehistory", ProductlistpricehistoryFields.structure(), ProductlistpricehistoryRow._rowParser.all());
+    return UpdateBuilder.of("\"production\".\"productlistpricehistory\"", ProductlistpricehistoryFields.structure(), ProductlistpricehistoryRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -303,8 +304,7 @@ public class ProductlistpricehistoryRepoImpl implements ProductlistpricehistoryR
            "enddate" = EXCLUDED."enddate",
          "listprice" = EXCLUDED."listprice",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text
-      """)
+         returning "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text""")
     )
       .updateReturning(ProductlistpricehistoryRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -323,8 +323,7 @@ public class ProductlistpricehistoryRepoImpl implements ProductlistpricehistoryR
                   "enddate" = EXCLUDED."enddate",
                 "listprice" = EXCLUDED."listprice",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text
-             """))
+                returning "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text"""))
       .updateManyReturning(ProductlistpricehistoryRow._rowParser, unsaved)
       .runUnchecked(c);
   };

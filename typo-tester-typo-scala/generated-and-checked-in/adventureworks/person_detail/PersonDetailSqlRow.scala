@@ -5,6 +5,7 @@
  */
 package adventureworks.person_detail
 
+import adventureworks.customtypes.TypoUUID
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.public.Name
 import adventureworks.userdefined.FirstName
@@ -34,9 +35,9 @@ case class PersonDetailSqlRow(
   /** Points to [[adventureworks.person.address.AddressRow.postalcode]] */
   postalcode: Optional[/* max 15 chars */ String],
   /** Points to [[adventureworks.person.address.AddressRow.rowguid]] */
-  rowguid: /* user-picked */ String
+  rowguid: Optional[TypoUUID]
 )
 
 object PersonDetailSqlRow {
-  val `_rowParser`: RowParser[PersonDetailSqlRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), /* user-picked */ FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text, PersonDetailSqlRow.apply, row => Array(row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.jobtitle, row.addressline1, row.city, row.postalcode, row.rowguid))
+  val `_rowParser`: RowParser[PersonDetailSqlRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), TypoUUID.pgType.opt(), PersonDetailSqlRow.apply, row => Array(row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.jobtitle, row.addressline1, row.city, row.postalcode, row.rowguid))
 }

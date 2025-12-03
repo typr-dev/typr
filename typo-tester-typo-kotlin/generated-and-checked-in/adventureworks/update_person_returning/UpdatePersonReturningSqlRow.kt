@@ -18,6 +18,6 @@ data class UpdatePersonReturningSqlRow(
   val modifieddate: TypoLocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<UpdatePersonReturningSqlRow> = RowParsers.of(/* user-picked */ FirstName.pgType, TypoLocalDateTime.pgType, { t0, t1 -> UpdatePersonReturningSqlRow(t0!!, t1!!) }, { row -> arrayOf<Any?>(row.firstname, row.modifieddate) })
+    val _rowParser: RowParser<UpdatePersonReturningSqlRow> = RowParsers.of(FirstName.pgType, TypoLocalDateTime.pgType, { t0, t1 -> UpdatePersonReturningSqlRow(t0!!, t1!!) }, { row -> arrayOf<Any?>(row.firstname, row.modifieddate) })
   }
 }

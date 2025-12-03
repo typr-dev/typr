@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -28,7 +29,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class CustomerRepoImpl implements CustomerRepo {
   @Override
   public DeleteBuilder<CustomerFields, CustomerRow> delete() {
-    return DeleteBuilder.of("sales.customer", CustomerFields.structure());
+    return DeleteBuilder.of("\"sales\".\"customer\"", CustomerFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -190,7 +191,7 @@ public class CustomerRepoImpl implements CustomerRepo {
 
   @Override
   public SelectBuilder<CustomerFields, CustomerRow> select() {
-    return SelectBuilder.of("sales.customer", CustomerFields.structure(), CustomerRow._rowParser);
+    return SelectBuilder.of("\"sales\".\"customer\"", CustomerFields.structure(), CustomerRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -243,7 +244,7 @@ public class CustomerRepoImpl implements CustomerRepo {
 
   @Override
   public UpdateBuilder<CustomerFields, CustomerRow> update() {
-    return UpdateBuilder.of("sales.customer", CustomerFields.structure(), CustomerRow._rowParser.all());
+    return UpdateBuilder.of("\"sales\".\"customer\"", CustomerFields.structure(), CustomerRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -310,8 +311,7 @@ public class CustomerRepoImpl implements CustomerRepo {
          "territoryid" = EXCLUDED."territoryid",
          "rowguid" = EXCLUDED."rowguid",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text
-      """)
+         returning "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text""")
     )
       .updateReturning(CustomerRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -332,8 +332,7 @@ public class CustomerRepoImpl implements CustomerRepo {
                 "territoryid" = EXCLUDED."territoryid",
                 "rowguid" = EXCLUDED."rowguid",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text
-             """))
+                returning "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text"""))
       .updateManyReturning(CustomerRow._rowParser, unsaved)
       .runUnchecked(c);
   };

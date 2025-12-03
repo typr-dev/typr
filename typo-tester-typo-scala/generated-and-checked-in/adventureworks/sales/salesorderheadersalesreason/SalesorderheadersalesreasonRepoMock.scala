@@ -92,8 +92,9 @@ case class SalesorderheadersalesreasonRepoMock(
 
   override def selectByIds(compositeIds: Array[SalesorderheadersalesreasonId])(using c: Connection): java.util.List[SalesorderheadersalesreasonRow] = {
     val result = new ArrayList[SalesorderheadersalesreasonRow]()
-    compositeIds.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    compositeIds.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

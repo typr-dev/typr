@@ -7,13 +7,14 @@ package adventureworks.person.vadditionalcontactinfo;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class VadditionalcontactinfoViewRepoImpl implements VadditionalcontactinfoViewRepo {
   @Override
   public SelectBuilder<VadditionalcontactinfoViewFields, VadditionalcontactinfoViewRow> select() {
-    return SelectBuilder.of("person.vadditionalcontactinfo", VadditionalcontactinfoViewFields.structure(), VadditionalcontactinfoViewRow._rowParser);
+    return SelectBuilder.of("\"person\".\"vadditionalcontactinfo\"", VadditionalcontactinfoViewFields.structure(), VadditionalcontactinfoViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

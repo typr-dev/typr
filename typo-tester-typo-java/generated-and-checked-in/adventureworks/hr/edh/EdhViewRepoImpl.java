@@ -7,13 +7,14 @@ package adventureworks.hr.edh;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class EdhViewRepoImpl implements EdhViewRepo {
   @Override
   public SelectBuilder<EdhViewFields, EdhViewRow> select() {
-    return SelectBuilder.of("hr.edh", EdhViewFields.structure(), EdhViewRow._rowParser);
+    return SelectBuilder.of("\"hr\".\"edh\"", EdhViewFields.structure(), EdhViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

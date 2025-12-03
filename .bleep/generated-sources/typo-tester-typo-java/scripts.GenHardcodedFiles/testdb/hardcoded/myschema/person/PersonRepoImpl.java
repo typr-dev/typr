@@ -16,6 +16,7 @@ import testdb.hardcoded.myschema.Number;
 import testdb.hardcoded.myschema.football_club.FootballClubId;
 import testdb.hardcoded.myschema.marital_status.MaritalStatusId;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -28,7 +29,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class PersonRepoImpl implements PersonRepo {
   @Override
   public DeleteBuilder<PersonFields, PersonRow> delete() {
-    return DeleteBuilder.of("myschema.person", PersonFields.structure());
+    return DeleteBuilder.of("\"myschema\".\"person\"", PersonFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -234,7 +235,7 @@ public class PersonRepoImpl implements PersonRepo {
 
   @Override
   public SelectBuilder<PersonFields, PersonRow> select() {
-    return SelectBuilder.of("myschema.person", PersonFields.structure(), PersonRow._rowParser);
+    return SelectBuilder.of("\"myschema\".\"person\"", PersonFields.structure(), PersonRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -287,7 +288,7 @@ public class PersonRepoImpl implements PersonRepo {
 
   @Override
   public UpdateBuilder<PersonFields, PersonRow> update() {
-    return UpdateBuilder.of("myschema.person", PersonFields.structure(), PersonRow._rowParser.all());
+    return UpdateBuilder.of("\"myschema\".\"person\"", PersonFields.structure(), PersonRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -389,8 +390,7 @@ public class PersonRepoImpl implements PersonRepo {
          "marital_status_id" = EXCLUDED."marital_status_id",
          "work_email" = EXCLUDED."work_email",
          "favorite_number" = EXCLUDED."favorite_number"
-         returning "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number"
-      """)
+         returning "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number\"""")
     )
       .updateReturning(PersonRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -416,8 +416,7 @@ public class PersonRepoImpl implements PersonRepo {
                 "marital_status_id" = EXCLUDED."marital_status_id",
                 "work_email" = EXCLUDED."work_email",
                 "favorite_number" = EXCLUDED."favorite_number"
-                returning "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number"
-             """))
+                returning "id", "favourite_football_club_id", "name", "nick_name", "blog_url", "email", "phone", "likes_pizza", "marital_status_id", "work_email", "sector", "favorite_number\""""))
       .updateManyReturning(PersonRow._rowParser, unsaved)
       .runUnchecked(c);
   };

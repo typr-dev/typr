@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -24,7 +25,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class TableWithGeneratedColumnsRepoImpl implements TableWithGeneratedColumnsRepo {
   @Override
   public DeleteBuilder<TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow> delete() {
-    return DeleteBuilder.of("public.table-with-generated-columns", TableWithGeneratedColumnsFields.structure());
+    return DeleteBuilder.of("\"public\".\"table-with-generated-columns\"", TableWithGeneratedColumnsFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -131,7 +132,7 @@ public class TableWithGeneratedColumnsRepoImpl implements TableWithGeneratedColu
 
   @Override
   public SelectBuilder<TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow> select() {
-    return SelectBuilder.of("public.table-with-generated-columns", TableWithGeneratedColumnsFields.structure(), TableWithGeneratedColumnsRow._rowParser);
+    return SelectBuilder.of("\"public\".\"table-with-generated-columns\"", TableWithGeneratedColumnsFields.structure(), TableWithGeneratedColumnsRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -184,7 +185,7 @@ public class TableWithGeneratedColumnsRepoImpl implements TableWithGeneratedColu
 
   @Override
   public UpdateBuilder<TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow> update() {
-    return UpdateBuilder.of("public.table-with-generated-columns", TableWithGeneratedColumnsFields.structure(), TableWithGeneratedColumnsRow._rowParser.all());
+    return UpdateBuilder.of("\"public\".\"table-with-generated-columns\"", TableWithGeneratedColumnsFields.structure(), TableWithGeneratedColumnsRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -201,8 +202,7 @@ public class TableWithGeneratedColumnsRepoImpl implements TableWithGeneratedColu
          )
          on conflict ("name")
          do update set "name" = EXCLUDED."name"
-         returning "name", "name-type-always"
-      """)
+         returning "name", "name-type-always\"""")
     )
       .updateReturning(TableWithGeneratedColumnsRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -217,9 +217,8 @@ public class TableWithGeneratedColumnsRepoImpl implements TableWithGeneratedColu
                 insert into "public"."table-with-generated-columns"("name")
                 values (?)
                 on conflict ("name")
-                do nothing
-                returning "name", "name-type-always"
-             """))
+                do update set "name" = EXCLUDED."name"
+                returning "name", "name-type-always\""""))
       .updateManyReturning(TableWithGeneratedColumnsRow._rowParser, unsaved)
       .runUnchecked(c);
   };

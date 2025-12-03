@@ -6,11 +6,12 @@
 package adventureworks.pr.um
 
 import java.sql.Connection
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class UmViewRepoImpl extends UmViewRepo {
-  override def select: SelectBuilder[UmViewFields, UmViewRow] = SelectBuilder.of("pr.um", UmViewFields.structure, UmViewRow.`_rowParser`)
+  override def select: SelectBuilder[UmViewFields, UmViewRow] = SelectBuilder.of(""""pr"."um"""", UmViewFields.structure, UmViewRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[UmViewRow] = {
     interpolate"""select "id", "unitmeasurecode", "name", "modifieddate"::text

@@ -9,13 +9,14 @@ import java.sql.Connection
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class Issue142RepoImpl extends Issue142Repo {
-  override def delete: DeleteBuilder[Issue142Fields, Issue142Row] = DeleteBuilder.of("public.issue142", Issue142Fields.structure)
+  override def delete: DeleteBuilder[Issue142Fields, Issue142Row] = DeleteBuilder.of(""""public"."issue142"""", Issue142Fields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(tabellkode: Issue142Id)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."issue142" where "tabellkode" = ${Issue142Id.pgType.encode(tabellkode)}""".update().runUnchecked(c) > 0
 
@@ -40,7 +41,7 @@ class Issue142RepoImpl extends Issue142Repo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."issue142"("tabellkode") FROM STDIN""", batchSize, unsaved, c, Issue142Row.pgText)
 
-  override def select: SelectBuilder[Issue142Fields, Issue142Row] = SelectBuilder.of("public.issue142", Issue142Fields.structure, Issue142Row.`_rowParser`)
+  override def select: SelectBuilder[Issue142Fields, Issue142Row] = SelectBuilder.of(""""public"."issue142"""", Issue142Fields.structure, Issue142Row.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[Issue142Row] = {
     interpolate"""select "tabellkode"
@@ -66,15 +67,14 @@ class Issue142RepoImpl extends Issue142Repo {
     return ret
   }
 
-  override def update: UpdateBuilder[Issue142Fields, Issue142Row] = UpdateBuilder.of("public.issue142", Issue142Fields.structure, Issue142Row.`_rowParser`.all())
+  override def update: UpdateBuilder[Issue142Fields, Issue142Row] = UpdateBuilder.of(""""public"."issue142"""", Issue142Fields.structure, Issue142Row.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def upsert(unsaved: Issue142Row)(using c: Connection): Issue142Row = {
   interpolate"""insert into "public"."issue142"("tabellkode")
     values (${Issue142Id.pgType.encode(unsaved.tabellkode)})
     on conflict ("tabellkode")
     do update set "tabellkode" = EXCLUDED."tabellkode"
-    returning "tabellkode"
-    """
+    returning "tabellkode""""
     .updateReturning(Issue142Row.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -83,9 +83,8 @@ class Issue142RepoImpl extends Issue142Repo {
     interpolate"""insert into "public"."issue142"("tabellkode")
     values (?)
     on conflict ("tabellkode")
-    do nothing
-    returning "tabellkode"
-    """
+    do update set "tabellkode" = EXCLUDED."tabellkode"
+    returning "tabellkode""""
       .updateManyReturning(Issue142Row.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

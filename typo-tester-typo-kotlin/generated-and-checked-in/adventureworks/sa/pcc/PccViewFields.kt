@@ -29,7 +29,7 @@ interface PccViewFields {
       override fun fields(): PccViewFields = object : PccViewFields {
         override fun id(): Field<BusinessentityId, PccViewRow> = Field<BusinessentityId, PccViewRow>(_path, "id", PccViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, BusinessentityId.pgType)
         override fun businessentityid(): Field<BusinessentityId, PccViewRow> = Field<BusinessentityId, PccViewRow>(_path, "businessentityid", PccViewRow::businessentityid, Optional.empty(), Optional.empty(), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
-        override fun creditcardid(): Field</* user-picked */ CustomCreditcardId, PccViewRow> = Field</* user-picked */ CustomCreditcardId, PccViewRow>(_path, "creditcardid", PccViewRow::creditcardid, Optional.empty(), Optional.empty(), { row, value -> row.copy(creditcardid = value) }, /* user-picked */ CustomCreditcardId.pgType)
+        override fun creditcardid(): Field</* user-picked */ CustomCreditcardId, PccViewRow> = Field</* user-picked */ CustomCreditcardId, PccViewRow>(_path, "creditcardid", PccViewRow::creditcardid, Optional.empty(), Optional.empty(), { row, value -> row.copy(creditcardid = value) }, CustomCreditcardId.pgType)
         override fun modifieddate(): Field<TypoLocalDateTime, PccViewRow> = Field<TypoLocalDateTime, PccViewRow>(_path, "modifieddate", PccViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
       }
 

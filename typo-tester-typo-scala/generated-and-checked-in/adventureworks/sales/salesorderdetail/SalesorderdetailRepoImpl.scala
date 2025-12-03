@@ -16,6 +16,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -25,7 +26,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
-  override def delete: DeleteBuilder[SalesorderdetailFields, SalesorderdetailRow] = DeleteBuilder.of("sales.salesorderdetail", SalesorderdetailFields.structure)
+  override def delete: DeleteBuilder[SalesorderdetailFields, SalesorderdetailRow] = DeleteBuilder.of(""""sales"."salesorderdetail"""", SalesorderdetailFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(compositeId: SalesorderdetailId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."salesorderdetail" where "salesorderid" = ${SalesorderheaderId.pgType.encode(compositeId.salesorderid)} AND "salesorderdetailid" = ${PgTypes.int4.encode(compositeId.salesorderdetailid)}""".update().runUnchecked(c) > 0
 
@@ -98,7 +99,7 @@ class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."salesorderdetail"("salesorderid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "salesorderdetailid", "unitpricediscount", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, SalesorderdetailRowUnsaved.pgText)
 
-  override def select: SelectBuilder[SalesorderdetailFields, SalesorderdetailRow] = SelectBuilder.of("sales.salesorderdetail", SalesorderdetailFields.structure, SalesorderdetailRow.`_rowParser`)
+  override def select: SelectBuilder[SalesorderdetailFields, SalesorderdetailRow] = SelectBuilder.of(""""sales"."salesorderdetail"""", SalesorderdetailFields.structure, SalesorderdetailRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[SalesorderdetailRow] = {
     interpolate"""select "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text
@@ -128,7 +129,7 @@ class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[SalesorderdetailFields, SalesorderdetailRow] = UpdateBuilder.of("sales.salesorderdetail", SalesorderdetailFields.structure, SalesorderdetailRow.`_rowParser`.all())
+  override def update: UpdateBuilder[SalesorderdetailFields, SalesorderdetailRow] = UpdateBuilder.of(""""sales"."salesorderdetail"""", SalesorderdetailFields.structure, SalesorderdetailRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: SalesorderdetailRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: SalesorderdetailId = row.compositeId
@@ -157,8 +158,7 @@ class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
     "unitpricediscount" = EXCLUDED."unitpricediscount",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text
-    """
+    returning "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text"""
     .updateReturning(SalesorderdetailRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -176,8 +176,7 @@ class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
     "unitpricediscount" = EXCLUDED."unitpricediscount",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text
-    """
+    returning "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text"""
       .updateManyReturning(SalesorderdetailRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

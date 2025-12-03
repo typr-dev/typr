@@ -116,7 +116,7 @@ object ThViewFields {
             Optional.empty(),
             Optional.empty(),
             (row, value) => row.copy(transactiontype = value),
-            PgTypes.text
+            PgTypes.bpchar
           )
         }
         override def quantity: Field[Integer, ThViewRow] = {

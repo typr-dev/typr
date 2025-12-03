@@ -15,6 +15,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -24,7 +25,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class PhonenumbertypeRepoImpl() : PhonenumbertypeRepo {
-  override fun delete(): DeleteBuilder<PhonenumbertypeFields, PhonenumbertypeRow> = DeleteBuilder.of("person.phonenumbertype", PhonenumbertypeFields.structure)
+  override fun delete(): DeleteBuilder<PhonenumbertypeFields, PhonenumbertypeRow> = DeleteBuilder.of("\"person\".\"phonenumbertype\"", PhonenumbertypeFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     phonenumbertypeid: PhonenumbertypeId,
@@ -131,7 +132,7 @@ class PhonenumbertypeRepoImpl() : PhonenumbertypeRepo {
   COPY "person"."phonenumbertype"("name", "phonenumbertypeid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, PhonenumbertypeRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<PhonenumbertypeFields, PhonenumbertypeRow> = SelectBuilder.of("person.phonenumbertype", PhonenumbertypeFields.structure, PhonenumbertypeRow._rowParser)
+  override fun select(): SelectBuilder<PhonenumbertypeFields, PhonenumbertypeRow> = SelectBuilder.of("\"person\".\"phonenumbertype\"", PhonenumbertypeFields.structure, PhonenumbertypeRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<PhonenumbertypeRow> = interpolate(typo.runtime.Fragment.lit("""
     select "phonenumbertypeid", "name", "modifieddate"::text
@@ -171,7 +172,7 @@ class PhonenumbertypeRepoImpl() : PhonenumbertypeRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<PhonenumbertypeFields, PhonenumbertypeRow> = UpdateBuilder.of("person.phonenumbertype", PhonenumbertypeFields.structure, PhonenumbertypeRow._rowParser.all())
+  override fun update(): UpdateBuilder<PhonenumbertypeFields, PhonenumbertypeRow> = UpdateBuilder.of("\"person\".\"phonenumbertype\"", PhonenumbertypeFields.structure, PhonenumbertypeRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: PhonenumbertypeRow,
@@ -213,8 +214,7 @@ class PhonenumbertypeRepoImpl() : PhonenumbertypeRepo {
       do update set
         "name" = EXCLUDED."name",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "phonenumbertypeid", "name", "modifieddate"::text
-    """.trimMargin())
+      returning "phonenumbertypeid", "name", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(PhonenumbertypeRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -229,8 +229,7 @@ class PhonenumbertypeRepoImpl() : PhonenumbertypeRepo {
                                   do update set
                                     "name" = EXCLUDED."name",
                                   "modifieddate" = EXCLUDED."modifieddate"
-                                  returning "phonenumbertypeid", "name", "modifieddate"::text
-                                """.trimMargin()))
+                                  returning "phonenumbertypeid", "name", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(PhonenumbertypeRow._rowParser, unsaved)
     .runUnchecked(c)
 

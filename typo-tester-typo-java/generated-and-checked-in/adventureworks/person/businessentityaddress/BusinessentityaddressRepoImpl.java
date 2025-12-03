@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -30,7 +31,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class BusinessentityaddressRepoImpl implements BusinessentityaddressRepo {
   @Override
   public DeleteBuilder<BusinessentityaddressFields, BusinessentityaddressRow> delete() {
-    return DeleteBuilder.of("person.businessentityaddress", BusinessentityaddressFields.structure());
+    return DeleteBuilder.of("\"person\".\"businessentityaddress\"", BusinessentityaddressFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -195,7 +196,7 @@ public class BusinessentityaddressRepoImpl implements BusinessentityaddressRepo 
 
   @Override
   public SelectBuilder<BusinessentityaddressFields, BusinessentityaddressRow> select() {
-    return SelectBuilder.of("person.businessentityaddress", BusinessentityaddressFields.structure(), BusinessentityaddressRow._rowParser);
+    return SelectBuilder.of("\"person\".\"businessentityaddress\"", BusinessentityaddressFields.structure(), BusinessentityaddressRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -267,7 +268,7 @@ public class BusinessentityaddressRepoImpl implements BusinessentityaddressRepo 
 
   @Override
   public UpdateBuilder<BusinessentityaddressFields, BusinessentityaddressRow> update() {
-    return UpdateBuilder.of("person.businessentityaddress", BusinessentityaddressFields.structure(), BusinessentityaddressRow._rowParser.all());
+    return UpdateBuilder.of("\"person\".\"businessentityaddress\"", BusinessentityaddressFields.structure(), BusinessentityaddressRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -325,8 +326,7 @@ public class BusinessentityaddressRepoImpl implements BusinessentityaddressRepo 
          do update set
            "rowguid" = EXCLUDED."rowguid",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate"::text
-      """)
+         returning "businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate"::text""")
     )
       .updateReturning(BusinessentityaddressRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -344,8 +344,7 @@ public class BusinessentityaddressRepoImpl implements BusinessentityaddressRepo 
                 do update set
                   "rowguid" = EXCLUDED."rowguid",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate"::text
-             """))
+                returning "businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate"::text"""))
       .updateManyReturning(BusinessentityaddressRow._rowParser, unsaved)
       .runUnchecked(c);
   };

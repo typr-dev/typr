@@ -109,6 +109,21 @@ object addPackageAndImports {
           thenp.mapTrees(t => shortenNames(t, typeImport, staticImport)),
           elsep.mapTrees(t => shortenNames(t, typeImport, staticImport))
         )
+      case jvm.If(branches, elseBody) =>
+        jvm.If(
+          branches.map { case jvm.If.Branch(cond, body) =>
+            jvm.If.Branch(
+              cond.mapTrees(t => shortenNames(t, typeImport, staticImport)),
+              body.mapTrees(t => shortenNames(t, typeImport, staticImport))
+            )
+          },
+          elseBody.map(_.mapTrees(t => shortenNames(t, typeImport, staticImport)))
+        )
+      case jvm.While(cond, body) =>
+        jvm.While(
+          cond.mapTrees(t => shortenNames(t, typeImport, staticImport)),
+          body.map(_.mapTrees(t => shortenNames(t, typeImport, staticImport)))
+        )
       case jvm.ConstructorMethodRef(tpe) => jvm.ConstructorMethodRef(shortenNamesType(tpe, typeImport))
       case jvm.ClassOf(tpe)              => jvm.ClassOf(shortenNamesType(tpe, typeImport))
       case jvm.JavaClassOf(tpe)          => jvm.JavaClassOf(shortenNamesType(tpe, typeImport))

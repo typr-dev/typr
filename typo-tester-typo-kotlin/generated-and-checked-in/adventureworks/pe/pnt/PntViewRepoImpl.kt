@@ -7,11 +7,12 @@ package adventureworks.pe.pnt
 
 import java.sql.Connection
 import kotlin.collections.List
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.Fragment.interpolate
 
 class PntViewRepoImpl() : PntViewRepo {
-  override fun select(): SelectBuilder<PntViewFields, PntViewRow> = SelectBuilder.of("pe.pnt", PntViewFields.structure, PntViewRow._rowParser)
+  override fun select(): SelectBuilder<PntViewFields, PntViewRow> = SelectBuilder.of("\"pe\".\"pnt\"", PntViewFields.structure, PntViewRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<PntViewRow> = interpolate(typo.runtime.Fragment.lit("""
     select "id", "phonenumbertypeid", "name", "modifieddate"::text

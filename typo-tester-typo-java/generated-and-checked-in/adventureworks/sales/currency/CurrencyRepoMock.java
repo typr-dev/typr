@@ -61,9 +61,11 @@ public record CurrencyRepoMock(
     Connection c
   ) {
     var count = 0;
-    for (var id : currencycodes) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : currencycodes) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -143,8 +145,12 @@ public record CurrencyRepoMock(
     Connection c
   ) {
     var result = new ArrayList<CurrencyRow>();
-    for (var id : currencycodes) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : currencycodes) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 
@@ -168,7 +174,7 @@ public record CurrencyRepoMock(
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.currencycode())).filter(oldRow -> !oldRow.equals(row)).isPresent();
     if (shouldUpdate) {
-      map.put(row.currencycode(), row);
+      map.put(row.currencycode(), row);;
     };
     return shouldUpdate;
   };

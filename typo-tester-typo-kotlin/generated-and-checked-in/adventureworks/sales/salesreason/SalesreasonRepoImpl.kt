@@ -15,6 +15,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -24,7 +25,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class SalesreasonRepoImpl() : SalesreasonRepo {
-  override fun delete(): DeleteBuilder<SalesreasonFields, SalesreasonRow> = DeleteBuilder.of("sales.salesreason", SalesreasonFields.structure)
+  override fun delete(): DeleteBuilder<SalesreasonFields, SalesreasonRow> = DeleteBuilder.of("\"sales\".\"salesreason\"", SalesreasonFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     salesreasonid: SalesreasonId,
@@ -138,7 +139,7 @@ class SalesreasonRepoImpl() : SalesreasonRepo {
   COPY "sales"."salesreason"("name", "reasontype", "salesreasonid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, SalesreasonRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<SalesreasonFields, SalesreasonRow> = SelectBuilder.of("sales.salesreason", SalesreasonFields.structure, SalesreasonRow._rowParser)
+  override fun select(): SelectBuilder<SalesreasonFields, SalesreasonRow> = SelectBuilder.of("\"sales\".\"salesreason\"", SalesreasonFields.structure, SalesreasonRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<SalesreasonRow> = interpolate(typo.runtime.Fragment.lit("""
     select "salesreasonid", "name", "reasontype", "modifieddate"::text
@@ -178,7 +179,7 @@ class SalesreasonRepoImpl() : SalesreasonRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<SalesreasonFields, SalesreasonRow> = UpdateBuilder.of("sales.salesreason", SalesreasonFields.structure, SalesreasonRow._rowParser.all())
+  override fun update(): UpdateBuilder<SalesreasonFields, SalesreasonRow> = UpdateBuilder.of("\"sales\".\"salesreason\"", SalesreasonFields.structure, SalesreasonRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: SalesreasonRow,
@@ -227,8 +228,7 @@ class SalesreasonRepoImpl() : SalesreasonRepo {
         "name" = EXCLUDED."name",
       "reasontype" = EXCLUDED."reasontype",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "salesreasonid", "name", "reasontype", "modifieddate"::text
-    """.trimMargin())
+      returning "salesreasonid", "name", "reasontype", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(SalesreasonRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -244,8 +244,7 @@ class SalesreasonRepoImpl() : SalesreasonRepo {
                                 "name" = EXCLUDED."name",
                               "reasontype" = EXCLUDED."reasontype",
                               "modifieddate" = EXCLUDED."modifieddate"
-                              returning "salesreasonid", "name", "reasontype", "modifieddate"::text
-                            """.trimMargin()))
+                              returning "salesreasonid", "name", "reasontype", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(SalesreasonRow._rowParser, unsaved)
     .runUnchecked(c)
 

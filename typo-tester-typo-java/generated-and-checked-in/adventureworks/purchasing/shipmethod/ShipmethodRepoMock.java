@@ -61,9 +61,11 @@ public record ShipmethodRepoMock(
     Connection c
   ) {
     var count = 0;
-    for (var id : shipmethodids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : shipmethodids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -143,8 +145,12 @@ public record ShipmethodRepoMock(
     Connection c
   ) {
     var result = new ArrayList<ShipmethodRow>();
-    for (var id : shipmethodids) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : shipmethodids) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 
@@ -168,7 +174,7 @@ public record ShipmethodRepoMock(
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.shipmethodid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
     if (shouldUpdate) {
-      map.put(row.shipmethodid(), row);
+      map.put(row.shipmethodid(), row);;
     };
     return shouldUpdate;
   };

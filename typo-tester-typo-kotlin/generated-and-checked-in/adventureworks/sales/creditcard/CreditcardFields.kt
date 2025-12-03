@@ -33,7 +33,7 @@ interface CreditcardFields {
   companion object {
     private class Impl(path: List<Path>) : Relation<CreditcardFields, CreditcardRow>(path) {
       override fun fields(): CreditcardFields = object : CreditcardFields {
-        override fun creditcardid(): IdField</* user-picked */ CustomCreditcardId, CreditcardRow> = IdField</* user-picked */ CustomCreditcardId, CreditcardRow>(_path, "creditcardid", CreditcardRow::creditcardid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(creditcardid = value) }, /* user-picked */ CustomCreditcardId.pgType)
+        override fun creditcardid(): IdField</* user-picked */ CustomCreditcardId, CreditcardRow> = IdField</* user-picked */ CustomCreditcardId, CreditcardRow>(_path, "creditcardid", CreditcardRow::creditcardid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(creditcardid = value) }, CustomCreditcardId.pgType)
         override fun cardtype(): Field</* max 50 chars */ String, CreditcardRow> = Field</* max 50 chars */ String, CreditcardRow>(_path, "cardtype", CreditcardRow::cardtype, Optional.empty(), Optional.empty(), { row, value -> row.copy(cardtype = value) }, PgTypes.text)
         override fun cardnumber(): Field</* max 25 chars */ String, CreditcardRow> = Field</* max 25 chars */ String, CreditcardRow>(_path, "cardnumber", CreditcardRow::cardnumber, Optional.empty(), Optional.empty(), { row, value -> row.copy(cardnumber = value) }, PgTypes.text)
         override fun expmonth(): Field<TypoShort, CreditcardRow> = Field<TypoShort, CreditcardRow>(_path, "expmonth", CreditcardRow::expmonth, Optional.empty(), Optional.of("int2"), { row, value -> row.copy(expmonth = value) }, TypoShort.pgType)

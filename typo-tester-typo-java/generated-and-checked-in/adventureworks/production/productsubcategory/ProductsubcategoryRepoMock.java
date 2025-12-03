@@ -61,9 +61,11 @@ public record ProductsubcategoryRepoMock(
     Connection c
   ) {
     var count = 0;
-    for (var id : productsubcategoryids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : productsubcategoryids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -143,8 +145,12 @@ public record ProductsubcategoryRepoMock(
     Connection c
   ) {
     var result = new ArrayList<ProductsubcategoryRow>();
-    for (var id : productsubcategoryids) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : productsubcategoryids) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 
@@ -168,7 +174,7 @@ public record ProductsubcategoryRepoMock(
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.productsubcategoryid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
     if (shouldUpdate) {
-      map.put(row.productsubcategoryid(), row);
+      map.put(row.productsubcategoryid(), row);;
     };
     return shouldUpdate;
   };

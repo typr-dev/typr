@@ -7,13 +7,14 @@ package adventureworks.pe.at;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class AtViewRepoImpl implements AtViewRepo {
   @Override
   public SelectBuilder<AtViewFields, AtViewRow> select() {
-    return SelectBuilder.of("pe.at", AtViewFields.structure(), AtViewRow._rowParser);
+    return SelectBuilder.of("\"pe\".\"at\"", AtViewFields.structure(), AtViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

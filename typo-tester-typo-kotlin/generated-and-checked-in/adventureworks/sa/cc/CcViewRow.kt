@@ -30,6 +30,6 @@ data class CcViewRow(
   val modifieddate: TypoLocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<CcViewRow> = RowParsers.of(/* user-picked */ CustomCreditcardId.pgType, /* user-picked */ CustomCreditcardId.pgType, PgTypes.text, PgTypes.text, TypoShort.pgType, TypoShort.pgType, TypoLocalDateTime.pgType, { t0, t1, t2, t3, t4, t5, t6 -> CcViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!) }, { row -> arrayOf<Any?>(row.id, row.creditcardid, row.cardtype, row.cardnumber, row.expmonth, row.expyear, row.modifieddate) })
+    val _rowParser: RowParser<CcViewRow> = RowParsers.of(CustomCreditcardId.pgType, CustomCreditcardId.pgType, PgTypes.text, PgTypes.text, TypoShort.pgType, TypoShort.pgType, TypoLocalDateTime.pgType, { t0, t1, t2, t3, t4, t5, t6 -> CcViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!) }, { row -> arrayOf<Any?>(row.id, row.creditcardid, row.cardtype, row.cardnumber, row.expmonth, row.expyear, row.modifieddate) })
   }
 }

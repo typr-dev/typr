@@ -61,9 +61,11 @@ public record AddressRepoMock(
     Connection c
   ) {
     var count = 0;
-    for (var id : addressids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : addressids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -143,8 +145,12 @@ public record AddressRepoMock(
     Connection c
   ) {
     var result = new ArrayList<AddressRow>();
-    for (var id : addressids) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : addressids) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 
@@ -168,7 +174,7 @@ public record AddressRepoMock(
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.addressid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
     if (shouldUpdate) {
-      map.put(row.addressid(), row);
+      map.put(row.addressid(), row);;
     };
     return shouldUpdate;
   };

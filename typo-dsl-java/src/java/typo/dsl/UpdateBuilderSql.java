@@ -1,7 +1,7 @@
 package typo.dsl;
 
+import typo.runtime.DbType;
 import typo.runtime.Fragment;
-import typo.runtime.PgType;
 import typo.runtime.ResultSetParser;
 
 import java.sql.Connection;
@@ -38,7 +38,7 @@ public class UpdateBuilderSql<Fields, Row> implements UpdateBuilder<Fields, Row>
     }
     
     @Override
-    public <T> UpdateBuilder<Fields, Row> set(Function<Fields, SqlExpr.FieldLike<T, Row>> field, T value, PgType<T> pgType) {
+    public <T> UpdateBuilder<Fields, Row> set(Function<Fields, SqlExpr.FieldLike<T, Row>> field, T value, DbType<T> pgType) {
         // Wrap the function to extract the field from potentially typed field
         Function<Fields, SqlExpr.FieldLikeNotId<T, Row>> fieldNotId = fields -> {
             SqlExpr.FieldLike<T, Row> f = field.apply(fields);
@@ -132,19 +132,22 @@ public class UpdateBuilderSql<Fields, Row> implements UpdateBuilder<Fields, Row>
         
         // Build SET clauses
         List<Fragment> setFragments = new ArrayList<>();
+        Dialect dialect = renderCtx.dialect();
         for (UpdateParams.Setter<Fields, ?, Row> setter : params.setters()) {
             SqlExpr.FieldLikeNotId<?, Row> column = setter.column().apply(fields);
             SqlExpr<?> value = setter.value().apply(fields);
 
             // Apply sqlWriteCast if present (like Scala DSL does)
-            Fragment castFragment = column.sqlWriteCast()
-                .<Fragment>map(cast -> Fragment.lit("::" + cast))
-                .orElse(Fragment.empty());
+            // For PostgreSQL: value::type
+            // For MariaDB: CAST(value AS type)
+            Fragment valueFragment = value.render(renderCtx, counter);
+            Fragment castedValue = column.sqlWriteCast()
+                .<Fragment>map(cast -> dialect.typeCast(valueFragment, cast))
+                .orElse(valueFragment);
 
             Fragment setFragment = column.render(renderCtx, counter)
                 .append(Fragment.lit(" = "))
-                .append(value.render(renderCtx, counter))
-                .append(castFragment);
+                .append(castedValue);
             setFragments.add(setFragment);
         }
         

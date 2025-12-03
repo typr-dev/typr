@@ -6,11 +6,12 @@
 package adventureworks.production.vproductmodelcatalogdescription
 
 import java.sql.Connection
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class VproductmodelcatalogdescriptionViewRepoImpl extends VproductmodelcatalogdescriptionViewRepo {
-  override def select: SelectBuilder[VproductmodelcatalogdescriptionViewFields, VproductmodelcatalogdescriptionViewRow] = SelectBuilder.of("production.vproductmodelcatalogdescription", VproductmodelcatalogdescriptionViewFields.structure, VproductmodelcatalogdescriptionViewRow.`_rowParser`)
+  override def select: SelectBuilder[VproductmodelcatalogdescriptionViewFields, VproductmodelcatalogdescriptionViewRow] = SelectBuilder.of(""""production"."vproductmodelcatalogdescription"""", VproductmodelcatalogdescriptionViewFields.structure, VproductmodelcatalogdescriptionViewRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[VproductmodelcatalogdescriptionViewRow] = {
     interpolate"""select "productmodelid", "name", "Summary", "manufacturer", "copyright", "producturl", "warrantyperiod", "warrantydescription", "noofyears", "maintenancedescription", "wheel", "saddle", "pedal", "bikeframe", "crankset", "pictureangle", "picturesize", "productphotoid", "material", "color", "productline", "style", "riderexperience", "rowguid", "modifieddate"::text

@@ -13,6 +13,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -22,7 +23,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PasswordRepoImpl extends PasswordRepo {
-  override def delete: DeleteBuilder[PasswordFields, PasswordRow] = DeleteBuilder.of("person.password", PasswordFields.structure)
+  override def delete: DeleteBuilder[PasswordFields, PasswordRow] = DeleteBuilder.of(""""person"."password"""", PasswordFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(businessentityid: BusinessentityId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "person"."password" where "businessentityid" = ${BusinessentityId.pgType.encode(businessentityid)}""".update().runUnchecked(c) > 0
 
@@ -79,7 +80,7 @@ class PasswordRepoImpl extends PasswordRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, PasswordRowUnsaved.pgText)
 
-  override def select: SelectBuilder[PasswordFields, PasswordRow] = SelectBuilder.of("person.password", PasswordFields.structure, PasswordRow.`_rowParser`)
+  override def select: SelectBuilder[PasswordFields, PasswordRow] = SelectBuilder.of(""""person"."password"""", PasswordFields.structure, PasswordRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[PasswordRow] = {
     interpolate"""select "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"::text
@@ -105,7 +106,7 @@ class PasswordRepoImpl extends PasswordRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[PasswordFields, PasswordRow] = UpdateBuilder.of("person.password", PasswordFields.structure, PasswordRow.`_rowParser`.all())
+  override def update: UpdateBuilder[PasswordFields, PasswordRow] = UpdateBuilder.of(""""person"."password"""", PasswordFields.structure, PasswordRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: PasswordRow)(using c: Connection): java.lang.Boolean = {
     val businessentityid: BusinessentityId = row.businessentityid
@@ -126,8 +127,7 @@ class PasswordRepoImpl extends PasswordRepo {
     "passwordsalt" = EXCLUDED."passwordsalt",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"::text
-    """
+    returning "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"::text"""
     .updateReturning(PasswordRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -141,8 +141,7 @@ class PasswordRepoImpl extends PasswordRepo {
     "passwordsalt" = EXCLUDED."passwordsalt",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"::text
-    """
+    returning "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"::text"""
       .updateManyReturning(PasswordRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

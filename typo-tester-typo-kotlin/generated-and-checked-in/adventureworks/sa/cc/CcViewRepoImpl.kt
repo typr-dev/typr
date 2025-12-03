@@ -7,11 +7,12 @@ package adventureworks.sa.cc
 
 import java.sql.Connection
 import kotlin.collections.List
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.Fragment.interpolate
 
 class CcViewRepoImpl() : CcViewRepo {
-  override fun select(): SelectBuilder<CcViewFields, CcViewRow> = SelectBuilder.of("sa.cc", CcViewFields.structure, CcViewRow._rowParser)
+  override fun select(): SelectBuilder<CcViewFields, CcViewRow> = SelectBuilder.of("\"sa\".\"cc\"", CcViewFields.structure, CcViewRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<CcViewRow> = interpolate(typo.runtime.Fragment.lit("""
     select "id", "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"::text

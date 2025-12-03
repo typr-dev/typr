@@ -15,6 +15,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -23,7 +24,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
-  override def delete: DeleteBuilder[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow] = DeleteBuilder.of("humanresources.employeedepartmenthistory", EmployeedepartmenthistoryFields.structure)
+  override def delete: DeleteBuilder[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow] = DeleteBuilder.of(""""humanresources"."employeedepartmenthistory"""", EmployeedepartmenthistoryFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(compositeId: EmployeedepartmenthistoryId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "humanresources"."employeedepartmenthistory" where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "startdate" = ${TypoLocalDate.pgType.encode(compositeId.startdate)} AND "departmentid" = ${DepartmentId.pgType.encode(compositeId.departmentid)} AND "shiftid" = ${ShiftId.pgType.encode(compositeId.shiftid)}""".update().runUnchecked(c) > 0
 
@@ -84,7 +85,7 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "humanresources"."employeedepartmenthistory"("businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, EmployeedepartmenthistoryRowUnsaved.pgText)
 
-  override def select: SelectBuilder[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow] = SelectBuilder.of("humanresources.employeedepartmenthistory", EmployeedepartmenthistoryFields.structure, EmployeedepartmenthistoryRow.`_rowParser`)
+  override def select: SelectBuilder[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow] = SelectBuilder.of(""""humanresources"."employeedepartmenthistory"""", EmployeedepartmenthistoryFields.structure, EmployeedepartmenthistoryRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[EmployeedepartmenthistoryRow] = {
     interpolate"""select "businessentityid", "departmentid", "shiftid", "startdate"::text, "enddate"::text, "modifieddate"::text
@@ -116,7 +117,7 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow] = UpdateBuilder.of("humanresources.employeedepartmenthistory", EmployeedepartmenthistoryFields.structure, EmployeedepartmenthistoryRow.`_rowParser`.all())
+  override def update: UpdateBuilder[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow] = UpdateBuilder.of(""""humanresources"."employeedepartmenthistory"""", EmployeedepartmenthistoryFields.structure, EmployeedepartmenthistoryRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: EmployeedepartmenthistoryRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: EmployeedepartmenthistoryId = row.compositeId
@@ -133,8 +134,7 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
     do update set
       "enddate" = EXCLUDED."enddate",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "businessentityid", "departmentid", "shiftid", "startdate"::text, "enddate"::text, "modifieddate"::text
-    """
+    returning "businessentityid", "departmentid", "shiftid", "startdate"::text, "enddate"::text, "modifieddate"::text"""
     .updateReturning(EmployeedepartmenthistoryRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -146,8 +146,7 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
     do update set
       "enddate" = EXCLUDED."enddate",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "businessentityid", "departmentid", "shiftid", "startdate"::text, "enddate"::text, "modifieddate"::text
-    """
+    returning "businessentityid", "departmentid", "shiftid", "startdate"::text, "enddate"::text, "modifieddate"::text"""
       .updateManyReturning(EmployeedepartmenthistoryRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

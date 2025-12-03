@@ -46,5 +46,5 @@ case class CreditcardRowUnsaved(
 }
 
 object CreditcardRowUnsaved {
-  given pgText: PgText[CreditcardRowUnsaved] = PgText.instance((row, sb) => { PgTypes.text.pgText.unsafeEncode(row.cardtype, sb); sb.append(PgText.DELIMETER); PgTypes.text.pgText.unsafeEncode(row.cardnumber, sb); sb.append(PgText.DELIMETER); TypoShort.pgType.pgText.unsafeEncode(row.expmonth, sb); sb.append(PgText.DELIMETER); TypoShort.pgType.pgText.unsafeEncode(row.expyear, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using /* user-picked */ CustomCreditcardId.pgType.pgText).unsafeEncode(row.creditcardid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
+  given pgText: PgText[CreditcardRowUnsaved] = PgText.instance((row, sb) => { PgTypes.text.pgText.unsafeEncode(row.cardtype, sb); sb.append(PgText.DELIMETER); PgTypes.text.pgText.unsafeEncode(row.cardnumber, sb); sb.append(PgText.DELIMETER); TypoShort.pgType.pgText.unsafeEncode(row.expmonth, sb); sb.append(PgText.DELIMETER); TypoShort.pgType.pgText.unsafeEncode(row.expyear, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using CustomCreditcardId.pgType.pgText).unsafeEncode(row.creditcardid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

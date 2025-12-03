@@ -37,9 +37,11 @@ data class TestSakSoknadsalternativRepoMock(val map: MutableMap<TestSakSoknadsal
     c: Connection
   ): Int {
     var count = 0
-    for (id in compositeIds) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in compositeIds) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -61,7 +63,7 @@ data class TestSakSoknadsalternativRepoMock(val map: MutableMap<TestSakSoknadsal
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.compositeId()] = row
       count = count + 1L
     }
@@ -81,9 +83,13 @@ data class TestSakSoknadsalternativRepoMock(val map: MutableMap<TestSakSoknadsal
     compositeIds: Array<TestSakSoknadsalternativId>,
     c: Connection
   ): List<TestSakSoknadsalternativRow> {
-    var result = ArrayList<TestSakSoknadsalternativRow>()
-    for (id in compositeIds) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<TestSakSoknadsalternativRow>()
+    for (id in compositeIds) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -117,9 +123,9 @@ data class TestSakSoknadsalternativRepoMock(val map: MutableMap<TestSakSoknadsal
     unsaved: MutableIterator<TestSakSoknadsalternativRow>,
     c: Connection
   ): List<TestSakSoknadsalternativRow> {
-    var result = ArrayList<TestSakSoknadsalternativRow>()
+    val result = ArrayList<TestSakSoknadsalternativRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.compositeId()] = row
       result.add(row)
     }
@@ -134,7 +140,7 @@ data class TestSakSoknadsalternativRepoMock(val map: MutableMap<TestSakSoknadsal
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.compositeId()] = row
       count = count + 1
     }

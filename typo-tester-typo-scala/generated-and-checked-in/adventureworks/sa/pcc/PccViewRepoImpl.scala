@@ -6,11 +6,12 @@
 package adventureworks.sa.pcc
 
 import java.sql.Connection
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PccViewRepoImpl extends PccViewRepo {
-  override def select: SelectBuilder[PccViewFields, PccViewRow] = SelectBuilder.of("sa.pcc", PccViewFields.structure, PccViewRow.`_rowParser`)
+  override def select: SelectBuilder[PccViewFields, PccViewRow] = SelectBuilder.of(""""sa"."pcc"""", PccViewFields.structure, PccViewRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[PccViewRow] = {
     interpolate"""select "id", "businessentityid", "creditcardid", "modifieddate"::text

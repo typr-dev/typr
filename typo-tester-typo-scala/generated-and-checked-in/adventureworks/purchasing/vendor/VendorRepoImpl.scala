@@ -16,6 +16,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -25,7 +26,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class VendorRepoImpl extends VendorRepo {
-  override def delete: DeleteBuilder[VendorFields, VendorRow] = DeleteBuilder.of("purchasing.vendor", VendorFields.structure)
+  override def delete: DeleteBuilder[VendorFields, VendorRow] = DeleteBuilder.of(""""purchasing"."vendor"""", VendorFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(businessentityid: BusinessentityId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "purchasing"."vendor" where "businessentityid" = ${BusinessentityId.pgType.encode(businessentityid)}""".update().runUnchecked(c) > 0
 
@@ -90,7 +91,7 @@ class VendorRepoImpl extends VendorRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "purchasing"."vendor"("businessentityid", "accountnumber", "name", "creditrating", "purchasingwebserviceurl", "preferredvendorstatus", "activeflag", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, VendorRowUnsaved.pgText)
 
-  override def select: SelectBuilder[VendorFields, VendorRow] = SelectBuilder.of("purchasing.vendor", VendorFields.structure, VendorRow.`_rowParser`)
+  override def select: SelectBuilder[VendorFields, VendorRow] = SelectBuilder.of(""""purchasing"."vendor"""", VendorFields.structure, VendorRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[VendorRow] = {
     interpolate"""select "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text
@@ -116,7 +117,7 @@ class VendorRepoImpl extends VendorRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[VendorFields, VendorRow] = UpdateBuilder.of("purchasing.vendor", VendorFields.structure, VendorRow.`_rowParser`.all())
+  override def update: UpdateBuilder[VendorFields, VendorRow] = UpdateBuilder.of(""""purchasing"."vendor"""", VendorFields.structure, VendorRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: VendorRow)(using c: Connection): java.lang.Boolean = {
     val businessentityid: BusinessentityId = row.businessentityid
@@ -143,8 +144,7 @@ class VendorRepoImpl extends VendorRepo {
     "activeflag" = EXCLUDED."activeflag",
     "purchasingwebserviceurl" = EXCLUDED."purchasingwebserviceurl",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text
-    """
+    returning "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text"""
     .updateReturning(VendorRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -161,8 +161,7 @@ class VendorRepoImpl extends VendorRepo {
     "activeflag" = EXCLUDED."activeflag",
     "purchasingwebserviceurl" = EXCLUDED."purchasingwebserviceurl",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text
-    """
+    returning "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text"""
       .updateManyReturning(VendorRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

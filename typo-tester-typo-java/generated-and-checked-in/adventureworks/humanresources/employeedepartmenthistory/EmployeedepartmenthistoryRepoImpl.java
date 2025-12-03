@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -30,7 +31,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class EmployeedepartmenthistoryRepoImpl implements EmployeedepartmenthistoryRepo {
   @Override
   public DeleteBuilder<EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow> delete() {
-    return DeleteBuilder.of("humanresources.employeedepartmenthistory", EmployeedepartmenthistoryFields.structure());
+    return DeleteBuilder.of("\"humanresources\".\"employeedepartmenthistory\"", EmployeedepartmenthistoryFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -202,7 +203,7 @@ public class EmployeedepartmenthistoryRepoImpl implements Employeedepartmenthist
 
   @Override
   public SelectBuilder<EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow> select() {
-    return SelectBuilder.of("humanresources.employeedepartmenthistory", EmployeedepartmenthistoryFields.structure(), EmployeedepartmenthistoryRow._rowParser);
+    return SelectBuilder.of("\"humanresources\".\"employeedepartmenthistory\"", EmployeedepartmenthistoryFields.structure(), EmployeedepartmenthistoryRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -281,7 +282,7 @@ public class EmployeedepartmenthistoryRepoImpl implements Employeedepartmenthist
 
   @Override
   public UpdateBuilder<EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow> update() {
-    return UpdateBuilder.of("humanresources.employeedepartmenthistory", EmployeedepartmenthistoryFields.structure(), EmployeedepartmenthistoryRow._rowParser.all());
+    return UpdateBuilder.of("\"humanresources\".\"employeedepartmenthistory\"", EmployeedepartmenthistoryFields.structure(), EmployeedepartmenthistoryRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -345,8 +346,7 @@ public class EmployeedepartmenthistoryRepoImpl implements Employeedepartmenthist
          do update set
            "enddate" = EXCLUDED."enddate",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "businessentityid", "departmentid", "shiftid", "startdate"::text, "enddate"::text, "modifieddate"::text
-      """)
+         returning "businessentityid", "departmentid", "shiftid", "startdate"::text, "enddate"::text, "modifieddate"::text""")
     )
       .updateReturning(EmployeedepartmenthistoryRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -364,8 +364,7 @@ public class EmployeedepartmenthistoryRepoImpl implements Employeedepartmenthist
                 do update set
                   "enddate" = EXCLUDED."enddate",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "businessentityid", "departmentid", "shiftid", "startdate"::text, "enddate"::text, "modifieddate"::text
-             """))
+                returning "businessentityid", "departmentid", "shiftid", "startdate"::text, "enddate"::text, "modifieddate"::text"""))
       .updateManyReturning(EmployeedepartmenthistoryRow._rowParser, unsaved)
       .runUnchecked(c);
   };

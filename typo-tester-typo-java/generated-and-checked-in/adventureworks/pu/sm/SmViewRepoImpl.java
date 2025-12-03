@@ -7,13 +7,14 @@ package adventureworks.pu.sm;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class SmViewRepoImpl implements SmViewRepo {
   @Override
   public SelectBuilder<SmViewFields, SmViewRow> select() {
-    return SelectBuilder.of("pu.sm", SmViewFields.structure(), SmViewRow._rowParser);
+    return SelectBuilder.of("\"pu\".\"sm\"", SmViewFields.structure(), SmViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

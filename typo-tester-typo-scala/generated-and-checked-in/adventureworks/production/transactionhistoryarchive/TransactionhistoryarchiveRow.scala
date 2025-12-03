@@ -64,7 +64,7 @@ case class TransactionhistoryarchiveRow(
 }
 
 object TransactionhistoryarchiveRow {
-  val `_rowParser`: RowParser[TransactionhistoryarchiveRow] = RowParsers.of(TransactionhistoryarchiveId.pgType, PgTypes.int4, PgTypes.int4, PgTypes.int4, TypoLocalDateTime.pgType, PgTypes.text, PgTypes.int4, PgTypes.numeric, TypoLocalDateTime.pgType, TransactionhistoryarchiveRow.apply, row => Array(row.transactionid, row.productid, row.referenceorderid, row.referenceorderlineid, row.transactiondate, row.transactiontype, row.quantity, row.actualcost, row.modifieddate))
+  val `_rowParser`: RowParser[TransactionhistoryarchiveRow] = RowParsers.of(TransactionhistoryarchiveId.pgType, PgTypes.int4, PgTypes.int4, PgTypes.int4, TypoLocalDateTime.pgType, PgTypes.bpchar, PgTypes.int4, PgTypes.numeric, TypoLocalDateTime.pgType, TransactionhistoryarchiveRow.apply, row => Array(row.transactionid, row.productid, row.referenceorderid, row.referenceorderlineid, row.transactiondate, row.transactiontype, row.quantity, row.actualcost, row.modifieddate))
 
   given pgText: PgText[TransactionhistoryarchiveRow] = PgText.from(`_rowParser`)
 }

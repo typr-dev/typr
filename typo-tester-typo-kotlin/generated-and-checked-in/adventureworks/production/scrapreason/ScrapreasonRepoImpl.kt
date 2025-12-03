@@ -15,6 +15,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -24,7 +25,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class ScrapreasonRepoImpl() : ScrapreasonRepo {
-  override fun delete(): DeleteBuilder<ScrapreasonFields, ScrapreasonRow> = DeleteBuilder.of("production.scrapreason", ScrapreasonFields.structure)
+  override fun delete(): DeleteBuilder<ScrapreasonFields, ScrapreasonRow> = DeleteBuilder.of("\"production\".\"scrapreason\"", ScrapreasonFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     scrapreasonid: ScrapreasonId,
@@ -131,7 +132,7 @@ class ScrapreasonRepoImpl() : ScrapreasonRepo {
   COPY "production"."scrapreason"("name", "scrapreasonid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, ScrapreasonRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<ScrapreasonFields, ScrapreasonRow> = SelectBuilder.of("production.scrapreason", ScrapreasonFields.structure, ScrapreasonRow._rowParser)
+  override fun select(): SelectBuilder<ScrapreasonFields, ScrapreasonRow> = SelectBuilder.of("\"production\".\"scrapreason\"", ScrapreasonFields.structure, ScrapreasonRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<ScrapreasonRow> = interpolate(typo.runtime.Fragment.lit("""
     select "scrapreasonid", "name", "modifieddate"::text
@@ -171,7 +172,7 @@ class ScrapreasonRepoImpl() : ScrapreasonRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<ScrapreasonFields, ScrapreasonRow> = UpdateBuilder.of("production.scrapreason", ScrapreasonFields.structure, ScrapreasonRow._rowParser.all())
+  override fun update(): UpdateBuilder<ScrapreasonFields, ScrapreasonRow> = UpdateBuilder.of("\"production\".\"scrapreason\"", ScrapreasonFields.structure, ScrapreasonRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: ScrapreasonRow,
@@ -213,8 +214,7 @@ class ScrapreasonRepoImpl() : ScrapreasonRepo {
       do update set
         "name" = EXCLUDED."name",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "scrapreasonid", "name", "modifieddate"::text
-    """.trimMargin())
+      returning "scrapreasonid", "name", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(ScrapreasonRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -229,8 +229,7 @@ class ScrapreasonRepoImpl() : ScrapreasonRepo {
                               do update set
                                 "name" = EXCLUDED."name",
                               "modifieddate" = EXCLUDED."modifieddate"
-                              returning "scrapreasonid", "name", "modifieddate"::text
-                            """.trimMargin()))
+                              returning "scrapreasonid", "name", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(ScrapreasonRow._rowParser, unsaved)
     .runUnchecked(c)
 

@@ -33,6 +33,7 @@ import adventureworks.public.Mydomain
 import adventureworks.public.Myenum
 import java.sql.Connection
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.PgTypes
@@ -40,7 +41,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PgtestnullRepoImpl extends PgtestnullRepo {
-  override def delete: DeleteBuilder[PgtestnullFields, PgtestnullRow] = DeleteBuilder.of("public.pgtestnull", PgtestnullFields.structure)
+  override def delete: DeleteBuilder[PgtestnullFields, PgtestnullRow] = DeleteBuilder.of(""""public"."pgtestnull"""", PgtestnullFields.structure, Dialect.POSTGRESQL)
 
   override def insert(unsaved: PgtestnullRow)(using c: Connection): PgtestnullRow = {
   interpolate"""insert into "public"."pgtestnull"("bool", "box", "bpchar", "bytea", "char", "circle", "date", "float4", "float8", "hstore", "inet", "int2", "int2vector", "int4", "int8", "interval", "json", "jsonb", "line", "lseg", "money", "mydomain", "myenum", "name", "numeric", "path", "point", "polygon", "text", "time", "timestamp", "timestampz", "timez", "uuid", "varchar", "vector", "xml", "boxes", "bpchares", "chares", "circlees", "datees", "float4es", "float8es", "inetes", "int2es", "int2vectores", "int4es", "int8es", "intervales", "jsones", "jsonbes", "linees", "lseges", "moneyes", "mydomaines", "myenumes", "namees", "numerices", "pathes", "pointes", "polygones", "textes", "timees", "timestampes", "timestampzes", "timezes", "uuides", "varchares", "xmles")
@@ -55,7 +56,7 @@ class PgtestnullRepoImpl extends PgtestnullRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."pgtestnull"("bool", "box", "bpchar", "bytea", "char", "circle", "date", "float4", "float8", "hstore", "inet", "int2", "int2vector", "int4", "int8", "interval", "json", "jsonb", "line", "lseg", "money", "mydomain", "myenum", "name", "numeric", "path", "point", "polygon", "text", "time", "timestamp", "timestampz", "timez", "uuid", "varchar", "vector", "xml", "boxes", "bpchares", "chares", "circlees", "datees", "float4es", "float8es", "inetes", "int2es", "int2vectores", "int4es", "int8es", "intervales", "jsones", "jsonbes", "linees", "lseges", "moneyes", "mydomaines", "myenumes", "namees", "numerices", "pathes", "pointes", "polygones", "textes", "timees", "timestampes", "timestampzes", "timezes", "uuides", "varchares", "xmles") FROM STDIN""", batchSize, unsaved, c, PgtestnullRow.pgText)
 
-  override def select: SelectBuilder[PgtestnullFields, PgtestnullRow] = SelectBuilder.of("public.pgtestnull", PgtestnullFields.structure, PgtestnullRow.`_rowParser`)
+  override def select: SelectBuilder[PgtestnullFields, PgtestnullRow] = SelectBuilder.of(""""public"."pgtestnull"""", PgtestnullFields.structure, PgtestnullRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[PgtestnullRow] = {
     interpolate"""select "bool", "box", "bpchar", "bytea", "char", "circle", "date"::text, "float4", "float8", "hstore", "inet", "int2", "int2vector", "int4", "int8", "interval", "json", "jsonb", "line", "lseg", "money"::numeric, "mydomain", "myenum", "name", "numeric", "path", "point", "polygon", "text", "time"::text, "timestamp"::text, "timestampz"::text, "timez"::text, "uuid", "varchar", "vector"::float4[], "xml", "boxes", "bpchares", "chares", "circlees", "datees"::text[], "float4es", "float8es", "inetes", "int2es", "int2vectores", "int4es", "int8es", "intervales", "jsones", "jsonbes", "linees", "lseges", "moneyes"::numeric[], "mydomaines"::text[], "myenumes", "namees", "numerices", "pathes", "pointes", "polygones", "textes", "timees"::text[], "timestampes"::text[], "timestampzes"::text[], "timezes"::text[], "uuides", "varchares", "xmles"
@@ -63,5 +64,5 @@ class PgtestnullRepoImpl extends PgtestnullRepo {
     """.query(PgtestnullRow.`_rowParser`.all()).runUnchecked(c)
   }
 
-  override def update: UpdateBuilder[PgtestnullFields, PgtestnullRow] = UpdateBuilder.of("public.pgtestnull", PgtestnullFields.structure, PgtestnullRow.`_rowParser`.all())
+  override def update: UpdateBuilder[PgtestnullFields, PgtestnullRow] = UpdateBuilder.of(""""public"."pgtestnull"""", PgtestnullFields.structure, PgtestnullRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 }

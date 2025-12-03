@@ -1,5 +1,5 @@
 with 
 personemailaddress0 as (
-  (select personemailaddress0 from person.emailaddress personemailaddress0 where ((personemailaddress0)."businessentityid" , (personemailaddress0)."emailaddressid" ) IN ((?::int4, ?::int4), (?::int4, ?::int4)))
+  (select (personemailaddress0)."businessentityid" AS personemailaddress0_businessentityid, (personemailaddress0)."emailaddressid" AS personemailaddress0_emailaddressid, (personemailaddress0)."emailaddress" AS personemailaddress0_emailaddress, (personemailaddress0)."rowguid" AS personemailaddress0_rowguid, (personemailaddress0)."modifieddate" AS personemailaddress0_modifieddate from "person"."emailaddress" personemailaddress0 where ((personemailaddress0)."businessentityid" , (personemailaddress0)."emailaddressid" ) IN ((?::int4, ?::int4), (?::int4, ?::int4)))
 )
-select (personemailaddress0)."businessentityid",(personemailaddress0)."emailaddressid",(personemailaddress0)."emailaddress",(personemailaddress0)."rowguid",(personemailaddress0)."modifieddate"::text from personemailaddress0
+select personemailaddress0.personemailaddress0_businessentityid, personemailaddress0.personemailaddress0_emailaddressid, personemailaddress0.personemailaddress0_emailaddress, personemailaddress0.personemailaddress0_rowguid, personemailaddress0.personemailaddress0_modifieddate::text from personemailaddress0

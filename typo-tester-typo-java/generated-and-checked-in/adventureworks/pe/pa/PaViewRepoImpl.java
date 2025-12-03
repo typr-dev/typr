@@ -7,13 +7,14 @@ package adventureworks.pe.pa;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class PaViewRepoImpl implements PaViewRepo {
   @Override
   public SelectBuilder<PaViewFields, PaViewRow> select() {
-    return SelectBuilder.of("pe.pa", PaViewFields.structure(), PaViewRow._rowParser);
+    return SelectBuilder.of("\"pe\".\"pa\"", PaViewFields.structure(), PaViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

@@ -2,7 +2,7 @@ package typo.runtime;
 
 import java.util.Optional;
 
-public sealed interface PgTypename<A> {
+public sealed interface PgTypename<A> extends DbTypename<A> {
     String sqlType();
 
     String sqlTypeNoPrecision();

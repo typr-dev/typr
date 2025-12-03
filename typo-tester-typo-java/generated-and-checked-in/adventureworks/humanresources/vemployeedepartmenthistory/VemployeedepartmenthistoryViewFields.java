@@ -37,7 +37,7 @@ public interface VemployeedepartmenthistoryViewFields {
                };
                @Override
                public Field</* user-picked */ FirstName, VemployeedepartmenthistoryViewRow> firstname() {
-                 return new Field</* user-picked */ FirstName, VemployeedepartmenthistoryViewRow>(_path, "firstname", VemployeedepartmenthistoryViewRow::firstname, Optional.empty(), Optional.empty(), (row, value) -> row.withFirstname(value), /* user-picked */ FirstName.pgType);
+                 return new Field</* user-picked */ FirstName, VemployeedepartmenthistoryViewRow>(_path, "firstname", VemployeedepartmenthistoryViewRow::firstname, Optional.empty(), Optional.empty(), (row, value) -> row.withFirstname(value), FirstName.pgType);
                };
                @Override
                public OptField<Name, VemployeedepartmenthistoryViewRow> middlename() {

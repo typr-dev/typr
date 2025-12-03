@@ -40,9 +40,11 @@ data class LocationRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in locationids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in locationids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -69,7 +71,7 @@ data class LocationRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.locationid] = row
       count = count + 1L
     }
@@ -84,8 +86,8 @@ data class LocationRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.locationid] = row
       count = count + 1L
     }
@@ -105,9 +107,13 @@ data class LocationRepoMock(
     locationids: Array<LocationId>,
     c: Connection
   ): List<LocationRow> {
-    var result = ArrayList<LocationRow>()
-    for (id in locationids) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<LocationRow>()
+    for (id in locationids) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -141,9 +147,9 @@ data class LocationRepoMock(
     unsaved: MutableIterator<LocationRow>,
     c: Connection
   ): List<LocationRow> {
-    var result = ArrayList<LocationRow>()
+    val result = ArrayList<LocationRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.locationid] = row
       result.add(row)
     }
@@ -158,7 +164,7 @@ data class LocationRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.locationid] = row
       count = count + 1
     }

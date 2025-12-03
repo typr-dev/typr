@@ -6,11 +6,12 @@
 package adventureworks.sales.vsalespersonsalesbyfiscalyears
 
 import java.sql.Connection
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class VsalespersonsalesbyfiscalyearsViewRepoImpl extends VsalespersonsalesbyfiscalyearsViewRepo {
-  override def select: SelectBuilder[VsalespersonsalesbyfiscalyearsViewFields, VsalespersonsalesbyfiscalyearsViewRow] = SelectBuilder.of("sales.vsalespersonsalesbyfiscalyears", VsalespersonsalesbyfiscalyearsViewFields.structure, VsalespersonsalesbyfiscalyearsViewRow.`_rowParser`)
+  override def select: SelectBuilder[VsalespersonsalesbyfiscalyearsViewFields, VsalespersonsalesbyfiscalyearsViewRow] = SelectBuilder.of(""""sales"."vsalespersonsalesbyfiscalyears"""", VsalespersonsalesbyfiscalyearsViewFields.structure, VsalespersonsalesbyfiscalyearsViewRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[VsalespersonsalesbyfiscalyearsViewRow] = {
     interpolate"""select "SalesPersonID", "FullName", "JobTitle", "SalesTerritory", "2012", "2013", "2014"

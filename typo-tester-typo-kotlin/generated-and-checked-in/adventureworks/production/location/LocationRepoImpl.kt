@@ -15,6 +15,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -25,7 +26,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class LocationRepoImpl() : LocationRepo {
-  override fun delete(): DeleteBuilder<LocationFields, LocationRow> = DeleteBuilder.of("production.location", LocationFields.structure)
+  override fun delete(): DeleteBuilder<LocationFields, LocationRow> = DeleteBuilder.of("\"production\".\"location\"", LocationFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     locationid: LocationId,
@@ -152,7 +153,7 @@ class LocationRepoImpl() : LocationRepo {
   COPY "production"."location"("name", "locationid", "costrate", "availability", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, LocationRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<LocationFields, LocationRow> = SelectBuilder.of("production.location", LocationFields.structure, LocationRow._rowParser)
+  override fun select(): SelectBuilder<LocationFields, LocationRow> = SelectBuilder.of("\"production\".\"location\"", LocationFields.structure, LocationRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<LocationRow> = interpolate(typo.runtime.Fragment.lit("""
     select "locationid", "name", "costrate", "availability", "modifieddate"::text
@@ -192,7 +193,7 @@ class LocationRepoImpl() : LocationRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<LocationFields, LocationRow> = UpdateBuilder.of("production.location", LocationFields.structure, LocationRow._rowParser.all())
+  override fun update(): UpdateBuilder<LocationFields, LocationRow> = UpdateBuilder.of("\"production\".\"location\"", LocationFields.structure, LocationRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: LocationRow,
@@ -248,8 +249,7 @@ class LocationRepoImpl() : LocationRepo {
       "costrate" = EXCLUDED."costrate",
       "availability" = EXCLUDED."availability",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "locationid", "name", "costrate", "availability", "modifieddate"::text
-    """.trimMargin())
+      returning "locationid", "name", "costrate", "availability", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(LocationRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -266,8 +266,7 @@ class LocationRepoImpl() : LocationRepo {
                            "costrate" = EXCLUDED."costrate",
                            "availability" = EXCLUDED."availability",
                            "modifieddate" = EXCLUDED."modifieddate"
-                           returning "locationid", "name", "costrate", "availability", "modifieddate"::text
-                         """.trimMargin()))
+                           returning "locationid", "name", "costrate", "availability", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(LocationRow._rowParser, unsaved)
     .runUnchecked(c)
 

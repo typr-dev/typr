@@ -116,7 +116,7 @@ object DViewFields {
             Optional.empty(),
             Optional.empty(),
             (row, value) => row.copy(revision = value),
-            PgTypes.text
+            PgTypes.bpchar
           )
         }
         override def changenumber: Field[Integer, DViewRow] = {

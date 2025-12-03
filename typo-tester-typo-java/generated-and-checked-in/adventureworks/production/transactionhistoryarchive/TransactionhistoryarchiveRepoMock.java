@@ -61,9 +61,11 @@ public record TransactionhistoryarchiveRepoMock(
     Connection c
   ) {
     var count = 0;
-    for (var id : transactionids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : transactionids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -143,8 +145,12 @@ public record TransactionhistoryarchiveRepoMock(
     Connection c
   ) {
     var result = new ArrayList<TransactionhistoryarchiveRow>();
-    for (var id : transactionids) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : transactionids) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 
@@ -168,7 +174,7 @@ public record TransactionhistoryarchiveRepoMock(
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.transactionid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
     if (shouldUpdate) {
-      map.put(row.transactionid(), row);
+      map.put(row.transactionid(), row);;
     };
     return shouldUpdate;
   };

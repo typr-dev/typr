@@ -7,11 +7,12 @@ package adventureworks.hr.s
 
 import java.sql.Connection
 import kotlin.collections.List
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.Fragment.interpolate
 
 class SViewRepoImpl() : SViewRepo {
-  override fun select(): SelectBuilder<SViewFields, SViewRow> = SelectBuilder.of("hr.s", SViewFields.structure, SViewRow._rowParser)
+  override fun select(): SelectBuilder<SViewFields, SViewRow> = SelectBuilder.of("\"hr\".\"s\"", SViewFields.structure, SViewRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<SViewRow> = interpolate(typo.runtime.Fragment.lit("""
     select "id", "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text

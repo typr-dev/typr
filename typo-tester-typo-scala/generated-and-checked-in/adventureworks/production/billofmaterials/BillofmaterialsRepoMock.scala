@@ -92,8 +92,9 @@ case class BillofmaterialsRepoMock(
 
   override def selectByIds(billofmaterialsids: Array[Integer])(using c: Connection): java.util.List[BillofmaterialsRow] = {
     val result = new ArrayList[BillofmaterialsRow]()
-    billofmaterialsids.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    billofmaterialsids.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

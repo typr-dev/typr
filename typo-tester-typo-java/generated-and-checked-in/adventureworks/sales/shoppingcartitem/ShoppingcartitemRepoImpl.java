@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -27,7 +28,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class ShoppingcartitemRepoImpl implements ShoppingcartitemRepo {
   @Override
   public DeleteBuilder<ShoppingcartitemFields, ShoppingcartitemRow> delete() {
-    return DeleteBuilder.of("sales.shoppingcartitem", ShoppingcartitemFields.structure());
+    return DeleteBuilder.of("\"sales\".\"shoppingcartitem\"", ShoppingcartitemFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -197,7 +198,7 @@ public class ShoppingcartitemRepoImpl implements ShoppingcartitemRepo {
 
   @Override
   public SelectBuilder<ShoppingcartitemFields, ShoppingcartitemRow> select() {
-    return SelectBuilder.of("sales.shoppingcartitem", ShoppingcartitemFields.structure(), ShoppingcartitemRow._rowParser);
+    return SelectBuilder.of("\"sales\".\"shoppingcartitem\"", ShoppingcartitemFields.structure(), ShoppingcartitemRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -250,7 +251,7 @@ public class ShoppingcartitemRepoImpl implements ShoppingcartitemRepo {
 
   @Override
   public UpdateBuilder<ShoppingcartitemFields, ShoppingcartitemRow> update() {
-    return UpdateBuilder.of("sales.shoppingcartitem", ShoppingcartitemFields.structure(), ShoppingcartitemRow._rowParser.all());
+    return UpdateBuilder.of("\"sales\".\"shoppingcartitem\"", ShoppingcartitemFields.structure(), ShoppingcartitemRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -317,8 +318,7 @@ public class ShoppingcartitemRepoImpl implements ShoppingcartitemRepo {
          "productid" = EXCLUDED."productid",
          "datecreated" = EXCLUDED."datecreated",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text
-      """)
+         returning "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text""")
     )
       .updateReturning(ShoppingcartitemRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -339,8 +339,7 @@ public class ShoppingcartitemRepoImpl implements ShoppingcartitemRepo {
                 "productid" = EXCLUDED."productid",
                 "datecreated" = EXCLUDED."datecreated",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text
-             """))
+                returning "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text"""))
       .updateManyReturning(ShoppingcartitemRow._rowParser, unsaved)
       .runUnchecked(c);
   };

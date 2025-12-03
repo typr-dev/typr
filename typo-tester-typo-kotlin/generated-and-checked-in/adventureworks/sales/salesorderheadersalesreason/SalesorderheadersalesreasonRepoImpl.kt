@@ -16,6 +16,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -26,7 +27,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class SalesorderheadersalesreasonRepoImpl() : SalesorderheadersalesreasonRepo {
-  override fun delete(): DeleteBuilder<SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow> = DeleteBuilder.of("sales.salesorderheadersalesreason", SalesorderheadersalesreasonFields.structure)
+  override fun delete(): DeleteBuilder<SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow> = DeleteBuilder.of("\"sales\".\"salesorderheadersalesreason\"", SalesorderheadersalesreasonFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     compositeId: SalesorderheadersalesreasonId,
@@ -142,7 +143,7 @@ class SalesorderheadersalesreasonRepoImpl() : SalesorderheadersalesreasonRepo {
   COPY "sales"."salesorderheadersalesreason"("salesorderid", "salesreasonid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, SalesorderheadersalesreasonRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow> = SelectBuilder.of("sales.salesorderheadersalesreason", SalesorderheadersalesreasonFields.structure, SalesorderheadersalesreasonRow._rowParser)
+  override fun select(): SelectBuilder<SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow> = SelectBuilder.of("\"sales\".\"salesorderheadersalesreason\"", SalesorderheadersalesreasonFields.structure, SalesorderheadersalesreasonRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<SalesorderheadersalesreasonRow> = interpolate(typo.runtime.Fragment.lit("""
     select "salesorderid", "salesreasonid", "modifieddate"::text
@@ -196,7 +197,7 @@ class SalesorderheadersalesreasonRepoImpl() : SalesorderheadersalesreasonRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow> = UpdateBuilder.of("sales.salesorderheadersalesreason", SalesorderheadersalesreasonFields.structure, SalesorderheadersalesreasonRow._rowParser.all())
+  override fun update(): UpdateBuilder<SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow> = UpdateBuilder.of("\"sales\".\"salesorderheadersalesreason\"", SalesorderheadersalesreasonFields.structure, SalesorderheadersalesreasonRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: SalesorderheadersalesreasonRow,
@@ -237,8 +238,7 @@ class SalesorderheadersalesreasonRepoImpl() : SalesorderheadersalesreasonRepo {
       on conflict ("salesorderid", "salesreasonid")
       do update set
         "modifieddate" = EXCLUDED."modifieddate"
-      returning "salesorderid", "salesreasonid", "modifieddate"::text
-    """.trimMargin())
+      returning "salesorderid", "salesreasonid", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(SalesorderheadersalesreasonRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -252,8 +252,7 @@ class SalesorderheadersalesreasonRepoImpl() : SalesorderheadersalesreasonRepo {
                                               on conflict ("salesorderid", "salesreasonid")
                                               do update set
                                                 "modifieddate" = EXCLUDED."modifieddate"
-                                              returning "salesorderid", "salesreasonid", "modifieddate"::text
-                                            """.trimMargin()))
+                                              returning "salesorderid", "salesreasonid", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(SalesorderheadersalesreasonRow._rowParser, unsaved)
     .runUnchecked(c)
 

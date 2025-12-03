@@ -8,7 +8,12 @@ public record PgType<A>(
         PgRead<A> read,
         PgWrite<A> write,
         PgText<A> pgText
-) {
+) implements DbType<A> {
+    @Override
+    public DbText<A> text() {
+        return pgText;
+    }
+
     public Fragment.Value<A> encode(A value) {
         return new Fragment.Value<>(value, this);
     }

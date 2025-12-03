@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -29,7 +30,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class PurchaseorderheaderRepoImpl implements PurchaseorderheaderRepo {
   @Override
   public DeleteBuilder<PurchaseorderheaderFields, PurchaseorderheaderRow> delete() {
-    return DeleteBuilder.of("purchasing.purchaseorderheader", PurchaseorderheaderFields.structure());
+    return DeleteBuilder.of("\"purchasing\".\"purchaseorderheader\"", PurchaseorderheaderFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -268,7 +269,7 @@ public class PurchaseorderheaderRepoImpl implements PurchaseorderheaderRepo {
 
   @Override
   public SelectBuilder<PurchaseorderheaderFields, PurchaseorderheaderRow> select() {
-    return SelectBuilder.of("purchasing.purchaseorderheader", PurchaseorderheaderFields.structure(), PurchaseorderheaderRow._rowParser);
+    return SelectBuilder.of("\"purchasing\".\"purchaseorderheader\"", PurchaseorderheaderFields.structure(), PurchaseorderheaderRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -321,7 +322,7 @@ public class PurchaseorderheaderRepoImpl implements PurchaseorderheaderRepo {
 
   @Override
   public UpdateBuilder<PurchaseorderheaderFields, PurchaseorderheaderRow> update() {
-    return UpdateBuilder.of("purchasing.purchaseorderheader", PurchaseorderheaderFields.structure(), PurchaseorderheaderRow._rowParser.all());
+    return UpdateBuilder.of("\"purchasing\".\"purchaseorderheader\"", PurchaseorderheaderFields.structure(), PurchaseorderheaderRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -430,8 +431,7 @@ public class PurchaseorderheaderRepoImpl implements PurchaseorderheaderRepo {
          "taxamt" = EXCLUDED."taxamt",
          "freight" = EXCLUDED."freight",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text
-      """)
+         returning "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text""")
     )
       .updateReturning(PurchaseorderheaderRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -458,8 +458,7 @@ public class PurchaseorderheaderRepoImpl implements PurchaseorderheaderRepo {
                 "taxamt" = EXCLUDED."taxamt",
                 "freight" = EXCLUDED."freight",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text
-             """))
+                returning "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text"""))
       .updateManyReturning(PurchaseorderheaderRow._rowParser, unsaved)
       .runUnchecked(c);
   };

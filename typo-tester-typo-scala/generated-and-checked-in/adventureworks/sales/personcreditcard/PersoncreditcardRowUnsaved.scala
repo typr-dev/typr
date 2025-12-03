@@ -29,5 +29,5 @@ case class PersoncreditcardRowUnsaved(
 }
 
 object PersoncreditcardRowUnsaved {
-  given pgText: PgText[PersoncreditcardRowUnsaved] = PgText.instance((row, sb) => { BusinessentityId.pgType.pgText.unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); /* user-picked */ CustomCreditcardId.pgType.pgText.unsafeEncode(row.creditcardid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
+  given pgText: PgText[PersoncreditcardRowUnsaved] = PgText.instance((row, sb) => { BusinessentityId.pgType.pgText.unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); CustomCreditcardId.pgType.pgText.unsafeEncode(row.creditcardid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using TypoLocalDateTime.pgType.pgText).unsafeEncode(row.modifieddate, sb) })
 }

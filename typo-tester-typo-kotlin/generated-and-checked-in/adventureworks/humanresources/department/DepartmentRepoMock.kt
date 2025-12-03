@@ -40,9 +40,11 @@ data class DepartmentRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in departmentids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in departmentids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -69,7 +71,7 @@ data class DepartmentRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.departmentid] = row
       count = count + 1L
     }
@@ -84,8 +86,8 @@ data class DepartmentRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.departmentid] = row
       count = count + 1L
     }
@@ -105,9 +107,13 @@ data class DepartmentRepoMock(
     departmentids: Array<DepartmentId>,
     c: Connection
   ): List<DepartmentRow> {
-    var result = ArrayList<DepartmentRow>()
-    for (id in departmentids) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<DepartmentRow>()
+    for (id in departmentids) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -141,9 +147,9 @@ data class DepartmentRepoMock(
     unsaved: MutableIterator<DepartmentRow>,
     c: Connection
   ): List<DepartmentRow> {
-    var result = ArrayList<DepartmentRow>()
+    val result = ArrayList<DepartmentRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.departmentid] = row
       result.add(row)
     }
@@ -158,7 +164,7 @@ data class DepartmentRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.departmentid] = row
       count = count + 1
     }

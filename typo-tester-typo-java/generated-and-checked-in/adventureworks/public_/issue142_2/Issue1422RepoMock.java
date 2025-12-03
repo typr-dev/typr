@@ -55,9 +55,11 @@ public record Issue1422RepoMock(HashMap<Issue142Id, Issue1422Row> map) implement
     Connection c
   ) {
     var count = 0;
-    for (var id : tabellkodes) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : tabellkodes) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -112,8 +114,12 @@ public record Issue1422RepoMock(HashMap<Issue142Id, Issue1422Row> map) implement
     Connection c
   ) {
     var result = new ArrayList<Issue1422Row>();
-    for (var id : tabellkodes) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : tabellkodes) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 

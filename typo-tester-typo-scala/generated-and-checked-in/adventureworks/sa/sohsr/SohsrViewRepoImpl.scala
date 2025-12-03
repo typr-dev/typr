@@ -6,11 +6,12 @@
 package adventureworks.sa.sohsr
 
 import java.sql.Connection
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class SohsrViewRepoImpl extends SohsrViewRepo {
-  override def select: SelectBuilder[SohsrViewFields, SohsrViewRow] = SelectBuilder.of("sa.sohsr", SohsrViewFields.structure, SohsrViewRow.`_rowParser`)
+  override def select: SelectBuilder[SohsrViewFields, SohsrViewRow] = SelectBuilder.of(""""sa"."sohsr"""", SohsrViewFields.structure, SohsrViewRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[SohsrViewRow] = {
     interpolate"""select "salesorderid", "salesreasonid", "modifieddate"::text

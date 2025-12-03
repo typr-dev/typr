@@ -6,11 +6,12 @@
 package adventureworks.pe.ct
 
 import java.sql.Connection
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class CtViewRepoImpl extends CtViewRepo {
-  override def select: SelectBuilder[CtViewFields, CtViewRow] = SelectBuilder.of("pe.ct", CtViewFields.structure, CtViewRow.`_rowParser`)
+  override def select: SelectBuilder[CtViewFields, CtViewRow] = SelectBuilder.of(""""pe"."ct"""", CtViewFields.structure, CtViewRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[CtViewRow] = {
     interpolate"""select "id", "contacttypeid", "name", "modifieddate"::text

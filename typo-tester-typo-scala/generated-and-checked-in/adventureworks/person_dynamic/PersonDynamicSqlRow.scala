@@ -25,5 +25,5 @@ case class PersonDynamicSqlRow(
 )
 
 object PersonDynamicSqlRow {
-  val `_rowParser`: RowParser[PersonDynamicSqlRow] = RowParsers.of(PgTypes.text.opt(), /* user-picked */ FirstName.pgType, Name.pgType.opt(), Name.pgType, PersonDynamicSqlRow.apply, row => Array(row.title, row.firstname, row.middlename, row.lastname))
+  val `_rowParser`: RowParser[PersonDynamicSqlRow] = RowParsers.of(PgTypes.text.opt(), FirstName.pgType, Name.pgType.opt(), Name.pgType, PersonDynamicSqlRow.apply, row => Array(row.title, row.firstname, row.middlename, row.lastname))
 }

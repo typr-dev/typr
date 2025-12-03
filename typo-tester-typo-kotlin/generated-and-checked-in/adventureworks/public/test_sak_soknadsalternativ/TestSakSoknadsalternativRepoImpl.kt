@@ -13,6 +13,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.PgTypes
@@ -22,7 +23,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class TestSakSoknadsalternativRepoImpl() : TestSakSoknadsalternativRepo {
-  override fun delete(): DeleteBuilder<TestSakSoknadsalternativFields, TestSakSoknadsalternativRow> = DeleteBuilder.of("public.test_sak_soknadsalternativ", TestSakSoknadsalternativFields.structure)
+  override fun delete(): DeleteBuilder<TestSakSoknadsalternativFields, TestSakSoknadsalternativRow> = DeleteBuilder.of("\"public\".\"test_sak_soknadsalternativ\"", TestSakSoknadsalternativFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     compositeId: TestSakSoknadsalternativId,
@@ -88,7 +89,7 @@ class TestSakSoknadsalternativRepoImpl() : TestSakSoknadsalternativRepo {
   COPY "public"."test_sak_soknadsalternativ"("organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder") FROM STDIN
   """.trimMargin()), batchSize, unsaved, c, TestSakSoknadsalternativRow.pgText)
 
-  override fun select(): SelectBuilder<TestSakSoknadsalternativFields, TestSakSoknadsalternativRow> = SelectBuilder.of("public.test_sak_soknadsalternativ", TestSakSoknadsalternativFields.structure, TestSakSoknadsalternativRow._rowParser)
+  override fun select(): SelectBuilder<TestSakSoknadsalternativFields, TestSakSoknadsalternativRow> = SelectBuilder.of("\"public\".\"test_sak_soknadsalternativ\"", TestSakSoknadsalternativFields.structure, TestSakSoknadsalternativRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<TestSakSoknadsalternativRow> = interpolate(typo.runtime.Fragment.lit("""
     select "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder"
@@ -142,7 +143,7 @@ class TestSakSoknadsalternativRepoImpl() : TestSakSoknadsalternativRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<TestSakSoknadsalternativFields, TestSakSoknadsalternativRow> = UpdateBuilder.of("public.test_sak_soknadsalternativ", TestSakSoknadsalternativFields.structure, TestSakSoknadsalternativRow._rowParser.all())
+  override fun update(): UpdateBuilder<TestSakSoknadsalternativFields, TestSakSoknadsalternativRow> = UpdateBuilder.of("\"public\".\"test_sak_soknadsalternativ\"", TestSakSoknadsalternativFields.structure, TestSakSoknadsalternativRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: TestSakSoknadsalternativRow,
@@ -183,8 +184,7 @@ class TestSakSoknadsalternativRepoImpl() : TestSakSoknadsalternativRepo {
       on conflict ("organisasjonskode_saksbehandler", "utdanningsmulighet_kode")
       do update set
         "organisasjonskode_tilbyder" = EXCLUDED."organisasjonskode_tilbyder"
-      returning "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder"
-    """.trimMargin())
+      returning "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder"""".trimMargin())
   )
     .updateReturning(TestSakSoknadsalternativRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -198,8 +198,7 @@ class TestSakSoknadsalternativRepoImpl() : TestSakSoknadsalternativRepo {
                                            on conflict ("organisasjonskode_saksbehandler", "utdanningsmulighet_kode")
                                            do update set
                                              "organisasjonskode_tilbyder" = EXCLUDED."organisasjonskode_tilbyder"
-                                           returning "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder"
-                                         """.trimMargin()))
+                                           returning "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder"""".trimMargin()))
     .updateManyReturning(TestSakSoknadsalternativRow._rowParser, unsaved)
     .runUnchecked(c)
 

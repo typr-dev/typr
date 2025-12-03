@@ -17,6 +17,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -28,7 +29,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class WorkorderroutingRepoImpl() : WorkorderroutingRepo {
-  override fun delete(): DeleteBuilder<WorkorderroutingFields, WorkorderroutingRow> = DeleteBuilder.of("production.workorderrouting", WorkorderroutingFields.structure)
+  override fun delete(): DeleteBuilder<WorkorderroutingFields, WorkorderroutingRow> = DeleteBuilder.of("\"production\".\"workorderrouting\"", WorkorderroutingFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     compositeId: WorkorderroutingId,
@@ -214,7 +215,7 @@ class WorkorderroutingRepoImpl() : WorkorderroutingRepo {
   COPY "production"."workorderrouting"("workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, WorkorderroutingRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<WorkorderroutingFields, WorkorderroutingRow> = SelectBuilder.of("production.workorderrouting", WorkorderroutingFields.structure, WorkorderroutingRow._rowParser)
+  override fun select(): SelectBuilder<WorkorderroutingFields, WorkorderroutingRow> = SelectBuilder.of("\"production\".\"workorderrouting\"", WorkorderroutingFields.structure, WorkorderroutingRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<WorkorderroutingRow> = interpolate(typo.runtime.Fragment.lit("""
     select "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text
@@ -275,7 +276,7 @@ class WorkorderroutingRepoImpl() : WorkorderroutingRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<WorkorderroutingFields, WorkorderroutingRow> = UpdateBuilder.of("production.workorderrouting", WorkorderroutingFields.structure, WorkorderroutingRow._rowParser.all())
+  override fun update(): UpdateBuilder<WorkorderroutingFields, WorkorderroutingRow> = UpdateBuilder.of("\"production\".\"workorderrouting\"", WorkorderroutingFields.structure, WorkorderroutingRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: WorkorderroutingRow,
@@ -378,8 +379,7 @@ class WorkorderroutingRepoImpl() : WorkorderroutingRepo {
       "plannedcost" = EXCLUDED."plannedcost",
       "actualcost" = EXCLUDED."actualcost",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text
-    """.trimMargin())
+      returning "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(WorkorderroutingRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -401,8 +401,7 @@ class WorkorderroutingRepoImpl() : WorkorderroutingRepo {
                                    "plannedcost" = EXCLUDED."plannedcost",
                                    "actualcost" = EXCLUDED."actualcost",
                                    "modifieddate" = EXCLUDED."modifieddate"
-                                   returning "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text
-                                 """.trimMargin()))
+                                   returning "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(WorkorderroutingRow._rowParser, unsaved)
     .runUnchecked(c)
 

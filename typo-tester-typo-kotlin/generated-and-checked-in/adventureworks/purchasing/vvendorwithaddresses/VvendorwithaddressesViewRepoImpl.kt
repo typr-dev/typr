@@ -7,11 +7,12 @@ package adventureworks.purchasing.vvendorwithaddresses
 
 import java.sql.Connection
 import kotlin.collections.List
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.Fragment.interpolate
 
 class VvendorwithaddressesViewRepoImpl() : VvendorwithaddressesViewRepo {
-  override fun select(): SelectBuilder<VvendorwithaddressesViewFields, VvendorwithaddressesViewRow> = SelectBuilder.of("purchasing.vvendorwithaddresses", VvendorwithaddressesViewFields.structure, VvendorwithaddressesViewRow._rowParser)
+  override fun select(): SelectBuilder<VvendorwithaddressesViewFields, VvendorwithaddressesViewRow> = SelectBuilder.of("\"purchasing\".\"vvendorwithaddresses\"", VvendorwithaddressesViewFields.structure, VvendorwithaddressesViewRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<VvendorwithaddressesViewRow> = interpolate(typo.runtime.Fragment.lit("""
     select "businessentityid", "name", "addresstype", "addressline1", "addressline2", "city", "stateprovincename", "postalcode", "countryregionname"

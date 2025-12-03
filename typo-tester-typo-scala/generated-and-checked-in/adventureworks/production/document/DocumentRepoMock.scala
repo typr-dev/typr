@@ -93,8 +93,9 @@ case class DocumentRepoMock(
 
   override def selectByIds(documentnodes: Array[DocumentId])(using c: Connection): java.util.List[DocumentRow] = {
     val result = new ArrayList[DocumentRow]()
-    documentnodes.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    documentnodes.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

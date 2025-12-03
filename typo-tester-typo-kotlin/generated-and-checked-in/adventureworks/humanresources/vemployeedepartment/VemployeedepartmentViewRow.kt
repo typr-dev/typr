@@ -38,6 +38,6 @@ data class VemployeedepartmentViewRow(
   val startdate: TypoLocalDate
 ) {
   companion object {
-    val _rowParser: RowParser<VemployeedepartmentViewRow> = RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), /* user-picked */ FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text.opt(), PgTypes.text, Name.pgType, Name.pgType, TypoLocalDate.pgType, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> VemployeedepartmentViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!) }, { row -> arrayOf<Any?>(row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.jobtitle, row.department, row.groupname, row.startdate) })
+    val _rowParser: RowParser<VemployeedepartmentViewRow> = RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text.opt(), PgTypes.text, Name.pgType, Name.pgType, TypoLocalDate.pgType, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> VemployeedepartmentViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!) }, { row -> arrayOf<Any?>(row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.jobtitle, row.department, row.groupname, row.startdate) })
   }
 }

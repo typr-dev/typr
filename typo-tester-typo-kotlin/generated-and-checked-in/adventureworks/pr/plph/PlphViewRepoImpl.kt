@@ -7,11 +7,12 @@ package adventureworks.pr.plph
 
 import java.sql.Connection
 import kotlin.collections.List
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.Fragment.interpolate
 
 class PlphViewRepoImpl() : PlphViewRepo {
-  override fun select(): SelectBuilder<PlphViewFields, PlphViewRow> = SelectBuilder.of("pr.plph", PlphViewFields.structure, PlphViewRow._rowParser)
+  override fun select(): SelectBuilder<PlphViewFields, PlphViewRow> = SelectBuilder.of("\"pr\".\"plph\"", PlphViewFields.structure, PlphViewRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<PlphViewRow> = interpolate(typo.runtime.Fragment.lit("""
     select "id", "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text

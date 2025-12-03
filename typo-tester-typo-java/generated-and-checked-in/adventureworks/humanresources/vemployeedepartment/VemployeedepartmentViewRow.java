@@ -87,5 +87,5 @@ public record VemployeedepartmentViewRow(
     return new VemployeedepartmentViewRow(businessentityid, title, firstname, middlename, lastname, suffix, jobtitle, department, groupname, startdate);
   };
 
-  static RowParser<VemployeedepartmentViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), /* user-picked */ FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text.opt(), PgTypes.text, Name.pgType, Name.pgType, TypoLocalDate.pgType, VemployeedepartmentViewRow::new, row -> new Object[]{row.businessentityid(), row.title(), row.firstname(), row.middlename(), row.lastname(), row.suffix(), row.jobtitle(), row.department(), row.groupname(), row.startdate()});;
+  static RowParser<VemployeedepartmentViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text.opt(), PgTypes.text, Name.pgType, Name.pgType, TypoLocalDate.pgType, VemployeedepartmentViewRow::new, row -> new Object[]{row.businessentityid(), row.title(), row.firstname(), row.middlename(), row.lastname(), row.suffix(), row.jobtitle(), row.department(), row.groupname(), row.startdate()});;
 }

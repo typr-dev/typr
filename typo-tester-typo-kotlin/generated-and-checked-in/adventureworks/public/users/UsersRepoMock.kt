@@ -41,9 +41,11 @@ data class UsersRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in userIds) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in userIds) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -70,7 +72,7 @@ data class UsersRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.userId] = row
       count = count + 1L
     }
@@ -85,8 +87,8 @@ data class UsersRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.userId] = row
       count = count + 1L
     }
@@ -106,9 +108,13 @@ data class UsersRepoMock(
     userIds: Array<UsersId>,
     c: Connection
   ): List<UsersRow> {
-    var result = ArrayList<UsersRow>()
-    for (id in userIds) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<UsersRow>()
+    for (id in userIds) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -147,9 +153,9 @@ data class UsersRepoMock(
     unsaved: MutableIterator<UsersRow>,
     c: Connection
   ): List<UsersRow> {
-    var result = ArrayList<UsersRow>()
+    val result = ArrayList<UsersRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.userId] = row
       result.add(row)
     }
@@ -164,7 +170,7 @@ data class UsersRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.userId] = row
       count = count + 1
     }

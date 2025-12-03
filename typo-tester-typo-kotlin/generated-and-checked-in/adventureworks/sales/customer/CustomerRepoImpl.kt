@@ -17,6 +17,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -26,7 +27,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class CustomerRepoImpl() : CustomerRepo {
-  override fun delete(): DeleteBuilder<CustomerFields, CustomerRow> = DeleteBuilder.of("sales.customer", CustomerFields.structure)
+  override fun delete(): DeleteBuilder<CustomerFields, CustomerRow> = DeleteBuilder.of("\"sales\".\"customer\"", CustomerFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     customerid: CustomerId,
@@ -157,7 +158,7 @@ class CustomerRepoImpl() : CustomerRepo {
   COPY "sales"."customer"("personid", "storeid", "territoryid", "customerid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, CustomerRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<CustomerFields, CustomerRow> = SelectBuilder.of("sales.customer", CustomerFields.structure, CustomerRow._rowParser)
+  override fun select(): SelectBuilder<CustomerFields, CustomerRow> = SelectBuilder.of("\"sales\".\"customer\"", CustomerFields.structure, CustomerRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<CustomerRow> = interpolate(typo.runtime.Fragment.lit("""
     select "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text
@@ -197,7 +198,7 @@ class CustomerRepoImpl() : CustomerRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<CustomerFields, CustomerRow> = UpdateBuilder.of("sales.customer", CustomerFields.structure, CustomerRow._rowParser.all())
+  override fun update(): UpdateBuilder<CustomerFields, CustomerRow> = UpdateBuilder.of("\"sales\".\"customer\"", CustomerFields.structure, CustomerRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: CustomerRow,
@@ -260,8 +261,7 @@ class CustomerRepoImpl() : CustomerRepo {
       "territoryid" = EXCLUDED."territoryid",
       "rowguid" = EXCLUDED."rowguid",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text
-    """.trimMargin())
+      returning "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(CustomerRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -279,8 +279,7 @@ class CustomerRepoImpl() : CustomerRepo {
                            "territoryid" = EXCLUDED."territoryid",
                            "rowguid" = EXCLUDED."rowguid",
                            "modifieddate" = EXCLUDED."modifieddate"
-                           returning "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text
-                         """.trimMargin()))
+                           returning "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(CustomerRow._rowParser, unsaved)
     .runUnchecked(c)
 

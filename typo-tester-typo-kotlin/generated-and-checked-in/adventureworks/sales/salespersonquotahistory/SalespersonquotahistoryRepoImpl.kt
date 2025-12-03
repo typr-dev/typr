@@ -16,6 +16,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -27,7 +28,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class SalespersonquotahistoryRepoImpl() : SalespersonquotahistoryRepo {
-  override fun delete(): DeleteBuilder<SalespersonquotahistoryFields, SalespersonquotahistoryRow> = DeleteBuilder.of("sales.salespersonquotahistory", SalespersonquotahistoryFields.structure)
+  override fun delete(): DeleteBuilder<SalespersonquotahistoryFields, SalespersonquotahistoryRow> = DeleteBuilder.of("\"sales\".\"salespersonquotahistory\"", SalespersonquotahistoryFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     compositeId: SalespersonquotahistoryId,
@@ -160,7 +161,7 @@ class SalespersonquotahistoryRepoImpl() : SalespersonquotahistoryRepo {
   COPY "sales"."salespersonquotahistory"("businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, SalespersonquotahistoryRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<SalespersonquotahistoryFields, SalespersonquotahistoryRow> = SelectBuilder.of("sales.salespersonquotahistory", SalespersonquotahistoryFields.structure, SalespersonquotahistoryRow._rowParser)
+  override fun select(): SelectBuilder<SalespersonquotahistoryFields, SalespersonquotahistoryRow> = SelectBuilder.of("\"sales\".\"salespersonquotahistory\"", SalespersonquotahistoryFields.structure, SalespersonquotahistoryRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<SalespersonquotahistoryRow> = interpolate(typo.runtime.Fragment.lit("""
     select "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text
@@ -214,7 +215,7 @@ class SalespersonquotahistoryRepoImpl() : SalespersonquotahistoryRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<SalespersonquotahistoryFields, SalespersonquotahistoryRow> = UpdateBuilder.of("sales.salespersonquotahistory", SalespersonquotahistoryFields.structure, SalespersonquotahistoryRow._rowParser.all())
+  override fun update(): UpdateBuilder<SalespersonquotahistoryFields, SalespersonquotahistoryRow> = UpdateBuilder.of("\"sales\".\"salespersonquotahistory\"", SalespersonquotahistoryFields.structure, SalespersonquotahistoryRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: SalespersonquotahistoryRow,
@@ -269,8 +270,7 @@ class SalespersonquotahistoryRepoImpl() : SalespersonquotahistoryRepo {
         "salesquota" = EXCLUDED."salesquota",
       "rowguid" = EXCLUDED."rowguid",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text
-    """.trimMargin())
+      returning "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(SalespersonquotahistoryRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -286,8 +286,7 @@ class SalespersonquotahistoryRepoImpl() : SalespersonquotahistoryRepo {
                                             "salesquota" = EXCLUDED."salesquota",
                                           "rowguid" = EXCLUDED."rowguid",
                                           "modifieddate" = EXCLUDED."modifieddate"
-                                          returning "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text
-                                        """.trimMargin()))
+                                          returning "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(SalespersonquotahistoryRow._rowParser, unsaved)
     .runUnchecked(c)
 

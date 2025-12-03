@@ -12,6 +12,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -20,7 +21,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class CountryregionRepoImpl extends CountryregionRepo {
-  override def delete: DeleteBuilder[CountryregionFields, CountryregionRow] = DeleteBuilder.of("person.countryregion", CountryregionFields.structure)
+  override def delete: DeleteBuilder[CountryregionFields, CountryregionRow] = DeleteBuilder.of(""""person"."countryregion"""", CountryregionFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(countryregioncode: CountryregionId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "person"."countryregion" where "countryregioncode" = ${CountryregionId.pgType.encode(countryregioncode)}""".update().runUnchecked(c) > 0
 
@@ -71,7 +72,7 @@ class CountryregionRepoImpl extends CountryregionRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "person"."countryregion"("countryregioncode", "name", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, CountryregionRowUnsaved.pgText)
 
-  override def select: SelectBuilder[CountryregionFields, CountryregionRow] = SelectBuilder.of("person.countryregion", CountryregionFields.structure, CountryregionRow.`_rowParser`)
+  override def select: SelectBuilder[CountryregionFields, CountryregionRow] = SelectBuilder.of(""""person"."countryregion"""", CountryregionFields.structure, CountryregionRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[CountryregionRow] = {
     interpolate"""select "countryregioncode", "name", "modifieddate"::text
@@ -97,7 +98,7 @@ class CountryregionRepoImpl extends CountryregionRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[CountryregionFields, CountryregionRow] = UpdateBuilder.of("person.countryregion", CountryregionFields.structure, CountryregionRow.`_rowParser`.all())
+  override def update: UpdateBuilder[CountryregionFields, CountryregionRow] = UpdateBuilder.of(""""person"."countryregion"""", CountryregionFields.structure, CountryregionRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: CountryregionRow)(using c: Connection): java.lang.Boolean = {
     val countryregioncode: CountryregionId = row.countryregioncode
@@ -114,8 +115,7 @@ class CountryregionRepoImpl extends CountryregionRepo {
     do update set
       "name" = EXCLUDED."name",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "countryregioncode", "name", "modifieddate"::text
-    """
+    returning "countryregioncode", "name", "modifieddate"::text"""
     .updateReturning(CountryregionRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -127,8 +127,7 @@ class CountryregionRepoImpl extends CountryregionRepo {
     do update set
       "name" = EXCLUDED."name",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "countryregioncode", "name", "modifieddate"::text
-    """
+    returning "countryregioncode", "name", "modifieddate"::text"""
       .updateManyReturning(CountryregionRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

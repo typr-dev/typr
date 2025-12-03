@@ -66,7 +66,21 @@ object jvm {
 
     def apply[T <: Type](name: Ident, tpe: T): Param[T] = Param(Nil, Comments.Empty, name, tpe, None)
   }
+
+  /** Ternary/inline if expression: Scala: `if (cond) then else`, Java: `cond ? then : else` */
   case class IfExpr(cond: Code, thenp: Code, elsep: Code) extends Tree
+
+  /** If statement with branches and optional else. Renders as: if (cond1) { body1 } else if (cond2) { body2 } else { elseBody }
+    */
+  case class If(branches: List[If.Branch], elseBody: Option[Code]) extends Tree
+  object If {
+    case class Branch(cond: Code, body: Code)
+    def apply(cond: Code, body: Code): If = If(List(Branch(cond, body)), None)
+    def apply(cond: Code, thenBody: Code, elseBody: Code): If = If(List(Branch(cond, thenBody)), Some(elseBody))
+  }
+
+  /** While loop statement: all languages: `while (cond) { body }` */
+  case class While(cond: Code, body: List[Code]) extends Tree
 
   case class MethodRef(tpe: Type, name: Ident) extends Tree
   case class ConstructorMethodRef(tpe: Type) extends Tree
@@ -465,6 +479,7 @@ object jvm {
       val DeleteBuilder = Qualified("typo.dsl.DeleteBuilder")
       val DeleteBuilderMock = Qualified("typo.dsl.DeleteBuilder.DeleteBuilderMock")
       val DeleteParams = Qualified("typo.dsl.DeleteParams")
+      val Dialect = Qualified("typo.dsl.Dialect")
       val Field = Qualified("typo.dsl.SqlExpr.Field")
       val FieldLikeNoHkt = Qualified("typo.dsl.SqlExpr.FieldLike")
       val ForeignKey = Qualified("typo.dsl.ForeignKey")

@@ -66,6 +66,24 @@ case object LangJava extends Lang {
 
   override def renderTree(tree: jvm.Tree, ctx: Ctx): jvm.Code =
     tree match {
+      case jvm.If(branches, elseBody) =>
+        val ifParts = branches.zipWithIndex.map { case (jvm.If.Branch(cond, body), idx) =>
+          val keyword = if (idx == 0) "if" else "else if"
+          code"""|$keyword ($cond) {
+                 |  $body;
+                 |}""".stripMargin
+        }
+        val elsePart = elseBody
+          .map(e => code"""| else {
+                                                |  $e;
+                                                |}""".stripMargin)
+          .getOrElse(jvm.Code.Empty)
+        ifParts.mkCode("") ++ elsePart
+      case jvm.While(cond, body) =>
+        val bodyWithSemicolons = body.map(stmt => stmt ++ code";").mkCode("\n")
+        code"""|while ($cond) {
+               |  $bodyWithSemicolons
+               |}""".stripMargin
       case jvm.IgnoreResult(expr)        => expr // Java: expression value is discarded automatically
       case jvm.NotNull(expr)             => expr // Java doesn't need not-null assertions
       case jvm.ConstructorMethodRef(tpe) => code"$tpe::new"
@@ -213,14 +231,19 @@ case object LangJava extends Lang {
           case content =>
             val strLit: jvm.Code = content.render(this).lines match {
               case Array(one) if one.contains(Quote) || one.contains("\n") || one.contains("\r") =>
+                // In Java text blocks, if the content ends with a quote, we need to escape it
+                // to avoid ambiguity with the closing """
+                val escaped = if (one.endsWith(Quote)) one.dropRight(1) + "\\\"" else one
                 code"""|$TripleQuote
-                       |$one
+                       |$escaped
                        |$TripleQuote""".stripMargin
               case Array(one) =>
                 code"$Quote$one$Quote"
               case more =>
-                val ret = more.iterator.zipWithIndex.map { case (line, _) =>
-                  code"${" " * 3}$line"
+                // In Java text blocks, if the last line ends with a quote, escape it
+                val ret = more.iterator.zipWithIndex.map { case (line, idx) =>
+                  val escaped = if (idx == more.length - 1 && line.endsWith(Quote)) line.dropRight(1) + "\\\"" else line
+                  code"${" " * 3}$escaped"
                 }
                 jvm.Code.Combined(List(code"$TripleQuote", code"\n") ++ ret ++ List(code"$TripleQuote"))
             }
@@ -678,9 +701,13 @@ case object LangJava extends Lang {
     jvm.Lambda("row", "value", jvm.Body.Expr(code"row.with$capitalizedName(value)"))
   }
 
-  // Java: for (var elem : array) { body }
-  override def arrayForEach(array: jvm.Code, elemVar: jvm.Ident, body: jvm.Code): jvm.Code =
-    code"for (var $elemVar : $array) { $body }"
+  // Java: for (var elem : array) { body; }
+  override def arrayForEach(array: jvm.Code, elemVar: jvm.Ident, body: jvm.Body): jvm.Code =
+    body match {
+      case jvm.Body.Expr(expr) => code"for (var $elemVar : $array) { $expr; }"
+      case _: jvm.Body.Stmts   => code"for (var $elemVar : $array) ${renderBody(body)}"
+      case jvm.Body.Abstract   => code"for (var $elemVar : $array) {}"
+    }
 
   // Java: arrayMap.map(array, mapper, targetClass)
   override def arrayMap(array: jvm.Code, mapper: jvm.Code, targetClass: jvm.Code): jvm.Code = {
@@ -702,6 +729,12 @@ case object LangJava extends Lang {
   // Java: new byte[size]
   override def newByteArray(size: jvm.Code): jvm.Code =
     code"new byte[$size]"
+
+  // Java: byte[]
+  override val ByteArrayType: jvm.Type = jvm.Type.ArrayOf(TypesJava.BytePrimitive)
+
+  // Java uses MAX_VALUE for max value constants
+  override def maxValue(tpe: jvm.Type): jvm.Code = code"$tpe.MAX_VALUE"
 
   // Java: Stream.generate(() -> factory).limit(size).toArray(elementType[]::new)
   override def arrayFill(size: jvm.Code, factory: jvm.Code, elementType: jvm.Type): jvm.Code =

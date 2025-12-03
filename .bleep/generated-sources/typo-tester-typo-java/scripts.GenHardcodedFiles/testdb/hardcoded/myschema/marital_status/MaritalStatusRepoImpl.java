@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.streamingInsert;
@@ -21,7 +22,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class MaritalStatusRepoImpl implements MaritalStatusRepo {
   @Override
   public DeleteBuilder<MaritalStatusFields, MaritalStatusRow> delete() {
-    return DeleteBuilder.of("myschema.marital_status", MaritalStatusFields.structure());
+    return DeleteBuilder.of("\"myschema\".\"marital_status\"", MaritalStatusFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -86,7 +87,7 @@ public class MaritalStatusRepoImpl implements MaritalStatusRepo {
 
   @Override
   public SelectBuilder<MaritalStatusFields, MaritalStatusRow> select() {
-    return SelectBuilder.of("myschema.marital_status", MaritalStatusFields.structure(), MaritalStatusRow._rowParser);
+    return SelectBuilder.of("\"myschema\".\"marital_status\"", MaritalStatusFields.structure(), MaritalStatusRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -139,7 +140,7 @@ public class MaritalStatusRepoImpl implements MaritalStatusRepo {
 
   @Override
   public UpdateBuilder<MaritalStatusFields, MaritalStatusRow> update() {
-    return UpdateBuilder.of("myschema.marital_status", MaritalStatusFields.structure(), MaritalStatusRow._rowParser.all());
+    return UpdateBuilder.of("\"myschema\".\"marital_status\"", MaritalStatusFields.structure(), MaritalStatusRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -156,8 +157,7 @@ public class MaritalStatusRepoImpl implements MaritalStatusRepo {
          ::int8)
          on conflict ("id")
          do update set "id" = EXCLUDED."id"
-         returning "id"
-      """)
+         returning "id\"""")
     )
       .updateReturning(MaritalStatusRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -172,9 +172,8 @@ public class MaritalStatusRepoImpl implements MaritalStatusRepo {
                 insert into "myschema"."marital_status"("id")
                 values (?::int8)
                 on conflict ("id")
-                do nothing
-                returning "id"
-             """))
+                do update set "id" = EXCLUDED."id"
+                returning "id\""""))
       .updateManyReturning(MaritalStatusRow._rowParser, unsaved)
       .runUnchecked(c);
   };

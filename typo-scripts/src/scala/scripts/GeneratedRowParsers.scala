@@ -21,7 +21,7 @@ object GeneratedRowParsers extends bleep.BleepCodegenScript("GeneratedRowParsers
         val range = 0.until(n)
         val tparamsDecl = range.map(nn => s"T$nn").mkString(", ")
         val tparams = range.map(nn => s"T$nn").mkString(", ")
-        val params = range.map(nn => s"PgType<T$nn> t$nn").mkString(", ")
+        val params = range.map(nn => s"DbType<T$nn> t$nn").mkString(", ")
         val decodeFunction = s"Function$n<$tparams, Row>"
         val decodeParams = range.map(nn => s"(T$nn) a[$nn]").mkString(", ")
         // Use java.util.function.Function<Row, Object[]> for encode - no complex generic inference needed

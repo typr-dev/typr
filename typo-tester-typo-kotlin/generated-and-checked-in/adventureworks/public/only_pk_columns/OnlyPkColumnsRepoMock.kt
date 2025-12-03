@@ -37,9 +37,11 @@ data class OnlyPkColumnsRepoMock(val map: MutableMap<OnlyPkColumnsId, OnlyPkColu
     c: Connection
   ): Int {
     var count = 0
-    for (id in compositeIds) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in compositeIds) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -61,7 +63,7 @@ data class OnlyPkColumnsRepoMock(val map: MutableMap<OnlyPkColumnsId, OnlyPkColu
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.compositeId()] = row
       count = count + 1L
     }
@@ -81,9 +83,13 @@ data class OnlyPkColumnsRepoMock(val map: MutableMap<OnlyPkColumnsId, OnlyPkColu
     compositeIds: Array<OnlyPkColumnsId>,
     c: Connection
   ): List<OnlyPkColumnsRow> {
-    var result = ArrayList<OnlyPkColumnsRow>()
-    for (id in compositeIds) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<OnlyPkColumnsRow>()
+    for (id in compositeIds) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -106,9 +112,9 @@ data class OnlyPkColumnsRepoMock(val map: MutableMap<OnlyPkColumnsId, OnlyPkColu
     unsaved: MutableIterator<OnlyPkColumnsRow>,
     c: Connection
   ): List<OnlyPkColumnsRow> {
-    var result = ArrayList<OnlyPkColumnsRow>()
+    val result = ArrayList<OnlyPkColumnsRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.compositeId()] = row
       result.add(row)
     }
@@ -123,7 +129,7 @@ data class OnlyPkColumnsRepoMock(val map: MutableMap<OnlyPkColumnsId, OnlyPkColu
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.compositeId()] = row
       count = count + 1
     }

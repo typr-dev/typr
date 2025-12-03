@@ -17,6 +17,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -27,7 +28,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class PurchaseorderheaderRepoImpl() : PurchaseorderheaderRepo {
-  override fun delete(): DeleteBuilder<PurchaseorderheaderFields, PurchaseorderheaderRow> = DeleteBuilder.of("purchasing.purchaseorderheader", PurchaseorderheaderFields.structure)
+  override fun delete(): DeleteBuilder<PurchaseorderheaderFields, PurchaseorderheaderRow> = DeleteBuilder.of("\"purchasing\".\"purchaseorderheader\"", PurchaseorderheaderFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     purchaseorderid: PurchaseorderheaderId,
@@ -215,7 +216,7 @@ class PurchaseorderheaderRepoImpl() : PurchaseorderheaderRepo {
   COPY "purchasing"."purchaseorderheader"("employeeid", "vendorid", "shipmethodid", "shipdate", "purchaseorderid", "revisionnumber", "status", "orderdate", "subtotal", "taxamt", "freight", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, PurchaseorderheaderRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<PurchaseorderheaderFields, PurchaseorderheaderRow> = SelectBuilder.of("purchasing.purchaseorderheader", PurchaseorderheaderFields.structure, PurchaseorderheaderRow._rowParser)
+  override fun select(): SelectBuilder<PurchaseorderheaderFields, PurchaseorderheaderRow> = SelectBuilder.of("\"purchasing\".\"purchaseorderheader\"", PurchaseorderheaderFields.structure, PurchaseorderheaderRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<PurchaseorderheaderRow> = interpolate(typo.runtime.Fragment.lit("""
     select "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text
@@ -255,7 +256,7 @@ class PurchaseorderheaderRepoImpl() : PurchaseorderheaderRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<PurchaseorderheaderFields, PurchaseorderheaderRow> = UpdateBuilder.of("purchasing.purchaseorderheader", PurchaseorderheaderFields.structure, PurchaseorderheaderRow._rowParser.all())
+  override fun update(): UpdateBuilder<PurchaseorderheaderFields, PurchaseorderheaderRow> = UpdateBuilder.of("\"purchasing\".\"purchaseorderheader\"", PurchaseorderheaderFields.structure, PurchaseorderheaderRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: PurchaseorderheaderRow,
@@ -360,8 +361,7 @@ class PurchaseorderheaderRepoImpl() : PurchaseorderheaderRepo {
       "taxamt" = EXCLUDED."taxamt",
       "freight" = EXCLUDED."freight",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text
-    """.trimMargin())
+      returning "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(PurchaseorderheaderRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -385,8 +385,7 @@ class PurchaseorderheaderRepoImpl() : PurchaseorderheaderRepo {
                                       "taxamt" = EXCLUDED."taxamt",
                                       "freight" = EXCLUDED."freight",
                                       "modifieddate" = EXCLUDED."modifieddate"
-                                      returning "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text
-                                    """.trimMargin()))
+                                      returning "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(PurchaseorderheaderRow._rowParser, unsaved)
     .runUnchecked(c)
 

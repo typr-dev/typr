@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -26,7 +27,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class TransactionhistoryarchiveRepoImpl implements TransactionhistoryarchiveRepo {
   @Override
   public DeleteBuilder<TransactionhistoryarchiveFields, TransactionhistoryarchiveRow> delete() {
-    return DeleteBuilder.of("production.transactionhistoryarchive", TransactionhistoryarchiveFields.structure());
+    return DeleteBuilder.of("\"production\".\"transactionhistoryarchive\"", TransactionhistoryarchiveFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -209,7 +210,7 @@ public class TransactionhistoryarchiveRepoImpl implements Transactionhistoryarch
 
   @Override
   public SelectBuilder<TransactionhistoryarchiveFields, TransactionhistoryarchiveRow> select() {
-    return SelectBuilder.of("production.transactionhistoryarchive", TransactionhistoryarchiveFields.structure(), TransactionhistoryarchiveRow._rowParser);
+    return SelectBuilder.of("\"production\".\"transactionhistoryarchive\"", TransactionhistoryarchiveFields.structure(), TransactionhistoryarchiveRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -262,7 +263,7 @@ public class TransactionhistoryarchiveRepoImpl implements Transactionhistoryarch
 
   @Override
   public UpdateBuilder<TransactionhistoryarchiveFields, TransactionhistoryarchiveRow> update() {
-    return UpdateBuilder.of("production.transactionhistoryarchive", TransactionhistoryarchiveFields.structure(), TransactionhistoryarchiveRow._rowParser.all());
+    return UpdateBuilder.of("\"production\".\"transactionhistoryarchive\"", TransactionhistoryarchiveFields.structure(), TransactionhistoryarchiveRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -350,8 +351,7 @@ public class TransactionhistoryarchiveRepoImpl implements Transactionhistoryarch
          "quantity" = EXCLUDED."quantity",
          "actualcost" = EXCLUDED."actualcost",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text
-      """)
+         returning "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text""")
     )
       .updateReturning(TransactionhistoryarchiveRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -375,8 +375,7 @@ public class TransactionhistoryarchiveRepoImpl implements Transactionhistoryarch
                 "quantity" = EXCLUDED."quantity",
                 "actualcost" = EXCLUDED."actualcost",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text
-             """))
+                returning "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text"""))
       .updateManyReturning(TransactionhistoryarchiveRow._rowParser, unsaved)
       .runUnchecked(c);
   };

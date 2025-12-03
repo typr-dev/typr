@@ -17,6 +17,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -27,7 +28,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class AddressRepoImpl() : AddressRepo {
-  override fun delete(): DeleteBuilder<AddressFields, AddressRow> = DeleteBuilder.of("person.address", AddressFields.structure)
+  override fun delete(): DeleteBuilder<AddressFields, AddressRow> = DeleteBuilder.of("\"person\".\"address\"", AddressFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     addressid: AddressId,
@@ -183,7 +184,7 @@ class AddressRepoImpl() : AddressRepo {
   COPY "person"."address"("addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "addressid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, AddressRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<AddressFields, AddressRow> = SelectBuilder.of("person.address", AddressFields.structure, AddressRow._rowParser)
+  override fun select(): SelectBuilder<AddressFields, AddressRow> = SelectBuilder.of("\"person\".\"address\"", AddressFields.structure, AddressRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<AddressRow> = interpolate(typo.runtime.Fragment.lit("""
     select "addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate"::text
@@ -223,7 +224,7 @@ class AddressRepoImpl() : AddressRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<AddressFields, AddressRow> = UpdateBuilder.of("person.address", AddressFields.structure, AddressRow._rowParser.all())
+  override fun update(): UpdateBuilder<AddressFields, AddressRow> = UpdateBuilder.of("\"person\".\"address\"", AddressFields.structure, AddressRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: AddressRow,
@@ -307,8 +308,7 @@ class AddressRepoImpl() : AddressRepo {
       "spatiallocation" = EXCLUDED."spatiallocation",
       "rowguid" = EXCLUDED."rowguid",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate"::text
-    """.trimMargin())
+      returning "addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(AddressRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -329,8 +329,7 @@ class AddressRepoImpl() : AddressRepo {
                           "spatiallocation" = EXCLUDED."spatiallocation",
                           "rowguid" = EXCLUDED."rowguid",
                           "modifieddate" = EXCLUDED."modifieddate"
-                          returning "addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate"::text
-                        """.trimMargin()))
+                          returning "addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(AddressRow._rowParser, unsaved)
     .runUnchecked(c)
 

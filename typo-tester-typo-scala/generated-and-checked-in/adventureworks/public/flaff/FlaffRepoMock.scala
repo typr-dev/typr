@@ -72,8 +72,9 @@ case class FlaffRepoMock(map: HashMap[FlaffId, FlaffRow] = new HashMap[FlaffId, 
 
   override def selectByIds(compositeIds: Array[FlaffId])(using c: Connection): java.util.List[FlaffRow] = {
     val result = new ArrayList[FlaffRow]()
-    compositeIds.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    compositeIds.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

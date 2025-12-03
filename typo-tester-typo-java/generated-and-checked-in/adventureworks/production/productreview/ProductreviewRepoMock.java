@@ -61,9 +61,11 @@ public record ProductreviewRepoMock(
     Connection c
   ) {
     var count = 0;
-    for (var id : productreviewids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : productreviewids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -143,8 +145,12 @@ public record ProductreviewRepoMock(
     Connection c
   ) {
     var result = new ArrayList<ProductreviewRow>();
-    for (var id : productreviewids) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : productreviewids) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 
@@ -168,7 +174,7 @@ public record ProductreviewRepoMock(
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.productreviewid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
     if (shouldUpdate) {
-      map.put(row.productreviewid(), row);
+      map.put(row.productreviewid(), row);;
     };
     return shouldUpdate;
   };

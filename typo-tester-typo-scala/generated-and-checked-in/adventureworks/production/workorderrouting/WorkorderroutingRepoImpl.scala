@@ -14,6 +14,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -23,7 +24,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
-  override def delete: DeleteBuilder[WorkorderroutingFields, WorkorderroutingRow] = DeleteBuilder.of("production.workorderrouting", WorkorderroutingFields.structure)
+  override def delete: DeleteBuilder[WorkorderroutingFields, WorkorderroutingRow] = DeleteBuilder.of(""""production"."workorderrouting"""", WorkorderroutingFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(compositeId: WorkorderroutingId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."workorderrouting" where "workorderid" = ${WorkorderId.pgType.encode(compositeId.workorderid)} AND "productid" = ${PgTypes.int4.encode(compositeId.productid)} AND "operationsequence" = ${TypoShort.pgType.encode(compositeId.operationsequence)}""".update().runUnchecked(c) > 0
 
@@ -95,7 +96,7 @@ class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."workorderrouting"("workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, WorkorderroutingRowUnsaved.pgText)
 
-  override def select: SelectBuilder[WorkorderroutingFields, WorkorderroutingRow] = SelectBuilder.of("production.workorderrouting", WorkorderroutingFields.structure, WorkorderroutingRow.`_rowParser`)
+  override def select: SelectBuilder[WorkorderroutingFields, WorkorderroutingRow] = SelectBuilder.of(""""production"."workorderrouting"""", WorkorderroutingFields.structure, WorkorderroutingRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[WorkorderroutingRow] = {
     interpolate"""select "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text
@@ -126,7 +127,7 @@ class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[WorkorderroutingFields, WorkorderroutingRow] = UpdateBuilder.of("production.workorderrouting", WorkorderroutingFields.structure, WorkorderroutingRow.`_rowParser`.all())
+  override def update: UpdateBuilder[WorkorderroutingFields, WorkorderroutingRow] = UpdateBuilder.of(""""production"."workorderrouting"""", WorkorderroutingFields.structure, WorkorderroutingRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: WorkorderroutingRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: WorkorderroutingId = row.compositeId
@@ -157,8 +158,7 @@ class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
     "plannedcost" = EXCLUDED."plannedcost",
     "actualcost" = EXCLUDED."actualcost",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text
-    """
+    returning "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text"""
     .updateReturning(WorkorderroutingRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -177,8 +177,7 @@ class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
     "plannedcost" = EXCLUDED."plannedcost",
     "actualcost" = EXCLUDED."actualcost",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text
-    """
+    returning "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text"""
       .updateManyReturning(WorkorderroutingRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

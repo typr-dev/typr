@@ -40,7 +40,7 @@ public interface StateprovinceFields {
                };
                @Override
                public Field</* bpchar, max 3 chars */ String, StateprovinceRow> stateprovincecode() {
-                 return new Field</* bpchar, max 3 chars */ String, StateprovinceRow>(_path, "stateprovincecode", StateprovinceRow::stateprovincecode, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withStateprovincecode(value), PgTypes.text);
+                 return new Field</* bpchar, max 3 chars */ String, StateprovinceRow>(_path, "stateprovincecode", StateprovinceRow::stateprovincecode, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withStateprovincecode(value), PgTypes.bpchar);
                };
                @Override
                public Field<CountryregionId, StateprovinceRow> countryregioncode() {

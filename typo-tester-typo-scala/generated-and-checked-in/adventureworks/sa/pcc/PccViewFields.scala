@@ -59,7 +59,7 @@ object PccViewFields {
             Optional.empty(),
             Optional.empty(),
             (row, value) => row.copy(creditcardid = value),
-            /* user-picked */ CustomCreditcardId.pgType
+            CustomCreditcardId.pgType
           )
         }
         override def modifieddate: Field[TypoLocalDateTime, PccViewRow] = {

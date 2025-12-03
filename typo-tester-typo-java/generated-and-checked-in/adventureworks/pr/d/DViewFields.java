@@ -52,7 +52,7 @@ public interface DViewFields {
                };
                @Override
                public Field</* bpchar, max 5 chars */ String, DViewRow> revision() {
-                 return new Field</* bpchar, max 5 chars */ String, DViewRow>(_path, "revision", DViewRow::revision, Optional.empty(), Optional.empty(), (row, value) -> row.withRevision(value), PgTypes.text);
+                 return new Field</* bpchar, max 5 chars */ String, DViewRow>(_path, "revision", DViewRow::revision, Optional.empty(), Optional.empty(), (row, value) -> row.withRevision(value), PgTypes.bpchar);
                };
                @Override
                public Field<Integer, DViewRow> changenumber() {

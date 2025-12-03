@@ -151,11 +151,11 @@ public record PersonRowUnsaved(
     PgText.instance((row, sb) -> {
       BusinessentityId.pgType.pgText().unsafeEncode(row.businessentityid, sb);
       sb.append(PgText.DELIMETER);
-      PgTypes.text.pgText().unsafeEncode(row.persontype, sb);
+      PgTypes.bpchar.pgText().unsafeEncode(row.persontype, sb);
       sb.append(PgText.DELIMETER);
       PgTypes.text.opt().pgText().unsafeEncode(row.title, sb);
       sb.append(PgText.DELIMETER);
-      /* user-picked */ FirstName.pgType.pgText().unsafeEncode(row.firstname, sb);
+      FirstName.pgType.pgText().unsafeEncode(row.firstname, sb);
       sb.append(PgText.DELIMETER);
       Name.pgType.opt().pgText().unsafeEncode(row.middlename, sb);
       sb.append(PgText.DELIMETER);

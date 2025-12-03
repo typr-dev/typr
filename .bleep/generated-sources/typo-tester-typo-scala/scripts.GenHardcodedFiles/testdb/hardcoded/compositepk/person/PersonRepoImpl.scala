@@ -12,6 +12,7 @@ import testdb.hardcoded.compositepk.person.PersonFieldValue.name
 import testdb.hardcoded.compositepk.person.PersonFieldValue.one
 import testdb.hardcoded.compositepk.person.PersonFieldValue.two
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -21,7 +22,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PersonRepoImpl extends PersonRepo {
-  override def delete: DeleteBuilder[PersonFields, PersonRow] = DeleteBuilder.of("compositepk.person", PersonFields.structure)
+  override def delete: DeleteBuilder[PersonFields, PersonRow] = DeleteBuilder.of(""""compositepk"."person"""", PersonFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(compositeId: PersonId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "compositepk"."person" where "one" = ${PgTypes.int8.encode(compositeId.one)} AND "two" = ${PgTypes.text.opt().encode(compositeId.two)}""".update().runUnchecked(c) > 0
 
@@ -66,7 +67,7 @@ class PersonRepoImpl extends PersonRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "compositepk"."person"("name", "one", "two") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, PersonRowUnsaved.pgText)
 
-  override def select: SelectBuilder[PersonFields, PersonRow] = SelectBuilder.of("compositepk.person", PersonFields.structure, PersonRow.`_rowParser`)
+  override def select: SelectBuilder[PersonFields, PersonRow] = SelectBuilder.of(""""compositepk"."person"""", PersonFields.structure, PersonRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[PersonRow] = {
     interpolate"""select "one", "two", "name"
@@ -93,7 +94,7 @@ class PersonRepoImpl extends PersonRepo {
     where "one" = ${PgTypes.int8.encode(compositeId.one)} AND "two" = ${PgTypes.text.opt().encode(compositeId.two)}""".query(PersonRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  override def update: UpdateBuilder[PersonFields, PersonRow] = UpdateBuilder.of("compositepk.person", PersonFields.structure, PersonRow.`_rowParser`.all())
+  override def update: UpdateBuilder[PersonFields, PersonRow] = UpdateBuilder.of(""""compositepk"."person"""", PersonFields.structure, PersonRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: PersonRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: PersonId = row.compositeId
@@ -125,8 +126,7 @@ class PersonRepoImpl extends PersonRepo {
     on conflict ("one", "two")
     do update set
       "name" = EXCLUDED."name"
-    returning "one", "two", "name"
-    """
+    returning "one", "two", "name""""
     .updateReturning(PersonRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -137,8 +137,7 @@ class PersonRepoImpl extends PersonRepo {
     on conflict ("one", "two")
     do update set
       "name" = EXCLUDED."name"
-    returning "one", "two", "name"
-    """
+    returning "one", "two", "name""""
       .updateManyReturning(PersonRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

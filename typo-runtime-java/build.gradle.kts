@@ -23,6 +23,7 @@ sourceSets {
 dependencies {
     api("org.postgresql:postgresql:42.7.3")
     api("org.jetbrains:annotations:26.0.1")
+    api("org.mariadb.jdbc:mariadb-java-client:3.5.1")
 }
 
 tasks.withType<JavaCompile> {

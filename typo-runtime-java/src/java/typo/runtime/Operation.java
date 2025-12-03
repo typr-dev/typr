@@ -13,7 +13,8 @@ public sealed interface Operation<Out>
         Operation.Update,
         Operation.UpdateReturning,
         Operation.UpdateManyReturning,
-        Operation.UpdateMany {
+        Operation.UpdateMany,
+        Operation.UpdateReturningEach {
     Out run(Connection conn) throws SQLException;
 
     default Out runUnchecked(Connection conn) {
@@ -95,6 +96,34 @@ public sealed interface Operation<Out>
                     return parser.all().apply(rs);
                 }
             }
+        }
+    }
+
+    /**
+     * Executes each row individually with RETURNING clause.
+     * Used for MariaDB where batch mode with RETURNING doesn't work properly via getGeneratedKeys().
+     * Each INSERT/UPDATE is executed separately and the RETURNING result is read from executeQuery().
+     */
+    record UpdateReturningEach<Row>(
+            Fragment query,
+            RowParser<Row> parser,
+            Iterator<Row> rows
+    ) implements Operation<List<Row>> {
+        @Override
+        public List<Row> run(Connection conn) throws SQLException {
+            java.util.ArrayList<Row> results = new java.util.ArrayList<>();
+            String sql = query.render();
+            while (rows.hasNext()) {
+                Row row = rows.next();
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    query.set(stmt);
+                    parser.writeRow(stmt, row);
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        results.addAll(parser.all().apply(rs));
+                    }
+                }
+            }
+            return results;
         }
     }
 }

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -27,7 +28,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class LocationRepoImpl implements LocationRepo {
   @Override
   public DeleteBuilder<LocationFields, LocationRow> delete() {
-    return DeleteBuilder.of("production.location", LocationFields.structure());
+    return DeleteBuilder.of("\"production\".\"location\"", LocationFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -189,7 +190,7 @@ public class LocationRepoImpl implements LocationRepo {
 
   @Override
   public SelectBuilder<LocationFields, LocationRow> select() {
-    return SelectBuilder.of("production.location", LocationFields.structure(), LocationRow._rowParser);
+    return SelectBuilder.of("\"production\".\"location\"", LocationFields.structure(), LocationRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -242,7 +243,7 @@ public class LocationRepoImpl implements LocationRepo {
 
   @Override
   public UpdateBuilder<LocationFields, LocationRow> update() {
-    return UpdateBuilder.of("production.location", LocationFields.structure(), LocationRow._rowParser.all());
+    return UpdateBuilder.of("\"production\".\"location\"", LocationFields.structure(), LocationRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -302,8 +303,7 @@ public class LocationRepoImpl implements LocationRepo {
          "costrate" = EXCLUDED."costrate",
          "availability" = EXCLUDED."availability",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "locationid", "name", "costrate", "availability", "modifieddate"::text
-      """)
+         returning "locationid", "name", "costrate", "availability", "modifieddate"::text""")
     )
       .updateReturning(LocationRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -323,8 +323,7 @@ public class LocationRepoImpl implements LocationRepo {
                 "costrate" = EXCLUDED."costrate",
                 "availability" = EXCLUDED."availability",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "locationid", "name", "costrate", "availability", "modifieddate"::text
-             """))
+                returning "locationid", "name", "costrate", "availability", "modifieddate"::text"""))
       .updateManyReturning(LocationRow._rowParser, unsaved)
       .runUnchecked(c);
   };

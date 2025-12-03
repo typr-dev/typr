@@ -16,6 +16,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -25,7 +26,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class ShiftRepoImpl() : ShiftRepo {
-  override fun delete(): DeleteBuilder<ShiftFields, ShiftRow> = DeleteBuilder.of("humanresources.shift", ShiftFields.structure)
+  override fun delete(): DeleteBuilder<ShiftFields, ShiftRow> = DeleteBuilder.of("\"humanresources\".\"shift\"", ShiftFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     shiftid: ShiftId,
@@ -146,7 +147,7 @@ class ShiftRepoImpl() : ShiftRepo {
   COPY "humanresources"."shift"("name", "starttime", "endtime", "shiftid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, ShiftRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<ShiftFields, ShiftRow> = SelectBuilder.of("humanresources.shift", ShiftFields.structure, ShiftRow._rowParser)
+  override fun select(): SelectBuilder<ShiftFields, ShiftRow> = SelectBuilder.of("\"humanresources\".\"shift\"", ShiftFields.structure, ShiftRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<ShiftRow> = interpolate(typo.runtime.Fragment.lit("""
     select "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text
@@ -186,7 +187,7 @@ class ShiftRepoImpl() : ShiftRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<ShiftFields, ShiftRow> = UpdateBuilder.of("humanresources.shift", ShiftFields.structure, ShiftRow._rowParser.all())
+  override fun update(): UpdateBuilder<ShiftFields, ShiftRow> = UpdateBuilder.of("\"humanresources\".\"shift\"", ShiftFields.structure, ShiftRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: ShiftRow,
@@ -242,8 +243,7 @@ class ShiftRepoImpl() : ShiftRepo {
       "starttime" = EXCLUDED."starttime",
       "endtime" = EXCLUDED."endtime",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text
-    """.trimMargin())
+      returning "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text""".trimMargin())
   )
     .updateReturning(ShiftRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -260,8 +260,7 @@ class ShiftRepoImpl() : ShiftRepo {
                         "starttime" = EXCLUDED."starttime",
                         "endtime" = EXCLUDED."endtime",
                         "modifieddate" = EXCLUDED."modifieddate"
-                        returning "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text
-                      """.trimMargin()))
+                        returning "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text""".trimMargin()))
     .updateManyReturning(ShiftRow._rowParser, unsaved)
     .runUnchecked(c)
 

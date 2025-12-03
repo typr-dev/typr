@@ -92,8 +92,9 @@ case class AddresstypeRepoMock(
 
   override def selectByIds(addresstypeids: Array[AddresstypeId])(using c: Connection): java.util.List[AddresstypeRow] = {
     val result = new ArrayList[AddresstypeRow]()
-    addresstypeids.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    addresstypeids.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

@@ -34,8 +34,8 @@ interface CcViewFields {
   companion object {
     private class Impl(path: List<Path>) : Relation<CcViewFields, CcViewRow>(path) {
       override fun fields(): CcViewFields = object : CcViewFields {
-        override fun id(): Field</* user-picked */ CustomCreditcardId, CcViewRow> = Field</* user-picked */ CustomCreditcardId, CcViewRow>(_path, "id", CcViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, /* user-picked */ CustomCreditcardId.pgType)
-        override fun creditcardid(): Field</* user-picked */ CustomCreditcardId, CcViewRow> = Field</* user-picked */ CustomCreditcardId, CcViewRow>(_path, "creditcardid", CcViewRow::creditcardid, Optional.empty(), Optional.empty(), { row, value -> row.copy(creditcardid = value) }, /* user-picked */ CustomCreditcardId.pgType)
+        override fun id(): Field</* user-picked */ CustomCreditcardId, CcViewRow> = Field</* user-picked */ CustomCreditcardId, CcViewRow>(_path, "id", CcViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, CustomCreditcardId.pgType)
+        override fun creditcardid(): Field</* user-picked */ CustomCreditcardId, CcViewRow> = Field</* user-picked */ CustomCreditcardId, CcViewRow>(_path, "creditcardid", CcViewRow::creditcardid, Optional.empty(), Optional.empty(), { row, value -> row.copy(creditcardid = value) }, CustomCreditcardId.pgType)
         override fun cardtype(): Field</* max 50 chars */ String, CcViewRow> = Field</* max 50 chars */ String, CcViewRow>(_path, "cardtype", CcViewRow::cardtype, Optional.empty(), Optional.empty(), { row, value -> row.copy(cardtype = value) }, PgTypes.text)
         override fun cardnumber(): Field</* max 25 chars */ String, CcViewRow> = Field</* max 25 chars */ String, CcViewRow>(_path, "cardnumber", CcViewRow::cardnumber, Optional.empty(), Optional.empty(), { row, value -> row.copy(cardnumber = value) }, PgTypes.text)
         override fun expmonth(): Field<TypoShort, CcViewRow> = Field<TypoShort, CcViewRow>(_path, "expmonth", CcViewRow::expmonth, Optional.empty(), Optional.empty(), { row, value -> row.copy(expmonth = value) }, TypoShort.pgType)

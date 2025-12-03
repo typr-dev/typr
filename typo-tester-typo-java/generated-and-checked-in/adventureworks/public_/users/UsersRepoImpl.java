@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -27,7 +28,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class UsersRepoImpl implements UsersRepo {
   @Override
   public DeleteBuilder<UsersFields, UsersRow> delete() {
-    return DeleteBuilder.of("public.users", UsersFields.structure());
+    return DeleteBuilder.of("\"public\".\"users\"", UsersFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -185,7 +186,7 @@ public class UsersRepoImpl implements UsersRepo {
 
   @Override
   public SelectBuilder<UsersFields, UsersRow> select() {
-    return SelectBuilder.of("public.users", UsersFields.structure(), UsersRow._rowParser);
+    return SelectBuilder.of("\"public\".\"users\"", UsersFields.structure(), UsersRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -256,7 +257,7 @@ public class UsersRepoImpl implements UsersRepo {
 
   @Override
   public UpdateBuilder<UsersFields, UsersRow> update() {
-    return UpdateBuilder.of("public.users", UsersFields.structure(), UsersRow._rowParser.all());
+    return UpdateBuilder.of("\"public\".\"users\"", UsersFields.structure(), UsersRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -330,8 +331,7 @@ public class UsersRepoImpl implements UsersRepo {
          "password" = EXCLUDED."password",
          "created_at" = EXCLUDED."created_at",
          "verified_on" = EXCLUDED."verified_on"
-         returning "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text
-      """)
+         returning "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text""")
     )
       .updateReturning(UsersRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -353,8 +353,7 @@ public class UsersRepoImpl implements UsersRepo {
                 "password" = EXCLUDED."password",
                 "created_at" = EXCLUDED."created_at",
                 "verified_on" = EXCLUDED."verified_on"
-                returning "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text
-             """))
+                returning "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text"""))
       .updateManyReturning(UsersRow._rowParser, unsaved)
       .runUnchecked(c);
   };

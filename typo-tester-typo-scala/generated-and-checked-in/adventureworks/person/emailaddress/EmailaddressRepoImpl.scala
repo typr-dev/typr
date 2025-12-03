@@ -13,6 +13,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -22,7 +23,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class EmailaddressRepoImpl extends EmailaddressRepo {
-  override def delete: DeleteBuilder[EmailaddressFields, EmailaddressRow] = DeleteBuilder.of("person.emailaddress", EmailaddressFields.structure)
+  override def delete: DeleteBuilder[EmailaddressFields, EmailaddressRow] = DeleteBuilder.of(""""person"."emailaddress"""", EmailaddressFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(compositeId: EmailaddressId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "person"."emailaddress" where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "emailaddressid" = ${PgTypes.int4.encode(compositeId.emailaddressid)}""".update().runUnchecked(c) > 0
 
@@ -83,7 +84,7 @@ class EmailaddressRepoImpl extends EmailaddressRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "person"."emailaddress"("businessentityid", "emailaddress", "emailaddressid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, EmailaddressRowUnsaved.pgText)
 
-  override def select: SelectBuilder[EmailaddressFields, EmailaddressRow] = SelectBuilder.of("person.emailaddress", EmailaddressFields.structure, EmailaddressRow.`_rowParser`)
+  override def select: SelectBuilder[EmailaddressFields, EmailaddressRow] = SelectBuilder.of(""""person"."emailaddress"""", EmailaddressFields.structure, EmailaddressRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[EmailaddressRow] = {
     interpolate"""select "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"::text
@@ -113,7 +114,7 @@ class EmailaddressRepoImpl extends EmailaddressRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[EmailaddressFields, EmailaddressRow] = UpdateBuilder.of("person.emailaddress", EmailaddressFields.structure, EmailaddressRow.`_rowParser`.all())
+  override def update: UpdateBuilder[EmailaddressFields, EmailaddressRow] = UpdateBuilder.of(""""person"."emailaddress"""", EmailaddressFields.structure, EmailaddressRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: EmailaddressRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: EmailaddressId = row.compositeId
@@ -132,8 +133,7 @@ class EmailaddressRepoImpl extends EmailaddressRepo {
       "emailaddress" = EXCLUDED."emailaddress",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"::text
-    """
+    returning "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"::text"""
     .updateReturning(EmailaddressRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -146,8 +146,7 @@ class EmailaddressRepoImpl extends EmailaddressRepo {
       "emailaddress" = EXCLUDED."emailaddress",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"::text
-    """
+    returning "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"::text"""
       .updateManyReturning(EmailaddressRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

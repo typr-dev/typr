@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -28,7 +29,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class SalesorderheadersalesreasonRepoImpl implements SalesorderheadersalesreasonRepo {
   @Override
   public DeleteBuilder<SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow> delete() {
-    return DeleteBuilder.of("sales.salesorderheadersalesreason", SalesorderheadersalesreasonFields.structure());
+    return DeleteBuilder.of("\"sales\".\"salesorderheadersalesreason\"", SalesorderheadersalesreasonFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -165,7 +166,7 @@ public class SalesorderheadersalesreasonRepoImpl implements Salesorderheadersale
 
   @Override
   public SelectBuilder<SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow> select() {
-    return SelectBuilder.of("sales.salesorderheadersalesreason", SalesorderheadersalesreasonFields.structure(), SalesorderheadersalesreasonRow._rowParser);
+    return SelectBuilder.of("\"sales\".\"salesorderheadersalesreason\"", SalesorderheadersalesreasonFields.structure(), SalesorderheadersalesreasonRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -230,7 +231,7 @@ public class SalesorderheadersalesreasonRepoImpl implements Salesorderheadersale
 
   @Override
   public UpdateBuilder<SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow> update() {
-    return UpdateBuilder.of("sales.salesorderheadersalesreason", SalesorderheadersalesreasonFields.structure(), SalesorderheadersalesreasonRow._rowParser.all());
+    return UpdateBuilder.of("\"sales\".\"salesorderheadersalesreason\"", SalesorderheadersalesreasonFields.structure(), SalesorderheadersalesreasonRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -275,8 +276,7 @@ public class SalesorderheadersalesreasonRepoImpl implements Salesorderheadersale
          on conflict ("salesorderid", "salesreasonid")
          do update set
            "modifieddate" = EXCLUDED."modifieddate"
-         returning "salesorderid", "salesreasonid", "modifieddate"::text
-      """)
+         returning "salesorderid", "salesreasonid", "modifieddate"::text""")
     )
       .updateReturning(SalesorderheadersalesreasonRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -293,8 +293,7 @@ public class SalesorderheadersalesreasonRepoImpl implements Salesorderheadersale
                 on conflict ("salesorderid", "salesreasonid")
                 do update set
                   "modifieddate" = EXCLUDED."modifieddate"
-                returning "salesorderid", "salesreasonid", "modifieddate"::text
-             """))
+                returning "salesorderid", "salesreasonid", "modifieddate"::text"""))
       .updateManyReturning(SalesorderheadersalesreasonRow._rowParser, unsaved)
       .runUnchecked(c);
   };

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.PgTypes;
@@ -24,7 +25,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class TestUtdanningstilbudRepoImpl implements TestUtdanningstilbudRepo {
   @Override
   public DeleteBuilder<TestUtdanningstilbudFields, TestUtdanningstilbudRow> delete() {
-    return DeleteBuilder.of("public.test_utdanningstilbud", TestUtdanningstilbudFields.structure());
+    return DeleteBuilder.of("\"public\".\"test_utdanningstilbud\"", TestUtdanningstilbudFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -101,7 +102,7 @@ public class TestUtdanningstilbudRepoImpl implements TestUtdanningstilbudRepo {
 
   @Override
   public SelectBuilder<TestUtdanningstilbudFields, TestUtdanningstilbudRow> select() {
-    return SelectBuilder.of("public.test_utdanningstilbud", TestUtdanningstilbudFields.structure(), TestUtdanningstilbudRow._rowParser);
+    return SelectBuilder.of("\"public\".\"test_utdanningstilbud\"", TestUtdanningstilbudFields.structure(), TestUtdanningstilbudRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -166,7 +167,7 @@ public class TestUtdanningstilbudRepoImpl implements TestUtdanningstilbudRepo {
 
   @Override
   public UpdateBuilder<TestUtdanningstilbudFields, TestUtdanningstilbudRow> update() {
-    return UpdateBuilder.of("public.test_utdanningstilbud", TestUtdanningstilbudFields.structure(), TestUtdanningstilbudRow._rowParser.all());
+    return UpdateBuilder.of("\"public\".\"test_utdanningstilbud\"", TestUtdanningstilbudFields.structure(), TestUtdanningstilbudRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -185,8 +186,7 @@ public class TestUtdanningstilbudRepoImpl implements TestUtdanningstilbudRepo {
          )
          on conflict ("organisasjonskode", "utdanningsmulighet_kode")
          do update set "organisasjonskode" = EXCLUDED."organisasjonskode"
-         returning "organisasjonskode", "utdanningsmulighet_kode"
-      """)
+         returning "organisasjonskode", "utdanningsmulighet_kode\"""")
     )
       .updateReturning(TestUtdanningstilbudRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -201,9 +201,8 @@ public class TestUtdanningstilbudRepoImpl implements TestUtdanningstilbudRepo {
                 insert into "public"."test_utdanningstilbud"("organisasjonskode", "utdanningsmulighet_kode")
                 values (?, ?)
                 on conflict ("organisasjonskode", "utdanningsmulighet_kode")
-                do nothing
-                returning "organisasjonskode", "utdanningsmulighet_kode"
-             """))
+                do update set "organisasjonskode" = EXCLUDED."organisasjonskode"
+                returning "organisasjonskode", "utdanningsmulighet_kode\""""))
       .updateManyReturning(TestUtdanningstilbudRow._rowParser, unsaved)
       .runUnchecked(c);
   };

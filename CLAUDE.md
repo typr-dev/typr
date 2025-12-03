@@ -53,12 +53,17 @@ bleep compile @jvm3    # Scala 3.3
 
 ### Database Setup
 ```bash
-# Start PostgreSQL with test data
+# Start PostgreSQL and MariaDB with test data
 docker-compose up -d
 
-# Database runs on localhost:6432
+# PostgreSQL runs on localhost:6432
 # Database: Adventureworks
 # User: postgres
+# Password: password
+
+# MariaDB runs on localhost:3307
+# Database: typo
+# User: typo
 # Password: password
 ```
 
@@ -255,12 +260,12 @@ npm run serve
 
 The website's code examples are generated from real Typo code using the `frontpage` schema in the test database. This ensures that all examples shown on the website are accurate and compile correctly.
 
-**Schema Location**: `init/data/frontpage/` contains:
+**Schema Location**: `db/pg/frontpage/` contains:
 - `schema.sql` - Database schema for frontpage examples
 - `*.sql` - SQL files that generate Typo repositories and types
 
 **Generation Process**:
-1. **Modify Schema**: Edit files in `init/data/frontpage/` to change database structure or add new examples
+1. **Modify Schema**: Edit files in `db/pg/frontpage/` to change database structure or add new examples
 2. **Restart Database**: Run `docker-compose down && docker-compose up -d` to apply schema changes  
 3. **Generate Code**: Run `bleep run GeneratedFrontpage` to generate fresh Scala code
 4. **Update Website**: Manually copy the generated code from `frontpage-generated/` into website components in `site/src/components/FeatureShowcase/index.js`
@@ -274,11 +279,11 @@ The website's code examples are generated from real Typo code using the `frontpa
 
 **Example Workflow**:
 ```bash
-# 1. Edit schema 
-vi init/data/frontpage/schema.sql
+# 1. Edit schema
+vi db/pg/frontpage/schema.sql
 
 # 2. Restart database
-docker-compose down && docker-compose up -d  
+docker-compose down && docker-compose up -d
 
 # 3. Generate fresh code
 bleep run GeneratedFrontpage
@@ -316,7 +321,7 @@ This project represents a sophisticated approach to type-safe database access in
 
 When working on Typo issues, follow this workflow:
 
-1. **Create Test Case**: Add a minimal reproduction SQL file in `init/data/issueNNN.sql`
+1. **Create Test Case**: Add a minimal reproduction SQL file in `db/pg/issueNNN.sql`
 2. **Update Install Script**: Add the SQL file to `init/install.sh`  
 3. **Restart Database**: Run `docker-compose down && docker-compose up -d`
 4. **Generate Code**: Run `bleep generate-adventureworks` to generate test code
@@ -330,7 +335,7 @@ When working on Typo issues, follow this workflow:
 ### Debugging and Development Approach
 
 **General Problem-Solving Process**:
-1. **Create Minimal Reproduction**: Add minimal test case to `init/data/issueNNN.sql`
+1. **Create Minimal Reproduction**: Add minimal test case to `db/pg/issueNNN.sql`
 2. **Set up Test Environment**: Update `init/install.sh`, restart database, regenerate code
 3. **Understand the Issue**: Trace through generated code to identify root cause
 4. **Test-Driven Development**:

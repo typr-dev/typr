@@ -37,9 +37,11 @@ data class FlaffRepoMock(val map: MutableMap<FlaffId, FlaffRow> = mutableMapOf<F
     c: Connection
   ): Int {
     var count = 0
-    for (id in compositeIds) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in compositeIds) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -61,7 +63,7 @@ data class FlaffRepoMock(val map: MutableMap<FlaffId, FlaffRow> = mutableMapOf<F
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.compositeId()] = row
       count = count + 1L
     }
@@ -81,9 +83,13 @@ data class FlaffRepoMock(val map: MutableMap<FlaffId, FlaffRow> = mutableMapOf<F
     compositeIds: Array<FlaffId>,
     c: Connection
   ): List<FlaffRow> {
-    var result = ArrayList<FlaffRow>()
-    for (id in compositeIds) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<FlaffRow>()
+    for (id in compositeIds) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -117,9 +123,9 @@ data class FlaffRepoMock(val map: MutableMap<FlaffId, FlaffRow> = mutableMapOf<F
     unsaved: MutableIterator<FlaffRow>,
     c: Connection
   ): List<FlaffRow> {
-    var result = ArrayList<FlaffRow>()
+    val result = ArrayList<FlaffRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.compositeId()] = row
       result.add(row)
     }
@@ -134,7 +140,7 @@ data class FlaffRepoMock(val map: MutableMap<FlaffId, FlaffRow> = mutableMapOf<F
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.compositeId()] = row
       count = count + 1
     }

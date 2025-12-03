@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -33,7 +34,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class ProductRepoImpl implements ProductRepo {
   @Override
   public DeleteBuilder<ProductFields, ProductRow> delete() {
-    return DeleteBuilder.of("production.product", ProductFields.structure());
+    return DeleteBuilder.of("\"production\".\"product\"", ProductFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -345,7 +346,7 @@ public class ProductRepoImpl implements ProductRepo {
 
   @Override
   public SelectBuilder<ProductFields, ProductRow> select() {
-    return SelectBuilder.of("production.product", ProductFields.structure(), ProductRow._rowParser);
+    return SelectBuilder.of("\"production\".\"product\"", ProductFields.structure(), ProductRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -398,7 +399,7 @@ public class ProductRepoImpl implements ProductRepo {
 
   @Override
   public UpdateBuilder<ProductFields, ProductRow> update() {
-    return UpdateBuilder.of("production.product", ProductFields.structure(), ProductRow._rowParser.all());
+    return UpdateBuilder.of("\"production\".\"product\"", ProductFields.structure(), ProductRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -598,8 +599,7 @@ public class ProductRepoImpl implements ProductRepo {
          "discontinueddate" = EXCLUDED."discontinueddate",
          "rowguid" = EXCLUDED."rowguid",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text
-      """)
+         returning "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text""")
     )
       .updateReturning(ProductRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -639,8 +639,7 @@ public class ProductRepoImpl implements ProductRepo {
                 "discontinueddate" = EXCLUDED."discontinueddate",
                 "rowguid" = EXCLUDED."rowguid",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text
-             """))
+                returning "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text"""))
       .updateManyReturning(ProductRow._rowParser, unsaved)
       .runUnchecked(c);
   };

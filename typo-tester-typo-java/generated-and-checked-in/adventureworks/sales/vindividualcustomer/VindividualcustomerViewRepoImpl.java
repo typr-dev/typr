@@ -7,13 +7,14 @@ package adventureworks.sales.vindividualcustomer;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class VindividualcustomerViewRepoImpl implements VindividualcustomerViewRepo {
   @Override
   public SelectBuilder<VindividualcustomerViewFields, VindividualcustomerViewRow> select() {
-    return SelectBuilder.of("sales.vindividualcustomer", VindividualcustomerViewFields.structure(), VindividualcustomerViewRow._rowParser);
+    return SelectBuilder.of("\"sales\".\"vindividualcustomer\"", VindividualcustomerViewFields.structure(), VindividualcustomerViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

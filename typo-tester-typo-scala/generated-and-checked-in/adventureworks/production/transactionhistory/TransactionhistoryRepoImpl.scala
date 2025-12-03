@@ -12,6 +12,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -21,7 +22,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class TransactionhistoryRepoImpl extends TransactionhistoryRepo {
-  override def delete: DeleteBuilder[TransactionhistoryFields, TransactionhistoryRow] = DeleteBuilder.of("production.transactionhistory", TransactionhistoryFields.structure)
+  override def delete: DeleteBuilder[TransactionhistoryFields, TransactionhistoryRow] = DeleteBuilder.of(""""production"."transactionhistory"""", TransactionhistoryFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(transactionid: TransactionhistoryId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."transactionhistory" where "transactionid" = ${TransactionhistoryId.pgType.encode(transactionid)}""".update().runUnchecked(c) > 0
 
@@ -90,7 +91,7 @@ class TransactionhistoryRepoImpl extends TransactionhistoryRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."transactionhistory"("productid", "referenceorderid", "transactiontype", "quantity", "actualcost", "transactionid", "referenceorderlineid", "transactiondate", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, TransactionhistoryRowUnsaved.pgText)
 
-  override def select: SelectBuilder[TransactionhistoryFields, TransactionhistoryRow] = SelectBuilder.of("production.transactionhistory", TransactionhistoryFields.structure, TransactionhistoryRow.`_rowParser`)
+  override def select: SelectBuilder[TransactionhistoryFields, TransactionhistoryRow] = SelectBuilder.of(""""production"."transactionhistory"""", TransactionhistoryFields.structure, TransactionhistoryRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[TransactionhistoryRow] = {
     interpolate"""select "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text
@@ -116,7 +117,7 @@ class TransactionhistoryRepoImpl extends TransactionhistoryRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[TransactionhistoryFields, TransactionhistoryRow] = UpdateBuilder.of("production.transactionhistory", TransactionhistoryFields.structure, TransactionhistoryRow.`_rowParser`.all())
+  override def update: UpdateBuilder[TransactionhistoryFields, TransactionhistoryRow] = UpdateBuilder.of(""""production"."transactionhistory"""", TransactionhistoryFields.structure, TransactionhistoryRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: TransactionhistoryRow)(using c: Connection): java.lang.Boolean = {
     val transactionid: TransactionhistoryId = row.transactionid
@@ -145,8 +146,7 @@ class TransactionhistoryRepoImpl extends TransactionhistoryRepo {
     "quantity" = EXCLUDED."quantity",
     "actualcost" = EXCLUDED."actualcost",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text
-    """
+    returning "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text"""
     .updateReturning(TransactionhistoryRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -164,8 +164,7 @@ class TransactionhistoryRepoImpl extends TransactionhistoryRepo {
     "quantity" = EXCLUDED."quantity",
     "actualcost" = EXCLUDED."actualcost",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text
-    """
+    returning "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text"""
       .updateManyReturning(TransactionhistoryRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

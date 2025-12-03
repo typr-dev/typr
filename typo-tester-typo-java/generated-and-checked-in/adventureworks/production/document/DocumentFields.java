@@ -55,7 +55,7 @@ public interface DocumentFields {
                };
                @Override
                public Field</* bpchar, max 5 chars */ String, DocumentRow> revision() {
-                 return new Field</* bpchar, max 5 chars */ String, DocumentRow>(_path, "revision", DocumentRow::revision, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withRevision(value), PgTypes.text);
+                 return new Field</* bpchar, max 5 chars */ String, DocumentRow>(_path, "revision", DocumentRow::revision, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withRevision(value), PgTypes.bpchar);
                };
                @Override
                public Field<Integer, DocumentRow> changenumber() {

@@ -13,6 +13,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -21,7 +22,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class SalesorderheadersalesreasonRepoImpl extends SalesorderheadersalesreasonRepo {
-  override def delete: DeleteBuilder[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow] = DeleteBuilder.of("sales.salesorderheadersalesreason", SalesorderheadersalesreasonFields.structure)
+  override def delete: DeleteBuilder[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow] = DeleteBuilder.of(""""sales"."salesorderheadersalesreason"""", SalesorderheadersalesreasonFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(compositeId: SalesorderheadersalesreasonId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."salesorderheadersalesreason" where "salesorderid" = ${SalesorderheaderId.pgType.encode(compositeId.salesorderid)} AND "salesreasonid" = ${SalesreasonId.pgType.encode(compositeId.salesreasonid)}""".update().runUnchecked(c) > 0
 
@@ -74,7 +75,7 @@ class SalesorderheadersalesreasonRepoImpl extends SalesorderheadersalesreasonRep
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."salesorderheadersalesreason"("salesorderid", "salesreasonid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, SalesorderheadersalesreasonRowUnsaved.pgText)
 
-  override def select: SelectBuilder[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow] = SelectBuilder.of("sales.salesorderheadersalesreason", SalesorderheadersalesreasonFields.structure, SalesorderheadersalesreasonRow.`_rowParser`)
+  override def select: SelectBuilder[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow] = SelectBuilder.of(""""sales"."salesorderheadersalesreason"""", SalesorderheadersalesreasonFields.structure, SalesorderheadersalesreasonRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[SalesorderheadersalesreasonRow] = {
     interpolate"""select "salesorderid", "salesreasonid", "modifieddate"::text
@@ -104,7 +105,7 @@ class SalesorderheadersalesreasonRepoImpl extends SalesorderheadersalesreasonRep
     return ret
   }
 
-  override def update: UpdateBuilder[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow] = UpdateBuilder.of("sales.salesorderheadersalesreason", SalesorderheadersalesreasonFields.structure, SalesorderheadersalesreasonRow.`_rowParser`.all())
+  override def update: UpdateBuilder[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow] = UpdateBuilder.of(""""sales"."salesorderheadersalesreason"""", SalesorderheadersalesreasonFields.structure, SalesorderheadersalesreasonRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: SalesorderheadersalesreasonRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: SalesorderheadersalesreasonId = row.compositeId
@@ -119,8 +120,7 @@ class SalesorderheadersalesreasonRepoImpl extends SalesorderheadersalesreasonRep
     on conflict ("salesorderid", "salesreasonid")
     do update set
       "modifieddate" = EXCLUDED."modifieddate"
-    returning "salesorderid", "salesreasonid", "modifieddate"::text
-    """
+    returning "salesorderid", "salesreasonid", "modifieddate"::text"""
     .updateReturning(SalesorderheadersalesreasonRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -131,8 +131,7 @@ class SalesorderheadersalesreasonRepoImpl extends SalesorderheadersalesreasonRep
     on conflict ("salesorderid", "salesreasonid")
     do update set
       "modifieddate" = EXCLUDED."modifieddate"
-    returning "salesorderid", "salesreasonid", "modifieddate"::text
-    """
+    returning "salesorderid", "salesreasonid", "modifieddate"::text"""
       .updateManyReturning(SalesorderheadersalesreasonRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

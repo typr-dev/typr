@@ -12,6 +12,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -21,7 +22,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ProductphotoRepoImpl extends ProductphotoRepo {
-  override def delete: DeleteBuilder[ProductphotoFields, ProductphotoRow] = DeleteBuilder.of("production.productphoto", ProductphotoFields.structure)
+  override def delete: DeleteBuilder[ProductphotoFields, ProductphotoRow] = DeleteBuilder.of(""""production"."productphoto"""", ProductphotoFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(productphotoid: ProductphotoId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."productphoto" where "productphotoid" = ${ProductphotoId.pgType.encode(productphotoid)}""".update().runUnchecked(c) > 0
 
@@ -80,7 +81,7 @@ class ProductphotoRepoImpl extends ProductphotoRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."productphoto"("thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "productphotoid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ProductphotoRowUnsaved.pgText)
 
-  override def select: SelectBuilder[ProductphotoFields, ProductphotoRow] = SelectBuilder.of("production.productphoto", ProductphotoFields.structure, ProductphotoRow.`_rowParser`)
+  override def select: SelectBuilder[ProductphotoFields, ProductphotoRow] = SelectBuilder.of(""""production"."productphoto"""", ProductphotoFields.structure, ProductphotoRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[ProductphotoRow] = {
     interpolate"""select "productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate"::text
@@ -106,7 +107,7 @@ class ProductphotoRepoImpl extends ProductphotoRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[ProductphotoFields, ProductphotoRow] = UpdateBuilder.of("production.productphoto", ProductphotoFields.structure, ProductphotoRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ProductphotoFields, ProductphotoRow] = UpdateBuilder.of(""""production"."productphoto"""", ProductphotoFields.structure, ProductphotoRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: ProductphotoRow)(using c: Connection): java.lang.Boolean = {
     val productphotoid: ProductphotoId = row.productphotoid
@@ -129,8 +130,7 @@ class ProductphotoRepoImpl extends ProductphotoRepo {
     "largephoto" = EXCLUDED."largephoto",
     "largephotofilename" = EXCLUDED."largephotofilename",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate"::text
-    """
+    returning "productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate"::text"""
     .updateReturning(ProductphotoRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -145,8 +145,7 @@ class ProductphotoRepoImpl extends ProductphotoRepo {
     "largephoto" = EXCLUDED."largephoto",
     "largephotofilename" = EXCLUDED."largephotofilename",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate"::text
-    """
+    returning "productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate"::text"""
       .updateManyReturning(ProductphotoRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

@@ -7,11 +7,12 @@ package adventureworks.pe.e
 
 import java.sql.Connection
 import kotlin.collections.List
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.Fragment.interpolate
 
 class EViewRepoImpl() : EViewRepo {
-  override fun select(): SelectBuilder<EViewFields, EViewRow> = SelectBuilder.of("pe.e", EViewFields.structure, EViewRow._rowParser)
+  override fun select(): SelectBuilder<EViewFields, EViewRow> = SelectBuilder.of("\"pe\".\"e\"", EViewFields.structure, EViewRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<EViewRow> = interpolate(typo.runtime.Fragment.lit("""
     select "id", "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"::text

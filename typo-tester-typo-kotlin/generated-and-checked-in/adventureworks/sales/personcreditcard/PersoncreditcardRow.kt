@@ -36,7 +36,7 @@ data class PersoncreditcardRow(
   fun toUnsavedRow(modifieddate: Defaulted<TypoLocalDateTime>): PersoncreditcardRowUnsaved = PersoncreditcardRowUnsaved(businessentityid, creditcardid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<PersoncreditcardRow> = RowParsers.of(BusinessentityId.pgType, /* user-picked */ CustomCreditcardId.pgType, TypoLocalDateTime.pgType, { t0, t1, t2 -> PersoncreditcardRow(t0!!, t1!!, t2!!) }, { row -> arrayOf<Any?>(row.businessentityid, row.creditcardid, row.modifieddate) })
+    val _rowParser: RowParser<PersoncreditcardRow> = RowParsers.of(BusinessentityId.pgType, CustomCreditcardId.pgType, TypoLocalDateTime.pgType, { t0, t1, t2 -> PersoncreditcardRow(t0!!, t1!!, t2!!) }, { row -> arrayOf<Any?>(row.businessentityid, row.creditcardid, row.modifieddate) })
 
     fun apply(
       compositeId: PersoncreditcardId,

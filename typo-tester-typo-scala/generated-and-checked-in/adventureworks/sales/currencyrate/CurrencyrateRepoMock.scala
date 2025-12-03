@@ -92,8 +92,9 @@ case class CurrencyrateRepoMock(
 
   override def selectByIds(currencyrateids: Array[CurrencyrateId])(using c: Connection): java.util.List[CurrencyrateRow] = {
     val result = new ArrayList[CurrencyrateRow]()
-    currencyrateids.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    currencyrateids.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

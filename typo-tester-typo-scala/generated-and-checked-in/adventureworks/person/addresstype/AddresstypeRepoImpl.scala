@@ -13,6 +13,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -21,7 +22,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class AddresstypeRepoImpl extends AddresstypeRepo {
-  override def delete: DeleteBuilder[AddresstypeFields, AddresstypeRow] = DeleteBuilder.of("person.addresstype", AddresstypeFields.structure)
+  override def delete: DeleteBuilder[AddresstypeFields, AddresstypeRow] = DeleteBuilder.of(""""person"."addresstype"""", AddresstypeFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(addresstypeid: AddresstypeId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "person"."addresstype" where "addresstypeid" = ${AddresstypeId.pgType.encode(addresstypeid)}""".update().runUnchecked(c) > 0
 
@@ -78,7 +79,7 @@ class AddresstypeRepoImpl extends AddresstypeRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "person"."addresstype"("name", "addresstypeid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, AddresstypeRowUnsaved.pgText)
 
-  override def select: SelectBuilder[AddresstypeFields, AddresstypeRow] = SelectBuilder.of("person.addresstype", AddresstypeFields.structure, AddresstypeRow.`_rowParser`)
+  override def select: SelectBuilder[AddresstypeFields, AddresstypeRow] = SelectBuilder.of(""""person"."addresstype"""", AddresstypeFields.structure, AddresstypeRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[AddresstypeRow] = {
     interpolate"""select "addresstypeid", "name", "rowguid", "modifieddate"::text
@@ -104,7 +105,7 @@ class AddresstypeRepoImpl extends AddresstypeRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[AddresstypeFields, AddresstypeRow] = UpdateBuilder.of("person.addresstype", AddresstypeFields.structure, AddresstypeRow.`_rowParser`.all())
+  override def update: UpdateBuilder[AddresstypeFields, AddresstypeRow] = UpdateBuilder.of(""""person"."addresstype"""", AddresstypeFields.structure, AddresstypeRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: AddresstypeRow)(using c: Connection): java.lang.Boolean = {
     val addresstypeid: AddresstypeId = row.addresstypeid
@@ -123,8 +124,7 @@ class AddresstypeRepoImpl extends AddresstypeRepo {
       "name" = EXCLUDED."name",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "addresstypeid", "name", "rowguid", "modifieddate"::text
-    """
+    returning "addresstypeid", "name", "rowguid", "modifieddate"::text"""
     .updateReturning(AddresstypeRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -137,8 +137,7 @@ class AddresstypeRepoImpl extends AddresstypeRepo {
       "name" = EXCLUDED."name",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "addresstypeid", "name", "rowguid", "modifieddate"::text
-    """
+    returning "addresstypeid", "name", "rowguid", "modifieddate"::text"""
       .updateManyReturning(AddresstypeRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -26,7 +27,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class CurrencyRepoImpl implements CurrencyRepo {
   @Override
   public DeleteBuilder<CurrencyFields, CurrencyRow> delete() {
-    return DeleteBuilder.of("sales.currency", CurrencyFields.structure());
+    return DeleteBuilder.of("\"sales\".\"currency\"", CurrencyFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -153,7 +154,7 @@ public class CurrencyRepoImpl implements CurrencyRepo {
 
   @Override
   public SelectBuilder<CurrencyFields, CurrencyRow> select() {
-    return SelectBuilder.of("sales.currency", CurrencyFields.structure(), CurrencyRow._rowParser);
+    return SelectBuilder.of("\"sales\".\"currency\"", CurrencyFields.structure(), CurrencyRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -206,7 +207,7 @@ public class CurrencyRepoImpl implements CurrencyRepo {
 
   @Override
   public UpdateBuilder<CurrencyFields, CurrencyRow> update() {
-    return UpdateBuilder.of("sales.currency", CurrencyFields.structure(), CurrencyRow._rowParser.all());
+    return UpdateBuilder.of("\"sales\".\"currency\"", CurrencyFields.structure(), CurrencyRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -252,8 +253,7 @@ public class CurrencyRepoImpl implements CurrencyRepo {
          do update set
            "name" = EXCLUDED."name",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "currencycode", "name", "modifieddate"::text
-      """)
+         returning "currencycode", "name", "modifieddate"::text""")
     )
       .updateReturning(CurrencyRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -271,8 +271,7 @@ public class CurrencyRepoImpl implements CurrencyRepo {
                 do update set
                   "name" = EXCLUDED."name",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "currencycode", "name", "modifieddate"::text
-             """))
+                returning "currencycode", "name", "modifieddate"::text"""))
       .updateManyReturning(CurrencyRow._rowParser, unsaved)
       .runUnchecked(c);
   };

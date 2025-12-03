@@ -34,7 +34,7 @@ public interface PccViewFields {
                };
                @Override
                public Field</* user-picked */ CustomCreditcardId, PccViewRow> creditcardid() {
-                 return new Field</* user-picked */ CustomCreditcardId, PccViewRow>(_path, "creditcardid", PccViewRow::creditcardid, Optional.empty(), Optional.empty(), (row, value) -> row.withCreditcardid(value), /* user-picked */ CustomCreditcardId.pgType);
+                 return new Field</* user-picked */ CustomCreditcardId, PccViewRow>(_path, "creditcardid", PccViewRow::creditcardid, Optional.empty(), Optional.empty(), (row, value) -> row.withCreditcardid(value), CustomCreditcardId.pgType);
                };
                @Override
                public Field<TypoLocalDateTime, PccViewRow> modifieddate() {

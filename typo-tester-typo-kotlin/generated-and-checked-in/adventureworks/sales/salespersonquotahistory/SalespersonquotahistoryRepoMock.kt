@@ -40,9 +40,11 @@ data class SalespersonquotahistoryRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in compositeIds) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in compositeIds) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -69,7 +71,7 @@ data class SalespersonquotahistoryRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.compositeId()] = row
       count = count + 1L
     }
@@ -84,8 +86,8 @@ data class SalespersonquotahistoryRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.compositeId()] = row
       count = count + 1L
     }
@@ -105,9 +107,13 @@ data class SalespersonquotahistoryRepoMock(
     compositeIds: Array<SalespersonquotahistoryId>,
     c: Connection
   ): List<SalespersonquotahistoryRow> {
-    var result = ArrayList<SalespersonquotahistoryRow>()
-    for (id in compositeIds) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<SalespersonquotahistoryRow>()
+    for (id in compositeIds) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -141,9 +147,9 @@ data class SalespersonquotahistoryRepoMock(
     unsaved: MutableIterator<SalespersonquotahistoryRow>,
     c: Connection
   ): List<SalespersonquotahistoryRow> {
-    var result = ArrayList<SalespersonquotahistoryRow>()
+    val result = ArrayList<SalespersonquotahistoryRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.compositeId()] = row
       result.add(row)
     }
@@ -158,7 +164,7 @@ data class SalespersonquotahistoryRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.compositeId()] = row
       count = count + 1
     }

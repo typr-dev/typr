@@ -6,11 +6,12 @@
 package adventureworks.person.vstateprovincecountryregion
 
 import java.sql.Connection
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class VstateprovincecountryregionMVRepoImpl extends VstateprovincecountryregionMVRepo {
-  override def select: SelectBuilder[VstateprovincecountryregionMVFields, VstateprovincecountryregionMVRow] = SelectBuilder.of("person.vstateprovincecountryregion", VstateprovincecountryregionMVFields.structure, VstateprovincecountryregionMVRow.`_rowParser`)
+  override def select: SelectBuilder[VstateprovincecountryregionMVFields, VstateprovincecountryregionMVRow] = SelectBuilder.of(""""person"."vstateprovincecountryregion"""", VstateprovincecountryregionMVFields.structure, VstateprovincecountryregionMVRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[VstateprovincecountryregionMVRow] = {
     interpolate"""select "stateprovinceid", "stateprovincecode", "isonlystateprovinceflag", "stateprovincename", "territoryid", "countryregioncode", "countryregionname"

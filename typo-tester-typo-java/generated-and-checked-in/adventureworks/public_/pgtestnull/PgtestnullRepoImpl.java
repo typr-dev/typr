@@ -35,6 +35,7 @@ import java.sql.Connection;
 import java.util.Iterator;
 import java.util.List;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.PgTypes;
@@ -45,7 +46,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class PgtestnullRepoImpl implements PgtestnullRepo {
   @Override
   public DeleteBuilder<PgtestnullFields, PgtestnullRow> delete() {
-    return DeleteBuilder.of("public.pgtestnull", PgtestnullFields.structure());
+    return DeleteBuilder.of("\"public\".\"pgtestnull\"", PgtestnullFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -217,7 +218,7 @@ public class PgtestnullRepoImpl implements PgtestnullRepo {
 
   @Override
   public SelectBuilder<PgtestnullFields, PgtestnullRow> select() {
-    return SelectBuilder.of("public.pgtestnull", PgtestnullFields.structure(), PgtestnullRow._rowParser);
+    return SelectBuilder.of("\"public\".\"pgtestnull\"", PgtestnullFields.structure(), PgtestnullRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -230,6 +231,6 @@ public class PgtestnullRepoImpl implements PgtestnullRepo {
 
   @Override
   public UpdateBuilder<PgtestnullFields, PgtestnullRow> update() {
-    return UpdateBuilder.of("public.pgtestnull", PgtestnullFields.structure(), PgtestnullRow._rowParser.all());
+    return UpdateBuilder.of("\"public\".\"pgtestnull\"", PgtestnullFields.structure(), PgtestnullRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 }

@@ -16,6 +16,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -26,7 +27,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class ProductreviewRepoImpl() : ProductreviewRepo {
-  override fun delete(): DeleteBuilder<ProductreviewFields, ProductreviewRow> = DeleteBuilder.of("production.productreview", ProductreviewFields.structure)
+  override fun delete(): DeleteBuilder<ProductreviewFields, ProductreviewRow> = DeleteBuilder.of("\"production\".\"productreview\"", ProductreviewFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     productreviewid: ProductreviewId,
@@ -173,7 +174,7 @@ class ProductreviewRepoImpl() : ProductreviewRepo {
   COPY "production"."productreview"("productid", "reviewername", "emailaddress", "rating", "comments", "productreviewid", "reviewdate", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, ProductreviewRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<ProductreviewFields, ProductreviewRow> = SelectBuilder.of("production.productreview", ProductreviewFields.structure, ProductreviewRow._rowParser)
+  override fun select(): SelectBuilder<ProductreviewFields, ProductreviewRow> = SelectBuilder.of("\"production\".\"productreview\"", ProductreviewFields.structure, ProductreviewRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<ProductreviewRow> = interpolate(typo.runtime.Fragment.lit("""
     select "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text
@@ -213,7 +214,7 @@ class ProductreviewRepoImpl() : ProductreviewRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<ProductreviewFields, ProductreviewRow> = UpdateBuilder.of("production.productreview", ProductreviewFields.structure, ProductreviewRow._rowParser.all())
+  override fun update(): UpdateBuilder<ProductreviewFields, ProductreviewRow> = UpdateBuilder.of("\"production\".\"productreview\"", ProductreviewFields.structure, ProductreviewRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: ProductreviewRow,
@@ -290,8 +291,7 @@ class ProductreviewRepoImpl() : ProductreviewRepo {
       "rating" = EXCLUDED."rating",
       "comments" = EXCLUDED."comments",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text
-    """.trimMargin())
+      returning "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(ProductreviewRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -311,8 +311,7 @@ class ProductreviewRepoImpl() : ProductreviewRepo {
                                 "rating" = EXCLUDED."rating",
                                 "comments" = EXCLUDED."comments",
                                 "modifieddate" = EXCLUDED."modifieddate"
-                                returning "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text
-                              """.trimMargin()))
+                                returning "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(ProductreviewRow._rowParser, unsaved)
     .runUnchecked(c)
 

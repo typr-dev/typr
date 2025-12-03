@@ -35,7 +35,7 @@ import java.util.function.Function;
  * </ul>
  * Then you create derived instances with {@code map} and/or {@code opt}</li>
  */
-public sealed interface PgRead<A> permits PgRead.NonNullable, PgRead.Nullable {
+public sealed interface PgRead<A> extends DbRead<A> permits PgRead.NonNullable, PgRead.Nullable {
     A read(ResultSet rs, int col) throws SQLException;
 
     <B> PgRead<B> map(SqlFunction<A, B> f);
@@ -92,7 +92,7 @@ public sealed interface PgRead<A> permits PgRead.NonNullable, PgRead.Nullable {
         }
     }
 
-    final class Nullable<A> implements PgRead<Optional<A>> {
+    final class Nullable<A> implements PgRead<Optional<A>>, DbRead.Nullable {
         final RawRead<Optional<A>> readNullable;
 
         public Nullable(RawRead<Optional<A>> readNullable) {

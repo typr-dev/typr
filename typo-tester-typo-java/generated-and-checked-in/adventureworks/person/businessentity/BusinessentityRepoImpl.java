@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -26,7 +27,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class BusinessentityRepoImpl implements BusinessentityRepo {
   @Override
   public DeleteBuilder<BusinessentityFields, BusinessentityRow> delete() {
-    return DeleteBuilder.of("person.businessentity", BusinessentityFields.structure());
+    return DeleteBuilder.of("\"person\".\"businessentity\"", BusinessentityFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -172,7 +173,7 @@ public class BusinessentityRepoImpl implements BusinessentityRepo {
 
   @Override
   public SelectBuilder<BusinessentityFields, BusinessentityRow> select() {
-    return SelectBuilder.of("person.businessentity", BusinessentityFields.structure(), BusinessentityRow._rowParser);
+    return SelectBuilder.of("\"person\".\"businessentity\"", BusinessentityFields.structure(), BusinessentityRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -225,7 +226,7 @@ public class BusinessentityRepoImpl implements BusinessentityRepo {
 
   @Override
   public UpdateBuilder<BusinessentityFields, BusinessentityRow> update() {
-    return UpdateBuilder.of("person.businessentity", BusinessentityFields.structure(), BusinessentityRow._rowParser.all());
+    return UpdateBuilder.of("\"person\".\"businessentity\"", BusinessentityFields.structure(), BusinessentityRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -271,8 +272,7 @@ public class BusinessentityRepoImpl implements BusinessentityRepo {
          do update set
            "rowguid" = EXCLUDED."rowguid",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "businessentityid", "rowguid", "modifieddate"::text
-      """)
+         returning "businessentityid", "rowguid", "modifieddate"::text""")
     )
       .updateReturning(BusinessentityRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -290,8 +290,7 @@ public class BusinessentityRepoImpl implements BusinessentityRepo {
                 do update set
                   "rowguid" = EXCLUDED."rowguid",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "businessentityid", "rowguid", "modifieddate"::text
-             """))
+                returning "businessentityid", "rowguid", "modifieddate"::text"""))
       .updateManyReturning(BusinessentityRow._rowParser, unsaved)
       .runUnchecked(c);
   };

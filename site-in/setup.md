@@ -43,7 +43,8 @@ import typo.*
 import typo.internal.codegen.LangScala
 
 // adapt to your instance and credentials
-val ds = TypoDataSource.hikari(
+// use hikariPostgres for PostgreSQL, hikariMariaDb for MariaDB
+val ds = TypoDataSource.hikariPostgres(
   server = "localhost",
   port = 6432,
   databaseName = "Adventureworks",

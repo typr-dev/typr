@@ -40,9 +40,11 @@ data class SalesreasonRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in salesreasonids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in salesreasonids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -69,7 +71,7 @@ data class SalesreasonRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.salesreasonid] = row
       count = count + 1L
     }
@@ -84,8 +86,8 @@ data class SalesreasonRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.salesreasonid] = row
       count = count + 1L
     }
@@ -105,9 +107,13 @@ data class SalesreasonRepoMock(
     salesreasonids: Array<SalesreasonId>,
     c: Connection
   ): List<SalesreasonRow> {
-    var result = ArrayList<SalesreasonRow>()
-    for (id in salesreasonids) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<SalesreasonRow>()
+    for (id in salesreasonids) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -141,9 +147,9 @@ data class SalesreasonRepoMock(
     unsaved: MutableIterator<SalesreasonRow>,
     c: Connection
   ): List<SalesreasonRow> {
-    var result = ArrayList<SalesreasonRow>()
+    val result = ArrayList<SalesreasonRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.salesreasonid] = row
       result.add(row)
     }
@@ -158,7 +164,7 @@ data class SalesreasonRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.salesreasonid] = row
       count = count + 1
     }

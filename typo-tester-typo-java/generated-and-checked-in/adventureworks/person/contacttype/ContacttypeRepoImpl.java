@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -26,7 +27,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class ContacttypeRepoImpl implements ContacttypeRepo {
   @Override
   public DeleteBuilder<ContacttypeFields, ContacttypeRow> delete() {
-    return DeleteBuilder.of("person.contacttype", ContacttypeFields.structure());
+    return DeleteBuilder.of("\"person\".\"contacttype\"", ContacttypeFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -160,7 +161,7 @@ public class ContacttypeRepoImpl implements ContacttypeRepo {
 
   @Override
   public SelectBuilder<ContacttypeFields, ContacttypeRow> select() {
-    return SelectBuilder.of("person.contacttype", ContacttypeFields.structure(), ContacttypeRow._rowParser);
+    return SelectBuilder.of("\"person\".\"contacttype\"", ContacttypeFields.structure(), ContacttypeRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -213,7 +214,7 @@ public class ContacttypeRepoImpl implements ContacttypeRepo {
 
   @Override
   public UpdateBuilder<ContacttypeFields, ContacttypeRow> update() {
-    return UpdateBuilder.of("person.contacttype", ContacttypeFields.structure(), ContacttypeRow._rowParser.all());
+    return UpdateBuilder.of("\"person\".\"contacttype\"", ContacttypeFields.structure(), ContacttypeRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -259,8 +260,7 @@ public class ContacttypeRepoImpl implements ContacttypeRepo {
          do update set
            "name" = EXCLUDED."name",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "contacttypeid", "name", "modifieddate"::text
-      """)
+         returning "contacttypeid", "name", "modifieddate"::text""")
     )
       .updateReturning(ContacttypeRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -278,8 +278,7 @@ public class ContacttypeRepoImpl implements ContacttypeRepo {
                 do update set
                   "name" = EXCLUDED."name",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "contacttypeid", "name", "modifieddate"::text
-             """))
+                returning "contacttypeid", "name", "modifieddate"::text"""))
       .updateManyReturning(ContacttypeRow._rowParser, unsaved)
       .runUnchecked(c);
   };

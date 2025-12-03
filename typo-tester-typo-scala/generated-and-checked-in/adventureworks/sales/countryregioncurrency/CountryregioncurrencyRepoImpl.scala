@@ -13,6 +13,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -21,7 +22,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class CountryregioncurrencyRepoImpl extends CountryregioncurrencyRepo {
-  override def delete: DeleteBuilder[CountryregioncurrencyFields, CountryregioncurrencyRow] = DeleteBuilder.of("sales.countryregioncurrency", CountryregioncurrencyFields.structure)
+  override def delete: DeleteBuilder[CountryregioncurrencyFields, CountryregioncurrencyRow] = DeleteBuilder.of(""""sales"."countryregioncurrency"""", CountryregioncurrencyFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(compositeId: CountryregioncurrencyId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."countryregioncurrency" where "countryregioncode" = ${CountryregionId.pgType.encode(compositeId.countryregioncode)} AND "currencycode" = ${CurrencyId.pgType.encode(compositeId.currencycode)}""".update().runUnchecked(c) > 0
 
@@ -74,7 +75,7 @@ class CountryregioncurrencyRepoImpl extends CountryregioncurrencyRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."countryregioncurrency"("countryregioncode", "currencycode", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, CountryregioncurrencyRowUnsaved.pgText)
 
-  override def select: SelectBuilder[CountryregioncurrencyFields, CountryregioncurrencyRow] = SelectBuilder.of("sales.countryregioncurrency", CountryregioncurrencyFields.structure, CountryregioncurrencyRow.`_rowParser`)
+  override def select: SelectBuilder[CountryregioncurrencyFields, CountryregioncurrencyRow] = SelectBuilder.of(""""sales"."countryregioncurrency"""", CountryregioncurrencyFields.structure, CountryregioncurrencyRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[CountryregioncurrencyRow] = {
     interpolate"""select "countryregioncode", "currencycode", "modifieddate"::text
@@ -104,7 +105,7 @@ class CountryregioncurrencyRepoImpl extends CountryregioncurrencyRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[CountryregioncurrencyFields, CountryregioncurrencyRow] = UpdateBuilder.of("sales.countryregioncurrency", CountryregioncurrencyFields.structure, CountryregioncurrencyRow.`_rowParser`.all())
+  override def update: UpdateBuilder[CountryregioncurrencyFields, CountryregioncurrencyRow] = UpdateBuilder.of(""""sales"."countryregioncurrency"""", CountryregioncurrencyFields.structure, CountryregioncurrencyRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: CountryregioncurrencyRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: CountryregioncurrencyId = row.compositeId
@@ -119,8 +120,7 @@ class CountryregioncurrencyRepoImpl extends CountryregioncurrencyRepo {
     on conflict ("countryregioncode", "currencycode")
     do update set
       "modifieddate" = EXCLUDED."modifieddate"
-    returning "countryregioncode", "currencycode", "modifieddate"::text
-    """
+    returning "countryregioncode", "currencycode", "modifieddate"::text"""
     .updateReturning(CountryregioncurrencyRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -131,8 +131,7 @@ class CountryregioncurrencyRepoImpl extends CountryregioncurrencyRepo {
     on conflict ("countryregioncode", "currencycode")
     do update set
       "modifieddate" = EXCLUDED."modifieddate"
-    returning "countryregioncode", "currencycode", "modifieddate"::text
-    """
+    returning "countryregioncode", "currencycode", "modifieddate"::text"""
       .updateManyReturning(CountryregioncurrencyRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

@@ -13,6 +13,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.PgTypes
@@ -22,7 +23,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class TestUtdanningstilbudRepoImpl() : TestUtdanningstilbudRepo {
-  override fun delete(): DeleteBuilder<TestUtdanningstilbudFields, TestUtdanningstilbudRow> = DeleteBuilder.of("public.test_utdanningstilbud", TestUtdanningstilbudFields.structure)
+  override fun delete(): DeleteBuilder<TestUtdanningstilbudFields, TestUtdanningstilbudRow> = DeleteBuilder.of("\"public\".\"test_utdanningstilbud\"", TestUtdanningstilbudFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     compositeId: TestUtdanningstilbudId,
@@ -86,7 +87,7 @@ class TestUtdanningstilbudRepoImpl() : TestUtdanningstilbudRepo {
   COPY "public"."test_utdanningstilbud"("organisasjonskode", "utdanningsmulighet_kode") FROM STDIN
   """.trimMargin()), batchSize, unsaved, c, TestUtdanningstilbudRow.pgText)
 
-  override fun select(): SelectBuilder<TestUtdanningstilbudFields, TestUtdanningstilbudRow> = SelectBuilder.of("public.test_utdanningstilbud", TestUtdanningstilbudFields.structure, TestUtdanningstilbudRow._rowParser)
+  override fun select(): SelectBuilder<TestUtdanningstilbudFields, TestUtdanningstilbudRow> = SelectBuilder.of("\"public\".\"test_utdanningstilbud\"", TestUtdanningstilbudFields.structure, TestUtdanningstilbudRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<TestUtdanningstilbudRow> = interpolate(typo.runtime.Fragment.lit("""
     select "organisasjonskode", "utdanningsmulighet_kode"
@@ -140,7 +141,7 @@ class TestUtdanningstilbudRepoImpl() : TestUtdanningstilbudRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<TestUtdanningstilbudFields, TestUtdanningstilbudRow> = UpdateBuilder.of("public.test_utdanningstilbud", TestUtdanningstilbudFields.structure, TestUtdanningstilbudRow._rowParser.all())
+  override fun update(): UpdateBuilder<TestUtdanningstilbudFields, TestUtdanningstilbudRow> = UpdateBuilder.of("\"public\".\"test_utdanningstilbud\"", TestUtdanningstilbudFields.structure, TestUtdanningstilbudRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun upsert(
     unsaved: TestUtdanningstilbudRow,
@@ -156,8 +157,7 @@ class TestUtdanningstilbudRepoImpl() : TestUtdanningstilbudRepo {
       )
       on conflict ("organisasjonskode", "utdanningsmulighet_kode")
       do update set "organisasjonskode" = EXCLUDED."organisasjonskode"
-      returning "organisasjonskode", "utdanningsmulighet_kode"
-    """.trimMargin())
+      returning "organisasjonskode", "utdanningsmulighet_kode"""".trimMargin())
   )
     .updateReturning(TestUtdanningstilbudRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -169,9 +169,8 @@ class TestUtdanningstilbudRepoImpl() : TestUtdanningstilbudRepo {
                                        insert into "public"."test_utdanningstilbud"("organisasjonskode", "utdanningsmulighet_kode")
                                        values (?, ?)
                                        on conflict ("organisasjonskode", "utdanningsmulighet_kode")
-                                       do nothing
-                                       returning "organisasjonskode", "utdanningsmulighet_kode"
-                                     """.trimMargin()))
+                                       do update set "organisasjonskode" = EXCLUDED."organisasjonskode"
+                                       returning "organisasjonskode", "utdanningsmulighet_kode"""".trimMargin()))
     .updateManyReturning(TestUtdanningstilbudRow._rowParser, unsaved)
     .runUnchecked(c)
 

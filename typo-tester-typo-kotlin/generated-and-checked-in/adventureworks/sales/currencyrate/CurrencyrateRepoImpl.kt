@@ -15,6 +15,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -25,7 +26,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class CurrencyrateRepoImpl() : CurrencyrateRepo {
-  override fun delete(): DeleteBuilder<CurrencyrateFields, CurrencyrateRow> = DeleteBuilder.of("sales.currencyrate", CurrencyrateFields.structure)
+  override fun delete(): DeleteBuilder<CurrencyrateFields, CurrencyrateRow> = DeleteBuilder.of("\"sales\".\"currencyrate\"", CurrencyrateFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     currencyrateid: CurrencyrateId,
@@ -160,7 +161,7 @@ class CurrencyrateRepoImpl() : CurrencyrateRepo {
   COPY "sales"."currencyrate"("currencyratedate", "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "currencyrateid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, CurrencyrateRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<CurrencyrateFields, CurrencyrateRow> = SelectBuilder.of("sales.currencyrate", CurrencyrateFields.structure, CurrencyrateRow._rowParser)
+  override fun select(): SelectBuilder<CurrencyrateFields, CurrencyrateRow> = SelectBuilder.of("\"sales\".\"currencyrate\"", CurrencyrateFields.structure, CurrencyrateRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<CurrencyrateRow> = interpolate(typo.runtime.Fragment.lit("""
     select "currencyrateid", "currencyratedate"::text, "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"::text
@@ -200,7 +201,7 @@ class CurrencyrateRepoImpl() : CurrencyrateRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<CurrencyrateFields, CurrencyrateRow> = UpdateBuilder.of("sales.currencyrate", CurrencyrateFields.structure, CurrencyrateRow._rowParser.all())
+  override fun update(): UpdateBuilder<CurrencyrateFields, CurrencyrateRow> = UpdateBuilder.of("\"sales\".\"currencyrate\"", CurrencyrateFields.structure, CurrencyrateRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: CurrencyrateRow,
@@ -270,8 +271,7 @@ class CurrencyrateRepoImpl() : CurrencyrateRepo {
       "averagerate" = EXCLUDED."averagerate",
       "endofdayrate" = EXCLUDED."endofdayrate",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "currencyrateid", "currencyratedate"::text, "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"::text
-    """.trimMargin())
+      returning "currencyrateid", "currencyratedate"::text, "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(CurrencyrateRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -290,8 +290,7 @@ class CurrencyrateRepoImpl() : CurrencyrateRepo {
                                "averagerate" = EXCLUDED."averagerate",
                                "endofdayrate" = EXCLUDED."endofdayrate",
                                "modifieddate" = EXCLUDED."modifieddate"
-                               returning "currencyrateid", "currencyratedate"::text, "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"::text
-                             """.trimMargin()))
+                               returning "currencyrateid", "currencyratedate"::text, "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(CurrencyrateRow._rowParser, unsaved)
     .runUnchecked(c)
 

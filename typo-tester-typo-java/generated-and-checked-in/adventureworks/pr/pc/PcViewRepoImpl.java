@@ -7,13 +7,14 @@ package adventureworks.pr.pc;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class PcViewRepoImpl implements PcViewRepo {
   @Override
   public SelectBuilder<PcViewFields, PcViewRow> select() {
-    return SelectBuilder.of("pr.pc", PcViewFields.structure(), PcViewRow._rowParser);
+    return SelectBuilder.of("\"pr\".\"pc\"", PcViewFields.structure(), PcViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

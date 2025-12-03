@@ -5,6 +5,7 @@
  */
 package adventureworks.person_detail
 
+import adventureworks.customtypes.TypoUUID
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.public.Name
 import adventureworks.userdefined.FirstName
@@ -36,7 +37,7 @@ case class PersonDetailSqlRow(
   /** Points to [[adventureworks.person.address.AddressRow.postalcode]] */
   postalcode: Option[/* max 15 chars */ String],
   /** Points to [[adventureworks.person.address.AddressRow.rowguid]] */
-  rowguid: /* user-picked */ String
+  rowguid: Option[TypoUUID]
 )
 
 object PersonDetailSqlRow {
@@ -54,7 +55,7 @@ object PersonDetailSqlRow {
             addressline1 = JdbcDecoder.optionDecoder(using JdbcDecoder.stringDecoder).unsafeDecode(columIndex + 6, rs)._2,
             city = JdbcDecoder.optionDecoder(using JdbcDecoder.stringDecoder).unsafeDecode(columIndex + 7, rs)._2,
             postalcode = JdbcDecoder.optionDecoder(using JdbcDecoder.stringDecoder).unsafeDecode(columIndex + 8, rs)._2,
-            rowguid = JdbcDecoder.stringDecoder.unsafeDecode(columIndex + 9, rs)._2
+            rowguid = JdbcDecoder.optionDecoder(using TypoUUID.jdbcDecoder).unsafeDecode(columIndex + 9, rs)._2
           )
     }
   }
@@ -70,7 +71,7 @@ object PersonDetailSqlRow {
       val addressline1 = jsonObj.get("addressline1").fold[Either[String, Option[String]]](Right(None))(_.as(using JsonDecoder.option(using JsonDecoder.string)))
       val city = jsonObj.get("city").fold[Either[String, Option[String]]](Right(None))(_.as(using JsonDecoder.option(using JsonDecoder.string)))
       val postalcode = jsonObj.get("postalcode").fold[Either[String, Option[String]]](Right(None))(_.as(using JsonDecoder.option(using JsonDecoder.string)))
-      val rowguid = jsonObj.get("rowguid").toRight("Missing field 'rowguid'").flatMap(_.as(using JsonDecoder.string))
+      val rowguid = jsonObj.get("rowguid").fold[Either[String, Option[TypoUUID]]](Right(None))(_.as(using JsonDecoder.option(using TypoUUID.jsonDecoder)))
       if (businessentityid.isRight && title.isRight && firstname.isRight && middlename.isRight && lastname.isRight && jobtitle.isRight && addressline1.isRight && city.isRight && postalcode.isRight && rowguid.isRight)
         Right(PersonDetailSqlRow(businessentityid = businessentityid.toOption.get, title = title.toOption.get, firstname = firstname.toOption.get, middlename = middlename.toOption.get, lastname = lastname.toOption.get, jobtitle = jobtitle.toOption.get, addressline1 = addressline1.toOption.get, city = city.toOption.get, postalcode = postalcode.toOption.get, rowguid = rowguid.toOption.get))
       else Left(List[Either[String, Any]](businessentityid, title, firstname, middlename, lastname, jobtitle, addressline1, city, postalcode, rowguid).flatMap(_.left.toOption).mkString(", "))
@@ -109,7 +110,7 @@ object PersonDetailSqlRow {
         JsonEncoder.option(using JsonEncoder.string).unsafeEncode(a.postalcode, indent, out)
         out.write(",")
         out.write(""""rowguid":""")
-        JsonEncoder.string.unsafeEncode(a.rowguid, indent, out)
+        JsonEncoder.option(using TypoUUID.jsonEncoder).unsafeEncode(a.rowguid, indent, out)
         out.write("}")
       }
     }

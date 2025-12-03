@@ -70,7 +70,7 @@ object StateprovinceFields {
             Optional.empty(),
             Optional.of("bpchar"),
             (row, value) => row.copy(stateprovincecode = value),
-            PgTypes.text
+            PgTypes.bpchar
           )
         }
         override def countryregioncode: Field[CountryregionId, StateprovinceRow] = {

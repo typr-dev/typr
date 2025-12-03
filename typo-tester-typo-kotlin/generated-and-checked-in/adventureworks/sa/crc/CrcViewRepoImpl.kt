@@ -7,11 +7,12 @@ package adventureworks.sa.crc
 
 import java.sql.Connection
 import kotlin.collections.List
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.Fragment.interpolate
 
 class CrcViewRepoImpl() : CrcViewRepo {
-  override fun select(): SelectBuilder<CrcViewFields, CrcViewRow> = SelectBuilder.of("sa.crc", CrcViewFields.structure, CrcViewRow._rowParser)
+  override fun select(): SelectBuilder<CrcViewFields, CrcViewRow> = SelectBuilder.of("\"sa\".\"crc\"", CrcViewFields.structure, CrcViewRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<CrcViewRow> = interpolate(typo.runtime.Fragment.lit("""
     select "countryregioncode", "currencycode", "modifieddate"::text

@@ -15,6 +15,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -24,7 +25,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class CurrencyRepoImpl() : CurrencyRepo {
-  override fun delete(): DeleteBuilder<CurrencyFields, CurrencyRow> = DeleteBuilder.of("sales.currency", CurrencyFields.structure)
+  override fun delete(): DeleteBuilder<CurrencyFields, CurrencyRow> = DeleteBuilder.of("\"sales\".\"currency\"", CurrencyFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     currencycode: CurrencyId,
@@ -128,7 +129,7 @@ class CurrencyRepoImpl() : CurrencyRepo {
   COPY "sales"."currency"("currencycode", "name", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, CurrencyRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<CurrencyFields, CurrencyRow> = SelectBuilder.of("sales.currency", CurrencyFields.structure, CurrencyRow._rowParser)
+  override fun select(): SelectBuilder<CurrencyFields, CurrencyRow> = SelectBuilder.of("\"sales\".\"currency\"", CurrencyFields.structure, CurrencyRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<CurrencyRow> = interpolate(typo.runtime.Fragment.lit("""
     select "currencycode", "name", "modifieddate"::text
@@ -168,7 +169,7 @@ class CurrencyRepoImpl() : CurrencyRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<CurrencyFields, CurrencyRow> = UpdateBuilder.of("sales.currency", CurrencyFields.structure, CurrencyRow._rowParser.all())
+  override fun update(): UpdateBuilder<CurrencyFields, CurrencyRow> = UpdateBuilder.of("\"sales\".\"currency\"", CurrencyFields.structure, CurrencyRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: CurrencyRow,
@@ -210,8 +211,7 @@ class CurrencyRepoImpl() : CurrencyRepo {
       do update set
         "name" = EXCLUDED."name",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "currencycode", "name", "modifieddate"::text
-    """.trimMargin())
+      returning "currencycode", "name", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(CurrencyRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -226,8 +226,7 @@ class CurrencyRepoImpl() : CurrencyRepo {
                            do update set
                              "name" = EXCLUDED."name",
                            "modifieddate" = EXCLUDED."modifieddate"
-                           returning "currencycode", "name", "modifieddate"::text
-                         """.trimMargin()))
+                           returning "currencycode", "name", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(CurrencyRow._rowParser, unsaved)
     .runUnchecked(c)
 

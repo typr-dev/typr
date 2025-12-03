@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -29,7 +30,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class StoreRepoImpl implements StoreRepo {
   @Override
   public DeleteBuilder<StoreFields, StoreRow> delete() {
-    return DeleteBuilder.of("sales.store", StoreFields.structure());
+    return DeleteBuilder.of("\"sales\".\"store\"", StoreFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -184,7 +185,7 @@ public class StoreRepoImpl implements StoreRepo {
 
   @Override
   public SelectBuilder<StoreFields, StoreRow> select() {
-    return SelectBuilder.of("sales.store", StoreFields.structure(), StoreRow._rowParser);
+    return SelectBuilder.of("\"sales\".\"store\"", StoreFields.structure(), StoreRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -237,7 +238,7 @@ public class StoreRepoImpl implements StoreRepo {
 
   @Override
   public UpdateBuilder<StoreFields, StoreRow> update() {
-    return UpdateBuilder.of("sales.store", StoreFields.structure(), StoreRow._rowParser.all());
+    return UpdateBuilder.of("\"sales\".\"store\"", StoreFields.structure(), StoreRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -304,8 +305,7 @@ public class StoreRepoImpl implements StoreRepo {
          "demographics" = EXCLUDED."demographics",
          "rowguid" = EXCLUDED."rowguid",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"::text
-      """)
+         returning "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"::text""")
     )
       .updateReturning(StoreRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -326,8 +326,7 @@ public class StoreRepoImpl implements StoreRepo {
                 "demographics" = EXCLUDED."demographics",
                 "rowguid" = EXCLUDED."rowguid",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"::text
-             """))
+                returning "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"::text"""))
       .updateManyReturning(StoreRow._rowParser, unsaved)
       .runUnchecked(c);
   };

@@ -7,13 +7,14 @@ package adventureworks.pe.bea;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class BeaViewRepoImpl implements BeaViewRepo {
   @Override
   public SelectBuilder<BeaViewFields, BeaViewRow> select() {
-    return SelectBuilder.of("pe.bea", BeaViewFields.structure(), BeaViewRow._rowParser);
+    return SelectBuilder.of("\"pe\".\"bea\"", BeaViewFields.structure(), BeaViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -27,7 +28,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class SpecialofferRepoImpl implements SpecialofferRepo {
   @Override
   public DeleteBuilder<SpecialofferFields, SpecialofferRow> delete() {
-    return DeleteBuilder.of("sales.specialoffer", SpecialofferFields.structure());
+    return DeleteBuilder.of("\"sales\".\"specialoffer\"", SpecialofferFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -241,7 +242,7 @@ public class SpecialofferRepoImpl implements SpecialofferRepo {
 
   @Override
   public SelectBuilder<SpecialofferFields, SpecialofferRow> select() {
-    return SelectBuilder.of("sales.specialoffer", SpecialofferFields.structure(), SpecialofferRow._rowParser);
+    return SelectBuilder.of("\"sales\".\"specialoffer\"", SpecialofferFields.structure(), SpecialofferRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -294,7 +295,7 @@ public class SpecialofferRepoImpl implements SpecialofferRepo {
 
   @Override
   public UpdateBuilder<SpecialofferFields, SpecialofferRow> update() {
-    return UpdateBuilder.of("sales.specialoffer", SpecialofferFields.structure(), SpecialofferRow._rowParser.all());
+    return UpdateBuilder.of("\"sales\".\"specialoffer\"", SpecialofferFields.structure(), SpecialofferRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -396,8 +397,7 @@ public class SpecialofferRepoImpl implements SpecialofferRepo {
          "maxqty" = EXCLUDED."maxqty",
          "rowguid" = EXCLUDED."rowguid",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text
-      """)
+         returning "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text""")
     )
       .updateReturning(SpecialofferRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -423,8 +423,7 @@ public class SpecialofferRepoImpl implements SpecialofferRepo {
                 "maxqty" = EXCLUDED."maxqty",
                 "rowguid" = EXCLUDED."rowguid",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text
-             """))
+                returning "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text"""))
       .updateManyReturning(SpecialofferRow._rowParser, unsaved)
       .runUnchecked(c);
   };

@@ -12,6 +12,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -21,7 +22,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ProductlistpricehistoryRepoImpl extends ProductlistpricehistoryRepo {
-  override def delete: DeleteBuilder[ProductlistpricehistoryFields, ProductlistpricehistoryRow] = DeleteBuilder.of("production.productlistpricehistory", ProductlistpricehistoryFields.structure)
+  override def delete: DeleteBuilder[ProductlistpricehistoryFields, ProductlistpricehistoryRow] = DeleteBuilder.of(""""production"."productlistpricehistory"""", ProductlistpricehistoryFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(compositeId: ProductlistpricehistoryId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."productlistpricehistory" where "productid" = ${ProductId.pgType.encode(compositeId.productid)} AND "startdate" = ${TypoLocalDateTime.pgType.encode(compositeId.startdate)}""".update().runUnchecked(c) > 0
 
@@ -78,7 +79,7 @@ class ProductlistpricehistoryRepoImpl extends ProductlistpricehistoryRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."productlistpricehistory"("productid", "startdate", "enddate", "listprice", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ProductlistpricehistoryRowUnsaved.pgText)
 
-  override def select: SelectBuilder[ProductlistpricehistoryFields, ProductlistpricehistoryRow] = SelectBuilder.of("production.productlistpricehistory", ProductlistpricehistoryFields.structure, ProductlistpricehistoryRow.`_rowParser`)
+  override def select: SelectBuilder[ProductlistpricehistoryFields, ProductlistpricehistoryRow] = SelectBuilder.of(""""production"."productlistpricehistory"""", ProductlistpricehistoryFields.structure, ProductlistpricehistoryRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[ProductlistpricehistoryRow] = {
     interpolate"""select "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text
@@ -108,7 +109,7 @@ class ProductlistpricehistoryRepoImpl extends ProductlistpricehistoryRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[ProductlistpricehistoryFields, ProductlistpricehistoryRow] = UpdateBuilder.of("production.productlistpricehistory", ProductlistpricehistoryFields.structure, ProductlistpricehistoryRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ProductlistpricehistoryFields, ProductlistpricehistoryRow] = UpdateBuilder.of(""""production"."productlistpricehistory"""", ProductlistpricehistoryFields.structure, ProductlistpricehistoryRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: ProductlistpricehistoryRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: ProductlistpricehistoryId = row.compositeId
@@ -127,8 +128,7 @@ class ProductlistpricehistoryRepoImpl extends ProductlistpricehistoryRepo {
       "enddate" = EXCLUDED."enddate",
     "listprice" = EXCLUDED."listprice",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text
-    """
+    returning "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text"""
     .updateReturning(ProductlistpricehistoryRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -141,8 +141,7 @@ class ProductlistpricehistoryRepoImpl extends ProductlistpricehistoryRepo {
       "enddate" = EXCLUDED."enddate",
     "listprice" = EXCLUDED."listprice",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text
-    """
+    returning "productid", "startdate"::text, "enddate"::text, "listprice", "modifieddate"::text"""
       .updateManyReturning(ProductlistpricehistoryRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

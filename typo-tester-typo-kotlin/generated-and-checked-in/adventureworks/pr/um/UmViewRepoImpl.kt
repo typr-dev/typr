@@ -7,11 +7,12 @@ package adventureworks.pr.um
 
 import java.sql.Connection
 import kotlin.collections.List
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.Fragment.interpolate
 
 class UmViewRepoImpl() : UmViewRepo {
-  override fun select(): SelectBuilder<UmViewFields, UmViewRow> = SelectBuilder.of("pr.um", UmViewFields.structure, UmViewRow._rowParser)
+  override fun select(): SelectBuilder<UmViewFields, UmViewRow> = SelectBuilder.of("\"pr\".\"um\"", UmViewFields.structure, UmViewRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<UmViewRow> = interpolate(typo.runtime.Fragment.lit("""
     select "id", "unitmeasurecode", "name", "modifieddate"::text

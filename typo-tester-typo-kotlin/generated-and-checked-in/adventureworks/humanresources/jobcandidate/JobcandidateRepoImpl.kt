@@ -16,6 +16,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -25,7 +26,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class JobcandidateRepoImpl() : JobcandidateRepo {
-  override fun delete(): DeleteBuilder<JobcandidateFields, JobcandidateRow> = DeleteBuilder.of("humanresources.jobcandidate", JobcandidateFields.structure)
+  override fun delete(): DeleteBuilder<JobcandidateFields, JobcandidateRow> = DeleteBuilder.of("\"humanresources\".\"jobcandidate\"", JobcandidateFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     jobcandidateid: JobcandidateId,
@@ -139,7 +140,7 @@ class JobcandidateRepoImpl() : JobcandidateRepo {
   COPY "humanresources"."jobcandidate"("businessentityid", "resume", "jobcandidateid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, JobcandidateRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<JobcandidateFields, JobcandidateRow> = SelectBuilder.of("humanresources.jobcandidate", JobcandidateFields.structure, JobcandidateRow._rowParser)
+  override fun select(): SelectBuilder<JobcandidateFields, JobcandidateRow> = SelectBuilder.of("\"humanresources\".\"jobcandidate\"", JobcandidateFields.structure, JobcandidateRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<JobcandidateRow> = interpolate(typo.runtime.Fragment.lit("""
     select "jobcandidateid", "businessentityid", "resume", "modifieddate"::text
@@ -179,7 +180,7 @@ class JobcandidateRepoImpl() : JobcandidateRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<JobcandidateFields, JobcandidateRow> = UpdateBuilder.of("humanresources.jobcandidate", JobcandidateFields.structure, JobcandidateRow._rowParser.all())
+  override fun update(): UpdateBuilder<JobcandidateFields, JobcandidateRow> = UpdateBuilder.of("\"humanresources\".\"jobcandidate\"", JobcandidateFields.structure, JobcandidateRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: JobcandidateRow,
@@ -228,8 +229,7 @@ class JobcandidateRepoImpl() : JobcandidateRepo {
         "businessentityid" = EXCLUDED."businessentityid",
       "resume" = EXCLUDED."resume",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "jobcandidateid", "businessentityid", "resume", "modifieddate"::text
-    """.trimMargin())
+      returning "jobcandidateid", "businessentityid", "resume", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(JobcandidateRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -245,8 +245,7 @@ class JobcandidateRepoImpl() : JobcandidateRepo {
                                  "businessentityid" = EXCLUDED."businessentityid",
                                "resume" = EXCLUDED."resume",
                                "modifieddate" = EXCLUDED."modifieddate"
-                               returning "jobcandidateid", "businessentityid", "resume", "modifieddate"::text
-                             """.trimMargin()))
+                               returning "jobcandidateid", "businessentityid", "resume", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(JobcandidateRow._rowParser, unsaved)
     .runUnchecked(c)
 

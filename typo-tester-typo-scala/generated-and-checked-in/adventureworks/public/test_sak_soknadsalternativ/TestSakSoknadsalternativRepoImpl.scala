@@ -10,6 +10,7 @@ import java.sql.Connection
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.PgTypes
@@ -17,7 +18,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class TestSakSoknadsalternativRepoImpl extends TestSakSoknadsalternativRepo {
-  override def delete: DeleteBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = DeleteBuilder.of("public.test_sak_soknadsalternativ", TestSakSoknadsalternativFields.structure)
+  override def delete: DeleteBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = DeleteBuilder.of(""""public"."test_sak_soknadsalternativ"""", TestSakSoknadsalternativFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(compositeId: TestSakSoknadsalternativId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."test_sak_soknadsalternativ" where "organisasjonskode_saksbehandler" = ${PgTypes.text.encode(compositeId.organisasjonskodeSaksbehandler)} AND "utdanningsmulighet_kode" = ${PgTypes.text.encode(compositeId.utdanningsmulighetKode)}""".update().runUnchecked(c) > 0
 
@@ -44,7 +45,7 @@ class TestSakSoknadsalternativRepoImpl extends TestSakSoknadsalternativRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."test_sak_soknadsalternativ"("organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder") FROM STDIN""", batchSize, unsaved, c, TestSakSoknadsalternativRow.pgText)
 
-  override def select: SelectBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = SelectBuilder.of("public.test_sak_soknadsalternativ", TestSakSoknadsalternativFields.structure, TestSakSoknadsalternativRow.`_rowParser`)
+  override def select: SelectBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = SelectBuilder.of(""""public"."test_sak_soknadsalternativ"""", TestSakSoknadsalternativFields.structure, TestSakSoknadsalternativRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[TestSakSoknadsalternativRow] = {
     interpolate"""select "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder"
@@ -74,7 +75,7 @@ class TestSakSoknadsalternativRepoImpl extends TestSakSoknadsalternativRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = UpdateBuilder.of("public.test_sak_soknadsalternativ", TestSakSoknadsalternativFields.structure, TestSakSoknadsalternativRow.`_rowParser`.all())
+  override def update: UpdateBuilder[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = UpdateBuilder.of(""""public"."test_sak_soknadsalternativ"""", TestSakSoknadsalternativFields.structure, TestSakSoknadsalternativRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: TestSakSoknadsalternativRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: TestSakSoknadsalternativId = row.compositeId
@@ -89,8 +90,7 @@ class TestSakSoknadsalternativRepoImpl extends TestSakSoknadsalternativRepo {
     on conflict ("organisasjonskode_saksbehandler", "utdanningsmulighet_kode")
     do update set
       "organisasjonskode_tilbyder" = EXCLUDED."organisasjonskode_tilbyder"
-    returning "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder"
-    """
+    returning "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder""""
     .updateReturning(TestSakSoknadsalternativRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -101,8 +101,7 @@ class TestSakSoknadsalternativRepoImpl extends TestSakSoknadsalternativRepo {
     on conflict ("organisasjonskode_saksbehandler", "utdanningsmulighet_kode")
     do update set
       "organisasjonskode_tilbyder" = EXCLUDED."organisasjonskode_tilbyder"
-    returning "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder"
-    """
+    returning "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder""""
       .updateManyReturning(TestSakSoknadsalternativRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

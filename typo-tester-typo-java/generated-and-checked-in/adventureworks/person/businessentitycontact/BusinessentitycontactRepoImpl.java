@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -29,7 +30,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class BusinessentitycontactRepoImpl implements BusinessentitycontactRepo {
   @Override
   public DeleteBuilder<BusinessentitycontactFields, BusinessentitycontactRow> delete() {
-    return DeleteBuilder.of("person.businessentitycontact", BusinessentitycontactFields.structure());
+    return DeleteBuilder.of("\"person\".\"businessentitycontact\"", BusinessentitycontactFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -194,7 +195,7 @@ public class BusinessentitycontactRepoImpl implements BusinessentitycontactRepo 
 
   @Override
   public SelectBuilder<BusinessentitycontactFields, BusinessentitycontactRow> select() {
-    return SelectBuilder.of("person.businessentitycontact", BusinessentitycontactFields.structure(), BusinessentitycontactRow._rowParser);
+    return SelectBuilder.of("\"person\".\"businessentitycontact\"", BusinessentitycontactFields.structure(), BusinessentitycontactRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -266,7 +267,7 @@ public class BusinessentitycontactRepoImpl implements BusinessentitycontactRepo 
 
   @Override
   public UpdateBuilder<BusinessentitycontactFields, BusinessentitycontactRow> update() {
-    return UpdateBuilder.of("person.businessentitycontact", BusinessentitycontactFields.structure(), BusinessentitycontactRow._rowParser.all());
+    return UpdateBuilder.of("\"person\".\"businessentitycontact\"", BusinessentitycontactFields.structure(), BusinessentitycontactRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -324,8 +325,7 @@ public class BusinessentitycontactRepoImpl implements BusinessentitycontactRepo 
          do update set
            "rowguid" = EXCLUDED."rowguid",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text
-      """)
+         returning "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text""")
     )
       .updateReturning(BusinessentitycontactRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -343,8 +343,7 @@ public class BusinessentitycontactRepoImpl implements BusinessentitycontactRepo 
                 do update set
                   "rowguid" = EXCLUDED."rowguid",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text
-             """))
+                returning "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text"""))
       .updateManyReturning(BusinessentitycontactRow._rowParser, unsaved)
       .runUnchecked(c);
   };

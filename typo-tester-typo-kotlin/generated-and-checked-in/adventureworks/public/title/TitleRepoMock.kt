@@ -37,9 +37,11 @@ data class TitleRepoMock(val map: MutableMap<TitleId, TitleRow> = mutableMapOf<T
     c: Connection
   ): Int {
     var count = 0
-    for (id in codes) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in codes) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -61,7 +63,7 @@ data class TitleRepoMock(val map: MutableMap<TitleId, TitleRow> = mutableMapOf<T
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.code] = row
       count = count + 1L
     }
@@ -81,9 +83,13 @@ data class TitleRepoMock(val map: MutableMap<TitleId, TitleRow> = mutableMapOf<T
     codes: Array<TitleId>,
     c: Connection
   ): List<TitleRow> {
-    var result = ArrayList<TitleRow>()
-    for (id in codes) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<TitleRow>()
+    for (id in codes) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -106,9 +112,9 @@ data class TitleRepoMock(val map: MutableMap<TitleId, TitleRow> = mutableMapOf<T
     unsaved: MutableIterator<TitleRow>,
     c: Connection
   ): List<TitleRow> {
-    var result = ArrayList<TitleRow>()
+    val result = ArrayList<TitleRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.code] = row
       result.add(row)
     }
@@ -123,7 +129,7 @@ data class TitleRepoMock(val map: MutableMap<TitleId, TitleRow> = mutableMapOf<T
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.code] = row
       count = count + 1
     }

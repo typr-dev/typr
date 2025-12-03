@@ -54,9 +54,11 @@ public record MaritalStatusRepoMock(HashMap<MaritalStatusId, MaritalStatusRow> m
     Connection c
   ) {
     var count = 0;
-    for (var id : ids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : ids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -111,8 +113,12 @@ public record MaritalStatusRepoMock(HashMap<MaritalStatusId, MaritalStatusRow> m
     Connection c
   ) {
     var result = new ArrayList<MaritalStatusRow>();
-    for (var id : ids) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : ids) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 

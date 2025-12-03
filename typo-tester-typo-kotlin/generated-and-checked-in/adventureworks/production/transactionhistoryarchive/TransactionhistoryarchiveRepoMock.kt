@@ -40,9 +40,11 @@ data class TransactionhistoryarchiveRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in transactionids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in transactionids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -69,7 +71,7 @@ data class TransactionhistoryarchiveRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.transactionid] = row
       count = count + 1L
     }
@@ -84,8 +86,8 @@ data class TransactionhistoryarchiveRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.transactionid] = row
       count = count + 1L
     }
@@ -105,9 +107,13 @@ data class TransactionhistoryarchiveRepoMock(
     transactionids: Array<TransactionhistoryarchiveId>,
     c: Connection
   ): List<TransactionhistoryarchiveRow> {
-    var result = ArrayList<TransactionhistoryarchiveRow>()
-    for (id in transactionids) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<TransactionhistoryarchiveRow>()
+    for (id in transactionids) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -141,9 +147,9 @@ data class TransactionhistoryarchiveRepoMock(
     unsaved: MutableIterator<TransactionhistoryarchiveRow>,
     c: Connection
   ): List<TransactionhistoryarchiveRow> {
-    var result = ArrayList<TransactionhistoryarchiveRow>()
+    val result = ArrayList<TransactionhistoryarchiveRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.transactionid] = row
       result.add(row)
     }
@@ -158,7 +164,7 @@ data class TransactionhistoryarchiveRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.transactionid] = row
       count = count + 1
     }

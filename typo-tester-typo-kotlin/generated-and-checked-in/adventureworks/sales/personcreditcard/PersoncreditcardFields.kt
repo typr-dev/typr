@@ -27,7 +27,7 @@ import typo.dsl.Structure.Relation
 interface PersoncreditcardFields {
   fun businessentityid(): IdField<BusinessentityId, PersoncreditcardRow>
 
-  fun compositeIdIn(compositeIds: List<PersoncreditcardId>): SqlExpr<Boolean> = CompositeIn(listOf(Part<BusinessentityId, PersoncreditcardId, PersoncreditcardRow>(businessentityid(), PersoncreditcardId::businessentityid, BusinessentityId.pgType), Part</* user-picked */ CustomCreditcardId, PersoncreditcardId, PersoncreditcardRow>(creditcardid(), PersoncreditcardId::creditcardid, /* user-picked */ CustomCreditcardId.pgType)), compositeIds)
+  fun compositeIdIn(compositeIds: List<PersoncreditcardId>): SqlExpr<Boolean> = CompositeIn(listOf(Part<BusinessentityId, PersoncreditcardId, PersoncreditcardRow>(businessentityid(), PersoncreditcardId::businessentityid, BusinessentityId.pgType), Part</* user-picked */ CustomCreditcardId, PersoncreditcardId, PersoncreditcardRow>(creditcardid(), PersoncreditcardId::creditcardid, CustomCreditcardId.pgType)), compositeIds)
 
   fun compositeIdIs(compositeId: PersoncreditcardId): SqlExpr<Boolean> = SqlExpr.all(businessentityid().isEqual(compositeId.businessentityid), creditcardid().isEqual(compositeId.creditcardid))
 
@@ -43,7 +43,7 @@ interface PersoncreditcardFields {
     private class Impl(path: List<Path>) : Relation<PersoncreditcardFields, PersoncreditcardRow>(path) {
       override fun fields(): PersoncreditcardFields = object : PersoncreditcardFields {
         override fun businessentityid(): IdField<BusinessentityId, PersoncreditcardRow> = IdField<BusinessentityId, PersoncreditcardRow>(_path, "businessentityid", PersoncreditcardRow::businessentityid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
-        override fun creditcardid(): IdField</* user-picked */ CustomCreditcardId, PersoncreditcardRow> = IdField</* user-picked */ CustomCreditcardId, PersoncreditcardRow>(_path, "creditcardid", PersoncreditcardRow::creditcardid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(creditcardid = value) }, /* user-picked */ CustomCreditcardId.pgType)
+        override fun creditcardid(): IdField</* user-picked */ CustomCreditcardId, PersoncreditcardRow> = IdField</* user-picked */ CustomCreditcardId, PersoncreditcardRow>(_path, "creditcardid", PersoncreditcardRow::creditcardid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(creditcardid = value) }, CustomCreditcardId.pgType)
         override fun modifieddate(): Field<TypoLocalDateTime, PersoncreditcardRow> = Field<TypoLocalDateTime, PersoncreditcardRow>(_path, "modifieddate", PersoncreditcardRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
       }
 

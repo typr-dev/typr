@@ -93,8 +93,9 @@ case class PasswordRepoMock(
 
   override def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.List[PasswordRow] = {
     val result = new ArrayList[PasswordRow]()
-    businessentityids.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    businessentityids.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

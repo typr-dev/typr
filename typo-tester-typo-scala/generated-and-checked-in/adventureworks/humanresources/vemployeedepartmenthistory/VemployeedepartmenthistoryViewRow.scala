@@ -41,5 +41,5 @@ case class VemployeedepartmenthistoryViewRow(
 )
 
 object VemployeedepartmenthistoryViewRow {
-  val `_rowParser`: RowParser[VemployeedepartmenthistoryViewRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), /* user-picked */ FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text.opt(), Name.pgType, Name.pgType, Name.pgType, TypoLocalDate.pgType, TypoLocalDate.pgType.opt(), VemployeedepartmenthistoryViewRow.apply, row => Array(row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.shift, row.department, row.groupname, row.startdate, row.enddate))
+  val `_rowParser`: RowParser[VemployeedepartmenthistoryViewRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text.opt(), Name.pgType, Name.pgType, Name.pgType, TypoLocalDate.pgType, TypoLocalDate.pgType.opt(), VemployeedepartmenthistoryViewRow.apply, row => Array(row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.shift, row.department, row.groupname, row.startdate, row.enddate))
 }

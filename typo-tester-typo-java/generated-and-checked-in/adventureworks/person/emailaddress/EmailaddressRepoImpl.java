@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -29,7 +30,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class EmailaddressRepoImpl implements EmailaddressRepo {
   @Override
   public DeleteBuilder<EmailaddressFields, EmailaddressRow> delete() {
-    return DeleteBuilder.of("person.emailaddress", EmailaddressFields.structure());
+    return DeleteBuilder.of("\"person\".\"emailaddress\"", EmailaddressFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -195,7 +196,7 @@ public class EmailaddressRepoImpl implements EmailaddressRepo {
 
   @Override
   public SelectBuilder<EmailaddressFields, EmailaddressRow> select() {
-    return SelectBuilder.of("person.emailaddress", EmailaddressFields.structure(), EmailaddressRow._rowParser);
+    return SelectBuilder.of("\"person\".\"emailaddress\"", EmailaddressFields.structure(), EmailaddressRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -260,7 +261,7 @@ public class EmailaddressRepoImpl implements EmailaddressRepo {
 
   @Override
   public UpdateBuilder<EmailaddressFields, EmailaddressRow> update() {
-    return UpdateBuilder.of("person.emailaddress", EmailaddressFields.structure(), EmailaddressRow._rowParser.all());
+    return UpdateBuilder.of("\"person\".\"emailaddress\"", EmailaddressFields.structure(), EmailaddressRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -319,8 +320,7 @@ public class EmailaddressRepoImpl implements EmailaddressRepo {
            "emailaddress" = EXCLUDED."emailaddress",
          "rowguid" = EXCLUDED."rowguid",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"::text
-      """)
+         returning "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"::text""")
     )
       .updateReturning(EmailaddressRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -339,8 +339,7 @@ public class EmailaddressRepoImpl implements EmailaddressRepo {
                   "emailaddress" = EXCLUDED."emailaddress",
                 "rowguid" = EXCLUDED."rowguid",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"::text
-             """))
+                returning "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"::text"""))
       .updateManyReturning(EmailaddressRow._rowParser, unsaved)
       .runUnchecked(c);
   };

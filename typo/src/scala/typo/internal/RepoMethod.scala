@@ -5,6 +5,9 @@ import typo.jvm.Comments
 
 sealed abstract class RepoMethod(val methodName: String, val tiebreaker: Int) {
   val comment: jvm.Comments = jvm.Comments.Empty
+
+  /** Whether this method requires PostgreSQL COPY/streaming support */
+  def requiresStreamingSupport: Boolean = false
 }
 
 object RepoMethod {
@@ -104,6 +107,7 @@ object RepoMethod {
       writeableColumnsWithId: NonEmptyList[ComputedColumn]
   ) extends Mutator("upsertStreaming") {
     override val comment = Comments(List("NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements"))
+    override def requiresStreamingSupport: Boolean = true // Uses PostgreSQL-specific temp table + COPY syntax
   }
 
   case class Insert(
@@ -127,13 +131,16 @@ object RepoMethod {
       relName: db.RelationName,
       rowType: jvm.Type,
       writeableColumnsWithId: NonEmptyList[ComputedColumn]
-  ) extends Mutator("insertStreaming")
+  ) extends Mutator("insertStreaming") {
+    override def requiresStreamingSupport: Boolean = true // Uses PostgreSQL COPY command
+  }
 
   case class InsertUnsavedStreaming(
       relName: db.RelationName,
       unsaved: ComputedRowUnsaved
   ) extends Mutator("insertUnsavedStreaming") {
     override val comment = Comments(List("NOTE: this functionality requires PostgreSQL 16 or later!"))
+    override def requiresStreamingSupport: Boolean = true // Uses PostgreSQL COPY command with DEFAULT
   }
 
   case class Delete(

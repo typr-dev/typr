@@ -215,7 +215,7 @@ object PgtestFields {
             Optional.empty(),
             Optional.of("bpchar"),
             (row, value) => row.copy(bpchar = value),
-            PgTypes.text
+            PgTypes.bpchar
           )
         }
         override def bytea: Field[TypoBytea, PgtestRow] = {
@@ -237,7 +237,7 @@ object PgtestFields {
             Optional.empty(),
             Optional.of("bpchar"),
             (row, value) => row.copy(char = value),
-            PgTypes.text
+            PgTypes.bpchar
           )
         }
         override def circle: Field[TypoCircle, PgtestRow] = {
@@ -446,7 +446,7 @@ object PgtestFields {
             Optional.empty(),
             Optional.of("name"),
             (row, value) => row.copy(name = value),
-            PgTypes.text
+            PgTypes.name
           )
         }
         override def numeric: Field[java.math.BigDecimal, PgtestRow] = {
@@ -611,7 +611,7 @@ object PgtestFields {
             Optional.empty(),
             Optional.of("bpchar[]"),
             (row, value) => row.copy(bpchares = value),
-            PgTypes.textArray
+            PgTypes.bpcharArray
           )
         }
         override def chares: Field[Array[/* bpchar */ String], PgtestRow] = {
@@ -622,7 +622,7 @@ object PgtestFields {
             Optional.empty(),
             Optional.of("bpchar[]"),
             (row, value) => row.copy(chares = value),
-            PgTypes.textArray
+            PgTypes.bpcharArray
           )
         }
         override def circlees: Field[Array[TypoCircle], PgtestRow] = {
@@ -820,7 +820,7 @@ object PgtestFields {
             Optional.empty(),
             Optional.of("name[]"),
             (row, value) => row.copy(namees = value),
-            PgTypes.textArray
+            PgTypes.nameArray
           )
         }
         override def numerices: Field[Array[java.math.BigDecimal], PgtestRow] = {

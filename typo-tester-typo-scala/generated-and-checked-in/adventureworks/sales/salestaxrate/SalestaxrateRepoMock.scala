@@ -92,8 +92,9 @@ case class SalestaxrateRepoMock(
 
   override def selectByIds(salestaxrateids: Array[SalestaxrateId])(using c: Connection): java.util.List[SalestaxrateRow] = {
     val result = new ArrayList[SalestaxrateRow]()
-    salestaxrateids.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    salestaxrateids.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

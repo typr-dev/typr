@@ -24,5 +24,5 @@ case class PccViewRow(
 )
 
 object PccViewRow {
-  val `_rowParser`: RowParser[PccViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, /* user-picked */ CustomCreditcardId.pgType, TypoLocalDateTime.pgType, PccViewRow.apply, row => Array(row.id, row.businessentityid, row.creditcardid, row.modifieddate))
+  val `_rowParser`: RowParser[PccViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, CustomCreditcardId.pgType, TypoLocalDateTime.pgType, PccViewRow.apply, row => Array(row.id, row.businessentityid, row.creditcardid, row.modifieddate))
 }

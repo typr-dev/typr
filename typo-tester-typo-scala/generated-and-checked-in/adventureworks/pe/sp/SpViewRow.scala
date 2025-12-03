@@ -39,5 +39,5 @@ case class SpViewRow(
 )
 
 object SpViewRow {
-  val `_rowParser`: RowParser[SpViewRow] = RowParsers.of(StateprovinceId.pgType, StateprovinceId.pgType, PgTypes.text, CountryregionId.pgType, Flag.pgType, Name.pgType, SalesterritoryId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, SpViewRow.apply, row => Array(row.id, row.stateprovinceid, row.stateprovincecode, row.countryregioncode, row.isonlystateprovinceflag, row.name, row.territoryid, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[SpViewRow] = RowParsers.of(StateprovinceId.pgType, StateprovinceId.pgType, PgTypes.bpchar, CountryregionId.pgType, Flag.pgType, Name.pgType, SalesterritoryId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, SpViewRow.apply, row => Array(row.id, row.stateprovinceid, row.stateprovincecode, row.countryregioncode, row.isonlystateprovinceflag, row.name, row.territoryid, row.rowguid, row.modifieddate))
 }

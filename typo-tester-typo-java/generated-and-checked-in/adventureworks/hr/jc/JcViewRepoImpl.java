@@ -7,13 +7,14 @@ package adventureworks.hr.jc;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class JcViewRepoImpl implements JcViewRepo {
   @Override
   public SelectBuilder<JcViewFields, JcViewRow> select() {
-    return SelectBuilder.of("hr.jc", JcViewFields.structure(), JcViewRow._rowParser);
+    return SelectBuilder.of("\"hr\".\"jc\"", JcViewFields.structure(), JcViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

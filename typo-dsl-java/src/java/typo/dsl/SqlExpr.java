@@ -1,7 +1,7 @@
 package typo.dsl;
 
+import typo.runtime.DbType;
 import typo.runtime.Fragment;
-import typo.runtime.PgType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -156,7 +156,7 @@ public sealed interface SqlExpr<T> {
     }
     
     // Array operations
-    default SqlExpr<Boolean> in(T[] values, PgType<T> pgType) {
+    default SqlExpr<Boolean> in(T[] values, DbType<T> pgType) {
         return new In<>(this, values, pgType);
     }
     
@@ -180,7 +180,7 @@ public sealed interface SqlExpr<T> {
         typo.runtime.Either<String, R> set(R row, Optional<T> value);
         Optional<String> sqlReadCast();
         Optional<String> sqlWriteCast();
-        PgType<T> pgType();
+        DbType<T> pgType();
         
         // Convenience methods for type-safe value comparisons
         default SqlExpr<Boolean> isEqual(T value) {
@@ -253,7 +253,7 @@ public sealed interface SqlExpr<T> {
         Optional<String> sqlReadCast,
         Optional<String> sqlWriteCast,
         BiFunction<R, T, R> setter,
-        PgType<T> pgType
+        DbType<T> pgType
     ) implements FieldLikeNotId<T, R> {
         @Override
         public Optional<T> get(R row) {
@@ -271,13 +271,23 @@ public sealed interface SqlExpr<T> {
 
         @Override
         public Fragment render(RenderCtx ctx, AtomicInteger counter) {
-            String aliasPrefix = ctx.alias(path())
-                .map(alias -> "(" + alias + ").")
-                .orElse("");
-            return Fragment.lit(aliasPrefix + "\"" + column() + "\" ");
+            String colRef = ctx.alias(path())
+                .map(alias -> {
+                    if (ctx.inJoinContext()) {
+                        // In join context, reference CTE output columns: cteName.alias_column
+                        // Resolve the actual CTE name that contains this alias's columns
+                        String cteName = ctx.resolveCte(alias);
+                        return cteName + "." + alias + "_" + column();
+                    } else {
+                        // In base context, reference actual table columns: (alias)."column"
+                        return ctx.dialect().columnRef(alias, ctx.dialect().quoteIdent(column()));
+                    }
+                })
+                .orElse(ctx.dialect().quoteIdent(column()));
+            return Fragment.lit(colRef + " ");
         }
     }
-    
+
     record OptField<T, R>(
         List<Path> path,
         String column,
@@ -285,7 +295,7 @@ public sealed interface SqlExpr<T> {
         Optional<String> sqlReadCast,
         Optional<String> sqlWriteCast,
         BiFunction<R, Optional<T>, R> setter,
-        PgType<T> pgType
+        DbType<T> pgType
     ) implements FieldLikeNotId<T, R> {
         @Override
         public Optional<T> get(R row) {
@@ -299,13 +309,23 @@ public sealed interface SqlExpr<T> {
 
         @Override
         public Fragment render(RenderCtx ctx, AtomicInteger counter) {
-            String aliasPrefix = ctx.alias(path())
-                .map(alias -> "(" + alias + ").")
-                .orElse("");
-            return Fragment.lit(aliasPrefix + "\"" + column() + "\" ");
+            String colRef = ctx.alias(path())
+                .map(alias -> {
+                    if (ctx.inJoinContext()) {
+                        // In join context, reference CTE output columns: cteName.alias_column
+                        // Resolve the actual CTE name that contains this alias's columns
+                        String cteName = ctx.resolveCte(alias);
+                        return cteName + "." + alias + "_" + column();
+                    } else {
+                        // In base context, reference actual table columns: (alias)."column"
+                        return ctx.dialect().columnRef(alias, ctx.dialect().quoteIdent(column()));
+                    }
+                })
+                .orElse(ctx.dialect().quoteIdent(column()));
+            return Fragment.lit(colRef + " ");
         }
     }
-    
+
     record IdField<T, R>(
         List<Path> path,
         String column,
@@ -313,7 +333,7 @@ public sealed interface SqlExpr<T> {
         Optional<String> sqlReadCast,
         Optional<String> sqlWriteCast,
         BiFunction<R, T, R> setter,
-        PgType<T> pgType
+        DbType<T> pgType
     ) implements FieldLike<T, R> {
         @Override
         public Optional<T> get(R row) {
@@ -331,24 +351,34 @@ public sealed interface SqlExpr<T> {
 
         @Override
         public Fragment render(RenderCtx ctx, AtomicInteger counter) {
-            String aliasPrefix = ctx.alias(path())
-                .map(alias -> "(" + alias + ").")
-                .orElse("");
-            return Fragment.lit(aliasPrefix + "\"" + column() + "\" ");
+            String colRef = ctx.alias(path())
+                .map(alias -> {
+                    if (ctx.inJoinContext()) {
+                        // In join context, reference CTE output columns: cteName.alias_column
+                        // Resolve the actual CTE name that contains this alias's columns
+                        String cteName = ctx.resolveCte(alias);
+                        return cteName + "." + alias + "_" + column();
+                    } else {
+                        // In base context, reference actual table columns: (alias)."column"
+                        return ctx.dialect().columnRef(alias, ctx.dialect().quoteIdent(column()));
+                    }
+                })
+                .orElse(ctx.dialect().quoteIdent(column()));
+            return Fragment.lit(colRef + " ");
         }
     }
-    
-    // Constant types with PgType
+
+    // Constant types with DbType
     sealed interface Const<T> extends SqlExpr<T> permits ConstReq, ConstOpt {}
-    
-    record ConstReq<T>(T value, PgType<T> pgType) implements Const<T> {
+
+    record ConstReq<T>(T value, DbType<T> pgType) implements Const<T> {
         @Override
         public Fragment render(RenderCtx ctx, AtomicInteger counter) {
             return Fragment.value(value(),  pgType());
         }
     }
-    
-    record ConstOpt<T>(Optional<T> value, PgType<T> pgType) implements Const<T> {
+
+    record ConstOpt<T>(Optional<T> value, DbType<T> pgType) implements Const<T> {
         @Override
         public Fragment render(RenderCtx ctx, AtomicInteger counter) {
             return value()
@@ -479,7 +509,7 @@ public sealed interface SqlExpr<T> {
     record In<T>(
         SqlExpr<T> expr,
         T[] values,
-        PgType<T> pgType
+        DbType<T> pgType
     ) implements SqlExpr<Boolean> {
         @Override
         public Fragment render(RenderCtx ctx, AtomicInteger counter) {
@@ -544,7 +574,7 @@ public sealed interface SqlExpr<T> {
         public record Part<T, Tuple, Row>(
             SqlExpr.FieldLike<T, Row> field,
             Function<Tuple, T> extract,
-            PgType<T> pgType
+            DbType<T> pgType
         ) {}
         
         @Override

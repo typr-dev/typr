@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -31,7 +32,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class EmployeeRepoImpl implements EmployeeRepo {
   @Override
   public DeleteBuilder<EmployeeFields, EmployeeRow> delete() {
-    return DeleteBuilder.of("humanresources.employee", EmployeeFields.structure());
+    return DeleteBuilder.of("\"humanresources\".\"employee\"", EmployeeFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -288,7 +289,7 @@ public class EmployeeRepoImpl implements EmployeeRepo {
 
   @Override
   public SelectBuilder<EmployeeFields, EmployeeRow> select() {
-    return SelectBuilder.of("humanresources.employee", EmployeeFields.structure(), EmployeeRow._rowParser);
+    return SelectBuilder.of("\"humanresources\".\"employee\"", EmployeeFields.structure(), EmployeeRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -341,7 +342,7 @@ public class EmployeeRepoImpl implements EmployeeRepo {
 
   @Override
   public UpdateBuilder<EmployeeFields, EmployeeRow> update() {
-    return UpdateBuilder.of("humanresources.employee", EmployeeFields.structure(), EmployeeRow._rowParser.all());
+    return UpdateBuilder.of("\"humanresources\".\"employee\"", EmployeeFields.structure(), EmployeeRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -471,8 +472,7 @@ public class EmployeeRepoImpl implements EmployeeRepo {
          "rowguid" = EXCLUDED."rowguid",
          "modifieddate" = EXCLUDED."modifieddate",
          "organizationnode" = EXCLUDED."organizationnode"
-         returning "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode"
-      """)
+         returning "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode\"""")
     )
       .updateReturning(EmployeeRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -502,8 +502,7 @@ public class EmployeeRepoImpl implements EmployeeRepo {
                 "rowguid" = EXCLUDED."rowguid",
                 "modifieddate" = EXCLUDED."modifieddate",
                 "organizationnode" = EXCLUDED."organizationnode"
-                returning "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode"
-             """))
+                returning "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode\""""))
       .updateManyReturning(EmployeeRow._rowParser, unsaved)
       .runUnchecked(c);
   };

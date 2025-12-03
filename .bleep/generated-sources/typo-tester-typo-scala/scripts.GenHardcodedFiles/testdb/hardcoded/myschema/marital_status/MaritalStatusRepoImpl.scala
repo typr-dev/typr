@@ -10,6 +10,7 @@ import java.util.HashMap
 import java.util.Optional
 import testdb.hardcoded.myschema.marital_status.MaritalStatusFieldValue.id
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -17,7 +18,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class MaritalStatusRepoImpl extends MaritalStatusRepo {
-  override def delete: DeleteBuilder[MaritalStatusFields, MaritalStatusRow] = DeleteBuilder.of("myschema.marital_status", MaritalStatusFields.structure)
+  override def delete: DeleteBuilder[MaritalStatusFields, MaritalStatusRow] = DeleteBuilder.of(""""myschema"."marital_status"""", MaritalStatusFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(id: MaritalStatusId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "myschema"."marital_status" where "id" = ${MaritalStatusId.pgType.encode(id)}""".update().runUnchecked(c) > 0
 
@@ -42,7 +43,7 @@ class MaritalStatusRepoImpl extends MaritalStatusRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "myschema"."marital_status"("id") FROM STDIN""", batchSize, unsaved, c, MaritalStatusRow.pgText)
 
-  override def select: SelectBuilder[MaritalStatusFields, MaritalStatusRow] = SelectBuilder.of("myschema.marital_status", MaritalStatusFields.structure, MaritalStatusRow.`_rowParser`)
+  override def select: SelectBuilder[MaritalStatusFields, MaritalStatusRow] = SelectBuilder.of(""""myschema"."marital_status"""", MaritalStatusFields.structure, MaritalStatusRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[MaritalStatusRow] = {
     interpolate"""select "id"
@@ -79,7 +80,7 @@ class MaritalStatusRepoImpl extends MaritalStatusRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[MaritalStatusFields, MaritalStatusRow] = UpdateBuilder.of("myschema.marital_status", MaritalStatusFields.structure, MaritalStatusRow.`_rowParser`.all())
+  override def update: UpdateBuilder[MaritalStatusFields, MaritalStatusRow] = UpdateBuilder.of(""""myschema"."marital_status"""", MaritalStatusFields.structure, MaritalStatusRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def updateFieldValues(
     id: MaritalStatusId,
@@ -101,8 +102,7 @@ class MaritalStatusRepoImpl extends MaritalStatusRepo {
     values (${MaritalStatusId.pgType.encode(unsaved.id)}::int8)
     on conflict ("id")
     do update set "id" = EXCLUDED."id"
-    returning "id"
-    """
+    returning "id""""
     .updateReturning(MaritalStatusRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -111,9 +111,8 @@ class MaritalStatusRepoImpl extends MaritalStatusRepo {
     interpolate"""insert into "myschema"."marital_status"("id")
     values (?::int8)
     on conflict ("id")
-    do nothing
-    returning "id"
-    """
+    do update set "id" = EXCLUDED."id"
+    returning "id""""
       .updateManyReturning(MaritalStatusRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

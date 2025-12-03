@@ -15,6 +15,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -23,7 +24,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class BusinessentityaddressRepoImpl extends BusinessentityaddressRepo {
-  override def delete: DeleteBuilder[BusinessentityaddressFields, BusinessentityaddressRow] = DeleteBuilder.of("person.businessentityaddress", BusinessentityaddressFields.structure)
+  override def delete: DeleteBuilder[BusinessentityaddressFields, BusinessentityaddressRow] = DeleteBuilder.of(""""person"."businessentityaddress"""", BusinessentityaddressFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(compositeId: BusinessentityaddressId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "person"."businessentityaddress" where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "addressid" = ${AddressId.pgType.encode(compositeId.addressid)} AND "addresstypeid" = ${AddresstypeId.pgType.encode(compositeId.addresstypeid)}""".update().runUnchecked(c) > 0
 
@@ -83,7 +84,7 @@ class BusinessentityaddressRepoImpl extends BusinessentityaddressRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "person"."businessentityaddress"("businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, BusinessentityaddressRowUnsaved.pgText)
 
-  override def select: SelectBuilder[BusinessentityaddressFields, BusinessentityaddressRow] = SelectBuilder.of("person.businessentityaddress", BusinessentityaddressFields.structure, BusinessentityaddressRow.`_rowParser`)
+  override def select: SelectBuilder[BusinessentityaddressFields, BusinessentityaddressRow] = SelectBuilder.of(""""person"."businessentityaddress"""", BusinessentityaddressFields.structure, BusinessentityaddressRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[BusinessentityaddressRow] = {
     interpolate"""select "businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate"::text
@@ -114,7 +115,7 @@ class BusinessentityaddressRepoImpl extends BusinessentityaddressRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[BusinessentityaddressFields, BusinessentityaddressRow] = UpdateBuilder.of("person.businessentityaddress", BusinessentityaddressFields.structure, BusinessentityaddressRow.`_rowParser`.all())
+  override def update: UpdateBuilder[BusinessentityaddressFields, BusinessentityaddressRow] = UpdateBuilder.of(""""person"."businessentityaddress"""", BusinessentityaddressFields.structure, BusinessentityaddressRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: BusinessentityaddressRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: BusinessentityaddressId = row.compositeId
@@ -131,8 +132,7 @@ class BusinessentityaddressRepoImpl extends BusinessentityaddressRepo {
     do update set
       "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate"::text
-    """
+    returning "businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate"::text"""
     .updateReturning(BusinessentityaddressRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -144,8 +144,7 @@ class BusinessentityaddressRepoImpl extends BusinessentityaddressRepo {
     do update set
       "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate"::text
-    """
+    returning "businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate"::text"""
       .updateManyReturning(BusinessentityaddressRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

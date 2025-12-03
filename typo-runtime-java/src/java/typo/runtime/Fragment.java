@@ -51,6 +51,10 @@ public sealed interface Fragment {
         return new Operation.UpdateManyReturning<>(this, parser, rows);
     }
 
+    default <Row> Operation.UpdateReturningEach<Row> updateReturningEach(RowParser<Row> parser, Iterator<Row> rows) {
+        return new Operation.UpdateReturningEach<>(this, parser, rows);
+    }
+
     record Literal(String value) implements Fragment {
         @Override
         public void render(StringBuilder sb) {
@@ -92,17 +96,19 @@ public sealed interface Fragment {
         }
     }
 
-    record Value<A>(A value, PgType<A> type) implements Fragment {
+    record Value<A>(A value, DbType<A> type) implements Fragment {
         @Override
         public void render(StringBuilder sb) {
             sb.append('?');
-            // Add PostgreSQL type cast like Scala DSL does: ?::typename
+            // Add type cast if the database type supports it (PostgreSQL yes, MariaDB no)
             // Skip text type - PostgreSQL handles implicit string conversion well,
             // and casting to text can conflict with bpchar comparison semantics
-            String sqlType = type.typename().sqlType();
-            if (sqlType != null && !sqlType.isEmpty() && !sqlType.equals("text")) {
-                sb.append("::");
-                sb.append(sqlType);
+            if (type.typename().renderTypeCast()) {
+                String sqlType = type.typename().sqlType();
+                if (sqlType != null && !sqlType.isEmpty() && !sqlType.equals("text")) {
+                    sb.append("::");
+                    sb.append(sqlType);
+                }
             }
         }
 
@@ -112,7 +118,7 @@ public sealed interface Fragment {
         }
     }
 
-    static <A> Value<A> value(A value, PgType<A> type) {
+    static <A> Value<A> value(A value, DbType<A> type) {
         return new Value<>(value, type);
     }
 
@@ -292,7 +298,7 @@ public sealed interface Fragment {
         /**
          * Add a parameter with its type and value
          */
-        public <T> Builder param(PgType<T> type, T value) {
+        public <T> Builder param(DbType<T> type, T value) {
             fragments.add(Fragment.value(value, type));
             return this;
         }
@@ -333,5 +339,102 @@ public sealed interface Fragment {
      */
     static Fragment interpolate(Fragment... fragments) {
         return new Concat(Arrays.asList(fragments));
+    }
+
+    /**
+     * Creates an IN clause fragment: `column IN (?, ?, ...)`
+     * Dynamically expands based on the number of values.
+     * Used primarily for MariaDB which doesn't support array parameters.
+     *
+     * @param column the column name (will be rendered as-is, use backticks for quoting if needed)
+     * @param values the array of values
+     * @param type the DbType for the values
+     * @return a fragment representing `column IN (?, ?, ...)`
+     */
+    static <T> Fragment in(String column, T[] values, DbType<T> type) {
+        return new InClause<>(column, values, type);
+    }
+
+    /**
+     * Creates an IN clause fragment for use in WHERE conditions.
+     * Returns FALSE if the values array is empty (standard SQL behavior for empty IN).
+     */
+    record InClause<T>(String column, T[] values, DbType<T> type) implements Fragment {
+        @Override
+        public void render(StringBuilder sb) {
+            if (values.length == 0) {
+                sb.append("FALSE");
+                return;
+            }
+            sb.append(column);
+            sb.append(" IN (");
+            for (int i = 0; i < values.length; i++) {
+                if (i > 0) sb.append(", ");
+                sb.append('?');
+            }
+            sb.append(')');
+        }
+
+        @Override
+        public void set(PreparedStatement stmt, AtomicInteger idx) throws SQLException {
+            for (T value : values) {
+                type.write().set(stmt, idx.getAndIncrement(), value);
+            }
+        }
+    }
+
+    /**
+     * Creates a composite IN clause for multiple columns: `(col1, col2) IN ((?, ?), (?, ?), ...)`
+     * Used for composite primary keys, primarily for MariaDB.
+     *
+     * @param columns the column names
+     * @param tuples list of value arrays, each representing one tuple
+     * @param types the DbTypes for each column in order
+     * @return a fragment representing `(col1, col2) IN ((?, ?), ...)`
+     */
+    static Fragment compositeIn(String[] columns, List<Object[]> tuples, DbType<?>[] types) {
+        return new CompositeInClause(columns, tuples, types);
+    }
+
+    /**
+     * Creates a composite IN clause for composite primary keys.
+     */
+    record CompositeInClause(String[] columns, List<Object[]> tuples, DbType<?>[] types) implements Fragment {
+        @Override
+        public void render(StringBuilder sb) {
+            if (tuples.isEmpty()) {
+                sb.append("FALSE");
+                return;
+            }
+            // Render (col1, col2, ...)
+            sb.append('(');
+            for (int i = 0; i < columns.length; i++) {
+                if (i > 0) sb.append(", ");
+                sb.append(columns[i]);
+            }
+            sb.append(") IN (");
+
+            // Render ((?, ?), (?, ?), ...)
+            for (int t = 0; t < tuples.size(); t++) {
+                if (t > 0) sb.append(", ");
+                sb.append('(');
+                for (int c = 0; c < columns.length; c++) {
+                    if (c > 0) sb.append(", ");
+                    sb.append('?');
+                }
+                sb.append(')');
+            }
+            sb.append(')');
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public void set(PreparedStatement stmt, AtomicInteger idx) throws SQLException {
+            for (Object[] tuple : tuples) {
+                for (int c = 0; c < types.length; c++) {
+                    ((DbType<Object>) types[c]).write().set(stmt, idx.getAndIncrement(), tuple[c]);
+                }
+            }
+        }
     }
 }

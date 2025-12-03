@@ -61,9 +61,11 @@ public record UnitmeasureRepoMock(
     Connection c
   ) {
     var count = 0;
-    for (var id : unitmeasurecodes) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : unitmeasurecodes) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -143,8 +145,12 @@ public record UnitmeasureRepoMock(
     Connection c
   ) {
     var result = new ArrayList<UnitmeasureRow>();
-    for (var id : unitmeasurecodes) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : unitmeasurecodes) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 
@@ -168,7 +174,7 @@ public record UnitmeasureRepoMock(
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.unitmeasurecode())).filter(oldRow -> !oldRow.equals(row)).isPresent();
     if (shouldUpdate) {
-      map.put(row.unitmeasurecode(), row);
+      map.put(row.unitmeasurecode(), row);;
     };
     return shouldUpdate;
   };

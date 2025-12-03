@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -30,7 +31,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class SalestaxrateRepoImpl implements SalestaxrateRepo {
   @Override
   public DeleteBuilder<SalestaxrateFields, SalestaxrateRow> delete() {
-    return DeleteBuilder.of("sales.salestaxrate", SalestaxrateFields.structure());
+    return DeleteBuilder.of("\"sales\".\"salestaxrate\"", SalestaxrateFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -206,7 +207,7 @@ public class SalestaxrateRepoImpl implements SalestaxrateRepo {
 
   @Override
   public SelectBuilder<SalestaxrateFields, SalestaxrateRow> select() {
-    return SelectBuilder.of("sales.salestaxrate", SalestaxrateFields.structure(), SalestaxrateRow._rowParser);
+    return SelectBuilder.of("\"sales\".\"salestaxrate\"", SalestaxrateFields.structure(), SalestaxrateRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -259,7 +260,7 @@ public class SalestaxrateRepoImpl implements SalestaxrateRepo {
 
   @Override
   public UpdateBuilder<SalestaxrateFields, SalestaxrateRow> update() {
-    return UpdateBuilder.of("sales.salestaxrate", SalestaxrateFields.structure(), SalestaxrateRow._rowParser.all());
+    return UpdateBuilder.of("\"sales\".\"salestaxrate\"", SalestaxrateFields.structure(), SalestaxrateRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -333,8 +334,7 @@ public class SalestaxrateRepoImpl implements SalestaxrateRepo {
          "name" = EXCLUDED."name",
          "rowguid" = EXCLUDED."rowguid",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"::text
-      """)
+         returning "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"::text""")
     )
       .updateReturning(SalestaxrateRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -356,8 +356,7 @@ public class SalestaxrateRepoImpl implements SalestaxrateRepo {
                 "name" = EXCLUDED."name",
                 "rowguid" = EXCLUDED."rowguid",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"::text
-             """))
+                returning "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"::text"""))
       .updateManyReturning(SalestaxrateRow._rowParser, unsaved)
       .runUnchecked(c);
   };

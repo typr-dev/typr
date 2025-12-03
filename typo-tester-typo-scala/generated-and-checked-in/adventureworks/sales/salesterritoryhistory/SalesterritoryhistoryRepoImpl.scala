@@ -14,6 +14,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -22,7 +23,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class SalesterritoryhistoryRepoImpl extends SalesterritoryhistoryRepo {
-  override def delete: DeleteBuilder[SalesterritoryhistoryFields, SalesterritoryhistoryRow] = DeleteBuilder.of("sales.salesterritoryhistory", SalesterritoryhistoryFields.structure)
+  override def delete: DeleteBuilder[SalesterritoryhistoryFields, SalesterritoryhistoryRow] = DeleteBuilder.of(""""sales"."salesterritoryhistory"""", SalesterritoryhistoryFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(compositeId: SalesterritoryhistoryId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."salesterritoryhistory" where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "startdate" = ${TypoLocalDateTime.pgType.encode(compositeId.startdate)} AND "territoryid" = ${SalesterritoryId.pgType.encode(compositeId.territoryid)}""".update().runUnchecked(c) > 0
 
@@ -84,7 +85,7 @@ class SalesterritoryhistoryRepoImpl extends SalesterritoryhistoryRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."salesterritoryhistory"("businessentityid", "territoryid", "startdate", "enddate", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, SalesterritoryhistoryRowUnsaved.pgText)
 
-  override def select: SelectBuilder[SalesterritoryhistoryFields, SalesterritoryhistoryRow] = SelectBuilder.of("sales.salesterritoryhistory", SalesterritoryhistoryFields.structure, SalesterritoryhistoryRow.`_rowParser`)
+  override def select: SelectBuilder[SalesterritoryhistoryFields, SalesterritoryhistoryRow] = SelectBuilder.of(""""sales"."salesterritoryhistory"""", SalesterritoryhistoryFields.structure, SalesterritoryhistoryRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[SalesterritoryhistoryRow] = {
     interpolate"""select "businessentityid", "territoryid", "startdate"::text, "enddate"::text, "rowguid", "modifieddate"::text
@@ -115,7 +116,7 @@ class SalesterritoryhistoryRepoImpl extends SalesterritoryhistoryRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[SalesterritoryhistoryFields, SalesterritoryhistoryRow] = UpdateBuilder.of("sales.salesterritoryhistory", SalesterritoryhistoryFields.structure, SalesterritoryhistoryRow.`_rowParser`.all())
+  override def update: UpdateBuilder[SalesterritoryhistoryFields, SalesterritoryhistoryRow] = UpdateBuilder.of(""""sales"."salesterritoryhistory"""", SalesterritoryhistoryFields.structure, SalesterritoryhistoryRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: SalesterritoryhistoryRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: SalesterritoryhistoryId = row.compositeId
@@ -134,8 +135,7 @@ class SalesterritoryhistoryRepoImpl extends SalesterritoryhistoryRepo {
       "enddate" = EXCLUDED."enddate",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "businessentityid", "territoryid", "startdate"::text, "enddate"::text, "rowguid", "modifieddate"::text
-    """
+    returning "businessentityid", "territoryid", "startdate"::text, "enddate"::text, "rowguid", "modifieddate"::text"""
     .updateReturning(SalesterritoryhistoryRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -148,8 +148,7 @@ class SalesterritoryhistoryRepoImpl extends SalesterritoryhistoryRepo {
       "enddate" = EXCLUDED."enddate",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "businessentityid", "territoryid", "startdate"::text, "enddate"::text, "rowguid", "modifieddate"::text
-    """
+    returning "businessentityid", "territoryid", "startdate"::text, "enddate"::text, "rowguid", "modifieddate"::text"""
       .updateManyReturning(SalesterritoryhistoryRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

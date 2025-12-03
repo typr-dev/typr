@@ -6,11 +6,12 @@
 package adventureworks.pe.bec
 
 import java.sql.Connection
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class BecViewRepoImpl extends BecViewRepo {
-  override def select: SelectBuilder[BecViewFields, BecViewRow] = SelectBuilder.of("pe.bec", BecViewFields.structure, BecViewRow.`_rowParser`)
+  override def select: SelectBuilder[BecViewFields, BecViewRow] = SelectBuilder.of(""""pe"."bec"""", BecViewFields.structure, BecViewRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[BecViewRow] = {
     interpolate"""select "id", "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text

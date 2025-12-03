@@ -7,13 +7,14 @@ package adventureworks.pr.d;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class DViewRepoImpl implements DViewRepo {
   @Override
   public SelectBuilder<DViewFields, DViewRow> select() {
-    return SelectBuilder.of("pr.d", DViewFields.structure(), DViewRow._rowParser);
+    return SelectBuilder.of("\"pr\".\"d\"", DViewFields.structure(), DViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

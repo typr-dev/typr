@@ -15,6 +15,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -25,7 +26,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class SpecialofferRepoImpl() : SpecialofferRepo {
-  override fun delete(): DeleteBuilder<SpecialofferFields, SpecialofferRow> = DeleteBuilder.of("sales.specialoffer", SpecialofferFields.structure)
+  override fun delete(): DeleteBuilder<SpecialofferFields, SpecialofferRow> = DeleteBuilder.of("\"sales\".\"specialoffer\"", SpecialofferFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     specialofferid: SpecialofferId,
@@ -200,7 +201,7 @@ class SpecialofferRepoImpl() : SpecialofferRepo {
   COPY "sales"."specialoffer"("description", "type", "category", "startdate", "enddate", "maxqty", "specialofferid", "discountpct", "minqty", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, SpecialofferRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<SpecialofferFields, SpecialofferRow> = SelectBuilder.of("sales.specialoffer", SpecialofferFields.structure, SpecialofferRow._rowParser)
+  override fun select(): SelectBuilder<SpecialofferFields, SpecialofferRow> = SelectBuilder.of("\"sales\".\"specialoffer\"", SpecialofferFields.structure, SpecialofferRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<SpecialofferRow> = interpolate(typo.runtime.Fragment.lit("""
     select "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text
@@ -240,7 +241,7 @@ class SpecialofferRepoImpl() : SpecialofferRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<SpecialofferFields, SpecialofferRow> = UpdateBuilder.of("sales.specialoffer", SpecialofferFields.structure, SpecialofferRow._rowParser.all())
+  override fun update(): UpdateBuilder<SpecialofferFields, SpecialofferRow> = UpdateBuilder.of("\"sales\".\"specialoffer\"", SpecialofferFields.structure, SpecialofferRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: SpecialofferRow,
@@ -338,8 +339,7 @@ class SpecialofferRepoImpl() : SpecialofferRepo {
       "maxqty" = EXCLUDED."maxqty",
       "rowguid" = EXCLUDED."rowguid",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text
-    """.trimMargin())
+      returning "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(SpecialofferRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -362,8 +362,7 @@ class SpecialofferRepoImpl() : SpecialofferRepo {
                                "maxqty" = EXCLUDED."maxqty",
                                "rowguid" = EXCLUDED."rowguid",
                                "modifieddate" = EXCLUDED."modifieddate"
-                               returning "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text
-                             """.trimMargin()))
+                               returning "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(SpecialofferRow._rowParser, unsaved)
     .runUnchecked(c)
 

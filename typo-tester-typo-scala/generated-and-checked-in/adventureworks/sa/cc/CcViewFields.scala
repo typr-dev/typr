@@ -44,7 +44,7 @@ object CcViewFields {
             Optional.empty(),
             Optional.empty(),
             (row, value) => row.copy(id = value),
-            /* user-picked */ CustomCreditcardId.pgType
+            CustomCreditcardId.pgType
           )
         }
         override def creditcardid: Field[/* user-picked */ CustomCreditcardId, CcViewRow] = {
@@ -55,7 +55,7 @@ object CcViewFields {
             Optional.empty(),
             Optional.empty(),
             (row, value) => row.copy(creditcardid = value),
-            /* user-picked */ CustomCreditcardId.pgType
+            CustomCreditcardId.pgType
           )
         }
         override def cardtype: Field[/* max 50 chars */ String, CcViewRow] = {

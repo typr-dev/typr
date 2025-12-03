@@ -92,8 +92,9 @@ case class ShipmethodRepoMock(
 
   override def selectByIds(shipmethodids: Array[ShipmethodId])(using c: Connection): java.util.List[ShipmethodRow] = {
     val result = new ArrayList[ShipmethodRow]()
-    shipmethodids.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    shipmethodids.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

@@ -35,6 +35,7 @@ import java.sql.Connection;
 import java.util.Iterator;
 import java.util.List;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.PgTypes;
@@ -45,7 +46,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class PgtestRepoImpl implements PgtestRepo {
   @Override
   public DeleteBuilder<PgtestFields, PgtestRow> delete() {
-    return DeleteBuilder.of("public.pgtest", PgtestFields.structure());
+    return DeleteBuilder.of("\"public\".\"pgtest\"", PgtestFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -217,7 +218,7 @@ public class PgtestRepoImpl implements PgtestRepo {
 
   @Override
   public SelectBuilder<PgtestFields, PgtestRow> select() {
-    return SelectBuilder.of("public.pgtest", PgtestFields.structure(), PgtestRow._rowParser);
+    return SelectBuilder.of("\"public\".\"pgtest\"", PgtestFields.structure(), PgtestRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -230,6 +231,6 @@ public class PgtestRepoImpl implements PgtestRepo {
 
   @Override
   public UpdateBuilder<PgtestFields, PgtestRow> update() {
-    return UpdateBuilder.of("public.pgtest", PgtestFields.structure(), PgtestRow._rowParser.all());
+    return UpdateBuilder.of("\"public\".\"pgtest\"", PgtestFields.structure(), PgtestRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 }

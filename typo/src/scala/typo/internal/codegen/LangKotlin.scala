@@ -153,8 +153,12 @@ case object LangKotlin extends Lang {
   override def rowSetter(fieldName: jvm.Ident): jvm.Code =
     jvm.Lambda("row", "value", jvm.Body.Expr(code"row.copy($fieldName = value)"))
 
-  override def arrayForEach(array: jvm.Code, elemVar: jvm.Ident, body: jvm.Code): jvm.Code =
-    code"for ($elemVar in $array) { $body }"
+  override def arrayForEach(array: jvm.Code, elemVar: jvm.Ident, body: jvm.Body): jvm.Code =
+    body match {
+      case jvm.Body.Expr(expr)   => code"for ($elemVar in $array) { $expr }"
+      case jvm.Body.Stmts(stmts) => code"for ($elemVar in $array) {\n  ${stmts.mkCode("\n  ")}\n}"
+      case jvm.Body.Abstract     => code"for ($elemVar in $array) {}"
+    }
 
   override def arrayMap(array: jvm.Code, mapper: jvm.Code, targetClass: jvm.Code): jvm.Code = {
     val arrayMapHelper = jvm.Type.Qualified("typo.runtime.internal.arrayMap")
@@ -173,6 +177,12 @@ case object LangKotlin extends Lang {
   // Kotlin: ByteArray(size)
   override def newByteArray(size: jvm.Code): jvm.Code =
     code"ByteArray($size)"
+
+  // Kotlin: ByteArray (distinct primitive array type, not Array<Byte>)
+  override val ByteArrayType: jvm.Type = TypesKotlin.ByteArray
+
+  // Kotlin uses MAX_VALUE for max value constants
+  override def maxValue(tpe: jvm.Type): jvm.Code = code"$tpe.MAX_VALUE"
 
   // Kotlin: Array(size) { factory }
   override def arrayFill(size: jvm.Code, factory: jvm.Code, elementType: jvm.Type): jvm.Code =
@@ -219,6 +229,24 @@ case object LangKotlin extends Lang {
 
   override def renderTree(tree: jvm.Tree, ctx: Ctx): jvm.Code =
     tree match {
+      case jvm.If(branches, elseBody) =>
+        val ifParts = branches.zipWithIndex.map { case (jvm.If.Branch(cond, body), idx) =>
+          val keyword = if (idx == 0) "if" else "else if"
+          code"""|$keyword ($cond) {
+                 |  $body
+                 |}""".stripMargin
+        }
+        val elsePart = elseBody
+          .map(e => code"""| else {
+                                                |  $e
+                                                |}""".stripMargin)
+          .getOrElse(jvm.Code.Empty)
+        ifParts.mkCode("") ++ elsePart
+      case jvm.While(cond, body) =>
+        val bodyCode = body.mkCode("\n")
+        code"""|while ($cond) {
+               |  $bodyCode
+               |}""".stripMargin
       case jvm.IgnoreResult(expr)        => expr
       case jvm.NotNull(expr)             => code"$expr!!"
       case jvm.ConstructorMethodRef(tpe) => code"::$tpe"

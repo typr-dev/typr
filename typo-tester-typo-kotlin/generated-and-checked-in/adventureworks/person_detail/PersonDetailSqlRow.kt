@@ -5,6 +5,7 @@
  */
 package adventureworks.person_detail
 
+import adventureworks.customtypes.TypoUUID
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.public.Name
 import adventureworks.userdefined.FirstName
@@ -34,9 +35,9 @@ data class PersonDetailSqlRow(
   /** Points to [adventureworks.person.address.AddressRow.postalcode] */
   val postalcode: Optional</* max 15 chars */ String>,
   /** Points to [adventureworks.person.address.AddressRow.rowguid] */
-  val rowguid: /* user-picked */ String
+  val rowguid: Optional<TypoUUID>
 ) {
   companion object {
-    val _rowParser: RowParser<PersonDetailSqlRow> = RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), /* user-picked */ FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> PersonDetailSqlRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!! as /* user-picked */ String) }, { row -> arrayOf<Any?>(row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.jobtitle, row.addressline1, row.city, row.postalcode, row.rowguid) })
+    val _rowParser: RowParser<PersonDetailSqlRow> = RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), TypoUUID.pgType.opt(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> PersonDetailSqlRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!) }, { row -> arrayOf<Any?>(row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.jobtitle, row.addressline1, row.city, row.postalcode, row.rowguid) })
   }
 }

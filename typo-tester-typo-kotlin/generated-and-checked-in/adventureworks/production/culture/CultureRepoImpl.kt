@@ -15,6 +15,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -24,7 +25,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class CultureRepoImpl() : CultureRepo {
-  override fun delete(): DeleteBuilder<CultureFields, CultureRow> = DeleteBuilder.of("production.culture", CultureFields.structure)
+  override fun delete(): DeleteBuilder<CultureFields, CultureRow> = DeleteBuilder.of("\"production\".\"culture\"", CultureFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     cultureid: CultureId,
@@ -128,7 +129,7 @@ class CultureRepoImpl() : CultureRepo {
   COPY "production"."culture"("cultureid", "name", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, CultureRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<CultureFields, CultureRow> = SelectBuilder.of("production.culture", CultureFields.structure, CultureRow._rowParser)
+  override fun select(): SelectBuilder<CultureFields, CultureRow> = SelectBuilder.of("\"production\".\"culture\"", CultureFields.structure, CultureRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<CultureRow> = interpolate(typo.runtime.Fragment.lit("""
     select "cultureid", "name", "modifieddate"::text
@@ -168,7 +169,7 @@ class CultureRepoImpl() : CultureRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<CultureFields, CultureRow> = UpdateBuilder.of("production.culture", CultureFields.structure, CultureRow._rowParser.all())
+  override fun update(): UpdateBuilder<CultureFields, CultureRow> = UpdateBuilder.of("\"production\".\"culture\"", CultureFields.structure, CultureRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: CultureRow,
@@ -210,8 +211,7 @@ class CultureRepoImpl() : CultureRepo {
       do update set
         "name" = EXCLUDED."name",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "cultureid", "name", "modifieddate"::text
-    """.trimMargin())
+      returning "cultureid", "name", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(CultureRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -226,8 +226,7 @@ class CultureRepoImpl() : CultureRepo {
                           do update set
                             "name" = EXCLUDED."name",
                           "modifieddate" = EXCLUDED."modifieddate"
-                          returning "cultureid", "name", "modifieddate"::text
-                        """.trimMargin()))
+                          returning "cultureid", "name", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(CultureRow._rowParser, unsaved)
     .runUnchecked(c)
 

@@ -20,8 +20,9 @@ public interface SelectBuilder<Fields, Row> {
     static <Fields, Row> SelectBuilder<Fields, Row> of(
             String name,
             Structure.Relation<Fields, Row> structure,
-            RowParser<Row> rowParser) {
-        return new SelectBuilderSql.Relation<>(name, structure, rowParser, SelectParams.empty());
+            RowParser<Row> rowParser,
+            Dialect dialect) {
+        return new SelectBuilderSql.Relation<>(name, structure, rowParser, SelectParams.empty(), dialect);
     }
 
     RenderCtx renderCtx();

@@ -12,6 +12,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -20,7 +21,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class IllustrationRepoImpl extends IllustrationRepo {
-  override def delete: DeleteBuilder[IllustrationFields, IllustrationRow] = DeleteBuilder.of("production.illustration", IllustrationFields.structure)
+  override def delete: DeleteBuilder[IllustrationFields, IllustrationRow] = DeleteBuilder.of(""""production"."illustration"""", IllustrationFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(illustrationid: IllustrationId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."illustration" where "illustrationid" = ${IllustrationId.pgType.encode(illustrationid)}""".update().runUnchecked(c) > 0
 
@@ -73,7 +74,7 @@ class IllustrationRepoImpl extends IllustrationRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."illustration"("diagram", "illustrationid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, IllustrationRowUnsaved.pgText)
 
-  override def select: SelectBuilder[IllustrationFields, IllustrationRow] = SelectBuilder.of("production.illustration", IllustrationFields.structure, IllustrationRow.`_rowParser`)
+  override def select: SelectBuilder[IllustrationFields, IllustrationRow] = SelectBuilder.of(""""production"."illustration"""", IllustrationFields.structure, IllustrationRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[IllustrationRow] = {
     interpolate"""select "illustrationid", "diagram", "modifieddate"::text
@@ -99,7 +100,7 @@ class IllustrationRepoImpl extends IllustrationRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[IllustrationFields, IllustrationRow] = UpdateBuilder.of("production.illustration", IllustrationFields.structure, IllustrationRow.`_rowParser`.all())
+  override def update: UpdateBuilder[IllustrationFields, IllustrationRow] = UpdateBuilder.of(""""production"."illustration"""", IllustrationFields.structure, IllustrationRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: IllustrationRow)(using c: Connection): java.lang.Boolean = {
     val illustrationid: IllustrationId = row.illustrationid
@@ -116,8 +117,7 @@ class IllustrationRepoImpl extends IllustrationRepo {
     do update set
       "diagram" = EXCLUDED."diagram",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "illustrationid", "diagram", "modifieddate"::text
-    """
+    returning "illustrationid", "diagram", "modifieddate"::text"""
     .updateReturning(IllustrationRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -129,8 +129,7 @@ class IllustrationRepoImpl extends IllustrationRepo {
     do update set
       "diagram" = EXCLUDED."diagram",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "illustrationid", "diagram", "modifieddate"::text
-    """
+    returning "illustrationid", "diagram", "modifieddate"::text"""
       .updateManyReturning(IllustrationRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

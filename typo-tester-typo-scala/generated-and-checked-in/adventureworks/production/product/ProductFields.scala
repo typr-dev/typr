@@ -267,7 +267,7 @@ object ProductFields {
             Optional.empty(),
             Optional.of("bpchar"),
             (row, value) => row.copy(productline = value),
-            PgTypes.text
+            PgTypes.bpchar
           )
         }
         override def `class`: OptField[/* bpchar, max 2 chars */ String, ProductRow] = {
@@ -278,7 +278,7 @@ object ProductFields {
             Optional.empty(),
             Optional.of("bpchar"),
             (row, value) => row.copy(`class` = value),
-            PgTypes.text
+            PgTypes.bpchar
           )
         }
         override def style: OptField[/* bpchar, max 2 chars */ String, ProductRow] = {
@@ -289,7 +289,7 @@ object ProductFields {
             Optional.empty(),
             Optional.of("bpchar"),
             (row, value) => row.copy(style = value),
-            PgTypes.text
+            PgTypes.bpchar
           )
         }
         override def productsubcategoryid: OptField[ProductsubcategoryId, ProductRow] = {

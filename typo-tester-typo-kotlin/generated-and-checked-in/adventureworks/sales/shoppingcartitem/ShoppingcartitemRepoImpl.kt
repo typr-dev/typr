@@ -15,6 +15,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -25,7 +26,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class ShoppingcartitemRepoImpl() : ShoppingcartitemRepo {
-  override fun delete(): DeleteBuilder<ShoppingcartitemFields, ShoppingcartitemRow> = DeleteBuilder.of("sales.shoppingcartitem", ShoppingcartitemFields.structure)
+  override fun delete(): DeleteBuilder<ShoppingcartitemFields, ShoppingcartitemRow> = DeleteBuilder.of("\"sales\".\"shoppingcartitem\"", ShoppingcartitemFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     shoppingcartitemid: ShoppingcartitemId,
@@ -160,7 +161,7 @@ class ShoppingcartitemRepoImpl() : ShoppingcartitemRepo {
   COPY "sales"."shoppingcartitem"("shoppingcartid", "productid", "shoppingcartitemid", "quantity", "datecreated", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, ShoppingcartitemRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<ShoppingcartitemFields, ShoppingcartitemRow> = SelectBuilder.of("sales.shoppingcartitem", ShoppingcartitemFields.structure, ShoppingcartitemRow._rowParser)
+  override fun select(): SelectBuilder<ShoppingcartitemFields, ShoppingcartitemRow> = SelectBuilder.of("\"sales\".\"shoppingcartitem\"", ShoppingcartitemFields.structure, ShoppingcartitemRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<ShoppingcartitemRow> = interpolate(typo.runtime.Fragment.lit("""
     select "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text
@@ -200,7 +201,7 @@ class ShoppingcartitemRepoImpl() : ShoppingcartitemRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<ShoppingcartitemFields, ShoppingcartitemRow> = UpdateBuilder.of("sales.shoppingcartitem", ShoppingcartitemFields.structure, ShoppingcartitemRow._rowParser.all())
+  override fun update(): UpdateBuilder<ShoppingcartitemFields, ShoppingcartitemRow> = UpdateBuilder.of("\"sales\".\"shoppingcartitem\"", ShoppingcartitemFields.structure, ShoppingcartitemRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: ShoppingcartitemRow,
@@ -263,8 +264,7 @@ class ShoppingcartitemRepoImpl() : ShoppingcartitemRepo {
       "productid" = EXCLUDED."productid",
       "datecreated" = EXCLUDED."datecreated",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text
-    """.trimMargin())
+      returning "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text""".trimMargin())
   )
     .updateReturning(ShoppingcartitemRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -282,8 +282,7 @@ class ShoppingcartitemRepoImpl() : ShoppingcartitemRepo {
                                    "productid" = EXCLUDED."productid",
                                    "datecreated" = EXCLUDED."datecreated",
                                    "modifieddate" = EXCLUDED."modifieddate"
-                                   returning "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text
-                                 """.trimMargin()))
+                                   returning "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text""".trimMargin()))
     .updateManyReturning(ShoppingcartitemRow._rowParser, unsaved)
     .runUnchecked(c)
 

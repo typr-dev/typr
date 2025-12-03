@@ -40,9 +40,11 @@ data class IdentityTestRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in names) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in names) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -69,7 +71,7 @@ data class IdentityTestRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.name] = row
       count = count + 1L
     }
@@ -84,8 +86,8 @@ data class IdentityTestRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.name] = row
       count = count + 1L
     }
@@ -105,9 +107,13 @@ data class IdentityTestRepoMock(
     names: Array<IdentityTestId>,
     c: Connection
   ): List<IdentityTestRow> {
-    var result = ArrayList<IdentityTestRow>()
-    for (id in names) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<IdentityTestRow>()
+    for (id in names) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -141,9 +147,9 @@ data class IdentityTestRepoMock(
     unsaved: MutableIterator<IdentityTestRow>,
     c: Connection
   ): List<IdentityTestRow> {
-    var result = ArrayList<IdentityTestRow>()
+    val result = ArrayList<IdentityTestRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.name] = row
       result.add(row)
     }
@@ -158,7 +164,7 @@ data class IdentityTestRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.name] = row
       count = count + 1
     }

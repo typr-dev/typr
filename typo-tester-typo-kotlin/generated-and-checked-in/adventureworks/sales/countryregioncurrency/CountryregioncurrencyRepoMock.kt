@@ -40,9 +40,11 @@ data class CountryregioncurrencyRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in compositeIds) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in compositeIds) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -69,7 +71,7 @@ data class CountryregioncurrencyRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.compositeId()] = row
       count = count + 1L
     }
@@ -84,8 +86,8 @@ data class CountryregioncurrencyRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.compositeId()] = row
       count = count + 1L
     }
@@ -105,9 +107,13 @@ data class CountryregioncurrencyRepoMock(
     compositeIds: Array<CountryregioncurrencyId>,
     c: Connection
   ): List<CountryregioncurrencyRow> {
-    var result = ArrayList<CountryregioncurrencyRow>()
-    for (id in compositeIds) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<CountryregioncurrencyRow>()
+    for (id in compositeIds) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -141,9 +147,9 @@ data class CountryregioncurrencyRepoMock(
     unsaved: MutableIterator<CountryregioncurrencyRow>,
     c: Connection
   ): List<CountryregioncurrencyRow> {
-    var result = ArrayList<CountryregioncurrencyRow>()
+    val result = ArrayList<CountryregioncurrencyRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.compositeId()] = row
       result.add(row)
     }
@@ -158,7 +164,7 @@ data class CountryregioncurrencyRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.compositeId()] = row
       count = count + 1
     }

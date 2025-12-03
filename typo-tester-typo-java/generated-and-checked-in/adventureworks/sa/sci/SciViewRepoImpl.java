@@ -7,13 +7,14 @@ package adventureworks.sa.sci;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class SciViewRepoImpl implements SciViewRepo {
   @Override
   public SelectBuilder<SciViewFields, SciViewRow> select() {
-    return SelectBuilder.of("sa.sci", SciViewFields.structure(), SciViewRow._rowParser);
+    return SelectBuilder.of("\"sa\".\"sci\"", SciViewFields.structure(), SciViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

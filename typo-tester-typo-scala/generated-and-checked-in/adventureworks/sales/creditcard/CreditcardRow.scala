@@ -52,7 +52,7 @@ case class CreditcardRow(
 }
 
 object CreditcardRow {
-  val `_rowParser`: RowParser[CreditcardRow] = RowParsers.of(/* user-picked */ CustomCreditcardId.pgType, PgTypes.text, PgTypes.text, TypoShort.pgType, TypoShort.pgType, TypoLocalDateTime.pgType, CreditcardRow.apply, row => Array(row.creditcardid, row.cardtype, row.cardnumber, row.expmonth, row.expyear, row.modifieddate))
+  val `_rowParser`: RowParser[CreditcardRow] = RowParsers.of(CustomCreditcardId.pgType, PgTypes.text, PgTypes.text, TypoShort.pgType, TypoShort.pgType, TypoLocalDateTime.pgType, CreditcardRow.apply, row => Array(row.creditcardid, row.cardtype, row.cardnumber, row.expmonth, row.expyear, row.modifieddate))
 
   given pgText: PgText[CreditcardRow] = PgText.from(`_rowParser`)
 }

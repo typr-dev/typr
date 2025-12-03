@@ -42,7 +42,7 @@ data class CreditcardRow(
   ): CreditcardRowUnsaved = CreditcardRowUnsaved(cardtype, cardnumber, expmonth, expyear, creditcardid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<CreditcardRow> = RowParsers.of(/* user-picked */ CustomCreditcardId.pgType, PgTypes.text, PgTypes.text, TypoShort.pgType, TypoShort.pgType, TypoLocalDateTime.pgType, { t0, t1, t2, t3, t4, t5 -> CreditcardRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!) }, { row -> arrayOf<Any?>(row.creditcardid, row.cardtype, row.cardnumber, row.expmonth, row.expyear, row.modifieddate) })
+    val _rowParser: RowParser<CreditcardRow> = RowParsers.of(CustomCreditcardId.pgType, PgTypes.text, PgTypes.text, TypoShort.pgType, TypoShort.pgType, TypoLocalDateTime.pgType, { t0, t1, t2, t3, t4, t5 -> CreditcardRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!) }, { row -> arrayOf<Any?>(row.creditcardid, row.cardtype, row.cardnumber, row.expmonth, row.expyear, row.modifieddate) })
 
     val pgText: PgText<CreditcardRow> =
       PgText.from(_rowParser)

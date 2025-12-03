@@ -92,8 +92,9 @@ case class TableWithGeneratedColumnsRepoMock(
 
   override def selectByIds(names: Array[TableWithGeneratedColumnsId])(using c: Connection): java.util.List[TableWithGeneratedColumnsRow] = {
     val result = new ArrayList[TableWithGeneratedColumnsRow]()
-    names.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    names.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

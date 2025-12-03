@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -28,7 +29,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class ProductsubcategoryRepoImpl implements ProductsubcategoryRepo {
   @Override
   public DeleteBuilder<ProductsubcategoryFields, ProductsubcategoryRow> delete() {
-    return DeleteBuilder.of("production.productsubcategory", ProductsubcategoryFields.structure());
+    return DeleteBuilder.of("\"production\".\"productsubcategory\"", ProductsubcategoryFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -183,7 +184,7 @@ public class ProductsubcategoryRepoImpl implements ProductsubcategoryRepo {
 
   @Override
   public SelectBuilder<ProductsubcategoryFields, ProductsubcategoryRow> select() {
-    return SelectBuilder.of("production.productsubcategory", ProductsubcategoryFields.structure(), ProductsubcategoryRow._rowParser);
+    return SelectBuilder.of("\"production\".\"productsubcategory\"", ProductsubcategoryFields.structure(), ProductsubcategoryRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -236,7 +237,7 @@ public class ProductsubcategoryRepoImpl implements ProductsubcategoryRepo {
 
   @Override
   public UpdateBuilder<ProductsubcategoryFields, ProductsubcategoryRow> update() {
-    return UpdateBuilder.of("production.productsubcategory", ProductsubcategoryFields.structure(), ProductsubcategoryRow._rowParser.all());
+    return UpdateBuilder.of("\"production\".\"productsubcategory\"", ProductsubcategoryFields.structure(), ProductsubcategoryRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -296,8 +297,7 @@ public class ProductsubcategoryRepoImpl implements ProductsubcategoryRepo {
          "name" = EXCLUDED."name",
          "rowguid" = EXCLUDED."rowguid",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate"::text
-      """)
+         returning "productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate"::text""")
     )
       .updateReturning(ProductsubcategoryRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -317,8 +317,7 @@ public class ProductsubcategoryRepoImpl implements ProductsubcategoryRepo {
                 "name" = EXCLUDED."name",
                 "rowguid" = EXCLUDED."rowguid",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate"::text
-             """))
+                returning "productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate"::text"""))
       .updateManyReturning(ProductsubcategoryRow._rowParser, unsaved)
       .runUnchecked(c);
   };

@@ -92,8 +92,9 @@ case class CultureRepoMock(
 
   override def selectByIds(cultureids: Array[CultureId])(using c: Connection): java.util.List[CultureRow] = {
     val result = new ArrayList[CultureRow]()
-    cultureids.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    cultureids.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

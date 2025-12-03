@@ -12,6 +12,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.PgTypes
@@ -21,7 +22,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class OnlyPkColumnsRepoImpl() : OnlyPkColumnsRepo {
-  override fun delete(): DeleteBuilder<OnlyPkColumnsFields, OnlyPkColumnsRow> = DeleteBuilder.of("public.only_pk_columns", OnlyPkColumnsFields.structure)
+  override fun delete(): DeleteBuilder<OnlyPkColumnsFields, OnlyPkColumnsRow> = DeleteBuilder.of("\"public\".\"only_pk_columns\"", OnlyPkColumnsFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     compositeId: OnlyPkColumnsId,
@@ -85,7 +86,7 @@ class OnlyPkColumnsRepoImpl() : OnlyPkColumnsRepo {
   COPY "public"."only_pk_columns"("key_column_1", "key_column_2") FROM STDIN
   """.trimMargin()), batchSize, unsaved, c, OnlyPkColumnsRow.pgText)
 
-  override fun select(): SelectBuilder<OnlyPkColumnsFields, OnlyPkColumnsRow> = SelectBuilder.of("public.only_pk_columns", OnlyPkColumnsFields.structure, OnlyPkColumnsRow._rowParser)
+  override fun select(): SelectBuilder<OnlyPkColumnsFields, OnlyPkColumnsRow> = SelectBuilder.of("\"public\".\"only_pk_columns\"", OnlyPkColumnsFields.structure, OnlyPkColumnsRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<OnlyPkColumnsRow> = interpolate(typo.runtime.Fragment.lit("""
     select "key_column_1", "key_column_2"
@@ -139,7 +140,7 @@ class OnlyPkColumnsRepoImpl() : OnlyPkColumnsRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<OnlyPkColumnsFields, OnlyPkColumnsRow> = UpdateBuilder.of("public.only_pk_columns", OnlyPkColumnsFields.structure, OnlyPkColumnsRow._rowParser.all())
+  override fun update(): UpdateBuilder<OnlyPkColumnsFields, OnlyPkColumnsRow> = UpdateBuilder.of("\"public\".\"only_pk_columns\"", OnlyPkColumnsFields.structure, OnlyPkColumnsRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun upsert(
     unsaved: OnlyPkColumnsRow,
@@ -155,8 +156,7 @@ class OnlyPkColumnsRepoImpl() : OnlyPkColumnsRepo {
       ::int4)
       on conflict ("key_column_1", "key_column_2")
       do update set "key_column_1" = EXCLUDED."key_column_1"
-      returning "key_column_1", "key_column_2"
-    """.trimMargin())
+      returning "key_column_1", "key_column_2"""".trimMargin())
   )
     .updateReturning(OnlyPkColumnsRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -168,9 +168,8 @@ class OnlyPkColumnsRepoImpl() : OnlyPkColumnsRepo {
                                 insert into "public"."only_pk_columns"("key_column_1", "key_column_2")
                                 values (?, ?::int4)
                                 on conflict ("key_column_1", "key_column_2")
-                                do nothing
-                                returning "key_column_1", "key_column_2"
-                              """.trimMargin()))
+                                do update set "key_column_1" = EXCLUDED."key_column_1"
+                                returning "key_column_1", "key_column_2"""".trimMargin()))
     .updateManyReturning(OnlyPkColumnsRow._rowParser, unsaved)
     .runUnchecked(c)
 

@@ -10,6 +10,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -18,7 +19,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class TableWithGeneratedColumnsRepoImpl extends TableWithGeneratedColumnsRepo {
-  override def delete: DeleteBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = DeleteBuilder.of("public.table-with-generated-columns", TableWithGeneratedColumnsFields.structure)
+  override def delete: DeleteBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = DeleteBuilder.of(""""public"."table-with-generated-columns"""", TableWithGeneratedColumnsFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(name: TableWithGeneratedColumnsId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."table-with-generated-columns" where "name" = ${TableWithGeneratedColumnsId.pgType.encode(name)}""".update().runUnchecked(c) > 0
 
@@ -63,7 +64,7 @@ class TableWithGeneratedColumnsRepoImpl extends TableWithGeneratedColumnsRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."table-with-generated-columns"("name") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, TableWithGeneratedColumnsRowUnsaved.pgText)
 
-  override def select: SelectBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = SelectBuilder.of("public.table-with-generated-columns", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow.`_rowParser`)
+  override def select: SelectBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = SelectBuilder.of(""""public"."table-with-generated-columns"""", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[TableWithGeneratedColumnsRow] = {
     interpolate"""select "name", "name-type-always"
@@ -89,15 +90,14 @@ class TableWithGeneratedColumnsRepoImpl extends TableWithGeneratedColumnsRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = UpdateBuilder.of("public.table-with-generated-columns", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow.`_rowParser`.all())
+  override def update: UpdateBuilder[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = UpdateBuilder.of(""""public"."table-with-generated-columns"""", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def upsert(unsaved: TableWithGeneratedColumnsRow)(using c: Connection): TableWithGeneratedColumnsRow = {
   interpolate"""insert into "public"."table-with-generated-columns"("name")
     values (${TableWithGeneratedColumnsId.pgType.encode(unsaved.name)})
     on conflict ("name")
     do update set "name" = EXCLUDED."name"
-    returning "name", "name-type-always"
-    """
+    returning "name", "name-type-always""""
     .updateReturning(TableWithGeneratedColumnsRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -106,9 +106,8 @@ class TableWithGeneratedColumnsRepoImpl extends TableWithGeneratedColumnsRepo {
     interpolate"""insert into "public"."table-with-generated-columns"("name")
     values (?)
     on conflict ("name")
-    do nothing
-    returning "name", "name-type-always"
-    """
+    do update set "name" = EXCLUDED."name"
+    returning "name", "name-type-always""""
       .updateManyReturning(TableWithGeneratedColumnsRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

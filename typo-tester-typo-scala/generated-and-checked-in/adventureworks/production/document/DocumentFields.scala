@@ -121,7 +121,7 @@ object DocumentFields {
             Optional.empty(),
             Optional.of("bpchar"),
             (row, value) => row.copy(revision = value),
-            PgTypes.text
+            PgTypes.bpchar
           )
         }
         override def changenumber: Field[Integer, DocumentRow] = {

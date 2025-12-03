@@ -7,13 +7,14 @@ package adventureworks.sa.sod;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class SodViewRepoImpl implements SodViewRepo {
   @Override
   public SelectBuilder<SodViewFields, SodViewRow> select() {
-    return SelectBuilder.of("sa.sod", SodViewFields.structure(), SodViewRow._rowParser);
+    return SelectBuilder.of("\"sa\".\"sod\"", SodViewFields.structure(), SodViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

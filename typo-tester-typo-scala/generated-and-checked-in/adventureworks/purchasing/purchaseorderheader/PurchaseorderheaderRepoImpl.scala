@@ -14,6 +14,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -23,7 +24,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PurchaseorderheaderRepoImpl extends PurchaseorderheaderRepo {
-  override def delete: DeleteBuilder[PurchaseorderheaderFields, PurchaseorderheaderRow] = DeleteBuilder.of("purchasing.purchaseorderheader", PurchaseorderheaderFields.structure)
+  override def delete: DeleteBuilder[PurchaseorderheaderFields, PurchaseorderheaderRow] = DeleteBuilder.of(""""purchasing"."purchaseorderheader"""", PurchaseorderheaderFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(purchaseorderid: PurchaseorderheaderId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "purchasing"."purchaseorderheader" where "purchaseorderid" = ${PurchaseorderheaderId.pgType.encode(purchaseorderid)}""".update().runUnchecked(c) > 0
 
@@ -106,7 +107,7 @@ class PurchaseorderheaderRepoImpl extends PurchaseorderheaderRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "purchasing"."purchaseorderheader"("employeeid", "vendorid", "shipmethodid", "shipdate", "purchaseorderid", "revisionnumber", "status", "orderdate", "subtotal", "taxamt", "freight", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, PurchaseorderheaderRowUnsaved.pgText)
 
-  override def select: SelectBuilder[PurchaseorderheaderFields, PurchaseorderheaderRow] = SelectBuilder.of("purchasing.purchaseorderheader", PurchaseorderheaderFields.structure, PurchaseorderheaderRow.`_rowParser`)
+  override def select: SelectBuilder[PurchaseorderheaderFields, PurchaseorderheaderRow] = SelectBuilder.of(""""purchasing"."purchaseorderheader"""", PurchaseorderheaderFields.structure, PurchaseorderheaderRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[PurchaseorderheaderRow] = {
     interpolate"""select "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text
@@ -132,7 +133,7 @@ class PurchaseorderheaderRepoImpl extends PurchaseorderheaderRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[PurchaseorderheaderFields, PurchaseorderheaderRow] = UpdateBuilder.of("purchasing.purchaseorderheader", PurchaseorderheaderFields.structure, PurchaseorderheaderRow.`_rowParser`.all())
+  override def update: UpdateBuilder[PurchaseorderheaderFields, PurchaseorderheaderRow] = UpdateBuilder.of(""""purchasing"."purchaseorderheader"""", PurchaseorderheaderFields.structure, PurchaseorderheaderRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: PurchaseorderheaderRow)(using c: Connection): java.lang.Boolean = {
     val purchaseorderid: PurchaseorderheaderId = row.purchaseorderid
@@ -167,8 +168,7 @@ class PurchaseorderheaderRepoImpl extends PurchaseorderheaderRepo {
     "taxamt" = EXCLUDED."taxamt",
     "freight" = EXCLUDED."freight",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text
-    """
+    returning "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text"""
     .updateReturning(PurchaseorderheaderRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -189,8 +189,7 @@ class PurchaseorderheaderRepoImpl extends PurchaseorderheaderRepo {
     "taxamt" = EXCLUDED."taxamt",
     "freight" = EXCLUDED."freight",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text
-    """
+    returning "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate"::text, "shipdate"::text, "subtotal", "taxamt", "freight", "modifieddate"::text"""
       .updateManyReturning(PurchaseorderheaderRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

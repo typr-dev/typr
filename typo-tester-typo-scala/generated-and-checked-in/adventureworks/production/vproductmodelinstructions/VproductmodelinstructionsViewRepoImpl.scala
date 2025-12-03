@@ -6,11 +6,12 @@
 package adventureworks.production.vproductmodelinstructions
 
 import java.sql.Connection
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class VproductmodelinstructionsViewRepoImpl extends VproductmodelinstructionsViewRepo {
-  override def select: SelectBuilder[VproductmodelinstructionsViewFields, VproductmodelinstructionsViewRow] = SelectBuilder.of("production.vproductmodelinstructions", VproductmodelinstructionsViewFields.structure, VproductmodelinstructionsViewRow.`_rowParser`)
+  override def select: SelectBuilder[VproductmodelinstructionsViewFields, VproductmodelinstructionsViewRow] = SelectBuilder.of(""""production"."vproductmodelinstructions"""", VproductmodelinstructionsViewFields.structure, VproductmodelinstructionsViewRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[VproductmodelinstructionsViewRow] = {
     interpolate"""select "productmodelid", "name", "instructions", "LocationID", "SetupHours", "MachineHours", "LaborHours", "LotSize", "Step", "rowguid", "modifieddate"::text

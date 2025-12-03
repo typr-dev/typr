@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -27,7 +28,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class AddresstypeRepoImpl implements AddresstypeRepo {
   @Override
   public DeleteBuilder<AddresstypeFields, AddresstypeRow> delete() {
-    return DeleteBuilder.of("person.addresstype", AddresstypeFields.structure());
+    return DeleteBuilder.of("\"person\".\"addresstype\"", AddresstypeFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -175,7 +176,7 @@ public class AddresstypeRepoImpl implements AddresstypeRepo {
 
   @Override
   public SelectBuilder<AddresstypeFields, AddresstypeRow> select() {
-    return SelectBuilder.of("person.addresstype", AddresstypeFields.structure(), AddresstypeRow._rowParser);
+    return SelectBuilder.of("\"person\".\"addresstype\"", AddresstypeFields.structure(), AddresstypeRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -228,7 +229,7 @@ public class AddresstypeRepoImpl implements AddresstypeRepo {
 
   @Override
   public UpdateBuilder<AddresstypeFields, AddresstypeRow> update() {
-    return UpdateBuilder.of("person.addresstype", AddresstypeFields.structure(), AddresstypeRow._rowParser.all());
+    return UpdateBuilder.of("\"person\".\"addresstype\"", AddresstypeFields.structure(), AddresstypeRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -281,8 +282,7 @@ public class AddresstypeRepoImpl implements AddresstypeRepo {
            "name" = EXCLUDED."name",
          "rowguid" = EXCLUDED."rowguid",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "addresstypeid", "name", "rowguid", "modifieddate"::text
-      """)
+         returning "addresstypeid", "name", "rowguid", "modifieddate"::text""")
     )
       .updateReturning(AddresstypeRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -301,8 +301,7 @@ public class AddresstypeRepoImpl implements AddresstypeRepo {
                   "name" = EXCLUDED."name",
                 "rowguid" = EXCLUDED."rowguid",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "addresstypeid", "name", "rowguid", "modifieddate"::text
-             """))
+                returning "addresstypeid", "name", "rowguid", "modifieddate"::text"""))
       .updateManyReturning(AddresstypeRow._rowParser, unsaved)
       .runUnchecked(c);
   };

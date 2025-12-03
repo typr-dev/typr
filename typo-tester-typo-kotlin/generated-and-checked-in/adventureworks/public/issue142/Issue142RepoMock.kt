@@ -37,9 +37,11 @@ data class Issue142RepoMock(val map: MutableMap<Issue142Id, Issue142Row> = mutab
     c: Connection
   ): Int {
     var count = 0
-    for (id in tabellkodes) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in tabellkodes) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -61,7 +63,7 @@ data class Issue142RepoMock(val map: MutableMap<Issue142Id, Issue142Row> = mutab
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.tabellkode] = row
       count = count + 1L
     }
@@ -81,9 +83,13 @@ data class Issue142RepoMock(val map: MutableMap<Issue142Id, Issue142Row> = mutab
     tabellkodes: Array<Issue142Id>,
     c: Connection
   ): List<Issue142Row> {
-    var result = ArrayList<Issue142Row>()
-    for (id in tabellkodes) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<Issue142Row>()
+    for (id in tabellkodes) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -106,9 +112,9 @@ data class Issue142RepoMock(val map: MutableMap<Issue142Id, Issue142Row> = mutab
     unsaved: MutableIterator<Issue142Row>,
     c: Connection
   ): List<Issue142Row> {
-    var result = ArrayList<Issue142Row>()
+    val result = ArrayList<Issue142Row>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.tabellkode] = row
       result.add(row)
     }
@@ -123,7 +129,7 @@ data class Issue142RepoMock(val map: MutableMap<Issue142Id, Issue142Row> = mutab
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.tabellkode] = row
       count = count + 1
     }

@@ -15,6 +15,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -24,7 +25,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ProductinventoryRepoImpl extends ProductinventoryRepo {
-  override def delete: DeleteBuilder[ProductinventoryFields, ProductinventoryRow] = DeleteBuilder.of("production.productinventory", ProductinventoryFields.structure)
+  override def delete: DeleteBuilder[ProductinventoryFields, ProductinventoryRow] = DeleteBuilder.of(""""production"."productinventory"""", ProductinventoryFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(compositeId: ProductinventoryId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."productinventory" where "productid" = ${ProductId.pgType.encode(compositeId.productid)} AND "locationid" = ${LocationId.pgType.encode(compositeId.locationid)}""".update().runUnchecked(c) > 0
 
@@ -89,7 +90,7 @@ class ProductinventoryRepoImpl extends ProductinventoryRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."productinventory"("productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ProductinventoryRowUnsaved.pgText)
 
-  override def select: SelectBuilder[ProductinventoryFields, ProductinventoryRow] = SelectBuilder.of("production.productinventory", ProductinventoryFields.structure, ProductinventoryRow.`_rowParser`)
+  override def select: SelectBuilder[ProductinventoryFields, ProductinventoryRow] = SelectBuilder.of(""""production"."productinventory"""", ProductinventoryFields.structure, ProductinventoryRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[ProductinventoryRow] = {
     interpolate"""select "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"::text
@@ -119,7 +120,7 @@ class ProductinventoryRepoImpl extends ProductinventoryRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[ProductinventoryFields, ProductinventoryRow] = UpdateBuilder.of("production.productinventory", ProductinventoryFields.structure, ProductinventoryRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ProductinventoryFields, ProductinventoryRow] = UpdateBuilder.of(""""production"."productinventory"""", ProductinventoryFields.structure, ProductinventoryRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: ProductinventoryRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: ProductinventoryId = row.compositeId
@@ -142,8 +143,7 @@ class ProductinventoryRepoImpl extends ProductinventoryRepo {
     "quantity" = EXCLUDED."quantity",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"::text
-    """
+    returning "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"::text"""
     .updateReturning(ProductinventoryRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -158,8 +158,7 @@ class ProductinventoryRepoImpl extends ProductinventoryRepo {
     "quantity" = EXCLUDED."quantity",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"::text
-    """
+    returning "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"::text"""
       .updateManyReturning(ProductinventoryRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

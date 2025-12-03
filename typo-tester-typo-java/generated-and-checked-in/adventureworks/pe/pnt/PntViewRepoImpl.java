@@ -7,13 +7,14 @@ package adventureworks.pe.pnt;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class PntViewRepoImpl implements PntViewRepo {
   @Override
   public SelectBuilder<PntViewFields, PntViewRow> select() {
-    return SelectBuilder.of("pe.pnt", PntViewFields.structure(), PntViewRow._rowParser);
+    return SelectBuilder.of("\"pe\".\"pnt\"", PntViewFields.structure(), PntViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

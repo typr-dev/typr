@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -29,7 +30,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class AddressRepoImpl implements AddressRepo {
   @Override
   public DeleteBuilder<AddressFields, AddressRow> delete() {
-    return DeleteBuilder.of("person.address", AddressFields.structure());
+    return DeleteBuilder.of("\"person\".\"address\"", AddressFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -216,7 +217,7 @@ public class AddressRepoImpl implements AddressRepo {
 
   @Override
   public SelectBuilder<AddressFields, AddressRow> select() {
-    return SelectBuilder.of("person.address", AddressFields.structure(), AddressRow._rowParser);
+    return SelectBuilder.of("\"person\".\"address\"", AddressFields.structure(), AddressRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -269,7 +270,7 @@ public class AddressRepoImpl implements AddressRepo {
 
   @Override
   public UpdateBuilder<AddressFields, AddressRow> update() {
-    return UpdateBuilder.of("person.address", AddressFields.structure(), AddressRow._rowParser.all());
+    return UpdateBuilder.of("\"person\".\"address\"", AddressFields.structure(), AddressRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -357,8 +358,7 @@ public class AddressRepoImpl implements AddressRepo {
          "spatiallocation" = EXCLUDED."spatiallocation",
          "rowguid" = EXCLUDED."rowguid",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate"::text
-      """)
+         returning "addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate"::text""")
     )
       .updateReturning(AddressRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -382,8 +382,7 @@ public class AddressRepoImpl implements AddressRepo {
                 "spatiallocation" = EXCLUDED."spatiallocation",
                 "rowguid" = EXCLUDED."rowguid",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate"::text
-             """))
+                returning "addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate"::text"""))
       .updateManyReturning(AddressRow._rowParser, unsaved)
       .runUnchecked(c);
   };

@@ -21,6 +21,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -31,7 +32,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class ProductRepoImpl() : ProductRepo {
-  override fun delete(): DeleteBuilder<ProductFields, ProductRow> = DeleteBuilder.of("production.product", ProductFields.structure)
+  override fun delete(): DeleteBuilder<ProductFields, ProductRow> = DeleteBuilder.of("\"production\".\"product\"", ProductFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     productid: ProductId,
@@ -304,7 +305,7 @@ class ProductRepoImpl() : ProductRepo {
   COPY "production"."product"("name", "productnumber", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "productid", "makeflag", "finishedgoodsflag", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, ProductRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<ProductFields, ProductRow> = SelectBuilder.of("production.product", ProductFields.structure, ProductRow._rowParser)
+  override fun select(): SelectBuilder<ProductFields, ProductRow> = SelectBuilder.of("\"production\".\"product\"", ProductFields.structure, ProductRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<ProductRow> = interpolate(typo.runtime.Fragment.lit("""
     select "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text
@@ -344,7 +345,7 @@ class ProductRepoImpl() : ProductRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<ProductFields, ProductRow> = UpdateBuilder.of("production.product", ProductFields.structure, ProductRow._rowParser.all())
+  override fun update(): UpdateBuilder<ProductFields, ProductRow> = UpdateBuilder.of("\"production\".\"product\"", ProductFields.structure, ProductRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: ProductRow,
@@ -540,8 +541,7 @@ class ProductRepoImpl() : ProductRepo {
       "discontinueddate" = EXCLUDED."discontinueddate",
       "rowguid" = EXCLUDED."rowguid",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text
-    """.trimMargin())
+      returning "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(ProductRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -578,8 +578,7 @@ class ProductRepoImpl() : ProductRepo {
                           "discontinueddate" = EXCLUDED."discontinueddate",
                           "rowguid" = EXCLUDED."rowguid",
                           "modifieddate" = EXCLUDED."modifieddate"
-                          returning "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text
-                        """.trimMargin()))
+                          returning "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(ProductRow._rowParser, unsaved)
     .runUnchecked(c)
 

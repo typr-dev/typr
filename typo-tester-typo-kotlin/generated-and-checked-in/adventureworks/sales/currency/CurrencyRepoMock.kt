@@ -40,9 +40,11 @@ data class CurrencyRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in currencycodes) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in currencycodes) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -69,7 +71,7 @@ data class CurrencyRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.currencycode] = row
       count = count + 1L
     }
@@ -84,8 +86,8 @@ data class CurrencyRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.currencycode] = row
       count = count + 1L
     }
@@ -105,9 +107,13 @@ data class CurrencyRepoMock(
     currencycodes: Array<CurrencyId>,
     c: Connection
   ): List<CurrencyRow> {
-    var result = ArrayList<CurrencyRow>()
-    for (id in currencycodes) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<CurrencyRow>()
+    for (id in currencycodes) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -141,9 +147,9 @@ data class CurrencyRepoMock(
     unsaved: MutableIterator<CurrencyRow>,
     c: Connection
   ): List<CurrencyRow> {
-    var result = ArrayList<CurrencyRow>()
+    val result = ArrayList<CurrencyRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.currencycode] = row
       result.add(row)
     }
@@ -158,7 +164,7 @@ data class CurrencyRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.currencycode] = row
       count = count + 1
     }

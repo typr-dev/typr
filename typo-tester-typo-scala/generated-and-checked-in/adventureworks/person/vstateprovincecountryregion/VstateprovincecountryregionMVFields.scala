@@ -57,7 +57,7 @@ object VstateprovincecountryregionMVFields {
             Optional.empty(),
             Optional.empty(),
             (row, value) => row.copy(stateprovincecode = value),
-            PgTypes.text
+            PgTypes.bpchar
           )
         }
         override def isonlystateprovinceflag: Field[Flag, VstateprovincecountryregionMVRow] = {

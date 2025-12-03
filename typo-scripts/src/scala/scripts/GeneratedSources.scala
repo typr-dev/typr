@@ -8,7 +8,7 @@ import scala.annotation.nowarn
 
 object GeneratedSources {
   def main(args: Array[String]): Unit = {
-    val ds = TypoDataSource.hikari(server = "localhost", port = 6432, databaseName = "Adventureworks", username = "postgres", password = "password")
+    val ds = TypoDataSource.hikariPostgres(server = "localhost", port = 6432, databaseName = "Adventureworks", username = "postgres", password = "password")
 
     val header =
       """|/**

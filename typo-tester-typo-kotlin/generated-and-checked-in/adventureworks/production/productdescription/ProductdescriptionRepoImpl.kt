@@ -15,6 +15,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -25,7 +26,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class ProductdescriptionRepoImpl() : ProductdescriptionRepo {
-  override fun delete(): DeleteBuilder<ProductdescriptionFields, ProductdescriptionRow> = DeleteBuilder.of("production.productdescription", ProductdescriptionFields.structure)
+  override fun delete(): DeleteBuilder<ProductdescriptionFields, ProductdescriptionRow> = DeleteBuilder.of("\"production\".\"productdescription\"", ProductdescriptionFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     productdescriptionid: ProductdescriptionId,
@@ -143,7 +144,7 @@ class ProductdescriptionRepoImpl() : ProductdescriptionRepo {
   COPY "production"."productdescription"("description", "productdescriptionid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, ProductdescriptionRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<ProductdescriptionFields, ProductdescriptionRow> = SelectBuilder.of("production.productdescription", ProductdescriptionFields.structure, ProductdescriptionRow._rowParser)
+  override fun select(): SelectBuilder<ProductdescriptionFields, ProductdescriptionRow> = SelectBuilder.of("\"production\".\"productdescription\"", ProductdescriptionFields.structure, ProductdescriptionRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<ProductdescriptionRow> = interpolate(typo.runtime.Fragment.lit("""
     select "productdescriptionid", "description", "rowguid", "modifieddate"::text
@@ -183,7 +184,7 @@ class ProductdescriptionRepoImpl() : ProductdescriptionRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<ProductdescriptionFields, ProductdescriptionRow> = UpdateBuilder.of("production.productdescription", ProductdescriptionFields.structure, ProductdescriptionRow._rowParser.all())
+  override fun update(): UpdateBuilder<ProductdescriptionFields, ProductdescriptionRow> = UpdateBuilder.of("\"production\".\"productdescription\"", ProductdescriptionFields.structure, ProductdescriptionRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: ProductdescriptionRow,
@@ -232,8 +233,7 @@ class ProductdescriptionRepoImpl() : ProductdescriptionRepo {
         "description" = EXCLUDED."description",
       "rowguid" = EXCLUDED."rowguid",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "productdescriptionid", "description", "rowguid", "modifieddate"::text
-    """.trimMargin())
+      returning "productdescriptionid", "description", "rowguid", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(ProductdescriptionRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -249,8 +249,7 @@ class ProductdescriptionRepoImpl() : ProductdescriptionRepo {
                                        "description" = EXCLUDED."description",
                                      "rowguid" = EXCLUDED."rowguid",
                                      "modifieddate" = EXCLUDED."modifieddate"
-                                     returning "productdescriptionid", "description", "rowguid", "modifieddate"::text
-                                   """.trimMargin()))
+                                     returning "productdescriptionid", "description", "rowguid", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(ProductdescriptionRow._rowParser, unsaved)
     .runUnchecked(c)
 

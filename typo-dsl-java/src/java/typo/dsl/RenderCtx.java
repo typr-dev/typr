@@ -12,23 +12,79 @@ public class RenderCtx {
 
     // Map from path to alias
     private final Map<List<Path>, String> aliasMap;
+    // Dialect for quoting identifiers and type casts
+    private final Dialect dialect;
+    // Whether we're rendering in a join context (referencing CTEs vs actual tables)
+    private final boolean inJoinContext;
+    // When in join context, maps base aliases to the CTE name that contains them
+    // e.g., if join_cte1 contains columns from publictitledperson0, maps publictitledperson0 -> join_cte1
+    private final Map<String, String> aliasToCteMap;
 
-    private RenderCtx(Map<List<Path>, String> aliasMap) {
+    private RenderCtx(Map<List<Path>, String> aliasMap, Dialect dialect, boolean inJoinContext, Map<String, String> aliasToCteMap) {
         this.aliasMap = aliasMap;
+        this.dialect = dialect;
+        this.inJoinContext = inJoinContext;
+        this.aliasToCteMap = aliasToCteMap;
     }
 
-    // Empty render context singleton
-    public static final RenderCtx EMPTY = new RenderCtx(Map.of());
+    /**
+     * Get the dialect for this context.
+     */
+    public Dialect dialect() {
+        return dialect;
+    }
 
-    // Create context from a SelectBuilder
-    public static RenderCtx from(SelectBuilder<?, ?> builder) {
+    /**
+     * Check if we're rendering in a join context.
+     * In join context, column references should use unique alias format (alias.alias_column)
+     * to reference CTE outputs. In base context, column references should use
+     * (alias)."column" to reference actual table columns.
+     */
+    public boolean inJoinContext() {
+        return inJoinContext;
+    }
+
+    /**
+     * Create a copy of this context with join context flag set.
+     */
+    public RenderCtx withJoinContext(boolean joinContext) {
+        return new RenderCtx(aliasMap, dialect, joinContext, aliasToCteMap);
+    }
+
+    /**
+     * Create a copy of this context with alias to CTE mapping for joins.
+     * This maps base table aliases to the CTE name that actually contains those columns.
+     */
+    public RenderCtx withAliasToCteMap(Map<String, String> aliasToCteMap) {
+        return new RenderCtx(aliasMap, dialect, inJoinContext, aliasToCteMap);
+    }
+
+    /**
+     * Get the CTE name that contains the given alias's columns.
+     * Used in join context to resolve the correct table reference.
+     */
+    public String resolveCte(String alias) {
+        return aliasToCteMap.getOrDefault(alias, alias);
+    }
+
+    /**
+     * Create a simple RenderCtx with just a dialect (no alias map).
+     */
+    public static RenderCtx of(Dialect dialect) {
+        return new RenderCtx(Map.of(), dialect, false, Map.of());
+    }
+
+    /**
+     * Create context from a SelectBuilder.
+     */
+    public static RenderCtx from(SelectBuilder<?, ?> builder, Dialect dialect) {
         if (!(builder instanceof SelectBuilderSql<?, ?> sqlBuilder)) {
-            return EMPTY;
+            return new RenderCtx(Map.of(), dialect, false, Map.of());
         }
-        return fromSql(sqlBuilder);
+        return fromSql(sqlBuilder, dialect);
     }
 
-    private static RenderCtx fromSql(SelectBuilderSql<?, ?> builder) {
+    private static RenderCtx fromSql(SelectBuilderSql<?, ?> builder, Dialect dialect) {
         List<PathAndName> pathsAndNames = findPathsAndTableNames(builder);
 
         // Group by name and assign unique indexed aliases
@@ -53,7 +109,7 @@ public class RenderCtx {
             }
         }
 
-        return new RenderCtx(aliasMap);
+        return new RenderCtx(aliasMap, dialect, false, Map.of());
     }
 
     private static List<PathAndName> findPathsAndTableNames(SelectBuilderSql<?, ?> builder) {

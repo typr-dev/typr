@@ -134,7 +134,7 @@ public record PersonRepoMock(
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.compositeId())).filter(oldRow -> !oldRow.equals(row)).isPresent();
     if (shouldUpdate) {
-      map.put(row.compositeId(), row);
+      map.put(row.compositeId(), row);;
     };
     return shouldUpdate;
   };

@@ -86,5 +86,5 @@ public record ThViewRow(
     return new ThViewRow(id, transactionid, productid, referenceorderid, referenceorderlineid, transactiondate, transactiontype, quantity, actualcost, modifieddate);
   };
 
-  static RowParser<ThViewRow> _rowParser = RowParsers.of(TransactionhistoryId.pgType, TransactionhistoryId.pgType, ProductId.pgType, PgTypes.int4, PgTypes.int4, TypoLocalDateTime.pgType, PgTypes.text, PgTypes.int4, PgTypes.numeric, TypoLocalDateTime.pgType, ThViewRow::new, row -> new Object[]{row.id(), row.transactionid(), row.productid(), row.referenceorderid(), row.referenceorderlineid(), row.transactiondate(), row.transactiontype(), row.quantity(), row.actualcost(), row.modifieddate()});;
+  static RowParser<ThViewRow> _rowParser = RowParsers.of(TransactionhistoryId.pgType, TransactionhistoryId.pgType, ProductId.pgType, PgTypes.int4, PgTypes.int4, TypoLocalDateTime.pgType, PgTypes.bpchar, PgTypes.int4, PgTypes.numeric, TypoLocalDateTime.pgType, ThViewRow::new, row -> new Object[]{row.id(), row.transactionid(), row.productid(), row.referenceorderid(), row.referenceorderlineid(), row.transactiondate(), row.transactiontype(), row.quantity(), row.actualcost(), row.modifieddate()});;
 }

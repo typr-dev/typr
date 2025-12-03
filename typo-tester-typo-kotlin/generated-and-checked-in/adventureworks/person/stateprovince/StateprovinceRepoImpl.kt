@@ -19,6 +19,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -29,7 +30,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class StateprovinceRepoImpl() : StateprovinceRepo {
-  override fun delete(): DeleteBuilder<StateprovinceFields, StateprovinceRow> = DeleteBuilder.of("person.stateprovince", StateprovinceFields.structure)
+  override fun delete(): DeleteBuilder<StateprovinceFields, StateprovinceRow> = DeleteBuilder.of("\"person\".\"stateprovince\"", StateprovinceFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     stateprovinceid: StateprovinceId,
@@ -178,7 +179,7 @@ class StateprovinceRepoImpl() : StateprovinceRepo {
   COPY "person"."stateprovince"("stateprovincecode", "countryregioncode", "name", "territoryid", "stateprovinceid", "isonlystateprovinceflag", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, StateprovinceRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<StateprovinceFields, StateprovinceRow> = SelectBuilder.of("person.stateprovince", StateprovinceFields.structure, StateprovinceRow._rowParser)
+  override fun select(): SelectBuilder<StateprovinceFields, StateprovinceRow> = SelectBuilder.of("\"person\".\"stateprovince\"", StateprovinceFields.structure, StateprovinceRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<StateprovinceRow> = interpolate(typo.runtime.Fragment.lit("""
     select "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"::text
@@ -218,7 +219,7 @@ class StateprovinceRepoImpl() : StateprovinceRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<StateprovinceFields, StateprovinceRow> = UpdateBuilder.of("person.stateprovince", StateprovinceFields.structure, StateprovinceRow._rowParser.all())
+  override fun update(): UpdateBuilder<StateprovinceFields, StateprovinceRow> = UpdateBuilder.of("\"person\".\"stateprovince\"", StateprovinceFields.structure, StateprovinceRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: StateprovinceRow,
@@ -295,8 +296,7 @@ class StateprovinceRepoImpl() : StateprovinceRepo {
       "territoryid" = EXCLUDED."territoryid",
       "rowguid" = EXCLUDED."rowguid",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"::text
-    """.trimMargin())
+      returning "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(StateprovinceRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -316,8 +316,7 @@ class StateprovinceRepoImpl() : StateprovinceRepo {
                                 "territoryid" = EXCLUDED."territoryid",
                                 "rowguid" = EXCLUDED."rowguid",
                                 "modifieddate" = EXCLUDED."modifieddate"
-                                returning "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"::text
-                              """.trimMargin()))
+                                returning "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(StateprovinceRow._rowParser, unsaved)
     .runUnchecked(c)
 

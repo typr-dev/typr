@@ -72,8 +72,9 @@ case class TestSakSoknadsalternativRepoMock(map: HashMap[TestSakSoknadsalternati
 
   override def selectByIds(compositeIds: Array[TestSakSoknadsalternativId])(using c: Connection): java.util.List[TestSakSoknadsalternativRow] = {
     val result = new ArrayList[TestSakSoknadsalternativRow]()
-    compositeIds.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    compositeIds.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

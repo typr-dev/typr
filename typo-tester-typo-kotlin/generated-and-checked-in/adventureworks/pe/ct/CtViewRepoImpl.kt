@@ -7,11 +7,12 @@ package adventureworks.pe.ct
 
 import java.sql.Connection
 import kotlin.collections.List
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.Fragment.interpolate
 
 class CtViewRepoImpl() : CtViewRepo {
-  override fun select(): SelectBuilder<CtViewFields, CtViewRow> = SelectBuilder.of("pe.ct", CtViewFields.structure, CtViewRow._rowParser)
+  override fun select(): SelectBuilder<CtViewFields, CtViewRow> = SelectBuilder.of("\"pe\".\"ct\"", CtViewFields.structure, CtViewRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<CtViewRow> = interpolate(typo.runtime.Fragment.lit("""
     select "id", "contacttypeid", "name", "modifieddate"::text

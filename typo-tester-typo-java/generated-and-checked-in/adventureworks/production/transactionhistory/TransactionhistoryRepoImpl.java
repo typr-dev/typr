@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -27,7 +28,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class TransactionhistoryRepoImpl implements TransactionhistoryRepo {
   @Override
   public DeleteBuilder<TransactionhistoryFields, TransactionhistoryRow> delete() {
-    return DeleteBuilder.of("production.transactionhistory", TransactionhistoryFields.structure());
+    return DeleteBuilder.of("\"production\".\"transactionhistory\"", TransactionhistoryFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -217,7 +218,7 @@ public class TransactionhistoryRepoImpl implements TransactionhistoryRepo {
 
   @Override
   public SelectBuilder<TransactionhistoryFields, TransactionhistoryRow> select() {
-    return SelectBuilder.of("production.transactionhistory", TransactionhistoryFields.structure(), TransactionhistoryRow._rowParser);
+    return SelectBuilder.of("\"production\".\"transactionhistory\"", TransactionhistoryFields.structure(), TransactionhistoryRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -270,7 +271,7 @@ public class TransactionhistoryRepoImpl implements TransactionhistoryRepo {
 
   @Override
   public UpdateBuilder<TransactionhistoryFields, TransactionhistoryRow> update() {
-    return UpdateBuilder.of("production.transactionhistory", TransactionhistoryFields.structure(), TransactionhistoryRow._rowParser.all());
+    return UpdateBuilder.of("\"production\".\"transactionhistory\"", TransactionhistoryFields.structure(), TransactionhistoryRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -358,8 +359,7 @@ public class TransactionhistoryRepoImpl implements TransactionhistoryRepo {
          "quantity" = EXCLUDED."quantity",
          "actualcost" = EXCLUDED."actualcost",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text
-      """)
+         returning "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text""")
     )
       .updateReturning(TransactionhistoryRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -383,8 +383,7 @@ public class TransactionhistoryRepoImpl implements TransactionhistoryRepo {
                 "quantity" = EXCLUDED."quantity",
                 "actualcost" = EXCLUDED."actualcost",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text
-             """))
+                returning "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text"""))
       .updateManyReturning(TransactionhistoryRow._rowParser, unsaved)
       .runUnchecked(c);
   };

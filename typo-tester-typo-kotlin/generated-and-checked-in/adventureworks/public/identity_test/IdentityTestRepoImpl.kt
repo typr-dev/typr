@@ -13,6 +13,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -23,7 +24,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class IdentityTestRepoImpl() : IdentityTestRepo {
-  override fun delete(): DeleteBuilder<IdentityTestFields, IdentityTestRow> = DeleteBuilder.of("public.identity-test", IdentityTestFields.structure)
+  override fun delete(): DeleteBuilder<IdentityTestFields, IdentityTestRow> = DeleteBuilder.of("\"public\".\"identity-test\"", IdentityTestFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     name: IdentityTestId,
@@ -121,7 +122,7 @@ class IdentityTestRepoImpl() : IdentityTestRepo {
   COPY "public"."identity-test"("name", "default_generated") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, IdentityTestRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<IdentityTestFields, IdentityTestRow> = SelectBuilder.of("public.identity-test", IdentityTestFields.structure, IdentityTestRow._rowParser)
+  override fun select(): SelectBuilder<IdentityTestFields, IdentityTestRow> = SelectBuilder.of("\"public\".\"identity-test\"", IdentityTestFields.structure, IdentityTestRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<IdentityTestRow> = interpolate(typo.runtime.Fragment.lit("""
     select "always_generated", "default_generated", "name"
@@ -161,7 +162,7 @@ class IdentityTestRepoImpl() : IdentityTestRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<IdentityTestFields, IdentityTestRow> = UpdateBuilder.of("public.identity-test", IdentityTestFields.structure, IdentityTestRow._rowParser.all())
+  override fun update(): UpdateBuilder<IdentityTestFields, IdentityTestRow> = UpdateBuilder.of("\"public\".\"identity-test\"", IdentityTestFields.structure, IdentityTestRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: IdentityTestRow,
@@ -196,8 +197,7 @@ class IdentityTestRepoImpl() : IdentityTestRepo {
       on conflict ("name")
       do update set
         "default_generated" = EXCLUDED."default_generated"
-      returning "always_generated", "default_generated", "name"
-    """.trimMargin())
+      returning "always_generated", "default_generated", "name"""".trimMargin())
   )
     .updateReturning(IdentityTestRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -211,8 +211,7 @@ class IdentityTestRepoImpl() : IdentityTestRepo {
                                on conflict ("name")
                                do update set
                                  "default_generated" = EXCLUDED."default_generated"
-                               returning "always_generated", "default_generated", "name"
-                             """.trimMargin()))
+                               returning "always_generated", "default_generated", "name"""".trimMargin()))
     .updateManyReturning(IdentityTestRow._rowParser, unsaved)
     .runUnchecked(c)
 

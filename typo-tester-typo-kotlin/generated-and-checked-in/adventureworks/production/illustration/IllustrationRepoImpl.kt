@@ -15,6 +15,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -24,7 +25,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class IllustrationRepoImpl() : IllustrationRepo {
-  override fun delete(): DeleteBuilder<IllustrationFields, IllustrationRow> = DeleteBuilder.of("production.illustration", IllustrationFields.structure)
+  override fun delete(): DeleteBuilder<IllustrationFields, IllustrationRow> = DeleteBuilder.of("\"production\".\"illustration\"", IllustrationFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     illustrationid: IllustrationId,
@@ -131,7 +132,7 @@ class IllustrationRepoImpl() : IllustrationRepo {
   COPY "production"."illustration"("diagram", "illustrationid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, IllustrationRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<IllustrationFields, IllustrationRow> = SelectBuilder.of("production.illustration", IllustrationFields.structure, IllustrationRow._rowParser)
+  override fun select(): SelectBuilder<IllustrationFields, IllustrationRow> = SelectBuilder.of("\"production\".\"illustration\"", IllustrationFields.structure, IllustrationRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<IllustrationRow> = interpolate(typo.runtime.Fragment.lit("""
     select "illustrationid", "diagram", "modifieddate"::text
@@ -171,7 +172,7 @@ class IllustrationRepoImpl() : IllustrationRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<IllustrationFields, IllustrationRow> = UpdateBuilder.of("production.illustration", IllustrationFields.structure, IllustrationRow._rowParser.all())
+  override fun update(): UpdateBuilder<IllustrationFields, IllustrationRow> = UpdateBuilder.of("\"production\".\"illustration\"", IllustrationFields.structure, IllustrationRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: IllustrationRow,
@@ -213,8 +214,7 @@ class IllustrationRepoImpl() : IllustrationRepo {
       do update set
         "diagram" = EXCLUDED."diagram",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "illustrationid", "diagram", "modifieddate"::text
-    """.trimMargin())
+      returning "illustrationid", "diagram", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(IllustrationRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -229,8 +229,7 @@ class IllustrationRepoImpl() : IllustrationRepo {
                                do update set
                                  "diagram" = EXCLUDED."diagram",
                                "modifieddate" = EXCLUDED."modifieddate"
-                               returning "illustrationid", "diagram", "modifieddate"::text
-                             """.trimMargin()))
+                               returning "illustrationid", "diagram", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(IllustrationRow._rowParser, unsaved)
     .runUnchecked(c)
 

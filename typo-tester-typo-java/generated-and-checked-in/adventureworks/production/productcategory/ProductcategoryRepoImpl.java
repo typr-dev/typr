@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -27,7 +28,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class ProductcategoryRepoImpl implements ProductcategoryRepo {
   @Override
   public DeleteBuilder<ProductcategoryFields, ProductcategoryRow> delete() {
-    return DeleteBuilder.of("production.productcategory", ProductcategoryFields.structure());
+    return DeleteBuilder.of("\"production\".\"productcategory\"", ProductcategoryFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -175,7 +176,7 @@ public class ProductcategoryRepoImpl implements ProductcategoryRepo {
 
   @Override
   public SelectBuilder<ProductcategoryFields, ProductcategoryRow> select() {
-    return SelectBuilder.of("production.productcategory", ProductcategoryFields.structure(), ProductcategoryRow._rowParser);
+    return SelectBuilder.of("\"production\".\"productcategory\"", ProductcategoryFields.structure(), ProductcategoryRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -228,7 +229,7 @@ public class ProductcategoryRepoImpl implements ProductcategoryRepo {
 
   @Override
   public UpdateBuilder<ProductcategoryFields, ProductcategoryRow> update() {
-    return UpdateBuilder.of("production.productcategory", ProductcategoryFields.structure(), ProductcategoryRow._rowParser.all());
+    return UpdateBuilder.of("\"production\".\"productcategory\"", ProductcategoryFields.structure(), ProductcategoryRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -281,8 +282,7 @@ public class ProductcategoryRepoImpl implements ProductcategoryRepo {
            "name" = EXCLUDED."name",
          "rowguid" = EXCLUDED."rowguid",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "productcategoryid", "name", "rowguid", "modifieddate"::text
-      """)
+         returning "productcategoryid", "name", "rowguid", "modifieddate"::text""")
     )
       .updateReturning(ProductcategoryRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -301,8 +301,7 @@ public class ProductcategoryRepoImpl implements ProductcategoryRepo {
                   "name" = EXCLUDED."name",
                 "rowguid" = EXCLUDED."rowguid",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "productcategoryid", "name", "rowguid", "modifieddate"::text
-             """))
+                returning "productcategoryid", "name", "rowguid", "modifieddate"::text"""))
       .updateManyReturning(ProductcategoryRow._rowParser, unsaved)
       .runUnchecked(c);
   };

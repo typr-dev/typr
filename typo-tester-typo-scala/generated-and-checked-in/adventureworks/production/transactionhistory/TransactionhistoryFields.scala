@@ -108,7 +108,7 @@ object TransactionhistoryFields {
             Optional.empty(),
             Optional.of("bpchar"),
             (row, value) => row.copy(transactiontype = value),
-            PgTypes.text
+            PgTypes.bpchar
           )
         }
         override def quantity: Field[Integer, TransactionhistoryRow] = {

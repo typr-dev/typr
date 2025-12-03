@@ -6,11 +6,12 @@
 package adventureworks.pe.pnt
 
 import java.sql.Connection
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PntViewRepoImpl extends PntViewRepo {
-  override def select: SelectBuilder[PntViewFields, PntViewRow] = SelectBuilder.of("pe.pnt", PntViewFields.structure, PntViewRow.`_rowParser`)
+  override def select: SelectBuilder[PntViewFields, PntViewRow] = SelectBuilder.of(""""pe"."pnt"""", PntViewFields.structure, PntViewRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[PntViewRow] = {
     interpolate"""select "id", "phonenumbertypeid", "name", "modifieddate"::text

@@ -16,6 +16,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -25,7 +26,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class DocumentRepoImpl extends DocumentRepo {
-  override def delete: DeleteBuilder[DocumentFields, DocumentRow] = DeleteBuilder.of("production.document", DocumentFields.structure)
+  override def delete: DeleteBuilder[DocumentFields, DocumentRow] = DeleteBuilder.of(""""production"."document"""", DocumentFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(documentnode: DocumentId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."document" where "documentnode" = ${DocumentId.pgType.encode(documentnode)}""".update().runUnchecked(c) > 0
 
@@ -104,7 +105,7 @@ class DocumentRepoImpl extends DocumentRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."document"("title", "owner", "filename", "fileextension", "revision", "status", "documentsummary", "document", "folderflag", "changenumber", "rowguid", "modifieddate", "documentnode") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, DocumentRowUnsaved.pgText)
 
-  override def select: SelectBuilder[DocumentFields, DocumentRow] = SelectBuilder.of("production.document", DocumentFields.structure, DocumentRow.`_rowParser`)
+  override def select: SelectBuilder[DocumentFields, DocumentRow] = SelectBuilder.of(""""production"."document"""", DocumentFields.structure, DocumentRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[DocumentRow] = {
     interpolate"""select "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"
@@ -137,7 +138,7 @@ class DocumentRepoImpl extends DocumentRepo {
     """.query(DocumentRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  override def update: UpdateBuilder[DocumentFields, DocumentRow] = UpdateBuilder.of("production.document", DocumentFields.structure, DocumentRow.`_rowParser`.all())
+  override def update: UpdateBuilder[DocumentFields, DocumentRow] = UpdateBuilder.of(""""production"."document"""", DocumentFields.structure, DocumentRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: DocumentRow)(using c: Connection): java.lang.Boolean = {
     val documentnode: DocumentId = row.documentnode
@@ -174,8 +175,7 @@ class DocumentRepoImpl extends DocumentRepo {
     "document" = EXCLUDED."document",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"
-    """
+    returning "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode""""
     .updateReturning(DocumentRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -197,8 +197,7 @@ class DocumentRepoImpl extends DocumentRepo {
     "document" = EXCLUDED."document",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"
-    """
+    returning "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode""""
       .updateManyReturning(DocumentRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

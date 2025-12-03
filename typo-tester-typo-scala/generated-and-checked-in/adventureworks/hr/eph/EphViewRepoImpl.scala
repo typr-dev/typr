@@ -6,11 +6,12 @@
 package adventureworks.hr.eph
 
 import java.sql.Connection
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class EphViewRepoImpl extends EphViewRepo {
-  override def select: SelectBuilder[EphViewFields, EphViewRow] = SelectBuilder.of("hr.eph", EphViewFields.structure, EphViewRow.`_rowParser`)
+  override def select: SelectBuilder[EphViewFields, EphViewRow] = SelectBuilder.of(""""hr"."eph"""", EphViewFields.structure, EphViewRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[EphViewRow] = {
     interpolate"""select "id", "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text

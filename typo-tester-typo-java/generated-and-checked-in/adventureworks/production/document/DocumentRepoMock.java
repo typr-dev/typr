@@ -62,9 +62,11 @@ public record DocumentRepoMock(
     Connection c
   ) {
     var count = 0;
-    for (var id : documentnodes) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : documentnodes) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -144,8 +146,12 @@ public record DocumentRepoMock(
     Connection c
   ) {
     var result = new ArrayList<DocumentRow>();
-    for (var id : documentnodes) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : documentnodes) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 
@@ -177,7 +183,7 @@ public record DocumentRepoMock(
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.documentnode())).filter(oldRow -> !oldRow.equals(row)).isPresent();
     if (shouldUpdate) {
-      map.put(row.documentnode(), row);
+      map.put(row.documentnode(), row);;
     };
     return shouldUpdate;
   };

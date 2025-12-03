@@ -92,8 +92,9 @@ case class UnitmeasureRepoMock(
 
   override def selectByIds(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): java.util.List[UnitmeasureRow] = {
     val result = new ArrayList[UnitmeasureRow]()
-    unitmeasurecodes.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    unitmeasurecodes.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

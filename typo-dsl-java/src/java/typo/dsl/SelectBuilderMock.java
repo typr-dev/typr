@@ -17,8 +17,7 @@ public class SelectBuilderMock<Fields, Row> implements SelectBuilder<Fields, Row
     private final Structure<Fields, Row> structure;
     private final Supplier<List<Row>> allRowsSupplier;
     private final SelectParams<Fields, Row> params;
-    private final RenderCtx renderCtx;
-    
+
     public SelectBuilderMock(
             Structure<Fields, Row> structure,
             Supplier<List<Row>> allRowsSupplier,
@@ -26,16 +25,16 @@ public class SelectBuilderMock<Fields, Row> implements SelectBuilder<Fields, Row
         this.structure = structure;
         this.allRowsSupplier = allRowsSupplier;
         this.params = params;
-        this.renderCtx = RenderCtx.EMPTY;
     }
-    
+
     public SelectBuilderMock<Fields, Row> withPath(Path path) {
         return new SelectBuilderMock<>(structure.withPath(path), allRowsSupplier, params);
     }
-    
+
     @Override
     public RenderCtx renderCtx() {
-        return renderCtx;
+        // Mock doesn't generate SQL, but RenderCtx is needed for structure operations
+        return RenderCtx.of(Dialect.POSTGRESQL);
     }
     
     @Override

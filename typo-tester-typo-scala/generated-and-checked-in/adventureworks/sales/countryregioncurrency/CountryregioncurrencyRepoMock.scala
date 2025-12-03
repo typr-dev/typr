@@ -92,8 +92,9 @@ case class CountryregioncurrencyRepoMock(
 
   override def selectByIds(compositeIds: Array[CountryregioncurrencyId])(using c: Connection): java.util.List[CountryregioncurrencyRow] = {
     val result = new ArrayList[CountryregioncurrencyRow]()
-    compositeIds.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    compositeIds.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

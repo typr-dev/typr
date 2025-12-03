@@ -7,13 +7,14 @@ package adventureworks.pr.pd;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class PdViewRepoImpl implements PdViewRepo {
   @Override
   public SelectBuilder<PdViewFields, PdViewRow> select() {
-    return SelectBuilder.of("pr.pd", PdViewFields.structure(), PdViewRow._rowParser);
+    return SelectBuilder.of("\"pr\".\"pd\"", PdViewFields.structure(), PdViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

@@ -59,7 +59,7 @@ public interface PgtestFields {
                };
                @Override
                public Field</* bpchar, max 3 chars */ String, PgtestRow> bpchar() {
-                 return new Field</* bpchar, max 3 chars */ String, PgtestRow>(_path, "bpchar", PgtestRow::bpchar, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withBpchar(value), PgTypes.text);
+                 return new Field</* bpchar, max 3 chars */ String, PgtestRow>(_path, "bpchar", PgtestRow::bpchar, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withBpchar(value), PgTypes.bpchar);
                };
                @Override
                public Field<TypoBytea, PgtestRow> bytea() {
@@ -67,7 +67,7 @@ public interface PgtestFields {
                };
                @Override
                public Field</* bpchar, max 1 chars */ String, PgtestRow> char_() {
-                 return new Field</* bpchar, max 1 chars */ String, PgtestRow>(_path, "char", PgtestRow::char_, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withChar(value), PgTypes.text);
+                 return new Field</* bpchar, max 1 chars */ String, PgtestRow>(_path, "char", PgtestRow::char_, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withChar(value), PgTypes.bpchar);
                };
                @Override
                public Field<TypoCircle, PgtestRow> circle() {
@@ -143,7 +143,7 @@ public interface PgtestFields {
                };
                @Override
                public Field<String, PgtestRow> name() {
-                 return new Field<String, PgtestRow>(_path, "name", PgtestRow::name, Optional.empty(), Optional.of("name"), (row, value) -> row.withName(value), PgTypes.text);
+                 return new Field<String, PgtestRow>(_path, "name", PgtestRow::name, Optional.empty(), Optional.of("name"), (row, value) -> row.withName(value), PgTypes.name);
                };
                @Override
                public Field<BigDecimal, PgtestRow> numeric() {
@@ -203,11 +203,11 @@ public interface PgtestFields {
                };
                @Override
                public Field</* bpchar */ String[], PgtestRow> bpchares() {
-                 return new Field</* bpchar */ String[], PgtestRow>(_path, "bpchares", PgtestRow::bpchares, Optional.empty(), Optional.of("bpchar[]"), (row, value) -> row.withBpchares(value), PgTypes.textArray);
+                 return new Field</* bpchar */ String[], PgtestRow>(_path, "bpchares", PgtestRow::bpchares, Optional.empty(), Optional.of("bpchar[]"), (row, value) -> row.withBpchares(value), PgTypes.bpcharArray);
                };
                @Override
                public Field</* bpchar */ String[], PgtestRow> chares() {
-                 return new Field</* bpchar */ String[], PgtestRow>(_path, "chares", PgtestRow::chares, Optional.empty(), Optional.of("bpchar[]"), (row, value) -> row.withChares(value), PgTypes.textArray);
+                 return new Field</* bpchar */ String[], PgtestRow>(_path, "chares", PgtestRow::chares, Optional.empty(), Optional.of("bpchar[]"), (row, value) -> row.withChares(value), PgTypes.bpcharArray);
                };
                @Override
                public Field<TypoCircle[], PgtestRow> circlees() {
@@ -279,7 +279,7 @@ public interface PgtestFields {
                };
                @Override
                public Field<String[], PgtestRow> namees() {
-                 return new Field<String[], PgtestRow>(_path, "namees", PgtestRow::namees, Optional.empty(), Optional.of("name[]"), (row, value) -> row.withNamees(value), PgTypes.textArray);
+                 return new Field<String[], PgtestRow>(_path, "namees", PgtestRow::namees, Optional.empty(), Optional.of("name[]"), (row, value) -> row.withNamees(value), PgTypes.nameArray);
                };
                @Override
                public Field<BigDecimal[], PgtestRow> numerices() {

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -28,7 +29,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class PasswordRepoImpl implements PasswordRepo {
   @Override
   public DeleteBuilder<PasswordFields, PasswordRow> delete() {
-    return DeleteBuilder.of("person.password", PasswordFields.structure());
+    return DeleteBuilder.of("\"person\".\"password\"", PasswordFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -178,7 +179,7 @@ public class PasswordRepoImpl implements PasswordRepo {
 
   @Override
   public SelectBuilder<PasswordFields, PasswordRow> select() {
-    return SelectBuilder.of("person.password", PasswordFields.structure(), PasswordRow._rowParser);
+    return SelectBuilder.of("\"person\".\"password\"", PasswordFields.structure(), PasswordRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -231,7 +232,7 @@ public class PasswordRepoImpl implements PasswordRepo {
 
   @Override
   public UpdateBuilder<PasswordFields, PasswordRow> update() {
-    return UpdateBuilder.of("person.password", PasswordFields.structure(), PasswordRow._rowParser.all());
+    return UpdateBuilder.of("\"person\".\"password\"", PasswordFields.structure(), PasswordRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -291,8 +292,7 @@ public class PasswordRepoImpl implements PasswordRepo {
          "passwordsalt" = EXCLUDED."passwordsalt",
          "rowguid" = EXCLUDED."rowguid",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"::text
-      """)
+         returning "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"::text""")
     )
       .updateReturning(PasswordRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -312,8 +312,7 @@ public class PasswordRepoImpl implements PasswordRepo {
                 "passwordsalt" = EXCLUDED."passwordsalt",
                 "rowguid" = EXCLUDED."rowguid",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"::text
-             """))
+                returning "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"::text"""))
       .updateManyReturning(PasswordRow._rowParser, unsaved)
       .runUnchecked(c);
   };

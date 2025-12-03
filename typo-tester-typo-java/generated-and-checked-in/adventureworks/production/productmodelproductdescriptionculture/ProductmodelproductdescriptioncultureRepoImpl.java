@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -29,7 +30,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class ProductmodelproductdescriptioncultureRepoImpl implements ProductmodelproductdescriptioncultureRepo {
   @Override
   public DeleteBuilder<ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow> delete() {
-    return DeleteBuilder.of("production.productmodelproductdescriptionculture", ProductmodelproductdescriptioncultureFields.structure());
+    return DeleteBuilder.of("\"production\".\"productmodelproductdescriptionculture\"", ProductmodelproductdescriptioncultureFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -180,7 +181,7 @@ public class ProductmodelproductdescriptioncultureRepoImpl implements Productmod
 
   @Override
   public SelectBuilder<ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow> select() {
-    return SelectBuilder.of("production.productmodelproductdescriptionculture", ProductmodelproductdescriptioncultureFields.structure(), ProductmodelproductdescriptioncultureRow._rowParser);
+    return SelectBuilder.of("\"production\".\"productmodelproductdescriptionculture\"", ProductmodelproductdescriptioncultureFields.structure(), ProductmodelproductdescriptioncultureRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -252,7 +253,7 @@ public class ProductmodelproductdescriptioncultureRepoImpl implements Productmod
 
   @Override
   public UpdateBuilder<ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow> update() {
-    return UpdateBuilder.of("production.productmodelproductdescriptionculture", ProductmodelproductdescriptioncultureFields.structure(), ProductmodelproductdescriptioncultureRow._rowParser.all());
+    return UpdateBuilder.of("\"production\".\"productmodelproductdescriptionculture\"", ProductmodelproductdescriptioncultureFields.structure(), ProductmodelproductdescriptioncultureRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -303,8 +304,7 @@ public class ProductmodelproductdescriptioncultureRepoImpl implements Productmod
          on conflict ("productmodelid", "productdescriptionid", "cultureid")
          do update set
            "modifieddate" = EXCLUDED."modifieddate"
-         returning "productmodelid", "productdescriptionid", "cultureid", "modifieddate"::text
-      """)
+         returning "productmodelid", "productdescriptionid", "cultureid", "modifieddate"::text""")
     )
       .updateReturning(ProductmodelproductdescriptioncultureRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -321,8 +321,7 @@ public class ProductmodelproductdescriptioncultureRepoImpl implements Productmod
                 on conflict ("productmodelid", "productdescriptionid", "cultureid")
                 do update set
                   "modifieddate" = EXCLUDED."modifieddate"
-                returning "productmodelid", "productdescriptionid", "cultureid", "modifieddate"::text
-             """))
+                returning "productmodelid", "productdescriptionid", "cultureid", "modifieddate"::text"""))
       .updateManyReturning(ProductmodelproductdescriptioncultureRow._rowParser, unsaved)
       .runUnchecked(c);
   };

@@ -7,13 +7,14 @@ package adventureworks.person.vstateprovincecountryregion;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class VstateprovincecountryregionMVRepoImpl implements VstateprovincecountryregionMVRepo {
   @Override
   public SelectBuilder<VstateprovincecountryregionMVFields, VstateprovincecountryregionMVRow> select() {
-    return SelectBuilder.of("person.vstateprovincecountryregion", VstateprovincecountryregionMVFields.structure(), VstateprovincecountryregionMVRow._rowParser);
+    return SelectBuilder.of("\"person\".\"vstateprovincecountryregion\"", VstateprovincecountryregionMVFields.structure(), VstateprovincecountryregionMVRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

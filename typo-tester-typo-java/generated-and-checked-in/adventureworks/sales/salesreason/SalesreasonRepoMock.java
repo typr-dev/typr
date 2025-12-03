@@ -61,9 +61,11 @@ public record SalesreasonRepoMock(
     Connection c
   ) {
     var count = 0;
-    for (var id : salesreasonids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : salesreasonids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -143,8 +145,12 @@ public record SalesreasonRepoMock(
     Connection c
   ) {
     var result = new ArrayList<SalesreasonRow>();
-    for (var id : salesreasonids) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : salesreasonids) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 
@@ -168,7 +174,7 @@ public record SalesreasonRepoMock(
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.salesreasonid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
     if (shouldUpdate) {
-      map.put(row.salesreasonid(), row);
+      map.put(row.salesreasonid(), row);;
     };
     return shouldUpdate;
   };

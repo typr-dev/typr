@@ -7,11 +7,12 @@ package adventureworks.humanresources.vjobcandidateeducation
 
 import java.sql.Connection
 import kotlin.collections.List
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.Fragment.interpolate
 
 class VjobcandidateeducationViewRepoImpl() : VjobcandidateeducationViewRepo {
-  override fun select(): SelectBuilder<VjobcandidateeducationViewFields, VjobcandidateeducationViewRow> = SelectBuilder.of("humanresources.vjobcandidateeducation", VjobcandidateeducationViewFields.structure, VjobcandidateeducationViewRow._rowParser)
+  override fun select(): SelectBuilder<VjobcandidateeducationViewFields, VjobcandidateeducationViewRow> = SelectBuilder.of("\"humanresources\".\"vjobcandidateeducation\"", VjobcandidateeducationViewFields.structure, VjobcandidateeducationViewRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<VjobcandidateeducationViewRow> = interpolate(typo.runtime.Fragment.lit("""
     select "jobcandidateid", "Edu.Level", "Edu.StartDate"::text, "Edu.EndDate"::text, "Edu.Degree", "Edu.Major", "Edu.Minor", "Edu.GPA", "Edu.GPAScale", "Edu.School", "Edu.Loc.CountryRegion", "Edu.Loc.State", "Edu.Loc.City"

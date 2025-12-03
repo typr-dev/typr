@@ -27,11 +27,11 @@ public interface CcViewFields {
       return new CcViewFields() {
                @Override
                public Field</* user-picked */ CustomCreditcardId, CcViewRow> id() {
-                 return new Field</* user-picked */ CustomCreditcardId, CcViewRow>(_path, "id", CcViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), /* user-picked */ CustomCreditcardId.pgType);
+                 return new Field</* user-picked */ CustomCreditcardId, CcViewRow>(_path, "id", CcViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), CustomCreditcardId.pgType);
                };
                @Override
                public Field</* user-picked */ CustomCreditcardId, CcViewRow> creditcardid() {
-                 return new Field</* user-picked */ CustomCreditcardId, CcViewRow>(_path, "creditcardid", CcViewRow::creditcardid, Optional.empty(), Optional.empty(), (row, value) -> row.withCreditcardid(value), /* user-picked */ CustomCreditcardId.pgType);
+                 return new Field</* user-picked */ CustomCreditcardId, CcViewRow>(_path, "creditcardid", CcViewRow::creditcardid, Optional.empty(), Optional.empty(), (row, value) -> row.withCreditcardid(value), CustomCreditcardId.pgType);
                };
                @Override
                public Field</* max 50 chars */ String, CcViewRow> cardtype() {

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -29,7 +30,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class WorkorderRepoImpl implements WorkorderRepo {
   @Override
   public DeleteBuilder<WorkorderFields, WorkorderRow> delete() {
-    return DeleteBuilder.of("production.workorder", WorkorderFields.structure());
+    return DeleteBuilder.of("\"production\".\"workorder\"", WorkorderFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -205,7 +206,7 @@ public class WorkorderRepoImpl implements WorkorderRepo {
 
   @Override
   public SelectBuilder<WorkorderFields, WorkorderRow> select() {
-    return SelectBuilder.of("production.workorder", WorkorderFields.structure(), WorkorderRow._rowParser);
+    return SelectBuilder.of("\"production\".\"workorder\"", WorkorderFields.structure(), WorkorderRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -258,7 +259,7 @@ public class WorkorderRepoImpl implements WorkorderRepo {
 
   @Override
   public UpdateBuilder<WorkorderFields, WorkorderRow> update() {
-    return UpdateBuilder.of("production.workorder", WorkorderFields.structure(), WorkorderRow._rowParser.all());
+    return UpdateBuilder.of("\"production\".\"workorder\"", WorkorderFields.structure(), WorkorderRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -346,8 +347,7 @@ public class WorkorderRepoImpl implements WorkorderRepo {
          "duedate" = EXCLUDED."duedate",
          "scrapreasonid" = EXCLUDED."scrapreasonid",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text
-      """)
+         returning "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text""")
     )
       .updateReturning(WorkorderRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -371,8 +371,7 @@ public class WorkorderRepoImpl implements WorkorderRepo {
                 "duedate" = EXCLUDED."duedate",
                 "scrapreasonid" = EXCLUDED."scrapreasonid",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text
-             """))
+                returning "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text"""))
       .updateManyReturning(WorkorderRow._rowParser, unsaved)
       .runUnchecked(c);
   };

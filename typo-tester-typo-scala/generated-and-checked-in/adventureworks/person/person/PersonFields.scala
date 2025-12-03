@@ -78,7 +78,7 @@ object PersonFields {
             Optional.empty(),
             Optional.of("bpchar"),
             (row, value) => row.copy(persontype = value),
-            PgTypes.text
+            PgTypes.bpchar
           )
         }
         override def namestyle: Field[NameStyle, PersonRow] = {
@@ -111,7 +111,7 @@ object PersonFields {
             Optional.empty(),
             Optional.of("varchar"),
             (row, value) => row.copy(firstname = value),
-            /* user-picked */ FirstName.pgType
+            FirstName.pgType
           )
         }
         override def middlename: OptField[Name, PersonRow] = {

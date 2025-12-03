@@ -61,9 +61,11 @@ public record PurchaseorderheaderRepoMock(
     Connection c
   ) {
     var count = 0;
-    for (var id : purchaseorderids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : purchaseorderids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -143,8 +145,12 @@ public record PurchaseorderheaderRepoMock(
     Connection c
   ) {
     var result = new ArrayList<PurchaseorderheaderRow>();
-    for (var id : purchaseorderids) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : purchaseorderids) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 
@@ -168,7 +174,7 @@ public record PurchaseorderheaderRepoMock(
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.purchaseorderid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
     if (shouldUpdate) {
-      map.put(row.purchaseorderid(), row);
+      map.put(row.purchaseorderid(), row);;
     };
     return shouldUpdate;
   };

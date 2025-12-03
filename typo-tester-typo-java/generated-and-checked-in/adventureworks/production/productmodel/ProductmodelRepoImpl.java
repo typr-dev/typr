@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -28,7 +29,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class ProductmodelRepoImpl implements ProductmodelRepo {
   @Override
   public DeleteBuilder<ProductmodelFields, ProductmodelRow> delete() {
-    return DeleteBuilder.of("production.productmodel", ProductmodelFields.structure());
+    return DeleteBuilder.of("\"production\".\"productmodel\"", ProductmodelFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -190,7 +191,7 @@ public class ProductmodelRepoImpl implements ProductmodelRepo {
 
   @Override
   public SelectBuilder<ProductmodelFields, ProductmodelRow> select() {
-    return SelectBuilder.of("production.productmodel", ProductmodelFields.structure(), ProductmodelRow._rowParser);
+    return SelectBuilder.of("\"production\".\"productmodel\"", ProductmodelFields.structure(), ProductmodelRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -243,7 +244,7 @@ public class ProductmodelRepoImpl implements ProductmodelRepo {
 
   @Override
   public UpdateBuilder<ProductmodelFields, ProductmodelRow> update() {
-    return UpdateBuilder.of("production.productmodel", ProductmodelFields.structure(), ProductmodelRow._rowParser.all());
+    return UpdateBuilder.of("\"production\".\"productmodel\"", ProductmodelFields.structure(), ProductmodelRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -310,8 +311,7 @@ public class ProductmodelRepoImpl implements ProductmodelRepo {
          "instructions" = EXCLUDED."instructions",
          "rowguid" = EXCLUDED."rowguid",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate"::text
-      """)
+         returning "productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate"::text""")
     )
       .updateReturning(ProductmodelRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -332,8 +332,7 @@ public class ProductmodelRepoImpl implements ProductmodelRepo {
                 "instructions" = EXCLUDED."instructions",
                 "rowguid" = EXCLUDED."rowguid",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate"::text
-             """))
+                returning "productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate"::text"""))
       .updateManyReturning(ProductmodelRow._rowParser, unsaved)
       .runUnchecked(c);
   };

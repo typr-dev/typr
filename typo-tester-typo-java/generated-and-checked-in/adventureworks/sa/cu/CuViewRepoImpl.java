@@ -7,13 +7,14 @@ package adventureworks.sa.cu;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class CuViewRepoImpl implements CuViewRepo {
   @Override
   public SelectBuilder<CuViewFields, CuViewRow> select() {
-    return SelectBuilder.of("sa.cu", CuViewFields.structure(), CuViewRow._rowParser);
+    return SelectBuilder.of("\"sa\".\"cu\"", CuViewFields.structure(), CuViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

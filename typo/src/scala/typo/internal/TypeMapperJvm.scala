@@ -13,7 +13,7 @@ abstract class TypeMapperJvm(lang: Lang, typeOverride: TypeOverride, nullability
     }
 
     val baseTpe = col.tpe match {
-      case db.Type.Array(tpe) =>
+      case db.PgType.Array(tpe) =>
         jvm.Type.ArrayOf(go(tpe))
       case other =>
         go(other)
@@ -27,7 +27,7 @@ abstract class TypeMapperJvm(lang: Lang, typeOverride: TypeOverride, nullability
       maybeOverridden.map(stripOptionAndArray).getOrElse(baseType(tpe))
 
     val base = dbType match {
-      case db.Type.Array(tpe) =>
+      case db.PgType.Array(tpe) =>
         jvm.Type.ArrayOf(go(tpe))
       case other =>
         go(other)
@@ -40,7 +40,7 @@ abstract class TypeMapperJvm(lang: Lang, typeOverride: TypeOverride, nullability
   // and the optionality should live in the field definitions
   def domain(dbType: db.Type): jvm.Type =
     dbType match {
-      case db.Type.Array(tpe) =>
+      case db.PgType.Array(tpe) =>
         jvm.Type.ArrayOf(baseType(tpe))
       case other =>
         baseType(other)

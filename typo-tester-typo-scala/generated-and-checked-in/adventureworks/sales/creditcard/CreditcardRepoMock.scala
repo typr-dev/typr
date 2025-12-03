@@ -93,8 +93,9 @@ case class CreditcardRepoMock(
 
   override def selectByIds(creditcardids: Array[/* user-picked */ CustomCreditcardId])(using c: Connection): java.util.List[CreditcardRow] = {
     val result = new ArrayList[CreditcardRow]()
-    creditcardids.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    creditcardids.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

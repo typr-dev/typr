@@ -6,11 +6,12 @@
 package adventureworks.sa.cu
 
 import java.sql.Connection
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class CuViewRepoImpl extends CuViewRepo {
-  override def select: SelectBuilder[CuViewFields, CuViewRow] = SelectBuilder.of("sa.cu", CuViewFields.structure, CuViewRow.`_rowParser`)
+  override def select: SelectBuilder[CuViewFields, CuViewRow] = SelectBuilder.of(""""sa"."cu"""", CuViewFields.structure, CuViewRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[CuViewRow] = {
     interpolate"""select "id", "currencycode", "name", "modifieddate"::text

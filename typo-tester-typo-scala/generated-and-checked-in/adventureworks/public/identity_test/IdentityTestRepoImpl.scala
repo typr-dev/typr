@@ -10,6 +10,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -19,7 +20,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class IdentityTestRepoImpl extends IdentityTestRepo {
-  override def delete: DeleteBuilder[IdentityTestFields, IdentityTestRow] = DeleteBuilder.of("public.identity-test", IdentityTestFields.structure)
+  override def delete: DeleteBuilder[IdentityTestFields, IdentityTestRow] = DeleteBuilder.of(""""public"."identity-test"""", IdentityTestFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(name: IdentityTestId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."identity-test" where "name" = ${IdentityTestId.pgType.encode(name)}""".update().runUnchecked(c) > 0
 
@@ -68,7 +69,7 @@ class IdentityTestRepoImpl extends IdentityTestRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."identity-test"("name", "default_generated") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, IdentityTestRowUnsaved.pgText)
 
-  override def select: SelectBuilder[IdentityTestFields, IdentityTestRow] = SelectBuilder.of("public.identity-test", IdentityTestFields.structure, IdentityTestRow.`_rowParser`)
+  override def select: SelectBuilder[IdentityTestFields, IdentityTestRow] = SelectBuilder.of(""""public"."identity-test"""", IdentityTestFields.structure, IdentityTestRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[IdentityTestRow] = {
     interpolate"""select "always_generated", "default_generated", "name"
@@ -94,7 +95,7 @@ class IdentityTestRepoImpl extends IdentityTestRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[IdentityTestFields, IdentityTestRow] = UpdateBuilder.of("public.identity-test", IdentityTestFields.structure, IdentityTestRow.`_rowParser`.all())
+  override def update: UpdateBuilder[IdentityTestFields, IdentityTestRow] = UpdateBuilder.of(""""public"."identity-test"""", IdentityTestFields.structure, IdentityTestRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: IdentityTestRow)(using c: Connection): java.lang.Boolean = {
     val name: IdentityTestId = row.name
@@ -109,8 +110,7 @@ class IdentityTestRepoImpl extends IdentityTestRepo {
     on conflict ("name")
     do update set
       "default_generated" = EXCLUDED."default_generated"
-    returning "always_generated", "default_generated", "name"
-    """
+    returning "always_generated", "default_generated", "name""""
     .updateReturning(IdentityTestRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -121,8 +121,7 @@ class IdentityTestRepoImpl extends IdentityTestRepo {
     on conflict ("name")
     do update set
       "default_generated" = EXCLUDED."default_generated"
-    returning "always_generated", "default_generated", "name"
-    """
+    returning "always_generated", "default_generated", "name""""
       .updateManyReturning(IdentityTestRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

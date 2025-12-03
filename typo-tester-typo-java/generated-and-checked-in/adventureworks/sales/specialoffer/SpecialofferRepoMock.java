@@ -61,9 +61,11 @@ public record SpecialofferRepoMock(
     Connection c
   ) {
     var count = 0;
-    for (var id : specialofferids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : specialofferids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -143,8 +145,12 @@ public record SpecialofferRepoMock(
     Connection c
   ) {
     var result = new ArrayList<SpecialofferRow>();
-    for (var id : specialofferids) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : specialofferids) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 
@@ -168,7 +174,7 @@ public record SpecialofferRepoMock(
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.specialofferid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
     if (shouldUpdate) {
-      map.put(row.specialofferid(), row);
+      map.put(row.specialofferid(), row);;
     };
     return shouldUpdate;
   };

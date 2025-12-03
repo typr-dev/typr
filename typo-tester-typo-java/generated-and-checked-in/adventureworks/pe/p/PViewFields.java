@@ -40,7 +40,7 @@ public interface PViewFields {
                };
                @Override
                public Field</* bpchar, max 2 chars */ String, PViewRow> persontype() {
-                 return new Field</* bpchar, max 2 chars */ String, PViewRow>(_path, "persontype", PViewRow::persontype, Optional.empty(), Optional.empty(), (row, value) -> row.withPersontype(value), PgTypes.text);
+                 return new Field</* bpchar, max 2 chars */ String, PViewRow>(_path, "persontype", PViewRow::persontype, Optional.empty(), Optional.empty(), (row, value) -> row.withPersontype(value), PgTypes.bpchar);
                };
                @Override
                public Field<NameStyle, PViewRow> namestyle() {
@@ -52,7 +52,7 @@ public interface PViewFields {
                };
                @Override
                public Field</* user-picked */ FirstName, PViewRow> firstname() {
-                 return new Field</* user-picked */ FirstName, PViewRow>(_path, "firstname", PViewRow::firstname, Optional.empty(), Optional.empty(), (row, value) -> row.withFirstname(value), /* user-picked */ FirstName.pgType);
+                 return new Field</* user-picked */ FirstName, PViewRow>(_path, "firstname", PViewRow::firstname, Optional.empty(), Optional.empty(), (row, value) -> row.withFirstname(value), FirstName.pgType);
                };
                @Override
                public OptField<Name, PViewRow> middlename() {

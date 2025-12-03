@@ -10,6 +10,7 @@ import java.sql.Connection
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.PgTypes
@@ -17,7 +18,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class TestUtdanningstilbudRepoImpl extends TestUtdanningstilbudRepo {
-  override def delete: DeleteBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = DeleteBuilder.of("public.test_utdanningstilbud", TestUtdanningstilbudFields.structure)
+  override def delete: DeleteBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = DeleteBuilder.of(""""public"."test_utdanningstilbud"""", TestUtdanningstilbudFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(compositeId: TestUtdanningstilbudId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."test_utdanningstilbud" where "organisasjonskode" = ${TestOrganisasjonId.pgType.encode(compositeId.organisasjonskode)} AND "utdanningsmulighet_kode" = ${PgTypes.text.encode(compositeId.utdanningsmulighetKode)}""".update().runUnchecked(c) > 0
 
@@ -44,7 +45,7 @@ class TestUtdanningstilbudRepoImpl extends TestUtdanningstilbudRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."test_utdanningstilbud"("organisasjonskode", "utdanningsmulighet_kode") FROM STDIN""", batchSize, unsaved, c, TestUtdanningstilbudRow.pgText)
 
-  override def select: SelectBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = SelectBuilder.of("public.test_utdanningstilbud", TestUtdanningstilbudFields.structure, TestUtdanningstilbudRow.`_rowParser`)
+  override def select: SelectBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = SelectBuilder.of(""""public"."test_utdanningstilbud"""", TestUtdanningstilbudFields.structure, TestUtdanningstilbudRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[TestUtdanningstilbudRow] = {
     interpolate"""select "organisasjonskode", "utdanningsmulighet_kode"
@@ -74,15 +75,14 @@ class TestUtdanningstilbudRepoImpl extends TestUtdanningstilbudRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = UpdateBuilder.of("public.test_utdanningstilbud", TestUtdanningstilbudFields.structure, TestUtdanningstilbudRow.`_rowParser`.all())
+  override def update: UpdateBuilder[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = UpdateBuilder.of(""""public"."test_utdanningstilbud"""", TestUtdanningstilbudFields.structure, TestUtdanningstilbudRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def upsert(unsaved: TestUtdanningstilbudRow)(using c: Connection): TestUtdanningstilbudRow = {
   interpolate"""insert into "public"."test_utdanningstilbud"("organisasjonskode", "utdanningsmulighet_kode")
     values (${TestOrganisasjonId.pgType.encode(unsaved.organisasjonskode)}, ${PgTypes.text.encode(unsaved.utdanningsmulighetKode)})
     on conflict ("organisasjonskode", "utdanningsmulighet_kode")
     do update set "organisasjonskode" = EXCLUDED."organisasjonskode"
-    returning "organisasjonskode", "utdanningsmulighet_kode"
-    """
+    returning "organisasjonskode", "utdanningsmulighet_kode""""
     .updateReturning(TestUtdanningstilbudRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -91,9 +91,8 @@ class TestUtdanningstilbudRepoImpl extends TestUtdanningstilbudRepo {
     interpolate"""insert into "public"."test_utdanningstilbud"("organisasjonskode", "utdanningsmulighet_kode")
     values (?, ?)
     on conflict ("organisasjonskode", "utdanningsmulighet_kode")
-    do nothing
-    returning "organisasjonskode", "utdanningsmulighet_kode"
-    """
+    do update set "organisasjonskode" = EXCLUDED."organisasjonskode"
+    returning "organisasjonskode", "utdanningsmulighet_kode""""
       .updateManyReturning(TestUtdanningstilbudRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

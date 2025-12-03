@@ -14,6 +14,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -23,7 +24,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ProductvendorRepoImpl extends ProductvendorRepo {
-  override def delete: DeleteBuilder[ProductvendorFields, ProductvendorRow] = DeleteBuilder.of("purchasing.productvendor", ProductvendorFields.structure)
+  override def delete: DeleteBuilder[ProductvendorFields, ProductvendorRow] = DeleteBuilder.of(""""purchasing"."productvendor"""", ProductvendorFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(compositeId: ProductvendorId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "purchasing"."productvendor" where "productid" = ${ProductId.pgType.encode(compositeId.productid)} AND "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)}""".update().runUnchecked(c) > 0
 
@@ -92,7 +93,7 @@ class ProductvendorRepoImpl extends ProductvendorRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "purchasing"."productvendor"("productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ProductvendorRowUnsaved.pgText)
 
-  override def select: SelectBuilder[ProductvendorFields, ProductvendorRow] = SelectBuilder.of("purchasing.productvendor", ProductvendorFields.structure, ProductvendorRow.`_rowParser`)
+  override def select: SelectBuilder[ProductvendorFields, ProductvendorRow] = SelectBuilder.of(""""purchasing"."productvendor"""", ProductvendorFields.structure, ProductvendorRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[ProductvendorRow] = {
     interpolate"""select "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text
@@ -122,7 +123,7 @@ class ProductvendorRepoImpl extends ProductvendorRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[ProductvendorFields, ProductvendorRow] = UpdateBuilder.of("purchasing.productvendor", ProductvendorFields.structure, ProductvendorRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ProductvendorFields, ProductvendorRow] = UpdateBuilder.of(""""purchasing"."productvendor"""", ProductvendorFields.structure, ProductvendorRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: ProductvendorRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: ProductvendorId = row.compositeId
@@ -153,8 +154,7 @@ class ProductvendorRepoImpl extends ProductvendorRepo {
     "onorderqty" = EXCLUDED."onorderqty",
     "unitmeasurecode" = EXCLUDED."unitmeasurecode",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text
-    """
+    returning "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text"""
     .updateReturning(ProductvendorRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -173,8 +173,7 @@ class ProductvendorRepoImpl extends ProductvendorRepo {
     "onorderqty" = EXCLUDED."onorderqty",
     "unitmeasurecode" = EXCLUDED."unitmeasurecode",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text
-    """
+    returning "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text"""
       .updateManyReturning(ProductvendorRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

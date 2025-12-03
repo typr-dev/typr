@@ -6,11 +6,12 @@
 package adventureworks.pr.pc
 
 import java.sql.Connection
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PcViewRepoImpl extends PcViewRepo {
-  override def select: SelectBuilder[PcViewFields, PcViewRow] = SelectBuilder.of("pr.pc", PcViewFields.structure, PcViewRow.`_rowParser`)
+  override def select: SelectBuilder[PcViewFields, PcViewRow] = SelectBuilder.of(""""pr"."pc"""", PcViewFields.structure, PcViewRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[PcViewRow] = {
     interpolate"""select "id", "productcategoryid", "name", "rowguid", "modifieddate"::text

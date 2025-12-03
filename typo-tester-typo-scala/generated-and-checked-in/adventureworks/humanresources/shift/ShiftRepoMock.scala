@@ -92,8 +92,9 @@ case class ShiftRepoMock(
 
   override def selectByIds(shiftids: Array[ShiftId])(using c: Connection): java.util.List[ShiftRow] = {
     val result = new ArrayList[ShiftRow]()
-    shiftids.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    shiftids.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

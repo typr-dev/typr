@@ -37,9 +37,11 @@ data class TestUtdanningstilbudRepoMock(val map: MutableMap<TestUtdanningstilbud
     c: Connection
   ): Int {
     var count = 0
-    for (id in compositeIds) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in compositeIds) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -61,7 +63,7 @@ data class TestUtdanningstilbudRepoMock(val map: MutableMap<TestUtdanningstilbud
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.compositeId()] = row
       count = count + 1L
     }
@@ -81,9 +83,13 @@ data class TestUtdanningstilbudRepoMock(val map: MutableMap<TestUtdanningstilbud
     compositeIds: Array<TestUtdanningstilbudId>,
     c: Connection
   ): List<TestUtdanningstilbudRow> {
-    var result = ArrayList<TestUtdanningstilbudRow>()
-    for (id in compositeIds) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<TestUtdanningstilbudRow>()
+    for (id in compositeIds) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -106,9 +112,9 @@ data class TestUtdanningstilbudRepoMock(val map: MutableMap<TestUtdanningstilbud
     unsaved: MutableIterator<TestUtdanningstilbudRow>,
     c: Connection
   ): List<TestUtdanningstilbudRow> {
-    var result = ArrayList<TestUtdanningstilbudRow>()
+    val result = ArrayList<TestUtdanningstilbudRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.compositeId()] = row
       result.add(row)
     }
@@ -123,7 +129,7 @@ data class TestUtdanningstilbudRepoMock(val map: MutableMap<TestUtdanningstilbud
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.compositeId()] = row
       count = count + 1
     }

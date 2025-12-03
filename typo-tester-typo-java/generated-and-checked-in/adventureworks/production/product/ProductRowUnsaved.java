@@ -329,11 +329,11 @@ public record ProductRowUnsaved(
       sb.append(PgText.DELIMETER);
       PgTypes.int4.pgText().unsafeEncode(row.daystomanufacture, sb);
       sb.append(PgText.DELIMETER);
-      PgTypes.text.opt().pgText().unsafeEncode(row.productline, sb);
+      PgTypes.bpchar.opt().pgText().unsafeEncode(row.productline, sb);
       sb.append(PgText.DELIMETER);
-      PgTypes.text.opt().pgText().unsafeEncode(row.class_, sb);
+      PgTypes.bpchar.opt().pgText().unsafeEncode(row.class_, sb);
       sb.append(PgText.DELIMETER);
-      PgTypes.text.opt().pgText().unsafeEncode(row.style, sb);
+      PgTypes.bpchar.opt().pgText().unsafeEncode(row.style, sb);
       sb.append(PgText.DELIMETER);
       ProductsubcategoryId.pgType.opt().pgText().unsafeEncode(row.productsubcategoryid, sb);
       sb.append(PgText.DELIMETER);

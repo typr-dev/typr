@@ -7,13 +7,14 @@ package adventureworks.sales.vsalesperson;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class VsalespersonViewRepoImpl implements VsalespersonViewRepo {
   @Override
   public SelectBuilder<VsalespersonViewFields, VsalespersonViewRow> select() {
-    return SelectBuilder.of("sales.vsalesperson", VsalespersonViewFields.structure(), VsalespersonViewRow._rowParser);
+    return SelectBuilder.of("\"sales\".\"vsalesperson\"", VsalespersonViewFields.structure(), VsalespersonViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

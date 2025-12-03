@@ -9,13 +9,14 @@ import java.sql.Connection
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class TitleRepoImpl extends TitleRepo {
-  override def delete: DeleteBuilder[TitleFields, TitleRow] = DeleteBuilder.of("public.title", TitleFields.structure)
+  override def delete: DeleteBuilder[TitleFields, TitleRow] = DeleteBuilder.of(""""public"."title"""", TitleFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(code: TitleId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."title" where "code" = ${TitleId.pgType.encode(code)}""".update().runUnchecked(c) > 0
 
@@ -40,7 +41,7 @@ class TitleRepoImpl extends TitleRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."title"("code") FROM STDIN""", batchSize, unsaved, c, TitleRow.pgText)
 
-  override def select: SelectBuilder[TitleFields, TitleRow] = SelectBuilder.of("public.title", TitleFields.structure, TitleRow.`_rowParser`)
+  override def select: SelectBuilder[TitleFields, TitleRow] = SelectBuilder.of(""""public"."title"""", TitleFields.structure, TitleRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[TitleRow] = {
     interpolate"""select "code"
@@ -66,15 +67,14 @@ class TitleRepoImpl extends TitleRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[TitleFields, TitleRow] = UpdateBuilder.of("public.title", TitleFields.structure, TitleRow.`_rowParser`.all())
+  override def update: UpdateBuilder[TitleFields, TitleRow] = UpdateBuilder.of(""""public"."title"""", TitleFields.structure, TitleRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def upsert(unsaved: TitleRow)(using c: Connection): TitleRow = {
   interpolate"""insert into "public"."title"("code")
     values (${TitleId.pgType.encode(unsaved.code)})
     on conflict ("code")
     do update set "code" = EXCLUDED."code"
-    returning "code"
-    """
+    returning "code""""
     .updateReturning(TitleRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -83,9 +83,8 @@ class TitleRepoImpl extends TitleRepo {
     interpolate"""insert into "public"."title"("code")
     values (?)
     on conflict ("code")
-    do nothing
-    returning "code"
-    """
+    do update set "code" = EXCLUDED."code"
+    returning "code""""
       .updateManyReturning(TitleRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

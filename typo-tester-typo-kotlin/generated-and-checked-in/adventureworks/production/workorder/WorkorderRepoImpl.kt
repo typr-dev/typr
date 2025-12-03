@@ -17,6 +17,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -27,7 +28,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class WorkorderRepoImpl() : WorkorderRepo {
-  override fun delete(): DeleteBuilder<WorkorderFields, WorkorderRow> = DeleteBuilder.of("production.workorder", WorkorderFields.structure)
+  override fun delete(): DeleteBuilder<WorkorderFields, WorkorderRow> = DeleteBuilder.of("\"production\".\"workorder\"", WorkorderFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     workorderid: WorkorderId,
@@ -176,7 +177,7 @@ class WorkorderRepoImpl() : WorkorderRepo {
   COPY "production"."workorder"("productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "workorderid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, WorkorderRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<WorkorderFields, WorkorderRow> = SelectBuilder.of("production.workorder", WorkorderFields.structure, WorkorderRow._rowParser)
+  override fun select(): SelectBuilder<WorkorderFields, WorkorderRow> = SelectBuilder.of("\"production\".\"workorder\"", WorkorderFields.structure, WorkorderRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<WorkorderRow> = interpolate(typo.runtime.Fragment.lit("""
     select "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text
@@ -216,7 +217,7 @@ class WorkorderRepoImpl() : WorkorderRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<WorkorderFields, WorkorderRow> = UpdateBuilder.of("production.workorder", WorkorderFields.structure, WorkorderRow._rowParser.all())
+  override fun update(): UpdateBuilder<WorkorderFields, WorkorderRow> = UpdateBuilder.of("\"production\".\"workorder\"", WorkorderFields.structure, WorkorderRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: WorkorderRow,
@@ -300,8 +301,7 @@ class WorkorderRepoImpl() : WorkorderRepo {
       "duedate" = EXCLUDED."duedate",
       "scrapreasonid" = EXCLUDED."scrapreasonid",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text
-    """.trimMargin())
+      returning "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(WorkorderRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -322,8 +322,7 @@ class WorkorderRepoImpl() : WorkorderRepo {
                             "duedate" = EXCLUDED."duedate",
                             "scrapreasonid" = EXCLUDED."scrapreasonid",
                             "modifieddate" = EXCLUDED."modifieddate"
-                            returning "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text
-                          """.trimMargin()))
+                            returning "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(WorkorderRow._rowParser, unsaved)
     .runUnchecked(c)
 

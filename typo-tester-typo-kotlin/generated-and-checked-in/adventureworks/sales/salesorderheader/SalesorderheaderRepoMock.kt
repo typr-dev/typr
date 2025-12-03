@@ -40,9 +40,11 @@ data class SalesorderheaderRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in salesorderids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in salesorderids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -69,7 +71,7 @@ data class SalesorderheaderRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.salesorderid] = row
       count = count + 1L
     }
@@ -84,8 +86,8 @@ data class SalesorderheaderRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.salesorderid] = row
       count = count + 1L
     }
@@ -105,9 +107,13 @@ data class SalesorderheaderRepoMock(
     salesorderids: Array<SalesorderheaderId>,
     c: Connection
   ): List<SalesorderheaderRow> {
-    var result = ArrayList<SalesorderheaderRow>()
-    for (id in salesorderids) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<SalesorderheaderRow>()
+    for (id in salesorderids) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -141,9 +147,9 @@ data class SalesorderheaderRepoMock(
     unsaved: MutableIterator<SalesorderheaderRow>,
     c: Connection
   ): List<SalesorderheaderRow> {
-    var result = ArrayList<SalesorderheaderRow>()
+    val result = ArrayList<SalesorderheaderRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.salesorderid] = row
       result.add(row)
     }
@@ -158,7 +164,7 @@ data class SalesorderheaderRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.salesorderid] = row
       count = count + 1
     }

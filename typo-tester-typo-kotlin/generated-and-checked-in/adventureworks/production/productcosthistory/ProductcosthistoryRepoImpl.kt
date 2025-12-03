@@ -15,6 +15,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -26,7 +27,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class ProductcosthistoryRepoImpl() : ProductcosthistoryRepo {
-  override fun delete(): DeleteBuilder<ProductcosthistoryFields, ProductcosthistoryRow> = DeleteBuilder.of("production.productcosthistory", ProductcosthistoryFields.structure)
+  override fun delete(): DeleteBuilder<ProductcosthistoryFields, ProductcosthistoryRow> = DeleteBuilder.of("\"production\".\"productcosthistory\"", ProductcosthistoryFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     compositeId: ProductcosthistoryId,
@@ -156,7 +157,7 @@ class ProductcosthistoryRepoImpl() : ProductcosthistoryRepo {
   COPY "production"."productcosthistory"("productid", "startdate", "enddate", "standardcost", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, ProductcosthistoryRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<ProductcosthistoryFields, ProductcosthistoryRow> = SelectBuilder.of("production.productcosthistory", ProductcosthistoryFields.structure, ProductcosthistoryRow._rowParser)
+  override fun select(): SelectBuilder<ProductcosthistoryFields, ProductcosthistoryRow> = SelectBuilder.of("\"production\".\"productcosthistory\"", ProductcosthistoryFields.structure, ProductcosthistoryRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<ProductcosthistoryRow> = interpolate(typo.runtime.Fragment.lit("""
     select "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text
@@ -210,7 +211,7 @@ class ProductcosthistoryRepoImpl() : ProductcosthistoryRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<ProductcosthistoryFields, ProductcosthistoryRow> = UpdateBuilder.of("production.productcosthistory", ProductcosthistoryFields.structure, ProductcosthistoryRow._rowParser.all())
+  override fun update(): UpdateBuilder<ProductcosthistoryFields, ProductcosthistoryRow> = UpdateBuilder.of("\"production\".\"productcosthistory\"", ProductcosthistoryFields.structure, ProductcosthistoryRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: ProductcosthistoryRow,
@@ -265,8 +266,7 @@ class ProductcosthistoryRepoImpl() : ProductcosthistoryRepo {
         "enddate" = EXCLUDED."enddate",
       "standardcost" = EXCLUDED."standardcost",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text
-    """.trimMargin())
+      returning "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(ProductcosthistoryRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -282,8 +282,7 @@ class ProductcosthistoryRepoImpl() : ProductcosthistoryRepo {
                                        "enddate" = EXCLUDED."enddate",
                                      "standardcost" = EXCLUDED."standardcost",
                                      "modifieddate" = EXCLUDED."modifieddate"
-                                     returning "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text
-                                   """.trimMargin()))
+                                     returning "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(ProductcosthistoryRow._rowParser, unsaved)
     .runUnchecked(c)
 

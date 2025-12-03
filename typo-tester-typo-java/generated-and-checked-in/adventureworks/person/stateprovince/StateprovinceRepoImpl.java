@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -31,7 +32,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class StateprovinceRepoImpl implements StateprovinceRepo {
   @Override
   public DeleteBuilder<StateprovinceFields, StateprovinceRow> delete() {
-    return DeleteBuilder.of("person.stateprovince", StateprovinceFields.structure());
+    return DeleteBuilder.of("\"person\".\"stateprovince\"", StateprovinceFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -215,7 +216,7 @@ public class StateprovinceRepoImpl implements StateprovinceRepo {
 
   @Override
   public SelectBuilder<StateprovinceFields, StateprovinceRow> select() {
-    return SelectBuilder.of("person.stateprovince", StateprovinceFields.structure(), StateprovinceRow._rowParser);
+    return SelectBuilder.of("\"person\".\"stateprovince\"", StateprovinceFields.structure(), StateprovinceRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -268,7 +269,7 @@ public class StateprovinceRepoImpl implements StateprovinceRepo {
 
   @Override
   public UpdateBuilder<StateprovinceFields, StateprovinceRow> update() {
-    return UpdateBuilder.of("person.stateprovince", StateprovinceFields.structure(), StateprovinceRow._rowParser.all());
+    return UpdateBuilder.of("\"person\".\"stateprovince\"", StateprovinceFields.structure(), StateprovinceRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -349,8 +350,7 @@ public class StateprovinceRepoImpl implements StateprovinceRepo {
          "territoryid" = EXCLUDED."territoryid",
          "rowguid" = EXCLUDED."rowguid",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"::text
-      """)
+         returning "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"::text""")
     )
       .updateReturning(StateprovinceRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -373,8 +373,7 @@ public class StateprovinceRepoImpl implements StateprovinceRepo {
                 "territoryid" = EXCLUDED."territoryid",
                 "rowguid" = EXCLUDED."rowguid",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"::text
-             """))
+                returning "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"::text"""))
       .updateManyReturning(StateprovinceRow._rowParser, unsaved)
       .runUnchecked(c);
   };

@@ -61,9 +61,11 @@ public record CountryregionRepoMock(
     Connection c
   ) {
     var count = 0;
-    for (var id : countryregioncodes) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : countryregioncodes) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -143,8 +145,12 @@ public record CountryregionRepoMock(
     Connection c
   ) {
     var result = new ArrayList<CountryregionRow>();
-    for (var id : countryregioncodes) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : countryregioncodes) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 
@@ -168,7 +174,7 @@ public record CountryregionRepoMock(
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.countryregioncode())).filter(oldRow -> !oldRow.equals(row)).isPresent();
     if (shouldUpdate) {
-      map.put(row.countryregioncode(), row);
+      map.put(row.countryregioncode(), row);;
     };
     return shouldUpdate;
   };

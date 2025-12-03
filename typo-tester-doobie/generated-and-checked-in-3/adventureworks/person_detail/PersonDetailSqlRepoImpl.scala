@@ -28,7 +28,7 @@ class PersonDetailSqlRepoImpl extends PersonDetailSqlRepo {
              a.addressline1,
              a.city,
              a.postalcode,
-             a.rowguid as "rowguid:java.lang.String!"
+             a.rowguid
       FROM sales.salesperson s
                JOIN humanresources.employee e ON e.businessentityid = s.businessentityid
                JOIN person.person p ON p.businessentityid = s.businessentityid

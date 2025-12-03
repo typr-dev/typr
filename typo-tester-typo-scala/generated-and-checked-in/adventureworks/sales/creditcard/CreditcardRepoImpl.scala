@@ -13,6 +13,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -22,7 +23,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class CreditcardRepoImpl extends CreditcardRepo {
-  override def delete: DeleteBuilder[CreditcardFields, CreditcardRow] = DeleteBuilder.of("sales.creditcard", CreditcardFields.structure)
+  override def delete: DeleteBuilder[CreditcardFields, CreditcardRow] = DeleteBuilder.of(""""sales"."creditcard"""", CreditcardFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(creditcardid: /* user-picked */ CustomCreditcardId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."creditcard" where "creditcardid" = ${/* user-picked */ CustomCreditcardId.pgType.encode(creditcardid)}""".update().runUnchecked(c) > 0
 
@@ -81,7 +82,7 @@ class CreditcardRepoImpl extends CreditcardRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."creditcard"("cardtype", "cardnumber", "expmonth", "expyear", "creditcardid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, CreditcardRowUnsaved.pgText)
 
-  override def select: SelectBuilder[CreditcardFields, CreditcardRow] = SelectBuilder.of("sales.creditcard", CreditcardFields.structure, CreditcardRow.`_rowParser`)
+  override def select: SelectBuilder[CreditcardFields, CreditcardRow] = SelectBuilder.of(""""sales"."creditcard"""", CreditcardFields.structure, CreditcardRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[CreditcardRow] = {
     interpolate"""select "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"::text
@@ -107,7 +108,7 @@ class CreditcardRepoImpl extends CreditcardRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[CreditcardFields, CreditcardRow] = UpdateBuilder.of("sales.creditcard", CreditcardFields.structure, CreditcardRow.`_rowParser`.all())
+  override def update: UpdateBuilder[CreditcardFields, CreditcardRow] = UpdateBuilder.of(""""sales"."creditcard"""", CreditcardFields.structure, CreditcardRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: CreditcardRow)(using c: Connection): java.lang.Boolean = {
     val creditcardid: /* user-picked */ CustomCreditcardId = row.creditcardid
@@ -130,8 +131,7 @@ class CreditcardRepoImpl extends CreditcardRepo {
     "expmonth" = EXCLUDED."expmonth",
     "expyear" = EXCLUDED."expyear",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"::text
-    """
+    returning "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"::text"""
     .updateReturning(CreditcardRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -146,8 +146,7 @@ class CreditcardRepoImpl extends CreditcardRepo {
     "expmonth" = EXCLUDED."expmonth",
     "expyear" = EXCLUDED."expyear",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"::text
-    """
+    returning "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"::text"""
       .updateManyReturning(CreditcardRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

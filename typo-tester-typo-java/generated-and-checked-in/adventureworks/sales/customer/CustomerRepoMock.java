@@ -61,9 +61,11 @@ public record CustomerRepoMock(
     Connection c
   ) {
     var count = 0;
-    for (var id : customerids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : customerids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -143,8 +145,12 @@ public record CustomerRepoMock(
     Connection c
   ) {
     var result = new ArrayList<CustomerRow>();
-    for (var id : customerids) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : customerids) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 
@@ -168,7 +174,7 @@ public record CustomerRepoMock(
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.customerid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
     if (shouldUpdate) {
-      map.put(row.customerid(), row);
+      map.put(row.customerid(), row);;
     };
     return shouldUpdate;
   };

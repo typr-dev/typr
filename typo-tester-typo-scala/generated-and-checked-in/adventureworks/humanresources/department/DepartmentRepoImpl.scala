@@ -12,6 +12,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -20,7 +21,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class DepartmentRepoImpl extends DepartmentRepo {
-  override def delete: DeleteBuilder[DepartmentFields, DepartmentRow] = DeleteBuilder.of("humanresources.department", DepartmentFields.structure)
+  override def delete: DeleteBuilder[DepartmentFields, DepartmentRow] = DeleteBuilder.of(""""humanresources"."department"""", DepartmentFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(departmentid: DepartmentId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "humanresources"."department" where "departmentid" = ${DepartmentId.pgType.encode(departmentid)}""".update().runUnchecked(c) > 0
 
@@ -75,7 +76,7 @@ class DepartmentRepoImpl extends DepartmentRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "humanresources"."department"("name", "groupname", "departmentid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, DepartmentRowUnsaved.pgText)
 
-  override def select: SelectBuilder[DepartmentFields, DepartmentRow] = SelectBuilder.of("humanresources.department", DepartmentFields.structure, DepartmentRow.`_rowParser`)
+  override def select: SelectBuilder[DepartmentFields, DepartmentRow] = SelectBuilder.of(""""humanresources"."department"""", DepartmentFields.structure, DepartmentRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[DepartmentRow] = {
     interpolate"""select "departmentid", "name", "groupname", "modifieddate"::text
@@ -101,7 +102,7 @@ class DepartmentRepoImpl extends DepartmentRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[DepartmentFields, DepartmentRow] = UpdateBuilder.of("humanresources.department", DepartmentFields.structure, DepartmentRow.`_rowParser`.all())
+  override def update: UpdateBuilder[DepartmentFields, DepartmentRow] = UpdateBuilder.of(""""humanresources"."department"""", DepartmentFields.structure, DepartmentRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: DepartmentRow)(using c: Connection): java.lang.Boolean = {
     val departmentid: DepartmentId = row.departmentid
@@ -120,8 +121,7 @@ class DepartmentRepoImpl extends DepartmentRepo {
       "name" = EXCLUDED."name",
     "groupname" = EXCLUDED."groupname",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "departmentid", "name", "groupname", "modifieddate"::text
-    """
+    returning "departmentid", "name", "groupname", "modifieddate"::text"""
     .updateReturning(DepartmentRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -134,8 +134,7 @@ class DepartmentRepoImpl extends DepartmentRepo {
       "name" = EXCLUDED."name",
     "groupname" = EXCLUDED."groupname",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "departmentid", "name", "groupname", "modifieddate"::text
-    """
+    returning "departmentid", "name", "groupname", "modifieddate"::text"""
       .updateManyReturning(DepartmentRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

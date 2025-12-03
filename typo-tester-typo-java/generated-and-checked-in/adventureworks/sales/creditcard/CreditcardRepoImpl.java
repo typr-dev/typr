@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -28,7 +29,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class CreditcardRepoImpl implements CreditcardRepo {
   @Override
   public DeleteBuilder<CreditcardFields, CreditcardRow> delete() {
-    return DeleteBuilder.of("sales.creditcard", CreditcardFields.structure());
+    return DeleteBuilder.of("\"sales\".\"creditcard\"", CreditcardFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -185,7 +186,7 @@ public class CreditcardRepoImpl implements CreditcardRepo {
 
   @Override
   public SelectBuilder<CreditcardFields, CreditcardRow> select() {
-    return SelectBuilder.of("sales.creditcard", CreditcardFields.structure(), CreditcardRow._rowParser);
+    return SelectBuilder.of("\"sales\".\"creditcard\"", CreditcardFields.structure(), CreditcardRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -238,7 +239,7 @@ public class CreditcardRepoImpl implements CreditcardRepo {
 
   @Override
   public UpdateBuilder<CreditcardFields, CreditcardRow> update() {
-    return UpdateBuilder.of("sales.creditcard", CreditcardFields.structure(), CreditcardRow._rowParser.all());
+    return UpdateBuilder.of("\"sales\".\"creditcard\"", CreditcardFields.structure(), CreditcardRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -305,8 +306,7 @@ public class CreditcardRepoImpl implements CreditcardRepo {
          "expmonth" = EXCLUDED."expmonth",
          "expyear" = EXCLUDED."expyear",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"::text
-      """)
+         returning "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"::text""")
     )
       .updateReturning(CreditcardRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -327,8 +327,7 @@ public class CreditcardRepoImpl implements CreditcardRepo {
                 "expmonth" = EXCLUDED."expmonth",
                 "expyear" = EXCLUDED."expyear",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"::text
-             """))
+                returning "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"::text"""))
       .updateManyReturning(CreditcardRow._rowParser, unsaved)
       .runUnchecked(c);
   };

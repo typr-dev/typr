@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.PgTypes;
@@ -22,7 +23,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class FootballClubRepoImpl implements FootballClubRepo {
   @Override
   public DeleteBuilder<FootballClubFields, FootballClubRow> delete() {
-    return DeleteBuilder.of("myschema.football_club", FootballClubFields.structure());
+    return DeleteBuilder.of("\"myschema\".\"football_club\"", FootballClubFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -89,7 +90,7 @@ public class FootballClubRepoImpl implements FootballClubRepo {
 
   @Override
   public SelectBuilder<FootballClubFields, FootballClubRow> select() {
-    return SelectBuilder.of("myschema.football_club", FootballClubFields.structure(), FootballClubRow._rowParser);
+    return SelectBuilder.of("\"myschema\".\"football_club\"", FootballClubFields.structure(), FootballClubRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -142,7 +143,7 @@ public class FootballClubRepoImpl implements FootballClubRepo {
 
   @Override
   public UpdateBuilder<FootballClubFields, FootballClubRow> update() {
-    return UpdateBuilder.of("myschema.football_club", FootballClubFields.structure(), FootballClubRow._rowParser.all());
+    return UpdateBuilder.of("\"myschema\".\"football_club\"", FootballClubFields.structure(), FootballClubRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -181,8 +182,7 @@ public class FootballClubRepoImpl implements FootballClubRepo {
          on conflict ("id")
          do update set
            "name" = EXCLUDED."name"
-         returning "id", "name"
-      """)
+         returning "id", "name\"""")
     )
       .updateReturning(FootballClubRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -199,8 +199,7 @@ public class FootballClubRepoImpl implements FootballClubRepo {
                 on conflict ("id")
                 do update set
                   "name" = EXCLUDED."name"
-                returning "id", "name"
-             """))
+                returning "id", "name\""""))
       .updateManyReturning(FootballClubRow._rowParser, unsaved)
       .runUnchecked(c);
   };

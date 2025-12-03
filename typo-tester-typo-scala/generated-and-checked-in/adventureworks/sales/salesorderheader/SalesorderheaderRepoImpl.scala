@@ -23,6 +23,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -32,7 +33,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class SalesorderheaderRepoImpl extends SalesorderheaderRepo {
-  override def delete: DeleteBuilder[SalesorderheaderFields, SalesorderheaderRow] = DeleteBuilder.of("sales.salesorderheader", SalesorderheaderFields.structure)
+  override def delete: DeleteBuilder[SalesorderheaderFields, SalesorderheaderRow] = DeleteBuilder.of(""""sales"."salesorderheader"""", SalesorderheaderFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(salesorderid: SalesorderheaderId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."salesorderheader" where "salesorderid" = ${SalesorderheaderId.pgType.encode(salesorderid)}""".update().runUnchecked(c) > 0
 
@@ -145,7 +146,7 @@ class SalesorderheaderRepoImpl extends SalesorderheaderRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."salesorderheader"("duedate", "shipdate", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "totaldue", "comment", "salesorderid", "revisionnumber", "orderdate", "status", "onlineorderflag", "subtotal", "taxamt", "freight", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, SalesorderheaderRowUnsaved.pgText)
 
-  override def select: SelectBuilder[SalesorderheaderFields, SalesorderheaderRow] = SelectBuilder.of("sales.salesorderheader", SalesorderheaderFields.structure, SalesorderheaderRow.`_rowParser`)
+  override def select: SelectBuilder[SalesorderheaderFields, SalesorderheaderRow] = SelectBuilder.of(""""sales"."salesorderheader"""", SalesorderheaderFields.structure, SalesorderheaderRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[SalesorderheaderRow] = {
     interpolate"""select "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text
@@ -171,7 +172,7 @@ class SalesorderheaderRepoImpl extends SalesorderheaderRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[SalesorderheaderFields, SalesorderheaderRow] = UpdateBuilder.of("sales.salesorderheader", SalesorderheaderFields.structure, SalesorderheaderRow.`_rowParser`.all())
+  override def update: UpdateBuilder[SalesorderheaderFields, SalesorderheaderRow] = UpdateBuilder.of(""""sales"."salesorderheader"""", SalesorderheaderFields.structure, SalesorderheaderRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: SalesorderheaderRow)(using c: Connection): java.lang.Boolean = {
     val salesorderid: SalesorderheaderId = row.salesorderid
@@ -232,8 +233,7 @@ class SalesorderheaderRepoImpl extends SalesorderheaderRepo {
     "comment" = EXCLUDED."comment",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text
-    """
+    returning "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text"""
     .updateReturning(SalesorderheaderRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -267,8 +267,7 @@ class SalesorderheaderRepoImpl extends SalesorderheaderRepo {
     "comment" = EXCLUDED."comment",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text
-    """
+    returning "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text"""
       .updateManyReturning(SalesorderheaderRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

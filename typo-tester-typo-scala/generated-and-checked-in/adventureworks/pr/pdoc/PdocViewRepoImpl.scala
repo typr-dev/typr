@@ -6,11 +6,12 @@
 package adventureworks.pr.pdoc
 
 import java.sql.Connection
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PdocViewRepoImpl extends PdocViewRepo {
-  override def select: SelectBuilder[PdocViewFields, PdocViewRow] = SelectBuilder.of("pr.pdoc", PdocViewFields.structure, PdocViewRow.`_rowParser`)
+  override def select: SelectBuilder[PdocViewFields, PdocViewRow] = SelectBuilder.of(""""pr"."pdoc"""", PdocViewFields.structure, PdocViewRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[PdocViewRow] = {
     interpolate"""select "id", "productid", "modifieddate"::text, "documentnode"

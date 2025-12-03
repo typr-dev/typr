@@ -19,6 +19,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -29,7 +30,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class DocumentRepoImpl() : DocumentRepo {
-  override fun delete(): DeleteBuilder<DocumentFields, DocumentRow> = DeleteBuilder.of("production.document", DocumentFields.structure)
+  override fun delete(): DeleteBuilder<DocumentFields, DocumentRow> = DeleteBuilder.of("\"production\".\"document\"", DocumentFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     documentnode: DocumentId,
@@ -220,7 +221,7 @@ class DocumentRepoImpl() : DocumentRepo {
   COPY "production"."document"("title", "owner", "filename", "fileextension", "revision", "status", "documentsummary", "document", "folderflag", "changenumber", "rowguid", "modifieddate", "documentnode") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, DocumentRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<DocumentFields, DocumentRow> = SelectBuilder.of("production.document", DocumentFields.structure, DocumentRow._rowParser)
+  override fun select(): SelectBuilder<DocumentFields, DocumentRow> = SelectBuilder.of("\"production\".\"document\"", DocumentFields.structure, DocumentRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<DocumentRow> = interpolate(typo.runtime.Fragment.lit("""
     select "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"
@@ -275,7 +276,7 @@ class DocumentRepoImpl() : DocumentRepo {
     """.trimMargin())
   ).query(DocumentRow._rowParser.first()).runUnchecked(c)
 
-  override fun update(): UpdateBuilder<DocumentFields, DocumentRow> = UpdateBuilder.of("production.document", DocumentFields.structure, DocumentRow._rowParser.all())
+  override fun update(): UpdateBuilder<DocumentFields, DocumentRow> = UpdateBuilder.of("\"production\".\"document\"", DocumentFields.structure, DocumentRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: DocumentRow,
@@ -387,8 +388,7 @@ class DocumentRepoImpl() : DocumentRepo {
       "document" = EXCLUDED."document",
       "rowguid" = EXCLUDED."rowguid",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"
-    """.trimMargin())
+      returning "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"""".trimMargin())
   )
     .updateReturning(DocumentRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -413,8 +413,7 @@ class DocumentRepoImpl() : DocumentRepo {
                            "document" = EXCLUDED."document",
                            "rowguid" = EXCLUDED."rowguid",
                            "modifieddate" = EXCLUDED."modifieddate"
-                           returning "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"
-                         """.trimMargin()))
+                           returning "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"""".trimMargin()))
     .updateManyReturning(DocumentRow._rowParser, unsaved)
     .runUnchecked(c)
 

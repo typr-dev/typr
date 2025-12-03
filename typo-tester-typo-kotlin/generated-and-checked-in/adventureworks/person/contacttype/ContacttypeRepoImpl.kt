@@ -15,6 +15,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -24,7 +25,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class ContacttypeRepoImpl() : ContacttypeRepo {
-  override fun delete(): DeleteBuilder<ContacttypeFields, ContacttypeRow> = DeleteBuilder.of("person.contacttype", ContacttypeFields.structure)
+  override fun delete(): DeleteBuilder<ContacttypeFields, ContacttypeRow> = DeleteBuilder.of("\"person\".\"contacttype\"", ContacttypeFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     contacttypeid: ContacttypeId,
@@ -131,7 +132,7 @@ class ContacttypeRepoImpl() : ContacttypeRepo {
   COPY "person"."contacttype"("name", "contacttypeid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, ContacttypeRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<ContacttypeFields, ContacttypeRow> = SelectBuilder.of("person.contacttype", ContacttypeFields.structure, ContacttypeRow._rowParser)
+  override fun select(): SelectBuilder<ContacttypeFields, ContacttypeRow> = SelectBuilder.of("\"person\".\"contacttype\"", ContacttypeFields.structure, ContacttypeRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<ContacttypeRow> = interpolate(typo.runtime.Fragment.lit("""
     select "contacttypeid", "name", "modifieddate"::text
@@ -171,7 +172,7 @@ class ContacttypeRepoImpl() : ContacttypeRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<ContacttypeFields, ContacttypeRow> = UpdateBuilder.of("person.contacttype", ContacttypeFields.structure, ContacttypeRow._rowParser.all())
+  override fun update(): UpdateBuilder<ContacttypeFields, ContacttypeRow> = UpdateBuilder.of("\"person\".\"contacttype\"", ContacttypeFields.structure, ContacttypeRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: ContacttypeRow,
@@ -213,8 +214,7 @@ class ContacttypeRepoImpl() : ContacttypeRepo {
       do update set
         "name" = EXCLUDED."name",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "contacttypeid", "name", "modifieddate"::text
-    """.trimMargin())
+      returning "contacttypeid", "name", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(ContacttypeRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -229,8 +229,7 @@ class ContacttypeRepoImpl() : ContacttypeRepo {
                               do update set
                                 "name" = EXCLUDED."name",
                               "modifieddate" = EXCLUDED."modifieddate"
-                              returning "contacttypeid", "name", "modifieddate"::text
-                            """.trimMargin()))
+                              returning "contacttypeid", "name", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(ContacttypeRow._rowParser, unsaved)
     .runUnchecked(c)
 

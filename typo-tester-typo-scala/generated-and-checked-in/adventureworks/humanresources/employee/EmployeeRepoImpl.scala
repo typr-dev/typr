@@ -16,6 +16,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -25,7 +26,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class EmployeeRepoImpl extends EmployeeRepo {
-  override def delete: DeleteBuilder[EmployeeFields, EmployeeRow] = DeleteBuilder.of("humanresources.employee", EmployeeFields.structure)
+  override def delete: DeleteBuilder[EmployeeFields, EmployeeRow] = DeleteBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(businessentityid: BusinessentityId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "humanresources"."employee" where "businessentityid" = ${BusinessentityId.pgType.encode(businessentityid)}""".update().runUnchecked(c) > 0
 
@@ -112,7 +113,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, EmployeeRowUnsaved.pgText)
 
-  override def select: SelectBuilder[EmployeeFields, EmployeeRow] = SelectBuilder.of("humanresources.employee", EmployeeFields.structure, EmployeeRow.`_rowParser`)
+  override def select: SelectBuilder[EmployeeFields, EmployeeRow] = SelectBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, EmployeeRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[EmployeeRow] = {
     interpolate"""select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode"
@@ -138,7 +139,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[EmployeeFields, EmployeeRow] = UpdateBuilder.of("humanresources.employee", EmployeeFields.structure, EmployeeRow.`_rowParser`.all())
+  override def update: UpdateBuilder[EmployeeFields, EmployeeRow] = UpdateBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, EmployeeRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: EmployeeRow)(using c: Connection): java.lang.Boolean = {
     val businessentityid: BusinessentityId = row.businessentityid
@@ -179,8 +180,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate",
     "organizationnode" = EXCLUDED."organizationnode"
-    returning "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode"
-    """
+    returning "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode""""
     .updateReturning(EmployeeRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -204,8 +204,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate",
     "organizationnode" = EXCLUDED."organizationnode"
-    returning "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode"
-    """
+    returning "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode""""
       .updateManyReturning(EmployeeRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

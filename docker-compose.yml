@@ -1,6 +1,4 @@
 # Use postgres/example user/password credentials
-version: '3.1'
-
 services:
   db:
     image: ghcr.io/oyvindberg/typo/typo-postgres${PG_MAJOR-16}:latest
@@ -14,3 +12,17 @@ services:
       - 6432:5432
     volumes:
       - ./init/:/docker-entrypoint-initdb.d/
+      - ./db/pg:/docker-entrypoint-initdb.d/pg
+
+  mariadb:
+    image: mariadb:11.4
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: password
+      MARIADB_DATABASE: typo
+      MARIADB_USER: typo
+      MARIADB_PASSWORD: password
+    ports:
+      - 3307:3306
+    volumes:
+      - ./db/mariadb:/docker-entrypoint-initdb.d

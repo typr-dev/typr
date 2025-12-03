@@ -66,5 +66,5 @@ public record VstateprovincecountryregionMVRow(
     return new VstateprovincecountryregionMVRow(stateprovinceid, stateprovincecode, isonlystateprovinceflag, stateprovincename, territoryid, countryregioncode, countryregionname);
   };
 
-  static RowParser<VstateprovincecountryregionMVRow> _rowParser = RowParsers.of(StateprovinceId.pgType, PgTypes.text, Flag.pgType, Name.pgType, SalesterritoryId.pgType, CountryregionId.pgType, Name.pgType, VstateprovincecountryregionMVRow::new, row -> new Object[]{row.stateprovinceid(), row.stateprovincecode(), row.isonlystateprovinceflag(), row.stateprovincename(), row.territoryid(), row.countryregioncode(), row.countryregionname()});;
+  static RowParser<VstateprovincecountryregionMVRow> _rowParser = RowParsers.of(StateprovinceId.pgType, PgTypes.bpchar, Flag.pgType, Name.pgType, SalesterritoryId.pgType, CountryregionId.pgType, Name.pgType, VstateprovincecountryregionMVRow::new, row -> new Object[]{row.stateprovinceid(), row.stateprovincecode(), row.isonlystateprovinceflag(), row.stateprovincename(), row.territoryid(), row.countryregioncode(), row.countryregionname()});;
 }

@@ -19,6 +19,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -30,7 +31,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class SalesorderdetailRepoImpl() : SalesorderdetailRepo {
-  override fun delete(): DeleteBuilder<SalesorderdetailFields, SalesorderdetailRow> = DeleteBuilder.of("sales.salesorderdetail", SalesorderdetailFields.structure)
+  override fun delete(): DeleteBuilder<SalesorderdetailFields, SalesorderdetailRow> = DeleteBuilder.of("\"sales\".\"salesorderdetail\"", SalesorderdetailFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     compositeId: SalesorderdetailId,
@@ -205,7 +206,7 @@ class SalesorderdetailRepoImpl() : SalesorderdetailRepo {
   COPY "sales"."salesorderdetail"("salesorderid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "salesorderdetailid", "unitpricediscount", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, SalesorderdetailRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<SalesorderdetailFields, SalesorderdetailRow> = SelectBuilder.of("sales.salesorderdetail", SalesorderdetailFields.structure, SalesorderdetailRow._rowParser)
+  override fun select(): SelectBuilder<SalesorderdetailFields, SalesorderdetailRow> = SelectBuilder.of("\"sales\".\"salesorderdetail\"", SalesorderdetailFields.structure, SalesorderdetailRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<SalesorderdetailRow> = interpolate(typo.runtime.Fragment.lit("""
     select "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text
@@ -259,7 +260,7 @@ class SalesorderdetailRepoImpl() : SalesorderdetailRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<SalesorderdetailFields, SalesorderdetailRow> = UpdateBuilder.of("sales.salesorderdetail", SalesorderdetailFields.structure, SalesorderdetailRow._rowParser.all())
+  override fun update(): UpdateBuilder<SalesorderdetailFields, SalesorderdetailRow> = UpdateBuilder.of("\"sales\".\"salesorderdetail\"", SalesorderdetailFields.structure, SalesorderdetailRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: SalesorderdetailRow,
@@ -349,8 +350,7 @@ class SalesorderdetailRepoImpl() : SalesorderdetailRepo {
       "unitpricediscount" = EXCLUDED."unitpricediscount",
       "rowguid" = EXCLUDED."rowguid",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text
-    """.trimMargin())
+      returning "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(SalesorderdetailRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -371,8 +371,7 @@ class SalesorderdetailRepoImpl() : SalesorderdetailRepo {
                                    "unitpricediscount" = EXCLUDED."unitpricediscount",
                                    "rowguid" = EXCLUDED."rowguid",
                                    "modifieddate" = EXCLUDED."modifieddate"
-                                   returning "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text
-                                 """.trimMargin()))
+                                   returning "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(SalesorderdetailRow._rowParser, unsaved)
     .runUnchecked(c)
 

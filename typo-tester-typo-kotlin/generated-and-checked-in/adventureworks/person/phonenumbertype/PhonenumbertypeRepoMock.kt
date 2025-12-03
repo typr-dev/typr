@@ -40,9 +40,11 @@ data class PhonenumbertypeRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in phonenumbertypeids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in phonenumbertypeids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -69,7 +71,7 @@ data class PhonenumbertypeRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.phonenumbertypeid] = row
       count = count + 1L
     }
@@ -84,8 +86,8 @@ data class PhonenumbertypeRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.phonenumbertypeid] = row
       count = count + 1L
     }
@@ -105,9 +107,13 @@ data class PhonenumbertypeRepoMock(
     phonenumbertypeids: Array<PhonenumbertypeId>,
     c: Connection
   ): List<PhonenumbertypeRow> {
-    var result = ArrayList<PhonenumbertypeRow>()
-    for (id in phonenumbertypeids) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<PhonenumbertypeRow>()
+    for (id in phonenumbertypeids) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -141,9 +147,9 @@ data class PhonenumbertypeRepoMock(
     unsaved: MutableIterator<PhonenumbertypeRow>,
     c: Connection
   ): List<PhonenumbertypeRow> {
-    var result = ArrayList<PhonenumbertypeRow>()
+    val result = ArrayList<PhonenumbertypeRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.phonenumbertypeid] = row
       result.add(row)
     }
@@ -158,7 +164,7 @@ data class PhonenumbertypeRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.phonenumbertypeid] = row
       count = count + 1
     }

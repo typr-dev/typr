@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -25,7 +26,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class IdentityTestRepoImpl implements IdentityTestRepo {
   @Override
   public DeleteBuilder<IdentityTestFields, IdentityTestRow> delete() {
-    return DeleteBuilder.of("public.identity-test", IdentityTestFields.structure());
+    return DeleteBuilder.of("\"public\".\"identity-test\"", IdentityTestFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -146,7 +147,7 @@ public class IdentityTestRepoImpl implements IdentityTestRepo {
 
   @Override
   public SelectBuilder<IdentityTestFields, IdentityTestRow> select() {
-    return SelectBuilder.of("public.identity-test", IdentityTestFields.structure(), IdentityTestRow._rowParser);
+    return SelectBuilder.of("\"public\".\"identity-test\"", IdentityTestFields.structure(), IdentityTestRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -199,7 +200,7 @@ public class IdentityTestRepoImpl implements IdentityTestRepo {
 
   @Override
   public UpdateBuilder<IdentityTestFields, IdentityTestRow> update() {
-    return UpdateBuilder.of("public.identity-test", IdentityTestFields.structure(), IdentityTestRow._rowParser.all());
+    return UpdateBuilder.of("\"public\".\"identity-test\"", IdentityTestFields.structure(), IdentityTestRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -238,8 +239,7 @@ public class IdentityTestRepoImpl implements IdentityTestRepo {
          on conflict ("name")
          do update set
            "default_generated" = EXCLUDED."default_generated"
-         returning "always_generated", "default_generated", "name"
-      """)
+         returning "always_generated", "default_generated", "name\"""")
     )
       .updateReturning(IdentityTestRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -256,8 +256,7 @@ public class IdentityTestRepoImpl implements IdentityTestRepo {
                 on conflict ("name")
                 do update set
                   "default_generated" = EXCLUDED."default_generated"
-                returning "always_generated", "default_generated", "name"
-             """))
+                returning "always_generated", "default_generated", "name\""""))
       .updateManyReturning(IdentityTestRow._rowParser, unsaved)
       .runUnchecked(c);
   };

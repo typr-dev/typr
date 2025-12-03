@@ -40,9 +40,11 @@ data class ShipmethodRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in shipmethodids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in shipmethodids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -69,7 +71,7 @@ data class ShipmethodRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.shipmethodid] = row
       count = count + 1L
     }
@@ -84,8 +86,8 @@ data class ShipmethodRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.shipmethodid] = row
       count = count + 1L
     }
@@ -105,9 +107,13 @@ data class ShipmethodRepoMock(
     shipmethodids: Array<ShipmethodId>,
     c: Connection
   ): List<ShipmethodRow> {
-    var result = ArrayList<ShipmethodRow>()
-    for (id in shipmethodids) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<ShipmethodRow>()
+    for (id in shipmethodids) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -141,9 +147,9 @@ data class ShipmethodRepoMock(
     unsaved: MutableIterator<ShipmethodRow>,
     c: Connection
   ): List<ShipmethodRow> {
-    var result = ArrayList<ShipmethodRow>()
+    val result = ArrayList<ShipmethodRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.shipmethodid] = row
       result.add(row)
     }
@@ -158,7 +164,7 @@ data class ShipmethodRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.shipmethodid] = row
       count = count + 1
     }

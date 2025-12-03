@@ -11,6 +11,7 @@ import java.sql.Connection
 import kotlin.collections.List
 import kotlin.collections.MutableIterator
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.PgTypes
@@ -19,7 +20,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class TitledpersonRepoImpl() : TitledpersonRepo {
-  override fun delete(): DeleteBuilder<TitledpersonFields, TitledpersonRow> = DeleteBuilder.of("public.titledperson", TitledpersonFields.structure)
+  override fun delete(): DeleteBuilder<TitledpersonFields, TitledpersonRow> = DeleteBuilder.of("\"public\".\"titledperson\"", TitledpersonFields.structure, Dialect.POSTGRESQL)
 
   override fun insert(
     unsaved: TitledpersonRow,
@@ -48,12 +49,12 @@ class TitledpersonRepoImpl() : TitledpersonRepo {
   COPY "public"."titledperson"("title_short", "title", "name") FROM STDIN
   """.trimMargin()), batchSize, unsaved, c, TitledpersonRow.pgText)
 
-  override fun select(): SelectBuilder<TitledpersonFields, TitledpersonRow> = SelectBuilder.of("public.titledperson", TitledpersonFields.structure, TitledpersonRow._rowParser)
+  override fun select(): SelectBuilder<TitledpersonFields, TitledpersonRow> = SelectBuilder.of("\"public\".\"titledperson\"", TitledpersonFields.structure, TitledpersonRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<TitledpersonRow> = interpolate(typo.runtime.Fragment.lit("""
     select "title_short", "title", "name"
     from "public"."titledperson"
   """.trimMargin())).query(TitledpersonRow._rowParser.all()).runUnchecked(c)
 
-  override fun update(): UpdateBuilder<TitledpersonFields, TitledpersonRow> = UpdateBuilder.of("public.titledperson", TitledpersonFields.structure, TitledpersonRow._rowParser.all())
+  override fun update(): UpdateBuilder<TitledpersonFields, TitledpersonRow> = UpdateBuilder.of("\"public\".\"titledperson\"", TitledpersonFields.structure, TitledpersonRow._rowParser.all(), Dialect.POSTGRESQL)
 }

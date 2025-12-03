@@ -37,6 +37,6 @@ data class ThViewRow(
   val modifieddate: TypoLocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<ThViewRow> = RowParsers.of(TransactionhistoryId.pgType, TransactionhistoryId.pgType, ProductId.pgType, PgTypes.int4, PgTypes.int4, TypoLocalDateTime.pgType, PgTypes.text, PgTypes.int4, PgTypes.numeric, TypoLocalDateTime.pgType, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> ThViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!) }, { row -> arrayOf<Any?>(row.id, row.transactionid, row.productid, row.referenceorderid, row.referenceorderlineid, row.transactiondate, row.transactiontype, row.quantity, row.actualcost, row.modifieddate) })
+    val _rowParser: RowParser<ThViewRow> = RowParsers.of(TransactionhistoryId.pgType, TransactionhistoryId.pgType, ProductId.pgType, PgTypes.int4, PgTypes.int4, TypoLocalDateTime.pgType, PgTypes.bpchar, PgTypes.int4, PgTypes.numeric, TypoLocalDateTime.pgType, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> ThViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!) }, { row -> arrayOf<Any?>(row.id, row.transactionid, row.productid, row.referenceorderid, row.referenceorderlineid, row.transactiondate, row.transactiontype, row.quantity, row.actualcost, row.modifieddate) })
   }
 }

@@ -16,7 +16,7 @@ import java.util.function.Function;
  * It is used to encode rows in string format for the COPY command.
  * <p>
  */
-public abstract class PgText<A> {
+public abstract class PgText<A> implements DbText<A> {
     public abstract void unsafeEncode(A a, StringBuilder sb);
 
     public abstract void unsafeArrayEncode(A a, StringBuilder sb);
@@ -83,7 +83,7 @@ public abstract class PgText<A> {
                 if (i > 0) {
                     sb.append(PgText.DELIMETER);
                 }
-                PgText<Object> text = (PgText<Object>) rowParser.columns().get(i).pgText();
+                DbText<Object> text = (DbText<Object>) rowParser.columns().get(i).text();
                 text.unsafeEncode(encoded[i], sb);
             }
         });

@@ -12,6 +12,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.streamingInsert
@@ -19,7 +20,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class TitleDomainRepoImpl() : TitleDomainRepo {
-  override fun delete(): DeleteBuilder<TitleDomainFields, TitleDomainRow> = DeleteBuilder.of("public.title_domain", TitleDomainFields.structure)
+  override fun delete(): DeleteBuilder<TitleDomainFields, TitleDomainRow> = DeleteBuilder.of("\"public\".\"title_domain\"", TitleDomainFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     code: TitleDomainId,
@@ -69,7 +70,7 @@ class TitleDomainRepoImpl() : TitleDomainRepo {
   COPY "public"."title_domain"("code") FROM STDIN
   """.trimMargin()), batchSize, unsaved, c, TitleDomainRow.pgText)
 
-  override fun select(): SelectBuilder<TitleDomainFields, TitleDomainRow> = SelectBuilder.of("public.title_domain", TitleDomainFields.structure, TitleDomainRow._rowParser)
+  override fun select(): SelectBuilder<TitleDomainFields, TitleDomainRow> = SelectBuilder.of("\"public\".\"title_domain\"", TitleDomainFields.structure, TitleDomainRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<TitleDomainRow> = interpolate(typo.runtime.Fragment.lit("""
     select "code"
@@ -109,7 +110,7 @@ class TitleDomainRepoImpl() : TitleDomainRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<TitleDomainFields, TitleDomainRow> = UpdateBuilder.of("public.title_domain", TitleDomainFields.structure, TitleDomainRow._rowParser.all())
+  override fun update(): UpdateBuilder<TitleDomainFields, TitleDomainRow> = UpdateBuilder.of("\"public\".\"title_domain\"", TitleDomainFields.structure, TitleDomainRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun upsert(
     unsaved: TitleDomainRow,
@@ -123,8 +124,7 @@ class TitleDomainRepoImpl() : TitleDomainRepo {
       ::text)
       on conflict ("code")
       do update set "code" = EXCLUDED."code"
-      returning "code"
-    """.trimMargin())
+      returning "code"""".trimMargin())
   )
     .updateReturning(TitleDomainRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -136,9 +136,8 @@ class TitleDomainRepoImpl() : TitleDomainRepo {
                               insert into "public"."title_domain"("code")
                               values (?::text)
                               on conflict ("code")
-                              do nothing
-                              returning "code"
-                            """.trimMargin()))
+                              do update set "code" = EXCLUDED."code"
+                              returning "code"""".trimMargin()))
     .updateManyReturning(TitleDomainRow._rowParser, unsaved)
     .runUnchecked(c)
 

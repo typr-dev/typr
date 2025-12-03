@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -26,7 +27,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class UnitmeasureRepoImpl implements UnitmeasureRepo {
   @Override
   public DeleteBuilder<UnitmeasureFields, UnitmeasureRow> delete() {
-    return DeleteBuilder.of("production.unitmeasure", UnitmeasureFields.structure());
+    return DeleteBuilder.of("\"production\".\"unitmeasure\"", UnitmeasureFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -153,7 +154,7 @@ public class UnitmeasureRepoImpl implements UnitmeasureRepo {
 
   @Override
   public SelectBuilder<UnitmeasureFields, UnitmeasureRow> select() {
-    return SelectBuilder.of("production.unitmeasure", UnitmeasureFields.structure(), UnitmeasureRow._rowParser);
+    return SelectBuilder.of("\"production\".\"unitmeasure\"", UnitmeasureFields.structure(), UnitmeasureRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -206,7 +207,7 @@ public class UnitmeasureRepoImpl implements UnitmeasureRepo {
 
   @Override
   public UpdateBuilder<UnitmeasureFields, UnitmeasureRow> update() {
-    return UpdateBuilder.of("production.unitmeasure", UnitmeasureFields.structure(), UnitmeasureRow._rowParser.all());
+    return UpdateBuilder.of("\"production\".\"unitmeasure\"", UnitmeasureFields.structure(), UnitmeasureRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -252,8 +253,7 @@ public class UnitmeasureRepoImpl implements UnitmeasureRepo {
          do update set
            "name" = EXCLUDED."name",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "unitmeasurecode", "name", "modifieddate"::text
-      """)
+         returning "unitmeasurecode", "name", "modifieddate"::text""")
     )
       .updateReturning(UnitmeasureRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -271,8 +271,7 @@ public class UnitmeasureRepoImpl implements UnitmeasureRepo {
                 do update set
                   "name" = EXCLUDED."name",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "unitmeasurecode", "name", "modifieddate"::text
-             """))
+                returning "unitmeasurecode", "name", "modifieddate"::text"""))
       .updateManyReturning(UnitmeasureRow._rowParser, unsaved)
       .runUnchecked(c);
   };

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -28,7 +29,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class PersoncreditcardRepoImpl implements PersoncreditcardRepo {
   @Override
   public DeleteBuilder<PersoncreditcardFields, PersoncreditcardRow> delete() {
-    return DeleteBuilder.of("sales.personcreditcard", PersoncreditcardFields.structure());
+    return DeleteBuilder.of("\"sales\".\"personcreditcard\"", PersoncreditcardFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -165,7 +166,7 @@ public class PersoncreditcardRepoImpl implements PersoncreditcardRepo {
 
   @Override
   public SelectBuilder<PersoncreditcardFields, PersoncreditcardRow> select() {
-    return SelectBuilder.of("sales.personcreditcard", PersoncreditcardFields.structure(), PersoncreditcardRow._rowParser);
+    return SelectBuilder.of("\"sales\".\"personcreditcard\"", PersoncreditcardFields.structure(), PersoncreditcardRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -230,7 +231,7 @@ public class PersoncreditcardRepoImpl implements PersoncreditcardRepo {
 
   @Override
   public UpdateBuilder<PersoncreditcardFields, PersoncreditcardRow> update() {
-    return UpdateBuilder.of("sales.personcreditcard", PersoncreditcardFields.structure(), PersoncreditcardRow._rowParser.all());
+    return UpdateBuilder.of("\"sales\".\"personcreditcard\"", PersoncreditcardFields.structure(), PersoncreditcardRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -275,8 +276,7 @@ public class PersoncreditcardRepoImpl implements PersoncreditcardRepo {
          on conflict ("businessentityid", "creditcardid")
          do update set
            "modifieddate" = EXCLUDED."modifieddate"
-         returning "businessentityid", "creditcardid", "modifieddate"::text
-      """)
+         returning "businessentityid", "creditcardid", "modifieddate"::text""")
     )
       .updateReturning(PersoncreditcardRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -293,8 +293,7 @@ public class PersoncreditcardRepoImpl implements PersoncreditcardRepo {
                 on conflict ("businessentityid", "creditcardid")
                 do update set
                   "modifieddate" = EXCLUDED."modifieddate"
-                returning "businessentityid", "creditcardid", "modifieddate"::text
-             """))
+                returning "businessentityid", "creditcardid", "modifieddate"::text"""))
       .updateManyReturning(PersoncreditcardRow._rowParser, unsaved)
       .runUnchecked(c);
   };

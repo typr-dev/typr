@@ -40,9 +40,11 @@ data class ContacttypeRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in contacttypeids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in contacttypeids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -69,7 +71,7 @@ data class ContacttypeRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.contacttypeid] = row
       count = count + 1L
     }
@@ -84,8 +86,8 @@ data class ContacttypeRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.contacttypeid] = row
       count = count + 1L
     }
@@ -105,9 +107,13 @@ data class ContacttypeRepoMock(
     contacttypeids: Array<ContacttypeId>,
     c: Connection
   ): List<ContacttypeRow> {
-    var result = ArrayList<ContacttypeRow>()
-    for (id in contacttypeids) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<ContacttypeRow>()
+    for (id in contacttypeids) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -141,9 +147,9 @@ data class ContacttypeRepoMock(
     unsaved: MutableIterator<ContacttypeRow>,
     c: Connection
   ): List<ContacttypeRow> {
-    var result = ArrayList<ContacttypeRow>()
+    val result = ArrayList<ContacttypeRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.contacttypeid] = row
       result.add(row)
     }
@@ -158,7 +164,7 @@ data class ContacttypeRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.contacttypeid] = row
       count = count + 1
     }

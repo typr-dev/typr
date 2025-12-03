@@ -12,6 +12,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -20,7 +21,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class CultureRepoImpl extends CultureRepo {
-  override def delete: DeleteBuilder[CultureFields, CultureRow] = DeleteBuilder.of("production.culture", CultureFields.structure)
+  override def delete: DeleteBuilder[CultureFields, CultureRow] = DeleteBuilder.of(""""production"."culture"""", CultureFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(cultureid: CultureId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."culture" where "cultureid" = ${CultureId.pgType.encode(cultureid)}""".update().runUnchecked(c) > 0
 
@@ -71,7 +72,7 @@ class CultureRepoImpl extends CultureRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."culture"("cultureid", "name", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, CultureRowUnsaved.pgText)
 
-  override def select: SelectBuilder[CultureFields, CultureRow] = SelectBuilder.of("production.culture", CultureFields.structure, CultureRow.`_rowParser`)
+  override def select: SelectBuilder[CultureFields, CultureRow] = SelectBuilder.of(""""production"."culture"""", CultureFields.structure, CultureRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[CultureRow] = {
     interpolate"""select "cultureid", "name", "modifieddate"::text
@@ -97,7 +98,7 @@ class CultureRepoImpl extends CultureRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[CultureFields, CultureRow] = UpdateBuilder.of("production.culture", CultureFields.structure, CultureRow.`_rowParser`.all())
+  override def update: UpdateBuilder[CultureFields, CultureRow] = UpdateBuilder.of(""""production"."culture"""", CultureFields.structure, CultureRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: CultureRow)(using c: Connection): java.lang.Boolean = {
     val cultureid: CultureId = row.cultureid
@@ -114,8 +115,7 @@ class CultureRepoImpl extends CultureRepo {
     do update set
       "name" = EXCLUDED."name",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "cultureid", "name", "modifieddate"::text
-    """
+    returning "cultureid", "name", "modifieddate"::text"""
     .updateReturning(CultureRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -127,8 +127,7 @@ class CultureRepoImpl extends CultureRepo {
     do update set
       "name" = EXCLUDED."name",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "cultureid", "name", "modifieddate"::text
-    """
+    returning "cultureid", "name", "modifieddate"::text"""
       .updateManyReturning(CultureRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

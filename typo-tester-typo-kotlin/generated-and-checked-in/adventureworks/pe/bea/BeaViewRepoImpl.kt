@@ -7,11 +7,12 @@ package adventureworks.pe.bea
 
 import java.sql.Connection
 import kotlin.collections.List
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.Fragment.interpolate
 
 class BeaViewRepoImpl() : BeaViewRepo {
-  override fun select(): SelectBuilder<BeaViewFields, BeaViewRow> = SelectBuilder.of("pe.bea", BeaViewFields.structure, BeaViewRow._rowParser)
+  override fun select(): SelectBuilder<BeaViewFields, BeaViewRow> = SelectBuilder.of("\"pe\".\"bea\"", BeaViewFields.structure, BeaViewRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<BeaViewRow> = interpolate(typo.runtime.Fragment.lit("""
     select "id", "businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate"::text

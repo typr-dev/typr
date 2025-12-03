@@ -9,17 +9,17 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public record RowParser<Row>(List<PgType<?>> columns,
+public record RowParser<Row>(List<DbType<?>> columns,
                              Function<Object[], Row> decode,
                              Function<Row, Object[]> encode) implements RowParsers {
     public Row readRow(ResultSet rs, int rowNum) throws SqlResultParseException {
         Object[] currentRow = new Object[columns.size()];
         for (int colNum = 0; colNum < columns.size(); colNum++) {
-            PgType<?> pgType = columns.get(colNum);
+            DbType<?> dbType = columns.get(colNum);
             try {
-                currentRow[colNum] = pgType.read().read(rs, colNum + 1);
+                currentRow[colNum] = dbType.read().read(rs, colNum + 1);
             } catch (Exception e) {
-                throw new SqlResultParseException(rowNum, colNum, pgType, e);
+                throw new SqlResultParseException(rowNum, colNum, dbType, e);
             }
         }
         return this.decode().apply(currentRow);
@@ -38,13 +38,13 @@ public record RowParser<Row>(List<PgType<?>> columns,
     public void writeRow(PreparedStatement stmt, Row row) throws SQLException {
         Object[] values = this.encode().apply(row);
         for (int colNum = 0; colNum < columns.size(); colNum++) {
-            PgType<Object> pgType = (PgType<Object>) columns.get(colNum);
-            pgType.write().set(stmt, colNum + 1, values[colNum]);
+            DbType<Object> dbType = (DbType<Object>) columns.get(colNum);
+            dbType.write().set(stmt, colNum + 1, values[colNum]);
         }
     }
 
     public static class SqlResultParseException extends SQLException {
-        public SqlResultParseException(int row, int column, PgType<?> tpe, Exception cause) {
+        public SqlResultParseException(int row, int column, DbType<?> tpe, Exception cause) {
             super("Error reading or parsing row " + row + ", (1-indexed) column " + column + " from ResultSet." + (tpe != null ? " Expected database type " + tpe.typename().sqlType() : ""), cause);
         }
     }
@@ -86,17 +86,17 @@ public record RowParser<Row>(List<PgType<?>> columns,
         // For opt(), we need to allow nullable reads for all columns
         // because in a left join, all columns from the right table can be null.
         // Track which columns were originally non-nullable so we can unwrap them later.
-        List<PgType<?>> optColumns = new ArrayList<>(columns.size());
+        List<DbType<?>> optColumns = new ArrayList<>(columns.size());
         boolean[] wasNonNullable = new boolean[columns.size()];
         for (int i = 0; i < columns.size(); i++) {
-            var pgType = columns.get(i);
-            if (pgType.read() instanceof PgRead.Nullable) {
+            var dbType = columns.get(i);
+            if (dbType.read() instanceof DbRead.Nullable) {
                 // Already nullable, keep as-is
-                optColumns.add(pgType);
+                optColumns.add(dbType);
                 wasNonNullable[i] = false;
             } else {
                 // Make it nullable - this changes the type to Optional<A>
-                optColumns.add(pgType.opt());
+                optColumns.add(dbType.opt());
                 wasNonNullable[i] = true;
             }
         }

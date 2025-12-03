@@ -7,13 +7,14 @@ package adventureworks.production.vproductanddescription;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class VproductanddescriptionMVRepoImpl implements VproductanddescriptionMVRepo {
   @Override
   public SelectBuilder<VproductanddescriptionMVFields, VproductanddescriptionMVRow> select() {
-    return SelectBuilder.of("production.vproductanddescription", VproductanddescriptionMVFields.structure(), VproductanddescriptionMVRow._rowParser);
+    return SelectBuilder.of("\"production\".\"vproductanddescription\"", VproductanddescriptionMVFields.structure(), VproductanddescriptionMVRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

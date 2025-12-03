@@ -61,9 +61,11 @@ public record TableWithGeneratedColumnsRepoMock(
     Connection c
   ) {
     var count = 0;
-    for (var id : names) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : names) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -143,8 +145,12 @@ public record TableWithGeneratedColumnsRepoMock(
     Connection c
   ) {
     var result = new ArrayList<TableWithGeneratedColumnsRow>();
-    for (var id : names) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : names) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 

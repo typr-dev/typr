@@ -1,17 +1,13 @@
 package typo
 package internal
 
-import typo.internal.compat.*
-import typo.internal.metadb.OpenEnum
+import typo.internal.pg.OpenEnum
 
 sealed trait IdComputed {
   def paramName: jvm.Ident
   def cols: NonEmptyList[ComputedColumn]
   def tpe: jvm.Type
   final def param: jvm.Param[jvm.Type] = jvm.Param(paramName, tpe)
-
-  final lazy val userDefinedColTypes: List[jvm.Type] =
-    cols.toList.collect { case x if jvm.Type.containsUserDefined(x.tpe) => x }.map(_.tpe).distinctByCompat(jvm.Type.base)
 }
 
 object IdComputed {

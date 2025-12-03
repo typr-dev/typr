@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -29,7 +30,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class PersonphoneRepoImpl implements PersonphoneRepo {
   @Override
   public DeleteBuilder<PersonphoneFields, PersonphoneRow> delete() {
-    return DeleteBuilder.of("person.personphone", PersonphoneFields.structure());
+    return DeleteBuilder.of("\"person\".\"personphone\"", PersonphoneFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -180,7 +181,7 @@ public class PersonphoneRepoImpl implements PersonphoneRepo {
 
   @Override
   public SelectBuilder<PersonphoneFields, PersonphoneRow> select() {
-    return SelectBuilder.of("person.personphone", PersonphoneFields.structure(), PersonphoneRow._rowParser);
+    return SelectBuilder.of("\"person\".\"personphone\"", PersonphoneFields.structure(), PersonphoneRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -252,7 +253,7 @@ public class PersonphoneRepoImpl implements PersonphoneRepo {
 
   @Override
   public UpdateBuilder<PersonphoneFields, PersonphoneRow> update() {
-    return UpdateBuilder.of("person.personphone", PersonphoneFields.structure(), PersonphoneRow._rowParser.all());
+    return UpdateBuilder.of("\"person\".\"personphone\"", PersonphoneFields.structure(), PersonphoneRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -303,8 +304,7 @@ public class PersonphoneRepoImpl implements PersonphoneRepo {
          on conflict ("businessentityid", "phonenumber", "phonenumbertypeid")
          do update set
            "modifieddate" = EXCLUDED."modifieddate"
-         returning "businessentityid", "phonenumber", "phonenumbertypeid", "modifieddate"::text
-      """)
+         returning "businessentityid", "phonenumber", "phonenumbertypeid", "modifieddate"::text""")
     )
       .updateReturning(PersonphoneRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -321,8 +321,7 @@ public class PersonphoneRepoImpl implements PersonphoneRepo {
                 on conflict ("businessentityid", "phonenumber", "phonenumbertypeid")
                 do update set
                   "modifieddate" = EXCLUDED."modifieddate"
-                returning "businessentityid", "phonenumber", "phonenumbertypeid", "modifieddate"::text
-             """))
+                returning "businessentityid", "phonenumber", "phonenumbertypeid", "modifieddate"::text"""))
       .updateManyReturning(PersonphoneRow._rowParser, unsaved)
       .runUnchecked(c);
   };

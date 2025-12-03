@@ -40,9 +40,11 @@ data class BillofmaterialsRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in billofmaterialsids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in billofmaterialsids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -69,7 +71,7 @@ data class BillofmaterialsRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.billofmaterialsid] = row
       count = count + 1L
     }
@@ -84,8 +86,8 @@ data class BillofmaterialsRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.billofmaterialsid] = row
       count = count + 1L
     }
@@ -105,9 +107,13 @@ data class BillofmaterialsRepoMock(
     billofmaterialsids: Array<Int>,
     c: Connection
   ): List<BillofmaterialsRow> {
-    var result = ArrayList<BillofmaterialsRow>()
-    for (id in billofmaterialsids) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<BillofmaterialsRow>()
+    for (id in billofmaterialsids) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -141,9 +147,9 @@ data class BillofmaterialsRepoMock(
     unsaved: MutableIterator<BillofmaterialsRow>,
     c: Connection
   ): List<BillofmaterialsRow> {
-    var result = ArrayList<BillofmaterialsRow>()
+    val result = ArrayList<BillofmaterialsRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.billofmaterialsid] = row
       result.add(row)
     }
@@ -158,7 +164,7 @@ data class BillofmaterialsRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.billofmaterialsid] = row
       count = count + 1
     }

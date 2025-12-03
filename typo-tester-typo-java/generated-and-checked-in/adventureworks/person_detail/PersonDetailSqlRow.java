@@ -5,6 +5,7 @@
  */
 package adventureworks.person_detail;
 
+import adventureworks.customtypes.TypoUUID;
 import adventureworks.person.businessentity.BusinessentityId;
 import adventureworks.public_.Name;
 import adventureworks.userdefined.FirstName;
@@ -34,7 +35,7 @@ public record PersonDetailSqlRow(
   /** Points to {@link adventureworks.person.address.AddressRow#postalcode()} */
   Optional</* max 15 chars */ String> postalcode,
   /** Points to {@link adventureworks.person.address.AddressRow#rowguid()} */
-  /* user-picked */ String rowguid
+  Optional<TypoUUID> rowguid
 ) {
   /** Points to {@link adventureworks.sales.salesperson.SalespersonRow#businessentityid()} */
   public PersonDetailSqlRow withBusinessentityid(BusinessentityId businessentityid) {
@@ -82,9 +83,9 @@ public record PersonDetailSqlRow(
   };
 
   /** Points to {@link adventureworks.person.address.AddressRow#rowguid()} */
-  public PersonDetailSqlRow withRowguid(/* user-picked */ String rowguid) {
+  public PersonDetailSqlRow withRowguid(Optional<TypoUUID> rowguid) {
     return new PersonDetailSqlRow(businessentityid, title, firstname, middlename, lastname, jobtitle, addressline1, city, postalcode, rowguid);
   };
 
-  static RowParser<PersonDetailSqlRow> _rowParser = RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), /* user-picked */ FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text, PersonDetailSqlRow::new, row -> new Object[]{row.businessentityid(), row.title(), row.firstname(), row.middlename(), row.lastname(), row.jobtitle(), row.addressline1(), row.city(), row.postalcode(), row.rowguid()});;
+  static RowParser<PersonDetailSqlRow> _rowParser = RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), TypoUUID.pgType.opt(), PersonDetailSqlRow::new, row -> new Object[]{row.businessentityid(), row.title(), row.firstname(), row.middlename(), row.lastname(), row.jobtitle(), row.addressline1(), row.city(), row.postalcode(), row.rowguid()});;
 }

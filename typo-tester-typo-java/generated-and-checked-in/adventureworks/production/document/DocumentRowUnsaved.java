@@ -164,7 +164,7 @@ public record DocumentRowUnsaved(
       sb.append(PgText.DELIMETER);
       PgTypes.text.opt().pgText().unsafeEncode(row.fileextension, sb);
       sb.append(PgText.DELIMETER);
-      PgTypes.text.pgText().unsafeEncode(row.revision, sb);
+      PgTypes.bpchar.pgText().unsafeEncode(row.revision, sb);
       sb.append(PgText.DELIMETER);
       TypoShort.pgType.pgText().unsafeEncode(row.status, sb);
       sb.append(PgText.DELIMETER);

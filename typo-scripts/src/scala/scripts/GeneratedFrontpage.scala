@@ -3,8 +3,8 @@ package scripts
 import ryddig.{Formatter, LogLevel, LogPatterns, Loggers}
 import typo.*
 import typo.internal.codegen.LangScala
-import typo.internal.metadb.OpenEnum
-import typo.internal.sqlfiles.readSqlFileDirectories
+import typo.internal.pg.OpenEnum
+import typo.internal.sqlfiles.SqlFileReader
 import typo.internal.{FileSync, generate}
 
 import java.nio.file.Path
@@ -23,14 +23,14 @@ object GeneratedFrontpage {
       .stdout(LogPatterns.interface(None, noColor = false), disableProgress = true)
       .map(_.withMinLogLevel(LogLevel.info))
       .use { logger =>
-        val ds = TypoDataSource.hikari(server = "localhost", port = 6432, databaseName = "Adventureworks", username = "postgres", password = "password")
-        val scriptsPath = buildDir.resolve("init/data/frontpage")
+        val ds = TypoDataSource.hikariPostgres(server = "localhost", port = 6432, databaseName = "Adventureworks", username = "postgres", password = "password")
+        val scriptsPath = buildDir.resolve("db/pg/frontpage")
         val selector = Selector.schemas("frontpage")
         val typoLogger = TypoLogger.Console
         val metadb = Await.result(MetaDb.fromDb(typoLogger, ds, selector, schemaMode = SchemaMode.MultiSchema), Duration.Inf)
         val relationNameToOpenEnum = Map.empty[db.RelationName, OpenEnum]
 
-        val sqlScripts = Await.result(readSqlFileDirectories(typoLogger, scriptsPath, ds), Duration.Inf)
+        val sqlScripts = Await.result(SqlFileReader(typoLogger, scriptsPath, ds), Duration.Inf)
 
         val options = Options(
           pkg = "frontpage",

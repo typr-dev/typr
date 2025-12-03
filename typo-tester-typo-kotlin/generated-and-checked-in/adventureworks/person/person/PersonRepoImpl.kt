@@ -20,6 +20,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -30,7 +31,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class PersonRepoImpl() : PersonRepo {
-  override fun delete(): DeleteBuilder<PersonFields, PersonRow> = DeleteBuilder.of("person.person", PersonFields.structure)
+  override fun delete(): DeleteBuilder<PersonFields, PersonRow> = DeleteBuilder.of("\"person\".\"person\"", PersonFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     businessentityid: BusinessentityId,
@@ -215,7 +216,7 @@ class PersonRepoImpl() : PersonRepo {
   COPY "person"."person"("businessentityid", "persontype", "title", "firstname", "middlename", "lastname", "suffix", "additionalcontactinfo", "demographics", "namestyle", "emailpromotion", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, PersonRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<PersonFields, PersonRow> = SelectBuilder.of("person.person", PersonFields.structure, PersonRow._rowParser)
+  override fun select(): SelectBuilder<PersonFields, PersonRow> = SelectBuilder.of("\"person\".\"person\"", PersonFields.structure, PersonRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<PersonRow> = interpolate(typo.runtime.Fragment.lit("""
     select "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text
@@ -255,7 +256,7 @@ class PersonRepoImpl() : PersonRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<PersonFields, PersonRow> = UpdateBuilder.of("person.person", PersonFields.structure, PersonRow._rowParser.all())
+  override fun update(): UpdateBuilder<PersonFields, PersonRow> = UpdateBuilder.of("\"person\".\"person\"", PersonFields.structure, PersonRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: PersonRow,
@@ -367,8 +368,7 @@ class PersonRepoImpl() : PersonRepo {
       "demographics" = EXCLUDED."demographics",
       "rowguid" = EXCLUDED."rowguid",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text
-    """.trimMargin())
+      returning "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(PersonRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -393,8 +393,7 @@ class PersonRepoImpl() : PersonRepo {
                          "demographics" = EXCLUDED."demographics",
                          "rowguid" = EXCLUDED."rowguid",
                          "modifieddate" = EXCLUDED."modifieddate"
-                         returning "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text
-                       """.trimMargin()))
+                         returning "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(PersonRow._rowParser, unsaved)
     .runUnchecked(c)
 

@@ -7,11 +7,12 @@ package adventureworks.sa.cu
 
 import java.sql.Connection
 import kotlin.collections.List
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.Fragment.interpolate
 
 class CuViewRepoImpl() : CuViewRepo {
-  override fun select(): SelectBuilder<CuViewFields, CuViewRow> = SelectBuilder.of("sa.cu", CuViewFields.structure, CuViewRow._rowParser)
+  override fun select(): SelectBuilder<CuViewFields, CuViewRow> = SelectBuilder.of("\"sa\".\"cu\"", CuViewFields.structure, CuViewRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<CuViewRow> = interpolate(typo.runtime.Fragment.lit("""
     select "id", "currencycode", "name", "modifieddate"::text

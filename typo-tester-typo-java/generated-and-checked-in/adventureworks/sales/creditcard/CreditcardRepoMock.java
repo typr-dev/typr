@@ -62,9 +62,11 @@ public record CreditcardRepoMock(
     Connection c
   ) {
     var count = 0;
-    for (var id : creditcardids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : creditcardids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -144,8 +146,12 @@ public record CreditcardRepoMock(
     Connection c
   ) {
     var result = new ArrayList<CreditcardRow>();
-    for (var id : creditcardids) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : creditcardids) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 
@@ -169,7 +175,7 @@ public record CreditcardRepoMock(
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.creditcardid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
     if (shouldUpdate) {
-      map.put(row.creditcardid(), row);
+      map.put(row.creditcardid(), row);;
     };
     return shouldUpdate;
   };

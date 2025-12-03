@@ -103,7 +103,7 @@ public record TransactionhistoryRow(
     return new TransactionhistoryRow(transactionid, productid, referenceorderid, referenceorderlineid, transactiondate, transactiontype, quantity, actualcost, modifieddate);
   };
 
-  static RowParser<TransactionhistoryRow> _rowParser = RowParsers.of(TransactionhistoryId.pgType, ProductId.pgType, PgTypes.int4, PgTypes.int4, TypoLocalDateTime.pgType, PgTypes.text, PgTypes.int4, PgTypes.numeric, TypoLocalDateTime.pgType, TransactionhistoryRow::new, row -> new Object[]{row.transactionid(), row.productid(), row.referenceorderid(), row.referenceorderlineid(), row.transactiondate(), row.transactiontype(), row.quantity(), row.actualcost(), row.modifieddate()});;
+  static RowParser<TransactionhistoryRow> _rowParser = RowParsers.of(TransactionhistoryId.pgType, ProductId.pgType, PgTypes.int4, PgTypes.int4, TypoLocalDateTime.pgType, PgTypes.bpchar, PgTypes.int4, PgTypes.numeric, TypoLocalDateTime.pgType, TransactionhistoryRow::new, row -> new Object[]{row.transactionid(), row.productid(), row.referenceorderid(), row.referenceorderlineid(), row.transactiondate(), row.transactiontype(), row.quantity(), row.actualcost(), row.modifieddate()});;
 
   static public PgText<TransactionhistoryRow> pgText =
     PgText.from(_rowParser);

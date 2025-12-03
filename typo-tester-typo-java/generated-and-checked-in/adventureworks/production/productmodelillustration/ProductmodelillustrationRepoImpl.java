@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -28,7 +29,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class ProductmodelillustrationRepoImpl implements ProductmodelillustrationRepo {
   @Override
   public DeleteBuilder<ProductmodelillustrationFields, ProductmodelillustrationRow> delete() {
-    return DeleteBuilder.of("production.productmodelillustration", ProductmodelillustrationFields.structure());
+    return DeleteBuilder.of("\"production\".\"productmodelillustration\"", ProductmodelillustrationFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -165,7 +166,7 @@ public class ProductmodelillustrationRepoImpl implements Productmodelillustratio
 
   @Override
   public SelectBuilder<ProductmodelillustrationFields, ProductmodelillustrationRow> select() {
-    return SelectBuilder.of("production.productmodelillustration", ProductmodelillustrationFields.structure(), ProductmodelillustrationRow._rowParser);
+    return SelectBuilder.of("\"production\".\"productmodelillustration\"", ProductmodelillustrationFields.structure(), ProductmodelillustrationRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -230,7 +231,7 @@ public class ProductmodelillustrationRepoImpl implements Productmodelillustratio
 
   @Override
   public UpdateBuilder<ProductmodelillustrationFields, ProductmodelillustrationRow> update() {
-    return UpdateBuilder.of("production.productmodelillustration", ProductmodelillustrationFields.structure(), ProductmodelillustrationRow._rowParser.all());
+    return UpdateBuilder.of("\"production\".\"productmodelillustration\"", ProductmodelillustrationFields.structure(), ProductmodelillustrationRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -275,8 +276,7 @@ public class ProductmodelillustrationRepoImpl implements Productmodelillustratio
          on conflict ("productmodelid", "illustrationid")
          do update set
            "modifieddate" = EXCLUDED."modifieddate"
-         returning "productmodelid", "illustrationid", "modifieddate"::text
-      """)
+         returning "productmodelid", "illustrationid", "modifieddate"::text""")
     )
       .updateReturning(ProductmodelillustrationRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -293,8 +293,7 @@ public class ProductmodelillustrationRepoImpl implements Productmodelillustratio
                 on conflict ("productmodelid", "illustrationid")
                 do update set
                   "modifieddate" = EXCLUDED."modifieddate"
-                returning "productmodelid", "illustrationid", "modifieddate"::text
-             """))
+                returning "productmodelid", "illustrationid", "modifieddate"::text"""))
       .updateManyReturning(ProductmodelillustrationRow._rowParser, unsaved)
       .runUnchecked(c);
   };

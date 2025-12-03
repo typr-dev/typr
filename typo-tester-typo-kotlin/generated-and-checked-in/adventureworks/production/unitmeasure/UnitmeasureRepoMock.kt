@@ -40,9 +40,11 @@ data class UnitmeasureRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in unitmeasurecodes) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in unitmeasurecodes) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -69,7 +71,7 @@ data class UnitmeasureRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.unitmeasurecode] = row
       count = count + 1L
     }
@@ -84,8 +86,8 @@ data class UnitmeasureRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.unitmeasurecode] = row
       count = count + 1L
     }
@@ -105,9 +107,13 @@ data class UnitmeasureRepoMock(
     unitmeasurecodes: Array<UnitmeasureId>,
     c: Connection
   ): List<UnitmeasureRow> {
-    var result = ArrayList<UnitmeasureRow>()
-    for (id in unitmeasurecodes) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<UnitmeasureRow>()
+    for (id in unitmeasurecodes) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -141,9 +147,9 @@ data class UnitmeasureRepoMock(
     unsaved: MutableIterator<UnitmeasureRow>,
     c: Connection
   ): List<UnitmeasureRow> {
-    var result = ArrayList<UnitmeasureRow>()
+    val result = ArrayList<UnitmeasureRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.unitmeasurecode] = row
       result.add(row)
     }
@@ -158,7 +164,7 @@ data class UnitmeasureRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.unitmeasurecode] = row
       count = count + 1
     }

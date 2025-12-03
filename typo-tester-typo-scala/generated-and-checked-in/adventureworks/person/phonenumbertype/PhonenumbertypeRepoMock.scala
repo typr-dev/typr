@@ -92,8 +92,9 @@ case class PhonenumbertypeRepoMock(
 
   override def selectByIds(phonenumbertypeids: Array[PhonenumbertypeId])(using c: Connection): java.util.List[PhonenumbertypeRow] = {
     val result = new ArrayList[PhonenumbertypeRow]()
-    phonenumbertypeids.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    phonenumbertypeids.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

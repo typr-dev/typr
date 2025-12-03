@@ -110,7 +110,7 @@ public record StateprovinceRowUnsaved(
 
   static public PgText<StateprovinceRowUnsaved> pgText =
     PgText.instance((row, sb) -> {
-      PgTypes.text.pgText().unsafeEncode(row.stateprovincecode, sb);
+      PgTypes.bpchar.pgText().unsafeEncode(row.stateprovincecode, sb);
       sb.append(PgText.DELIMETER);
       CountryregionId.pgType.pgText().unsafeEncode(row.countryregioncode, sb);
       sb.append(PgText.DELIMETER);

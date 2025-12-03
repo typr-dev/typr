@@ -43,7 +43,7 @@ object CreditcardFields {
             Optional.empty(),
             Optional.of("int4"),
             (row, value) => row.copy(creditcardid = value),
-            /* user-picked */ CustomCreditcardId.pgType
+            CustomCreditcardId.pgType
           )
         }
         override def cardtype: Field[/* max 50 chars */ String, CreditcardRow] = {

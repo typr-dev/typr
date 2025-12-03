@@ -6,11 +6,12 @@
 package adventureworks.person.vadditionalcontactinfo
 
 import java.sql.Connection
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class VadditionalcontactinfoViewRepoImpl extends VadditionalcontactinfoViewRepo {
-  override def select: SelectBuilder[VadditionalcontactinfoViewFields, VadditionalcontactinfoViewRow] = SelectBuilder.of("person.vadditionalcontactinfo", VadditionalcontactinfoViewFields.structure, VadditionalcontactinfoViewRow.`_rowParser`)
+  override def select: SelectBuilder[VadditionalcontactinfoViewFields, VadditionalcontactinfoViewRow] = SelectBuilder.of(""""person"."vadditionalcontactinfo"""", VadditionalcontactinfoViewFields.structure, VadditionalcontactinfoViewRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[VadditionalcontactinfoViewRow] = {
     interpolate"""select "businessentityid", "firstname", "middlename", "lastname", "telephonenumber", "telephonespecialinstructions", "street", "city", "stateprovince", "postalcode", "countryregion", "homeaddressspecialinstructions", "emailaddress", "emailspecialinstructions", "emailtelephonenumber", "rowguid", "modifieddate"::text

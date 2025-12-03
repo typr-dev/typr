@@ -6,11 +6,12 @@
 package adventureworks.sales.vstorewithdemographics
 
 import java.sql.Connection
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class VstorewithdemographicsViewRepoImpl extends VstorewithdemographicsViewRepo {
-  override def select: SelectBuilder[VstorewithdemographicsViewFields, VstorewithdemographicsViewRow] = SelectBuilder.of("sales.vstorewithdemographics", VstorewithdemographicsViewFields.structure, VstorewithdemographicsViewRow.`_rowParser`)
+  override def select: SelectBuilder[VstorewithdemographicsViewFields, VstorewithdemographicsViewRow] = SelectBuilder.of(""""sales"."vstorewithdemographics"""", VstorewithdemographicsViewFields.structure, VstorewithdemographicsViewRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[VstorewithdemographicsViewRow] = {
     interpolate"""select "businessentityid", "name", "AnnualSales"::numeric, "AnnualRevenue"::numeric, "BankName", "BusinessType", "YearOpened", "Specialty", "SquareFeet", "Brands", "Internet", "NumberEmployees"

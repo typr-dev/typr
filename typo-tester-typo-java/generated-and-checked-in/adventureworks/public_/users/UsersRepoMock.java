@@ -62,9 +62,11 @@ public record UsersRepoMock(
     Connection c
   ) {
     var count = 0;
-    for (var id : userIds) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : userIds) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -144,8 +146,12 @@ public record UsersRepoMock(
     Connection c
   ) {
     var result = new ArrayList<UsersRow>();
-    for (var id : userIds) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : userIds) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 
@@ -177,7 +183,7 @@ public record UsersRepoMock(
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.userId())).filter(oldRow -> !oldRow.equals(row)).isPresent();
     if (shouldUpdate) {
-      map.put(row.userId(), row);
+      map.put(row.userId(), row);;
     };
     return shouldUpdate;
   };

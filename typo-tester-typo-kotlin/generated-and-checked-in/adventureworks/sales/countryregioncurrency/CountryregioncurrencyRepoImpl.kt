@@ -16,6 +16,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -26,7 +27,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class CountryregioncurrencyRepoImpl() : CountryregioncurrencyRepo {
-  override fun delete(): DeleteBuilder<CountryregioncurrencyFields, CountryregioncurrencyRow> = DeleteBuilder.of("sales.countryregioncurrency", CountryregioncurrencyFields.structure)
+  override fun delete(): DeleteBuilder<CountryregioncurrencyFields, CountryregioncurrencyRow> = DeleteBuilder.of("\"sales\".\"countryregioncurrency\"", CountryregioncurrencyFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     compositeId: CountryregioncurrencyId,
@@ -143,7 +144,7 @@ class CountryregioncurrencyRepoImpl() : CountryregioncurrencyRepo {
   COPY "sales"."countryregioncurrency"("countryregioncode", "currencycode", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, CountryregioncurrencyRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<CountryregioncurrencyFields, CountryregioncurrencyRow> = SelectBuilder.of("sales.countryregioncurrency", CountryregioncurrencyFields.structure, CountryregioncurrencyRow._rowParser)
+  override fun select(): SelectBuilder<CountryregioncurrencyFields, CountryregioncurrencyRow> = SelectBuilder.of("\"sales\".\"countryregioncurrency\"", CountryregioncurrencyFields.structure, CountryregioncurrencyRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<CountryregioncurrencyRow> = interpolate(typo.runtime.Fragment.lit("""
     select "countryregioncode", "currencycode", "modifieddate"::text
@@ -197,7 +198,7 @@ class CountryregioncurrencyRepoImpl() : CountryregioncurrencyRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<CountryregioncurrencyFields, CountryregioncurrencyRow> = UpdateBuilder.of("sales.countryregioncurrency", CountryregioncurrencyFields.structure, CountryregioncurrencyRow._rowParser.all())
+  override fun update(): UpdateBuilder<CountryregioncurrencyFields, CountryregioncurrencyRow> = UpdateBuilder.of("\"sales\".\"countryregioncurrency\"", CountryregioncurrencyFields.structure, CountryregioncurrencyRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: CountryregioncurrencyRow,
@@ -238,8 +239,7 @@ class CountryregioncurrencyRepoImpl() : CountryregioncurrencyRepo {
       on conflict ("countryregioncode", "currencycode")
       do update set
         "modifieddate" = EXCLUDED."modifieddate"
-      returning "countryregioncode", "currencycode", "modifieddate"::text
-    """.trimMargin())
+      returning "countryregioncode", "currencycode", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(CountryregioncurrencyRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -253,8 +253,7 @@ class CountryregioncurrencyRepoImpl() : CountryregioncurrencyRepo {
                                         on conflict ("countryregioncode", "currencycode")
                                         do update set
                                           "modifieddate" = EXCLUDED."modifieddate"
-                                        returning "countryregioncode", "currencycode", "modifieddate"::text
-                                      """.trimMargin()))
+                                        returning "countryregioncode", "currencycode", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(CountryregioncurrencyRow._rowParser, unsaved)
     .runUnchecked(c)
 

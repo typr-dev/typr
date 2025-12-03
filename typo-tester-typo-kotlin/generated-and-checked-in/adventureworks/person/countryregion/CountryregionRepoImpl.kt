@@ -15,6 +15,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -24,7 +25,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class CountryregionRepoImpl() : CountryregionRepo {
-  override fun delete(): DeleteBuilder<CountryregionFields, CountryregionRow> = DeleteBuilder.of("person.countryregion", CountryregionFields.structure)
+  override fun delete(): DeleteBuilder<CountryregionFields, CountryregionRow> = DeleteBuilder.of("\"person\".\"countryregion\"", CountryregionFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     countryregioncode: CountryregionId,
@@ -129,7 +130,7 @@ class CountryregionRepoImpl() : CountryregionRepo {
   COPY "person"."countryregion"("countryregioncode", "name", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, CountryregionRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<CountryregionFields, CountryregionRow> = SelectBuilder.of("person.countryregion", CountryregionFields.structure, CountryregionRow._rowParser)
+  override fun select(): SelectBuilder<CountryregionFields, CountryregionRow> = SelectBuilder.of("\"person\".\"countryregion\"", CountryregionFields.structure, CountryregionRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<CountryregionRow> = interpolate(typo.runtime.Fragment.lit("""
     select "countryregioncode", "name", "modifieddate"::text
@@ -169,7 +170,7 @@ class CountryregionRepoImpl() : CountryregionRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<CountryregionFields, CountryregionRow> = UpdateBuilder.of("person.countryregion", CountryregionFields.structure, CountryregionRow._rowParser.all())
+  override fun update(): UpdateBuilder<CountryregionFields, CountryregionRow> = UpdateBuilder.of("\"person\".\"countryregion\"", CountryregionFields.structure, CountryregionRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: CountryregionRow,
@@ -211,8 +212,7 @@ class CountryregionRepoImpl() : CountryregionRepo {
       do update set
         "name" = EXCLUDED."name",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "countryregioncode", "name", "modifieddate"::text
-    """.trimMargin())
+      returning "countryregioncode", "name", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(CountryregionRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -227,8 +227,7 @@ class CountryregionRepoImpl() : CountryregionRepo {
                                 do update set
                                   "name" = EXCLUDED."name",
                                 "modifieddate" = EXCLUDED."modifieddate"
-                                returning "countryregioncode", "name", "modifieddate"::text
-                              """.trimMargin()))
+                                returning "countryregioncode", "name", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(CountryregionRow._rowParser, unsaved)
     .runUnchecked(c)
 

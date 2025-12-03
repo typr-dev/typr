@@ -13,6 +13,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -21,7 +22,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class JobcandidateRepoImpl extends JobcandidateRepo {
-  override def delete: DeleteBuilder[JobcandidateFields, JobcandidateRow] = DeleteBuilder.of("humanresources.jobcandidate", JobcandidateFields.structure)
+  override def delete: DeleteBuilder[JobcandidateFields, JobcandidateRow] = DeleteBuilder.of(""""humanresources"."jobcandidate"""", JobcandidateFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(jobcandidateid: JobcandidateId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "humanresources"."jobcandidate" where "jobcandidateid" = ${JobcandidateId.pgType.encode(jobcandidateid)}""".update().runUnchecked(c) > 0
 
@@ -76,7 +77,7 @@ class JobcandidateRepoImpl extends JobcandidateRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "humanresources"."jobcandidate"("businessentityid", "resume", "jobcandidateid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, JobcandidateRowUnsaved.pgText)
 
-  override def select: SelectBuilder[JobcandidateFields, JobcandidateRow] = SelectBuilder.of("humanresources.jobcandidate", JobcandidateFields.structure, JobcandidateRow.`_rowParser`)
+  override def select: SelectBuilder[JobcandidateFields, JobcandidateRow] = SelectBuilder.of(""""humanresources"."jobcandidate"""", JobcandidateFields.structure, JobcandidateRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[JobcandidateRow] = {
     interpolate"""select "jobcandidateid", "businessentityid", "resume", "modifieddate"::text
@@ -102,7 +103,7 @@ class JobcandidateRepoImpl extends JobcandidateRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[JobcandidateFields, JobcandidateRow] = UpdateBuilder.of("humanresources.jobcandidate", JobcandidateFields.structure, JobcandidateRow.`_rowParser`.all())
+  override def update: UpdateBuilder[JobcandidateFields, JobcandidateRow] = UpdateBuilder.of(""""humanresources"."jobcandidate"""", JobcandidateFields.structure, JobcandidateRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: JobcandidateRow)(using c: Connection): java.lang.Boolean = {
     val jobcandidateid: JobcandidateId = row.jobcandidateid
@@ -121,8 +122,7 @@ class JobcandidateRepoImpl extends JobcandidateRepo {
       "businessentityid" = EXCLUDED."businessentityid",
     "resume" = EXCLUDED."resume",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "jobcandidateid", "businessentityid", "resume", "modifieddate"::text
-    """
+    returning "jobcandidateid", "businessentityid", "resume", "modifieddate"::text"""
     .updateReturning(JobcandidateRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -135,8 +135,7 @@ class JobcandidateRepoImpl extends JobcandidateRepo {
       "businessentityid" = EXCLUDED."businessentityid",
     "resume" = EXCLUDED."resume",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "jobcandidateid", "businessentityid", "resume", "modifieddate"::text
-    """
+    returning "jobcandidateid", "businessentityid", "resume", "modifieddate"::text"""
       .updateManyReturning(JobcandidateRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

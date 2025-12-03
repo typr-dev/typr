@@ -13,6 +13,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -21,7 +22,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ProductdocumentRepoImpl extends ProductdocumentRepo {
-  override def delete: DeleteBuilder[ProductdocumentFields, ProductdocumentRow] = DeleteBuilder.of("production.productdocument", ProductdocumentFields.structure)
+  override def delete: DeleteBuilder[ProductdocumentFields, ProductdocumentRow] = DeleteBuilder.of(""""production"."productdocument"""", ProductdocumentFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(compositeId: ProductdocumentId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."productdocument" where "productid" = ${ProductId.pgType.encode(compositeId.productid)} AND "documentnode" = ${DocumentId.pgType.encode(compositeId.documentnode)}""".update().runUnchecked(c) > 0
 
@@ -76,7 +77,7 @@ class ProductdocumentRepoImpl extends ProductdocumentRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."productdocument"("productid", "modifieddate", "documentnode") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ProductdocumentRowUnsaved.pgText)
 
-  override def select: SelectBuilder[ProductdocumentFields, ProductdocumentRow] = SelectBuilder.of("production.productdocument", ProductdocumentFields.structure, ProductdocumentRow.`_rowParser`)
+  override def select: SelectBuilder[ProductdocumentFields, ProductdocumentRow] = SelectBuilder.of(""""production"."productdocument"""", ProductdocumentFields.structure, ProductdocumentRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[ProductdocumentRow] = {
     interpolate"""select "productid", "modifieddate"::text, "documentnode"
@@ -106,7 +107,7 @@ class ProductdocumentRepoImpl extends ProductdocumentRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[ProductdocumentFields, ProductdocumentRow] = UpdateBuilder.of("production.productdocument", ProductdocumentFields.structure, ProductdocumentRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ProductdocumentFields, ProductdocumentRow] = UpdateBuilder.of(""""production"."productdocument"""", ProductdocumentFields.structure, ProductdocumentRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: ProductdocumentRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: ProductdocumentId = row.compositeId
@@ -121,8 +122,7 @@ class ProductdocumentRepoImpl extends ProductdocumentRepo {
     on conflict ("productid", "documentnode")
     do update set
       "modifieddate" = EXCLUDED."modifieddate"
-    returning "productid", "modifieddate"::text, "documentnode"
-    """
+    returning "productid", "modifieddate"::text, "documentnode""""
     .updateReturning(ProductdocumentRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -133,8 +133,7 @@ class ProductdocumentRepoImpl extends ProductdocumentRepo {
     on conflict ("productid", "documentnode")
     do update set
       "modifieddate" = EXCLUDED."modifieddate"
-    returning "productid", "modifieddate"::text, "documentnode"
-    """
+    returning "productid", "modifieddate"::text, "documentnode""""
       .updateManyReturning(ProductdocumentRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

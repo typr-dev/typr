@@ -1,0 +1,22 @@
+-- Test subquery tracking (no CTE)
+SELECT
+    c.customer_id,
+    c.email,
+    c.first_name,
+    sub.order_count,
+    sub.total_spent,
+    b.name as favorite_brand
+FROM customers c
+INNER JOIN (
+    SELECT
+        o.customer_id,
+        COUNT(*) as order_count,
+        SUM(o.total_amount) as total_spent
+    FROM orders o
+    GROUP BY o.customer_id
+) sub ON c.customer_id = sub.customer_id
+LEFT JOIN orders o2 ON c.customer_id = o2.customer_id
+LEFT JOIN order_items oi ON o2.order_id = oi.order_id
+LEFT JOIN products p ON oi.product_id = p.product_id
+LEFT JOIN brands b ON p.brand_id = b.brand_id
+WHERE sub.total_spent > 100

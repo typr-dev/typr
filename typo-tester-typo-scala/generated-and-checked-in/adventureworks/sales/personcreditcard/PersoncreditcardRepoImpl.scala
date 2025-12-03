@@ -13,6 +13,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -21,7 +22,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PersoncreditcardRepoImpl extends PersoncreditcardRepo {
-  override def delete: DeleteBuilder[PersoncreditcardFields, PersoncreditcardRow] = DeleteBuilder.of("sales.personcreditcard", PersoncreditcardFields.structure)
+  override def delete: DeleteBuilder[PersoncreditcardFields, PersoncreditcardRow] = DeleteBuilder.of(""""sales"."personcreditcard"""", PersoncreditcardFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(compositeId: PersoncreditcardId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."personcreditcard" where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "creditcardid" = ${/* user-picked */ CustomCreditcardId.pgType.encode(compositeId.creditcardid)}""".update().runUnchecked(c) > 0
 
@@ -74,7 +75,7 @@ class PersoncreditcardRepoImpl extends PersoncreditcardRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."personcreditcard"("businessentityid", "creditcardid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, PersoncreditcardRowUnsaved.pgText)
 
-  override def select: SelectBuilder[PersoncreditcardFields, PersoncreditcardRow] = SelectBuilder.of("sales.personcreditcard", PersoncreditcardFields.structure, PersoncreditcardRow.`_rowParser`)
+  override def select: SelectBuilder[PersoncreditcardFields, PersoncreditcardRow] = SelectBuilder.of(""""sales"."personcreditcard"""", PersoncreditcardFields.structure, PersoncreditcardRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[PersoncreditcardRow] = {
     interpolate"""select "businessentityid", "creditcardid", "modifieddate"::text
@@ -104,7 +105,7 @@ class PersoncreditcardRepoImpl extends PersoncreditcardRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[PersoncreditcardFields, PersoncreditcardRow] = UpdateBuilder.of("sales.personcreditcard", PersoncreditcardFields.structure, PersoncreditcardRow.`_rowParser`.all())
+  override def update: UpdateBuilder[PersoncreditcardFields, PersoncreditcardRow] = UpdateBuilder.of(""""sales"."personcreditcard"""", PersoncreditcardFields.structure, PersoncreditcardRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: PersoncreditcardRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: PersoncreditcardId = row.compositeId
@@ -119,8 +120,7 @@ class PersoncreditcardRepoImpl extends PersoncreditcardRepo {
     on conflict ("businessentityid", "creditcardid")
     do update set
       "modifieddate" = EXCLUDED."modifieddate"
-    returning "businessentityid", "creditcardid", "modifieddate"::text
-    """
+    returning "businessentityid", "creditcardid", "modifieddate"::text"""
     .updateReturning(PersoncreditcardRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -131,8 +131,7 @@ class PersoncreditcardRepoImpl extends PersoncreditcardRepo {
     on conflict ("businessentityid", "creditcardid")
     do update set
       "modifieddate" = EXCLUDED."modifieddate"
-    returning "businessentityid", "creditcardid", "modifieddate"::text
-    """
+    returning "businessentityid", "creditcardid", "modifieddate"::text"""
       .updateManyReturning(PersoncreditcardRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

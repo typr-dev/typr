@@ -265,7 +265,7 @@ object PViewFields {
             Optional.empty(),
             Optional.empty(),
             (row, value) => row.copy(productline = value),
-            PgTypes.text
+            PgTypes.bpchar
           )
         }
         override def `class`: OptField[/* bpchar, max 2 chars */ String, PViewRow] = {
@@ -276,7 +276,7 @@ object PViewFields {
             Optional.empty(),
             Optional.empty(),
             (row, value) => row.copy(`class` = value),
-            PgTypes.text
+            PgTypes.bpchar
           )
         }
         override def style: OptField[/* bpchar, max 2 chars */ String, PViewRow] = {
@@ -287,7 +287,7 @@ object PViewFields {
             Optional.empty(),
             Optional.empty(),
             (row, value) => row.copy(style = value),
-            PgTypes.text
+            PgTypes.bpchar
           )
         }
         override def productsubcategoryid: OptField[ProductsubcategoryId, PViewRow] = {

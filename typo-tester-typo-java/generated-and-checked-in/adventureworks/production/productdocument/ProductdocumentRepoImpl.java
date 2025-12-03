@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -28,7 +29,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class ProductdocumentRepoImpl implements ProductdocumentRepo {
   @Override
   public DeleteBuilder<ProductdocumentFields, ProductdocumentRow> delete() {
-    return DeleteBuilder.of("production.productdocument", ProductdocumentFields.structure());
+    return DeleteBuilder.of("\"production\".\"productdocument\"", ProductdocumentFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -173,7 +174,7 @@ public class ProductdocumentRepoImpl implements ProductdocumentRepo {
 
   @Override
   public SelectBuilder<ProductdocumentFields, ProductdocumentRow> select() {
-    return SelectBuilder.of("production.productdocument", ProductdocumentFields.structure(), ProductdocumentRow._rowParser);
+    return SelectBuilder.of("\"production\".\"productdocument\"", ProductdocumentFields.structure(), ProductdocumentRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -238,7 +239,7 @@ public class ProductdocumentRepoImpl implements ProductdocumentRepo {
 
   @Override
   public UpdateBuilder<ProductdocumentFields, ProductdocumentRow> update() {
-    return UpdateBuilder.of("production.productdocument", ProductdocumentFields.structure(), ProductdocumentRow._rowParser.all());
+    return UpdateBuilder.of("\"production\".\"productdocument\"", ProductdocumentFields.structure(), ProductdocumentRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -283,8 +284,7 @@ public class ProductdocumentRepoImpl implements ProductdocumentRepo {
          on conflict ("productid", "documentnode")
          do update set
            "modifieddate" = EXCLUDED."modifieddate"
-         returning "productid", "modifieddate"::text, "documentnode"
-      """)
+         returning "productid", "modifieddate"::text, "documentnode\"""")
     )
       .updateReturning(ProductdocumentRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -301,8 +301,7 @@ public class ProductdocumentRepoImpl implements ProductdocumentRepo {
                 on conflict ("productid", "documentnode")
                 do update set
                   "modifieddate" = EXCLUDED."modifieddate"
-                returning "productid", "modifieddate"::text, "documentnode"
-             """))
+                returning "productid", "modifieddate"::text, "documentnode\""""))
       .updateManyReturning(ProductdocumentRow._rowParser, unsaved)
       .runUnchecked(c);
   };

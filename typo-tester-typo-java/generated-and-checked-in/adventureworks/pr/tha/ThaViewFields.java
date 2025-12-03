@@ -51,7 +51,7 @@ public interface ThaViewFields {
                };
                @Override
                public Field</* bpchar, max 1 chars */ String, ThaViewRow> transactiontype() {
-                 return new Field</* bpchar, max 1 chars */ String, ThaViewRow>(_path, "transactiontype", ThaViewRow::transactiontype, Optional.empty(), Optional.empty(), (row, value) -> row.withTransactiontype(value), PgTypes.text);
+                 return new Field</* bpchar, max 1 chars */ String, ThaViewRow>(_path, "transactiontype", ThaViewRow::transactiontype, Optional.empty(), Optional.empty(), (row, value) -> row.withTransactiontype(value), PgTypes.bpchar);
                };
                @Override
                public Field<Integer, ThaViewRow> quantity() {

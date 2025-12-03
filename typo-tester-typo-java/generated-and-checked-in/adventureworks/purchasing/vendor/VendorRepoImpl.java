@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -31,7 +32,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class VendorRepoImpl implements VendorRepo {
   @Override
   public DeleteBuilder<VendorFields, VendorRow> delete() {
-    return DeleteBuilder.of("purchasing.vendor", VendorFields.structure());
+    return DeleteBuilder.of("\"purchasing\".\"vendor\"", VendorFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -208,7 +209,7 @@ public class VendorRepoImpl implements VendorRepo {
 
   @Override
   public SelectBuilder<VendorFields, VendorRow> select() {
-    return SelectBuilder.of("purchasing.vendor", VendorFields.structure(), VendorRow._rowParser);
+    return SelectBuilder.of("\"purchasing\".\"vendor\"", VendorFields.structure(), VendorRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -261,7 +262,7 @@ public class VendorRepoImpl implements VendorRepo {
 
   @Override
   public UpdateBuilder<VendorFields, VendorRow> update() {
-    return UpdateBuilder.of("purchasing.vendor", VendorFields.structure(), VendorRow._rowParser.all());
+    return UpdateBuilder.of("\"purchasing\".\"vendor\"", VendorFields.structure(), VendorRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -342,8 +343,7 @@ public class VendorRepoImpl implements VendorRepo {
          "activeflag" = EXCLUDED."activeflag",
          "purchasingwebserviceurl" = EXCLUDED."purchasingwebserviceurl",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text
-      """)
+         returning "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text""")
     )
       .updateReturning(VendorRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -366,8 +366,7 @@ public class VendorRepoImpl implements VendorRepo {
                 "activeflag" = EXCLUDED."activeflag",
                 "purchasingwebserviceurl" = EXCLUDED."purchasingwebserviceurl",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text
-             """))
+                returning "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text"""))
       .updateManyReturning(VendorRow._rowParser, unsaved)
       .runUnchecked(c);
   };

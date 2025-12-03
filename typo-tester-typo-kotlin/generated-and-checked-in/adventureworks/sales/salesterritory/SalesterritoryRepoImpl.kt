@@ -17,6 +17,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -27,7 +28,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class SalesterritoryRepoImpl() : SalesterritoryRepo {
-  override fun delete(): DeleteBuilder<SalesterritoryFields, SalesterritoryRow> = DeleteBuilder.of("sales.salesterritory", SalesterritoryFields.structure)
+  override fun delete(): DeleteBuilder<SalesterritoryFields, SalesterritoryRow> = DeleteBuilder.of("\"sales\".\"salesterritory\"", SalesterritoryFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     territoryid: SalesterritoryId,
@@ -200,7 +201,7 @@ class SalesterritoryRepoImpl() : SalesterritoryRepo {
   COPY "sales"."salesterritory"("name", "countryregioncode", "group", "territoryid", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, SalesterritoryRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<SalesterritoryFields, SalesterritoryRow> = SelectBuilder.of("sales.salesterritory", SalesterritoryFields.structure, SalesterritoryRow._rowParser)
+  override fun select(): SelectBuilder<SalesterritoryFields, SalesterritoryRow> = SelectBuilder.of("\"sales\".\"salesterritory\"", SalesterritoryFields.structure, SalesterritoryRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<SalesterritoryRow> = interpolate(typo.runtime.Fragment.lit("""
     select "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"::text
@@ -240,7 +241,7 @@ class SalesterritoryRepoImpl() : SalesterritoryRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<SalesterritoryFields, SalesterritoryRow> = UpdateBuilder.of("sales.salesterritory", SalesterritoryFields.structure, SalesterritoryRow._rowParser.all())
+  override fun update(): UpdateBuilder<SalesterritoryFields, SalesterritoryRow> = UpdateBuilder.of("\"sales\".\"salesterritory\"", SalesterritoryFields.structure, SalesterritoryRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: SalesterritoryRow,
@@ -331,8 +332,7 @@ class SalesterritoryRepoImpl() : SalesterritoryRepo {
       "costlastyear" = EXCLUDED."costlastyear",
       "rowguid" = EXCLUDED."rowguid",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"::text
-    """.trimMargin())
+      returning "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(SalesterritoryRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -354,8 +354,7 @@ class SalesterritoryRepoImpl() : SalesterritoryRepo {
                                  "costlastyear" = EXCLUDED."costlastyear",
                                  "rowguid" = EXCLUDED."rowguid",
                                  "modifieddate" = EXCLUDED."modifieddate"
-                                 returning "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"::text
-                               """.trimMargin()))
+                                 returning "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(SalesterritoryRow._rowParser, unsaved)
     .runUnchecked(c)
 

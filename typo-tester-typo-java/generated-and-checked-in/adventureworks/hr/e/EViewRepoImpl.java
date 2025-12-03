@@ -7,13 +7,14 @@ package adventureworks.hr.e;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class EViewRepoImpl implements EViewRepo {
   @Override
   public SelectBuilder<EViewFields, EViewRow> select() {
-    return SelectBuilder.of("hr.e", EViewFields.structure(), EViewRow._rowParser);
+    return SelectBuilder.of("\"hr\".\"e\"", EViewFields.structure(), EViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

@@ -53,7 +53,7 @@ data class TransactionhistoryarchiveRowUnsaved(
       sb.append(PgText.DELIMETER)
       PgTypes.int4.pgText().unsafeEncode(row.referenceorderid, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.text.pgText().unsafeEncode(row.transactiontype, sb)
+      PgTypes.bpchar.pgText().unsafeEncode(row.transactiontype, sb)
       sb.append(PgText.DELIMETER)
       PgTypes.int4.pgText().unsafeEncode(row.quantity, sb)
       sb.append(PgText.DELIMETER)

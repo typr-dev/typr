@@ -9,12 +9,13 @@ import adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderId
 import java.sql.Connection
 import java.util.HashMap
 import java.util.Optional
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.PgTypes
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PurchaseorderdetailRepoImpl extends PurchaseorderdetailRepo {
-  override def select: SelectBuilder[PurchaseorderdetailFields, PurchaseorderdetailRow] = SelectBuilder.of("purchasing.purchaseorderdetail", PurchaseorderdetailFields.structure, PurchaseorderdetailRow.`_rowParser`)
+  override def select: SelectBuilder[PurchaseorderdetailFields, PurchaseorderdetailRow] = SelectBuilder.of(""""purchasing"."purchaseorderdetail"""", PurchaseorderdetailFields.structure, PurchaseorderdetailRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[PurchaseorderdetailRow] = {
     interpolate"""select "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text

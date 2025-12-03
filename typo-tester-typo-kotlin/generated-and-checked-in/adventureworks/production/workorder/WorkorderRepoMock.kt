@@ -40,9 +40,11 @@ data class WorkorderRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in workorderids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in workorderids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -69,7 +71,7 @@ data class WorkorderRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.workorderid] = row
       count = count + 1L
     }
@@ -84,8 +86,8 @@ data class WorkorderRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.workorderid] = row
       count = count + 1L
     }
@@ -105,9 +107,13 @@ data class WorkorderRepoMock(
     workorderids: Array<WorkorderId>,
     c: Connection
   ): List<WorkorderRow> {
-    var result = ArrayList<WorkorderRow>()
-    for (id in workorderids) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<WorkorderRow>()
+    for (id in workorderids) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -141,9 +147,9 @@ data class WorkorderRepoMock(
     unsaved: MutableIterator<WorkorderRow>,
     c: Connection
   ): List<WorkorderRow> {
-    var result = ArrayList<WorkorderRow>()
+    val result = ArrayList<WorkorderRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.workorderid] = row
       result.add(row)
     }
@@ -158,7 +164,7 @@ data class WorkorderRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.workorderid] = row
       count = count + 1
     }

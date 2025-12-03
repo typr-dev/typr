@@ -1,7 +1,7 @@
 package typo
 
-import typo.internal.metadb.OpenEnum
-import typo.internal.sqlfiles.readSqlFileDirectories
+import typo.internal.pg.OpenEnum
+import typo.internal.sqlfiles.SqlFileReader
 
 import java.nio.file.Path
 import scala.concurrent.duration.Duration
@@ -34,7 +34,7 @@ object generateFromDb {
     implicit val ec: ExecutionContext = options.executionContext
     val viewSelector = graph.toList.map(_.value).foldLeft(Selector.None)(_.or(_))
     val eventualMetaDb = MetaDb.fromDb(options.logger, dataSource, viewSelector, options.schemaMode)
-    val eventualScripts = graph.mapScripts(paths => Future.sequence(paths.map(p => readSqlFileDirectories(options.logger, p, dataSource))).map(_.flatten))
+    val eventualScripts = graph.mapScripts(paths => Future.sequence(paths.map(p => SqlFileReader(options.logger, p, dataSource))).map(_.flatten))
 
     val combined = for {
       metaDb <- eventualMetaDb

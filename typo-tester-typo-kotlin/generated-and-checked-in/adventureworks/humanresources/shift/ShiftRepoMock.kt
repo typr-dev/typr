@@ -40,9 +40,11 @@ data class ShiftRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in shiftids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in shiftids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -69,7 +71,7 @@ data class ShiftRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.shiftid] = row
       count = count + 1L
     }
@@ -84,8 +86,8 @@ data class ShiftRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.shiftid] = row
       count = count + 1L
     }
@@ -105,9 +107,13 @@ data class ShiftRepoMock(
     shiftids: Array<ShiftId>,
     c: Connection
   ): List<ShiftRow> {
-    var result = ArrayList<ShiftRow>()
-    for (id in shiftids) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<ShiftRow>()
+    for (id in shiftids) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -141,9 +147,9 @@ data class ShiftRepoMock(
     unsaved: MutableIterator<ShiftRow>,
     c: Connection
   ): List<ShiftRow> {
-    var result = ArrayList<ShiftRow>()
+    val result = ArrayList<ShiftRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.shiftid] = row
       result.add(row)
     }
@@ -158,7 +164,7 @@ data class ShiftRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.shiftid] = row
       count = count + 1
     }

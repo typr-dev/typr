@@ -54,9 +54,11 @@ public record FlaffRepoMock(HashMap<FlaffId, FlaffRow> map) implements FlaffRepo
     Connection c
   ) {
     var count = 0;
-    for (var id : compositeIds) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : compositeIds) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -111,8 +113,12 @@ public record FlaffRepoMock(HashMap<FlaffId, FlaffRow> map) implements FlaffRepo
     Connection c
   ) {
     var result = new ArrayList<FlaffRow>();
-    for (var id : compositeIds) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : compositeIds) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 
@@ -136,7 +142,7 @@ public record FlaffRepoMock(HashMap<FlaffId, FlaffRow> map) implements FlaffRepo
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.compositeId())).filter(oldRow -> !oldRow.equals(row)).isPresent();
     if (shouldUpdate) {
-      map.put(row.compositeId(), row);
+      map.put(row.compositeId(), row);;
     };
     return shouldUpdate;
   };

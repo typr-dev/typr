@@ -7,13 +7,14 @@ package adventureworks.pe.cr;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class CrViewRepoImpl implements CrViewRepo {
   @Override
   public SelectBuilder<CrViewFields, CrViewRow> select() {
-    return SelectBuilder.of("pe.cr", CrViewFields.structure(), CrViewRow._rowParser);
+    return SelectBuilder.of("\"pe\".\"cr\"", CrViewFields.structure(), CrViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

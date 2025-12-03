@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -29,7 +30,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class SalespersonRepoImpl implements SalespersonRepo {
   @Override
   public DeleteBuilder<SalespersonFields, SalespersonRow> delete() {
-    return DeleteBuilder.of("sales.salesperson", SalespersonFields.structure());
+    return DeleteBuilder.of("\"sales\".\"salesperson\"", SalespersonFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -233,7 +234,7 @@ public class SalespersonRepoImpl implements SalespersonRepo {
 
   @Override
   public SelectBuilder<SalespersonFields, SalespersonRow> select() {
-    return SelectBuilder.of("sales.salesperson", SalespersonFields.structure(), SalespersonRow._rowParser);
+    return SelectBuilder.of("\"sales\".\"salesperson\"", SalespersonFields.structure(), SalespersonRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -286,7 +287,7 @@ public class SalespersonRepoImpl implements SalespersonRepo {
 
   @Override
   public UpdateBuilder<SalespersonFields, SalespersonRow> update() {
-    return UpdateBuilder.of("sales.salesperson", SalespersonFields.structure(), SalespersonRow._rowParser.all());
+    return UpdateBuilder.of("\"sales\".\"salesperson\"", SalespersonFields.structure(), SalespersonRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -374,8 +375,7 @@ public class SalespersonRepoImpl implements SalespersonRepo {
          "saleslastyear" = EXCLUDED."saleslastyear",
          "rowguid" = EXCLUDED."rowguid",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate"::text
-      """)
+         returning "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate"::text""")
     )
       .updateReturning(SalespersonRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -399,8 +399,7 @@ public class SalespersonRepoImpl implements SalespersonRepo {
                 "saleslastyear" = EXCLUDED."saleslastyear",
                 "rowguid" = EXCLUDED."rowguid",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate"::text
-             """))
+                returning "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate"::text"""))
       .updateManyReturning(SalespersonRow._rowParser, unsaved)
       .runUnchecked(c);
   };

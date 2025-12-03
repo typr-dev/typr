@@ -40,9 +40,11 @@ data class CustomerRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in customerids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in customerids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -69,7 +71,7 @@ data class CustomerRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.customerid] = row
       count = count + 1L
     }
@@ -84,8 +86,8 @@ data class CustomerRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.customerid] = row
       count = count + 1L
     }
@@ -105,9 +107,13 @@ data class CustomerRepoMock(
     customerids: Array<CustomerId>,
     c: Connection
   ): List<CustomerRow> {
-    var result = ArrayList<CustomerRow>()
-    for (id in customerids) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<CustomerRow>()
+    for (id in customerids) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -141,9 +147,9 @@ data class CustomerRepoMock(
     unsaved: MutableIterator<CustomerRow>,
     c: Connection
   ): List<CustomerRow> {
-    var result = ArrayList<CustomerRow>()
+    val result = ArrayList<CustomerRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.customerid] = row
       result.add(row)
     }
@@ -158,7 +164,7 @@ data class CustomerRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.customerid] = row
       count = count + 1
     }

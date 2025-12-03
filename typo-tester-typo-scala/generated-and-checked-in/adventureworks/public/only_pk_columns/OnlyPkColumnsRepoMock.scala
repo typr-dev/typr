@@ -72,8 +72,9 @@ case class OnlyPkColumnsRepoMock(map: HashMap[OnlyPkColumnsId, OnlyPkColumnsRow]
 
   override def selectByIds(compositeIds: Array[OnlyPkColumnsId])(using c: Connection): java.util.List[OnlyPkColumnsRow] = {
     val result = new ArrayList[OnlyPkColumnsRow]()
-    compositeIds.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    compositeIds.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

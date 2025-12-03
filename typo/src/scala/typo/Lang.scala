@@ -31,7 +31,7 @@ trait Lang extends TypeSupport {
   def rowSetter(fieldName: jvm.Ident): jvm.Code
 
   /** Iterate over array with a consumer lambda (for side effects) - handles Scala vs Java array iteration syntax */
-  def arrayForEach(array: jvm.Code, elemVar: jvm.Ident, body: jvm.Code): jvm.Code
+  def arrayForEach(array: jvm.Code, elemVar: jvm.Ident, body: jvm.Body): jvm.Code
 
   /** Map over array elements. Scala: array.map(mapper), Java: arrayMap.map(array, mapper, targetClass) */
   def arrayMap(array: jvm.Code, mapper: jvm.Code, targetClass: jvm.Code): jvm.Code
@@ -44,6 +44,20 @@ trait Lang extends TypeSupport {
 
   /** Byte array creation: Kotlin: `ByteArray(size)`, Scala: `Array.ofDim[Byte](size)`, Java: `new byte[size]` */
   def newByteArray(size: jvm.Code): jvm.Code
+
+  /** The byte array type. Different in Kotlin (ByteArray) vs Scala/Java (Array[Byte]/byte[]).
+    *   - Scala: Array[Byte]
+    *   - Java: byte[]
+    *   - Kotlin: ByteArray (a distinct primitive array type, not Array<Byte>)
+    */
+  val ByteArrayType: jvm.Type
+
+  /** Get the max value constant for a numeric type.
+    *   - Scala: Type.MaxValue (e.g., Byte.MaxValue)
+    *   - Java: Type.MAX_VALUE (e.g., Byte.MAX_VALUE)
+    *   - Kotlin: Type.MAX_VALUE
+    */
+  def maxValue(tpe: jvm.Type): jvm.Code
 
   /** Array fill: Kotlin: `Array(size) { factory }`, Scala: `Array.fill(size)(factory)`, Java: requires stream API */
   def arrayFill(size: jvm.Code, factory: jvm.Code, elementType: jvm.Type): jvm.Code

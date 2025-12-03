@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -29,7 +30,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class SalesterritoryRepoImpl implements SalesterritoryRepo {
   @Override
   public DeleteBuilder<SalesterritoryFields, SalesterritoryRow> delete() {
-    return DeleteBuilder.of("sales.salesterritory", SalesterritoryFields.structure());
+    return DeleteBuilder.of("\"sales\".\"salesterritory\"", SalesterritoryFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -249,7 +250,7 @@ public class SalesterritoryRepoImpl implements SalesterritoryRepo {
 
   @Override
   public SelectBuilder<SalesterritoryFields, SalesterritoryRow> select() {
-    return SelectBuilder.of("sales.salesterritory", SalesterritoryFields.structure(), SalesterritoryRow._rowParser);
+    return SelectBuilder.of("\"sales\".\"salesterritory\"", SalesterritoryFields.structure(), SalesterritoryRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -302,7 +303,7 @@ public class SalesterritoryRepoImpl implements SalesterritoryRepo {
 
   @Override
   public UpdateBuilder<SalesterritoryFields, SalesterritoryRow> update() {
-    return UpdateBuilder.of("sales.salesterritory", SalesterritoryFields.structure(), SalesterritoryRow._rowParser.all());
+    return UpdateBuilder.of("\"sales\".\"salesterritory\"", SalesterritoryFields.structure(), SalesterritoryRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -397,8 +398,7 @@ public class SalesterritoryRepoImpl implements SalesterritoryRepo {
          "costlastyear" = EXCLUDED."costlastyear",
          "rowguid" = EXCLUDED."rowguid",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"::text
-      """)
+         returning "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"::text""")
     )
       .updateReturning(SalesterritoryRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -423,8 +423,7 @@ public class SalesterritoryRepoImpl implements SalesterritoryRepo {
                 "costlastyear" = EXCLUDED."costlastyear",
                 "rowguid" = EXCLUDED."rowguid",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"::text
-             """))
+                returning "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"::text"""))
       .updateManyReturning(SalesterritoryRow._rowParser, unsaved)
       .runUnchecked(c);
   };

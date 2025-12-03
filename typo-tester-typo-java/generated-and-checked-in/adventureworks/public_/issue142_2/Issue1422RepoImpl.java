@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.streamingInsert;
@@ -22,7 +23,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class Issue1422RepoImpl implements Issue1422Repo {
   @Override
   public DeleteBuilder<Issue1422Fields, Issue1422Row> delete() {
-    return DeleteBuilder.of("public.issue142_2", Issue1422Fields.structure());
+    return DeleteBuilder.of("\"public\".\"issue142_2\"", Issue1422Fields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -87,7 +88,7 @@ public class Issue1422RepoImpl implements Issue1422Repo {
 
   @Override
   public SelectBuilder<Issue1422Fields, Issue1422Row> select() {
-    return SelectBuilder.of("public.issue142_2", Issue1422Fields.structure(), Issue1422Row._rowParser);
+    return SelectBuilder.of("\"public\".\"issue142_2\"", Issue1422Fields.structure(), Issue1422Row._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -140,7 +141,7 @@ public class Issue1422RepoImpl implements Issue1422Repo {
 
   @Override
   public UpdateBuilder<Issue1422Fields, Issue1422Row> update() {
-    return UpdateBuilder.of("public.issue142_2", Issue1422Fields.structure(), Issue1422Row._rowParser.all());
+    return UpdateBuilder.of("\"public\".\"issue142_2\"", Issue1422Fields.structure(), Issue1422Row._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -157,8 +158,7 @@ public class Issue1422RepoImpl implements Issue1422Repo {
          )
          on conflict ("tabellkode")
          do update set "tabellkode" = EXCLUDED."tabellkode"
-         returning "tabellkode"
-      """)
+         returning "tabellkode\"""")
     )
       .updateReturning(Issue1422Row._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -173,9 +173,8 @@ public class Issue1422RepoImpl implements Issue1422Repo {
                 insert into "public"."issue142_2"("tabellkode")
                 values (?)
                 on conflict ("tabellkode")
-                do nothing
-                returning "tabellkode"
-             """))
+                do update set "tabellkode" = EXCLUDED."tabellkode"
+                returning "tabellkode\""""))
       .updateManyReturning(Issue1422Row._rowParser, unsaved)
       .runUnchecked(c);
   };

@@ -12,6 +12,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.streamingInsert
@@ -19,7 +20,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class TitleRepoImpl() : TitleRepo {
-  override fun delete(): DeleteBuilder<TitleFields, TitleRow> = DeleteBuilder.of("public.title", TitleFields.structure)
+  override fun delete(): DeleteBuilder<TitleFields, TitleRow> = DeleteBuilder.of("\"public\".\"title\"", TitleFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     code: TitleId,
@@ -69,7 +70,7 @@ class TitleRepoImpl() : TitleRepo {
   COPY "public"."title"("code") FROM STDIN
   """.trimMargin()), batchSize, unsaved, c, TitleRow.pgText)
 
-  override fun select(): SelectBuilder<TitleFields, TitleRow> = SelectBuilder.of("public.title", TitleFields.structure, TitleRow._rowParser)
+  override fun select(): SelectBuilder<TitleFields, TitleRow> = SelectBuilder.of("\"public\".\"title\"", TitleFields.structure, TitleRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<TitleRow> = interpolate(typo.runtime.Fragment.lit("""
     select "code"
@@ -109,7 +110,7 @@ class TitleRepoImpl() : TitleRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<TitleFields, TitleRow> = UpdateBuilder.of("public.title", TitleFields.structure, TitleRow._rowParser.all())
+  override fun update(): UpdateBuilder<TitleFields, TitleRow> = UpdateBuilder.of("\"public\".\"title\"", TitleFields.structure, TitleRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun upsert(
     unsaved: TitleRow,
@@ -123,8 +124,7 @@ class TitleRepoImpl() : TitleRepo {
       )
       on conflict ("code")
       do update set "code" = EXCLUDED."code"
-      returning "code"
-    """.trimMargin())
+      returning "code"""".trimMargin())
   )
     .updateReturning(TitleRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -136,9 +136,8 @@ class TitleRepoImpl() : TitleRepo {
                         insert into "public"."title"("code")
                         values (?)
                         on conflict ("code")
-                        do nothing
-                        returning "code"
-                      """.trimMargin()))
+                        do update set "code" = EXCLUDED."code"
+                        returning "code"""".trimMargin()))
     .updateManyReturning(TitleRow._rowParser, unsaved)
     .runUnchecked(c)
 

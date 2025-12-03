@@ -7,13 +7,14 @@ package adventureworks.pr.th;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class ThViewRepoImpl implements ThViewRepo {
   @Override
   public SelectBuilder<ThViewFields, ThViewRow> select() {
-    return SelectBuilder.of("pr.th", ThViewFields.structure(), ThViewRow._rowParser);
+    return SelectBuilder.of("\"pr\".\"th\"", ThViewFields.structure(), ThViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

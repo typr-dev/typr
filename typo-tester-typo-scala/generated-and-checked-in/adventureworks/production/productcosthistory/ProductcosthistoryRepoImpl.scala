@@ -12,6 +12,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -21,7 +22,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ProductcosthistoryRepoImpl extends ProductcosthistoryRepo {
-  override def delete: DeleteBuilder[ProductcosthistoryFields, ProductcosthistoryRow] = DeleteBuilder.of("production.productcosthistory", ProductcosthistoryFields.structure)
+  override def delete: DeleteBuilder[ProductcosthistoryFields, ProductcosthistoryRow] = DeleteBuilder.of(""""production"."productcosthistory"""", ProductcosthistoryFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(compositeId: ProductcosthistoryId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."productcosthistory" where "productid" = ${ProductId.pgType.encode(compositeId.productid)} AND "startdate" = ${TypoLocalDateTime.pgType.encode(compositeId.startdate)}""".update().runUnchecked(c) > 0
 
@@ -78,7 +79,7 @@ class ProductcosthistoryRepoImpl extends ProductcosthistoryRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."productcosthistory"("productid", "startdate", "enddate", "standardcost", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ProductcosthistoryRowUnsaved.pgText)
 
-  override def select: SelectBuilder[ProductcosthistoryFields, ProductcosthistoryRow] = SelectBuilder.of("production.productcosthistory", ProductcosthistoryFields.structure, ProductcosthistoryRow.`_rowParser`)
+  override def select: SelectBuilder[ProductcosthistoryFields, ProductcosthistoryRow] = SelectBuilder.of(""""production"."productcosthistory"""", ProductcosthistoryFields.structure, ProductcosthistoryRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[ProductcosthistoryRow] = {
     interpolate"""select "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text
@@ -108,7 +109,7 @@ class ProductcosthistoryRepoImpl extends ProductcosthistoryRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[ProductcosthistoryFields, ProductcosthistoryRow] = UpdateBuilder.of("production.productcosthistory", ProductcosthistoryFields.structure, ProductcosthistoryRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ProductcosthistoryFields, ProductcosthistoryRow] = UpdateBuilder.of(""""production"."productcosthistory"""", ProductcosthistoryFields.structure, ProductcosthistoryRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: ProductcosthistoryRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: ProductcosthistoryId = row.compositeId
@@ -127,8 +128,7 @@ class ProductcosthistoryRepoImpl extends ProductcosthistoryRepo {
       "enddate" = EXCLUDED."enddate",
     "standardcost" = EXCLUDED."standardcost",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text
-    """
+    returning "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text"""
     .updateReturning(ProductcosthistoryRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -141,8 +141,7 @@ class ProductcosthistoryRepoImpl extends ProductcosthistoryRepo {
       "enddate" = EXCLUDED."enddate",
     "standardcost" = EXCLUDED."standardcost",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text
-    """
+    returning "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text"""
       .updateManyReturning(ProductcosthistoryRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

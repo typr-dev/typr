@@ -99,15 +99,15 @@ public interface PViewFields {
                };
                @Override
                public OptField</* bpchar, max 2 chars */ String, PViewRow> productline() {
-                 return new OptField</* bpchar, max 2 chars */ String, PViewRow>(_path, "productline", PViewRow::productline, Optional.empty(), Optional.empty(), (row, value) -> row.withProductline(value), PgTypes.text);
+                 return new OptField</* bpchar, max 2 chars */ String, PViewRow>(_path, "productline", PViewRow::productline, Optional.empty(), Optional.empty(), (row, value) -> row.withProductline(value), PgTypes.bpchar);
                };
                @Override
                public OptField</* bpchar, max 2 chars */ String, PViewRow> class_() {
-                 return new OptField</* bpchar, max 2 chars */ String, PViewRow>(_path, "class", PViewRow::class_, Optional.empty(), Optional.empty(), (row, value) -> row.withClass(value), PgTypes.text);
+                 return new OptField</* bpchar, max 2 chars */ String, PViewRow>(_path, "class", PViewRow::class_, Optional.empty(), Optional.empty(), (row, value) -> row.withClass(value), PgTypes.bpchar);
                };
                @Override
                public OptField</* bpchar, max 2 chars */ String, PViewRow> style() {
-                 return new OptField</* bpchar, max 2 chars */ String, PViewRow>(_path, "style", PViewRow::style, Optional.empty(), Optional.empty(), (row, value) -> row.withStyle(value), PgTypes.text);
+                 return new OptField</* bpchar, max 2 chars */ String, PViewRow>(_path, "style", PViewRow::style, Optional.empty(), Optional.empty(), (row, value) -> row.withStyle(value), PgTypes.bpchar);
                };
                @Override
                public OptField<ProductsubcategoryId, PViewRow> productsubcategoryid() {

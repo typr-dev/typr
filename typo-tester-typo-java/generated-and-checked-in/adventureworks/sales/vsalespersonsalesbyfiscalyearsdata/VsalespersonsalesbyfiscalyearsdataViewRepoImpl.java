@@ -7,13 +7,14 @@ package adventureworks.sales.vsalespersonsalesbyfiscalyearsdata;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class VsalespersonsalesbyfiscalyearsdataViewRepoImpl implements VsalespersonsalesbyfiscalyearsdataViewRepo {
   @Override
   public SelectBuilder<VsalespersonsalesbyfiscalyearsdataViewFields, VsalespersonsalesbyfiscalyearsdataViewRow> select() {
-    return SelectBuilder.of("sales.vsalespersonsalesbyfiscalyearsdata", VsalespersonsalesbyfiscalyearsdataViewFields.structure(), VsalespersonsalesbyfiscalyearsdataViewRow._rowParser);
+    return SelectBuilder.of("\"sales\".\"vsalespersonsalesbyfiscalyearsdata\"", VsalespersonsalesbyfiscalyearsdataViewFields.structure(), VsalespersonsalesbyfiscalyearsdataViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

@@ -85,11 +85,29 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
 
   override def renderTree(tree: jvm.Tree, ctx: Ctx): jvm.Code =
     tree match {
-      case jvm.IfExpr(pred, thenp, elsep) => code"(if ($pred) $thenp else $elsep)"
-      case jvm.IgnoreResult(expr)         => code"$expr: @${TypesScala.nowarn}"
-      case jvm.NotNull(expr)              => expr // Scala doesn't need not-null assertions
-      case jvm.ConstructorMethodRef(tpe)  => code"$tpe.apply"
-      case jvm.ClassOf(tpe)               => code"classOf[$tpe]"
+      case jvm.IfExpr(cond, thenp, elsep) => code"(if ($cond) $thenp else $elsep)"
+      case jvm.If(branches, elseBody) =>
+        val ifParts = branches.zipWithIndex.map { case (jvm.If.Branch(cond, body), idx) =>
+          val keyword = if (idx == 0) "if" else "else if"
+          code"""|$keyword ($cond) {
+                 |  $body
+                 |}""".stripMargin
+        }
+        val elsePart = elseBody
+          .map(e => code"""| else {
+                                                |  $e
+                                                |}""".stripMargin)
+          .getOrElse(jvm.Code.Empty)
+        ifParts.mkCode("") ++ elsePart
+      case jvm.While(cond, body) =>
+        val bodyCode = body.mkCode("\n")
+        code"""|while ($cond) {
+               |  $bodyCode
+               |}""".stripMargin
+      case jvm.IgnoreResult(expr)        => code"$expr: @${TypesScala.nowarn}"
+      case jvm.NotNull(expr)             => expr // Scala doesn't need not-null assertions
+      case jvm.ConstructorMethodRef(tpe) => code"$tpe.apply"
+      case jvm.ClassOf(tpe)              => code"classOf[$tpe]"
       case jvm.JavaClassOf(tpe)           => code"classOf[$tpe]" // Same as ClassOf for Scala
       case jvm.Call(target, argGroups) =>
         val renderedGroups = argGroups.map { group =>
@@ -629,8 +647,12 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
     code"(row, value) => row.copy($fieldName = value)"
 
   // Scala: array.foreach { elem => body }
-  override def arrayForEach(array: jvm.Code, elemVar: jvm.Ident, body: jvm.Code): jvm.Code =
-    code"$array.foreach { $elemVar => $body }"
+  override def arrayForEach(array: jvm.Code, elemVar: jvm.Ident, body: jvm.Body): jvm.Code =
+    body match {
+      case jvm.Body.Expr(expr)   => code"$array.foreach { $elemVar => $expr }"
+      case jvm.Body.Stmts(stmts) => code"$array.foreach { $elemVar => ${stmts.mkCode("; ")} }"
+      case jvm.Body.Abstract     => code"$array.foreach { _ => () }"
+    }
 
   // Scala: array.map(mapper)
   override def arrayMap(array: jvm.Code, mapper: jvm.Code, targetClass: jvm.Code): jvm.Code =
@@ -650,6 +672,17 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
   // Scala: Array.ofDim[Byte](size)
   override def newByteArray(size: jvm.Code): jvm.Code =
     code"${TypesScala.Array}.ofDim[${TypesScala.Byte}]($size)"
+
+  // Scala: Array[Byte]
+  override val ByteArrayType: jvm.Type = jvm.Type.ArrayOf(TypesScala.Byte)
+
+  // Scala/Java hybrid: When typeSupport is Java (java.lang.Byte), use MAX_VALUE; otherwise use MaxValue
+  override def maxValue(tpe: jvm.Type): jvm.Code = tpe match {
+    case TypesJava.Byte | TypesJava.Short | TypesJava.Integer | TypesJava.Long | TypesJava.Float | TypesJava.Double =>
+      code"$tpe.MAX_VALUE"
+    case _ =>
+      code"$tpe.MaxValue"
+  }
 
   // Scala: Array.fill(size)(factory)
   override def arrayFill(size: jvm.Code, factory: jvm.Code, elementType: jvm.Type): jvm.Code =

@@ -7,13 +7,14 @@ package adventureworks.humanresources.vemployeedepartment;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class VemployeedepartmentViewRepoImpl implements VemployeedepartmentViewRepo {
   @Override
   public SelectBuilder<VemployeedepartmentViewFields, VemployeedepartmentViewRow> select() {
-    return SelectBuilder.of("humanresources.vemployeedepartment", VemployeedepartmentViewFields.structure(), VemployeedepartmentViewRow._rowParser);
+    return SelectBuilder.of("\"humanresources\".\"vemployeedepartment\"", VemployeedepartmentViewFields.structure(), VemployeedepartmentViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

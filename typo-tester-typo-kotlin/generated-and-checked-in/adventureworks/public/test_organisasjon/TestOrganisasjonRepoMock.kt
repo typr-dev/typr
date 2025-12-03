@@ -37,9 +37,11 @@ data class TestOrganisasjonRepoMock(val map: MutableMap<TestOrganisasjonId, Test
     c: Connection
   ): Int {
     var count = 0
-    for (id in organisasjonskodes) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in organisasjonskodes) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -61,7 +63,7 @@ data class TestOrganisasjonRepoMock(val map: MutableMap<TestOrganisasjonId, Test
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.organisasjonskode] = row
       count = count + 1L
     }
@@ -81,9 +83,13 @@ data class TestOrganisasjonRepoMock(val map: MutableMap<TestOrganisasjonId, Test
     organisasjonskodes: Array<TestOrganisasjonId>,
     c: Connection
   ): List<TestOrganisasjonRow> {
-    var result = ArrayList<TestOrganisasjonRow>()
-    for (id in organisasjonskodes) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<TestOrganisasjonRow>()
+    for (id in organisasjonskodes) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -106,9 +112,9 @@ data class TestOrganisasjonRepoMock(val map: MutableMap<TestOrganisasjonId, Test
     unsaved: MutableIterator<TestOrganisasjonRow>,
     c: Connection
   ): List<TestOrganisasjonRow> {
-    var result = ArrayList<TestOrganisasjonRow>()
+    val result = ArrayList<TestOrganisasjonRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.organisasjonskode] = row
       result.add(row)
     }
@@ -123,7 +129,7 @@ data class TestOrganisasjonRepoMock(val map: MutableMap<TestOrganisasjonId, Test
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.organisasjonskode] = row
       count = count + 1
     }

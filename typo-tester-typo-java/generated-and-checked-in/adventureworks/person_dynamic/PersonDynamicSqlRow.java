@@ -43,5 +43,5 @@ public record PersonDynamicSqlRow(
     return new PersonDynamicSqlRow(title, firstname, middlename, lastname);
   };
 
-  static RowParser<PersonDynamicSqlRow> _rowParser = RowParsers.of(PgTypes.text.opt(), /* user-picked */ FirstName.pgType, Name.pgType.opt(), Name.pgType, PersonDynamicSqlRow::new, row -> new Object[]{row.title(), row.firstname(), row.middlename(), row.lastname()});;
+  static RowParser<PersonDynamicSqlRow> _rowParser = RowParsers.of(PgTypes.text.opt(), FirstName.pgType, Name.pgType.opt(), Name.pgType, PersonDynamicSqlRow::new, row -> new Object[]{row.title(), row.firstname(), row.middlename(), row.lastname()});;
 }

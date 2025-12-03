@@ -61,9 +61,11 @@ public record LocationRepoMock(
     Connection c
   ) {
     var count = 0;
-    for (var id : locationids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : locationids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -143,8 +145,12 @@ public record LocationRepoMock(
     Connection c
   ) {
     var result = new ArrayList<LocationRow>();
-    for (var id : locationids) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : locationids) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 
@@ -168,7 +174,7 @@ public record LocationRepoMock(
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.locationid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
     if (shouldUpdate) {
-      map.put(row.locationid(), row);
+      map.put(row.locationid(), row);;
     };
     return shouldUpdate;
   };

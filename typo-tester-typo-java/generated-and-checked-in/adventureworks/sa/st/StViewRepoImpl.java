@@ -7,13 +7,14 @@ package adventureworks.sa.st;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class StViewRepoImpl implements StViewRepo {
   @Override
   public SelectBuilder<StViewFields, StViewRow> select() {
-    return SelectBuilder.of("sa.st", StViewFields.structure(), StViewRow._rowParser);
+    return SelectBuilder.of("\"sa\".\"st\"", StViewFields.structure(), StViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

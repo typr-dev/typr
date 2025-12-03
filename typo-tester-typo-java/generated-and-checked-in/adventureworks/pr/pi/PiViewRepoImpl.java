@@ -7,13 +7,14 @@ package adventureworks.pr.pi;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class PiViewRepoImpl implements PiViewRepo {
   @Override
   public SelectBuilder<PiViewFields, PiViewRow> select() {
-    return SelectBuilder.of("pr.pi", PiViewFields.structure(), PiViewRow._rowParser);
+    return SelectBuilder.of("\"pr\".\"pi\"", PiViewFields.structure(), PiViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

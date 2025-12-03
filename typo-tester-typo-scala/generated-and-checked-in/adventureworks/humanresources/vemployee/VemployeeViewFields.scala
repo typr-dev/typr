@@ -91,7 +91,7 @@ object VemployeeViewFields {
             Optional.empty(),
             Optional.empty(),
             (row, value) => row.copy(firstname = value),
-            /* user-picked */ FirstName.pgType
+            FirstName.pgType
           )
         }
         override def middlename: OptField[Name, VemployeeViewRow] = {

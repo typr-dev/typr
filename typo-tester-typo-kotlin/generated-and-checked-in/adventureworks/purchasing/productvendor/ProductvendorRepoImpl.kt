@@ -17,6 +17,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -28,7 +29,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class ProductvendorRepoImpl() : ProductvendorRepo {
-  override fun delete(): DeleteBuilder<ProductvendorFields, ProductvendorRow> = DeleteBuilder.of("purchasing.productvendor", ProductvendorFields.structure)
+  override fun delete(): DeleteBuilder<ProductvendorFields, ProductvendorRow> = DeleteBuilder.of("\"purchasing\".\"productvendor\"", ProductvendorFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     compositeId: ProductvendorId,
@@ -200,7 +201,7 @@ class ProductvendorRepoImpl() : ProductvendorRepo {
   COPY "purchasing"."productvendor"("productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, ProductvendorRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<ProductvendorFields, ProductvendorRow> = SelectBuilder.of("purchasing.productvendor", ProductvendorFields.structure, ProductvendorRow._rowParser)
+  override fun select(): SelectBuilder<ProductvendorFields, ProductvendorRow> = SelectBuilder.of("\"purchasing\".\"productvendor\"", ProductvendorFields.structure, ProductvendorRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<ProductvendorRow> = interpolate(typo.runtime.Fragment.lit("""
     select "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text
@@ -254,7 +255,7 @@ class ProductvendorRepoImpl() : ProductvendorRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<ProductvendorFields, ProductvendorRow> = UpdateBuilder.of("purchasing.productvendor", ProductvendorFields.structure, ProductvendorRow._rowParser.all())
+  override fun update(): UpdateBuilder<ProductvendorFields, ProductvendorRow> = UpdateBuilder.of("\"purchasing\".\"productvendor\"", ProductvendorFields.structure, ProductvendorRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: ProductvendorRow,
@@ -351,8 +352,7 @@ class ProductvendorRepoImpl() : ProductvendorRepo {
       "onorderqty" = EXCLUDED."onorderqty",
       "unitmeasurecode" = EXCLUDED."unitmeasurecode",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text
-    """.trimMargin())
+      returning "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(ProductvendorRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -374,8 +374,7 @@ class ProductvendorRepoImpl() : ProductvendorRepo {
                                 "onorderqty" = EXCLUDED."onorderqty",
                                 "unitmeasurecode" = EXCLUDED."unitmeasurecode",
                                 "modifieddate" = EXCLUDED."modifieddate"
-                                returning "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text
-                              """.trimMargin()))
+                                returning "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(ProductvendorRow._rowParser, unsaved)
     .runUnchecked(c)
 

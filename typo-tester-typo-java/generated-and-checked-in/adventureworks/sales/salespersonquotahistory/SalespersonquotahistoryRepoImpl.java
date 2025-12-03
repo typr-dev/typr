@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -29,7 +30,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class SalespersonquotahistoryRepoImpl implements SalespersonquotahistoryRepo {
   @Override
   public DeleteBuilder<SalespersonquotahistoryFields, SalespersonquotahistoryRow> delete() {
-    return DeleteBuilder.of("sales.salespersonquotahistory", SalespersonquotahistoryFields.structure());
+    return DeleteBuilder.of("\"sales\".\"salespersonquotahistory\"", SalespersonquotahistoryFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -187,7 +188,7 @@ public class SalespersonquotahistoryRepoImpl implements SalespersonquotahistoryR
 
   @Override
   public SelectBuilder<SalespersonquotahistoryFields, SalespersonquotahistoryRow> select() {
-    return SelectBuilder.of("sales.salespersonquotahistory", SalespersonquotahistoryFields.structure(), SalespersonquotahistoryRow._rowParser);
+    return SelectBuilder.of("\"sales\".\"salespersonquotahistory\"", SalespersonquotahistoryFields.structure(), SalespersonquotahistoryRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -252,7 +253,7 @@ public class SalespersonquotahistoryRepoImpl implements SalespersonquotahistoryR
 
   @Override
   public UpdateBuilder<SalespersonquotahistoryFields, SalespersonquotahistoryRow> update() {
-    return UpdateBuilder.of("sales.salespersonquotahistory", SalespersonquotahistoryFields.structure(), SalespersonquotahistoryRow._rowParser.all());
+    return UpdateBuilder.of("\"sales\".\"salespersonquotahistory\"", SalespersonquotahistoryFields.structure(), SalespersonquotahistoryRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -311,8 +312,7 @@ public class SalespersonquotahistoryRepoImpl implements SalespersonquotahistoryR
            "salesquota" = EXCLUDED."salesquota",
          "rowguid" = EXCLUDED."rowguid",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text
-      """)
+         returning "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text""")
     )
       .updateReturning(SalespersonquotahistoryRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -331,8 +331,7 @@ public class SalespersonquotahistoryRepoImpl implements SalespersonquotahistoryR
                   "salesquota" = EXCLUDED."salesquota",
                 "rowguid" = EXCLUDED."rowguid",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text
-             """))
+                returning "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text"""))
       .updateManyReturning(SalespersonquotahistoryRow._rowParser, unsaved)
       .runUnchecked(c);
   };

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -26,7 +27,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class PhonenumbertypeRepoImpl implements PhonenumbertypeRepo {
   @Override
   public DeleteBuilder<PhonenumbertypeFields, PhonenumbertypeRow> delete() {
-    return DeleteBuilder.of("person.phonenumbertype", PhonenumbertypeFields.structure());
+    return DeleteBuilder.of("\"person\".\"phonenumbertype\"", PhonenumbertypeFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -160,7 +161,7 @@ public class PhonenumbertypeRepoImpl implements PhonenumbertypeRepo {
 
   @Override
   public SelectBuilder<PhonenumbertypeFields, PhonenumbertypeRow> select() {
-    return SelectBuilder.of("person.phonenumbertype", PhonenumbertypeFields.structure(), PhonenumbertypeRow._rowParser);
+    return SelectBuilder.of("\"person\".\"phonenumbertype\"", PhonenumbertypeFields.structure(), PhonenumbertypeRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -213,7 +214,7 @@ public class PhonenumbertypeRepoImpl implements PhonenumbertypeRepo {
 
   @Override
   public UpdateBuilder<PhonenumbertypeFields, PhonenumbertypeRow> update() {
-    return UpdateBuilder.of("person.phonenumbertype", PhonenumbertypeFields.structure(), PhonenumbertypeRow._rowParser.all());
+    return UpdateBuilder.of("\"person\".\"phonenumbertype\"", PhonenumbertypeFields.structure(), PhonenumbertypeRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -259,8 +260,7 @@ public class PhonenumbertypeRepoImpl implements PhonenumbertypeRepo {
          do update set
            "name" = EXCLUDED."name",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "phonenumbertypeid", "name", "modifieddate"::text
-      """)
+         returning "phonenumbertypeid", "name", "modifieddate"::text""")
     )
       .updateReturning(PhonenumbertypeRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -278,8 +278,7 @@ public class PhonenumbertypeRepoImpl implements PhonenumbertypeRepo {
                 do update set
                   "name" = EXCLUDED."name",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "phonenumbertypeid", "name", "modifieddate"::text
-             """))
+                returning "phonenumbertypeid", "name", "modifieddate"::text"""))
       .updateManyReturning(PhonenumbertypeRow._rowParser, unsaved)
       .runUnchecked(c);
   };

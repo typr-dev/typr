@@ -13,6 +13,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -22,7 +23,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ProductreviewRepoImpl extends ProductreviewRepo {
-  override def delete: DeleteBuilder[ProductreviewFields, ProductreviewRow] = DeleteBuilder.of("production.productreview", ProductreviewFields.structure)
+  override def delete: DeleteBuilder[ProductreviewFields, ProductreviewRow] = DeleteBuilder.of(""""production"."productreview"""", ProductreviewFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(productreviewid: ProductreviewId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."productreview" where "productreviewid" = ${ProductreviewId.pgType.encode(productreviewid)}""".update().runUnchecked(c) > 0
 
@@ -87,7 +88,7 @@ class ProductreviewRepoImpl extends ProductreviewRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."productreview"("productid", "reviewername", "emailaddress", "rating", "comments", "productreviewid", "reviewdate", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ProductreviewRowUnsaved.pgText)
 
-  override def select: SelectBuilder[ProductreviewFields, ProductreviewRow] = SelectBuilder.of("production.productreview", ProductreviewFields.structure, ProductreviewRow.`_rowParser`)
+  override def select: SelectBuilder[ProductreviewFields, ProductreviewRow] = SelectBuilder.of(""""production"."productreview"""", ProductreviewFields.structure, ProductreviewRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[ProductreviewRow] = {
     interpolate"""select "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text
@@ -113,7 +114,7 @@ class ProductreviewRepoImpl extends ProductreviewRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[ProductreviewFields, ProductreviewRow] = UpdateBuilder.of("production.productreview", ProductreviewFields.structure, ProductreviewRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ProductreviewFields, ProductreviewRow] = UpdateBuilder.of(""""production"."productreview"""", ProductreviewFields.structure, ProductreviewRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: ProductreviewRow)(using c: Connection): java.lang.Boolean = {
     val productreviewid: ProductreviewId = row.productreviewid
@@ -140,8 +141,7 @@ class ProductreviewRepoImpl extends ProductreviewRepo {
     "rating" = EXCLUDED."rating",
     "comments" = EXCLUDED."comments",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text
-    """
+    returning "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text"""
     .updateReturning(ProductreviewRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -158,8 +158,7 @@ class ProductreviewRepoImpl extends ProductreviewRepo {
     "rating" = EXCLUDED."rating",
     "comments" = EXCLUDED."comments",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text
-    """
+    returning "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text"""
       .updateManyReturning(ProductreviewRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -28,7 +29,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class ProductcosthistoryRepoImpl implements ProductcosthistoryRepo {
   @Override
   public DeleteBuilder<ProductcosthistoryFields, ProductcosthistoryRow> delete() {
-    return DeleteBuilder.of("production.productcosthistory", ProductcosthistoryFields.structure());
+    return DeleteBuilder.of("\"production\".\"productcosthistory\"", ProductcosthistoryFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -179,7 +180,7 @@ public class ProductcosthistoryRepoImpl implements ProductcosthistoryRepo {
 
   @Override
   public SelectBuilder<ProductcosthistoryFields, ProductcosthistoryRow> select() {
-    return SelectBuilder.of("production.productcosthistory", ProductcosthistoryFields.structure(), ProductcosthistoryRow._rowParser);
+    return SelectBuilder.of("\"production\".\"productcosthistory\"", ProductcosthistoryFields.structure(), ProductcosthistoryRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -244,7 +245,7 @@ public class ProductcosthistoryRepoImpl implements ProductcosthistoryRepo {
 
   @Override
   public UpdateBuilder<ProductcosthistoryFields, ProductcosthistoryRow> update() {
-    return UpdateBuilder.of("production.productcosthistory", ProductcosthistoryFields.structure(), ProductcosthistoryRow._rowParser.all());
+    return UpdateBuilder.of("\"production\".\"productcosthistory\"", ProductcosthistoryFields.structure(), ProductcosthistoryRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -303,8 +304,7 @@ public class ProductcosthistoryRepoImpl implements ProductcosthistoryRepo {
            "enddate" = EXCLUDED."enddate",
          "standardcost" = EXCLUDED."standardcost",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text
-      """)
+         returning "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text""")
     )
       .updateReturning(ProductcosthistoryRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -323,8 +323,7 @@ public class ProductcosthistoryRepoImpl implements ProductcosthistoryRepo {
                   "enddate" = EXCLUDED."enddate",
                 "standardcost" = EXCLUDED."standardcost",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text
-             """))
+                returning "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text"""))
       .updateManyReturning(ProductcosthistoryRow._rowParser, unsaved)
       .runUnchecked(c);
   };

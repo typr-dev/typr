@@ -13,6 +13,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -21,7 +22,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ProductmodelillustrationRepoImpl extends ProductmodelillustrationRepo {
-  override def delete: DeleteBuilder[ProductmodelillustrationFields, ProductmodelillustrationRow] = DeleteBuilder.of("production.productmodelillustration", ProductmodelillustrationFields.structure)
+  override def delete: DeleteBuilder[ProductmodelillustrationFields, ProductmodelillustrationRow] = DeleteBuilder.of(""""production"."productmodelillustration"""", ProductmodelillustrationFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(compositeId: ProductmodelillustrationId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."productmodelillustration" where "productmodelid" = ${ProductmodelId.pgType.encode(compositeId.productmodelid)} AND "illustrationid" = ${IllustrationId.pgType.encode(compositeId.illustrationid)}""".update().runUnchecked(c) > 0
 
@@ -74,7 +75,7 @@ class ProductmodelillustrationRepoImpl extends ProductmodelillustrationRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."productmodelillustration"("productmodelid", "illustrationid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ProductmodelillustrationRowUnsaved.pgText)
 
-  override def select: SelectBuilder[ProductmodelillustrationFields, ProductmodelillustrationRow] = SelectBuilder.of("production.productmodelillustration", ProductmodelillustrationFields.structure, ProductmodelillustrationRow.`_rowParser`)
+  override def select: SelectBuilder[ProductmodelillustrationFields, ProductmodelillustrationRow] = SelectBuilder.of(""""production"."productmodelillustration"""", ProductmodelillustrationFields.structure, ProductmodelillustrationRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[ProductmodelillustrationRow] = {
     interpolate"""select "productmodelid", "illustrationid", "modifieddate"::text
@@ -104,7 +105,7 @@ class ProductmodelillustrationRepoImpl extends ProductmodelillustrationRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[ProductmodelillustrationFields, ProductmodelillustrationRow] = UpdateBuilder.of("production.productmodelillustration", ProductmodelillustrationFields.structure, ProductmodelillustrationRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ProductmodelillustrationFields, ProductmodelillustrationRow] = UpdateBuilder.of(""""production"."productmodelillustration"""", ProductmodelillustrationFields.structure, ProductmodelillustrationRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: ProductmodelillustrationRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: ProductmodelillustrationId = row.compositeId
@@ -119,8 +120,7 @@ class ProductmodelillustrationRepoImpl extends ProductmodelillustrationRepo {
     on conflict ("productmodelid", "illustrationid")
     do update set
       "modifieddate" = EXCLUDED."modifieddate"
-    returning "productmodelid", "illustrationid", "modifieddate"::text
-    """
+    returning "productmodelid", "illustrationid", "modifieddate"::text"""
     .updateReturning(ProductmodelillustrationRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -131,8 +131,7 @@ class ProductmodelillustrationRepoImpl extends ProductmodelillustrationRepo {
     on conflict ("productmodelid", "illustrationid")
     do update set
       "modifieddate" = EXCLUDED."modifieddate"
-    returning "productmodelid", "illustrationid", "modifieddate"::text
-    """
+    returning "productmodelid", "illustrationid", "modifieddate"::text"""
       .updateManyReturning(ProductmodelillustrationRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

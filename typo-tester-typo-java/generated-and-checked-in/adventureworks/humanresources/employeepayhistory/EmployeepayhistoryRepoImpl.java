@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -29,7 +30,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class EmployeepayhistoryRepoImpl implements EmployeepayhistoryRepo {
   @Override
   public DeleteBuilder<EmployeepayhistoryFields, EmployeepayhistoryRow> delete() {
-    return DeleteBuilder.of("humanresources.employeepayhistory", EmployeepayhistoryFields.structure());
+    return DeleteBuilder.of("\"humanresources\".\"employeepayhistory\"", EmployeepayhistoryFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -180,7 +181,7 @@ public class EmployeepayhistoryRepoImpl implements EmployeepayhistoryRepo {
 
   @Override
   public SelectBuilder<EmployeepayhistoryFields, EmployeepayhistoryRow> select() {
-    return SelectBuilder.of("humanresources.employeepayhistory", EmployeepayhistoryFields.structure(), EmployeepayhistoryRow._rowParser);
+    return SelectBuilder.of("\"humanresources\".\"employeepayhistory\"", EmployeepayhistoryFields.structure(), EmployeepayhistoryRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -245,7 +246,7 @@ public class EmployeepayhistoryRepoImpl implements EmployeepayhistoryRepo {
 
   @Override
   public UpdateBuilder<EmployeepayhistoryFields, EmployeepayhistoryRow> update() {
-    return UpdateBuilder.of("humanresources.employeepayhistory", EmployeepayhistoryFields.structure(), EmployeepayhistoryRow._rowParser.all());
+    return UpdateBuilder.of("\"humanresources\".\"employeepayhistory\"", EmployeepayhistoryFields.structure(), EmployeepayhistoryRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -304,8 +305,7 @@ public class EmployeepayhistoryRepoImpl implements EmployeepayhistoryRepo {
            "rate" = EXCLUDED."rate",
          "payfrequency" = EXCLUDED."payfrequency",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text
-      """)
+         returning "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text""")
     )
       .updateReturning(EmployeepayhistoryRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -324,8 +324,7 @@ public class EmployeepayhistoryRepoImpl implements EmployeepayhistoryRepo {
                   "rate" = EXCLUDED."rate",
                 "payfrequency" = EXCLUDED."payfrequency",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text
-             """))
+                returning "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text"""))
       .updateManyReturning(EmployeepayhistoryRow._rowParser, unsaved)
       .runUnchecked(c);
   };

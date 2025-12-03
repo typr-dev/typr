@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.runtime.PgTypes;
 import typo.runtime.internal.arrayMap;
@@ -19,7 +20,7 @@ import static typo.runtime.Fragment.interpolate;
 public class PurchaseorderdetailRepoImpl implements PurchaseorderdetailRepo {
   @Override
   public SelectBuilder<PurchaseorderdetailFields, PurchaseorderdetailRow> select() {
-    return SelectBuilder.of("purchasing.purchaseorderdetail", PurchaseorderdetailFields.structure(), PurchaseorderdetailRow._rowParser);
+    return SelectBuilder.of("\"purchasing\".\"purchaseorderdetail\"", PurchaseorderdetailFields.structure(), PurchaseorderdetailRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

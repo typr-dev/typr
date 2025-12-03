@@ -7,13 +7,14 @@ package adventureworks.pr.c;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class CViewRepoImpl implements CViewRepo {
   @Override
   public SelectBuilder<CViewFields, CViewRow> select() {
-    return SelectBuilder.of("pr.c", CViewFields.structure(), CViewRow._rowParser);
+    return SelectBuilder.of("\"pr\".\"c\"", CViewFields.structure(), CViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

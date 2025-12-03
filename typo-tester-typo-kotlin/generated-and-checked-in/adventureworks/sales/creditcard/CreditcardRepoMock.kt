@@ -41,9 +41,11 @@ data class CreditcardRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in creditcardids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in creditcardids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -70,7 +72,7 @@ data class CreditcardRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.creditcardid] = row
       count = count + 1L
     }
@@ -85,8 +87,8 @@ data class CreditcardRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.creditcardid] = row
       count = count + 1L
     }
@@ -106,9 +108,13 @@ data class CreditcardRepoMock(
     creditcardids: Array</* user-picked */ CustomCreditcardId>,
     c: Connection
   ): List<CreditcardRow> {
-    var result = ArrayList<CreditcardRow>()
-    for (id in creditcardids) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<CreditcardRow>()
+    for (id in creditcardids) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -142,9 +148,9 @@ data class CreditcardRepoMock(
     unsaved: MutableIterator<CreditcardRow>,
     c: Connection
   ): List<CreditcardRow> {
-    var result = ArrayList<CreditcardRow>()
+    val result = ArrayList<CreditcardRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.creditcardid] = row
       result.add(row)
     }
@@ -159,7 +165,7 @@ data class CreditcardRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.creditcardid] = row
       count = count + 1
     }

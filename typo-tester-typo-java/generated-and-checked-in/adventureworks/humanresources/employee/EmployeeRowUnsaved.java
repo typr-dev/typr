@@ -212,9 +212,9 @@ public record EmployeeRowUnsaved(
       sb.append(PgText.DELIMETER);
       TypoLocalDate.pgType.pgText().unsafeEncode(row.birthdate, sb);
       sb.append(PgText.DELIMETER);
-      PgTypes.text.pgText().unsafeEncode(row.maritalstatus, sb);
+      PgTypes.bpchar.pgText().unsafeEncode(row.maritalstatus, sb);
       sb.append(PgText.DELIMETER);
-      PgTypes.text.pgText().unsafeEncode(row.gender, sb);
+      PgTypes.bpchar.pgText().unsafeEncode(row.gender, sb);
       sb.append(PgText.DELIMETER);
       TypoLocalDate.pgType.pgText().unsafeEncode(row.hiredate, sb);
       sb.append(PgText.DELIMETER);

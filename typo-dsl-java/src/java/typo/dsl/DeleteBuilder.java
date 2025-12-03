@@ -21,8 +21,9 @@ public interface DeleteBuilder<Fields, Row> {
      */
     static <Fields, Row> DeleteBuilder<Fields, Row> of(
             String tableName,
-            Structure.Relation<Fields, Row> structure) {
-        return new DeleteBuilderSql<>(tableName, RenderCtx.EMPTY, structure, DeleteParams.empty());
+            Structure.Relation<Fields, Row> structure,
+            Dialect dialect) {
+        return new DeleteBuilderSql<>(tableName, RenderCtx.of(dialect), structure, DeleteParams.empty());
     }
 
     /**

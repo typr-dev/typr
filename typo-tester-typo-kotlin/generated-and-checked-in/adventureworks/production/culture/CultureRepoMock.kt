@@ -40,9 +40,11 @@ data class CultureRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in cultureids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in cultureids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -69,7 +71,7 @@ data class CultureRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.cultureid] = row
       count = count + 1L
     }
@@ -84,8 +86,8 @@ data class CultureRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.cultureid] = row
       count = count + 1L
     }
@@ -105,9 +107,13 @@ data class CultureRepoMock(
     cultureids: Array<CultureId>,
     c: Connection
   ): List<CultureRow> {
-    var result = ArrayList<CultureRow>()
-    for (id in cultureids) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<CultureRow>()
+    for (id in cultureids) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -141,9 +147,9 @@ data class CultureRepoMock(
     unsaved: MutableIterator<CultureRow>,
     c: Connection
   ): List<CultureRow> {
-    var result = ArrayList<CultureRow>()
+    val result = ArrayList<CultureRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.cultureid] = row
       result.add(row)
     }
@@ -158,7 +164,7 @@ data class CultureRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.cultureid] = row
       count = count + 1
     }

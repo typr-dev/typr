@@ -40,9 +40,11 @@ data class ShoppingcartitemRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in shoppingcartitemids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in shoppingcartitemids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -69,7 +71,7 @@ data class ShoppingcartitemRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.shoppingcartitemid] = row
       count = count + 1L
     }
@@ -84,8 +86,8 @@ data class ShoppingcartitemRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.shoppingcartitemid] = row
       count = count + 1L
     }
@@ -105,9 +107,13 @@ data class ShoppingcartitemRepoMock(
     shoppingcartitemids: Array<ShoppingcartitemId>,
     c: Connection
   ): List<ShoppingcartitemRow> {
-    var result = ArrayList<ShoppingcartitemRow>()
-    for (id in shoppingcartitemids) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<ShoppingcartitemRow>()
+    for (id in shoppingcartitemids) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -141,9 +147,9 @@ data class ShoppingcartitemRepoMock(
     unsaved: MutableIterator<ShoppingcartitemRow>,
     c: Connection
   ): List<ShoppingcartitemRow> {
-    var result = ArrayList<ShoppingcartitemRow>()
+    val result = ArrayList<ShoppingcartitemRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.shoppingcartitemid] = row
       result.add(row)
     }
@@ -158,7 +164,7 @@ data class ShoppingcartitemRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.shoppingcartitemid] = row
       count = count + 1
     }

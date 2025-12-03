@@ -61,9 +61,11 @@ public record WorkorderRepoMock(
     Connection c
   ) {
     var count = 0;
-    for (var id : workorderids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : workorderids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -143,8 +145,12 @@ public record WorkorderRepoMock(
     Connection c
   ) {
     var result = new ArrayList<WorkorderRow>();
-    for (var id : workorderids) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : workorderids) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 
@@ -168,7 +174,7 @@ public record WorkorderRepoMock(
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.workorderid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
     if (shouldUpdate) {
-      map.put(row.workorderid(), row);
+      map.put(row.workorderid(), row);;
     };
     return shouldUpdate;
   };

@@ -12,6 +12,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -21,7 +22,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class LocationRepoImpl extends LocationRepo {
-  override def delete: DeleteBuilder[LocationFields, LocationRow] = DeleteBuilder.of("production.location", LocationFields.structure)
+  override def delete: DeleteBuilder[LocationFields, LocationRow] = DeleteBuilder.of(""""production"."location"""", LocationFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(locationid: LocationId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."location" where "locationid" = ${LocationId.pgType.encode(locationid)}""".update().runUnchecked(c) > 0
 
@@ -82,7 +83,7 @@ class LocationRepoImpl extends LocationRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."location"("name", "locationid", "costrate", "availability", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, LocationRowUnsaved.pgText)
 
-  override def select: SelectBuilder[LocationFields, LocationRow] = SelectBuilder.of("production.location", LocationFields.structure, LocationRow.`_rowParser`)
+  override def select: SelectBuilder[LocationFields, LocationRow] = SelectBuilder.of(""""production"."location"""", LocationFields.structure, LocationRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[LocationRow] = {
     interpolate"""select "locationid", "name", "costrate", "availability", "modifieddate"::text
@@ -108,7 +109,7 @@ class LocationRepoImpl extends LocationRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[LocationFields, LocationRow] = UpdateBuilder.of("production.location", LocationFields.structure, LocationRow.`_rowParser`.all())
+  override def update: UpdateBuilder[LocationFields, LocationRow] = UpdateBuilder.of(""""production"."location"""", LocationFields.structure, LocationRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: LocationRow)(using c: Connection): java.lang.Boolean = {
     val locationid: LocationId = row.locationid
@@ -129,8 +130,7 @@ class LocationRepoImpl extends LocationRepo {
     "costrate" = EXCLUDED."costrate",
     "availability" = EXCLUDED."availability",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "locationid", "name", "costrate", "availability", "modifieddate"::text
-    """
+    returning "locationid", "name", "costrate", "availability", "modifieddate"::text"""
     .updateReturning(LocationRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -144,8 +144,7 @@ class LocationRepoImpl extends LocationRepo {
     "costrate" = EXCLUDED."costrate",
     "availability" = EXCLUDED."availability",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "locationid", "name", "costrate", "availability", "modifieddate"::text
-    """
+    returning "locationid", "name", "costrate", "availability", "modifieddate"::text"""
       .updateManyReturning(LocationRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

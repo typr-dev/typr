@@ -5,6 +5,7 @@
  */
 package adventureworks.person_detail
 
+import adventureworks.customtypes.TypoUUID
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.public.Name
 import adventureworks.userdefined.FirstName
@@ -41,7 +42,7 @@ case class PersonDetailSqlRow(
   /** Points to [[adventureworks.person.address.AddressRow.postalcode]] */
   postalcode: Option[/* max 15 chars */ String],
   /** Points to [[adventureworks.person.address.AddressRow.rowguid]] */
-  rowguid: /* user-picked */ String
+  rowguid: Option[TypoUUID]
 )
 
 object PersonDetailSqlRow {
@@ -58,7 +59,7 @@ object PersonDetailSqlRow {
             addressline1 = json.\("addressline1").toOption.map(_.as(Reads.StringReads)),
             city = json.\("city").toOption.map(_.as(Reads.StringReads)),
             postalcode = json.\("postalcode").toOption.map(_.as(Reads.StringReads)),
-            rowguid = json.\("rowguid").as(Reads.StringReads)
+            rowguid = json.\("rowguid").toOption.map(_.as(TypoUUID.reads))
           )
         )
       ),
@@ -78,7 +79,7 @@ object PersonDetailSqlRow {
           addressline1 = row(idx + 6)(Column.columnToOption(Column.columnToString)),
           city = row(idx + 7)(Column.columnToOption(Column.columnToString)),
           postalcode = row(idx + 8)(Column.columnToOption(Column.columnToString)),
-          rowguid = row(idx + 9)(Column.columnToString)
+          rowguid = row(idx + 9)(Column.columnToOption(TypoUUID.column))
         )
       )
     }
@@ -96,7 +97,7 @@ object PersonDetailSqlRow {
         "addressline1" -> Writes.OptionWrites(Writes.StringWrites).writes(o.addressline1),
         "city" -> Writes.OptionWrites(Writes.StringWrites).writes(o.city),
         "postalcode" -> Writes.OptionWrites(Writes.StringWrites).writes(o.postalcode),
-        "rowguid" -> Writes.StringWrites.writes(o.rowguid)
+        "rowguid" -> Writes.OptionWrites(TypoUUID.writes).writes(o.rowguid)
       ))
     )
   }

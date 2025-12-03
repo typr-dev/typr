@@ -6,11 +6,12 @@
 package adventureworks.pr.ppp
 
 import java.sql.Connection
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PppViewRepoImpl extends PppViewRepo {
-  override def select: SelectBuilder[PppViewFields, PppViewRow] = SelectBuilder.of("pr.ppp", PppViewFields.structure, PppViewRow.`_rowParser`)
+  override def select: SelectBuilder[PppViewFields, PppViewRow] = SelectBuilder.of(""""pr"."ppp"""", PppViewFields.structure, PppViewRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[PppViewRow] = {
     interpolate"""select "productid", "productphotoid", "primary", "modifieddate"::text

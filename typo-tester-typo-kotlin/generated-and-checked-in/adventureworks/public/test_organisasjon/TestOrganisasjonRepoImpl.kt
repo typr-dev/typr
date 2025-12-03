@@ -12,6 +12,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.streamingInsert
@@ -19,7 +20,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class TestOrganisasjonRepoImpl() : TestOrganisasjonRepo {
-  override fun delete(): DeleteBuilder<TestOrganisasjonFields, TestOrganisasjonRow> = DeleteBuilder.of("public.test_organisasjon", TestOrganisasjonFields.structure)
+  override fun delete(): DeleteBuilder<TestOrganisasjonFields, TestOrganisasjonRow> = DeleteBuilder.of("\"public\".\"test_organisasjon\"", TestOrganisasjonFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     organisasjonskode: TestOrganisasjonId,
@@ -69,7 +70,7 @@ class TestOrganisasjonRepoImpl() : TestOrganisasjonRepo {
   COPY "public"."test_organisasjon"("organisasjonskode") FROM STDIN
   """.trimMargin()), batchSize, unsaved, c, TestOrganisasjonRow.pgText)
 
-  override fun select(): SelectBuilder<TestOrganisasjonFields, TestOrganisasjonRow> = SelectBuilder.of("public.test_organisasjon", TestOrganisasjonFields.structure, TestOrganisasjonRow._rowParser)
+  override fun select(): SelectBuilder<TestOrganisasjonFields, TestOrganisasjonRow> = SelectBuilder.of("\"public\".\"test_organisasjon\"", TestOrganisasjonFields.structure, TestOrganisasjonRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<TestOrganisasjonRow> = interpolate(typo.runtime.Fragment.lit("""
     select "organisasjonskode"
@@ -109,7 +110,7 @@ class TestOrganisasjonRepoImpl() : TestOrganisasjonRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<TestOrganisasjonFields, TestOrganisasjonRow> = UpdateBuilder.of("public.test_organisasjon", TestOrganisasjonFields.structure, TestOrganisasjonRow._rowParser.all())
+  override fun update(): UpdateBuilder<TestOrganisasjonFields, TestOrganisasjonRow> = UpdateBuilder.of("\"public\".\"test_organisasjon\"", TestOrganisasjonFields.structure, TestOrganisasjonRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun upsert(
     unsaved: TestOrganisasjonRow,
@@ -123,8 +124,7 @@ class TestOrganisasjonRepoImpl() : TestOrganisasjonRepo {
       )
       on conflict ("organisasjonskode")
       do update set "organisasjonskode" = EXCLUDED."organisasjonskode"
-      returning "organisasjonskode"
-    """.trimMargin())
+      returning "organisasjonskode"""".trimMargin())
   )
     .updateReturning(TestOrganisasjonRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -136,9 +136,8 @@ class TestOrganisasjonRepoImpl() : TestOrganisasjonRepo {
                                    insert into "public"."test_organisasjon"("organisasjonskode")
                                    values (?)
                                    on conflict ("organisasjonskode")
-                                   do nothing
-                                   returning "organisasjonskode"
-                                 """.trimMargin()))
+                                   do update set "organisasjonskode" = EXCLUDED."organisasjonskode"
+                                   returning "organisasjonskode"""".trimMargin()))
     .updateManyReturning(TestOrganisasjonRow._rowParser, unsaved)
     .runUnchecked(c)
 

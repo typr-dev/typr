@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.PgTypes;
@@ -24,7 +25,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class FlaffRepoImpl implements FlaffRepo {
   @Override
   public DeleteBuilder<FlaffFields, FlaffRow> delete() {
-    return DeleteBuilder.of("public.flaff", FlaffFields.structure());
+    return DeleteBuilder.of("\"public\".\"flaff\"", FlaffFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -121,7 +122,7 @@ public class FlaffRepoImpl implements FlaffRepo {
 
   @Override
   public SelectBuilder<FlaffFields, FlaffRow> select() {
-    return SelectBuilder.of("public.flaff", FlaffFields.structure(), FlaffRow._rowParser);
+    return SelectBuilder.of("\"public\".\"flaff\"", FlaffFields.structure(), FlaffRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -200,7 +201,7 @@ public class FlaffRepoImpl implements FlaffRepo {
 
   @Override
   public UpdateBuilder<FlaffFields, FlaffRow> update() {
-    return UpdateBuilder.of("public.flaff", FlaffFields.structure(), FlaffRow._rowParser.all());
+    return UpdateBuilder.of("\"public\".\"flaff\"", FlaffFields.structure(), FlaffRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -257,8 +258,7 @@ public class FlaffRepoImpl implements FlaffRepo {
          on conflict ("code", "another_code", "some_number", "specifier")
          do update set
            "parentspecifier" = EXCLUDED."parentspecifier"
-         returning "code", "another_code", "some_number", "specifier", "parentspecifier"
-      """)
+         returning "code", "another_code", "some_number", "specifier", "parentspecifier\"""")
     )
       .updateReturning(FlaffRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -275,8 +275,7 @@ public class FlaffRepoImpl implements FlaffRepo {
                 on conflict ("code", "another_code", "some_number", "specifier")
                 do update set
                   "parentspecifier" = EXCLUDED."parentspecifier"
-                returning "code", "another_code", "some_number", "specifier", "parentspecifier"
-             """))
+                returning "code", "another_code", "some_number", "specifier", "parentspecifier\""""))
       .updateManyReturning(FlaffRow._rowParser, unsaved)
       .runUnchecked(c);
   };

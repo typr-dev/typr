@@ -7,11 +7,12 @@ package adventureworks.humanresources.vemployeedepartment
 
 import java.sql.Connection
 import kotlin.collections.List
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.Fragment.interpolate
 
 class VemployeedepartmentViewRepoImpl() : VemployeedepartmentViewRepo {
-  override fun select(): SelectBuilder<VemployeedepartmentViewFields, VemployeedepartmentViewRow> = SelectBuilder.of("humanresources.vemployeedepartment", VemployeedepartmentViewFields.structure, VemployeedepartmentViewRow._rowParser)
+  override fun select(): SelectBuilder<VemployeedepartmentViewFields, VemployeedepartmentViewRow> = SelectBuilder.of("\"humanresources\".\"vemployeedepartment\"", VemployeedepartmentViewFields.structure, VemployeedepartmentViewRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<VemployeedepartmentViewRow> = interpolate(typo.runtime.Fragment.lit("""
     select "businessentityid", "title", "firstname", "middlename", "lastname", "suffix", "jobtitle", "department", "groupname", "startdate"::text

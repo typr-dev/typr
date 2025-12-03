@@ -33,7 +33,7 @@ public interface VstateprovincecountryregionMVFields {
                };
                @Override
                public Field</* bpchar, max 3 chars */ String, VstateprovincecountryregionMVRow> stateprovincecode() {
-                 return new Field</* bpchar, max 3 chars */ String, VstateprovincecountryregionMVRow>(_path, "stateprovincecode", VstateprovincecountryregionMVRow::stateprovincecode, Optional.empty(), Optional.empty(), (row, value) -> row.withStateprovincecode(value), PgTypes.text);
+                 return new Field</* bpchar, max 3 chars */ String, VstateprovincecountryregionMVRow>(_path, "stateprovincecode", VstateprovincecountryregionMVRow::stateprovincecode, Optional.empty(), Optional.empty(), (row, value) -> row.withStateprovincecode(value), PgTypes.bpchar);
                };
                @Override
                public Field<Flag, VstateprovincecountryregionMVRow> isonlystateprovinceflag() {

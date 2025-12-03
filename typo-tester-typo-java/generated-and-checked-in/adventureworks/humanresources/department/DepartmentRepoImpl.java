@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -26,7 +27,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class DepartmentRepoImpl implements DepartmentRepo {
   @Override
   public DeleteBuilder<DepartmentFields, DepartmentRow> delete() {
-    return DeleteBuilder.of("humanresources.department", DepartmentFields.structure());
+    return DeleteBuilder.of("\"humanresources\".\"department\"", DepartmentFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -167,7 +168,7 @@ public class DepartmentRepoImpl implements DepartmentRepo {
 
   @Override
   public SelectBuilder<DepartmentFields, DepartmentRow> select() {
-    return SelectBuilder.of("humanresources.department", DepartmentFields.structure(), DepartmentRow._rowParser);
+    return SelectBuilder.of("\"humanresources\".\"department\"", DepartmentFields.structure(), DepartmentRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -220,7 +221,7 @@ public class DepartmentRepoImpl implements DepartmentRepo {
 
   @Override
   public UpdateBuilder<DepartmentFields, DepartmentRow> update() {
-    return UpdateBuilder.of("humanresources.department", DepartmentFields.structure(), DepartmentRow._rowParser.all());
+    return UpdateBuilder.of("\"humanresources\".\"department\"", DepartmentFields.structure(), DepartmentRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -273,8 +274,7 @@ public class DepartmentRepoImpl implements DepartmentRepo {
            "name" = EXCLUDED."name",
          "groupname" = EXCLUDED."groupname",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "departmentid", "name", "groupname", "modifieddate"::text
-      """)
+         returning "departmentid", "name", "groupname", "modifieddate"::text""")
     )
       .updateReturning(DepartmentRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -293,8 +293,7 @@ public class DepartmentRepoImpl implements DepartmentRepo {
                   "name" = EXCLUDED."name",
                 "groupname" = EXCLUDED."groupname",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "departmentid", "name", "groupname", "modifieddate"::text
-             """))
+                returning "departmentid", "name", "groupname", "modifieddate"::text"""))
       .updateManyReturning(DepartmentRow._rowParser, unsaved)
       .runUnchecked(c);
   };

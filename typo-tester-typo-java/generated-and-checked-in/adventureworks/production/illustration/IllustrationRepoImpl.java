@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -26,7 +27,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class IllustrationRepoImpl implements IllustrationRepo {
   @Override
   public DeleteBuilder<IllustrationFields, IllustrationRow> delete() {
-    return DeleteBuilder.of("production.illustration", IllustrationFields.structure());
+    return DeleteBuilder.of("\"production\".\"illustration\"", IllustrationFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -160,7 +161,7 @@ public class IllustrationRepoImpl implements IllustrationRepo {
 
   @Override
   public SelectBuilder<IllustrationFields, IllustrationRow> select() {
-    return SelectBuilder.of("production.illustration", IllustrationFields.structure(), IllustrationRow._rowParser);
+    return SelectBuilder.of("\"production\".\"illustration\"", IllustrationFields.structure(), IllustrationRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -213,7 +214,7 @@ public class IllustrationRepoImpl implements IllustrationRepo {
 
   @Override
   public UpdateBuilder<IllustrationFields, IllustrationRow> update() {
-    return UpdateBuilder.of("production.illustration", IllustrationFields.structure(), IllustrationRow._rowParser.all());
+    return UpdateBuilder.of("\"production\".\"illustration\"", IllustrationFields.structure(), IllustrationRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -259,8 +260,7 @@ public class IllustrationRepoImpl implements IllustrationRepo {
          do update set
            "diagram" = EXCLUDED."diagram",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "illustrationid", "diagram", "modifieddate"::text
-      """)
+         returning "illustrationid", "diagram", "modifieddate"::text""")
     )
       .updateReturning(IllustrationRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -278,8 +278,7 @@ public class IllustrationRepoImpl implements IllustrationRepo {
                 do update set
                   "diagram" = EXCLUDED."diagram",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "illustrationid", "diagram", "modifieddate"::text
-             """))
+                returning "illustrationid", "diagram", "modifieddate"::text"""))
       .updateManyReturning(IllustrationRow._rowParser, unsaved)
       .runUnchecked(c);
   };

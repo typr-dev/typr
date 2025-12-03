@@ -18,6 +18,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -27,7 +28,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ProductRepoImpl extends ProductRepo {
-  override def delete: DeleteBuilder[ProductFields, ProductRow] = DeleteBuilder.of("production.product", ProductFields.structure)
+  override def delete: DeleteBuilder[ProductFields, ProductRow] = DeleteBuilder.of(""""production"."product"""", ProductFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(productid: ProductId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."product" where "productid" = ${ProductId.pgType.encode(productid)}""".update().runUnchecked(c) > 0
 
@@ -130,7 +131,7 @@ class ProductRepoImpl extends ProductRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."product"("name", "productnumber", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "productid", "makeflag", "finishedgoodsflag", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ProductRowUnsaved.pgText)
 
-  override def select: SelectBuilder[ProductFields, ProductRow] = SelectBuilder.of("production.product", ProductFields.structure, ProductRow.`_rowParser`)
+  override def select: SelectBuilder[ProductFields, ProductRow] = SelectBuilder.of(""""production"."product"""", ProductFields.structure, ProductRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[ProductRow] = {
     interpolate"""select "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text
@@ -156,7 +157,7 @@ class ProductRepoImpl extends ProductRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[ProductFields, ProductRow] = UpdateBuilder.of("production.product", ProductFields.structure, ProductRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ProductFields, ProductRow] = UpdateBuilder.of(""""production"."product"""", ProductFields.structure, ProductRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: ProductRow)(using c: Connection): java.lang.Boolean = {
     val productid: ProductId = row.productid
@@ -217,8 +218,7 @@ class ProductRepoImpl extends ProductRepo {
     "discontinueddate" = EXCLUDED."discontinueddate",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text
-    """
+    returning "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text"""
     .updateReturning(ProductRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -252,8 +252,7 @@ class ProductRepoImpl extends ProductRepo {
     "discontinueddate" = EXCLUDED."discontinueddate",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text
-    """
+    returning "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate"::text, "sellenddate"::text, "discontinueddate"::text, "rowguid", "modifieddate"::text"""
       .updateManyReturning(ProductRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

@@ -15,6 +15,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -24,7 +25,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class SalestaxrateRepoImpl extends SalestaxrateRepo {
-  override def delete: DeleteBuilder[SalestaxrateFields, SalestaxrateRow] = DeleteBuilder.of("sales.salestaxrate", SalestaxrateFields.structure)
+  override def delete: DeleteBuilder[SalestaxrateFields, SalestaxrateRow] = DeleteBuilder.of(""""sales"."salestaxrate"""", SalestaxrateFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(salestaxrateid: SalestaxrateId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."salestaxrate" where "salestaxrateid" = ${SalestaxrateId.pgType.encode(salestaxrateid)}""".update().runUnchecked(c) > 0
 
@@ -89,7 +90,7 @@ class SalestaxrateRepoImpl extends SalestaxrateRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."salestaxrate"("stateprovinceid", "taxtype", "name", "salestaxrateid", "taxrate", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, SalestaxrateRowUnsaved.pgText)
 
-  override def select: SelectBuilder[SalestaxrateFields, SalestaxrateRow] = SelectBuilder.of("sales.salestaxrate", SalestaxrateFields.structure, SalestaxrateRow.`_rowParser`)
+  override def select: SelectBuilder[SalestaxrateFields, SalestaxrateRow] = SelectBuilder.of(""""sales"."salestaxrate"""", SalestaxrateFields.structure, SalestaxrateRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[SalestaxrateRow] = {
     interpolate"""select "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"::text
@@ -115,7 +116,7 @@ class SalestaxrateRepoImpl extends SalestaxrateRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[SalestaxrateFields, SalestaxrateRow] = UpdateBuilder.of("sales.salestaxrate", SalestaxrateFields.structure, SalestaxrateRow.`_rowParser`.all())
+  override def update: UpdateBuilder[SalestaxrateFields, SalestaxrateRow] = UpdateBuilder.of(""""sales"."salestaxrate"""", SalestaxrateFields.structure, SalestaxrateRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: SalestaxrateRow)(using c: Connection): java.lang.Boolean = {
     val salestaxrateid: SalestaxrateId = row.salestaxrateid
@@ -140,8 +141,7 @@ class SalestaxrateRepoImpl extends SalestaxrateRepo {
     "name" = EXCLUDED."name",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"::text
-    """
+    returning "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"::text"""
     .updateReturning(SalestaxrateRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -157,8 +157,7 @@ class SalestaxrateRepoImpl extends SalestaxrateRepo {
     "name" = EXCLUDED."name",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"::text
-    """
+    returning "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"::text"""
       .updateManyReturning(SalestaxrateRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

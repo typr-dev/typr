@@ -7,11 +7,12 @@ package adventureworks.pr.bom
 
 import java.sql.Connection
 import kotlin.collections.List
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.Fragment.interpolate
 
 class BomViewRepoImpl() : BomViewRepo {
-  override fun select(): SelectBuilder<BomViewFields, BomViewRow> = SelectBuilder.of("pr.bom", BomViewFields.structure, BomViewRow._rowParser)
+  override fun select(): SelectBuilder<BomViewFields, BomViewRow> = SelectBuilder.of("\"pr\".\"bom\"", BomViewFields.structure, BomViewRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<BomViewRow> = interpolate(typo.runtime.Fragment.lit("""
     select "id", "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text

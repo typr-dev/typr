@@ -92,8 +92,9 @@ case class ScrapreasonRepoMock(
 
   override def selectByIds(scrapreasonids: Array[ScrapreasonId])(using c: Connection): java.util.List[ScrapreasonRow] = {
     val result = new ArrayList[ScrapreasonRow]()
-    scrapreasonids.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    scrapreasonids.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

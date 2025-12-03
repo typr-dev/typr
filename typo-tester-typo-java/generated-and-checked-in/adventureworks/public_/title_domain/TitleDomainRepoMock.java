@@ -54,9 +54,11 @@ public record TitleDomainRepoMock(HashMap<TitleDomainId, TitleDomainRow> map) im
     Connection c
   ) {
     var count = 0;
-    for (var id : codes) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : codes) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -111,8 +113,12 @@ public record TitleDomainRepoMock(HashMap<TitleDomainId, TitleDomainRow> map) im
     Connection c
   ) {
     var result = new ArrayList<TitleDomainRow>();
-    for (var id : codes) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : codes) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 

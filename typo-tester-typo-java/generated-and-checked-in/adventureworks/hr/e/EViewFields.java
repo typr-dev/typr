@@ -55,11 +55,11 @@ public interface EViewFields {
                };
                @Override
                public Field</* bpchar, max 1 chars */ String, EViewRow> maritalstatus() {
-                 return new Field</* bpchar, max 1 chars */ String, EViewRow>(_path, "maritalstatus", EViewRow::maritalstatus, Optional.empty(), Optional.empty(), (row, value) -> row.withMaritalstatus(value), PgTypes.text);
+                 return new Field</* bpchar, max 1 chars */ String, EViewRow>(_path, "maritalstatus", EViewRow::maritalstatus, Optional.empty(), Optional.empty(), (row, value) -> row.withMaritalstatus(value), PgTypes.bpchar);
                };
                @Override
                public Field</* bpchar, max 1 chars */ String, EViewRow> gender() {
-                 return new Field</* bpchar, max 1 chars */ String, EViewRow>(_path, "gender", EViewRow::gender, Optional.empty(), Optional.empty(), (row, value) -> row.withGender(value), PgTypes.text);
+                 return new Field</* bpchar, max 1 chars */ String, EViewRow>(_path, "gender", EViewRow::gender, Optional.empty(), Optional.empty(), (row, value) -> row.withGender(value), PgTypes.bpchar);
                };
                @Override
                public Field<TypoLocalDate, EViewRow> hiredate() {

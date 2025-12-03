@@ -55,11 +55,11 @@ public interface EmployeeFields {
                };
                @Override
                public Field</* bpchar, max 1 chars */ String, EmployeeRow> maritalstatus() {
-                 return new Field</* bpchar, max 1 chars */ String, EmployeeRow>(_path, "maritalstatus", EmployeeRow::maritalstatus, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withMaritalstatus(value), PgTypes.text);
+                 return new Field</* bpchar, max 1 chars */ String, EmployeeRow>(_path, "maritalstatus", EmployeeRow::maritalstatus, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withMaritalstatus(value), PgTypes.bpchar);
                };
                @Override
                public Field</* bpchar, max 1 chars */ String, EmployeeRow> gender() {
-                 return new Field</* bpchar, max 1 chars */ String, EmployeeRow>(_path, "gender", EmployeeRow::gender, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withGender(value), PgTypes.text);
+                 return new Field</* bpchar, max 1 chars */ String, EmployeeRow>(_path, "gender", EmployeeRow::gender, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withGender(value), PgTypes.bpchar);
                };
                @Override
                public Field<TypoLocalDate, EmployeeRow> hiredate() {

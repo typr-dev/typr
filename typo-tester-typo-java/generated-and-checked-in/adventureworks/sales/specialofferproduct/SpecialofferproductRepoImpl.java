@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -29,7 +30,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class SpecialofferproductRepoImpl implements SpecialofferproductRepo {
   @Override
   public DeleteBuilder<SpecialofferproductFields, SpecialofferproductRow> delete() {
-    return DeleteBuilder.of("sales.specialofferproduct", SpecialofferproductFields.structure());
+    return DeleteBuilder.of("\"sales\".\"specialofferproduct\"", SpecialofferproductFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -180,7 +181,7 @@ public class SpecialofferproductRepoImpl implements SpecialofferproductRepo {
 
   @Override
   public SelectBuilder<SpecialofferproductFields, SpecialofferproductRow> select() {
-    return SelectBuilder.of("sales.specialofferproduct", SpecialofferproductFields.structure(), SpecialofferproductRow._rowParser);
+    return SelectBuilder.of("\"sales\".\"specialofferproduct\"", SpecialofferproductFields.structure(), SpecialofferproductRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -245,7 +246,7 @@ public class SpecialofferproductRepoImpl implements SpecialofferproductRepo {
 
   @Override
   public UpdateBuilder<SpecialofferproductFields, SpecialofferproductRow> update() {
-    return UpdateBuilder.of("sales.specialofferproduct", SpecialofferproductFields.structure(), SpecialofferproductRow._rowParser.all());
+    return UpdateBuilder.of("\"sales\".\"specialofferproduct\"", SpecialofferproductFields.structure(), SpecialofferproductRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -297,8 +298,7 @@ public class SpecialofferproductRepoImpl implements SpecialofferproductRepo {
          do update set
            "rowguid" = EXCLUDED."rowguid",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "specialofferid", "productid", "rowguid", "modifieddate"::text
-      """)
+         returning "specialofferid", "productid", "rowguid", "modifieddate"::text""")
     )
       .updateReturning(SpecialofferproductRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -316,8 +316,7 @@ public class SpecialofferproductRepoImpl implements SpecialofferproductRepo {
                 do update set
                   "rowguid" = EXCLUDED."rowguid",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "specialofferid", "productid", "rowguid", "modifieddate"::text
-             """))
+                returning "specialofferid", "productid", "rowguid", "modifieddate"::text"""))
       .updateManyReturning(SpecialofferproductRow._rowParser, unsaved)
       .runUnchecked(c);
   };

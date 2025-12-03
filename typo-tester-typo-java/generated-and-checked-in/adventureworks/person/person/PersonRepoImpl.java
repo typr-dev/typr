@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -32,7 +33,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class PersonRepoImpl implements PersonRepo {
   @Override
   public DeleteBuilder<PersonFields, PersonRow> delete() {
-    return DeleteBuilder.of("person.person", PersonFields.structure());
+    return DeleteBuilder.of("\"person\".\"person\"", PersonFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -252,7 +253,7 @@ public class PersonRepoImpl implements PersonRepo {
 
   @Override
   public SelectBuilder<PersonFields, PersonRow> select() {
-    return SelectBuilder.of("person.person", PersonFields.structure(), PersonRow._rowParser);
+    return SelectBuilder.of("\"person\".\"person\"", PersonFields.structure(), PersonRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -305,7 +306,7 @@ public class PersonRepoImpl implements PersonRepo {
 
   @Override
   public UpdateBuilder<PersonFields, PersonRow> update() {
-    return UpdateBuilder.of("person.person", PersonFields.structure(), PersonRow._rowParser.all());
+    return UpdateBuilder.of("\"person\".\"person\"", PersonFields.structure(), PersonRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -421,8 +422,7 @@ public class PersonRepoImpl implements PersonRepo {
          "demographics" = EXCLUDED."demographics",
          "rowguid" = EXCLUDED."rowguid",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text
-      """)
+         returning "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text""")
     )
       .updateReturning(PersonRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -450,8 +450,7 @@ public class PersonRepoImpl implements PersonRepo {
                 "demographics" = EXCLUDED."demographics",
                 "rowguid" = EXCLUDED."rowguid",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text
-             """))
+                returning "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text"""))
       .updateManyReturning(PersonRow._rowParser, unsaved)
       .runUnchecked(c);
   };

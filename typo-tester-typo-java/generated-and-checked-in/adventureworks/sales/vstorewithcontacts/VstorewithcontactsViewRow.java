@@ -101,5 +101,5 @@ public record VstorewithcontactsViewRow(
     return new VstorewithcontactsViewRow(businessentityid, name, contacttype, title, firstname, middlename, lastname, suffix, phonenumber, phonenumbertype, emailaddress, emailpromotion);
   };
 
-  static RowParser<VstorewithcontactsViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, Name.pgType, Name.pgType, PgTypes.text.opt(), /* user-picked */ FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text.opt(), Phone.pgType.opt(), Name.pgType.opt(), PgTypes.text.opt(), PgTypes.int4, VstorewithcontactsViewRow::new, row -> new Object[]{row.businessentityid(), row.name(), row.contacttype(), row.title(), row.firstname(), row.middlename(), row.lastname(), row.suffix(), row.phonenumber(), row.phonenumbertype(), row.emailaddress(), row.emailpromotion()});;
+  static RowParser<VstorewithcontactsViewRow> _rowParser = RowParsers.of(BusinessentityId.pgType, Name.pgType, Name.pgType, PgTypes.text.opt(), FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text.opt(), Phone.pgType.opt(), Name.pgType.opt(), PgTypes.text.opt(), PgTypes.int4, VstorewithcontactsViewRow::new, row -> new Object[]{row.businessentityid(), row.name(), row.contacttype(), row.title(), row.firstname(), row.middlename(), row.lastname(), row.suffix(), row.phonenumber(), row.phonenumbertype(), row.emailaddress(), row.emailpromotion()});;
 }

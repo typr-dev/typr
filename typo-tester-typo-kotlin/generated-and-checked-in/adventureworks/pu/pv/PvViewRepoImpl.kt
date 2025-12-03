@@ -7,11 +7,12 @@ package adventureworks.pu.pv
 
 import java.sql.Connection
 import kotlin.collections.List
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.Fragment.interpolate
 
 class PvViewRepoImpl() : PvViewRepo {
-  override fun select(): SelectBuilder<PvViewFields, PvViewRow> = SelectBuilder.of("pu.pv", PvViewFields.structure, PvViewRow._rowParser)
+  override fun select(): SelectBuilder<PvViewFields, PvViewRow> = SelectBuilder.of("\"pu\".\"pv\"", PvViewFields.structure, PvViewRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<PvViewRow> = interpolate(typo.runtime.Fragment.lit("""
     select "id", "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate"::text, "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"::text

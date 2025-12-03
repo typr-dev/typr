@@ -16,6 +16,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -26,7 +27,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class CreditcardRepoImpl() : CreditcardRepo {
-  override fun delete(): DeleteBuilder<CreditcardFields, CreditcardRow> = DeleteBuilder.of("sales.creditcard", CreditcardFields.structure)
+  override fun delete(): DeleteBuilder<CreditcardFields, CreditcardRow> = DeleteBuilder.of("\"sales\".\"creditcard\"", CreditcardFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     creditcardid: /* user-picked */ CustomCreditcardId,
@@ -156,7 +157,7 @@ class CreditcardRepoImpl() : CreditcardRepo {
   COPY "sales"."creditcard"("cardtype", "cardnumber", "expmonth", "expyear", "creditcardid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, CreditcardRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<CreditcardFields, CreditcardRow> = SelectBuilder.of("sales.creditcard", CreditcardFields.structure, CreditcardRow._rowParser)
+  override fun select(): SelectBuilder<CreditcardFields, CreditcardRow> = SelectBuilder.of("\"sales\".\"creditcard\"", CreditcardFields.structure, CreditcardRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<CreditcardRow> = interpolate(typo.runtime.Fragment.lit("""
     select "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"::text
@@ -196,7 +197,7 @@ class CreditcardRepoImpl() : CreditcardRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<CreditcardFields, CreditcardRow> = UpdateBuilder.of("sales.creditcard", CreditcardFields.structure, CreditcardRow._rowParser.all())
+  override fun update(): UpdateBuilder<CreditcardFields, CreditcardRow> = UpdateBuilder.of("\"sales\".\"creditcard\"", CreditcardFields.structure, CreditcardRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: CreditcardRow,
@@ -259,8 +260,7 @@ class CreditcardRepoImpl() : CreditcardRepo {
       "expmonth" = EXCLUDED."expmonth",
       "expyear" = EXCLUDED."expyear",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"::text
-    """.trimMargin())
+      returning "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(CreditcardRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -278,8 +278,7 @@ class CreditcardRepoImpl() : CreditcardRepo {
                              "expmonth" = EXCLUDED."expmonth",
                              "expyear" = EXCLUDED."expyear",
                              "modifieddate" = EXCLUDED."modifieddate"
-                             returning "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"::text
-                           """.trimMargin()))
+                             returning "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(CreditcardRow._rowParser, unsaved)
     .runUnchecked(c)
 

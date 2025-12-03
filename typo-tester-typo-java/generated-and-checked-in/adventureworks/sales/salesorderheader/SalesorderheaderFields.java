@@ -115,7 +115,7 @@ public interface SalesorderheaderFields {
                };
                @Override
                public OptField</* user-picked */ CustomCreditcardId, SalesorderheaderRow> creditcardid() {
-                 return new OptField</* user-picked */ CustomCreditcardId, SalesorderheaderRow>(_path, "creditcardid", SalesorderheaderRow::creditcardid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withCreditcardid(value), /* user-picked */ CustomCreditcardId.pgType);
+                 return new OptField</* user-picked */ CustomCreditcardId, SalesorderheaderRow>(_path, "creditcardid", SalesorderheaderRow::creditcardid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withCreditcardid(value), CustomCreditcardId.pgType);
                };
                @Override
                public OptField</* max 15 chars */ String, SalesorderheaderRow> creditcardapprovalcode() {

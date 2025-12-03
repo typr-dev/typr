@@ -52,7 +52,7 @@ data class StateprovinceRowUnsaved(
 
   companion object {
     val pgText: PgText<StateprovinceRowUnsaved> =
-      PgText.instance({ row, sb -> PgTypes.text.pgText().unsafeEncode(row.stateprovincecode, sb)
+      PgText.instance({ row, sb -> PgTypes.bpchar.pgText().unsafeEncode(row.stateprovincecode, sb)
       sb.append(PgText.DELIMETER)
       CountryregionId.pgType.pgText().unsafeEncode(row.countryregioncode, sb)
       sb.append(PgText.DELIMETER)

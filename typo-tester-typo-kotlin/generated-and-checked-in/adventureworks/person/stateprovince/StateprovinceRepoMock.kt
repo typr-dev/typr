@@ -40,9 +40,11 @@ data class StateprovinceRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in stateprovinceids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in stateprovinceids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -69,7 +71,7 @@ data class StateprovinceRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.stateprovinceid] = row
       count = count + 1L
     }
@@ -84,8 +86,8 @@ data class StateprovinceRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.stateprovinceid] = row
       count = count + 1L
     }
@@ -105,9 +107,13 @@ data class StateprovinceRepoMock(
     stateprovinceids: Array<StateprovinceId>,
     c: Connection
   ): List<StateprovinceRow> {
-    var result = ArrayList<StateprovinceRow>()
-    for (id in stateprovinceids) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<StateprovinceRow>()
+    for (id in stateprovinceids) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -141,9 +147,9 @@ data class StateprovinceRepoMock(
     unsaved: MutableIterator<StateprovinceRow>,
     c: Connection
   ): List<StateprovinceRow> {
-    var result = ArrayList<StateprovinceRow>()
+    val result = ArrayList<StateprovinceRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.stateprovinceid] = row
       result.add(row)
     }
@@ -158,7 +164,7 @@ data class StateprovinceRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.stateprovinceid] = row
       count = count + 1
     }

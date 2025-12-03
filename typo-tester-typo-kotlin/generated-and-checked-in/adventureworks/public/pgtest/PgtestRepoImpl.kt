@@ -35,6 +35,7 @@ import java.sql.Connection
 import kotlin.collections.List
 import kotlin.collections.MutableIterator
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.PgTypes
@@ -43,7 +44,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class PgtestRepoImpl() : PgtestRepo {
-  override fun delete(): DeleteBuilder<PgtestFields, PgtestRow> = DeleteBuilder.of("public.pgtest", PgtestFields.structure)
+  override fun delete(): DeleteBuilder<PgtestFields, PgtestRow> = DeleteBuilder.of("\"public\".\"pgtest\"", PgtestFields.structure, Dialect.POSTGRESQL)
 
   override fun insert(
     unsaved: PgtestRow,
@@ -206,12 +207,12 @@ class PgtestRepoImpl() : PgtestRepo {
   COPY "public"."pgtest"("bool", "box", "bpchar", "bytea", "char", "circle", "date", "float4", "float8", "hstore", "inet", "int2", "int2vector", "int4", "int8", "interval", "json", "jsonb", "line", "lseg", "money", "mydomain", "myenum", "name", "numeric", "path", "point", "polygon", "text", "time", "timestamp", "timestampz", "timez", "uuid", "varchar", "vector", "xml", "boxes", "bpchares", "chares", "circlees", "datees", "float4es", "float8es", "inetes", "int2es", "int2vectores", "int4es", "int8es", "intervales", "jsones", "jsonbes", "linees", "lseges", "moneyes", "mydomaines", "myenumes", "namees", "numerices", "pathes", "pointes", "polygones", "textes", "timees", "timestampes", "timestampzes", "timezes", "uuides", "varchares", "xmles") FROM STDIN
   """.trimMargin()), batchSize, unsaved, c, PgtestRow.pgText)
 
-  override fun select(): SelectBuilder<PgtestFields, PgtestRow> = SelectBuilder.of("public.pgtest", PgtestFields.structure, PgtestRow._rowParser)
+  override fun select(): SelectBuilder<PgtestFields, PgtestRow> = SelectBuilder.of("\"public\".\"pgtest\"", PgtestFields.structure, PgtestRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<PgtestRow> = interpolate(typo.runtime.Fragment.lit("""
     select "bool", "box", "bpchar", "bytea", "char", "circle", "date"::text, "float4", "float8", "hstore", "inet", "int2", "int2vector", "int4", "int8", "interval", "json", "jsonb", "line", "lseg", "money"::numeric, "mydomain", "myenum", "name", "numeric", "path", "point", "polygon", "text", "time"::text, "timestamp"::text, "timestampz"::text, "timez"::text, "uuid", "varchar", "vector"::float4[], "xml", "boxes", "bpchares", "chares", "circlees", "datees"::text[], "float4es", "float8es", "inetes", "int2es", "int2vectores", "int4es", "int8es", "intervales", "jsones", "jsonbes", "linees", "lseges", "moneyes"::numeric[], "mydomaines"::text[], "myenumes", "namees", "numerices", "pathes", "pointes", "polygones", "textes", "timees"::text[], "timestampes"::text[], "timestampzes"::text[], "timezes"::text[], "uuides", "varchares", "xmles"
     from "public"."pgtest"
   """.trimMargin())).query(PgtestRow._rowParser.all()).runUnchecked(c)
 
-  override fun update(): UpdateBuilder<PgtestFields, PgtestRow> = UpdateBuilder.of("public.pgtest", PgtestFields.structure, PgtestRow._rowParser.all())
+  override fun update(): UpdateBuilder<PgtestFields, PgtestRow> = UpdateBuilder.of("\"public\".\"pgtest\"", PgtestFields.structure, PgtestRow._rowParser.all(), Dialect.POSTGRESQL)
 }

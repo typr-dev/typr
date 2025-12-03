@@ -7,13 +7,14 @@ package adventureworks.sales.vstorewithdemographics;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class VstorewithdemographicsViewRepoImpl implements VstorewithdemographicsViewRepo {
   @Override
   public SelectBuilder<VstorewithdemographicsViewFields, VstorewithdemographicsViewRow> select() {
-    return SelectBuilder.of("sales.vstorewithdemographics", VstorewithdemographicsViewFields.structure(), VstorewithdemographicsViewRow._rowParser);
+    return SelectBuilder.of("\"sales\".\"vstorewithdemographics\"", VstorewithdemographicsViewFields.structure(), VstorewithdemographicsViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

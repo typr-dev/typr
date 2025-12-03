@@ -14,6 +14,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -23,7 +24,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class WorkorderRepoImpl extends WorkorderRepo {
-  override def delete: DeleteBuilder[WorkorderFields, WorkorderRow] = DeleteBuilder.of("production.workorder", WorkorderFields.structure)
+  override def delete: DeleteBuilder[WorkorderFields, WorkorderRow] = DeleteBuilder.of(""""production"."workorder"""", WorkorderFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(workorderid: WorkorderId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."workorder" where "workorderid" = ${WorkorderId.pgType.encode(workorderid)}""".update().runUnchecked(c) > 0
 
@@ -88,7 +89,7 @@ class WorkorderRepoImpl extends WorkorderRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."workorder"("productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "workorderid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, WorkorderRowUnsaved.pgText)
 
-  override def select: SelectBuilder[WorkorderFields, WorkorderRow] = SelectBuilder.of("production.workorder", WorkorderFields.structure, WorkorderRow.`_rowParser`)
+  override def select: SelectBuilder[WorkorderFields, WorkorderRow] = SelectBuilder.of(""""production"."workorder"""", WorkorderFields.structure, WorkorderRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[WorkorderRow] = {
     interpolate"""select "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text
@@ -114,7 +115,7 @@ class WorkorderRepoImpl extends WorkorderRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[WorkorderFields, WorkorderRow] = UpdateBuilder.of("production.workorder", WorkorderFields.structure, WorkorderRow.`_rowParser`.all())
+  override def update: UpdateBuilder[WorkorderFields, WorkorderRow] = UpdateBuilder.of(""""production"."workorder"""", WorkorderFields.structure, WorkorderRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: WorkorderRow)(using c: Connection): java.lang.Boolean = {
     val workorderid: WorkorderId = row.workorderid
@@ -143,8 +144,7 @@ class WorkorderRepoImpl extends WorkorderRepo {
     "duedate" = EXCLUDED."duedate",
     "scrapreasonid" = EXCLUDED."scrapreasonid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text
-    """
+    returning "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text"""
     .updateReturning(WorkorderRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -162,8 +162,7 @@ class WorkorderRepoImpl extends WorkorderRepo {
     "duedate" = EXCLUDED."duedate",
     "scrapreasonid" = EXCLUDED."scrapreasonid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text
-    """
+    returning "workorderid", "productid", "orderqty", "scrappedqty", "startdate"::text, "enddate"::text, "duedate"::text, "scrapreasonid", "modifieddate"::text"""
       .updateManyReturning(WorkorderRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

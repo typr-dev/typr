@@ -16,6 +16,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -27,7 +28,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class EmailaddressRepoImpl() : EmailaddressRepo {
-  override fun delete(): DeleteBuilder<EmailaddressFields, EmailaddressRow> = DeleteBuilder.of("person.emailaddress", EmailaddressFields.structure)
+  override fun delete(): DeleteBuilder<EmailaddressFields, EmailaddressRow> = DeleteBuilder.of("\"person\".\"emailaddress\"", EmailaddressFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     compositeId: EmailaddressId,
@@ -164,7 +165,7 @@ class EmailaddressRepoImpl() : EmailaddressRepo {
   COPY "person"."emailaddress"("businessentityid", "emailaddress", "emailaddressid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, EmailaddressRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<EmailaddressFields, EmailaddressRow> = SelectBuilder.of("person.emailaddress", EmailaddressFields.structure, EmailaddressRow._rowParser)
+  override fun select(): SelectBuilder<EmailaddressFields, EmailaddressRow> = SelectBuilder.of("\"person\".\"emailaddress\"", EmailaddressFields.structure, EmailaddressRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<EmailaddressRow> = interpolate(typo.runtime.Fragment.lit("""
     select "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"::text
@@ -218,7 +219,7 @@ class EmailaddressRepoImpl() : EmailaddressRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<EmailaddressFields, EmailaddressRow> = UpdateBuilder.of("person.emailaddress", EmailaddressFields.structure, EmailaddressRow._rowParser.all())
+  override fun update(): UpdateBuilder<EmailaddressFields, EmailaddressRow> = UpdateBuilder.of("\"person\".\"emailaddress\"", EmailaddressFields.structure, EmailaddressRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: EmailaddressRow,
@@ -273,8 +274,7 @@ class EmailaddressRepoImpl() : EmailaddressRepo {
         "emailaddress" = EXCLUDED."emailaddress",
       "rowguid" = EXCLUDED."rowguid",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"::text
-    """.trimMargin())
+      returning "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(EmailaddressRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -290,8 +290,7 @@ class EmailaddressRepoImpl() : EmailaddressRepo {
                                  "emailaddress" = EXCLUDED."emailaddress",
                                "rowguid" = EXCLUDED."rowguid",
                                "modifieddate" = EXCLUDED."modifieddate"
-                               returning "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"::text
-                             """.trimMargin()))
+                               returning "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(EmailaddressRow._rowParser, unsaved)
     .runUnchecked(c)
 

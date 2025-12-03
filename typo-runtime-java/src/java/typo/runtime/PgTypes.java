@@ -48,6 +48,8 @@ public interface PgTypes {
     PgType<Map<String, String>> hstore = PgType.of("hstore", PgRead.readMapStringString, PgWrite.passObjectToJdbc(), PgText.textMapStringString);
     PgType<Money> money = PgType.of("money", PgRead.readDouble.map(Money::new), PgWrite.pgObject("money").contramap(m -> String.valueOf(m.value())), PgText.textDouble.contramap(Money::value));
     PgType<Money[]> moneyArray = money.array(PgRead.readMoneyArray);
+    PgType<String> name = PgType.of("name", PgRead.readString, PgWrite.writeString, PgText.textString);
+    PgType<String[]> nameArray = name.array(PgRead.readStringArray);
     PgType<OffsetTime> timetz = PgType.of("timetz", PgRead.readOffsetTime, PgWrite.passObjectToJdbc(), PgText.instanceToString());
     PgType<OffsetTime[]> timetzArray = timetz.array(PgRead.readOffsetTimeArray);
     PgType<OidVector> oidvector = ofPgObject("oidvector").bimap(OidVector::new, OidVector::value);

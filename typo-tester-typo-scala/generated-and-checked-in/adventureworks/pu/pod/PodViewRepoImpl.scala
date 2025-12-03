@@ -6,11 +6,12 @@
 package adventureworks.pu.pod
 
 import java.sql.Connection
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PodViewRepoImpl extends PodViewRepo {
-  override def select: SelectBuilder[PodViewFields, PodViewRow] = SelectBuilder.of("pu.pod", PodViewFields.structure, PodViewRow.`_rowParser`)
+  override def select: SelectBuilder[PodViewFields, PodViewRow] = SelectBuilder.of(""""pu"."pod"""", PodViewFields.structure, PodViewRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[PodViewRow] = {
     interpolate"""select "id", "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text

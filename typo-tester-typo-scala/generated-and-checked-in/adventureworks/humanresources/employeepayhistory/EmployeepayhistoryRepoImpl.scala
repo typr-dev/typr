@@ -13,6 +13,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -22,7 +23,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class EmployeepayhistoryRepoImpl extends EmployeepayhistoryRepo {
-  override def delete: DeleteBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = DeleteBuilder.of("humanresources.employeepayhistory", EmployeepayhistoryFields.structure)
+  override def delete: DeleteBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = DeleteBuilder.of(""""humanresources"."employeepayhistory"""", EmployeepayhistoryFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(compositeId: EmployeepayhistoryId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "humanresources"."employeepayhistory" where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "ratechangedate" = ${TypoLocalDateTime.pgType.encode(compositeId.ratechangedate)}""".update().runUnchecked(c) > 0
 
@@ -79,7 +80,7 @@ class EmployeepayhistoryRepoImpl extends EmployeepayhistoryRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "humanresources"."employeepayhistory"("businessentityid", "ratechangedate", "rate", "payfrequency", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, EmployeepayhistoryRowUnsaved.pgText)
 
-  override def select: SelectBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = SelectBuilder.of("humanresources.employeepayhistory", EmployeepayhistoryFields.structure, EmployeepayhistoryRow.`_rowParser`)
+  override def select: SelectBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = SelectBuilder.of(""""humanresources"."employeepayhistory"""", EmployeepayhistoryFields.structure, EmployeepayhistoryRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[EmployeepayhistoryRow] = {
     interpolate"""select "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text
@@ -109,7 +110,7 @@ class EmployeepayhistoryRepoImpl extends EmployeepayhistoryRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = UpdateBuilder.of("humanresources.employeepayhistory", EmployeepayhistoryFields.structure, EmployeepayhistoryRow.`_rowParser`.all())
+  override def update: UpdateBuilder[EmployeepayhistoryFields, EmployeepayhistoryRow] = UpdateBuilder.of(""""humanresources"."employeepayhistory"""", EmployeepayhistoryFields.structure, EmployeepayhistoryRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: EmployeepayhistoryRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: EmployeepayhistoryId = row.compositeId
@@ -128,8 +129,7 @@ class EmployeepayhistoryRepoImpl extends EmployeepayhistoryRepo {
       "rate" = EXCLUDED."rate",
     "payfrequency" = EXCLUDED."payfrequency",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text
-    """
+    returning "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text"""
     .updateReturning(EmployeepayhistoryRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -142,8 +142,7 @@ class EmployeepayhistoryRepoImpl extends EmployeepayhistoryRepo {
       "rate" = EXCLUDED."rate",
     "payfrequency" = EXCLUDED."payfrequency",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text
-    """
+    returning "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text"""
       .updateManyReturning(EmployeepayhistoryRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

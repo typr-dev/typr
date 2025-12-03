@@ -92,8 +92,9 @@ case class TransactionhistoryRepoMock(
 
   override def selectByIds(transactionids: Array[TransactionhistoryId])(using c: Connection): java.util.List[TransactionhistoryRow] = {
     val result = new ArrayList[TransactionhistoryRow]()
-    transactionids.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    transactionids.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

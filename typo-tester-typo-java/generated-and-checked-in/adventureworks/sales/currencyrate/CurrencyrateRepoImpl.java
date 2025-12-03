@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -27,7 +28,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class CurrencyrateRepoImpl implements CurrencyrateRepo {
   @Override
   public DeleteBuilder<CurrencyrateFields, CurrencyrateRow> delete() {
-    return DeleteBuilder.of("sales.currencyrate", CurrencyrateFields.structure());
+    return DeleteBuilder.of("\"sales\".\"currencyrate\"", CurrencyrateFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -189,7 +190,7 @@ public class CurrencyrateRepoImpl implements CurrencyrateRepo {
 
   @Override
   public SelectBuilder<CurrencyrateFields, CurrencyrateRow> select() {
-    return SelectBuilder.of("sales.currencyrate", CurrencyrateFields.structure(), CurrencyrateRow._rowParser);
+    return SelectBuilder.of("\"sales\".\"currencyrate\"", CurrencyrateFields.structure(), CurrencyrateRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -242,7 +243,7 @@ public class CurrencyrateRepoImpl implements CurrencyrateRepo {
 
   @Override
   public UpdateBuilder<CurrencyrateFields, CurrencyrateRow> update() {
-    return UpdateBuilder.of("sales.currencyrate", CurrencyrateFields.structure(), CurrencyrateRow._rowParser.all());
+    return UpdateBuilder.of("\"sales\".\"currencyrate\"", CurrencyrateFields.structure(), CurrencyrateRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -316,8 +317,7 @@ public class CurrencyrateRepoImpl implements CurrencyrateRepo {
          "averagerate" = EXCLUDED."averagerate",
          "endofdayrate" = EXCLUDED."endofdayrate",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "currencyrateid", "currencyratedate"::text, "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"::text
-      """)
+         returning "currencyrateid", "currencyratedate"::text, "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"::text""")
     )
       .updateReturning(CurrencyrateRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -339,8 +339,7 @@ public class CurrencyrateRepoImpl implements CurrencyrateRepo {
                 "averagerate" = EXCLUDED."averagerate",
                 "endofdayrate" = EXCLUDED."endofdayrate",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "currencyrateid", "currencyratedate"::text, "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"::text
-             """))
+                returning "currencyrateid", "currencyratedate"::text, "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"::text"""))
       .updateManyReturning(CurrencyrateRow._rowParser, unsaved)
       .runUnchecked(c);
   };

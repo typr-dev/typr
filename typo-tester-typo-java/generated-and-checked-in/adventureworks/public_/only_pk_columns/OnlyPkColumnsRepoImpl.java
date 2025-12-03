@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.PgTypes;
@@ -23,7 +24,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class OnlyPkColumnsRepoImpl implements OnlyPkColumnsRepo {
   @Override
   public DeleteBuilder<OnlyPkColumnsFields, OnlyPkColumnsRow> delete() {
-    return DeleteBuilder.of("public.only_pk_columns", OnlyPkColumnsFields.structure());
+    return DeleteBuilder.of("\"public\".\"only_pk_columns\"", OnlyPkColumnsFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -100,7 +101,7 @@ public class OnlyPkColumnsRepoImpl implements OnlyPkColumnsRepo {
 
   @Override
   public SelectBuilder<OnlyPkColumnsFields, OnlyPkColumnsRow> select() {
-    return SelectBuilder.of("public.only_pk_columns", OnlyPkColumnsFields.structure(), OnlyPkColumnsRow._rowParser);
+    return SelectBuilder.of("\"public\".\"only_pk_columns\"", OnlyPkColumnsFields.structure(), OnlyPkColumnsRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -165,7 +166,7 @@ public class OnlyPkColumnsRepoImpl implements OnlyPkColumnsRepo {
 
   @Override
   public UpdateBuilder<OnlyPkColumnsFields, OnlyPkColumnsRow> update() {
-    return UpdateBuilder.of("public.only_pk_columns", OnlyPkColumnsFields.structure(), OnlyPkColumnsRow._rowParser.all());
+    return UpdateBuilder.of("\"public\".\"only_pk_columns\"", OnlyPkColumnsFields.structure(), OnlyPkColumnsRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -184,8 +185,7 @@ public class OnlyPkColumnsRepoImpl implements OnlyPkColumnsRepo {
          ::int4)
          on conflict ("key_column_1", "key_column_2")
          do update set "key_column_1" = EXCLUDED."key_column_1"
-         returning "key_column_1", "key_column_2"
-      """)
+         returning "key_column_1", "key_column_2\"""")
     )
       .updateReturning(OnlyPkColumnsRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -200,9 +200,8 @@ public class OnlyPkColumnsRepoImpl implements OnlyPkColumnsRepo {
                 insert into "public"."only_pk_columns"("key_column_1", "key_column_2")
                 values (?, ?::int4)
                 on conflict ("key_column_1", "key_column_2")
-                do nothing
-                returning "key_column_1", "key_column_2"
-             """))
+                do update set "key_column_1" = EXCLUDED."key_column_1"
+                returning "key_column_1", "key_column_2\""""))
       .updateManyReturning(OnlyPkColumnsRow._rowParser, unsaved)
       .runUnchecked(c);
   };

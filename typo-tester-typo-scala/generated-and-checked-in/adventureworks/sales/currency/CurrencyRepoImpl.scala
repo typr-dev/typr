@@ -12,6 +12,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -20,7 +21,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class CurrencyRepoImpl extends CurrencyRepo {
-  override def delete: DeleteBuilder[CurrencyFields, CurrencyRow] = DeleteBuilder.of("sales.currency", CurrencyFields.structure)
+  override def delete: DeleteBuilder[CurrencyFields, CurrencyRow] = DeleteBuilder.of(""""sales"."currency"""", CurrencyFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(currencycode: CurrencyId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."currency" where "currencycode" = ${CurrencyId.pgType.encode(currencycode)}""".update().runUnchecked(c) > 0
 
@@ -71,7 +72,7 @@ class CurrencyRepoImpl extends CurrencyRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."currency"("currencycode", "name", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, CurrencyRowUnsaved.pgText)
 
-  override def select: SelectBuilder[CurrencyFields, CurrencyRow] = SelectBuilder.of("sales.currency", CurrencyFields.structure, CurrencyRow.`_rowParser`)
+  override def select: SelectBuilder[CurrencyFields, CurrencyRow] = SelectBuilder.of(""""sales"."currency"""", CurrencyFields.structure, CurrencyRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[CurrencyRow] = {
     interpolate"""select "currencycode", "name", "modifieddate"::text
@@ -97,7 +98,7 @@ class CurrencyRepoImpl extends CurrencyRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[CurrencyFields, CurrencyRow] = UpdateBuilder.of("sales.currency", CurrencyFields.structure, CurrencyRow.`_rowParser`.all())
+  override def update: UpdateBuilder[CurrencyFields, CurrencyRow] = UpdateBuilder.of(""""sales"."currency"""", CurrencyFields.structure, CurrencyRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: CurrencyRow)(using c: Connection): java.lang.Boolean = {
     val currencycode: CurrencyId = row.currencycode
@@ -114,8 +115,7 @@ class CurrencyRepoImpl extends CurrencyRepo {
     do update set
       "name" = EXCLUDED."name",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "currencycode", "name", "modifieddate"::text
-    """
+    returning "currencycode", "name", "modifieddate"::text"""
     .updateReturning(CurrencyRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -127,8 +127,7 @@ class CurrencyRepoImpl extends CurrencyRepo {
     do update set
       "name" = EXCLUDED."name",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "currencycode", "name", "modifieddate"::text
-    """
+    returning "currencycode", "name", "modifieddate"::text"""
       .updateManyReturning(CurrencyRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

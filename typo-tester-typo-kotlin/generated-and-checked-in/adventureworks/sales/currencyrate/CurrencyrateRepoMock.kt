@@ -40,9 +40,11 @@ data class CurrencyrateRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in currencyrateids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in currencyrateids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -69,7 +71,7 @@ data class CurrencyrateRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.currencyrateid] = row
       count = count + 1L
     }
@@ -84,8 +86,8 @@ data class CurrencyrateRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.currencyrateid] = row
       count = count + 1L
     }
@@ -105,9 +107,13 @@ data class CurrencyrateRepoMock(
     currencyrateids: Array<CurrencyrateId>,
     c: Connection
   ): List<CurrencyrateRow> {
-    var result = ArrayList<CurrencyrateRow>()
-    for (id in currencyrateids) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<CurrencyrateRow>()
+    for (id in currencyrateids) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -141,9 +147,9 @@ data class CurrencyrateRepoMock(
     unsaved: MutableIterator<CurrencyrateRow>,
     c: Connection
   ): List<CurrencyrateRow> {
-    var result = ArrayList<CurrencyrateRow>()
+    val result = ArrayList<CurrencyrateRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.currencyrateid] = row
       result.add(row)
     }
@@ -158,7 +164,7 @@ data class CurrencyrateRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.currencyrateid] = row
       count = count + 1
     }

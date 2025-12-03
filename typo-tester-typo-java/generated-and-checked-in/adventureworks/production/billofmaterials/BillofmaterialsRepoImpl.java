@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -29,7 +30,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class BillofmaterialsRepoImpl implements BillofmaterialsRepo {
   @Override
   public DeleteBuilder<BillofmaterialsFields, BillofmaterialsRow> delete() {
-    return DeleteBuilder.of("production.billofmaterials", BillofmaterialsFields.structure());
+    return DeleteBuilder.of("\"production\".\"billofmaterials\"", BillofmaterialsFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -219,7 +220,7 @@ public class BillofmaterialsRepoImpl implements BillofmaterialsRepo {
 
   @Override
   public SelectBuilder<BillofmaterialsFields, BillofmaterialsRow> select() {
-    return SelectBuilder.of("production.billofmaterials", BillofmaterialsFields.structure(), BillofmaterialsRow._rowParser);
+    return SelectBuilder.of("\"production\".\"billofmaterials\"", BillofmaterialsFields.structure(), BillofmaterialsRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -272,7 +273,7 @@ public class BillofmaterialsRepoImpl implements BillofmaterialsRepo {
 
   @Override
   public UpdateBuilder<BillofmaterialsFields, BillofmaterialsRow> update() {
-    return UpdateBuilder.of("production.billofmaterials", BillofmaterialsFields.structure(), BillofmaterialsRow._rowParser.all());
+    return UpdateBuilder.of("\"production\".\"billofmaterials\"", BillofmaterialsFields.structure(), BillofmaterialsRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -360,8 +361,7 @@ public class BillofmaterialsRepoImpl implements BillofmaterialsRepo {
          "bomlevel" = EXCLUDED."bomlevel",
          "perassemblyqty" = EXCLUDED."perassemblyqty",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text
-      """)
+         returning "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text""")
     )
       .updateReturning(BillofmaterialsRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -385,8 +385,7 @@ public class BillofmaterialsRepoImpl implements BillofmaterialsRepo {
                 "bomlevel" = EXCLUDED."bomlevel",
                 "perassemblyqty" = EXCLUDED."perassemblyqty",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text
-             """))
+                returning "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text"""))
       .updateManyReturning(BillofmaterialsRow._rowParser, unsaved)
       .runUnchecked(c);
   };

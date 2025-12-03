@@ -6,7 +6,7 @@ import bleep.model.{CrossProjectName, ProjectName}
 import typo.*
 import typo.internal.codegen.LangScala
 import typo.internal.generate
-import typo.internal.sqlfiles.readSqlFileDirectories
+import typo.internal.sqlfiles.SqlFileReader
 
 import java.nio.file.Path
 import scala.concurrent.Await
@@ -27,9 +27,9 @@ object CompileBenchmark extends BleepScript("CompileBenchmark") {
   )
 
   override def run(started: Started, commands: Commands, args: List[String]): Unit = {
-    val ds = TypoDataSource.hikari(server = "localhost", port = 6432, databaseName = "Adventureworks", username = "postgres", password = "password")
+    val ds = TypoDataSource.hikariPostgres(server = "localhost", port = 6432, databaseName = "Adventureworks", username = "postgres", password = "password")
     val metadb = Await.result(MetaDb.fromDb(logger = TypoLogger.Noop, ds = ds, viewSelector = Selector.All, schemaMode = SchemaMode.MultiSchema), Duration.Inf)
-    val sqlFiles = Await.result(readSqlFileDirectories(TypoLogger.Noop, buildDir.resolve("adventureworks_sql"), ds), Duration.Inf)
+    val sqlFiles = Await.result(SqlFileReader(TypoLogger.Noop, buildDir.resolve("adventureworks_sql"), ds), Duration.Inf)
 
     val crossIds = List(
       "jvm212",

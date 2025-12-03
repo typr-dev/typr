@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -32,7 +33,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class SalesorderdetailRepoImpl implements SalesorderdetailRepo {
   @Override
   public DeleteBuilder<SalesorderdetailFields, SalesorderdetailRow> delete() {
-    return DeleteBuilder.of("sales.salesorderdetail", SalesorderdetailFields.structure());
+    return DeleteBuilder.of("\"sales\".\"salesorderdetail\"", SalesorderdetailFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -240,7 +241,7 @@ public class SalesorderdetailRepoImpl implements SalesorderdetailRepo {
 
   @Override
   public SelectBuilder<SalesorderdetailFields, SalesorderdetailRow> select() {
-    return SelectBuilder.of("sales.salesorderdetail", SalesorderdetailFields.structure(), SalesorderdetailRow._rowParser);
+    return SelectBuilder.of("\"sales\".\"salesorderdetail\"", SalesorderdetailFields.structure(), SalesorderdetailRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -305,7 +306,7 @@ public class SalesorderdetailRepoImpl implements SalesorderdetailRepo {
 
   @Override
   public UpdateBuilder<SalesorderdetailFields, SalesorderdetailRow> update() {
-    return UpdateBuilder.of("sales.salesorderdetail", SalesorderdetailFields.structure(), SalesorderdetailRow._rowParser.all());
+    return UpdateBuilder.of("\"sales\".\"salesorderdetail\"", SalesorderdetailFields.structure(), SalesorderdetailRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -399,8 +400,7 @@ public class SalesorderdetailRepoImpl implements SalesorderdetailRepo {
          "unitpricediscount" = EXCLUDED."unitpricediscount",
          "rowguid" = EXCLUDED."rowguid",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text
-      """)
+         returning "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text""")
     )
       .updateReturning(SalesorderdetailRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -424,8 +424,7 @@ public class SalesorderdetailRepoImpl implements SalesorderdetailRepo {
                 "unitpricediscount" = EXCLUDED."unitpricediscount",
                 "rowguid" = EXCLUDED."rowguid",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text
-             """))
+                returning "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"::text"""))
       .updateManyReturning(SalesorderdetailRow._rowParser, unsaved)
       .runUnchecked(c);
   };

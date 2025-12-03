@@ -7,11 +7,12 @@ package adventureworks.sales.vsalespersonsalesbyfiscalyears
 
 import java.sql.Connection
 import kotlin.collections.List
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.Fragment.interpolate
 
 class VsalespersonsalesbyfiscalyearsViewRepoImpl() : VsalespersonsalesbyfiscalyearsViewRepo {
-  override fun select(): SelectBuilder<VsalespersonsalesbyfiscalyearsViewFields, VsalespersonsalesbyfiscalyearsViewRow> = SelectBuilder.of("sales.vsalespersonsalesbyfiscalyears", VsalespersonsalesbyfiscalyearsViewFields.structure, VsalespersonsalesbyfiscalyearsViewRow._rowParser)
+  override fun select(): SelectBuilder<VsalespersonsalesbyfiscalyearsViewFields, VsalespersonsalesbyfiscalyearsViewRow> = SelectBuilder.of("\"sales\".\"vsalespersonsalesbyfiscalyears\"", VsalespersonsalesbyfiscalyearsViewFields.structure, VsalespersonsalesbyfiscalyearsViewRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<VsalespersonsalesbyfiscalyearsViewRow> = interpolate(typo.runtime.Fragment.lit("""
     select "SalesPersonID", "FullName", "JobTitle", "SalesTerritory", "2012", "2013", "2014"

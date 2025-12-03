@@ -6,11 +6,12 @@
 package adventureworks.pr.pch
 
 import java.sql.Connection
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PchViewRepoImpl extends PchViewRepo {
-  override def select: SelectBuilder[PchViewFields, PchViewRow] = SelectBuilder.of("pr.pch", PchViewFields.structure, PchViewRow.`_rowParser`)
+  override def select: SelectBuilder[PchViewFields, PchViewRow] = SelectBuilder.of(""""pr"."pch"""", PchViewFields.structure, PchViewRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[PchViewRow] = {
     interpolate"""select "id", "productid", "startdate"::text, "enddate"::text, "standardcost", "modifieddate"::text

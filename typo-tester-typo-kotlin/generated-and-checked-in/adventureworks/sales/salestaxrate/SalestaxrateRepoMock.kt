@@ -40,9 +40,11 @@ data class SalestaxrateRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in salestaxrateids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in salestaxrateids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -69,7 +71,7 @@ data class SalestaxrateRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.salestaxrateid] = row
       count = count + 1L
     }
@@ -84,8 +86,8 @@ data class SalestaxrateRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.salestaxrateid] = row
       count = count + 1L
     }
@@ -105,9 +107,13 @@ data class SalestaxrateRepoMock(
     salestaxrateids: Array<SalestaxrateId>,
     c: Connection
   ): List<SalestaxrateRow> {
-    var result = ArrayList<SalestaxrateRow>()
-    for (id in salestaxrateids) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<SalestaxrateRow>()
+    for (id in salestaxrateids) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -141,9 +147,9 @@ data class SalestaxrateRepoMock(
     unsaved: MutableIterator<SalestaxrateRow>,
     c: Connection
   ): List<SalestaxrateRow> {
-    var result = ArrayList<SalestaxrateRow>()
+    val result = ArrayList<SalestaxrateRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.salestaxrateid] = row
       result.add(row)
     }
@@ -158,7 +164,7 @@ data class SalestaxrateRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.salestaxrateid] = row
       count = count + 1
     }

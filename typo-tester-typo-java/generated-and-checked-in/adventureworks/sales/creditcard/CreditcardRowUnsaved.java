@@ -85,7 +85,7 @@ public record CreditcardRowUnsaved(
       sb.append(PgText.DELIMETER);
       TypoShort.pgType.pgText().unsafeEncode(row.expyear, sb);
       sb.append(PgText.DELIMETER);
-      Defaulted.pgText(/* user-picked */ CustomCreditcardId.pgType.pgText()).unsafeEncode(row.creditcardid, sb);
+      Defaulted.pgText(CustomCreditcardId.pgType.pgText()).unsafeEncode(row.creditcardid, sb);
       sb.append(PgText.DELIMETER);
       Defaulted.pgText(TypoLocalDateTime.pgType.pgText()).unsafeEncode(row.modifieddate, sb);
     });

@@ -9,13 +9,14 @@ import java.sql.Connection
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class TitleDomainRepoImpl extends TitleDomainRepo {
-  override def delete: DeleteBuilder[TitleDomainFields, TitleDomainRow] = DeleteBuilder.of("public.title_domain", TitleDomainFields.structure)
+  override def delete: DeleteBuilder[TitleDomainFields, TitleDomainRow] = DeleteBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(code: TitleDomainId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."title_domain" where "code" = ${TitleDomainId.pgType.encode(code)}""".update().runUnchecked(c) > 0
 
@@ -40,7 +41,7 @@ class TitleDomainRepoImpl extends TitleDomainRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."title_domain"("code") FROM STDIN""", batchSize, unsaved, c, TitleDomainRow.pgText)
 
-  override def select: SelectBuilder[TitleDomainFields, TitleDomainRow] = SelectBuilder.of("public.title_domain", TitleDomainFields.structure, TitleDomainRow.`_rowParser`)
+  override def select: SelectBuilder[TitleDomainFields, TitleDomainRow] = SelectBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, TitleDomainRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[TitleDomainRow] = {
     interpolate"""select "code"
@@ -66,15 +67,14 @@ class TitleDomainRepoImpl extends TitleDomainRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[TitleDomainFields, TitleDomainRow] = UpdateBuilder.of("public.title_domain", TitleDomainFields.structure, TitleDomainRow.`_rowParser`.all())
+  override def update: UpdateBuilder[TitleDomainFields, TitleDomainRow] = UpdateBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, TitleDomainRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def upsert(unsaved: TitleDomainRow)(using c: Connection): TitleDomainRow = {
   interpolate"""insert into "public"."title_domain"("code")
     values (${TitleDomainId.pgType.encode(unsaved.code)}::text)
     on conflict ("code")
     do update set "code" = EXCLUDED."code"
-    returning "code"
-    """
+    returning "code""""
     .updateReturning(TitleDomainRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -83,9 +83,8 @@ class TitleDomainRepoImpl extends TitleDomainRepo {
     interpolate"""insert into "public"."title_domain"("code")
     values (?::text)
     on conflict ("code")
-    do nothing
-    returning "code"
-    """
+    do update set "code" = EXCLUDED."code"
+    returning "code""""
       .updateManyReturning(TitleDomainRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

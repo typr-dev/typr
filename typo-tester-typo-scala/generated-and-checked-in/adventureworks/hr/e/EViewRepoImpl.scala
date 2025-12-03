@@ -6,11 +6,12 @@
 package adventureworks.hr.e
 
 import java.sql.Connection
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class EViewRepoImpl extends EViewRepo {
-  override def select: SelectBuilder[EViewFields, EViewRow] = SelectBuilder.of("hr.e", EViewFields.structure, EViewRow.`_rowParser`)
+  override def select: SelectBuilder[EViewFields, EViewRow] = SelectBuilder.of(""""hr"."e"""", EViewFields.structure, EViewRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[EViewRow] = {
     interpolate"""select "id", "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode"

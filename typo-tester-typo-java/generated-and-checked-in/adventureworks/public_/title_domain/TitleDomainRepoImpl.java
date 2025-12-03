@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.streamingInsert;
@@ -21,7 +22,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class TitleDomainRepoImpl implements TitleDomainRepo {
   @Override
   public DeleteBuilder<TitleDomainFields, TitleDomainRow> delete() {
-    return DeleteBuilder.of("public.title_domain", TitleDomainFields.structure());
+    return DeleteBuilder.of("\"public\".\"title_domain\"", TitleDomainFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -86,7 +87,7 @@ public class TitleDomainRepoImpl implements TitleDomainRepo {
 
   @Override
   public SelectBuilder<TitleDomainFields, TitleDomainRow> select() {
-    return SelectBuilder.of("public.title_domain", TitleDomainFields.structure(), TitleDomainRow._rowParser);
+    return SelectBuilder.of("\"public\".\"title_domain\"", TitleDomainFields.structure(), TitleDomainRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -139,7 +140,7 @@ public class TitleDomainRepoImpl implements TitleDomainRepo {
 
   @Override
   public UpdateBuilder<TitleDomainFields, TitleDomainRow> update() {
-    return UpdateBuilder.of("public.title_domain", TitleDomainFields.structure(), TitleDomainRow._rowParser.all());
+    return UpdateBuilder.of("\"public\".\"title_domain\"", TitleDomainFields.structure(), TitleDomainRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -156,8 +157,7 @@ public class TitleDomainRepoImpl implements TitleDomainRepo {
          ::text)
          on conflict ("code")
          do update set "code" = EXCLUDED."code"
-         returning "code"
-      """)
+         returning "code\"""")
     )
       .updateReturning(TitleDomainRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -172,9 +172,8 @@ public class TitleDomainRepoImpl implements TitleDomainRepo {
                 insert into "public"."title_domain"("code")
                 values (?::text)
                 on conflict ("code")
-                do nothing
-                returning "code"
-             """))
+                do update set "code" = EXCLUDED."code"
+                returning "code\""""))
       .updateManyReturning(TitleDomainRow._rowParser, unsaved)
       .runUnchecked(c);
   };

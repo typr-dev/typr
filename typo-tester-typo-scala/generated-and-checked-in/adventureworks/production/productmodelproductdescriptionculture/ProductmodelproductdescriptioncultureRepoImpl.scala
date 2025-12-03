@@ -14,6 +14,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -22,7 +23,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ProductmodelproductdescriptioncultureRepoImpl extends ProductmodelproductdescriptioncultureRepo {
-  override def delete: DeleteBuilder[ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow] = DeleteBuilder.of("production.productmodelproductdescriptionculture", ProductmodelproductdescriptioncultureFields.structure)
+  override def delete: DeleteBuilder[ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow] = DeleteBuilder.of(""""production"."productmodelproductdescriptionculture"""", ProductmodelproductdescriptioncultureFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(compositeId: ProductmodelproductdescriptioncultureId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."productmodelproductdescriptionculture" where "productmodelid" = ${ProductmodelId.pgType.encode(compositeId.productmodelid)} AND "productdescriptionid" = ${ProductdescriptionId.pgType.encode(compositeId.productdescriptionid)} AND "cultureid" = ${CultureId.pgType.encode(compositeId.cultureid)}""".update().runUnchecked(c) > 0
 
@@ -78,7 +79,7 @@ class ProductmodelproductdescriptioncultureRepoImpl extends Productmodelproductd
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."productmodelproductdescriptionculture"("productmodelid", "productdescriptionid", "cultureid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ProductmodelproductdescriptioncultureRowUnsaved.pgText)
 
-  override def select: SelectBuilder[ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow] = SelectBuilder.of("production.productmodelproductdescriptionculture", ProductmodelproductdescriptioncultureFields.structure, ProductmodelproductdescriptioncultureRow.`_rowParser`)
+  override def select: SelectBuilder[ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow] = SelectBuilder.of(""""production"."productmodelproductdescriptionculture"""", ProductmodelproductdescriptioncultureFields.structure, ProductmodelproductdescriptioncultureRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[ProductmodelproductdescriptioncultureRow] = {
     interpolate"""select "productmodelid", "productdescriptionid", "cultureid", "modifieddate"::text
@@ -109,7 +110,7 @@ class ProductmodelproductdescriptioncultureRepoImpl extends Productmodelproductd
     return ret
   }
 
-  override def update: UpdateBuilder[ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow] = UpdateBuilder.of("production.productmodelproductdescriptionculture", ProductmodelproductdescriptioncultureFields.structure, ProductmodelproductdescriptioncultureRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow] = UpdateBuilder.of(""""production"."productmodelproductdescriptionculture"""", ProductmodelproductdescriptioncultureFields.structure, ProductmodelproductdescriptioncultureRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: ProductmodelproductdescriptioncultureRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: ProductmodelproductdescriptioncultureId = row.compositeId
@@ -124,8 +125,7 @@ class ProductmodelproductdescriptioncultureRepoImpl extends Productmodelproductd
     on conflict ("productmodelid", "productdescriptionid", "cultureid")
     do update set
       "modifieddate" = EXCLUDED."modifieddate"
-    returning "productmodelid", "productdescriptionid", "cultureid", "modifieddate"::text
-    """
+    returning "productmodelid", "productdescriptionid", "cultureid", "modifieddate"::text"""
     .updateReturning(ProductmodelproductdescriptioncultureRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -136,8 +136,7 @@ class ProductmodelproductdescriptioncultureRepoImpl extends Productmodelproductd
     on conflict ("productmodelid", "productdescriptionid", "cultureid")
     do update set
       "modifieddate" = EXCLUDED."modifieddate"
-    returning "productmodelid", "productdescriptionid", "cultureid", "modifieddate"::text
-    """
+    returning "productmodelid", "productdescriptionid", "cultureid", "modifieddate"::text"""
       .updateManyReturning(ProductmodelproductdescriptioncultureRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

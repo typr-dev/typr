@@ -13,6 +13,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -22,7 +23,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class SalespersonquotahistoryRepoImpl extends SalespersonquotahistoryRepo {
-  override def delete: DeleteBuilder[SalespersonquotahistoryFields, SalespersonquotahistoryRow] = DeleteBuilder.of("sales.salespersonquotahistory", SalespersonquotahistoryFields.structure)
+  override def delete: DeleteBuilder[SalespersonquotahistoryFields, SalespersonquotahistoryRow] = DeleteBuilder.of(""""sales"."salespersonquotahistory"""", SalespersonquotahistoryFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(compositeId: SalespersonquotahistoryId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."salespersonquotahistory" where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "quotadate" = ${TypoLocalDateTime.pgType.encode(compositeId.quotadate)}""".update().runUnchecked(c) > 0
 
@@ -81,7 +82,7 @@ class SalespersonquotahistoryRepoImpl extends SalespersonquotahistoryRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."salespersonquotahistory"("businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, SalespersonquotahistoryRowUnsaved.pgText)
 
-  override def select: SelectBuilder[SalespersonquotahistoryFields, SalespersonquotahistoryRow] = SelectBuilder.of("sales.salespersonquotahistory", SalespersonquotahistoryFields.structure, SalespersonquotahistoryRow.`_rowParser`)
+  override def select: SelectBuilder[SalespersonquotahistoryFields, SalespersonquotahistoryRow] = SelectBuilder.of(""""sales"."salespersonquotahistory"""", SalespersonquotahistoryFields.structure, SalespersonquotahistoryRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[SalespersonquotahistoryRow] = {
     interpolate"""select "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text
@@ -111,7 +112,7 @@ class SalespersonquotahistoryRepoImpl extends SalespersonquotahistoryRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[SalespersonquotahistoryFields, SalespersonquotahistoryRow] = UpdateBuilder.of("sales.salespersonquotahistory", SalespersonquotahistoryFields.structure, SalespersonquotahistoryRow.`_rowParser`.all())
+  override def update: UpdateBuilder[SalespersonquotahistoryFields, SalespersonquotahistoryRow] = UpdateBuilder.of(""""sales"."salespersonquotahistory"""", SalespersonquotahistoryFields.structure, SalespersonquotahistoryRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: SalespersonquotahistoryRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: SalespersonquotahistoryId = row.compositeId
@@ -130,8 +131,7 @@ class SalespersonquotahistoryRepoImpl extends SalespersonquotahistoryRepo {
       "salesquota" = EXCLUDED."salesquota",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text
-    """
+    returning "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text"""
     .updateReturning(SalespersonquotahistoryRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -144,8 +144,7 @@ class SalespersonquotahistoryRepoImpl extends SalespersonquotahistoryRepo {
       "salesquota" = EXCLUDED."salesquota",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text
-    """
+    returning "businessentityid", "quotadate"::text, "salesquota", "rowguid", "modifieddate"::text"""
       .updateManyReturning(SalespersonquotahistoryRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

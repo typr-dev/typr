@@ -12,6 +12,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -21,7 +22,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class CurrencyrateRepoImpl extends CurrencyrateRepo {
-  override def delete: DeleteBuilder[CurrencyrateFields, CurrencyrateRow] = DeleteBuilder.of("sales.currencyrate", CurrencyrateFields.structure)
+  override def delete: DeleteBuilder[CurrencyrateFields, CurrencyrateRow] = DeleteBuilder.of(""""sales"."currencyrate"""", CurrencyrateFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(currencyrateid: CurrencyrateId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."currencyrate" where "currencyrateid" = ${CurrencyrateId.pgType.encode(currencyrateid)}""".update().runUnchecked(c) > 0
 
@@ -82,7 +83,7 @@ class CurrencyrateRepoImpl extends CurrencyrateRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."currencyrate"("currencyratedate", "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "currencyrateid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, CurrencyrateRowUnsaved.pgText)
 
-  override def select: SelectBuilder[CurrencyrateFields, CurrencyrateRow] = SelectBuilder.of("sales.currencyrate", CurrencyrateFields.structure, CurrencyrateRow.`_rowParser`)
+  override def select: SelectBuilder[CurrencyrateFields, CurrencyrateRow] = SelectBuilder.of(""""sales"."currencyrate"""", CurrencyrateFields.structure, CurrencyrateRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[CurrencyrateRow] = {
     interpolate"""select "currencyrateid", "currencyratedate"::text, "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"::text
@@ -108,7 +109,7 @@ class CurrencyrateRepoImpl extends CurrencyrateRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[CurrencyrateFields, CurrencyrateRow] = UpdateBuilder.of("sales.currencyrate", CurrencyrateFields.structure, CurrencyrateRow.`_rowParser`.all())
+  override def update: UpdateBuilder[CurrencyrateFields, CurrencyrateRow] = UpdateBuilder.of(""""sales"."currencyrate"""", CurrencyrateFields.structure, CurrencyrateRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: CurrencyrateRow)(using c: Connection): java.lang.Boolean = {
     val currencyrateid: CurrencyrateId = row.currencyrateid
@@ -133,8 +134,7 @@ class CurrencyrateRepoImpl extends CurrencyrateRepo {
     "averagerate" = EXCLUDED."averagerate",
     "endofdayrate" = EXCLUDED."endofdayrate",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "currencyrateid", "currencyratedate"::text, "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"::text
-    """
+    returning "currencyrateid", "currencyratedate"::text, "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"::text"""
     .updateReturning(CurrencyrateRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -150,8 +150,7 @@ class CurrencyrateRepoImpl extends CurrencyrateRepo {
     "averagerate" = EXCLUDED."averagerate",
     "endofdayrate" = EXCLUDED."endofdayrate",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "currencyrateid", "currencyratedate"::text, "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"::text
-    """
+    returning "currencyrateid", "currencyratedate"::text, "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"::text"""
       .updateManyReturning(CurrencyrateRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

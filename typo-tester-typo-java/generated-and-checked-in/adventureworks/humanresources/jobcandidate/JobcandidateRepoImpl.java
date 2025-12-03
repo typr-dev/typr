@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -27,7 +28,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class JobcandidateRepoImpl implements JobcandidateRepo {
   @Override
   public DeleteBuilder<JobcandidateFields, JobcandidateRow> delete() {
-    return DeleteBuilder.of("humanresources.jobcandidate", JobcandidateFields.structure());
+    return DeleteBuilder.of("\"humanresources\".\"jobcandidate\"", JobcandidateFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -168,7 +169,7 @@ public class JobcandidateRepoImpl implements JobcandidateRepo {
 
   @Override
   public SelectBuilder<JobcandidateFields, JobcandidateRow> select() {
-    return SelectBuilder.of("humanresources.jobcandidate", JobcandidateFields.structure(), JobcandidateRow._rowParser);
+    return SelectBuilder.of("\"humanresources\".\"jobcandidate\"", JobcandidateFields.structure(), JobcandidateRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -221,7 +222,7 @@ public class JobcandidateRepoImpl implements JobcandidateRepo {
 
   @Override
   public UpdateBuilder<JobcandidateFields, JobcandidateRow> update() {
-    return UpdateBuilder.of("humanresources.jobcandidate", JobcandidateFields.structure(), JobcandidateRow._rowParser.all());
+    return UpdateBuilder.of("\"humanresources\".\"jobcandidate\"", JobcandidateFields.structure(), JobcandidateRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -274,8 +275,7 @@ public class JobcandidateRepoImpl implements JobcandidateRepo {
            "businessentityid" = EXCLUDED."businessentityid",
          "resume" = EXCLUDED."resume",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "jobcandidateid", "businessentityid", "resume", "modifieddate"::text
-      """)
+         returning "jobcandidateid", "businessentityid", "resume", "modifieddate"::text""")
     )
       .updateReturning(JobcandidateRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -294,8 +294,7 @@ public class JobcandidateRepoImpl implements JobcandidateRepo {
                   "businessentityid" = EXCLUDED."businessentityid",
                 "resume" = EXCLUDED."resume",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "jobcandidateid", "businessentityid", "resume", "modifieddate"::text
-             """))
+                returning "jobcandidateid", "businessentityid", "resume", "modifieddate"::text"""))
       .updateManyReturning(JobcandidateRow._rowParser, unsaved)
       .runUnchecked(c);
   };

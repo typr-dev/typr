@@ -44,6 +44,15 @@ object minimize {
               go(pred)
               go(thenp)
               go(elsep)
+            case jvm.If(branches, elseBody) =>
+              branches.foreach { case jvm.If.Branch(cond, body) =>
+                go(cond)
+                go(body)
+              }
+              elseBody.foreach(go)
+            case jvm.While(cond, body) =>
+              go(cond)
+              body.foreach(go)
             case jvm.ConstructorMethodRef(tpe) =>
               goTree(tpe)
             case jvm.ClassOf(tpe) =>

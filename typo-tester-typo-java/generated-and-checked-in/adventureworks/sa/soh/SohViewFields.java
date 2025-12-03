@@ -104,7 +104,7 @@ public interface SohViewFields {
                };
                @Override
                public OptField</* user-picked */ CustomCreditcardId, SohViewRow> creditcardid() {
-                 return new OptField</* user-picked */ CustomCreditcardId, SohViewRow>(_path, "creditcardid", SohViewRow::creditcardid, Optional.empty(), Optional.empty(), (row, value) -> row.withCreditcardid(value), /* user-picked */ CustomCreditcardId.pgType);
+                 return new OptField</* user-picked */ CustomCreditcardId, SohViewRow>(_path, "creditcardid", SohViewRow::creditcardid, Optional.empty(), Optional.empty(), (row, value) -> row.withCreditcardid(value), CustomCreditcardId.pgType);
                };
                @Override
                public OptField</* max 15 chars */ String, SohViewRow> creditcardapprovalcode() {

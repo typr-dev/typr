@@ -6,11 +6,12 @@
 package adventureworks.humanresources.vjobcandidateeducation
 
 import java.sql.Connection
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class VjobcandidateeducationViewRepoImpl extends VjobcandidateeducationViewRepo {
-  override def select: SelectBuilder[VjobcandidateeducationViewFields, VjobcandidateeducationViewRow] = SelectBuilder.of("humanresources.vjobcandidateeducation", VjobcandidateeducationViewFields.structure, VjobcandidateeducationViewRow.`_rowParser`)
+  override def select: SelectBuilder[VjobcandidateeducationViewFields, VjobcandidateeducationViewRow] = SelectBuilder.of(""""humanresources"."vjobcandidateeducation"""", VjobcandidateeducationViewFields.structure, VjobcandidateeducationViewRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[VjobcandidateeducationViewRow] = {
     interpolate"""select "jobcandidateid", "Edu.Level", "Edu.StartDate"::text, "Edu.EndDate"::text, "Edu.Degree", "Edu.Major", "Edu.Minor", "Edu.GPA", "Edu.GPAScale", "Edu.School", "Edu.Loc.CountryRegion", "Edu.Loc.State", "Edu.Loc.City"

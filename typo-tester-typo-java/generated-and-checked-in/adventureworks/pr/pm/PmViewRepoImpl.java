@@ -7,13 +7,14 @@ package adventureworks.pr.pm;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class PmViewRepoImpl implements PmViewRepo {
   @Override
   public SelectBuilder<PmViewFields, PmViewRow> select() {
-    return SelectBuilder.of("pr.pm", PmViewFields.structure(), PmViewRow._rowParser);
+    return SelectBuilder.of("\"pr\".\"pm\"", PmViewFields.structure(), PmViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

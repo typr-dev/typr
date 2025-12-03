@@ -53,5 +53,5 @@ case class EViewRow(
 )
 
 object EViewRow {
-  val `_rowParser`: RowParser[EViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.text, TypoLocalDate.pgType, PgTypes.text, PgTypes.text, TypoLocalDate.pgType, Flag.pgType, TypoShort.pgType, TypoShort.pgType, Flag.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, PgTypes.text.opt(), EViewRow.apply, row => Array(row.id, row.businessentityid, row.nationalidnumber, row.loginid, row.jobtitle, row.birthdate, row.maritalstatus, row.gender, row.hiredate, row.salariedflag, row.vacationhours, row.sickleavehours, row.currentflag, row.rowguid, row.modifieddate, row.organizationnode))
+  val `_rowParser`: RowParser[EViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.text, TypoLocalDate.pgType, PgTypes.bpchar, PgTypes.bpchar, TypoLocalDate.pgType, Flag.pgType, TypoShort.pgType, TypoShort.pgType, Flag.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, PgTypes.text.opt(), EViewRow.apply, row => Array(row.id, row.businessentityid, row.nationalidnumber, row.loginid, row.jobtitle, row.birthdate, row.maritalstatus, row.gender, row.hiredate, row.salariedflag, row.vacationhours, row.sickleavehours, row.currentflag, row.rowguid, row.modifieddate, row.organizationnode))
 }

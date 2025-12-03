@@ -39,7 +39,7 @@ public interface SpViewFields {
                };
                @Override
                public Field</* bpchar, max 3 chars */ String, SpViewRow> stateprovincecode() {
-                 return new Field</* bpchar, max 3 chars */ String, SpViewRow>(_path, "stateprovincecode", SpViewRow::stateprovincecode, Optional.empty(), Optional.empty(), (row, value) -> row.withStateprovincecode(value), PgTypes.text);
+                 return new Field</* bpchar, max 3 chars */ String, SpViewRow>(_path, "stateprovincecode", SpViewRow::stateprovincecode, Optional.empty(), Optional.empty(), (row, value) -> row.withStateprovincecode(value), PgTypes.bpchar);
                };
                @Override
                public Field<CountryregionId, SpViewRow> countryregioncode() {

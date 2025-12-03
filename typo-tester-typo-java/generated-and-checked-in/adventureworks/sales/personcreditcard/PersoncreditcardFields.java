@@ -39,7 +39,7 @@ public interface PersoncreditcardFields {
                };
                @Override
                public IdField</* user-picked */ CustomCreditcardId, PersoncreditcardRow> creditcardid() {
-                 return new IdField</* user-picked */ CustomCreditcardId, PersoncreditcardRow>(_path, "creditcardid", PersoncreditcardRow::creditcardid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withCreditcardid(value), /* user-picked */ CustomCreditcardId.pgType);
+                 return new IdField</* user-picked */ CustomCreditcardId, PersoncreditcardRow>(_path, "creditcardid", PersoncreditcardRow::creditcardid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withCreditcardid(value), CustomCreditcardId.pgType);
                };
                @Override
                public Field<TypoLocalDateTime, PersoncreditcardRow> modifieddate() {
@@ -82,6 +82,6 @@ public interface PersoncreditcardFields {
   };
 
   default SqlExpr<Boolean> compositeIdIn(List<PersoncreditcardId> compositeIds) {
-    return new CompositeIn(List.of(new Part<BusinessentityId, PersoncreditcardId, PersoncreditcardRow>(businessentityid(), PersoncreditcardId::businessentityid, BusinessentityId.pgType), new Part</* user-picked */ CustomCreditcardId, PersoncreditcardId, PersoncreditcardRow>(creditcardid(), PersoncreditcardId::creditcardid, /* user-picked */ CustomCreditcardId.pgType)), compositeIds);
+    return new CompositeIn(List.of(new Part<BusinessentityId, PersoncreditcardId, PersoncreditcardRow>(businessentityid(), PersoncreditcardId::businessentityid, BusinessentityId.pgType), new Part</* user-picked */ CustomCreditcardId, PersoncreditcardId, PersoncreditcardRow>(creditcardid(), PersoncreditcardId::creditcardid, CustomCreditcardId.pgType)), compositeIds);
   };
 }

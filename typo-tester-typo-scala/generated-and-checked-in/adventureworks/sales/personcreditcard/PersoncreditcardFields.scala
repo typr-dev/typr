@@ -36,7 +36,7 @@ trait PersoncreditcardFields {
 
   def compositeIdIs(compositeId: PersoncreditcardId): SqlExpr[java.lang.Boolean] = SqlExpr.all(businessentityid.isEqual(compositeId.businessentityid), creditcardid.isEqual(compositeId.creditcardid))
 
-  def compositeIdIn(compositeIds: java.util.List[PersoncreditcardId]): SqlExpr[java.lang.Boolean] = new CompositeIn(java.util.List.of(new Part[BusinessentityId, PersoncreditcardId, PersoncreditcardRow](businessentityid, _.businessentityid, BusinessentityId.pgType), new Part[/* user-picked */ CustomCreditcardId, PersoncreditcardId, PersoncreditcardRow](creditcardid, _.creditcardid, /* user-picked */ CustomCreditcardId.pgType)), compositeIds)
+  def compositeIdIn(compositeIds: java.util.List[PersoncreditcardId]): SqlExpr[java.lang.Boolean] = new CompositeIn(java.util.List.of(new Part[BusinessentityId, PersoncreditcardId, PersoncreditcardRow](businessentityid, _.businessentityid, BusinessentityId.pgType), new Part[/* user-picked */ CustomCreditcardId, PersoncreditcardId, PersoncreditcardRow](creditcardid, _.creditcardid, CustomCreditcardId.pgType)), compositeIds)
 }
 
 object PersoncreditcardFields {
@@ -63,7 +63,7 @@ object PersoncreditcardFields {
             Optional.empty(),
             Optional.of("int4"),
             (row, value) => row.copy(creditcardid = value),
-            /* user-picked */ CustomCreditcardId.pgType
+            CustomCreditcardId.pgType
           )
         }
         override def modifieddate: Field[TypoLocalDateTime, PersoncreditcardRow] = {

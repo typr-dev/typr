@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -38,7 +39,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class SalesorderheaderRepoImpl implements SalesorderheaderRepo {
   @Override
   public DeleteBuilder<SalesorderheaderFields, SalesorderheaderRow> delete() {
-    return DeleteBuilder.of("sales.salesorderheader", SalesorderheaderFields.structure());
+    return DeleteBuilder.of("\"sales\".\"salesorderheader\"", SalesorderheaderFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -384,7 +385,7 @@ public class SalesorderheaderRepoImpl implements SalesorderheaderRepo {
 
   @Override
   public SelectBuilder<SalesorderheaderFields, SalesorderheaderRow> select() {
-    return SelectBuilder.of("sales.salesorderheader", SalesorderheaderFields.structure(), SalesorderheaderRow._rowParser);
+    return SelectBuilder.of("\"sales\".\"salesorderheader\"", SalesorderheaderFields.structure(), SalesorderheaderRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -437,7 +438,7 @@ public class SalesorderheaderRepoImpl implements SalesorderheaderRepo {
 
   @Override
   public UpdateBuilder<SalesorderheaderFields, SalesorderheaderRow> update() {
-    return UpdateBuilder.of("sales.salesorderheader", SalesorderheaderFields.structure(), SalesorderheaderRow._rowParser.all());
+    return UpdateBuilder.of("\"sales\".\"salesorderheader\"", SalesorderheaderFields.structure(), SalesorderheaderRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -637,8 +638,7 @@ public class SalesorderheaderRepoImpl implements SalesorderheaderRepo {
          "comment" = EXCLUDED."comment",
          "rowguid" = EXCLUDED."rowguid",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text
-      """)
+         returning "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text""")
     )
       .updateReturning(SalesorderheaderRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -678,8 +678,7 @@ public class SalesorderheaderRepoImpl implements SalesorderheaderRepo {
                 "comment" = EXCLUDED."comment",
                 "rowguid" = EXCLUDED."rowguid",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text
-             """))
+                returning "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text"""))
       .updateManyReturning(SalesorderheaderRow._rowParser, unsaved)
       .runUnchecked(c);
   };

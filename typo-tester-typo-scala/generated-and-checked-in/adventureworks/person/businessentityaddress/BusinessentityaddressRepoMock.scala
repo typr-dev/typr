@@ -92,8 +92,9 @@ case class BusinessentityaddressRepoMock(
 
   override def selectByIds(compositeIds: Array[BusinessentityaddressId])(using c: Connection): java.util.List[BusinessentityaddressRow] = {
     val result = new ArrayList[BusinessentityaddressRow]()
-    compositeIds.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    compositeIds.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

@@ -6,7 +6,7 @@ import java.sql.Connection
 import javax.sql.DataSource
 import scala.concurrent.{ExecutionContext, Future, blocking}
 
-case class TypoDataSource(ds: DataSource) {
+case class TypoDataSource(ds: DataSource, dbType: DbType) {
   def run[T](f: Connection => T)(implicit ec: ExecutionContext): Future[T] =
     blocking {
       Future {
@@ -18,12 +18,37 @@ case class TypoDataSource(ds: DataSource) {
 }
 
 object TypoDataSource {
-  def hikari(server: String, port: Int, databaseName: String, username: String, password: String): TypoDataSource = {
+
+  /** Create a TypoDataSource for PostgreSQL */
+  def hikariPostgres(server: String, port: Int, databaseName: String, username: String, password: String): TypoDataSource = {
     val config = new HikariConfig
     config.setJdbcUrl(s"jdbc:postgresql://$server:$port/$databaseName")
     config.setUsername(username)
     config.setPassword(password)
     val ds = new HikariDataSource(config)
-    TypoDataSource(ds)
+    TypoDataSource(ds, DbType.PostgreSQL)
   }
+
+  /** Create a TypoDataSource for MariaDB */
+  def hikariMariaDb(server: String, port: Int, databaseName: String, username: String, password: String): TypoDataSource = {
+    val config = new HikariConfig
+    config.setJdbcUrl(s"jdbc:mariadb://$server:$port/$databaseName")
+    config.setUsername(username)
+    config.setPassword(password)
+    val ds = new HikariDataSource(config)
+    TypoDataSource(ds, DbType.MariaDB)
+  }
+
+  /** Create a TypoDataSource with auto-detection of database type */
+  def hikari(ds: DataSource): TypoDataSource = {
+    val conn = ds.getConnection
+    try {
+      val dbType = DbType.detect(conn)
+      TypoDataSource(ds, dbType)
+    } finally conn.close()
+  }
+
+  @deprecated("Use hikariPostgres instead", "0.x")
+  def hikari(server: String, port: Int, databaseName: String, username: String, password: String): TypoDataSource =
+    hikariPostgres(server, port, databaseName, username, password)
 }

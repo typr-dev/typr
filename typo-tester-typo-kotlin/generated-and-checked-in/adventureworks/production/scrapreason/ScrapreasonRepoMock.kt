@@ -40,9 +40,11 @@ data class ScrapreasonRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in scrapreasonids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in scrapreasonids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -69,7 +71,7 @@ data class ScrapreasonRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.scrapreasonid] = row
       count = count + 1L
     }
@@ -84,8 +86,8 @@ data class ScrapreasonRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.scrapreasonid] = row
       count = count + 1L
     }
@@ -105,9 +107,13 @@ data class ScrapreasonRepoMock(
     scrapreasonids: Array<ScrapreasonId>,
     c: Connection
   ): List<ScrapreasonRow> {
-    var result = ArrayList<ScrapreasonRow>()
-    for (id in scrapreasonids) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<ScrapreasonRow>()
+    for (id in scrapreasonids) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -141,9 +147,9 @@ data class ScrapreasonRepoMock(
     unsaved: MutableIterator<ScrapreasonRow>,
     c: Connection
   ): List<ScrapreasonRow> {
-    var result = ArrayList<ScrapreasonRow>()
+    val result = ArrayList<ScrapreasonRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.scrapreasonid] = row
       result.add(row)
     }
@@ -158,7 +164,7 @@ data class ScrapreasonRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.scrapreasonid] = row
       count = count + 1
     }

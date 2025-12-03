@@ -19,6 +19,7 @@ projects:
     - com.typesafe.play::play-json:2.10.6
     - org.playframework.anorm::anorm:2.7.0
     - org.postgresql:postgresql:42.7.3
+    - org.mariadb.jdbc:mariadb-java-client:3.5.1
     - com.zaxxer:HikariCP:4.0.3
     - org.slf4j:slf4j-nop:2.0.13
     - io.swagger.parser.v3:swagger-parser:2.1.24
@@ -61,6 +62,7 @@ projects:
       main: scripts.GeneratedRowParsers
     dependencies:
       - org.postgresql:postgresql:42.7.3
+      - org.mariadb.jdbc:mariadb-java-client:3.5.1
       - net.hamnaberg.json:immutable-json-ast:7.0.1
       - org.jetbrains:annotations:26.0.1
     platform:
@@ -173,6 +175,35 @@ projects:
     sourcegen:
       main: scripts.GenHardcodedFiles
       project: typo-scripts
+  # MariaDB tester projects
+  typo-tester-mariadb-java:
+    dependencies:
+    - junit:junit:4.13.2
+    - com.novocode:junit-interface:0.11
+    - com.fasterxml.jackson.core:jackson-annotations:2.17.2
+    - com.fasterxml.jackson.core:jackson-databind:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2
+    dependsOn: typo-dsl-java
+    isTestProject: true
+    java:
+      options: -proc:none
+    platform:
+      name: jvm
+    sources: ./generated-and-checked-in
+  typo-tester-mariadb-scala:
+    dependencies:
+    - org.scalatest::scalatest:3.2.18
+    - com.fasterxml.jackson.core:jackson-annotations:2.17.2
+    - com.fasterxml.jackson.core:jackson-databind:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2
+    dependsOn:
+    - typo-dsl-java
+    - typo-runtime-scala
+    extends: template-scala-3-stable
+    isTestProject: true
+    sources: ./generated-and-checked-in
   openapi-test-scala-http4s:
     dependencies:
     - org.http4s::http4s-dsl:0.23.30
@@ -359,6 +390,10 @@ scripts:
   generate-openapi-test:
     main: scripts.GenerateOpenApiTest
     project: typo-scripts
+  generate-mariadb:
+    main: scripts.GeneratedMariaDb
+    project: typo-scripts
+    sourceGlobs: ../mariadb_sql
   generate-sources:
     main: scripts.GeneratedSources
     project: typo-scripts

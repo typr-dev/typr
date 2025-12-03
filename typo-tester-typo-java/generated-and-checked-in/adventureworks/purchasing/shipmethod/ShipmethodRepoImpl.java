@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -28,7 +29,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class ShipmethodRepoImpl implements ShipmethodRepo {
   @Override
   public DeleteBuilder<ShipmethodFields, ShipmethodRow> delete() {
-    return DeleteBuilder.of("purchasing.shipmethod", ShipmethodFields.structure());
+    return DeleteBuilder.of("\"purchasing\".\"shipmethod\"", ShipmethodFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -204,7 +205,7 @@ public class ShipmethodRepoImpl implements ShipmethodRepo {
 
   @Override
   public SelectBuilder<ShipmethodFields, ShipmethodRow> select() {
-    return SelectBuilder.of("purchasing.shipmethod", ShipmethodFields.structure(), ShipmethodRow._rowParser);
+    return SelectBuilder.of("\"purchasing\".\"shipmethod\"", ShipmethodFields.structure(), ShipmethodRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -257,7 +258,7 @@ public class ShipmethodRepoImpl implements ShipmethodRepo {
 
   @Override
   public UpdateBuilder<ShipmethodFields, ShipmethodRow> update() {
-    return UpdateBuilder.of("purchasing.shipmethod", ShipmethodFields.structure(), ShipmethodRow._rowParser.all());
+    return UpdateBuilder.of("\"purchasing\".\"shipmethod\"", ShipmethodFields.structure(), ShipmethodRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -324,8 +325,7 @@ public class ShipmethodRepoImpl implements ShipmethodRepo {
          "shiprate" = EXCLUDED."shiprate",
          "rowguid" = EXCLUDED."rowguid",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text
-      """)
+         returning "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text""")
     )
       .updateReturning(ShipmethodRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -346,8 +346,7 @@ public class ShipmethodRepoImpl implements ShipmethodRepo {
                 "shiprate" = EXCLUDED."shiprate",
                 "rowguid" = EXCLUDED."rowguid",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text
-             """))
+                returning "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text"""))
       .updateManyReturning(ShipmethodRow._rowParser, unsaved)
       .runUnchecked(c);
   };

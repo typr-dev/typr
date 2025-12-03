@@ -13,6 +13,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.PgTypes
@@ -22,7 +23,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class FlaffRepoImpl() : FlaffRepo {
-  override fun delete(): DeleteBuilder<FlaffFields, FlaffRow> = DeleteBuilder.of("public.flaff", FlaffFields.structure)
+  override fun delete(): DeleteBuilder<FlaffFields, FlaffRow> = DeleteBuilder.of("\"public\".\"flaff\"", FlaffFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     compositeId: FlaffId,
@@ -106,7 +107,7 @@ class FlaffRepoImpl() : FlaffRepo {
   COPY "public"."flaff"("code", "another_code", "some_number", "specifier", "parentspecifier") FROM STDIN
   """.trimMargin()), batchSize, unsaved, c, FlaffRow.pgText)
 
-  override fun select(): SelectBuilder<FlaffFields, FlaffRow> = SelectBuilder.of("public.flaff", FlaffFields.structure, FlaffRow._rowParser)
+  override fun select(): SelectBuilder<FlaffFields, FlaffRow> = SelectBuilder.of("\"public\".\"flaff\"", FlaffFields.structure, FlaffRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<FlaffRow> = interpolate(typo.runtime.Fragment.lit("""
     select "code", "another_code", "some_number", "specifier", "parentspecifier"
@@ -174,7 +175,7 @@ class FlaffRepoImpl() : FlaffRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<FlaffFields, FlaffRow> = UpdateBuilder.of("public.flaff", FlaffFields.structure, FlaffRow._rowParser.all())
+  override fun update(): UpdateBuilder<FlaffFields, FlaffRow> = UpdateBuilder.of("\"public\".\"flaff\"", FlaffFields.structure, FlaffRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: FlaffRow,
@@ -227,8 +228,7 @@ class FlaffRepoImpl() : FlaffRepo {
       on conflict ("code", "another_code", "some_number", "specifier")
       do update set
         "parentspecifier" = EXCLUDED."parentspecifier"
-      returning "code", "another_code", "some_number", "specifier", "parentspecifier"
-    """.trimMargin())
+      returning "code", "another_code", "some_number", "specifier", "parentspecifier"""".trimMargin())
   )
     .updateReturning(FlaffRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -242,8 +242,7 @@ class FlaffRepoImpl() : FlaffRepo {
                         on conflict ("code", "another_code", "some_number", "specifier")
                         do update set
                           "parentspecifier" = EXCLUDED."parentspecifier"
-                        returning "code", "another_code", "some_number", "specifier", "parentspecifier"
-                      """.trimMargin()))
+                        returning "code", "another_code", "some_number", "specifier", "parentspecifier"""".trimMargin()))
     .updateManyReturning(FlaffRow._rowParser, unsaved)
     .runUnchecked(c)
 

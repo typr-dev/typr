@@ -270,7 +270,7 @@ object SohViewFields {
             Optional.empty(),
             Optional.empty(),
             (row, value) => row.copy(creditcardid = value),
-            /* user-picked */ CustomCreditcardId.pgType
+            CustomCreditcardId.pgType
           )
         }
         override def creditcardapprovalcode: OptField[/* max 15 chars */ String, SohViewRow] = {

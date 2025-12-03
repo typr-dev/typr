@@ -13,6 +13,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -21,7 +22,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ShiftRepoImpl extends ShiftRepo {
-  override def delete: DeleteBuilder[ShiftFields, ShiftRow] = DeleteBuilder.of("humanresources.shift", ShiftFields.structure)
+  override def delete: DeleteBuilder[ShiftFields, ShiftRow] = DeleteBuilder.of(""""humanresources"."shift"""", ShiftFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(shiftid: ShiftId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "humanresources"."shift" where "shiftid" = ${ShiftId.pgType.encode(shiftid)}""".update().runUnchecked(c) > 0
 
@@ -78,7 +79,7 @@ class ShiftRepoImpl extends ShiftRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "humanresources"."shift"("name", "starttime", "endtime", "shiftid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ShiftRowUnsaved.pgText)
 
-  override def select: SelectBuilder[ShiftFields, ShiftRow] = SelectBuilder.of("humanresources.shift", ShiftFields.structure, ShiftRow.`_rowParser`)
+  override def select: SelectBuilder[ShiftFields, ShiftRow] = SelectBuilder.of(""""humanresources"."shift"""", ShiftFields.structure, ShiftRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[ShiftRow] = {
     interpolate"""select "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text
@@ -104,7 +105,7 @@ class ShiftRepoImpl extends ShiftRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[ShiftFields, ShiftRow] = UpdateBuilder.of("humanresources.shift", ShiftFields.structure, ShiftRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ShiftFields, ShiftRow] = UpdateBuilder.of(""""humanresources"."shift"""", ShiftFields.structure, ShiftRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: ShiftRow)(using c: Connection): java.lang.Boolean = {
     val shiftid: ShiftId = row.shiftid
@@ -125,8 +126,7 @@ class ShiftRepoImpl extends ShiftRepo {
     "starttime" = EXCLUDED."starttime",
     "endtime" = EXCLUDED."endtime",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text
-    """
+    returning "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text"""
     .updateReturning(ShiftRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -140,8 +140,7 @@ class ShiftRepoImpl extends ShiftRepo {
     "starttime" = EXCLUDED."starttime",
     "endtime" = EXCLUDED."endtime",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text
-    """
+    returning "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text"""
       .updateManyReturning(ShiftRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

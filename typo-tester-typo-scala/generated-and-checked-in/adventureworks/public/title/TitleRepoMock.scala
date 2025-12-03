@@ -72,8 +72,9 @@ case class TitleRepoMock(map: HashMap[TitleId, TitleRow] = new HashMap[TitleId, 
 
   override def selectByIds(codes: Array[TitleId])(using c: Connection): java.util.List[TitleRow] = {
     val result = new ArrayList[TitleRow]()
-    codes.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    codes.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

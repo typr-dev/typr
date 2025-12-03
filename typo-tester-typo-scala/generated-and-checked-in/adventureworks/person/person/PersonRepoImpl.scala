@@ -17,6 +17,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -26,7 +27,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PersonRepoImpl extends PersonRepo {
-  override def delete: DeleteBuilder[PersonFields, PersonRow] = DeleteBuilder.of("person.person", PersonFields.structure)
+  override def delete: DeleteBuilder[PersonFields, PersonRow] = DeleteBuilder.of(""""person"."person"""", PersonFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(businessentityid: BusinessentityId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "person"."person" where "businessentityid" = ${BusinessentityId.pgType.encode(businessentityid)}""".update().runUnchecked(c) > 0
 
@@ -103,7 +104,7 @@ class PersonRepoImpl extends PersonRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "person"."person"("businessentityid", "persontype", "title", "firstname", "middlename", "lastname", "suffix", "additionalcontactinfo", "demographics", "namestyle", "emailpromotion", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, PersonRowUnsaved.pgText)
 
-  override def select: SelectBuilder[PersonFields, PersonRow] = SelectBuilder.of("person.person", PersonFields.structure, PersonRow.`_rowParser`)
+  override def select: SelectBuilder[PersonFields, PersonRow] = SelectBuilder.of(""""person"."person"""", PersonFields.structure, PersonRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[PersonRow] = {
     interpolate"""select "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text
@@ -129,7 +130,7 @@ class PersonRepoImpl extends PersonRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[PersonFields, PersonRow] = UpdateBuilder.of("person.person", PersonFields.structure, PersonRow.`_rowParser`.all())
+  override def update: UpdateBuilder[PersonFields, PersonRow] = UpdateBuilder.of(""""person"."person"""", PersonFields.structure, PersonRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: PersonRow)(using c: Connection): java.lang.Boolean = {
     val businessentityid: BusinessentityId = row.businessentityid
@@ -166,8 +167,7 @@ class PersonRepoImpl extends PersonRepo {
     "demographics" = EXCLUDED."demographics",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text
-    """
+    returning "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text"""
     .updateReturning(PersonRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -189,8 +189,7 @@ class PersonRepoImpl extends PersonRepo {
     "demographics" = EXCLUDED."demographics",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text
-    """
+    returning "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text"""
       .updateManyReturning(PersonRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

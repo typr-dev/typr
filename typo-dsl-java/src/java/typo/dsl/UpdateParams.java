@@ -1,6 +1,6 @@
 package typo.dsl;
 
-import typo.runtime.PgType;
+import typo.runtime.DbType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +30,12 @@ public record UpdateParams<Fields, Row>(
     
     /**
      * Convenience method to set a field to a constant value.
-     * The PgType parameter ensures type safety for the value.
+     * The DbType parameter ensures type safety for the value.
      */
     public <T> UpdateParams<Fields, Row> set(
             Function<Fields, SqlExpr.FieldLikeNotId<T, Row>> column,
             T value,
-            PgType<T> pgType) {
+            DbType<T> pgType) {
         return set(column, fields -> new SqlExpr.ConstReq<>(value, pgType));
     }
     

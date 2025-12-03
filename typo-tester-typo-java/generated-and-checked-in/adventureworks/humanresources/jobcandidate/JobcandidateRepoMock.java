@@ -61,9 +61,11 @@ public record JobcandidateRepoMock(
     Connection c
   ) {
     var count = 0;
-    for (var id : jobcandidateids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : jobcandidateids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -143,8 +145,12 @@ public record JobcandidateRepoMock(
     Connection c
   ) {
     var result = new ArrayList<JobcandidateRow>();
-    for (var id : jobcandidateids) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : jobcandidateids) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 
@@ -168,7 +174,7 @@ public record JobcandidateRepoMock(
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.jobcandidateid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
     if (shouldUpdate) {
-      map.put(row.jobcandidateid(), row);
+      map.put(row.jobcandidateid(), row);;
     };
     return shouldUpdate;
   };

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -26,7 +27,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class CultureRepoImpl implements CultureRepo {
   @Override
   public DeleteBuilder<CultureFields, CultureRow> delete() {
-    return DeleteBuilder.of("production.culture", CultureFields.structure());
+    return DeleteBuilder.of("\"production\".\"culture\"", CultureFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -153,7 +154,7 @@ public class CultureRepoImpl implements CultureRepo {
 
   @Override
   public SelectBuilder<CultureFields, CultureRow> select() {
-    return SelectBuilder.of("production.culture", CultureFields.structure(), CultureRow._rowParser);
+    return SelectBuilder.of("\"production\".\"culture\"", CultureFields.structure(), CultureRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -206,7 +207,7 @@ public class CultureRepoImpl implements CultureRepo {
 
   @Override
   public UpdateBuilder<CultureFields, CultureRow> update() {
-    return UpdateBuilder.of("production.culture", CultureFields.structure(), CultureRow._rowParser.all());
+    return UpdateBuilder.of("\"production\".\"culture\"", CultureFields.structure(), CultureRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -252,8 +253,7 @@ public class CultureRepoImpl implements CultureRepo {
          do update set
            "name" = EXCLUDED."name",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "cultureid", "name", "modifieddate"::text
-      """)
+         returning "cultureid", "name", "modifieddate"::text""")
     )
       .updateReturning(CultureRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -271,8 +271,7 @@ public class CultureRepoImpl implements CultureRepo {
                 do update set
                   "name" = EXCLUDED."name",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "cultureid", "name", "modifieddate"::text
-             """))
+                returning "cultureid", "name", "modifieddate"::text"""))
       .updateManyReturning(CultureRow._rowParser, unsaved)
       .runUnchecked(c);
   };

@@ -40,9 +40,11 @@ data class AddressRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in addressids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in addressids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -69,7 +71,7 @@ data class AddressRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.addressid] = row
       count = count + 1L
     }
@@ -84,8 +86,8 @@ data class AddressRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.addressid] = row
       count = count + 1L
     }
@@ -105,9 +107,13 @@ data class AddressRepoMock(
     addressids: Array<AddressId>,
     c: Connection
   ): List<AddressRow> {
-    var result = ArrayList<AddressRow>()
-    for (id in addressids) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<AddressRow>()
+    for (id in addressids) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -141,9 +147,9 @@ data class AddressRepoMock(
     unsaved: MutableIterator<AddressRow>,
     c: Connection
   ): List<AddressRow> {
-    var result = ArrayList<AddressRow>()
+    val result = ArrayList<AddressRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.addressid] = row
       result.add(row)
     }
@@ -158,7 +164,7 @@ data class AddressRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.addressid] = row
       count = count + 1
     }

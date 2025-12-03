@@ -72,8 +72,9 @@ case class TestUtdanningstilbudRepoMock(map: HashMap[TestUtdanningstilbudId, Tes
 
   override def selectByIds(compositeIds: Array[TestUtdanningstilbudId])(using c: Connection): java.util.List[TestUtdanningstilbudRow] = {
     val result = new ArrayList[TestUtdanningstilbudRow]()
-    compositeIds.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    compositeIds.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

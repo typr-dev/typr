@@ -6,11 +6,12 @@
 package adventureworks.sa.crc
 
 import java.sql.Connection
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class CrcViewRepoImpl extends CrcViewRepo {
-  override def select: SelectBuilder[CrcViewFields, CrcViewRow] = SelectBuilder.of("sa.crc", CrcViewFields.structure, CrcViewRow.`_rowParser`)
+  override def select: SelectBuilder[CrcViewFields, CrcViewRow] = SelectBuilder.of(""""sa"."crc"""", CrcViewFields.structure, CrcViewRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[CrcViewRow] = {
     interpolate"""select "countryregioncode", "currencycode", "modifieddate"::text

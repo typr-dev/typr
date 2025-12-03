@@ -40,6 +40,6 @@ data class VemployeedepartmenthistoryViewRow(
   val enddate: Optional<TypoLocalDate>
 ) {
   companion object {
-    val _rowParser: RowParser<VemployeedepartmenthistoryViewRow> = RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), /* user-picked */ FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text.opt(), Name.pgType, Name.pgType, Name.pgType, TypoLocalDate.pgType, TypoLocalDate.pgType.opt(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10 -> VemployeedepartmenthistoryViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!, t10!!) }, { row -> arrayOf<Any?>(row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.shift, row.department, row.groupname, row.startdate, row.enddate) })
+    val _rowParser: RowParser<VemployeedepartmenthistoryViewRow> = RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text.opt(), Name.pgType, Name.pgType, Name.pgType, TypoLocalDate.pgType, TypoLocalDate.pgType.opt(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10 -> VemployeedepartmenthistoryViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!, t10!!) }, { row -> arrayOf<Any?>(row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.shift, row.department, row.groupname, row.startdate, row.enddate) })
   }
 }

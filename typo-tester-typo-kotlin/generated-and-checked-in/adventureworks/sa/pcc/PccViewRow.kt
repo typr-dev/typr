@@ -23,6 +23,6 @@ data class PccViewRow(
   val modifieddate: TypoLocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<PccViewRow> = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, /* user-picked */ CustomCreditcardId.pgType, TypoLocalDateTime.pgType, { t0, t1, t2, t3 -> PccViewRow(t0!!, t1!!, t2!!, t3!!) }, { row -> arrayOf<Any?>(row.id, row.businessentityid, row.creditcardid, row.modifieddate) })
+    val _rowParser: RowParser<PccViewRow> = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, CustomCreditcardId.pgType, TypoLocalDateTime.pgType, { t0, t1, t2, t3 -> PccViewRow(t0!!, t1!!, t2!!, t3!!) }, { row -> arrayOf<Any?>(row.id, row.businessentityid, row.creditcardid, row.modifieddate) })
   }
 }

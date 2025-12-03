@@ -12,6 +12,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -21,7 +22,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class UsersRepoImpl extends UsersRepo {
-  override def delete: DeleteBuilder[UsersFields, UsersRow] = DeleteBuilder.of("public.users", UsersFields.structure)
+  override def delete: DeleteBuilder[UsersFields, UsersRow] = DeleteBuilder.of(""""public"."users"""", UsersFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(userId: UsersId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."users" where "user_id" = ${UsersId.pgType.encode(userId)}""".update().runUnchecked(c) > 0
 
@@ -80,7 +81,7 @@ class UsersRepoImpl extends UsersRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."users"("user_id", "name", "last_name", "email", "password", "verified_on", "created_at") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, UsersRowUnsaved.pgText)
 
-  override def select: SelectBuilder[UsersFields, UsersRow] = SelectBuilder.of("public.users", UsersFields.structure, UsersRow.`_rowParser`)
+  override def select: SelectBuilder[UsersFields, UsersRow] = SelectBuilder.of(""""public"."users"""", UsersFields.structure, UsersRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[UsersRow] = {
     interpolate"""select "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text
@@ -113,7 +114,7 @@ class UsersRepoImpl extends UsersRepo {
     """.query(UsersRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  override def update: UpdateBuilder[UsersFields, UsersRow] = UpdateBuilder.of("public.users", UsersFields.structure, UsersRow.`_rowParser`.all())
+  override def update: UpdateBuilder[UsersFields, UsersRow] = UpdateBuilder.of(""""public"."users"""", UsersFields.structure, UsersRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: UsersRow)(using c: Connection): java.lang.Boolean = {
     val userId: UsersId = row.userId
@@ -138,8 +139,7 @@ class UsersRepoImpl extends UsersRepo {
     "password" = EXCLUDED."password",
     "created_at" = EXCLUDED."created_at",
     "verified_on" = EXCLUDED."verified_on"
-    returning "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text
-    """
+    returning "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text"""
     .updateReturning(UsersRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -155,8 +155,7 @@ class UsersRepoImpl extends UsersRepo {
     "password" = EXCLUDED."password",
     "created_at" = EXCLUDED."created_at",
     "verified_on" = EXCLUDED."verified_on"
-    returning "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text
-    """
+    returning "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text"""
       .updateManyReturning(UsersRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

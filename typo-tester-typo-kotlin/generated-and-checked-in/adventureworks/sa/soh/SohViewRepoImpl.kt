@@ -7,11 +7,12 @@ package adventureworks.sa.soh
 
 import java.sql.Connection
 import kotlin.collections.List
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.Fragment.interpolate
 
 class SohViewRepoImpl() : SohViewRepo {
-  override fun select(): SelectBuilder<SohViewFields, SohViewRow> = SelectBuilder.of("sa.soh", SohViewFields.structure, SohViewRow._rowParser)
+  override fun select(): SelectBuilder<SohViewFields, SohViewRow> = SelectBuilder.of("\"sa\".\"soh\"", SohViewFields.structure, SohViewRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<SohViewRow> = interpolate(typo.runtime.Fragment.lit("""
     select "id", "salesorderid", "revisionnumber", "orderdate"::text, "duedate"::text, "shipdate"::text, "status", "onlineorderflag", "purchaseordernumber", "accountnumber", "customerid", "salespersonid", "territoryid", "billtoaddressid", "shiptoaddressid", "shipmethodid", "creditcardid", "creditcardapprovalcode", "currencyrateid", "subtotal", "taxamt", "freight", "totaldue", "comment", "rowguid", "modifieddate"::text

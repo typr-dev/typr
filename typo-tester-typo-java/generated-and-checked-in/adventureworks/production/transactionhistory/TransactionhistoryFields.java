@@ -51,7 +51,7 @@ public interface TransactionhistoryFields {
                };
                @Override
                public Field</* bpchar, max 1 chars */ String, TransactionhistoryRow> transactiontype() {
-                 return new Field</* bpchar, max 1 chars */ String, TransactionhistoryRow>(_path, "transactiontype", TransactionhistoryRow::transactiontype, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withTransactiontype(value), PgTypes.text);
+                 return new Field</* bpchar, max 1 chars */ String, TransactionhistoryRow>(_path, "transactiontype", TransactionhistoryRow::transactiontype, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withTransactiontype(value), PgTypes.bpchar);
                };
                @Override
                public Field<Integer, TransactionhistoryRow> quantity() {

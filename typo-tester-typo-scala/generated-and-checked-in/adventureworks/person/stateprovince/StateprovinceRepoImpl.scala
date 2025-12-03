@@ -16,6 +16,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -25,7 +26,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class StateprovinceRepoImpl extends StateprovinceRepo {
-  override def delete: DeleteBuilder[StateprovinceFields, StateprovinceRow] = DeleteBuilder.of("person.stateprovince", StateprovinceFields.structure)
+  override def delete: DeleteBuilder[StateprovinceFields, StateprovinceRow] = DeleteBuilder.of(""""person"."stateprovince"""", StateprovinceFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(stateprovinceid: StateprovinceId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "person"."stateprovince" where "stateprovinceid" = ${StateprovinceId.pgType.encode(stateprovinceid)}""".update().runUnchecked(c) > 0
 
@@ -92,7 +93,7 @@ class StateprovinceRepoImpl extends StateprovinceRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "person"."stateprovince"("stateprovincecode", "countryregioncode", "name", "territoryid", "stateprovinceid", "isonlystateprovinceflag", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, StateprovinceRowUnsaved.pgText)
 
-  override def select: SelectBuilder[StateprovinceFields, StateprovinceRow] = SelectBuilder.of("person.stateprovince", StateprovinceFields.structure, StateprovinceRow.`_rowParser`)
+  override def select: SelectBuilder[StateprovinceFields, StateprovinceRow] = SelectBuilder.of(""""person"."stateprovince"""", StateprovinceFields.structure, StateprovinceRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[StateprovinceRow] = {
     interpolate"""select "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"::text
@@ -118,7 +119,7 @@ class StateprovinceRepoImpl extends StateprovinceRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[StateprovinceFields, StateprovinceRow] = UpdateBuilder.of("person.stateprovince", StateprovinceFields.structure, StateprovinceRow.`_rowParser`.all())
+  override def update: UpdateBuilder[StateprovinceFields, StateprovinceRow] = UpdateBuilder.of(""""person"."stateprovince"""", StateprovinceFields.structure, StateprovinceRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: StateprovinceRow)(using c: Connection): java.lang.Boolean = {
     val stateprovinceid: StateprovinceId = row.stateprovinceid
@@ -145,8 +146,7 @@ class StateprovinceRepoImpl extends StateprovinceRepo {
     "territoryid" = EXCLUDED."territoryid",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"::text
-    """
+    returning "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"::text"""
     .updateReturning(StateprovinceRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -163,8 +163,7 @@ class StateprovinceRepoImpl extends StateprovinceRepo {
     "territoryid" = EXCLUDED."territoryid",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"::text
-    """
+    returning "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"::text"""
       .updateManyReturning(StateprovinceRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

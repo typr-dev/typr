@@ -7,13 +7,14 @@ package adventureworks.pu.poh;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class PohViewRepoImpl implements PohViewRepo {
   @Override
   public SelectBuilder<PohViewFields, PohViewRow> select() {
-    return SelectBuilder.of("pu.poh", PohViewFields.structure(), PohViewRow._rowParser);
+    return SelectBuilder.of("\"pu\".\"poh\"", PohViewFields.structure(), PohViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

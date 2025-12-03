@@ -41,9 +41,11 @@ data class StoreRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in businessentityids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in businessentityids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -70,7 +72,7 @@ data class StoreRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.businessentityid] = row
       count = count + 1L
     }
@@ -85,8 +87,8 @@ data class StoreRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.businessentityid] = row
       count = count + 1L
     }
@@ -106,9 +108,13 @@ data class StoreRepoMock(
     businessentityids: Array<BusinessentityId>,
     c: Connection
   ): List<StoreRow> {
-    var result = ArrayList<StoreRow>()
-    for (id in businessentityids) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<StoreRow>()
+    for (id in businessentityids) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -142,9 +148,9 @@ data class StoreRepoMock(
     unsaved: MutableIterator<StoreRow>,
     c: Connection
   ): List<StoreRow> {
-    var result = ArrayList<StoreRow>()
+    val result = ArrayList<StoreRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.businessentityid] = row
       result.add(row)
     }
@@ -159,7 +165,7 @@ data class StoreRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.businessentityid] = row
       count = count + 1
     }

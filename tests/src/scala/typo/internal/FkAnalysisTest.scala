@@ -204,7 +204,7 @@ class FkAnalysisTest extends AnyFunSuite with Matchers {
   private def createDbCol(name: String): db.Col = {
     db.Col(
       parsedName = ParsedName(db.ColName(name), db.ColName(name), None, None),
-      tpe = db.Type.Text,
+      tpe = db.PgType.Text,
       udtName = None,
       nullability = Nullability.NoNulls,
       columnDefault = None,

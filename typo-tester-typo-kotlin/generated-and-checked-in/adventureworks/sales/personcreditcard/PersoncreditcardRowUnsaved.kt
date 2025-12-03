@@ -31,7 +31,7 @@ data class PersoncreditcardRowUnsaved(
     val pgText: PgText<PersoncreditcardRowUnsaved> =
       PgText.instance({ row, sb -> BusinessentityId.pgType.pgText().unsafeEncode(row.businessentityid, sb)
       sb.append(PgText.DELIMETER)
-      /* user-picked */ CustomCreditcardId.pgType.pgText().unsafeEncode(row.creditcardid, sb)
+      CustomCreditcardId.pgType.pgText().unsafeEncode(row.creditcardid, sb)
       sb.append(PgText.DELIMETER)
       Defaulted.pgText(TypoLocalDateTime.pgType.pgText()).unsafeEncode(row.modifieddate, sb) })
   }

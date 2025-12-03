@@ -13,6 +13,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -22,7 +23,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ShipmethodRepoImpl extends ShipmethodRepo {
-  override def delete: DeleteBuilder[ShipmethodFields, ShipmethodRow] = DeleteBuilder.of("purchasing.shipmethod", ShipmethodFields.structure)
+  override def delete: DeleteBuilder[ShipmethodFields, ShipmethodRow] = DeleteBuilder.of(""""purchasing"."shipmethod"""", ShipmethodFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(shipmethodid: ShipmethodId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "purchasing"."shipmethod" where "shipmethodid" = ${ShipmethodId.pgType.encode(shipmethodid)}""".update().runUnchecked(c) > 0
 
@@ -87,7 +88,7 @@ class ShipmethodRepoImpl extends ShipmethodRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "purchasing"."shipmethod"("name", "shipmethodid", "shipbase", "shiprate", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ShipmethodRowUnsaved.pgText)
 
-  override def select: SelectBuilder[ShipmethodFields, ShipmethodRow] = SelectBuilder.of("purchasing.shipmethod", ShipmethodFields.structure, ShipmethodRow.`_rowParser`)
+  override def select: SelectBuilder[ShipmethodFields, ShipmethodRow] = SelectBuilder.of(""""purchasing"."shipmethod"""", ShipmethodFields.structure, ShipmethodRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[ShipmethodRow] = {
     interpolate"""select "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text
@@ -113,7 +114,7 @@ class ShipmethodRepoImpl extends ShipmethodRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[ShipmethodFields, ShipmethodRow] = UpdateBuilder.of("purchasing.shipmethod", ShipmethodFields.structure, ShipmethodRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ShipmethodFields, ShipmethodRow] = UpdateBuilder.of(""""purchasing"."shipmethod"""", ShipmethodFields.structure, ShipmethodRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: ShipmethodRow)(using c: Connection): java.lang.Boolean = {
     val shipmethodid: ShipmethodId = row.shipmethodid
@@ -136,8 +137,7 @@ class ShipmethodRepoImpl extends ShipmethodRepo {
     "shiprate" = EXCLUDED."shiprate",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text
-    """
+    returning "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text"""
     .updateReturning(ShipmethodRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -152,8 +152,7 @@ class ShipmethodRepoImpl extends ShipmethodRepo {
     "shiprate" = EXCLUDED."shiprate",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text
-    """
+    returning "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text"""
       .updateManyReturning(ShipmethodRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

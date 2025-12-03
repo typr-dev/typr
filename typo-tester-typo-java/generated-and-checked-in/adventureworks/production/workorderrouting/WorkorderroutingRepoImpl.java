@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -30,7 +31,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class WorkorderroutingRepoImpl implements WorkorderroutingRepo {
   @Override
   public DeleteBuilder<WorkorderroutingFields, WorkorderroutingRow> delete() {
-    return DeleteBuilder.of("production.workorderrouting", WorkorderroutingFields.structure());
+    return DeleteBuilder.of("\"production\".\"workorderrouting\"", WorkorderroutingFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -237,7 +238,7 @@ public class WorkorderroutingRepoImpl implements WorkorderroutingRepo {
 
   @Override
   public SelectBuilder<WorkorderroutingFields, WorkorderroutingRow> select() {
-    return SelectBuilder.of("production.workorderrouting", WorkorderroutingFields.structure(), WorkorderroutingRow._rowParser);
+    return SelectBuilder.of("\"production\".\"workorderrouting\"", WorkorderroutingFields.structure(), WorkorderroutingRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -309,7 +310,7 @@ public class WorkorderroutingRepoImpl implements WorkorderroutingRepo {
 
   @Override
   public UpdateBuilder<WorkorderroutingFields, WorkorderroutingRow> update() {
-    return UpdateBuilder.of("production.workorderrouting", WorkorderroutingFields.structure(), WorkorderroutingRow._rowParser.all());
+    return UpdateBuilder.of("\"production\".\"workorderrouting\"", WorkorderroutingFields.structure(), WorkorderroutingRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -416,8 +417,7 @@ public class WorkorderroutingRepoImpl implements WorkorderroutingRepo {
          "plannedcost" = EXCLUDED."plannedcost",
          "actualcost" = EXCLUDED."actualcost",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text
-      """)
+         returning "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text""")
     )
       .updateReturning(WorkorderroutingRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -442,8 +442,7 @@ public class WorkorderroutingRepoImpl implements WorkorderroutingRepo {
                 "plannedcost" = EXCLUDED."plannedcost",
                 "actualcost" = EXCLUDED."actualcost",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text
-             """))
+                returning "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate"::text, "scheduledenddate"::text, "actualstartdate"::text, "actualenddate"::text, "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"::text"""))
       .updateManyReturning(WorkorderroutingRow._rowParser, unsaved)
       .runUnchecked(c);
   };

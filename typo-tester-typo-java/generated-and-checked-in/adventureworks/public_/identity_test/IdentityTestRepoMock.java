@@ -61,9 +61,11 @@ public record IdentityTestRepoMock(
     Connection c
   ) {
     var count = 0;
-    for (var id : names) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : names) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -143,8 +145,12 @@ public record IdentityTestRepoMock(
     Connection c
   ) {
     var result = new ArrayList<IdentityTestRow>();
-    for (var id : names) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : names) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 
@@ -168,7 +174,7 @@ public record IdentityTestRepoMock(
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.name())).filter(oldRow -> !oldRow.equals(row)).isPresent();
     if (shouldUpdate) {
-      map.put(row.name(), row);
+      map.put(row.name(), row);;
     };
     return shouldUpdate;
   };

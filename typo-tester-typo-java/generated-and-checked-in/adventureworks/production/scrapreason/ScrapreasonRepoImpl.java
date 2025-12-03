@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -26,7 +27,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class ScrapreasonRepoImpl implements ScrapreasonRepo {
   @Override
   public DeleteBuilder<ScrapreasonFields, ScrapreasonRow> delete() {
-    return DeleteBuilder.of("production.scrapreason", ScrapreasonFields.structure());
+    return DeleteBuilder.of("\"production\".\"scrapreason\"", ScrapreasonFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -160,7 +161,7 @@ public class ScrapreasonRepoImpl implements ScrapreasonRepo {
 
   @Override
   public SelectBuilder<ScrapreasonFields, ScrapreasonRow> select() {
-    return SelectBuilder.of("production.scrapreason", ScrapreasonFields.structure(), ScrapreasonRow._rowParser);
+    return SelectBuilder.of("\"production\".\"scrapreason\"", ScrapreasonFields.structure(), ScrapreasonRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -213,7 +214,7 @@ public class ScrapreasonRepoImpl implements ScrapreasonRepo {
 
   @Override
   public UpdateBuilder<ScrapreasonFields, ScrapreasonRow> update() {
-    return UpdateBuilder.of("production.scrapreason", ScrapreasonFields.structure(), ScrapreasonRow._rowParser.all());
+    return UpdateBuilder.of("\"production\".\"scrapreason\"", ScrapreasonFields.structure(), ScrapreasonRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -259,8 +260,7 @@ public class ScrapreasonRepoImpl implements ScrapreasonRepo {
          do update set
            "name" = EXCLUDED."name",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "scrapreasonid", "name", "modifieddate"::text
-      """)
+         returning "scrapreasonid", "name", "modifieddate"::text""")
     )
       .updateReturning(ScrapreasonRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -278,8 +278,7 @@ public class ScrapreasonRepoImpl implements ScrapreasonRepo {
                 do update set
                   "name" = EXCLUDED."name",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "scrapreasonid", "name", "modifieddate"::text
-             """))
+                returning "scrapreasonid", "name", "modifieddate"::text"""))
       .updateManyReturning(ScrapreasonRow._rowParser, unsaved)
       .runUnchecked(c);
   };

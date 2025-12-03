@@ -92,8 +92,9 @@ case class SpecialofferRepoMock(
 
   override def selectByIds(specialofferids: Array[SpecialofferId])(using c: Connection): java.util.List[SpecialofferRow] = {
     val result = new ArrayList[SpecialofferRow]()
-    specialofferids.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    specialofferids.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

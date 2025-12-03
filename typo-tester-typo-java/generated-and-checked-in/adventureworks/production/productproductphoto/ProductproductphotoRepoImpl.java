@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -29,7 +30,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class ProductproductphotoRepoImpl implements ProductproductphotoRepo {
   @Override
   public DeleteBuilder<ProductproductphotoFields, ProductproductphotoRow> delete() {
-    return DeleteBuilder.of("production.productproductphoto", ProductproductphotoFields.structure());
+    return DeleteBuilder.of("\"production\".\"productproductphoto\"", ProductproductphotoFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -180,7 +181,7 @@ public class ProductproductphotoRepoImpl implements ProductproductphotoRepo {
 
   @Override
   public SelectBuilder<ProductproductphotoFields, ProductproductphotoRow> select() {
-    return SelectBuilder.of("production.productproductphoto", ProductproductphotoFields.structure(), ProductproductphotoRow._rowParser);
+    return SelectBuilder.of("\"production\".\"productproductphoto\"", ProductproductphotoFields.structure(), ProductproductphotoRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -245,7 +246,7 @@ public class ProductproductphotoRepoImpl implements ProductproductphotoRepo {
 
   @Override
   public UpdateBuilder<ProductproductphotoFields, ProductproductphotoRow> update() {
-    return UpdateBuilder.of("production.productproductphoto", ProductproductphotoFields.structure(), ProductproductphotoRow._rowParser.all());
+    return UpdateBuilder.of("\"production\".\"productproductphoto\"", ProductproductphotoFields.structure(), ProductproductphotoRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -297,8 +298,7 @@ public class ProductproductphotoRepoImpl implements ProductproductphotoRepo {
          do update set
            "primary" = EXCLUDED."primary",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "productid", "productphotoid", "primary", "modifieddate"::text
-      """)
+         returning "productid", "productphotoid", "primary", "modifieddate"::text""")
     )
       .updateReturning(ProductproductphotoRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -316,8 +316,7 @@ public class ProductproductphotoRepoImpl implements ProductproductphotoRepo {
                 do update set
                   "primary" = EXCLUDED."primary",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "productid", "productphotoid", "primary", "modifieddate"::text
-             """))
+                returning "productid", "productphotoid", "primary", "modifieddate"::text"""))
       .updateManyReturning(ProductproductphotoRow._rowParser, unsaved)
       .runUnchecked(c);
   };

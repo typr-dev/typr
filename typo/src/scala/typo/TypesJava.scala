@@ -3,6 +3,7 @@ package typo
 import typo.jvm.Type.Qualified
 
 object TypesJava {
+  // PostgreSQL-specific runtime types
   object runtime {
     val AclItem = Qualified("typo.data.AclItem")
     val AnyArray = Qualified("typo.data.AnyArray")
@@ -30,11 +31,28 @@ object TypesJava {
     val Xid = Qualified("typo.data.Xid")
     val Xml = Qualified("typo.data.Xml")
   }
+
+  // MariaDB-specific runtime types
+  object maria {
+    val Inet4 = Qualified("typo.data.maria.Inet4")
+    val Inet6 = Qualified("typo.data.maria.Inet6")
+    val MariaSet = Qualified("typo.data.maria.MariaSet")
+    // Spatial types from MariaDB Connector/J
+    val Geometry = Qualified("org.mariadb.jdbc.type.Geometry")
+    val Point = Qualified("org.mariadb.jdbc.type.Point")
+    val LineString = Qualified("org.mariadb.jdbc.type.LineString")
+    val Polygon = Qualified("org.mariadb.jdbc.type.Polygon")
+    val MultiPoint = Qualified("org.mariadb.jdbc.type.MultiPoint")
+    val MultiLineString = Qualified("org.mariadb.jdbc.type.MultiLineString")
+    val MultiPolygon = Qualified("org.mariadb.jdbc.type.MultiPolygon")
+    val GeometryCollection = Qualified("org.mariadb.jdbc.type.GeometryCollection")
+  }
   val Arrays = Qualified("java.util.Arrays")
   val ArrayList = Qualified("java.util.ArrayList")
   val BiFunction = Qualified("java.util.function.BiFunction")
   val BiConsumer = Qualified("java.util.function.BiConsumer")
   val BigDecimal = Qualified("java.math.BigDecimal")
+  val BigInteger = Qualified("java.math.BigInteger")
   val Boolean = Qualified("java.lang.Boolean")
   val Byte = Qualified("java.lang.Byte")
   val BytePrimitive = jvm.Type.Primitive("byte") // Java primitive byte
@@ -93,5 +111,6 @@ object TypesJava {
   val Supplier = Qualified("java.util.function.Supplier")
   val Throwable = jvm.Type.Qualified("java.lang.Throwable")
   val UUID = Qualified("java.util.UUID")
+  val Year = Qualified("java.time.Year")
   val ZoneOffset = Qualified("java.time.ZoneOffset")
 }

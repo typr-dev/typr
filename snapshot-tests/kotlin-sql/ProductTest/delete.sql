@@ -1,1 +1,1 @@
-DELETE FROM production.product WHERE ("productid"  = ?::int4)
+DELETE FROM "production"."product" WHERE ("productid"  = ?::int4)

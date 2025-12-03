@@ -6,11 +6,12 @@
 package adventureworks.production.vproductanddescription
 
 import java.sql.Connection
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class VproductanddescriptionMVRepoImpl extends VproductanddescriptionMVRepo {
-  override def select: SelectBuilder[VproductanddescriptionMVFields, VproductanddescriptionMVRow] = SelectBuilder.of("production.vproductanddescription", VproductanddescriptionMVFields.structure, VproductanddescriptionMVRow.`_rowParser`)
+  override def select: SelectBuilder[VproductanddescriptionMVFields, VproductanddescriptionMVRow] = SelectBuilder.of(""""production"."vproductanddescription"""", VproductanddescriptionMVFields.structure, VproductanddescriptionMVRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[VproductanddescriptionMVRow] = {
     interpolate"""select "productid", "name", "productmodel", "cultureid", "description"

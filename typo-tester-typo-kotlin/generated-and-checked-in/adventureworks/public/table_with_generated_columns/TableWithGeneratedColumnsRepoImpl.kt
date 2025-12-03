@@ -13,6 +13,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -22,7 +23,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class TableWithGeneratedColumnsRepoImpl() : TableWithGeneratedColumnsRepo {
-  override fun delete(): DeleteBuilder<TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow> = DeleteBuilder.of("public.table-with-generated-columns", TableWithGeneratedColumnsFields.structure)
+  override fun delete(): DeleteBuilder<TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow> = DeleteBuilder.of("\"public\".\"table-with-generated-columns\"", TableWithGeneratedColumnsFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     name: TableWithGeneratedColumnsId,
@@ -110,7 +111,7 @@ class TableWithGeneratedColumnsRepoImpl() : TableWithGeneratedColumnsRepo {
   COPY "public"."table-with-generated-columns"("name") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, TableWithGeneratedColumnsRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow> = SelectBuilder.of("public.table-with-generated-columns", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow._rowParser)
+  override fun select(): SelectBuilder<TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow> = SelectBuilder.of("\"public\".\"table-with-generated-columns\"", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<TableWithGeneratedColumnsRow> = interpolate(typo.runtime.Fragment.lit("""
     select "name", "name-type-always"
@@ -150,7 +151,7 @@ class TableWithGeneratedColumnsRepoImpl() : TableWithGeneratedColumnsRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow> = UpdateBuilder.of("public.table-with-generated-columns", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow._rowParser.all())
+  override fun update(): UpdateBuilder<TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow> = UpdateBuilder.of("\"public\".\"table-with-generated-columns\"", TableWithGeneratedColumnsFields.structure, TableWithGeneratedColumnsRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun upsert(
     unsaved: TableWithGeneratedColumnsRow,
@@ -164,8 +165,7 @@ class TableWithGeneratedColumnsRepoImpl() : TableWithGeneratedColumnsRepo {
       )
       on conflict ("name")
       do update set "name" = EXCLUDED."name"
-      returning "name", "name-type-always"
-    """.trimMargin())
+      returning "name", "name-type-always"""".trimMargin())
   )
     .updateReturning(TableWithGeneratedColumnsRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -177,9 +177,8 @@ class TableWithGeneratedColumnsRepoImpl() : TableWithGeneratedColumnsRepo {
                                             insert into "public"."table-with-generated-columns"("name")
                                             values (?)
                                             on conflict ("name")
-                                            do nothing
-                                            returning "name", "name-type-always"
-                                          """.trimMargin()))
+                                            do update set "name" = EXCLUDED."name"
+                                            returning "name", "name-type-always"""".trimMargin()))
     .updateManyReturning(TableWithGeneratedColumnsRow._rowParser, unsaved)
     .runUnchecked(c)
 

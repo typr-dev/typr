@@ -19,6 +19,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -29,7 +30,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class VendorRepoImpl() : VendorRepo {
-  override fun delete(): DeleteBuilder<VendorFields, VendorRow> = DeleteBuilder.of("purchasing.vendor", VendorFields.structure)
+  override fun delete(): DeleteBuilder<VendorFields, VendorRow> = DeleteBuilder.of("\"purchasing\".\"vendor\"", VendorFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     businessentityid: BusinessentityId,
@@ -175,7 +176,7 @@ class VendorRepoImpl() : VendorRepo {
   COPY "purchasing"."vendor"("businessentityid", "accountnumber", "name", "creditrating", "purchasingwebserviceurl", "preferredvendorstatus", "activeflag", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, VendorRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<VendorFields, VendorRow> = SelectBuilder.of("purchasing.vendor", VendorFields.structure, VendorRow._rowParser)
+  override fun select(): SelectBuilder<VendorFields, VendorRow> = SelectBuilder.of("\"purchasing\".\"vendor\"", VendorFields.structure, VendorRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<VendorRow> = interpolate(typo.runtime.Fragment.lit("""
     select "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text
@@ -215,7 +216,7 @@ class VendorRepoImpl() : VendorRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<VendorFields, VendorRow> = UpdateBuilder.of("purchasing.vendor", VendorFields.structure, VendorRow._rowParser.all())
+  override fun update(): UpdateBuilder<VendorFields, VendorRow> = UpdateBuilder.of("\"purchasing\".\"vendor\"", VendorFields.structure, VendorRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: VendorRow,
@@ -292,8 +293,7 @@ class VendorRepoImpl() : VendorRepo {
       "activeflag" = EXCLUDED."activeflag",
       "purchasingwebserviceurl" = EXCLUDED."purchasingwebserviceurl",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text
-    """.trimMargin())
+      returning "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(VendorRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -313,8 +313,7 @@ class VendorRepoImpl() : VendorRepo {
                          "activeflag" = EXCLUDED."activeflag",
                          "purchasingwebserviceurl" = EXCLUDED."purchasingwebserviceurl",
                          "modifieddate" = EXCLUDED."modifieddate"
-                         returning "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text
-                       """.trimMargin()))
+                         returning "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(VendorRow._rowParser, unsaved)
     .runUnchecked(c)
 

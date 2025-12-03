@@ -7,11 +7,12 @@ package adventureworks.production.vproductmodelinstructions
 
 import java.sql.Connection
 import kotlin.collections.List
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.Fragment.interpolate
 
 class VproductmodelinstructionsViewRepoImpl() : VproductmodelinstructionsViewRepo {
-  override fun select(): SelectBuilder<VproductmodelinstructionsViewFields, VproductmodelinstructionsViewRow> = SelectBuilder.of("production.vproductmodelinstructions", VproductmodelinstructionsViewFields.structure, VproductmodelinstructionsViewRow._rowParser)
+  override fun select(): SelectBuilder<VproductmodelinstructionsViewFields, VproductmodelinstructionsViewRow> = SelectBuilder.of("\"production\".\"vproductmodelinstructions\"", VproductmodelinstructionsViewFields.structure, VproductmodelinstructionsViewRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<VproductmodelinstructionsViewRow> = interpolate(typo.runtime.Fragment.lit("""
     select "productmodelid", "name", "instructions", "LocationID", "SetupHours", "MachineHours", "LaborHours", "LotSize", "Step", "rowguid", "modifieddate"::text

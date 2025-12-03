@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.util.Iterator;
 import java.util.List;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.PgTypes;
@@ -21,7 +22,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class TitledpersonRepoImpl implements TitledpersonRepo {
   @Override
   public DeleteBuilder<TitledpersonFields, TitledpersonRow> delete() {
-    return DeleteBuilder.of("public.titledperson", TitledpersonFields.structure());
+    return DeleteBuilder.of("\"public\".\"titledperson\"", TitledpersonFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -59,7 +60,7 @@ public class TitledpersonRepoImpl implements TitledpersonRepo {
 
   @Override
   public SelectBuilder<TitledpersonFields, TitledpersonRow> select() {
-    return SelectBuilder.of("public.titledperson", TitledpersonFields.structure(), TitledpersonRow._rowParser);
+    return SelectBuilder.of("\"public\".\"titledperson\"", TitledpersonFields.structure(), TitledpersonRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -72,6 +73,6 @@ public class TitledpersonRepoImpl implements TitledpersonRepo {
 
   @Override
   public UpdateBuilder<TitledpersonFields, TitledpersonRow> update() {
-    return UpdateBuilder.of("public.titledperson", TitledpersonFields.structure(), TitledpersonRow._rowParser.all());
+    return UpdateBuilder.of("\"public\".\"titledperson\"", TitledpersonFields.structure(), TitledpersonRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 }

@@ -16,6 +16,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -27,7 +28,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class EmployeepayhistoryRepoImpl() : EmployeepayhistoryRepo {
-  override fun delete(): DeleteBuilder<EmployeepayhistoryFields, EmployeepayhistoryRow> = DeleteBuilder.of("humanresources.employeepayhistory", EmployeepayhistoryFields.structure)
+  override fun delete(): DeleteBuilder<EmployeepayhistoryFields, EmployeepayhistoryRow> = DeleteBuilder.of("\"humanresources\".\"employeepayhistory\"", EmployeepayhistoryFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     compositeId: EmployeepayhistoryId,
@@ -157,7 +158,7 @@ class EmployeepayhistoryRepoImpl() : EmployeepayhistoryRepo {
   COPY "humanresources"."employeepayhistory"("businessentityid", "ratechangedate", "rate", "payfrequency", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, EmployeepayhistoryRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<EmployeepayhistoryFields, EmployeepayhistoryRow> = SelectBuilder.of("humanresources.employeepayhistory", EmployeepayhistoryFields.structure, EmployeepayhistoryRow._rowParser)
+  override fun select(): SelectBuilder<EmployeepayhistoryFields, EmployeepayhistoryRow> = SelectBuilder.of("\"humanresources\".\"employeepayhistory\"", EmployeepayhistoryFields.structure, EmployeepayhistoryRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<EmployeepayhistoryRow> = interpolate(typo.runtime.Fragment.lit("""
     select "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text
@@ -211,7 +212,7 @@ class EmployeepayhistoryRepoImpl() : EmployeepayhistoryRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<EmployeepayhistoryFields, EmployeepayhistoryRow> = UpdateBuilder.of("humanresources.employeepayhistory", EmployeepayhistoryFields.structure, EmployeepayhistoryRow._rowParser.all())
+  override fun update(): UpdateBuilder<EmployeepayhistoryFields, EmployeepayhistoryRow> = UpdateBuilder.of("\"humanresources\".\"employeepayhistory\"", EmployeepayhistoryFields.structure, EmployeepayhistoryRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: EmployeepayhistoryRow,
@@ -266,8 +267,7 @@ class EmployeepayhistoryRepoImpl() : EmployeepayhistoryRepo {
         "rate" = EXCLUDED."rate",
       "payfrequency" = EXCLUDED."payfrequency",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text
-    """.trimMargin())
+      returning "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(EmployeepayhistoryRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -283,8 +283,7 @@ class EmployeepayhistoryRepoImpl() : EmployeepayhistoryRepo {
                                        "rate" = EXCLUDED."rate",
                                      "payfrequency" = EXCLUDED."payfrequency",
                                      "modifieddate" = EXCLUDED."modifieddate"
-                                     returning "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text
-                                   """.trimMargin()))
+                                     returning "businessentityid", "ratechangedate"::text, "rate", "payfrequency", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(EmployeepayhistoryRow._rowParser, unsaved)
     .runUnchecked(c)
 

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.PgTypes;
@@ -24,7 +25,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class TestSakSoknadsalternativRepoImpl implements TestSakSoknadsalternativRepo {
   @Override
   public DeleteBuilder<TestSakSoknadsalternativFields, TestSakSoknadsalternativRow> delete() {
-    return DeleteBuilder.of("public.test_sak_soknadsalternativ", TestSakSoknadsalternativFields.structure());
+    return DeleteBuilder.of("\"public\".\"test_sak_soknadsalternativ\"", TestSakSoknadsalternativFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -103,7 +104,7 @@ public class TestSakSoknadsalternativRepoImpl implements TestSakSoknadsalternati
 
   @Override
   public SelectBuilder<TestSakSoknadsalternativFields, TestSakSoknadsalternativRow> select() {
-    return SelectBuilder.of("public.test_sak_soknadsalternativ", TestSakSoknadsalternativFields.structure(), TestSakSoknadsalternativRow._rowParser);
+    return SelectBuilder.of("\"public\".\"test_sak_soknadsalternativ\"", TestSakSoknadsalternativFields.structure(), TestSakSoknadsalternativRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -168,7 +169,7 @@ public class TestSakSoknadsalternativRepoImpl implements TestSakSoknadsalternati
 
   @Override
   public UpdateBuilder<TestSakSoknadsalternativFields, TestSakSoknadsalternativRow> update() {
-    return UpdateBuilder.of("public.test_sak_soknadsalternativ", TestSakSoknadsalternativFields.structure(), TestSakSoknadsalternativRow._rowParser.all());
+    return UpdateBuilder.of("\"public\".\"test_sak_soknadsalternativ\"", TestSakSoknadsalternativFields.structure(), TestSakSoknadsalternativRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -213,8 +214,7 @@ public class TestSakSoknadsalternativRepoImpl implements TestSakSoknadsalternati
          on conflict ("organisasjonskode_saksbehandler", "utdanningsmulighet_kode")
          do update set
            "organisasjonskode_tilbyder" = EXCLUDED."organisasjonskode_tilbyder"
-         returning "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder"
-      """)
+         returning "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder\"""")
     )
       .updateReturning(TestSakSoknadsalternativRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -231,8 +231,7 @@ public class TestSakSoknadsalternativRepoImpl implements TestSakSoknadsalternati
                 on conflict ("organisasjonskode_saksbehandler", "utdanningsmulighet_kode")
                 do update set
                   "organisasjonskode_tilbyder" = EXCLUDED."organisasjonskode_tilbyder"
-                returning "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder"
-             """))
+                returning "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder\""""))
       .updateManyReturning(TestSakSoknadsalternativRow._rowParser, unsaved)
       .runUnchecked(c);
   };

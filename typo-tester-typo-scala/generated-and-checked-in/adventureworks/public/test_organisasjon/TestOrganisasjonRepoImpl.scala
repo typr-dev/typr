@@ -9,13 +9,14 @@ import java.sql.Connection
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class TestOrganisasjonRepoImpl extends TestOrganisasjonRepo {
-  override def delete: DeleteBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = DeleteBuilder.of("public.test_organisasjon", TestOrganisasjonFields.structure)
+  override def delete: DeleteBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = DeleteBuilder.of(""""public"."test_organisasjon"""", TestOrganisasjonFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(organisasjonskode: TestOrganisasjonId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."test_organisasjon" where "organisasjonskode" = ${TestOrganisasjonId.pgType.encode(organisasjonskode)}""".update().runUnchecked(c) > 0
 
@@ -40,7 +41,7 @@ class TestOrganisasjonRepoImpl extends TestOrganisasjonRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."test_organisasjon"("organisasjonskode") FROM STDIN""", batchSize, unsaved, c, TestOrganisasjonRow.pgText)
 
-  override def select: SelectBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = SelectBuilder.of("public.test_organisasjon", TestOrganisasjonFields.structure, TestOrganisasjonRow.`_rowParser`)
+  override def select: SelectBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = SelectBuilder.of(""""public"."test_organisasjon"""", TestOrganisasjonFields.structure, TestOrganisasjonRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[TestOrganisasjonRow] = {
     interpolate"""select "organisasjonskode"
@@ -66,15 +67,14 @@ class TestOrganisasjonRepoImpl extends TestOrganisasjonRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = UpdateBuilder.of("public.test_organisasjon", TestOrganisasjonFields.structure, TestOrganisasjonRow.`_rowParser`.all())
+  override def update: UpdateBuilder[TestOrganisasjonFields, TestOrganisasjonRow] = UpdateBuilder.of(""""public"."test_organisasjon"""", TestOrganisasjonFields.structure, TestOrganisasjonRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def upsert(unsaved: TestOrganisasjonRow)(using c: Connection): TestOrganisasjonRow = {
   interpolate"""insert into "public"."test_organisasjon"("organisasjonskode")
     values (${TestOrganisasjonId.pgType.encode(unsaved.organisasjonskode)})
     on conflict ("organisasjonskode")
     do update set "organisasjonskode" = EXCLUDED."organisasjonskode"
-    returning "organisasjonskode"
-    """
+    returning "organisasjonskode""""
     .updateReturning(TestOrganisasjonRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -83,9 +83,8 @@ class TestOrganisasjonRepoImpl extends TestOrganisasjonRepo {
     interpolate"""insert into "public"."test_organisasjon"("organisasjonskode")
     values (?)
     on conflict ("organisasjonskode")
-    do nothing
-    returning "organisasjonskode"
-    """
+    do update set "organisasjonskode" = EXCLUDED."organisasjonskode"
+    returning "organisasjonskode""""
       .updateManyReturning(TestOrganisasjonRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

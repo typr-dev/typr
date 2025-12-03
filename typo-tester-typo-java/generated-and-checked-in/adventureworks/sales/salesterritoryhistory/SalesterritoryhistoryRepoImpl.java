@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -29,7 +30,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class SalesterritoryhistoryRepoImpl implements SalesterritoryhistoryRepo {
   @Override
   public DeleteBuilder<SalesterritoryhistoryFields, SalesterritoryhistoryRow> delete() {
-    return DeleteBuilder.of("sales.salesterritoryhistory", SalesterritoryhistoryFields.structure());
+    return DeleteBuilder.of("\"sales\".\"salesterritoryhistory\"", SalesterritoryhistoryFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -201,7 +202,7 @@ public class SalesterritoryhistoryRepoImpl implements SalesterritoryhistoryRepo 
 
   @Override
   public SelectBuilder<SalesterritoryhistoryFields, SalesterritoryhistoryRow> select() {
-    return SelectBuilder.of("sales.salesterritoryhistory", SalesterritoryhistoryFields.structure(), SalesterritoryhistoryRow._rowParser);
+    return SelectBuilder.of("\"sales\".\"salesterritoryhistory\"", SalesterritoryhistoryFields.structure(), SalesterritoryhistoryRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -273,7 +274,7 @@ public class SalesterritoryhistoryRepoImpl implements SalesterritoryhistoryRepo 
 
   @Override
   public UpdateBuilder<SalesterritoryhistoryFields, SalesterritoryhistoryRow> update() {
-    return UpdateBuilder.of("sales.salesterritoryhistory", SalesterritoryhistoryFields.structure(), SalesterritoryhistoryRow._rowParser.all());
+    return UpdateBuilder.of("\"sales\".\"salesterritoryhistory\"", SalesterritoryhistoryFields.structure(), SalesterritoryhistoryRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -338,8 +339,7 @@ public class SalesterritoryhistoryRepoImpl implements SalesterritoryhistoryRepo 
            "enddate" = EXCLUDED."enddate",
          "rowguid" = EXCLUDED."rowguid",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "businessentityid", "territoryid", "startdate"::text, "enddate"::text, "rowguid", "modifieddate"::text
-      """)
+         returning "businessentityid", "territoryid", "startdate"::text, "enddate"::text, "rowguid", "modifieddate"::text""")
     )
       .updateReturning(SalesterritoryhistoryRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -358,8 +358,7 @@ public class SalesterritoryhistoryRepoImpl implements SalesterritoryhistoryRepo 
                   "enddate" = EXCLUDED."enddate",
                 "rowguid" = EXCLUDED."rowguid",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "businessentityid", "territoryid", "startdate"::text, "enddate"::text, "rowguid", "modifieddate"::text
-             """))
+                returning "businessentityid", "territoryid", "startdate"::text, "enddate"::text, "rowguid", "modifieddate"::text"""))
       .updateManyReturning(SalesterritoryhistoryRow._rowParser, unsaved)
       .runUnchecked(c);
   };

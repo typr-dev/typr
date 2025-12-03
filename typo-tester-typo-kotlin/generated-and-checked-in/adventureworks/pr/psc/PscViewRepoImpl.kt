@@ -7,11 +7,12 @@ package adventureworks.pr.psc
 
 import java.sql.Connection
 import kotlin.collections.List
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.Fragment.interpolate
 
 class PscViewRepoImpl() : PscViewRepo {
-  override fun select(): SelectBuilder<PscViewFields, PscViewRow> = SelectBuilder.of("pr.psc", PscViewFields.structure, PscViewRow._rowParser)
+  override fun select(): SelectBuilder<PscViewFields, PscViewRow> = SelectBuilder.of("\"pr\".\"psc\"", PscViewFields.structure, PscViewRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<PscViewRow> = interpolate(typo.runtime.Fragment.lit("""
     select "id", "productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate"::text

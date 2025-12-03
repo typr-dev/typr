@@ -7,11 +7,12 @@ package adventureworks.pu.pod
 
 import java.sql.Connection
 import kotlin.collections.List
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.Fragment.interpolate
 
 class PodViewRepoImpl() : PodViewRepo {
-  override fun select(): SelectBuilder<PodViewFields, PodViewRow> = SelectBuilder.of("pu.pod", PodViewFields.structure, PodViewRow._rowParser)
+  override fun select(): SelectBuilder<PodViewFields, PodViewRow> = SelectBuilder.of("\"pu\".\"pod\"", PodViewFields.structure, PodViewRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<PodViewRow> = interpolate(typo.runtime.Fragment.lit("""
     select "id", "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text

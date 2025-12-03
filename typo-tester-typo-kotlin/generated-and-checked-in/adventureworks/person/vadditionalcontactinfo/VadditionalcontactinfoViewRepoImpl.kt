@@ -7,11 +7,12 @@ package adventureworks.person.vadditionalcontactinfo
 
 import java.sql.Connection
 import kotlin.collections.List
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.Fragment.interpolate
 
 class VadditionalcontactinfoViewRepoImpl() : VadditionalcontactinfoViewRepo {
-  override fun select(): SelectBuilder<VadditionalcontactinfoViewFields, VadditionalcontactinfoViewRow> = SelectBuilder.of("person.vadditionalcontactinfo", VadditionalcontactinfoViewFields.structure, VadditionalcontactinfoViewRow._rowParser)
+  override fun select(): SelectBuilder<VadditionalcontactinfoViewFields, VadditionalcontactinfoViewRow> = SelectBuilder.of("\"person\".\"vadditionalcontactinfo\"", VadditionalcontactinfoViewFields.structure, VadditionalcontactinfoViewRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<VadditionalcontactinfoViewRow> = interpolate(typo.runtime.Fragment.lit("""
     select "businessentityid", "firstname", "middlename", "lastname", "telephonenumber", "telephonespecialinstructions", "street", "city", "stateprovince", "postalcode", "countryregion", "homeaddressspecialinstructions", "emailaddress", "emailspecialinstructions", "emailtelephonenumber", "rowguid", "modifieddate"::text

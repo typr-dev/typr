@@ -9,6 +9,7 @@ import java.sql.Connection
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.PgTypes
@@ -16,7 +17,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class OnlyPkColumnsRepoImpl extends OnlyPkColumnsRepo {
-  override def delete: DeleteBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = DeleteBuilder.of("public.only_pk_columns", OnlyPkColumnsFields.structure)
+  override def delete: DeleteBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = DeleteBuilder.of(""""public"."only_pk_columns"""", OnlyPkColumnsFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(compositeId: OnlyPkColumnsId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."only_pk_columns" where "key_column_1" = ${PgTypes.text.encode(compositeId.keyColumn1)} AND "key_column_2" = ${PgTypes.int4.encode(compositeId.keyColumn2)}""".update().runUnchecked(c) > 0
 
@@ -43,7 +44,7 @@ class OnlyPkColumnsRepoImpl extends OnlyPkColumnsRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."only_pk_columns"("key_column_1", "key_column_2") FROM STDIN""", batchSize, unsaved, c, OnlyPkColumnsRow.pgText)
 
-  override def select: SelectBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = SelectBuilder.of("public.only_pk_columns", OnlyPkColumnsFields.structure, OnlyPkColumnsRow.`_rowParser`)
+  override def select: SelectBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = SelectBuilder.of(""""public"."only_pk_columns"""", OnlyPkColumnsFields.structure, OnlyPkColumnsRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[OnlyPkColumnsRow] = {
     interpolate"""select "key_column_1", "key_column_2"
@@ -73,15 +74,14 @@ class OnlyPkColumnsRepoImpl extends OnlyPkColumnsRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = UpdateBuilder.of("public.only_pk_columns", OnlyPkColumnsFields.structure, OnlyPkColumnsRow.`_rowParser`.all())
+  override def update: UpdateBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = UpdateBuilder.of(""""public"."only_pk_columns"""", OnlyPkColumnsFields.structure, OnlyPkColumnsRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def upsert(unsaved: OnlyPkColumnsRow)(using c: Connection): OnlyPkColumnsRow = {
   interpolate"""insert into "public"."only_pk_columns"("key_column_1", "key_column_2")
     values (${PgTypes.text.encode(unsaved.keyColumn1)}, ${PgTypes.int4.encode(unsaved.keyColumn2)}::int4)
     on conflict ("key_column_1", "key_column_2")
     do update set "key_column_1" = EXCLUDED."key_column_1"
-    returning "key_column_1", "key_column_2"
-    """
+    returning "key_column_1", "key_column_2""""
     .updateReturning(OnlyPkColumnsRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -90,9 +90,8 @@ class OnlyPkColumnsRepoImpl extends OnlyPkColumnsRepo {
     interpolate"""insert into "public"."only_pk_columns"("key_column_1", "key_column_2")
     values (?, ?::int4)
     on conflict ("key_column_1", "key_column_2")
-    do nothing
-    returning "key_column_1", "key_column_2"
-    """
+    do update set "key_column_1" = EXCLUDED."key_column_1"
+    returning "key_column_1", "key_column_2""""
       .updateManyReturning(OnlyPkColumnsRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

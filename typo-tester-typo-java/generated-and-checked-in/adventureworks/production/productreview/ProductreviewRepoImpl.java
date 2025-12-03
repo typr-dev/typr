@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -28,7 +29,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class ProductreviewRepoImpl implements ProductreviewRepo {
   @Override
   public DeleteBuilder<ProductreviewFields, ProductreviewRow> delete() {
-    return DeleteBuilder.of("production.productreview", ProductreviewFields.structure());
+    return DeleteBuilder.of("\"production\".\"productreview\"", ProductreviewFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -206,7 +207,7 @@ public class ProductreviewRepoImpl implements ProductreviewRepo {
 
   @Override
   public SelectBuilder<ProductreviewFields, ProductreviewRow> select() {
-    return SelectBuilder.of("production.productreview", ProductreviewFields.structure(), ProductreviewRow._rowParser);
+    return SelectBuilder.of("\"production\".\"productreview\"", ProductreviewFields.structure(), ProductreviewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -259,7 +260,7 @@ public class ProductreviewRepoImpl implements ProductreviewRepo {
 
   @Override
   public UpdateBuilder<ProductreviewFields, ProductreviewRow> update() {
-    return UpdateBuilder.of("production.productreview", ProductreviewFields.structure(), ProductreviewRow._rowParser.all());
+    return UpdateBuilder.of("\"production\".\"productreview\"", ProductreviewFields.structure(), ProductreviewRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -340,8 +341,7 @@ public class ProductreviewRepoImpl implements ProductreviewRepo {
          "rating" = EXCLUDED."rating",
          "comments" = EXCLUDED."comments",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text
-      """)
+         returning "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text""")
     )
       .updateReturning(ProductreviewRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -364,8 +364,7 @@ public class ProductreviewRepoImpl implements ProductreviewRepo {
                 "rating" = EXCLUDED."rating",
                 "comments" = EXCLUDED."comments",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text
-             """))
+                returning "productreviewid", "productid", "reviewername", "reviewdate"::text, "emailaddress", "rating", "comments", "modifieddate"::text"""))
       .updateManyReturning(ProductreviewRow._rowParser, unsaved)
       .runUnchecked(c);
   };

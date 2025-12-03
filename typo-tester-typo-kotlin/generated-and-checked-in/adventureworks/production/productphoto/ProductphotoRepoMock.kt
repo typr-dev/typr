@@ -40,9 +40,11 @@ data class ProductphotoRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in productphotoids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in productphotoids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -69,7 +71,7 @@ data class ProductphotoRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.productphotoid] = row
       count = count + 1L
     }
@@ -84,8 +86,8 @@ data class ProductphotoRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.productphotoid] = row
       count = count + 1L
     }
@@ -105,9 +107,13 @@ data class ProductphotoRepoMock(
     productphotoids: Array<ProductphotoId>,
     c: Connection
   ): List<ProductphotoRow> {
-    var result = ArrayList<ProductphotoRow>()
-    for (id in productphotoids) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<ProductphotoRow>()
+    for (id in productphotoids) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -141,9 +147,9 @@ data class ProductphotoRepoMock(
     unsaved: MutableIterator<ProductphotoRow>,
     c: Connection
   ): List<ProductphotoRow> {
-    var result = ArrayList<ProductphotoRow>()
+    val result = ArrayList<ProductphotoRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.productphotoid] = row
       result.add(row)
     }
@@ -158,7 +164,7 @@ data class ProductphotoRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.productphotoid] = row
       count = count + 1
     }

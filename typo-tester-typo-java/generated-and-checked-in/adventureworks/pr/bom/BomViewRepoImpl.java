@@ -7,13 +7,14 @@ package adventureworks.pr.bom;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class BomViewRepoImpl implements BomViewRepo {
   @Override
   public SelectBuilder<BomViewFields, BomViewRow> select() {
-    return SelectBuilder.of("pr.bom", BomViewFields.structure(), BomViewRow._rowParser);
+    return SelectBuilder.of("\"pr\".\"bom\"", BomViewFields.structure(), BomViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

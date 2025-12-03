@@ -92,8 +92,9 @@ case class CountryregionRepoMock(
 
   override def selectByIds(countryregioncodes: Array[CountryregionId])(using c: Connection): java.util.List[CountryregionRow] = {
     val result = new ArrayList[CountryregionRow]()
-    countryregioncodes.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    countryregioncodes.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

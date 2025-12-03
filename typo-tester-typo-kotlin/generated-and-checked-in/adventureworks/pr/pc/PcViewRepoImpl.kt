@@ -7,11 +7,12 @@ package adventureworks.pr.pc
 
 import java.sql.Connection
 import kotlin.collections.List
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.Fragment.interpolate
 
 class PcViewRepoImpl() : PcViewRepo {
-  override fun select(): SelectBuilder<PcViewFields, PcViewRow> = SelectBuilder.of("pr.pc", PcViewFields.structure, PcViewRow._rowParser)
+  override fun select(): SelectBuilder<PcViewFields, PcViewRow> = SelectBuilder.of("\"pr\".\"pc\"", PcViewFields.structure, PcViewRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<PcViewRow> = interpolate(typo.runtime.Fragment.lit("""
     select "id", "productcategoryid", "name", "rowguid", "modifieddate"::text

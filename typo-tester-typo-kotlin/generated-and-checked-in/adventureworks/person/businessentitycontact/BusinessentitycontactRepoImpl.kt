@@ -17,6 +17,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -27,7 +28,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class BusinessentitycontactRepoImpl() : BusinessentitycontactRepo {
-  override fun delete(): DeleteBuilder<BusinessentitycontactFields, BusinessentitycontactRow> = DeleteBuilder.of("person.businessentitycontact", BusinessentitycontactFields.structure)
+  override fun delete(): DeleteBuilder<BusinessentitycontactFields, BusinessentitycontactRow> = DeleteBuilder.of("\"person\".\"businessentitycontact\"", BusinessentitycontactFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     compositeId: BusinessentitycontactId,
@@ -167,7 +168,7 @@ class BusinessentitycontactRepoImpl() : BusinessentitycontactRepo {
   COPY "person"."businessentitycontact"("businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, BusinessentitycontactRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<BusinessentitycontactFields, BusinessentitycontactRow> = SelectBuilder.of("person.businessentitycontact", BusinessentitycontactFields.structure, BusinessentitycontactRow._rowParser)
+  override fun select(): SelectBuilder<BusinessentitycontactFields, BusinessentitycontactRow> = SelectBuilder.of("\"person\".\"businessentitycontact\"", BusinessentitycontactFields.structure, BusinessentitycontactRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<BusinessentitycontactRow> = interpolate(typo.runtime.Fragment.lit("""
     select "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text
@@ -228,7 +229,7 @@ class BusinessentitycontactRepoImpl() : BusinessentitycontactRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<BusinessentitycontactFields, BusinessentitycontactRow> = UpdateBuilder.of("person.businessentitycontact", BusinessentitycontactFields.structure, BusinessentitycontactRow._rowParser.all())
+  override fun update(): UpdateBuilder<BusinessentitycontactFields, BusinessentitycontactRow> = UpdateBuilder.of("\"person\".\"businessentitycontact\"", BusinessentitycontactFields.structure, BusinessentitycontactRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: BusinessentitycontactRow,
@@ -282,8 +283,7 @@ class BusinessentitycontactRepoImpl() : BusinessentitycontactRepo {
       do update set
         "rowguid" = EXCLUDED."rowguid",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text
-    """.trimMargin())
+      returning "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(BusinessentitycontactRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -298,8 +298,7 @@ class BusinessentitycontactRepoImpl() : BusinessentitycontactRepo {
                                         do update set
                                           "rowguid" = EXCLUDED."rowguid",
                                         "modifieddate" = EXCLUDED."modifieddate"
-                                        returning "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text
-                                      """.trimMargin()))
+                                        returning "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(BusinessentitycontactRow._rowParser, unsaved)
     .runUnchecked(c)
 

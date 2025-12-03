@@ -15,6 +15,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -24,7 +25,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class DepartmentRepoImpl() : DepartmentRepo {
-  override fun delete(): DeleteBuilder<DepartmentFields, DepartmentRow> = DeleteBuilder.of("humanresources.department", DepartmentFields.structure)
+  override fun delete(): DeleteBuilder<DepartmentFields, DepartmentRow> = DeleteBuilder.of("\"humanresources\".\"department\"", DepartmentFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     departmentid: DepartmentId,
@@ -138,7 +139,7 @@ class DepartmentRepoImpl() : DepartmentRepo {
   COPY "humanresources"."department"("name", "groupname", "departmentid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, DepartmentRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<DepartmentFields, DepartmentRow> = SelectBuilder.of("humanresources.department", DepartmentFields.structure, DepartmentRow._rowParser)
+  override fun select(): SelectBuilder<DepartmentFields, DepartmentRow> = SelectBuilder.of("\"humanresources\".\"department\"", DepartmentFields.structure, DepartmentRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<DepartmentRow> = interpolate(typo.runtime.Fragment.lit("""
     select "departmentid", "name", "groupname", "modifieddate"::text
@@ -178,7 +179,7 @@ class DepartmentRepoImpl() : DepartmentRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<DepartmentFields, DepartmentRow> = UpdateBuilder.of("humanresources.department", DepartmentFields.structure, DepartmentRow._rowParser.all())
+  override fun update(): UpdateBuilder<DepartmentFields, DepartmentRow> = UpdateBuilder.of("\"humanresources\".\"department\"", DepartmentFields.structure, DepartmentRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: DepartmentRow,
@@ -227,8 +228,7 @@ class DepartmentRepoImpl() : DepartmentRepo {
         "name" = EXCLUDED."name",
       "groupname" = EXCLUDED."groupname",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "departmentid", "name", "groupname", "modifieddate"::text
-    """.trimMargin())
+      returning "departmentid", "name", "groupname", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(DepartmentRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -244,8 +244,7 @@ class DepartmentRepoImpl() : DepartmentRepo {
                                "name" = EXCLUDED."name",
                              "groupname" = EXCLUDED."groupname",
                              "modifieddate" = EXCLUDED."modifieddate"
-                             returning "departmentid", "name", "groupname", "modifieddate"::text
-                           """.trimMargin()))
+                             returning "departmentid", "name", "groupname", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(DepartmentRow._rowParser, unsaved)
     .runUnchecked(c)
 

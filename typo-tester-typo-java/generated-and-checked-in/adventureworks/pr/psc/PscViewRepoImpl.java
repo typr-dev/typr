@@ -7,13 +7,14 @@ package adventureworks.pr.psc;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class PscViewRepoImpl implements PscViewRepo {
   @Override
   public SelectBuilder<PscViewFields, PscViewRow> select() {
-    return SelectBuilder.of("pr.psc", PscViewFields.structure(), PscViewRow._rowParser);
+    return SelectBuilder.of("\"pr\".\"psc\"", PscViewFields.structure(), PscViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

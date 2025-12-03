@@ -6,11 +6,12 @@
 package adventureworks.hr.jc
 
 import java.sql.Connection
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class JcViewRepoImpl extends JcViewRepo {
-  override def select: SelectBuilder[JcViewFields, JcViewRow] = SelectBuilder.of("hr.jc", JcViewFields.structure, JcViewRow.`_rowParser`)
+  override def select: SelectBuilder[JcViewFields, JcViewRow] = SelectBuilder.of(""""hr"."jc"""", JcViewFields.structure, JcViewRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[JcViewRow] = {
     interpolate"""select "id", "jobcandidateid", "businessentityid", "resume", "modifieddate"::text

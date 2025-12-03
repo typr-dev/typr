@@ -125,7 +125,7 @@ object EmployeeFields {
             Optional.empty(),
             Optional.of("bpchar"),
             (row, value) => row.copy(maritalstatus = value),
-            PgTypes.text
+            PgTypes.bpchar
           )
         }
         override def gender: Field[/* bpchar, max 1 chars */ String, EmployeeRow] = {
@@ -136,7 +136,7 @@ object EmployeeFields {
             Optional.empty(),
             Optional.of("bpchar"),
             (row, value) => row.copy(gender = value),
-            PgTypes.text
+            PgTypes.bpchar
           )
         }
         override def hiredate: Field[TypoLocalDate, EmployeeRow] = {

@@ -7,11 +7,12 @@ package adventureworks.pe.cr
 
 import java.sql.Connection
 import kotlin.collections.List
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.Fragment.interpolate
 
 class CrViewRepoImpl() : CrViewRepo {
-  override fun select(): SelectBuilder<CrViewFields, CrViewRow> = SelectBuilder.of("pe.cr", CrViewFields.structure, CrViewRow._rowParser)
+  override fun select(): SelectBuilder<CrViewFields, CrViewRow> = SelectBuilder.of("\"pe\".\"cr\"", CrViewFields.structure, CrViewRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<CrViewRow> = interpolate(typo.runtime.Fragment.lit("""
     select "countryregioncode", "name", "modifieddate"::text

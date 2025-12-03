@@ -1,11 +1,12 @@
 package typo
 package internal
 
-import typo.internal.metadb.OpenEnum
+import typo.internal.pg.OpenEnum
 import typo.internal.rewriteDependentData.Eval
 
 case class ComputedTable(
     lang: Lang,
+    dbType: DbType,
     options: InternalOptions,
     default: ComputedDefault,
     dbTable: db.Table,
@@ -43,6 +44,9 @@ case class ComputedTable(
 
   val dbColsByName: Map[db.ColName, db.Col] =
     dbTable.cols.map(col => (col.name, col)).toMap
+
+  /** Whether the database supports streaming insert (PostgreSQL COPY command) */
+  val hasStreamingSupport: Boolean = dbType.adapter.supportsCopyStreaming
 
   val maybeId: Option[IdComputed] =
     dbTable.primaryKey.flatMap { pk =>
@@ -236,9 +240,13 @@ case class ComputedTable(
           )
         }
     )
-    val valid = maybeMethods.flatten.filter {
-      case _: RepoMethod.Mutator => !options.readonlyRepo.include(dbTable.name)
-      case _                     => true
+    val valid = maybeMethods.flatten.filter { method =>
+      val mutatorAllowed = method match {
+        case _: RepoMethod.Mutator => !options.readonlyRepo.include(dbTable.name)
+        case _                     => true
+      }
+      val streamingAllowed = !method.requiresStreamingSupport || hasStreamingSupport
+      mutatorAllowed && streamingAllowed
     }.sorted
 
     NonEmptyList.fromList(valid)

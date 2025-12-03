@@ -15,6 +15,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -24,7 +25,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class UnitmeasureRepoImpl() : UnitmeasureRepo {
-  override fun delete(): DeleteBuilder<UnitmeasureFields, UnitmeasureRow> = DeleteBuilder.of("production.unitmeasure", UnitmeasureFields.structure)
+  override fun delete(): DeleteBuilder<UnitmeasureFields, UnitmeasureRow> = DeleteBuilder.of("\"production\".\"unitmeasure\"", UnitmeasureFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     unitmeasurecode: UnitmeasureId,
@@ -128,7 +129,7 @@ class UnitmeasureRepoImpl() : UnitmeasureRepo {
   COPY "production"."unitmeasure"("unitmeasurecode", "name", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, UnitmeasureRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<UnitmeasureFields, UnitmeasureRow> = SelectBuilder.of("production.unitmeasure", UnitmeasureFields.structure, UnitmeasureRow._rowParser)
+  override fun select(): SelectBuilder<UnitmeasureFields, UnitmeasureRow> = SelectBuilder.of("\"production\".\"unitmeasure\"", UnitmeasureFields.structure, UnitmeasureRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<UnitmeasureRow> = interpolate(typo.runtime.Fragment.lit("""
     select "unitmeasurecode", "name", "modifieddate"::text
@@ -168,7 +169,7 @@ class UnitmeasureRepoImpl() : UnitmeasureRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<UnitmeasureFields, UnitmeasureRow> = UpdateBuilder.of("production.unitmeasure", UnitmeasureFields.structure, UnitmeasureRow._rowParser.all())
+  override fun update(): UpdateBuilder<UnitmeasureFields, UnitmeasureRow> = UpdateBuilder.of("\"production\".\"unitmeasure\"", UnitmeasureFields.structure, UnitmeasureRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: UnitmeasureRow,
@@ -210,8 +211,7 @@ class UnitmeasureRepoImpl() : UnitmeasureRepo {
       do update set
         "name" = EXCLUDED."name",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "unitmeasurecode", "name", "modifieddate"::text
-    """.trimMargin())
+      returning "unitmeasurecode", "name", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(UnitmeasureRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -226,8 +226,7 @@ class UnitmeasureRepoImpl() : UnitmeasureRepo {
                               do update set
                                 "name" = EXCLUDED."name",
                               "modifieddate" = EXCLUDED."modifieddate"
-                              returning "unitmeasurecode", "name", "modifieddate"::text
-                            """.trimMargin()))
+                              returning "unitmeasurecode", "name", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(UnitmeasureRow._rowParser, unsaved)
     .runUnchecked(c)
 

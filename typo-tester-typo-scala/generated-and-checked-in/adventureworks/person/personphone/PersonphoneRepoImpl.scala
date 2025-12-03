@@ -14,6 +14,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -22,7 +23,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PersonphoneRepoImpl extends PersonphoneRepo {
-  override def delete: DeleteBuilder[PersonphoneFields, PersonphoneRow] = DeleteBuilder.of("person.personphone", PersonphoneFields.structure)
+  override def delete: DeleteBuilder[PersonphoneFields, PersonphoneRow] = DeleteBuilder.of(""""person"."personphone"""", PersonphoneFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(compositeId: PersonphoneId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "person"."personphone" where "businessentityid" = ${BusinessentityId.pgType.encode(compositeId.businessentityid)} AND "phonenumber" = ${Phone.pgType.encode(compositeId.phonenumber)} AND "phonenumbertypeid" = ${PhonenumbertypeId.pgType.encode(compositeId.phonenumbertypeid)}""".update().runUnchecked(c) > 0
 
@@ -78,7 +79,7 @@ class PersonphoneRepoImpl extends PersonphoneRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "person"."personphone"("businessentityid", "phonenumber", "phonenumbertypeid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, PersonphoneRowUnsaved.pgText)
 
-  override def select: SelectBuilder[PersonphoneFields, PersonphoneRow] = SelectBuilder.of("person.personphone", PersonphoneFields.structure, PersonphoneRow.`_rowParser`)
+  override def select: SelectBuilder[PersonphoneFields, PersonphoneRow] = SelectBuilder.of(""""person"."personphone"""", PersonphoneFields.structure, PersonphoneRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[PersonphoneRow] = {
     interpolate"""select "businessentityid", "phonenumber", "phonenumbertypeid", "modifieddate"::text
@@ -109,7 +110,7 @@ class PersonphoneRepoImpl extends PersonphoneRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[PersonphoneFields, PersonphoneRow] = UpdateBuilder.of("person.personphone", PersonphoneFields.structure, PersonphoneRow.`_rowParser`.all())
+  override def update: UpdateBuilder[PersonphoneFields, PersonphoneRow] = UpdateBuilder.of(""""person"."personphone"""", PersonphoneFields.structure, PersonphoneRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: PersonphoneRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: PersonphoneId = row.compositeId
@@ -124,8 +125,7 @@ class PersonphoneRepoImpl extends PersonphoneRepo {
     on conflict ("businessentityid", "phonenumber", "phonenumbertypeid")
     do update set
       "modifieddate" = EXCLUDED."modifieddate"
-    returning "businessentityid", "phonenumber", "phonenumbertypeid", "modifieddate"::text
-    """
+    returning "businessentityid", "phonenumber", "phonenumbertypeid", "modifieddate"::text"""
     .updateReturning(PersonphoneRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -136,8 +136,7 @@ class PersonphoneRepoImpl extends PersonphoneRepo {
     on conflict ("businessentityid", "phonenumber", "phonenumbertypeid")
     do update set
       "modifieddate" = EXCLUDED."modifieddate"
-    returning "businessentityid", "phonenumber", "phonenumbertypeid", "modifieddate"::text
-    """
+    returning "businessentityid", "phonenumber", "phonenumbertypeid", "modifieddate"::text"""
       .updateManyReturning(PersonphoneRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

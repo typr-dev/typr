@@ -35,7 +35,7 @@ public interface VadditionalcontactinfoViewFields {
                };
                @Override
                public Field</* user-picked */ FirstName, VadditionalcontactinfoViewRow> firstname() {
-                 return new Field</* user-picked */ FirstName, VadditionalcontactinfoViewRow>(_path, "firstname", VadditionalcontactinfoViewRow::firstname, Optional.empty(), Optional.empty(), (row, value) -> row.withFirstname(value), /* user-picked */ FirstName.pgType);
+                 return new Field</* user-picked */ FirstName, VadditionalcontactinfoViewRow>(_path, "firstname", VadditionalcontactinfoViewRow::firstname, Optional.empty(), Optional.empty(), (row, value) -> row.withFirstname(value), FirstName.pgType);
                };
                @Override
                public OptField<Name, VadditionalcontactinfoViewRow> middlename() {

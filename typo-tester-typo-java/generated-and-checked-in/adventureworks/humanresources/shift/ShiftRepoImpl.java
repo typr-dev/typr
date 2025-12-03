@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -27,7 +28,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class ShiftRepoImpl implements ShiftRepo {
   @Override
   public DeleteBuilder<ShiftFields, ShiftRow> delete() {
-    return DeleteBuilder.of("humanresources.shift", ShiftFields.structure());
+    return DeleteBuilder.of("\"humanresources\".\"shift\"", ShiftFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -175,7 +176,7 @@ public class ShiftRepoImpl implements ShiftRepo {
 
   @Override
   public SelectBuilder<ShiftFields, ShiftRow> select() {
-    return SelectBuilder.of("humanresources.shift", ShiftFields.structure(), ShiftRow._rowParser);
+    return SelectBuilder.of("\"humanresources\".\"shift\"", ShiftFields.structure(), ShiftRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -228,7 +229,7 @@ public class ShiftRepoImpl implements ShiftRepo {
 
   @Override
   public UpdateBuilder<ShiftFields, ShiftRow> update() {
-    return UpdateBuilder.of("humanresources.shift", ShiftFields.structure(), ShiftRow._rowParser.all());
+    return UpdateBuilder.of("\"humanresources\".\"shift\"", ShiftFields.structure(), ShiftRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -288,8 +289,7 @@ public class ShiftRepoImpl implements ShiftRepo {
          "starttime" = EXCLUDED."starttime",
          "endtime" = EXCLUDED."endtime",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text
-      """)
+         returning "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text""")
     )
       .updateReturning(ShiftRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -309,8 +309,7 @@ public class ShiftRepoImpl implements ShiftRepo {
                 "starttime" = EXCLUDED."starttime",
                 "endtime" = EXCLUDED."endtime",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text
-             """))
+                returning "shiftid", "name", "starttime"::text, "endtime"::text, "modifieddate"::text"""))
       .updateManyReturning(ShiftRow._rowParser, unsaved)
       .runUnchecked(c);
   };

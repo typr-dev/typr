@@ -15,6 +15,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -25,7 +26,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class UsersRepoImpl() : UsersRepo {
-  override fun delete(): DeleteBuilder<UsersFields, UsersRow> = DeleteBuilder.of("public.users", UsersFields.structure)
+  override fun delete(): DeleteBuilder<UsersFields, UsersRow> = DeleteBuilder.of("\"public\".\"users\"", UsersFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     userId: UsersId,
@@ -160,7 +161,7 @@ class UsersRepoImpl() : UsersRepo {
   COPY "public"."users"("user_id", "name", "last_name", "email", "password", "verified_on", "created_at") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, UsersRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<UsersFields, UsersRow> = SelectBuilder.of("public.users", UsersFields.structure, UsersRow._rowParser)
+  override fun select(): SelectBuilder<UsersFields, UsersRow> = SelectBuilder.of("\"public\".\"users\"", UsersFields.structure, UsersRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<UsersRow> = interpolate(typo.runtime.Fragment.lit("""
     select "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text
@@ -215,7 +216,7 @@ class UsersRepoImpl() : UsersRepo {
     """.trimMargin())
   ).query(UsersRow._rowParser.first()).runUnchecked(c)
 
-  override fun update(): UpdateBuilder<UsersFields, UsersRow> = UpdateBuilder.of("public.users", UsersFields.structure, UsersRow._rowParser.all())
+  override fun update(): UpdateBuilder<UsersFields, UsersRow> = UpdateBuilder.of("\"public\".\"users\"", UsersFields.structure, UsersRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: UsersRow,
@@ -285,8 +286,7 @@ class UsersRepoImpl() : UsersRepo {
       "password" = EXCLUDED."password",
       "created_at" = EXCLUDED."created_at",
       "verified_on" = EXCLUDED."verified_on"
-      returning "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text
-    """.trimMargin())
+      returning "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text""".trimMargin())
   )
     .updateReturning(UsersRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -305,8 +305,7 @@ class UsersRepoImpl() : UsersRepo {
                         "password" = EXCLUDED."password",
                         "created_at" = EXCLUDED."created_at",
                         "verified_on" = EXCLUDED."verified_on"
-                        returning "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text
-                      """.trimMargin()))
+                        returning "user_id", "name", "last_name", "email"::text, "password", "created_at"::text, "verified_on"::text""".trimMargin()))
     .updateManyReturning(UsersRow._rowParser, unsaved)
     .runUnchecked(c)
 

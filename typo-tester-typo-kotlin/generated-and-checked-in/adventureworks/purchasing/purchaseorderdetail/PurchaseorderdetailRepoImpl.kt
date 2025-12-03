@@ -11,13 +11,14 @@ import java.util.Optional
 import kotlin.collections.List
 import kotlin.collections.Map
 import kotlin.collections.MutableMap
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.PgTypes
 import typo.runtime.internal.arrayMap
 import typo.runtime.Fragment.interpolate
 
 class PurchaseorderdetailRepoImpl() : PurchaseorderdetailRepo {
-  override fun select(): SelectBuilder<PurchaseorderdetailFields, PurchaseorderdetailRow> = SelectBuilder.of("purchasing.purchaseorderdetail", PurchaseorderdetailFields.structure, PurchaseorderdetailRow._rowParser)
+  override fun select(): SelectBuilder<PurchaseorderdetailFields, PurchaseorderdetailRow> = SelectBuilder.of("\"purchasing\".\"purchaseorderdetail\"", PurchaseorderdetailFields.structure, PurchaseorderdetailRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<PurchaseorderdetailRow> = interpolate(typo.runtime.Fragment.lit("""
     select "purchaseorderid", "purchaseorderdetailid", "duedate"::text, "orderqty", "productid", "unitprice", "receivedqty", "rejectedqty", "modifieddate"::text

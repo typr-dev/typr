@@ -7,13 +7,14 @@ package adventureworks.pe.ct;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class CtViewRepoImpl implements CtViewRepo {
   @Override
   public SelectBuilder<CtViewFields, CtViewRow> select() {
-    return SelectBuilder.of("pe.ct", CtViewFields.structure(), CtViewRow._rowParser);
+    return SelectBuilder.of("\"pe\".\"ct\"", CtViewFields.structure(), CtViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

@@ -28,7 +28,7 @@ public interface CreditcardFields {
       return new CreditcardFields() {
                @Override
                public IdField</* user-picked */ CustomCreditcardId, CreditcardRow> creditcardid() {
-                 return new IdField</* user-picked */ CustomCreditcardId, CreditcardRow>(_path, "creditcardid", CreditcardRow::creditcardid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withCreditcardid(value), /* user-picked */ CustomCreditcardId.pgType);
+                 return new IdField</* user-picked */ CustomCreditcardId, CreditcardRow>(_path, "creditcardid", CreditcardRow::creditcardid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withCreditcardid(value), CustomCreditcardId.pgType);
                };
                @Override
                public Field</* max 50 chars */ String, CreditcardRow> cardtype() {

@@ -6,11 +6,12 @@
 package adventureworks.pr.pi
 
 import java.sql.Connection
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.FragmentInterpolator.interpolate
 
 class PiViewRepoImpl extends PiViewRepo {
-  override def select: SelectBuilder[PiViewFields, PiViewRow] = SelectBuilder.of("pr.pi", PiViewFields.structure, PiViewRow.`_rowParser`)
+  override def select: SelectBuilder[PiViewFields, PiViewRow] = SelectBuilder.of(""""pr"."pi"""", PiViewFields.structure, PiViewRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[PiViewRow] = {
     interpolate"""select "id", "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"::text

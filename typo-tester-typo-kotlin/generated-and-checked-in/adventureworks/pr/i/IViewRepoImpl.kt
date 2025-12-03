@@ -7,11 +7,12 @@ package adventureworks.pr.i
 
 import java.sql.Connection
 import kotlin.collections.List
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.Fragment.interpolate
 
 class IViewRepoImpl() : IViewRepo {
-  override fun select(): SelectBuilder<IViewFields, IViewRow> = SelectBuilder.of("pr.i", IViewFields.structure, IViewRow._rowParser)
+  override fun select(): SelectBuilder<IViewFields, IViewRow> = SelectBuilder.of("\"pr\".\"i\"", IViewFields.structure, IViewRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<IViewRow> = interpolate(typo.runtime.Fragment.lit("""
     select "id", "illustrationid", "diagram", "modifieddate"::text

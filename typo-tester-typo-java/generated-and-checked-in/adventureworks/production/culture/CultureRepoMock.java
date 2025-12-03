@@ -61,9 +61,11 @@ public record CultureRepoMock(
     Connection c
   ) {
     var count = 0;
-    for (var id : cultureids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : cultureids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -143,8 +145,12 @@ public record CultureRepoMock(
     Connection c
   ) {
     var result = new ArrayList<CultureRow>();
-    for (var id : cultureids) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : cultureids) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 
@@ -168,7 +174,7 @@ public record CultureRepoMock(
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.cultureid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
     if (shouldUpdate) {
-      map.put(row.cultureid(), row);
+      map.put(row.cultureid(), row);;
     };
     return shouldUpdate;
   };

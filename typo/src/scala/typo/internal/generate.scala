@@ -2,7 +2,7 @@ package typo
 package internal
 
 import typo.internal.codegen.*
-import typo.internal.metadb.OpenEnum
+import typo.internal.pg.OpenEnum
 import typo.internal.sqlfiles.SqlFile
 
 import scala.collection.immutable
@@ -41,7 +41,7 @@ object generate {
         case DbLibName.Doobie =>
           new DbLibDoobie(pkg, publicOptions.inlineImplicits, default, publicOptions.enableStreamingInserts, publicOptions.fixVerySlowImplicit, requireScala("doobie"))
         case DbLibName.Typo =>
-          new DbLibTypo(pkg, language, default, publicOptions.enableStreamingInserts)
+          new DbLibTypo(pkg, language, default, publicOptions.enableStreamingInserts, metaDb.dbType.adapter, naming)
         case DbLibName.ZioJdbc =>
           new DbLibZioJdbc(pkg, publicOptions.inlineImplicits, dslEnabled = publicOptions.enableDsl, default, publicOptions.enableStreamingInserts, requireScala("zio-jdbc"))
       },
@@ -81,7 +81,7 @@ object generate {
         val computedLazyRelations: SortedMap[db.RelationName, Lazy[HasSource]] =
           rewriteDependentData(metaDb.relations).apply[HasSource] {
             case (_, dbTable: db.Table, eval) =>
-              ComputedTable(language, options, default, dbTable, naming, scalaTypeMapper, eval, openEnumsByTable)
+              ComputedTable(language, metaDb.dbType, options, default, dbTable, naming, scalaTypeMapper, eval, openEnumsByTable)
             case (_, dbView: db.View, eval) =>
               ComputedView(language, options.logger, dbView, naming, metaDb.typeMapperDb, scalaTypeMapper, eval, options.enableFieldValue.include(dbView.name), options.enableDsl)
           }

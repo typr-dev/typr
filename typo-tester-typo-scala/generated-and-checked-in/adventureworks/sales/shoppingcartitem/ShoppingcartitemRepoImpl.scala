@@ -12,6 +12,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -21,7 +22,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
-  override def delete: DeleteBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = DeleteBuilder.of("sales.shoppingcartitem", ShoppingcartitemFields.structure)
+  override def delete: DeleteBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = DeleteBuilder.of(""""sales"."shoppingcartitem"""", ShoppingcartitemFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(shoppingcartitemid: ShoppingcartitemId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."shoppingcartitem" where "shoppingcartitemid" = ${ShoppingcartitemId.pgType.encode(shoppingcartitemid)}""".update().runUnchecked(c) > 0
 
@@ -84,7 +85,7 @@ class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."shoppingcartitem"("shoppingcartid", "productid", "shoppingcartitemid", "quantity", "datecreated", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ShoppingcartitemRowUnsaved.pgText)
 
-  override def select: SelectBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = SelectBuilder.of("sales.shoppingcartitem", ShoppingcartitemFields.structure, ShoppingcartitemRow.`_rowParser`)
+  override def select: SelectBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = SelectBuilder.of(""""sales"."shoppingcartitem"""", ShoppingcartitemFields.structure, ShoppingcartitemRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[ShoppingcartitemRow] = {
     interpolate"""select "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text
@@ -110,7 +111,7 @@ class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = UpdateBuilder.of("sales.shoppingcartitem", ShoppingcartitemFields.structure, ShoppingcartitemRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ShoppingcartitemFields, ShoppingcartitemRow] = UpdateBuilder.of(""""sales"."shoppingcartitem"""", ShoppingcartitemFields.structure, ShoppingcartitemRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: ShoppingcartitemRow)(using c: Connection): java.lang.Boolean = {
     val shoppingcartitemid: ShoppingcartitemId = row.shoppingcartitemid
@@ -133,8 +134,7 @@ class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
     "productid" = EXCLUDED."productid",
     "datecreated" = EXCLUDED."datecreated",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text
-    """
+    returning "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text"""
     .updateReturning(ShoppingcartitemRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -149,8 +149,7 @@ class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
     "productid" = EXCLUDED."productid",
     "datecreated" = EXCLUDED."datecreated",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text
-    """
+    returning "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated"::text, "modifieddate"::text"""
       .updateManyReturning(ShoppingcartitemRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

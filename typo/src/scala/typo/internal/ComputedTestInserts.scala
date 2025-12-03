@@ -1,10 +1,10 @@
 package typo
 package internal
 
-import typo.db.Type
+import typo.db.PgType
 import typo.internal.codegen.*
 import typo.internal.compat.*
-import typo.internal.metadb.OpenEnum
+import typo.internal.pg.OpenEnum
 
 case class ComputedTestInserts(tpe: jvm.Type.Qualified, methods: List[ComputedTestInserts.InsertMethod], maybeDomainMethods: Option[ComputedTestInserts.GenerateDomainMethods])
 
@@ -62,20 +62,20 @@ object ComputedTestInserts {
             val max: Int =
               Option(dbType)
                 .collect {
-                  case db.Type.VarChar(Some(maxLength)) => maxLength
-                  case db.Type.Bpchar(Some(maxLength))  => maxLength
+                  case db.PgType.VarChar(Some(maxLength)) => maxLength
+                  case db.PgType.Bpchar(Some(maxLength))  => maxLength
                 }
                 .getOrElse(20)
                 .min(20)
             Some(lang.Random.alphanumeric(r, code"$max"))
           case lang.Boolean    => Some(lang.Random.nextBoolean(r))
           case TypesScala.Char => Some(lang.Random.nextPrintableChar(r))
-          case lang.Byte       => Some(code"${lang.Random.nextIntBounded(r, code"${lang.Byte}.MaxValue")}.toByte")
-          case lang.Short      => Some(code"${lang.Random.nextIntBounded(r, code"${lang.Short}.MaxValue")}.toShort")
+          case lang.Byte       => Some(code"${lang.Random.nextIntBounded(r, lang.maxValue(lang.Byte))}.toByte")
+          case lang.Short      => Some(code"${lang.Random.nextIntBounded(r, lang.maxValue(lang.Short))}.toShort")
           case lang.Int =>
             dbType match {
-              case db.Type.Int2 => Some(lang.Random.nextIntBounded(r, code"${lang.Short}.MaxValue"))
-              case _            => Some(lang.Random.nextInt(r))
+              case db.PgType.Int2 => Some(lang.Random.nextIntBounded(r, lang.maxValue(lang.Short)))
+              case _              => Some(lang.Random.nextInt(r))
             }
           case lang.Long       => Some(lang.Random.nextLong(r))
           case lang.Float      => Some(lang.Random.nextFloat(r))
@@ -89,7 +89,7 @@ object ComputedTestInserts {
             }
           case jvm.Type.ArrayOf(underlying) =>
             dbType match {
-              case db.Type.Array(underlyingDb) =>
+              case db.PgType.Array(underlyingDb) =>
                 go(underlying, underlyingDb, tableUnaryId).map { default =>
                   lang.arrayFill(lang.Random.nextIntBounded(r, code"3"), default, underlying)
                 }
@@ -97,7 +97,7 @@ object ComputedTestInserts {
             }
 
           case customTypes.TypoShort.typoType =>
-            Some(code"${customTypes.TypoShort.typoType}(${lang.Random.nextIntBounded(r, code"Short.MaxValue")}.toShort)")
+            Some(code"${customTypes.TypoShort.typoType}(${lang.Random.nextIntBounded(r, lang.maxValue(lang.Short))}.toShort)")
           case customTypes.TypoLocalDate.typoType =>
             Some(code"${customTypes.TypoLocalDate.typoType}($defaultLocalDate)")
           case customTypes.TypoLocalTime.typoType =>
@@ -230,8 +230,8 @@ object ComputedTestInserts {
         table <- computedTables
         col <- table.cols.toList
         domain <- col.dbCol.tpe match {
-          case Type.DomainRef(name, _, _) => computedDomainByType.get(name)
-          case _                          => None
+          case PgType.DomainRef(name, _, _) => computedDomainByType.get(name)
+          case _                            => None
         }
       } yield GenerateDomainMethod(domain)
 

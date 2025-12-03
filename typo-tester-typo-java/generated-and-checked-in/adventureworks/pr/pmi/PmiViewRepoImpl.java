@@ -7,13 +7,14 @@ package adventureworks.pr.pmi;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class PmiViewRepoImpl implements PmiViewRepo {
   @Override
   public SelectBuilder<PmiViewFields, PmiViewRow> select() {
-    return SelectBuilder.of("pr.pmi", PmiViewFields.structure(), PmiViewRow._rowParser);
+    return SelectBuilder.of("\"pr\".\"pmi\"", PmiViewFields.structure(), PmiViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

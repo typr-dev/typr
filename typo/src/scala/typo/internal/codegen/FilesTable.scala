@@ -4,7 +4,7 @@ package codegen
 
 import play.api.libs.json.Json
 import typo.internal.codegen.DbLib.RowType
-import typo.internal.metadb.OpenEnum
+import typo.internal.pg.OpenEnum
 
 case class FilesTable(lang: Lang, table: ComputedTable, fkAnalysis: FkAnalysis, options: InternalOptions, domainsByName: Map[db.RelationName, ComputedDomain]) {
   val relation = FilesRelation(lang, table.naming, table.names, Some(table.cols), Some(fkAnalysis), options, table.dbTable.foreignKeys)
@@ -117,7 +117,7 @@ case class FilesTable(lang: Lang, table: ComputedTable, fkAnalysis: FkAnalysis, 
         // shortcut for id files wrapping a domain
         val maybeFromString: Option[jvm.Method] =
           id.col.dbCol.tpe match {
-            case db.Type.DomainRef(name, _, _) =>
+            case db.PgType.DomainRef(name, _, _) =>
               domainsByName.get(name).map { domain =>
                 val name = domain.underlying.constraintDefinition match {
                   case Some(_) => domain.tpe.name.map(Naming.camelCase)
@@ -216,7 +216,7 @@ case class FilesTable(lang: Lang, table: ComputedTable, fkAnalysis: FkAnalysis, 
         val maybeFromString: Option[jvm.Method] =
           x.openEnum match {
             case OpenEnum.Text(_) => None
-            case OpenEnum.TextDomain(db.Type.DomainRef(name, _, _), _) =>
+            case OpenEnum.TextDomain(db.PgType.DomainRef(name, _, _), _) =>
               domainsByName.get(name).map { domain =>
                 val name = domain.underlying.constraintDefinition match {
                   case Some(_) => domain.tpe.name.map(Naming.camelCase)

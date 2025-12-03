@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -31,7 +32,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class DocumentRepoImpl implements DocumentRepo {
   @Override
   public DeleteBuilder<DocumentFields, DocumentRow> delete() {
-    return DeleteBuilder.of("production.document", DocumentFields.structure());
+    return DeleteBuilder.of("\"production\".\"document\"", DocumentFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -261,7 +262,7 @@ public class DocumentRepoImpl implements DocumentRepo {
 
   @Override
   public SelectBuilder<DocumentFields, DocumentRow> select() {
-    return SelectBuilder.of("production.document", DocumentFields.structure(), DocumentRow._rowParser);
+    return SelectBuilder.of("\"production\".\"document\"", DocumentFields.structure(), DocumentRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -332,7 +333,7 @@ public class DocumentRepoImpl implements DocumentRepo {
 
   @Override
   public UpdateBuilder<DocumentFields, DocumentRow> update() {
-    return UpdateBuilder.of("production.document", DocumentFields.structure(), DocumentRow._rowParser.all());
+    return UpdateBuilder.of("\"production\".\"document\"", DocumentFields.structure(), DocumentRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -448,8 +449,7 @@ public class DocumentRepoImpl implements DocumentRepo {
          "document" = EXCLUDED."document",
          "rowguid" = EXCLUDED."rowguid",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"
-      """)
+         returning "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode\"""")
     )
       .updateReturning(DocumentRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -477,8 +477,7 @@ public class DocumentRepoImpl implements DocumentRepo {
                 "document" = EXCLUDED."document",
                 "rowguid" = EXCLUDED."rowguid",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode"
-             """))
+                returning "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate"::text, "documentnode\""""))
       .updateManyReturning(DocumentRow._rowParser, unsaved)
       .runUnchecked(c);
   };

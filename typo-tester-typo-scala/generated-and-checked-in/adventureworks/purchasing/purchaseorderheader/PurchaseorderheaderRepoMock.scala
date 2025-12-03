@@ -92,8 +92,9 @@ case class PurchaseorderheaderRepoMock(
 
   override def selectByIds(purchaseorderids: Array[PurchaseorderheaderId])(using c: Connection): java.util.List[PurchaseorderheaderRow] = {
     val result = new ArrayList[PurchaseorderheaderRow]()
-    purchaseorderids.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    purchaseorderids.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

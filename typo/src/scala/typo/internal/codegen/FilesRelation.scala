@@ -61,7 +61,7 @@ case class FilesRelation(
           )
         },
         maybeUnsavedRow.map { case (unsaved, defaults) =>
-          val (partOfId, rest) = unsaved.defaultedCols.toList.partition { case ComputedRowUnsaved.DefaultedCol(col, _) => names.isIdColumn(col.dbName) }
+          val (partOfId, rest) = unsaved.defaultedCols.partition { case ComputedRowUnsaved.DefaultedCol(col, _) => names.isIdColumn(col.dbName) }
           val partOfIdParams = partOfId.map { case ComputedRowUnsaved.DefaultedCol(col, _) => jvm.Param(col.name, col.tpe) }
           val restParams = rest.map { case ComputedRowUnsaved.DefaultedCol(col, _) =>
             jvm.Param(col.name, col.tpe).copy(default = Some(code"${defaults.Defaulted}.${defaults.Provided}(this.${col.name})"))
@@ -325,11 +325,11 @@ case class FilesRelation(
 
         val inMethod = {
           val parts = x.colPairs.map { case (otherCol, thisCol) =>
-            val pgType = dbLib.lookupPgType(thisCol.tpe)
+            val pgType = dbLib.lookupDbTypeInstance(thisCol)
             val fieldExpr = jvm.SelfNullary(thisCol.name)
             dbLib.compositeInPart(thisCol.tpe, x.otherCompositeIdType, names.RowName, fieldExpr, otherCol.name, pgType)
           }
-          val body = jvm.Type.dsl.CompositeIn.construct(lang.ListType.create(parts.toList), idsParam.name.code)
+          val body = jvm.Type.dsl.CompositeIn.construct(lang.ListType.create(parts), idsParam.name.code)
           jvm.Method(
             annotations = Nil,
             comments = jvm.Comments.Empty,
@@ -391,7 +391,7 @@ case class FilesRelation(
                 body = jvm.Body.Expr(
                   jvm.Type.dsl.CompositeIn.construct(
                     lang.ListType.create(x.cols.map { col =>
-                      val pgType = dbLib.lookupPgType(col.tpe)
+                      val pgType = dbLib.lookupDbTypeInstance(col)
                       val fieldExpr = jvm.SelfNullary(col.name)
                       dbLib.compositeInPart(col.tpe, x.tpe, names.RowName, fieldExpr, col.name, pgType)
                     }.toList),
@@ -415,12 +415,12 @@ case class FilesRelation(
 
     // Field implementations inside the Impl class
     val fieldImplMethods: List[jvm.Method] = cols.toList.map { col =>
-      val (cls, tpe, pgTypeTpe) =
-        if (names.isIdColumn(col.dbName)) (jvm.Type.dsl.IdField, col.tpe, col.tpe)
+      val (cls, tpe) =
+        if (names.isIdColumn(col.dbName)) (jvm.Type.dsl.IdField, col.tpe)
         else
           col.tpe match {
-            case lang.Optional(underlying) => (jvm.Type.dsl.OptField, underlying, underlying)
-            case _                         => (jvm.Type.dsl.Field, col.tpe, col.tpe)
+            case lang.Optional(underlying) => (jvm.Type.dsl.OptField, underlying)
+            case _                         => (jvm.Type.dsl.Field, col.tpe)
           }
 
       jvm.Method(
@@ -448,7 +448,7 @@ case class FilesRelation(
                 case None          => lang.Optional.none
               },
               lang.rowSetter(col.name),
-              dbLib.lookupPgType(pgTypeTpe)
+              dbLib.lookupDbTypeInstance(tpe, col.dbCol.tpe)
             )
         ),
         isOverride = true,
@@ -463,25 +463,11 @@ case class FilesRelation(
       fieldAccess.code
     })
 
-    // fields: lazy override val (Scala) / @Override public Type fields() (Java)
-    val fieldsValue = jvm.Value(
-      Nil,
-      jvm.Ident("fields"),
-      fieldsName,
-      Some(jvm.NewWithBody(extendsClass = None, implementsInterface = Some(fieldsName), fieldImplMethods).code),
-      isLazy = true,
-      isOverride = true
-    )
+    /* fields: lazy override val (Scala) / @Override public Type fields() (Java) */
+    val fieldsValue = jvm.Value(Nil, jvm.Ident("fields"), fieldsName, Some(jvm.NewWithBody(extendsClass = None, implementsInterface = Some(fieldsName), fieldImplMethods).code), isLazy = true, isOverride = true)
 
     // columns: lazy override val (Scala) / @Override public Type columns() (Java)
-    val columnsValue = jvm.Value(
-      Nil,
-      jvm.Ident("columns"),
-      columnsList,
-      Some(columnsExpr),
-      isLazy = true,
-      isOverride = true
-    )
+    val columnsValue = jvm.Value(Nil, jvm.Ident("columns"), columnsList, Some(columnsExpr), isLazy = true, isOverride = true)
 
     // copy method
     val copyPathParam = jvm.Param(jvm.Ident("path"), pathList)

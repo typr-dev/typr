@@ -14,6 +14,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -23,7 +24,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class BillofmaterialsRepoImpl extends BillofmaterialsRepo {
-  override def delete: DeleteBuilder[BillofmaterialsFields, BillofmaterialsRow] = DeleteBuilder.of("production.billofmaterials", BillofmaterialsFields.structure)
+  override def delete: DeleteBuilder[BillofmaterialsFields, BillofmaterialsRow] = DeleteBuilder.of(""""production"."billofmaterials"""", BillofmaterialsFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(billofmaterialsid: Integer)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."billofmaterials" where "billofmaterialsid" = ${PgTypes.int4.encode(billofmaterialsid)}""".update().runUnchecked(c) > 0
 
@@ -92,7 +93,7 @@ class BillofmaterialsRepoImpl extends BillofmaterialsRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."billofmaterials"("productassemblyid", "componentid", "enddate", "unitmeasurecode", "bomlevel", "billofmaterialsid", "startdate", "perassemblyqty", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, BillofmaterialsRowUnsaved.pgText)
 
-  override def select: SelectBuilder[BillofmaterialsFields, BillofmaterialsRow] = SelectBuilder.of("production.billofmaterials", BillofmaterialsFields.structure, BillofmaterialsRow.`_rowParser`)
+  override def select: SelectBuilder[BillofmaterialsFields, BillofmaterialsRow] = SelectBuilder.of(""""production"."billofmaterials"""", BillofmaterialsFields.structure, BillofmaterialsRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[BillofmaterialsRow] = {
     interpolate"""select "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text
@@ -118,7 +119,7 @@ class BillofmaterialsRepoImpl extends BillofmaterialsRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[BillofmaterialsFields, BillofmaterialsRow] = UpdateBuilder.of("production.billofmaterials", BillofmaterialsFields.structure, BillofmaterialsRow.`_rowParser`.all())
+  override def update: UpdateBuilder[BillofmaterialsFields, BillofmaterialsRow] = UpdateBuilder.of(""""production"."billofmaterials"""", BillofmaterialsFields.structure, BillofmaterialsRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: BillofmaterialsRow)(using c: Connection): java.lang.Boolean = {
     val billofmaterialsid: Integer = row.billofmaterialsid
@@ -147,8 +148,7 @@ class BillofmaterialsRepoImpl extends BillofmaterialsRepo {
     "bomlevel" = EXCLUDED."bomlevel",
     "perassemblyqty" = EXCLUDED."perassemblyqty",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text
-    """
+    returning "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text"""
     .updateReturning(BillofmaterialsRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -166,8 +166,7 @@ class BillofmaterialsRepoImpl extends BillofmaterialsRepo {
     "bomlevel" = EXCLUDED."bomlevel",
     "perassemblyqty" = EXCLUDED."perassemblyqty",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text
-    """
+    returning "billofmaterialsid", "productassemblyid", "componentid", "startdate"::text, "enddate"::text, "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"::text"""
       .updateManyReturning(BillofmaterialsRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

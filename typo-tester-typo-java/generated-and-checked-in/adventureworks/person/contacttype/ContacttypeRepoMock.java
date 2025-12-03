@@ -61,9 +61,11 @@ public record ContacttypeRepoMock(
     Connection c
   ) {
     var count = 0;
-    for (var id : contacttypeids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : contacttypeids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -143,8 +145,12 @@ public record ContacttypeRepoMock(
     Connection c
   ) {
     var result = new ArrayList<ContacttypeRow>();
-    for (var id : contacttypeids) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : contacttypeids) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 
@@ -168,7 +174,7 @@ public record ContacttypeRepoMock(
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.contacttypeid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
     if (shouldUpdate) {
-      map.put(row.contacttypeid(), row);
+      map.put(row.contacttypeid(), row);;
     };
     return shouldUpdate;
   };

@@ -7,13 +7,14 @@ package adventureworks.sa.so;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class SoViewRepoImpl implements SoViewRepo {
   @Override
   public SelectBuilder<SoViewFields, SoViewRow> select() {
-    return SelectBuilder.of("sa.so", SoViewFields.structure(), SoViewRow._rowParser);
+    return SelectBuilder.of("\"sa\".\"so\"", SoViewFields.structure(), SoViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

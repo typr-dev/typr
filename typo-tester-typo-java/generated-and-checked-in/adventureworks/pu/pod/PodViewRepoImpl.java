@@ -7,13 +7,14 @@ package adventureworks.pu.pod;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class PodViewRepoImpl implements PodViewRepo {
   @Override
   public SelectBuilder<PodViewFields, PodViewRow> select() {
-    return SelectBuilder.of("pu.pod", PodViewFields.structure(), PodViewRow._rowParser);
+    return SelectBuilder.of("\"pu\".\"pod\"", PodViewFields.structure(), PodViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

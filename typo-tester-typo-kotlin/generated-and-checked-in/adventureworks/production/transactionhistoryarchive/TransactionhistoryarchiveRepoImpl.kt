@@ -14,6 +14,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -24,7 +25,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class TransactionhistoryarchiveRepoImpl() : TransactionhistoryarchiveRepo {
-  override fun delete(): DeleteBuilder<TransactionhistoryarchiveFields, TransactionhistoryarchiveRow> = DeleteBuilder.of("production.transactionhistoryarchive", TransactionhistoryarchiveFields.structure)
+  override fun delete(): DeleteBuilder<TransactionhistoryarchiveFields, TransactionhistoryarchiveRow> = DeleteBuilder.of("\"production\".\"transactionhistoryarchive\"", TransactionhistoryarchiveFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     transactionid: TransactionhistoryarchiveId,
@@ -176,7 +177,7 @@ class TransactionhistoryarchiveRepoImpl() : TransactionhistoryarchiveRepo {
   COPY "production"."transactionhistoryarchive"("transactionid", "productid", "referenceorderid", "transactiontype", "quantity", "actualcost", "referenceorderlineid", "transactiondate", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, TransactionhistoryarchiveRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<TransactionhistoryarchiveFields, TransactionhistoryarchiveRow> = SelectBuilder.of("production.transactionhistoryarchive", TransactionhistoryarchiveFields.structure, TransactionhistoryarchiveRow._rowParser)
+  override fun select(): SelectBuilder<TransactionhistoryarchiveFields, TransactionhistoryarchiveRow> = SelectBuilder.of("\"production\".\"transactionhistoryarchive\"", TransactionhistoryarchiveFields.structure, TransactionhistoryarchiveRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<TransactionhistoryarchiveRow> = interpolate(typo.runtime.Fragment.lit("""
     select "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text
@@ -216,7 +217,7 @@ class TransactionhistoryarchiveRepoImpl() : TransactionhistoryarchiveRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<TransactionhistoryarchiveFields, TransactionhistoryarchiveRow> = UpdateBuilder.of("production.transactionhistoryarchive", TransactionhistoryarchiveFields.structure, TransactionhistoryarchiveRow._rowParser.all())
+  override fun update(): UpdateBuilder<TransactionhistoryarchiveFields, TransactionhistoryarchiveRow> = UpdateBuilder.of("\"production\".\"transactionhistoryarchive\"", TransactionhistoryarchiveFields.structure, TransactionhistoryarchiveRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: TransactionhistoryarchiveRow,
@@ -300,8 +301,7 @@ class TransactionhistoryarchiveRepoImpl() : TransactionhistoryarchiveRepo {
       "quantity" = EXCLUDED."quantity",
       "actualcost" = EXCLUDED."actualcost",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text
-    """.trimMargin())
+      returning "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(TransactionhistoryarchiveRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -322,8 +322,7 @@ class TransactionhistoryarchiveRepoImpl() : TransactionhistoryarchiveRepo {
                                             "quantity" = EXCLUDED."quantity",
                                             "actualcost" = EXCLUDED."actualcost",
                                             "modifieddate" = EXCLUDED."modifieddate"
-                                            returning "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text
-                                          """.trimMargin()))
+                                            returning "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate"::text, "transactiontype", "quantity", "actualcost", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(TransactionhistoryarchiveRow._rowParser, unsaved)
     .runUnchecked(c)
 

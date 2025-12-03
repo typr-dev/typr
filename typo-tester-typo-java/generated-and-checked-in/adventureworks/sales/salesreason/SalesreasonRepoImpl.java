@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -26,7 +27,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class SalesreasonRepoImpl implements SalesreasonRepo {
   @Override
   public DeleteBuilder<SalesreasonFields, SalesreasonRow> delete() {
-    return DeleteBuilder.of("sales.salesreason", SalesreasonFields.structure());
+    return DeleteBuilder.of("\"sales\".\"salesreason\"", SalesreasonFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -167,7 +168,7 @@ public class SalesreasonRepoImpl implements SalesreasonRepo {
 
   @Override
   public SelectBuilder<SalesreasonFields, SalesreasonRow> select() {
-    return SelectBuilder.of("sales.salesreason", SalesreasonFields.structure(), SalesreasonRow._rowParser);
+    return SelectBuilder.of("\"sales\".\"salesreason\"", SalesreasonFields.structure(), SalesreasonRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -220,7 +221,7 @@ public class SalesreasonRepoImpl implements SalesreasonRepo {
 
   @Override
   public UpdateBuilder<SalesreasonFields, SalesreasonRow> update() {
-    return UpdateBuilder.of("sales.salesreason", SalesreasonFields.structure(), SalesreasonRow._rowParser.all());
+    return UpdateBuilder.of("\"sales\".\"salesreason\"", SalesreasonFields.structure(), SalesreasonRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -273,8 +274,7 @@ public class SalesreasonRepoImpl implements SalesreasonRepo {
            "name" = EXCLUDED."name",
          "reasontype" = EXCLUDED."reasontype",
          "modifieddate" = EXCLUDED."modifieddate"
-         returning "salesreasonid", "name", "reasontype", "modifieddate"::text
-      """)
+         returning "salesreasonid", "name", "reasontype", "modifieddate"::text""")
     )
       .updateReturning(SalesreasonRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -293,8 +293,7 @@ public class SalesreasonRepoImpl implements SalesreasonRepo {
                   "name" = EXCLUDED."name",
                 "reasontype" = EXCLUDED."reasontype",
                 "modifieddate" = EXCLUDED."modifieddate"
-                returning "salesreasonid", "name", "reasontype", "modifieddate"::text
-             """))
+                returning "salesreasonid", "name", "reasontype", "modifieddate"::text"""))
       .updateManyReturning(SalesreasonRow._rowParser, unsaved)
       .runUnchecked(c);
   };

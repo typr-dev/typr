@@ -48,7 +48,7 @@ public record PersoncreditcardRow(
     return new PersoncreditcardRow(businessentityid, creditcardid, modifieddate);
   };
 
-  static RowParser<PersoncreditcardRow> _rowParser = RowParsers.of(BusinessentityId.pgType, /* user-picked */ CustomCreditcardId.pgType, TypoLocalDateTime.pgType, PersoncreditcardRow::new, row -> new Object[]{row.businessentityid(), row.creditcardid(), row.modifieddate()});;
+  static RowParser<PersoncreditcardRow> _rowParser = RowParsers.of(BusinessentityId.pgType, CustomCreditcardId.pgType, TypoLocalDateTime.pgType, PersoncreditcardRow::new, row -> new Object[]{row.businessentityid(), row.creditcardid(), row.modifieddate()});;
 
   static public PersoncreditcardRow apply(
     PersoncreditcardId compositeId,

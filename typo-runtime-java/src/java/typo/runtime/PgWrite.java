@@ -10,8 +10,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 
-public sealed interface PgWrite<A> permits PgWrite.Instance {
-    void set(PreparedStatement ps, int index, A a) throws SQLException;
+public sealed interface PgWrite<A> extends DbWrite<A> permits PgWrite.Instance {
+    void set(PreparedStatement ps, int idx, A a) throws SQLException;
 
     // combinators
     PgWrite<Optional<A>> opt(PgTypename<A> typename);

@@ -19,6 +19,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -29,7 +30,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class EmployeeRepoImpl() : EmployeeRepo {
-  override fun delete(): DeleteBuilder<EmployeeFields, EmployeeRow> = DeleteBuilder.of("humanresources.employee", EmployeeFields.structure)
+  override fun delete(): DeleteBuilder<EmployeeFields, EmployeeRow> = DeleteBuilder.of("\"humanresources\".\"employee\"", EmployeeFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     businessentityid: BusinessentityId,
@@ -239,7 +240,7 @@ class EmployeeRepoImpl() : EmployeeRepo {
   COPY "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, EmployeeRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<EmployeeFields, EmployeeRow> = SelectBuilder.of("humanresources.employee", EmployeeFields.structure, EmployeeRow._rowParser)
+  override fun select(): SelectBuilder<EmployeeFields, EmployeeRow> = SelectBuilder.of("\"humanresources\".\"employee\"", EmployeeFields.structure, EmployeeRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<EmployeeRow> = interpolate(typo.runtime.Fragment.lit("""
     select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode"
@@ -279,7 +280,7 @@ class EmployeeRepoImpl() : EmployeeRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<EmployeeFields, EmployeeRow> = UpdateBuilder.of("humanresources.employee", EmployeeFields.structure, EmployeeRow._rowParser.all())
+  override fun update(): UpdateBuilder<EmployeeFields, EmployeeRow> = UpdateBuilder.of("\"humanresources\".\"employee\"", EmployeeFields.structure, EmployeeRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: EmployeeRow,
@@ -405,8 +406,7 @@ class EmployeeRepoImpl() : EmployeeRepo {
       "rowguid" = EXCLUDED."rowguid",
       "modifieddate" = EXCLUDED."modifieddate",
       "organizationnode" = EXCLUDED."organizationnode"
-      returning "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode"
-    """.trimMargin())
+      returning "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode"""".trimMargin())
   )
     .updateReturning(EmployeeRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -433,8 +433,7 @@ class EmployeeRepoImpl() : EmployeeRepo {
                            "rowguid" = EXCLUDED."rowguid",
                            "modifieddate" = EXCLUDED."modifieddate",
                            "organizationnode" = EXCLUDED."organizationnode"
-                           returning "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode"
-                         """.trimMargin()))
+                           returning "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode"""".trimMargin()))
     .updateManyReturning(EmployeeRow._rowParser, unsaved)
     .runUnchecked(c)
 

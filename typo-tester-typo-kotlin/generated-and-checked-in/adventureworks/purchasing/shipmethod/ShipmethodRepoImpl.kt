@@ -16,6 +16,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -26,7 +27,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class ShipmethodRepoImpl() : ShipmethodRepo {
-  override fun delete(): DeleteBuilder<ShipmethodFields, ShipmethodRow> = DeleteBuilder.of("purchasing.shipmethod", ShipmethodFields.structure)
+  override fun delete(): DeleteBuilder<ShipmethodFields, ShipmethodRow> = DeleteBuilder.of("\"purchasing\".\"shipmethod\"", ShipmethodFields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     shipmethodid: ShipmethodId,
@@ -163,7 +164,7 @@ class ShipmethodRepoImpl() : ShipmethodRepo {
   COPY "purchasing"."shipmethod"("name", "shipmethodid", "shipbase", "shiprate", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')
   """.trimMargin()), batchSize, unsaved, c, ShipmethodRowUnsaved.pgText)
 
-  override fun select(): SelectBuilder<ShipmethodFields, ShipmethodRow> = SelectBuilder.of("purchasing.shipmethod", ShipmethodFields.structure, ShipmethodRow._rowParser)
+  override fun select(): SelectBuilder<ShipmethodFields, ShipmethodRow> = SelectBuilder.of("\"purchasing\".\"shipmethod\"", ShipmethodFields.structure, ShipmethodRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<ShipmethodRow> = interpolate(typo.runtime.Fragment.lit("""
     select "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text
@@ -203,7 +204,7 @@ class ShipmethodRepoImpl() : ShipmethodRepo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<ShipmethodFields, ShipmethodRow> = UpdateBuilder.of("purchasing.shipmethod", ShipmethodFields.structure, ShipmethodRow._rowParser.all())
+  override fun update(): UpdateBuilder<ShipmethodFields, ShipmethodRow> = UpdateBuilder.of("\"purchasing\".\"shipmethod\"", ShipmethodFields.structure, ShipmethodRow._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun update(
     row: ShipmethodRow,
@@ -266,8 +267,7 @@ class ShipmethodRepoImpl() : ShipmethodRepo {
       "shiprate" = EXCLUDED."shiprate",
       "rowguid" = EXCLUDED."rowguid",
       "modifieddate" = EXCLUDED."modifieddate"
-      returning "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text
-    """.trimMargin())
+      returning "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text""".trimMargin())
   )
     .updateReturning(ShipmethodRow._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -285,8 +285,7 @@ class ShipmethodRepoImpl() : ShipmethodRepo {
                              "shiprate" = EXCLUDED."shiprate",
                              "rowguid" = EXCLUDED."rowguid",
                              "modifieddate" = EXCLUDED."modifieddate"
-                             returning "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text
-                           """.trimMargin()))
+                             returning "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"::text""".trimMargin()))
     .updateManyReturning(ShipmethodRow._rowParser, unsaved)
     .runUnchecked(c)
 

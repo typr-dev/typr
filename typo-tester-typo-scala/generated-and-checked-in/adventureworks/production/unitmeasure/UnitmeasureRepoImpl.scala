@@ -12,6 +12,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -20,7 +21,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class UnitmeasureRepoImpl extends UnitmeasureRepo {
-  override def delete: DeleteBuilder[UnitmeasureFields, UnitmeasureRow] = DeleteBuilder.of("production.unitmeasure", UnitmeasureFields.structure)
+  override def delete: DeleteBuilder[UnitmeasureFields, UnitmeasureRow] = DeleteBuilder.of(""""production"."unitmeasure"""", UnitmeasureFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(unitmeasurecode: UnitmeasureId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."unitmeasure" where "unitmeasurecode" = ${UnitmeasureId.pgType.encode(unitmeasurecode)}""".update().runUnchecked(c) > 0
 
@@ -71,7 +72,7 @@ class UnitmeasureRepoImpl extends UnitmeasureRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."unitmeasure"("unitmeasurecode", "name", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, UnitmeasureRowUnsaved.pgText)
 
-  override def select: SelectBuilder[UnitmeasureFields, UnitmeasureRow] = SelectBuilder.of("production.unitmeasure", UnitmeasureFields.structure, UnitmeasureRow.`_rowParser`)
+  override def select: SelectBuilder[UnitmeasureFields, UnitmeasureRow] = SelectBuilder.of(""""production"."unitmeasure"""", UnitmeasureFields.structure, UnitmeasureRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[UnitmeasureRow] = {
     interpolate"""select "unitmeasurecode", "name", "modifieddate"::text
@@ -97,7 +98,7 @@ class UnitmeasureRepoImpl extends UnitmeasureRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[UnitmeasureFields, UnitmeasureRow] = UpdateBuilder.of("production.unitmeasure", UnitmeasureFields.structure, UnitmeasureRow.`_rowParser`.all())
+  override def update: UpdateBuilder[UnitmeasureFields, UnitmeasureRow] = UpdateBuilder.of(""""production"."unitmeasure"""", UnitmeasureFields.structure, UnitmeasureRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: UnitmeasureRow)(using c: Connection): java.lang.Boolean = {
     val unitmeasurecode: UnitmeasureId = row.unitmeasurecode
@@ -114,8 +115,7 @@ class UnitmeasureRepoImpl extends UnitmeasureRepo {
     do update set
       "name" = EXCLUDED."name",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "unitmeasurecode", "name", "modifieddate"::text
-    """
+    returning "unitmeasurecode", "name", "modifieddate"::text"""
     .updateReturning(UnitmeasureRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -127,8 +127,7 @@ class UnitmeasureRepoImpl extends UnitmeasureRepo {
     do update set
       "name" = EXCLUDED."name",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "unitmeasurecode", "name", "modifieddate"::text
-    """
+    returning "unitmeasurecode", "name", "modifieddate"::text"""
       .updateManyReturning(UnitmeasureRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

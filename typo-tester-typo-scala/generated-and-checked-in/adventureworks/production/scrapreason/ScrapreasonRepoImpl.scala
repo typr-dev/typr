@@ -12,6 +12,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -20,7 +21,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ScrapreasonRepoImpl extends ScrapreasonRepo {
-  override def delete: DeleteBuilder[ScrapreasonFields, ScrapreasonRow] = DeleteBuilder.of("production.scrapreason", ScrapreasonFields.structure)
+  override def delete: DeleteBuilder[ScrapreasonFields, ScrapreasonRow] = DeleteBuilder.of(""""production"."scrapreason"""", ScrapreasonFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(scrapreasonid: ScrapreasonId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."scrapreason" where "scrapreasonid" = ${ScrapreasonId.pgType.encode(scrapreasonid)}""".update().runUnchecked(c) > 0
 
@@ -73,7 +74,7 @@ class ScrapreasonRepoImpl extends ScrapreasonRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."scrapreason"("name", "scrapreasonid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ScrapreasonRowUnsaved.pgText)
 
-  override def select: SelectBuilder[ScrapreasonFields, ScrapreasonRow] = SelectBuilder.of("production.scrapreason", ScrapreasonFields.structure, ScrapreasonRow.`_rowParser`)
+  override def select: SelectBuilder[ScrapreasonFields, ScrapreasonRow] = SelectBuilder.of(""""production"."scrapreason"""", ScrapreasonFields.structure, ScrapreasonRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[ScrapreasonRow] = {
     interpolate"""select "scrapreasonid", "name", "modifieddate"::text
@@ -99,7 +100,7 @@ class ScrapreasonRepoImpl extends ScrapreasonRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[ScrapreasonFields, ScrapreasonRow] = UpdateBuilder.of("production.scrapreason", ScrapreasonFields.structure, ScrapreasonRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ScrapreasonFields, ScrapreasonRow] = UpdateBuilder.of(""""production"."scrapreason"""", ScrapreasonFields.structure, ScrapreasonRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: ScrapreasonRow)(using c: Connection): java.lang.Boolean = {
     val scrapreasonid: ScrapreasonId = row.scrapreasonid
@@ -116,8 +117,7 @@ class ScrapreasonRepoImpl extends ScrapreasonRepo {
     do update set
       "name" = EXCLUDED."name",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "scrapreasonid", "name", "modifieddate"::text
-    """
+    returning "scrapreasonid", "name", "modifieddate"::text"""
     .updateReturning(ScrapreasonRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -129,8 +129,7 @@ class ScrapreasonRepoImpl extends ScrapreasonRepo {
     do update set
       "name" = EXCLUDED."name",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "scrapreasonid", "name", "modifieddate"::text
-    """
+    returning "scrapreasonid", "name", "modifieddate"::text"""
       .updateManyReturning(ScrapreasonRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

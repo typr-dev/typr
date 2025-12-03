@@ -12,6 +12,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -21,7 +22,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class SpecialofferRepoImpl extends SpecialofferRepo {
-  override def delete: DeleteBuilder[SpecialofferFields, SpecialofferRow] = DeleteBuilder.of("sales.specialoffer", SpecialofferFields.structure)
+  override def delete: DeleteBuilder[SpecialofferFields, SpecialofferRow] = DeleteBuilder.of(""""sales"."specialoffer"""", SpecialofferFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(specialofferid: SpecialofferId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "sales"."specialoffer" where "specialofferid" = ${SpecialofferId.pgType.encode(specialofferid)}""".update().runUnchecked(c) > 0
 
@@ -96,7 +97,7 @@ class SpecialofferRepoImpl extends SpecialofferRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."specialoffer"("description", "type", "category", "startdate", "enddate", "maxqty", "specialofferid", "discountpct", "minqty", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, SpecialofferRowUnsaved.pgText)
 
-  override def select: SelectBuilder[SpecialofferFields, SpecialofferRow] = SelectBuilder.of("sales.specialoffer", SpecialofferFields.structure, SpecialofferRow.`_rowParser`)
+  override def select: SelectBuilder[SpecialofferFields, SpecialofferRow] = SelectBuilder.of(""""sales"."specialoffer"""", SpecialofferFields.structure, SpecialofferRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[SpecialofferRow] = {
     interpolate"""select "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text
@@ -122,7 +123,7 @@ class SpecialofferRepoImpl extends SpecialofferRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[SpecialofferFields, SpecialofferRow] = UpdateBuilder.of("sales.specialoffer", SpecialofferFields.structure, SpecialofferRow.`_rowParser`.all())
+  override def update: UpdateBuilder[SpecialofferFields, SpecialofferRow] = UpdateBuilder.of(""""sales"."specialoffer"""", SpecialofferFields.structure, SpecialofferRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: SpecialofferRow)(using c: Connection): java.lang.Boolean = {
     val specialofferid: SpecialofferId = row.specialofferid
@@ -155,8 +156,7 @@ class SpecialofferRepoImpl extends SpecialofferRepo {
     "maxqty" = EXCLUDED."maxqty",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text
-    """
+    returning "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text"""
     .updateReturning(SpecialofferRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -176,8 +176,7 @@ class SpecialofferRepoImpl extends SpecialofferRepo {
     "maxqty" = EXCLUDED."maxqty",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text
-    """
+    returning "specialofferid", "description", "discountpct", "type", "category", "startdate"::text, "enddate"::text, "minqty", "maxqty", "rowguid", "modifieddate"::text"""
       .updateManyReturning(SpecialofferRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

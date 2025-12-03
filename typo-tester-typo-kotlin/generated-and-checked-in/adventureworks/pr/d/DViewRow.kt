@@ -47,6 +47,6 @@ data class DViewRow(
   val documentnode: DocumentId
 ) {
   companion object {
-    val _rowParser: RowParser<DViewRow> = RowParsers.of(PgTypes.text, BusinessentityId.pgType, Flag.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text, PgTypes.int4, TypoShort.pgType, PgTypes.text.opt(), TypoBytea.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, DocumentId.pgType, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12 -> DViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!, t10!!, t11!!, t12!!) }, { row -> arrayOf<Any?>(row.title, row.owner, row.folderflag, row.filename, row.fileextension, row.revision, row.changenumber, row.status, row.documentsummary, row.document, row.rowguid, row.modifieddate, row.documentnode) })
+    val _rowParser: RowParser<DViewRow> = RowParsers.of(PgTypes.text, BusinessentityId.pgType, Flag.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.bpchar, PgTypes.int4, TypoShort.pgType, PgTypes.text.opt(), TypoBytea.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, DocumentId.pgType, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12 -> DViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!, t10!!, t11!!, t12!!) }, { row -> arrayOf<Any?>(row.title, row.owner, row.folderflag, row.filename, row.fileextension, row.revision, row.changenumber, row.status, row.documentsummary, row.document, row.rowguid, row.modifieddate, row.documentnode) })
   }
 }

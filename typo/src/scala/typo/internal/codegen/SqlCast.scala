@@ -19,14 +19,18 @@ object SqlCast {
   def toPg(param: ComputedSqlFile.Param): Option[SqlCast] =
     toPg(param.dbType, Some(param.udtName))
 
-  /** cast to correctly insert into PG
+  /** cast to correctly insert into PG/MariaDB
     */
   def toPg(dbType: db.Type, udtName: Option[String]): Option[SqlCast] =
     dbType match {
-      case db.Type.Unknown(sqlType)                            => Some(SqlCast(sqlType))
-      case db.Type.EnumRef(enm)                                => Some(SqlCast(enm.name.value))
-      case db.Type.Boolean | db.Type.Text | db.Type.VarChar(_) => None
-      case _ =>
+      // Unknown type (extends both PgType and MariaType) - must be first
+      case db.Unknown(sqlType) => Some(SqlCast(sqlType))
+      // MariaDB types - no cast needed, driver handles it
+      case _: db.MariaType => None
+      // PostgreSQL types
+      case db.PgType.EnumRef(enm)                                    => Some(SqlCast(enm.name.value))
+      case db.PgType.Boolean | db.PgType.Text | db.PgType.VarChar(_) => None
+      case _: db.PgType =>
         udtName.map {
           case ArrayName(x) => SqlCast(x + "[]")
           case other        => SqlCast(other)
@@ -40,23 +44,27 @@ object SqlCast {
     */
   def fromPg(dbType: db.Type): Option[SqlCast] =
     dbType match {
-      case db.Type.Array(db.Type.Unknown(_)) | db.Type.Array(db.Type.DomainRef(_, _, db.Type.Unknown(_))) =>
+      // Unknown type (extends both PgType and MariaType) - must be first
+      case db.Unknown(_) =>
+        Some(SqlCast("text"))
+      // MariaDB types - no cast needed for reading
+      case _: db.MariaType => None
+      // PostgreSQL types
+      case db.PgType.Array(db.Unknown(_)) | db.PgType.Array(db.PgType.DomainRef(_, _, db.Unknown(_))) =>
         Some(SqlCast("text[]"))
-      case db.Type.Unknown(_) =>
-        Some(SqlCast("text"))
-      case db.Type.DomainRef(_, _, underlying) =>
+      case db.PgType.DomainRef(_, _, underlying) =>
         fromPg(underlying)
-      case db.Type.PGmoney =>
+      case db.PgType.PGmoney =>
         Some(SqlCast("numeric"))
-      case db.Type.Vector =>
+      case db.PgType.Vector =>
         Some(SqlCast("float4[]"))
-      case db.Type.Array(db.Type.PGmoney) =>
+      case db.PgType.Array(db.PgType.PGmoney) =>
         Some(SqlCast("numeric[]"))
-      case db.Type.Array(db.Type.DomainRef(_, underlying, _)) =>
+      case db.PgType.Array(db.PgType.DomainRef(_, underlying, _)) =>
         Some(SqlCast(underlying + "[]"))
-      case db.Type.TimestampTz | db.Type.Timestamp | db.Type.TimeTz | db.Type.Time | db.Type.Date =>
+      case db.PgType.TimestampTz | db.PgType.Timestamp | db.PgType.TimeTz | db.PgType.Time | db.PgType.Date =>
         Some(SqlCast("text"))
-      case db.Type.Array(db.Type.TimestampTz | db.Type.Timestamp | db.Type.TimeTz | db.Type.Time | db.Type.Date) =>
+      case db.PgType.Array(db.PgType.TimestampTz | db.PgType.Timestamp | db.PgType.TimeTz | db.PgType.Time | db.PgType.Date) =>
         Some(SqlCast("text[]"))
       case _ => None
     }

@@ -1,8 +1,8 @@
 package typo.dsl;
 
+import typo.runtime.DbType;
 import typo.runtime.Either;
 import typo.runtime.Fragment;
-import typo.runtime.PgType;
 import typo.runtime.ResultSetParser;
 
 import java.sql.Connection;
@@ -23,17 +23,18 @@ public interface UpdateBuilder<Fields, Row> {
     static <Fields, Row> UpdateBuilder<Fields, Row> of(
             String tableName,
             Structure.Relation<Fields, Row> structure,
-            ResultSetParser<List<Row>> parser) {
-        return new UpdateBuilderSql<>(tableName, RenderCtx.EMPTY, structure, UpdateParams.empty(), parser);
+            ResultSetParser<List<Row>> parser,
+            Dialect dialect) {
+        return new UpdateBuilderSql<>(tableName, RenderCtx.of(dialect), structure, UpdateParams.empty(), parser);
     }
 
     /**
      * Set a field to a new value.
      * @param field The field to update
      * @param value The value to set
-     * @param pgType The PostgreSQL type of the value
+     * @param pgType The database type of the value
      */
-    <T> UpdateBuilder<Fields, Row> set(Function<Fields, SqlExpr.FieldLike<T, Row>> field, T value, PgType<T> pgType);
+    <T> UpdateBuilder<Fields, Row> set(Function<Fields, SqlExpr.FieldLike<T, Row>> field, T value, DbType<T> pgType);
 
     /**
      * Set a field to a new value. The pgType is extracted from the field.
@@ -100,7 +101,7 @@ public interface UpdateBuilder<Fields, Row> {
         }
 
         @Override
-        public <T> UpdateBuilder<Fields, Row> set(Function<Fields, SqlExpr.FieldLike<T, Row>> field, T value, PgType<T> pgType) {
+        public <T> UpdateBuilder<Fields, Row> set(Function<Fields, SqlExpr.FieldLike<T, Row>> field, T value, DbType<T> pgType) {
             // Wrap the function to extract the field from potentially typed field
             Function<Fields, SqlExpr.FieldLikeNotId<T, Row>> fieldNotId = fields -> {
                 SqlExpr.FieldLike<T, Row> f = field.apply(fields);

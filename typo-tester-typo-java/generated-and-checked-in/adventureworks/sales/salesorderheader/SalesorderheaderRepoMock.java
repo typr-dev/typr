@@ -61,9 +61,11 @@ public record SalesorderheaderRepoMock(
     Connection c
   ) {
     var count = 0;
-    for (var id : salesorderids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
-      count = count + 1;
-    } };
+    for (var id : salesorderids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
+      count = count + 1;;
+    };
+    };
     return count;
   };
 
@@ -143,8 +145,12 @@ public record SalesorderheaderRepoMock(
     Connection c
   ) {
     var result = new ArrayList<SalesorderheaderRow>();
-    for (var id : salesorderids) { var opt = Optional.ofNullable(map.get(id));
-    if (opt.isPresent()) result.add(opt.get()); };
+    for (var id : salesorderids) {
+      var opt = Optional.ofNullable(map.get(id));
+      if (opt.isPresent()) {
+      result.add(opt.get());
+    };
+    };
     return result;
   };
 
@@ -168,7 +174,7 @@ public record SalesorderheaderRepoMock(
   ) {
     var shouldUpdate = Optional.ofNullable(map.get(row.salesorderid())).filter(oldRow -> !oldRow.equals(row)).isPresent();
     if (shouldUpdate) {
-      map.put(row.salesorderid(), row);
+      map.put(row.salesorderid(), row);;
     };
     return shouldUpdate;
   };

@@ -92,8 +92,9 @@ case class ProductcosthistoryRepoMock(
 
   override def selectByIds(compositeIds: Array[ProductcosthistoryId])(using c: Connection): java.util.List[ProductcosthistoryRow] = {
     val result = new ArrayList[ProductcosthistoryRow]()
-    compositeIds.foreach { id => val opt = Optional.ofNullable(map.get(id))
-    if (opt.isPresent()) result.add(opt.get()): @scala.annotation.nowarn }
+    compositeIds.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+      result.add(opt.get()): @scala.annotation.nowarn
+    } }
     return result
   }
 

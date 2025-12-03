@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.Fragment;
@@ -28,7 +29,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class CountryregioncurrencyRepoImpl implements CountryregioncurrencyRepo {
   @Override
   public DeleteBuilder<CountryregioncurrencyFields, CountryregioncurrencyRow> delete() {
-    return DeleteBuilder.of("sales.countryregioncurrency", CountryregioncurrencyFields.structure());
+    return DeleteBuilder.of("\"sales\".\"countryregioncurrency\"", CountryregioncurrencyFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -166,7 +167,7 @@ public class CountryregioncurrencyRepoImpl implements CountryregioncurrencyRepo 
 
   @Override
   public SelectBuilder<CountryregioncurrencyFields, CountryregioncurrencyRow> select() {
-    return SelectBuilder.of("sales.countryregioncurrency", CountryregioncurrencyFields.structure(), CountryregioncurrencyRow._rowParser);
+    return SelectBuilder.of("\"sales\".\"countryregioncurrency\"", CountryregioncurrencyFields.structure(), CountryregioncurrencyRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -231,7 +232,7 @@ public class CountryregioncurrencyRepoImpl implements CountryregioncurrencyRepo 
 
   @Override
   public UpdateBuilder<CountryregioncurrencyFields, CountryregioncurrencyRow> update() {
-    return UpdateBuilder.of("sales.countryregioncurrency", CountryregioncurrencyFields.structure(), CountryregioncurrencyRow._rowParser.all());
+    return UpdateBuilder.of("\"sales\".\"countryregioncurrency\"", CountryregioncurrencyFields.structure(), CountryregioncurrencyRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -276,8 +277,7 @@ public class CountryregioncurrencyRepoImpl implements CountryregioncurrencyRepo 
          on conflict ("countryregioncode", "currencycode")
          do update set
            "modifieddate" = EXCLUDED."modifieddate"
-         returning "countryregioncode", "currencycode", "modifieddate"::text
-      """)
+         returning "countryregioncode", "currencycode", "modifieddate"::text""")
     )
       .updateReturning(CountryregioncurrencyRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -294,8 +294,7 @@ public class CountryregioncurrencyRepoImpl implements CountryregioncurrencyRepo 
                 on conflict ("countryregioncode", "currencycode")
                 do update set
                   "modifieddate" = EXCLUDED."modifieddate"
-                returning "countryregioncode", "currencycode", "modifieddate"::text
-             """))
+                returning "countryregioncode", "currencycode", "modifieddate"::text"""))
       .updateManyReturning(CountryregioncurrencyRow._rowParser, unsaved)
       .runUnchecked(c);
   };

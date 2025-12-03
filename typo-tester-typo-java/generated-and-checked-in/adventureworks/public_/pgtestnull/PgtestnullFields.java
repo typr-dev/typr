@@ -59,7 +59,7 @@ public interface PgtestnullFields {
                };
                @Override
                public OptField</* bpchar, max 3 chars */ String, PgtestnullRow> bpchar() {
-                 return new OptField</* bpchar, max 3 chars */ String, PgtestnullRow>(_path, "bpchar", PgtestnullRow::bpchar, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withBpchar(value), PgTypes.text);
+                 return new OptField</* bpchar, max 3 chars */ String, PgtestnullRow>(_path, "bpchar", PgtestnullRow::bpchar, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withBpchar(value), PgTypes.bpchar);
                };
                @Override
                public OptField<TypoBytea, PgtestnullRow> bytea() {
@@ -67,7 +67,7 @@ public interface PgtestnullFields {
                };
                @Override
                public OptField</* bpchar, max 1 chars */ String, PgtestnullRow> char_() {
-                 return new OptField</* bpchar, max 1 chars */ String, PgtestnullRow>(_path, "char", PgtestnullRow::char_, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withChar(value), PgTypes.text);
+                 return new OptField</* bpchar, max 1 chars */ String, PgtestnullRow>(_path, "char", PgtestnullRow::char_, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withChar(value), PgTypes.bpchar);
                };
                @Override
                public OptField<TypoCircle, PgtestnullRow> circle() {
@@ -143,7 +143,7 @@ public interface PgtestnullFields {
                };
                @Override
                public OptField<String, PgtestnullRow> name() {
-                 return new OptField<String, PgtestnullRow>(_path, "name", PgtestnullRow::name, Optional.empty(), Optional.of("name"), (row, value) -> row.withName(value), PgTypes.text);
+                 return new OptField<String, PgtestnullRow>(_path, "name", PgtestnullRow::name, Optional.empty(), Optional.of("name"), (row, value) -> row.withName(value), PgTypes.name);
                };
                @Override
                public OptField<BigDecimal, PgtestnullRow> numeric() {
@@ -203,11 +203,11 @@ public interface PgtestnullFields {
                };
                @Override
                public OptField</* bpchar */ String[], PgtestnullRow> bpchares() {
-                 return new OptField</* bpchar */ String[], PgtestnullRow>(_path, "bpchares", PgtestnullRow::bpchares, Optional.empty(), Optional.of("bpchar[]"), (row, value) -> row.withBpchares(value), PgTypes.textArray);
+                 return new OptField</* bpchar */ String[], PgtestnullRow>(_path, "bpchares", PgtestnullRow::bpchares, Optional.empty(), Optional.of("bpchar[]"), (row, value) -> row.withBpchares(value), PgTypes.bpcharArray);
                };
                @Override
                public OptField</* bpchar */ String[], PgtestnullRow> chares() {
-                 return new OptField</* bpchar */ String[], PgtestnullRow>(_path, "chares", PgtestnullRow::chares, Optional.empty(), Optional.of("bpchar[]"), (row, value) -> row.withChares(value), PgTypes.textArray);
+                 return new OptField</* bpchar */ String[], PgtestnullRow>(_path, "chares", PgtestnullRow::chares, Optional.empty(), Optional.of("bpchar[]"), (row, value) -> row.withChares(value), PgTypes.bpcharArray);
                };
                @Override
                public OptField<TypoCircle[], PgtestnullRow> circlees() {
@@ -279,7 +279,7 @@ public interface PgtestnullFields {
                };
                @Override
                public OptField<String[], PgtestnullRow> namees() {
-                 return new OptField<String[], PgtestnullRow>(_path, "namees", PgtestnullRow::namees, Optional.empty(), Optional.of("name[]"), (row, value) -> row.withNamees(value), PgTypes.textArray);
+                 return new OptField<String[], PgtestnullRow>(_path, "namees", PgtestnullRow::namees, Optional.empty(), Optional.of("name[]"), (row, value) -> row.withNamees(value), PgTypes.nameArray);
                };
                @Override
                public OptField<BigDecimal[], PgtestnullRow> numerices() {

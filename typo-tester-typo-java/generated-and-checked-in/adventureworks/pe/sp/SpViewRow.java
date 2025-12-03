@@ -82,5 +82,5 @@ public record SpViewRow(
     return new SpViewRow(id, stateprovinceid, stateprovincecode, countryregioncode, isonlystateprovinceflag, name, territoryid, rowguid, modifieddate);
   };
 
-  static RowParser<SpViewRow> _rowParser = RowParsers.of(StateprovinceId.pgType, StateprovinceId.pgType, PgTypes.text, CountryregionId.pgType, Flag.pgType, Name.pgType, SalesterritoryId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, SpViewRow::new, row -> new Object[]{row.id(), row.stateprovinceid(), row.stateprovincecode(), row.countryregioncode(), row.isonlystateprovinceflag(), row.name(), row.territoryid(), row.rowguid(), row.modifieddate()});;
+  static RowParser<SpViewRow> _rowParser = RowParsers.of(StateprovinceId.pgType, StateprovinceId.pgType, PgTypes.bpchar, CountryregionId.pgType, Flag.pgType, Name.pgType, SalesterritoryId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, SpViewRow::new, row -> new Object[]{row.id(), row.stateprovinceid(), row.stateprovincecode(), row.countryregioncode(), row.isonlystateprovinceflag(), row.name(), row.territoryid(), row.rowguid(), row.modifieddate()});;
 }

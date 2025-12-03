@@ -7,11 +7,12 @@ package adventureworks.person.vstateprovincecountryregion
 
 import java.sql.Connection
 import kotlin.collections.List
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.runtime.Fragment.interpolate
 
 class VstateprovincecountryregionMVRepoImpl() : VstateprovincecountryregionMVRepo {
-  override fun select(): SelectBuilder<VstateprovincecountryregionMVFields, VstateprovincecountryregionMVRow> = SelectBuilder.of("person.vstateprovincecountryregion", VstateprovincecountryregionMVFields.structure, VstateprovincecountryregionMVRow._rowParser)
+  override fun select(): SelectBuilder<VstateprovincecountryregionMVFields, VstateprovincecountryregionMVRow> = SelectBuilder.of("\"person\".\"vstateprovincecountryregion\"", VstateprovincecountryregionMVFields.structure, VstateprovincecountryregionMVRow._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<VstateprovincecountryregionMVRow> = interpolate(typo.runtime.Fragment.lit("""
     select "stateprovinceid", "stateprovincecode", "isonlystateprovinceflag", "stateprovincename", "territoryid", "countryregioncode", "countryregionname"

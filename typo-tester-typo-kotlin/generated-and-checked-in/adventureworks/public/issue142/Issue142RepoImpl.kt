@@ -12,6 +12,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.streamingInsert
@@ -19,7 +20,7 @@ import typo.runtime.Fragment.interpolate
 import typo.runtime.internal.stringInterpolator.str
 
 class Issue142RepoImpl() : Issue142Repo {
-  override fun delete(): DeleteBuilder<Issue142Fields, Issue142Row> = DeleteBuilder.of("public.issue142", Issue142Fields.structure)
+  override fun delete(): DeleteBuilder<Issue142Fields, Issue142Row> = DeleteBuilder.of("\"public\".\"issue142\"", Issue142Fields.structure, Dialect.POSTGRESQL)
 
   override fun deleteById(
     tabellkode: Issue142Id,
@@ -69,7 +70,7 @@ class Issue142RepoImpl() : Issue142Repo {
   COPY "public"."issue142"("tabellkode") FROM STDIN
   """.trimMargin()), batchSize, unsaved, c, Issue142Row.pgText)
 
-  override fun select(): SelectBuilder<Issue142Fields, Issue142Row> = SelectBuilder.of("public.issue142", Issue142Fields.structure, Issue142Row._rowParser)
+  override fun select(): SelectBuilder<Issue142Fields, Issue142Row> = SelectBuilder.of("\"public\".\"issue142\"", Issue142Fields.structure, Issue142Row._rowParser, Dialect.POSTGRESQL)
 
   override fun selectAll(c: Connection): List<Issue142Row> = interpolate(typo.runtime.Fragment.lit("""
     select "tabellkode"
@@ -109,7 +110,7 @@ class Issue142RepoImpl() : Issue142Repo {
     return ret
   }
 
-  override fun update(): UpdateBuilder<Issue142Fields, Issue142Row> = UpdateBuilder.of("public.issue142", Issue142Fields.structure, Issue142Row._rowParser.all())
+  override fun update(): UpdateBuilder<Issue142Fields, Issue142Row> = UpdateBuilder.of("\"public\".\"issue142\"", Issue142Fields.structure, Issue142Row._rowParser.all(), Dialect.POSTGRESQL)
 
   override fun upsert(
     unsaved: Issue142Row,
@@ -123,8 +124,7 @@ class Issue142RepoImpl() : Issue142Repo {
       )
       on conflict ("tabellkode")
       do update set "tabellkode" = EXCLUDED."tabellkode"
-      returning "tabellkode"
-    """.trimMargin())
+      returning "tabellkode"""".trimMargin())
   )
     .updateReturning(Issue142Row._rowParser.exactlyOne())
     .runUnchecked(c)
@@ -136,9 +136,8 @@ class Issue142RepoImpl() : Issue142Repo {
                            insert into "public"."issue142"("tabellkode")
                            values (?)
                            on conflict ("tabellkode")
-                           do nothing
-                           returning "tabellkode"
-                         """.trimMargin()))
+                           do update set "tabellkode" = EXCLUDED."tabellkode"
+                           returning "tabellkode"""".trimMargin()))
     .updateManyReturning(Issue142Row._rowParser, unsaved)
     .runUnchecked(c)
 

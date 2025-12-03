@@ -41,9 +41,11 @@ data class VendorRepoMock(
     c: Connection
   ): Int {
     var count = 0
-    for (id in businessentityids) { if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    for (id in businessentityids) {
+      if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
-    } }
+    }
+    }
     return count
   }
 
@@ -70,7 +72,7 @@ data class VendorRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.businessentityid] = row
       count = count + 1L
     }
@@ -85,8 +87,8 @@ data class VendorRepoMock(
   ): Long {
     var count = 0L
     while (unsaved.hasNext()) {
-      var unsavedRow = unsaved.next()
-      var row = toRow(unsavedRow)
+      val unsavedRow = unsaved.next()
+      val row = toRow(unsavedRow)
       map[row.businessentityid] = row
       count = count + 1L
     }
@@ -106,9 +108,13 @@ data class VendorRepoMock(
     businessentityids: Array<BusinessentityId>,
     c: Connection
   ): List<VendorRow> {
-    var result = ArrayList<VendorRow>()
-    for (id in businessentityids) { var opt = Optional.ofNullable(map[id])
-    if (opt.isPresent()) result.add(opt.get()) }
+    val result = ArrayList<VendorRow>()
+    for (id in businessentityids) {
+      val opt = Optional.ofNullable(map[id])
+      if (opt.isPresent()) {
+      result.add(opt.get())
+    }
+    }
     return result
   }
 
@@ -142,9 +148,9 @@ data class VendorRepoMock(
     unsaved: MutableIterator<VendorRow>,
     c: Connection
   ): List<VendorRow> {
-    var result = ArrayList<VendorRow>()
+    val result = ArrayList<VendorRow>()
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.businessentityid] = row
       result.add(row)
     }
@@ -159,7 +165,7 @@ data class VendorRepoMock(
   ): Int {
     var count = 0
     while (unsaved.hasNext()) {
-      var row = unsaved.next()
+      val row = unsaved.next()
       map[row.businessentityid] = row
       count = count + 1
     }

@@ -45,7 +45,7 @@ public interface VvendorwithcontactsViewFields {
                };
                @Override
                public Field</* user-picked */ FirstName, VvendorwithcontactsViewRow> firstname() {
-                 return new Field</* user-picked */ FirstName, VvendorwithcontactsViewRow>(_path, "firstname", VvendorwithcontactsViewRow::firstname, Optional.empty(), Optional.empty(), (row, value) -> row.withFirstname(value), /* user-picked */ FirstName.pgType);
+                 return new Field</* user-picked */ FirstName, VvendorwithcontactsViewRow>(_path, "firstname", VvendorwithcontactsViewRow::firstname, Optional.empty(), Optional.empty(), (row, value) -> row.withFirstname(value), FirstName.pgType);
                };
                @Override
                public OptField<Name, VvendorwithcontactsViewRow> middlename() {

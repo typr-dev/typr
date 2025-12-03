@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import typo.dsl.DeleteBuilder;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import typo.dsl.UpdateBuilder;
 import typo.runtime.streamingInsert;
@@ -21,7 +22,7 @@ import static typo.runtime.internal.stringInterpolator.str;
 public class TitleRepoImpl implements TitleRepo {
   @Override
   public DeleteBuilder<TitleFields, TitleRow> delete() {
-    return DeleteBuilder.of("public.title", TitleFields.structure());
+    return DeleteBuilder.of("\"public\".\"title\"", TitleFields.structure(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -86,7 +87,7 @@ public class TitleRepoImpl implements TitleRepo {
 
   @Override
   public SelectBuilder<TitleFields, TitleRow> select() {
-    return SelectBuilder.of("public.title", TitleFields.structure(), TitleRow._rowParser);
+    return SelectBuilder.of("\"public\".\"title\"", TitleFields.structure(), TitleRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override
@@ -139,7 +140,7 @@ public class TitleRepoImpl implements TitleRepo {
 
   @Override
   public UpdateBuilder<TitleFields, TitleRow> update() {
-    return UpdateBuilder.of("public.title", TitleFields.structure(), TitleRow._rowParser.all());
+    return UpdateBuilder.of("\"public\".\"title\"", TitleFields.structure(), TitleRow._rowParser.all(), Dialect.POSTGRESQL);
   };
 
   @Override
@@ -156,8 +157,7 @@ public class TitleRepoImpl implements TitleRepo {
          )
          on conflict ("code")
          do update set "code" = EXCLUDED."code"
-         returning "code"
-      """)
+         returning "code\"""")
     )
       .updateReturning(TitleRow._rowParser.exactlyOne())
       .runUnchecked(c);
@@ -172,9 +172,8 @@ public class TitleRepoImpl implements TitleRepo {
                 insert into "public"."title"("code")
                 values (?)
                 on conflict ("code")
-                do nothing
-                returning "code"
-             """))
+                do update set "code" = EXCLUDED."code"
+                returning "code\""""))
       .updateManyReturning(TitleRow._rowParser, unsaved)
       .runUnchecked(c);
   };

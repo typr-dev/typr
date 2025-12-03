@@ -13,6 +13,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.Fragment
@@ -21,7 +22,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class ProductcategoryRepoImpl extends ProductcategoryRepo {
-  override def delete: DeleteBuilder[ProductcategoryFields, ProductcategoryRow] = DeleteBuilder.of("production.productcategory", ProductcategoryFields.structure)
+  override def delete: DeleteBuilder[ProductcategoryFields, ProductcategoryRow] = DeleteBuilder.of(""""production"."productcategory"""", ProductcategoryFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(productcategoryid: ProductcategoryId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "production"."productcategory" where "productcategoryid" = ${ProductcategoryId.pgType.encode(productcategoryid)}""".update().runUnchecked(c) > 0
 
@@ -78,7 +79,7 @@ class ProductcategoryRepoImpl extends ProductcategoryRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."productcategory"("name", "productcategoryid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ProductcategoryRowUnsaved.pgText)
 
-  override def select: SelectBuilder[ProductcategoryFields, ProductcategoryRow] = SelectBuilder.of("production.productcategory", ProductcategoryFields.structure, ProductcategoryRow.`_rowParser`)
+  override def select: SelectBuilder[ProductcategoryFields, ProductcategoryRow] = SelectBuilder.of(""""production"."productcategory"""", ProductcategoryFields.structure, ProductcategoryRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[ProductcategoryRow] = {
     interpolate"""select "productcategoryid", "name", "rowguid", "modifieddate"::text
@@ -104,7 +105,7 @@ class ProductcategoryRepoImpl extends ProductcategoryRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[ProductcategoryFields, ProductcategoryRow] = UpdateBuilder.of("production.productcategory", ProductcategoryFields.structure, ProductcategoryRow.`_rowParser`.all())
+  override def update: UpdateBuilder[ProductcategoryFields, ProductcategoryRow] = UpdateBuilder.of(""""production"."productcategory"""", ProductcategoryFields.structure, ProductcategoryRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: ProductcategoryRow)(using c: Connection): java.lang.Boolean = {
     val productcategoryid: ProductcategoryId = row.productcategoryid
@@ -123,8 +124,7 @@ class ProductcategoryRepoImpl extends ProductcategoryRepo {
       "name" = EXCLUDED."name",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "productcategoryid", "name", "rowguid", "modifieddate"::text
-    """
+    returning "productcategoryid", "name", "rowguid", "modifieddate"::text"""
     .updateReturning(ProductcategoryRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -137,8 +137,7 @@ class ProductcategoryRepoImpl extends ProductcategoryRepo {
       "name" = EXCLUDED."name",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
-    returning "productcategoryid", "name", "rowguid", "modifieddate"::text
-    """
+    returning "productcategoryid", "name", "rowguid", "modifieddate"::text"""
       .updateManyReturning(ProductcategoryRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }

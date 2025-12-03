@@ -69,7 +69,7 @@ case class StateprovinceRow(
 }
 
 object StateprovinceRow {
-  val `_rowParser`: RowParser[StateprovinceRow] = RowParsers.of(StateprovinceId.pgType, PgTypes.text, CountryregionId.pgType, Flag.pgType, Name.pgType, SalesterritoryId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, StateprovinceRow.apply, row => Array(row.stateprovinceid, row.stateprovincecode, row.countryregioncode, row.isonlystateprovinceflag, row.name, row.territoryid, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[StateprovinceRow] = RowParsers.of(StateprovinceId.pgType, PgTypes.bpchar, CountryregionId.pgType, Flag.pgType, Name.pgType, SalesterritoryId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, StateprovinceRow.apply, row => Array(row.stateprovinceid, row.stateprovincecode, row.countryregioncode, row.isonlystateprovinceflag, row.name, row.territoryid, row.rowguid, row.modifieddate))
 
   given pgText: PgText[StateprovinceRow] = PgText.from(`_rowParser`)
 }

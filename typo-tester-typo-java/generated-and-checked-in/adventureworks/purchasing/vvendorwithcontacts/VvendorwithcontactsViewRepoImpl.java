@@ -7,13 +7,14 @@ package adventureworks.purchasing.vvendorwithcontacts;
 
 import java.sql.Connection;
 import java.util.List;
+import typo.dsl.Dialect;
 import typo.dsl.SelectBuilder;
 import static typo.runtime.Fragment.interpolate;
 
 public class VvendorwithcontactsViewRepoImpl implements VvendorwithcontactsViewRepo {
   @Override
   public SelectBuilder<VvendorwithcontactsViewFields, VvendorwithcontactsViewRow> select() {
-    return SelectBuilder.of("purchasing.vvendorwithcontacts", VvendorwithcontactsViewFields.structure(), VvendorwithcontactsViewRow._rowParser);
+    return SelectBuilder.of("\"purchasing\".\"vvendorwithcontacts\"", VvendorwithcontactsViewFields.structure(), VvendorwithcontactsViewRow._rowParser, Dialect.POSTGRESQL);
   };
 
   @Override

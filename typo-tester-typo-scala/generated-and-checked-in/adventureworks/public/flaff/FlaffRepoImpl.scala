@@ -10,6 +10,7 @@ import java.sql.Connection
 import java.util.HashMap
 import java.util.Optional
 import typo.dsl.DeleteBuilder
+import typo.dsl.Dialect
 import typo.dsl.SelectBuilder
 import typo.dsl.UpdateBuilder
 import typo.runtime.PgTypes
@@ -17,7 +18,7 @@ import typo.runtime.streamingInsert
 import typo.runtime.FragmentInterpolator.interpolate
 
 class FlaffRepoImpl extends FlaffRepo {
-  override def delete: DeleteBuilder[FlaffFields, FlaffRow] = DeleteBuilder.of("public.flaff", FlaffFields.structure)
+  override def delete: DeleteBuilder[FlaffFields, FlaffRow] = DeleteBuilder.of(""""public"."flaff"""", FlaffFields.structure, Dialect.POSTGRESQL)
 
   override def deleteById(compositeId: FlaffId)(using c: Connection): java.lang.Boolean = interpolate"""delete from "public"."flaff" where "code" = ${ShortText.pgType.encode(compositeId.code)} AND "another_code" = ${PgTypes.text.encode(compositeId.anotherCode)} AND "some_number" = ${PgTypes.int4.encode(compositeId.someNumber)} AND "specifier" = ${ShortText.pgType.encode(compositeId.specifier)}""".update().runUnchecked(c) > 0
 
@@ -46,7 +47,7 @@ class FlaffRepoImpl extends FlaffRepo {
     batchSize: Integer = 10000
   )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."flaff"("code", "another_code", "some_number", "specifier", "parentspecifier") FROM STDIN""", batchSize, unsaved, c, FlaffRow.pgText)
 
-  override def select: SelectBuilder[FlaffFields, FlaffRow] = SelectBuilder.of("public.flaff", FlaffFields.structure, FlaffRow.`_rowParser`)
+  override def select: SelectBuilder[FlaffFields, FlaffRow] = SelectBuilder.of(""""public"."flaff"""", FlaffFields.structure, FlaffRow.`_rowParser`, Dialect.POSTGRESQL)
 
   override def selectAll(using c: Connection): java.util.List[FlaffRow] = {
     interpolate"""select "code", "another_code", "some_number", "specifier", "parentspecifier"
@@ -78,7 +79,7 @@ class FlaffRepoImpl extends FlaffRepo {
     return ret
   }
 
-  override def update: UpdateBuilder[FlaffFields, FlaffRow] = UpdateBuilder.of("public.flaff", FlaffFields.structure, FlaffRow.`_rowParser`.all())
+  override def update: UpdateBuilder[FlaffFields, FlaffRow] = UpdateBuilder.of(""""public"."flaff"""", FlaffFields.structure, FlaffRow.`_rowParser`.all(), Dialect.POSTGRESQL)
 
   override def update(row: FlaffRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: FlaffId = row.compositeId
@@ -93,8 +94,7 @@ class FlaffRepoImpl extends FlaffRepo {
     on conflict ("code", "another_code", "some_number", "specifier")
     do update set
       "parentspecifier" = EXCLUDED."parentspecifier"
-    returning "code", "another_code", "some_number", "specifier", "parentspecifier"
-    """
+    returning "code", "another_code", "some_number", "specifier", "parentspecifier""""
     .updateReturning(FlaffRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)
   }
@@ -105,8 +105,7 @@ class FlaffRepoImpl extends FlaffRepo {
     on conflict ("code", "another_code", "some_number", "specifier")
     do update set
       "parentspecifier" = EXCLUDED."parentspecifier"
-    returning "code", "another_code", "some_number", "specifier", "parentspecifier"
-    """
+    returning "code", "another_code", "some_number", "specifier", "parentspecifier""""
       .updateManyReturning(FlaffRow.`_rowParser`, unsaved)
       .runUnchecked(c)
   }
