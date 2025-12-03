@@ -47,6 +47,7 @@ object TypesScala {
       case Byte                              => scala.Some(TypesJava.Byte)
       case Char                              => scala.Some(TypesJava.Character)
       case jvm.Type.Commented(underlying, _) => boxedType(underlying)
+      case jvm.Type.Annotated(underlying, _) => boxedType(underlying)
       case jvm.Type.UserDefined(underlying)  => boxedType(underlying)
       case _                                 => scala.None
     }

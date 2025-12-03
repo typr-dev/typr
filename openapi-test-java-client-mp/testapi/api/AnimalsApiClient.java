@@ -10,7 +10,6 @@ import jakarta.ws.rs.core.Response;
 import java.lang.IllegalStateException;
 import java.util.List;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
-import testapi.api.ListAnimalsResponse;
 import testapi.model.Animal;
 import testapi.model.Error;
 
@@ -25,9 +24,9 @@ public interface AnimalsApiClient extends AnimalsApi {
 
   /** List all animals (polymorphic) - handles response status codes */
   @Override
-  default ListAnimalsResponse listAnimals() {
+  default Response2004XX5XX<List<Animal>> listAnimals() {
     try {
-      Response response = listAnimalsRaw();
+      Response response = listAnimalsRaw;
       if (response.getStatus() == 200) { new Ok(response.readEntity(new GenericType<List<Animal>>() {})) }
       else if (response.getStatus() >= 400 && response.getStatus() < 500) { new ClientError4XX(response.getStatus(), response.readEntity(Error.class)) }
       else if (response.getStatus() >= 500 && response.getStatus() < 600) { new ServerError5XX(response.getStatus(), response.readEntity(Error.class)) }

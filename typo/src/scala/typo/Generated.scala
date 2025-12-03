@@ -32,7 +32,7 @@ object Generated {
     }
 
   def asRelativePaths(language: Lang, files: Iterator[jvm.File]): Map[RelPath, jvm.Code] =
-    files.map { case jvm.File(jvm.Type.Qualified(jvm.QIdent(idents)), code, _, _) =>
+    files.map { case jvm.File(jvm.Type.Qualified(jvm.QIdent(idents)), code, _, _, _) =>
       val path = idents.init
       val name = idents.last
       val relPath = RelPath(path.map(_.value) :+ s"${name.value}.${language.extension}")

@@ -1,6 +1,7 @@
 package testapi.model
 
-
+import io.circe.Decoder
+import io.circe.Encoder
 
 case class PetCreate(
   age: Option[Long],
@@ -10,3 +11,9 @@ case class PetCreate(
   tags: Option[List[String]],
   website: Option[String]
 )
+
+object PetCreate {
+  implicit val decoder: Decoder[PetCreate] = io.circe.generic.semiauto.deriveDecoder[testapi.model.PetCreate]
+
+  implicit val encoder: Encoder[PetCreate] = io.circe.generic.semiauto.deriveEncoder[testapi.model.PetCreate]
+}

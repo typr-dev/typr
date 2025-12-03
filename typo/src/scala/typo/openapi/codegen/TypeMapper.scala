@@ -198,7 +198,8 @@ object Types {
 
   // HTTP4s types
   object Http4s {
-    val Response = jvm.Type.Qualified("org.http4s.Response")
+    val ResponseCtor = jvm.Type.Qualified("org.http4s.Response")
+    val Response: jvm.Type = jvm.Type.TApply(ResponseCtor, List(Cats.IO)) // Response[IO]
     val Request = jvm.Type.Qualified("org.http4s.Request")
     val Status = jvm.Type.Qualified("org.http4s.Status")
     val Uri = jvm.Type.Qualified("org.http4s.Uri")
@@ -223,7 +224,16 @@ object Types {
     val Json = jvm.Type.Qualified("io.circe.Json")
     val Encoder = jvm.Type.Qualified("io.circe.Encoder")
     val Decoder = jvm.Type.Qualified("io.circe.Decoder")
+    val DecodingFailure = jvm.Type.Qualified("io.circe.DecodingFailure")
+    val deriveEncoder = jvm.Type.Qualified("io.circe.generic.semiauto.deriveEncoder")
+    val deriveDecoder = jvm.Type.Qualified("io.circe.generic.semiauto.deriveDecoder")
   }
+}
+
+object OpenApiTypesScala {
+
+  /** Annotation for suppressing variance checking */
+  val UncheckedVariance = jvm.Type.Qualified("scala.annotation.unchecked.uncheckedVariance")
 }
 
 /** Scala types for OpenAPI code generation */

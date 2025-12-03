@@ -111,25 +111,33 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
       case jvm.StrLit(str) if str.contains(Quote)                             => TripleQuote + str + TripleQuote
       case jvm.StrLit(str)                                                    => Quote + str + Quote
       case jvm.Summon(tpe)                                                    => code"implicitly[$tpe]"
-      case jvm.Type.Abstract(value)                                           => value.code
-      case jvm.Type.ArrayOf(value)                                            => code"Array[$value]"
-      case jvm.Type.Commented(underlying, comment)                            => code"$comment $underlying"
-      case jvm.Type.Function0(ret)                                            => code"=> $ret"
-      case jvm.Type.Function1(t1, ret)                                        => code"$t1 => $ret"
-      case jvm.Type.Function2(t1, t2, ret)                                    => code"($t1, $t2) => $ret"
-      case jvm.Type.Qualified(value)                                          => value.code
-      case jvm.Type.TApply(underlying, targs)                                 => code"$underlying[${targs.map(t => renderTree(t, ctx)).mkCode(", ")}]"
-      case jvm.Type.UserDefined(underlying)                                   => code"/* user-picked */ $underlying"
-      case jvm.Type.Void                                                      => code"Unit"
-      case jvm.Type.Wildcard                                                  => code"?"
-      case jvm.Type.Primitive(name)                                           => name
-      case p: jvm.Param[jvm.Type]                                             => renderParam(p, false)
-      case jvm.RuntimeInterpolation(value)                                    => code"$${$value"
-      case jvm.TypeSwitch(value, cases, nullCase, _) =>
+      case jvm.Type.Abstract(value, variance) =>
+        variance match {
+          case jvm.Variance.Invariant     => value.code
+          case jvm.Variance.Covariant     => code"+$value"
+          case jvm.Variance.Contravariant => code"-$value"
+        }
+      case jvm.Type.ArrayOf(value)                    => code"Array[$value]"
+      case jvm.Type.Commented(underlying, comment)    => code"$comment $underlying"
+      case jvm.Type.Annotated(underlying, annotation) => code"$underlying @$annotation"
+      case jvm.Type.Function0(ret)                    => code"=> $ret"
+      case jvm.Type.Function1(t1, ret)                => code"$t1 => $ret"
+      case jvm.Type.Function2(t1, t2, ret)            => code"($t1, $t2) => $ret"
+      case jvm.Type.Qualified(value)                  => value.code
+      case jvm.Type.TApply(underlying, targs)         => code"$underlying[${targs.map(t => renderTree(t, ctx)).mkCode(", ")}]"
+      case jvm.Type.UserDefined(underlying)           => code"/* user-picked */ $underlying"
+      case jvm.Type.Void                              => code"Unit"
+      case jvm.Type.Wildcard                          => code"?"
+      case jvm.Type.Primitive(name)                   => name
+      case p: jvm.Param[jvm.Type]                     => renderParam(p, false)
+      case jvm.RuntimeInterpolation(value)            => code"$${$value"
+      case jvm.TypeSwitch(value, cases, nullCase, _, unchecked) =>
         val nullCaseCode = nullCase.map(body => code"case null => $body").toList
         val typeCases = cases.map { case jvm.TypeSwitch.Case(pat, ident, body) => code"case $ident: $pat => $body" }
         val allCases = nullCaseCode ++ typeCases
-        code"""|$value match {
+        // If unchecked is true, add @unchecked annotation to suppress type erasure warnings
+        val scrutinee = if (unchecked) code"($value: @unchecked)" else value
+        code"""|$scrutinee match {
                |  ${allCases.mkCode("\n")}
                |}""".stripMargin
       case jvm.TryCatch(tryBlock, catches, finallyBlock) =>
@@ -221,11 +229,12 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
         else {
           withBody(code"$annotationsCode${dialect.defDefinition} $name${renderTparams(tparams, ctx)}${renderImplicitParams(implicitParams, ctx)}: $tpe", List(body))
         }
-      case jvm.Value(annotations, name, tpe, body, isLazy, isOverride) =>
+      case jvm.Value(annotations, name, tpe, body, isLazy, isOverride, isImplicit) =>
         val annotationsCode = renderAnnotations(annotations)
         val overrideMod = if (isOverride) "override " else ""
         val lazyMod = if (isLazy) "lazy " else ""
-        withBody(code"$annotationsCode${overrideMod}${lazyMod}val $name: $tpe", body.toList)
+        val implicitMod = if (isImplicit) "implicit " else ""
+        withBody(code"$annotationsCode${overrideMod}${implicitMod}${lazyMod}val $name: $tpe", body.toList)
       case jvm.Method(annotations, comments, tparams, name, params, implicitParams, tpe, throws, body, isOverride, _) =>
         val annotationsCode = renderAnnotations(annotations)
         val throwsCode = throws.map(th => code"@throws[$th]\n").mkCode("")

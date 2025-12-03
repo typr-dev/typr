@@ -4,6 +4,7 @@ import typo.{jvm, Lang}
 import typo.internal.codegen.LangScala
 import typo.openapi.codegen.{
   ApiCodegen,
+  CirceSupport,
   FrameworkSupport,
   Http4sSupport,
   JacksonSupport,
@@ -13,7 +14,6 @@ import typo.openapi.codegen.{
   MicroProfileRestClientSupport,
   ModelCodegen,
   NoFrameworkSupport,
-  NoJsonLibSupport,
   NoValidationSupport,
   QuarkusReactiveServerSupport,
   ScalaTypeMapper,
@@ -87,7 +87,8 @@ object OpenApiCodegen {
     val isScala = lang.isInstanceOf[LangScala]
 
     val jsonLib: JsonLibSupport = (isScala, options.jsonLib) match {
-      case (true, _)                       => NoJsonLibSupport // Scala uses derivation
+      case (true, OpenApiJsonLib.Circe)    => CirceSupport
+      case (true, _)                       => CirceSupport // Default to Circe for Scala
       case (false, OpenApiJsonLib.Jackson) => JacksonSupport
       case (false, _)                      => JacksonSupport // Default to Jackson for Java
     }

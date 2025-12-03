@@ -21,9 +21,6 @@ import java.util.Optional;
 import java.util.UUID;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import org.glassfish.jersey.media.multipart.FormDataParam;
-import testapi.api.CreatePetResponse;
-import testapi.api.DeletePetResponse;
-import testapi.api.GetPetResponse;
 import testapi.model.Error;
 import testapi.model.Pet;
 import testapi.model.PetCreate;
@@ -42,7 +39,7 @@ public interface PetsApiClient extends PetsApi {
 
   /** Create a pet - handles response status codes */
   @Override
-  default CreatePetResponse createPet(PetCreate body) {
+  default Response201400<Pet, Error> createPet(PetCreate body) {
     try {
       Response response = createPetRaw(body);
       if (response.getStatus() == 201) { new Created(response.readEntity(Pet.class)) }
@@ -67,7 +64,7 @@ public interface PetsApiClient extends PetsApi {
 
   /** Delete a pet - handles response status codes */
   @Override
-  default DeletePetResponse deletePet(
+  default Response404Default<Error> deletePet(
   
     /** The pet ID */
     String petId
@@ -95,7 +92,7 @@ public interface PetsApiClient extends PetsApi {
 
   /** Get a pet by ID - handles response status codes */
   @Override
-  default GetPetResponse getPet(
+  default Response200404<Pet, Error> getPet(
   
     /** The pet ID */
     String petId

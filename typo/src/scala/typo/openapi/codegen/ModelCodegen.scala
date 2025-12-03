@@ -55,6 +55,9 @@ class ModelCodegen(
       )
     }
 
+    // Get static members for companion object (e.g., Circe codecs)
+    val staticMembers = jsonLib.objectTypeStaticMembers(tpe)
+
     val record = jvm.Adt.Record(
       annotations = jsonLib.modelAnnotations,
       constructorAnnotations = Nil,
@@ -67,7 +70,7 @@ class ModelCodegen(
       `extends` = None,
       implements = implements,
       members = discriminatorMembers,
-      staticMembers = Nil
+      staticMembers = staticMembers
     )
 
     val generatedCode = lang.renderTree(record, lang.Ctx.Empty)
@@ -84,12 +87,15 @@ class ModelCodegen(
       })
       .getOrElse(sys.error(s"Enum ${enumType.name} has no values"))
 
+    // Get static members for companion object (e.g., Circe codecs)
+    val staticMembers = jsonLib.enumTypeStaticMembers(tpe)
+
     val enumTree = jvm.Enum(
       annotations = Nil,
       comments = comments,
       tpe = tpe,
       values = values,
-      staticMembers = Nil
+      staticMembers = staticMembers
     )
 
     val generatedCode = lang.renderTree(enumTree, lang.Ctx.Empty)
@@ -109,6 +115,9 @@ class ModelCodegen(
       default = None
     )
 
+    // Get static members for companion object (e.g., Circe codecs)
+    val staticMembers = jsonLib.wrapperTypeStaticMembers(tpe, underlyingType)
+
     val record = jvm.Adt.Record(
       annotations = jsonLib.wrapperAnnotations(tpe),
       constructorAnnotations = jsonLib.constructorAnnotations,
@@ -121,7 +130,7 @@ class ModelCodegen(
       `extends` = None,
       implements = Nil,
       members = Nil,
-      staticMembers = Nil
+      staticMembers = staticMembers
     )
 
     val generatedCode = lang.renderTree(record, lang.Ctx.Empty)
@@ -199,6 +208,9 @@ class ModelCodegen(
       isDefault = false
     )
 
+    // Get static members for companion object (e.g., Circe codecs)
+    val staticMembers = jsonLib.sumTypeStaticMembers(tpe, sumType)
+
     val sumAdt = jvm.Adt.Sum(
       annotations = jsonLib.sumTypeAnnotations(sumType),
       comments = comments,
@@ -207,7 +219,7 @@ class ModelCodegen(
       members = discriminatorMethod :: commonMethods,
       implements = Nil,
       subtypes = Nil, // Subtypes are separate model classes
-      staticMembers = Nil
+      staticMembers = staticMembers
     )
 
     val generatedCode = lang.renderTree(sumAdt, lang.Ctx.Empty)

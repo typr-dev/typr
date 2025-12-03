@@ -121,8 +121,9 @@ trait OptionalSupport {
       case jvm.Type.TApply(`tpe`, List(one)) => Some(one)
       case jvm.Type.TApply(underlying, _)    => unapply(underlying)
       case jvm.Type.Qualified(_)             => None
-      case jvm.Type.Abstract(_)              => None
+      case jvm.Type.Abstract(_, _)           => None
       case jvm.Type.Commented(underlying, _) => unapply(underlying)
+      case jvm.Type.Annotated(underlying, _) => unapply(underlying)
       case jvm.Type.UserDefined(underlying)  => unapply(underlying)
       case jvm.Type.Function0(_)             => None
       case jvm.Type.Function1(_, _)          => None

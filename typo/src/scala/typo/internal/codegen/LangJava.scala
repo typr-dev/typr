@@ -138,9 +138,10 @@ case object LangJava extends Lang {
       case jvm.StrLit(str) if str.contains(Quote)          => Quote + str.replace(Quote, "\\\"") + Quote
       case jvm.StrLit(str)                                 => Quote + str + Quote
       case jvm.Summon(_)                                   => sys.error("java doesn't support `summon`")
-      case jvm.Type.Abstract(value)                        => value.code
+      case jvm.Type.Abstract(value, _)                     => value.code // Java ignores variance
       case jvm.Type.ArrayOf(value)                         => code"$value[]"
       case jvm.Type.Commented(underlying, comment)         => code"$comment $underlying"
+      case jvm.Type.Annotated(underlying, _)               => renderTree(underlying, ctx) // Java doesn't support Scala-style type annotations
       case jvm.Type.Function0(jvm.Type.Void)               => TypesJava.Runnable.code
       case jvm.Type.Function0(targ)                        => TypesJava.Supplier.of(targ).code
       case jvm.Type.Function1(targ, jvm.Type.Void)         => TypesJava.Consumer.of(targ).code
@@ -158,8 +159,9 @@ case object LangJava extends Lang {
         code"""|$pred
                |  ? $thenp
                |  : $elsep""".stripMargin
-      case jvm.TypeSwitch(value, cases, nullCase, defaultCase) =>
+      case jvm.TypeSwitch(value, cases, nullCase, defaultCase, _) =>
         // In Java switch expressions: blocks don't need semicolon, expressions do
+        // Note: unchecked flag is Scala-only (for @unchecked annotation), ignored in Java
         def needsSemicolon(body: jvm.Code): String = {
           val rendered = body.render(LangJava).asString.trim
           if (rendered.endsWith("}")) "" else ";"
@@ -255,11 +257,11 @@ case object LangJava extends Lang {
                 |  return $body;
                 |}""".stripMargin
         }
-      case jvm.Value(annotations, name, tpe, None, _, _) =>
+      case jvm.Value(annotations, name, tpe, None, _, _, _) =>
         val annotationsCode = renderAnnotations(annotations)
         val staticMod = if (ctx.staticImplied) "static " else ""
         code"$annotationsCode$staticMod$tpe $name;"
-      case jvm.Value(annotations, name, tpe, Some(body), isLazy, isOverride) =>
+      case jvm.Value(annotations, name, tpe, Some(body), isLazy, isOverride, _) =>
         val overrideAnnotation = if (isOverride) "@Override\n" else ""
         val staticMod = if (ctx.staticImplied) "static " else ""
         if (isLazy) {

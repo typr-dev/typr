@@ -32,9 +32,8 @@ case class OpenApiOptions(
     generateWebhooks: Boolean,
     /** Whether to generate callback handler interfaces */
     generateCallbacks: Boolean,
-    /** Whether to use generic response types to deduplicate response classes with the same shape.
-      * When true, generates types like Response200Default[T] instead of per-method response types.
-      * This reduces generated code when many methods have the same response status codes.
+    /** Whether to use generic response types to deduplicate response classes with the same shape. When true, generates types like Response200Default[T] instead of per-method response types. This
+      * reduces generated code when many methods have the same response status codes.
       */
     useGenericResponseTypes: Boolean
 )
@@ -78,6 +77,9 @@ trait EffectTypeOps {
   /** Map over the effect value: effect.map(f) */
   def map(effect: jvm.Code, f: jvm.Code): jvm.Code
 
+  /** FlatMap over the effect value: effect.flatMap(f) where f returns Effect[B] */
+  def flatMap(effect: jvm.Code, f: jvm.Code): jvm.Code
+
   /** Wrap a value in the effect: Effect.pure(value) */
   def pure(value: jvm.Code): jvm.Code
 }
@@ -96,30 +98,35 @@ object OpenApiEffectType {
   private object MutinyUniOps extends EffectTypeOps {
     def tpe: jvm.Type.Qualified = UniType
     def map(effect: jvm.Code, f: jvm.Code): jvm.Code = code"$effect.map($f)"
+    def flatMap(effect: jvm.Code, f: jvm.Code): jvm.Code = code"$effect.flatMap($f)"
     def pure(value: jvm.Code): jvm.Code = code"$tpe.createFrom().item($value)"
   }
 
   private object ReactorMonoOps extends EffectTypeOps {
     def tpe: jvm.Type.Qualified = MonoType
     def map(effect: jvm.Code, f: jvm.Code): jvm.Code = code"$effect.map($f)"
+    def flatMap(effect: jvm.Code, f: jvm.Code): jvm.Code = code"$effect.flatMap($f)"
     def pure(value: jvm.Code): jvm.Code = code"$tpe.just($value)"
   }
 
   private object CompletableFutureOps extends EffectTypeOps {
     def tpe: jvm.Type.Qualified = CompletableFutureType
     def map(effect: jvm.Code, f: jvm.Code): jvm.Code = code"$effect.thenApply($f)"
+    def flatMap(effect: jvm.Code, f: jvm.Code): jvm.Code = code"$effect.thenCompose($f)"
     def pure(value: jvm.Code): jvm.Code = code"$tpe.completedFuture($value)"
   }
 
   private object CatsIOOps extends EffectTypeOps {
     def tpe: jvm.Type.Qualified = IOType
     def map(effect: jvm.Code, f: jvm.Code): jvm.Code = code"$effect.map($f)"
+    def flatMap(effect: jvm.Code, f: jvm.Code): jvm.Code = code"$effect.flatMap($f)"
     def pure(value: jvm.Code): jvm.Code = code"$tpe.pure($value)"
   }
 
   private object ZIOOps extends EffectTypeOps {
     def tpe: jvm.Type.Qualified = TaskType
     def map(effect: jvm.Code, f: jvm.Code): jvm.Code = code"$effect.map($f)"
+    def flatMap(effect: jvm.Code, f: jvm.Code): jvm.Code = code"$effect.flatMap($f)"
     def pure(value: jvm.Code): jvm.Code = code"zio.ZIO.succeed($value)"
   }
 

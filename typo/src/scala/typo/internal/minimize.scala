@@ -15,7 +15,7 @@ object minimize {
               go(expr)
             case jvm.NotNull(expr) =>
               go(expr)
-            case jvm.TypeSwitch(value, cases, nullCase, defaultCase) =>
+            case jvm.TypeSwitch(value, cases, nullCase, defaultCase, _) =>
               go(value)
               cases.foreach { c =>
                 goTree(c.tpe)
@@ -124,7 +124,7 @@ object minimize {
               implicitParams.foreach(goTree)
               goTree(tpe)
               go(body)
-            case jvm.Value(_, name, tpe, body, _, _) =>
+            case jvm.Value(_, name, tpe, body, _, _, _) =>
               goTree(name)
               goTree(tpe)
               body.foreach(go)
@@ -177,10 +177,13 @@ object minimize {
               goTree(value)
             case jvm.Type.Qualified(value) =>
               goTree(value)
-            case jvm.Type.Abstract(_) =>
+            case jvm.Type.Abstract(_, _) =>
               ()
             case jvm.Type.Commented(underlying, _) =>
               goTree(underlying)
+            case jvm.Type.Annotated(underlying, ann) =>
+              goTree(underlying)
+              goTree(ann)
             case jvm.Type.UserDefined(underlying) =>
               goTree(underlying)
             case jvm.Type.Void =>

@@ -23,9 +23,6 @@ import java.util.UUID;
 import java.util.function.Function;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import org.glassfish.jersey.media.multipart.FormDataParam;
-import testapi.api.CreatePetResponse;
-import testapi.api.DeletePetResponse;
-import testapi.api.GetPetResponse;
 import testapi.model.Error;
 import testapi.model.Pet;
 import testapi.model.PetCreate;
@@ -44,7 +41,7 @@ public interface PetsApiClient extends PetsApi {
 
   /** Create a pet - handles response status codes */
   @Override
-  default Uni<CreatePetResponse> createPet(PetCreate body) {
+  default Uni<Response201400<Pet, Error>> createPet(PetCreate body) {
     return createPetRaw(body).onFailure(WebApplicationException.class).recoverWithItem((Throwable e) -> ((WebApplicationException) e).getResponse()).map((Response response) -> if (response.getStatus() == 201) { new Created(response.readEntity(Pet.class)) }
     else if (response.getStatus() == 400) { new BadRequest(response.readEntity(Error.class)) }
     else { throw new IllegalStateException("Unexpected status code: " + response.getStatus()) });
@@ -61,7 +58,7 @@ public interface PetsApiClient extends PetsApi {
 
   /** Delete a pet - handles response status codes */
   @Override
-  default Uni<DeletePetResponse> deletePet(
+  default Uni<Response404Default<Error>> deletePet(
   
     /** The pet ID */
     String petId
@@ -82,7 +79,7 @@ public interface PetsApiClient extends PetsApi {
 
   /** Get a pet by ID - handles response status codes */
   @Override
-  default Uni<GetPetResponse> getPet(
+  default Uni<Response200404<Pet, Error>> getPet(
   
     /** The pet ID */
     String petId

@@ -5,36 +5,36 @@ import kotlin.Nothing
 import testapi.model.Error
 
 /** Response type for: 201, 400 */
-sealed interface Response201400<T201, T400> {
+sealed interface Response201400<out T201, out T400> {
   @JsonProperty("status")
   fun status(): String
 }
 
 /** Response type for: 404, default */
-sealed interface Response404Default<T404> {
+sealed interface Response404Default<out T404> {
   @JsonProperty("status")
   fun status(): String
 }
 
 /** Response type for: 200, 404 */
-sealed interface Response200404<T200, T404> {
+sealed interface Response200404<out T200, out T404> {
   @JsonProperty("status")
   fun status(): String
 }
 
 /** Response type for: 200, 4XX, 5XX */
-sealed interface Response2004XX5XX<T200> {
+sealed interface Response2004XX5XX<out T200> {
   @JsonProperty("status")
   fun status(): String
 }
 
 /** HTTP 400 response */
-data class BadRequest<T>(@field:JsonProperty("value") val value: T) : Response201400<Nothing, T> {
+data class BadRequest<out T>(@field:JsonProperty("value") val value: T) : Response201400<Nothing, T> {
   override fun status(): String = "400"
 }
 
 /** HTTP 201 response */
-data class Created<T>(@field:JsonProperty("value") val value: T) : Response201400<T, Nothing> {
+data class Created<out T>(@field:JsonProperty("value") val value: T) : Response201400<T, Nothing> {
   override fun status(): String = "201"
 }
 
@@ -57,12 +57,12 @@ data class ServerError5XX(
 }
 
 /** HTTP 200 response */
-data class Ok<T>(@field:JsonProperty("value") val value: T) : Response200404<T, Nothing>, Response2004XX5XX<T> {
+data class Ok<out T>(@field:JsonProperty("value") val value: T) : Response200404<T, Nothing>, Response2004XX5XX<T> {
   override fun status(): String = "200"
 }
 
 /** HTTP 404 response */
-data class NotFound<T>(@field:JsonProperty("value") val value: T) : Response404Default<T>, Response200404<Nothing, T> {
+data class NotFound<out T>(@field:JsonProperty("value") val value: T) : Response404Default<T>, Response200404<Nothing, T> {
   override fun status(): String = "404"
 }
 

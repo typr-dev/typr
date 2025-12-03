@@ -138,9 +138,8 @@ case class Callback(
     methods: List[ApiMethod]
 )
 
-/** Represents a unique response shape defined by status codes.
-  * Used for deduplicating response types that have the same status code pattern.
-  * For example, all methods returning 200+default can share a generic Response200Default[T] type.
+/** Represents a unique response shape defined by status codes. Used for deduplicating response types that have the same status code pattern. For example, all methods returning 200+default can share a
+  * generic Response200Default[T] type.
   */
 case class ResponseShape(
     /** Status codes sorted numerically, "default" comes last. e.g., List("200", "default") */
@@ -218,7 +217,7 @@ object ResponseShape {
     (aLower, bLower) match {
       case ("default", _) => false // default always last
       case (_, "default") => true
-      case _ =>
+      case _              =>
         // Try to parse as numbers for sorting
         val aNum = scala.util.Try(a.toInt).toOption
         val bNum = scala.util.Try(b.toInt).toOption

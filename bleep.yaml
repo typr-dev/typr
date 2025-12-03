@@ -173,6 +173,21 @@ projects:
     sourcegen:
       main: scripts.GenHardcodedFiles
       project: typo-scripts
+  openapi-test-scala-http4s:
+    dependencies:
+    - org.http4s::http4s-dsl:0.23.30
+    - org.http4s::http4s-ember-server:0.23.30
+    - org.http4s::http4s-ember-client:0.23.30
+    - org.http4s::http4s-circe:0.23.30
+    - io.circe::circe-generic:0.14.10
+    - org.scalatest::scalatest:3.2.18
+    - org.typelevel::cats-effect-testing-scalatest:1.6.0
+    extends: template-scala-3-stable
+    isTestProject: true
+    folder: ./openapi-test-scala-server-http4s-client-http4s
+    sources: ./testapi
+    scala:
+      strict: false
 scripts:
   compile-benchmarks:
     main: scripts.CompileBenchmark

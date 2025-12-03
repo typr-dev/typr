@@ -112,6 +112,13 @@ class ApiCodegen(
       }
     }
 
+    // Generate routes method for DSL-based frameworks (Http4s)
+    val routesMethod: List[jvm.Method] = if (serverSupport.supportsRouteGeneration) {
+      generateRoutesMethod(api.methods, basePath).toList
+    } else {
+      Nil
+    }
+
     val serverInterface = jvm.Class(
       annotations = interfaceAnnotations,
       comments = jvm.Comments.Empty,
@@ -122,12 +129,24 @@ class ApiCodegen(
       implicitParams = Nil,
       `extends` = Some(baseTpe),
       implements = Nil,
-      members = methods,
+      members = methods ++ routesMethod,
       staticMembers = Nil
     )
 
     val generatedCode = lang.renderTree(serverInterface, lang.Ctx.Empty)
-    jvm.File(serverTpe, generatedCode, secondaryTypes = Nil, scope = Scope.Main)
+    // Add http4s-circe imports for Http4s servers (needed for EntityEncoder/EntityDecoder)
+    // CirceEntityEncoder/CirceEntityDecoder provide implicit conversions from Encoder/Decoder to EntityEncoder/EntityDecoder
+    // Also add http4s DSL imports for route generation (Root, GET, POST, etc.)
+    val additionalImports = serverSupport match {
+      case Http4sSupport =>
+        List(
+          "org.http4s.circe.CirceEntityEncoder.circeEntityEncoder",
+          "org.http4s.circe.CirceEntityDecoder.circeEntityDecoder",
+          "org.http4s.dsl.io._"
+        )
+      case _ => Nil
+    }
+    jvm.File(serverTpe, generatedCode, secondaryTypes = Nil, scope = Scope.Main, additionalImports = additionalImports)
   }
 
   /** Generate client trait that extends the base trait */
@@ -174,7 +193,16 @@ class ApiCodegen(
     )
 
     val generatedCode = lang.renderTree(clientInterface, lang.Ctx.Empty)
-    jvm.File(clientTpe, generatedCode, secondaryTypes = Nil, scope = Scope.Main)
+    // Add http4s-circe imports for Http4s clients (needed for EntityEncoder/EntityDecoder)
+    val additionalImports = clientSupport match {
+      case Http4sSupport =>
+        List(
+          "org.http4s.circe.CirceEntityEncoder.circeEntityEncoder",
+          "org.http4s.circe.CirceEntityDecoder.circeEntityDecoder"
+        )
+      case _ => Nil
+    }
+    jvm.File(clientTpe, generatedCode, secondaryTypes = Nil, scope = Scope.Main, additionalImports = additionalImports)
   }
 
   /** Find the common base path prefix for a list of paths */
@@ -365,13 +393,10 @@ class ApiCodegen(
     List(typeInfoAnnotation, subTypesAnnotation)
   }
 
-  /** Generate all response types in a single file.
-    * This is required because sealed types in Scala/Java/Kotlin require all implementations
-    * to be in the same compilation unit (same file).
+  /** Generate all response types in a single file. This is required because sealed types in Scala/Java/Kotlin require all implementations to be in the same compilation unit (same file).
     *
     * The file contains:
-    * 1. Sealed interfaces for each response shape (e.g., Response200404, Response200Default)
-    * 2. Leaf classes for each status code (e.g., Ok, NotFound, Default)
+    *   1. Sealed interfaces for each response shape (e.g., Response200404, Response200Default) 2. Leaf classes for each status code (e.g., Ok, NotFound, Default)
     *
     * Example output:
     * ```
@@ -416,10 +441,11 @@ class ApiCodegen(
     val typeName = shape.typeName
     val tpe = jvm.Type.Qualified(apiPkg / jvm.Ident(typeName))
 
-    // Create type parameters for non-range status codes
+    // Create covariant type parameters for non-range status codes
+    // This allows Created[Pet] to be a subtype of Response201400[Pet, Error] when Pet <: T201
     val nonRangeStatuses = shape.statusCodes.filterNot(ResponseShape.isRangeStatus)
     val typeParamNames = nonRangeStatuses.map(s => "T" + normalizeStatusCode(s))
-    val tparams = typeParamNames.map(name => jvm.Type.Abstract(jvm.Ident(name)))
+    val tparams = typeParamNames.map(name => jvm.Type.Abstract(jvm.Ident(name), jvm.Variance.Covariant))
 
     // Abstract status method
     val statusMethod = jvm.Method(
@@ -461,7 +487,8 @@ class ApiCodegen(
 
     val isRangeStatus = ResponseShape.isRangeStatus(statusCode)
 
-    val tparams: List[jvm.Type.Abstract] = if (isRangeStatus) Nil else List(jvm.Type.Abstract(jvm.Ident("T")))
+    // Leaf classes also need covariant type parameters to match the interface
+    val tparams: List[jvm.Type.Abstract] = if (isRangeStatus) Nil else List(jvm.Type.Abstract(jvm.Ident("T"), jvm.Variance.Covariant))
 
     val valueType: jvm.Type = if (isRangeStatus) Types.Error(apiPkg) else jvm.Type.Abstract(jvm.Ident("T"))
 
@@ -495,6 +522,62 @@ class ApiCodegen(
       isOverride = true
     )
 
+    // Generate toResponse method if server framework supports it
+    val toResponseMethod: List[jvm.Method] = serverFrameworkSupport match {
+      case Some(serverSupport) if serverSupport.supportsToResponseMethod =>
+        val statusCodeInt = statusCodeToInt(statusCode)
+        val valueExpr = jvm.Ident("value").code
+        val statusCodeExpr = jvm.Ident("statusCode").code
+
+        // For generic types, add implicit EntityEncoder parameter
+        // For range types (fixed Error type), use the Error encoder
+        val (implicitParams, methodBody) = if (isRangeStatus) {
+          // Range status: Error type, need implicit EntityEncoder[IO, Error]
+          val encoderParam = jvm.Param[jvm.Type](
+            annotations = Nil,
+            comments = jvm.Comments.Empty,
+            name = jvm.Ident("encoder"),
+            tpe = jvm.Type.TApply(Types.Http4s.EntityEncoder, List(Types.Cats.IO, Types.Error(apiPkg))),
+            default = None
+          )
+          val body = serverSupport.toResponseBodyRange(statusCodeExpr, valueExpr, jvm.Ident("encoder").code)
+          (List(encoderParam), body)
+        } else {
+          // Generic type: need implicit EntityEncoder[IO, T @uncheckedVariance]
+          // The @uncheckedVariance is needed because T is covariant but EntityEncoder has T in contravariant position
+          val tTypeWithVariance = jvm.Type.Annotated(jvm.Type.Abstract(jvm.Ident("T")), OpenApiTypesScala.UncheckedVariance)
+          val encoderParam = jvm.Param[jvm.Type](
+            annotations = Nil,
+            comments = jvm.Comments.Empty,
+            name = jvm.Ident("encoder"),
+            tpe = jvm.Type.TApply(Types.Http4s.EntityEncoder, List(Types.Cats.IO, tTypeWithVariance)),
+            default = None
+          )
+          val body = serverSupport.toResponseBody(valueExpr, jvm.Ident("encoder").code, statusCodeInt)
+          (List(encoderParam), body)
+        }
+
+        // Return type: IO[Response[IO]]
+        val returnType = jvm.Type.TApply(Types.Cats.IO, List(Types.Http4s.Response))
+
+        List(
+          jvm.Method(
+            annotations = Nil,
+            comments = jvm.Comments(List("Convert this response to an HTTP4s Response")),
+            tparams = Nil,
+            name = jvm.Ident("toResponse"),
+            params = Nil,
+            implicitParams = implicitParams,
+            tpe = returnType,
+            throws = Nil,
+            body = jvm.Body.Expr(methodBody),
+            isOverride = false,
+            isDefault = false
+          )
+        )
+      case _ => Nil
+    }
+
     val implementsList: List[jvm.Type] = shapes.map { shape =>
       val responseTpe = jvm.Type.Qualified(apiPkg / jvm.Ident(shape.typeName))
       val nonRangeStatuses = shape.statusCodes.filterNot(ResponseShape.isRangeStatus)
@@ -519,7 +602,7 @@ class ApiCodegen(
       implicitParams = Nil,
       `extends` = None,
       implements = implementsList,
-      members = List(statusOverride),
+      members = List(statusOverride) ++ toResponseMethod,
       staticMembers = Nil
     )
   }
@@ -535,13 +618,37 @@ class ApiCodegen(
     }
   }
 
-  /** Get the type reference to the status subtype.
-    * When using generic response types, this returns the shared leaf class (e.g., Ok, NotFound).
-    * Otherwise, it returns the nested subtype (e.g., Response200404.Status200).
+  /** Get the type reference to the status subtype for pattern matching. When using generic response types, this returns the shared leaf class (e.g., Ok, NotFound). Otherwise, it returns the nested
+    * subtype (e.g., Response200404.Status200). For Scala, we use wildcards for pattern matching to avoid runtime type check warnings.
     */
-  private def statusSubtypeTpe(statusCode: String, responseName: String): jvm.Type.Qualified = {
+  private def statusSubtypeTpe(statusCode: String, responseName: String): jvm.Type = {
     if (useGenericResponseTypes) {
       // Use shared leaf class like Ok, NotFound, Default
+      val baseTpe = jvm.Type.Qualified(apiPkg / jvm.Ident(ResponseShape.httpStatusClassName(statusCode)))
+      // Ok[T], NotFound[T], Created[T], BadRequest[T] are generic
+      // Default, ServerError5XX, ClientError4XX are not generic (they have fixed Error type)
+      val isGenericType = statusCode.toLowerCase match {
+        case "default" | "4xx" | "5xx" => false
+        case _                         => true
+      }
+      if (isGenericType && lang.isInstanceOf[LangScala]) {
+        // Use wildcard for pattern matching to avoid Scala 3 type erasure warnings
+        jvm.Type.TApply(baseTpe, List(jvm.Type.Wildcard))
+      } else {
+        baseTpe
+      }
+    } else {
+      // Use nested subtype like Response200404.Status200
+      val statusName = "Status" + normalizeStatusCode(statusCode)
+      jvm.Type.Qualified(apiPkg / jvm.Ident(responseName) / jvm.Ident(statusName))
+    }
+  }
+
+  /** Get the type reference to the status subtype for constructor calls. Unlike statusSubtypeTpe, this never uses wildcards - Scala can infer the type argument.
+    */
+  private def statusSubtypeCtorTpe(statusCode: String, responseName: String): jvm.Type = {
+    if (useGenericResponseTypes) {
+      // Use shared leaf class like Ok, NotFound, Default - no wildcards for constructors
       jvm.Type.Qualified(apiPkg / jvm.Ident(ResponseShape.httpStatusClassName(statusCode)))
     } else {
       // Use nested subtype like Response200404.Status200
@@ -750,8 +857,16 @@ class ApiCodegen(
     val params = generateBaseParams(method)
 
     // Return type is the response sum type (or Effect<ResponseSumType> for async)
-    val responseName = capitalize(method.name) + "Response"
-    val responseTpe = jvm.Type.Qualified(apiPkg / jvm.Ident(responseName))
+    val responseTpe: jvm.Type = if (useGenericResponseTypes) {
+      // Use generic response type with actual type arguments
+      val shape = ResponseShape.fromVariants(variants)
+      val baseTpe = jvm.Type.Qualified(apiPkg / jvm.Ident(shape.typeName))
+      val typeArgs = variants.filter(v => !ResponseShape.isRangeStatus(v.statusCode)).map(v => typeMapper.map(v.typeInfo))
+      if (typeArgs.nonEmpty) jvm.Type.TApply(baseTpe, typeArgs) else baseTpe
+    } else {
+      val responseName = capitalize(method.name) + "Response"
+      jvm.Type.Qualified(apiPkg / jvm.Ident(responseName))
+    }
     val returnType = effectOps match {
       case Some(ops) => jvm.Type.TApply(ops.tpe, List(responseTpe))
       case None      => responseTpe
@@ -791,8 +906,13 @@ class ApiCodegen(
         }
       }
 
-    val argsCode = argNames.mkCode(", ")
-    val rawMethodCall = code"${jvm.Ident(method.name + "Raw")}($argsCode)"
+    val rawMethodCall = if (argNames.isEmpty) {
+      // For Scala, parameterless methods should be called without parentheses
+      jvm.Ident(method.name + "Raw").code
+    } else {
+      val argsCode = argNames.mkCode(", ")
+      code"${jvm.Ident(method.name + "Raw")}($argsCode)"
+    }
 
     val responseIdent = jvm.Ident("response")
 
@@ -834,7 +954,8 @@ class ApiCodegen(
 
     // Build if-else chain for each variant, using response.as[T].map for entity reading
     val ifElseCases = variants.map { variant =>
-      val subtypeTpe = statusSubtypeTpe(variant.statusCode, responseName)
+      // Use constructor type (no wildcards) - Scala infers the type argument from value
+      val subtypeCtorTpe = statusSubtypeCtorTpe(variant.statusCode, responseName)
       val bodyType = typeMapper.map(variant.typeInfo)
       val readEntityCode = clientSupport.readEntity(responseIdent.code, bodyType)
 
@@ -857,9 +978,9 @@ class ApiCodegen(
       // For async: response.as[T].map(v => ResponseType(v)) or response.as[T].map(v => ResponseType(statusCode, v))
       val valueIdent = jvm.Ident("v")
       val constructorCall = if (isRangeStatus) {
-        code"$subtypeTpe(${statusCodeIdent.code}, ${valueIdent.code})"
+        code"$subtypeCtorTpe(${statusCodeIdent.code}, ${valueIdent.code})"
       } else {
-        code"$subtypeTpe(${valueIdent.code})"
+        code"$subtypeCtorTpe(${valueIdent.code})"
       }
       val result = code"$readEntityCode.map(${valueIdent.code} => $constructorCall)"
 
@@ -984,7 +1105,8 @@ class ApiCodegen(
 
     // Build if-else chain for each variant
     val ifElseCases = variants.map { variant =>
-      val subtypeTpe = statusSubtypeTpe(variant.statusCode, responseName)
+      // Use constructor type (no wildcards) - type inference handles the type argument
+      val subtypeCtorTpe = statusSubtypeCtorTpe(variant.statusCode, responseName)
       val bodyType = typeMapper.map(variant.typeInfo)
       val readEntityCode = clientSupport.readEntity(responseExpr, bodyType)
 
@@ -1018,7 +1140,7 @@ class ApiCodegen(
       } else {
         List(readEntityCode) ++ headerValues
       }
-      val constructorCall = subtypeTpe.construct(allArgs: _*)
+      val constructorCall = subtypeCtorTpe.construct(allArgs: _*)
 
       (condition, constructorCall, variant.statusCode.toLowerCase == "default")
     }
@@ -1285,20 +1407,110 @@ class ApiCodegen(
         }
       }
 
-    val argsCode = argNames.mkCode(", ")
-    val methodCall = code"${jvm.Ident(method.name)}($argsCode)"
+    val methodCall = if (argNames.isEmpty) {
+      // For Scala, parameterless methods should be called without parentheses
+      jvm.Ident(method.name).code
+    } else {
+      val argsCode = argNames.mkCode(", ")
+      code"${jvm.Ident(method.name)}($argsCode)"
+    }
 
     // Build the response sum type name - either per-method or generic
-    val responseName = if (useGenericResponseTypes) {
+    val (responseName, numTypeParams) = if (useGenericResponseTypes) {
       val shape = ResponseShape.fromVariants(variants)
-      shape.typeName
+      // Number of type parameters = number of non-range status codes
+      val nonRangeCount = shape.statusCodes.filterNot(ResponseShape.isRangeStatus).size
+      (shape.typeName, nonRangeCount)
     } else {
-      capitalize(method.name) + "Response"
+      (capitalize(method.name) + "Response", 0)
     }
-    val responseTpe = jvm.Type.Qualified(apiPkg / jvm.Ident(responseName))
+    val baseResponseTpe = jvm.Type.Qualified(apiPkg / jvm.Ident(responseName))
+    // For Scala, add wildcards for the type parameters in lambda types
+    val responseTpe: jvm.Type = if (numTypeParams > 0 && lang.isInstanceOf[LangScala]) {
+      jvm.Type.TApply(baseResponseTpe, List.fill(numTypeParams)(jvm.Type.Wildcard))
+    } else {
+      baseResponseTpe
+    }
 
     val responseIdent = jvm.Ident("response")
 
+    // If server supports toResponse, use that approach (no asInstanceOf needed)
+    if (serverSupport.supportsToResponseMethod && useGenericResponseTypes && lang.isInstanceOf[LangScala]) {
+      generateEndpointWrapperBodyWithToResponse(methodCall, responseIdent, responseName, responseTpe, variants, serverSupport)
+    } else {
+      generateEndpointWrapperBodyWithTypeSwitch(methodCall, responseIdent, responseName, responseTpe, variants, serverSupport)
+    }
+  }
+
+  /** Generate endpoint wrapper body using toResponse methods (no asInstanceOf casts) */
+  private def generateEndpointWrapperBodyWithToResponse(
+      methodCall: jvm.Code,
+      responseIdent: jvm.Ident,
+      @annotation.nowarn responseName: String,
+      responseTpe: jvm.Type,
+      variants: List[ResponseVariant],
+      serverSupport: FrameworkSupport
+  ): List[jvm.Code] = {
+    // For each variant, generate a case that calls toResponse
+    // Since toResponse returns IO[Response[IO]], we use flatMap
+    // We use concrete types (not wildcards) to enable implicit resolution for EntityEncoder
+    val switchCases = variants.map { variant =>
+      val subtypeTpe = statusSubtypeTpeForToResponse(variant.statusCode, variant.typeInfo)
+      val bindingIdent = jvm.Ident("r")
+
+      // Call r.toResponse which uses the implicit encoder
+      val body = lang.prop(bindingIdent.code, jvm.Ident("toResponse"))
+
+      jvm.TypeSwitch.Case(subtypeTpe, bindingIdent, body)
+    }
+
+    effectOps match {
+      case Some(ops) =>
+        // Async with toResponse: use flatMap since toResponse returns IO[Response[IO]]
+        val fallbackCase = Some(serverSupport.raiseError(Types.IllegalStateException.construct(jvm.StrLit("Unexpected response type").code)))
+        // Set unchecked=true to suppress type erasure warnings - the pattern matching is safe
+        // because we know the exact subtypes at compile time from the response shape
+        val typeSwitch = jvm.TypeSwitch(responseIdent.code, switchCases, nullCase = None, defaultCase = fallbackCase, unchecked = true)
+        val lambda = jvm.Lambda(List(jvm.LambdaParam.typed(responseIdent, responseTpe)), jvm.Body.Expr(typeSwitch.code))
+        val flatMappedCall = ops.flatMap(methodCall, lambda.code)
+        List(flatMappedCall)
+
+      case None =>
+        // Sync: directly switch on the result and return
+        val fallbackCase = Some(jvm.Throw(Types.IllegalStateException.construct(jvm.StrLit("Unexpected response type").code)).code)
+        // Set unchecked=true to suppress type erasure warnings
+        val switchOnResult = jvm.TypeSwitch(methodCall, switchCases, nullCase = None, defaultCase = fallbackCase, unchecked = true)
+        List(switchOnResult.code)
+    }
+  }
+
+  /** Get the type reference for pattern matching when using toResponse. Uses concrete types to enable implicit resolution, not wildcards.
+    */
+  private def statusSubtypeTpeForToResponse(statusCode: String, typeInfo: TypeInfo): jvm.Type = {
+    val baseTpe = jvm.Type.Qualified(apiPkg / jvm.Ident(ResponseShape.httpStatusClassName(statusCode)))
+    // Range types (Default, ServerError5XX, ClientError4XX) are not generic
+    val isRangeType = statusCode.toLowerCase match {
+      case "default" | "4xx" | "5xx" => true
+      case _                         => false
+    }
+    if (isRangeType) {
+      baseTpe
+    } else {
+      // Use concrete type from variant's typeInfo
+      val concreteType = typeMapper.map(typeInfo)
+      jvm.Type.TApply(baseTpe, List(concreteType))
+    }
+  }
+
+  /** Generate endpoint wrapper body using type switch with manual response building (may need asInstanceOf for erasure) */
+  private def generateEndpointWrapperBodyWithTypeSwitch(
+      methodCall: jvm.Code,
+      responseIdent: jvm.Ident,
+      responseName: String,
+      responseTpe: jvm.Type,
+      variants: List[ResponseVariant],
+      serverSupport: FrameworkSupport
+  ): List[jvm.Code] = {
     // Generate the type switch cases for each variant
     val switchCases = variants.map { variant =>
       val subtypeTpe = statusSubtypeTpe(variant.statusCode, responseName)
@@ -1312,12 +1524,21 @@ class ApiCodegen(
       }
 
       // Use lang.prop for proper field access syntax (Java: .value(), Scala: .value)
-      val valueAccess = lang.prop(bindingIdent.code, jvm.Ident("value"))
+      val rawValueAccess = lang.prop(bindingIdent.code, jvm.Ident("value"))
       val statusCodeAccess = lang.prop(bindingIdent.code, jvm.Ident("statusCode"))
+
+      // For Scala with generic response types, cast the value to the expected type for proper implicit resolution
+      // This is needed because we pattern match on Ok[_] (wildcard) to avoid runtime type check warnings
+      val expectedType = typeMapper.map(variant.typeInfo)
+      val valueAccess = if (useGenericResponseTypes && lang.isInstanceOf[LangScala] && !isRangeStatus) {
+        code"$rawValueAccess.asInstanceOf[$expectedType]"
+      } else {
+        rawValueAccess
+      }
 
       val body = if (isRangeStatus) {
         // Use the user-provided statusCode field
-        serverSupport.buildStatusResponse(statusCodeAccess, valueAccess)
+        serverSupport.buildStatusResponse(statusCodeAccess, rawValueAccess) // Range types have fixed Error type, no cast needed
       } else if (defaultStatusCode >= 200 && defaultStatusCode < 300) {
         // Fixed success response
         serverSupport.buildOkResponse(valueAccess)
@@ -1430,6 +1651,197 @@ class ApiCodegen(
     val baseFile = jvm.File(callbackTpe, generatedCode, secondaryTypes = Nil, scope = Scope.Main)
 
     baseFile :: responseSumTypeFiles
+  }
+
+  /** Generate Http4s routes method for the server trait.
+    *
+    * Generates code like:
+    * {{{
+    * def routes: HttpRoutes[IO] = HttpRoutes.of[IO] {
+    *   case req @ GET -> Root / "pets" => listPetsEndpoint(None, None)
+    *   case req @ POST -> Root / "pets" => req.as[PetCreate].flatMap(createPetEndpoint)
+    *   // etc.
+    * }
+    * }}}
+    */
+  private def generateRoutesMethod(methods: List[ApiMethod], basePath: Option[String]): Option[jvm.Method] = {
+    if (methods.isEmpty) return None
+
+    // Filter out methods that can't be easily handled in routes:
+    // - Multipart form data (requires special decoding)
+    // - Binary response types (requires special encoding)
+    val supportedMethods = methods.filter { m =>
+      val hasMultipart = m.requestBody.exists(_.isMultipart)
+      val hasBinaryResponse = m.responses.exists { r =>
+        // Check for binary type info
+        val isBinaryType = r.typeInfo.exists {
+          case TypeInfo.Primitive(PrimitiveType.Binary) => true
+          case _                                        => false
+        }
+        // Also check for octet-stream content type
+        val isBinaryContentType = r.contentType.exists(_.contains("octet-stream"))
+        isBinaryType || isBinaryContentType
+      }
+      !hasMultipart && !hasBinaryResponse
+    }
+
+    if (supportedMethods.isEmpty) return None
+
+    // Generate pattern match cases for each method
+    val cases = supportedMethods.map(generateRouteCase(_, basePath))
+
+    // HttpRoutes.of[IO] { cases }
+    val HttpRoutes = Types.Http4s.HttpRoutes
+    val IO = Types.Cats.IO
+
+    // Build the HttpRoutes.of[IO] { ... } call
+    val routesBody = code"""|${HttpRoutes}.of[$IO] {
+                            |  ${cases.mkCode("\n")}
+                            |}""".stripMargin
+
+    Some(
+      jvm.Method(
+        annotations = Nil,
+        comments = jvm.Comments(List("HTTP routes for this API - wire this to your Http4s server")),
+        tparams = Nil,
+        name = jvm.Ident("routes"),
+        params = Nil,
+        implicitParams = Nil,
+        tpe = jvm.Type.TApply(HttpRoutes, List(IO)),
+        throws = Nil,
+        body = jvm.Body.Expr(routesBody),
+        isOverride = false,
+        isDefault = false
+      )
+    )
+  }
+
+  /** Generate a single route case for Http4s pattern matching */
+  private def generateRouteCase(method: ApiMethod, @annotation.nowarn basePath: Option[String]): jvm.Code = {
+    // HTTP method name in uppercase (GET, POST, etc.)
+    val httpMethod = method.httpMethod match {
+      case HttpMethod.Get     => "GET"
+      case HttpMethod.Post    => "POST"
+      case HttpMethod.Put     => "PUT"
+      case HttpMethod.Delete  => "DELETE"
+      case HttpMethod.Patch   => "PATCH"
+      case HttpMethod.Head    => "HEAD"
+      case HttpMethod.Options => "OPTIONS"
+    }
+
+    // Build the path pattern with path parameters
+    // e.g., /pets/{petId} becomes Root / "pets" / petId
+    // Note: For Http4s routes, we use the full method path directly (no base path concatenation)
+    val fullPath = method.path
+
+    val pathSegments = fullPath.stripPrefix("/").split("/").toList
+
+    // Separate path params and query params
+    val pathParams = method.parameters.filter(_.in == ParameterIn.Path)
+    val queryParams = method.parameters.filter(_.in == ParameterIn.Query)
+
+    // Build the path pattern
+    val pathPattern = pathSegments
+      .map { segment =>
+        if (segment.startsWith("{") && segment.endsWith("}")) {
+          // Path parameter - extract the name
+          val paramName = segment.drop(1).dropRight(1)
+          paramName
+        } else {
+          // Literal segment
+          s""""$segment""""
+        }
+      }
+      .mkString("Root / ", " / ", "")
+
+    // Build query parameter matchers if any
+    val queryMatchers = if (queryParams.isEmpty) {
+      ""
+    } else {
+      // For simplicity, we'll use optional query param extractors
+      // This generates: :? Param1Matcher(param1) +& Param2Matcher(param2)
+      // But Http4s query params need custom matchers, so we'll handle this differently
+      // For now, skip query params in the pattern and handle them in the body
+      ""
+    }
+
+    // Determine if we need a request binding (for request body or query params)
+    val needsReqBinding = method.requestBody.isDefined || queryParams.nonEmpty
+    val reqBinding = if (needsReqBinding) "req @ " else ""
+
+    // Build the endpoint call
+    val endpointName = if (method.responseVariants.isDefined) {
+      method.name + "Endpoint"
+    } else {
+      method.name
+    }
+
+    // Build arguments list
+    val pathParamArgs = pathParams.map { p =>
+      val paramName = p.name
+      // Path params are always strings in Http4s patterns, may need parsing
+      paramName
+    }
+
+    val queryParamArgs = queryParams.map { p =>
+      // Query params need to be extracted from the request and converted to the expected type
+      val rawGet = s"req.params.get(${jvm.StrLit(p.originalName).code.render(lang).asString})"
+
+      // Check if this is a primitive type that needs parsing (Int, Long, Boolean, etc.)
+      // The typeInfo may be wrapped in Optional for non-required params
+      val underlyingType = p.typeInfo match {
+        case TypeInfo.Optional(inner) => inner
+        case other                    => other
+      }
+      val parseExpr = underlyingType match {
+        case TypeInfo.Primitive(PrimitiveType.Int32)   => s"$rawGet.flatMap(_.toIntOption)"
+        case TypeInfo.Primitive(PrimitiveType.Int64)   => s"$rawGet.flatMap(_.toLongOption)"
+        case TypeInfo.Primitive(PrimitiveType.Float)   => s"$rawGet.flatMap(_.toFloatOption)"
+        case TypeInfo.Primitive(PrimitiveType.Double)  => s"$rawGet.flatMap(_.toDoubleOption)"
+        case TypeInfo.Primitive(PrimitiveType.Boolean) => s"$rawGet.flatMap(_.toBooleanOption)"
+        case _                                         => rawGet // String and other types stay as-is
+      }
+
+      if (p.required) {
+        s"$parseExpr.get"
+      } else {
+        parseExpr
+      }
+    }
+
+    // Determine if we need to wrap the result in Ok()
+    // Methods with response variants have endpoint wrappers that return IO[Response[IO]]
+    // Methods without response variants return IO[T] and need Ok(result) wrapping
+    val hasResponseVariants = method.responseVariants.isDefined
+
+    // Build the call body
+    val callBody = method.requestBody match {
+      case Some(body) if !body.isMultipart =>
+        // Decode request body and call endpoint
+        val bodyType = typeMapper.map(body.typeInfo)
+        // Render the type properly for Scala code
+        val bodyTypeStr = bodyType.code.render(lang).asString
+        val allArgs = pathParamArgs ++ queryParamArgs :+ "body"
+        val argsStr = allArgs.mkString(", ")
+        if (hasResponseVariants) {
+          s"req.as[$bodyTypeStr].flatMap(body => $endpointName($argsStr))"
+        } else {
+          s"req.as[$bodyTypeStr].flatMap(body => ${method.name}($argsStr).flatMap(result => Ok(result)))"
+        }
+      case _ =>
+        // No request body (or multipart which is complex)
+        val allArgs = pathParamArgs ++ queryParamArgs
+        val argsStr = if (allArgs.isEmpty) "" else allArgs.mkString("(", ", ", ")")
+        if (hasResponseVariants) {
+          s"$endpointName$argsStr"
+        } else {
+          s"${method.name}$argsStr.flatMap(result => Ok(result))"
+        }
+    }
+
+    // Assemble the case pattern
+    val pattern = s"$reqBinding$httpMethod -> $pathPattern$queryMatchers"
+    jvm.Code.Str(s"case $pattern => $callBody")
   }
 }
 

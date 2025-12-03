@@ -1,5 +1,7 @@
 package testapi.model
 
+import io.circe.Decoder
+import io.circe.Encoder
 import java.time.OffsetDateTime
 
 case class Pet(
@@ -12,3 +14,9 @@ case class Pet(
   name: String,
   updatedAt: Option[OffsetDateTime]
 )
+
+object Pet {
+  implicit val decoder: Decoder[Pet] = io.circe.generic.semiauto.deriveDecoder[testapi.model.Pet]
+
+  implicit val encoder: Encoder[Pet] = io.circe.generic.semiauto.deriveEncoder[testapi.model.Pet]
+}

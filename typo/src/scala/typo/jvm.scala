@@ -10,6 +10,15 @@ import scala.reflect.ClassTag
   * You'll mainly use this module with the `code"..."` interpolator.
   */
 object jvm {
+
+  /** Variance for type parameters */
+  sealed trait Variance
+  object Variance {
+    case object Invariant extends Variance
+    case object Covariant extends Variance
+    case object Contravariant extends Variance
+  }
+
   sealed trait Tree
 
   case class Ident(value: String) extends Tree {
@@ -275,7 +284,7 @@ object jvm {
     case class Named(name: Ident, value: Code) extends Arg
   }
 
-  case class TypeSwitch(value: Code, cases: List[TypeSwitch.Case], nullCase: Option[Code] = None, defaultCase: Option[Code] = None) extends Tree
+  case class TypeSwitch(value: Code, cases: List[TypeSwitch.Case], nullCase: Option[Code] = None, defaultCase: Option[Code] = None, unchecked: Boolean = false) extends Tree
   object TypeSwitch {
     case class Case(tpe: Type, ident: Ident, body: Code)
   }
@@ -366,7 +375,8 @@ object jvm {
       tpe: Type,
       body: Option[Code],
       isLazy: Boolean,
-      isOverride: Boolean
+      isOverride: Boolean,
+      isImplicit: Boolean = false
   ) extends ClassMember
 
   /** Local variable declaration - renders as `val` in Scala, `var` in Java */
@@ -408,8 +418,11 @@ object jvm {
       lazy val dotName = value.dotName
       def name = value.name
     }
-    case class Abstract(value: Ident) extends Type
+    case class Abstract(value: Ident, variance: Variance = Variance.Invariant) extends Type
     case class Commented(underlying: Type, comment: String) extends Type
+
+    /** Type with annotation in type position: `T @annotation` (Scala) */
+    case class Annotated(underlying: Type, annotation: Type.Qualified) extends Type
     case class UserDefined(underlying: Type) extends Type
     case class ArrayOf(underlying: Type) extends Type
 
@@ -455,9 +468,10 @@ object jvm {
     // todo: represent this fact better.
     def containsUserDefined(tpe: Type): Boolean =
       tpe match {
-        case Abstract(_)               => false
+        case Abstract(_, _)            => false
         case ArrayOf(targ)             => containsUserDefined(targ)
         case Commented(underlying, _)  => containsUserDefined(underlying)
+        case Annotated(underlying, _)  => containsUserDefined(underlying)
         case Qualified(_)              => false
         case TApply(underlying, targs) => containsUserDefined(underlying) || targs.exists(containsUserDefined)
         case UserDefined(_)            => true
@@ -470,9 +484,10 @@ object jvm {
       }
 
     def base(tpe: Type): Type = tpe match {
-      case Abstract(_)               => tpe
+      case Abstract(_, _)            => tpe
       case ArrayOf(targ)             => Type.ArrayOf(base(targ))
       case Commented(underlying, _)  => base(underlying)
+      case Annotated(underlying, _)  => base(underlying)
       case Qualified(_)              => tpe
       case TApply(underlying, targs) => TApply(base(underlying), targs.map(base))
       case UserDefined(tpe)          => base(tpe)
@@ -485,7 +500,7 @@ object jvm {
     }
   }
 
-  case class File(tpe: Type.Qualified, contents: Code, secondaryTypes: List[Type.Qualified], scope: Scope) {
+  case class File(tpe: Type.Qualified, contents: Code, secondaryTypes: List[Type.Qualified], scope: Scope, additionalImports: List[String] = Nil) {
     val name: Ident = tpe.value.name
     val pkg = QIdent(tpe.value.idents.dropRight(1))
   }

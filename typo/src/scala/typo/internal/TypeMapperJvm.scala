@@ -57,11 +57,12 @@ abstract class TypeMapperJvm(lang: Lang, typeOverride: TypeOverride, nullability
     tpe match {
       case jvm.Type.ArrayOf(tpe)                         => stripOptionAndArray(tpe)
       case jvm.Type.Commented(underlying, comment)       => jvm.Type.Commented(stripOptionAndArray(underlying), comment)
+      case jvm.Type.Annotated(underlying, ann)           => jvm.Type.Annotated(stripOptionAndArray(underlying), ann)
       case jvm.Type.TApply(lang.Optional.tpe, List(tpe)) => stripOptionAndArray(tpe)
       case jvm.Type.TApply(other, targs)                 => jvm.Type.TApply(stripOptionAndArray(other), targs.map(stripOptionAndArray))
       case jvm.Type.UserDefined(underlying)              => jvm.Type.UserDefined(stripOptionAndArray(underlying))
       case tpe @ (
-            jvm.Type.Abstract(_) | jvm.Type.Wildcard | jvm.Type.Qualified(_) | jvm.Type.Function0(_) | jvm.Type.Function1(_, _) | jvm.Type.Function2(_, _, _) | jvm.Type.Void | jvm.Type.Primitive(_)
+            jvm.Type.Abstract(_, _) | jvm.Type.Wildcard | jvm.Type.Qualified(_) | jvm.Type.Function0(_) | jvm.Type.Function1(_, _) | jvm.Type.Function2(_, _, _) | jvm.Type.Void | jvm.Type.Primitive(_)
           ) =>
         tpe
     }

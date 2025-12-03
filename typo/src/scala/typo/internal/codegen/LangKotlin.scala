@@ -307,15 +307,21 @@ case object LangKotlin extends Lang {
       case jvm.Cast(targetType, expr) =>
         // Kotlin cast: expr as Type
         code"($expr as $targetType)"
-      case jvm.FieldGetterRef(rowType, field)              => code"$rowType::$field"
-      case jvm.Param(_, cs, name, tpe, _)                  => code"${renderComments(cs).getOrElse(jvm.Code.Empty)}$name: $tpe"
-      case jvm.QIdent(value)                               => value.map(i => renderTree(i, ctx)).mkCode(".")
-      case jvm.StrLit(str) if str.contains(Quote)          => Quote + str.replace(Quote, "\\\"") + Quote
-      case jvm.StrLit(str)                                 => Quote + str + Quote
-      case jvm.Summon(_)                                   => sys.error("kotlin doesn't support `summon`")
-      case jvm.Type.Abstract(value)                        => value.code
+      case jvm.FieldGetterRef(rowType, field)     => code"$rowType::$field"
+      case jvm.Param(_, cs, name, tpe, _)         => code"${renderComments(cs).getOrElse(jvm.Code.Empty)}$name: $tpe"
+      case jvm.QIdent(value)                      => value.map(i => renderTree(i, ctx)).mkCode(".")
+      case jvm.StrLit(str) if str.contains(Quote) => Quote + str.replace(Quote, "\\\"") + Quote
+      case jvm.StrLit(str)                        => Quote + str + Quote
+      case jvm.Summon(_)                          => sys.error("kotlin doesn't support `summon`")
+      case jvm.Type.Abstract(value, variance) =>
+        variance match {
+          case jvm.Variance.Invariant     => value.code
+          case jvm.Variance.Covariant     => code"out $value"
+          case jvm.Variance.Contravariant => code"in $value"
+        }
       case jvm.Type.ArrayOf(value)                         => code"Array<$value>"
       case jvm.Type.Commented(underlying, comment)         => code"$comment $underlying"
+      case jvm.Type.Annotated(underlying, _)               => renderTree(underlying, ctx) // Kotlin doesn't support Scala-style type annotations
       case jvm.Type.Function0(jvm.Type.Void)               => code"() -> Unit"
       case jvm.Type.Function0(targ)                        => code"() -> $targ"
       case jvm.Type.Function1(targ, jvm.Type.Void)         => code"($targ) -> Unit"
@@ -345,8 +351,9 @@ case object LangKotlin extends Lang {
       case jvm.RuntimeInterpolation(value)    => value
       case jvm.IfExpr(pred, thenp, elsep) =>
         code"if ($pred) $thenp else $elsep"
-      case jvm.TypeSwitch(value, cases, nullCase, defaultCase) =>
+      case jvm.TypeSwitch(value, cases, nullCase, defaultCase, _) =>
         // Use `when (val __r = value)` to bind value once and avoid double evaluation
+        // Note: unchecked flag is Scala-only (for @unchecked annotation), ignored in Kotlin
         val boundIdent = jvm.Ident("__r")
         val nullCaseCode = nullCase.map(body => code"null -> $body").toList
         val typeCases = cases.map { case jvm.TypeSwitch.Case(pat, ident, body) =>
@@ -417,14 +424,14 @@ case object LangKotlin extends Lang {
                 |  return $body
                 |}""".stripMargin
         }
-      case jvm.Value(_, name, tpe, None, _, isOverride) =>
+      case jvm.Value(_, name, tpe, None, _, isOverride, _) =>
         val overrideMod = if (isOverride) "override " else ""
         // In Kotlin, override of Java methods must be fun, not val
         if (isOverride)
           code"${overrideMod}fun $name(): $tpe"
         else
           code"${overrideMod}abstract val $name: $tpe"
-      case jvm.Value(_, name, tpe, Some(body), _, isOverride) =>
+      case jvm.Value(_, name, tpe, Some(body), _, isOverride, _) =>
         val overrideMod = if (isOverride) "override " else ""
         // In Kotlin, override of Java methods must be fun, not val
         if (isOverride)

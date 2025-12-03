@@ -78,7 +78,16 @@ object addPackageAndImports {
         case other                     => sys.error(s"Unsupported language: $other")
       }
     }
-    val allImports = renderedImports ++ renderedStaticImports
+    // Render additional imports (wildcard imports like "org.http4s.circe._")
+    val renderedAdditionalImports = file.additionalImports.map { imp =>
+      language match {
+        case LangJava                  => code"import $imp;"
+        case _: LangScala | LangKotlin => code"import $imp"
+        case other                     => sys.error(s"Unsupported language: $other")
+      }
+    }
+
+    val allImports = renderedImports ++ renderedStaticImports ++ renderedAdditionalImports
     val withPrefix =
       code"""|package ${file.pkg}${language.`;`}
              |
@@ -181,12 +190,13 @@ object addPackageAndImports {
       case x: jvm.Summon                             => jvm.Summon(shortenNamesType(x.tpe, typeImport))
       case jvm.LocalVar(name, tpe, value) =>
         jvm.LocalVar(name, tpe.map(shortenNamesType(_, typeImport)), value.mapTrees(t => shortenNames(t, typeImport, staticImport)))
-      case jvm.TypeSwitch(value, cases, nullCase, defaultCase) =>
+      case jvm.TypeSwitch(value, cases, nullCase, defaultCase, unchecked) =>
         jvm.TypeSwitch(
           value.mapTrees(t => shortenNames(t, typeImport, staticImport)),
           cases.map { c => jvm.TypeSwitch.Case(shortenNamesType(c.tpe, typeImport), c.ident, c.body.mapTrees(t => shortenNames(t, typeImport, staticImport))) },
           nullCase.map(_.mapTrees(t => shortenNames(t, typeImport, staticImport))),
-          defaultCase.map(_.mapTrees(t => shortenNames(t, typeImport, staticImport)))
+          defaultCase.map(_.mapTrees(t => shortenNames(t, typeImport, staticImport))),
+          unchecked
         )
       case jvm.TryCatch(tryBlock, catches, finallyBlock) =>
         jvm.TryCatch(
@@ -311,14 +321,15 @@ object addPackageAndImports {
           shortenNamesType(tpe, typeImport),
           body.mapTrees(t => shortenNames(t, typeImport, staticImport))
         )
-      case jvm.Value(anns, name, tpe, body, isLazy, isOverride) =>
+      case jvm.Value(anns, name, tpe, body, isLazy, isOverride, isImplicit) =>
         jvm.Value(
           anns,
           name,
           shortenNamesType(tpe, typeImport),
           body.map(_.mapTrees(t => shortenNames(t, typeImport, staticImport))),
           isLazy,
-          isOverride
+          isOverride,
+          isImplicit
         )
       case x: jvm.Method =>
         shortenNamesMethod(x, typeImport, staticImport)
@@ -358,17 +369,18 @@ object addPackageAndImports {
   // traverse type tree and rewrite qualified names
   def shortenNamesType(tpe: jvm.Type, f: jvm.Type.Qualified => jvm.Type.Qualified): jvm.Type =
     tpe match {
-      case q @ jvm.Type.Qualified(_)               => f(q)
-      case jvm.Type.Abstract(value)                => jvm.Type.Abstract(value)
-      case jvm.Type.ArrayOf(value)                 => jvm.Type.ArrayOf(shortenNamesType(value, f))
-      case jvm.Type.Commented(underlying, comment) => jvm.Type.Commented(shortenNamesType(underlying, f), comment)
-      case jvm.Type.TApply(underlying, targs)      => jvm.Type.TApply(shortenNamesType(underlying, f), targs.map(targ => shortenNamesType(targ, f)))
-      case jvm.Type.UserDefined(underlying)        => jvm.Type.UserDefined(shortenNamesType(underlying, f))
-      case jvm.Type.Void                           => jvm.Type.Void
-      case jvm.Type.Wildcard                       => jvm.Type.Wildcard
-      case jvm.Type.Function0(ret)                 => jvm.Type.Function0(shortenNamesType(ret, f))
-      case jvm.Type.Function1(tpe1, ret)           => jvm.Type.Function1(shortenNamesType(tpe1, f), shortenNamesType(ret, f))
-      case jvm.Type.Function2(tpe1, tpe2, ret)     => jvm.Type.Function2(shortenNamesType(tpe1, f), shortenNamesType(tpe2, f), shortenNamesType(ret, f))
-      case p: jvm.Type.Primitive                   => p
+      case q @ jvm.Type.Qualified(_)                  => f(q)
+      case jvm.Type.Abstract(value, variance)         => jvm.Type.Abstract(value, variance)
+      case jvm.Type.ArrayOf(value)                    => jvm.Type.ArrayOf(shortenNamesType(value, f))
+      case jvm.Type.Commented(underlying, comment)    => jvm.Type.Commented(shortenNamesType(underlying, f), comment)
+      case jvm.Type.Annotated(underlying, annotation) => jvm.Type.Annotated(shortenNamesType(underlying, f), f(annotation).asInstanceOf[jvm.Type.Qualified])
+      case jvm.Type.TApply(underlying, targs)         => jvm.Type.TApply(shortenNamesType(underlying, f), targs.map(targ => shortenNamesType(targ, f)))
+      case jvm.Type.UserDefined(underlying)           => jvm.Type.UserDefined(shortenNamesType(underlying, f))
+      case jvm.Type.Void                              => jvm.Type.Void
+      case jvm.Type.Wildcard                          => jvm.Type.Wildcard
+      case jvm.Type.Function0(ret)                    => jvm.Type.Function0(shortenNamesType(ret, f))
+      case jvm.Type.Function1(tpe1, ret)              => jvm.Type.Function1(shortenNamesType(tpe1, f), shortenNamesType(ret, f))
+      case jvm.Type.Function2(tpe1, tpe2, ret)        => jvm.Type.Function2(shortenNamesType(tpe1, f), shortenNamesType(tpe2, f), shortenNamesType(ret, f))
+      case p: jvm.Type.Primitive                      => p
     }
 }

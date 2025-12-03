@@ -64,6 +64,44 @@ trait FrameworkSupport {
   /** Raise an error in the effect type (e.g., IO.raiseError). Only used when isAsyncEntityRead is true.
     */
   def raiseError(exception: jvm.Code): jvm.Code = code"throw $exception"
+
+  /** Whether this framework supports generating toResponse methods on response leaf classes. When true, the framework generates toResponse methods that can convert response case classes to the
+    * framework's Response type without needing asInstanceOf casts.
+    */
+  def supportsToResponseMethod: Boolean = false
+
+  /** Whether this framework should generate HTTP routes in the server trait. This is used for DSL-based frameworks like Http4s that don't use annotations.
+    */
+  def supportsRouteGeneration: Boolean = false
+
+  /** Generate the toResponse method body for a generic response type (e.g., Ok[T]). Takes the value expression and generates the response creation code with entity encoding.
+    * @param valueExpr
+    *   Expression to access the value field
+    * @param encoderExpr
+    *   Expression for the implicit EntityEncoder
+    * @param statusCode
+    *   The HTTP status code (e.g., 200, 404)
+    * @return
+    *   Code that creates the response
+    */
+  def toResponseBody(valueExpr: jvm.Code, @annotation.nowarn encoderExpr: jvm.Code, statusCode: Int): jvm.Code = {
+    if (statusCode == 200) buildOkResponse(valueExpr)
+    else buildStatusResponse(code"$statusCode", valueExpr)
+  }
+
+  /** Generate the toResponse method body for a range response type (e.g., ServerError5XX). Takes the statusCode field and value expression.
+    * @param statusCodeExpr
+    *   Expression for the statusCode field
+    * @param valueExpr
+    *   Expression for the value field
+    * @param encoderExpr
+    *   Expression for the implicit EntityEncoder
+    * @return
+    *   Code that creates the response
+    */
+  def toResponseBodyRange(statusCodeExpr: jvm.Code, valueExpr: jvm.Code, @annotation.nowarn encoderExpr: jvm.Code): jvm.Code = {
+    buildStatusResponse(statusCodeExpr, valueExpr)
+  }
 }
 
 /** No framework annotations - just generate plain interfaces */
@@ -555,13 +593,13 @@ object Http4sSupport extends FrameworkSupport {
   override def formFieldAnnotations(field: FormField): List[jvm.Annotation] = Nil
 
   // For HTTP4s, Response[F] is the response type (we use Response[IO] for simplicity)
-  override def responseType: jvm.Type.Qualified = Types.Http4s.Response
+  override def responseType: jvm.Type = Types.Http4s.Response // Response[IO]
 
   override def buildOkResponse(value: jvm.Code): jvm.Code =
-    code"${Types.Http4s.Response}.apply(${Types.Http4s.Status}.Ok).withEntity($value)"
+    code"${Types.Http4s.ResponseCtor}.apply(${Types.Http4s.Status}.Ok).withEntity($value)"
 
   override def buildStatusResponse(statusCode: jvm.Code, value: jvm.Code): jvm.Code =
-    code"${Types.Http4s.Response}.apply(${Types.Http4s.Status}.fromInt($statusCode).getOrElse(${Types.Http4s.Status}.InternalServerError)).withEntity($value)"
+    code"${Types.Http4s.ResponseCtor}.apply(${Types.Http4s.Status}.fromInt($statusCode).getOrElse(${Types.Http4s.Status}.InternalServerError)).withEntity($value)"
 
   // Client-side: get status from Response
   override def getStatusCode(response: jvm.Code): jvm.Code = code"$response.status.code"
@@ -585,4 +623,46 @@ object Http4sSupport extends FrameworkSupport {
 
   // Cats Effect uses IO.raiseError for error handling
   override def raiseError(exception: jvm.Code): jvm.Code = code"${Types.Cats.IO}.raiseError($exception)"
+
+  /** Whether this framework supports generating toResponse methods on response leaf classes. When true, the framework generates toResponse methods that can convert response case classes to the
+    * framework's Response type without needing asInstanceOf casts.
+    */
+  override def supportsToResponseMethod: Boolean = true
+
+  /** Http4s uses a DSL-based approach for routing, so we generate routes in the server trait */
+  override def supportsRouteGeneration: Boolean = true
+
+  /** Generate the toResponse method body for a generic response type (e.g., Ok[T]). Takes the value expression and generates the response creation code with entity encoding.
+    * @param valueExpr
+    *   Expression to access the value field
+    * @param encoderExpr
+    *   Expression for the implicit EntityEncoder (unused for Http4s - implicit resolution happens via withEntity)
+    * @param statusCode
+    *   The HTTP status code (e.g., 200, 404)
+    * @return
+    *   Code that creates an IO[Response[IO]]
+    */
+  override def toResponseBody(valueExpr: jvm.Code, encoderExpr: jvm.Code, statusCode: Int): jvm.Code = {
+    val responseCode = if (statusCode == 200) {
+      buildOkResponse(valueExpr)
+    } else {
+      buildStatusResponse(code"$statusCode", valueExpr)
+    }
+    code"${Types.Cats.IO}.pure($responseCode)"
+  }
+
+  /** Generate the toResponse method body for a range response type (e.g., ServerError5XX). Takes the statusCode field and value expression.
+    * @param statusCodeExpr
+    *   Expression for the statusCode field
+    * @param valueExpr
+    *   Expression for the value field
+    * @param encoderExpr
+    *   Expression for the implicit EntityEncoder (unused for Http4s - implicit resolution happens via withEntity)
+    * @return
+    *   Code that creates an IO[Response[IO]]
+    */
+  override def toResponseBodyRange(statusCodeExpr: jvm.Code, valueExpr: jvm.Code, encoderExpr: jvm.Code): jvm.Code = {
+    val responseCode = buildStatusResponse(statusCodeExpr, valueExpr)
+    code"${Types.Cats.IO}.pure($responseCode)"
+  }
 }
