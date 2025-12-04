@@ -179,14 +179,13 @@ object Types {
     val FormDataContentDisposition = jvm.Type.Qualified("org.glassfish.jersey.media.multipart.FormDataContentDisposition")
   }
 
-  // MicroProfile Rest Client
-  object MicroProfile {
-    val RegisterRestClient = jvm.Type.Qualified("org.eclipse.microprofile.rest.client.inject.RegisterRestClient")
-    val RestClient = jvm.Type.Qualified("org.eclipse.microprofile.rest.client.inject.RestClient")
-  }
-
-  // File types
+  // File/IO types
   val InputStream = jvm.Type.Qualified("java.io.InputStream")
+  val IOException = jvm.Type.Qualified("java.io.IOException")
+  val InterruptedException = jvm.Type.Qualified("java.lang.InterruptedException")
+
+  // Exception type that covers both IOException and InterruptedException
+  val Exception = jvm.Type.Qualified("java.lang.Exception")
 
   /** Error type - typically in the model package. Used for default/error response types. */
   def Error(apiPkg: jvm.QIdent): jvm.Type.Qualified = {
@@ -194,6 +193,21 @@ object Types {
     val parentPkg = apiPkg.idents.init // Remove "api" segment
     val modelPkg = jvm.QIdent(parentPkg :+ jvm.Ident("model"))
     jvm.Type.Qualified(modelPkg / jvm.Ident("Error"))
+  }
+
+  // JDK HTTP Client types (java.net.http)
+  object JdkHttp {
+    val HttpClient = jvm.Type.Qualified("java.net.http.HttpClient")
+    val HttpRequest = jvm.Type.Qualified("java.net.http.HttpRequest")
+    val HttpResponse = jvm.Type.Qualified("java.net.http.HttpResponse")
+    val BodyPublishers = jvm.Type.Qualified("java.net.http.HttpRequest.BodyPublishers")
+    val BodyHandlers = jvm.Type.Qualified("java.net.http.HttpResponse.BodyHandlers")
+  }
+
+  // Jackson ObjectMapper
+  object JacksonMapper {
+    val ObjectMapper = jvm.Type.Qualified("com.fasterxml.jackson.databind.ObjectMapper")
+    val TypeReference = jvm.Type.Qualified("com.fasterxml.jackson.core.type.TypeReference")
   }
 
   // HTTP4s types

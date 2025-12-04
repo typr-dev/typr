@@ -17,6 +17,11 @@ public record UnitmeasureId(@JsonValue /* bpchar, max 3 chars */ String value) {
     return new UnitmeasureId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<UnitmeasureId, /* bpchar, max 3 chars */ String> bijection =
     Bijection.of(UnitmeasureId::value, UnitmeasureId::new);
 

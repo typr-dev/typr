@@ -17,6 +17,11 @@ public record CountryregionId(@JsonValue /* max 3 chars */ String value) {
     return new CountryregionId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<CountryregionId, /* max 3 chars */ String> bijection =
     Bijection.of(CountryregionId::value, CountryregionId::new);
 

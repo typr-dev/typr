@@ -17,6 +17,11 @@ public record LocationId(@JsonValue Integer value) {
     return new LocationId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<LocationId, Integer> bijection =
     Bijection.of(LocationId::value, LocationId::new);
 

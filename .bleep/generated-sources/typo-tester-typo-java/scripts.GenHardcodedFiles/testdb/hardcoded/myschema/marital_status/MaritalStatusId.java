@@ -17,6 +17,11 @@ public record MaritalStatusId(@JsonValue Long value) {
     return new MaritalStatusId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<MaritalStatusId, Long> bijection =
     Bijection.of(MaritalStatusId::value, MaritalStatusId::new);
 

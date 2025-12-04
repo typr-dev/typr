@@ -17,6 +17,11 @@ public record FootballClubId(@JsonValue Long value) {
     return new FootballClubId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<FootballClubId, Long> bijection =
     Bijection.of(FootballClubId::value, FootballClubId::new);
 

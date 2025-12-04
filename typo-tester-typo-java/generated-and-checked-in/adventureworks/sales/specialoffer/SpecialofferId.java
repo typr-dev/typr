@@ -17,6 +17,11 @@ public record SpecialofferId(@JsonValue Integer value) {
     return new SpecialofferId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<SpecialofferId, Integer> bijection =
     Bijection.of(SpecialofferId::value, SpecialofferId::new);
 

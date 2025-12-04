@@ -17,6 +17,11 @@ public record AddresstypeId(@JsonValue Integer value) {
     return new AddresstypeId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<AddresstypeId, Integer> bijection =
     Bijection.of(AddresstypeId::value, AddresstypeId::new);
 

@@ -46,7 +46,7 @@ object OpenApiOptions {
       apiPackage = "api",
       jsonLib = OpenApiJsonLib.Jackson,
       serverLib = Some(OpenApiServerLib.QuarkusReactive),
-      clientLib = Some(OpenApiClientLib.MicroProfileReactive),
+      clientLib = None,
       generateWrapperTypes = true,
       typeOverrides = Map.empty,
       useOptionalForNullable = false,
@@ -182,20 +182,14 @@ object OpenApiServerLib {
 sealed abstract class OpenApiClientLib(val effectType: OpenApiEffectType)
 object OpenApiClientLib {
 
-  /** MicroProfile Rest Client Reactive (Mutiny Uni) */
-  case object MicroProfileReactive extends OpenApiClientLib(OpenApiEffectType.MutinyUni)
-
-  /** MicroProfile Rest Client (blocking) */
-  case object MicroProfileBlocking extends OpenApiClientLib(OpenApiEffectType.Blocking)
+  /** JDK HTTP Client (java.net.http.HttpClient) - zero dependency, synchronous */
+  case object JdkHttpClient extends OpenApiClientLib(OpenApiEffectType.Blocking)
 
   /** Spring WebClient (Reactor Mono) */
   case object SpringWebClient extends OpenApiClientLib(OpenApiEffectType.ReactorMono)
 
   /** Spring RestTemplate (blocking) */
   case object SpringRestTemplate extends OpenApiClientLib(OpenApiEffectType.Blocking)
-
-  /** Vert.x Web Client (Mutiny Uni) */
-  case object VertxMutiny extends OpenApiClientLib(OpenApiEffectType.MutinyUni)
 
   /** http4s client with Cats Effect */
   case object Http4s extends OpenApiClientLib(OpenApiEffectType.CatsIO)

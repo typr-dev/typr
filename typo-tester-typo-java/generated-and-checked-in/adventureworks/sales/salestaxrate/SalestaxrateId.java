@@ -17,6 +17,11 @@ public record SalestaxrateId(@JsonValue Integer value) {
     return new SalestaxrateId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<SalestaxrateId, Integer> bijection =
     Bijection.of(SalestaxrateId::value, SalestaxrateId::new);
 

@@ -17,6 +17,11 @@ public record SalesorderheaderId(@JsonValue Integer value) {
     return new SalesorderheaderId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<SalesorderheaderId, Integer> bijection =
     Bijection.of(SalesorderheaderId::value, SalesorderheaderId::new);
 

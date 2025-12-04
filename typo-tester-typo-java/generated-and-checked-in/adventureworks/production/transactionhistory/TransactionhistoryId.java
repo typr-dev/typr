@@ -17,6 +17,11 @@ public record TransactionhistoryId(@JsonValue Integer value) {
     return new TransactionhistoryId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<TransactionhistoryId, Integer> bijection =
     Bijection.of(TransactionhistoryId::value, TransactionhistoryId::new);
 

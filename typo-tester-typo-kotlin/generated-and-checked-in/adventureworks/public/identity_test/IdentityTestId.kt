@@ -13,6 +13,10 @@ import typo.runtime.internal.arrayMap
 
 /** Type for the primary key of table `public.identity-test` */
 data class IdentityTestId(@JsonValue val value: /* max 250 chars */ String) {
+  override fun toString(): kotlin.String {
+    return value.toString()
+  }
+
   companion object {
     val bijection: Bijection<IdentityTestId, /* max 250 chars */ String> =
       Bijection.of(IdentityTestId::value, ::IdentityTestId)

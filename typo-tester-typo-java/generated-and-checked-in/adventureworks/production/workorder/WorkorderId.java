@@ -17,6 +17,11 @@ public record WorkorderId(@JsonValue Integer value) {
     return new WorkorderId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<WorkorderId, Integer> bijection =
     Bijection.of(WorkorderId::value, WorkorderId::new);
 

@@ -17,6 +17,11 @@ public record ScrapreasonId(@JsonValue Integer value) {
     return new ScrapreasonId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<ScrapreasonId, Integer> bijection =
     Bijection.of(ScrapreasonId::value, ScrapreasonId::new);
 

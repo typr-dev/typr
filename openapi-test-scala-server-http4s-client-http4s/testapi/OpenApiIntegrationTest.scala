@@ -117,19 +117,25 @@ class OpenApiIntegrationTest extends AnyFunSuite with Matchers {
   }
 
   test("getPet returns existing pet via HTTP round-trip") {
-    httpClient.getPet(PetId("pet-123")).map { response =>
-      val ok = response.asInstanceOf[Ok[Pet]]
-      ok.value.name shouldBe "Fluffy"
-      ok.value.id shouldBe PetId("pet-123")
-      ok.value.status shouldBe PetStatus.available
-    }.unsafeRunSync()
+    httpClient
+      .getPet(PetId("pet-123"))
+      .map { response =>
+        val ok = response.asInstanceOf[Ok[Pet]]
+        ok.value.name shouldBe "Fluffy"
+        ok.value.id shouldBe PetId("pet-123")
+        ok.value.status shouldBe PetStatus.available
+      }
+      .unsafeRunSync()
   }
 
   test("getPet returns NotFound for non-existent pet via HTTP round-trip") {
-    httpClient.getPet(PetId("nonexistent")).map { response =>
-      val notFound = response.asInstanceOf[NotFound[Error]]
-      notFound.value.code shouldBe "NOT_FOUND"
-    }.unsafeRunSync()
+    httpClient
+      .getPet(PetId("nonexistent"))
+      .map { response =>
+        val notFound = response.asInstanceOf[NotFound[Error]]
+        notFound.value.code shouldBe "NOT_FOUND"
+      }
+      .unsafeRunSync()
   }
 
   test("createPet creates and returns pet via HTTP round-trip") {
@@ -142,30 +148,42 @@ class OpenApiIntegrationTest extends AnyFunSuite with Matchers {
       website = None
     )
 
-    httpClient.createPet(newPet).map { response =>
-      val created = response.asInstanceOf[Created[Pet]]
-      created.value.name shouldBe "Buddy"
-      created.value.status shouldBe PetStatus.pending
-      created.value.tags shouldBe Some(List("playful"))
-    }.unsafeRunSync()
+    httpClient
+      .createPet(newPet)
+      .map { response =>
+        val created = response.asInstanceOf[Created[Pet]]
+        created.value.name shouldBe "Buddy"
+        created.value.status shouldBe PetStatus.pending
+        created.value.tags shouldBe Some(List("playful"))
+      }
+      .unsafeRunSync()
   }
 
   test("deletePet deletes existing pet via HTTP round-trip") {
-    httpClient.deletePet(PetId("pet-123")).map { _ =>
-      succeed
-    }.unsafeRunSync()
+    httpClient
+      .deletePet(PetId("pet-123"))
+      .map { _ =>
+        succeed
+      }
+      .unsafeRunSync()
   }
 
   test("listPets returns all pets via HTTP round-trip") {
-    httpClient.listPets(None, None).map { pets =>
-      pets should not be empty
-      pets.exists(_.name == "Fluffy") shouldBe true
-    }.unsafeRunSync()
+    httpClient
+      .listPets(None, None)
+      .map { pets =>
+        pets should not be empty
+        pets.exists(_.name == "Fluffy") shouldBe true
+      }
+      .unsafeRunSync()
   }
 
   test("listPets with limit returns limited pets via HTTP round-trip") {
-    httpClient.listPets(Some(1), None).map { pets =>
-      pets.size shouldBe 1
-    }.unsafeRunSync()
+    httpClient
+      .listPets(Some(1), None)
+      .map { pets =>
+        pets.size shouldBe 1
+      }
+      .unsafeRunSync()
   }
 }

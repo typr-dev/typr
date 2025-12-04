@@ -17,6 +17,11 @@ public record PhonenumbertypeId(@JsonValue Integer value) {
     return new PhonenumbertypeId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<PhonenumbertypeId, Integer> bijection =
     Bijection.of(PhonenumbertypeId::value, PhonenumbertypeId::new);
 

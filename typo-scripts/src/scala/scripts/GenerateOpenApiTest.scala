@@ -16,32 +16,42 @@ object GenerateOpenApiTest {
 
     println(s"Generating code from: $specPath")
 
-    // Java with JAX-RS server + MicroProfile client (blocking)
+    // Java with JAX-RS server (no client - JAX-RS client doesn't support standalone typed proxies)
     generateCode(
       specPath = specPath,
       language = "java",
       serverLib = Some(OpenApiServerLib.JaxRsSync),
-      clientLib = Some(OpenApiClientLib.MicroProfileBlocking),
+      clientLib = None,
       lang = LangJava,
       generateValidation = true
     )
 
-    // Java with Spring server + MicroProfile client (blocking)
+    // Java with JAX-RS server + JDK HTTP Client
+    generateCode(
+      specPath = specPath,
+      language = "java",
+      serverLib = Some(OpenApiServerLib.JaxRsSync),
+      clientLib = Some(OpenApiClientLib.JdkHttpClient),
+      lang = LangJava,
+      generateValidation = true
+    )
+
+    // Java with Spring server (no client)
     generateCode(
       specPath = specPath,
       language = "java",
       serverLib = Some(OpenApiServerLib.SpringMvc),
-      clientLib = Some(OpenApiClientLib.MicroProfileBlocking),
+      clientLib = None,
       lang = LangJava,
       generateValidation = true
     )
 
-    // Java with Quarkus server + MicroProfile client (reactive)
+    // Java with Quarkus server (no client)
     generateCode(
       specPath = specPath,
       language = "java",
       serverLib = Some(OpenApiServerLib.QuarkusReactive),
-      clientLib = Some(OpenApiClientLib.MicroProfileReactive),
+      clientLib = None,
       lang = LangJava,
       generateValidation = true
     )
@@ -58,42 +68,42 @@ object GenerateOpenApiTest {
       generateValidation = false
     )
 
-    // Scala with Spring server + MicroProfile client (blocking)
+    // Scala with Spring server (no client)
     generateCode(
       specPath = specPath,
       language = "scala",
       serverLib = Some(OpenApiServerLib.SpringMvc),
-      clientLib = Some(OpenApiClientLib.MicroProfileBlocking),
+      clientLib = None,
       lang = langScala,
       generateValidation = true
     )
 
-    // Kotlin with JAX-RS server + MicroProfile client (blocking)
+    // Kotlin with JAX-RS server (no client)
     generateCode(
       specPath = specPath,
       language = "kotlin",
       serverLib = Some(OpenApiServerLib.JaxRsSync),
-      clientLib = Some(OpenApiClientLib.MicroProfileBlocking),
+      clientLib = None,
       lang = LangKotlin,
       generateValidation = true
     )
 
-    // Kotlin with Spring server + MicroProfile client (blocking)
+    // Kotlin with Spring server (no client)
     generateCode(
       specPath = specPath,
       language = "kotlin",
       serverLib = Some(OpenApiServerLib.SpringMvc),
-      clientLib = Some(OpenApiClientLib.MicroProfileBlocking),
+      clientLib = None,
       lang = LangKotlin,
       generateValidation = true
     )
 
-    // Kotlin with Quarkus server + MicroProfile client (reactive)
+    // Kotlin with Quarkus server (no client)
     generateCode(
       specPath = specPath,
       language = "kotlin",
       serverLib = Some(OpenApiServerLib.QuarkusReactive),
-      clientLib = Some(OpenApiClientLib.MicroProfileReactive),
+      clientLib = None,
       lang = LangKotlin,
       generateValidation = true
     )
@@ -123,14 +133,12 @@ object GenerateOpenApiTest {
 
     clientLib.foreach { client =>
       val name = client match {
-        case OpenApiClientLib.MicroProfileReactive => "mp-reactive"
-        case OpenApiClientLib.MicroProfileBlocking => "mp"
-        case OpenApiClientLib.SpringWebClient      => "spring-webclient"
-        case OpenApiClientLib.SpringRestTemplate   => "spring-rest"
-        case OpenApiClientLib.VertxMutiny          => "vertx"
-        case OpenApiClientLib.Http4s               => "http4s"
-        case OpenApiClientLib.Sttp                 => "sttp"
-        case OpenApiClientLib.ZioHttp              => "zio-http"
+        case OpenApiClientLib.JdkHttpClient      => "jdk"
+        case OpenApiClientLib.SpringWebClient    => "spring-webclient"
+        case OpenApiClientLib.SpringRestTemplate => "spring-rest"
+        case OpenApiClientLib.Http4s             => "http4s"
+        case OpenApiClientLib.Sttp               => "sttp"
+        case OpenApiClientLib.ZioHttp            => "zio-http"
       }
       parts += s"client-$name"
     }

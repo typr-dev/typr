@@ -17,6 +17,11 @@ public record CurrencyId(@JsonValue /* bpchar, max 3 chars */ String value) {
     return new CurrencyId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<CurrencyId, /* bpchar, max 3 chars */ String> bijection =
     Bijection.of(CurrencyId::value, CurrencyId::new);
 

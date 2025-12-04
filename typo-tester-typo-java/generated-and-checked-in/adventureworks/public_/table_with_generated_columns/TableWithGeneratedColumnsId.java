@@ -17,6 +17,11 @@ public record TableWithGeneratedColumnsId(@JsonValue String value) {
     return new TableWithGeneratedColumnsId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<TableWithGeneratedColumnsId, String> bijection =
     Bijection.of(TableWithGeneratedColumnsId::value, TableWithGeneratedColumnsId::new);
 

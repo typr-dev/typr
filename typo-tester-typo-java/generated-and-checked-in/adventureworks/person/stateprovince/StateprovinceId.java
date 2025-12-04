@@ -17,6 +17,11 @@ public record StateprovinceId(@JsonValue Integer value) {
     return new StateprovinceId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<StateprovinceId, Integer> bijection =
     Bijection.of(StateprovinceId::value, StateprovinceId::new);
 

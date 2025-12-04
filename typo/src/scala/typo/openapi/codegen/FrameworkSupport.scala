@@ -55,6 +55,11 @@ trait FrameworkSupport {
   /** The exception type thrown when HTTP request fails (e.g., WebApplicationException) */
   def clientExceptionType: jvm.Type.Qualified
 
+  /** Exception types that client methods should declare in their throws clause. For sync HTTP clients (JDK), this typically includes IOException and JsonProcessingException. For async clients or
+    * annotation-based clients, this is usually empty.
+    */
+  def clientMethodThrows: List[jvm.Type.Qualified] = Nil
+
   /** Extract response from the exception */
   def getResponseFromException(exception: jvm.Code): jvm.Code
 
@@ -79,6 +84,88 @@ trait FrameworkSupport {
     * parameters and implements all methods with real HTTP calls.
     */
   def generatesConcreteClient: Boolean = false
+
+  /** Constructor parameters for concrete client class. Only used when generatesConcreteClient is true.
+    */
+  def clientConstructorParams: List[jvm.Param[jvm.Type]] = Nil
+
+  /** Comment for the generated client class. Only used when generatesConcreteClient is true.
+    */
+  def clientClassComment(apiName: String): String = s"Client implementation for $apiName"
+
+  /** Additional imports needed for the client class. Only used when generatesConcreteClient is true.
+    */
+  def clientAdditionalImports: List[String] = Nil
+
+  /** Generate HTTP method constant code (e.g., HttpMethod.GET, "GET").
+    */
+  def httpMethodCode(method: HttpMethod): jvm.Code = method match {
+    case HttpMethod.Get     => jvm.StrLit("GET").code
+    case HttpMethod.Post    => jvm.StrLit("POST").code
+    case HttpMethod.Put     => jvm.StrLit("PUT").code
+    case HttpMethod.Delete  => jvm.StrLit("DELETE").code
+    case HttpMethod.Patch   => jvm.StrLit("PATCH").code
+    case HttpMethod.Head    => jvm.StrLit("HEAD").code
+    case HttpMethod.Options => jvm.StrLit("OPTIONS").code
+  }
+
+  /** Build a client request for the given method, URI, and optional body.
+    * @param httpMethodCode
+    *   the HTTP method code
+    * @param uriCode
+    *   the URI code
+    * @param bodyParamName
+    *   optional body parameter name (for POST/PUT)
+    * @return
+    *   code that creates the request
+    */
+  def buildClientRequest(httpMethodCode: jvm.Code, uriCode: jvm.Code, bodyParamName: Option[String]): jvm.Code =
+    throw new UnsupportedOperationException("buildClientRequest not implemented for this framework")
+
+  /** Execute the client request and get response. Returns (responseDecl, responseIdent) code.
+    * @param requestIdent
+    *   identifier for the request variable
+    * @return
+    *   code that executes the request and gets response
+    */
+  def executeClientRequest(requestIdent: jvm.Ident): jvm.Code =
+    throw new UnsupportedOperationException("executeClientRequest not implemented for this framework")
+
+  /** Build URI path code with segments. Base implementation uses / operator.
+    * @param baseUriIdent
+    *   base URI identifier
+    * @param segments
+    *   list of (segment, isParameter) pairs
+    * @return
+    *   code that builds the URI
+    */
+  def buildUriPath(baseUriIdent: jvm.Ident, segments: List[(String, Boolean)]): jvm.Code = {
+    var uriCode: jvm.Code = baseUriIdent.code
+    for ((segment, isParam) <- segments) {
+      if (isParam) {
+        uriCode = code"$uriCode / ${jvm.Ident(segment).code}"
+      } else {
+        uriCode = code"$uriCode / ${jvm.StrLit(segment).code}"
+      }
+    }
+    uriCode
+  }
+
+  /** Add query parameter to URI.
+    * @param uriCode
+    *   current URI code
+    * @param paramName
+    *   parameter name in URL
+    * @param paramIdent
+    *   parameter identifier in code
+    * @param required
+    *   whether the parameter is required
+    * @return
+    *   code with query parameter added
+    */
+  def addQueryParam(uriCode: jvm.Code, paramName: String, paramIdent: jvm.Ident, required: Boolean): jvm.Code =
+    if (required) code"$uriCode.withQueryParam(${jvm.StrLit(paramName).code}, ${paramIdent.code})"
+    else code"$uriCode.withOptionQueryParam(${jvm.StrLit(paramName).code}, ${paramIdent.code})"
 
   /** Generate the toResponse method body for a generic response type (e.g., Ok[T]). Takes the value expression and generates the response creation code with entity encoding.
     * @param valueExpr
@@ -536,54 +623,171 @@ object QuarkusReactiveServerSupport extends FrameworkSupport {
   override def getResponseFromException(exception: jvm.Code): jvm.Code = JaxRsSupport.getResponseFromException(exception)
 }
 
-/** MicroProfile Rest Client - generates client interface with JAX-RS annotations that can be used with the MicroProfile Rest Client to make HTTP calls.
+/** JDK HTTP Client support for Java - generates concrete client classes using java.net.http.HttpClient. This is a zero-dependency client that works standalone without any container.
   */
-object MicroProfileRestClientSupport extends FrameworkSupport {
+object JdkHttpClientSupport extends FrameworkSupport {
 
-  override def interfaceAnnotations(basePath: Option[String], securitySchemes: Map[String, SecurityScheme]): List[jvm.Annotation] = {
-    // @RegisterRestClient annotation
-    val registerRestClient = jvm.Annotation(
-      Types.MicroProfile.RegisterRestClient,
-      Nil
-    )
+  // JDK HTTP Client doesn't use annotations - it's a programmatic API
+  override def interfaceAnnotations(basePath: Option[String], securitySchemes: Map[String, SecurityScheme]): List[jvm.Annotation] = Nil
+  override def methodAnnotations(method: ApiMethod): List[jvm.Annotation] = Nil
+  override def securityAnnotations(security: List[SecurityRequirement]): List[jvm.Annotation] = Nil
+  override def parameterAnnotations(param: ApiParameter): List[jvm.Annotation] = Nil
+  override def bodyAnnotations(body: RequestBody): List[jvm.Annotation] = Nil
+  override def fileUploadType: jvm.Type = Types.InputStream
+  override def formFieldAnnotations(field: FormField): List[jvm.Annotation] = Nil
 
-    // Add @Path if there's a base path
-    val pathAnnotation = basePath.map { path =>
-      jvm.Annotation(
-        Types.JaxRs.Path,
-        List(jvm.Annotation.Arg.Positional(jvm.StrLit(path).code))
-      )
-    }.toList
+  // Response type for JDK HTTP Client
+  override def responseType: jvm.Type = jvm.Type.TApply(Types.JdkHttp.HttpResponse, List(Types.String))
 
-    List(registerRestClient) ++ pathAnnotation
+  override def buildOkResponse(value: jvm.Code): jvm.Code =
+    throw new UnsupportedOperationException("JDK HTTP Client is client-only, no server response building")
+
+  override def buildStatusResponse(statusCode: jvm.Code, value: jvm.Code): jvm.Code =
+    throw new UnsupportedOperationException("JDK HTTP Client is client-only, no server response building")
+
+  // Client-side: get status from HttpResponse
+  override def getStatusCode(response: jvm.Code): jvm.Code = code"$response.statusCode()"
+
+  // Client-side: read entity - this is synchronous, body is already a String
+  // The actual JSON parsing happens in the generated code using ObjectMapper
+  override def readEntity(response: jvm.Code, entityType: jvm.Type): jvm.Code = entityType match {
+    case jvm.Type.TApply(_, _) =>
+      // Generic type: use TypeReference to preserve type parameters at runtime
+      val typeRefTpe = jvm.Type.TApply(Types.JacksonMapper.TypeReference, List(entityType))
+      val typeRefExpr = jvm.NewWithBody(extendsClass = Some(typeRefTpe), implementsInterface = None, Nil).code
+      code"objectMapper.readValue($response.body(), $typeRefExpr)"
+    case _ =>
+      val classLiteral = jvm.JavaClassOf(entityType).code
+      code"objectMapper.readValue($response.body(), $classLiteral)"
   }
 
-  // Use JAX-RS annotations for methods and parameters
-  override def methodAnnotations(method: ApiMethod): List[jvm.Annotation] =
-    JaxRsSupport.methodAnnotations(method)
+  override def getHeaderString(response: jvm.Code, headerName: String): jvm.Code =
+    code"$response.headers().firstValue(${jvm.StrLit(headerName).code}).orElse(null)"
 
-  override def securityAnnotations(security: List[SecurityRequirement]): List[jvm.Annotation] =
-    JaxRsSupport.securityAnnotations(security)
+  // JDK HTTP Client throws IOException for network errors
+  override def clientExceptionType: jvm.Type.Qualified = jvm.Type.Qualified("java.io.IOException")
+  override def getResponseFromException(exception: jvm.Code): jvm.Code =
+    throw new UnsupportedOperationException("JDK HTTP Client exceptions don't contain response")
 
-  override def parameterAnnotations(param: ApiParameter): List[jvm.Annotation] =
-    JaxRsSupport.parameterAnnotations(param)
+  // JDK HTTP Client is synchronous - entity reading returns T directly
+  override def isAsyncEntityRead: Boolean = false
 
-  override def bodyAnnotations(body: RequestBody): List[jvm.Annotation] =
-    JaxRsSupport.bodyAnnotations(body)
+  // JDK HTTP Client generates concrete client classes
+  override def generatesConcreteClient: Boolean = true
 
-  override def fileUploadType: jvm.Type = Types.InputStream
+  // Constructor parameters: HttpClient, URI (baseUri), ObjectMapper
+  override def clientConstructorParams: List[jvm.Param[jvm.Type]] = List(
+    jvm.Param[jvm.Type](
+      annotations = Nil,
+      comments = jvm.Comments(List("JDK HTTP client for making HTTP requests")),
+      name = jvm.Ident("httpClient"),
+      tpe = Types.JdkHttp.HttpClient,
+      default = None
+    ),
+    jvm.Param[jvm.Type](
+      annotations = Nil,
+      comments = jvm.Comments(List("Base URI for API requests")),
+      name = jvm.Ident("baseUri"),
+      tpe = Types.URI,
+      default = None
+    ),
+    jvm.Param[jvm.Type](
+      annotations = Nil,
+      comments = jvm.Comments(List("Jackson ObjectMapper for JSON serialization")),
+      name = jvm.Ident("objectMapper"),
+      tpe = Types.JacksonMapper.ObjectMapper,
+      default = None
+    )
+  )
 
-  override def formFieldAnnotations(field: FormField): List[jvm.Annotation] =
-    JaxRsSupport.formFieldAnnotations(field)
+  override def clientClassComment(apiName: String): String = s"JDK HTTP Client implementation for $apiName"
 
-  override def responseType: jvm.Type.Qualified = JaxRsSupport.responseType
-  override def buildOkResponse(value: jvm.Code): jvm.Code = JaxRsSupport.buildOkResponse(value)
-  override def buildStatusResponse(statusCode: jvm.Code, value: jvm.Code): jvm.Code = JaxRsSupport.buildStatusResponse(statusCode, value)
-  override def getStatusCode(response: jvm.Code): jvm.Code = JaxRsSupport.getStatusCode(response)
-  override def readEntity(response: jvm.Code, entityType: jvm.Type): jvm.Code = JaxRsSupport.readEntity(response, entityType)
-  override def getHeaderString(response: jvm.Code, headerName: String): jvm.Code = JaxRsSupport.getHeaderString(response, headerName)
-  override def clientExceptionType: jvm.Type.Qualified = JaxRsSupport.clientExceptionType
-  override def getResponseFromException(exception: jvm.Code): jvm.Code = JaxRsSupport.getResponseFromException(exception)
+  override def clientAdditionalImports: List[String] = Nil // No additional imports needed
+
+  // JDK HTTP Client throws checked exceptions: IOException from httpClient.send() and InterruptedException
+  // Using Exception to cover both since JsonProcessingException extends IOException
+  override def clientMethodThrows: List[jvm.Type.Qualified] = List(Types.Exception)
+
+  override def httpMethodCode(method: HttpMethod): jvm.Code = jvm
+    .StrLit(method match {
+      case HttpMethod.Get     => "GET"
+      case HttpMethod.Post    => "POST"
+      case HttpMethod.Put     => "PUT"
+      case HttpMethod.Delete  => "DELETE"
+      case HttpMethod.Patch   => "PATCH"
+      case HttpMethod.Head    => "HEAD"
+      case HttpMethod.Options => "OPTIONS"
+    })
+    .code
+
+  override def buildClientRequest(httpMethodCode: jvm.Code, uriCode: jvm.Code, bodyParamName: Option[String]): jvm.Code = {
+    val bodyPublisher = bodyParamName match {
+      case Some(paramName) =>
+        code"${Types.JdkHttp.BodyPublishers}.ofString(objectMapper.writeValueAsString(${jvm.Ident(paramName).code}))"
+      case None =>
+        code"${Types.JdkHttp.BodyPublishers}.noBody()"
+    }
+    code"${Types.JdkHttp.HttpRequest}.newBuilder($uriCode).method($httpMethodCode, $bodyPublisher).header(${jvm.StrLit("Content-Type").code}, ${jvm.StrLit("application/json").code}).header(${jvm
+        .StrLit("Accept")
+        .code}, ${jvm.StrLit("application/json").code}).build()"
+  }
+
+  override def executeClientRequest(requestIdent: jvm.Ident): jvm.Code =
+    code"httpClient.send(${requestIdent.code}, ${Types.JdkHttp.BodyHandlers}.ofString())"
+
+  override def buildUriPath(baseUriIdent: jvm.Ident, segments: List[(String, Boolean)]): jvm.Code = {
+    // For JDK, we need to build the path string and use URI.resolve
+    val pathParts = segments.map {
+      case (segment, true)  => code"${jvm.Ident(segment).code}.toString()"
+      case (segment, false) => jvm.StrLit(segment).code
+    }
+    if (pathParts.isEmpty) {
+      baseUriIdent.code
+    } else {
+      // Build: baseUri.resolve("/" + seg1 + "/" + seg2 + ...)
+      val pathExpr = pathParts.zipWithIndex
+        .map { case (part, idx) =>
+          if (idx == 0) code"${jvm.StrLit("/").code} + $part"
+          else code"${jvm.StrLit("/").code} + $part"
+        }
+        .reduceLeft((a, b) => code"$a + $b")
+      code"${baseUriIdent.code}.resolve($pathExpr)"
+    }
+  }
+
+  /** Build the full URI including query parameters for JDK HTTP Client. Returns a URI - converts path + query string to URI using URI.create().
+    */
+  def buildFullClientUri(
+      baseUriIdent: jvm.Ident,
+      segments: List[(String, Boolean)],
+      queryParams: List[(String, jvm.Ident, Boolean)]
+  ): jvm.Code = {
+    // Build path as string first
+    val pathParts = segments.map {
+      case (segment, true)  => code"${jvm.Ident(segment).code}.toString()"
+      case (segment, false) => jvm.StrLit(segment).code
+    }
+
+    // Build full path string starting from base URI as string
+    var uriStringCode: jvm.Code = code"${baseUriIdent.code}.toString()"
+    for (part <- pathParts) {
+      uriStringCode = code"$uriStringCode + ${jvm.StrLit("/").code} + $part"
+    }
+
+    // Add query parameters with proper ? and & separators
+    queryParams.zipWithIndex.foreach { case ((paramName, paramIdent, required), idx) =>
+      val separator = if (idx == 0) "?" else "&"
+      if (required) {
+        uriStringCode = code"$uriStringCode + ${jvm.StrLit(s"$separator$paramName=").code} + ${paramIdent.code}.toString()"
+      } else {
+        // For Optional in Java, check .isPresent() and use .get()
+        uriStringCode = code"$uriStringCode + (${paramIdent.code}.isPresent() ? ${jvm.StrLit(s"$separator$paramName=").code} + ${paramIdent.code}.get().toString() : ${jvm.StrLit("").code})"
+      }
+    }
+
+    // Convert final string to URI
+    code"${Types.URI}.create($uriStringCode)"
+  }
 }
 
 /** HTTP4s framework support for Scala - generates clean traits without annotations. HTTP4s uses a DSL-based approach rather than annotations, so this generates plain Scala traits that can be wired to
@@ -743,5 +947,40 @@ object Http4sSupport extends FrameworkSupport {
     )
 
     List(unapplyMethod, segmentEncoderGiven)
+  }
+
+  // Constructor parameters: Client[IO] and Uri
+  override def clientConstructorParams: List[jvm.Param[jvm.Type]] = List(
+    jvm.Param[jvm.Type](
+      annotations = Nil,
+      comments = jvm.Comments(List("Http4s client for making HTTP requests")),
+      name = jvm.Ident("client"),
+      tpe = jvm.Type.TApply(Types.Http4s.Client, List(Types.Cats.IO)),
+      default = None
+    ),
+    jvm.Param[jvm.Type](
+      annotations = Nil,
+      comments = jvm.Comments(List("Base URI for API requests")),
+      name = jvm.Ident("baseUri"),
+      tpe = Types.Http4s.Uri,
+      default = None
+    )
+  )
+
+  override def clientClassComment(apiName: String): String = s"Http4s client implementation for $apiName"
+
+  override def clientAdditionalImports: List[String] = List(
+    "org.http4s.circe.CirceEntityEncoder.circeEntityEncoder",
+    "org.http4s.circe.CirceEntityDecoder.circeEntityDecoder"
+  )
+
+  override def httpMethodCode(method: HttpMethod): jvm.Code = method match {
+    case HttpMethod.Get     => code"${Types.Http4s.Method}.GET"
+    case HttpMethod.Post    => code"${Types.Http4s.Method}.POST"
+    case HttpMethod.Put     => code"${Types.Http4s.Method}.PUT"
+    case HttpMethod.Delete  => code"${Types.Http4s.Method}.DELETE"
+    case HttpMethod.Patch   => code"${Types.Http4s.Method}.PATCH"
+    case HttpMethod.Head    => code"${Types.Http4s.Method}.HEAD"
+    case HttpMethod.Options => code"${Types.Http4s.Method}.OPTIONS"
   }
 }

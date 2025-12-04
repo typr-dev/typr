@@ -17,6 +17,11 @@ public record IdentityTestId(@JsonValue /* max 250 chars */ String value) {
     return new IdentityTestId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<IdentityTestId, /* max 250 chars */ String> bijection =
     Bijection.of(IdentityTestId::value, IdentityTestId::new);
 

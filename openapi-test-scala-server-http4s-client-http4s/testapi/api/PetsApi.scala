@@ -9,43 +9,42 @@ import testapi.model.PetCreate
 import testapi.model.PetId
 
 trait PetsApi {
-
   /** Create a pet */
   def createPet(body: PetCreate): IO[Response201400[Pet, Error]]
 
   /** Delete a pet */
   def deletePet(
-      /** The pet ID */
-      petId: PetId
+    /** The pet ID */
+    petId: PetId
   ): IO[Void]
 
   /** Get a pet by ID */
   def getPet(
-      /** The pet ID */
-      petId: PetId
+    /** The pet ID */
+    petId: PetId
   ): IO[Response200404[Pet, Error]]
 
   /** Get pet photo */
   def getPetPhoto(
-      /** The pet ID */
-      petId: PetId
+    /** The pet ID */
+    petId: PetId
   ): IO[Void]
 
   /** List all pets */
   def listPets(
-      /** Maximum number of pets to return */
-      limit: Option[Int],
-      /** Filter by status */
-      status: Option[String]
+    /** Maximum number of pets to return */
+    limit: Option[Int],
+    /** Filter by status */
+    status: Option[String]
   ): IO[List[Pet]]
 
   /** Upload a pet photo */
   def uploadPetPhoto(
-      /** The pet ID */
-      petId: PetId,
-      /** Optional caption for the photo */
-      caption: String,
-      /** The photo file to upload */
-      file: Array[Byte]
+    /** The pet ID */
+    petId: PetId,
+    /** Optional caption for the photo */
+    caption: String,
+    /** The photo file to upload */
+    file: Array[Byte]
   ): IO[Json]
 }

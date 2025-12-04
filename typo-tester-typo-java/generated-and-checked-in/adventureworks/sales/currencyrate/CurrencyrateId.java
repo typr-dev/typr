@@ -17,6 +17,11 @@ public record CurrencyrateId(@JsonValue Integer value) {
     return new CurrencyrateId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<CurrencyrateId, Integer> bijection =
     Bijection.of(CurrencyrateId::value, CurrencyrateId::new);
 

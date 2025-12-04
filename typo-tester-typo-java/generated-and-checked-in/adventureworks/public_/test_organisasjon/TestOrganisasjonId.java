@@ -17,6 +17,11 @@ public record TestOrganisasjonId(@JsonValue String value) {
     return new TestOrganisasjonId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<TestOrganisasjonId, String> bijection =
     Bijection.of(TestOrganisasjonId::value, TestOrganisasjonId::new);
 

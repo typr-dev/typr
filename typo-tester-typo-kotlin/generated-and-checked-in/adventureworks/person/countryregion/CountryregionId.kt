@@ -13,6 +13,10 @@ import typo.runtime.internal.arrayMap
 
 /** Type for the primary key of table `person.countryregion` */
 data class CountryregionId(@JsonValue val value: /* max 3 chars */ String) {
+  override fun toString(): kotlin.String {
+    return value.toString()
+  }
+
   companion object {
     val bijection: Bijection<CountryregionId, /* max 3 chars */ String> =
       Bijection.of(CountryregionId::value, ::CountryregionId)

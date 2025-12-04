@@ -13,6 +13,10 @@ import typo.runtime.internal.arrayMap
 
 /** Type for the primary key of table `humanresources.shift` */
 data class ShiftId(@JsonValue val value: Int) {
+  override fun toString(): kotlin.String {
+    return value.toString()
+  }
+
   companion object {
     val bijection: Bijection<ShiftId, Int> =
       Bijection.of(ShiftId::value, ::ShiftId)

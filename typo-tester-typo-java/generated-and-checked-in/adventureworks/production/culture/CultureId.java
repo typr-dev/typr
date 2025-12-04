@@ -17,6 +17,11 @@ public record CultureId(@JsonValue /* bpchar, max 6 chars */ String value) {
     return new CultureId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<CultureId, /* bpchar, max 6 chars */ String> bijection =
     Bijection.of(CultureId::value, CultureId::new);
 

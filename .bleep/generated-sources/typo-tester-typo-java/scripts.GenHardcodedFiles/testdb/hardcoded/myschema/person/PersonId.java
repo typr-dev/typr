@@ -17,6 +17,11 @@ public record PersonId(@JsonValue Long value) {
     return new PersonId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<PersonId, Long> bijection =
     Bijection.of(PersonId::value, PersonId::new);
 

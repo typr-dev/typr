@@ -17,6 +17,11 @@ public record DocumentId(@JsonValue String value) {
     return new DocumentId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<DocumentId, String> bijection =
     Bijection.of(DocumentId::value, DocumentId::new);
 

@@ -17,6 +17,11 @@ public record ShiftId(@JsonValue Integer value) {
     return new ShiftId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<ShiftId, Integer> bijection =
     Bijection.of(ShiftId::value, ShiftId::new);
 

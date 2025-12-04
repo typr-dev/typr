@@ -9,9 +9,9 @@ import typo.openapi.codegen.{
   Http4sSupport,
   JacksonSupport,
   JaxRsSupport,
+  JdkHttpClientSupport,
   Jsr380ValidationSupport,
   JsonLibSupport,
-  MicroProfileRestClientSupport,
   ModelCodegen,
   NoFrameworkSupport,
   NoValidationSupport,
@@ -107,14 +107,12 @@ object OpenApiCodegen {
 
     // Determine client framework support based on clientLib
     val clientFrameworkSupport: Option[FrameworkSupport] = options.clientLib.map {
-      case OpenApiClientLib.MicroProfileReactive => MicroProfileRestClientSupport
-      case OpenApiClientLib.MicroProfileBlocking => MicroProfileRestClientSupport
-      case OpenApiClientLib.SpringWebClient      => SpringBootSupport // TODO: implement
-      case OpenApiClientLib.SpringRestTemplate   => SpringBootSupport // TODO: implement
-      case OpenApiClientLib.VertxMutiny          => MicroProfileRestClientSupport // Similar to MicroProfile
-      case OpenApiClientLib.Http4s               => Http4sSupport
-      case OpenApiClientLib.Sttp                 => NoFrameworkSupport // TODO: implement
-      case OpenApiClientLib.ZioHttp              => NoFrameworkSupport // TODO: implement
+      case OpenApiClientLib.JdkHttpClient      => JdkHttpClientSupport
+      case OpenApiClientLib.SpringWebClient    => SpringBootSupport // TODO: implement
+      case OpenApiClientLib.SpringRestTemplate => SpringBootSupport // TODO: implement
+      case OpenApiClientLib.Http4s             => Http4sSupport
+      case OpenApiClientLib.Sttp               => NoFrameworkSupport // TODO: implement
+      case OpenApiClientLib.ZioHttp            => NoFrameworkSupport // TODO: implement
     }
 
     // Scala doesn't use JSR-380 annotations - validation is done differently

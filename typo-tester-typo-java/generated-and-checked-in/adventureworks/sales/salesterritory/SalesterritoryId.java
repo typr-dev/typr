@@ -17,6 +17,11 @@ public record SalesterritoryId(@JsonValue Integer value) {
     return new SalesterritoryId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<SalesterritoryId, Integer> bijection =
     Bijection.of(SalesterritoryId::value, SalesterritoryId::new);
 

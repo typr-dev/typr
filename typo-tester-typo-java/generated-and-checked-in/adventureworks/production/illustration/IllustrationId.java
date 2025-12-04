@@ -17,6 +17,11 @@ public record IllustrationId(@JsonValue Integer value) {
     return new IllustrationId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<IllustrationId, Integer> bijection =
     Bijection.of(IllustrationId::value, IllustrationId::new);
 

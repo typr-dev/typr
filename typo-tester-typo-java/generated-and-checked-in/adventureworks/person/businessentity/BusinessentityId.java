@@ -17,6 +17,11 @@ public record BusinessentityId(@JsonValue Integer value) {
     return new BusinessentityId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<BusinessentityId, Integer> bijection =
     Bijection.of(BusinessentityId::value, BusinessentityId::new);
 

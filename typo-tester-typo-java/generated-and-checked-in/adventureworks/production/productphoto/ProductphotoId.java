@@ -17,6 +17,11 @@ public record ProductphotoId(@JsonValue Integer value) {
     return new ProductphotoId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<ProductphotoId, Integer> bijection =
     Bijection.of(ProductphotoId::value, ProductphotoId::new);
 

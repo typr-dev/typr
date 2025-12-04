@@ -13,6 +13,10 @@ import typo.runtime.internal.arrayMap
 
 /** Type for the primary key of table `public.table-with-generated-columns` */
 data class TableWithGeneratedColumnsId(@JsonValue val value: String) {
+  override fun toString(): kotlin.String {
+    return value.toString()
+  }
+
   companion object {
     val bijection: Bijection<TableWithGeneratedColumnsId, String> =
       Bijection.of(TableWithGeneratedColumnsId::value, ::TableWithGeneratedColumnsId)

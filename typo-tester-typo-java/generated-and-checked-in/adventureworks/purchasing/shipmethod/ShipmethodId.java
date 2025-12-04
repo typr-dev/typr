@@ -17,6 +17,11 @@ public record ShipmethodId(@JsonValue Integer value) {
     return new ShipmethodId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<ShipmethodId, Integer> bijection =
     Bijection.of(ShipmethodId::value, ShipmethodId::new);
 

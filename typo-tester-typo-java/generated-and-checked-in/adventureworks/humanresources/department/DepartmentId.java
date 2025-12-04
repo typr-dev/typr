@@ -17,6 +17,11 @@ public record DepartmentId(@JsonValue Integer value) {
     return new DepartmentId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<DepartmentId, Integer> bijection =
     Bijection.of(DepartmentId::value, DepartmentId::new);
 

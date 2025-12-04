@@ -48,8 +48,15 @@ class ApiCodegen(
     // Find common base path for all methods in this API
     val basePath = findCommonBasePath(api.methods.map(_.path))
 
+    // Get throws clause from client support if it generates concrete client
+    // (interface methods must declare checked exceptions that implementations throw)
+    val baseMethodThrows = clientFrameworkSupport
+      .filter(_.generatesConcreteClient)
+      .map(_.clientMethodThrows)
+      .getOrElse(Nil)
+
     // Generate base trait (no framework annotations on methods)
-    val baseMethods = api.methods.map(m => generateBaseMethod(m))
+    val baseMethods = api.methods.map(m => generateBaseMethod(m, throws = baseMethodThrows))
     val baseInterface = jvm.Class(
       annotations = Nil,
       comments = comments,
@@ -210,7 +217,7 @@ class ApiCodegen(
     jvm.File(clientTpe, generatedCode, secondaryTypes = Nil, scope = Scope.Main)
   }
 
-  /** Generate concrete client class (for DSL-based frameworks like Http4s) */
+  /** Generate concrete client class (for DSL-based frameworks like Http4s, JDK HttpClient) */
   private def generateConcreteClientClass(
       api: ApiInterface,
       baseTpe: jvm.Type.Qualified,
@@ -218,48 +225,37 @@ class ApiCodegen(
   ): jvm.File = {
     val clientTpe = jvm.Type.Qualified(apiPkg / jvm.Ident(api.name + "Client"))
 
-    // Constructor parameters: Client[IO] and Uri
-    val clientParam = jvm.Param[jvm.Type](
-      annotations = Nil,
-      comments = jvm.Comments(List("Http4s client for making HTTP requests")),
-      name = jvm.Ident("client"),
-      tpe = jvm.Type.TApply(Types.Http4s.Client, List(Types.Cats.IO)),
-      default = None
-    )
-    val baseUriParam = jvm.Param[jvm.Type](
-      annotations = Nil,
-      comments = jvm.Comments(List("Base URI for API requests")),
-      name = jvm.Ident("baseUri"),
-      tpe = Types.Http4s.Uri,
-      default = None
-    )
+    // Get constructor parameters from framework support
+    val constructorParams = clientSupport.clientConstructorParams
 
     // Generate methods with concrete implementations
     val methods = api.methods.map { m =>
       generateConcreteClientMethod(m, clientSupport)
     }
 
+    // For Java/Kotlin, the base API is an interface, so use implements
+    // For Scala, it's a trait which uses extends
+    val (extendsOpt, implementsList) = lang match {
+      case _: LangScala => (Some(baseTpe), Nil)
+      case _            => (None, List(baseTpe))
+    }
+
     val clientClass = jvm.Class(
       annotations = Nil,
-      comments = jvm.Comments(List(s"Http4s client implementation for ${api.name}")),
+      comments = jvm.Comments(List(clientSupport.clientClassComment(api.name))),
       classType = jvm.ClassType.Class,
       name = clientTpe,
       tparams = Nil,
-      params = List(clientParam, baseUriParam),
+      params = constructorParams,
       implicitParams = Nil,
-      `extends` = Some(baseTpe),
-      implements = Nil,
+      `extends` = extendsOpt,
+      implements = implementsList,
       members = methods,
       staticMembers = Nil
     )
 
     val generatedCode = lang.renderTree(clientClass, lang.Ctx.Empty)
-    // Add http4s imports for client
-    val additionalImports = List(
-      "org.http4s.circe.CirceEntityEncoder.circeEntityEncoder",
-      "org.http4s.circe.CirceEntityDecoder.circeEntityDecoder"
-    )
-    jvm.File(clientTpe, generatedCode, secondaryTypes = Nil, scope = Scope.Main, additionalImports = additionalImports)
+    jvm.File(clientTpe, generatedCode, secondaryTypes = Nil, scope = Scope.Main, additionalImports = clientSupport.clientAdditionalImports)
   }
 
   /** Generate a concrete client method implementation for Http4s */
@@ -301,7 +297,7 @@ class ApiCodegen(
       params = params,
       implicitParams = Nil,
       tpe = returnType,
-      throws = Nil,
+      throws = clientSupport.clientMethodThrows,
       body = jvm.Body(body),
       isOverride = true,
       isDefault = false
@@ -313,19 +309,23 @@ class ApiCodegen(
       method: ApiMethod,
       clientSupport: FrameworkSupport
   ): List[jvm.Code] = {
-    // Build the URI with path and query parameters
-    val uriCode = buildClientUri(method)
+    if (clientSupport.isAsyncEntityRead) {
+      generateAsyncClientMethodBody(method, clientSupport)
+    } else {
+      generateSyncClientMethodBody(method, clientSupport)
+    }
+  }
+
+  /** Generate async client method body (for Http4s, etc.) */
+  private def generateAsyncClientMethodBody(
+      method: ApiMethod,
+      clientSupport: FrameworkSupport
+  ): List[jvm.Code] = {
+    // Build the URI with path and query parameters (Http4s style with / operator)
+    val uriCode = buildClientUriHttp4s(method)
 
     // Build the HTTP method
-    val httpMethodCode = method.httpMethod match {
-      case HttpMethod.Get     => code"${Types.Http4s.Method}.GET"
-      case HttpMethod.Post    => code"${Types.Http4s.Method}.POST"
-      case HttpMethod.Put     => code"${Types.Http4s.Method}.PUT"
-      case HttpMethod.Delete  => code"${Types.Http4s.Method}.DELETE"
-      case HttpMethod.Patch   => code"${Types.Http4s.Method}.PATCH"
-      case HttpMethod.Head    => code"${Types.Http4s.Method}.HEAD"
-      case HttpMethod.Options => code"${Types.Http4s.Method}.OPTIONS"
-    }
+    val httpMethodCode = clientSupport.httpMethodCode(method.httpMethod)
 
     // Build the request
     val requestIdent = jvm.Ident("request")
@@ -373,8 +373,126 @@ class ApiCodegen(
     }
   }
 
-  /** Build URI code for client request with path and query parameters */
-  private def buildClientUri(method: ApiMethod): jvm.Code = {
+  /** Generate sync client method body (for JDK HttpClient, etc.) */
+  private def generateSyncClientMethodBody(
+      method: ApiMethod,
+      clientSupport: FrameworkSupport
+  ): List[jvm.Code] = {
+    val stmts = List.newBuilder[jvm.Code]
+
+    // Build the URI with path and query parameters
+    val uriCode = buildClientUriJdk(method, clientSupport)
+
+    // Build the HTTP method code
+    val httpMethodCode = clientSupport.httpMethodCode(method.httpMethod)
+
+    // Get body parameter name if present
+    val bodyParamName = method.requestBody match {
+      case Some(body) if !body.isMultipart => Some("body")
+      case _                               => None
+    }
+
+    // Build the request using framework support
+    val requestIdent = jvm.Ident("request")
+    val requestCode = clientSupport.buildClientRequest(httpMethodCode, uriCode, bodyParamName)
+    stmts += code"var ${requestIdent.code} = $requestCode"
+
+    // Execute the request and get response
+    val responseIdent = jvm.Ident("response")
+    val executeCode = clientSupport.executeClientRequest(requestIdent)
+    stmts += code"var ${responseIdent.code} = $executeCode"
+
+    // Generate response handling
+    method.responseVariants match {
+      case Some(variants) =>
+        val responseName = if (useGenericResponseTypes) {
+          val shape = ResponseShape.fromVariants(variants)
+          shape.typeName
+        } else {
+          capitalize(method.name) + "Response"
+        }
+        stmts ++= generateSyncClientResponseHandling(responseIdent, responseName, variants, clientSupport)
+
+      case None =>
+        // Single response type - just parse the body
+        val singleResponseType = inferSingleResponseType(method)
+        if (singleResponseType == Types.Void) {
+          stmts += code"return null"
+        } else {
+          val readCode = clientSupport.readEntity(responseIdent.code, singleResponseType)
+          stmts += code"return $readCode"
+        }
+    }
+
+    stmts.result()
+  }
+
+  /** Generate sync response handling code (for JDK HTTP Client, etc.) */
+  private def generateSyncClientResponseHandling(
+      responseIdent: jvm.Ident,
+      responseName: String,
+      variants: List[ResponseVariant],
+      clientSupport: FrameworkSupport
+  ): List[jvm.Code] = {
+    val stmts = List.newBuilder[jvm.Code]
+    val statusCodeIdent = jvm.Ident("statusCode")
+    val statusCodeExpr = clientSupport.getStatusCode(responseIdent.code)
+    stmts += code"var ${statusCodeIdent.code} = $statusCodeExpr"
+
+    // Build if-else chain for each variant
+    val ifElseCases = variants.map { variant =>
+      val subtypeCtorTpe = statusSubtypeCtorTpe(variant.statusCode, responseName)
+      val bodyType = typeMapper.map(variant.typeInfo)
+      val readEntityCode = clientSupport.readEntity(responseIdent.code, bodyType)
+
+      val isRangeStatus = variant.statusCode.toLowerCase match {
+        case "4xx" | "5xx" | "default" | "2xx" => true
+        case _                                 => false
+      }
+
+      val condition = variant.statusCode.toLowerCase match {
+        case "2xx"     => code"${statusCodeIdent.code} >= 200 && ${statusCodeIdent.code} < 300"
+        case "4xx"     => code"${statusCodeIdent.code} >= 400 && ${statusCodeIdent.code} < 500"
+        case "5xx"     => code"${statusCodeIdent.code} >= 500 && ${statusCodeIdent.code} < 600"
+        case "default" => code"true"
+        case s =>
+          val statusInt = scala.util.Try(s.toInt).getOrElse(500)
+          code"${statusCodeIdent.code} == $statusInt"
+      }
+
+      // For sync clients, just read entity directly (no .map)
+      // Use .construct() to generate proper `new Type(...)` for Java
+      val constructorCall = if (isRangeStatus) {
+        val newExpr = subtypeCtorTpe.construct(statusCodeIdent.code, readEntityCode)
+        code"return $newExpr"
+      } else {
+        val newExpr = subtypeCtorTpe.construct(readEntityCode)
+        code"return $newExpr"
+      }
+
+      (condition, constructorCall, variant.statusCode.toLowerCase == "default")
+    }
+
+    val (defaultCases, specificCases) = ifElseCases.partition(_._3)
+
+    // Build if-else chain using IfElseChain tree (avoids extra semicolon after last brace)
+    val cases = specificCases.map { case (cond, body, _) => (cond, body) }
+
+    // Add else case
+    val elseBody = defaultCases.headOption
+      .map(_._2)
+      .getOrElse {
+        val errorExpr = Types.IllegalStateException.construct(lang.s(code"Unexpected status code: ${rt(statusCodeIdent.code)}").code)
+        code"throw $errorExpr"
+      }
+
+    stmts += jvm.IfElseChain(cases, elseBody).code
+
+    stmts.result()
+  }
+
+  /** Build URI code for Http4s client request with path and query parameters (uses / operator) */
+  private def buildClientUriHttp4s(method: ApiMethod): jvm.Code = {
     val fullPath = method.path
     val pathSegments = fullPath.split("/").filter(_.nonEmpty).toList
 
@@ -413,6 +531,38 @@ class ApiCodegen(
     }
 
     uriCode
+  }
+
+  /** Build URI code for JDK HTTP client (uses URI.resolve and string concatenation) */
+  private def buildClientUriJdk(method: ApiMethod, clientSupport: FrameworkSupport): jvm.Code = {
+    val fullPath = method.path
+    val pathSegments = fullPath.split("/").filter(_.nonEmpty).toList
+    val baseUriIdent = jvm.Ident("baseUri")
+
+    // Build path segments list with (segment, isParam) tuples
+    val segments = pathSegments.map { segment =>
+      if (segment.startsWith("{") && segment.endsWith("}")) {
+        val paramName = segment.substring(1, segment.length - 1)
+        val param = method.parameters.find(p => p.originalName == paramName).map(_.name).getOrElse(paramName)
+        (param, true)
+      } else {
+        (segment, false)
+      }
+    }
+
+    // Get query parameters as (name, ident, required) tuples
+    val queryParams = method.parameters.filter(_.in == ParameterIn.Query).map { param =>
+      (param.originalName, jvm.Ident(param.name), param.required)
+    }
+
+    // Use the JDK-specific method that handles all query params at once
+    clientSupport match {
+      case jdk: JdkHttpClientSupport.type =>
+        jdk.buildFullClientUri(baseUriIdent, segments, queryParams)
+      case _ =>
+        // Fallback for other frameworks - build path only (shouldn't reach here for JDK)
+        clientSupport.buildUriPath(baseUriIdent, segments)
+    }
   }
 
   /** Generate async response handling code (for use inside client.run(...).use) */
@@ -1066,7 +1216,11 @@ $ifElseCode"""
   }
 
   /** Generate base method (no framework annotations, just return type and params) */
-  private def generateBaseMethod(method: ApiMethod, isOverride: Boolean = false): jvm.Method = {
+  private def generateBaseMethod(
+      method: ApiMethod,
+      isOverride: Boolean = false,
+      throws: List[jvm.Type.Qualified] = Nil
+  ): jvm.Method = {
     val comments = method.description.map(d => jvm.Comments(List(d))).getOrElse(jvm.Comments.Empty)
 
     // Generate parameters without framework annotations
@@ -1090,7 +1244,7 @@ $ifElseCode"""
       params = params,
       implicitParams = Nil,
       tpe = returnType,
-      throws = Nil,
+      throws = throws,
       body = jvm.Body.Abstract, // Interface method - no body
       isOverride = isOverride,
       isDefault = false

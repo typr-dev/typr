@@ -13,6 +13,10 @@ import typo.runtime.internal.arrayMap
 
 /** Type for the primary key of table `production.productcategory` */
 data class ProductcategoryId(@JsonValue val value: Int) {
+  override fun toString(): kotlin.String {
+    return value.toString()
+  }
+
   companion object {
     val bijection: Bijection<ProductcategoryId, Int> =
       Bijection.of(ProductcategoryId::value, ::ProductcategoryId)

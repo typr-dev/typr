@@ -17,6 +17,11 @@ public record JobcandidateId(@JsonValue Integer value) {
     return new JobcandidateId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<JobcandidateId, Integer> bijection =
     Bijection.of(JobcandidateId::value, JobcandidateId::new);
 

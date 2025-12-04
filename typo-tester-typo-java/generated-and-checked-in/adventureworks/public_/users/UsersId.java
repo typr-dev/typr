@@ -17,6 +17,11 @@ public record UsersId(@JsonValue TypoUUID value) {
     return new UsersId(value);
   };
 
+  @Override
+  public java.lang.String toString() {
+    return value.toString();
+  };
+
   static public Bijection<UsersId, TypoUUID> bijection =
     Bijection.of(UsersId::value, UsersId::new);
 
