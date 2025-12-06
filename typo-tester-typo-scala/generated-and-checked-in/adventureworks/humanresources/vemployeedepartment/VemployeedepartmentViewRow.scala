@@ -39,5 +39,5 @@ case class VemployeedepartmentViewRow(
 )
 
 object VemployeedepartmentViewRow {
-  val `_rowParser`: RowParser[VemployeedepartmentViewRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text.opt(), PgTypes.text, Name.pgType, Name.pgType, TypoLocalDate.pgType, VemployeedepartmentViewRow.apply, row => Array(row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.jobtitle, row.department, row.groupname, row.startdate))
+  val `_rowParser`: RowParser[VemployeedepartmentViewRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text.opt(), PgTypes.text, Name.pgType, Name.pgType, TypoLocalDate.pgType, VemployeedepartmentViewRow.apply, row => Array[Object](row.businessentityid.asInstanceOf[Object], row.title.asInstanceOf[Object], row.firstname.asInstanceOf[Object], row.middlename.asInstanceOf[Object], row.lastname.asInstanceOf[Object], row.suffix.asInstanceOf[Object], row.jobtitle.asInstanceOf[Object], row.department.asInstanceOf[Object], row.groupname.asInstanceOf[Object], row.startdate.asInstanceOf[Object]))
 }

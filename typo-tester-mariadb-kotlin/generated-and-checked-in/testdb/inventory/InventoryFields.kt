@@ -14,6 +14,7 @@ import testdb.products.ProductsRow
 import testdb.warehouses.WarehousesFields
 import testdb.warehouses.WarehousesId
 import testdb.warehouses.WarehousesRow
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -22,9 +23,12 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-interface InventoryFields {
+interface InventoryFields : FieldsExpr<InventoryRow> {
   fun binLocation(): OptField<String, InventoryRow>
+
+  override fun columns(): List<FieldLike<*, InventoryRow>>
 
   fun fkProducts(): ForeignKey<ProductsFields, ProductsRow> = ForeignKey.of<ProductsFields, ProductsRow>("fk_inventory_product").withColumnPair(productId(), ProductsFields::productId)
 
@@ -46,31 +50,41 @@ interface InventoryFields {
 
   fun reorderQuantity(): Field<Int, InventoryRow>
 
+  override fun rowParser(): RowParser<InventoryRow> = InventoryRow._rowParser
+
   fun updatedAt(): Field<LocalDateTime, InventoryRow>
 
   fun warehouseId(): Field<WarehousesId, InventoryRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<InventoryFields, InventoryRow>(path) {
-      override fun fields(): InventoryFields = object : InventoryFields {
-        override fun inventoryId(): IdField<InventoryId, InventoryRow> = IdField<InventoryId, InventoryRow>(_path, "inventory_id", InventoryRow::inventoryId, Optional.empty(), Optional.empty(), { row, value -> row.copy(inventoryId = value) }, InventoryId.pgType)
-        override fun productId(): Field<ProductsId, InventoryRow> = Field<ProductsId, InventoryRow>(_path, "product_id", InventoryRow::productId, Optional.empty(), Optional.empty(), { row, value -> row.copy(productId = value) }, ProductsId.pgType)
-        override fun warehouseId(): Field<WarehousesId, InventoryRow> = Field<WarehousesId, InventoryRow>(_path, "warehouse_id", InventoryRow::warehouseId, Optional.empty(), Optional.empty(), { row, value -> row.copy(warehouseId = value) }, WarehousesId.pgType)
-        override fun quantityOnHand(): Field<Int, InventoryRow> = Field<Int, InventoryRow>(_path, "quantity_on_hand", InventoryRow::quantityOnHand, Optional.empty(), Optional.empty(), { row, value -> row.copy(quantityOnHand = value) }, MariaTypes.int_)
-        override fun quantityReserved(): Field<Int, InventoryRow> = Field<Int, InventoryRow>(_path, "quantity_reserved", InventoryRow::quantityReserved, Optional.empty(), Optional.empty(), { row, value -> row.copy(quantityReserved = value) }, MariaTypes.int_)
-        override fun quantityOnOrder(): Field<Int, InventoryRow> = Field<Int, InventoryRow>(_path, "quantity_on_order", InventoryRow::quantityOnOrder, Optional.empty(), Optional.empty(), { row, value -> row.copy(quantityOnOrder = value) }, MariaTypes.int_)
-        override fun reorderPoint(): Field<Int, InventoryRow> = Field<Int, InventoryRow>(_path, "reorder_point", InventoryRow::reorderPoint, Optional.empty(), Optional.empty(), { row, value -> row.copy(reorderPoint = value) }, MariaTypes.int_)
-        override fun reorderQuantity(): Field<Int, InventoryRow> = Field<Int, InventoryRow>(_path, "reorder_quantity", InventoryRow::reorderQuantity, Optional.empty(), Optional.empty(), { row, value -> row.copy(reorderQuantity = value) }, MariaTypes.int_)
-        override fun binLocation(): OptField<String, InventoryRow> = OptField<String, InventoryRow>(_path, "bin_location", InventoryRow::binLocation, Optional.empty(), Optional.empty(), { row, value -> row.copy(binLocation = value) }, MariaTypes.varchar)
-        override fun lastCountedAt(): OptField<LocalDateTime, InventoryRow> = OptField<LocalDateTime, InventoryRow>(_path, "last_counted_at", InventoryRow::lastCountedAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(lastCountedAt = value) }, MariaTypes.datetime)
-        override fun updatedAt(): Field<LocalDateTime, InventoryRow> = Field<LocalDateTime, InventoryRow>(_path, "updated_at", InventoryRow::updatedAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(updatedAt = value) }, MariaTypes.datetime)
-      }
+    data class Impl(val _path: List<Path>) : InventoryFields, Relation<InventoryFields, InventoryRow> {
+      override fun inventoryId(): IdField<InventoryId, InventoryRow> = IdField<InventoryId, InventoryRow>(_path, "inventory_id", InventoryRow::inventoryId, Optional.empty(), Optional.empty(), { row, value -> row.copy(inventoryId = value) }, InventoryId.pgType)
 
-      override fun columns(): List<FieldLike<*, InventoryRow>> = listOf(this.fields().inventoryId(), this.fields().productId(), this.fields().warehouseId(), this.fields().quantityOnHand(), this.fields().quantityReserved(), this.fields().quantityOnOrder(), this.fields().reorderPoint(), this.fields().reorderQuantity(), this.fields().binLocation(), this.fields().lastCountedAt(), this.fields().updatedAt())
+      override fun productId(): Field<ProductsId, InventoryRow> = Field<ProductsId, InventoryRow>(_path, "product_id", InventoryRow::productId, Optional.empty(), Optional.empty(), { row, value -> row.copy(productId = value) }, ProductsId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun warehouseId(): Field<WarehousesId, InventoryRow> = Field<WarehousesId, InventoryRow>(_path, "warehouse_id", InventoryRow::warehouseId, Optional.empty(), Optional.empty(), { row, value -> row.copy(warehouseId = value) }, WarehousesId.pgType)
+
+      override fun quantityOnHand(): Field<Int, InventoryRow> = Field<Int, InventoryRow>(_path, "quantity_on_hand", InventoryRow::quantityOnHand, Optional.empty(), Optional.empty(), { row, value -> row.copy(quantityOnHand = value) }, MariaTypes.int_)
+
+      override fun quantityReserved(): Field<Int, InventoryRow> = Field<Int, InventoryRow>(_path, "quantity_reserved", InventoryRow::quantityReserved, Optional.empty(), Optional.empty(), { row, value -> row.copy(quantityReserved = value) }, MariaTypes.int_)
+
+      override fun quantityOnOrder(): Field<Int, InventoryRow> = Field<Int, InventoryRow>(_path, "quantity_on_order", InventoryRow::quantityOnOrder, Optional.empty(), Optional.empty(), { row, value -> row.copy(quantityOnOrder = value) }, MariaTypes.int_)
+
+      override fun reorderPoint(): Field<Int, InventoryRow> = Field<Int, InventoryRow>(_path, "reorder_point", InventoryRow::reorderPoint, Optional.empty(), Optional.empty(), { row, value -> row.copy(reorderPoint = value) }, MariaTypes.int_)
+
+      override fun reorderQuantity(): Field<Int, InventoryRow> = Field<Int, InventoryRow>(_path, "reorder_quantity", InventoryRow::reorderQuantity, Optional.empty(), Optional.empty(), { row, value -> row.copy(reorderQuantity = value) }, MariaTypes.int_)
+
+      override fun binLocation(): OptField<String, InventoryRow> = OptField<String, InventoryRow>(_path, "bin_location", InventoryRow::binLocation, Optional.empty(), Optional.empty(), { row, value -> row.copy(binLocation = value) }, MariaTypes.varchar)
+
+      override fun lastCountedAt(): OptField<LocalDateTime, InventoryRow> = OptField<LocalDateTime, InventoryRow>(_path, "last_counted_at", InventoryRow::lastCountedAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(lastCountedAt = value) }, MariaTypes.datetime)
+
+      override fun updatedAt(): Field<LocalDateTime, InventoryRow> = Field<LocalDateTime, InventoryRow>(_path, "updated_at", InventoryRow::updatedAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(updatedAt = value) }, MariaTypes.datetime)
+
+      override fun columns(): List<FieldLike<*, InventoryRow>> = listOf(this.inventoryId(), this.productId(), this.warehouseId(), this.quantityOnHand(), this.quantityReserved(), this.quantityOnOrder(), this.reorderPoint(), this.reorderQuantity(), this.binLocation(), this.lastCountedAt(), this.updatedAt())
+
+      override fun copy(_path: List<Path>): Relation<InventoryFields, InventoryRow> = Impl(_path)
     }
 
-    val structure: Relation<InventoryFields, InventoryRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

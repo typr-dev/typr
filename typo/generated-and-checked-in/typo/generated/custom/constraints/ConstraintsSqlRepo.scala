@@ -5,13 +5,10 @@
  *
  * (If you're developing `typo` and want to change it: run `bleep generate-sources`)
  */
-package typo
-package generated
-package custom
-package constraints
+package typo.generated.custom.constraints
 
 import java.sql.Connection
 
 trait ConstraintsSqlRepo {
-  def apply()(implicit c: Connection): List[ConstraintsSqlRow]
+  def apply(implicit c: Connection): List[ConstraintsSqlRow]
 }

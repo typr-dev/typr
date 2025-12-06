@@ -13,14 +13,16 @@ import adventureworks.public.Name
 import adventureworks.public.NameStyle
 import adventureworks.userdefined.FirstName
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait PViewFields {
+trait PViewFields extends FieldsExpr[PViewRow] {
   def id: Field[BusinessentityId, PViewRow]
 
   def businessentityid: Field[BusinessentityId, PViewRow]
@@ -48,174 +50,187 @@ trait PViewFields {
   def rowguid: Field[TypoUUID, PViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, PViewRow]
+
+  override def columns: java.util.List[FieldLike[?, PViewRow]]
+
+  override def rowParser: RowParser[PViewRow] = PViewRow._rowParser
 }
 
 object PViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[PViewFields, PViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends PViewFields with Relation[PViewFields, PViewRow] {
 
-    override lazy val fields: PViewFields = {
-      new PViewFields {
-        override def id: Field[BusinessentityId, PViewRow] = {
-          new Field[BusinessentityId, PViewRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def businessentityid: Field[BusinessentityId, PViewRow] = {
-          new Field[BusinessentityId, PViewRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def persontype: Field[/* bpchar, max 2 chars */ String, PViewRow] = {
-          new Field[/* bpchar, max 2 chars */ String, PViewRow](
-            _path,
-            "persontype",
-            _.persontype,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(persontype = value),
-            PgTypes.bpchar
-          )
-        }
-        override def namestyle: Field[NameStyle, PViewRow] = {
-          new Field[NameStyle, PViewRow](
-            _path,
-            "namestyle",
-            _.namestyle,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(namestyle = value),
-            NameStyle.pgType
-          )
-        }
-        override def title: OptField[/* max 8 chars */ String, PViewRow] = {
-          new OptField[/* max 8 chars */ String, PViewRow](
-            _path,
-            "title",
-            _.title,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(title = value),
-            PgTypes.text
-          )
-        }
-        override def firstname: Field[/* user-picked */ FirstName, PViewRow] = {
-          new Field[/* user-picked */ FirstName, PViewRow](
-            _path,
-            "firstname",
-            _.firstname,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(firstname = value),
-            FirstName.pgType
-          )
-        }
-        override def middlename: OptField[Name, PViewRow] = {
-          new OptField[Name, PViewRow](
-            _path,
-            "middlename",
-            _.middlename,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(middlename = value),
-            Name.pgType
-          )
-        }
-        override def lastname: Field[Name, PViewRow] = {
-          new Field[Name, PViewRow](
-            _path,
-            "lastname",
-            _.lastname,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(lastname = value),
-            Name.pgType
-          )
-        }
-        override def suffix: OptField[/* max 10 chars */ String, PViewRow] = {
-          new OptField[/* max 10 chars */ String, PViewRow](
-            _path,
-            "suffix",
-            _.suffix,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(suffix = value),
-            PgTypes.text
-          )
-        }
-        override def emailpromotion: Field[Integer, PViewRow] = {
-          new Field[Integer, PViewRow](
-            _path,
-            "emailpromotion",
-            _.emailpromotion,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(emailpromotion = value),
-            PgTypes.int4
-          )
-        }
-        override def additionalcontactinfo: OptField[TypoXml, PViewRow] = {
-          new OptField[TypoXml, PViewRow](
-            _path,
-            "additionalcontactinfo",
-            _.additionalcontactinfo,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(additionalcontactinfo = value),
-            TypoXml.pgType
-          )
-        }
-        override def demographics: OptField[TypoXml, PViewRow] = {
-          new OptField[TypoXml, PViewRow](
-            _path,
-            "demographics",
-            _.demographics,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(demographics = value),
-            TypoXml.pgType
-          )
-        }
-        override def rowguid: Field[TypoUUID, PViewRow] = {
-          new Field[TypoUUID, PViewRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, PViewRow] = {
-          new Field[TypoLocalDateTime, PViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def id: Field[BusinessentityId, PViewRow] = {
+      new Field[BusinessentityId, PViewRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        BusinessentityId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, PViewRow]] = java.util.List.of(this.fields.id, this.fields.businessentityid, this.fields.persontype, this.fields.namestyle, this.fields.title, this.fields.firstname, this.fields.middlename, this.fields.lastname, this.fields.suffix, this.fields.emailpromotion, this.fields.additionalcontactinfo, this.fields.demographics, this.fields.rowguid, this.fields.modifieddate)
+    override def businessentityid: Field[BusinessentityId, PViewRow] = {
+      new Field[BusinessentityId, PViewRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def persontype: Field[/* bpchar, max 2 chars */ String, PViewRow] = {
+      new Field[/* bpchar, max 2 chars */ String, PViewRow](
+        _path,
+        "persontype",
+        _.persontype,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(persontype = value),
+        PgTypes.bpchar
+      )
+    }
+
+    override def namestyle: Field[NameStyle, PViewRow] = {
+      new Field[NameStyle, PViewRow](
+        _path,
+        "namestyle",
+        _.namestyle,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(namestyle = value),
+        NameStyle.pgType
+      )
+    }
+
+    override def title: OptField[/* max 8 chars */ String, PViewRow] = {
+      new OptField[/* max 8 chars */ String, PViewRow](
+        _path,
+        "title",
+        _.title,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(title = value),
+        PgTypes.text
+      )
+    }
+
+    override def firstname: Field[/* user-picked */ FirstName, PViewRow] = {
+      new Field[/* user-picked */ FirstName, PViewRow](
+        _path,
+        "firstname",
+        _.firstname,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(firstname = value),
+        FirstName.pgType
+      )
+    }
+
+    override def middlename: OptField[Name, PViewRow] = {
+      new OptField[Name, PViewRow](
+        _path,
+        "middlename",
+        _.middlename,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(middlename = value),
+        Name.pgType
+      )
+    }
+
+    override def lastname: Field[Name, PViewRow] = {
+      new Field[Name, PViewRow](
+        _path,
+        "lastname",
+        _.lastname,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(lastname = value),
+        Name.pgType
+      )
+    }
+
+    override def suffix: OptField[/* max 10 chars */ String, PViewRow] = {
+      new OptField[/* max 10 chars */ String, PViewRow](
+        _path,
+        "suffix",
+        _.suffix,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(suffix = value),
+        PgTypes.text
+      )
+    }
+
+    override def emailpromotion: Field[Integer, PViewRow] = {
+      new Field[Integer, PViewRow](
+        _path,
+        "emailpromotion",
+        _.emailpromotion,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(emailpromotion = value),
+        PgTypes.int4
+      )
+    }
+
+    override def additionalcontactinfo: OptField[TypoXml, PViewRow] = {
+      new OptField[TypoXml, PViewRow](
+        _path,
+        "additionalcontactinfo",
+        _.additionalcontactinfo,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(additionalcontactinfo = value),
+        TypoXml.pgType
+      )
+    }
+
+    override def demographics: OptField[TypoXml, PViewRow] = {
+      new OptField[TypoXml, PViewRow](
+        _path,
+        "demographics",
+        _.demographics,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(demographics = value),
+        TypoXml.pgType
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, PViewRow] = {
+      new Field[TypoUUID, PViewRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, PViewRow] = {
+      new Field[TypoLocalDateTime, PViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, PViewRow]] = java.util.List.of(this.id, this.businessentityid, this.persontype, this.namestyle, this.title, this.firstname, this.middlename, this.lastname, this.suffix, this.emailpromotion, this.additionalcontactinfo, this.demographics, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[PViewFields, PViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[PViewFields, PViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

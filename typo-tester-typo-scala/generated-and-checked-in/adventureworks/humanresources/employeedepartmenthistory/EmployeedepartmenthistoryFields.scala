@@ -17,6 +17,7 @@ import adventureworks.humanresources.shift.ShiftId
 import adventureworks.humanresources.shift.ShiftRow
 import adventureworks.person.businessentity.BusinessentityId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -27,8 +28,9 @@ import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait EmployeedepartmenthistoryFields {
+trait EmployeedepartmenthistoryFields extends FieldsExpr[EmployeedepartmenthistoryRow] {
   def businessentityid: IdField[BusinessentityId, EmployeedepartmenthistoryRow]
 
   def departmentid: IdField[DepartmentId, EmployeedepartmenthistoryRow]
@@ -50,86 +52,91 @@ trait EmployeedepartmenthistoryFields {
   def compositeIdIs(compositeId: EmployeedepartmenthistoryId): SqlExpr[java.lang.Boolean] = SqlExpr.all(businessentityid.isEqual(compositeId.businessentityid), startdate.isEqual(compositeId.startdate), departmentid.isEqual(compositeId.departmentid), shiftid.isEqual(compositeId.shiftid))
 
   def compositeIdIn(compositeIds: java.util.List[EmployeedepartmenthistoryId]): SqlExpr[java.lang.Boolean] = new CompositeIn(java.util.List.of(new Part[BusinessentityId, EmployeedepartmenthistoryId, EmployeedepartmenthistoryRow](businessentityid, _.businessentityid, BusinessentityId.pgType), new Part[TypoLocalDate, EmployeedepartmenthistoryId, EmployeedepartmenthistoryRow](startdate, _.startdate, TypoLocalDate.pgType), new Part[DepartmentId, EmployeedepartmenthistoryId, EmployeedepartmenthistoryRow](departmentid, _.departmentid, DepartmentId.pgType), new Part[ShiftId, EmployeedepartmenthistoryId, EmployeedepartmenthistoryRow](shiftid, _.shiftid, ShiftId.pgType)), compositeIds)
+
+  override def columns: java.util.List[FieldLike[?, EmployeedepartmenthistoryRow]]
+
+  override def rowParser: RowParser[EmployeedepartmenthistoryRow] = EmployeedepartmenthistoryRow._rowParser
 }
 
 object EmployeedepartmenthistoryFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends EmployeedepartmenthistoryFields with Relation[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow] {
 
-    override lazy val fields: EmployeedepartmenthistoryFields = {
-      new EmployeedepartmenthistoryFields {
-        override def businessentityid: IdField[BusinessentityId, EmployeedepartmenthistoryRow] = {
-          new IdField[BusinessentityId, EmployeedepartmenthistoryRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def departmentid: IdField[DepartmentId, EmployeedepartmenthistoryRow] = {
-          new IdField[DepartmentId, EmployeedepartmenthistoryRow](
-            _path,
-            "departmentid",
-            _.departmentid,
-            Optional.empty(),
-            Optional.of("int2"),
-            (row, value) => row.copy(departmentid = value),
-            DepartmentId.pgType
-          )
-        }
-        override def shiftid: IdField[ShiftId, EmployeedepartmenthistoryRow] = {
-          new IdField[ShiftId, EmployeedepartmenthistoryRow](
-            _path,
-            "shiftid",
-            _.shiftid,
-            Optional.empty(),
-            Optional.of("int2"),
-            (row, value) => row.copy(shiftid = value),
-            ShiftId.pgType
-          )
-        }
-        override def startdate: IdField[TypoLocalDate, EmployeedepartmenthistoryRow] = {
-          new IdField[TypoLocalDate, EmployeedepartmenthistoryRow](
-            _path,
-            "startdate",
-            _.startdate,
-            Optional.of("text"),
-            Optional.of("date"),
-            (row, value) => row.copy(startdate = value),
-            TypoLocalDate.pgType
-          )
-        }
-        override def enddate: OptField[TypoLocalDate, EmployeedepartmenthistoryRow] = {
-          new OptField[TypoLocalDate, EmployeedepartmenthistoryRow](
-            _path,
-            "enddate",
-            _.enddate,
-            Optional.of("text"),
-            Optional.of("date"),
-            (row, value) => row.copy(enddate = value),
-            TypoLocalDate.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, EmployeedepartmenthistoryRow] = {
-          new Field[TypoLocalDateTime, EmployeedepartmenthistoryRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def businessentityid: IdField[BusinessentityId, EmployeedepartmenthistoryRow] = {
+      new IdField[BusinessentityId, EmployeedepartmenthistoryRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, EmployeedepartmenthistoryRow]] = java.util.List.of(this.fields.businessentityid, this.fields.departmentid, this.fields.shiftid, this.fields.startdate, this.fields.enddate, this.fields.modifieddate)
+    override def departmentid: IdField[DepartmentId, EmployeedepartmenthistoryRow] = {
+      new IdField[DepartmentId, EmployeedepartmenthistoryRow](
+        _path,
+        "departmentid",
+        _.departmentid,
+        Optional.empty(),
+        Optional.of("int2"),
+        (row, value) => row.copy(departmentid = value),
+        DepartmentId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def shiftid: IdField[ShiftId, EmployeedepartmenthistoryRow] = {
+      new IdField[ShiftId, EmployeedepartmenthistoryRow](
+        _path,
+        "shiftid",
+        _.shiftid,
+        Optional.empty(),
+        Optional.of("int2"),
+        (row, value) => row.copy(shiftid = value),
+        ShiftId.pgType
+      )
+    }
+
+    override def startdate: IdField[TypoLocalDate, EmployeedepartmenthistoryRow] = {
+      new IdField[TypoLocalDate, EmployeedepartmenthistoryRow](
+        _path,
+        "startdate",
+        _.startdate,
+        Optional.of("text"),
+        Optional.of("date"),
+        (row, value) => row.copy(startdate = value),
+        TypoLocalDate.pgType
+      )
+    }
+
+    override def enddate: OptField[TypoLocalDate, EmployeedepartmenthistoryRow] = {
+      new OptField[TypoLocalDate, EmployeedepartmenthistoryRow](
+        _path,
+        "enddate",
+        _.enddate,
+        Optional.of("text"),
+        Optional.of("date"),
+        (row, value) => row.copy(enddate = value),
+        TypoLocalDate.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, EmployeedepartmenthistoryRow] = {
+      new Field[TypoLocalDateTime, EmployeedepartmenthistoryRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, EmployeedepartmenthistoryRow]] = java.util.List.of(this.businessentityid, this.departmentid, this.shiftid, this.startdate, this.enddate, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

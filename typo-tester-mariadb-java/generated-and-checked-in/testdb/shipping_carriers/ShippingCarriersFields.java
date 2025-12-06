@@ -7,6 +7,7 @@ package testdb.shipping_carriers;
 
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
@@ -14,55 +15,52 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.MariaTypes;
+import typo.runtime.RowParser;
 
-public interface ShippingCarriersFields {
-  final class Impl extends Relation<ShippingCarriersFields, ShippingCarriersRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface ShippingCarriersFields extends FieldsExpr<ShippingCarriersRow> {
+  record Impl(List<Path> _path) implements ShippingCarriersFields, Relation<ShippingCarriersFields, ShippingCarriersRow> {
+    @Override
+    public IdField<ShippingCarriersId, ShippingCarriersRow> carrierId() {
+      return new IdField<ShippingCarriersId, ShippingCarriersRow>(_path, "carrier_id", ShippingCarriersRow::carrierId, Optional.empty(), Optional.empty(), (row, value) -> row.withCarrierId(value), ShippingCarriersId.pgType);
+    };
 
     @Override
-    public ShippingCarriersFields fields() {
-      return new ShippingCarriersFields() {
-               @Override
-               public IdField<ShippingCarriersId, ShippingCarriersRow> carrierId() {
-                 return new IdField<ShippingCarriersId, ShippingCarriersRow>(_path, "carrier_id", ShippingCarriersRow::carrierId, Optional.empty(), Optional.empty(), (row, value) -> row.withCarrierId(value), ShippingCarriersId.pgType);
-               };
-               @Override
-               public Field<String, ShippingCarriersRow> code() {
-                 return new Field<String, ShippingCarriersRow>(_path, "code", ShippingCarriersRow::code, Optional.empty(), Optional.empty(), (row, value) -> row.withCode(value), MariaTypes.varchar);
-               };
-               @Override
-               public Field<String, ShippingCarriersRow> name() {
-                 return new Field<String, ShippingCarriersRow>(_path, "name", ShippingCarriersRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), MariaTypes.varchar);
-               };
-               @Override
-               public OptField<String, ShippingCarriersRow> trackingUrlTemplate() {
-                 return new OptField<String, ShippingCarriersRow>(_path, "tracking_url_template", ShippingCarriersRow::trackingUrlTemplate, Optional.empty(), Optional.empty(), (row, value) -> row.withTrackingUrlTemplate(value), MariaTypes.varchar);
-               };
-               @Override
-               public OptField<String, ShippingCarriersRow> apiConfig() {
-                 return new OptField<String, ShippingCarriersRow>(_path, "api_config", ShippingCarriersRow::apiConfig, Optional.empty(), Optional.empty(), (row, value) -> row.withApiConfig(value), MariaTypes.longtext);
-               };
-               @Override
-               public Field<Boolean, ShippingCarriersRow> isActive() {
-                 return new Field<Boolean, ShippingCarriersRow>(_path, "is_active", ShippingCarriersRow::isActive, Optional.empty(), Optional.empty(), (row, value) -> row.withIsActive(value), MariaTypes.bool);
-               };
-             };
+    public Field<String, ShippingCarriersRow> code() {
+      return new Field<String, ShippingCarriersRow>(_path, "code", ShippingCarriersRow::code, Optional.empty(), Optional.empty(), (row, value) -> row.withCode(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public Field<String, ShippingCarriersRow> name() {
+      return new Field<String, ShippingCarriersRow>(_path, "name", ShippingCarriersRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public OptField<String, ShippingCarriersRow> trackingUrlTemplate() {
+      return new OptField<String, ShippingCarriersRow>(_path, "tracking_url_template", ShippingCarriersRow::trackingUrlTemplate, Optional.empty(), Optional.empty(), (row, value) -> row.withTrackingUrlTemplate(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public OptField<String, ShippingCarriersRow> apiConfig() {
+      return new OptField<String, ShippingCarriersRow>(_path, "api_config", ShippingCarriersRow::apiConfig, Optional.empty(), Optional.empty(), (row, value) -> row.withApiConfig(value), MariaTypes.longtext);
+    };
+
+    @Override
+    public Field<Boolean, ShippingCarriersRow> isActive() {
+      return new Field<Boolean, ShippingCarriersRow>(_path, "is_active", ShippingCarriersRow::isActive, Optional.empty(), Optional.empty(), (row, value) -> row.withIsActive(value), MariaTypes.bool);
     };
 
     @Override
     public List<FieldLike<?, ShippingCarriersRow>> columns() {
-      return List.of(this.fields().carrierId(), this.fields().code(), this.fields().name(), this.fields().trackingUrlTemplate(), this.fields().apiConfig(), this.fields().isActive());
+      return List.of(this.carrierId(), this.code(), this.name(), this.trackingUrlTemplate(), this.apiConfig(), this.isActive());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<ShippingCarriersFields, ShippingCarriersRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<ShippingCarriersFields, ShippingCarriersRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -77,4 +75,12 @@ public interface ShippingCarriersFields {
   OptField<String, ShippingCarriersRow> apiConfig();
 
   Field<Boolean, ShippingCarriersRow> isActive();
+
+  @Override
+  List<FieldLike<?, ShippingCarriersRow>> columns();
+
+  @Override
+  default RowParser<ShippingCarriersRow> rowParser() {
+    return ShippingCarriersRow._rowParser;
+  };
 }

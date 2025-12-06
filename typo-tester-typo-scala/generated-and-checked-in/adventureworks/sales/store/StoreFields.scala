@@ -15,6 +15,7 @@ import adventureworks.public.Name
 import adventureworks.sales.salesperson.SalespersonFields
 import adventureworks.sales.salesperson.SalespersonRow
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -22,8 +23,9 @@ import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait StoreFields {
+trait StoreFields extends FieldsExpr[StoreRow] {
   def businessentityid: IdField[BusinessentityId, StoreRow]
 
   def name: Field[Name, StoreRow]
@@ -39,86 +41,91 @@ trait StoreFields {
   def fkPersonBusinessentity: ForeignKey[BusinessentityFields, BusinessentityRow] = ForeignKey.of[BusinessentityFields, BusinessentityRow]("sales.FK_Store_BusinessEntity_BusinessEntityID").withColumnPair(businessentityid, _.businessentityid)
 
   def fkSalesperson: ForeignKey[SalespersonFields, SalespersonRow] = ForeignKey.of[SalespersonFields, SalespersonRow]("sales.FK_Store_SalesPerson_SalesPersonID").withColumnPair(salespersonid, _.businessentityid)
+
+  override def columns: java.util.List[FieldLike[?, StoreRow]]
+
+  override def rowParser: RowParser[StoreRow] = StoreRow._rowParser
 }
 
 object StoreFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[StoreFields, StoreRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends StoreFields with Relation[StoreFields, StoreRow] {
 
-    override lazy val fields: StoreFields = {
-      new StoreFields {
-        override def businessentityid: IdField[BusinessentityId, StoreRow] = {
-          new IdField[BusinessentityId, StoreRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def name: Field[Name, StoreRow] = {
-          new Field[Name, StoreRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.of("varchar"),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def salespersonid: OptField[BusinessentityId, StoreRow] = {
-          new OptField[BusinessentityId, StoreRow](
-            _path,
-            "salespersonid",
-            _.salespersonid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(salespersonid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def demographics: OptField[TypoXml, StoreRow] = {
-          new OptField[TypoXml, StoreRow](
-            _path,
-            "demographics",
-            _.demographics,
-            Optional.empty(),
-            Optional.of("xml"),
-            (row, value) => row.copy(demographics = value),
-            TypoXml.pgType
-          )
-        }
-        override def rowguid: Field[TypoUUID, StoreRow] = {
-          new Field[TypoUUID, StoreRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.of("uuid"),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, StoreRow] = {
-          new Field[TypoLocalDateTime, StoreRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def businessentityid: IdField[BusinessentityId, StoreRow] = {
+      new IdField[BusinessentityId, StoreRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, StoreRow]] = java.util.List.of(this.fields.businessentityid, this.fields.name, this.fields.salespersonid, this.fields.demographics, this.fields.rowguid, this.fields.modifieddate)
+    override def name: Field[Name, StoreRow] = {
+      new Field[Name, StoreRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.of("varchar"),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def salespersonid: OptField[BusinessentityId, StoreRow] = {
+      new OptField[BusinessentityId, StoreRow](
+        _path,
+        "salespersonid",
+        _.salespersonid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(salespersonid = value),
+        BusinessentityId.pgType
+      )
+    }
+
+    override def demographics: OptField[TypoXml, StoreRow] = {
+      new OptField[TypoXml, StoreRow](
+        _path,
+        "demographics",
+        _.demographics,
+        Optional.empty(),
+        Optional.of("xml"),
+        (row, value) => row.copy(demographics = value),
+        TypoXml.pgType
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, StoreRow] = {
+      new Field[TypoUUID, StoreRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.of("uuid"),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, StoreRow] = {
+      new Field[TypoLocalDateTime, StoreRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, StoreRow]] = java.util.List.of(this.businessentityid, this.name, this.salespersonid, this.demographics, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[StoreFields, StoreRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[StoreFields, StoreRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

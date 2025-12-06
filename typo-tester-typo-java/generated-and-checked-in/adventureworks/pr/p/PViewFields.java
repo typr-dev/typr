@@ -17,141 +17,159 @@ import adventureworks.public_.Name;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface PViewFields {
-  final class Impl extends Relation<PViewFields, PViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PViewFields extends FieldsExpr<PViewRow> {
+  record Impl(List<Path> _path) implements PViewFields, Relation<PViewFields, PViewRow> {
+    @Override
+    public Field<ProductId, PViewRow> id() {
+      return new Field<ProductId, PViewRow>(_path, "id", PViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ProductId.pgType);
+    };
 
     @Override
-    public PViewFields fields() {
-      return new PViewFields() {
-               @Override
-               public Field<ProductId, PViewRow> id() {
-                 return new Field<ProductId, PViewRow>(_path, "id", PViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ProductId.pgType);
-               };
-               @Override
-               public Field<ProductId, PViewRow> productid() {
-                 return new Field<ProductId, PViewRow>(_path, "productid", PViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
-               };
-               @Override
-               public Field<Name, PViewRow> name() {
-                 return new Field<Name, PViewRow>(_path, "name", PViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field</* max 25 chars */ String, PViewRow> productnumber() {
-                 return new Field</* max 25 chars */ String, PViewRow>(_path, "productnumber", PViewRow::productnumber, Optional.empty(), Optional.empty(), (row, value) -> row.withProductnumber(value), PgTypes.text);
-               };
-               @Override
-               public Field<Flag, PViewRow> makeflag() {
-                 return new Field<Flag, PViewRow>(_path, "makeflag", PViewRow::makeflag, Optional.empty(), Optional.empty(), (row, value) -> row.withMakeflag(value), Flag.pgType);
-               };
-               @Override
-               public Field<Flag, PViewRow> finishedgoodsflag() {
-                 return new Field<Flag, PViewRow>(_path, "finishedgoodsflag", PViewRow::finishedgoodsflag, Optional.empty(), Optional.empty(), (row, value) -> row.withFinishedgoodsflag(value), Flag.pgType);
-               };
-               @Override
-               public OptField</* max 15 chars */ String, PViewRow> color() {
-                 return new OptField</* max 15 chars */ String, PViewRow>(_path, "color", PViewRow::color, Optional.empty(), Optional.empty(), (row, value) -> row.withColor(value), PgTypes.text);
-               };
-               @Override
-               public Field<TypoShort, PViewRow> safetystocklevel() {
-                 return new Field<TypoShort, PViewRow>(_path, "safetystocklevel", PViewRow::safetystocklevel, Optional.empty(), Optional.empty(), (row, value) -> row.withSafetystocklevel(value), TypoShort.pgType);
-               };
-               @Override
-               public Field<TypoShort, PViewRow> reorderpoint() {
-                 return new Field<TypoShort, PViewRow>(_path, "reorderpoint", PViewRow::reorderpoint, Optional.empty(), Optional.empty(), (row, value) -> row.withReorderpoint(value), TypoShort.pgType);
-               };
-               @Override
-               public Field<BigDecimal, PViewRow> standardcost() {
-                 return new Field<BigDecimal, PViewRow>(_path, "standardcost", PViewRow::standardcost, Optional.empty(), Optional.empty(), (row, value) -> row.withStandardcost(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<BigDecimal, PViewRow> listprice() {
-                 return new Field<BigDecimal, PViewRow>(_path, "listprice", PViewRow::listprice, Optional.empty(), Optional.empty(), (row, value) -> row.withListprice(value), PgTypes.numeric);
-               };
-               @Override
-               public OptField</* max 5 chars */ String, PViewRow> size() {
-                 return new OptField</* max 5 chars */ String, PViewRow>(_path, "size", PViewRow::size, Optional.empty(), Optional.empty(), (row, value) -> row.withSize(value), PgTypes.text);
-               };
-               @Override
-               public OptField<UnitmeasureId, PViewRow> sizeunitmeasurecode() {
-                 return new OptField<UnitmeasureId, PViewRow>(_path, "sizeunitmeasurecode", PViewRow::sizeunitmeasurecode, Optional.empty(), Optional.empty(), (row, value) -> row.withSizeunitmeasurecode(value), UnitmeasureId.pgType);
-               };
-               @Override
-               public OptField<UnitmeasureId, PViewRow> weightunitmeasurecode() {
-                 return new OptField<UnitmeasureId, PViewRow>(_path, "weightunitmeasurecode", PViewRow::weightunitmeasurecode, Optional.empty(), Optional.empty(), (row, value) -> row.withWeightunitmeasurecode(value), UnitmeasureId.pgType);
-               };
-               @Override
-               public OptField<BigDecimal, PViewRow> weight() {
-                 return new OptField<BigDecimal, PViewRow>(_path, "weight", PViewRow::weight, Optional.empty(), Optional.empty(), (row, value) -> row.withWeight(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<Integer, PViewRow> daystomanufacture() {
-                 return new Field<Integer, PViewRow>(_path, "daystomanufacture", PViewRow::daystomanufacture, Optional.empty(), Optional.empty(), (row, value) -> row.withDaystomanufacture(value), PgTypes.int4);
-               };
-               @Override
-               public OptField</* bpchar, max 2 chars */ String, PViewRow> productline() {
-                 return new OptField</* bpchar, max 2 chars */ String, PViewRow>(_path, "productline", PViewRow::productline, Optional.empty(), Optional.empty(), (row, value) -> row.withProductline(value), PgTypes.bpchar);
-               };
-               @Override
-               public OptField</* bpchar, max 2 chars */ String, PViewRow> class_() {
-                 return new OptField</* bpchar, max 2 chars */ String, PViewRow>(_path, "class", PViewRow::class_, Optional.empty(), Optional.empty(), (row, value) -> row.withClass(value), PgTypes.bpchar);
-               };
-               @Override
-               public OptField</* bpchar, max 2 chars */ String, PViewRow> style() {
-                 return new OptField</* bpchar, max 2 chars */ String, PViewRow>(_path, "style", PViewRow::style, Optional.empty(), Optional.empty(), (row, value) -> row.withStyle(value), PgTypes.bpchar);
-               };
-               @Override
-               public OptField<ProductsubcategoryId, PViewRow> productsubcategoryid() {
-                 return new OptField<ProductsubcategoryId, PViewRow>(_path, "productsubcategoryid", PViewRow::productsubcategoryid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductsubcategoryid(value), ProductsubcategoryId.pgType);
-               };
-               @Override
-               public OptField<ProductmodelId, PViewRow> productmodelid() {
-                 return new OptField<ProductmodelId, PViewRow>(_path, "productmodelid", PViewRow::productmodelid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductmodelid(value), ProductmodelId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PViewRow> sellstartdate() {
-                 return new Field<TypoLocalDateTime, PViewRow>(_path, "sellstartdate", PViewRow::sellstartdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withSellstartdate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public OptField<TypoLocalDateTime, PViewRow> sellenddate() {
-                 return new OptField<TypoLocalDateTime, PViewRow>(_path, "sellenddate", PViewRow::sellenddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withSellenddate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public OptField<TypoLocalDateTime, PViewRow> discontinueddate() {
-                 return new OptField<TypoLocalDateTime, PViewRow>(_path, "discontinueddate", PViewRow::discontinueddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withDiscontinueddate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public Field<TypoUUID, PViewRow> rowguid() {
-                 return new Field<TypoUUID, PViewRow>(_path, "rowguid", PViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, PViewRow>(_path, "modifieddate", PViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<ProductId, PViewRow> productid() {
+      return new Field<ProductId, PViewRow>(_path, "productid", PViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
+    };
+
+    @Override
+    public Field<Name, PViewRow> name() {
+      return new Field<Name, PViewRow>(_path, "name", PViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field</* max 25 chars */ String, PViewRow> productnumber() {
+      return new Field</* max 25 chars */ String, PViewRow>(_path, "productnumber", PViewRow::productnumber, Optional.empty(), Optional.empty(), (row, value) -> row.withProductnumber(value), PgTypes.text);
+    };
+
+    @Override
+    public Field<Flag, PViewRow> makeflag() {
+      return new Field<Flag, PViewRow>(_path, "makeflag", PViewRow::makeflag, Optional.empty(), Optional.empty(), (row, value) -> row.withMakeflag(value), Flag.pgType);
+    };
+
+    @Override
+    public Field<Flag, PViewRow> finishedgoodsflag() {
+      return new Field<Flag, PViewRow>(_path, "finishedgoodsflag", PViewRow::finishedgoodsflag, Optional.empty(), Optional.empty(), (row, value) -> row.withFinishedgoodsflag(value), Flag.pgType);
+    };
+
+    @Override
+    public OptField</* max 15 chars */ String, PViewRow> color() {
+      return new OptField</* max 15 chars */ String, PViewRow>(_path, "color", PViewRow::color, Optional.empty(), Optional.empty(), (row, value) -> row.withColor(value), PgTypes.text);
+    };
+
+    @Override
+    public Field<TypoShort, PViewRow> safetystocklevel() {
+      return new Field<TypoShort, PViewRow>(_path, "safetystocklevel", PViewRow::safetystocklevel, Optional.empty(), Optional.empty(), (row, value) -> row.withSafetystocklevel(value), TypoShort.pgType);
+    };
+
+    @Override
+    public Field<TypoShort, PViewRow> reorderpoint() {
+      return new Field<TypoShort, PViewRow>(_path, "reorderpoint", PViewRow::reorderpoint, Optional.empty(), Optional.empty(), (row, value) -> row.withReorderpoint(value), TypoShort.pgType);
+    };
+
+    @Override
+    public Field<BigDecimal, PViewRow> standardcost() {
+      return new Field<BigDecimal, PViewRow>(_path, "standardcost", PViewRow::standardcost, Optional.empty(), Optional.empty(), (row, value) -> row.withStandardcost(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<BigDecimal, PViewRow> listprice() {
+      return new Field<BigDecimal, PViewRow>(_path, "listprice", PViewRow::listprice, Optional.empty(), Optional.empty(), (row, value) -> row.withListprice(value), PgTypes.numeric);
+    };
+
+    @Override
+    public OptField</* max 5 chars */ String, PViewRow> size() {
+      return new OptField</* max 5 chars */ String, PViewRow>(_path, "size", PViewRow::size, Optional.empty(), Optional.empty(), (row, value) -> row.withSize(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField<UnitmeasureId, PViewRow> sizeunitmeasurecode() {
+      return new OptField<UnitmeasureId, PViewRow>(_path, "sizeunitmeasurecode", PViewRow::sizeunitmeasurecode, Optional.empty(), Optional.empty(), (row, value) -> row.withSizeunitmeasurecode(value), UnitmeasureId.pgType);
+    };
+
+    @Override
+    public OptField<UnitmeasureId, PViewRow> weightunitmeasurecode() {
+      return new OptField<UnitmeasureId, PViewRow>(_path, "weightunitmeasurecode", PViewRow::weightunitmeasurecode, Optional.empty(), Optional.empty(), (row, value) -> row.withWeightunitmeasurecode(value), UnitmeasureId.pgType);
+    };
+
+    @Override
+    public OptField<BigDecimal, PViewRow> weight() {
+      return new OptField<BigDecimal, PViewRow>(_path, "weight", PViewRow::weight, Optional.empty(), Optional.empty(), (row, value) -> row.withWeight(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<Integer, PViewRow> daystomanufacture() {
+      return new Field<Integer, PViewRow>(_path, "daystomanufacture", PViewRow::daystomanufacture, Optional.empty(), Optional.empty(), (row, value) -> row.withDaystomanufacture(value), PgTypes.int4);
+    };
+
+    @Override
+    public OptField</* bpchar, max 2 chars */ String, PViewRow> productline() {
+      return new OptField</* bpchar, max 2 chars */ String, PViewRow>(_path, "productline", PViewRow::productline, Optional.empty(), Optional.empty(), (row, value) -> row.withProductline(value), PgTypes.bpchar);
+    };
+
+    @Override
+    public OptField</* bpchar, max 2 chars */ String, PViewRow> class_() {
+      return new OptField</* bpchar, max 2 chars */ String, PViewRow>(_path, "class", PViewRow::class_, Optional.empty(), Optional.empty(), (row, value) -> row.withClass(value), PgTypes.bpchar);
+    };
+
+    @Override
+    public OptField</* bpchar, max 2 chars */ String, PViewRow> style() {
+      return new OptField</* bpchar, max 2 chars */ String, PViewRow>(_path, "style", PViewRow::style, Optional.empty(), Optional.empty(), (row, value) -> row.withStyle(value), PgTypes.bpchar);
+    };
+
+    @Override
+    public OptField<ProductsubcategoryId, PViewRow> productsubcategoryid() {
+      return new OptField<ProductsubcategoryId, PViewRow>(_path, "productsubcategoryid", PViewRow::productsubcategoryid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductsubcategoryid(value), ProductsubcategoryId.pgType);
+    };
+
+    @Override
+    public OptField<ProductmodelId, PViewRow> productmodelid() {
+      return new OptField<ProductmodelId, PViewRow>(_path, "productmodelid", PViewRow::productmodelid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductmodelid(value), ProductmodelId.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PViewRow> sellstartdate() {
+      return new Field<TypoLocalDateTime, PViewRow>(_path, "sellstartdate", PViewRow::sellstartdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withSellstartdate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public OptField<TypoLocalDateTime, PViewRow> sellenddate() {
+      return new OptField<TypoLocalDateTime, PViewRow>(_path, "sellenddate", PViewRow::sellenddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withSellenddate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public OptField<TypoLocalDateTime, PViewRow> discontinueddate() {
+      return new OptField<TypoLocalDateTime, PViewRow>(_path, "discontinueddate", PViewRow::discontinueddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withDiscontinueddate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public Field<TypoUUID, PViewRow> rowguid() {
+      return new Field<TypoUUID, PViewRow>(_path, "rowguid", PViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, PViewRow>(_path, "modifieddate", PViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, PViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().productid(), this.fields().name(), this.fields().productnumber(), this.fields().makeflag(), this.fields().finishedgoodsflag(), this.fields().color(), this.fields().safetystocklevel(), this.fields().reorderpoint(), this.fields().standardcost(), this.fields().listprice(), this.fields().size(), this.fields().sizeunitmeasurecode(), this.fields().weightunitmeasurecode(), this.fields().weight(), this.fields().daystomanufacture(), this.fields().productline(), this.fields().class_(), this.fields().style(), this.fields().productsubcategoryid(), this.fields().productmodelid(), this.fields().sellstartdate(), this.fields().sellenddate(), this.fields().discontinueddate(), this.fields().rowguid(), this.fields().modifieddate());
+      return List.of(this.id(), this.productid(), this.name(), this.productnumber(), this.makeflag(), this.finishedgoodsflag(), this.color(), this.safetystocklevel(), this.reorderpoint(), this.standardcost(), this.listprice(), this.size(), this.sizeunitmeasurecode(), this.weightunitmeasurecode(), this.weight(), this.daystomanufacture(), this.productline(), this.class_(), this.style(), this.productsubcategoryid(), this.productmodelid(), this.sellstartdate(), this.sellenddate(), this.discontinueddate(), this.rowguid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PViewFields, PViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PViewFields, PViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -206,4 +224,12 @@ public interface PViewFields {
   Field<TypoUUID, PViewRow> rowguid();
 
   Field<TypoLocalDateTime, PViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, PViewRow>> columns();
+
+  @Override
+  default RowParser<PViewRow> rowParser() {
+    return PViewRow._rowParser;
+  };
 }

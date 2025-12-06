@@ -7,6 +7,7 @@ package testdb.payment_methods;
 
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
@@ -14,59 +15,57 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.MariaTypes;
+import typo.runtime.RowParser;
 
-public interface PaymentMethodsFields {
-  final class Impl extends Relation<PaymentMethodsFields, PaymentMethodsRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PaymentMethodsFields extends FieldsExpr<PaymentMethodsRow> {
+  record Impl(List<Path> _path) implements PaymentMethodsFields, Relation<PaymentMethodsFields, PaymentMethodsRow> {
+    @Override
+    public IdField<PaymentMethodsId, PaymentMethodsRow> methodId() {
+      return new IdField<PaymentMethodsId, PaymentMethodsRow>(_path, "method_id", PaymentMethodsRow::methodId, Optional.empty(), Optional.empty(), (row, value) -> row.withMethodId(value), PaymentMethodsId.pgType);
+    };
 
     @Override
-    public PaymentMethodsFields fields() {
-      return new PaymentMethodsFields() {
-               @Override
-               public IdField<PaymentMethodsId, PaymentMethodsRow> methodId() {
-                 return new IdField<PaymentMethodsId, PaymentMethodsRow>(_path, "method_id", PaymentMethodsRow::methodId, Optional.empty(), Optional.empty(), (row, value) -> row.withMethodId(value), PaymentMethodsId.pgType);
-               };
-               @Override
-               public Field<String, PaymentMethodsRow> code() {
-                 return new Field<String, PaymentMethodsRow>(_path, "code", PaymentMethodsRow::code, Optional.empty(), Optional.empty(), (row, value) -> row.withCode(value), MariaTypes.varchar);
-               };
-               @Override
-               public Field<String, PaymentMethodsRow> name() {
-                 return new Field<String, PaymentMethodsRow>(_path, "name", PaymentMethodsRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), MariaTypes.varchar);
-               };
-               @Override
-               public Field<String, PaymentMethodsRow> methodType() {
-                 return new Field<String, PaymentMethodsRow>(_path, "method_type", PaymentMethodsRow::methodType, Optional.empty(), Optional.empty(), (row, value) -> row.withMethodType(value), MariaTypes.text);
-               };
-               @Override
-               public OptField<String, PaymentMethodsRow> processorConfig() {
-                 return new OptField<String, PaymentMethodsRow>(_path, "processor_config", PaymentMethodsRow::processorConfig, Optional.empty(), Optional.empty(), (row, value) -> row.withProcessorConfig(value), MariaTypes.longtext);
-               };
-               @Override
-               public Field<Boolean, PaymentMethodsRow> isActive() {
-                 return new Field<Boolean, PaymentMethodsRow>(_path, "is_active", PaymentMethodsRow::isActive, Optional.empty(), Optional.empty(), (row, value) -> row.withIsActive(value), MariaTypes.bool);
-               };
-               @Override
-               public Field<Byte, PaymentMethodsRow> sortOrder() {
-                 return new Field<Byte, PaymentMethodsRow>(_path, "sort_order", PaymentMethodsRow::sortOrder, Optional.empty(), Optional.empty(), (row, value) -> row.withSortOrder(value), MariaTypes.tinyint);
-               };
-             };
+    public Field<String, PaymentMethodsRow> code() {
+      return new Field<String, PaymentMethodsRow>(_path, "code", PaymentMethodsRow::code, Optional.empty(), Optional.empty(), (row, value) -> row.withCode(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public Field<String, PaymentMethodsRow> name() {
+      return new Field<String, PaymentMethodsRow>(_path, "name", PaymentMethodsRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public Field<String, PaymentMethodsRow> methodType() {
+      return new Field<String, PaymentMethodsRow>(_path, "method_type", PaymentMethodsRow::methodType, Optional.empty(), Optional.empty(), (row, value) -> row.withMethodType(value), MariaTypes.text);
+    };
+
+    @Override
+    public OptField<String, PaymentMethodsRow> processorConfig() {
+      return new OptField<String, PaymentMethodsRow>(_path, "processor_config", PaymentMethodsRow::processorConfig, Optional.empty(), Optional.empty(), (row, value) -> row.withProcessorConfig(value), MariaTypes.longtext);
+    };
+
+    @Override
+    public Field<Boolean, PaymentMethodsRow> isActive() {
+      return new Field<Boolean, PaymentMethodsRow>(_path, "is_active", PaymentMethodsRow::isActive, Optional.empty(), Optional.empty(), (row, value) -> row.withIsActive(value), MariaTypes.bool);
+    };
+
+    @Override
+    public Field<Byte, PaymentMethodsRow> sortOrder() {
+      return new Field<Byte, PaymentMethodsRow>(_path, "sort_order", PaymentMethodsRow::sortOrder, Optional.empty(), Optional.empty(), (row, value) -> row.withSortOrder(value), MariaTypes.tinyint);
     };
 
     @Override
     public List<FieldLike<?, PaymentMethodsRow>> columns() {
-      return List.of(this.fields().methodId(), this.fields().code(), this.fields().name(), this.fields().methodType(), this.fields().processorConfig(), this.fields().isActive(), this.fields().sortOrder());
+      return List.of(this.methodId(), this.code(), this.name(), this.methodType(), this.processorConfig(), this.isActive(), this.sortOrder());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PaymentMethodsFields, PaymentMethodsRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PaymentMethodsFields, PaymentMethodsRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -83,4 +82,12 @@ public interface PaymentMethodsFields {
   Field<Boolean, PaymentMethodsRow> isActive();
 
   Field<Byte, PaymentMethodsRow> sortOrder();
+
+  @Override
+  List<FieldLike<?, PaymentMethodsRow>> columns();
+
+  @Override
+  default RowParser<PaymentMethodsRow> rowParser() {
+    return PaymentMethodsRow._rowParser;
+  };
 }

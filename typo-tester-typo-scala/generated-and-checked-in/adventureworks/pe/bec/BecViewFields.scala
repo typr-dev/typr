@@ -10,12 +10,14 @@ import adventureworks.customtypes.TypoUUID
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.person.contacttype.ContacttypeId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait BecViewFields {
+trait BecViewFields extends FieldsExpr[BecViewRow] {
   def id: Field[BusinessentityId, BecViewRow]
 
   def businessentityid: Field[BusinessentityId, BecViewRow]
@@ -27,86 +29,91 @@ trait BecViewFields {
   def rowguid: Field[TypoUUID, BecViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, BecViewRow]
+
+  override def columns: java.util.List[FieldLike[?, BecViewRow]]
+
+  override def rowParser: RowParser[BecViewRow] = BecViewRow._rowParser
 }
 
 object BecViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[BecViewFields, BecViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends BecViewFields with Relation[BecViewFields, BecViewRow] {
 
-    override lazy val fields: BecViewFields = {
-      new BecViewFields {
-        override def id: Field[BusinessentityId, BecViewRow] = {
-          new Field[BusinessentityId, BecViewRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def businessentityid: Field[BusinessentityId, BecViewRow] = {
-          new Field[BusinessentityId, BecViewRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def personid: Field[BusinessentityId, BecViewRow] = {
-          new Field[BusinessentityId, BecViewRow](
-            _path,
-            "personid",
-            _.personid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(personid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def contacttypeid: Field[ContacttypeId, BecViewRow] = {
-          new Field[ContacttypeId, BecViewRow](
-            _path,
-            "contacttypeid",
-            _.contacttypeid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(contacttypeid = value),
-            ContacttypeId.pgType
-          )
-        }
-        override def rowguid: Field[TypoUUID, BecViewRow] = {
-          new Field[TypoUUID, BecViewRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, BecViewRow] = {
-          new Field[TypoLocalDateTime, BecViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def id: Field[BusinessentityId, BecViewRow] = {
+      new Field[BusinessentityId, BecViewRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        BusinessentityId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, BecViewRow]] = java.util.List.of(this.fields.id, this.fields.businessentityid, this.fields.personid, this.fields.contacttypeid, this.fields.rowguid, this.fields.modifieddate)
+    override def businessentityid: Field[BusinessentityId, BecViewRow] = {
+      new Field[BusinessentityId, BecViewRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def personid: Field[BusinessentityId, BecViewRow] = {
+      new Field[BusinessentityId, BecViewRow](
+        _path,
+        "personid",
+        _.personid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(personid = value),
+        BusinessentityId.pgType
+      )
+    }
+
+    override def contacttypeid: Field[ContacttypeId, BecViewRow] = {
+      new Field[ContacttypeId, BecViewRow](
+        _path,
+        "contacttypeid",
+        _.contacttypeid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(contacttypeid = value),
+        ContacttypeId.pgType
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, BecViewRow] = {
+      new Field[TypoUUID, BecViewRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, BecViewRow] = {
+      new Field[TypoLocalDateTime, BecViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, BecViewRow]] = java.util.List.of(this.id, this.businessentityid, this.personid, this.contacttypeid, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[BecViewFields, BecViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[BecViewFields, BecViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

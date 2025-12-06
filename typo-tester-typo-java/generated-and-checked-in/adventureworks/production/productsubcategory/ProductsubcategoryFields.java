@@ -13,57 +13,54 @@ import adventureworks.production.productcategory.ProductcategoryRow;
 import adventureworks.public_.Name;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface ProductsubcategoryFields {
-  final class Impl extends Relation<ProductsubcategoryFields, ProductsubcategoryRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface ProductsubcategoryFields extends FieldsExpr<ProductsubcategoryRow> {
+  record Impl(List<Path> _path) implements ProductsubcategoryFields, Relation<ProductsubcategoryFields, ProductsubcategoryRow> {
+    @Override
+    public IdField<ProductsubcategoryId, ProductsubcategoryRow> productsubcategoryid() {
+      return new IdField<ProductsubcategoryId, ProductsubcategoryRow>(_path, "productsubcategoryid", ProductsubcategoryRow::productsubcategoryid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductsubcategoryid(value), ProductsubcategoryId.pgType);
+    };
 
     @Override
-    public ProductsubcategoryFields fields() {
-      return new ProductsubcategoryFields() {
-               @Override
-               public IdField<ProductsubcategoryId, ProductsubcategoryRow> productsubcategoryid() {
-                 return new IdField<ProductsubcategoryId, ProductsubcategoryRow>(_path, "productsubcategoryid", ProductsubcategoryRow::productsubcategoryid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductsubcategoryid(value), ProductsubcategoryId.pgType);
-               };
-               @Override
-               public Field<ProductcategoryId, ProductsubcategoryRow> productcategoryid() {
-                 return new Field<ProductcategoryId, ProductsubcategoryRow>(_path, "productcategoryid", ProductsubcategoryRow::productcategoryid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductcategoryid(value), ProductcategoryId.pgType);
-               };
-               @Override
-               public Field<Name, ProductsubcategoryRow> name() {
-                 return new Field<Name, ProductsubcategoryRow>(_path, "name", ProductsubcategoryRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<TypoUUID, ProductsubcategoryRow> rowguid() {
-                 return new Field<TypoUUID, ProductsubcategoryRow>(_path, "rowguid", ProductsubcategoryRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, ProductsubcategoryRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, ProductsubcategoryRow>(_path, "modifieddate", ProductsubcategoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<ProductcategoryId, ProductsubcategoryRow> productcategoryid() {
+      return new Field<ProductcategoryId, ProductsubcategoryRow>(_path, "productcategoryid", ProductsubcategoryRow::productcategoryid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductcategoryid(value), ProductcategoryId.pgType);
+    };
+
+    @Override
+    public Field<Name, ProductsubcategoryRow> name() {
+      return new Field<Name, ProductsubcategoryRow>(_path, "name", ProductsubcategoryRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<TypoUUID, ProductsubcategoryRow> rowguid() {
+      return new Field<TypoUUID, ProductsubcategoryRow>(_path, "rowguid", ProductsubcategoryRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, ProductsubcategoryRow> modifieddate() {
+      return new Field<TypoLocalDateTime, ProductsubcategoryRow>(_path, "modifieddate", ProductsubcategoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, ProductsubcategoryRow>> columns() {
-      return List.of(this.fields().productsubcategoryid(), this.fields().productcategoryid(), this.fields().name(), this.fields().rowguid(), this.fields().modifieddate());
+      return List.of(this.productsubcategoryid(), this.productcategoryid(), this.name(), this.rowguid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<ProductsubcategoryFields, ProductsubcategoryRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<ProductsubcategoryFields, ProductsubcategoryRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -79,5 +76,13 @@ public interface ProductsubcategoryFields {
 
   default ForeignKey<ProductcategoryFields, ProductcategoryRow> fkProductcategory() {
     return ForeignKey.<ProductcategoryFields, ProductcategoryRow>of("production.FK_ProductSubcategory_ProductCategory_ProductCategoryID").withColumnPair(productcategoryid(), ProductcategoryFields::productcategoryid);
+  };
+
+  @Override
+  List<FieldLike<?, ProductsubcategoryRow>> columns();
+
+  @Override
+  default RowParser<ProductsubcategoryRow> rowParser() {
+    return ProductsubcategoryRow._rowParser;
   };
 }

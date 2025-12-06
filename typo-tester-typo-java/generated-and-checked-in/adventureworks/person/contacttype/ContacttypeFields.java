@@ -9,48 +9,43 @@ import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.public_.Name;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface ContacttypeFields {
-  final class Impl extends Relation<ContacttypeFields, ContacttypeRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface ContacttypeFields extends FieldsExpr<ContacttypeRow> {
+  record Impl(List<Path> _path) implements ContacttypeFields, Relation<ContacttypeFields, ContacttypeRow> {
+    @Override
+    public IdField<ContacttypeId, ContacttypeRow> contacttypeid() {
+      return new IdField<ContacttypeId, ContacttypeRow>(_path, "contacttypeid", ContacttypeRow::contacttypeid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withContacttypeid(value), ContacttypeId.pgType);
+    };
 
     @Override
-    public ContacttypeFields fields() {
-      return new ContacttypeFields() {
-               @Override
-               public IdField<ContacttypeId, ContacttypeRow> contacttypeid() {
-                 return new IdField<ContacttypeId, ContacttypeRow>(_path, "contacttypeid", ContacttypeRow::contacttypeid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withContacttypeid(value), ContacttypeId.pgType);
-               };
-               @Override
-               public Field<Name, ContacttypeRow> name() {
-                 return new Field<Name, ContacttypeRow>(_path, "name", ContacttypeRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, ContacttypeRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, ContacttypeRow>(_path, "modifieddate", ContacttypeRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<Name, ContacttypeRow> name() {
+      return new Field<Name, ContacttypeRow>(_path, "name", ContacttypeRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, ContacttypeRow> modifieddate() {
+      return new Field<TypoLocalDateTime, ContacttypeRow>(_path, "modifieddate", ContacttypeRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, ContacttypeRow>> columns() {
-      return List.of(this.fields().contacttypeid(), this.fields().name(), this.fields().modifieddate());
+      return List.of(this.contacttypeid(), this.name(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<ContacttypeFields, ContacttypeRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<ContacttypeFields, ContacttypeRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -59,4 +54,12 @@ public interface ContacttypeFields {
   Field<Name, ContacttypeRow> name();
 
   Field<TypoLocalDateTime, ContacttypeRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, ContacttypeRow>> columns();
+
+  @Override
+  default RowParser<ContacttypeRow> rowParser() {
+    return ContacttypeRow._rowParser;
+  };
 }

@@ -10,12 +10,16 @@ import adventureworks.production.document.DocumentId
 import adventureworks.production.product.ProductId
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface PdocViewFields {
+interface PdocViewFields : FieldsExpr<PdocViewRow> {
+  override fun columns(): List<FieldLike<*, PdocViewRow>>
+
   fun documentnode(): Field<DocumentId, PdocViewRow>
 
   fun id(): Field<ProductId, PdocViewRow>
@@ -24,20 +28,23 @@ interface PdocViewFields {
 
   fun productid(): Field<ProductId, PdocViewRow>
 
+  override fun rowParser(): RowParser<PdocViewRow> = PdocViewRow._rowParser
+
   companion object {
-    private class Impl(path: List<Path>) : Relation<PdocViewFields, PdocViewRow>(path) {
-      override fun fields(): PdocViewFields = object : PdocViewFields {
-        override fun id(): Field<ProductId, PdocViewRow> = Field<ProductId, PdocViewRow>(_path, "id", PdocViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, ProductId.pgType)
-        override fun productid(): Field<ProductId, PdocViewRow> = Field<ProductId, PdocViewRow>(_path, "productid", PdocViewRow::productid, Optional.empty(), Optional.empty(), { row, value -> row.copy(productid = value) }, ProductId.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, PdocViewRow> = Field<TypoLocalDateTime, PdocViewRow>(_path, "modifieddate", PdocViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-        override fun documentnode(): Field<DocumentId, PdocViewRow> = Field<DocumentId, PdocViewRow>(_path, "documentnode", PdocViewRow::documentnode, Optional.empty(), Optional.empty(), { row, value -> row.copy(documentnode = value) }, DocumentId.pgType)
-      }
+    data class Impl(val _path: List<Path>) : PdocViewFields, Relation<PdocViewFields, PdocViewRow> {
+      override fun id(): Field<ProductId, PdocViewRow> = Field<ProductId, PdocViewRow>(_path, "id", PdocViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, ProductId.pgType)
 
-      override fun columns(): List<FieldLike<*, PdocViewRow>> = listOf(this.fields().id(), this.fields().productid(), this.fields().modifieddate(), this.fields().documentnode())
+      override fun productid(): Field<ProductId, PdocViewRow> = Field<ProductId, PdocViewRow>(_path, "productid", PdocViewRow::productid, Optional.empty(), Optional.empty(), { row, value -> row.copy(productid = value) }, ProductId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun modifieddate(): Field<TypoLocalDateTime, PdocViewRow> = Field<TypoLocalDateTime, PdocViewRow>(_path, "modifieddate", PdocViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun documentnode(): Field<DocumentId, PdocViewRow> = Field<DocumentId, PdocViewRow>(_path, "documentnode", PdocViewRow::documentnode, Optional.empty(), Optional.empty(), { row, value -> row.copy(documentnode = value) }, DocumentId.pgType)
+
+      override fun columns(): List<FieldLike<*, PdocViewRow>> = listOf(this.id(), this.productid(), this.modifieddate(), this.documentnode())
+
+      override fun copy(_path: List<Path>): Relation<PdocViewFields, PdocViewRow> = Impl(_path)
     }
 
-    val structure: Relation<PdocViewFields, PdocViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

@@ -7,14 +7,16 @@ package testdb.v_daily_sales
 
 import java.time.LocalDate
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-trait VDailySalesViewFields {
+trait VDailySalesViewFields extends FieldsExpr[VDailySalesViewRow] {
   def orderDate: OptField[LocalDate, VDailySalesViewRow]
 
   def orderCount: Field[java.lang.Long, VDailySalesViewRow]
@@ -34,130 +36,139 @@ trait VDailySalesViewFields {
   def netSales: OptField[java.math.BigDecimal, VDailySalesViewRow]
 
   def avgOrderValue: OptField[java.math.BigDecimal, VDailySalesViewRow]
+
+  override def columns: java.util.List[FieldLike[?, VDailySalesViewRow]]
+
+  override def rowParser: RowParser[VDailySalesViewRow] = VDailySalesViewRow._rowParser
 }
 
 object VDailySalesViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[VDailySalesViewFields, VDailySalesViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends VDailySalesViewFields with Relation[VDailySalesViewFields, VDailySalesViewRow] {
 
-    override lazy val fields: VDailySalesViewFields = {
-      new VDailySalesViewFields {
-        override def orderDate: OptField[LocalDate, VDailySalesViewRow] = {
-          new OptField[LocalDate, VDailySalesViewRow](
-            _path,
-            "order_date",
-            _.orderDate,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(orderDate = value),
-            MariaTypes.date
-          )
-        }
-        override def orderCount: Field[java.lang.Long, VDailySalesViewRow] = {
-          new Field[java.lang.Long, VDailySalesViewRow](
-            _path,
-            "order_count",
-            _.orderCount,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(orderCount = value),
-            MariaTypes.bigint
-          )
-        }
-        override def uniqueCustomers: Field[java.lang.Long, VDailySalesViewRow] = {
-          new Field[java.lang.Long, VDailySalesViewRow](
-            _path,
-            "unique_customers",
-            _.uniqueCustomers,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(uniqueCustomers = value),
-            MariaTypes.bigint
-          )
-        }
-        override def itemsSold: OptField[java.math.BigDecimal, VDailySalesViewRow] = {
-          new OptField[java.math.BigDecimal, VDailySalesViewRow](
-            _path,
-            "items_sold",
-            _.itemsSold,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(itemsSold = value),
-            MariaTypes.decimal
-          )
-        }
-        override def grossSales: OptField[java.math.BigDecimal, VDailySalesViewRow] = {
-          new OptField[java.math.BigDecimal, VDailySalesViewRow](
-            _path,
-            "gross_sales",
-            _.grossSales,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(grossSales = value),
-            MariaTypes.decimal
-          )
-        }
-        override def totalDiscounts: OptField[java.math.BigDecimal, VDailySalesViewRow] = {
-          new OptField[java.math.BigDecimal, VDailySalesViewRow](
-            _path,
-            "total_discounts",
-            _.totalDiscounts,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(totalDiscounts = value),
-            MariaTypes.decimal
-          )
-        }
-        override def totalShipping: OptField[java.math.BigDecimal, VDailySalesViewRow] = {
-          new OptField[java.math.BigDecimal, VDailySalesViewRow](
-            _path,
-            "total_shipping",
-            _.totalShipping,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(totalShipping = value),
-            MariaTypes.decimal
-          )
-        }
-        override def totalTax: OptField[java.math.BigDecimal, VDailySalesViewRow] = {
-          new OptField[java.math.BigDecimal, VDailySalesViewRow](
-            _path,
-            "total_tax",
-            _.totalTax,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(totalTax = value),
-            MariaTypes.decimal
-          )
-        }
-        override def netSales: OptField[java.math.BigDecimal, VDailySalesViewRow] = {
-          new OptField[java.math.BigDecimal, VDailySalesViewRow](
-            _path,
-            "net_sales",
-            _.netSales,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(netSales = value),
-            MariaTypes.decimal
-          )
-        }
-        override def avgOrderValue: OptField[java.math.BigDecimal, VDailySalesViewRow] = {
-          new OptField[java.math.BigDecimal, VDailySalesViewRow](
-            _path,
-            "avg_order_value",
-            _.avgOrderValue,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(avgOrderValue = value),
-            MariaTypes.decimal
-          )
-        }
-      }
+    override def orderDate: OptField[LocalDate, VDailySalesViewRow] = {
+      new OptField[LocalDate, VDailySalesViewRow](
+        _path,
+        "order_date",
+        _.orderDate,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(orderDate = value),
+        MariaTypes.date
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, VDailySalesViewRow]] = java.util.List.of(this.fields.orderDate, this.fields.orderCount, this.fields.uniqueCustomers, this.fields.itemsSold, this.fields.grossSales, this.fields.totalDiscounts, this.fields.totalShipping, this.fields.totalTax, this.fields.netSales, this.fields.avgOrderValue)
+    override def orderCount: Field[java.lang.Long, VDailySalesViewRow] = {
+      new Field[java.lang.Long, VDailySalesViewRow](
+        _path,
+        "order_count",
+        _.orderCount,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(orderCount = value),
+        MariaTypes.bigint
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def uniqueCustomers: Field[java.lang.Long, VDailySalesViewRow] = {
+      new Field[java.lang.Long, VDailySalesViewRow](
+        _path,
+        "unique_customers",
+        _.uniqueCustomers,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(uniqueCustomers = value),
+        MariaTypes.bigint
+      )
+    }
+
+    override def itemsSold: OptField[java.math.BigDecimal, VDailySalesViewRow] = {
+      new OptField[java.math.BigDecimal, VDailySalesViewRow](
+        _path,
+        "items_sold",
+        _.itemsSold,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(itemsSold = value),
+        MariaTypes.decimal
+      )
+    }
+
+    override def grossSales: OptField[java.math.BigDecimal, VDailySalesViewRow] = {
+      new OptField[java.math.BigDecimal, VDailySalesViewRow](
+        _path,
+        "gross_sales",
+        _.grossSales,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(grossSales = value),
+        MariaTypes.decimal
+      )
+    }
+
+    override def totalDiscounts: OptField[java.math.BigDecimal, VDailySalesViewRow] = {
+      new OptField[java.math.BigDecimal, VDailySalesViewRow](
+        _path,
+        "total_discounts",
+        _.totalDiscounts,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(totalDiscounts = value),
+        MariaTypes.decimal
+      )
+    }
+
+    override def totalShipping: OptField[java.math.BigDecimal, VDailySalesViewRow] = {
+      new OptField[java.math.BigDecimal, VDailySalesViewRow](
+        _path,
+        "total_shipping",
+        _.totalShipping,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(totalShipping = value),
+        MariaTypes.decimal
+      )
+    }
+
+    override def totalTax: OptField[java.math.BigDecimal, VDailySalesViewRow] = {
+      new OptField[java.math.BigDecimal, VDailySalesViewRow](
+        _path,
+        "total_tax",
+        _.totalTax,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(totalTax = value),
+        MariaTypes.decimal
+      )
+    }
+
+    override def netSales: OptField[java.math.BigDecimal, VDailySalesViewRow] = {
+      new OptField[java.math.BigDecimal, VDailySalesViewRow](
+        _path,
+        "net_sales",
+        _.netSales,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(netSales = value),
+        MariaTypes.decimal
+      )
+    }
+
+    override def avgOrderValue: OptField[java.math.BigDecimal, VDailySalesViewRow] = {
+      new OptField[java.math.BigDecimal, VDailySalesViewRow](
+        _path,
+        "avg_order_value",
+        _.avgOrderValue,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(avgOrderValue = value),
+        MariaTypes.decimal
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, VDailySalesViewRow]] = java.util.List.of(this.orderDate, this.orderCount, this.uniqueCustomers, this.itemsSold, this.grossSales, this.totalDiscounts, this.totalShipping, this.totalTax, this.netSales, this.avgOrderValue)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[VDailySalesViewFields, VDailySalesViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[VDailySalesViewFields, VDailySalesViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

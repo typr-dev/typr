@@ -15,6 +15,7 @@ import testdb.products.ProductsRow
 import testdb.warehouses.WarehousesFields
 import testdb.warehouses.WarehousesId
 import testdb.warehouses.WarehousesRow
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -23,8 +24,9 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-trait OrderItemsFields {
+trait OrderItemsFields extends FieldsExpr[OrderItemsRow] {
   def itemId: IdField[OrderItemsId, OrderItemsRow]
 
   def orderId: Field[OrdersId, OrderItemsRow]
@@ -56,163 +58,175 @@ trait OrderItemsFields {
   def fkProducts: ForeignKey[ProductsFields, ProductsRow] = ForeignKey.of[ProductsFields, ProductsRow]("fk_oi_product").withColumnPair(productId, _.productId)
 
   def fkWarehouses: ForeignKey[WarehousesFields, WarehousesRow] = ForeignKey.of[WarehousesFields, WarehousesRow]("fk_oi_warehouse").withColumnPair(warehouseId, _.warehouseId)
+
+  override def columns: java.util.List[FieldLike[?, OrderItemsRow]]
+
+  override def rowParser: RowParser[OrderItemsRow] = OrderItemsRow._rowParser
 }
 
 object OrderItemsFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[OrderItemsFields, OrderItemsRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends OrderItemsFields with Relation[OrderItemsFields, OrderItemsRow] {
 
-    override lazy val fields: OrderItemsFields = {
-      new OrderItemsFields {
-        override def itemId: IdField[OrderItemsId, OrderItemsRow] = {
-          new IdField[OrderItemsId, OrderItemsRow](
-            _path,
-            "item_id",
-            _.itemId,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(itemId = value),
-            OrderItemsId.pgType
-          )
-        }
-        override def orderId: Field[OrdersId, OrderItemsRow] = {
-          new Field[OrdersId, OrderItemsRow](
-            _path,
-            "order_id",
-            _.orderId,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(orderId = value),
-            OrdersId.pgType
-          )
-        }
-        override def productId: Field[ProductsId, OrderItemsRow] = {
-          new Field[ProductsId, OrderItemsRow](
-            _path,
-            "product_id",
-            _.productId,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(productId = value),
-            ProductsId.pgType
-          )
-        }
-        override def sku: Field[String, OrderItemsRow] = {
-          new Field[String, OrderItemsRow](
-            _path,
-            "sku",
-            _.sku,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(sku = value),
-            MariaTypes.varchar
-          )
-        }
-        override def productName: Field[String, OrderItemsRow] = {
-          new Field[String, OrderItemsRow](
-            _path,
-            "product_name",
-            _.productName,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(productName = value),
-            MariaTypes.varchar
-          )
-        }
-        override def quantity: Field[Integer, OrderItemsRow] = {
-          new Field[Integer, OrderItemsRow](
-            _path,
-            "quantity",
-            _.quantity,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(quantity = value),
-            MariaTypes.smallintUnsigned
-          )
-        }
-        override def unitPrice: Field[java.math.BigDecimal, OrderItemsRow] = {
-          new Field[java.math.BigDecimal, OrderItemsRow](
-            _path,
-            "unit_price",
-            _.unitPrice,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(unitPrice = value),
-            MariaTypes.decimal
-          )
-        }
-        override def discountAmount: Field[java.math.BigDecimal, OrderItemsRow] = {
-          new Field[java.math.BigDecimal, OrderItemsRow](
-            _path,
-            "discount_amount",
-            _.discountAmount,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(discountAmount = value),
-            MariaTypes.decimal
-          )
-        }
-        override def taxAmount: Field[java.math.BigDecimal, OrderItemsRow] = {
-          new Field[java.math.BigDecimal, OrderItemsRow](
-            _path,
-            "tax_amount",
-            _.taxAmount,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(taxAmount = value),
-            MariaTypes.decimal
-          )
-        }
-        override def lineTotal: Field[java.math.BigDecimal, OrderItemsRow] = {
-          new Field[java.math.BigDecimal, OrderItemsRow](
-            _path,
-            "line_total",
-            _.lineTotal,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(lineTotal = value),
-            MariaTypes.decimal
-          )
-        }
-        override def fulfillmentStatus: Field[String, OrderItemsRow] = {
-          new Field[String, OrderItemsRow](
-            _path,
-            "fulfillment_status",
-            _.fulfillmentStatus,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(fulfillmentStatus = value),
-            MariaTypes.text
-          )
-        }
-        override def warehouseId: OptField[WarehousesId, OrderItemsRow] = {
-          new OptField[WarehousesId, OrderItemsRow](
-            _path,
-            "warehouse_id",
-            _.warehouseId,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(warehouseId = value),
-            WarehousesId.pgType
-          )
-        }
-        override def notes: OptField[String, OrderItemsRow] = {
-          new OptField[String, OrderItemsRow](
-            _path,
-            "notes",
-            _.notes,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(notes = value),
-            MariaTypes.tinytext
-          )
-        }
-      }
+    override def itemId: IdField[OrderItemsId, OrderItemsRow] = {
+      new IdField[OrderItemsId, OrderItemsRow](
+        _path,
+        "item_id",
+        _.itemId,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(itemId = value),
+        OrderItemsId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, OrderItemsRow]] = java.util.List.of(this.fields.itemId, this.fields.orderId, this.fields.productId, this.fields.sku, this.fields.productName, this.fields.quantity, this.fields.unitPrice, this.fields.discountAmount, this.fields.taxAmount, this.fields.lineTotal, this.fields.fulfillmentStatus, this.fields.warehouseId, this.fields.notes)
+    override def orderId: Field[OrdersId, OrderItemsRow] = {
+      new Field[OrdersId, OrderItemsRow](
+        _path,
+        "order_id",
+        _.orderId,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(orderId = value),
+        OrdersId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def productId: Field[ProductsId, OrderItemsRow] = {
+      new Field[ProductsId, OrderItemsRow](
+        _path,
+        "product_id",
+        _.productId,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(productId = value),
+        ProductsId.pgType
+      )
+    }
+
+    override def sku: Field[String, OrderItemsRow] = {
+      new Field[String, OrderItemsRow](
+        _path,
+        "sku",
+        _.sku,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(sku = value),
+        MariaTypes.varchar
+      )
+    }
+
+    override def productName: Field[String, OrderItemsRow] = {
+      new Field[String, OrderItemsRow](
+        _path,
+        "product_name",
+        _.productName,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(productName = value),
+        MariaTypes.varchar
+      )
+    }
+
+    override def quantity: Field[Integer, OrderItemsRow] = {
+      new Field[Integer, OrderItemsRow](
+        _path,
+        "quantity",
+        _.quantity,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(quantity = value),
+        MariaTypes.smallintUnsigned
+      )
+    }
+
+    override def unitPrice: Field[java.math.BigDecimal, OrderItemsRow] = {
+      new Field[java.math.BigDecimal, OrderItemsRow](
+        _path,
+        "unit_price",
+        _.unitPrice,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(unitPrice = value),
+        MariaTypes.decimal
+      )
+    }
+
+    override def discountAmount: Field[java.math.BigDecimal, OrderItemsRow] = {
+      new Field[java.math.BigDecimal, OrderItemsRow](
+        _path,
+        "discount_amount",
+        _.discountAmount,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(discountAmount = value),
+        MariaTypes.decimal
+      )
+    }
+
+    override def taxAmount: Field[java.math.BigDecimal, OrderItemsRow] = {
+      new Field[java.math.BigDecimal, OrderItemsRow](
+        _path,
+        "tax_amount",
+        _.taxAmount,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(taxAmount = value),
+        MariaTypes.decimal
+      )
+    }
+
+    override def lineTotal: Field[java.math.BigDecimal, OrderItemsRow] = {
+      new Field[java.math.BigDecimal, OrderItemsRow](
+        _path,
+        "line_total",
+        _.lineTotal,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(lineTotal = value),
+        MariaTypes.decimal
+      )
+    }
+
+    override def fulfillmentStatus: Field[String, OrderItemsRow] = {
+      new Field[String, OrderItemsRow](
+        _path,
+        "fulfillment_status",
+        _.fulfillmentStatus,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(fulfillmentStatus = value),
+        MariaTypes.text
+      )
+    }
+
+    override def warehouseId: OptField[WarehousesId, OrderItemsRow] = {
+      new OptField[WarehousesId, OrderItemsRow](
+        _path,
+        "warehouse_id",
+        _.warehouseId,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(warehouseId = value),
+        WarehousesId.pgType
+      )
+    }
+
+    override def notes: OptField[String, OrderItemsRow] = {
+      new OptField[String, OrderItemsRow](
+        _path,
+        "notes",
+        _.notes,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(notes = value),
+        MariaTypes.tinytext
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, OrderItemsRow]] = java.util.List.of(this.itemId, this.orderId, this.productId, this.sku, this.productName, this.quantity, this.unitPrice, this.discountAmount, this.taxAmount, this.lineTotal, this.fulfillmentStatus, this.warehouseId, this.notes)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[OrderItemsFields, OrderItemsRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[OrderItemsFields, OrderItemsRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

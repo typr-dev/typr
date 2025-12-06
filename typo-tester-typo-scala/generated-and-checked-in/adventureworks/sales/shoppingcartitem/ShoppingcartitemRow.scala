@@ -60,7 +60,7 @@ case class ShoppingcartitemRow(
 }
 
 object ShoppingcartitemRow {
-  val `_rowParser`: RowParser[ShoppingcartitemRow] = RowParsers.of(ShoppingcartitemId.pgType, PgTypes.text, PgTypes.int4, ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, ShoppingcartitemRow.apply, row => Array(row.shoppingcartitemid, row.shoppingcartid, row.quantity, row.productid, row.datecreated, row.modifieddate))
+  val `_rowParser`: RowParser[ShoppingcartitemRow] = RowParsers.of(ShoppingcartitemId.pgType, PgTypes.text, PgTypes.int4, ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, ShoppingcartitemRow.apply, row => Array[Object](row.shoppingcartitemid.asInstanceOf[Object], row.shoppingcartid.asInstanceOf[Object], row.quantity.asInstanceOf[Object], row.productid.asInstanceOf[Object], row.datecreated.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   given pgText: PgText[ShoppingcartitemRow] = PgText.from(`_rowParser`)
 }

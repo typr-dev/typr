@@ -8,14 +8,16 @@ package adventureworks.production.location
 import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.public.Name
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait LocationFields {
+trait LocationFields extends FieldsExpr[LocationRow] {
   def locationid: IdField[LocationId, LocationRow]
 
   def name: Field[Name, LocationRow]
@@ -25,75 +27,79 @@ trait LocationFields {
   def availability: Field[java.math.BigDecimal, LocationRow]
 
   def modifieddate: Field[TypoLocalDateTime, LocationRow]
+
+  override def columns: java.util.List[FieldLike[?, LocationRow]]
+
+  override def rowParser: RowParser[LocationRow] = LocationRow._rowParser
 }
 
 object LocationFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[LocationFields, LocationRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends LocationFields with Relation[LocationFields, LocationRow] {
 
-    override lazy val fields: LocationFields = {
-      new LocationFields {
-        override def locationid: IdField[LocationId, LocationRow] = {
-          new IdField[LocationId, LocationRow](
-            _path,
-            "locationid",
-            _.locationid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(locationid = value),
-            LocationId.pgType
-          )
-        }
-        override def name: Field[Name, LocationRow] = {
-          new Field[Name, LocationRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.of("varchar"),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def costrate: Field[java.math.BigDecimal, LocationRow] = {
-          new Field[java.math.BigDecimal, LocationRow](
-            _path,
-            "costrate",
-            _.costrate,
-            Optional.empty(),
-            Optional.of("numeric"),
-            (row, value) => row.copy(costrate = value),
-            PgTypes.numeric
-          )
-        }
-        override def availability: Field[java.math.BigDecimal, LocationRow] = {
-          new Field[java.math.BigDecimal, LocationRow](
-            _path,
-            "availability",
-            _.availability,
-            Optional.empty(),
-            Optional.of("numeric"),
-            (row, value) => row.copy(availability = value),
-            PgTypes.numeric
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, LocationRow] = {
-          new Field[TypoLocalDateTime, LocationRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def locationid: IdField[LocationId, LocationRow] = {
+      new IdField[LocationId, LocationRow](
+        _path,
+        "locationid",
+        _.locationid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(locationid = value),
+        LocationId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, LocationRow]] = java.util.List.of(this.fields.locationid, this.fields.name, this.fields.costrate, this.fields.availability, this.fields.modifieddate)
+    override def name: Field[Name, LocationRow] = {
+      new Field[Name, LocationRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.of("varchar"),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def costrate: Field[java.math.BigDecimal, LocationRow] = {
+      new Field[java.math.BigDecimal, LocationRow](
+        _path,
+        "costrate",
+        _.costrate,
+        Optional.empty(),
+        Optional.of("numeric"),
+        (row, value) => row.copy(costrate = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def availability: Field[java.math.BigDecimal, LocationRow] = {
+      new Field[java.math.BigDecimal, LocationRow](
+        _path,
+        "availability",
+        _.availability,
+        Optional.empty(),
+        Optional.of("numeric"),
+        (row, value) => row.copy(availability = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, LocationRow] = {
+      new Field[TypoLocalDateTime, LocationRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, LocationRow]] = java.util.List.of(this.locationid, this.name, this.costrate, this.availability, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[LocationFields, LocationRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[LocationFields, LocationRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

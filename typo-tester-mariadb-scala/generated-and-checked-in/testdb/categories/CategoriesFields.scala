@@ -6,6 +6,7 @@
 package testdb.categories
 
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -14,8 +15,9 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-trait CategoriesFields {
+trait CategoriesFields extends FieldsExpr[CategoriesRow] {
   def categoryId: IdField[CategoriesId, CategoriesRow]
 
   def parentId: OptField[CategoriesId, CategoriesRow]
@@ -35,119 +37,127 @@ trait CategoriesFields {
   def metadata: OptField[String, CategoriesRow]
 
   def fkCategories: ForeignKey[CategoriesFields, CategoriesRow] = ForeignKey.of[CategoriesFields, CategoriesRow]("fk_category_parent").withColumnPair(parentId, _.categoryId)
+
+  override def columns: java.util.List[FieldLike[?, CategoriesRow]]
+
+  override def rowParser: RowParser[CategoriesRow] = CategoriesRow._rowParser
 }
 
 object CategoriesFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[CategoriesFields, CategoriesRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends CategoriesFields with Relation[CategoriesFields, CategoriesRow] {
 
-    override lazy val fields: CategoriesFields = {
-      new CategoriesFields {
-        override def categoryId: IdField[CategoriesId, CategoriesRow] = {
-          new IdField[CategoriesId, CategoriesRow](
-            _path,
-            "category_id",
-            _.categoryId,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(categoryId = value),
-            CategoriesId.pgType
-          )
-        }
-        override def parentId: OptField[CategoriesId, CategoriesRow] = {
-          new OptField[CategoriesId, CategoriesRow](
-            _path,
-            "parent_id",
-            _.parentId,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(parentId = value),
-            CategoriesId.pgType
-          )
-        }
-        override def name: Field[String, CategoriesRow] = {
-          new Field[String, CategoriesRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(name = value),
-            MariaTypes.varchar
-          )
-        }
-        override def slug: Field[String, CategoriesRow] = {
-          new Field[String, CategoriesRow](
-            _path,
-            "slug",
-            _.slug,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(slug = value),
-            MariaTypes.varchar
-          )
-        }
-        override def description: OptField[String, CategoriesRow] = {
-          new OptField[String, CategoriesRow](
-            _path,
-            "description",
-            _.description,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(description = value),
-            MariaTypes.mediumtext
-          )
-        }
-        override def imageUrl: OptField[String, CategoriesRow] = {
-          new OptField[String, CategoriesRow](
-            _path,
-            "image_url",
-            _.imageUrl,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(imageUrl = value),
-            MariaTypes.varchar
-          )
-        }
-        override def sortOrder: Field[java.lang.Short, CategoriesRow] = {
-          new Field[java.lang.Short, CategoriesRow](
-            _path,
-            "sort_order",
-            _.sortOrder,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(sortOrder = value),
-            MariaTypes.smallint
-          )
-        }
-        override def isVisible: Field[java.lang.Boolean, CategoriesRow] = {
-          new Field[java.lang.Boolean, CategoriesRow](
-            _path,
-            "is_visible",
-            _.isVisible,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(isVisible = value),
-            MariaTypes.bool
-          )
-        }
-        override def metadata: OptField[String, CategoriesRow] = {
-          new OptField[String, CategoriesRow](
-            _path,
-            "metadata",
-            _.metadata,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(metadata = value),
-            MariaTypes.longtext
-          )
-        }
-      }
+    override def categoryId: IdField[CategoriesId, CategoriesRow] = {
+      new IdField[CategoriesId, CategoriesRow](
+        _path,
+        "category_id",
+        _.categoryId,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(categoryId = value),
+        CategoriesId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, CategoriesRow]] = java.util.List.of(this.fields.categoryId, this.fields.parentId, this.fields.name, this.fields.slug, this.fields.description, this.fields.imageUrl, this.fields.sortOrder, this.fields.isVisible, this.fields.metadata)
+    override def parentId: OptField[CategoriesId, CategoriesRow] = {
+      new OptField[CategoriesId, CategoriesRow](
+        _path,
+        "parent_id",
+        _.parentId,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(parentId = value),
+        CategoriesId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def name: Field[String, CategoriesRow] = {
+      new Field[String, CategoriesRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(name = value),
+        MariaTypes.varchar
+      )
+    }
+
+    override def slug: Field[String, CategoriesRow] = {
+      new Field[String, CategoriesRow](
+        _path,
+        "slug",
+        _.slug,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(slug = value),
+        MariaTypes.varchar
+      )
+    }
+
+    override def description: OptField[String, CategoriesRow] = {
+      new OptField[String, CategoriesRow](
+        _path,
+        "description",
+        _.description,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(description = value),
+        MariaTypes.mediumtext
+      )
+    }
+
+    override def imageUrl: OptField[String, CategoriesRow] = {
+      new OptField[String, CategoriesRow](
+        _path,
+        "image_url",
+        _.imageUrl,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(imageUrl = value),
+        MariaTypes.varchar
+      )
+    }
+
+    override def sortOrder: Field[java.lang.Short, CategoriesRow] = {
+      new Field[java.lang.Short, CategoriesRow](
+        _path,
+        "sort_order",
+        _.sortOrder,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(sortOrder = value),
+        MariaTypes.smallint
+      )
+    }
+
+    override def isVisible: Field[java.lang.Boolean, CategoriesRow] = {
+      new Field[java.lang.Boolean, CategoriesRow](
+        _path,
+        "is_visible",
+        _.isVisible,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(isVisible = value),
+        MariaTypes.bool
+      )
+    }
+
+    override def metadata: OptField[String, CategoriesRow] = {
+      new OptField[String, CategoriesRow](
+        _path,
+        "metadata",
+        _.metadata,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(metadata = value),
+        MariaTypes.longtext
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, CategoriesRow]] = java.util.List.of(this.categoryId, this.parentId, this.name, this.slug, this.description, this.imageUrl, this.sortOrder, this.isVisible, this.metadata)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[CategoriesFields, CategoriesRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[CategoriesFields, CategoriesRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

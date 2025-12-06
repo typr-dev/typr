@@ -14,14 +14,16 @@ import org.mariadb.jdbc.`type`.MultiPoint
 import org.mariadb.jdbc.`type`.MultiPolygon
 import org.mariadb.jdbc.`type`.Point
 import org.mariadb.jdbc.`type`.Polygon
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-trait MariatestSpatialFields {
+trait MariatestSpatialFields extends FieldsExpr[MariatestSpatialRow] {
   def id: IdField[MariatestSpatialId, MariatestSpatialRow]
 
   def geometryCol: Field[Geometry, MariatestSpatialRow]
@@ -39,119 +41,127 @@ trait MariatestSpatialFields {
   def multipolygonCol: Field[MultiPolygon, MariatestSpatialRow]
 
   def geometrycollectionCol: Field[GeometryCollection, MariatestSpatialRow]
+
+  override def columns: java.util.List[FieldLike[?, MariatestSpatialRow]]
+
+  override def rowParser: RowParser[MariatestSpatialRow] = MariatestSpatialRow._rowParser
 }
 
 object MariatestSpatialFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[MariatestSpatialFields, MariatestSpatialRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends MariatestSpatialFields with Relation[MariatestSpatialFields, MariatestSpatialRow] {
 
-    override lazy val fields: MariatestSpatialFields = {
-      new MariatestSpatialFields {
-        override def id: IdField[MariatestSpatialId, MariatestSpatialRow] = {
-          new IdField[MariatestSpatialId, MariatestSpatialRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            MariatestSpatialId.pgType
-          )
-        }
-        override def geometryCol: Field[Geometry, MariatestSpatialRow] = {
-          new Field[Geometry, MariatestSpatialRow](
-            _path,
-            "geometry_col",
-            _.geometryCol,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(geometryCol = value),
-            MariaTypes.geometry
-          )
-        }
-        override def pointCol: Field[Point, MariatestSpatialRow] = {
-          new Field[Point, MariatestSpatialRow](
-            _path,
-            "point_col",
-            _.pointCol,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(pointCol = value),
-            MariaTypes.point
-          )
-        }
-        override def linestringCol: Field[LineString, MariatestSpatialRow] = {
-          new Field[LineString, MariatestSpatialRow](
-            _path,
-            "linestring_col",
-            _.linestringCol,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(linestringCol = value),
-            MariaTypes.linestring
-          )
-        }
-        override def polygonCol: Field[Polygon, MariatestSpatialRow] = {
-          new Field[Polygon, MariatestSpatialRow](
-            _path,
-            "polygon_col",
-            _.polygonCol,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(polygonCol = value),
-            MariaTypes.polygon
-          )
-        }
-        override def multipointCol: Field[MultiPoint, MariatestSpatialRow] = {
-          new Field[MultiPoint, MariatestSpatialRow](
-            _path,
-            "multipoint_col",
-            _.multipointCol,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(multipointCol = value),
-            MariaTypes.multipoint
-          )
-        }
-        override def multilinestringCol: Field[MultiLineString, MariatestSpatialRow] = {
-          new Field[MultiLineString, MariatestSpatialRow](
-            _path,
-            "multilinestring_col",
-            _.multilinestringCol,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(multilinestringCol = value),
-            MariaTypes.multilinestring
-          )
-        }
-        override def multipolygonCol: Field[MultiPolygon, MariatestSpatialRow] = {
-          new Field[MultiPolygon, MariatestSpatialRow](
-            _path,
-            "multipolygon_col",
-            _.multipolygonCol,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(multipolygonCol = value),
-            MariaTypes.multipolygon
-          )
-        }
-        override def geometrycollectionCol: Field[GeometryCollection, MariatestSpatialRow] = {
-          new Field[GeometryCollection, MariatestSpatialRow](
-            _path,
-            "geometrycollection_col",
-            _.geometrycollectionCol,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(geometrycollectionCol = value),
-            MariaTypes.geometrycollection
-          )
-        }
-      }
+    override def id: IdField[MariatestSpatialId, MariatestSpatialRow] = {
+      new IdField[MariatestSpatialId, MariatestSpatialRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        MariatestSpatialId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, MariatestSpatialRow]] = java.util.List.of(this.fields.id, this.fields.geometryCol, this.fields.pointCol, this.fields.linestringCol, this.fields.polygonCol, this.fields.multipointCol, this.fields.multilinestringCol, this.fields.multipolygonCol, this.fields.geometrycollectionCol)
+    override def geometryCol: Field[Geometry, MariatestSpatialRow] = {
+      new Field[Geometry, MariatestSpatialRow](
+        _path,
+        "geometry_col",
+        _.geometryCol,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(geometryCol = value),
+        MariaTypes.geometry
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def pointCol: Field[Point, MariatestSpatialRow] = {
+      new Field[Point, MariatestSpatialRow](
+        _path,
+        "point_col",
+        _.pointCol,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(pointCol = value),
+        MariaTypes.point
+      )
+    }
+
+    override def linestringCol: Field[LineString, MariatestSpatialRow] = {
+      new Field[LineString, MariatestSpatialRow](
+        _path,
+        "linestring_col",
+        _.linestringCol,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(linestringCol = value),
+        MariaTypes.linestring
+      )
+    }
+
+    override def polygonCol: Field[Polygon, MariatestSpatialRow] = {
+      new Field[Polygon, MariatestSpatialRow](
+        _path,
+        "polygon_col",
+        _.polygonCol,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(polygonCol = value),
+        MariaTypes.polygon
+      )
+    }
+
+    override def multipointCol: Field[MultiPoint, MariatestSpatialRow] = {
+      new Field[MultiPoint, MariatestSpatialRow](
+        _path,
+        "multipoint_col",
+        _.multipointCol,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(multipointCol = value),
+        MariaTypes.multipoint
+      )
+    }
+
+    override def multilinestringCol: Field[MultiLineString, MariatestSpatialRow] = {
+      new Field[MultiLineString, MariatestSpatialRow](
+        _path,
+        "multilinestring_col",
+        _.multilinestringCol,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(multilinestringCol = value),
+        MariaTypes.multilinestring
+      )
+    }
+
+    override def multipolygonCol: Field[MultiPolygon, MariatestSpatialRow] = {
+      new Field[MultiPolygon, MariatestSpatialRow](
+        _path,
+        "multipolygon_col",
+        _.multipolygonCol,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(multipolygonCol = value),
+        MariaTypes.multipolygon
+      )
+    }
+
+    override def geometrycollectionCol: Field[GeometryCollection, MariatestSpatialRow] = {
+      new Field[GeometryCollection, MariatestSpatialRow](
+        _path,
+        "geometrycollection_col",
+        _.geometrycollectionCol,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(geometrycollectionCol = value),
+        MariaTypes.geometrycollection
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, MariatestSpatialRow]] = java.util.List.of(this.id, this.geometryCol, this.pointCol, this.linestringCol, this.polygonCol, this.multipointCol, this.multilinestringCol, this.multipolygonCol, this.geometrycollectionCol)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[MariatestSpatialFields, MariatestSpatialRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[MariatestSpatialFields, MariatestSpatialRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

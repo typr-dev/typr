@@ -10,13 +10,15 @@ import adventureworks.customtypes.TypoShort
 import adventureworks.production.product.ProductId
 import adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait PodViewFields {
+trait PodViewFields extends FieldsExpr[PodViewRow] {
   def id: Field[Integer, PodViewRow]
 
   def purchaseorderid: Field[PurchaseorderheaderId, PodViewRow]
@@ -36,130 +38,139 @@ trait PodViewFields {
   def rejectedqty: Field[java.math.BigDecimal, PodViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, PodViewRow]
+
+  override def columns: java.util.List[FieldLike[?, PodViewRow]]
+
+  override def rowParser: RowParser[PodViewRow] = PodViewRow._rowParser
 }
 
 object PodViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[PodViewFields, PodViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends PodViewFields with Relation[PodViewFields, PodViewRow] {
 
-    override lazy val fields: PodViewFields = {
-      new PodViewFields {
-        override def id: Field[Integer, PodViewRow] = {
-          new Field[Integer, PodViewRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            PgTypes.int4
-          )
-        }
-        override def purchaseorderid: Field[PurchaseorderheaderId, PodViewRow] = {
-          new Field[PurchaseorderheaderId, PodViewRow](
-            _path,
-            "purchaseorderid",
-            _.purchaseorderid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(purchaseorderid = value),
-            PurchaseorderheaderId.pgType
-          )
-        }
-        override def purchaseorderdetailid: Field[Integer, PodViewRow] = {
-          new Field[Integer, PodViewRow](
-            _path,
-            "purchaseorderdetailid",
-            _.purchaseorderdetailid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(purchaseorderdetailid = value),
-            PgTypes.int4
-          )
-        }
-        override def duedate: Field[TypoLocalDateTime, PodViewRow] = {
-          new Field[TypoLocalDateTime, PodViewRow](
-            _path,
-            "duedate",
-            _.duedate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(duedate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def orderqty: Field[TypoShort, PodViewRow] = {
-          new Field[TypoShort, PodViewRow](
-            _path,
-            "orderqty",
-            _.orderqty,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(orderqty = value),
-            TypoShort.pgType
-          )
-        }
-        override def productid: Field[ProductId, PodViewRow] = {
-          new Field[ProductId, PodViewRow](
-            _path,
-            "productid",
-            _.productid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(productid = value),
-            ProductId.pgType
-          )
-        }
-        override def unitprice: Field[java.math.BigDecimal, PodViewRow] = {
-          new Field[java.math.BigDecimal, PodViewRow](
-            _path,
-            "unitprice",
-            _.unitprice,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(unitprice = value),
-            PgTypes.numeric
-          )
-        }
-        override def receivedqty: Field[java.math.BigDecimal, PodViewRow] = {
-          new Field[java.math.BigDecimal, PodViewRow](
-            _path,
-            "receivedqty",
-            _.receivedqty,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(receivedqty = value),
-            PgTypes.numeric
-          )
-        }
-        override def rejectedqty: Field[java.math.BigDecimal, PodViewRow] = {
-          new Field[java.math.BigDecimal, PodViewRow](
-            _path,
-            "rejectedqty",
-            _.rejectedqty,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(rejectedqty = value),
-            PgTypes.numeric
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, PodViewRow] = {
-          new Field[TypoLocalDateTime, PodViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def id: Field[Integer, PodViewRow] = {
+      new Field[Integer, PodViewRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        PgTypes.int4
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, PodViewRow]] = java.util.List.of(this.fields.id, this.fields.purchaseorderid, this.fields.purchaseorderdetailid, this.fields.duedate, this.fields.orderqty, this.fields.productid, this.fields.unitprice, this.fields.receivedqty, this.fields.rejectedqty, this.fields.modifieddate)
+    override def purchaseorderid: Field[PurchaseorderheaderId, PodViewRow] = {
+      new Field[PurchaseorderheaderId, PodViewRow](
+        _path,
+        "purchaseorderid",
+        _.purchaseorderid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(purchaseorderid = value),
+        PurchaseorderheaderId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def purchaseorderdetailid: Field[Integer, PodViewRow] = {
+      new Field[Integer, PodViewRow](
+        _path,
+        "purchaseorderdetailid",
+        _.purchaseorderdetailid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(purchaseorderdetailid = value),
+        PgTypes.int4
+      )
+    }
+
+    override def duedate: Field[TypoLocalDateTime, PodViewRow] = {
+      new Field[TypoLocalDateTime, PodViewRow](
+        _path,
+        "duedate",
+        _.duedate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(duedate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def orderqty: Field[TypoShort, PodViewRow] = {
+      new Field[TypoShort, PodViewRow](
+        _path,
+        "orderqty",
+        _.orderqty,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(orderqty = value),
+        TypoShort.pgType
+      )
+    }
+
+    override def productid: Field[ProductId, PodViewRow] = {
+      new Field[ProductId, PodViewRow](
+        _path,
+        "productid",
+        _.productid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(productid = value),
+        ProductId.pgType
+      )
+    }
+
+    override def unitprice: Field[java.math.BigDecimal, PodViewRow] = {
+      new Field[java.math.BigDecimal, PodViewRow](
+        _path,
+        "unitprice",
+        _.unitprice,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(unitprice = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def receivedqty: Field[java.math.BigDecimal, PodViewRow] = {
+      new Field[java.math.BigDecimal, PodViewRow](
+        _path,
+        "receivedqty",
+        _.receivedqty,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(receivedqty = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def rejectedqty: Field[java.math.BigDecimal, PodViewRow] = {
+      new Field[java.math.BigDecimal, PodViewRow](
+        _path,
+        "rejectedqty",
+        _.rejectedqty,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(rejectedqty = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, PodViewRow] = {
+      new Field[TypoLocalDateTime, PodViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, PodViewRow]] = java.util.List.of(this.id, this.purchaseorderid, this.purchaseorderdetailid, this.duedate, this.orderqty, this.productid, this.unitprice, this.receivedqty, this.rejectedqty, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[PodViewFields, PodViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[PodViewFields, PodViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

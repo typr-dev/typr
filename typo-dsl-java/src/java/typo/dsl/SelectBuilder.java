@@ -1,5 +1,6 @@
 package typo.dsl;
 
+import typo.data.Json;
 import typo.runtime.Fragment;
 import typo.runtime.RowParser;
 
@@ -12,7 +13,7 @@ import java.util.function.Function;
 /**
  * Builder for SQL SELECT queries with type-safe operations.
  */
-public interface SelectBuilder<Fields, Row> {
+public interface SelectBuilder<Fields, Row> extends SelectBuilderMap<Fields, Row> {
 
     /**
      * Create a SelectBuilder for a table.
@@ -153,9 +154,114 @@ public interface SelectBuilder<Fields, Row> {
     /**
      * Left join with the given predicate.
      */
-    <Fields2, Row2> SelectBuilder<Structure.Tuple2<Fields, Fields2>, Structure.Tuple2<Row, Optional<Row2>>> 
+    <Fields2, Row2> SelectBuilder<Structure.Tuple2<Fields, Fields2>, Structure.Tuple2<Row, Optional<Row2>>>
         leftJoinOn(SelectBuilder<Fields2, Row2> other, Function<Structure.Tuple2<Fields, Fields2>, SqlExpr<Boolean>> pred);
-    
+
+    /**
+     * Join and aggregate the right side into a JSON array (one-to-many relationship).
+     *
+     * This avoids the "rectangular explosion" problem where joining one-to-many
+     * would multiply rows. Instead, the right side is aggregated into a JSON array.
+     *
+     * Example:
+     * <pre>
+     * person.multisetOn(email, (p, e) -> p.id().isEqual(e.personId()))
+     * </pre>
+     *
+     * Returns a SelectBuilder where the right side becomes a Json column.
+     *
+     * @param other The right side of the join (the "many" side)
+     * @param pred The join predicate (correlation)
+     * @return SelectBuilder with the right side as Json
+     */
+    <Fields2, Row2> SelectBuilder<Structure.Tuple2<Fields, Fields2>, Structure.Tuple2<Row, Json>>
+        multisetOn(SelectBuilder<Fields2, Row2> other, Function<Structure.Tuple2<Fields, Fields2>, SqlExpr<Boolean>> pred);
+
+    // ========== GROUP BY Methods ==========
+
+    /**
+     * Group results by a single column or expression.
+     *
+     * <p>Example:
+     * <pre>{@code
+     * personRepo.select()
+     *     .groupBy(p -> p.department())
+     *     .select(p -> Tuples.of(
+     *         p.department(),
+     *         SqlExpr.count()
+     *     ))
+     * }</pre>
+     *
+     * @param groupKey function that extracts the group key expression
+     * @param <G> the type of the group key
+     * @return a GroupedBuilder for constructing the grouped query
+     */
+    default <G> GroupedBuilder<Fields, Row> groupBy(Function<Fields, SqlExpr<G>> groupKey) {
+        return groupByExpr(f -> List.of(groupKey.apply(f)));
+    }
+
+    /**
+     * Group results by two columns.
+     *
+     * <p>Example:
+     * <pre>{@code
+     * salesRepo.select()
+     *     .groupBy(s -> s.year(), s -> s.quarter())
+     *     .select(s -> Tuples.of(
+     *         s.year(),
+     *         s.quarter(),
+     *         SqlExpr.sum(s.amount())
+     *     ))
+     * }</pre>
+     */
+    default <G1, G2> GroupedBuilder<Fields, Row> groupBy(
+            Function<Fields, SqlExpr<G1>> key1,
+            Function<Fields, SqlExpr<G2>> key2) {
+        return groupByExpr(f -> List.of(key1.apply(f), key2.apply(f)));
+    }
+
+    /**
+     * Group results by three columns.
+     */
+    default <G1, G2, G3> GroupedBuilder<Fields, Row> groupBy(
+            Function<Fields, SqlExpr<G1>> key1,
+            Function<Fields, SqlExpr<G2>> key2,
+            Function<Fields, SqlExpr<G3>> key3) {
+        return groupByExpr(f -> List.of(key1.apply(f), key2.apply(f), key3.apply(f)));
+    }
+
+    /**
+     * Group results by four columns.
+     */
+    default <G1, G2, G3, G4> GroupedBuilder<Fields, Row> groupBy(
+            Function<Fields, SqlExpr<G1>> key1,
+            Function<Fields, SqlExpr<G2>> key2,
+            Function<Fields, SqlExpr<G3>> key3,
+            Function<Fields, SqlExpr<G4>> key4) {
+        return groupByExpr(f -> List.of(key1.apply(f), key2.apply(f), key3.apply(f), key4.apply(f)));
+    }
+
+    /**
+     * Group results by five columns.
+     */
+    default <G1, G2, G3, G4, G5> GroupedBuilder<Fields, Row> groupBy(
+            Function<Fields, SqlExpr<G1>> key1,
+            Function<Fields, SqlExpr<G2>> key2,
+            Function<Fields, SqlExpr<G3>> key3,
+            Function<Fields, SqlExpr<G4>> key4,
+            Function<Fields, SqlExpr<G5>> key5) {
+        return groupByExpr(f -> List.of(key1.apply(f), key2.apply(f), key3.apply(f), key4.apply(f), key5.apply(f)));
+    }
+
+    /**
+     * Low-level groupBy that accepts a list of expressions.
+     * Implementations must override this.
+     *
+     * @param groupKeys function that returns the list of GROUP BY expressions
+     * @return a GroupedBuilder for constructing the grouped query
+     */
+    GroupedBuilder<Fields, Row> groupByExpr(Function<Fields, List<SqlExpr<?>>> groupKeys);
+
     // Protected methods that implementations must provide
     SelectParams<Fields, Row> params();
     SelectBuilder<Fields, Row> withParams(SelectParams<Fields, Row> params);
@@ -163,35 +269,30 @@ public interface SelectBuilder<Fields, Row> {
     /**
      * Helper class for building joins with fluent syntax.
      */
-    class PartialJoin<Fields, Row, Fields2, Row2> {
-        private final SelectBuilder<Fields, Row> parent;
-        private final SelectBuilder<Fields2, Row2> other;
-        
-        public PartialJoin(SelectBuilder<Fields, Row> parent, SelectBuilder<Fields2, Row2> other) {
-            this.parent = parent;
-            this.other = other;
-        }
-        
+    record PartialJoin<Fields, Row, Fields2, Row2>(
+            SelectBuilder<Fields, Row> parent,
+            SelectBuilder<Fields2, Row2> other
+    ) {
         /**
          * Complete the join using a foreign key.
          */
-        public SelectBuilder<Structure.Tuple2<Fields, Fields2>, Structure.Tuple2<Row, Row2>> 
+        public SelectBuilder<Structure.Tuple2<Fields, Fields2>, Structure.Tuple2<Row, Row2>>
                 onFk(Function<Fields, ForeignKey<Fields2, Row2>> fkFunc) {
             return parent.joinFk(fkFunc, other);
         }
-        
+
         /**
          * Inner join with the given predicate.
          */
-        public SelectBuilder<Structure.Tuple2<Fields, Fields2>, Structure.Tuple2<Row, Row2>> 
+        public SelectBuilder<Structure.Tuple2<Fields, Fields2>, Structure.Tuple2<Row, Row2>>
                 on(Function<Structure.Tuple2<Fields, Fields2>, SqlExpr<Boolean>> pred) {
             return parent.joinOn(other, pred);
         }
-        
+
         /**
          * Left join with the given predicate.
          */
-        public SelectBuilder<Structure.Tuple2<Fields, Fields2>, Structure.Tuple2<Row, Optional<Row2>>> 
+        public SelectBuilder<Structure.Tuple2<Fields, Fields2>, Structure.Tuple2<Row, Optional<Row2>>>
                 leftOn(Function<Structure.Tuple2<Fields, Fields2>, SqlExpr<Boolean>> pred) {
             return parent.leftJoinOn(other, pred);
         }

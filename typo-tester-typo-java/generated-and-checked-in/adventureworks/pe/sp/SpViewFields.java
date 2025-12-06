@@ -14,72 +14,73 @@ import adventureworks.public_.Name;
 import adventureworks.sales.salesterritory.SalesterritoryId;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface SpViewFields {
-  final class Impl extends Relation<SpViewFields, SpViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface SpViewFields extends FieldsExpr<SpViewRow> {
+  record Impl(List<Path> _path) implements SpViewFields, Relation<SpViewFields, SpViewRow> {
+    @Override
+    public Field<StateprovinceId, SpViewRow> id() {
+      return new Field<StateprovinceId, SpViewRow>(_path, "id", SpViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), StateprovinceId.pgType);
+    };
 
     @Override
-    public SpViewFields fields() {
-      return new SpViewFields() {
-               @Override
-               public Field<StateprovinceId, SpViewRow> id() {
-                 return new Field<StateprovinceId, SpViewRow>(_path, "id", SpViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), StateprovinceId.pgType);
-               };
-               @Override
-               public Field<StateprovinceId, SpViewRow> stateprovinceid() {
-                 return new Field<StateprovinceId, SpViewRow>(_path, "stateprovinceid", SpViewRow::stateprovinceid, Optional.empty(), Optional.empty(), (row, value) -> row.withStateprovinceid(value), StateprovinceId.pgType);
-               };
-               @Override
-               public Field</* bpchar, max 3 chars */ String, SpViewRow> stateprovincecode() {
-                 return new Field</* bpchar, max 3 chars */ String, SpViewRow>(_path, "stateprovincecode", SpViewRow::stateprovincecode, Optional.empty(), Optional.empty(), (row, value) -> row.withStateprovincecode(value), PgTypes.bpchar);
-               };
-               @Override
-               public Field<CountryregionId, SpViewRow> countryregioncode() {
-                 return new Field<CountryregionId, SpViewRow>(_path, "countryregioncode", SpViewRow::countryregioncode, Optional.empty(), Optional.empty(), (row, value) -> row.withCountryregioncode(value), CountryregionId.pgType);
-               };
-               @Override
-               public Field<Flag, SpViewRow> isonlystateprovinceflag() {
-                 return new Field<Flag, SpViewRow>(_path, "isonlystateprovinceflag", SpViewRow::isonlystateprovinceflag, Optional.empty(), Optional.empty(), (row, value) -> row.withIsonlystateprovinceflag(value), Flag.pgType);
-               };
-               @Override
-               public Field<Name, SpViewRow> name() {
-                 return new Field<Name, SpViewRow>(_path, "name", SpViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<SalesterritoryId, SpViewRow> territoryid() {
-                 return new Field<SalesterritoryId, SpViewRow>(_path, "territoryid", SpViewRow::territoryid, Optional.empty(), Optional.empty(), (row, value) -> row.withTerritoryid(value), SalesterritoryId.pgType);
-               };
-               @Override
-               public Field<TypoUUID, SpViewRow> rowguid() {
-                 return new Field<TypoUUID, SpViewRow>(_path, "rowguid", SpViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, SpViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, SpViewRow>(_path, "modifieddate", SpViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<StateprovinceId, SpViewRow> stateprovinceid() {
+      return new Field<StateprovinceId, SpViewRow>(_path, "stateprovinceid", SpViewRow::stateprovinceid, Optional.empty(), Optional.empty(), (row, value) -> row.withStateprovinceid(value), StateprovinceId.pgType);
+    };
+
+    @Override
+    public Field</* bpchar, max 3 chars */ String, SpViewRow> stateprovincecode() {
+      return new Field</* bpchar, max 3 chars */ String, SpViewRow>(_path, "stateprovincecode", SpViewRow::stateprovincecode, Optional.empty(), Optional.empty(), (row, value) -> row.withStateprovincecode(value), PgTypes.bpchar);
+    };
+
+    @Override
+    public Field<CountryregionId, SpViewRow> countryregioncode() {
+      return new Field<CountryregionId, SpViewRow>(_path, "countryregioncode", SpViewRow::countryregioncode, Optional.empty(), Optional.empty(), (row, value) -> row.withCountryregioncode(value), CountryregionId.pgType);
+    };
+
+    @Override
+    public Field<Flag, SpViewRow> isonlystateprovinceflag() {
+      return new Field<Flag, SpViewRow>(_path, "isonlystateprovinceflag", SpViewRow::isonlystateprovinceflag, Optional.empty(), Optional.empty(), (row, value) -> row.withIsonlystateprovinceflag(value), Flag.pgType);
+    };
+
+    @Override
+    public Field<Name, SpViewRow> name() {
+      return new Field<Name, SpViewRow>(_path, "name", SpViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<SalesterritoryId, SpViewRow> territoryid() {
+      return new Field<SalesterritoryId, SpViewRow>(_path, "territoryid", SpViewRow::territoryid, Optional.empty(), Optional.empty(), (row, value) -> row.withTerritoryid(value), SalesterritoryId.pgType);
+    };
+
+    @Override
+    public Field<TypoUUID, SpViewRow> rowguid() {
+      return new Field<TypoUUID, SpViewRow>(_path, "rowguid", SpViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, SpViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, SpViewRow>(_path, "modifieddate", SpViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, SpViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().stateprovinceid(), this.fields().stateprovincecode(), this.fields().countryregioncode(), this.fields().isonlystateprovinceflag(), this.fields().name(), this.fields().territoryid(), this.fields().rowguid(), this.fields().modifieddate());
+      return List.of(this.id(), this.stateprovinceid(), this.stateprovincecode(), this.countryregioncode(), this.isonlystateprovinceflag(), this.name(), this.territoryid(), this.rowguid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<SpViewFields, SpViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<SpViewFields, SpViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -100,4 +101,12 @@ public interface SpViewFields {
   Field<TypoUUID, SpViewRow> rowguid();
 
   Field<TypoLocalDateTime, SpViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, SpViewRow>> columns();
+
+  @Override
+  default RowParser<SpViewRow> rowParser() {
+    return SpViewRow._rowParser;
+  };
 }

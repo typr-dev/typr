@@ -15,6 +15,7 @@ import adventureworks.person.phonenumbertype.PhonenumbertypeRow;
 import adventureworks.public_.Phone;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr;
@@ -24,47 +25,42 @@ import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface PersonphoneFields {
-  final class Impl extends Relation<PersonphoneFields, PersonphoneRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PersonphoneFields extends FieldsExpr<PersonphoneRow> {
+  record Impl(List<Path> _path) implements PersonphoneFields, Relation<PersonphoneFields, PersonphoneRow> {
+    @Override
+    public IdField<BusinessentityId, PersonphoneRow> businessentityid() {
+      return new IdField<BusinessentityId, PersonphoneRow>(_path, "businessentityid", PersonphoneRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
+    };
 
     @Override
-    public PersonphoneFields fields() {
-      return new PersonphoneFields() {
-               @Override
-               public IdField<BusinessentityId, PersonphoneRow> businessentityid() {
-                 return new IdField<BusinessentityId, PersonphoneRow>(_path, "businessentityid", PersonphoneRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public IdField<Phone, PersonphoneRow> phonenumber() {
-                 return new IdField<Phone, PersonphoneRow>(_path, "phonenumber", PersonphoneRow::phonenumber, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withPhonenumber(value), Phone.pgType);
-               };
-               @Override
-               public IdField<PhonenumbertypeId, PersonphoneRow> phonenumbertypeid() {
-                 return new IdField<PhonenumbertypeId, PersonphoneRow>(_path, "phonenumbertypeid", PersonphoneRow::phonenumbertypeid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withPhonenumbertypeid(value), PhonenumbertypeId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PersonphoneRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, PersonphoneRow>(_path, "modifieddate", PersonphoneRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public IdField<Phone, PersonphoneRow> phonenumber() {
+      return new IdField<Phone, PersonphoneRow>(_path, "phonenumber", PersonphoneRow::phonenumber, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withPhonenumber(value), Phone.pgType);
+    };
+
+    @Override
+    public IdField<PhonenumbertypeId, PersonphoneRow> phonenumbertypeid() {
+      return new IdField<PhonenumbertypeId, PersonphoneRow>(_path, "phonenumbertypeid", PersonphoneRow::phonenumbertypeid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withPhonenumbertypeid(value), PhonenumbertypeId.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PersonphoneRow> modifieddate() {
+      return new Field<TypoLocalDateTime, PersonphoneRow>(_path, "modifieddate", PersonphoneRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, PersonphoneRow>> columns() {
-      return List.of(this.fields().businessentityid(), this.fields().phonenumber(), this.fields().phonenumbertypeid(), this.fields().modifieddate());
+      return List.of(this.businessentityid(), this.phonenumber(), this.phonenumbertypeid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PersonphoneFields, PersonphoneRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PersonphoneFields, PersonphoneRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -90,5 +86,13 @@ public interface PersonphoneFields {
 
   default SqlExpr<Boolean> compositeIdIn(List<PersonphoneId> compositeIds) {
     return new CompositeIn(List.of(new Part<BusinessentityId, PersonphoneId, PersonphoneRow>(businessentityid(), PersonphoneId::businessentityid, BusinessentityId.pgType), new Part<Phone, PersonphoneId, PersonphoneRow>(phonenumber(), PersonphoneId::phonenumber, Phone.pgType), new Part<PhonenumbertypeId, PersonphoneId, PersonphoneRow>(phonenumbertypeid(), PersonphoneId::phonenumbertypeid, PhonenumbertypeId.pgType)), compositeIds);
+  };
+
+  @Override
+  List<FieldLike<?, PersonphoneRow>> columns();
+
+  @Override
+  default RowParser<PersonphoneRow> rowParser() {
+    return PersonphoneRow._rowParser;
   };
 }

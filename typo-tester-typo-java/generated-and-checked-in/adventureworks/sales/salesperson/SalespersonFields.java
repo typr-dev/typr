@@ -16,6 +16,7 @@ import adventureworks.sales.salesterritory.SalesterritoryRow;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
@@ -24,67 +25,67 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface SalespersonFields {
-  final class Impl extends Relation<SalespersonFields, SalespersonRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface SalespersonFields extends FieldsExpr<SalespersonRow> {
+  record Impl(List<Path> _path) implements SalespersonFields, Relation<SalespersonFields, SalespersonRow> {
+    @Override
+    public IdField<BusinessentityId, SalespersonRow> businessentityid() {
+      return new IdField<BusinessentityId, SalespersonRow>(_path, "businessentityid", SalespersonRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
+    };
 
     @Override
-    public SalespersonFields fields() {
-      return new SalespersonFields() {
-               @Override
-               public IdField<BusinessentityId, SalespersonRow> businessentityid() {
-                 return new IdField<BusinessentityId, SalespersonRow>(_path, "businessentityid", SalespersonRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public OptField<SalesterritoryId, SalespersonRow> territoryid() {
-                 return new OptField<SalesterritoryId, SalespersonRow>(_path, "territoryid", SalespersonRow::territoryid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withTerritoryid(value), SalesterritoryId.pgType);
-               };
-               @Override
-               public OptField<BigDecimal, SalespersonRow> salesquota() {
-                 return new OptField<BigDecimal, SalespersonRow>(_path, "salesquota", SalespersonRow::salesquota, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withSalesquota(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<BigDecimal, SalespersonRow> bonus() {
-                 return new Field<BigDecimal, SalespersonRow>(_path, "bonus", SalespersonRow::bonus, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withBonus(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<BigDecimal, SalespersonRow> commissionpct() {
-                 return new Field<BigDecimal, SalespersonRow>(_path, "commissionpct", SalespersonRow::commissionpct, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withCommissionpct(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<BigDecimal, SalespersonRow> salesytd() {
-                 return new Field<BigDecimal, SalespersonRow>(_path, "salesytd", SalespersonRow::salesytd, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withSalesytd(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<BigDecimal, SalespersonRow> saleslastyear() {
-                 return new Field<BigDecimal, SalespersonRow>(_path, "saleslastyear", SalespersonRow::saleslastyear, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withSaleslastyear(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<TypoUUID, SalespersonRow> rowguid() {
-                 return new Field<TypoUUID, SalespersonRow>(_path, "rowguid", SalespersonRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, SalespersonRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, SalespersonRow>(_path, "modifieddate", SalespersonRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public OptField<SalesterritoryId, SalespersonRow> territoryid() {
+      return new OptField<SalesterritoryId, SalespersonRow>(_path, "territoryid", SalespersonRow::territoryid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withTerritoryid(value), SalesterritoryId.pgType);
+    };
+
+    @Override
+    public OptField<BigDecimal, SalespersonRow> salesquota() {
+      return new OptField<BigDecimal, SalespersonRow>(_path, "salesquota", SalespersonRow::salesquota, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withSalesquota(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<BigDecimal, SalespersonRow> bonus() {
+      return new Field<BigDecimal, SalespersonRow>(_path, "bonus", SalespersonRow::bonus, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withBonus(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<BigDecimal, SalespersonRow> commissionpct() {
+      return new Field<BigDecimal, SalespersonRow>(_path, "commissionpct", SalespersonRow::commissionpct, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withCommissionpct(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<BigDecimal, SalespersonRow> salesytd() {
+      return new Field<BigDecimal, SalespersonRow>(_path, "salesytd", SalespersonRow::salesytd, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withSalesytd(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<BigDecimal, SalespersonRow> saleslastyear() {
+      return new Field<BigDecimal, SalespersonRow>(_path, "saleslastyear", SalespersonRow::saleslastyear, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withSaleslastyear(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<TypoUUID, SalespersonRow> rowguid() {
+      return new Field<TypoUUID, SalespersonRow>(_path, "rowguid", SalespersonRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, SalespersonRow> modifieddate() {
+      return new Field<TypoLocalDateTime, SalespersonRow>(_path, "modifieddate", SalespersonRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, SalespersonRow>> columns() {
-      return List.of(this.fields().businessentityid(), this.fields().territoryid(), this.fields().salesquota(), this.fields().bonus(), this.fields().commissionpct(), this.fields().salesytd(), this.fields().saleslastyear(), this.fields().rowguid(), this.fields().modifieddate());
+      return List.of(this.businessentityid(), this.territoryid(), this.salesquota(), this.bonus(), this.commissionpct(), this.salesytd(), this.saleslastyear(), this.rowguid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<SalespersonFields, SalespersonRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<SalespersonFields, SalespersonRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -112,5 +113,13 @@ public interface SalespersonFields {
 
   default ForeignKey<SalesterritoryFields, SalesterritoryRow> fkSalesterritory() {
     return ForeignKey.<SalesterritoryFields, SalesterritoryRow>of("sales.FK_SalesPerson_SalesTerritory_TerritoryID").withColumnPair(territoryid(), SalesterritoryFields::territoryid);
+  };
+
+  @Override
+  List<FieldLike<?, SalespersonRow>> columns();
+
+  @Override
+  default RowParser<SalespersonRow> rowParser() {
+    return SalespersonRow._rowParser;
   };
 }

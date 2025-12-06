@@ -7,41 +7,42 @@ package adventureworks.public_.issue142;
 
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface Issue142Fields {
-  final class Impl extends Relation<Issue142Fields, Issue142Row> {
-    Impl(List<Path> path) {
-      super(path);
-    }
-
+public interface Issue142Fields extends FieldsExpr<Issue142Row> {
+  record Impl(List<Path> _path) implements Issue142Fields, Relation<Issue142Fields, Issue142Row> {
     @Override
-    public Issue142Fields fields() {
-      return new Issue142Fields() {
-               @Override
-               public IdField<Issue142Id, Issue142Row> tabellkode() {
-                 return new IdField<Issue142Id, Issue142Row>(_path, "tabellkode", Issue142Row::tabellkode, Optional.empty(), Optional.empty(), (row, value) -> row.withTabellkode(value), Issue142Id.pgType);
-               };
-             };
+    public IdField<Issue142Id, Issue142Row> tabellkode() {
+      return new IdField<Issue142Id, Issue142Row>(_path, "tabellkode", Issue142Row::tabellkode, Optional.empty(), Optional.empty(), (row, value) -> row.withTabellkode(value), Issue142Id.pgType);
     };
 
     @Override
     public List<FieldLike<?, Issue142Row>> columns() {
-      return List.of(this.fields().tabellkode());
+      return List.of(this.tabellkode());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<Issue142Fields, Issue142Row> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<Issue142Fields, Issue142Row> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
   IdField<Issue142Id, Issue142Row> tabellkode();
+
+  @Override
+  List<FieldLike<?, Issue142Row>> columns();
+
+  @Override
+  default RowParser<Issue142Row> rowParser() {
+    return Issue142Row._rowParser;
+  };
 }

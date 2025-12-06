@@ -7,49 +7,51 @@ package testdb.hardcoded.myschema.football_club;
 
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface FootballClubFields {
-  final class Impl extends Relation<FootballClubFields, FootballClubRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface FootballClubFields extends FieldsExpr<FootballClubRow> {
+  record Impl(List<Path> _path) implements FootballClubFields, Relation<FootballClubFields, FootballClubRow> {
+    @Override
+    public IdField<FootballClubId, FootballClubRow> id() {
+      return new IdField<FootballClubId, FootballClubRow>(_path, "id", FootballClubRow::id, Optional.empty(), Optional.of("int8"), (row, value) -> row.withId(value), FootballClubId.pgType);
+    };
 
     @Override
-    public FootballClubFields fields() {
-      return new FootballClubFields() {
-               @Override
-               public IdField<FootballClubId, FootballClubRow> id() {
-                 return new IdField<FootballClubId, FootballClubRow>(_path, "id", FootballClubRow::id, Optional.empty(), Optional.of("int8"), (row, value) -> row.withId(value), FootballClubId.pgType);
-               };
-               @Override
-               public Field</* max 100 chars */ String, FootballClubRow> name() {
-                 return new Field</* max 100 chars */ String, FootballClubRow>(_path, "name", FootballClubRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), PgTypes.text);
-               };
-             };
+    public Field</* max 100 chars */ String, FootballClubRow> name() {
+      return new Field</* max 100 chars */ String, FootballClubRow>(_path, "name", FootballClubRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), PgTypes.text);
     };
 
     @Override
     public List<FieldLike<?, FootballClubRow>> columns() {
-      return List.of(this.fields().id(), this.fields().name());
+      return List.of(this.id(), this.name());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<FootballClubFields, FootballClubRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<FootballClubFields, FootballClubRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
   IdField<FootballClubId, FootballClubRow> id();
 
   Field</* max 100 chars */ String, FootballClubRow> name();
+
+  @Override
+  List<FieldLike<?, FootballClubRow>> columns();
+
+  @Override
+  default RowParser<FootballClubRow> rowParser() {
+    return FootballClubRow._rowParser;
+  };
 }

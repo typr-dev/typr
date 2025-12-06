@@ -5,24 +5,21 @@
  *
  * (If you're developing `typo` and want to change it: run `bleep generate-sources`)
  */
-package typo
-package generated
-package custom
-package enums
+package typo.generated.custom.enums
 
-import anorm.SqlStringInterpolation
 import java.sql.Connection
+import anorm.SqlStringInterpolation
 
 class EnumsSqlRepoImpl extends EnumsSqlRepo {
-  override def apply()(implicit c: Connection): List[EnumsSqlRow] = {
+  override def apply(implicit c: Connection): List[EnumsSqlRow] = {
     val sql =
       SQL"""select n.nspname as "enum_schema?",
-                   t.typname as enum_name,
-                   e.enumsortorder as enum_sort_order,
-                   e.enumlabel as enum_value
-            from pg_type t
-                     join pg_enum e on t.oid = e.enumtypid
-                     join pg_catalog.pg_namespace n ON n.oid = t.typnamespace"""
+             t.typname as enum_name,
+             e.enumsortorder as enum_sort_order,
+             e.enumlabel as enum_value
+      from pg_type t
+               join pg_enum e on t.oid = e.enumtypid
+               join pg_catalog.pg_namespace n ON n.oid = t.typnamespace"""
     sql.as(EnumsSqlRow.rowParser(1).*)
   }
 }

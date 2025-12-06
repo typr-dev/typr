@@ -33,5 +33,5 @@ case class CViewRow(
 )
 
 object CViewRow {
-  val `_rowParser`: RowParser[CViewRow] = RowParsers.of(CustomerId.pgType, CustomerId.pgType, BusinessentityId.pgType.opt(), BusinessentityId.pgType.opt(), SalesterritoryId.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, CViewRow.apply, row => Array(row.id, row.customerid, row.personid, row.storeid, row.territoryid, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[CViewRow] = RowParsers.of(CustomerId.pgType, CustomerId.pgType, BusinessentityId.pgType.opt(), BusinessentityId.pgType.opt(), SalesterritoryId.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, CViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.customerid.asInstanceOf[Object], row.personid.asInstanceOf[Object], row.storeid.asInstanceOf[Object], row.territoryid.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

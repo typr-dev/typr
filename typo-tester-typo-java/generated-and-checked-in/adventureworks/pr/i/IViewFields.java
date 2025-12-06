@@ -10,52 +10,48 @@ import adventureworks.customtypes.TypoXml;
 import adventureworks.production.illustration.IllustrationId;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface IViewFields {
-  final class Impl extends Relation<IViewFields, IViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface IViewFields extends FieldsExpr<IViewRow> {
+  record Impl(List<Path> _path) implements IViewFields, Relation<IViewFields, IViewRow> {
+    @Override
+    public Field<IllustrationId, IViewRow> id() {
+      return new Field<IllustrationId, IViewRow>(_path, "id", IViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), IllustrationId.pgType);
+    };
 
     @Override
-    public IViewFields fields() {
-      return new IViewFields() {
-               @Override
-               public Field<IllustrationId, IViewRow> id() {
-                 return new Field<IllustrationId, IViewRow>(_path, "id", IViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), IllustrationId.pgType);
-               };
-               @Override
-               public Field<IllustrationId, IViewRow> illustrationid() {
-                 return new Field<IllustrationId, IViewRow>(_path, "illustrationid", IViewRow::illustrationid, Optional.empty(), Optional.empty(), (row, value) -> row.withIllustrationid(value), IllustrationId.pgType);
-               };
-               @Override
-               public OptField<TypoXml, IViewRow> diagram() {
-                 return new OptField<TypoXml, IViewRow>(_path, "diagram", IViewRow::diagram, Optional.empty(), Optional.empty(), (row, value) -> row.withDiagram(value), TypoXml.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, IViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, IViewRow>(_path, "modifieddate", IViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<IllustrationId, IViewRow> illustrationid() {
+      return new Field<IllustrationId, IViewRow>(_path, "illustrationid", IViewRow::illustrationid, Optional.empty(), Optional.empty(), (row, value) -> row.withIllustrationid(value), IllustrationId.pgType);
+    };
+
+    @Override
+    public OptField<TypoXml, IViewRow> diagram() {
+      return new OptField<TypoXml, IViewRow>(_path, "diagram", IViewRow::diagram, Optional.empty(), Optional.empty(), (row, value) -> row.withDiagram(value), TypoXml.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, IViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, IViewRow>(_path, "modifieddate", IViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, IViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().illustrationid(), this.fields().diagram(), this.fields().modifieddate());
+      return List.of(this.id(), this.illustrationid(), this.diagram(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<IViewFields, IViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<IViewFields, IViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -66,4 +62,12 @@ public interface IViewFields {
   OptField<TypoXml, IViewRow> diagram();
 
   Field<TypoLocalDateTime, IViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, IViewRow>> columns();
+
+  @Override
+  default RowParser<IViewRow> rowParser() {
+    return IViewRow._rowParser;
+  };
 }

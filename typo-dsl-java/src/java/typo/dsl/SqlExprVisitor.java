@@ -1,5 +1,6 @@
 package typo.dsl;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -9,7 +10,7 @@ import java.util.function.Function;
  * This handles the existential types that arise from pattern matching on GADT-like structures.
  */
 public interface SqlExprVisitor<T, Row, Result> {
-    
+
     Result visitFieldLike(SqlExpr.FieldLike<T, Row> field);
     Result visitConstReq(SqlExpr.ConstReq<T> constReq);
     Result visitConstOpt(SqlExpr.ConstOpt<T> constOpt);
@@ -24,10 +25,30 @@ public interface SqlExprVisitor<T, Row, Result> {
     Result visitInExpr(SqlExpr.In<?> in);
     Result visitIsNullExpr(SqlExpr.IsNull<?> isNull);
     <Tuple> Result visitCompositeInExpr(SqlExpr.CompositeIn<Tuple, ?> compositeIn);
-    
+    <F extends Tuples.TupleExpr<R>, R extends Tuples.Tuple> Result visitInSubqueryExpr(SqlExpr.InSubquery<?, F, R> inSubquery);
+    <F, R> Result visitExistsExpr(SqlExpr.Exists<F, R> exists);
+
     // These can return T
     Result visitNot(SqlExpr.Not<T> not);
     Result visitRowExpr(SqlExpr.RowExpr rowExpr);
+    Result visitTupleExpr(Tuples.TupleExpr<?> tupleExpr);
+    Result visitFieldsExpr(FieldsExpr<?> fieldsExpr);
+    <U> Result visitIncludeIf(SqlExpr.IncludeIf<U> includeIf);
+
+    // Aggregate functions
+    Result visitCountStar(SqlExpr.CountStar countStar);
+    <U> Result visitCount(SqlExpr.Count<U> count);
+    <U> Result visitCountDistinct(SqlExpr.CountDistinct<U> countDistinct);
+    <U, R> Result visitSum(SqlExpr.Sum<U, R> sum);
+    <U> Result visitAvg(SqlExpr.Avg<U> avg);
+    <U> Result visitMin(SqlExpr.Min<U> min);
+    <U> Result visitMax(SqlExpr.Max<U> max);
+    Result visitStringAgg(SqlExpr.StringAgg stringAgg);
+    <U> Result visitArrayAgg(SqlExpr.ArrayAgg<U> arrayAgg);
+    <U> Result visitJsonAgg(SqlExpr.JsonAgg<U> jsonAgg);
+    Result visitBoolAnd(SqlExpr.BoolAnd boolAnd);
+    Result visitBoolOr(SqlExpr.BoolOr boolOr);
+
     Result visitDefault(SqlExpr<T> expr);
     
     /**
@@ -84,6 +105,24 @@ public interface SqlExprVisitor<T, Row, Result> {
             }
             case SqlExpr.RowExpr rowExpr -> visitRowExpr(rowExpr);
             case SqlExpr.CompositeIn<?, ?> compositeIn -> visitCompositeInExpr(compositeIn);
+            case SqlExpr.InSubquery<?, ?, ?> inSubquery -> visitInSubqueryExpr(inSubquery);
+            case SqlExpr.Exists<?, ?> exists -> visitExistsExpr(exists);
+            case SqlExpr.IncludeIf<?> includeIf -> visitIncludeIf(includeIf);
+            // Aggregate functions
+            case SqlExpr.CountStar countStar -> visitCountStar(countStar);
+            case SqlExpr.Count<?> count -> visitCount(count);
+            case SqlExpr.CountDistinct<?> countDistinct -> visitCountDistinct(countDistinct);
+            case SqlExpr.Sum<?, ?> sum -> visitSum(sum);
+            case SqlExpr.Avg<?> avg -> visitAvg(avg);
+            case SqlExpr.Min<?> min -> visitMin(min);
+            case SqlExpr.Max<?> max -> visitMax(max);
+            case SqlExpr.StringAgg stringAgg -> visitStringAgg(stringAgg);
+            case SqlExpr.ArrayAgg<?> arrayAgg -> visitArrayAgg(arrayAgg);
+            case SqlExpr.JsonAgg<?> jsonAgg -> visitJsonAgg(jsonAgg);
+            case SqlExpr.BoolAnd boolAnd -> visitBoolAnd(boolAnd);
+            case SqlExpr.BoolOr boolOr -> visitBoolOr(boolOr);
+            case Tuples.TupleExpr<?> tupleExpr -> visitTupleExpr(tupleExpr);
+            case FieldsExpr<?> fieldsExpr -> visitFieldsExpr(fieldsExpr);
         };
     }
 }

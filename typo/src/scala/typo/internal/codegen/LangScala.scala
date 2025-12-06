@@ -519,6 +519,21 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
                  |
                  |  ${cls.members.map(m => renderTree(m, ctx)).mkCode("\n\n")}
                  |}""".stripMargin
+
+      // Nested record: in Scala becomes case class Name(params) extends Interface { members }
+      case rec: jvm.NestedRecord =>
+        val privateMod = if (rec.isPrivate) "private " else ""
+        val implementsClause = rec.implements match {
+          case Nil      => jvm.Code.Empty
+          case nonEmpty => code" extends ${nonEmpty.map(renderTree(_, ctx)).mkCode(" with ")}"
+        }
+        val paramsStr = if (rec.params.isEmpty) jvm.Code.Empty else code"(${rec.params.map(p => renderParam(p, isVal = true)).mkCode(", ")})"
+        if (rec.members.isEmpty) code"${privateMod}case class ${rec.name}$paramsStr$implementsClause"
+        else
+          code"""|${privateMod}case class ${rec.name}$paramsStr$implementsClause {
+                 |
+                 |  ${rec.members.map(m => renderTree(m, ctx)).mkCode("\n\n")}
+                 |}""".stripMargin
     }
 
   override def escapedIdent(value: String): String = {
@@ -701,8 +716,11 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
   override def nullaryMethodCall(target: jvm.Code, name: jvm.Ident): jvm.Code =
     code"$target.$name"
 
-  override def arrayOf(elements: List[jvm.Code]): jvm.Code =
-    code"Array(${elements.mkCode(", ")})"
+  override def arrayOf(elements: List[jvm.Code]): jvm.Code = {
+    // Cast each element to Object using asInstanceOf to handle Scala 3 opaque types
+    val castElements = elements.map(e => code"$e.asInstanceOf[Object]")
+    code"Array[Object](${castElements.mkCode(", ")})"
+  }
 
   // Scala: == calls .equals() for structural equality
   override def equals(left: jvm.Code, right: jvm.Code): jvm.Code =
@@ -710,6 +728,9 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport) extends Lang {
 
   override def notEquals(left: jvm.Code, right: jvm.Code): jvm.Code =
     code"($left != $right)"
+
+  override def castFromObject(targetType: jvm.Type, expr: jvm.Code): jvm.Code =
+    code"$expr.asInstanceOf[$targetType]"
 
   override val isKeyword: Set[String] =
     Set(

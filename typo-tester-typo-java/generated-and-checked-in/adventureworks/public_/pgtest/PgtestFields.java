@@ -34,316 +34,378 @@ import adventureworks.public_.Myenum;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface PgtestFields {
-  final class Impl extends Relation<PgtestFields, PgtestRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PgtestFields extends FieldsExpr<PgtestRow> {
+  record Impl(List<Path> _path) implements PgtestFields, Relation<PgtestFields, PgtestRow> {
+    @Override
+    public Field<Boolean, PgtestRow> bool() {
+      return new Field<Boolean, PgtestRow>(_path, "bool", PgtestRow::bool, Optional.empty(), Optional.empty(), (row, value) -> row.withBool(value), PgTypes.bool);
+    };
 
     @Override
-    public PgtestFields fields() {
-      return new PgtestFields() {
-               @Override
-               public Field<Boolean, PgtestRow> bool() {
-                 return new Field<Boolean, PgtestRow>(_path, "bool", PgtestRow::bool, Optional.empty(), Optional.empty(), (row, value) -> row.withBool(value), PgTypes.bool);
-               };
-               @Override
-               public Field<TypoBox, PgtestRow> box() {
-                 return new Field<TypoBox, PgtestRow>(_path, "box", PgtestRow::box, Optional.empty(), Optional.of("box"), (row, value) -> row.withBox(value), TypoBox.pgType);
-               };
-               @Override
-               public Field</* bpchar, max 3 chars */ String, PgtestRow> bpchar() {
-                 return new Field</* bpchar, max 3 chars */ String, PgtestRow>(_path, "bpchar", PgtestRow::bpchar, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withBpchar(value), PgTypes.bpchar);
-               };
-               @Override
-               public Field<TypoBytea, PgtestRow> bytea() {
-                 return new Field<TypoBytea, PgtestRow>(_path, "bytea", PgtestRow::bytea, Optional.empty(), Optional.of("bytea"), (row, value) -> row.withBytea(value), TypoBytea.pgType);
-               };
-               @Override
-               public Field</* bpchar, max 1 chars */ String, PgtestRow> char_() {
-                 return new Field</* bpchar, max 1 chars */ String, PgtestRow>(_path, "char", PgtestRow::char_, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withChar(value), PgTypes.bpchar);
-               };
-               @Override
-               public Field<TypoCircle, PgtestRow> circle() {
-                 return new Field<TypoCircle, PgtestRow>(_path, "circle", PgtestRow::circle, Optional.empty(), Optional.of("circle"), (row, value) -> row.withCircle(value), TypoCircle.pgType);
-               };
-               @Override
-               public Field<TypoLocalDate, PgtestRow> date() {
-                 return new Field<TypoLocalDate, PgtestRow>(_path, "date", PgtestRow::date, Optional.of("text"), Optional.of("date"), (row, value) -> row.withDate(value), TypoLocalDate.pgType);
-               };
-               @Override
-               public Field<Float, PgtestRow> float4() {
-                 return new Field<Float, PgtestRow>(_path, "float4", PgtestRow::float4, Optional.empty(), Optional.of("float4"), (row, value) -> row.withFloat4(value), PgTypes.float4);
-               };
-               @Override
-               public Field<Double, PgtestRow> float8() {
-                 return new Field<Double, PgtestRow>(_path, "float8", PgtestRow::float8, Optional.empty(), Optional.of("float8"), (row, value) -> row.withFloat8(value), PgTypes.float8);
-               };
-               @Override
-               public Field<TypoHStore, PgtestRow> hstore() {
-                 return new Field<TypoHStore, PgtestRow>(_path, "hstore", PgtestRow::hstore, Optional.empty(), Optional.of("hstore"), (row, value) -> row.withHstore(value), TypoHStore.pgType);
-               };
-               @Override
-               public Field<TypoInet, PgtestRow> inet() {
-                 return new Field<TypoInet, PgtestRow>(_path, "inet", PgtestRow::inet, Optional.empty(), Optional.of("inet"), (row, value) -> row.withInet(value), TypoInet.pgType);
-               };
-               @Override
-               public Field<TypoShort, PgtestRow> int2() {
-                 return new Field<TypoShort, PgtestRow>(_path, "int2", PgtestRow::int2, Optional.empty(), Optional.of("int2"), (row, value) -> row.withInt2(value), TypoShort.pgType);
-               };
-               @Override
-               public Field<TypoInt2Vector, PgtestRow> int2vector() {
-                 return new Field<TypoInt2Vector, PgtestRow>(_path, "int2vector", PgtestRow::int2vector, Optional.empty(), Optional.of("int2vector"), (row, value) -> row.withInt2vector(value), TypoInt2Vector.pgType);
-               };
-               @Override
-               public Field<Integer, PgtestRow> int4() {
-                 return new Field<Integer, PgtestRow>(_path, "int4", PgtestRow::int4, Optional.empty(), Optional.of("int4"), (row, value) -> row.withInt4(value), PgTypes.int4);
-               };
-               @Override
-               public Field<Long, PgtestRow> int8() {
-                 return new Field<Long, PgtestRow>(_path, "int8", PgtestRow::int8, Optional.empty(), Optional.of("int8"), (row, value) -> row.withInt8(value), PgTypes.int8);
-               };
-               @Override
-               public Field<TypoInterval, PgtestRow> interval() {
-                 return new Field<TypoInterval, PgtestRow>(_path, "interval", PgtestRow::interval, Optional.empty(), Optional.of("interval"), (row, value) -> row.withInterval(value), TypoInterval.pgType);
-               };
-               @Override
-               public Field<TypoJson, PgtestRow> json() {
-                 return new Field<TypoJson, PgtestRow>(_path, "json", PgtestRow::json, Optional.empty(), Optional.of("json"), (row, value) -> row.withJson(value), TypoJson.pgType);
-               };
-               @Override
-               public Field<TypoJsonb, PgtestRow> jsonb() {
-                 return new Field<TypoJsonb, PgtestRow>(_path, "jsonb", PgtestRow::jsonb, Optional.empty(), Optional.of("jsonb"), (row, value) -> row.withJsonb(value), TypoJsonb.pgType);
-               };
-               @Override
-               public Field<TypoLine, PgtestRow> line() {
-                 return new Field<TypoLine, PgtestRow>(_path, "line", PgtestRow::line, Optional.empty(), Optional.of("line"), (row, value) -> row.withLine(value), TypoLine.pgType);
-               };
-               @Override
-               public Field<TypoLineSegment, PgtestRow> lseg() {
-                 return new Field<TypoLineSegment, PgtestRow>(_path, "lseg", PgtestRow::lseg, Optional.empty(), Optional.of("lseg"), (row, value) -> row.withLseg(value), TypoLineSegment.pgType);
-               };
-               @Override
-               public Field<TypoMoney, PgtestRow> money() {
-                 return new Field<TypoMoney, PgtestRow>(_path, "money", PgtestRow::money, Optional.of("numeric"), Optional.of("money"), (row, value) -> row.withMoney(value), TypoMoney.pgType);
-               };
-               @Override
-               public Field<Mydomain, PgtestRow> mydomain() {
-                 return new Field<Mydomain, PgtestRow>(_path, "mydomain", PgtestRow::mydomain, Optional.empty(), Optional.of("text"), (row, value) -> row.withMydomain(value), Mydomain.pgType);
-               };
-               @Override
-               public Field<Myenum, PgtestRow> myenum() {
-                 return new Field<Myenum, PgtestRow>(_path, "myenum", PgtestRow::myenum, Optional.empty(), Optional.of("public.myenum"), (row, value) -> row.withMyenum(value), Myenum.pgType);
-               };
-               @Override
-               public Field<String, PgtestRow> name() {
-                 return new Field<String, PgtestRow>(_path, "name", PgtestRow::name, Optional.empty(), Optional.of("name"), (row, value) -> row.withName(value), PgTypes.name);
-               };
-               @Override
-               public Field<BigDecimal, PgtestRow> numeric() {
-                 return new Field<BigDecimal, PgtestRow>(_path, "numeric", PgtestRow::numeric, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withNumeric(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<TypoPath, PgtestRow> path() {
-                 return new Field<TypoPath, PgtestRow>(_path, "path", PgtestRow::path, Optional.empty(), Optional.of("path"), (row, value) -> row.withPath(value), TypoPath.pgType);
-               };
-               @Override
-               public Field<TypoPoint, PgtestRow> point() {
-                 return new Field<TypoPoint, PgtestRow>(_path, "point", PgtestRow::point, Optional.empty(), Optional.of("point"), (row, value) -> row.withPoint(value), TypoPoint.pgType);
-               };
-               @Override
-               public Field<TypoPolygon, PgtestRow> polygon() {
-                 return new Field<TypoPolygon, PgtestRow>(_path, "polygon", PgtestRow::polygon, Optional.empty(), Optional.of("polygon"), (row, value) -> row.withPolygon(value), TypoPolygon.pgType);
-               };
-               @Override
-               public Field<String, PgtestRow> text() {
-                 return new Field<String, PgtestRow>(_path, "text", PgtestRow::text, Optional.empty(), Optional.empty(), (row, value) -> row.withText(value), PgTypes.text);
-               };
-               @Override
-               public Field<TypoLocalTime, PgtestRow> time() {
-                 return new Field<TypoLocalTime, PgtestRow>(_path, "time", PgtestRow::time, Optional.of("text"), Optional.of("time"), (row, value) -> row.withTime(value), TypoLocalTime.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PgtestRow> timestamp() {
-                 return new Field<TypoLocalDateTime, PgtestRow>(_path, "timestamp", PgtestRow::timestamp, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withTimestamp(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public Field<TypoInstant, PgtestRow> timestampz() {
-                 return new Field<TypoInstant, PgtestRow>(_path, "timestampz", PgtestRow::timestampz, Optional.of("text"), Optional.of("timestamptz"), (row, value) -> row.withTimestampz(value), TypoInstant.pgType);
-               };
-               @Override
-               public Field<TypoOffsetTime, PgtestRow> timez() {
-                 return new Field<TypoOffsetTime, PgtestRow>(_path, "timez", PgtestRow::timez, Optional.of("text"), Optional.of("timetz"), (row, value) -> row.withTimez(value), TypoOffsetTime.pgType);
-               };
-               @Override
-               public Field<TypoUUID, PgtestRow> uuid() {
-                 return new Field<TypoUUID, PgtestRow>(_path, "uuid", PgtestRow::uuid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withUuid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<String, PgtestRow> varchar() {
-                 return new Field<String, PgtestRow>(_path, "varchar", PgtestRow::varchar, Optional.empty(), Optional.empty(), (row, value) -> row.withVarchar(value), PgTypes.text);
-               };
-               @Override
-               public Field<TypoVector, PgtestRow> vector() {
-                 return new Field<TypoVector, PgtestRow>(_path, "vector", PgtestRow::vector, Optional.of("float4[]"), Optional.of("vector"), (row, value) -> row.withVector(value), TypoVector.pgType);
-               };
-               @Override
-               public Field<TypoXml, PgtestRow> xml() {
-                 return new Field<TypoXml, PgtestRow>(_path, "xml", PgtestRow::xml, Optional.empty(), Optional.of("xml"), (row, value) -> row.withXml(value), TypoXml.pgType);
-               };
-               @Override
-               public Field<TypoBox[], PgtestRow> boxes() {
-                 return new Field<TypoBox[], PgtestRow>(_path, "boxes", PgtestRow::boxes, Optional.empty(), Optional.of("box[]"), (row, value) -> row.withBoxes(value), TypoBox.pgTypeArray);
-               };
-               @Override
-               public Field</* bpchar */ String[], PgtestRow> bpchares() {
-                 return new Field</* bpchar */ String[], PgtestRow>(_path, "bpchares", PgtestRow::bpchares, Optional.empty(), Optional.of("bpchar[]"), (row, value) -> row.withBpchares(value), PgTypes.bpcharArray);
-               };
-               @Override
-               public Field</* bpchar */ String[], PgtestRow> chares() {
-                 return new Field</* bpchar */ String[], PgtestRow>(_path, "chares", PgtestRow::chares, Optional.empty(), Optional.of("bpchar[]"), (row, value) -> row.withChares(value), PgTypes.bpcharArray);
-               };
-               @Override
-               public Field<TypoCircle[], PgtestRow> circlees() {
-                 return new Field<TypoCircle[], PgtestRow>(_path, "circlees", PgtestRow::circlees, Optional.empty(), Optional.of("circle[]"), (row, value) -> row.withCirclees(value), TypoCircle.pgTypeArray);
-               };
-               @Override
-               public Field<TypoLocalDate[], PgtestRow> datees() {
-                 return new Field<TypoLocalDate[], PgtestRow>(_path, "datees", PgtestRow::datees, Optional.of("text[]"), Optional.of("date[]"), (row, value) -> row.withDatees(value), TypoLocalDate.pgTypeArray);
-               };
-               @Override
-               public Field<Float[], PgtestRow> float4es() {
-                 return new Field<Float[], PgtestRow>(_path, "float4es", PgtestRow::float4es, Optional.empty(), Optional.of("float4[]"), (row, value) -> row.withFloat4es(value), PgTypes.float4Array);
-               };
-               @Override
-               public Field<Double[], PgtestRow> float8es() {
-                 return new Field<Double[], PgtestRow>(_path, "float8es", PgtestRow::float8es, Optional.empty(), Optional.of("float8[]"), (row, value) -> row.withFloat8es(value), PgTypes.float8Array);
-               };
-               @Override
-               public Field<TypoInet[], PgtestRow> inetes() {
-                 return new Field<TypoInet[], PgtestRow>(_path, "inetes", PgtestRow::inetes, Optional.empty(), Optional.of("inet[]"), (row, value) -> row.withInetes(value), TypoInet.pgTypeArray);
-               };
-               @Override
-               public Field<TypoShort[], PgtestRow> int2es() {
-                 return new Field<TypoShort[], PgtestRow>(_path, "int2es", PgtestRow::int2es, Optional.empty(), Optional.of("int2[]"), (row, value) -> row.withInt2es(value), TypoShort.pgTypeArray);
-               };
-               @Override
-               public Field<TypoInt2Vector[], PgtestRow> int2vectores() {
-                 return new Field<TypoInt2Vector[], PgtestRow>(_path, "int2vectores", PgtestRow::int2vectores, Optional.empty(), Optional.of("int2vector[]"), (row, value) -> row.withInt2vectores(value), TypoInt2Vector.pgTypeArray);
-               };
-               @Override
-               public Field<Integer[], PgtestRow> int4es() {
-                 return new Field<Integer[], PgtestRow>(_path, "int4es", PgtestRow::int4es, Optional.empty(), Optional.of("int4[]"), (row, value) -> row.withInt4es(value), PgTypes.int4Array);
-               };
-               @Override
-               public Field<Long[], PgtestRow> int8es() {
-                 return new Field<Long[], PgtestRow>(_path, "int8es", PgtestRow::int8es, Optional.empty(), Optional.of("int8[]"), (row, value) -> row.withInt8es(value), PgTypes.int8Array);
-               };
-               @Override
-               public Field<TypoInterval[], PgtestRow> intervales() {
-                 return new Field<TypoInterval[], PgtestRow>(_path, "intervales", PgtestRow::intervales, Optional.empty(), Optional.of("interval[]"), (row, value) -> row.withIntervales(value), TypoInterval.pgTypeArray);
-               };
-               @Override
-               public Field<TypoJson[], PgtestRow> jsones() {
-                 return new Field<TypoJson[], PgtestRow>(_path, "jsones", PgtestRow::jsones, Optional.empty(), Optional.of("json[]"), (row, value) -> row.withJsones(value), TypoJson.pgTypeArray);
-               };
-               @Override
-               public Field<TypoJsonb[], PgtestRow> jsonbes() {
-                 return new Field<TypoJsonb[], PgtestRow>(_path, "jsonbes", PgtestRow::jsonbes, Optional.empty(), Optional.of("jsonb[]"), (row, value) -> row.withJsonbes(value), TypoJsonb.pgTypeArray);
-               };
-               @Override
-               public Field<TypoLine[], PgtestRow> linees() {
-                 return new Field<TypoLine[], PgtestRow>(_path, "linees", PgtestRow::linees, Optional.empty(), Optional.of("line[]"), (row, value) -> row.withLinees(value), TypoLine.pgTypeArray);
-               };
-               @Override
-               public Field<TypoLineSegment[], PgtestRow> lseges() {
-                 return new Field<TypoLineSegment[], PgtestRow>(_path, "lseges", PgtestRow::lseges, Optional.empty(), Optional.of("lseg[]"), (row, value) -> row.withLseges(value), TypoLineSegment.pgTypeArray);
-               };
-               @Override
-               public Field<TypoMoney[], PgtestRow> moneyes() {
-                 return new Field<TypoMoney[], PgtestRow>(_path, "moneyes", PgtestRow::moneyes, Optional.of("numeric[]"), Optional.of("money[]"), (row, value) -> row.withMoneyes(value), TypoMoney.pgTypeArray);
-               };
-               @Override
-               public Field<Mydomain[], PgtestRow> mydomaines() {
-                 return new Field<Mydomain[], PgtestRow>(_path, "mydomaines", PgtestRow::mydomaines, Optional.of("text[]"), Optional.of("mydomain[]"), (row, value) -> row.withMydomaines(value), Mydomain.pgTypeArray);
-               };
-               @Override
-               public Field<Myenum[], PgtestRow> myenumes() {
-                 return new Field<Myenum[], PgtestRow>(_path, "myenumes", PgtestRow::myenumes, Optional.empty(), Optional.of("myenum[]"), (row, value) -> row.withMyenumes(value), Myenum.pgTypeArray);
-               };
-               @Override
-               public Field<String[], PgtestRow> namees() {
-                 return new Field<String[], PgtestRow>(_path, "namees", PgtestRow::namees, Optional.empty(), Optional.of("name[]"), (row, value) -> row.withNamees(value), PgTypes.nameArray);
-               };
-               @Override
-               public Field<BigDecimal[], PgtestRow> numerices() {
-                 return new Field<BigDecimal[], PgtestRow>(_path, "numerices", PgtestRow::numerices, Optional.empty(), Optional.of("numeric[]"), (row, value) -> row.withNumerices(value), PgTypes.numericArray);
-               };
-               @Override
-               public Field<TypoPath[], PgtestRow> pathes() {
-                 return new Field<TypoPath[], PgtestRow>(_path, "pathes", PgtestRow::pathes, Optional.empty(), Optional.of("path[]"), (row, value) -> row.withPathes(value), TypoPath.pgTypeArray);
-               };
-               @Override
-               public Field<TypoPoint[], PgtestRow> pointes() {
-                 return new Field<TypoPoint[], PgtestRow>(_path, "pointes", PgtestRow::pointes, Optional.empty(), Optional.of("point[]"), (row, value) -> row.withPointes(value), TypoPoint.pgTypeArray);
-               };
-               @Override
-               public Field<TypoPolygon[], PgtestRow> polygones() {
-                 return new Field<TypoPolygon[], PgtestRow>(_path, "polygones", PgtestRow::polygones, Optional.empty(), Optional.of("polygon[]"), (row, value) -> row.withPolygones(value), TypoPolygon.pgTypeArray);
-               };
-               @Override
-               public Field<String[], PgtestRow> textes() {
-                 return new Field<String[], PgtestRow>(_path, "textes", PgtestRow::textes, Optional.empty(), Optional.of("text[]"), (row, value) -> row.withTextes(value), PgTypes.textArray);
-               };
-               @Override
-               public Field<TypoLocalTime[], PgtestRow> timees() {
-                 return new Field<TypoLocalTime[], PgtestRow>(_path, "timees", PgtestRow::timees, Optional.of("text[]"), Optional.of("time[]"), (row, value) -> row.withTimees(value), TypoLocalTime.pgTypeArray);
-               };
-               @Override
-               public Field<TypoLocalDateTime[], PgtestRow> timestampes() {
-                 return new Field<TypoLocalDateTime[], PgtestRow>(_path, "timestampes", PgtestRow::timestampes, Optional.of("text[]"), Optional.of("timestamp[]"), (row, value) -> row.withTimestampes(value), TypoLocalDateTime.pgTypeArray);
-               };
-               @Override
-               public Field<TypoInstant[], PgtestRow> timestampzes() {
-                 return new Field<TypoInstant[], PgtestRow>(_path, "timestampzes", PgtestRow::timestampzes, Optional.of("text[]"), Optional.of("timestamptz[]"), (row, value) -> row.withTimestampzes(value), TypoInstant.pgTypeArray);
-               };
-               @Override
-               public Field<TypoOffsetTime[], PgtestRow> timezes() {
-                 return new Field<TypoOffsetTime[], PgtestRow>(_path, "timezes", PgtestRow::timezes, Optional.of("text[]"), Optional.of("timetz[]"), (row, value) -> row.withTimezes(value), TypoOffsetTime.pgTypeArray);
-               };
-               @Override
-               public Field<TypoUUID[], PgtestRow> uuides() {
-                 return new Field<TypoUUID[], PgtestRow>(_path, "uuides", PgtestRow::uuides, Optional.empty(), Optional.of("uuid[]"), (row, value) -> row.withUuides(value), TypoUUID.pgTypeArray);
-               };
-               @Override
-               public Field<String[], PgtestRow> varchares() {
-                 return new Field<String[], PgtestRow>(_path, "varchares", PgtestRow::varchares, Optional.empty(), Optional.of("varchar[]"), (row, value) -> row.withVarchares(value), PgTypes.textArray);
-               };
-               @Override
-               public Field<TypoXml[], PgtestRow> xmles() {
-                 return new Field<TypoXml[], PgtestRow>(_path, "xmles", PgtestRow::xmles, Optional.empty(), Optional.of("xml[]"), (row, value) -> row.withXmles(value), TypoXml.pgTypeArray);
-               };
-             };
+    public Field<TypoBox, PgtestRow> box() {
+      return new Field<TypoBox, PgtestRow>(_path, "box", PgtestRow::box, Optional.empty(), Optional.of("box"), (row, value) -> row.withBox(value), TypoBox.pgType);
+    };
+
+    @Override
+    public Field</* bpchar, max 3 chars */ String, PgtestRow> bpchar() {
+      return new Field</* bpchar, max 3 chars */ String, PgtestRow>(_path, "bpchar", PgtestRow::bpchar, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withBpchar(value), PgTypes.bpchar);
+    };
+
+    @Override
+    public Field<TypoBytea, PgtestRow> bytea() {
+      return new Field<TypoBytea, PgtestRow>(_path, "bytea", PgtestRow::bytea, Optional.empty(), Optional.of("bytea"), (row, value) -> row.withBytea(value), TypoBytea.pgType);
+    };
+
+    @Override
+    public Field</* bpchar, max 1 chars */ String, PgtestRow> char_() {
+      return new Field</* bpchar, max 1 chars */ String, PgtestRow>(_path, "char", PgtestRow::char_, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withChar(value), PgTypes.bpchar);
+    };
+
+    @Override
+    public Field<TypoCircle, PgtestRow> circle() {
+      return new Field<TypoCircle, PgtestRow>(_path, "circle", PgtestRow::circle, Optional.empty(), Optional.of("circle"), (row, value) -> row.withCircle(value), TypoCircle.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDate, PgtestRow> date() {
+      return new Field<TypoLocalDate, PgtestRow>(_path, "date", PgtestRow::date, Optional.of("text"), Optional.of("date"), (row, value) -> row.withDate(value), TypoLocalDate.pgType);
+    };
+
+    @Override
+    public Field<Float, PgtestRow> float4() {
+      return new Field<Float, PgtestRow>(_path, "float4", PgtestRow::float4, Optional.empty(), Optional.of("float4"), (row, value) -> row.withFloat4(value), PgTypes.float4);
+    };
+
+    @Override
+    public Field<Double, PgtestRow> float8() {
+      return new Field<Double, PgtestRow>(_path, "float8", PgtestRow::float8, Optional.empty(), Optional.of("float8"), (row, value) -> row.withFloat8(value), PgTypes.float8);
+    };
+
+    @Override
+    public Field<TypoHStore, PgtestRow> hstore() {
+      return new Field<TypoHStore, PgtestRow>(_path, "hstore", PgtestRow::hstore, Optional.empty(), Optional.of("hstore"), (row, value) -> row.withHstore(value), TypoHStore.pgType);
+    };
+
+    @Override
+    public Field<TypoInet, PgtestRow> inet() {
+      return new Field<TypoInet, PgtestRow>(_path, "inet", PgtestRow::inet, Optional.empty(), Optional.of("inet"), (row, value) -> row.withInet(value), TypoInet.pgType);
+    };
+
+    @Override
+    public Field<TypoShort, PgtestRow> int2() {
+      return new Field<TypoShort, PgtestRow>(_path, "int2", PgtestRow::int2, Optional.empty(), Optional.of("int2"), (row, value) -> row.withInt2(value), TypoShort.pgType);
+    };
+
+    @Override
+    public Field<TypoInt2Vector, PgtestRow> int2vector() {
+      return new Field<TypoInt2Vector, PgtestRow>(_path, "int2vector", PgtestRow::int2vector, Optional.empty(), Optional.of("int2vector"), (row, value) -> row.withInt2vector(value), TypoInt2Vector.pgType);
+    };
+
+    @Override
+    public Field<Integer, PgtestRow> int4() {
+      return new Field<Integer, PgtestRow>(_path, "int4", PgtestRow::int4, Optional.empty(), Optional.of("int4"), (row, value) -> row.withInt4(value), PgTypes.int4);
+    };
+
+    @Override
+    public Field<Long, PgtestRow> int8() {
+      return new Field<Long, PgtestRow>(_path, "int8", PgtestRow::int8, Optional.empty(), Optional.of("int8"), (row, value) -> row.withInt8(value), PgTypes.int8);
+    };
+
+    @Override
+    public Field<TypoInterval, PgtestRow> interval() {
+      return new Field<TypoInterval, PgtestRow>(_path, "interval", PgtestRow::interval, Optional.empty(), Optional.of("interval"), (row, value) -> row.withInterval(value), TypoInterval.pgType);
+    };
+
+    @Override
+    public Field<TypoJson, PgtestRow> json() {
+      return new Field<TypoJson, PgtestRow>(_path, "json", PgtestRow::json, Optional.empty(), Optional.of("json"), (row, value) -> row.withJson(value), TypoJson.pgType);
+    };
+
+    @Override
+    public Field<TypoJsonb, PgtestRow> jsonb() {
+      return new Field<TypoJsonb, PgtestRow>(_path, "jsonb", PgtestRow::jsonb, Optional.empty(), Optional.of("jsonb"), (row, value) -> row.withJsonb(value), TypoJsonb.pgType);
+    };
+
+    @Override
+    public Field<TypoLine, PgtestRow> line() {
+      return new Field<TypoLine, PgtestRow>(_path, "line", PgtestRow::line, Optional.empty(), Optional.of("line"), (row, value) -> row.withLine(value), TypoLine.pgType);
+    };
+
+    @Override
+    public Field<TypoLineSegment, PgtestRow> lseg() {
+      return new Field<TypoLineSegment, PgtestRow>(_path, "lseg", PgtestRow::lseg, Optional.empty(), Optional.of("lseg"), (row, value) -> row.withLseg(value), TypoLineSegment.pgType);
+    };
+
+    @Override
+    public Field<TypoMoney, PgtestRow> money() {
+      return new Field<TypoMoney, PgtestRow>(_path, "money", PgtestRow::money, Optional.of("numeric"), Optional.of("money"), (row, value) -> row.withMoney(value), TypoMoney.pgType);
+    };
+
+    @Override
+    public Field<Mydomain, PgtestRow> mydomain() {
+      return new Field<Mydomain, PgtestRow>(_path, "mydomain", PgtestRow::mydomain, Optional.empty(), Optional.of("text"), (row, value) -> row.withMydomain(value), Mydomain.pgType);
+    };
+
+    @Override
+    public Field<Myenum, PgtestRow> myenum() {
+      return new Field<Myenum, PgtestRow>(_path, "myenum", PgtestRow::myenum, Optional.empty(), Optional.of("public.myenum"), (row, value) -> row.withMyenum(value), Myenum.pgType);
+    };
+
+    @Override
+    public Field<String, PgtestRow> name() {
+      return new Field<String, PgtestRow>(_path, "name", PgtestRow::name, Optional.empty(), Optional.of("name"), (row, value) -> row.withName(value), PgTypes.name);
+    };
+
+    @Override
+    public Field<BigDecimal, PgtestRow> numeric() {
+      return new Field<BigDecimal, PgtestRow>(_path, "numeric", PgtestRow::numeric, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withNumeric(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<TypoPath, PgtestRow> path() {
+      return new Field<TypoPath, PgtestRow>(_path, "path", PgtestRow::path, Optional.empty(), Optional.of("path"), (row, value) -> row.withPath(value), TypoPath.pgType);
+    };
+
+    @Override
+    public Field<TypoPoint, PgtestRow> point() {
+      return new Field<TypoPoint, PgtestRow>(_path, "point", PgtestRow::point, Optional.empty(), Optional.of("point"), (row, value) -> row.withPoint(value), TypoPoint.pgType);
+    };
+
+    @Override
+    public Field<TypoPolygon, PgtestRow> polygon() {
+      return new Field<TypoPolygon, PgtestRow>(_path, "polygon", PgtestRow::polygon, Optional.empty(), Optional.of("polygon"), (row, value) -> row.withPolygon(value), TypoPolygon.pgType);
+    };
+
+    @Override
+    public Field<String, PgtestRow> text() {
+      return new Field<String, PgtestRow>(_path, "text", PgtestRow::text, Optional.empty(), Optional.empty(), (row, value) -> row.withText(value), PgTypes.text);
+    };
+
+    @Override
+    public Field<TypoLocalTime, PgtestRow> time() {
+      return new Field<TypoLocalTime, PgtestRow>(_path, "time", PgtestRow::time, Optional.of("text"), Optional.of("time"), (row, value) -> row.withTime(value), TypoLocalTime.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PgtestRow> timestamp() {
+      return new Field<TypoLocalDateTime, PgtestRow>(_path, "timestamp", PgtestRow::timestamp, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withTimestamp(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public Field<TypoInstant, PgtestRow> timestampz() {
+      return new Field<TypoInstant, PgtestRow>(_path, "timestampz", PgtestRow::timestampz, Optional.of("text"), Optional.of("timestamptz"), (row, value) -> row.withTimestampz(value), TypoInstant.pgType);
+    };
+
+    @Override
+    public Field<TypoOffsetTime, PgtestRow> timez() {
+      return new Field<TypoOffsetTime, PgtestRow>(_path, "timez", PgtestRow::timez, Optional.of("text"), Optional.of("timetz"), (row, value) -> row.withTimez(value), TypoOffsetTime.pgType);
+    };
+
+    @Override
+    public Field<TypoUUID, PgtestRow> uuid() {
+      return new Field<TypoUUID, PgtestRow>(_path, "uuid", PgtestRow::uuid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withUuid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<String, PgtestRow> varchar() {
+      return new Field<String, PgtestRow>(_path, "varchar", PgtestRow::varchar, Optional.empty(), Optional.empty(), (row, value) -> row.withVarchar(value), PgTypes.text);
+    };
+
+    @Override
+    public Field<TypoVector, PgtestRow> vector() {
+      return new Field<TypoVector, PgtestRow>(_path, "vector", PgtestRow::vector, Optional.of("float4[]"), Optional.of("vector"), (row, value) -> row.withVector(value), TypoVector.pgType);
+    };
+
+    @Override
+    public Field<TypoXml, PgtestRow> xml() {
+      return new Field<TypoXml, PgtestRow>(_path, "xml", PgtestRow::xml, Optional.empty(), Optional.of("xml"), (row, value) -> row.withXml(value), TypoXml.pgType);
+    };
+
+    @Override
+    public Field<TypoBox[], PgtestRow> boxes() {
+      return new Field<TypoBox[], PgtestRow>(_path, "boxes", PgtestRow::boxes, Optional.empty(), Optional.of("box[]"), (row, value) -> row.withBoxes(value), TypoBox.pgTypeArray);
+    };
+
+    @Override
+    public Field</* bpchar */ String[], PgtestRow> bpchares() {
+      return new Field</* bpchar */ String[], PgtestRow>(_path, "bpchares", PgtestRow::bpchares, Optional.empty(), Optional.of("bpchar[]"), (row, value) -> row.withBpchares(value), PgTypes.bpcharArray);
+    };
+
+    @Override
+    public Field</* bpchar */ String[], PgtestRow> chares() {
+      return new Field</* bpchar */ String[], PgtestRow>(_path, "chares", PgtestRow::chares, Optional.empty(), Optional.of("bpchar[]"), (row, value) -> row.withChares(value), PgTypes.bpcharArray);
+    };
+
+    @Override
+    public Field<TypoCircle[], PgtestRow> circlees() {
+      return new Field<TypoCircle[], PgtestRow>(_path, "circlees", PgtestRow::circlees, Optional.empty(), Optional.of("circle[]"), (row, value) -> row.withCirclees(value), TypoCircle.pgTypeArray);
+    };
+
+    @Override
+    public Field<TypoLocalDate[], PgtestRow> datees() {
+      return new Field<TypoLocalDate[], PgtestRow>(_path, "datees", PgtestRow::datees, Optional.of("text[]"), Optional.of("date[]"), (row, value) -> row.withDatees(value), TypoLocalDate.pgTypeArray);
+    };
+
+    @Override
+    public Field<Float[], PgtestRow> float4es() {
+      return new Field<Float[], PgtestRow>(_path, "float4es", PgtestRow::float4es, Optional.empty(), Optional.of("float4[]"), (row, value) -> row.withFloat4es(value), PgTypes.float4Array);
+    };
+
+    @Override
+    public Field<Double[], PgtestRow> float8es() {
+      return new Field<Double[], PgtestRow>(_path, "float8es", PgtestRow::float8es, Optional.empty(), Optional.of("float8[]"), (row, value) -> row.withFloat8es(value), PgTypes.float8Array);
+    };
+
+    @Override
+    public Field<TypoInet[], PgtestRow> inetes() {
+      return new Field<TypoInet[], PgtestRow>(_path, "inetes", PgtestRow::inetes, Optional.empty(), Optional.of("inet[]"), (row, value) -> row.withInetes(value), TypoInet.pgTypeArray);
+    };
+
+    @Override
+    public Field<TypoShort[], PgtestRow> int2es() {
+      return new Field<TypoShort[], PgtestRow>(_path, "int2es", PgtestRow::int2es, Optional.empty(), Optional.of("int2[]"), (row, value) -> row.withInt2es(value), TypoShort.pgTypeArray);
+    };
+
+    @Override
+    public Field<TypoInt2Vector[], PgtestRow> int2vectores() {
+      return new Field<TypoInt2Vector[], PgtestRow>(_path, "int2vectores", PgtestRow::int2vectores, Optional.empty(), Optional.of("int2vector[]"), (row, value) -> row.withInt2vectores(value), TypoInt2Vector.pgTypeArray);
+    };
+
+    @Override
+    public Field<Integer[], PgtestRow> int4es() {
+      return new Field<Integer[], PgtestRow>(_path, "int4es", PgtestRow::int4es, Optional.empty(), Optional.of("int4[]"), (row, value) -> row.withInt4es(value), PgTypes.int4Array);
+    };
+
+    @Override
+    public Field<Long[], PgtestRow> int8es() {
+      return new Field<Long[], PgtestRow>(_path, "int8es", PgtestRow::int8es, Optional.empty(), Optional.of("int8[]"), (row, value) -> row.withInt8es(value), PgTypes.int8Array);
+    };
+
+    @Override
+    public Field<TypoInterval[], PgtestRow> intervales() {
+      return new Field<TypoInterval[], PgtestRow>(_path, "intervales", PgtestRow::intervales, Optional.empty(), Optional.of("interval[]"), (row, value) -> row.withIntervales(value), TypoInterval.pgTypeArray);
+    };
+
+    @Override
+    public Field<TypoJson[], PgtestRow> jsones() {
+      return new Field<TypoJson[], PgtestRow>(_path, "jsones", PgtestRow::jsones, Optional.empty(), Optional.of("json[]"), (row, value) -> row.withJsones(value), TypoJson.pgTypeArray);
+    };
+
+    @Override
+    public Field<TypoJsonb[], PgtestRow> jsonbes() {
+      return new Field<TypoJsonb[], PgtestRow>(_path, "jsonbes", PgtestRow::jsonbes, Optional.empty(), Optional.of("jsonb[]"), (row, value) -> row.withJsonbes(value), TypoJsonb.pgTypeArray);
+    };
+
+    @Override
+    public Field<TypoLine[], PgtestRow> linees() {
+      return new Field<TypoLine[], PgtestRow>(_path, "linees", PgtestRow::linees, Optional.empty(), Optional.of("line[]"), (row, value) -> row.withLinees(value), TypoLine.pgTypeArray);
+    };
+
+    @Override
+    public Field<TypoLineSegment[], PgtestRow> lseges() {
+      return new Field<TypoLineSegment[], PgtestRow>(_path, "lseges", PgtestRow::lseges, Optional.empty(), Optional.of("lseg[]"), (row, value) -> row.withLseges(value), TypoLineSegment.pgTypeArray);
+    };
+
+    @Override
+    public Field<TypoMoney[], PgtestRow> moneyes() {
+      return new Field<TypoMoney[], PgtestRow>(_path, "moneyes", PgtestRow::moneyes, Optional.of("numeric[]"), Optional.of("money[]"), (row, value) -> row.withMoneyes(value), TypoMoney.pgTypeArray);
+    };
+
+    @Override
+    public Field<Mydomain[], PgtestRow> mydomaines() {
+      return new Field<Mydomain[], PgtestRow>(_path, "mydomaines", PgtestRow::mydomaines, Optional.of("text[]"), Optional.of("mydomain[]"), (row, value) -> row.withMydomaines(value), Mydomain.pgTypeArray);
+    };
+
+    @Override
+    public Field<Myenum[], PgtestRow> myenumes() {
+      return new Field<Myenum[], PgtestRow>(_path, "myenumes", PgtestRow::myenumes, Optional.empty(), Optional.of("myenum[]"), (row, value) -> row.withMyenumes(value), Myenum.pgTypeArray);
+    };
+
+    @Override
+    public Field<String[], PgtestRow> namees() {
+      return new Field<String[], PgtestRow>(_path, "namees", PgtestRow::namees, Optional.empty(), Optional.of("name[]"), (row, value) -> row.withNamees(value), PgTypes.nameArray);
+    };
+
+    @Override
+    public Field<BigDecimal[], PgtestRow> numerices() {
+      return new Field<BigDecimal[], PgtestRow>(_path, "numerices", PgtestRow::numerices, Optional.empty(), Optional.of("numeric[]"), (row, value) -> row.withNumerices(value), PgTypes.numericArray);
+    };
+
+    @Override
+    public Field<TypoPath[], PgtestRow> pathes() {
+      return new Field<TypoPath[], PgtestRow>(_path, "pathes", PgtestRow::pathes, Optional.empty(), Optional.of("path[]"), (row, value) -> row.withPathes(value), TypoPath.pgTypeArray);
+    };
+
+    @Override
+    public Field<TypoPoint[], PgtestRow> pointes() {
+      return new Field<TypoPoint[], PgtestRow>(_path, "pointes", PgtestRow::pointes, Optional.empty(), Optional.of("point[]"), (row, value) -> row.withPointes(value), TypoPoint.pgTypeArray);
+    };
+
+    @Override
+    public Field<TypoPolygon[], PgtestRow> polygones() {
+      return new Field<TypoPolygon[], PgtestRow>(_path, "polygones", PgtestRow::polygones, Optional.empty(), Optional.of("polygon[]"), (row, value) -> row.withPolygones(value), TypoPolygon.pgTypeArray);
+    };
+
+    @Override
+    public Field<String[], PgtestRow> textes() {
+      return new Field<String[], PgtestRow>(_path, "textes", PgtestRow::textes, Optional.empty(), Optional.of("text[]"), (row, value) -> row.withTextes(value), PgTypes.textArray);
+    };
+
+    @Override
+    public Field<TypoLocalTime[], PgtestRow> timees() {
+      return new Field<TypoLocalTime[], PgtestRow>(_path, "timees", PgtestRow::timees, Optional.of("text[]"), Optional.of("time[]"), (row, value) -> row.withTimees(value), TypoLocalTime.pgTypeArray);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime[], PgtestRow> timestampes() {
+      return new Field<TypoLocalDateTime[], PgtestRow>(_path, "timestampes", PgtestRow::timestampes, Optional.of("text[]"), Optional.of("timestamp[]"), (row, value) -> row.withTimestampes(value), TypoLocalDateTime.pgTypeArray);
+    };
+
+    @Override
+    public Field<TypoInstant[], PgtestRow> timestampzes() {
+      return new Field<TypoInstant[], PgtestRow>(_path, "timestampzes", PgtestRow::timestampzes, Optional.of("text[]"), Optional.of("timestamptz[]"), (row, value) -> row.withTimestampzes(value), TypoInstant.pgTypeArray);
+    };
+
+    @Override
+    public Field<TypoOffsetTime[], PgtestRow> timezes() {
+      return new Field<TypoOffsetTime[], PgtestRow>(_path, "timezes", PgtestRow::timezes, Optional.of("text[]"), Optional.of("timetz[]"), (row, value) -> row.withTimezes(value), TypoOffsetTime.pgTypeArray);
+    };
+
+    @Override
+    public Field<TypoUUID[], PgtestRow> uuides() {
+      return new Field<TypoUUID[], PgtestRow>(_path, "uuides", PgtestRow::uuides, Optional.empty(), Optional.of("uuid[]"), (row, value) -> row.withUuides(value), TypoUUID.pgTypeArray);
+    };
+
+    @Override
+    public Field<String[], PgtestRow> varchares() {
+      return new Field<String[], PgtestRow>(_path, "varchares", PgtestRow::varchares, Optional.empty(), Optional.of("varchar[]"), (row, value) -> row.withVarchares(value), PgTypes.textArray);
+    };
+
+    @Override
+    public Field<TypoXml[], PgtestRow> xmles() {
+      return new Field<TypoXml[], PgtestRow>(_path, "xmles", PgtestRow::xmles, Optional.empty(), Optional.of("xml[]"), (row, value) -> row.withXmles(value), TypoXml.pgTypeArray);
     };
 
     @Override
     public List<FieldLike<?, PgtestRow>> columns() {
-      return List.of(this.fields().bool(), this.fields().box(), this.fields().bpchar(), this.fields().bytea(), this.fields().char_(), this.fields().circle(), this.fields().date(), this.fields().float4(), this.fields().float8(), this.fields().hstore(), this.fields().inet(), this.fields().int2(), this.fields().int2vector(), this.fields().int4(), this.fields().int8(), this.fields().interval(), this.fields().json(), this.fields().jsonb(), this.fields().line(), this.fields().lseg(), this.fields().money(), this.fields().mydomain(), this.fields().myenum(), this.fields().name(), this.fields().numeric(), this.fields().path(), this.fields().point(), this.fields().polygon(), this.fields().text(), this.fields().time(), this.fields().timestamp(), this.fields().timestampz(), this.fields().timez(), this.fields().uuid(), this.fields().varchar(), this.fields().vector(), this.fields().xml(), this.fields().boxes(), this.fields().bpchares(), this.fields().chares(), this.fields().circlees(), this.fields().datees(), this.fields().float4es(), this.fields().float8es(), this.fields().inetes(), this.fields().int2es(), this.fields().int2vectores(), this.fields().int4es(), this.fields().int8es(), this.fields().intervales(), this.fields().jsones(), this.fields().jsonbes(), this.fields().linees(), this.fields().lseges(), this.fields().moneyes(), this.fields().mydomaines(), this.fields().myenumes(), this.fields().namees(), this.fields().numerices(), this.fields().pathes(), this.fields().pointes(), this.fields().polygones(), this.fields().textes(), this.fields().timees(), this.fields().timestampes(), this.fields().timestampzes(), this.fields().timezes(), this.fields().uuides(), this.fields().varchares(), this.fields().xmles());
+      return List.of(this.bool(), this.box(), this.bpchar(), this.bytea(), this.char_(), this.circle(), this.date(), this.float4(), this.float8(), this.hstore(), this.inet(), this.int2(), this.int2vector(), this.int4(), this.int8(), this.interval(), this.json(), this.jsonb(), this.line(), this.lseg(), this.money(), this.mydomain(), this.myenum(), this.name(), this.numeric(), this.path(), this.point(), this.polygon(), this.text(), this.time(), this.timestamp(), this.timestampz(), this.timez(), this.uuid(), this.varchar(), this.vector(), this.xml(), this.boxes(), this.bpchares(), this.chares(), this.circlees(), this.datees(), this.float4es(), this.float8es(), this.inetes(), this.int2es(), this.int2vectores(), this.int4es(), this.int8es(), this.intervales(), this.jsones(), this.jsonbes(), this.linees(), this.lseges(), this.moneyes(), this.mydomaines(), this.myenumes(), this.namees(), this.numerices(), this.pathes(), this.pointes(), this.polygones(), this.textes(), this.timees(), this.timestampes(), this.timestampzes(), this.timezes(), this.uuides(), this.varchares(), this.xmles());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PgtestFields, PgtestRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PgtestFields, PgtestRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -486,4 +548,12 @@ public interface PgtestFields {
   Field<String[], PgtestRow> varchares();
 
   Field<TypoXml[], PgtestRow> xmles();
+
+  @Override
+  List<FieldLike<?, PgtestRow>> columns();
+
+  @Override
+  default RowParser<PgtestRow> rowParser() {
+    return PgtestRow._rowParser;
+  };
 }

@@ -11,55 +11,52 @@ import adventureworks.person.addresstype.AddresstypeId;
 import adventureworks.public_.Name;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface AtViewFields {
-  final class Impl extends Relation<AtViewFields, AtViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface AtViewFields extends FieldsExpr<AtViewRow> {
+  record Impl(List<Path> _path) implements AtViewFields, Relation<AtViewFields, AtViewRow> {
+    @Override
+    public Field<AddresstypeId, AtViewRow> id() {
+      return new Field<AddresstypeId, AtViewRow>(_path, "id", AtViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), AddresstypeId.pgType);
+    };
 
     @Override
-    public AtViewFields fields() {
-      return new AtViewFields() {
-               @Override
-               public Field<AddresstypeId, AtViewRow> id() {
-                 return new Field<AddresstypeId, AtViewRow>(_path, "id", AtViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), AddresstypeId.pgType);
-               };
-               @Override
-               public Field<AddresstypeId, AtViewRow> addresstypeid() {
-                 return new Field<AddresstypeId, AtViewRow>(_path, "addresstypeid", AtViewRow::addresstypeid, Optional.empty(), Optional.empty(), (row, value) -> row.withAddresstypeid(value), AddresstypeId.pgType);
-               };
-               @Override
-               public Field<Name, AtViewRow> name() {
-                 return new Field<Name, AtViewRow>(_path, "name", AtViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<TypoUUID, AtViewRow> rowguid() {
-                 return new Field<TypoUUID, AtViewRow>(_path, "rowguid", AtViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, AtViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, AtViewRow>(_path, "modifieddate", AtViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<AddresstypeId, AtViewRow> addresstypeid() {
+      return new Field<AddresstypeId, AtViewRow>(_path, "addresstypeid", AtViewRow::addresstypeid, Optional.empty(), Optional.empty(), (row, value) -> row.withAddresstypeid(value), AddresstypeId.pgType);
+    };
+
+    @Override
+    public Field<Name, AtViewRow> name() {
+      return new Field<Name, AtViewRow>(_path, "name", AtViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<TypoUUID, AtViewRow> rowguid() {
+      return new Field<TypoUUID, AtViewRow>(_path, "rowguid", AtViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, AtViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, AtViewRow>(_path, "modifieddate", AtViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, AtViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().addresstypeid(), this.fields().name(), this.fields().rowguid(), this.fields().modifieddate());
+      return List.of(this.id(), this.addresstypeid(), this.name(), this.rowguid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<AtViewFields, AtViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<AtViewFields, AtViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -72,4 +69,12 @@ public interface AtViewFields {
   Field<TypoUUID, AtViewRow> rowguid();
 
   Field<TypoLocalDateTime, AtViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, AtViewRow>> columns();
+
+  @Override
+  default RowParser<AtViewRow> rowParser() {
+    return AtViewRow._rowParser;
+  };
 }

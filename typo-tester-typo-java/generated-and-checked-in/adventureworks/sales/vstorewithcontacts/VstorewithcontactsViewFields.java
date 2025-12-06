@@ -11,85 +11,89 @@ import adventureworks.public_.Phone;
 import adventureworks.userdefined.FirstName;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface VstorewithcontactsViewFields {
-  final class Impl extends Relation<VstorewithcontactsViewFields, VstorewithcontactsViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface VstorewithcontactsViewFields extends FieldsExpr<VstorewithcontactsViewRow> {
+  record Impl(List<Path> _path) implements VstorewithcontactsViewFields, Relation<VstorewithcontactsViewFields, VstorewithcontactsViewRow> {
+    @Override
+    public Field<BusinessentityId, VstorewithcontactsViewRow> businessentityid() {
+      return new Field<BusinessentityId, VstorewithcontactsViewRow>(_path, "businessentityid", VstorewithcontactsViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
+    };
 
     @Override
-    public VstorewithcontactsViewFields fields() {
-      return new VstorewithcontactsViewFields() {
-               @Override
-               public Field<BusinessentityId, VstorewithcontactsViewRow> businessentityid() {
-                 return new Field<BusinessentityId, VstorewithcontactsViewRow>(_path, "businessentityid", VstorewithcontactsViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<Name, VstorewithcontactsViewRow> name() {
-                 return new Field<Name, VstorewithcontactsViewRow>(_path, "name", VstorewithcontactsViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<Name, VstorewithcontactsViewRow> contacttype() {
-                 return new Field<Name, VstorewithcontactsViewRow>(_path, "contacttype", VstorewithcontactsViewRow::contacttype, Optional.empty(), Optional.empty(), (row, value) -> row.withContacttype(value), Name.pgType);
-               };
-               @Override
-               public OptField</* max 8 chars */ String, VstorewithcontactsViewRow> title() {
-                 return new OptField</* max 8 chars */ String, VstorewithcontactsViewRow>(_path, "title", VstorewithcontactsViewRow::title, Optional.empty(), Optional.empty(), (row, value) -> row.withTitle(value), PgTypes.text);
-               };
-               @Override
-               public Field</* user-picked */ FirstName, VstorewithcontactsViewRow> firstname() {
-                 return new Field</* user-picked */ FirstName, VstorewithcontactsViewRow>(_path, "firstname", VstorewithcontactsViewRow::firstname, Optional.empty(), Optional.empty(), (row, value) -> row.withFirstname(value), FirstName.pgType);
-               };
-               @Override
-               public OptField<Name, VstorewithcontactsViewRow> middlename() {
-                 return new OptField<Name, VstorewithcontactsViewRow>(_path, "middlename", VstorewithcontactsViewRow::middlename, Optional.empty(), Optional.empty(), (row, value) -> row.withMiddlename(value), Name.pgType);
-               };
-               @Override
-               public Field<Name, VstorewithcontactsViewRow> lastname() {
-                 return new Field<Name, VstorewithcontactsViewRow>(_path, "lastname", VstorewithcontactsViewRow::lastname, Optional.empty(), Optional.empty(), (row, value) -> row.withLastname(value), Name.pgType);
-               };
-               @Override
-               public OptField</* max 10 chars */ String, VstorewithcontactsViewRow> suffix() {
-                 return new OptField</* max 10 chars */ String, VstorewithcontactsViewRow>(_path, "suffix", VstorewithcontactsViewRow::suffix, Optional.empty(), Optional.empty(), (row, value) -> row.withSuffix(value), PgTypes.text);
-               };
-               @Override
-               public OptField<Phone, VstorewithcontactsViewRow> phonenumber() {
-                 return new OptField<Phone, VstorewithcontactsViewRow>(_path, "phonenumber", VstorewithcontactsViewRow::phonenumber, Optional.empty(), Optional.empty(), (row, value) -> row.withPhonenumber(value), Phone.pgType);
-               };
-               @Override
-               public OptField<Name, VstorewithcontactsViewRow> phonenumbertype() {
-                 return new OptField<Name, VstorewithcontactsViewRow>(_path, "phonenumbertype", VstorewithcontactsViewRow::phonenumbertype, Optional.empty(), Optional.empty(), (row, value) -> row.withPhonenumbertype(value), Name.pgType);
-               };
-               @Override
-               public OptField</* max 50 chars */ String, VstorewithcontactsViewRow> emailaddress() {
-                 return new OptField</* max 50 chars */ String, VstorewithcontactsViewRow>(_path, "emailaddress", VstorewithcontactsViewRow::emailaddress, Optional.empty(), Optional.empty(), (row, value) -> row.withEmailaddress(value), PgTypes.text);
-               };
-               @Override
-               public Field<Integer, VstorewithcontactsViewRow> emailpromotion() {
-                 return new Field<Integer, VstorewithcontactsViewRow>(_path, "emailpromotion", VstorewithcontactsViewRow::emailpromotion, Optional.empty(), Optional.empty(), (row, value) -> row.withEmailpromotion(value), PgTypes.int4);
-               };
-             };
+    public Field<Name, VstorewithcontactsViewRow> name() {
+      return new Field<Name, VstorewithcontactsViewRow>(_path, "name", VstorewithcontactsViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<Name, VstorewithcontactsViewRow> contacttype() {
+      return new Field<Name, VstorewithcontactsViewRow>(_path, "contacttype", VstorewithcontactsViewRow::contacttype, Optional.empty(), Optional.empty(), (row, value) -> row.withContacttype(value), Name.pgType);
+    };
+
+    @Override
+    public OptField</* max 8 chars */ String, VstorewithcontactsViewRow> title() {
+      return new OptField</* max 8 chars */ String, VstorewithcontactsViewRow>(_path, "title", VstorewithcontactsViewRow::title, Optional.empty(), Optional.empty(), (row, value) -> row.withTitle(value), PgTypes.text);
+    };
+
+    @Override
+    public Field</* user-picked */ FirstName, VstorewithcontactsViewRow> firstname() {
+      return new Field</* user-picked */ FirstName, VstorewithcontactsViewRow>(_path, "firstname", VstorewithcontactsViewRow::firstname, Optional.empty(), Optional.empty(), (row, value) -> row.withFirstname(value), FirstName.pgType);
+    };
+
+    @Override
+    public OptField<Name, VstorewithcontactsViewRow> middlename() {
+      return new OptField<Name, VstorewithcontactsViewRow>(_path, "middlename", VstorewithcontactsViewRow::middlename, Optional.empty(), Optional.empty(), (row, value) -> row.withMiddlename(value), Name.pgType);
+    };
+
+    @Override
+    public Field<Name, VstorewithcontactsViewRow> lastname() {
+      return new Field<Name, VstorewithcontactsViewRow>(_path, "lastname", VstorewithcontactsViewRow::lastname, Optional.empty(), Optional.empty(), (row, value) -> row.withLastname(value), Name.pgType);
+    };
+
+    @Override
+    public OptField</* max 10 chars */ String, VstorewithcontactsViewRow> suffix() {
+      return new OptField</* max 10 chars */ String, VstorewithcontactsViewRow>(_path, "suffix", VstorewithcontactsViewRow::suffix, Optional.empty(), Optional.empty(), (row, value) -> row.withSuffix(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField<Phone, VstorewithcontactsViewRow> phonenumber() {
+      return new OptField<Phone, VstorewithcontactsViewRow>(_path, "phonenumber", VstorewithcontactsViewRow::phonenumber, Optional.empty(), Optional.empty(), (row, value) -> row.withPhonenumber(value), Phone.pgType);
+    };
+
+    @Override
+    public OptField<Name, VstorewithcontactsViewRow> phonenumbertype() {
+      return new OptField<Name, VstorewithcontactsViewRow>(_path, "phonenumbertype", VstorewithcontactsViewRow::phonenumbertype, Optional.empty(), Optional.empty(), (row, value) -> row.withPhonenumbertype(value), Name.pgType);
+    };
+
+    @Override
+    public OptField</* max 50 chars */ String, VstorewithcontactsViewRow> emailaddress() {
+      return new OptField</* max 50 chars */ String, VstorewithcontactsViewRow>(_path, "emailaddress", VstorewithcontactsViewRow::emailaddress, Optional.empty(), Optional.empty(), (row, value) -> row.withEmailaddress(value), PgTypes.text);
+    };
+
+    @Override
+    public Field<Integer, VstorewithcontactsViewRow> emailpromotion() {
+      return new Field<Integer, VstorewithcontactsViewRow>(_path, "emailpromotion", VstorewithcontactsViewRow::emailpromotion, Optional.empty(), Optional.empty(), (row, value) -> row.withEmailpromotion(value), PgTypes.int4);
     };
 
     @Override
     public List<FieldLike<?, VstorewithcontactsViewRow>> columns() {
-      return List.of(this.fields().businessentityid(), this.fields().name(), this.fields().contacttype(), this.fields().title(), this.fields().firstname(), this.fields().middlename(), this.fields().lastname(), this.fields().suffix(), this.fields().phonenumber(), this.fields().phonenumbertype(), this.fields().emailaddress(), this.fields().emailpromotion());
+      return List.of(this.businessentityid(), this.name(), this.contacttype(), this.title(), this.firstname(), this.middlename(), this.lastname(), this.suffix(), this.phonenumber(), this.phonenumbertype(), this.emailaddress(), this.emailpromotion());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<VstorewithcontactsViewFields, VstorewithcontactsViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<VstorewithcontactsViewFields, VstorewithcontactsViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -116,4 +120,12 @@ public interface VstorewithcontactsViewFields {
   OptField</* max 50 chars */ String, VstorewithcontactsViewRow> emailaddress();
 
   Field<Integer, VstorewithcontactsViewRow> emailpromotion();
+
+  @Override
+  List<FieldLike<?, VstorewithcontactsViewRow>> columns();
+
+  @Override
+  default RowParser<VstorewithcontactsViewRow> rowParser() {
+    return VstorewithcontactsViewRow._rowParser;
+  };
 }

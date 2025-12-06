@@ -11,6 +11,7 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.sales.salesperson.SalespersonFields
 import adventureworks.sales.salesperson.SalespersonRow
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -21,8 +22,9 @@ import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait SalespersonquotahistoryFields {
+trait SalespersonquotahistoryFields extends FieldsExpr[SalespersonquotahistoryRow] {
   def businessentityid: IdField[BusinessentityId, SalespersonquotahistoryRow]
 
   def quotadate: IdField[TypoLocalDateTime, SalespersonquotahistoryRow]
@@ -38,75 +40,79 @@ trait SalespersonquotahistoryFields {
   def compositeIdIs(compositeId: SalespersonquotahistoryId): SqlExpr[java.lang.Boolean] = SqlExpr.all(businessentityid.isEqual(compositeId.businessentityid), quotadate.isEqual(compositeId.quotadate))
 
   def compositeIdIn(compositeIds: java.util.List[SalespersonquotahistoryId]): SqlExpr[java.lang.Boolean] = new CompositeIn(java.util.List.of(new Part[BusinessentityId, SalespersonquotahistoryId, SalespersonquotahistoryRow](businessentityid, _.businessentityid, BusinessentityId.pgType), new Part[TypoLocalDateTime, SalespersonquotahistoryId, SalespersonquotahistoryRow](quotadate, _.quotadate, TypoLocalDateTime.pgType)), compositeIds)
+
+  override def columns: java.util.List[FieldLike[?, SalespersonquotahistoryRow]]
+
+  override def rowParser: RowParser[SalespersonquotahistoryRow] = SalespersonquotahistoryRow._rowParser
 }
 
 object SalespersonquotahistoryFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[SalespersonquotahistoryFields, SalespersonquotahistoryRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends SalespersonquotahistoryFields with Relation[SalespersonquotahistoryFields, SalespersonquotahistoryRow] {
 
-    override lazy val fields: SalespersonquotahistoryFields = {
-      new SalespersonquotahistoryFields {
-        override def businessentityid: IdField[BusinessentityId, SalespersonquotahistoryRow] = {
-          new IdField[BusinessentityId, SalespersonquotahistoryRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def quotadate: IdField[TypoLocalDateTime, SalespersonquotahistoryRow] = {
-          new IdField[TypoLocalDateTime, SalespersonquotahistoryRow](
-            _path,
-            "quotadate",
-            _.quotadate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(quotadate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def salesquota: Field[java.math.BigDecimal, SalespersonquotahistoryRow] = {
-          new Field[java.math.BigDecimal, SalespersonquotahistoryRow](
-            _path,
-            "salesquota",
-            _.salesquota,
-            Optional.empty(),
-            Optional.of("numeric"),
-            (row, value) => row.copy(salesquota = value),
-            PgTypes.numeric
-          )
-        }
-        override def rowguid: Field[TypoUUID, SalespersonquotahistoryRow] = {
-          new Field[TypoUUID, SalespersonquotahistoryRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.of("uuid"),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, SalespersonquotahistoryRow] = {
-          new Field[TypoLocalDateTime, SalespersonquotahistoryRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def businessentityid: IdField[BusinessentityId, SalespersonquotahistoryRow] = {
+      new IdField[BusinessentityId, SalespersonquotahistoryRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, SalespersonquotahistoryRow]] = java.util.List.of(this.fields.businessentityid, this.fields.quotadate, this.fields.salesquota, this.fields.rowguid, this.fields.modifieddate)
+    override def quotadate: IdField[TypoLocalDateTime, SalespersonquotahistoryRow] = {
+      new IdField[TypoLocalDateTime, SalespersonquotahistoryRow](
+        _path,
+        "quotadate",
+        _.quotadate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(quotadate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def salesquota: Field[java.math.BigDecimal, SalespersonquotahistoryRow] = {
+      new Field[java.math.BigDecimal, SalespersonquotahistoryRow](
+        _path,
+        "salesquota",
+        _.salesquota,
+        Optional.empty(),
+        Optional.of("numeric"),
+        (row, value) => row.copy(salesquota = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, SalespersonquotahistoryRow] = {
+      new Field[TypoUUID, SalespersonquotahistoryRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.of("uuid"),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, SalespersonquotahistoryRow] = {
+      new Field[TypoLocalDateTime, SalespersonquotahistoryRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, SalespersonquotahistoryRow]] = java.util.List.of(this.businessentityid, this.quotadate, this.salesquota, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[SalespersonquotahistoryFields, SalespersonquotahistoryRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[SalespersonquotahistoryFields, SalespersonquotahistoryRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

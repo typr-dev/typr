@@ -11,51 +11,47 @@ import adventureworks.production.productphoto.ProductphotoId;
 import adventureworks.public_.Flag;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface PppViewFields {
-  final class Impl extends Relation<PppViewFields, PppViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PppViewFields extends FieldsExpr<PppViewRow> {
+  record Impl(List<Path> _path) implements PppViewFields, Relation<PppViewFields, PppViewRow> {
+    @Override
+    public Field<ProductId, PppViewRow> productid() {
+      return new Field<ProductId, PppViewRow>(_path, "productid", PppViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
+    };
 
     @Override
-    public PppViewFields fields() {
-      return new PppViewFields() {
-               @Override
-               public Field<ProductId, PppViewRow> productid() {
-                 return new Field<ProductId, PppViewRow>(_path, "productid", PppViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
-               };
-               @Override
-               public Field<ProductphotoId, PppViewRow> productphotoid() {
-                 return new Field<ProductphotoId, PppViewRow>(_path, "productphotoid", PppViewRow::productphotoid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductphotoid(value), ProductphotoId.pgType);
-               };
-               @Override
-               public Field<Flag, PppViewRow> primary() {
-                 return new Field<Flag, PppViewRow>(_path, "primary", PppViewRow::primary, Optional.empty(), Optional.empty(), (row, value) -> row.withPrimary(value), Flag.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PppViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, PppViewRow>(_path, "modifieddate", PppViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<ProductphotoId, PppViewRow> productphotoid() {
+      return new Field<ProductphotoId, PppViewRow>(_path, "productphotoid", PppViewRow::productphotoid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductphotoid(value), ProductphotoId.pgType);
+    };
+
+    @Override
+    public Field<Flag, PppViewRow> primary() {
+      return new Field<Flag, PppViewRow>(_path, "primary", PppViewRow::primary, Optional.empty(), Optional.empty(), (row, value) -> row.withPrimary(value), Flag.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PppViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, PppViewRow>(_path, "modifieddate", PppViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, PppViewRow>> columns() {
-      return List.of(this.fields().productid(), this.fields().productphotoid(), this.fields().primary(), this.fields().modifieddate());
+      return List.of(this.productid(), this.productphotoid(), this.primary(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PppViewFields, PppViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PppViewFields, PppViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -66,4 +62,12 @@ public interface PppViewFields {
   Field<Flag, PppViewRow> primary();
 
   Field<TypoLocalDateTime, PppViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, PppViewRow>> columns();
+
+  @Override
+  default RowParser<PppViewRow> rowParser() {
+    return PppViewRow._rowParser;
+  };
 }

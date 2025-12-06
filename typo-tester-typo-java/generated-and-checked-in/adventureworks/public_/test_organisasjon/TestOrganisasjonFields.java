@@ -7,41 +7,42 @@ package adventureworks.public_.test_organisasjon;
 
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface TestOrganisasjonFields {
-  final class Impl extends Relation<TestOrganisasjonFields, TestOrganisasjonRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
-
+public interface TestOrganisasjonFields extends FieldsExpr<TestOrganisasjonRow> {
+  record Impl(List<Path> _path) implements TestOrganisasjonFields, Relation<TestOrganisasjonFields, TestOrganisasjonRow> {
     @Override
-    public TestOrganisasjonFields fields() {
-      return new TestOrganisasjonFields() {
-               @Override
-               public IdField<TestOrganisasjonId, TestOrganisasjonRow> organisasjonskode() {
-                 return new IdField<TestOrganisasjonId, TestOrganisasjonRow>(_path, "organisasjonskode", TestOrganisasjonRow::organisasjonskode, Optional.empty(), Optional.empty(), (row, value) -> row.withOrganisasjonskode(value), TestOrganisasjonId.pgType);
-               };
-             };
+    public IdField<TestOrganisasjonId, TestOrganisasjonRow> organisasjonskode() {
+      return new IdField<TestOrganisasjonId, TestOrganisasjonRow>(_path, "organisasjonskode", TestOrganisasjonRow::organisasjonskode, Optional.empty(), Optional.empty(), (row, value) -> row.withOrganisasjonskode(value), TestOrganisasjonId.pgType);
     };
 
     @Override
     public List<FieldLike<?, TestOrganisasjonRow>> columns() {
-      return List.of(this.fields().organisasjonskode());
+      return List.of(this.organisasjonskode());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<TestOrganisasjonFields, TestOrganisasjonRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<TestOrganisasjonFields, TestOrganisasjonRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
   IdField<TestOrganisasjonId, TestOrganisasjonRow> organisasjonskode();
+
+  @Override
+  List<FieldLike<?, TestOrganisasjonRow>> columns();
+
+  @Override
+  default RowParser<TestOrganisasjonRow> rowParser() {
+    return TestOrganisasjonRow._rowParser;
+  };
 }

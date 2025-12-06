@@ -28,5 +28,5 @@ case class JcViewRow(
 )
 
 object JcViewRow {
-  val `_rowParser`: RowParser[JcViewRow] = RowParsers.of(JobcandidateId.pgType, JobcandidateId.pgType, BusinessentityId.pgType.opt(), TypoXml.pgType.opt(), TypoLocalDateTime.pgType, JcViewRow.apply, row => Array(row.id, row.jobcandidateid, row.businessentityid, row.resume, row.modifieddate))
+  val `_rowParser`: RowParser[JcViewRow] = RowParsers.of(JobcandidateId.pgType, JobcandidateId.pgType, BusinessentityId.pgType.opt(), TypoXml.pgType.opt(), TypoLocalDateTime.pgType, JcViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.jobcandidateid.asInstanceOf[Object], row.businessentityid.asInstanceOf[Object], row.resume.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

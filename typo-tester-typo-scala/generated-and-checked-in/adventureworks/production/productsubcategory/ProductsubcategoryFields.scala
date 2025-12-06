@@ -12,14 +12,16 @@ import adventureworks.production.productcategory.ProductcategoryId
 import adventureworks.production.productcategory.ProductcategoryRow
 import adventureworks.public.Name
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait ProductsubcategoryFields {
+trait ProductsubcategoryFields extends FieldsExpr[ProductsubcategoryRow] {
   def productsubcategoryid: IdField[ProductsubcategoryId, ProductsubcategoryRow]
 
   def productcategoryid: Field[ProductcategoryId, ProductsubcategoryRow]
@@ -31,75 +33,79 @@ trait ProductsubcategoryFields {
   def modifieddate: Field[TypoLocalDateTime, ProductsubcategoryRow]
 
   def fkProductcategory: ForeignKey[ProductcategoryFields, ProductcategoryRow] = ForeignKey.of[ProductcategoryFields, ProductcategoryRow]("production.FK_ProductSubcategory_ProductCategory_ProductCategoryID").withColumnPair(productcategoryid, _.productcategoryid)
+
+  override def columns: java.util.List[FieldLike[?, ProductsubcategoryRow]]
+
+  override def rowParser: RowParser[ProductsubcategoryRow] = ProductsubcategoryRow._rowParser
 }
 
 object ProductsubcategoryFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[ProductsubcategoryFields, ProductsubcategoryRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends ProductsubcategoryFields with Relation[ProductsubcategoryFields, ProductsubcategoryRow] {
 
-    override lazy val fields: ProductsubcategoryFields = {
-      new ProductsubcategoryFields {
-        override def productsubcategoryid: IdField[ProductsubcategoryId, ProductsubcategoryRow] = {
-          new IdField[ProductsubcategoryId, ProductsubcategoryRow](
-            _path,
-            "productsubcategoryid",
-            _.productsubcategoryid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(productsubcategoryid = value),
-            ProductsubcategoryId.pgType
-          )
-        }
-        override def productcategoryid: Field[ProductcategoryId, ProductsubcategoryRow] = {
-          new Field[ProductcategoryId, ProductsubcategoryRow](
-            _path,
-            "productcategoryid",
-            _.productcategoryid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(productcategoryid = value),
-            ProductcategoryId.pgType
-          )
-        }
-        override def name: Field[Name, ProductsubcategoryRow] = {
-          new Field[Name, ProductsubcategoryRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.of("varchar"),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def rowguid: Field[TypoUUID, ProductsubcategoryRow] = {
-          new Field[TypoUUID, ProductsubcategoryRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.of("uuid"),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, ProductsubcategoryRow] = {
-          new Field[TypoLocalDateTime, ProductsubcategoryRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def productsubcategoryid: IdField[ProductsubcategoryId, ProductsubcategoryRow] = {
+      new IdField[ProductsubcategoryId, ProductsubcategoryRow](
+        _path,
+        "productsubcategoryid",
+        _.productsubcategoryid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(productsubcategoryid = value),
+        ProductsubcategoryId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, ProductsubcategoryRow]] = java.util.List.of(this.fields.productsubcategoryid, this.fields.productcategoryid, this.fields.name, this.fields.rowguid, this.fields.modifieddate)
+    override def productcategoryid: Field[ProductcategoryId, ProductsubcategoryRow] = {
+      new Field[ProductcategoryId, ProductsubcategoryRow](
+        _path,
+        "productcategoryid",
+        _.productcategoryid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(productcategoryid = value),
+        ProductcategoryId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def name: Field[Name, ProductsubcategoryRow] = {
+      new Field[Name, ProductsubcategoryRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.of("varchar"),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, ProductsubcategoryRow] = {
+      new Field[TypoUUID, ProductsubcategoryRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.of("uuid"),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, ProductsubcategoryRow] = {
+      new Field[TypoLocalDateTime, ProductsubcategoryRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, ProductsubcategoryRow]] = java.util.List.of(this.productsubcategoryid, this.productcategoryid, this.name, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[ProductsubcategoryFields, ProductsubcategoryRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[ProductsubcategoryFields, ProductsubcategoryRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

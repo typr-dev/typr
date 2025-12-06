@@ -24,5 +24,5 @@ case class PdocViewRow(
 )
 
 object PdocViewRow {
-  val `_rowParser`: RowParser[PdocViewRow] = RowParsers.of(ProductId.pgType, ProductId.pgType, TypoLocalDateTime.pgType, DocumentId.pgType, PdocViewRow.apply, row => Array(row.id, row.productid, row.modifieddate, row.documentnode))
+  val `_rowParser`: RowParser[PdocViewRow] = RowParsers.of(ProductId.pgType, ProductId.pgType, TypoLocalDateTime.pgType, DocumentId.pgType, PdocViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.productid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object], row.documentnode.asInstanceOf[Object]))
 }

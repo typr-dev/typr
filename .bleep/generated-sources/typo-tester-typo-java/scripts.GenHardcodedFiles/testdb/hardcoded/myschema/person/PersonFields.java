@@ -15,6 +15,7 @@ import testdb.hardcoded.myschema.football_club.FootballClubRow;
 import testdb.hardcoded.myschema.marital_status.MaritalStatusFields;
 import testdb.hardcoded.myschema.marital_status.MaritalStatusId;
 import testdb.hardcoded.myschema.marital_status.MaritalStatusRow;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
@@ -23,79 +24,82 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface PersonFields {
-  final class Impl extends Relation<PersonFields, PersonRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PersonFields extends FieldsExpr<PersonRow> {
+  record Impl(List<Path> _path) implements PersonFields, Relation<PersonFields, PersonRow> {
+    @Override
+    public IdField<PersonId, PersonRow> id() {
+      return new IdField<PersonId, PersonRow>(_path, "id", PersonRow::id, Optional.empty(), Optional.of("int8"), (row, value) -> row.withId(value), PersonId.pgType);
+    };
 
     @Override
-    public PersonFields fields() {
-      return new PersonFields() {
-               @Override
-               public IdField<PersonId, PersonRow> id() {
-                 return new IdField<PersonId, PersonRow>(_path, "id", PersonRow::id, Optional.empty(), Optional.of("int8"), (row, value) -> row.withId(value), PersonId.pgType);
-               };
-               @Override
-               public Field<FootballClubId, PersonRow> favouriteFootballClubId() {
-                 return new Field<FootballClubId, PersonRow>(_path, "favourite_football_club_id", PersonRow::favouriteFootballClubId, Optional.empty(), Optional.empty(), (row, value) -> row.withFavouriteFootballClubId(value), FootballClubId.pgType);
-               };
-               @Override
-               public Field</* max 100 chars */ String, PersonRow> name() {
-                 return new Field</* max 100 chars */ String, PersonRow>(_path, "name", PersonRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), PgTypes.text);
-               };
-               @Override
-               public OptField</* max 30 chars */ String, PersonRow> nickName() {
-                 return new OptField</* max 30 chars */ String, PersonRow>(_path, "nick_name", PersonRow::nickName, Optional.empty(), Optional.empty(), (row, value) -> row.withNickName(value), PgTypes.text);
-               };
-               @Override
-               public OptField</* max 100 chars */ String, PersonRow> blogUrl() {
-                 return new OptField</* max 100 chars */ String, PersonRow>(_path, "blog_url", PersonRow::blogUrl, Optional.empty(), Optional.empty(), (row, value) -> row.withBlogUrl(value), PgTypes.text);
-               };
-               @Override
-               public Field</* max 254 chars */ String, PersonRow> email() {
-                 return new Field</* max 254 chars */ String, PersonRow>(_path, "email", PersonRow::email, Optional.empty(), Optional.empty(), (row, value) -> row.withEmail(value), PgTypes.text);
-               };
-               @Override
-               public Field</* max 8 chars */ String, PersonRow> phone() {
-                 return new Field</* max 8 chars */ String, PersonRow>(_path, "phone", PersonRow::phone, Optional.empty(), Optional.empty(), (row, value) -> row.withPhone(value), PgTypes.text);
-               };
-               @Override
-               public Field<Boolean, PersonRow> likesPizza() {
-                 return new Field<Boolean, PersonRow>(_path, "likes_pizza", PersonRow::likesPizza, Optional.empty(), Optional.empty(), (row, value) -> row.withLikesPizza(value), PgTypes.bool);
-               };
-               @Override
-               public Field<MaritalStatusId, PersonRow> maritalStatusId() {
-                 return new Field<MaritalStatusId, PersonRow>(_path, "marital_status_id", PersonRow::maritalStatusId, Optional.empty(), Optional.empty(), (row, value) -> row.withMaritalStatusId(value), MaritalStatusId.pgType);
-               };
-               @Override
-               public OptField</* max 254 chars */ String, PersonRow> workEmail() {
-                 return new OptField</* max 254 chars */ String, PersonRow>(_path, "work_email", PersonRow::workEmail, Optional.empty(), Optional.empty(), (row, value) -> row.withWorkEmail(value), PgTypes.text);
-               };
-               @Override
-               public Field<Sector, PersonRow> sector() {
-                 return new Field<Sector, PersonRow>(_path, "sector", PersonRow::sector, Optional.empty(), Optional.of("myschema.sector"), (row, value) -> row.withSector(value), Sector.pgType);
-               };
-               @Override
-               public Field<Number, PersonRow> favoriteNumber() {
-                 return new Field<Number, PersonRow>(_path, "favorite_number", PersonRow::favoriteNumber, Optional.empty(), Optional.of("myschema.number"), (row, value) -> row.withFavoriteNumber(value), Number.pgType);
-               };
-             };
+    public Field<FootballClubId, PersonRow> favouriteFootballClubId() {
+      return new Field<FootballClubId, PersonRow>(_path, "favourite_football_club_id", PersonRow::favouriteFootballClubId, Optional.empty(), Optional.empty(), (row, value) -> row.withFavouriteFootballClubId(value), FootballClubId.pgType);
+    };
+
+    @Override
+    public Field</* max 100 chars */ String, PersonRow> name() {
+      return new Field</* max 100 chars */ String, PersonRow>(_path, "name", PersonRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField</* max 30 chars */ String, PersonRow> nickName() {
+      return new OptField</* max 30 chars */ String, PersonRow>(_path, "nick_name", PersonRow::nickName, Optional.empty(), Optional.empty(), (row, value) -> row.withNickName(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField</* max 100 chars */ String, PersonRow> blogUrl() {
+      return new OptField</* max 100 chars */ String, PersonRow>(_path, "blog_url", PersonRow::blogUrl, Optional.empty(), Optional.empty(), (row, value) -> row.withBlogUrl(value), PgTypes.text);
+    };
+
+    @Override
+    public Field</* max 254 chars */ String, PersonRow> email() {
+      return new Field</* max 254 chars */ String, PersonRow>(_path, "email", PersonRow::email, Optional.empty(), Optional.empty(), (row, value) -> row.withEmail(value), PgTypes.text);
+    };
+
+    @Override
+    public Field</* max 8 chars */ String, PersonRow> phone() {
+      return new Field</* max 8 chars */ String, PersonRow>(_path, "phone", PersonRow::phone, Optional.empty(), Optional.empty(), (row, value) -> row.withPhone(value), PgTypes.text);
+    };
+
+    @Override
+    public Field<Boolean, PersonRow> likesPizza() {
+      return new Field<Boolean, PersonRow>(_path, "likes_pizza", PersonRow::likesPizza, Optional.empty(), Optional.empty(), (row, value) -> row.withLikesPizza(value), PgTypes.bool);
+    };
+
+    @Override
+    public Field<MaritalStatusId, PersonRow> maritalStatusId() {
+      return new Field<MaritalStatusId, PersonRow>(_path, "marital_status_id", PersonRow::maritalStatusId, Optional.empty(), Optional.empty(), (row, value) -> row.withMaritalStatusId(value), MaritalStatusId.pgType);
+    };
+
+    @Override
+    public OptField</* max 254 chars */ String, PersonRow> workEmail() {
+      return new OptField</* max 254 chars */ String, PersonRow>(_path, "work_email", PersonRow::workEmail, Optional.empty(), Optional.empty(), (row, value) -> row.withWorkEmail(value), PgTypes.text);
+    };
+
+    @Override
+    public Field<Sector, PersonRow> sector() {
+      return new Field<Sector, PersonRow>(_path, "sector", PersonRow::sector, Optional.empty(), Optional.of("myschema.sector"), (row, value) -> row.withSector(value), Sector.pgType);
+    };
+
+    @Override
+    public Field<Number, PersonRow> favoriteNumber() {
+      return new Field<Number, PersonRow>(_path, "favorite_number", PersonRow::favoriteNumber, Optional.empty(), Optional.of("myschema.number"), (row, value) -> row.withFavoriteNumber(value), Number.pgType);
     };
 
     @Override
     public List<FieldLike<?, PersonRow>> columns() {
-      return List.of(this.fields().id(), this.fields().favouriteFootballClubId(), this.fields().name(), this.fields().nickName(), this.fields().blogUrl(), this.fields().email(), this.fields().phone(), this.fields().likesPizza(), this.fields().maritalStatusId(), this.fields().workEmail(), this.fields().sector(), this.fields().favoriteNumber());
+      return List.of(this.id(), this.favouriteFootballClubId(), this.name(), this.nickName(), this.blogUrl(), this.email(), this.phone(), this.likesPizza(), this.maritalStatusId(), this.workEmail(), this.sector(), this.favoriteNumber());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PersonFields, PersonRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PersonFields, PersonRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -129,5 +133,13 @@ public interface PersonFields {
 
   default ForeignKey<MaritalStatusFields, MaritalStatusRow> fkMaritalStatus() {
     return ForeignKey.<MaritalStatusFields, MaritalStatusRow>of("myschema.person_marital_status_id_fkey").withColumnPair(maritalStatusId(), MaritalStatusFields::id);
+  };
+
+  @Override
+  List<FieldLike<?, PersonRow>> columns();
+
+  @Override
+  default RowParser<PersonRow> rowParser() {
+    return PersonRow._rowParser;
   };
 }

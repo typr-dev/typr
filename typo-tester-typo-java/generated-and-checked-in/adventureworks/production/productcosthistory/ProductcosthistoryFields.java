@@ -12,6 +12,7 @@ import adventureworks.production.product.ProductRow;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr;
@@ -23,51 +24,47 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface ProductcosthistoryFields {
-  final class Impl extends Relation<ProductcosthistoryFields, ProductcosthistoryRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface ProductcosthistoryFields extends FieldsExpr<ProductcosthistoryRow> {
+  record Impl(List<Path> _path) implements ProductcosthistoryFields, Relation<ProductcosthistoryFields, ProductcosthistoryRow> {
+    @Override
+    public IdField<ProductId, ProductcosthistoryRow> productid() {
+      return new IdField<ProductId, ProductcosthistoryRow>(_path, "productid", ProductcosthistoryRow::productid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductid(value), ProductId.pgType);
+    };
 
     @Override
-    public ProductcosthistoryFields fields() {
-      return new ProductcosthistoryFields() {
-               @Override
-               public IdField<ProductId, ProductcosthistoryRow> productid() {
-                 return new IdField<ProductId, ProductcosthistoryRow>(_path, "productid", ProductcosthistoryRow::productid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductid(value), ProductId.pgType);
-               };
-               @Override
-               public IdField<TypoLocalDateTime, ProductcosthistoryRow> startdate() {
-                 return new IdField<TypoLocalDateTime, ProductcosthistoryRow>(_path, "startdate", ProductcosthistoryRow::startdate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withStartdate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public OptField<TypoLocalDateTime, ProductcosthistoryRow> enddate() {
-                 return new OptField<TypoLocalDateTime, ProductcosthistoryRow>(_path, "enddate", ProductcosthistoryRow::enddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withEnddate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public Field<BigDecimal, ProductcosthistoryRow> standardcost() {
-                 return new Field<BigDecimal, ProductcosthistoryRow>(_path, "standardcost", ProductcosthistoryRow::standardcost, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withStandardcost(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<TypoLocalDateTime, ProductcosthistoryRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, ProductcosthistoryRow>(_path, "modifieddate", ProductcosthistoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public IdField<TypoLocalDateTime, ProductcosthistoryRow> startdate() {
+      return new IdField<TypoLocalDateTime, ProductcosthistoryRow>(_path, "startdate", ProductcosthistoryRow::startdate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withStartdate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public OptField<TypoLocalDateTime, ProductcosthistoryRow> enddate() {
+      return new OptField<TypoLocalDateTime, ProductcosthistoryRow>(_path, "enddate", ProductcosthistoryRow::enddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withEnddate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public Field<BigDecimal, ProductcosthistoryRow> standardcost() {
+      return new Field<BigDecimal, ProductcosthistoryRow>(_path, "standardcost", ProductcosthistoryRow::standardcost, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withStandardcost(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, ProductcosthistoryRow> modifieddate() {
+      return new Field<TypoLocalDateTime, ProductcosthistoryRow>(_path, "modifieddate", ProductcosthistoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, ProductcosthistoryRow>> columns() {
-      return List.of(this.fields().productid(), this.fields().startdate(), this.fields().enddate(), this.fields().standardcost(), this.fields().modifieddate());
+      return List.of(this.productid(), this.startdate(), this.enddate(), this.standardcost(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<ProductcosthistoryFields, ProductcosthistoryRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<ProductcosthistoryFields, ProductcosthistoryRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -91,5 +88,13 @@ public interface ProductcosthistoryFields {
 
   default SqlExpr<Boolean> compositeIdIn(List<ProductcosthistoryId> compositeIds) {
     return new CompositeIn(List.of(new Part<ProductId, ProductcosthistoryId, ProductcosthistoryRow>(productid(), ProductcosthistoryId::productid, ProductId.pgType), new Part<TypoLocalDateTime, ProductcosthistoryId, ProductcosthistoryRow>(startdate(), ProductcosthistoryId::startdate, TypoLocalDateTime.pgType)), compositeIds);
+  };
+
+  @Override
+  List<FieldLike<?, ProductcosthistoryRow>> columns();
+
+  @Override
+  default RowParser<ProductcosthistoryRow> rowParser() {
+    return ProductcosthistoryRow._rowParser;
   };
 }

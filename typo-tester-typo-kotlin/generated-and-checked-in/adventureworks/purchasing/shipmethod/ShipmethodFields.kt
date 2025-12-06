@@ -11,17 +11,23 @@ import adventureworks.public.Name
 import java.math.BigDecimal
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface ShipmethodFields {
+interface ShipmethodFields : FieldsExpr<ShipmethodRow> {
+  override fun columns(): List<FieldLike<*, ShipmethodRow>>
+
   fun modifieddate(): Field<TypoLocalDateTime, ShipmethodRow>
 
   fun name(): Field<Name, ShipmethodRow>
+
+  override fun rowParser(): RowParser<ShipmethodRow> = ShipmethodRow._rowParser
 
   fun rowguid(): Field<TypoUUID, ShipmethodRow>
 
@@ -32,21 +38,24 @@ interface ShipmethodFields {
   fun shiprate(): Field<BigDecimal, ShipmethodRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<ShipmethodFields, ShipmethodRow>(path) {
-      override fun fields(): ShipmethodFields = object : ShipmethodFields {
-        override fun shipmethodid(): IdField<ShipmethodId, ShipmethodRow> = IdField<ShipmethodId, ShipmethodRow>(_path, "shipmethodid", ShipmethodRow::shipmethodid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(shipmethodid = value) }, ShipmethodId.pgType)
-        override fun name(): Field<Name, ShipmethodRow> = Field<Name, ShipmethodRow>(_path, "name", ShipmethodRow::name, Optional.empty(), Optional.of("varchar"), { row, value -> row.copy(name = value) }, Name.pgType)
-        override fun shipbase(): Field<BigDecimal, ShipmethodRow> = Field<BigDecimal, ShipmethodRow>(_path, "shipbase", ShipmethodRow::shipbase, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(shipbase = value) }, PgTypes.numeric)
-        override fun shiprate(): Field<BigDecimal, ShipmethodRow> = Field<BigDecimal, ShipmethodRow>(_path, "shiprate", ShipmethodRow::shiprate, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(shiprate = value) }, PgTypes.numeric)
-        override fun rowguid(): Field<TypoUUID, ShipmethodRow> = Field<TypoUUID, ShipmethodRow>(_path, "rowguid", ShipmethodRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, ShipmethodRow> = Field<TypoLocalDateTime, ShipmethodRow>(_path, "modifieddate", ShipmethodRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : ShipmethodFields, Relation<ShipmethodFields, ShipmethodRow> {
+      override fun shipmethodid(): IdField<ShipmethodId, ShipmethodRow> = IdField<ShipmethodId, ShipmethodRow>(_path, "shipmethodid", ShipmethodRow::shipmethodid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(shipmethodid = value) }, ShipmethodId.pgType)
 
-      override fun columns(): List<FieldLike<*, ShipmethodRow>> = listOf(this.fields().shipmethodid(), this.fields().name(), this.fields().shipbase(), this.fields().shiprate(), this.fields().rowguid(), this.fields().modifieddate())
+      override fun name(): Field<Name, ShipmethodRow> = Field<Name, ShipmethodRow>(_path, "name", ShipmethodRow::name, Optional.empty(), Optional.of("varchar"), { row, value -> row.copy(name = value) }, Name.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun shipbase(): Field<BigDecimal, ShipmethodRow> = Field<BigDecimal, ShipmethodRow>(_path, "shipbase", ShipmethodRow::shipbase, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(shipbase = value) }, PgTypes.numeric)
+
+      override fun shiprate(): Field<BigDecimal, ShipmethodRow> = Field<BigDecimal, ShipmethodRow>(_path, "shiprate", ShipmethodRow::shiprate, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(shiprate = value) }, PgTypes.numeric)
+
+      override fun rowguid(): Field<TypoUUID, ShipmethodRow> = Field<TypoUUID, ShipmethodRow>(_path, "rowguid", ShipmethodRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, ShipmethodRow> = Field<TypoLocalDateTime, ShipmethodRow>(_path, "modifieddate", ShipmethodRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, ShipmethodRow>> = listOf(this.shipmethodid(), this.name(), this.shipbase(), this.shiprate(), this.rowguid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<ShipmethodFields, ShipmethodRow> = Impl(_path)
     }
 
-    val structure: Relation<ShipmethodFields, ShipmethodRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

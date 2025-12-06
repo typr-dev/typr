@@ -7,25 +7,29 @@ package adventureworks.public.test_organisasjon
 
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface TestOrganisasjonFields {
+interface TestOrganisasjonFields : FieldsExpr<TestOrganisasjonRow> {
+  override fun columns(): List<FieldLike<*, TestOrganisasjonRow>>
+
   fun organisasjonskode(): IdField<TestOrganisasjonId, TestOrganisasjonRow>
 
+  override fun rowParser(): RowParser<TestOrganisasjonRow> = TestOrganisasjonRow._rowParser
+
   companion object {
-    private class Impl(path: List<Path>) : Relation<TestOrganisasjonFields, TestOrganisasjonRow>(path) {
-      override fun fields(): TestOrganisasjonFields = object : TestOrganisasjonFields {
-        override fun organisasjonskode(): IdField<TestOrganisasjonId, TestOrganisasjonRow> = IdField<TestOrganisasjonId, TestOrganisasjonRow>(_path, "organisasjonskode", TestOrganisasjonRow::organisasjonskode, Optional.empty(), Optional.empty(), { row, value -> row.copy(organisasjonskode = value) }, TestOrganisasjonId.pgType)
-      }
+    data class Impl(val _path: List<Path>) : TestOrganisasjonFields, Relation<TestOrganisasjonFields, TestOrganisasjonRow> {
+      override fun organisasjonskode(): IdField<TestOrganisasjonId, TestOrganisasjonRow> = IdField<TestOrganisasjonId, TestOrganisasjonRow>(_path, "organisasjonskode", TestOrganisasjonRow::organisasjonskode, Optional.empty(), Optional.empty(), { row, value -> row.copy(organisasjonskode = value) }, TestOrganisasjonId.pgType)
 
-      override fun columns(): List<FieldLike<*, TestOrganisasjonRow>> = listOf(this.fields().organisasjonskode())
+      override fun columns(): List<FieldLike<*, TestOrganisasjonRow>> = listOf(this.organisasjonskode())
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun copy(_path: List<Path>): Relation<TestOrganisasjonFields, TestOrganisasjonRow> = Impl(_path)
     }
 
-    val structure: Relation<TestOrganisasjonFields, TestOrganisasjonRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

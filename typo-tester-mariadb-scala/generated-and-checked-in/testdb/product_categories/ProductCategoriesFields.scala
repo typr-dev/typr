@@ -12,6 +12,7 @@ import testdb.categories.CategoriesRow
 import testdb.products.ProductsFields
 import testdb.products.ProductsId
 import testdb.products.ProductsRow
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -22,8 +23,9 @@ import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-trait ProductCategoriesFields {
+trait ProductCategoriesFields extends FieldsExpr[ProductCategoriesRow] {
   def productId: IdField[ProductsId, ProductCategoriesRow]
 
   def categoryId: IdField[CategoriesId, ProductCategoriesRow]
@@ -39,64 +41,67 @@ trait ProductCategoriesFields {
   def compositeIdIs(compositeId: ProductCategoriesId): SqlExpr[java.lang.Boolean] = SqlExpr.all(productId.isEqual(compositeId.productId), categoryId.isEqual(compositeId.categoryId))
 
   def compositeIdIn(compositeIds: java.util.List[ProductCategoriesId]): SqlExpr[java.lang.Boolean] = new CompositeIn(java.util.List.of(new Part[ProductsId, ProductCategoriesId, ProductCategoriesRow](productId, _.productId, ProductsId.pgType), new Part[CategoriesId, ProductCategoriesId, ProductCategoriesRow](categoryId, _.categoryId, CategoriesId.pgType)), compositeIds)
+
+  override def columns: java.util.List[FieldLike[?, ProductCategoriesRow]]
+
+  override def rowParser: RowParser[ProductCategoriesRow] = ProductCategoriesRow._rowParser
 }
 
 object ProductCategoriesFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[ProductCategoriesFields, ProductCategoriesRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends ProductCategoriesFields with Relation[ProductCategoriesFields, ProductCategoriesRow] {
 
-    override lazy val fields: ProductCategoriesFields = {
-      new ProductCategoriesFields {
-        override def productId: IdField[ProductsId, ProductCategoriesRow] = {
-          new IdField[ProductsId, ProductCategoriesRow](
-            _path,
-            "product_id",
-            _.productId,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(productId = value),
-            ProductsId.pgType
-          )
-        }
-        override def categoryId: IdField[CategoriesId, ProductCategoriesRow] = {
-          new IdField[CategoriesId, ProductCategoriesRow](
-            _path,
-            "category_id",
-            _.categoryId,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(categoryId = value),
-            CategoriesId.pgType
-          )
-        }
-        override def isPrimary: Field[java.lang.Boolean, ProductCategoriesRow] = {
-          new Field[java.lang.Boolean, ProductCategoriesRow](
-            _path,
-            "is_primary",
-            _.isPrimary,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(isPrimary = value),
-            MariaTypes.bool
-          )
-        }
-        override def sortOrder: Field[java.lang.Short, ProductCategoriesRow] = {
-          new Field[java.lang.Short, ProductCategoriesRow](
-            _path,
-            "sort_order",
-            _.sortOrder,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(sortOrder = value),
-            MariaTypes.smallint
-          )
-        }
-      }
+    override def productId: IdField[ProductsId, ProductCategoriesRow] = {
+      new IdField[ProductsId, ProductCategoriesRow](
+        _path,
+        "product_id",
+        _.productId,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(productId = value),
+        ProductsId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, ProductCategoriesRow]] = java.util.List.of(this.fields.productId, this.fields.categoryId, this.fields.isPrimary, this.fields.sortOrder)
+    override def categoryId: IdField[CategoriesId, ProductCategoriesRow] = {
+      new IdField[CategoriesId, ProductCategoriesRow](
+        _path,
+        "category_id",
+        _.categoryId,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(categoryId = value),
+        CategoriesId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def isPrimary: Field[java.lang.Boolean, ProductCategoriesRow] = {
+      new Field[java.lang.Boolean, ProductCategoriesRow](
+        _path,
+        "is_primary",
+        _.isPrimary,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(isPrimary = value),
+        MariaTypes.bool
+      )
+    }
+
+    override def sortOrder: Field[java.lang.Short, ProductCategoriesRow] = {
+      new Field[java.lang.Short, ProductCategoriesRow](
+        _path,
+        "sort_order",
+        _.sortOrder,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(sortOrder = value),
+        MariaTypes.smallint
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, ProductCategoriesRow]] = java.util.List.of(this.productId, this.categoryId, this.isPrimary, this.sortOrder)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[ProductCategoriesFields, ProductCategoriesRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[ProductCategoriesFields, ProductCategoriesRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

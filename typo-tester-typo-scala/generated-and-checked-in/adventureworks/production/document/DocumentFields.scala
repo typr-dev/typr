@@ -14,6 +14,7 @@ import adventureworks.humanresources.employee.EmployeeRow
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.public.Flag
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -22,8 +23,9 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait DocumentFields {
+trait DocumentFields extends FieldsExpr[DocumentRow] {
   def title: Field[/* max 50 chars */ String, DocumentRow]
 
   def owner: Field[BusinessentityId, DocumentRow]
@@ -51,163 +53,175 @@ trait DocumentFields {
   def documentnode: IdField[DocumentId, DocumentRow]
 
   def fkHumanresourcesEmployee: ForeignKey[EmployeeFields, EmployeeRow] = ForeignKey.of[EmployeeFields, EmployeeRow]("production.FK_Document_Employee_Owner").withColumnPair(owner, _.businessentityid)
+
+  override def columns: java.util.List[FieldLike[?, DocumentRow]]
+
+  override def rowParser: RowParser[DocumentRow] = DocumentRow._rowParser
 }
 
 object DocumentFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[DocumentFields, DocumentRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends DocumentFields with Relation[DocumentFields, DocumentRow] {
 
-    override lazy val fields: DocumentFields = {
-      new DocumentFields {
-        override def title: Field[/* max 50 chars */ String, DocumentRow] = {
-          new Field[/* max 50 chars */ String, DocumentRow](
-            _path,
-            "title",
-            _.title,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(title = value),
-            PgTypes.text
-          )
-        }
-        override def owner: Field[BusinessentityId, DocumentRow] = {
-          new Field[BusinessentityId, DocumentRow](
-            _path,
-            "owner",
-            _.owner,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(owner = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def folderflag: Field[Flag, DocumentRow] = {
-          new Field[Flag, DocumentRow](
-            _path,
-            "folderflag",
-            _.folderflag,
-            Optional.empty(),
-            Optional.of("bool"),
-            (row, value) => row.copy(folderflag = value),
-            Flag.pgType
-          )
-        }
-        override def filename: Field[/* max 400 chars */ String, DocumentRow] = {
-          new Field[/* max 400 chars */ String, DocumentRow](
-            _path,
-            "filename",
-            _.filename,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(filename = value),
-            PgTypes.text
-          )
-        }
-        override def fileextension: OptField[/* max 8 chars */ String, DocumentRow] = {
-          new OptField[/* max 8 chars */ String, DocumentRow](
-            _path,
-            "fileextension",
-            _.fileextension,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(fileextension = value),
-            PgTypes.text
-          )
-        }
-        override def revision: Field[/* bpchar, max 5 chars */ String, DocumentRow] = {
-          new Field[/* bpchar, max 5 chars */ String, DocumentRow](
-            _path,
-            "revision",
-            _.revision,
-            Optional.empty(),
-            Optional.of("bpchar"),
-            (row, value) => row.copy(revision = value),
-            PgTypes.bpchar
-          )
-        }
-        override def changenumber: Field[Integer, DocumentRow] = {
-          new Field[Integer, DocumentRow](
-            _path,
-            "changenumber",
-            _.changenumber,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(changenumber = value),
-            PgTypes.int4
-          )
-        }
-        override def status: Field[TypoShort, DocumentRow] = {
-          new Field[TypoShort, DocumentRow](
-            _path,
-            "status",
-            _.status,
-            Optional.empty(),
-            Optional.of("int2"),
-            (row, value) => row.copy(status = value),
-            TypoShort.pgType
-          )
-        }
-        override def documentsummary: OptField[String, DocumentRow] = {
-          new OptField[String, DocumentRow](
-            _path,
-            "documentsummary",
-            _.documentsummary,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(documentsummary = value),
-            PgTypes.text
-          )
-        }
-        override def document: OptField[TypoBytea, DocumentRow] = {
-          new OptField[TypoBytea, DocumentRow](
-            _path,
-            "document",
-            _.document,
-            Optional.empty(),
-            Optional.of("bytea"),
-            (row, value) => row.copy(document = value),
-            TypoBytea.pgType
-          )
-        }
-        override def rowguid: Field[TypoUUID, DocumentRow] = {
-          new Field[TypoUUID, DocumentRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.of("uuid"),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, DocumentRow] = {
-          new Field[TypoLocalDateTime, DocumentRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def documentnode: IdField[DocumentId, DocumentRow] = {
-          new IdField[DocumentId, DocumentRow](
-            _path,
-            "documentnode",
-            _.documentnode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(documentnode = value),
-            DocumentId.pgType
-          )
-        }
-      }
+    override def title: Field[/* max 50 chars */ String, DocumentRow] = {
+      new Field[/* max 50 chars */ String, DocumentRow](
+        _path,
+        "title",
+        _.title,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(title = value),
+        PgTypes.text
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, DocumentRow]] = java.util.List.of(this.fields.title, this.fields.owner, this.fields.folderflag, this.fields.filename, this.fields.fileextension, this.fields.revision, this.fields.changenumber, this.fields.status, this.fields.documentsummary, this.fields.document, this.fields.rowguid, this.fields.modifieddate, this.fields.documentnode)
+    override def owner: Field[BusinessentityId, DocumentRow] = {
+      new Field[BusinessentityId, DocumentRow](
+        _path,
+        "owner",
+        _.owner,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(owner = value),
+        BusinessentityId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def folderflag: Field[Flag, DocumentRow] = {
+      new Field[Flag, DocumentRow](
+        _path,
+        "folderflag",
+        _.folderflag,
+        Optional.empty(),
+        Optional.of("bool"),
+        (row, value) => row.copy(folderflag = value),
+        Flag.pgType
+      )
+    }
+
+    override def filename: Field[/* max 400 chars */ String, DocumentRow] = {
+      new Field[/* max 400 chars */ String, DocumentRow](
+        _path,
+        "filename",
+        _.filename,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(filename = value),
+        PgTypes.text
+      )
+    }
+
+    override def fileextension: OptField[/* max 8 chars */ String, DocumentRow] = {
+      new OptField[/* max 8 chars */ String, DocumentRow](
+        _path,
+        "fileextension",
+        _.fileextension,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(fileextension = value),
+        PgTypes.text
+      )
+    }
+
+    override def revision: Field[/* bpchar, max 5 chars */ String, DocumentRow] = {
+      new Field[/* bpchar, max 5 chars */ String, DocumentRow](
+        _path,
+        "revision",
+        _.revision,
+        Optional.empty(),
+        Optional.of("bpchar"),
+        (row, value) => row.copy(revision = value),
+        PgTypes.bpchar
+      )
+    }
+
+    override def changenumber: Field[Integer, DocumentRow] = {
+      new Field[Integer, DocumentRow](
+        _path,
+        "changenumber",
+        _.changenumber,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(changenumber = value),
+        PgTypes.int4
+      )
+    }
+
+    override def status: Field[TypoShort, DocumentRow] = {
+      new Field[TypoShort, DocumentRow](
+        _path,
+        "status",
+        _.status,
+        Optional.empty(),
+        Optional.of("int2"),
+        (row, value) => row.copy(status = value),
+        TypoShort.pgType
+      )
+    }
+
+    override def documentsummary: OptField[String, DocumentRow] = {
+      new OptField[String, DocumentRow](
+        _path,
+        "documentsummary",
+        _.documentsummary,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(documentsummary = value),
+        PgTypes.text
+      )
+    }
+
+    override def document: OptField[TypoBytea, DocumentRow] = {
+      new OptField[TypoBytea, DocumentRow](
+        _path,
+        "document",
+        _.document,
+        Optional.empty(),
+        Optional.of("bytea"),
+        (row, value) => row.copy(document = value),
+        TypoBytea.pgType
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, DocumentRow] = {
+      new Field[TypoUUID, DocumentRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.of("uuid"),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, DocumentRow] = {
+      new Field[TypoLocalDateTime, DocumentRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def documentnode: IdField[DocumentId, DocumentRow] = {
+      new IdField[DocumentId, DocumentRow](
+        _path,
+        "documentnode",
+        _.documentnode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(documentnode = value),
+        DocumentId.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, DocumentRow]] = java.util.List.of(this.title, this.owner, this.folderflag, this.filename, this.fileextension, this.revision, this.changenumber, this.status, this.documentsummary, this.document, this.rowguid, this.modifieddate, this.documentnode)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[DocumentFields, DocumentRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[DocumentFields, DocumentRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

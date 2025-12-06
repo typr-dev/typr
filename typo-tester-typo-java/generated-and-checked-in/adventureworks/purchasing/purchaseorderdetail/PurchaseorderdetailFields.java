@@ -16,6 +16,7 @@ import adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderRow;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr;
@@ -26,67 +27,67 @@ import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface PurchaseorderdetailFields {
-  final class Impl extends Relation<PurchaseorderdetailFields, PurchaseorderdetailRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PurchaseorderdetailFields extends FieldsExpr<PurchaseorderdetailRow> {
+  record Impl(List<Path> _path) implements PurchaseorderdetailFields, Relation<PurchaseorderdetailFields, PurchaseorderdetailRow> {
+    @Override
+    public IdField<PurchaseorderheaderId, PurchaseorderdetailRow> purchaseorderid() {
+      return new IdField<PurchaseorderheaderId, PurchaseorderdetailRow>(_path, "purchaseorderid", PurchaseorderdetailRow::purchaseorderid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withPurchaseorderid(value), PurchaseorderheaderId.pgType);
+    };
 
     @Override
-    public PurchaseorderdetailFields fields() {
-      return new PurchaseorderdetailFields() {
-               @Override
-               public IdField<PurchaseorderheaderId, PurchaseorderdetailRow> purchaseorderid() {
-                 return new IdField<PurchaseorderheaderId, PurchaseorderdetailRow>(_path, "purchaseorderid", PurchaseorderdetailRow::purchaseorderid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withPurchaseorderid(value), PurchaseorderheaderId.pgType);
-               };
-               @Override
-               public IdField<Integer, PurchaseorderdetailRow> purchaseorderdetailid() {
-                 return new IdField<Integer, PurchaseorderdetailRow>(_path, "purchaseorderdetailid", PurchaseorderdetailRow::purchaseorderdetailid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withPurchaseorderdetailid(value), PgTypes.int4);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PurchaseorderdetailRow> duedate() {
-                 return new Field<TypoLocalDateTime, PurchaseorderdetailRow>(_path, "duedate", PurchaseorderdetailRow::duedate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withDuedate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public Field<TypoShort, PurchaseorderdetailRow> orderqty() {
-                 return new Field<TypoShort, PurchaseorderdetailRow>(_path, "orderqty", PurchaseorderdetailRow::orderqty, Optional.empty(), Optional.of("int2"), (row, value) -> row.withOrderqty(value), TypoShort.pgType);
-               };
-               @Override
-               public Field<ProductId, PurchaseorderdetailRow> productid() {
-                 return new Field<ProductId, PurchaseorderdetailRow>(_path, "productid", PurchaseorderdetailRow::productid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductid(value), ProductId.pgType);
-               };
-               @Override
-               public Field<BigDecimal, PurchaseorderdetailRow> unitprice() {
-                 return new Field<BigDecimal, PurchaseorderdetailRow>(_path, "unitprice", PurchaseorderdetailRow::unitprice, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withUnitprice(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<BigDecimal, PurchaseorderdetailRow> receivedqty() {
-                 return new Field<BigDecimal, PurchaseorderdetailRow>(_path, "receivedqty", PurchaseorderdetailRow::receivedqty, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withReceivedqty(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<BigDecimal, PurchaseorderdetailRow> rejectedqty() {
-                 return new Field<BigDecimal, PurchaseorderdetailRow>(_path, "rejectedqty", PurchaseorderdetailRow::rejectedqty, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withRejectedqty(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PurchaseorderdetailRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, PurchaseorderdetailRow>(_path, "modifieddate", PurchaseorderdetailRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public IdField<Integer, PurchaseorderdetailRow> purchaseorderdetailid() {
+      return new IdField<Integer, PurchaseorderdetailRow>(_path, "purchaseorderdetailid", PurchaseorderdetailRow::purchaseorderdetailid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withPurchaseorderdetailid(value), PgTypes.int4);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PurchaseorderdetailRow> duedate() {
+      return new Field<TypoLocalDateTime, PurchaseorderdetailRow>(_path, "duedate", PurchaseorderdetailRow::duedate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withDuedate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public Field<TypoShort, PurchaseorderdetailRow> orderqty() {
+      return new Field<TypoShort, PurchaseorderdetailRow>(_path, "orderqty", PurchaseorderdetailRow::orderqty, Optional.empty(), Optional.of("int2"), (row, value) -> row.withOrderqty(value), TypoShort.pgType);
+    };
+
+    @Override
+    public Field<ProductId, PurchaseorderdetailRow> productid() {
+      return new Field<ProductId, PurchaseorderdetailRow>(_path, "productid", PurchaseorderdetailRow::productid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductid(value), ProductId.pgType);
+    };
+
+    @Override
+    public Field<BigDecimal, PurchaseorderdetailRow> unitprice() {
+      return new Field<BigDecimal, PurchaseorderdetailRow>(_path, "unitprice", PurchaseorderdetailRow::unitprice, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withUnitprice(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<BigDecimal, PurchaseorderdetailRow> receivedqty() {
+      return new Field<BigDecimal, PurchaseorderdetailRow>(_path, "receivedqty", PurchaseorderdetailRow::receivedqty, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withReceivedqty(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<BigDecimal, PurchaseorderdetailRow> rejectedqty() {
+      return new Field<BigDecimal, PurchaseorderdetailRow>(_path, "rejectedqty", PurchaseorderdetailRow::rejectedqty, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withRejectedqty(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PurchaseorderdetailRow> modifieddate() {
+      return new Field<TypoLocalDateTime, PurchaseorderdetailRow>(_path, "modifieddate", PurchaseorderdetailRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, PurchaseorderdetailRow>> columns() {
-      return List.of(this.fields().purchaseorderid(), this.fields().purchaseorderdetailid(), this.fields().duedate(), this.fields().orderqty(), this.fields().productid(), this.fields().unitprice(), this.fields().receivedqty(), this.fields().rejectedqty(), this.fields().modifieddate());
+      return List.of(this.purchaseorderid(), this.purchaseorderdetailid(), this.duedate(), this.orderqty(), this.productid(), this.unitprice(), this.receivedqty(), this.rejectedqty(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PurchaseorderdetailFields, PurchaseorderdetailRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PurchaseorderdetailFields, PurchaseorderdetailRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -122,5 +123,13 @@ public interface PurchaseorderdetailFields {
 
   default SqlExpr<Boolean> compositeIdIn(List<PurchaseorderdetailId> compositeIds) {
     return new CompositeIn(List.of(new Part<PurchaseorderheaderId, PurchaseorderdetailId, PurchaseorderdetailRow>(purchaseorderid(), PurchaseorderdetailId::purchaseorderid, PurchaseorderheaderId.pgType), new Part<Integer, PurchaseorderdetailId, PurchaseorderdetailRow>(purchaseorderdetailid(), PurchaseorderdetailId::purchaseorderdetailid, PgTypes.int4)), compositeIds);
+  };
+
+  @Override
+  List<FieldLike<?, PurchaseorderdetailRow>> columns();
+
+  @Override
+  default RowParser<PurchaseorderdetailRow> rowParser() {
+    return PurchaseorderdetailRow._rowParser;
   };
 }

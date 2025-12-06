@@ -10,47 +10,42 @@ import adventureworks.sales.salesorderheader.SalesorderheaderId;
 import adventureworks.sales.salesreason.SalesreasonId;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface SohsrViewFields {
-  final class Impl extends Relation<SohsrViewFields, SohsrViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface SohsrViewFields extends FieldsExpr<SohsrViewRow> {
+  record Impl(List<Path> _path) implements SohsrViewFields, Relation<SohsrViewFields, SohsrViewRow> {
+    @Override
+    public Field<SalesorderheaderId, SohsrViewRow> salesorderid() {
+      return new Field<SalesorderheaderId, SohsrViewRow>(_path, "salesorderid", SohsrViewRow::salesorderid, Optional.empty(), Optional.empty(), (row, value) -> row.withSalesorderid(value), SalesorderheaderId.pgType);
+    };
 
     @Override
-    public SohsrViewFields fields() {
-      return new SohsrViewFields() {
-               @Override
-               public Field<SalesorderheaderId, SohsrViewRow> salesorderid() {
-                 return new Field<SalesorderheaderId, SohsrViewRow>(_path, "salesorderid", SohsrViewRow::salesorderid, Optional.empty(), Optional.empty(), (row, value) -> row.withSalesorderid(value), SalesorderheaderId.pgType);
-               };
-               @Override
-               public Field<SalesreasonId, SohsrViewRow> salesreasonid() {
-                 return new Field<SalesreasonId, SohsrViewRow>(_path, "salesreasonid", SohsrViewRow::salesreasonid, Optional.empty(), Optional.empty(), (row, value) -> row.withSalesreasonid(value), SalesreasonId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, SohsrViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, SohsrViewRow>(_path, "modifieddate", SohsrViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<SalesreasonId, SohsrViewRow> salesreasonid() {
+      return new Field<SalesreasonId, SohsrViewRow>(_path, "salesreasonid", SohsrViewRow::salesreasonid, Optional.empty(), Optional.empty(), (row, value) -> row.withSalesreasonid(value), SalesreasonId.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, SohsrViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, SohsrViewRow>(_path, "modifieddate", SohsrViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, SohsrViewRow>> columns() {
-      return List.of(this.fields().salesorderid(), this.fields().salesreasonid(), this.fields().modifieddate());
+      return List.of(this.salesorderid(), this.salesreasonid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<SohsrViewFields, SohsrViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<SohsrViewFields, SohsrViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -59,4 +54,12 @@ public interface SohsrViewFields {
   Field<SalesreasonId, SohsrViewRow> salesreasonid();
 
   Field<TypoLocalDateTime, SohsrViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, SohsrViewRow>> columns();
+
+  @Override
+  default RowParser<SohsrViewRow> rowParser() {
+    return SohsrViewRow._rowParser;
+  };
 }

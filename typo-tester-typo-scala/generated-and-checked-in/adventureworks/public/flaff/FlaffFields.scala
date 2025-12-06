@@ -7,6 +7,7 @@ package adventureworks.public.flaff
 
 import adventureworks.public.ShortText
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -17,8 +18,9 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait FlaffFields {
+trait FlaffFields extends FieldsExpr[FlaffRow] {
   def code: IdField[ShortText, FlaffRow]
 
   def anotherCode: IdField[/* max 20 chars */ String, FlaffRow]
@@ -39,75 +41,79 @@ trait FlaffFields {
   def compositeIdIs(compositeId: FlaffId): SqlExpr[java.lang.Boolean] = SqlExpr.all(code.isEqual(compositeId.code), anotherCode.isEqual(compositeId.anotherCode), someNumber.isEqual(compositeId.someNumber), specifier.isEqual(compositeId.specifier))
 
   def compositeIdIn(compositeIds: java.util.List[FlaffId]): SqlExpr[java.lang.Boolean] = new CompositeIn(java.util.List.of(new Part[ShortText, FlaffId, FlaffRow](code, _.code, ShortText.pgType), new Part[/* max 20 chars */ String, FlaffId, FlaffRow](anotherCode, _.anotherCode, PgTypes.text), new Part[Integer, FlaffId, FlaffRow](someNumber, _.someNumber, PgTypes.int4), new Part[ShortText, FlaffId, FlaffRow](specifier, _.specifier, ShortText.pgType)), compositeIds)
+
+  override def columns: java.util.List[FieldLike[?, FlaffRow]]
+
+  override def rowParser: RowParser[FlaffRow] = FlaffRow._rowParser
 }
 
 object FlaffFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[FlaffFields, FlaffRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends FlaffFields with Relation[FlaffFields, FlaffRow] {
 
-    override lazy val fields: FlaffFields = {
-      new FlaffFields {
-        override def code: IdField[ShortText, FlaffRow] = {
-          new IdField[ShortText, FlaffRow](
-            _path,
-            "code",
-            _.code,
-            Optional.empty(),
-            Optional.of("text"),
-            (row, value) => row.copy(code = value),
-            ShortText.pgType
-          )
-        }
-        override def anotherCode: IdField[/* max 20 chars */ String, FlaffRow] = {
-          new IdField[/* max 20 chars */ String, FlaffRow](
-            _path,
-            "another_code",
-            _.anotherCode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(anotherCode = value),
-            PgTypes.text
-          )
-        }
-        override def someNumber: IdField[Integer, FlaffRow] = {
-          new IdField[Integer, FlaffRow](
-            _path,
-            "some_number",
-            _.someNumber,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(someNumber = value),
-            PgTypes.int4
-          )
-        }
-        override def specifier: IdField[ShortText, FlaffRow] = {
-          new IdField[ShortText, FlaffRow](
-            _path,
-            "specifier",
-            _.specifier,
-            Optional.empty(),
-            Optional.of("text"),
-            (row, value) => row.copy(specifier = value),
-            ShortText.pgType
-          )
-        }
-        override def parentspecifier: OptField[ShortText, FlaffRow] = {
-          new OptField[ShortText, FlaffRow](
-            _path,
-            "parentspecifier",
-            _.parentspecifier,
-            Optional.empty(),
-            Optional.of("text"),
-            (row, value) => row.copy(parentspecifier = value),
-            ShortText.pgType
-          )
-        }
-      }
+    override def code: IdField[ShortText, FlaffRow] = {
+      new IdField[ShortText, FlaffRow](
+        _path,
+        "code",
+        _.code,
+        Optional.empty(),
+        Optional.of("text"),
+        (row, value) => row.copy(code = value),
+        ShortText.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, FlaffRow]] = java.util.List.of(this.fields.code, this.fields.anotherCode, this.fields.someNumber, this.fields.specifier, this.fields.parentspecifier)
+    override def anotherCode: IdField[/* max 20 chars */ String, FlaffRow] = {
+      new IdField[/* max 20 chars */ String, FlaffRow](
+        _path,
+        "another_code",
+        _.anotherCode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(anotherCode = value),
+        PgTypes.text
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def someNumber: IdField[Integer, FlaffRow] = {
+      new IdField[Integer, FlaffRow](
+        _path,
+        "some_number",
+        _.someNumber,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(someNumber = value),
+        PgTypes.int4
+      )
+    }
+
+    override def specifier: IdField[ShortText, FlaffRow] = {
+      new IdField[ShortText, FlaffRow](
+        _path,
+        "specifier",
+        _.specifier,
+        Optional.empty(),
+        Optional.of("text"),
+        (row, value) => row.copy(specifier = value),
+        ShortText.pgType
+      )
+    }
+
+    override def parentspecifier: OptField[ShortText, FlaffRow] = {
+      new OptField[ShortText, FlaffRow](
+        _path,
+        "parentspecifier",
+        _.parentspecifier,
+        Optional.empty(),
+        Optional.of("text"),
+        (row, value) => row.copy(parentspecifier = value),
+        ShortText.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, FlaffRow]] = java.util.List.of(this.code, this.anotherCode, this.someNumber, this.specifier, this.parentspecifier)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[FlaffFields, FlaffRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[FlaffFields, FlaffRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

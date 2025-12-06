@@ -97,7 +97,7 @@ case class PaymentsRow(
 }
 
 object PaymentsRow {
-  val `_rowParser`: RowParser[PaymentsRow] = RowParsers.of(PaymentsId.pgType, OrdersId.pgType, PaymentMethodsId.pgType, MariaTypes.varchar.opt(), MariaTypes.decimal, MariaTypes.char_, MariaTypes.text, MariaTypes.longtext.opt(), MariaTypes.varchar.opt(), MariaTypes.inet6.opt(), MariaTypes.datetime, MariaTypes.datetime.opt(), PaymentsRow.apply, row => Array(row.paymentId, row.orderId, row.methodId, row.transactionId, row.amount, row.currencyCode, row.status, row.processorResponse, row.errorMessage, row.ipAddress, row.createdAt, row.processedAt))
+  val `_rowParser`: RowParser[PaymentsRow] = RowParsers.of(PaymentsId.pgType, OrdersId.pgType, PaymentMethodsId.pgType, MariaTypes.varchar.opt(), MariaTypes.decimal, MariaTypes.char_, MariaTypes.text, MariaTypes.longtext.opt(), MariaTypes.varchar.opt(), MariaTypes.inet6.opt(), MariaTypes.datetime, MariaTypes.datetime.opt(), PaymentsRow.apply, row => Array[Object](row.paymentId.asInstanceOf[Object], row.orderId.asInstanceOf[Object], row.methodId.asInstanceOf[Object], row.transactionId.asInstanceOf[Object], row.amount.asInstanceOf[Object], row.currencyCode.asInstanceOf[Object], row.status.asInstanceOf[Object], row.processorResponse.asInstanceOf[Object], row.errorMessage.asInstanceOf[Object], row.ipAddress.asInstanceOf[Object], row.createdAt.asInstanceOf[Object], row.processedAt.asInstanceOf[Object]))
 
   given mariaText: MariaText[PaymentsRow] = MariaText.from(`_rowParser`)
 }

@@ -15,6 +15,7 @@ import adventureworks.production.scrapreason.ScrapreasonId
 import adventureworks.production.scrapreason.ScrapreasonRow
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -23,8 +24,11 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface WorkorderFields {
+interface WorkorderFields : FieldsExpr<WorkorderRow> {
+  override fun columns(): List<FieldLike<*, WorkorderRow>>
+
   fun duedate(): Field<TypoLocalDateTime, WorkorderRow>
 
   fun enddate(): OptField<TypoLocalDateTime, WorkorderRow>
@@ -39,6 +43,8 @@ interface WorkorderFields {
 
   fun productid(): Field<ProductId, WorkorderRow>
 
+  override fun rowParser(): RowParser<WorkorderRow> = WorkorderRow._rowParser
+
   fun scrappedqty(): Field<TypoShort, WorkorderRow>
 
   fun scrapreasonid(): OptField<ScrapreasonId, WorkorderRow>
@@ -48,24 +54,30 @@ interface WorkorderFields {
   fun workorderid(): IdField<WorkorderId, WorkorderRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<WorkorderFields, WorkorderRow>(path) {
-      override fun fields(): WorkorderFields = object : WorkorderFields {
-        override fun workorderid(): IdField<WorkorderId, WorkorderRow> = IdField<WorkorderId, WorkorderRow>(_path, "workorderid", WorkorderRow::workorderid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(workorderid = value) }, WorkorderId.pgType)
-        override fun productid(): Field<ProductId, WorkorderRow> = Field<ProductId, WorkorderRow>(_path, "productid", WorkorderRow::productid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(productid = value) }, ProductId.pgType)
-        override fun orderqty(): Field<Int, WorkorderRow> = Field<Int, WorkorderRow>(_path, "orderqty", WorkorderRow::orderqty, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(orderqty = value) }, PgTypes.int4)
-        override fun scrappedqty(): Field<TypoShort, WorkorderRow> = Field<TypoShort, WorkorderRow>(_path, "scrappedqty", WorkorderRow::scrappedqty, Optional.empty(), Optional.of("int2"), { row, value -> row.copy(scrappedqty = value) }, TypoShort.pgType)
-        override fun startdate(): Field<TypoLocalDateTime, WorkorderRow> = Field<TypoLocalDateTime, WorkorderRow>(_path, "startdate", WorkorderRow::startdate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(startdate = value) }, TypoLocalDateTime.pgType)
-        override fun enddate(): OptField<TypoLocalDateTime, WorkorderRow> = OptField<TypoLocalDateTime, WorkorderRow>(_path, "enddate", WorkorderRow::enddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(enddate = value) }, TypoLocalDateTime.pgType)
-        override fun duedate(): Field<TypoLocalDateTime, WorkorderRow> = Field<TypoLocalDateTime, WorkorderRow>(_path, "duedate", WorkorderRow::duedate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(duedate = value) }, TypoLocalDateTime.pgType)
-        override fun scrapreasonid(): OptField<ScrapreasonId, WorkorderRow> = OptField<ScrapreasonId, WorkorderRow>(_path, "scrapreasonid", WorkorderRow::scrapreasonid, Optional.empty(), Optional.of("int2"), { row, value -> row.copy(scrapreasonid = value) }, ScrapreasonId.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, WorkorderRow> = Field<TypoLocalDateTime, WorkorderRow>(_path, "modifieddate", WorkorderRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : WorkorderFields, Relation<WorkorderFields, WorkorderRow> {
+      override fun workorderid(): IdField<WorkorderId, WorkorderRow> = IdField<WorkorderId, WorkorderRow>(_path, "workorderid", WorkorderRow::workorderid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(workorderid = value) }, WorkorderId.pgType)
 
-      override fun columns(): List<FieldLike<*, WorkorderRow>> = listOf(this.fields().workorderid(), this.fields().productid(), this.fields().orderqty(), this.fields().scrappedqty(), this.fields().startdate(), this.fields().enddate(), this.fields().duedate(), this.fields().scrapreasonid(), this.fields().modifieddate())
+      override fun productid(): Field<ProductId, WorkorderRow> = Field<ProductId, WorkorderRow>(_path, "productid", WorkorderRow::productid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(productid = value) }, ProductId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun orderqty(): Field<Int, WorkorderRow> = Field<Int, WorkorderRow>(_path, "orderqty", WorkorderRow::orderqty, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(orderqty = value) }, PgTypes.int4)
+
+      override fun scrappedqty(): Field<TypoShort, WorkorderRow> = Field<TypoShort, WorkorderRow>(_path, "scrappedqty", WorkorderRow::scrappedqty, Optional.empty(), Optional.of("int2"), { row, value -> row.copy(scrappedqty = value) }, TypoShort.pgType)
+
+      override fun startdate(): Field<TypoLocalDateTime, WorkorderRow> = Field<TypoLocalDateTime, WorkorderRow>(_path, "startdate", WorkorderRow::startdate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(startdate = value) }, TypoLocalDateTime.pgType)
+
+      override fun enddate(): OptField<TypoLocalDateTime, WorkorderRow> = OptField<TypoLocalDateTime, WorkorderRow>(_path, "enddate", WorkorderRow::enddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(enddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun duedate(): Field<TypoLocalDateTime, WorkorderRow> = Field<TypoLocalDateTime, WorkorderRow>(_path, "duedate", WorkorderRow::duedate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(duedate = value) }, TypoLocalDateTime.pgType)
+
+      override fun scrapreasonid(): OptField<ScrapreasonId, WorkorderRow> = OptField<ScrapreasonId, WorkorderRow>(_path, "scrapreasonid", WorkorderRow::scrapreasonid, Optional.empty(), Optional.of("int2"), { row, value -> row.copy(scrapreasonid = value) }, ScrapreasonId.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, WorkorderRow> = Field<TypoLocalDateTime, WorkorderRow>(_path, "modifieddate", WorkorderRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, WorkorderRow>> = listOf(this.workorderid(), this.productid(), this.orderqty(), this.scrappedqty(), this.startdate(), this.enddate(), this.duedate(), this.scrapreasonid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<WorkorderFields, WorkorderRow> = Impl(_path)
     }
 
-    val structure: Relation<WorkorderFields, WorkorderRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

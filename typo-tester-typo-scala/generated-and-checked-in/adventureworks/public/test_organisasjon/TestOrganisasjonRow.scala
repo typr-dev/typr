@@ -17,7 +17,7 @@ case class TestOrganisasjonRow(organisasjonskode: TestOrganisasjonId) {
 }
 
 object TestOrganisasjonRow {
-  val `_rowParser`: RowParser[TestOrganisasjonRow] = RowParsers.of(TestOrganisasjonId.pgType, TestOrganisasjonRow.apply, row => Array(row.organisasjonskode))
+  val `_rowParser`: RowParser[TestOrganisasjonRow] = RowParsers.of(TestOrganisasjonId.pgType, TestOrganisasjonRow.apply, row => Array[Object](row.organisasjonskode.asInstanceOf[Object]))
 
   given pgText: PgText[TestOrganisasjonRow] = PgText.from(`_rowParser`)
 }

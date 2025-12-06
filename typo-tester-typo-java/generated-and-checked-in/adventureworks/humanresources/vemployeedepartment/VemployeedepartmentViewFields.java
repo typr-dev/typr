@@ -11,77 +11,79 @@ import adventureworks.public_.Name;
 import adventureworks.userdefined.FirstName;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface VemployeedepartmentViewFields {
-  final class Impl extends Relation<VemployeedepartmentViewFields, VemployeedepartmentViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface VemployeedepartmentViewFields extends FieldsExpr<VemployeedepartmentViewRow> {
+  record Impl(List<Path> _path) implements VemployeedepartmentViewFields, Relation<VemployeedepartmentViewFields, VemployeedepartmentViewRow> {
+    @Override
+    public Field<BusinessentityId, VemployeedepartmentViewRow> businessentityid() {
+      return new Field<BusinessentityId, VemployeedepartmentViewRow>(_path, "businessentityid", VemployeedepartmentViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
+    };
 
     @Override
-    public VemployeedepartmentViewFields fields() {
-      return new VemployeedepartmentViewFields() {
-               @Override
-               public Field<BusinessentityId, VemployeedepartmentViewRow> businessentityid() {
-                 return new Field<BusinessentityId, VemployeedepartmentViewRow>(_path, "businessentityid", VemployeedepartmentViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public OptField</* max 8 chars */ String, VemployeedepartmentViewRow> title() {
-                 return new OptField</* max 8 chars */ String, VemployeedepartmentViewRow>(_path, "title", VemployeedepartmentViewRow::title, Optional.empty(), Optional.empty(), (row, value) -> row.withTitle(value), PgTypes.text);
-               };
-               @Override
-               public Field</* user-picked */ FirstName, VemployeedepartmentViewRow> firstname() {
-                 return new Field</* user-picked */ FirstName, VemployeedepartmentViewRow>(_path, "firstname", VemployeedepartmentViewRow::firstname, Optional.empty(), Optional.empty(), (row, value) -> row.withFirstname(value), FirstName.pgType);
-               };
-               @Override
-               public OptField<Name, VemployeedepartmentViewRow> middlename() {
-                 return new OptField<Name, VemployeedepartmentViewRow>(_path, "middlename", VemployeedepartmentViewRow::middlename, Optional.empty(), Optional.empty(), (row, value) -> row.withMiddlename(value), Name.pgType);
-               };
-               @Override
-               public Field<Name, VemployeedepartmentViewRow> lastname() {
-                 return new Field<Name, VemployeedepartmentViewRow>(_path, "lastname", VemployeedepartmentViewRow::lastname, Optional.empty(), Optional.empty(), (row, value) -> row.withLastname(value), Name.pgType);
-               };
-               @Override
-               public OptField</* max 10 chars */ String, VemployeedepartmentViewRow> suffix() {
-                 return new OptField</* max 10 chars */ String, VemployeedepartmentViewRow>(_path, "suffix", VemployeedepartmentViewRow::suffix, Optional.empty(), Optional.empty(), (row, value) -> row.withSuffix(value), PgTypes.text);
-               };
-               @Override
-               public Field</* max 50 chars */ String, VemployeedepartmentViewRow> jobtitle() {
-                 return new Field</* max 50 chars */ String, VemployeedepartmentViewRow>(_path, "jobtitle", VemployeedepartmentViewRow::jobtitle, Optional.empty(), Optional.empty(), (row, value) -> row.withJobtitle(value), PgTypes.text);
-               };
-               @Override
-               public Field<Name, VemployeedepartmentViewRow> department() {
-                 return new Field<Name, VemployeedepartmentViewRow>(_path, "department", VemployeedepartmentViewRow::department, Optional.empty(), Optional.empty(), (row, value) -> row.withDepartment(value), Name.pgType);
-               };
-               @Override
-               public Field<Name, VemployeedepartmentViewRow> groupname() {
-                 return new Field<Name, VemployeedepartmentViewRow>(_path, "groupname", VemployeedepartmentViewRow::groupname, Optional.empty(), Optional.empty(), (row, value) -> row.withGroupname(value), Name.pgType);
-               };
-               @Override
-               public Field<TypoLocalDate, VemployeedepartmentViewRow> startdate() {
-                 return new Field<TypoLocalDate, VemployeedepartmentViewRow>(_path, "startdate", VemployeedepartmentViewRow::startdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withStartdate(value), TypoLocalDate.pgType);
-               };
-             };
+    public OptField</* max 8 chars */ String, VemployeedepartmentViewRow> title() {
+      return new OptField</* max 8 chars */ String, VemployeedepartmentViewRow>(_path, "title", VemployeedepartmentViewRow::title, Optional.empty(), Optional.empty(), (row, value) -> row.withTitle(value), PgTypes.text);
+    };
+
+    @Override
+    public Field</* user-picked */ FirstName, VemployeedepartmentViewRow> firstname() {
+      return new Field</* user-picked */ FirstName, VemployeedepartmentViewRow>(_path, "firstname", VemployeedepartmentViewRow::firstname, Optional.empty(), Optional.empty(), (row, value) -> row.withFirstname(value), FirstName.pgType);
+    };
+
+    @Override
+    public OptField<Name, VemployeedepartmentViewRow> middlename() {
+      return new OptField<Name, VemployeedepartmentViewRow>(_path, "middlename", VemployeedepartmentViewRow::middlename, Optional.empty(), Optional.empty(), (row, value) -> row.withMiddlename(value), Name.pgType);
+    };
+
+    @Override
+    public Field<Name, VemployeedepartmentViewRow> lastname() {
+      return new Field<Name, VemployeedepartmentViewRow>(_path, "lastname", VemployeedepartmentViewRow::lastname, Optional.empty(), Optional.empty(), (row, value) -> row.withLastname(value), Name.pgType);
+    };
+
+    @Override
+    public OptField</* max 10 chars */ String, VemployeedepartmentViewRow> suffix() {
+      return new OptField</* max 10 chars */ String, VemployeedepartmentViewRow>(_path, "suffix", VemployeedepartmentViewRow::suffix, Optional.empty(), Optional.empty(), (row, value) -> row.withSuffix(value), PgTypes.text);
+    };
+
+    @Override
+    public Field</* max 50 chars */ String, VemployeedepartmentViewRow> jobtitle() {
+      return new Field</* max 50 chars */ String, VemployeedepartmentViewRow>(_path, "jobtitle", VemployeedepartmentViewRow::jobtitle, Optional.empty(), Optional.empty(), (row, value) -> row.withJobtitle(value), PgTypes.text);
+    };
+
+    @Override
+    public Field<Name, VemployeedepartmentViewRow> department() {
+      return new Field<Name, VemployeedepartmentViewRow>(_path, "department", VemployeedepartmentViewRow::department, Optional.empty(), Optional.empty(), (row, value) -> row.withDepartment(value), Name.pgType);
+    };
+
+    @Override
+    public Field<Name, VemployeedepartmentViewRow> groupname() {
+      return new Field<Name, VemployeedepartmentViewRow>(_path, "groupname", VemployeedepartmentViewRow::groupname, Optional.empty(), Optional.empty(), (row, value) -> row.withGroupname(value), Name.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDate, VemployeedepartmentViewRow> startdate() {
+      return new Field<TypoLocalDate, VemployeedepartmentViewRow>(_path, "startdate", VemployeedepartmentViewRow::startdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withStartdate(value), TypoLocalDate.pgType);
     };
 
     @Override
     public List<FieldLike<?, VemployeedepartmentViewRow>> columns() {
-      return List.of(this.fields().businessentityid(), this.fields().title(), this.fields().firstname(), this.fields().middlename(), this.fields().lastname(), this.fields().suffix(), this.fields().jobtitle(), this.fields().department(), this.fields().groupname(), this.fields().startdate());
+      return List.of(this.businessentityid(), this.title(), this.firstname(), this.middlename(), this.lastname(), this.suffix(), this.jobtitle(), this.department(), this.groupname(), this.startdate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<VemployeedepartmentViewFields, VemployeedepartmentViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<VemployeedepartmentViewFields, VemployeedepartmentViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -104,4 +106,12 @@ public interface VemployeedepartmentViewFields {
   Field<Name, VemployeedepartmentViewRow> groupname();
 
   Field<TypoLocalDate, VemployeedepartmentViewRow> startdate();
+
+  @Override
+  List<FieldLike<?, VemployeedepartmentViewRow>> columns();
+
+  @Override
+  default RowParser<VemployeedepartmentViewRow> rowParser() {
+    return VemployeedepartmentViewRow._rowParser;
+  };
 }

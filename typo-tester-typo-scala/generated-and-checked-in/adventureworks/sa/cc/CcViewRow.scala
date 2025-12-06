@@ -31,5 +31,5 @@ case class CcViewRow(
 )
 
 object CcViewRow {
-  val `_rowParser`: RowParser[CcViewRow] = RowParsers.of(CustomCreditcardId.pgType, CustomCreditcardId.pgType, PgTypes.text, PgTypes.text, TypoShort.pgType, TypoShort.pgType, TypoLocalDateTime.pgType, CcViewRow.apply, row => Array(row.id, row.creditcardid, row.cardtype, row.cardnumber, row.expmonth, row.expyear, row.modifieddate))
+  val `_rowParser`: RowParser[CcViewRow] = RowParsers.of(CustomCreditcardId.pgType, CustomCreditcardId.pgType, PgTypes.text, PgTypes.text, TypoShort.pgType, TypoShort.pgType, TypoLocalDateTime.pgType, CcViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.creditcardid.asInstanceOf[Object], row.cardtype.asInstanceOf[Object], row.cardnumber.asInstanceOf[Object], row.expmonth.asInstanceOf[Object], row.expyear.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

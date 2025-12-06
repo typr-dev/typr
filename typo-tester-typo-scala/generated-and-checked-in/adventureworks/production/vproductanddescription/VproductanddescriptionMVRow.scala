@@ -27,5 +27,5 @@ case class VproductanddescriptionMVRow(
 )
 
 object VproductanddescriptionMVRow {
-  val `_rowParser`: RowParser[VproductanddescriptionMVRow] = RowParsers.of(ProductId.pgType, Name.pgType, Name.pgType, CultureId.pgType, PgTypes.text, VproductanddescriptionMVRow.apply, row => Array(row.productid, row.name, row.productmodel, row.cultureid, row.description))
+  val `_rowParser`: RowParser[VproductanddescriptionMVRow] = RowParsers.of(ProductId.pgType, Name.pgType, Name.pgType, CultureId.pgType, PgTypes.text, VproductanddescriptionMVRow.apply, row => Array[Object](row.productid.asInstanceOf[Object], row.name.asInstanceOf[Object], row.productmodel.asInstanceOf[Object], row.cultureid.asInstanceOf[Object], row.description.asInstanceOf[Object]))
 }

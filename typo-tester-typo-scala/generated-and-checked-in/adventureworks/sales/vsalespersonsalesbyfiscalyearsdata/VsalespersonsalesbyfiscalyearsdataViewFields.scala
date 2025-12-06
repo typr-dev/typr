@@ -8,14 +8,16 @@ package adventureworks.sales.vsalespersonsalesbyfiscalyearsdata
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.public.Name
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait VsalespersonsalesbyfiscalyearsdataViewFields {
+trait VsalespersonsalesbyfiscalyearsdataViewFields extends FieldsExpr[VsalespersonsalesbyfiscalyearsdataViewRow] {
   def salespersonid: OptField[BusinessentityId, VsalespersonsalesbyfiscalyearsdataViewRow]
 
   def fullname: OptField[String, VsalespersonsalesbyfiscalyearsdataViewRow]
@@ -27,86 +29,91 @@ trait VsalespersonsalesbyfiscalyearsdataViewFields {
   def salestotal: OptField[java.math.BigDecimal, VsalespersonsalesbyfiscalyearsdataViewRow]
 
   def fiscalyear: OptField[java.math.BigDecimal, VsalespersonsalesbyfiscalyearsdataViewRow]
+
+  override def columns: java.util.List[FieldLike[?, VsalespersonsalesbyfiscalyearsdataViewRow]]
+
+  override def rowParser: RowParser[VsalespersonsalesbyfiscalyearsdataViewRow] = VsalespersonsalesbyfiscalyearsdataViewRow._rowParser
 }
 
 object VsalespersonsalesbyfiscalyearsdataViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[VsalespersonsalesbyfiscalyearsdataViewFields, VsalespersonsalesbyfiscalyearsdataViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends VsalespersonsalesbyfiscalyearsdataViewFields with Relation[VsalespersonsalesbyfiscalyearsdataViewFields, VsalespersonsalesbyfiscalyearsdataViewRow] {
 
-    override lazy val fields: VsalespersonsalesbyfiscalyearsdataViewFields = {
-      new VsalespersonsalesbyfiscalyearsdataViewFields {
-        override def salespersonid: OptField[BusinessentityId, VsalespersonsalesbyfiscalyearsdataViewRow] = {
-          new OptField[BusinessentityId, VsalespersonsalesbyfiscalyearsdataViewRow](
-            _path,
-            "salespersonid",
-            _.salespersonid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(salespersonid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def fullname: OptField[String, VsalespersonsalesbyfiscalyearsdataViewRow] = {
-          new OptField[String, VsalespersonsalesbyfiscalyearsdataViewRow](
-            _path,
-            "fullname",
-            _.fullname,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(fullname = value),
-            PgTypes.text
-          )
-        }
-        override def jobtitle: Field[/* max 50 chars */ String, VsalespersonsalesbyfiscalyearsdataViewRow] = {
-          new Field[/* max 50 chars */ String, VsalespersonsalesbyfiscalyearsdataViewRow](
-            _path,
-            "jobtitle",
-            _.jobtitle,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(jobtitle = value),
-            PgTypes.text
-          )
-        }
-        override def salesterritory: Field[Name, VsalespersonsalesbyfiscalyearsdataViewRow] = {
-          new Field[Name, VsalespersonsalesbyfiscalyearsdataViewRow](
-            _path,
-            "salesterritory",
-            _.salesterritory,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(salesterritory = value),
-            Name.pgType
-          )
-        }
-        override def salestotal: OptField[java.math.BigDecimal, VsalespersonsalesbyfiscalyearsdataViewRow] = {
-          new OptField[java.math.BigDecimal, VsalespersonsalesbyfiscalyearsdataViewRow](
-            _path,
-            "salestotal",
-            _.salestotal,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(salestotal = value),
-            PgTypes.numeric
-          )
-        }
-        override def fiscalyear: OptField[java.math.BigDecimal, VsalespersonsalesbyfiscalyearsdataViewRow] = {
-          new OptField[java.math.BigDecimal, VsalespersonsalesbyfiscalyearsdataViewRow](
-            _path,
-            "fiscalyear",
-            _.fiscalyear,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(fiscalyear = value),
-            PgTypes.numeric
-          )
-        }
-      }
+    override def salespersonid: OptField[BusinessentityId, VsalespersonsalesbyfiscalyearsdataViewRow] = {
+      new OptField[BusinessentityId, VsalespersonsalesbyfiscalyearsdataViewRow](
+        _path,
+        "salespersonid",
+        _.salespersonid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(salespersonid = value),
+        BusinessentityId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, VsalespersonsalesbyfiscalyearsdataViewRow]] = java.util.List.of(this.fields.salespersonid, this.fields.fullname, this.fields.jobtitle, this.fields.salesterritory, this.fields.salestotal, this.fields.fiscalyear)
+    override def fullname: OptField[String, VsalespersonsalesbyfiscalyearsdataViewRow] = {
+      new OptField[String, VsalespersonsalesbyfiscalyearsdataViewRow](
+        _path,
+        "fullname",
+        _.fullname,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(fullname = value),
+        PgTypes.text
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def jobtitle: Field[/* max 50 chars */ String, VsalespersonsalesbyfiscalyearsdataViewRow] = {
+      new Field[/* max 50 chars */ String, VsalespersonsalesbyfiscalyearsdataViewRow](
+        _path,
+        "jobtitle",
+        _.jobtitle,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(jobtitle = value),
+        PgTypes.text
+      )
+    }
+
+    override def salesterritory: Field[Name, VsalespersonsalesbyfiscalyearsdataViewRow] = {
+      new Field[Name, VsalespersonsalesbyfiscalyearsdataViewRow](
+        _path,
+        "salesterritory",
+        _.salesterritory,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(salesterritory = value),
+        Name.pgType
+      )
+    }
+
+    override def salestotal: OptField[java.math.BigDecimal, VsalespersonsalesbyfiscalyearsdataViewRow] = {
+      new OptField[java.math.BigDecimal, VsalespersonsalesbyfiscalyearsdataViewRow](
+        _path,
+        "salestotal",
+        _.salestotal,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(salestotal = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def fiscalyear: OptField[java.math.BigDecimal, VsalespersonsalesbyfiscalyearsdataViewRow] = {
+      new OptField[java.math.BigDecimal, VsalespersonsalesbyfiscalyearsdataViewRow](
+        _path,
+        "fiscalyear",
+        _.fiscalyear,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(fiscalyear = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, VsalespersonsalesbyfiscalyearsdataViewRow]] = java.util.List.of(this.salespersonid, this.fullname, this.jobtitle, this.salesterritory, this.salestotal, this.fiscalyear)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[VsalespersonsalesbyfiscalyearsdataViewFields, VsalespersonsalesbyfiscalyearsdataViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[VsalespersonsalesbyfiscalyearsdataViewFields, VsalespersonsalesbyfiscalyearsdataViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

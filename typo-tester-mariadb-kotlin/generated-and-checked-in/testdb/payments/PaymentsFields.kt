@@ -16,6 +16,7 @@ import testdb.payment_methods.PaymentMethodsFields
 import testdb.payment_methods.PaymentMethodsId
 import testdb.payment_methods.PaymentMethodsRow
 import typo.data.maria.Inet6
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -24,9 +25,12 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-interface PaymentsFields {
+interface PaymentsFields : FieldsExpr<PaymentsRow> {
   fun amount(): Field<BigDecimal, PaymentsRow>
+
+  override fun columns(): List<FieldLike<*, PaymentsRow>>
 
   fun createdAt(): Field<LocalDateTime, PaymentsRow>
 
@@ -50,32 +54,43 @@ interface PaymentsFields {
 
   fun processorResponse(): OptField<String, PaymentsRow>
 
+  override fun rowParser(): RowParser<PaymentsRow> = PaymentsRow._rowParser
+
   fun status(): Field<String, PaymentsRow>
 
   fun transactionId(): OptField<String, PaymentsRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<PaymentsFields, PaymentsRow>(path) {
-      override fun fields(): PaymentsFields = object : PaymentsFields {
-        override fun paymentId(): IdField<PaymentsId, PaymentsRow> = IdField<PaymentsId, PaymentsRow>(_path, "payment_id", PaymentsRow::paymentId, Optional.empty(), Optional.empty(), { row, value -> row.copy(paymentId = value) }, PaymentsId.pgType)
-        override fun orderId(): Field<OrdersId, PaymentsRow> = Field<OrdersId, PaymentsRow>(_path, "order_id", PaymentsRow::orderId, Optional.empty(), Optional.empty(), { row, value -> row.copy(orderId = value) }, OrdersId.pgType)
-        override fun methodId(): Field<PaymentMethodsId, PaymentsRow> = Field<PaymentMethodsId, PaymentsRow>(_path, "method_id", PaymentsRow::methodId, Optional.empty(), Optional.empty(), { row, value -> row.copy(methodId = value) }, PaymentMethodsId.pgType)
-        override fun transactionId(): OptField<String, PaymentsRow> = OptField<String, PaymentsRow>(_path, "transaction_id", PaymentsRow::transactionId, Optional.empty(), Optional.empty(), { row, value -> row.copy(transactionId = value) }, MariaTypes.varchar)
-        override fun amount(): Field<BigDecimal, PaymentsRow> = Field<BigDecimal, PaymentsRow>(_path, "amount", PaymentsRow::amount, Optional.empty(), Optional.empty(), { row, value -> row.copy(amount = value) }, MariaTypes.decimal)
-        override fun currencyCode(): Field<String, PaymentsRow> = Field<String, PaymentsRow>(_path, "currency_code", PaymentsRow::currencyCode, Optional.empty(), Optional.empty(), { row, value -> row.copy(currencyCode = value) }, MariaTypes.char_)
-        override fun status(): Field<String, PaymentsRow> = Field<String, PaymentsRow>(_path, "status", PaymentsRow::status, Optional.empty(), Optional.empty(), { row, value -> row.copy(status = value) }, MariaTypes.text)
-        override fun processorResponse(): OptField<String, PaymentsRow> = OptField<String, PaymentsRow>(_path, "processor_response", PaymentsRow::processorResponse, Optional.empty(), Optional.empty(), { row, value -> row.copy(processorResponse = value) }, MariaTypes.longtext)
-        override fun errorMessage(): OptField<String, PaymentsRow> = OptField<String, PaymentsRow>(_path, "error_message", PaymentsRow::errorMessage, Optional.empty(), Optional.empty(), { row, value -> row.copy(errorMessage = value) }, MariaTypes.varchar)
-        override fun ipAddress(): OptField<Inet6, PaymentsRow> = OptField<Inet6, PaymentsRow>(_path, "ip_address", PaymentsRow::ipAddress, Optional.empty(), Optional.empty(), { row, value -> row.copy(ipAddress = value) }, MariaTypes.inet6)
-        override fun createdAt(): Field<LocalDateTime, PaymentsRow> = Field<LocalDateTime, PaymentsRow>(_path, "created_at", PaymentsRow::createdAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(createdAt = value) }, MariaTypes.datetime)
-        override fun processedAt(): OptField<LocalDateTime, PaymentsRow> = OptField<LocalDateTime, PaymentsRow>(_path, "processed_at", PaymentsRow::processedAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(processedAt = value) }, MariaTypes.datetime)
-      }
+    data class Impl(val _path: List<Path>) : PaymentsFields, Relation<PaymentsFields, PaymentsRow> {
+      override fun paymentId(): IdField<PaymentsId, PaymentsRow> = IdField<PaymentsId, PaymentsRow>(_path, "payment_id", PaymentsRow::paymentId, Optional.empty(), Optional.empty(), { row, value -> row.copy(paymentId = value) }, PaymentsId.pgType)
 
-      override fun columns(): List<FieldLike<*, PaymentsRow>> = listOf(this.fields().paymentId(), this.fields().orderId(), this.fields().methodId(), this.fields().transactionId(), this.fields().amount(), this.fields().currencyCode(), this.fields().status(), this.fields().processorResponse(), this.fields().errorMessage(), this.fields().ipAddress(), this.fields().createdAt(), this.fields().processedAt())
+      override fun orderId(): Field<OrdersId, PaymentsRow> = Field<OrdersId, PaymentsRow>(_path, "order_id", PaymentsRow::orderId, Optional.empty(), Optional.empty(), { row, value -> row.copy(orderId = value) }, OrdersId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun methodId(): Field<PaymentMethodsId, PaymentsRow> = Field<PaymentMethodsId, PaymentsRow>(_path, "method_id", PaymentsRow::methodId, Optional.empty(), Optional.empty(), { row, value -> row.copy(methodId = value) }, PaymentMethodsId.pgType)
+
+      override fun transactionId(): OptField<String, PaymentsRow> = OptField<String, PaymentsRow>(_path, "transaction_id", PaymentsRow::transactionId, Optional.empty(), Optional.empty(), { row, value -> row.copy(transactionId = value) }, MariaTypes.varchar)
+
+      override fun amount(): Field<BigDecimal, PaymentsRow> = Field<BigDecimal, PaymentsRow>(_path, "amount", PaymentsRow::amount, Optional.empty(), Optional.empty(), { row, value -> row.copy(amount = value) }, MariaTypes.decimal)
+
+      override fun currencyCode(): Field<String, PaymentsRow> = Field<String, PaymentsRow>(_path, "currency_code", PaymentsRow::currencyCode, Optional.empty(), Optional.empty(), { row, value -> row.copy(currencyCode = value) }, MariaTypes.char_)
+
+      override fun status(): Field<String, PaymentsRow> = Field<String, PaymentsRow>(_path, "status", PaymentsRow::status, Optional.empty(), Optional.empty(), { row, value -> row.copy(status = value) }, MariaTypes.text)
+
+      override fun processorResponse(): OptField<String, PaymentsRow> = OptField<String, PaymentsRow>(_path, "processor_response", PaymentsRow::processorResponse, Optional.empty(), Optional.empty(), { row, value -> row.copy(processorResponse = value) }, MariaTypes.longtext)
+
+      override fun errorMessage(): OptField<String, PaymentsRow> = OptField<String, PaymentsRow>(_path, "error_message", PaymentsRow::errorMessage, Optional.empty(), Optional.empty(), { row, value -> row.copy(errorMessage = value) }, MariaTypes.varchar)
+
+      override fun ipAddress(): OptField<Inet6, PaymentsRow> = OptField<Inet6, PaymentsRow>(_path, "ip_address", PaymentsRow::ipAddress, Optional.empty(), Optional.empty(), { row, value -> row.copy(ipAddress = value) }, MariaTypes.inet6)
+
+      override fun createdAt(): Field<LocalDateTime, PaymentsRow> = Field<LocalDateTime, PaymentsRow>(_path, "created_at", PaymentsRow::createdAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(createdAt = value) }, MariaTypes.datetime)
+
+      override fun processedAt(): OptField<LocalDateTime, PaymentsRow> = OptField<LocalDateTime, PaymentsRow>(_path, "processed_at", PaymentsRow::processedAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(processedAt = value) }, MariaTypes.datetime)
+
+      override fun columns(): List<FieldLike<*, PaymentsRow>> = listOf(this.paymentId(), this.orderId(), this.methodId(), this.transactionId(), this.amount(), this.currencyCode(), this.status(), this.processorResponse(), this.errorMessage(), this.ipAddress(), this.createdAt(), this.processedAt())
+
+      override fun copy(_path: List<Path>): Relation<PaymentsFields, PaymentsRow> = Impl(_path)
     }
 
-    val structure: Relation<PaymentsFields, PaymentsRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

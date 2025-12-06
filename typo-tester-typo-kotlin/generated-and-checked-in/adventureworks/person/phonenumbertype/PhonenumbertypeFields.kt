@@ -9,32 +9,38 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.public.Name
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface PhonenumbertypeFields {
+interface PhonenumbertypeFields : FieldsExpr<PhonenumbertypeRow> {
+  override fun columns(): List<FieldLike<*, PhonenumbertypeRow>>
+
   fun modifieddate(): Field<TypoLocalDateTime, PhonenumbertypeRow>
 
   fun name(): Field<Name, PhonenumbertypeRow>
 
   fun phonenumbertypeid(): IdField<PhonenumbertypeId, PhonenumbertypeRow>
 
+  override fun rowParser(): RowParser<PhonenumbertypeRow> = PhonenumbertypeRow._rowParser
+
   companion object {
-    private class Impl(path: List<Path>) : Relation<PhonenumbertypeFields, PhonenumbertypeRow>(path) {
-      override fun fields(): PhonenumbertypeFields = object : PhonenumbertypeFields {
-        override fun phonenumbertypeid(): IdField<PhonenumbertypeId, PhonenumbertypeRow> = IdField<PhonenumbertypeId, PhonenumbertypeRow>(_path, "phonenumbertypeid", PhonenumbertypeRow::phonenumbertypeid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(phonenumbertypeid = value) }, PhonenumbertypeId.pgType)
-        override fun name(): Field<Name, PhonenumbertypeRow> = Field<Name, PhonenumbertypeRow>(_path, "name", PhonenumbertypeRow::name, Optional.empty(), Optional.of("varchar"), { row, value -> row.copy(name = value) }, Name.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, PhonenumbertypeRow> = Field<TypoLocalDateTime, PhonenumbertypeRow>(_path, "modifieddate", PhonenumbertypeRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : PhonenumbertypeFields, Relation<PhonenumbertypeFields, PhonenumbertypeRow> {
+      override fun phonenumbertypeid(): IdField<PhonenumbertypeId, PhonenumbertypeRow> = IdField<PhonenumbertypeId, PhonenumbertypeRow>(_path, "phonenumbertypeid", PhonenumbertypeRow::phonenumbertypeid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(phonenumbertypeid = value) }, PhonenumbertypeId.pgType)
 
-      override fun columns(): List<FieldLike<*, PhonenumbertypeRow>> = listOf(this.fields().phonenumbertypeid(), this.fields().name(), this.fields().modifieddate())
+      override fun name(): Field<Name, PhonenumbertypeRow> = Field<Name, PhonenumbertypeRow>(_path, "name", PhonenumbertypeRow::name, Optional.empty(), Optional.of("varchar"), { row, value -> row.copy(name = value) }, Name.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun modifieddate(): Field<TypoLocalDateTime, PhonenumbertypeRow> = Field<TypoLocalDateTime, PhonenumbertypeRow>(_path, "modifieddate", PhonenumbertypeRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, PhonenumbertypeRow>> = listOf(this.phonenumbertypeid(), this.name(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<PhonenumbertypeFields, PhonenumbertypeRow> = Impl(_path)
     }
 
-    val structure: Relation<PhonenumbertypeFields, PhonenumbertypeRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

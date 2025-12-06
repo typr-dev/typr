@@ -10,60 +10,58 @@ import adventureworks.customtypes.TypoUUID;
 import adventureworks.person.businessentity.BusinessentityId;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface PaViewFields {
-  final class Impl extends Relation<PaViewFields, PaViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PaViewFields extends FieldsExpr<PaViewRow> {
+  record Impl(List<Path> _path) implements PaViewFields, Relation<PaViewFields, PaViewRow> {
+    @Override
+    public Field<BusinessentityId, PaViewRow> id() {
+      return new Field<BusinessentityId, PaViewRow>(_path, "id", PaViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
+    };
 
     @Override
-    public PaViewFields fields() {
-      return new PaViewFields() {
-               @Override
-               public Field<BusinessentityId, PaViewRow> id() {
-                 return new Field<BusinessentityId, PaViewRow>(_path, "id", PaViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<BusinessentityId, PaViewRow> businessentityid() {
-                 return new Field<BusinessentityId, PaViewRow>(_path, "businessentityid", PaViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field</* max 128 chars */ String, PaViewRow> passwordhash() {
-                 return new Field</* max 128 chars */ String, PaViewRow>(_path, "passwordhash", PaViewRow::passwordhash, Optional.empty(), Optional.empty(), (row, value) -> row.withPasswordhash(value), PgTypes.text);
-               };
-               @Override
-               public Field</* max 10 chars */ String, PaViewRow> passwordsalt() {
-                 return new Field</* max 10 chars */ String, PaViewRow>(_path, "passwordsalt", PaViewRow::passwordsalt, Optional.empty(), Optional.empty(), (row, value) -> row.withPasswordsalt(value), PgTypes.text);
-               };
-               @Override
-               public Field<TypoUUID, PaViewRow> rowguid() {
-                 return new Field<TypoUUID, PaViewRow>(_path, "rowguid", PaViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PaViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, PaViewRow>(_path, "modifieddate", PaViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<BusinessentityId, PaViewRow> businessentityid() {
+      return new Field<BusinessentityId, PaViewRow>(_path, "businessentityid", PaViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
+    };
+
+    @Override
+    public Field</* max 128 chars */ String, PaViewRow> passwordhash() {
+      return new Field</* max 128 chars */ String, PaViewRow>(_path, "passwordhash", PaViewRow::passwordhash, Optional.empty(), Optional.empty(), (row, value) -> row.withPasswordhash(value), PgTypes.text);
+    };
+
+    @Override
+    public Field</* max 10 chars */ String, PaViewRow> passwordsalt() {
+      return new Field</* max 10 chars */ String, PaViewRow>(_path, "passwordsalt", PaViewRow::passwordsalt, Optional.empty(), Optional.empty(), (row, value) -> row.withPasswordsalt(value), PgTypes.text);
+    };
+
+    @Override
+    public Field<TypoUUID, PaViewRow> rowguid() {
+      return new Field<TypoUUID, PaViewRow>(_path, "rowguid", PaViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PaViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, PaViewRow>(_path, "modifieddate", PaViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, PaViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().businessentityid(), this.fields().passwordhash(), this.fields().passwordsalt(), this.fields().rowguid(), this.fields().modifieddate());
+      return List.of(this.id(), this.businessentityid(), this.passwordhash(), this.passwordsalt(), this.rowguid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PaViewFields, PaViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PaViewFields, PaViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -78,4 +76,12 @@ public interface PaViewFields {
   Field<TypoUUID, PaViewRow> rowguid();
 
   Field<TypoLocalDateTime, PaViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, PaViewRow>> columns();
+
+  @Override
+  default RowParser<PaViewRow> rowParser() {
+    return PaViewRow._rowParser;
+  };
 }

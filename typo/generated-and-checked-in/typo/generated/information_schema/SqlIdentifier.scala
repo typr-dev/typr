@@ -5,9 +5,7 @@
  *
  * (If you're developing `typo` and want to change it: run `bleep generate-sources`)
  */
-package typo
-package generated
-package information_schema
+package typo.generated.information_schema
 
 import anorm.Column
 import anorm.ParameterMetaData
@@ -15,25 +13,37 @@ import anorm.ToStatement
 import java.sql.Types
 import play.api.libs.json.Reads
 import play.api.libs.json.Writes
+import typo.generated.Text
 
 /** Domain `information_schema.sql_identifier`
-  * No constraint
-  */
+ * No constraint
+ */
 case class SqlIdentifier(value: String)
+
 object SqlIdentifier {
   implicit lazy val arrayColumn: Column[Array[SqlIdentifier]] = Column.columnToArray(column, implicitly)
+
   implicit lazy val arrayToStatement: ToStatement[Array[SqlIdentifier]] = ToStatement.arrayToParameter(ParameterMetaData.StringParameterMetaData).contramap(_.map(_.value))
+
   implicit lazy val column: Column[SqlIdentifier] = Column.columnToString.map(SqlIdentifier.apply)
-  implicit lazy val ordering: Ordering[SqlIdentifier] = Ordering.by(_.value)
-  implicit lazy val parameterMetadata: ParameterMetaData[SqlIdentifier] = new ParameterMetaData[SqlIdentifier] {
-    override def sqlType: String = """"information_schema"."sql_identifier""""
-    override def jdbcType: Int = Types.OTHER
+
+  implicit lazy val parameterMetadata: ParameterMetaData[SqlIdentifier] = {
+    new ParameterMetaData[SqlIdentifier] {
+      override def sqlType: String = """"information_schema"."sql_identifier""""
+      override def jdbcType: Int = Types.OTHER
+    }
   }
+
+  implicit lazy val pgText: Text[SqlIdentifier] = {
+    new Text[SqlIdentifier] {
+      override def unsafeEncode(v: SqlIdentifier, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value, sb)
+      override def unsafeArrayEncode(v: SqlIdentifier, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value, sb)
+    }
+  }
+
   implicit lazy val reads: Reads[SqlIdentifier] = Reads.StringReads.map(SqlIdentifier.apply)
-  implicit lazy val text: Text[SqlIdentifier] = new Text[SqlIdentifier] {
-    override def unsafeEncode(v: SqlIdentifier, sb: StringBuilder) = Text.stringInstance.unsafeEncode(v.value, sb)
-    override def unsafeArrayEncode(v: SqlIdentifier, sb: StringBuilder) = Text.stringInstance.unsafeArrayEncode(v.value, sb)
-  }
+
   implicit lazy val toStatement: ToStatement[SqlIdentifier] = ToStatement.stringToStatement.contramap(_.value)
+
   implicit lazy val writes: Writes[SqlIdentifier] = Writes.StringWrites.contramap(_.value)
 }

@@ -9,14 +9,16 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoShort
 import adventureworks.userdefined.CustomCreditcardId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait CreditcardFields {
+trait CreditcardFields extends FieldsExpr[CreditcardRow] {
   def creditcardid: IdField[/* user-picked */ CustomCreditcardId, CreditcardRow]
 
   def cardtype: Field[/* max 50 chars */ String, CreditcardRow]
@@ -28,86 +30,91 @@ trait CreditcardFields {
   def expyear: Field[TypoShort, CreditcardRow]
 
   def modifieddate: Field[TypoLocalDateTime, CreditcardRow]
+
+  override def columns: java.util.List[FieldLike[?, CreditcardRow]]
+
+  override def rowParser: RowParser[CreditcardRow] = CreditcardRow._rowParser
 }
 
 object CreditcardFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[CreditcardFields, CreditcardRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends CreditcardFields with Relation[CreditcardFields, CreditcardRow] {
 
-    override lazy val fields: CreditcardFields = {
-      new CreditcardFields {
-        override def creditcardid: IdField[/* user-picked */ CustomCreditcardId, CreditcardRow] = {
-          new IdField[/* user-picked */ CustomCreditcardId, CreditcardRow](
-            _path,
-            "creditcardid",
-            _.creditcardid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(creditcardid = value),
-            CustomCreditcardId.pgType
-          )
-        }
-        override def cardtype: Field[/* max 50 chars */ String, CreditcardRow] = {
-          new Field[/* max 50 chars */ String, CreditcardRow](
-            _path,
-            "cardtype",
-            _.cardtype,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(cardtype = value),
-            PgTypes.text
-          )
-        }
-        override def cardnumber: Field[/* max 25 chars */ String, CreditcardRow] = {
-          new Field[/* max 25 chars */ String, CreditcardRow](
-            _path,
-            "cardnumber",
-            _.cardnumber,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(cardnumber = value),
-            PgTypes.text
-          )
-        }
-        override def expmonth: Field[TypoShort, CreditcardRow] = {
-          new Field[TypoShort, CreditcardRow](
-            _path,
-            "expmonth",
-            _.expmonth,
-            Optional.empty(),
-            Optional.of("int2"),
-            (row, value) => row.copy(expmonth = value),
-            TypoShort.pgType
-          )
-        }
-        override def expyear: Field[TypoShort, CreditcardRow] = {
-          new Field[TypoShort, CreditcardRow](
-            _path,
-            "expyear",
-            _.expyear,
-            Optional.empty(),
-            Optional.of("int2"),
-            (row, value) => row.copy(expyear = value),
-            TypoShort.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, CreditcardRow] = {
-          new Field[TypoLocalDateTime, CreditcardRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def creditcardid: IdField[/* user-picked */ CustomCreditcardId, CreditcardRow] = {
+      new IdField[/* user-picked */ CustomCreditcardId, CreditcardRow](
+        _path,
+        "creditcardid",
+        _.creditcardid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(creditcardid = value),
+        CustomCreditcardId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, CreditcardRow]] = java.util.List.of(this.fields.creditcardid, this.fields.cardtype, this.fields.cardnumber, this.fields.expmonth, this.fields.expyear, this.fields.modifieddate)
+    override def cardtype: Field[/* max 50 chars */ String, CreditcardRow] = {
+      new Field[/* max 50 chars */ String, CreditcardRow](
+        _path,
+        "cardtype",
+        _.cardtype,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(cardtype = value),
+        PgTypes.text
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def cardnumber: Field[/* max 25 chars */ String, CreditcardRow] = {
+      new Field[/* max 25 chars */ String, CreditcardRow](
+        _path,
+        "cardnumber",
+        _.cardnumber,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(cardnumber = value),
+        PgTypes.text
+      )
+    }
+
+    override def expmonth: Field[TypoShort, CreditcardRow] = {
+      new Field[TypoShort, CreditcardRow](
+        _path,
+        "expmonth",
+        _.expmonth,
+        Optional.empty(),
+        Optional.of("int2"),
+        (row, value) => row.copy(expmonth = value),
+        TypoShort.pgType
+      )
+    }
+
+    override def expyear: Field[TypoShort, CreditcardRow] = {
+      new Field[TypoShort, CreditcardRow](
+        _path,
+        "expyear",
+        _.expyear,
+        Optional.empty(),
+        Optional.of("int2"),
+        (row, value) => row.copy(expyear = value),
+        TypoShort.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, CreditcardRow] = {
+      new Field[TypoLocalDateTime, CreditcardRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, CreditcardRow]] = java.util.List.of(this.creditcardid, this.cardtype, this.cardnumber, this.expmonth, this.expyear, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[CreditcardFields, CreditcardRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[CreditcardFields, CreditcardRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

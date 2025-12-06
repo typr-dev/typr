@@ -14,15 +14,19 @@ import adventureworks.sales.specialoffer.SpecialofferId
 import java.math.BigDecimal
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface SodViewFields {
+interface SodViewFields : FieldsExpr<SodViewRow> {
   fun carriertrackingnumber(): OptField</* max 25 chars */ String, SodViewRow>
+
+  override fun columns(): List<FieldLike<*, SodViewRow>>
 
   fun id(): Field<Int, SodViewRow>
 
@@ -31,6 +35,8 @@ interface SodViewFields {
   fun orderqty(): Field<TypoShort, SodViewRow>
 
   fun productid(): Field<ProductId, SodViewRow>
+
+  override fun rowParser(): RowParser<SodViewRow> = SodViewRow._rowParser
 
   fun rowguid(): Field<TypoUUID, SodViewRow>
 
@@ -45,26 +51,34 @@ interface SodViewFields {
   fun unitpricediscount(): Field<BigDecimal, SodViewRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<SodViewFields, SodViewRow>(path) {
-      override fun fields(): SodViewFields = object : SodViewFields {
-        override fun id(): Field<Int, SodViewRow> = Field<Int, SodViewRow>(_path, "id", SodViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, PgTypes.int4)
-        override fun salesorderid(): Field<SalesorderheaderId, SodViewRow> = Field<SalesorderheaderId, SodViewRow>(_path, "salesorderid", SodViewRow::salesorderid, Optional.empty(), Optional.empty(), { row, value -> row.copy(salesorderid = value) }, SalesorderheaderId.pgType)
-        override fun salesorderdetailid(): Field<Int, SodViewRow> = Field<Int, SodViewRow>(_path, "salesorderdetailid", SodViewRow::salesorderdetailid, Optional.empty(), Optional.empty(), { row, value -> row.copy(salesorderdetailid = value) }, PgTypes.int4)
-        override fun carriertrackingnumber(): OptField</* max 25 chars */ String, SodViewRow> = OptField</* max 25 chars */ String, SodViewRow>(_path, "carriertrackingnumber", SodViewRow::carriertrackingnumber, Optional.empty(), Optional.empty(), { row, value -> row.copy(carriertrackingnumber = value) }, PgTypes.text)
-        override fun orderqty(): Field<TypoShort, SodViewRow> = Field<TypoShort, SodViewRow>(_path, "orderqty", SodViewRow::orderqty, Optional.empty(), Optional.empty(), { row, value -> row.copy(orderqty = value) }, TypoShort.pgType)
-        override fun productid(): Field<ProductId, SodViewRow> = Field<ProductId, SodViewRow>(_path, "productid", SodViewRow::productid, Optional.empty(), Optional.empty(), { row, value -> row.copy(productid = value) }, ProductId.pgType)
-        override fun specialofferid(): Field<SpecialofferId, SodViewRow> = Field<SpecialofferId, SodViewRow>(_path, "specialofferid", SodViewRow::specialofferid, Optional.empty(), Optional.empty(), { row, value -> row.copy(specialofferid = value) }, SpecialofferId.pgType)
-        override fun unitprice(): Field<BigDecimal, SodViewRow> = Field<BigDecimal, SodViewRow>(_path, "unitprice", SodViewRow::unitprice, Optional.empty(), Optional.empty(), { row, value -> row.copy(unitprice = value) }, PgTypes.numeric)
-        override fun unitpricediscount(): Field<BigDecimal, SodViewRow> = Field<BigDecimal, SodViewRow>(_path, "unitpricediscount", SodViewRow::unitpricediscount, Optional.empty(), Optional.empty(), { row, value -> row.copy(unitpricediscount = value) }, PgTypes.numeric)
-        override fun rowguid(): Field<TypoUUID, SodViewRow> = Field<TypoUUID, SodViewRow>(_path, "rowguid", SodViewRow::rowguid, Optional.empty(), Optional.empty(), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, SodViewRow> = Field<TypoLocalDateTime, SodViewRow>(_path, "modifieddate", SodViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : SodViewFields, Relation<SodViewFields, SodViewRow> {
+      override fun id(): Field<Int, SodViewRow> = Field<Int, SodViewRow>(_path, "id", SodViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, PgTypes.int4)
 
-      override fun columns(): List<FieldLike<*, SodViewRow>> = listOf(this.fields().id(), this.fields().salesorderid(), this.fields().salesorderdetailid(), this.fields().carriertrackingnumber(), this.fields().orderqty(), this.fields().productid(), this.fields().specialofferid(), this.fields().unitprice(), this.fields().unitpricediscount(), this.fields().rowguid(), this.fields().modifieddate())
+      override fun salesorderid(): Field<SalesorderheaderId, SodViewRow> = Field<SalesorderheaderId, SodViewRow>(_path, "salesorderid", SodViewRow::salesorderid, Optional.empty(), Optional.empty(), { row, value -> row.copy(salesorderid = value) }, SalesorderheaderId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun salesorderdetailid(): Field<Int, SodViewRow> = Field<Int, SodViewRow>(_path, "salesorderdetailid", SodViewRow::salesorderdetailid, Optional.empty(), Optional.empty(), { row, value -> row.copy(salesorderdetailid = value) }, PgTypes.int4)
+
+      override fun carriertrackingnumber(): OptField</* max 25 chars */ String, SodViewRow> = OptField</* max 25 chars */ String, SodViewRow>(_path, "carriertrackingnumber", SodViewRow::carriertrackingnumber, Optional.empty(), Optional.empty(), { row, value -> row.copy(carriertrackingnumber = value) }, PgTypes.text)
+
+      override fun orderqty(): Field<TypoShort, SodViewRow> = Field<TypoShort, SodViewRow>(_path, "orderqty", SodViewRow::orderqty, Optional.empty(), Optional.empty(), { row, value -> row.copy(orderqty = value) }, TypoShort.pgType)
+
+      override fun productid(): Field<ProductId, SodViewRow> = Field<ProductId, SodViewRow>(_path, "productid", SodViewRow::productid, Optional.empty(), Optional.empty(), { row, value -> row.copy(productid = value) }, ProductId.pgType)
+
+      override fun specialofferid(): Field<SpecialofferId, SodViewRow> = Field<SpecialofferId, SodViewRow>(_path, "specialofferid", SodViewRow::specialofferid, Optional.empty(), Optional.empty(), { row, value -> row.copy(specialofferid = value) }, SpecialofferId.pgType)
+
+      override fun unitprice(): Field<BigDecimal, SodViewRow> = Field<BigDecimal, SodViewRow>(_path, "unitprice", SodViewRow::unitprice, Optional.empty(), Optional.empty(), { row, value -> row.copy(unitprice = value) }, PgTypes.numeric)
+
+      override fun unitpricediscount(): Field<BigDecimal, SodViewRow> = Field<BigDecimal, SodViewRow>(_path, "unitpricediscount", SodViewRow::unitpricediscount, Optional.empty(), Optional.empty(), { row, value -> row.copy(unitpricediscount = value) }, PgTypes.numeric)
+
+      override fun rowguid(): Field<TypoUUID, SodViewRow> = Field<TypoUUID, SodViewRow>(_path, "rowguid", SodViewRow::rowguid, Optional.empty(), Optional.empty(), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, SodViewRow> = Field<TypoLocalDateTime, SodViewRow>(_path, "modifieddate", SodViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, SodViewRow>> = listOf(this.id(), this.salesorderid(), this.salesorderdetailid(), this.carriertrackingnumber(), this.orderqty(), this.productid(), this.specialofferid(), this.unitprice(), this.unitpricediscount(), this.rowguid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<SodViewFields, SodViewRow> = Impl(_path)
     }
 
-    val structure: Relation<SodViewFields, SodViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

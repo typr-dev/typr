@@ -29,5 +29,5 @@ case class SViewRow(
 )
 
 object SViewRow {
-  val `_rowParser`: RowParser[SViewRow] = RowParsers.of(ShiftId.pgType, ShiftId.pgType, Name.pgType, TypoLocalTime.pgType, TypoLocalTime.pgType, TypoLocalDateTime.pgType, SViewRow.apply, row => Array(row.id, row.shiftid, row.name, row.starttime, row.endtime, row.modifieddate))
+  val `_rowParser`: RowParser[SViewRow] = RowParsers.of(ShiftId.pgType, ShiftId.pgType, Name.pgType, TypoLocalTime.pgType, TypoLocalTime.pgType, TypoLocalDateTime.pgType, SViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.shiftid.asInstanceOf[Object], row.name.asInstanceOf[Object], row.starttime.asInstanceOf[Object], row.endtime.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

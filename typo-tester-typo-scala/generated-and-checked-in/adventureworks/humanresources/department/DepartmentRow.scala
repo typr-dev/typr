@@ -44,7 +44,7 @@ case class DepartmentRow(
 }
 
 object DepartmentRow {
-  val `_rowParser`: RowParser[DepartmentRow] = RowParsers.of(DepartmentId.pgType, Name.pgType, Name.pgType, TypoLocalDateTime.pgType, DepartmentRow.apply, row => Array(row.departmentid, row.name, row.groupname, row.modifieddate))
+  val `_rowParser`: RowParser[DepartmentRow] = RowParsers.of(DepartmentId.pgType, Name.pgType, Name.pgType, TypoLocalDateTime.pgType, DepartmentRow.apply, row => Array[Object](row.departmentid.asInstanceOf[Object], row.name.asInstanceOf[Object], row.groupname.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   given pgText: PgText[DepartmentRow] = PgText.from(`_rowParser`)
 }

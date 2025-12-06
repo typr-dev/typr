@@ -14,6 +14,7 @@ import adventureworks.sales.creditcard.CreditcardRow;
 import adventureworks.userdefined.CustomCreditcardId;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr;
@@ -23,43 +24,37 @@ import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface PersoncreditcardFields {
-  final class Impl extends Relation<PersoncreditcardFields, PersoncreditcardRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PersoncreditcardFields extends FieldsExpr<PersoncreditcardRow> {
+  record Impl(List<Path> _path) implements PersoncreditcardFields, Relation<PersoncreditcardFields, PersoncreditcardRow> {
+    @Override
+    public IdField<BusinessentityId, PersoncreditcardRow> businessentityid() {
+      return new IdField<BusinessentityId, PersoncreditcardRow>(_path, "businessentityid", PersoncreditcardRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
+    };
 
     @Override
-    public PersoncreditcardFields fields() {
-      return new PersoncreditcardFields() {
-               @Override
-               public IdField<BusinessentityId, PersoncreditcardRow> businessentityid() {
-                 return new IdField<BusinessentityId, PersoncreditcardRow>(_path, "businessentityid", PersoncreditcardRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public IdField</* user-picked */ CustomCreditcardId, PersoncreditcardRow> creditcardid() {
-                 return new IdField</* user-picked */ CustomCreditcardId, PersoncreditcardRow>(_path, "creditcardid", PersoncreditcardRow::creditcardid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withCreditcardid(value), CustomCreditcardId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PersoncreditcardRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, PersoncreditcardRow>(_path, "modifieddate", PersoncreditcardRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public IdField</* user-picked */ CustomCreditcardId, PersoncreditcardRow> creditcardid() {
+      return new IdField</* user-picked */ CustomCreditcardId, PersoncreditcardRow>(_path, "creditcardid", PersoncreditcardRow::creditcardid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withCreditcardid(value), CustomCreditcardId.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PersoncreditcardRow> modifieddate() {
+      return new Field<TypoLocalDateTime, PersoncreditcardRow>(_path, "modifieddate", PersoncreditcardRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, PersoncreditcardRow>> columns() {
-      return List.of(this.fields().businessentityid(), this.fields().creditcardid(), this.fields().modifieddate());
+      return List.of(this.businessentityid(), this.creditcardid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PersoncreditcardFields, PersoncreditcardRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PersoncreditcardFields, PersoncreditcardRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -83,5 +78,13 @@ public interface PersoncreditcardFields {
 
   default SqlExpr<Boolean> compositeIdIn(List<PersoncreditcardId> compositeIds) {
     return new CompositeIn(List.of(new Part<BusinessentityId, PersoncreditcardId, PersoncreditcardRow>(businessentityid(), PersoncreditcardId::businessentityid, BusinessentityId.pgType), new Part</* user-picked */ CustomCreditcardId, PersoncreditcardId, PersoncreditcardRow>(creditcardid(), PersoncreditcardId::creditcardid, CustomCreditcardId.pgType)), compositeIds);
+  };
+
+  @Override
+  List<FieldLike<?, PersoncreditcardRow>> columns();
+
+  @Override
+  default RowParser<PersoncreditcardRow> rowParser() {
+    return PersoncreditcardRow._rowParser;
   };
 }

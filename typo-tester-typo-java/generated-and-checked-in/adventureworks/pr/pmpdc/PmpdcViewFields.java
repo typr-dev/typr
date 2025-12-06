@@ -11,51 +11,47 @@ import adventureworks.production.productdescription.ProductdescriptionId;
 import adventureworks.production.productmodel.ProductmodelId;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface PmpdcViewFields {
-  final class Impl extends Relation<PmpdcViewFields, PmpdcViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PmpdcViewFields extends FieldsExpr<PmpdcViewRow> {
+  record Impl(List<Path> _path) implements PmpdcViewFields, Relation<PmpdcViewFields, PmpdcViewRow> {
+    @Override
+    public Field<ProductmodelId, PmpdcViewRow> productmodelid() {
+      return new Field<ProductmodelId, PmpdcViewRow>(_path, "productmodelid", PmpdcViewRow::productmodelid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductmodelid(value), ProductmodelId.pgType);
+    };
 
     @Override
-    public PmpdcViewFields fields() {
-      return new PmpdcViewFields() {
-               @Override
-               public Field<ProductmodelId, PmpdcViewRow> productmodelid() {
-                 return new Field<ProductmodelId, PmpdcViewRow>(_path, "productmodelid", PmpdcViewRow::productmodelid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductmodelid(value), ProductmodelId.pgType);
-               };
-               @Override
-               public Field<ProductdescriptionId, PmpdcViewRow> productdescriptionid() {
-                 return new Field<ProductdescriptionId, PmpdcViewRow>(_path, "productdescriptionid", PmpdcViewRow::productdescriptionid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductdescriptionid(value), ProductdescriptionId.pgType);
-               };
-               @Override
-               public Field<CultureId, PmpdcViewRow> cultureid() {
-                 return new Field<CultureId, PmpdcViewRow>(_path, "cultureid", PmpdcViewRow::cultureid, Optional.empty(), Optional.empty(), (row, value) -> row.withCultureid(value), CultureId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PmpdcViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, PmpdcViewRow>(_path, "modifieddate", PmpdcViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<ProductdescriptionId, PmpdcViewRow> productdescriptionid() {
+      return new Field<ProductdescriptionId, PmpdcViewRow>(_path, "productdescriptionid", PmpdcViewRow::productdescriptionid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductdescriptionid(value), ProductdescriptionId.pgType);
+    };
+
+    @Override
+    public Field<CultureId, PmpdcViewRow> cultureid() {
+      return new Field<CultureId, PmpdcViewRow>(_path, "cultureid", PmpdcViewRow::cultureid, Optional.empty(), Optional.empty(), (row, value) -> row.withCultureid(value), CultureId.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PmpdcViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, PmpdcViewRow>(_path, "modifieddate", PmpdcViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, PmpdcViewRow>> columns() {
-      return List.of(this.fields().productmodelid(), this.fields().productdescriptionid(), this.fields().cultureid(), this.fields().modifieddate());
+      return List.of(this.productmodelid(), this.productdescriptionid(), this.cultureid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PmpdcViewFields, PmpdcViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PmpdcViewFields, PmpdcViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -66,4 +62,12 @@ public interface PmpdcViewFields {
   Field<CultureId, PmpdcViewRow> cultureid();
 
   Field<TypoLocalDateTime, PmpdcViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, PmpdcViewRow>> columns();
+
+  @Override
+  default RowParser<PmpdcViewRow> rowParser() {
+    return PmpdcViewRow._rowParser;
+  };
 }

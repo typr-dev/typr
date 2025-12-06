@@ -9,13 +9,15 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoUUID
 import adventureworks.person.businessentity.BusinessentityId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait SpqhViewFields {
+trait SpqhViewFields extends FieldsExpr[SpqhViewRow] {
   def id: Field[BusinessentityId, SpqhViewRow]
 
   def businessentityid: Field[BusinessentityId, SpqhViewRow]
@@ -27,86 +29,91 @@ trait SpqhViewFields {
   def rowguid: Field[TypoUUID, SpqhViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, SpqhViewRow]
+
+  override def columns: java.util.List[FieldLike[?, SpqhViewRow]]
+
+  override def rowParser: RowParser[SpqhViewRow] = SpqhViewRow._rowParser
 }
 
 object SpqhViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[SpqhViewFields, SpqhViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends SpqhViewFields with Relation[SpqhViewFields, SpqhViewRow] {
 
-    override lazy val fields: SpqhViewFields = {
-      new SpqhViewFields {
-        override def id: Field[BusinessentityId, SpqhViewRow] = {
-          new Field[BusinessentityId, SpqhViewRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def businessentityid: Field[BusinessentityId, SpqhViewRow] = {
-          new Field[BusinessentityId, SpqhViewRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def quotadate: Field[TypoLocalDateTime, SpqhViewRow] = {
-          new Field[TypoLocalDateTime, SpqhViewRow](
-            _path,
-            "quotadate",
-            _.quotadate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(quotadate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def salesquota: Field[java.math.BigDecimal, SpqhViewRow] = {
-          new Field[java.math.BigDecimal, SpqhViewRow](
-            _path,
-            "salesquota",
-            _.salesquota,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(salesquota = value),
-            PgTypes.numeric
-          )
-        }
-        override def rowguid: Field[TypoUUID, SpqhViewRow] = {
-          new Field[TypoUUID, SpqhViewRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, SpqhViewRow] = {
-          new Field[TypoLocalDateTime, SpqhViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def id: Field[BusinessentityId, SpqhViewRow] = {
+      new Field[BusinessentityId, SpqhViewRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        BusinessentityId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, SpqhViewRow]] = java.util.List.of(this.fields.id, this.fields.businessentityid, this.fields.quotadate, this.fields.salesquota, this.fields.rowguid, this.fields.modifieddate)
+    override def businessentityid: Field[BusinessentityId, SpqhViewRow] = {
+      new Field[BusinessentityId, SpqhViewRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def quotadate: Field[TypoLocalDateTime, SpqhViewRow] = {
+      new Field[TypoLocalDateTime, SpqhViewRow](
+        _path,
+        "quotadate",
+        _.quotadate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(quotadate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def salesquota: Field[java.math.BigDecimal, SpqhViewRow] = {
+      new Field[java.math.BigDecimal, SpqhViewRow](
+        _path,
+        "salesquota",
+        _.salesquota,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(salesquota = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, SpqhViewRow] = {
+      new Field[TypoUUID, SpqhViewRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, SpqhViewRow] = {
+      new Field[TypoLocalDateTime, SpqhViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, SpqhViewRow]] = java.util.List.of(this.id, this.businessentityid, this.quotadate, this.salesquota, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[SpqhViewFields, SpqhViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[SpqhViewFields, SpqhViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

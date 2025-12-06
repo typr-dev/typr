@@ -46,7 +46,7 @@ case class ProductdescriptionRow(
 }
 
 object ProductdescriptionRow {
-  val `_rowParser`: RowParser[ProductdescriptionRow] = RowParsers.of(ProductdescriptionId.pgType, PgTypes.text, TypoUUID.pgType, TypoLocalDateTime.pgType, ProductdescriptionRow.apply, row => Array(row.productdescriptionid, row.description, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[ProductdescriptionRow] = RowParsers.of(ProductdescriptionId.pgType, PgTypes.text, TypoUUID.pgType, TypoLocalDateTime.pgType, ProductdescriptionRow.apply, row => Array[Object](row.productdescriptionid.asInstanceOf[Object], row.description.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   given pgText: PgText[ProductdescriptionRow] = PgText.from(`_rowParser`)
 }

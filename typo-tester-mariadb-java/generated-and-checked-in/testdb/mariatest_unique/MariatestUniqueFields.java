@@ -7,53 +7,49 @@ package testdb.mariatest_unique;
 
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.MariaTypes;
+import typo.runtime.RowParser;
 
-public interface MariatestUniqueFields {
-  final class Impl extends Relation<MariatestUniqueFields, MariatestUniqueRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface MariatestUniqueFields extends FieldsExpr<MariatestUniqueRow> {
+  record Impl(List<Path> _path) implements MariatestUniqueFields, Relation<MariatestUniqueFields, MariatestUniqueRow> {
+    @Override
+    public IdField<MariatestUniqueId, MariatestUniqueRow> id() {
+      return new IdField<MariatestUniqueId, MariatestUniqueRow>(_path, "id", MariatestUniqueRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), MariatestUniqueId.pgType);
+    };
 
     @Override
-    public MariatestUniqueFields fields() {
-      return new MariatestUniqueFields() {
-               @Override
-               public IdField<MariatestUniqueId, MariatestUniqueRow> id() {
-                 return new IdField<MariatestUniqueId, MariatestUniqueRow>(_path, "id", MariatestUniqueRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), MariatestUniqueId.pgType);
-               };
-               @Override
-               public Field<String, MariatestUniqueRow> email() {
-                 return new Field<String, MariatestUniqueRow>(_path, "email", MariatestUniqueRow::email, Optional.empty(), Optional.empty(), (row, value) -> row.withEmail(value), MariaTypes.varchar);
-               };
-               @Override
-               public Field<String, MariatestUniqueRow> code() {
-                 return new Field<String, MariatestUniqueRow>(_path, "code", MariatestUniqueRow::code, Optional.empty(), Optional.empty(), (row, value) -> row.withCode(value), MariaTypes.varchar);
-               };
-               @Override
-               public Field<String, MariatestUniqueRow> category() {
-                 return new Field<String, MariatestUniqueRow>(_path, "category", MariatestUniqueRow::category, Optional.empty(), Optional.empty(), (row, value) -> row.withCategory(value), MariaTypes.varchar);
-               };
-             };
+    public Field<String, MariatestUniqueRow> email() {
+      return new Field<String, MariatestUniqueRow>(_path, "email", MariatestUniqueRow::email, Optional.empty(), Optional.empty(), (row, value) -> row.withEmail(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public Field<String, MariatestUniqueRow> code() {
+      return new Field<String, MariatestUniqueRow>(_path, "code", MariatestUniqueRow::code, Optional.empty(), Optional.empty(), (row, value) -> row.withCode(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public Field<String, MariatestUniqueRow> category() {
+      return new Field<String, MariatestUniqueRow>(_path, "category", MariatestUniqueRow::category, Optional.empty(), Optional.empty(), (row, value) -> row.withCategory(value), MariaTypes.varchar);
     };
 
     @Override
     public List<FieldLike<?, MariatestUniqueRow>> columns() {
-      return List.of(this.fields().id(), this.fields().email(), this.fields().code(), this.fields().category());
+      return List.of(this.id(), this.email(), this.code(), this.category());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<MariatestUniqueFields, MariatestUniqueRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<MariatestUniqueFields, MariatestUniqueRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -64,4 +60,12 @@ public interface MariatestUniqueFields {
   Field<String, MariatestUniqueRow> code();
 
   Field<String, MariatestUniqueRow> category();
+
+  @Override
+  List<FieldLike<?, MariatestUniqueRow>> columns();
+
+  @Override
+  default RowParser<MariatestUniqueRow> rowParser() {
+    return MariatestUniqueRow._rowParser;
+  };
 }

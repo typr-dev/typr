@@ -11,6 +11,7 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.person.person.PersonFields
 import adventureworks.person.person.PersonRow
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -18,8 +19,9 @@ import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait PasswordFields {
+trait PasswordFields extends FieldsExpr[PasswordRow] {
   def businessentityid: IdField[BusinessentityId, PasswordRow]
 
   def passwordhash: Field[/* max 128 chars */ String, PasswordRow]
@@ -31,75 +33,79 @@ trait PasswordFields {
   def modifieddate: Field[TypoLocalDateTime, PasswordRow]
 
   def fkPerson: ForeignKey[PersonFields, PersonRow] = ForeignKey.of[PersonFields, PersonRow]("person.FK_Password_Person_BusinessEntityID").withColumnPair(businessentityid, _.businessentityid)
+
+  override def columns: java.util.List[FieldLike[?, PasswordRow]]
+
+  override def rowParser: RowParser[PasswordRow] = PasswordRow._rowParser
 }
 
 object PasswordFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[PasswordFields, PasswordRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends PasswordFields with Relation[PasswordFields, PasswordRow] {
 
-    override lazy val fields: PasswordFields = {
-      new PasswordFields {
-        override def businessentityid: IdField[BusinessentityId, PasswordRow] = {
-          new IdField[BusinessentityId, PasswordRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def passwordhash: Field[/* max 128 chars */ String, PasswordRow] = {
-          new Field[/* max 128 chars */ String, PasswordRow](
-            _path,
-            "passwordhash",
-            _.passwordhash,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(passwordhash = value),
-            PgTypes.text
-          )
-        }
-        override def passwordsalt: Field[/* max 10 chars */ String, PasswordRow] = {
-          new Field[/* max 10 chars */ String, PasswordRow](
-            _path,
-            "passwordsalt",
-            _.passwordsalt,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(passwordsalt = value),
-            PgTypes.text
-          )
-        }
-        override def rowguid: Field[TypoUUID, PasswordRow] = {
-          new Field[TypoUUID, PasswordRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.of("uuid"),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, PasswordRow] = {
-          new Field[TypoLocalDateTime, PasswordRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def businessentityid: IdField[BusinessentityId, PasswordRow] = {
+      new IdField[BusinessentityId, PasswordRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, PasswordRow]] = java.util.List.of(this.fields.businessentityid, this.fields.passwordhash, this.fields.passwordsalt, this.fields.rowguid, this.fields.modifieddate)
+    override def passwordhash: Field[/* max 128 chars */ String, PasswordRow] = {
+      new Field[/* max 128 chars */ String, PasswordRow](
+        _path,
+        "passwordhash",
+        _.passwordhash,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(passwordhash = value),
+        PgTypes.text
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def passwordsalt: Field[/* max 10 chars */ String, PasswordRow] = {
+      new Field[/* max 10 chars */ String, PasswordRow](
+        _path,
+        "passwordsalt",
+        _.passwordsalt,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(passwordsalt = value),
+        PgTypes.text
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, PasswordRow] = {
+      new Field[TypoUUID, PasswordRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.of("uuid"),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, PasswordRow] = {
+      new Field[TypoLocalDateTime, PasswordRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, PasswordRow]] = java.util.List.of(this.businessentityid, this.passwordhash, this.passwordsalt, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[PasswordFields, PasswordRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[PasswordFields, PasswordRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

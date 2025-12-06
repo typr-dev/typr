@@ -9,64 +9,68 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.sales.salesorderheader.SalesorderheaderId
 import adventureworks.sales.salesreason.SalesreasonId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait SohsrViewFields {
+trait SohsrViewFields extends FieldsExpr[SohsrViewRow] {
   def salesorderid: Field[SalesorderheaderId, SohsrViewRow]
 
   def salesreasonid: Field[SalesreasonId, SohsrViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, SohsrViewRow]
+
+  override def columns: java.util.List[FieldLike[?, SohsrViewRow]]
+
+  override def rowParser: RowParser[SohsrViewRow] = SohsrViewRow._rowParser
 }
 
 object SohsrViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[SohsrViewFields, SohsrViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends SohsrViewFields with Relation[SohsrViewFields, SohsrViewRow] {
 
-    override lazy val fields: SohsrViewFields = {
-      new SohsrViewFields {
-        override def salesorderid: Field[SalesorderheaderId, SohsrViewRow] = {
-          new Field[SalesorderheaderId, SohsrViewRow](
-            _path,
-            "salesorderid",
-            _.salesorderid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(salesorderid = value),
-            SalesorderheaderId.pgType
-          )
-        }
-        override def salesreasonid: Field[SalesreasonId, SohsrViewRow] = {
-          new Field[SalesreasonId, SohsrViewRow](
-            _path,
-            "salesreasonid",
-            _.salesreasonid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(salesreasonid = value),
-            SalesreasonId.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, SohsrViewRow] = {
-          new Field[TypoLocalDateTime, SohsrViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def salesorderid: Field[SalesorderheaderId, SohsrViewRow] = {
+      new Field[SalesorderheaderId, SohsrViewRow](
+        _path,
+        "salesorderid",
+        _.salesorderid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(salesorderid = value),
+        SalesorderheaderId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, SohsrViewRow]] = java.util.List.of(this.fields.salesorderid, this.fields.salesreasonid, this.fields.modifieddate)
+    override def salesreasonid: Field[SalesreasonId, SohsrViewRow] = {
+      new Field[SalesreasonId, SohsrViewRow](
+        _path,
+        "salesreasonid",
+        _.salesreasonid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(salesreasonid = value),
+        SalesreasonId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def modifieddate: Field[TypoLocalDateTime, SohsrViewRow] = {
+      new Field[TypoLocalDateTime, SohsrViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, SohsrViewRow]] = java.util.List.of(this.salesorderid, this.salesreasonid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[SohsrViewFields, SohsrViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[SohsrViewFields, SohsrViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

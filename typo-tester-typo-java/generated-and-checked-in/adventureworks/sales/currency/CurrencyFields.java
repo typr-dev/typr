@@ -9,48 +9,43 @@ import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.public_.Name;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface CurrencyFields {
-  final class Impl extends Relation<CurrencyFields, CurrencyRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface CurrencyFields extends FieldsExpr<CurrencyRow> {
+  record Impl(List<Path> _path) implements CurrencyFields, Relation<CurrencyFields, CurrencyRow> {
+    @Override
+    public IdField<CurrencyId, CurrencyRow> currencycode() {
+      return new IdField<CurrencyId, CurrencyRow>(_path, "currencycode", CurrencyRow::currencycode, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withCurrencycode(value), CurrencyId.pgType);
+    };
 
     @Override
-    public CurrencyFields fields() {
-      return new CurrencyFields() {
-               @Override
-               public IdField<CurrencyId, CurrencyRow> currencycode() {
-                 return new IdField<CurrencyId, CurrencyRow>(_path, "currencycode", CurrencyRow::currencycode, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withCurrencycode(value), CurrencyId.pgType);
-               };
-               @Override
-               public Field<Name, CurrencyRow> name() {
-                 return new Field<Name, CurrencyRow>(_path, "name", CurrencyRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, CurrencyRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, CurrencyRow>(_path, "modifieddate", CurrencyRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<Name, CurrencyRow> name() {
+      return new Field<Name, CurrencyRow>(_path, "name", CurrencyRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, CurrencyRow> modifieddate() {
+      return new Field<TypoLocalDateTime, CurrencyRow>(_path, "modifieddate", CurrencyRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, CurrencyRow>> columns() {
-      return List.of(this.fields().currencycode(), this.fields().name(), this.fields().modifieddate());
+      return List.of(this.currencycode(), this.name(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<CurrencyFields, CurrencyRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<CurrencyFields, CurrencyRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -59,4 +54,12 @@ public interface CurrencyFields {
   Field<Name, CurrencyRow> name();
 
   Field<TypoLocalDateTime, CurrencyRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, CurrencyRow>> columns();
+
+  @Override
+  default RowParser<CurrencyRow> rowParser() {
+    return CurrencyRow._rowParser;
+  };
 }

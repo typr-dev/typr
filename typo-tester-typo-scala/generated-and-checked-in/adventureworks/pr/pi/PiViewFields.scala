@@ -11,13 +11,15 @@ import adventureworks.customtypes.TypoUUID
 import adventureworks.production.location.LocationId
 import adventureworks.production.product.ProductId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait PiViewFields {
+trait PiViewFields extends FieldsExpr[PiViewRow] {
   def id: Field[ProductId, PiViewRow]
 
   def productid: Field[ProductId, PiViewRow]
@@ -33,108 +35,115 @@ trait PiViewFields {
   def rowguid: Field[TypoUUID, PiViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, PiViewRow]
+
+  override def columns: java.util.List[FieldLike[?, PiViewRow]]
+
+  override def rowParser: RowParser[PiViewRow] = PiViewRow._rowParser
 }
 
 object PiViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[PiViewFields, PiViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends PiViewFields with Relation[PiViewFields, PiViewRow] {
 
-    override lazy val fields: PiViewFields = {
-      new PiViewFields {
-        override def id: Field[ProductId, PiViewRow] = {
-          new Field[ProductId, PiViewRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            ProductId.pgType
-          )
-        }
-        override def productid: Field[ProductId, PiViewRow] = {
-          new Field[ProductId, PiViewRow](
-            _path,
-            "productid",
-            _.productid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(productid = value),
-            ProductId.pgType
-          )
-        }
-        override def locationid: Field[LocationId, PiViewRow] = {
-          new Field[LocationId, PiViewRow](
-            _path,
-            "locationid",
-            _.locationid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(locationid = value),
-            LocationId.pgType
-          )
-        }
-        override def shelf: Field[/* max 10 chars */ String, PiViewRow] = {
-          new Field[/* max 10 chars */ String, PiViewRow](
-            _path,
-            "shelf",
-            _.shelf,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(shelf = value),
-            PgTypes.text
-          )
-        }
-        override def bin: Field[TypoShort, PiViewRow] = {
-          new Field[TypoShort, PiViewRow](
-            _path,
-            "bin",
-            _.bin,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(bin = value),
-            TypoShort.pgType
-          )
-        }
-        override def quantity: Field[TypoShort, PiViewRow] = {
-          new Field[TypoShort, PiViewRow](
-            _path,
-            "quantity",
-            _.quantity,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(quantity = value),
-            TypoShort.pgType
-          )
-        }
-        override def rowguid: Field[TypoUUID, PiViewRow] = {
-          new Field[TypoUUID, PiViewRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, PiViewRow] = {
-          new Field[TypoLocalDateTime, PiViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def id: Field[ProductId, PiViewRow] = {
+      new Field[ProductId, PiViewRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        ProductId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, PiViewRow]] = java.util.List.of(this.fields.id, this.fields.productid, this.fields.locationid, this.fields.shelf, this.fields.bin, this.fields.quantity, this.fields.rowguid, this.fields.modifieddate)
+    override def productid: Field[ProductId, PiViewRow] = {
+      new Field[ProductId, PiViewRow](
+        _path,
+        "productid",
+        _.productid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(productid = value),
+        ProductId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def locationid: Field[LocationId, PiViewRow] = {
+      new Field[LocationId, PiViewRow](
+        _path,
+        "locationid",
+        _.locationid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(locationid = value),
+        LocationId.pgType
+      )
+    }
+
+    override def shelf: Field[/* max 10 chars */ String, PiViewRow] = {
+      new Field[/* max 10 chars */ String, PiViewRow](
+        _path,
+        "shelf",
+        _.shelf,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(shelf = value),
+        PgTypes.text
+      )
+    }
+
+    override def bin: Field[TypoShort, PiViewRow] = {
+      new Field[TypoShort, PiViewRow](
+        _path,
+        "bin",
+        _.bin,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(bin = value),
+        TypoShort.pgType
+      )
+    }
+
+    override def quantity: Field[TypoShort, PiViewRow] = {
+      new Field[TypoShort, PiViewRow](
+        _path,
+        "quantity",
+        _.quantity,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(quantity = value),
+        TypoShort.pgType
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, PiViewRow] = {
+      new Field[TypoUUID, PiViewRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, PiViewRow] = {
+      new Field[TypoLocalDateTime, PiViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, PiViewRow]] = java.util.List.of(this.id, this.productid, this.locationid, this.shelf, this.bin, this.quantity, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[PiViewFields, PiViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[PiViewFields, PiViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

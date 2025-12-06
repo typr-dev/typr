@@ -55,7 +55,7 @@ case class EmailaddressRow(
 }
 
 object EmailaddressRow {
-  val `_rowParser`: RowParser[EmailaddressRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.int4, PgTypes.text.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, EmailaddressRow.apply, row => Array(row.businessentityid, row.emailaddressid, row.emailaddress, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[EmailaddressRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.int4, PgTypes.text.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, EmailaddressRow.apply, row => Array[Object](row.businessentityid.asInstanceOf[Object], row.emailaddressid.asInstanceOf[Object], row.emailaddress.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   def apply(
     compositeId: EmailaddressId,

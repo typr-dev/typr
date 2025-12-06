@@ -40,5 +40,5 @@ case class AViewRow(
 )
 
 object AViewRow {
-  val `_rowParser`: RowParser[AViewRow] = RowParsers.of(AddressId.pgType, AddressId.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text, StateprovinceId.pgType, PgTypes.text, TypoBytea.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, AViewRow.apply, row => Array(row.id, row.addressid, row.addressline1, row.addressline2, row.city, row.stateprovinceid, row.postalcode, row.spatiallocation, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[AViewRow] = RowParsers.of(AddressId.pgType, AddressId.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text, StateprovinceId.pgType, PgTypes.text, TypoBytea.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, AViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.addressid.asInstanceOf[Object], row.addressline1.asInstanceOf[Object], row.addressline2.asInstanceOf[Object], row.city.asInstanceOf[Object], row.stateprovinceid.asInstanceOf[Object], row.postalcode.asInstanceOf[Object], row.spatiallocation.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

@@ -13,6 +13,7 @@ import testdb.price_tiers.PriceTiersRow
 import testdb.products.ProductsFields
 import testdb.products.ProductsId
 import testdb.products.ProductsRow
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -21,8 +22,9 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-trait ProductPricesFields {
+trait ProductPricesFields extends FieldsExpr[ProductPricesRow] {
   def priceId: IdField[ProductPricesId, ProductPricesRow]
 
   def productId: Field[ProductsId, ProductPricesRow]
@@ -40,97 +42,103 @@ trait ProductPricesFields {
   def fkProducts: ForeignKey[ProductsFields, ProductsRow] = ForeignKey.of[ProductsFields, ProductsRow]("fk_pp_product").withColumnPair(productId, _.productId)
 
   def fkPriceTiers: ForeignKey[PriceTiersFields, PriceTiersRow] = ForeignKey.of[PriceTiersFields, PriceTiersRow]("fk_pp_tier").withColumnPair(tierId, _.tierId)
+
+  override def columns: java.util.List[FieldLike[?, ProductPricesRow]]
+
+  override def rowParser: RowParser[ProductPricesRow] = ProductPricesRow._rowParser
 }
 
 object ProductPricesFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[ProductPricesFields, ProductPricesRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends ProductPricesFields with Relation[ProductPricesFields, ProductPricesRow] {
 
-    override lazy val fields: ProductPricesFields = {
-      new ProductPricesFields {
-        override def priceId: IdField[ProductPricesId, ProductPricesRow] = {
-          new IdField[ProductPricesId, ProductPricesRow](
-            _path,
-            "price_id",
-            _.priceId,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(priceId = value),
-            ProductPricesId.pgType
-          )
-        }
-        override def productId: Field[ProductsId, ProductPricesRow] = {
-          new Field[ProductsId, ProductPricesRow](
-            _path,
-            "product_id",
-            _.productId,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(productId = value),
-            ProductsId.pgType
-          )
-        }
-        override def tierId: OptField[PriceTiersId, ProductPricesRow] = {
-          new OptField[PriceTiersId, ProductPricesRow](
-            _path,
-            "tier_id",
-            _.tierId,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(tierId = value),
-            PriceTiersId.pgType
-          )
-        }
-        override def price: Field[java.math.BigDecimal, ProductPricesRow] = {
-          new Field[java.math.BigDecimal, ProductPricesRow](
-            _path,
-            "price",
-            _.price,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(price = value),
-            MariaTypes.decimal
-          )
-        }
-        override def currencyCode: Field[String, ProductPricesRow] = {
-          new Field[String, ProductPricesRow](
-            _path,
-            "currency_code",
-            _.currencyCode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(currencyCode = value),
-            MariaTypes.char_
-          )
-        }
-        override def validFrom: Field[LocalDate, ProductPricesRow] = {
-          new Field[LocalDate, ProductPricesRow](
-            _path,
-            "valid_from",
-            _.validFrom,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(validFrom = value),
-            MariaTypes.date
-          )
-        }
-        override def validTo: OptField[LocalDate, ProductPricesRow] = {
-          new OptField[LocalDate, ProductPricesRow](
-            _path,
-            "valid_to",
-            _.validTo,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(validTo = value),
-            MariaTypes.date
-          )
-        }
-      }
+    override def priceId: IdField[ProductPricesId, ProductPricesRow] = {
+      new IdField[ProductPricesId, ProductPricesRow](
+        _path,
+        "price_id",
+        _.priceId,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(priceId = value),
+        ProductPricesId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, ProductPricesRow]] = java.util.List.of(this.fields.priceId, this.fields.productId, this.fields.tierId, this.fields.price, this.fields.currencyCode, this.fields.validFrom, this.fields.validTo)
+    override def productId: Field[ProductsId, ProductPricesRow] = {
+      new Field[ProductsId, ProductPricesRow](
+        _path,
+        "product_id",
+        _.productId,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(productId = value),
+        ProductsId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def tierId: OptField[PriceTiersId, ProductPricesRow] = {
+      new OptField[PriceTiersId, ProductPricesRow](
+        _path,
+        "tier_id",
+        _.tierId,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(tierId = value),
+        PriceTiersId.pgType
+      )
+    }
+
+    override def price: Field[java.math.BigDecimal, ProductPricesRow] = {
+      new Field[java.math.BigDecimal, ProductPricesRow](
+        _path,
+        "price",
+        _.price,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(price = value),
+        MariaTypes.decimal
+      )
+    }
+
+    override def currencyCode: Field[String, ProductPricesRow] = {
+      new Field[String, ProductPricesRow](
+        _path,
+        "currency_code",
+        _.currencyCode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(currencyCode = value),
+        MariaTypes.char_
+      )
+    }
+
+    override def validFrom: Field[LocalDate, ProductPricesRow] = {
+      new Field[LocalDate, ProductPricesRow](
+        _path,
+        "valid_from",
+        _.validFrom,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(validFrom = value),
+        MariaTypes.date
+      )
+    }
+
+    override def validTo: OptField[LocalDate, ProductPricesRow] = {
+      new OptField[LocalDate, ProductPricesRow](
+        _path,
+        "valid_to",
+        _.validTo,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(validTo = value),
+        MariaTypes.date
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, ProductPricesRow]] = java.util.List.of(this.priceId, this.productId, this.tierId, this.price, this.currencyCode, this.validFrom, this.validTo)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[ProductPricesFields, ProductPricesRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[ProductPricesFields, ProductPricesRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

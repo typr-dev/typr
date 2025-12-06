@@ -9,15 +9,19 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-interface VDailySalesViewFields {
+interface VDailySalesViewFields : FieldsExpr<VDailySalesViewRow> {
   fun avgOrderValue(): OptField<BigDecimal, VDailySalesViewRow>
+
+  override fun columns(): List<FieldLike<*, VDailySalesViewRow>>
 
   fun grossSales(): OptField<BigDecimal, VDailySalesViewRow>
 
@@ -29,6 +33,8 @@ interface VDailySalesViewFields {
 
   fun orderDate(): OptField<LocalDate, VDailySalesViewRow>
 
+  override fun rowParser(): RowParser<VDailySalesViewRow> = VDailySalesViewRow._rowParser
+
   fun totalDiscounts(): OptField<BigDecimal, VDailySalesViewRow>
 
   fun totalShipping(): OptField<BigDecimal, VDailySalesViewRow>
@@ -38,25 +44,32 @@ interface VDailySalesViewFields {
   fun uniqueCustomers(): Field<Long, VDailySalesViewRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<VDailySalesViewFields, VDailySalesViewRow>(path) {
-      override fun fields(): VDailySalesViewFields = object : VDailySalesViewFields {
-        override fun orderDate(): OptField<LocalDate, VDailySalesViewRow> = OptField<LocalDate, VDailySalesViewRow>(_path, "order_date", VDailySalesViewRow::orderDate, Optional.empty(), Optional.empty(), { row, value -> row.copy(orderDate = value) }, MariaTypes.date)
-        override fun orderCount(): Field<Long, VDailySalesViewRow> = Field<Long, VDailySalesViewRow>(_path, "order_count", VDailySalesViewRow::orderCount, Optional.empty(), Optional.empty(), { row, value -> row.copy(orderCount = value) }, MariaTypes.bigint)
-        override fun uniqueCustomers(): Field<Long, VDailySalesViewRow> = Field<Long, VDailySalesViewRow>(_path, "unique_customers", VDailySalesViewRow::uniqueCustomers, Optional.empty(), Optional.empty(), { row, value -> row.copy(uniqueCustomers = value) }, MariaTypes.bigint)
-        override fun itemsSold(): OptField<BigDecimal, VDailySalesViewRow> = OptField<BigDecimal, VDailySalesViewRow>(_path, "items_sold", VDailySalesViewRow::itemsSold, Optional.empty(), Optional.empty(), { row, value -> row.copy(itemsSold = value) }, MariaTypes.decimal)
-        override fun grossSales(): OptField<BigDecimal, VDailySalesViewRow> = OptField<BigDecimal, VDailySalesViewRow>(_path, "gross_sales", VDailySalesViewRow::grossSales, Optional.empty(), Optional.empty(), { row, value -> row.copy(grossSales = value) }, MariaTypes.decimal)
-        override fun totalDiscounts(): OptField<BigDecimal, VDailySalesViewRow> = OptField<BigDecimal, VDailySalesViewRow>(_path, "total_discounts", VDailySalesViewRow::totalDiscounts, Optional.empty(), Optional.empty(), { row, value -> row.copy(totalDiscounts = value) }, MariaTypes.decimal)
-        override fun totalShipping(): OptField<BigDecimal, VDailySalesViewRow> = OptField<BigDecimal, VDailySalesViewRow>(_path, "total_shipping", VDailySalesViewRow::totalShipping, Optional.empty(), Optional.empty(), { row, value -> row.copy(totalShipping = value) }, MariaTypes.decimal)
-        override fun totalTax(): OptField<BigDecimal, VDailySalesViewRow> = OptField<BigDecimal, VDailySalesViewRow>(_path, "total_tax", VDailySalesViewRow::totalTax, Optional.empty(), Optional.empty(), { row, value -> row.copy(totalTax = value) }, MariaTypes.decimal)
-        override fun netSales(): OptField<BigDecimal, VDailySalesViewRow> = OptField<BigDecimal, VDailySalesViewRow>(_path, "net_sales", VDailySalesViewRow::netSales, Optional.empty(), Optional.empty(), { row, value -> row.copy(netSales = value) }, MariaTypes.decimal)
-        override fun avgOrderValue(): OptField<BigDecimal, VDailySalesViewRow> = OptField<BigDecimal, VDailySalesViewRow>(_path, "avg_order_value", VDailySalesViewRow::avgOrderValue, Optional.empty(), Optional.empty(), { row, value -> row.copy(avgOrderValue = value) }, MariaTypes.decimal)
-      }
+    data class Impl(val _path: List<Path>) : VDailySalesViewFields, Relation<VDailySalesViewFields, VDailySalesViewRow> {
+      override fun orderDate(): OptField<LocalDate, VDailySalesViewRow> = OptField<LocalDate, VDailySalesViewRow>(_path, "order_date", VDailySalesViewRow::orderDate, Optional.empty(), Optional.empty(), { row, value -> row.copy(orderDate = value) }, MariaTypes.date)
 
-      override fun columns(): List<FieldLike<*, VDailySalesViewRow>> = listOf(this.fields().orderDate(), this.fields().orderCount(), this.fields().uniqueCustomers(), this.fields().itemsSold(), this.fields().grossSales(), this.fields().totalDiscounts(), this.fields().totalShipping(), this.fields().totalTax(), this.fields().netSales(), this.fields().avgOrderValue())
+      override fun orderCount(): Field<Long, VDailySalesViewRow> = Field<Long, VDailySalesViewRow>(_path, "order_count", VDailySalesViewRow::orderCount, Optional.empty(), Optional.empty(), { row, value -> row.copy(orderCount = value) }, MariaTypes.bigint)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun uniqueCustomers(): Field<Long, VDailySalesViewRow> = Field<Long, VDailySalesViewRow>(_path, "unique_customers", VDailySalesViewRow::uniqueCustomers, Optional.empty(), Optional.empty(), { row, value -> row.copy(uniqueCustomers = value) }, MariaTypes.bigint)
+
+      override fun itemsSold(): OptField<BigDecimal, VDailySalesViewRow> = OptField<BigDecimal, VDailySalesViewRow>(_path, "items_sold", VDailySalesViewRow::itemsSold, Optional.empty(), Optional.empty(), { row, value -> row.copy(itemsSold = value) }, MariaTypes.decimal)
+
+      override fun grossSales(): OptField<BigDecimal, VDailySalesViewRow> = OptField<BigDecimal, VDailySalesViewRow>(_path, "gross_sales", VDailySalesViewRow::grossSales, Optional.empty(), Optional.empty(), { row, value -> row.copy(grossSales = value) }, MariaTypes.decimal)
+
+      override fun totalDiscounts(): OptField<BigDecimal, VDailySalesViewRow> = OptField<BigDecimal, VDailySalesViewRow>(_path, "total_discounts", VDailySalesViewRow::totalDiscounts, Optional.empty(), Optional.empty(), { row, value -> row.copy(totalDiscounts = value) }, MariaTypes.decimal)
+
+      override fun totalShipping(): OptField<BigDecimal, VDailySalesViewRow> = OptField<BigDecimal, VDailySalesViewRow>(_path, "total_shipping", VDailySalesViewRow::totalShipping, Optional.empty(), Optional.empty(), { row, value -> row.copy(totalShipping = value) }, MariaTypes.decimal)
+
+      override fun totalTax(): OptField<BigDecimal, VDailySalesViewRow> = OptField<BigDecimal, VDailySalesViewRow>(_path, "total_tax", VDailySalesViewRow::totalTax, Optional.empty(), Optional.empty(), { row, value -> row.copy(totalTax = value) }, MariaTypes.decimal)
+
+      override fun netSales(): OptField<BigDecimal, VDailySalesViewRow> = OptField<BigDecimal, VDailySalesViewRow>(_path, "net_sales", VDailySalesViewRow::netSales, Optional.empty(), Optional.empty(), { row, value -> row.copy(netSales = value) }, MariaTypes.decimal)
+
+      override fun avgOrderValue(): OptField<BigDecimal, VDailySalesViewRow> = OptField<BigDecimal, VDailySalesViewRow>(_path, "avg_order_value", VDailySalesViewRow::avgOrderValue, Optional.empty(), Optional.empty(), { row, value -> row.copy(avgOrderValue = value) }, MariaTypes.decimal)
+
+      override fun columns(): List<FieldLike<*, VDailySalesViewRow>> = listOf(this.orderDate(), this.orderCount(), this.uniqueCustomers(), this.itemsSold(), this.grossSales(), this.totalDiscounts(), this.totalShipping(), this.totalTax(), this.netSales(), this.avgOrderValue())
+
+      override fun copy(_path: List<Path>): Relation<VDailySalesViewFields, VDailySalesViewRow> = Impl(_path)
     }
 
-    val structure: Relation<VDailySalesViewFields, VDailySalesViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

@@ -27,5 +27,5 @@ case class PdViewRow(
 )
 
 object PdViewRow {
-  val `_rowParser`: RowParser[PdViewRow] = RowParsers.of(ProductdescriptionId.pgType, ProductdescriptionId.pgType, PgTypes.text, TypoUUID.pgType, TypoLocalDateTime.pgType, PdViewRow.apply, row => Array(row.id, row.productdescriptionid, row.description, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[PdViewRow] = RowParsers.of(ProductdescriptionId.pgType, ProductdescriptionId.pgType, PgTypes.text, TypoUUID.pgType, TypoLocalDateTime.pgType, PdViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.productdescriptionid.asInstanceOf[Object], row.description.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

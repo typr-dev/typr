@@ -14,15 +14,19 @@ import adventureworks.production.document.DocumentId
 import adventureworks.public.Flag
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface DViewFields {
+interface DViewFields : FieldsExpr<DViewRow> {
   fun changenumber(): Field<Int, DViewRow>
+
+  override fun columns(): List<FieldLike<*, DViewRow>>
 
   fun document(): OptField<TypoBytea, DViewRow>
 
@@ -42,6 +46,8 @@ interface DViewFields {
 
   fun revision(): Field</* bpchar, max 5 chars */ String, DViewRow>
 
+  override fun rowParser(): RowParser<DViewRow> = DViewRow._rowParser
+
   fun rowguid(): Field<TypoUUID, DViewRow>
 
   fun status(): Field<TypoShort, DViewRow>
@@ -49,28 +55,38 @@ interface DViewFields {
   fun title(): Field</* max 50 chars */ String, DViewRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<DViewFields, DViewRow>(path) {
-      override fun fields(): DViewFields = object : DViewFields {
-        override fun title(): Field</* max 50 chars */ String, DViewRow> = Field</* max 50 chars */ String, DViewRow>(_path, "title", DViewRow::title, Optional.empty(), Optional.empty(), { row, value -> row.copy(title = value) }, PgTypes.text)
-        override fun owner(): Field<BusinessentityId, DViewRow> = Field<BusinessentityId, DViewRow>(_path, "owner", DViewRow::owner, Optional.empty(), Optional.empty(), { row, value -> row.copy(owner = value) }, BusinessentityId.pgType)
-        override fun folderflag(): Field<Flag, DViewRow> = Field<Flag, DViewRow>(_path, "folderflag", DViewRow::folderflag, Optional.empty(), Optional.empty(), { row, value -> row.copy(folderflag = value) }, Flag.pgType)
-        override fun filename(): Field</* max 400 chars */ String, DViewRow> = Field</* max 400 chars */ String, DViewRow>(_path, "filename", DViewRow::filename, Optional.empty(), Optional.empty(), { row, value -> row.copy(filename = value) }, PgTypes.text)
-        override fun fileextension(): OptField</* max 8 chars */ String, DViewRow> = OptField</* max 8 chars */ String, DViewRow>(_path, "fileextension", DViewRow::fileextension, Optional.empty(), Optional.empty(), { row, value -> row.copy(fileextension = value) }, PgTypes.text)
-        override fun revision(): Field</* bpchar, max 5 chars */ String, DViewRow> = Field</* bpchar, max 5 chars */ String, DViewRow>(_path, "revision", DViewRow::revision, Optional.empty(), Optional.empty(), { row, value -> row.copy(revision = value) }, PgTypes.bpchar)
-        override fun changenumber(): Field<Int, DViewRow> = Field<Int, DViewRow>(_path, "changenumber", DViewRow::changenumber, Optional.empty(), Optional.empty(), { row, value -> row.copy(changenumber = value) }, PgTypes.int4)
-        override fun status(): Field<TypoShort, DViewRow> = Field<TypoShort, DViewRow>(_path, "status", DViewRow::status, Optional.empty(), Optional.empty(), { row, value -> row.copy(status = value) }, TypoShort.pgType)
-        override fun documentsummary(): OptField<String, DViewRow> = OptField<String, DViewRow>(_path, "documentsummary", DViewRow::documentsummary, Optional.empty(), Optional.empty(), { row, value -> row.copy(documentsummary = value) }, PgTypes.text)
-        override fun document(): OptField<TypoBytea, DViewRow> = OptField<TypoBytea, DViewRow>(_path, "document", DViewRow::document, Optional.empty(), Optional.empty(), { row, value -> row.copy(document = value) }, TypoBytea.pgType)
-        override fun rowguid(): Field<TypoUUID, DViewRow> = Field<TypoUUID, DViewRow>(_path, "rowguid", DViewRow::rowguid, Optional.empty(), Optional.empty(), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, DViewRow> = Field<TypoLocalDateTime, DViewRow>(_path, "modifieddate", DViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-        override fun documentnode(): Field<DocumentId, DViewRow> = Field<DocumentId, DViewRow>(_path, "documentnode", DViewRow::documentnode, Optional.empty(), Optional.empty(), { row, value -> row.copy(documentnode = value) }, DocumentId.pgType)
-      }
+    data class Impl(val _path: List<Path>) : DViewFields, Relation<DViewFields, DViewRow> {
+      override fun title(): Field</* max 50 chars */ String, DViewRow> = Field</* max 50 chars */ String, DViewRow>(_path, "title", DViewRow::title, Optional.empty(), Optional.empty(), { row, value -> row.copy(title = value) }, PgTypes.text)
 
-      override fun columns(): List<FieldLike<*, DViewRow>> = listOf(this.fields().title(), this.fields().owner(), this.fields().folderflag(), this.fields().filename(), this.fields().fileextension(), this.fields().revision(), this.fields().changenumber(), this.fields().status(), this.fields().documentsummary(), this.fields().document(), this.fields().rowguid(), this.fields().modifieddate(), this.fields().documentnode())
+      override fun owner(): Field<BusinessentityId, DViewRow> = Field<BusinessentityId, DViewRow>(_path, "owner", DViewRow::owner, Optional.empty(), Optional.empty(), { row, value -> row.copy(owner = value) }, BusinessentityId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun folderflag(): Field<Flag, DViewRow> = Field<Flag, DViewRow>(_path, "folderflag", DViewRow::folderflag, Optional.empty(), Optional.empty(), { row, value -> row.copy(folderflag = value) }, Flag.pgType)
+
+      override fun filename(): Field</* max 400 chars */ String, DViewRow> = Field</* max 400 chars */ String, DViewRow>(_path, "filename", DViewRow::filename, Optional.empty(), Optional.empty(), { row, value -> row.copy(filename = value) }, PgTypes.text)
+
+      override fun fileextension(): OptField</* max 8 chars */ String, DViewRow> = OptField</* max 8 chars */ String, DViewRow>(_path, "fileextension", DViewRow::fileextension, Optional.empty(), Optional.empty(), { row, value -> row.copy(fileextension = value) }, PgTypes.text)
+
+      override fun revision(): Field</* bpchar, max 5 chars */ String, DViewRow> = Field</* bpchar, max 5 chars */ String, DViewRow>(_path, "revision", DViewRow::revision, Optional.empty(), Optional.empty(), { row, value -> row.copy(revision = value) }, PgTypes.bpchar)
+
+      override fun changenumber(): Field<Int, DViewRow> = Field<Int, DViewRow>(_path, "changenumber", DViewRow::changenumber, Optional.empty(), Optional.empty(), { row, value -> row.copy(changenumber = value) }, PgTypes.int4)
+
+      override fun status(): Field<TypoShort, DViewRow> = Field<TypoShort, DViewRow>(_path, "status", DViewRow::status, Optional.empty(), Optional.empty(), { row, value -> row.copy(status = value) }, TypoShort.pgType)
+
+      override fun documentsummary(): OptField<String, DViewRow> = OptField<String, DViewRow>(_path, "documentsummary", DViewRow::documentsummary, Optional.empty(), Optional.empty(), { row, value -> row.copy(documentsummary = value) }, PgTypes.text)
+
+      override fun document(): OptField<TypoBytea, DViewRow> = OptField<TypoBytea, DViewRow>(_path, "document", DViewRow::document, Optional.empty(), Optional.empty(), { row, value -> row.copy(document = value) }, TypoBytea.pgType)
+
+      override fun rowguid(): Field<TypoUUID, DViewRow> = Field<TypoUUID, DViewRow>(_path, "rowguid", DViewRow::rowguid, Optional.empty(), Optional.empty(), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, DViewRow> = Field<TypoLocalDateTime, DViewRow>(_path, "modifieddate", DViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun documentnode(): Field<DocumentId, DViewRow> = Field<DocumentId, DViewRow>(_path, "documentnode", DViewRow::documentnode, Optional.empty(), Optional.empty(), { row, value -> row.copy(documentnode = value) }, DocumentId.pgType)
+
+      override fun columns(): List<FieldLike<*, DViewRow>> = listOf(this.title(), this.owner(), this.folderflag(), this.filename(), this.fileextension(), this.revision(), this.changenumber(), this.status(), this.documentsummary(), this.document(), this.rowguid(), this.modifieddate(), this.documentnode())
+
+      override fun copy(_path: List<Path>): Relation<DViewFields, DViewRow> = Impl(_path)
     }
 
-    val structure: Relation<DViewFields, DViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

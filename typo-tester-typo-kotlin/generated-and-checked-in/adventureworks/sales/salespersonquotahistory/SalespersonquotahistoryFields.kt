@@ -13,6 +13,7 @@ import adventureworks.sales.salesperson.SalespersonRow
 import java.math.BigDecimal
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -23,9 +24,12 @@ import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface SalespersonquotahistoryFields {
+interface SalespersonquotahistoryFields : FieldsExpr<SalespersonquotahistoryRow> {
   fun businessentityid(): IdField<BusinessentityId, SalespersonquotahistoryRow>
+
+  override fun columns(): List<FieldLike<*, SalespersonquotahistoryRow>>
 
   fun compositeIdIn(compositeIds: List<SalespersonquotahistoryId>): SqlExpr<Boolean> = CompositeIn(listOf(Part<BusinessentityId, SalespersonquotahistoryId, SalespersonquotahistoryRow>(businessentityid(), SalespersonquotahistoryId::businessentityid, BusinessentityId.pgType), Part<TypoLocalDateTime, SalespersonquotahistoryId, SalespersonquotahistoryRow>(quotadate(), SalespersonquotahistoryId::quotadate, TypoLocalDateTime.pgType)), compositeIds)
 
@@ -37,25 +41,29 @@ interface SalespersonquotahistoryFields {
 
   fun quotadate(): IdField<TypoLocalDateTime, SalespersonquotahistoryRow>
 
+  override fun rowParser(): RowParser<SalespersonquotahistoryRow> = SalespersonquotahistoryRow._rowParser
+
   fun rowguid(): Field<TypoUUID, SalespersonquotahistoryRow>
 
   fun salesquota(): Field<BigDecimal, SalespersonquotahistoryRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<SalespersonquotahistoryFields, SalespersonquotahistoryRow>(path) {
-      override fun fields(): SalespersonquotahistoryFields = object : SalespersonquotahistoryFields {
-        override fun businessentityid(): IdField<BusinessentityId, SalespersonquotahistoryRow> = IdField<BusinessentityId, SalespersonquotahistoryRow>(_path, "businessentityid", SalespersonquotahistoryRow::businessentityid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
-        override fun quotadate(): IdField<TypoLocalDateTime, SalespersonquotahistoryRow> = IdField<TypoLocalDateTime, SalespersonquotahistoryRow>(_path, "quotadate", SalespersonquotahistoryRow::quotadate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(quotadate = value) }, TypoLocalDateTime.pgType)
-        override fun salesquota(): Field<BigDecimal, SalespersonquotahistoryRow> = Field<BigDecimal, SalespersonquotahistoryRow>(_path, "salesquota", SalespersonquotahistoryRow::salesquota, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(salesquota = value) }, PgTypes.numeric)
-        override fun rowguid(): Field<TypoUUID, SalespersonquotahistoryRow> = Field<TypoUUID, SalespersonquotahistoryRow>(_path, "rowguid", SalespersonquotahistoryRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, SalespersonquotahistoryRow> = Field<TypoLocalDateTime, SalespersonquotahistoryRow>(_path, "modifieddate", SalespersonquotahistoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : SalespersonquotahistoryFields, Relation<SalespersonquotahistoryFields, SalespersonquotahistoryRow> {
+      override fun businessentityid(): IdField<BusinessentityId, SalespersonquotahistoryRow> = IdField<BusinessentityId, SalespersonquotahistoryRow>(_path, "businessentityid", SalespersonquotahistoryRow::businessentityid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
 
-      override fun columns(): List<FieldLike<*, SalespersonquotahistoryRow>> = listOf(this.fields().businessentityid(), this.fields().quotadate(), this.fields().salesquota(), this.fields().rowguid(), this.fields().modifieddate())
+      override fun quotadate(): IdField<TypoLocalDateTime, SalespersonquotahistoryRow> = IdField<TypoLocalDateTime, SalespersonquotahistoryRow>(_path, "quotadate", SalespersonquotahistoryRow::quotadate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(quotadate = value) }, TypoLocalDateTime.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun salesquota(): Field<BigDecimal, SalespersonquotahistoryRow> = Field<BigDecimal, SalespersonquotahistoryRow>(_path, "salesquota", SalespersonquotahistoryRow::salesquota, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(salesquota = value) }, PgTypes.numeric)
+
+      override fun rowguid(): Field<TypoUUID, SalespersonquotahistoryRow> = Field<TypoUUID, SalespersonquotahistoryRow>(_path, "rowguid", SalespersonquotahistoryRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, SalespersonquotahistoryRow> = Field<TypoLocalDateTime, SalespersonquotahistoryRow>(_path, "modifieddate", SalespersonquotahistoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, SalespersonquotahistoryRow>> = listOf(this.businessentityid(), this.quotadate(), this.salesquota(), this.rowguid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<SalespersonquotahistoryFields, SalespersonquotahistoryRow> = Impl(_path)
     }
 
-    val structure: Relation<SalespersonquotahistoryFields, SalespersonquotahistoryRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

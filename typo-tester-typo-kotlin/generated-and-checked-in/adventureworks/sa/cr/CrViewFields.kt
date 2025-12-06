@@ -11,14 +11,18 @@ import adventureworks.sales.currencyrate.CurrencyrateId
 import java.math.BigDecimal
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface CrViewFields {
+interface CrViewFields : FieldsExpr<CrViewRow> {
   fun averagerate(): Field<BigDecimal, CrViewRow>
+
+  override fun columns(): List<FieldLike<*, CrViewRow>>
 
   fun currencyratedate(): Field<TypoLocalDateTime, CrViewRow>
 
@@ -30,25 +34,31 @@ interface CrViewFields {
 
   fun modifieddate(): Field<TypoLocalDateTime, CrViewRow>
 
+  override fun rowParser(): RowParser<CrViewRow> = CrViewRow._rowParser
+
   fun tocurrencycode(): Field<CurrencyId, CrViewRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<CrViewFields, CrViewRow>(path) {
-      override fun fields(): CrViewFields = object : CrViewFields {
-        override fun currencyrateid(): Field<CurrencyrateId, CrViewRow> = Field<CurrencyrateId, CrViewRow>(_path, "currencyrateid", CrViewRow::currencyrateid, Optional.empty(), Optional.empty(), { row, value -> row.copy(currencyrateid = value) }, CurrencyrateId.pgType)
-        override fun currencyratedate(): Field<TypoLocalDateTime, CrViewRow> = Field<TypoLocalDateTime, CrViewRow>(_path, "currencyratedate", CrViewRow::currencyratedate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(currencyratedate = value) }, TypoLocalDateTime.pgType)
-        override fun fromcurrencycode(): Field<CurrencyId, CrViewRow> = Field<CurrencyId, CrViewRow>(_path, "fromcurrencycode", CrViewRow::fromcurrencycode, Optional.empty(), Optional.empty(), { row, value -> row.copy(fromcurrencycode = value) }, CurrencyId.pgType)
-        override fun tocurrencycode(): Field<CurrencyId, CrViewRow> = Field<CurrencyId, CrViewRow>(_path, "tocurrencycode", CrViewRow::tocurrencycode, Optional.empty(), Optional.empty(), { row, value -> row.copy(tocurrencycode = value) }, CurrencyId.pgType)
-        override fun averagerate(): Field<BigDecimal, CrViewRow> = Field<BigDecimal, CrViewRow>(_path, "averagerate", CrViewRow::averagerate, Optional.empty(), Optional.empty(), { row, value -> row.copy(averagerate = value) }, PgTypes.numeric)
-        override fun endofdayrate(): Field<BigDecimal, CrViewRow> = Field<BigDecimal, CrViewRow>(_path, "endofdayrate", CrViewRow::endofdayrate, Optional.empty(), Optional.empty(), { row, value -> row.copy(endofdayrate = value) }, PgTypes.numeric)
-        override fun modifieddate(): Field<TypoLocalDateTime, CrViewRow> = Field<TypoLocalDateTime, CrViewRow>(_path, "modifieddate", CrViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : CrViewFields, Relation<CrViewFields, CrViewRow> {
+      override fun currencyrateid(): Field<CurrencyrateId, CrViewRow> = Field<CurrencyrateId, CrViewRow>(_path, "currencyrateid", CrViewRow::currencyrateid, Optional.empty(), Optional.empty(), { row, value -> row.copy(currencyrateid = value) }, CurrencyrateId.pgType)
 
-      override fun columns(): List<FieldLike<*, CrViewRow>> = listOf(this.fields().currencyrateid(), this.fields().currencyratedate(), this.fields().fromcurrencycode(), this.fields().tocurrencycode(), this.fields().averagerate(), this.fields().endofdayrate(), this.fields().modifieddate())
+      override fun currencyratedate(): Field<TypoLocalDateTime, CrViewRow> = Field<TypoLocalDateTime, CrViewRow>(_path, "currencyratedate", CrViewRow::currencyratedate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(currencyratedate = value) }, TypoLocalDateTime.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun fromcurrencycode(): Field<CurrencyId, CrViewRow> = Field<CurrencyId, CrViewRow>(_path, "fromcurrencycode", CrViewRow::fromcurrencycode, Optional.empty(), Optional.empty(), { row, value -> row.copy(fromcurrencycode = value) }, CurrencyId.pgType)
+
+      override fun tocurrencycode(): Field<CurrencyId, CrViewRow> = Field<CurrencyId, CrViewRow>(_path, "tocurrencycode", CrViewRow::tocurrencycode, Optional.empty(), Optional.empty(), { row, value -> row.copy(tocurrencycode = value) }, CurrencyId.pgType)
+
+      override fun averagerate(): Field<BigDecimal, CrViewRow> = Field<BigDecimal, CrViewRow>(_path, "averagerate", CrViewRow::averagerate, Optional.empty(), Optional.empty(), { row, value -> row.copy(averagerate = value) }, PgTypes.numeric)
+
+      override fun endofdayrate(): Field<BigDecimal, CrViewRow> = Field<BigDecimal, CrViewRow>(_path, "endofdayrate", CrViewRow::endofdayrate, Optional.empty(), Optional.empty(), { row, value -> row.copy(endofdayrate = value) }, PgTypes.numeric)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, CrViewRow> = Field<TypoLocalDateTime, CrViewRow>(_path, "modifieddate", CrViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, CrViewRow>> = listOf(this.currencyrateid(), this.currencyratedate(), this.fromcurrencycode(), this.tocurrencycode(), this.averagerate(), this.endofdayrate(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<CrViewFields, CrViewRow> = Impl(_path)
     }
 
-    val structure: Relation<CrViewFields, CrViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

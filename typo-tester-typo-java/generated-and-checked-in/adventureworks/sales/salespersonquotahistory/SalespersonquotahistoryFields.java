@@ -13,6 +13,7 @@ import adventureworks.sales.salesperson.SalespersonRow;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr;
@@ -23,51 +24,47 @@ import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface SalespersonquotahistoryFields {
-  final class Impl extends Relation<SalespersonquotahistoryFields, SalespersonquotahistoryRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface SalespersonquotahistoryFields extends FieldsExpr<SalespersonquotahistoryRow> {
+  record Impl(List<Path> _path) implements SalespersonquotahistoryFields, Relation<SalespersonquotahistoryFields, SalespersonquotahistoryRow> {
+    @Override
+    public IdField<BusinessentityId, SalespersonquotahistoryRow> businessentityid() {
+      return new IdField<BusinessentityId, SalespersonquotahistoryRow>(_path, "businessentityid", SalespersonquotahistoryRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
+    };
 
     @Override
-    public SalespersonquotahistoryFields fields() {
-      return new SalespersonquotahistoryFields() {
-               @Override
-               public IdField<BusinessentityId, SalespersonquotahistoryRow> businessentityid() {
-                 return new IdField<BusinessentityId, SalespersonquotahistoryRow>(_path, "businessentityid", SalespersonquotahistoryRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public IdField<TypoLocalDateTime, SalespersonquotahistoryRow> quotadate() {
-                 return new IdField<TypoLocalDateTime, SalespersonquotahistoryRow>(_path, "quotadate", SalespersonquotahistoryRow::quotadate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withQuotadate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public Field<BigDecimal, SalespersonquotahistoryRow> salesquota() {
-                 return new Field<BigDecimal, SalespersonquotahistoryRow>(_path, "salesquota", SalespersonquotahistoryRow::salesquota, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withSalesquota(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<TypoUUID, SalespersonquotahistoryRow> rowguid() {
-                 return new Field<TypoUUID, SalespersonquotahistoryRow>(_path, "rowguid", SalespersonquotahistoryRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, SalespersonquotahistoryRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, SalespersonquotahistoryRow>(_path, "modifieddate", SalespersonquotahistoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public IdField<TypoLocalDateTime, SalespersonquotahistoryRow> quotadate() {
+      return new IdField<TypoLocalDateTime, SalespersonquotahistoryRow>(_path, "quotadate", SalespersonquotahistoryRow::quotadate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withQuotadate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public Field<BigDecimal, SalespersonquotahistoryRow> salesquota() {
+      return new Field<BigDecimal, SalespersonquotahistoryRow>(_path, "salesquota", SalespersonquotahistoryRow::salesquota, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withSalesquota(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<TypoUUID, SalespersonquotahistoryRow> rowguid() {
+      return new Field<TypoUUID, SalespersonquotahistoryRow>(_path, "rowguid", SalespersonquotahistoryRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, SalespersonquotahistoryRow> modifieddate() {
+      return new Field<TypoLocalDateTime, SalespersonquotahistoryRow>(_path, "modifieddate", SalespersonquotahistoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, SalespersonquotahistoryRow>> columns() {
-      return List.of(this.fields().businessentityid(), this.fields().quotadate(), this.fields().salesquota(), this.fields().rowguid(), this.fields().modifieddate());
+      return List.of(this.businessentityid(), this.quotadate(), this.salesquota(), this.rowguid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<SalespersonquotahistoryFields, SalespersonquotahistoryRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<SalespersonquotahistoryFields, SalespersonquotahistoryRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -91,5 +88,13 @@ public interface SalespersonquotahistoryFields {
 
   default SqlExpr<Boolean> compositeIdIn(List<SalespersonquotahistoryId> compositeIds) {
     return new CompositeIn(List.of(new Part<BusinessentityId, SalespersonquotahistoryId, SalespersonquotahistoryRow>(businessentityid(), SalespersonquotahistoryId::businessentityid, BusinessentityId.pgType), new Part<TypoLocalDateTime, SalespersonquotahistoryId, SalespersonquotahistoryRow>(quotadate(), SalespersonquotahistoryId::quotadate, TypoLocalDateTime.pgType)), compositeIds);
+  };
+
+  @Override
+  List<FieldLike<?, SalespersonquotahistoryRow>> columns();
+
+  @Override
+  default RowParser<SalespersonquotahistoryRow> rowParser() {
+    return SalespersonquotahistoryRow._rowParser;
   };
 }

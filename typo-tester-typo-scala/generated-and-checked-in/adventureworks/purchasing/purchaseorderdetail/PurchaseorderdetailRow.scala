@@ -76,7 +76,7 @@ case class PurchaseorderdetailRow(
 }
 
 object PurchaseorderdetailRow {
-  val `_rowParser`: RowParser[PurchaseorderdetailRow] = RowParsers.of(PurchaseorderheaderId.pgType, PgTypes.int4, TypoLocalDateTime.pgType, TypoShort.pgType, ProductId.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, PurchaseorderdetailRow.apply, row => Array(row.purchaseorderid, row.purchaseorderdetailid, row.duedate, row.orderqty, row.productid, row.unitprice, row.receivedqty, row.rejectedqty, row.modifieddate))
+  val `_rowParser`: RowParser[PurchaseorderdetailRow] = RowParsers.of(PurchaseorderheaderId.pgType, PgTypes.int4, TypoLocalDateTime.pgType, TypoShort.pgType, ProductId.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, PurchaseorderdetailRow.apply, row => Array[Object](row.purchaseorderid.asInstanceOf[Object], row.purchaseorderdetailid.asInstanceOf[Object], row.duedate.asInstanceOf[Object], row.orderqty.asInstanceOf[Object], row.productid.asInstanceOf[Object], row.unitprice.asInstanceOf[Object], row.receivedqty.asInstanceOf[Object], row.rejectedqty.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   def apply(
     compositeId: PurchaseorderdetailId,

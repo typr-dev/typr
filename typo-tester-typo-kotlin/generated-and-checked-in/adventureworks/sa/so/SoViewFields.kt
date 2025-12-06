@@ -11,15 +11,19 @@ import adventureworks.sales.specialoffer.SpecialofferId
 import java.math.BigDecimal
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface SoViewFields {
+interface SoViewFields : FieldsExpr<SoViewRow> {
   fun category(): Field</* max 50 chars */ String, SoViewRow>
+
+  override fun columns(): List<FieldLike<*, SoViewRow>>
 
   fun description(): Field</* max 255 chars */ String, SoViewRow>
 
@@ -35,6 +39,8 @@ interface SoViewFields {
 
   fun modifieddate(): Field<TypoLocalDateTime, SoViewRow>
 
+  override fun rowParser(): RowParser<SoViewRow> = SoViewRow._rowParser
+
   fun rowguid(): Field<TypoUUID, SoViewRow>
 
   fun specialofferid(): Field<SpecialofferId, SoViewRow>
@@ -44,27 +50,36 @@ interface SoViewFields {
   fun type(): Field</* max 50 chars */ String, SoViewRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<SoViewFields, SoViewRow>(path) {
-      override fun fields(): SoViewFields = object : SoViewFields {
-        override fun id(): Field<SpecialofferId, SoViewRow> = Field<SpecialofferId, SoViewRow>(_path, "id", SoViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, SpecialofferId.pgType)
-        override fun specialofferid(): Field<SpecialofferId, SoViewRow> = Field<SpecialofferId, SoViewRow>(_path, "specialofferid", SoViewRow::specialofferid, Optional.empty(), Optional.empty(), { row, value -> row.copy(specialofferid = value) }, SpecialofferId.pgType)
-        override fun description(): Field</* max 255 chars */ String, SoViewRow> = Field</* max 255 chars */ String, SoViewRow>(_path, "description", SoViewRow::description, Optional.empty(), Optional.empty(), { row, value -> row.copy(description = value) }, PgTypes.text)
-        override fun discountpct(): Field<BigDecimal, SoViewRow> = Field<BigDecimal, SoViewRow>(_path, "discountpct", SoViewRow::discountpct, Optional.empty(), Optional.empty(), { row, value -> row.copy(discountpct = value) }, PgTypes.numeric)
-        override fun type(): Field</* max 50 chars */ String, SoViewRow> = Field</* max 50 chars */ String, SoViewRow>(_path, "type", SoViewRow::type, Optional.empty(), Optional.empty(), { row, value -> row.copy(type = value) }, PgTypes.text)
-        override fun category(): Field</* max 50 chars */ String, SoViewRow> = Field</* max 50 chars */ String, SoViewRow>(_path, "category", SoViewRow::category, Optional.empty(), Optional.empty(), { row, value -> row.copy(category = value) }, PgTypes.text)
-        override fun startdate(): Field<TypoLocalDateTime, SoViewRow> = Field<TypoLocalDateTime, SoViewRow>(_path, "startdate", SoViewRow::startdate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(startdate = value) }, TypoLocalDateTime.pgType)
-        override fun enddate(): Field<TypoLocalDateTime, SoViewRow> = Field<TypoLocalDateTime, SoViewRow>(_path, "enddate", SoViewRow::enddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(enddate = value) }, TypoLocalDateTime.pgType)
-        override fun minqty(): Field<Int, SoViewRow> = Field<Int, SoViewRow>(_path, "minqty", SoViewRow::minqty, Optional.empty(), Optional.empty(), { row, value -> row.copy(minqty = value) }, PgTypes.int4)
-        override fun maxqty(): OptField<Int, SoViewRow> = OptField<Int, SoViewRow>(_path, "maxqty", SoViewRow::maxqty, Optional.empty(), Optional.empty(), { row, value -> row.copy(maxqty = value) }, PgTypes.int4)
-        override fun rowguid(): Field<TypoUUID, SoViewRow> = Field<TypoUUID, SoViewRow>(_path, "rowguid", SoViewRow::rowguid, Optional.empty(), Optional.empty(), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, SoViewRow> = Field<TypoLocalDateTime, SoViewRow>(_path, "modifieddate", SoViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : SoViewFields, Relation<SoViewFields, SoViewRow> {
+      override fun id(): Field<SpecialofferId, SoViewRow> = Field<SpecialofferId, SoViewRow>(_path, "id", SoViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, SpecialofferId.pgType)
 
-      override fun columns(): List<FieldLike<*, SoViewRow>> = listOf(this.fields().id(), this.fields().specialofferid(), this.fields().description(), this.fields().discountpct(), this.fields().type(), this.fields().category(), this.fields().startdate(), this.fields().enddate(), this.fields().minqty(), this.fields().maxqty(), this.fields().rowguid(), this.fields().modifieddate())
+      override fun specialofferid(): Field<SpecialofferId, SoViewRow> = Field<SpecialofferId, SoViewRow>(_path, "specialofferid", SoViewRow::specialofferid, Optional.empty(), Optional.empty(), { row, value -> row.copy(specialofferid = value) }, SpecialofferId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun description(): Field</* max 255 chars */ String, SoViewRow> = Field</* max 255 chars */ String, SoViewRow>(_path, "description", SoViewRow::description, Optional.empty(), Optional.empty(), { row, value -> row.copy(description = value) }, PgTypes.text)
+
+      override fun discountpct(): Field<BigDecimal, SoViewRow> = Field<BigDecimal, SoViewRow>(_path, "discountpct", SoViewRow::discountpct, Optional.empty(), Optional.empty(), { row, value -> row.copy(discountpct = value) }, PgTypes.numeric)
+
+      override fun type(): Field</* max 50 chars */ String, SoViewRow> = Field</* max 50 chars */ String, SoViewRow>(_path, "type", SoViewRow::type, Optional.empty(), Optional.empty(), { row, value -> row.copy(type = value) }, PgTypes.text)
+
+      override fun category(): Field</* max 50 chars */ String, SoViewRow> = Field</* max 50 chars */ String, SoViewRow>(_path, "category", SoViewRow::category, Optional.empty(), Optional.empty(), { row, value -> row.copy(category = value) }, PgTypes.text)
+
+      override fun startdate(): Field<TypoLocalDateTime, SoViewRow> = Field<TypoLocalDateTime, SoViewRow>(_path, "startdate", SoViewRow::startdate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(startdate = value) }, TypoLocalDateTime.pgType)
+
+      override fun enddate(): Field<TypoLocalDateTime, SoViewRow> = Field<TypoLocalDateTime, SoViewRow>(_path, "enddate", SoViewRow::enddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(enddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun minqty(): Field<Int, SoViewRow> = Field<Int, SoViewRow>(_path, "minqty", SoViewRow::minqty, Optional.empty(), Optional.empty(), { row, value -> row.copy(minqty = value) }, PgTypes.int4)
+
+      override fun maxqty(): OptField<Int, SoViewRow> = OptField<Int, SoViewRow>(_path, "maxqty", SoViewRow::maxqty, Optional.empty(), Optional.empty(), { row, value -> row.copy(maxqty = value) }, PgTypes.int4)
+
+      override fun rowguid(): Field<TypoUUID, SoViewRow> = Field<TypoUUID, SoViewRow>(_path, "rowguid", SoViewRow::rowguid, Optional.empty(), Optional.empty(), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, SoViewRow> = Field<TypoLocalDateTime, SoViewRow>(_path, "modifieddate", SoViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, SoViewRow>> = listOf(this.id(), this.specialofferid(), this.description(), this.discountpct(), this.type(), this.category(), this.startdate(), this.enddate(), this.minqty(), this.maxqty(), this.rowguid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<SoViewFields, SoViewRow> = Impl(_path)
     }
 
-    val structure: Relation<SoViewFields, SoViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

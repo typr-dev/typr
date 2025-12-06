@@ -9,14 +9,16 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoUUID
 import adventureworks.person.businessentity.BusinessentityId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait EViewFields {
+trait EViewFields extends FieldsExpr[EViewRow] {
   def id: Field[Integer, EViewRow]
 
   def businessentityid: Field[BusinessentityId, EViewRow]
@@ -28,86 +30,91 @@ trait EViewFields {
   def rowguid: Field[TypoUUID, EViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, EViewRow]
+
+  override def columns: java.util.List[FieldLike[?, EViewRow]]
+
+  override def rowParser: RowParser[EViewRow] = EViewRow._rowParser
 }
 
 object EViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[EViewFields, EViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends EViewFields with Relation[EViewFields, EViewRow] {
 
-    override lazy val fields: EViewFields = {
-      new EViewFields {
-        override def id: Field[Integer, EViewRow] = {
-          new Field[Integer, EViewRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            PgTypes.int4
-          )
-        }
-        override def businessentityid: Field[BusinessentityId, EViewRow] = {
-          new Field[BusinessentityId, EViewRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def emailaddressid: Field[Integer, EViewRow] = {
-          new Field[Integer, EViewRow](
-            _path,
-            "emailaddressid",
-            _.emailaddressid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(emailaddressid = value),
-            PgTypes.int4
-          )
-        }
-        override def emailaddress: OptField[/* max 50 chars */ String, EViewRow] = {
-          new OptField[/* max 50 chars */ String, EViewRow](
-            _path,
-            "emailaddress",
-            _.emailaddress,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(emailaddress = value),
-            PgTypes.text
-          )
-        }
-        override def rowguid: Field[TypoUUID, EViewRow] = {
-          new Field[TypoUUID, EViewRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, EViewRow] = {
-          new Field[TypoLocalDateTime, EViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def id: Field[Integer, EViewRow] = {
+      new Field[Integer, EViewRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        PgTypes.int4
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, EViewRow]] = java.util.List.of(this.fields.id, this.fields.businessentityid, this.fields.emailaddressid, this.fields.emailaddress, this.fields.rowguid, this.fields.modifieddate)
+    override def businessentityid: Field[BusinessentityId, EViewRow] = {
+      new Field[BusinessentityId, EViewRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def emailaddressid: Field[Integer, EViewRow] = {
+      new Field[Integer, EViewRow](
+        _path,
+        "emailaddressid",
+        _.emailaddressid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(emailaddressid = value),
+        PgTypes.int4
+      )
+    }
+
+    override def emailaddress: OptField[/* max 50 chars */ String, EViewRow] = {
+      new OptField[/* max 50 chars */ String, EViewRow](
+        _path,
+        "emailaddress",
+        _.emailaddress,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(emailaddress = value),
+        PgTypes.text
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, EViewRow] = {
+      new Field[TypoUUID, EViewRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, EViewRow] = {
+      new Field[TypoLocalDateTime, EViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, EViewRow]] = java.util.List.of(this.id, this.businessentityid, this.emailaddressid, this.emailaddress, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[EViewFields, EViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[EViewFields, EViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

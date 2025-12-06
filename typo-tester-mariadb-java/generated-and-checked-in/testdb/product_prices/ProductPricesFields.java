@@ -15,6 +15,7 @@ import testdb.price_tiers.PriceTiersRow;
 import testdb.products.ProductsFields;
 import testdb.products.ProductsId;
 import testdb.products.ProductsRow;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
@@ -23,59 +24,57 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.MariaTypes;
+import typo.runtime.RowParser;
 
-public interface ProductPricesFields {
-  final class Impl extends Relation<ProductPricesFields, ProductPricesRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface ProductPricesFields extends FieldsExpr<ProductPricesRow> {
+  record Impl(List<Path> _path) implements ProductPricesFields, Relation<ProductPricesFields, ProductPricesRow> {
+    @Override
+    public IdField<ProductPricesId, ProductPricesRow> priceId() {
+      return new IdField<ProductPricesId, ProductPricesRow>(_path, "price_id", ProductPricesRow::priceId, Optional.empty(), Optional.empty(), (row, value) -> row.withPriceId(value), ProductPricesId.pgType);
+    };
 
     @Override
-    public ProductPricesFields fields() {
-      return new ProductPricesFields() {
-               @Override
-               public IdField<ProductPricesId, ProductPricesRow> priceId() {
-                 return new IdField<ProductPricesId, ProductPricesRow>(_path, "price_id", ProductPricesRow::priceId, Optional.empty(), Optional.empty(), (row, value) -> row.withPriceId(value), ProductPricesId.pgType);
-               };
-               @Override
-               public Field<ProductsId, ProductPricesRow> productId() {
-                 return new Field<ProductsId, ProductPricesRow>(_path, "product_id", ProductPricesRow::productId, Optional.empty(), Optional.empty(), (row, value) -> row.withProductId(value), ProductsId.pgType);
-               };
-               @Override
-               public OptField<PriceTiersId, ProductPricesRow> tierId() {
-                 return new OptField<PriceTiersId, ProductPricesRow>(_path, "tier_id", ProductPricesRow::tierId, Optional.empty(), Optional.empty(), (row, value) -> row.withTierId(value), PriceTiersId.pgType);
-               };
-               @Override
-               public Field<BigDecimal, ProductPricesRow> price() {
-                 return new Field<BigDecimal, ProductPricesRow>(_path, "price", ProductPricesRow::price, Optional.empty(), Optional.empty(), (row, value) -> row.withPrice(value), MariaTypes.decimal);
-               };
-               @Override
-               public Field<String, ProductPricesRow> currencyCode() {
-                 return new Field<String, ProductPricesRow>(_path, "currency_code", ProductPricesRow::currencyCode, Optional.empty(), Optional.empty(), (row, value) -> row.withCurrencyCode(value), MariaTypes.char_);
-               };
-               @Override
-               public Field<LocalDate, ProductPricesRow> validFrom() {
-                 return new Field<LocalDate, ProductPricesRow>(_path, "valid_from", ProductPricesRow::validFrom, Optional.empty(), Optional.empty(), (row, value) -> row.withValidFrom(value), MariaTypes.date);
-               };
-               @Override
-               public OptField<LocalDate, ProductPricesRow> validTo() {
-                 return new OptField<LocalDate, ProductPricesRow>(_path, "valid_to", ProductPricesRow::validTo, Optional.empty(), Optional.empty(), (row, value) -> row.withValidTo(value), MariaTypes.date);
-               };
-             };
+    public Field<ProductsId, ProductPricesRow> productId() {
+      return new Field<ProductsId, ProductPricesRow>(_path, "product_id", ProductPricesRow::productId, Optional.empty(), Optional.empty(), (row, value) -> row.withProductId(value), ProductsId.pgType);
+    };
+
+    @Override
+    public OptField<PriceTiersId, ProductPricesRow> tierId() {
+      return new OptField<PriceTiersId, ProductPricesRow>(_path, "tier_id", ProductPricesRow::tierId, Optional.empty(), Optional.empty(), (row, value) -> row.withTierId(value), PriceTiersId.pgType);
+    };
+
+    @Override
+    public Field<BigDecimal, ProductPricesRow> price() {
+      return new Field<BigDecimal, ProductPricesRow>(_path, "price", ProductPricesRow::price, Optional.empty(), Optional.empty(), (row, value) -> row.withPrice(value), MariaTypes.decimal);
+    };
+
+    @Override
+    public Field<String, ProductPricesRow> currencyCode() {
+      return new Field<String, ProductPricesRow>(_path, "currency_code", ProductPricesRow::currencyCode, Optional.empty(), Optional.empty(), (row, value) -> row.withCurrencyCode(value), MariaTypes.char_);
+    };
+
+    @Override
+    public Field<LocalDate, ProductPricesRow> validFrom() {
+      return new Field<LocalDate, ProductPricesRow>(_path, "valid_from", ProductPricesRow::validFrom, Optional.empty(), Optional.empty(), (row, value) -> row.withValidFrom(value), MariaTypes.date);
+    };
+
+    @Override
+    public OptField<LocalDate, ProductPricesRow> validTo() {
+      return new OptField<LocalDate, ProductPricesRow>(_path, "valid_to", ProductPricesRow::validTo, Optional.empty(), Optional.empty(), (row, value) -> row.withValidTo(value), MariaTypes.date);
     };
 
     @Override
     public List<FieldLike<?, ProductPricesRow>> columns() {
-      return List.of(this.fields().priceId(), this.fields().productId(), this.fields().tierId(), this.fields().price(), this.fields().currencyCode(), this.fields().validFrom(), this.fields().validTo());
+      return List.of(this.priceId(), this.productId(), this.tierId(), this.price(), this.currencyCode(), this.validFrom(), this.validTo());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<ProductPricesFields, ProductPricesRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<ProductPricesFields, ProductPricesRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -99,5 +98,13 @@ public interface ProductPricesFields {
 
   default ForeignKey<PriceTiersFields, PriceTiersRow> fkPriceTiers() {
     return ForeignKey.<PriceTiersFields, PriceTiersRow>of("fk_pp_tier").withColumnPair(tierId(), PriceTiersFields::tierId);
+  };
+
+  @Override
+  List<FieldLike<?, ProductPricesRow>> columns();
+
+  @Override
+  default RowParser<ProductPricesRow> rowParser() {
+    return ProductPricesRow._rowParser;
   };
 }

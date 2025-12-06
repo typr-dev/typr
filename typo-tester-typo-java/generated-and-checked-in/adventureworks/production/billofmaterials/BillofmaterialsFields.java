@@ -16,6 +16,7 @@ import adventureworks.production.unitmeasure.UnitmeasureRow;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
@@ -24,67 +25,67 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface BillofmaterialsFields {
-  final class Impl extends Relation<BillofmaterialsFields, BillofmaterialsRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface BillofmaterialsFields extends FieldsExpr<BillofmaterialsRow> {
+  record Impl(List<Path> _path) implements BillofmaterialsFields, Relation<BillofmaterialsFields, BillofmaterialsRow> {
+    @Override
+    public IdField<Integer, BillofmaterialsRow> billofmaterialsid() {
+      return new IdField<Integer, BillofmaterialsRow>(_path, "billofmaterialsid", BillofmaterialsRow::billofmaterialsid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBillofmaterialsid(value), PgTypes.int4);
+    };
 
     @Override
-    public BillofmaterialsFields fields() {
-      return new BillofmaterialsFields() {
-               @Override
-               public IdField<Integer, BillofmaterialsRow> billofmaterialsid() {
-                 return new IdField<Integer, BillofmaterialsRow>(_path, "billofmaterialsid", BillofmaterialsRow::billofmaterialsid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBillofmaterialsid(value), PgTypes.int4);
-               };
-               @Override
-               public OptField<ProductId, BillofmaterialsRow> productassemblyid() {
-                 return new OptField<ProductId, BillofmaterialsRow>(_path, "productassemblyid", BillofmaterialsRow::productassemblyid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductassemblyid(value), ProductId.pgType);
-               };
-               @Override
-               public Field<ProductId, BillofmaterialsRow> componentid() {
-                 return new Field<ProductId, BillofmaterialsRow>(_path, "componentid", BillofmaterialsRow::componentid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withComponentid(value), ProductId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, BillofmaterialsRow> startdate() {
-                 return new Field<TypoLocalDateTime, BillofmaterialsRow>(_path, "startdate", BillofmaterialsRow::startdate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withStartdate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public OptField<TypoLocalDateTime, BillofmaterialsRow> enddate() {
-                 return new OptField<TypoLocalDateTime, BillofmaterialsRow>(_path, "enddate", BillofmaterialsRow::enddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withEnddate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public Field<UnitmeasureId, BillofmaterialsRow> unitmeasurecode() {
-                 return new Field<UnitmeasureId, BillofmaterialsRow>(_path, "unitmeasurecode", BillofmaterialsRow::unitmeasurecode, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withUnitmeasurecode(value), UnitmeasureId.pgType);
-               };
-               @Override
-               public Field<TypoShort, BillofmaterialsRow> bomlevel() {
-                 return new Field<TypoShort, BillofmaterialsRow>(_path, "bomlevel", BillofmaterialsRow::bomlevel, Optional.empty(), Optional.of("int2"), (row, value) -> row.withBomlevel(value), TypoShort.pgType);
-               };
-               @Override
-               public Field<BigDecimal, BillofmaterialsRow> perassemblyqty() {
-                 return new Field<BigDecimal, BillofmaterialsRow>(_path, "perassemblyqty", BillofmaterialsRow::perassemblyqty, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withPerassemblyqty(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<TypoLocalDateTime, BillofmaterialsRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, BillofmaterialsRow>(_path, "modifieddate", BillofmaterialsRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public OptField<ProductId, BillofmaterialsRow> productassemblyid() {
+      return new OptField<ProductId, BillofmaterialsRow>(_path, "productassemblyid", BillofmaterialsRow::productassemblyid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductassemblyid(value), ProductId.pgType);
+    };
+
+    @Override
+    public Field<ProductId, BillofmaterialsRow> componentid() {
+      return new Field<ProductId, BillofmaterialsRow>(_path, "componentid", BillofmaterialsRow::componentid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withComponentid(value), ProductId.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, BillofmaterialsRow> startdate() {
+      return new Field<TypoLocalDateTime, BillofmaterialsRow>(_path, "startdate", BillofmaterialsRow::startdate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withStartdate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public OptField<TypoLocalDateTime, BillofmaterialsRow> enddate() {
+      return new OptField<TypoLocalDateTime, BillofmaterialsRow>(_path, "enddate", BillofmaterialsRow::enddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withEnddate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public Field<UnitmeasureId, BillofmaterialsRow> unitmeasurecode() {
+      return new Field<UnitmeasureId, BillofmaterialsRow>(_path, "unitmeasurecode", BillofmaterialsRow::unitmeasurecode, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withUnitmeasurecode(value), UnitmeasureId.pgType);
+    };
+
+    @Override
+    public Field<TypoShort, BillofmaterialsRow> bomlevel() {
+      return new Field<TypoShort, BillofmaterialsRow>(_path, "bomlevel", BillofmaterialsRow::bomlevel, Optional.empty(), Optional.of("int2"), (row, value) -> row.withBomlevel(value), TypoShort.pgType);
+    };
+
+    @Override
+    public Field<BigDecimal, BillofmaterialsRow> perassemblyqty() {
+      return new Field<BigDecimal, BillofmaterialsRow>(_path, "perassemblyqty", BillofmaterialsRow::perassemblyqty, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withPerassemblyqty(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, BillofmaterialsRow> modifieddate() {
+      return new Field<TypoLocalDateTime, BillofmaterialsRow>(_path, "modifieddate", BillofmaterialsRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, BillofmaterialsRow>> columns() {
-      return List.of(this.fields().billofmaterialsid(), this.fields().productassemblyid(), this.fields().componentid(), this.fields().startdate(), this.fields().enddate(), this.fields().unitmeasurecode(), this.fields().bomlevel(), this.fields().perassemblyqty(), this.fields().modifieddate());
+      return List.of(this.billofmaterialsid(), this.productassemblyid(), this.componentid(), this.startdate(), this.enddate(), this.unitmeasurecode(), this.bomlevel(), this.perassemblyqty(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<BillofmaterialsFields, BillofmaterialsRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<BillofmaterialsFields, BillofmaterialsRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -116,5 +117,13 @@ public interface BillofmaterialsFields {
 
   default ForeignKey<UnitmeasureFields, UnitmeasureRow> fkUnitmeasure() {
     return ForeignKey.<UnitmeasureFields, UnitmeasureRow>of("production.FK_BillOfMaterials_UnitMeasure_UnitMeasureCode").withColumnPair(unitmeasurecode(), UnitmeasureFields::unitmeasurecode);
+  };
+
+  @Override
+  List<FieldLike<?, BillofmaterialsRow>> columns();
+
+  @Override
+  default RowParser<BillofmaterialsRow> rowParser() {
+    return BillofmaterialsRow._rowParser;
   };
 }

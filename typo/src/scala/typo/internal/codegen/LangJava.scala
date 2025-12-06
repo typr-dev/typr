@@ -560,7 +560,11 @@ case object LangJava extends Lang {
           cls.`extends`.map(x => code" extends $x"),
           cls.implements match {
             case Nil      => None
-            case nonEmpty => Some(code" implements ${nonEmpty.map(x => code"$x").mkCode(", ")}")
+            case nonEmpty =>
+              // In Java, interfaces use 'extends' to inherit from other interfaces,
+              // while classes use 'implements' for interfaces
+              val keyword = if (cls.classType == jvm.ClassType.Interface) "extends" else "implements"
+              Some(nonEmpty.map(x => code" $keyword $x").mkCode(","))
           },
           Some {
             val allBody = fieldsCode ++ constructorCode ++ body
@@ -609,6 +613,23 @@ case object LangJava extends Lang {
                |
                |  $membersCode
                |}""".stripMargin
+
+      // Nested record: record Name(params) implements Interface { members }
+      case rec: jvm.NestedRecord =>
+        val memberCtx = Ctx.Empty
+        val paramsCode = rec.params.map(p => code"${p.tpe} ${p.name}").mkCode(", ")
+        val implementsClause = rec.implements match {
+          case Nil      => jvm.Code.Empty
+          case nonEmpty => code" implements ${nonEmpty.map(renderTree(_, memberCtx)).mkCode(", ")}"
+        }
+        if (rec.members.isEmpty) {
+          code"record ${rec.name}($paramsCode)$implementsClause {}"
+        } else {
+          val membersCode = rec.members.map(m => renderTree(m, memberCtx) ++ code";").mkCode("\n\n")
+          code"""|record ${rec.name}($paramsCode)$implementsClause {
+                 |  $membersCode
+                 |}""".stripMargin
+        }
     }
 
   override def escapedIdent(value: String): String = {
@@ -767,6 +788,9 @@ case object LangJava extends Lang {
 
   override def notEquals(left: jvm.Code, right: jvm.Code): jvm.Code =
     code"!$left.equals($right)"
+
+  override def castFromObject(targetType: jvm.Type, expr: jvm.Code): jvm.Code =
+    code"($targetType) $expr"
 
   val isKeyword: Set[String] =
     Set(

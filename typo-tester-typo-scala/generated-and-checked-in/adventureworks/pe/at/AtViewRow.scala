@@ -27,5 +27,5 @@ case class AtViewRow(
 )
 
 object AtViewRow {
-  val `_rowParser`: RowParser[AtViewRow] = RowParsers.of(AddresstypeId.pgType, AddresstypeId.pgType, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, AtViewRow.apply, row => Array(row.id, row.addresstypeid, row.name, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[AtViewRow] = RowParsers.of(AddresstypeId.pgType, AddresstypeId.pgType, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, AtViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.addresstypeid.asInstanceOf[Object], row.name.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

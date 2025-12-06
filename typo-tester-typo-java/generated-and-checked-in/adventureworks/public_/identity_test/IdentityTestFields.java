@@ -7,49 +7,44 @@ package adventureworks.public_.identity_test;
 
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface IdentityTestFields {
-  final class Impl extends Relation<IdentityTestFields, IdentityTestRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface IdentityTestFields extends FieldsExpr<IdentityTestRow> {
+  record Impl(List<Path> _path) implements IdentityTestFields, Relation<IdentityTestFields, IdentityTestRow> {
+    @Override
+    public Field<Integer, IdentityTestRow> alwaysGenerated() {
+      return new Field<Integer, IdentityTestRow>(_path, "always_generated", IdentityTestRow::alwaysGenerated, Optional.empty(), Optional.of("int4"), (row, value) -> row.withAlwaysGenerated(value), PgTypes.int4);
+    };
 
     @Override
-    public IdentityTestFields fields() {
-      return new IdentityTestFields() {
-               @Override
-               public Field<Integer, IdentityTestRow> alwaysGenerated() {
-                 return new Field<Integer, IdentityTestRow>(_path, "always_generated", IdentityTestRow::alwaysGenerated, Optional.empty(), Optional.of("int4"), (row, value) -> row.withAlwaysGenerated(value), PgTypes.int4);
-               };
-               @Override
-               public Field<Integer, IdentityTestRow> defaultGenerated() {
-                 return new Field<Integer, IdentityTestRow>(_path, "default_generated", IdentityTestRow::defaultGenerated, Optional.empty(), Optional.of("int4"), (row, value) -> row.withDefaultGenerated(value), PgTypes.int4);
-               };
-               @Override
-               public IdField<IdentityTestId, IdentityTestRow> name() {
-                 return new IdField<IdentityTestId, IdentityTestRow>(_path, "name", IdentityTestRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), IdentityTestId.pgType);
-               };
-             };
+    public Field<Integer, IdentityTestRow> defaultGenerated() {
+      return new Field<Integer, IdentityTestRow>(_path, "default_generated", IdentityTestRow::defaultGenerated, Optional.empty(), Optional.of("int4"), (row, value) -> row.withDefaultGenerated(value), PgTypes.int4);
+    };
+
+    @Override
+    public IdField<IdentityTestId, IdentityTestRow> name() {
+      return new IdField<IdentityTestId, IdentityTestRow>(_path, "name", IdentityTestRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), IdentityTestId.pgType);
     };
 
     @Override
     public List<FieldLike<?, IdentityTestRow>> columns() {
-      return List.of(this.fields().alwaysGenerated(), this.fields().defaultGenerated(), this.fields().name());
+      return List.of(this.alwaysGenerated(), this.defaultGenerated(), this.name());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<IdentityTestFields, IdentityTestRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<IdentityTestFields, IdentityTestRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -58,4 +53,12 @@ public interface IdentityTestFields {
   Field<Integer, IdentityTestRow> defaultGenerated();
 
   IdField<IdentityTestId, IdentityTestRow> name();
+
+  @Override
+  List<FieldLike<?, IdentityTestRow>> columns();
+
+  @Override
+  default RowParser<IdentityTestRow> rowParser() {
+    return IdentityTestRow._rowParser;
+  };
 }

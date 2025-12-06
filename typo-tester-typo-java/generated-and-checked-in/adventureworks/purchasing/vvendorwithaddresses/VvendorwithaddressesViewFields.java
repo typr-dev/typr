@@ -9,73 +9,74 @@ import adventureworks.person.businessentity.BusinessentityId;
 import adventureworks.public_.Name;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface VvendorwithaddressesViewFields {
-  final class Impl extends Relation<VvendorwithaddressesViewFields, VvendorwithaddressesViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface VvendorwithaddressesViewFields extends FieldsExpr<VvendorwithaddressesViewRow> {
+  record Impl(List<Path> _path) implements VvendorwithaddressesViewFields, Relation<VvendorwithaddressesViewFields, VvendorwithaddressesViewRow> {
+    @Override
+    public Field<BusinessentityId, VvendorwithaddressesViewRow> businessentityid() {
+      return new Field<BusinessentityId, VvendorwithaddressesViewRow>(_path, "businessentityid", VvendorwithaddressesViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
+    };
 
     @Override
-    public VvendorwithaddressesViewFields fields() {
-      return new VvendorwithaddressesViewFields() {
-               @Override
-               public Field<BusinessentityId, VvendorwithaddressesViewRow> businessentityid() {
-                 return new Field<BusinessentityId, VvendorwithaddressesViewRow>(_path, "businessentityid", VvendorwithaddressesViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<Name, VvendorwithaddressesViewRow> name() {
-                 return new Field<Name, VvendorwithaddressesViewRow>(_path, "name", VvendorwithaddressesViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<Name, VvendorwithaddressesViewRow> addresstype() {
-                 return new Field<Name, VvendorwithaddressesViewRow>(_path, "addresstype", VvendorwithaddressesViewRow::addresstype, Optional.empty(), Optional.empty(), (row, value) -> row.withAddresstype(value), Name.pgType);
-               };
-               @Override
-               public Field</* max 60 chars */ String, VvendorwithaddressesViewRow> addressline1() {
-                 return new Field</* max 60 chars */ String, VvendorwithaddressesViewRow>(_path, "addressline1", VvendorwithaddressesViewRow::addressline1, Optional.empty(), Optional.empty(), (row, value) -> row.withAddressline1(value), PgTypes.text);
-               };
-               @Override
-               public OptField</* max 60 chars */ String, VvendorwithaddressesViewRow> addressline2() {
-                 return new OptField</* max 60 chars */ String, VvendorwithaddressesViewRow>(_path, "addressline2", VvendorwithaddressesViewRow::addressline2, Optional.empty(), Optional.empty(), (row, value) -> row.withAddressline2(value), PgTypes.text);
-               };
-               @Override
-               public Field</* max 30 chars */ String, VvendorwithaddressesViewRow> city() {
-                 return new Field</* max 30 chars */ String, VvendorwithaddressesViewRow>(_path, "city", VvendorwithaddressesViewRow::city, Optional.empty(), Optional.empty(), (row, value) -> row.withCity(value), PgTypes.text);
-               };
-               @Override
-               public Field<Name, VvendorwithaddressesViewRow> stateprovincename() {
-                 return new Field<Name, VvendorwithaddressesViewRow>(_path, "stateprovincename", VvendorwithaddressesViewRow::stateprovincename, Optional.empty(), Optional.empty(), (row, value) -> row.withStateprovincename(value), Name.pgType);
-               };
-               @Override
-               public Field</* max 15 chars */ String, VvendorwithaddressesViewRow> postalcode() {
-                 return new Field</* max 15 chars */ String, VvendorwithaddressesViewRow>(_path, "postalcode", VvendorwithaddressesViewRow::postalcode, Optional.empty(), Optional.empty(), (row, value) -> row.withPostalcode(value), PgTypes.text);
-               };
-               @Override
-               public Field<Name, VvendorwithaddressesViewRow> countryregionname() {
-                 return new Field<Name, VvendorwithaddressesViewRow>(_path, "countryregionname", VvendorwithaddressesViewRow::countryregionname, Optional.empty(), Optional.empty(), (row, value) -> row.withCountryregionname(value), Name.pgType);
-               };
-             };
+    public Field<Name, VvendorwithaddressesViewRow> name() {
+      return new Field<Name, VvendorwithaddressesViewRow>(_path, "name", VvendorwithaddressesViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<Name, VvendorwithaddressesViewRow> addresstype() {
+      return new Field<Name, VvendorwithaddressesViewRow>(_path, "addresstype", VvendorwithaddressesViewRow::addresstype, Optional.empty(), Optional.empty(), (row, value) -> row.withAddresstype(value), Name.pgType);
+    };
+
+    @Override
+    public Field</* max 60 chars */ String, VvendorwithaddressesViewRow> addressline1() {
+      return new Field</* max 60 chars */ String, VvendorwithaddressesViewRow>(_path, "addressline1", VvendorwithaddressesViewRow::addressline1, Optional.empty(), Optional.empty(), (row, value) -> row.withAddressline1(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField</* max 60 chars */ String, VvendorwithaddressesViewRow> addressline2() {
+      return new OptField</* max 60 chars */ String, VvendorwithaddressesViewRow>(_path, "addressline2", VvendorwithaddressesViewRow::addressline2, Optional.empty(), Optional.empty(), (row, value) -> row.withAddressline2(value), PgTypes.text);
+    };
+
+    @Override
+    public Field</* max 30 chars */ String, VvendorwithaddressesViewRow> city() {
+      return new Field</* max 30 chars */ String, VvendorwithaddressesViewRow>(_path, "city", VvendorwithaddressesViewRow::city, Optional.empty(), Optional.empty(), (row, value) -> row.withCity(value), PgTypes.text);
+    };
+
+    @Override
+    public Field<Name, VvendorwithaddressesViewRow> stateprovincename() {
+      return new Field<Name, VvendorwithaddressesViewRow>(_path, "stateprovincename", VvendorwithaddressesViewRow::stateprovincename, Optional.empty(), Optional.empty(), (row, value) -> row.withStateprovincename(value), Name.pgType);
+    };
+
+    @Override
+    public Field</* max 15 chars */ String, VvendorwithaddressesViewRow> postalcode() {
+      return new Field</* max 15 chars */ String, VvendorwithaddressesViewRow>(_path, "postalcode", VvendorwithaddressesViewRow::postalcode, Optional.empty(), Optional.empty(), (row, value) -> row.withPostalcode(value), PgTypes.text);
+    };
+
+    @Override
+    public Field<Name, VvendorwithaddressesViewRow> countryregionname() {
+      return new Field<Name, VvendorwithaddressesViewRow>(_path, "countryregionname", VvendorwithaddressesViewRow::countryregionname, Optional.empty(), Optional.empty(), (row, value) -> row.withCountryregionname(value), Name.pgType);
     };
 
     @Override
     public List<FieldLike<?, VvendorwithaddressesViewRow>> columns() {
-      return List.of(this.fields().businessentityid(), this.fields().name(), this.fields().addresstype(), this.fields().addressline1(), this.fields().addressline2(), this.fields().city(), this.fields().stateprovincename(), this.fields().postalcode(), this.fields().countryregionname());
+      return List.of(this.businessentityid(), this.name(), this.addresstype(), this.addressline1(), this.addressline2(), this.city(), this.stateprovincename(), this.postalcode(), this.countryregionname());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<VvendorwithaddressesViewFields, VvendorwithaddressesViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<VvendorwithaddressesViewFields, VvendorwithaddressesViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -96,4 +97,12 @@ public interface VvendorwithaddressesViewFields {
   Field</* max 15 chars */ String, VvendorwithaddressesViewRow> postalcode();
 
   Field<Name, VvendorwithaddressesViewRow> countryregionname();
+
+  @Override
+  List<FieldLike<?, VvendorwithaddressesViewRow>> columns();
+
+  @Override
+  default RowParser<VvendorwithaddressesViewRow> rowParser() {
+    return VvendorwithaddressesViewRow._rowParser;
+  };
 }

@@ -11,13 +11,15 @@ import adventureworks.humanresources.department.DepartmentId
 import adventureworks.humanresources.shift.ShiftId
 import adventureworks.person.businessentity.BusinessentityId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait EdhViewFields {
+trait EdhViewFields extends FieldsExpr[EdhViewRow] {
   def id: Field[BusinessentityId, EdhViewRow]
 
   def businessentityid: Field[BusinessentityId, EdhViewRow]
@@ -31,97 +33,103 @@ trait EdhViewFields {
   def enddate: OptField[TypoLocalDate, EdhViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, EdhViewRow]
+
+  override def columns: java.util.List[FieldLike[?, EdhViewRow]]
+
+  override def rowParser: RowParser[EdhViewRow] = EdhViewRow._rowParser
 }
 
 object EdhViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[EdhViewFields, EdhViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends EdhViewFields with Relation[EdhViewFields, EdhViewRow] {
 
-    override lazy val fields: EdhViewFields = {
-      new EdhViewFields {
-        override def id: Field[BusinessentityId, EdhViewRow] = {
-          new Field[BusinessentityId, EdhViewRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def businessentityid: Field[BusinessentityId, EdhViewRow] = {
-          new Field[BusinessentityId, EdhViewRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def departmentid: Field[DepartmentId, EdhViewRow] = {
-          new Field[DepartmentId, EdhViewRow](
-            _path,
-            "departmentid",
-            _.departmentid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(departmentid = value),
-            DepartmentId.pgType
-          )
-        }
-        override def shiftid: Field[ShiftId, EdhViewRow] = {
-          new Field[ShiftId, EdhViewRow](
-            _path,
-            "shiftid",
-            _.shiftid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(shiftid = value),
-            ShiftId.pgType
-          )
-        }
-        override def startdate: Field[TypoLocalDate, EdhViewRow] = {
-          new Field[TypoLocalDate, EdhViewRow](
-            _path,
-            "startdate",
-            _.startdate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(startdate = value),
-            TypoLocalDate.pgType
-          )
-        }
-        override def enddate: OptField[TypoLocalDate, EdhViewRow] = {
-          new OptField[TypoLocalDate, EdhViewRow](
-            _path,
-            "enddate",
-            _.enddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(enddate = value),
-            TypoLocalDate.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, EdhViewRow] = {
-          new Field[TypoLocalDateTime, EdhViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def id: Field[BusinessentityId, EdhViewRow] = {
+      new Field[BusinessentityId, EdhViewRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        BusinessentityId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, EdhViewRow]] = java.util.List.of(this.fields.id, this.fields.businessentityid, this.fields.departmentid, this.fields.shiftid, this.fields.startdate, this.fields.enddate, this.fields.modifieddate)
+    override def businessentityid: Field[BusinessentityId, EdhViewRow] = {
+      new Field[BusinessentityId, EdhViewRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def departmentid: Field[DepartmentId, EdhViewRow] = {
+      new Field[DepartmentId, EdhViewRow](
+        _path,
+        "departmentid",
+        _.departmentid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(departmentid = value),
+        DepartmentId.pgType
+      )
+    }
+
+    override def shiftid: Field[ShiftId, EdhViewRow] = {
+      new Field[ShiftId, EdhViewRow](
+        _path,
+        "shiftid",
+        _.shiftid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(shiftid = value),
+        ShiftId.pgType
+      )
+    }
+
+    override def startdate: Field[TypoLocalDate, EdhViewRow] = {
+      new Field[TypoLocalDate, EdhViewRow](
+        _path,
+        "startdate",
+        _.startdate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(startdate = value),
+        TypoLocalDate.pgType
+      )
+    }
+
+    override def enddate: OptField[TypoLocalDate, EdhViewRow] = {
+      new OptField[TypoLocalDate, EdhViewRow](
+        _path,
+        "enddate",
+        _.enddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(enddate = value),
+        TypoLocalDate.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, EdhViewRow] = {
+      new Field[TypoLocalDateTime, EdhViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, EdhViewRow]] = java.util.List.of(this.id, this.businessentityid, this.departmentid, this.shiftid, this.startdate, this.enddate, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[EdhViewFields, EdhViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[EdhViewFields, EdhViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

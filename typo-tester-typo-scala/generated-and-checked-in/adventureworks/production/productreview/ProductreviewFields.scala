@@ -11,6 +11,7 @@ import adventureworks.production.product.ProductId
 import adventureworks.production.product.ProductRow
 import adventureworks.public.Name
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -19,8 +20,9 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait ProductreviewFields {
+trait ProductreviewFields extends FieldsExpr[ProductreviewRow] {
   def productreviewid: IdField[ProductreviewId, ProductreviewRow]
 
   def productid: Field[ProductId, ProductreviewRow]
@@ -38,108 +40,115 @@ trait ProductreviewFields {
   def modifieddate: Field[TypoLocalDateTime, ProductreviewRow]
 
   def fkProduct: ForeignKey[ProductFields, ProductRow] = ForeignKey.of[ProductFields, ProductRow]("production.FK_ProductReview_Product_ProductID").withColumnPair(productid, _.productid)
+
+  override def columns: java.util.List[FieldLike[?, ProductreviewRow]]
+
+  override def rowParser: RowParser[ProductreviewRow] = ProductreviewRow._rowParser
 }
 
 object ProductreviewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[ProductreviewFields, ProductreviewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends ProductreviewFields with Relation[ProductreviewFields, ProductreviewRow] {
 
-    override lazy val fields: ProductreviewFields = {
-      new ProductreviewFields {
-        override def productreviewid: IdField[ProductreviewId, ProductreviewRow] = {
-          new IdField[ProductreviewId, ProductreviewRow](
-            _path,
-            "productreviewid",
-            _.productreviewid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(productreviewid = value),
-            ProductreviewId.pgType
-          )
-        }
-        override def productid: Field[ProductId, ProductreviewRow] = {
-          new Field[ProductId, ProductreviewRow](
-            _path,
-            "productid",
-            _.productid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(productid = value),
-            ProductId.pgType
-          )
-        }
-        override def reviewername: Field[Name, ProductreviewRow] = {
-          new Field[Name, ProductreviewRow](
-            _path,
-            "reviewername",
-            _.reviewername,
-            Optional.empty(),
-            Optional.of("varchar"),
-            (row, value) => row.copy(reviewername = value),
-            Name.pgType
-          )
-        }
-        override def reviewdate: Field[TypoLocalDateTime, ProductreviewRow] = {
-          new Field[TypoLocalDateTime, ProductreviewRow](
-            _path,
-            "reviewdate",
-            _.reviewdate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(reviewdate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def emailaddress: Field[/* max 50 chars */ String, ProductreviewRow] = {
-          new Field[/* max 50 chars */ String, ProductreviewRow](
-            _path,
-            "emailaddress",
-            _.emailaddress,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(emailaddress = value),
-            PgTypes.text
-          )
-        }
-        override def rating: Field[Integer, ProductreviewRow] = {
-          new Field[Integer, ProductreviewRow](
-            _path,
-            "rating",
-            _.rating,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(rating = value),
-            PgTypes.int4
-          )
-        }
-        override def comments: OptField[/* max 3850 chars */ String, ProductreviewRow] = {
-          new OptField[/* max 3850 chars */ String, ProductreviewRow](
-            _path,
-            "comments",
-            _.comments,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(comments = value),
-            PgTypes.text
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, ProductreviewRow] = {
-          new Field[TypoLocalDateTime, ProductreviewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def productreviewid: IdField[ProductreviewId, ProductreviewRow] = {
+      new IdField[ProductreviewId, ProductreviewRow](
+        _path,
+        "productreviewid",
+        _.productreviewid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(productreviewid = value),
+        ProductreviewId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, ProductreviewRow]] = java.util.List.of(this.fields.productreviewid, this.fields.productid, this.fields.reviewername, this.fields.reviewdate, this.fields.emailaddress, this.fields.rating, this.fields.comments, this.fields.modifieddate)
+    override def productid: Field[ProductId, ProductreviewRow] = {
+      new Field[ProductId, ProductreviewRow](
+        _path,
+        "productid",
+        _.productid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(productid = value),
+        ProductId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def reviewername: Field[Name, ProductreviewRow] = {
+      new Field[Name, ProductreviewRow](
+        _path,
+        "reviewername",
+        _.reviewername,
+        Optional.empty(),
+        Optional.of("varchar"),
+        (row, value) => row.copy(reviewername = value),
+        Name.pgType
+      )
+    }
+
+    override def reviewdate: Field[TypoLocalDateTime, ProductreviewRow] = {
+      new Field[TypoLocalDateTime, ProductreviewRow](
+        _path,
+        "reviewdate",
+        _.reviewdate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(reviewdate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def emailaddress: Field[/* max 50 chars */ String, ProductreviewRow] = {
+      new Field[/* max 50 chars */ String, ProductreviewRow](
+        _path,
+        "emailaddress",
+        _.emailaddress,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(emailaddress = value),
+        PgTypes.text
+      )
+    }
+
+    override def rating: Field[Integer, ProductreviewRow] = {
+      new Field[Integer, ProductreviewRow](
+        _path,
+        "rating",
+        _.rating,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(rating = value),
+        PgTypes.int4
+      )
+    }
+
+    override def comments: OptField[/* max 3850 chars */ String, ProductreviewRow] = {
+      new OptField[/* max 3850 chars */ String, ProductreviewRow](
+        _path,
+        "comments",
+        _.comments,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(comments = value),
+        PgTypes.text
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, ProductreviewRow] = {
+      new Field[TypoLocalDateTime, ProductreviewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, ProductreviewRow]] = java.util.List.of(this.productreviewid, this.productid, this.reviewername, this.reviewdate, this.emailaddress, this.rating, this.comments, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[ProductreviewFields, ProductreviewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[ProductreviewFields, ProductreviewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

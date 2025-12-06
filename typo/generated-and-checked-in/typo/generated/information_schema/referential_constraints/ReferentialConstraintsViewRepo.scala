@@ -5,10 +5,7 @@
  *
  * (If you're developing `typo` and want to change it: run `bleep generate-sources`)
  */
-package typo
-package generated
-package information_schema
-package referential_constraints
+package typo.generated.information_schema.referential_constraints
 
 import java.sql.Connection
 

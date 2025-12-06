@@ -11,64 +11,63 @@ import adventureworks.person.businessentity.BusinessentityId;
 import adventureworks.sales.salesterritory.SalesterritoryId;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface SthViewFields {
-  final class Impl extends Relation<SthViewFields, SthViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface SthViewFields extends FieldsExpr<SthViewRow> {
+  record Impl(List<Path> _path) implements SthViewFields, Relation<SthViewFields, SthViewRow> {
+    @Override
+    public Field<SalesterritoryId, SthViewRow> id() {
+      return new Field<SalesterritoryId, SthViewRow>(_path, "id", SthViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), SalesterritoryId.pgType);
+    };
 
     @Override
-    public SthViewFields fields() {
-      return new SthViewFields() {
-               @Override
-               public Field<SalesterritoryId, SthViewRow> id() {
-                 return new Field<SalesterritoryId, SthViewRow>(_path, "id", SthViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), SalesterritoryId.pgType);
-               };
-               @Override
-               public Field<BusinessentityId, SthViewRow> businessentityid() {
-                 return new Field<BusinessentityId, SthViewRow>(_path, "businessentityid", SthViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<SalesterritoryId, SthViewRow> territoryid() {
-                 return new Field<SalesterritoryId, SthViewRow>(_path, "territoryid", SthViewRow::territoryid, Optional.empty(), Optional.empty(), (row, value) -> row.withTerritoryid(value), SalesterritoryId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, SthViewRow> startdate() {
-                 return new Field<TypoLocalDateTime, SthViewRow>(_path, "startdate", SthViewRow::startdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withStartdate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public OptField<TypoLocalDateTime, SthViewRow> enddate() {
-                 return new OptField<TypoLocalDateTime, SthViewRow>(_path, "enddate", SthViewRow::enddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withEnddate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public Field<TypoUUID, SthViewRow> rowguid() {
-                 return new Field<TypoUUID, SthViewRow>(_path, "rowguid", SthViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, SthViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, SthViewRow>(_path, "modifieddate", SthViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<BusinessentityId, SthViewRow> businessentityid() {
+      return new Field<BusinessentityId, SthViewRow>(_path, "businessentityid", SthViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
+    };
+
+    @Override
+    public Field<SalesterritoryId, SthViewRow> territoryid() {
+      return new Field<SalesterritoryId, SthViewRow>(_path, "territoryid", SthViewRow::territoryid, Optional.empty(), Optional.empty(), (row, value) -> row.withTerritoryid(value), SalesterritoryId.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, SthViewRow> startdate() {
+      return new Field<TypoLocalDateTime, SthViewRow>(_path, "startdate", SthViewRow::startdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withStartdate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public OptField<TypoLocalDateTime, SthViewRow> enddate() {
+      return new OptField<TypoLocalDateTime, SthViewRow>(_path, "enddate", SthViewRow::enddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withEnddate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public Field<TypoUUID, SthViewRow> rowguid() {
+      return new Field<TypoUUID, SthViewRow>(_path, "rowguid", SthViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, SthViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, SthViewRow>(_path, "modifieddate", SthViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, SthViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().businessentityid(), this.fields().territoryid(), this.fields().startdate(), this.fields().enddate(), this.fields().rowguid(), this.fields().modifieddate());
+      return List.of(this.id(), this.businessentityid(), this.territoryid(), this.startdate(), this.enddate(), this.rowguid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<SthViewFields, SthViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<SthViewFields, SthViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -85,4 +84,12 @@ public interface SthViewFields {
   Field<TypoUUID, SthViewRow> rowguid();
 
   Field<TypoLocalDateTime, SthViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, SthViewRow>> columns();
+
+  @Override
+  default RowParser<SthViewRow> rowParser() {
+    return SthViewRow._rowParser;
+  };
 }

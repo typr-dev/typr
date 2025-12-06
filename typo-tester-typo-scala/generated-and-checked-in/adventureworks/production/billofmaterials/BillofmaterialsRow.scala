@@ -85,7 +85,7 @@ case class BillofmaterialsRow(
 }
 
 object BillofmaterialsRow {
-  val `_rowParser`: RowParser[BillofmaterialsRow] = RowParsers.of(PgTypes.int4, ProductId.pgType.opt(), ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), UnitmeasureId.pgType, TypoShort.pgType, PgTypes.numeric, TypoLocalDateTime.pgType, BillofmaterialsRow.apply, row => Array(row.billofmaterialsid, row.productassemblyid, row.componentid, row.startdate, row.enddate, row.unitmeasurecode, row.bomlevel, row.perassemblyqty, row.modifieddate))
+  val `_rowParser`: RowParser[BillofmaterialsRow] = RowParsers.of(PgTypes.int4, ProductId.pgType.opt(), ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), UnitmeasureId.pgType, TypoShort.pgType, PgTypes.numeric, TypoLocalDateTime.pgType, BillofmaterialsRow.apply, row => Array[Object](row.billofmaterialsid.asInstanceOf[Object], row.productassemblyid.asInstanceOf[Object], row.componentid.asInstanceOf[Object], row.startdate.asInstanceOf[Object], row.enddate.asInstanceOf[Object], row.unitmeasurecode.asInstanceOf[Object], row.bomlevel.asInstanceOf[Object], row.perassemblyqty.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   given pgText: PgText[BillofmaterialsRow] = PgText.from(`_rowParser`)
 }

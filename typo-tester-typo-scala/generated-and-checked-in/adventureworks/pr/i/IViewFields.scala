@@ -9,13 +9,15 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoXml
 import adventureworks.production.illustration.IllustrationId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait IViewFields {
+trait IViewFields extends FieldsExpr[IViewRow] {
   def id: Field[IllustrationId, IViewRow]
 
   def illustrationid: Field[IllustrationId, IViewRow]
@@ -23,64 +25,67 @@ trait IViewFields {
   def diagram: OptField[TypoXml, IViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, IViewRow]
+
+  override def columns: java.util.List[FieldLike[?, IViewRow]]
+
+  override def rowParser: RowParser[IViewRow] = IViewRow._rowParser
 }
 
 object IViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[IViewFields, IViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends IViewFields with Relation[IViewFields, IViewRow] {
 
-    override lazy val fields: IViewFields = {
-      new IViewFields {
-        override def id: Field[IllustrationId, IViewRow] = {
-          new Field[IllustrationId, IViewRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            IllustrationId.pgType
-          )
-        }
-        override def illustrationid: Field[IllustrationId, IViewRow] = {
-          new Field[IllustrationId, IViewRow](
-            _path,
-            "illustrationid",
-            _.illustrationid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(illustrationid = value),
-            IllustrationId.pgType
-          )
-        }
-        override def diagram: OptField[TypoXml, IViewRow] = {
-          new OptField[TypoXml, IViewRow](
-            _path,
-            "diagram",
-            _.diagram,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(diagram = value),
-            TypoXml.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, IViewRow] = {
-          new Field[TypoLocalDateTime, IViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def id: Field[IllustrationId, IViewRow] = {
+      new Field[IllustrationId, IViewRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        IllustrationId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, IViewRow]] = java.util.List.of(this.fields.id, this.fields.illustrationid, this.fields.diagram, this.fields.modifieddate)
+    override def illustrationid: Field[IllustrationId, IViewRow] = {
+      new Field[IllustrationId, IViewRow](
+        _path,
+        "illustrationid",
+        _.illustrationid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(illustrationid = value),
+        IllustrationId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def diagram: OptField[TypoXml, IViewRow] = {
+      new OptField[TypoXml, IViewRow](
+        _path,
+        "diagram",
+        _.diagram,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(diagram = value),
+        TypoXml.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, IViewRow] = {
+      new Field[TypoLocalDateTime, IViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, IViewRow]] = java.util.List.of(this.id, this.illustrationid, this.diagram, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[IViewFields, IViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[IViewFields, IViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

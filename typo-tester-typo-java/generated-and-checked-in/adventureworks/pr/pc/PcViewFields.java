@@ -11,55 +11,52 @@ import adventureworks.production.productcategory.ProductcategoryId;
 import adventureworks.public_.Name;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface PcViewFields {
-  final class Impl extends Relation<PcViewFields, PcViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PcViewFields extends FieldsExpr<PcViewRow> {
+  record Impl(List<Path> _path) implements PcViewFields, Relation<PcViewFields, PcViewRow> {
+    @Override
+    public Field<ProductcategoryId, PcViewRow> id() {
+      return new Field<ProductcategoryId, PcViewRow>(_path, "id", PcViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ProductcategoryId.pgType);
+    };
 
     @Override
-    public PcViewFields fields() {
-      return new PcViewFields() {
-               @Override
-               public Field<ProductcategoryId, PcViewRow> id() {
-                 return new Field<ProductcategoryId, PcViewRow>(_path, "id", PcViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ProductcategoryId.pgType);
-               };
-               @Override
-               public Field<ProductcategoryId, PcViewRow> productcategoryid() {
-                 return new Field<ProductcategoryId, PcViewRow>(_path, "productcategoryid", PcViewRow::productcategoryid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductcategoryid(value), ProductcategoryId.pgType);
-               };
-               @Override
-               public Field<Name, PcViewRow> name() {
-                 return new Field<Name, PcViewRow>(_path, "name", PcViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<TypoUUID, PcViewRow> rowguid() {
-                 return new Field<TypoUUID, PcViewRow>(_path, "rowguid", PcViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PcViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, PcViewRow>(_path, "modifieddate", PcViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<ProductcategoryId, PcViewRow> productcategoryid() {
+      return new Field<ProductcategoryId, PcViewRow>(_path, "productcategoryid", PcViewRow::productcategoryid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductcategoryid(value), ProductcategoryId.pgType);
+    };
+
+    @Override
+    public Field<Name, PcViewRow> name() {
+      return new Field<Name, PcViewRow>(_path, "name", PcViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<TypoUUID, PcViewRow> rowguid() {
+      return new Field<TypoUUID, PcViewRow>(_path, "rowguid", PcViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PcViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, PcViewRow>(_path, "modifieddate", PcViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, PcViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().productcategoryid(), this.fields().name(), this.fields().rowguid(), this.fields().modifieddate());
+      return List.of(this.id(), this.productcategoryid(), this.name(), this.rowguid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PcViewFields, PcViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PcViewFields, PcViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -72,4 +69,12 @@ public interface PcViewFields {
   Field<TypoUUID, PcViewRow> rowguid();
 
   Field<TypoLocalDateTime, PcViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, PcViewRow>> columns();
+
+  @Override
+  default RowParser<PcViewRow> rowParser() {
+    return PcViewRow._rowParser;
+  };
 }

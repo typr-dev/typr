@@ -8,6 +8,7 @@ package adventureworks.sales.specialoffer
 import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoUUID
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
@@ -15,8 +16,9 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait SpecialofferFields {
+trait SpecialofferFields extends FieldsExpr[SpecialofferRow] {
   def specialofferid: IdField[SpecialofferId, SpecialofferRow]
 
   def description: Field[/* max 255 chars */ String, SpecialofferRow]
@@ -38,141 +40,151 @@ trait SpecialofferFields {
   def rowguid: Field[TypoUUID, SpecialofferRow]
 
   def modifieddate: Field[TypoLocalDateTime, SpecialofferRow]
+
+  override def columns: java.util.List[FieldLike[?, SpecialofferRow]]
+
+  override def rowParser: RowParser[SpecialofferRow] = SpecialofferRow._rowParser
 }
 
 object SpecialofferFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[SpecialofferFields, SpecialofferRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends SpecialofferFields with Relation[SpecialofferFields, SpecialofferRow] {
 
-    override lazy val fields: SpecialofferFields = {
-      new SpecialofferFields {
-        override def specialofferid: IdField[SpecialofferId, SpecialofferRow] = {
-          new IdField[SpecialofferId, SpecialofferRow](
-            _path,
-            "specialofferid",
-            _.specialofferid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(specialofferid = value),
-            SpecialofferId.pgType
-          )
-        }
-        override def description: Field[/* max 255 chars */ String, SpecialofferRow] = {
-          new Field[/* max 255 chars */ String, SpecialofferRow](
-            _path,
-            "description",
-            _.description,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(description = value),
-            PgTypes.text
-          )
-        }
-        override def discountpct: Field[java.math.BigDecimal, SpecialofferRow] = {
-          new Field[java.math.BigDecimal, SpecialofferRow](
-            _path,
-            "discountpct",
-            _.discountpct,
-            Optional.empty(),
-            Optional.of("numeric"),
-            (row, value) => row.copy(discountpct = value),
-            PgTypes.numeric
-          )
-        }
-        override def `type`: Field[/* max 50 chars */ String, SpecialofferRow] = {
-          new Field[/* max 50 chars */ String, SpecialofferRow](
-            _path,
-            "type",
-            _.`type`,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(`type` = value),
-            PgTypes.text
-          )
-        }
-        override def category: Field[/* max 50 chars */ String, SpecialofferRow] = {
-          new Field[/* max 50 chars */ String, SpecialofferRow](
-            _path,
-            "category",
-            _.category,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(category = value),
-            PgTypes.text
-          )
-        }
-        override def startdate: Field[TypoLocalDateTime, SpecialofferRow] = {
-          new Field[TypoLocalDateTime, SpecialofferRow](
-            _path,
-            "startdate",
-            _.startdate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(startdate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def enddate: Field[TypoLocalDateTime, SpecialofferRow] = {
-          new Field[TypoLocalDateTime, SpecialofferRow](
-            _path,
-            "enddate",
-            _.enddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(enddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def minqty: Field[Integer, SpecialofferRow] = {
-          new Field[Integer, SpecialofferRow](
-            _path,
-            "minqty",
-            _.minqty,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(minqty = value),
-            PgTypes.int4
-          )
-        }
-        override def maxqty: OptField[Integer, SpecialofferRow] = {
-          new OptField[Integer, SpecialofferRow](
-            _path,
-            "maxqty",
-            _.maxqty,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(maxqty = value),
-            PgTypes.int4
-          )
-        }
-        override def rowguid: Field[TypoUUID, SpecialofferRow] = {
-          new Field[TypoUUID, SpecialofferRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.of("uuid"),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, SpecialofferRow] = {
-          new Field[TypoLocalDateTime, SpecialofferRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def specialofferid: IdField[SpecialofferId, SpecialofferRow] = {
+      new IdField[SpecialofferId, SpecialofferRow](
+        _path,
+        "specialofferid",
+        _.specialofferid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(specialofferid = value),
+        SpecialofferId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, SpecialofferRow]] = java.util.List.of(this.fields.specialofferid, this.fields.description, this.fields.discountpct, this.fields.`type`, this.fields.category, this.fields.startdate, this.fields.enddate, this.fields.minqty, this.fields.maxqty, this.fields.rowguid, this.fields.modifieddate)
+    override def description: Field[/* max 255 chars */ String, SpecialofferRow] = {
+      new Field[/* max 255 chars */ String, SpecialofferRow](
+        _path,
+        "description",
+        _.description,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(description = value),
+        PgTypes.text
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def discountpct: Field[java.math.BigDecimal, SpecialofferRow] = {
+      new Field[java.math.BigDecimal, SpecialofferRow](
+        _path,
+        "discountpct",
+        _.discountpct,
+        Optional.empty(),
+        Optional.of("numeric"),
+        (row, value) => row.copy(discountpct = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def `type`: Field[/* max 50 chars */ String, SpecialofferRow] = {
+      new Field[/* max 50 chars */ String, SpecialofferRow](
+        _path,
+        "type",
+        _.`type`,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(`type` = value),
+        PgTypes.text
+      )
+    }
+
+    override def category: Field[/* max 50 chars */ String, SpecialofferRow] = {
+      new Field[/* max 50 chars */ String, SpecialofferRow](
+        _path,
+        "category",
+        _.category,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(category = value),
+        PgTypes.text
+      )
+    }
+
+    override def startdate: Field[TypoLocalDateTime, SpecialofferRow] = {
+      new Field[TypoLocalDateTime, SpecialofferRow](
+        _path,
+        "startdate",
+        _.startdate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(startdate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def enddate: Field[TypoLocalDateTime, SpecialofferRow] = {
+      new Field[TypoLocalDateTime, SpecialofferRow](
+        _path,
+        "enddate",
+        _.enddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(enddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def minqty: Field[Integer, SpecialofferRow] = {
+      new Field[Integer, SpecialofferRow](
+        _path,
+        "minqty",
+        _.minqty,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(minqty = value),
+        PgTypes.int4
+      )
+    }
+
+    override def maxqty: OptField[Integer, SpecialofferRow] = {
+      new OptField[Integer, SpecialofferRow](
+        _path,
+        "maxqty",
+        _.maxqty,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(maxqty = value),
+        PgTypes.int4
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, SpecialofferRow] = {
+      new Field[TypoUUID, SpecialofferRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.of("uuid"),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, SpecialofferRow] = {
+      new Field[TypoLocalDateTime, SpecialofferRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, SpecialofferRow]] = java.util.List.of(this.specialofferid, this.description, this.discountpct, this.`type`, this.category, this.startdate, this.enddate, this.minqty, this.maxqty, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[SpecialofferFields, SpecialofferRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[SpecialofferFields, SpecialofferRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

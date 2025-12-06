@@ -10,51 +10,47 @@ import adventureworks.production.document.DocumentId;
 import adventureworks.production.product.ProductId;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface PdocViewFields {
-  final class Impl extends Relation<PdocViewFields, PdocViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PdocViewFields extends FieldsExpr<PdocViewRow> {
+  record Impl(List<Path> _path) implements PdocViewFields, Relation<PdocViewFields, PdocViewRow> {
+    @Override
+    public Field<ProductId, PdocViewRow> id() {
+      return new Field<ProductId, PdocViewRow>(_path, "id", PdocViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ProductId.pgType);
+    };
 
     @Override
-    public PdocViewFields fields() {
-      return new PdocViewFields() {
-               @Override
-               public Field<ProductId, PdocViewRow> id() {
-                 return new Field<ProductId, PdocViewRow>(_path, "id", PdocViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ProductId.pgType);
-               };
-               @Override
-               public Field<ProductId, PdocViewRow> productid() {
-                 return new Field<ProductId, PdocViewRow>(_path, "productid", PdocViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PdocViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, PdocViewRow>(_path, "modifieddate", PdocViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public Field<DocumentId, PdocViewRow> documentnode() {
-                 return new Field<DocumentId, PdocViewRow>(_path, "documentnode", PdocViewRow::documentnode, Optional.empty(), Optional.empty(), (row, value) -> row.withDocumentnode(value), DocumentId.pgType);
-               };
-             };
+    public Field<ProductId, PdocViewRow> productid() {
+      return new Field<ProductId, PdocViewRow>(_path, "productid", PdocViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PdocViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, PdocViewRow>(_path, "modifieddate", PdocViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public Field<DocumentId, PdocViewRow> documentnode() {
+      return new Field<DocumentId, PdocViewRow>(_path, "documentnode", PdocViewRow::documentnode, Optional.empty(), Optional.empty(), (row, value) -> row.withDocumentnode(value), DocumentId.pgType);
     };
 
     @Override
     public List<FieldLike<?, PdocViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().productid(), this.fields().modifieddate(), this.fields().documentnode());
+      return List.of(this.id(), this.productid(), this.modifieddate(), this.documentnode());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PdocViewFields, PdocViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PdocViewFields, PdocViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -65,4 +61,12 @@ public interface PdocViewFields {
   Field<TypoLocalDateTime, PdocViewRow> modifieddate();
 
   Field<DocumentId, PdocViewRow> documentnode();
+
+  @Override
+  List<FieldLike<?, PdocViewRow>> columns();
+
+  @Override
+  default RowParser<PdocViewRow> rowParser() {
+    return PdocViewRow._rowParser;
+  };
 }

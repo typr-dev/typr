@@ -10,51 +10,47 @@ import adventureworks.production.culture.CultureId;
 import adventureworks.public_.Name;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface CViewFields {
-  final class Impl extends Relation<CViewFields, CViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface CViewFields extends FieldsExpr<CViewRow> {
+  record Impl(List<Path> _path) implements CViewFields, Relation<CViewFields, CViewRow> {
+    @Override
+    public Field<CultureId, CViewRow> id() {
+      return new Field<CultureId, CViewRow>(_path, "id", CViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), CultureId.pgType);
+    };
 
     @Override
-    public CViewFields fields() {
-      return new CViewFields() {
-               @Override
-               public Field<CultureId, CViewRow> id() {
-                 return new Field<CultureId, CViewRow>(_path, "id", CViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), CultureId.pgType);
-               };
-               @Override
-               public Field<CultureId, CViewRow> cultureid() {
-                 return new Field<CultureId, CViewRow>(_path, "cultureid", CViewRow::cultureid, Optional.empty(), Optional.empty(), (row, value) -> row.withCultureid(value), CultureId.pgType);
-               };
-               @Override
-               public Field<Name, CViewRow> name() {
-                 return new Field<Name, CViewRow>(_path, "name", CViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, CViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, CViewRow>(_path, "modifieddate", CViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<CultureId, CViewRow> cultureid() {
+      return new Field<CultureId, CViewRow>(_path, "cultureid", CViewRow::cultureid, Optional.empty(), Optional.empty(), (row, value) -> row.withCultureid(value), CultureId.pgType);
+    };
+
+    @Override
+    public Field<Name, CViewRow> name() {
+      return new Field<Name, CViewRow>(_path, "name", CViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, CViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, CViewRow>(_path, "modifieddate", CViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, CViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().cultureid(), this.fields().name(), this.fields().modifieddate());
+      return List.of(this.id(), this.cultureid(), this.name(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<CViewFields, CViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<CViewFields, CViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -65,4 +61,12 @@ public interface CViewFields {
   Field<Name, CViewRow> name();
 
   Field<TypoLocalDateTime, CViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, CViewRow>> columns();
+
+  @Override
+  default RowParser<CViewRow> rowParser() {
+    return CViewRow._rowParser;
+  };
 }

@@ -5,8 +5,7 @@
  *
  * (If you're developing `typo` and want to change it: run `bleep generate-sources`)
  */
-package typo
-package generated
+package typo.generated
 
 
 
@@ -36,7 +35,7 @@ object Text {
   def instance[A](f: (A, StringBuilder) => Unit): Text[A] = (sb, a) => f(sb, a)
 
   // String encoder escapes any embedded `QUOTE` characters.
-  implicit val stringInstance: Text[String] =
+  implicit lazy val stringInstance: Text[String] =
     new Text[String] {
       // Standard char encodings that don't differ in array context
       def stdChar(c: Char, sb: StringBuilder): StringBuilder =
@@ -63,8 +62,8 @@ object Text {
       override def unsafeArrayEncode(s: String, sb: StringBuilder): Unit = {
         sb.append('"')
         s.foreach {
-          case '\"' => sb.append("\\\\\"")
-          case '\\' => sb.append("\\\\\\\\") // srsly
+          case '\"' => sb.append("\\\\\\\"")
+          case '\\' => sb.append("\\\\\\\\\\\\\\\\") // srsly
           case c    => stdChar(c, sb)
         }
         sb.append('"')
@@ -72,15 +71,15 @@ object Text {
       }
     }
 
-  implicit val charInstance: Text[Char] = instance { (n, sb) => sb.append(n.toString); () }
-  implicit val intInstance: Text[Int] = instance { (n, sb) => sb.append(n); () }
-  implicit val shortInstance: Text[Short] = instance { (n, sb) => sb.append(n); () }
-  implicit val longInstance: Text[Long] = instance { (n, sb) => sb.append(n); () }
-  implicit val floatInstance: Text[Float] = instance { (n, sb) => sb.append(n); () }
-  implicit val doubleInstance: Text[Double] = instance { (n, sb) => sb.append(n); () }
-  implicit val bigDecimalInstance: Text[BigDecimal] = instance { (n, sb) => sb.append(n); () }
-  implicit val booleanInstance: Text[Boolean] = instance { (n, sb) => sb.append(n); () }
-  implicit val byteArrayInstance: Text[Array[Byte]] = instance { (bs, sb) =>
+  implicit lazy val charInstance: Text[Char] = instance { (n, sb) => sb.append(n.toString); () }
+  implicit lazy val intInstance: Text[Int] = instance { (n, sb) => sb.append(n); () }
+  implicit lazy val shortInstance: Text[Short] = instance { (n, sb) => sb.append(n); () }
+  implicit lazy val longInstance: Text[Long] = instance { (n, sb) => sb.append(n); () }
+  implicit lazy val floatInstance: Text[Float] = instance { (n, sb) => sb.append(n); () }
+  implicit lazy val doubleInstance: Text[Double] = instance { (n, sb) => sb.append(n); () }
+  implicit lazy val bigDecimalInstance: Text[BigDecimal] = instance { (n, sb) => sb.append(n); () }
+  implicit lazy val booleanInstance: Text[Boolean] = instance { (n, sb) => sb.append(n); () }
+  implicit lazy val byteArrayInstance: Text[Array[Byte]] = instance { (bs, sb) =>
     sb.append("\\\\x")
     if (bs.length > 0) {
       val hex = BigInt(1, bs).toString(16)

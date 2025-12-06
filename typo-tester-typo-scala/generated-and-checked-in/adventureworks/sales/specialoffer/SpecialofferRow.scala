@@ -82,7 +82,7 @@ case class SpecialofferRow(
 }
 
 object SpecialofferRow {
-  val `_rowParser`: RowParser[SpecialofferRow] = RowParsers.of(SpecialofferId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.text, PgTypes.text, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, PgTypes.int4, PgTypes.int4.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SpecialofferRow.apply, row => Array(row.specialofferid, row.description, row.discountpct, row.`type`, row.category, row.startdate, row.enddate, row.minqty, row.maxqty, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[SpecialofferRow] = RowParsers.of(SpecialofferId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.text, PgTypes.text, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, PgTypes.int4, PgTypes.int4.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SpecialofferRow.apply, row => Array[Object](row.specialofferid.asInstanceOf[Object], row.description.asInstanceOf[Object], row.discountpct.asInstanceOf[Object], row.`type`.asInstanceOf[Object], row.category.asInstanceOf[Object], row.startdate.asInstanceOf[Object], row.enddate.asInstanceOf[Object], row.minqty.asInstanceOf[Object], row.maxqty.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   given pgText: PgText[SpecialofferRow] = PgText.from(`_rowParser`)
 }

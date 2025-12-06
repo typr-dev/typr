@@ -26,7 +26,7 @@ case class TestUtdanningstilbudRow(
 }
 
 object TestUtdanningstilbudRow {
-  val `_rowParser`: RowParser[TestUtdanningstilbudRow] = RowParsers.of(TestOrganisasjonId.pgType, PgTypes.text, TestUtdanningstilbudRow.apply, row => Array(row.organisasjonskode, row.utdanningsmulighetKode))
+  val `_rowParser`: RowParser[TestUtdanningstilbudRow] = RowParsers.of(TestOrganisasjonId.pgType, PgTypes.text, TestUtdanningstilbudRow.apply, row => Array[Object](row.organisasjonskode.asInstanceOf[Object], row.utdanningsmulighetKode.asInstanceOf[Object]))
 
   def apply(compositeId: TestUtdanningstilbudId): TestUtdanningstilbudRow = new TestUtdanningstilbudRow(compositeId.organisasjonskode, compositeId.utdanningsmulighetKode)
 

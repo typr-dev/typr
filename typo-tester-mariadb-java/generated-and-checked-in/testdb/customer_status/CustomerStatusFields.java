@@ -7,49 +7,44 @@ package testdb.customer_status;
 
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.MariaTypes;
+import typo.runtime.RowParser;
 
-public interface CustomerStatusFields {
-  final class Impl extends Relation<CustomerStatusFields, CustomerStatusRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface CustomerStatusFields extends FieldsExpr<CustomerStatusRow> {
+  record Impl(List<Path> _path) implements CustomerStatusFields, Relation<CustomerStatusFields, CustomerStatusRow> {
+    @Override
+    public IdField<CustomerStatusId, CustomerStatusRow> statusCode() {
+      return new IdField<CustomerStatusId, CustomerStatusRow>(_path, "status_code", CustomerStatusRow::statusCode, Optional.empty(), Optional.empty(), (row, value) -> row.withStatusCode(value), CustomerStatusId.pgType);
+    };
 
     @Override
-    public CustomerStatusFields fields() {
-      return new CustomerStatusFields() {
-               @Override
-               public IdField<CustomerStatusId, CustomerStatusRow> statusCode() {
-                 return new IdField<CustomerStatusId, CustomerStatusRow>(_path, "status_code", CustomerStatusRow::statusCode, Optional.empty(), Optional.empty(), (row, value) -> row.withStatusCode(value), CustomerStatusId.pgType);
-               };
-               @Override
-               public Field<String, CustomerStatusRow> description() {
-                 return new Field<String, CustomerStatusRow>(_path, "description", CustomerStatusRow::description, Optional.empty(), Optional.empty(), (row, value) -> row.withDescription(value), MariaTypes.varchar);
-               };
-               @Override
-               public Field<Boolean, CustomerStatusRow> isActive() {
-                 return new Field<Boolean, CustomerStatusRow>(_path, "is_active", CustomerStatusRow::isActive, Optional.empty(), Optional.empty(), (row, value) -> row.withIsActive(value), MariaTypes.bool);
-               };
-             };
+    public Field<String, CustomerStatusRow> description() {
+      return new Field<String, CustomerStatusRow>(_path, "description", CustomerStatusRow::description, Optional.empty(), Optional.empty(), (row, value) -> row.withDescription(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public Field<Boolean, CustomerStatusRow> isActive() {
+      return new Field<Boolean, CustomerStatusRow>(_path, "is_active", CustomerStatusRow::isActive, Optional.empty(), Optional.empty(), (row, value) -> row.withIsActive(value), MariaTypes.bool);
     };
 
     @Override
     public List<FieldLike<?, CustomerStatusRow>> columns() {
-      return List.of(this.fields().statusCode(), this.fields().description(), this.fields().isActive());
+      return List.of(this.statusCode(), this.description(), this.isActive());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<CustomerStatusFields, CustomerStatusRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<CustomerStatusFields, CustomerStatusRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -58,4 +53,12 @@ public interface CustomerStatusFields {
   Field<String, CustomerStatusRow> description();
 
   Field<Boolean, CustomerStatusRow> isActive();
+
+  @Override
+  List<FieldLike<?, CustomerStatusRow>> columns();
+
+  @Override
+  default RowParser<CustomerStatusRow> rowParser() {
+    return CustomerStatusRow._rowParser;
+  };
 }

@@ -22,5 +22,5 @@ case class PmiViewRow(
 )
 
 object PmiViewRow {
-  val `_rowParser`: RowParser[PmiViewRow] = RowParsers.of(ProductmodelId.pgType, IllustrationId.pgType, TypoLocalDateTime.pgType, PmiViewRow.apply, row => Array(row.productmodelid, row.illustrationid, row.modifieddate))
+  val `_rowParser`: RowParser[PmiViewRow] = RowParsers.of(ProductmodelId.pgType, IllustrationId.pgType, TypoLocalDateTime.pgType, PmiViewRow.apply, row => Array[Object](row.productmodelid.asInstanceOf[Object], row.illustrationid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

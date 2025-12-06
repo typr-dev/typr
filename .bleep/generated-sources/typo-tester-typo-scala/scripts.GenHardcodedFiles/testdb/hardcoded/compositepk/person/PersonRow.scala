@@ -33,7 +33,7 @@ case class PersonRow(
 }
 
 object PersonRow {
-  val `_rowParser`: RowParser[PersonRow] = RowParsers.of(PgTypes.int8, PgTypes.text.opt(), PgTypes.text.opt(), PersonRow.apply, row => Array(row.one, row.two, row.name))
+  val `_rowParser`: RowParser[PersonRow] = RowParsers.of(PgTypes.int8, PgTypes.text.opt(), PgTypes.text.opt(), PersonRow.apply, row => Array[Object](row.one.asInstanceOf[Object], row.two.asInstanceOf[Object], row.name.asInstanceOf[Object]))
 
   def apply(
     compositeId: PersonId,

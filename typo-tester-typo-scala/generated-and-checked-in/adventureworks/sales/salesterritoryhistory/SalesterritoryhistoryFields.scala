@@ -14,6 +14,7 @@ import adventureworks.sales.salesterritory.SalesterritoryFields
 import adventureworks.sales.salesterritory.SalesterritoryId
 import adventureworks.sales.salesterritory.SalesterritoryRow
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -24,8 +25,9 @@ import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait SalesterritoryhistoryFields {
+trait SalesterritoryhistoryFields extends FieldsExpr[SalesterritoryhistoryRow] {
   def businessentityid: IdField[BusinessentityId, SalesterritoryhistoryRow]
 
   def territoryid: IdField[SalesterritoryId, SalesterritoryhistoryRow]
@@ -45,86 +47,91 @@ trait SalesterritoryhistoryFields {
   def compositeIdIs(compositeId: SalesterritoryhistoryId): SqlExpr[java.lang.Boolean] = SqlExpr.all(businessentityid.isEqual(compositeId.businessentityid), startdate.isEqual(compositeId.startdate), territoryid.isEqual(compositeId.territoryid))
 
   def compositeIdIn(compositeIds: java.util.List[SalesterritoryhistoryId]): SqlExpr[java.lang.Boolean] = new CompositeIn(java.util.List.of(new Part[BusinessentityId, SalesterritoryhistoryId, SalesterritoryhistoryRow](businessentityid, _.businessentityid, BusinessentityId.pgType), new Part[TypoLocalDateTime, SalesterritoryhistoryId, SalesterritoryhistoryRow](startdate, _.startdate, TypoLocalDateTime.pgType), new Part[SalesterritoryId, SalesterritoryhistoryId, SalesterritoryhistoryRow](territoryid, _.territoryid, SalesterritoryId.pgType)), compositeIds)
+
+  override def columns: java.util.List[FieldLike[?, SalesterritoryhistoryRow]]
+
+  override def rowParser: RowParser[SalesterritoryhistoryRow] = SalesterritoryhistoryRow._rowParser
 }
 
 object SalesterritoryhistoryFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[SalesterritoryhistoryFields, SalesterritoryhistoryRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends SalesterritoryhistoryFields with Relation[SalesterritoryhistoryFields, SalesterritoryhistoryRow] {
 
-    override lazy val fields: SalesterritoryhistoryFields = {
-      new SalesterritoryhistoryFields {
-        override def businessentityid: IdField[BusinessentityId, SalesterritoryhistoryRow] = {
-          new IdField[BusinessentityId, SalesterritoryhistoryRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def territoryid: IdField[SalesterritoryId, SalesterritoryhistoryRow] = {
-          new IdField[SalesterritoryId, SalesterritoryhistoryRow](
-            _path,
-            "territoryid",
-            _.territoryid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(territoryid = value),
-            SalesterritoryId.pgType
-          )
-        }
-        override def startdate: IdField[TypoLocalDateTime, SalesterritoryhistoryRow] = {
-          new IdField[TypoLocalDateTime, SalesterritoryhistoryRow](
-            _path,
-            "startdate",
-            _.startdate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(startdate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def enddate: OptField[TypoLocalDateTime, SalesterritoryhistoryRow] = {
-          new OptField[TypoLocalDateTime, SalesterritoryhistoryRow](
-            _path,
-            "enddate",
-            _.enddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(enddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def rowguid: Field[TypoUUID, SalesterritoryhistoryRow] = {
-          new Field[TypoUUID, SalesterritoryhistoryRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.of("uuid"),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, SalesterritoryhistoryRow] = {
-          new Field[TypoLocalDateTime, SalesterritoryhistoryRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def businessentityid: IdField[BusinessentityId, SalesterritoryhistoryRow] = {
+      new IdField[BusinessentityId, SalesterritoryhistoryRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, SalesterritoryhistoryRow]] = java.util.List.of(this.fields.businessentityid, this.fields.territoryid, this.fields.startdate, this.fields.enddate, this.fields.rowguid, this.fields.modifieddate)
+    override def territoryid: IdField[SalesterritoryId, SalesterritoryhistoryRow] = {
+      new IdField[SalesterritoryId, SalesterritoryhistoryRow](
+        _path,
+        "territoryid",
+        _.territoryid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(territoryid = value),
+        SalesterritoryId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def startdate: IdField[TypoLocalDateTime, SalesterritoryhistoryRow] = {
+      new IdField[TypoLocalDateTime, SalesterritoryhistoryRow](
+        _path,
+        "startdate",
+        _.startdate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(startdate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def enddate: OptField[TypoLocalDateTime, SalesterritoryhistoryRow] = {
+      new OptField[TypoLocalDateTime, SalesterritoryhistoryRow](
+        _path,
+        "enddate",
+        _.enddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(enddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, SalesterritoryhistoryRow] = {
+      new Field[TypoUUID, SalesterritoryhistoryRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.of("uuid"),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, SalesterritoryhistoryRow] = {
+      new Field[TypoLocalDateTime, SalesterritoryhistoryRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, SalesterritoryhistoryRow]] = java.util.List.of(this.businessentityid, this.territoryid, this.startdate, this.enddate, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[SalesterritoryhistoryFields, SalesterritoryhistoryRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[SalesterritoryhistoryFields, SalesterritoryhistoryRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

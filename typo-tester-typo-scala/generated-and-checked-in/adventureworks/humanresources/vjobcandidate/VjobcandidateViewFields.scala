@@ -9,14 +9,16 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.humanresources.jobcandidate.JobcandidateId
 import adventureworks.person.businessentity.BusinessentityId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait VjobcandidateViewFields {
+trait VjobcandidateViewFields extends FieldsExpr[VjobcandidateViewRow] {
   def jobcandidateid: Field[JobcandidateId, VjobcandidateViewRow]
 
   def businessentityid: OptField[BusinessentityId, VjobcandidateViewRow]
@@ -48,196 +50,211 @@ trait VjobcandidateViewFields {
   def webSite: OptField[String, VjobcandidateViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, VjobcandidateViewRow]
+
+  override def columns: java.util.List[FieldLike[?, VjobcandidateViewRow]]
+
+  override def rowParser: RowParser[VjobcandidateViewRow] = VjobcandidateViewRow._rowParser
 }
 
 object VjobcandidateViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[VjobcandidateViewFields, VjobcandidateViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends VjobcandidateViewFields with Relation[VjobcandidateViewFields, VjobcandidateViewRow] {
 
-    override lazy val fields: VjobcandidateViewFields = {
-      new VjobcandidateViewFields {
-        override def jobcandidateid: Field[JobcandidateId, VjobcandidateViewRow] = {
-          new Field[JobcandidateId, VjobcandidateViewRow](
-            _path,
-            "jobcandidateid",
-            _.jobcandidateid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(jobcandidateid = value),
-            JobcandidateId.pgType
-          )
-        }
-        override def businessentityid: OptField[BusinessentityId, VjobcandidateViewRow] = {
-          new OptField[BusinessentityId, VjobcandidateViewRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def namePrefix: OptField[/* max 30 chars */ String, VjobcandidateViewRow] = {
-          new OptField[/* max 30 chars */ String, VjobcandidateViewRow](
-            _path,
-            "Name.Prefix",
-            _.namePrefix,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(namePrefix = value),
-            PgTypes.text
-          )
-        }
-        override def nameFirst: OptField[/* max 30 chars */ String, VjobcandidateViewRow] = {
-          new OptField[/* max 30 chars */ String, VjobcandidateViewRow](
-            _path,
-            "Name.First",
-            _.nameFirst,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(nameFirst = value),
-            PgTypes.text
-          )
-        }
-        override def nameMiddle: OptField[/* max 30 chars */ String, VjobcandidateViewRow] = {
-          new OptField[/* max 30 chars */ String, VjobcandidateViewRow](
-            _path,
-            "Name.Middle",
-            _.nameMiddle,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(nameMiddle = value),
-            PgTypes.text
-          )
-        }
-        override def nameLast: OptField[/* max 30 chars */ String, VjobcandidateViewRow] = {
-          new OptField[/* max 30 chars */ String, VjobcandidateViewRow](
-            _path,
-            "Name.Last",
-            _.nameLast,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(nameLast = value),
-            PgTypes.text
-          )
-        }
-        override def nameSuffix: OptField[/* max 30 chars */ String, VjobcandidateViewRow] = {
-          new OptField[/* max 30 chars */ String, VjobcandidateViewRow](
-            _path,
-            "Name.Suffix",
-            _.nameSuffix,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(nameSuffix = value),
-            PgTypes.text
-          )
-        }
-        override def skills: OptField[String, VjobcandidateViewRow] = {
-          new OptField[String, VjobcandidateViewRow](
-            _path,
-            "Skills",
-            _.skills,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(skills = value),
-            PgTypes.text
-          )
-        }
-        override def addrType: OptField[/* max 30 chars */ String, VjobcandidateViewRow] = {
-          new OptField[/* max 30 chars */ String, VjobcandidateViewRow](
-            _path,
-            "Addr.Type",
-            _.addrType,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(addrType = value),
-            PgTypes.text
-          )
-        }
-        override def addrLocCountryRegion: OptField[/* max 100 chars */ String, VjobcandidateViewRow] = {
-          new OptField[/* max 100 chars */ String, VjobcandidateViewRow](
-            _path,
-            "Addr.Loc.CountryRegion",
-            _.addrLocCountryRegion,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(addrLocCountryRegion = value),
-            PgTypes.text
-          )
-        }
-        override def addrLocState: OptField[/* max 100 chars */ String, VjobcandidateViewRow] = {
-          new OptField[/* max 100 chars */ String, VjobcandidateViewRow](
-            _path,
-            "Addr.Loc.State",
-            _.addrLocState,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(addrLocState = value),
-            PgTypes.text
-          )
-        }
-        override def addrLocCity: OptField[/* max 100 chars */ String, VjobcandidateViewRow] = {
-          new OptField[/* max 100 chars */ String, VjobcandidateViewRow](
-            _path,
-            "Addr.Loc.City",
-            _.addrLocCity,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(addrLocCity = value),
-            PgTypes.text
-          )
-        }
-        override def addrPostalCode: OptField[/* max 20 chars */ String, VjobcandidateViewRow] = {
-          new OptField[/* max 20 chars */ String, VjobcandidateViewRow](
-            _path,
-            "Addr.PostalCode",
-            _.addrPostalCode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(addrPostalCode = value),
-            PgTypes.text
-          )
-        }
-        override def eMail: OptField[String, VjobcandidateViewRow] = {
-          new OptField[String, VjobcandidateViewRow](
-            _path,
-            "EMail",
-            _.eMail,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(eMail = value),
-            PgTypes.text
-          )
-        }
-        override def webSite: OptField[String, VjobcandidateViewRow] = {
-          new OptField[String, VjobcandidateViewRow](
-            _path,
-            "WebSite",
-            _.webSite,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(webSite = value),
-            PgTypes.text
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, VjobcandidateViewRow] = {
-          new Field[TypoLocalDateTime, VjobcandidateViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def jobcandidateid: Field[JobcandidateId, VjobcandidateViewRow] = {
+      new Field[JobcandidateId, VjobcandidateViewRow](
+        _path,
+        "jobcandidateid",
+        _.jobcandidateid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(jobcandidateid = value),
+        JobcandidateId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, VjobcandidateViewRow]] = java.util.List.of(this.fields.jobcandidateid, this.fields.businessentityid, this.fields.namePrefix, this.fields.nameFirst, this.fields.nameMiddle, this.fields.nameLast, this.fields.nameSuffix, this.fields.skills, this.fields.addrType, this.fields.addrLocCountryRegion, this.fields.addrLocState, this.fields.addrLocCity, this.fields.addrPostalCode, this.fields.eMail, this.fields.webSite, this.fields.modifieddate)
+    override def businessentityid: OptField[BusinessentityId, VjobcandidateViewRow] = {
+      new OptField[BusinessentityId, VjobcandidateViewRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def namePrefix: OptField[/* max 30 chars */ String, VjobcandidateViewRow] = {
+      new OptField[/* max 30 chars */ String, VjobcandidateViewRow](
+        _path,
+        "Name.Prefix",
+        _.namePrefix,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(namePrefix = value),
+        PgTypes.text
+      )
+    }
+
+    override def nameFirst: OptField[/* max 30 chars */ String, VjobcandidateViewRow] = {
+      new OptField[/* max 30 chars */ String, VjobcandidateViewRow](
+        _path,
+        "Name.First",
+        _.nameFirst,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(nameFirst = value),
+        PgTypes.text
+      )
+    }
+
+    override def nameMiddle: OptField[/* max 30 chars */ String, VjobcandidateViewRow] = {
+      new OptField[/* max 30 chars */ String, VjobcandidateViewRow](
+        _path,
+        "Name.Middle",
+        _.nameMiddle,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(nameMiddle = value),
+        PgTypes.text
+      )
+    }
+
+    override def nameLast: OptField[/* max 30 chars */ String, VjobcandidateViewRow] = {
+      new OptField[/* max 30 chars */ String, VjobcandidateViewRow](
+        _path,
+        "Name.Last",
+        _.nameLast,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(nameLast = value),
+        PgTypes.text
+      )
+    }
+
+    override def nameSuffix: OptField[/* max 30 chars */ String, VjobcandidateViewRow] = {
+      new OptField[/* max 30 chars */ String, VjobcandidateViewRow](
+        _path,
+        "Name.Suffix",
+        _.nameSuffix,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(nameSuffix = value),
+        PgTypes.text
+      )
+    }
+
+    override def skills: OptField[String, VjobcandidateViewRow] = {
+      new OptField[String, VjobcandidateViewRow](
+        _path,
+        "Skills",
+        _.skills,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(skills = value),
+        PgTypes.text
+      )
+    }
+
+    override def addrType: OptField[/* max 30 chars */ String, VjobcandidateViewRow] = {
+      new OptField[/* max 30 chars */ String, VjobcandidateViewRow](
+        _path,
+        "Addr.Type",
+        _.addrType,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(addrType = value),
+        PgTypes.text
+      )
+    }
+
+    override def addrLocCountryRegion: OptField[/* max 100 chars */ String, VjobcandidateViewRow] = {
+      new OptField[/* max 100 chars */ String, VjobcandidateViewRow](
+        _path,
+        "Addr.Loc.CountryRegion",
+        _.addrLocCountryRegion,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(addrLocCountryRegion = value),
+        PgTypes.text
+      )
+    }
+
+    override def addrLocState: OptField[/* max 100 chars */ String, VjobcandidateViewRow] = {
+      new OptField[/* max 100 chars */ String, VjobcandidateViewRow](
+        _path,
+        "Addr.Loc.State",
+        _.addrLocState,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(addrLocState = value),
+        PgTypes.text
+      )
+    }
+
+    override def addrLocCity: OptField[/* max 100 chars */ String, VjobcandidateViewRow] = {
+      new OptField[/* max 100 chars */ String, VjobcandidateViewRow](
+        _path,
+        "Addr.Loc.City",
+        _.addrLocCity,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(addrLocCity = value),
+        PgTypes.text
+      )
+    }
+
+    override def addrPostalCode: OptField[/* max 20 chars */ String, VjobcandidateViewRow] = {
+      new OptField[/* max 20 chars */ String, VjobcandidateViewRow](
+        _path,
+        "Addr.PostalCode",
+        _.addrPostalCode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(addrPostalCode = value),
+        PgTypes.text
+      )
+    }
+
+    override def eMail: OptField[String, VjobcandidateViewRow] = {
+      new OptField[String, VjobcandidateViewRow](
+        _path,
+        "EMail",
+        _.eMail,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(eMail = value),
+        PgTypes.text
+      )
+    }
+
+    override def webSite: OptField[String, VjobcandidateViewRow] = {
+      new OptField[String, VjobcandidateViewRow](
+        _path,
+        "WebSite",
+        _.webSite,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(webSite = value),
+        PgTypes.text
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, VjobcandidateViewRow] = {
+      new Field[TypoLocalDateTime, VjobcandidateViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, VjobcandidateViewRow]] = java.util.List.of(this.jobcandidateid, this.businessentityid, this.namePrefix, this.nameFirst, this.nameMiddle, this.nameLast, this.nameSuffix, this.skills, this.addrType, this.addrLocCountryRegion, this.addrLocState, this.addrLocCity, this.addrPostalCode, this.eMail, this.webSite, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[VjobcandidateViewFields, VjobcandidateViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[VjobcandidateViewFields, VjobcandidateViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

@@ -10,47 +10,42 @@ import adventureworks.person.countryregion.CountryregionId;
 import adventureworks.sales.currency.CurrencyId;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface CrcViewFields {
-  final class Impl extends Relation<CrcViewFields, CrcViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface CrcViewFields extends FieldsExpr<CrcViewRow> {
+  record Impl(List<Path> _path) implements CrcViewFields, Relation<CrcViewFields, CrcViewRow> {
+    @Override
+    public Field<CountryregionId, CrcViewRow> countryregioncode() {
+      return new Field<CountryregionId, CrcViewRow>(_path, "countryregioncode", CrcViewRow::countryregioncode, Optional.empty(), Optional.empty(), (row, value) -> row.withCountryregioncode(value), CountryregionId.pgType);
+    };
 
     @Override
-    public CrcViewFields fields() {
-      return new CrcViewFields() {
-               @Override
-               public Field<CountryregionId, CrcViewRow> countryregioncode() {
-                 return new Field<CountryregionId, CrcViewRow>(_path, "countryregioncode", CrcViewRow::countryregioncode, Optional.empty(), Optional.empty(), (row, value) -> row.withCountryregioncode(value), CountryregionId.pgType);
-               };
-               @Override
-               public Field<CurrencyId, CrcViewRow> currencycode() {
-                 return new Field<CurrencyId, CrcViewRow>(_path, "currencycode", CrcViewRow::currencycode, Optional.empty(), Optional.empty(), (row, value) -> row.withCurrencycode(value), CurrencyId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, CrcViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, CrcViewRow>(_path, "modifieddate", CrcViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<CurrencyId, CrcViewRow> currencycode() {
+      return new Field<CurrencyId, CrcViewRow>(_path, "currencycode", CrcViewRow::currencycode, Optional.empty(), Optional.empty(), (row, value) -> row.withCurrencycode(value), CurrencyId.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, CrcViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, CrcViewRow>(_path, "modifieddate", CrcViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, CrcViewRow>> columns() {
-      return List.of(this.fields().countryregioncode(), this.fields().currencycode(), this.fields().modifieddate());
+      return List.of(this.countryregioncode(), this.currencycode(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<CrcViewFields, CrcViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<CrcViewFields, CrcViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -59,4 +54,12 @@ public interface CrcViewFields {
   Field<CurrencyId, CrcViewRow> currencycode();
 
   Field<TypoLocalDateTime, CrcViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, CrcViewRow>> columns();
+
+  @Override
+  default RowParser<CrcViewRow> rowParser() {
+    return CrcViewRow._rowParser;
+  };
 }

@@ -75,7 +75,7 @@ case class CategoriesRow(
 }
 
 object CategoriesRow {
-  val `_rowParser`: RowParser[CategoriesRow] = RowParsers.of(CategoriesId.pgType, CategoriesId.pgType.opt(), MariaTypes.varchar, MariaTypes.varchar, MariaTypes.mediumtext.opt(), MariaTypes.varchar.opt(), MariaTypes.smallint, MariaTypes.bool, MariaTypes.longtext.opt(), CategoriesRow.apply, row => Array(row.categoryId, row.parentId, row.name, row.slug, row.description, row.imageUrl, row.sortOrder, row.isVisible, row.metadata))
+  val `_rowParser`: RowParser[CategoriesRow] = RowParsers.of(CategoriesId.pgType, CategoriesId.pgType.opt(), MariaTypes.varchar, MariaTypes.varchar, MariaTypes.mediumtext.opt(), MariaTypes.varchar.opt(), MariaTypes.smallint, MariaTypes.bool, MariaTypes.longtext.opt(), CategoriesRow.apply, row => Array[Object](row.categoryId.asInstanceOf[Object], row.parentId.asInstanceOf[Object], row.name.asInstanceOf[Object], row.slug.asInstanceOf[Object], row.description.asInstanceOf[Object], row.imageUrl.asInstanceOf[Object], row.sortOrder.asInstanceOf[Object], row.isVisible.asInstanceOf[Object], row.metadata.asInstanceOf[Object]))
 
   given mariaText: MariaText[CategoriesRow] = MariaText.from(`_rowParser`)
 }

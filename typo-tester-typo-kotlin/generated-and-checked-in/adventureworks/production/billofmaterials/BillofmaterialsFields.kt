@@ -16,6 +16,7 @@ import adventureworks.production.unitmeasure.UnitmeasureRow
 import java.math.BigDecimal
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -24,11 +25,14 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface BillofmaterialsFields {
+interface BillofmaterialsFields : FieldsExpr<BillofmaterialsRow> {
   fun billofmaterialsid(): IdField<Int, BillofmaterialsRow>
 
   fun bomlevel(): Field<TypoShort, BillofmaterialsRow>
+
+  override fun columns(): List<FieldLike<*, BillofmaterialsRow>>
 
   fun componentid(): Field<ProductId, BillofmaterialsRow>
 
@@ -46,29 +50,37 @@ interface BillofmaterialsFields {
 
   fun productassemblyid(): OptField<ProductId, BillofmaterialsRow>
 
+  override fun rowParser(): RowParser<BillofmaterialsRow> = BillofmaterialsRow._rowParser
+
   fun startdate(): Field<TypoLocalDateTime, BillofmaterialsRow>
 
   fun unitmeasurecode(): Field<UnitmeasureId, BillofmaterialsRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<BillofmaterialsFields, BillofmaterialsRow>(path) {
-      override fun fields(): BillofmaterialsFields = object : BillofmaterialsFields {
-        override fun billofmaterialsid(): IdField<Int, BillofmaterialsRow> = IdField<Int, BillofmaterialsRow>(_path, "billofmaterialsid", BillofmaterialsRow::billofmaterialsid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(billofmaterialsid = value) }, PgTypes.int4)
-        override fun productassemblyid(): OptField<ProductId, BillofmaterialsRow> = OptField<ProductId, BillofmaterialsRow>(_path, "productassemblyid", BillofmaterialsRow::productassemblyid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(productassemblyid = value) }, ProductId.pgType)
-        override fun componentid(): Field<ProductId, BillofmaterialsRow> = Field<ProductId, BillofmaterialsRow>(_path, "componentid", BillofmaterialsRow::componentid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(componentid = value) }, ProductId.pgType)
-        override fun startdate(): Field<TypoLocalDateTime, BillofmaterialsRow> = Field<TypoLocalDateTime, BillofmaterialsRow>(_path, "startdate", BillofmaterialsRow::startdate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(startdate = value) }, TypoLocalDateTime.pgType)
-        override fun enddate(): OptField<TypoLocalDateTime, BillofmaterialsRow> = OptField<TypoLocalDateTime, BillofmaterialsRow>(_path, "enddate", BillofmaterialsRow::enddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(enddate = value) }, TypoLocalDateTime.pgType)
-        override fun unitmeasurecode(): Field<UnitmeasureId, BillofmaterialsRow> = Field<UnitmeasureId, BillofmaterialsRow>(_path, "unitmeasurecode", BillofmaterialsRow::unitmeasurecode, Optional.empty(), Optional.of("bpchar"), { row, value -> row.copy(unitmeasurecode = value) }, UnitmeasureId.pgType)
-        override fun bomlevel(): Field<TypoShort, BillofmaterialsRow> = Field<TypoShort, BillofmaterialsRow>(_path, "bomlevel", BillofmaterialsRow::bomlevel, Optional.empty(), Optional.of("int2"), { row, value -> row.copy(bomlevel = value) }, TypoShort.pgType)
-        override fun perassemblyqty(): Field<BigDecimal, BillofmaterialsRow> = Field<BigDecimal, BillofmaterialsRow>(_path, "perassemblyqty", BillofmaterialsRow::perassemblyqty, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(perassemblyqty = value) }, PgTypes.numeric)
-        override fun modifieddate(): Field<TypoLocalDateTime, BillofmaterialsRow> = Field<TypoLocalDateTime, BillofmaterialsRow>(_path, "modifieddate", BillofmaterialsRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : BillofmaterialsFields, Relation<BillofmaterialsFields, BillofmaterialsRow> {
+      override fun billofmaterialsid(): IdField<Int, BillofmaterialsRow> = IdField<Int, BillofmaterialsRow>(_path, "billofmaterialsid", BillofmaterialsRow::billofmaterialsid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(billofmaterialsid = value) }, PgTypes.int4)
 
-      override fun columns(): List<FieldLike<*, BillofmaterialsRow>> = listOf(this.fields().billofmaterialsid(), this.fields().productassemblyid(), this.fields().componentid(), this.fields().startdate(), this.fields().enddate(), this.fields().unitmeasurecode(), this.fields().bomlevel(), this.fields().perassemblyqty(), this.fields().modifieddate())
+      override fun productassemblyid(): OptField<ProductId, BillofmaterialsRow> = OptField<ProductId, BillofmaterialsRow>(_path, "productassemblyid", BillofmaterialsRow::productassemblyid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(productassemblyid = value) }, ProductId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun componentid(): Field<ProductId, BillofmaterialsRow> = Field<ProductId, BillofmaterialsRow>(_path, "componentid", BillofmaterialsRow::componentid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(componentid = value) }, ProductId.pgType)
+
+      override fun startdate(): Field<TypoLocalDateTime, BillofmaterialsRow> = Field<TypoLocalDateTime, BillofmaterialsRow>(_path, "startdate", BillofmaterialsRow::startdate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(startdate = value) }, TypoLocalDateTime.pgType)
+
+      override fun enddate(): OptField<TypoLocalDateTime, BillofmaterialsRow> = OptField<TypoLocalDateTime, BillofmaterialsRow>(_path, "enddate", BillofmaterialsRow::enddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(enddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun unitmeasurecode(): Field<UnitmeasureId, BillofmaterialsRow> = Field<UnitmeasureId, BillofmaterialsRow>(_path, "unitmeasurecode", BillofmaterialsRow::unitmeasurecode, Optional.empty(), Optional.of("bpchar"), { row, value -> row.copy(unitmeasurecode = value) }, UnitmeasureId.pgType)
+
+      override fun bomlevel(): Field<TypoShort, BillofmaterialsRow> = Field<TypoShort, BillofmaterialsRow>(_path, "bomlevel", BillofmaterialsRow::bomlevel, Optional.empty(), Optional.of("int2"), { row, value -> row.copy(bomlevel = value) }, TypoShort.pgType)
+
+      override fun perassemblyqty(): Field<BigDecimal, BillofmaterialsRow> = Field<BigDecimal, BillofmaterialsRow>(_path, "perassemblyqty", BillofmaterialsRow::perassemblyqty, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(perassemblyqty = value) }, PgTypes.numeric)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, BillofmaterialsRow> = Field<TypoLocalDateTime, BillofmaterialsRow>(_path, "modifieddate", BillofmaterialsRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, BillofmaterialsRow>> = listOf(this.billofmaterialsid(), this.productassemblyid(), this.componentid(), this.startdate(), this.enddate(), this.unitmeasurecode(), this.bomlevel(), this.perassemblyqty(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<BillofmaterialsFields, BillofmaterialsRow> = Impl(_path)
     }
 
-    val structure: Relation<BillofmaterialsFields, BillofmaterialsRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

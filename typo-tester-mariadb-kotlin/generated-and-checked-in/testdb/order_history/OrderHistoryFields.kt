@@ -11,6 +11,7 @@ import kotlin.collections.List
 import testdb.orders.OrdersFields
 import testdb.orders.OrdersId
 import testdb.orders.OrdersRow
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -19,11 +20,14 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-interface OrderHistoryFields {
+interface OrderHistoryFields : FieldsExpr<OrderHistoryRow> {
   fun changeReason(): OptField<String, OrderHistoryRow>
 
   fun changedBy(): OptField<String, OrderHistoryRow>
+
+  override fun columns(): List<FieldLike<*, OrderHistoryRow>>
 
   fun createdAt(): Field<LocalDateTime, OrderHistoryRow>
 
@@ -39,24 +43,31 @@ interface OrderHistoryFields {
 
   fun previousStatus(): OptField<String, OrderHistoryRow>
 
+  override fun rowParser(): RowParser<OrderHistoryRow> = OrderHistoryRow._rowParser
+
   companion object {
-    private class Impl(path: List<Path>) : Relation<OrderHistoryFields, OrderHistoryRow>(path) {
-      override fun fields(): OrderHistoryFields = object : OrderHistoryFields {
-        override fun historyId(): IdField<OrderHistoryId, OrderHistoryRow> = IdField<OrderHistoryId, OrderHistoryRow>(_path, "history_id", OrderHistoryRow::historyId, Optional.empty(), Optional.empty(), { row, value -> row.copy(historyId = value) }, OrderHistoryId.pgType)
-        override fun orderId(): Field<OrdersId, OrderHistoryRow> = Field<OrdersId, OrderHistoryRow>(_path, "order_id", OrderHistoryRow::orderId, Optional.empty(), Optional.empty(), { row, value -> row.copy(orderId = value) }, OrdersId.pgType)
-        override fun previousStatus(): OptField<String, OrderHistoryRow> = OptField<String, OrderHistoryRow>(_path, "previous_status", OrderHistoryRow::previousStatus, Optional.empty(), Optional.empty(), { row, value -> row.copy(previousStatus = value) }, MariaTypes.text)
-        override fun newStatus(): Field<String, OrderHistoryRow> = Field<String, OrderHistoryRow>(_path, "new_status", OrderHistoryRow::newStatus, Optional.empty(), Optional.empty(), { row, value -> row.copy(newStatus = value) }, MariaTypes.text)
-        override fun changedBy(): OptField<String, OrderHistoryRow> = OptField<String, OrderHistoryRow>(_path, "changed_by", OrderHistoryRow::changedBy, Optional.empty(), Optional.empty(), { row, value -> row.copy(changedBy = value) }, MariaTypes.varchar)
-        override fun changeReason(): OptField<String, OrderHistoryRow> = OptField<String, OrderHistoryRow>(_path, "change_reason", OrderHistoryRow::changeReason, Optional.empty(), Optional.empty(), { row, value -> row.copy(changeReason = value) }, MariaTypes.varchar)
-        override fun metadata(): OptField<String, OrderHistoryRow> = OptField<String, OrderHistoryRow>(_path, "metadata", OrderHistoryRow::metadata, Optional.empty(), Optional.empty(), { row, value -> row.copy(metadata = value) }, MariaTypes.longtext)
-        override fun createdAt(): Field<LocalDateTime, OrderHistoryRow> = Field<LocalDateTime, OrderHistoryRow>(_path, "created_at", OrderHistoryRow::createdAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(createdAt = value) }, MariaTypes.datetime)
-      }
+    data class Impl(val _path: List<Path>) : OrderHistoryFields, Relation<OrderHistoryFields, OrderHistoryRow> {
+      override fun historyId(): IdField<OrderHistoryId, OrderHistoryRow> = IdField<OrderHistoryId, OrderHistoryRow>(_path, "history_id", OrderHistoryRow::historyId, Optional.empty(), Optional.empty(), { row, value -> row.copy(historyId = value) }, OrderHistoryId.pgType)
 
-      override fun columns(): List<FieldLike<*, OrderHistoryRow>> = listOf(this.fields().historyId(), this.fields().orderId(), this.fields().previousStatus(), this.fields().newStatus(), this.fields().changedBy(), this.fields().changeReason(), this.fields().metadata(), this.fields().createdAt())
+      override fun orderId(): Field<OrdersId, OrderHistoryRow> = Field<OrdersId, OrderHistoryRow>(_path, "order_id", OrderHistoryRow::orderId, Optional.empty(), Optional.empty(), { row, value -> row.copy(orderId = value) }, OrdersId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun previousStatus(): OptField<String, OrderHistoryRow> = OptField<String, OrderHistoryRow>(_path, "previous_status", OrderHistoryRow::previousStatus, Optional.empty(), Optional.empty(), { row, value -> row.copy(previousStatus = value) }, MariaTypes.text)
+
+      override fun newStatus(): Field<String, OrderHistoryRow> = Field<String, OrderHistoryRow>(_path, "new_status", OrderHistoryRow::newStatus, Optional.empty(), Optional.empty(), { row, value -> row.copy(newStatus = value) }, MariaTypes.text)
+
+      override fun changedBy(): OptField<String, OrderHistoryRow> = OptField<String, OrderHistoryRow>(_path, "changed_by", OrderHistoryRow::changedBy, Optional.empty(), Optional.empty(), { row, value -> row.copy(changedBy = value) }, MariaTypes.varchar)
+
+      override fun changeReason(): OptField<String, OrderHistoryRow> = OptField<String, OrderHistoryRow>(_path, "change_reason", OrderHistoryRow::changeReason, Optional.empty(), Optional.empty(), { row, value -> row.copy(changeReason = value) }, MariaTypes.varchar)
+
+      override fun metadata(): OptField<String, OrderHistoryRow> = OptField<String, OrderHistoryRow>(_path, "metadata", OrderHistoryRow::metadata, Optional.empty(), Optional.empty(), { row, value -> row.copy(metadata = value) }, MariaTypes.longtext)
+
+      override fun createdAt(): Field<LocalDateTime, OrderHistoryRow> = Field<LocalDateTime, OrderHistoryRow>(_path, "created_at", OrderHistoryRow::createdAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(createdAt = value) }, MariaTypes.datetime)
+
+      override fun columns(): List<FieldLike<*, OrderHistoryRow>> = listOf(this.historyId(), this.orderId(), this.previousStatus(), this.newStatus(), this.changedBy(), this.changeReason(), this.metadata(), this.createdAt())
+
+      override fun copy(_path: List<Path>): Relation<OrderHistoryFields, OrderHistoryRow> = Impl(_path)
     }
 
-    val structure: Relation<OrderHistoryFields, OrderHistoryRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

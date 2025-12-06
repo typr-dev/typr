@@ -22,5 +22,5 @@ case class CrViewRow(
 )
 
 object CrViewRow {
-  val `_rowParser`: RowParser[CrViewRow] = RowParsers.of(CountryregionId.pgType, Name.pgType, TypoLocalDateTime.pgType, CrViewRow.apply, row => Array(row.countryregioncode, row.name, row.modifieddate))
+  val `_rowParser`: RowParser[CrViewRow] = RowParsers.of(CountryregionId.pgType, Name.pgType, TypoLocalDateTime.pgType, CrViewRow.apply, row => Array[Object](row.countryregioncode.asInstanceOf[Object], row.name.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

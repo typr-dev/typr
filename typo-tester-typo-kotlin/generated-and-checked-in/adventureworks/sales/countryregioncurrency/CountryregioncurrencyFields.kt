@@ -14,6 +14,7 @@ import adventureworks.sales.currency.CurrencyId
 import adventureworks.sales.currency.CurrencyRow
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -23,8 +24,11 @@ import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface CountryregioncurrencyFields {
+interface CountryregioncurrencyFields : FieldsExpr<CountryregioncurrencyRow> {
+  override fun columns(): List<FieldLike<*, CountryregioncurrencyRow>>
+
   fun compositeIdIn(compositeIds: List<CountryregioncurrencyId>): SqlExpr<Boolean> = CompositeIn(listOf(Part<CountryregionId, CountryregioncurrencyId, CountryregioncurrencyRow>(countryregioncode(), CountryregioncurrencyId::countryregioncode, CountryregionId.pgType), Part<CurrencyId, CountryregioncurrencyId, CountryregioncurrencyRow>(currencycode(), CountryregioncurrencyId::currencycode, CurrencyId.pgType)), compositeIds)
 
   fun compositeIdIs(compositeId: CountryregioncurrencyId): SqlExpr<Boolean> = SqlExpr.all(countryregioncode().isEqual(compositeId.countryregioncode), currencycode().isEqual(compositeId.currencycode))
@@ -39,19 +43,21 @@ interface CountryregioncurrencyFields {
 
   fun modifieddate(): Field<TypoLocalDateTime, CountryregioncurrencyRow>
 
+  override fun rowParser(): RowParser<CountryregioncurrencyRow> = CountryregioncurrencyRow._rowParser
+
   companion object {
-    private class Impl(path: List<Path>) : Relation<CountryregioncurrencyFields, CountryregioncurrencyRow>(path) {
-      override fun fields(): CountryregioncurrencyFields = object : CountryregioncurrencyFields {
-        override fun countryregioncode(): IdField<CountryregionId, CountryregioncurrencyRow> = IdField<CountryregionId, CountryregioncurrencyRow>(_path, "countryregioncode", CountryregioncurrencyRow::countryregioncode, Optional.empty(), Optional.empty(), { row, value -> row.copy(countryregioncode = value) }, CountryregionId.pgType)
-        override fun currencycode(): IdField<CurrencyId, CountryregioncurrencyRow> = IdField<CurrencyId, CountryregioncurrencyRow>(_path, "currencycode", CountryregioncurrencyRow::currencycode, Optional.empty(), Optional.of("bpchar"), { row, value -> row.copy(currencycode = value) }, CurrencyId.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, CountryregioncurrencyRow> = Field<TypoLocalDateTime, CountryregioncurrencyRow>(_path, "modifieddate", CountryregioncurrencyRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : CountryregioncurrencyFields, Relation<CountryregioncurrencyFields, CountryregioncurrencyRow> {
+      override fun countryregioncode(): IdField<CountryregionId, CountryregioncurrencyRow> = IdField<CountryregionId, CountryregioncurrencyRow>(_path, "countryregioncode", CountryregioncurrencyRow::countryregioncode, Optional.empty(), Optional.empty(), { row, value -> row.copy(countryregioncode = value) }, CountryregionId.pgType)
 
-      override fun columns(): List<FieldLike<*, CountryregioncurrencyRow>> = listOf(this.fields().countryregioncode(), this.fields().currencycode(), this.fields().modifieddate())
+      override fun currencycode(): IdField<CurrencyId, CountryregioncurrencyRow> = IdField<CurrencyId, CountryregioncurrencyRow>(_path, "currencycode", CountryregioncurrencyRow::currencycode, Optional.empty(), Optional.of("bpchar"), { row, value -> row.copy(currencycode = value) }, CurrencyId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun modifieddate(): Field<TypoLocalDateTime, CountryregioncurrencyRow> = Field<TypoLocalDateTime, CountryregioncurrencyRow>(_path, "modifieddate", CountryregioncurrencyRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, CountryregioncurrencyRow>> = listOf(this.countryregioncode(), this.currencycode(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<CountryregioncurrencyFields, CountryregioncurrencyRow> = Impl(_path)
     }
 
-    val structure: Relation<CountryregioncurrencyFields, CountryregioncurrencyRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

@@ -7,41 +7,42 @@ package adventureworks.public_.title_domain;
 
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface TitleDomainFields {
-  final class Impl extends Relation<TitleDomainFields, TitleDomainRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
-
+public interface TitleDomainFields extends FieldsExpr<TitleDomainRow> {
+  record Impl(List<Path> _path) implements TitleDomainFields, Relation<TitleDomainFields, TitleDomainRow> {
     @Override
-    public TitleDomainFields fields() {
-      return new TitleDomainFields() {
-               @Override
-               public IdField<TitleDomainId, TitleDomainRow> code() {
-                 return new IdField<TitleDomainId, TitleDomainRow>(_path, "code", TitleDomainRow::code, Optional.empty(), Optional.of("text"), (row, value) -> row.withCode(value), TitleDomainId.pgType);
-               };
-             };
+    public IdField<TitleDomainId, TitleDomainRow> code() {
+      return new IdField<TitleDomainId, TitleDomainRow>(_path, "code", TitleDomainRow::code, Optional.empty(), Optional.of("text"), (row, value) -> row.withCode(value), TitleDomainId.pgType);
     };
 
     @Override
     public List<FieldLike<?, TitleDomainRow>> columns() {
-      return List.of(this.fields().code());
+      return List.of(this.code());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<TitleDomainFields, TitleDomainRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<TitleDomainFields, TitleDomainRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
   IdField<TitleDomainId, TitleDomainRow> code();
+
+  @Override
+  List<FieldLike<?, TitleDomainRow>> columns();
+
+  @Override
+  default RowParser<TitleDomainRow> rowParser() {
+    return TitleDomainRow._rowParser;
+  };
 }

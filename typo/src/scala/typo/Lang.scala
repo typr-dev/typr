@@ -83,6 +83,9 @@ trait Lang extends TypeSupport {
   /** Structural inequality check */
   def notEquals(left: jvm.Code, right: jvm.Code): jvm.Code
 
+  /** Cast from Object to a specific type. Java: (Type) expr, Scala: expr.asInstanceOf[Type] */
+  def castFromObject(targetType: jvm.Type, expr: jvm.Code): jvm.Code
+
   /** Convenience method for property access on generated data classes */
   final def prop(target: jvm.Code, field: jvm.Ident): jvm.Code = propertyGetterAccess(target, field)
   final def prop(target: jvm.Code, field: String): jvm.Code = propertyGetterAccess(target, jvm.Ident(field))

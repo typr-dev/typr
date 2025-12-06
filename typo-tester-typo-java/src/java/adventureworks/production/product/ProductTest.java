@@ -170,7 +170,7 @@ public class ProductTest extends SnapshotTest {
 
             var q = productRepo.select()
                     .where(p -> p.name().like("foo%", Name.bijection).not(Bijection.asBool()))
-                    .where(p -> p.name().underlying(Name.bijection).stringAppend(p.color(), typo.dsl.Bijection.identity()).like("foo%", typo.dsl.Bijection.identity()).not(Bijection.asBool()))
+                    .where(p -> p.name().underlying(Name.bijection, typo.runtime.PgTypes.text).stringAppend(p.color(), typo.dsl.Bijection.identity()).like("foo%", typo.dsl.Bijection.identity()).not(Bijection.asBool()))
                     .where(p -> p.daystomanufacture().greaterThan(0))
                     .where(p -> p.modifieddate().lessThan(TypoLocalDateTime.now()))
                     .join(projectModelRepo.select().where(pm -> pm.modifieddate().lessThan(TypoLocalDateTime.now())))
@@ -186,7 +186,7 @@ public class ProductTest extends SnapshotTest {
                     // call `length` function and compare result
                     .where(p -> p.name().strLength(Name.bijection).greaterThan(new SqlExpr.ConstReq<>(3, typo.runtime.PgTypes.int4)))
                     // concatenate two strings (one of which is a wrapped type in scala) and compare result
-                    .where(p -> p.name().underlying(Name.bijection).stringAppend(p.color(), typo.dsl.Bijection.identity()).like("foo%", typo.dsl.Bijection.identity()).not(Bijection.asBool()))
+                    .where(p -> p.name().underlying(Name.bijection, typo.runtime.PgTypes.text).stringAppend(p.color(), typo.dsl.Bijection.identity()).like("foo%", typo.dsl.Bijection.identity()).not(Bijection.asBool()))
                     // tracks nullability
                     .where(p -> p.color().coalesce("yellow").isNotEqual(new SqlExpr.ConstReq<>("blue", typo.runtime.PgTypes.text)))
                     // compare dates
@@ -195,7 +195,7 @@ public class ProductTest extends SnapshotTest {
                     .join(projectModelRepo.select().where(pm -> pm.name().strLength(Name.bijection).greaterThan(new SqlExpr.ConstReq<>(0, typo.runtime.PgTypes.int4))))
                     .on(p_pm -> p_pm._1().productmodelid().isEqual(p_pm._2().productmodelid()))
                     // additional predicates for joined rows.
-                    .where(p_pm -> p_pm._2().name().underlying(Name.bijection).isNotEqual(new SqlExpr.ConstReq<>("foo", typo.runtime.PgTypes.text)))
+                    .where(p_pm -> p_pm._2().name().underlying(Name.bijection, typo.runtime.PgTypes.text).isNotEqual(new SqlExpr.ConstReq<>("foo", typo.runtime.PgTypes.text)))
                     // works arbitrarily deep
                     .join(projectModelRepo.select().where(pm -> pm.name().strLength(Name.bijection).greaterThan(new SqlExpr.ConstReq<>(0, typo.runtime.PgTypes.int4))))
                     .leftOn(p_pm_pm2 -> p_pm_pm2._1()._1().productmodelid().isEqual(p_pm_pm2._2().productmodelid()).and(new SqlExpr.ConstReq<>(false, typo.runtime.PgTypes.bool), Bijection.asBool()))

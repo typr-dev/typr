@@ -6,66 +6,70 @@
 package testdb.customer_status
 
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-trait CustomerStatusFields {
+trait CustomerStatusFields extends FieldsExpr[CustomerStatusRow] {
   def statusCode: IdField[CustomerStatusId, CustomerStatusRow]
 
   def description: Field[String, CustomerStatusRow]
 
   def isActive: Field[java.lang.Boolean, CustomerStatusRow]
+
+  override def columns: java.util.List[FieldLike[?, CustomerStatusRow]]
+
+  override def rowParser: RowParser[CustomerStatusRow] = CustomerStatusRow._rowParser
 }
 
 object CustomerStatusFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[CustomerStatusFields, CustomerStatusRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends CustomerStatusFields with Relation[CustomerStatusFields, CustomerStatusRow] {
 
-    override lazy val fields: CustomerStatusFields = {
-      new CustomerStatusFields {
-        override def statusCode: IdField[CustomerStatusId, CustomerStatusRow] = {
-          new IdField[CustomerStatusId, CustomerStatusRow](
-            _path,
-            "status_code",
-            _.statusCode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(statusCode = value),
-            CustomerStatusId.pgType
-          )
-        }
-        override def description: Field[String, CustomerStatusRow] = {
-          new Field[String, CustomerStatusRow](
-            _path,
-            "description",
-            _.description,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(description = value),
-            MariaTypes.varchar
-          )
-        }
-        override def isActive: Field[java.lang.Boolean, CustomerStatusRow] = {
-          new Field[java.lang.Boolean, CustomerStatusRow](
-            _path,
-            "is_active",
-            _.isActive,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(isActive = value),
-            MariaTypes.bool
-          )
-        }
-      }
+    override def statusCode: IdField[CustomerStatusId, CustomerStatusRow] = {
+      new IdField[CustomerStatusId, CustomerStatusRow](
+        _path,
+        "status_code",
+        _.statusCode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(statusCode = value),
+        CustomerStatusId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, CustomerStatusRow]] = java.util.List.of(this.fields.statusCode, this.fields.description, this.fields.isActive)
+    override def description: Field[String, CustomerStatusRow] = {
+      new Field[String, CustomerStatusRow](
+        _path,
+        "description",
+        _.description,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(description = value),
+        MariaTypes.varchar
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def isActive: Field[java.lang.Boolean, CustomerStatusRow] = {
+      new Field[java.lang.Boolean, CustomerStatusRow](
+        _path,
+        "is_active",
+        _.isActive,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(isActive = value),
+        MariaTypes.bool
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, CustomerStatusRow]] = java.util.List.of(this.statusCode, this.description, this.isActive)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[CustomerStatusFields, CustomerStatusRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[CustomerStatusFields, CustomerStatusRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

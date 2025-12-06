@@ -9,13 +9,15 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoUUID
 import adventureworks.public.Name
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait AddresstypeFields {
+trait AddresstypeFields extends FieldsExpr[AddresstypeRow] {
   def addresstypeid: IdField[AddresstypeId, AddresstypeRow]
 
   def name: Field[Name, AddresstypeRow]
@@ -23,64 +25,67 @@ trait AddresstypeFields {
   def rowguid: Field[TypoUUID, AddresstypeRow]
 
   def modifieddate: Field[TypoLocalDateTime, AddresstypeRow]
+
+  override def columns: java.util.List[FieldLike[?, AddresstypeRow]]
+
+  override def rowParser: RowParser[AddresstypeRow] = AddresstypeRow._rowParser
 }
 
 object AddresstypeFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[AddresstypeFields, AddresstypeRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends AddresstypeFields with Relation[AddresstypeFields, AddresstypeRow] {
 
-    override lazy val fields: AddresstypeFields = {
-      new AddresstypeFields {
-        override def addresstypeid: IdField[AddresstypeId, AddresstypeRow] = {
-          new IdField[AddresstypeId, AddresstypeRow](
-            _path,
-            "addresstypeid",
-            _.addresstypeid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(addresstypeid = value),
-            AddresstypeId.pgType
-          )
-        }
-        override def name: Field[Name, AddresstypeRow] = {
-          new Field[Name, AddresstypeRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.of("varchar"),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def rowguid: Field[TypoUUID, AddresstypeRow] = {
-          new Field[TypoUUID, AddresstypeRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.of("uuid"),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, AddresstypeRow] = {
-          new Field[TypoLocalDateTime, AddresstypeRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def addresstypeid: IdField[AddresstypeId, AddresstypeRow] = {
+      new IdField[AddresstypeId, AddresstypeRow](
+        _path,
+        "addresstypeid",
+        _.addresstypeid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(addresstypeid = value),
+        AddresstypeId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, AddresstypeRow]] = java.util.List.of(this.fields.addresstypeid, this.fields.name, this.fields.rowguid, this.fields.modifieddate)
+    override def name: Field[Name, AddresstypeRow] = {
+      new Field[Name, AddresstypeRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.of("varchar"),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def rowguid: Field[TypoUUID, AddresstypeRow] = {
+      new Field[TypoUUID, AddresstypeRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.of("uuid"),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, AddresstypeRow] = {
+      new Field[TypoLocalDateTime, AddresstypeRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, AddresstypeRow]] = java.util.List.of(this.addresstypeid, this.name, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[AddresstypeFields, AddresstypeRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[AddresstypeFields, AddresstypeRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

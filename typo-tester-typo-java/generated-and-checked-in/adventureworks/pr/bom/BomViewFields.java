@@ -12,77 +12,79 @@ import adventureworks.production.unitmeasure.UnitmeasureId;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface BomViewFields {
-  final class Impl extends Relation<BomViewFields, BomViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface BomViewFields extends FieldsExpr<BomViewRow> {
+  record Impl(List<Path> _path) implements BomViewFields, Relation<BomViewFields, BomViewRow> {
+    @Override
+    public Field<Integer, BomViewRow> id() {
+      return new Field<Integer, BomViewRow>(_path, "id", BomViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), PgTypes.int4);
+    };
 
     @Override
-    public BomViewFields fields() {
-      return new BomViewFields() {
-               @Override
-               public Field<Integer, BomViewRow> id() {
-                 return new Field<Integer, BomViewRow>(_path, "id", BomViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), PgTypes.int4);
-               };
-               @Override
-               public Field<Integer, BomViewRow> billofmaterialsid() {
-                 return new Field<Integer, BomViewRow>(_path, "billofmaterialsid", BomViewRow::billofmaterialsid, Optional.empty(), Optional.empty(), (row, value) -> row.withBillofmaterialsid(value), PgTypes.int4);
-               };
-               @Override
-               public OptField<ProductId, BomViewRow> productassemblyid() {
-                 return new OptField<ProductId, BomViewRow>(_path, "productassemblyid", BomViewRow::productassemblyid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductassemblyid(value), ProductId.pgType);
-               };
-               @Override
-               public Field<ProductId, BomViewRow> componentid() {
-                 return new Field<ProductId, BomViewRow>(_path, "componentid", BomViewRow::componentid, Optional.empty(), Optional.empty(), (row, value) -> row.withComponentid(value), ProductId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, BomViewRow> startdate() {
-                 return new Field<TypoLocalDateTime, BomViewRow>(_path, "startdate", BomViewRow::startdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withStartdate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public OptField<TypoLocalDateTime, BomViewRow> enddate() {
-                 return new OptField<TypoLocalDateTime, BomViewRow>(_path, "enddate", BomViewRow::enddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withEnddate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public Field<UnitmeasureId, BomViewRow> unitmeasurecode() {
-                 return new Field<UnitmeasureId, BomViewRow>(_path, "unitmeasurecode", BomViewRow::unitmeasurecode, Optional.empty(), Optional.empty(), (row, value) -> row.withUnitmeasurecode(value), UnitmeasureId.pgType);
-               };
-               @Override
-               public Field<TypoShort, BomViewRow> bomlevel() {
-                 return new Field<TypoShort, BomViewRow>(_path, "bomlevel", BomViewRow::bomlevel, Optional.empty(), Optional.empty(), (row, value) -> row.withBomlevel(value), TypoShort.pgType);
-               };
-               @Override
-               public Field<BigDecimal, BomViewRow> perassemblyqty() {
-                 return new Field<BigDecimal, BomViewRow>(_path, "perassemblyqty", BomViewRow::perassemblyqty, Optional.empty(), Optional.empty(), (row, value) -> row.withPerassemblyqty(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<TypoLocalDateTime, BomViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, BomViewRow>(_path, "modifieddate", BomViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<Integer, BomViewRow> billofmaterialsid() {
+      return new Field<Integer, BomViewRow>(_path, "billofmaterialsid", BomViewRow::billofmaterialsid, Optional.empty(), Optional.empty(), (row, value) -> row.withBillofmaterialsid(value), PgTypes.int4);
+    };
+
+    @Override
+    public OptField<ProductId, BomViewRow> productassemblyid() {
+      return new OptField<ProductId, BomViewRow>(_path, "productassemblyid", BomViewRow::productassemblyid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductassemblyid(value), ProductId.pgType);
+    };
+
+    @Override
+    public Field<ProductId, BomViewRow> componentid() {
+      return new Field<ProductId, BomViewRow>(_path, "componentid", BomViewRow::componentid, Optional.empty(), Optional.empty(), (row, value) -> row.withComponentid(value), ProductId.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, BomViewRow> startdate() {
+      return new Field<TypoLocalDateTime, BomViewRow>(_path, "startdate", BomViewRow::startdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withStartdate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public OptField<TypoLocalDateTime, BomViewRow> enddate() {
+      return new OptField<TypoLocalDateTime, BomViewRow>(_path, "enddate", BomViewRow::enddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withEnddate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public Field<UnitmeasureId, BomViewRow> unitmeasurecode() {
+      return new Field<UnitmeasureId, BomViewRow>(_path, "unitmeasurecode", BomViewRow::unitmeasurecode, Optional.empty(), Optional.empty(), (row, value) -> row.withUnitmeasurecode(value), UnitmeasureId.pgType);
+    };
+
+    @Override
+    public Field<TypoShort, BomViewRow> bomlevel() {
+      return new Field<TypoShort, BomViewRow>(_path, "bomlevel", BomViewRow::bomlevel, Optional.empty(), Optional.empty(), (row, value) -> row.withBomlevel(value), TypoShort.pgType);
+    };
+
+    @Override
+    public Field<BigDecimal, BomViewRow> perassemblyqty() {
+      return new Field<BigDecimal, BomViewRow>(_path, "perassemblyqty", BomViewRow::perassemblyqty, Optional.empty(), Optional.empty(), (row, value) -> row.withPerassemblyqty(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, BomViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, BomViewRow>(_path, "modifieddate", BomViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, BomViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().billofmaterialsid(), this.fields().productassemblyid(), this.fields().componentid(), this.fields().startdate(), this.fields().enddate(), this.fields().unitmeasurecode(), this.fields().bomlevel(), this.fields().perassemblyqty(), this.fields().modifieddate());
+      return List.of(this.id(), this.billofmaterialsid(), this.productassemblyid(), this.componentid(), this.startdate(), this.enddate(), this.unitmeasurecode(), this.bomlevel(), this.perassemblyqty(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<BomViewFields, BomViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<BomViewFields, BomViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -105,4 +107,12 @@ public interface BomViewFields {
   Field<BigDecimal, BomViewRow> perassemblyqty();
 
   Field<TypoLocalDateTime, BomViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, BomViewRow>> columns();
+
+  @Override
+  default RowParser<BomViewRow> rowParser() {
+    return BomViewRow._rowParser;
+  };
 }

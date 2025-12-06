@@ -9,13 +9,15 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoLocalTime
 import adventureworks.public.Name
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait ShiftFields {
+trait ShiftFields extends FieldsExpr[ShiftRow] {
   def shiftid: IdField[ShiftId, ShiftRow]
 
   def name: Field[Name, ShiftRow]
@@ -25,75 +27,79 @@ trait ShiftFields {
   def endtime: Field[TypoLocalTime, ShiftRow]
 
   def modifieddate: Field[TypoLocalDateTime, ShiftRow]
+
+  override def columns: java.util.List[FieldLike[?, ShiftRow]]
+
+  override def rowParser: RowParser[ShiftRow] = ShiftRow._rowParser
 }
 
 object ShiftFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[ShiftFields, ShiftRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends ShiftFields with Relation[ShiftFields, ShiftRow] {
 
-    override lazy val fields: ShiftFields = {
-      new ShiftFields {
-        override def shiftid: IdField[ShiftId, ShiftRow] = {
-          new IdField[ShiftId, ShiftRow](
-            _path,
-            "shiftid",
-            _.shiftid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(shiftid = value),
-            ShiftId.pgType
-          )
-        }
-        override def name: Field[Name, ShiftRow] = {
-          new Field[Name, ShiftRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.of("varchar"),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def starttime: Field[TypoLocalTime, ShiftRow] = {
-          new Field[TypoLocalTime, ShiftRow](
-            _path,
-            "starttime",
-            _.starttime,
-            Optional.of("text"),
-            Optional.of("time"),
-            (row, value) => row.copy(starttime = value),
-            TypoLocalTime.pgType
-          )
-        }
-        override def endtime: Field[TypoLocalTime, ShiftRow] = {
-          new Field[TypoLocalTime, ShiftRow](
-            _path,
-            "endtime",
-            _.endtime,
-            Optional.of("text"),
-            Optional.of("time"),
-            (row, value) => row.copy(endtime = value),
-            TypoLocalTime.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, ShiftRow] = {
-          new Field[TypoLocalDateTime, ShiftRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def shiftid: IdField[ShiftId, ShiftRow] = {
+      new IdField[ShiftId, ShiftRow](
+        _path,
+        "shiftid",
+        _.shiftid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(shiftid = value),
+        ShiftId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, ShiftRow]] = java.util.List.of(this.fields.shiftid, this.fields.name, this.fields.starttime, this.fields.endtime, this.fields.modifieddate)
+    override def name: Field[Name, ShiftRow] = {
+      new Field[Name, ShiftRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.of("varchar"),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def starttime: Field[TypoLocalTime, ShiftRow] = {
+      new Field[TypoLocalTime, ShiftRow](
+        _path,
+        "starttime",
+        _.starttime,
+        Optional.of("text"),
+        Optional.of("time"),
+        (row, value) => row.copy(starttime = value),
+        TypoLocalTime.pgType
+      )
+    }
+
+    override def endtime: Field[TypoLocalTime, ShiftRow] = {
+      new Field[TypoLocalTime, ShiftRow](
+        _path,
+        "endtime",
+        _.endtime,
+        Optional.of("text"),
+        Optional.of("time"),
+        (row, value) => row.copy(endtime = value),
+        TypoLocalTime.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, ShiftRow] = {
+      new Field[TypoLocalDateTime, ShiftRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, ShiftRow]] = java.util.List.of(this.shiftid, this.name, this.starttime, this.endtime, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[ShiftFields, ShiftRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[ShiftFields, ShiftRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

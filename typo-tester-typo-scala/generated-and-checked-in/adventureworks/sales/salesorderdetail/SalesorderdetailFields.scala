@@ -17,6 +17,7 @@ import adventureworks.sales.specialofferproduct.SpecialofferproductFields
 import adventureworks.sales.specialofferproduct.SpecialofferproductId
 import adventureworks.sales.specialofferproduct.SpecialofferproductRow
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -28,8 +29,9 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait SalesorderdetailFields {
+trait SalesorderdetailFields extends FieldsExpr[SalesorderdetailRow] {
   def salesorderid: IdField[SalesorderheaderId, SalesorderdetailRow]
 
   def salesorderdetailid: IdField[Integer, SalesorderdetailRow]
@@ -64,130 +66,139 @@ trait SalesorderdetailFields {
   def compositeIdIs(compositeId: SalesorderdetailId): SqlExpr[java.lang.Boolean] = SqlExpr.all(salesorderid.isEqual(compositeId.salesorderid), salesorderdetailid.isEqual(compositeId.salesorderdetailid))
 
   def compositeIdIn(compositeIds: java.util.List[SalesorderdetailId]): SqlExpr[java.lang.Boolean] = new CompositeIn(java.util.List.of(new Part[SalesorderheaderId, SalesorderdetailId, SalesorderdetailRow](salesorderid, _.salesorderid, SalesorderheaderId.pgType), new Part[Integer, SalesorderdetailId, SalesorderdetailRow](salesorderdetailid, _.salesorderdetailid, PgTypes.int4)), compositeIds)
+
+  override def columns: java.util.List[FieldLike[?, SalesorderdetailRow]]
+
+  override def rowParser: RowParser[SalesorderdetailRow] = SalesorderdetailRow._rowParser
 }
 
 object SalesorderdetailFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[SalesorderdetailFields, SalesorderdetailRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends SalesorderdetailFields with Relation[SalesorderdetailFields, SalesorderdetailRow] {
 
-    override lazy val fields: SalesorderdetailFields = {
-      new SalesorderdetailFields {
-        override def salesorderid: IdField[SalesorderheaderId, SalesorderdetailRow] = {
-          new IdField[SalesorderheaderId, SalesorderdetailRow](
-            _path,
-            "salesorderid",
-            _.salesorderid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(salesorderid = value),
-            SalesorderheaderId.pgType
-          )
-        }
-        override def salesorderdetailid: IdField[Integer, SalesorderdetailRow] = {
-          new IdField[Integer, SalesorderdetailRow](
-            _path,
-            "salesorderdetailid",
-            _.salesorderdetailid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(salesorderdetailid = value),
-            PgTypes.int4
-          )
-        }
-        override def carriertrackingnumber: OptField[/* max 25 chars */ String, SalesorderdetailRow] = {
-          new OptField[/* max 25 chars */ String, SalesorderdetailRow](
-            _path,
-            "carriertrackingnumber",
-            _.carriertrackingnumber,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(carriertrackingnumber = value),
-            PgTypes.text
-          )
-        }
-        override def orderqty: Field[TypoShort, SalesorderdetailRow] = {
-          new Field[TypoShort, SalesorderdetailRow](
-            _path,
-            "orderqty",
-            _.orderqty,
-            Optional.empty(),
-            Optional.of("int2"),
-            (row, value) => row.copy(orderqty = value),
-            TypoShort.pgType
-          )
-        }
-        override def productid: Field[ProductId, SalesorderdetailRow] = {
-          new Field[ProductId, SalesorderdetailRow](
-            _path,
-            "productid",
-            _.productid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(productid = value),
-            ProductId.pgType
-          )
-        }
-        override def specialofferid: Field[SpecialofferId, SalesorderdetailRow] = {
-          new Field[SpecialofferId, SalesorderdetailRow](
-            _path,
-            "specialofferid",
-            _.specialofferid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(specialofferid = value),
-            SpecialofferId.pgType
-          )
-        }
-        override def unitprice: Field[java.math.BigDecimal, SalesorderdetailRow] = {
-          new Field[java.math.BigDecimal, SalesorderdetailRow](
-            _path,
-            "unitprice",
-            _.unitprice,
-            Optional.empty(),
-            Optional.of("numeric"),
-            (row, value) => row.copy(unitprice = value),
-            PgTypes.numeric
-          )
-        }
-        override def unitpricediscount: Field[java.math.BigDecimal, SalesorderdetailRow] = {
-          new Field[java.math.BigDecimal, SalesorderdetailRow](
-            _path,
-            "unitpricediscount",
-            _.unitpricediscount,
-            Optional.empty(),
-            Optional.of("numeric"),
-            (row, value) => row.copy(unitpricediscount = value),
-            PgTypes.numeric
-          )
-        }
-        override def rowguid: Field[TypoUUID, SalesorderdetailRow] = {
-          new Field[TypoUUID, SalesorderdetailRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.of("uuid"),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, SalesorderdetailRow] = {
-          new Field[TypoLocalDateTime, SalesorderdetailRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def salesorderid: IdField[SalesorderheaderId, SalesorderdetailRow] = {
+      new IdField[SalesorderheaderId, SalesorderdetailRow](
+        _path,
+        "salesorderid",
+        _.salesorderid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(salesorderid = value),
+        SalesorderheaderId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, SalesorderdetailRow]] = java.util.List.of(this.fields.salesorderid, this.fields.salesorderdetailid, this.fields.carriertrackingnumber, this.fields.orderqty, this.fields.productid, this.fields.specialofferid, this.fields.unitprice, this.fields.unitpricediscount, this.fields.rowguid, this.fields.modifieddate)
+    override def salesorderdetailid: IdField[Integer, SalesorderdetailRow] = {
+      new IdField[Integer, SalesorderdetailRow](
+        _path,
+        "salesorderdetailid",
+        _.salesorderdetailid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(salesorderdetailid = value),
+        PgTypes.int4
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def carriertrackingnumber: OptField[/* max 25 chars */ String, SalesorderdetailRow] = {
+      new OptField[/* max 25 chars */ String, SalesorderdetailRow](
+        _path,
+        "carriertrackingnumber",
+        _.carriertrackingnumber,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(carriertrackingnumber = value),
+        PgTypes.text
+      )
+    }
+
+    override def orderqty: Field[TypoShort, SalesorderdetailRow] = {
+      new Field[TypoShort, SalesorderdetailRow](
+        _path,
+        "orderqty",
+        _.orderqty,
+        Optional.empty(),
+        Optional.of("int2"),
+        (row, value) => row.copy(orderqty = value),
+        TypoShort.pgType
+      )
+    }
+
+    override def productid: Field[ProductId, SalesorderdetailRow] = {
+      new Field[ProductId, SalesorderdetailRow](
+        _path,
+        "productid",
+        _.productid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(productid = value),
+        ProductId.pgType
+      )
+    }
+
+    override def specialofferid: Field[SpecialofferId, SalesorderdetailRow] = {
+      new Field[SpecialofferId, SalesorderdetailRow](
+        _path,
+        "specialofferid",
+        _.specialofferid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(specialofferid = value),
+        SpecialofferId.pgType
+      )
+    }
+
+    override def unitprice: Field[java.math.BigDecimal, SalesorderdetailRow] = {
+      new Field[java.math.BigDecimal, SalesorderdetailRow](
+        _path,
+        "unitprice",
+        _.unitprice,
+        Optional.empty(),
+        Optional.of("numeric"),
+        (row, value) => row.copy(unitprice = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def unitpricediscount: Field[java.math.BigDecimal, SalesorderdetailRow] = {
+      new Field[java.math.BigDecimal, SalesorderdetailRow](
+        _path,
+        "unitpricediscount",
+        _.unitpricediscount,
+        Optional.empty(),
+        Optional.of("numeric"),
+        (row, value) => row.copy(unitpricediscount = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, SalesorderdetailRow] = {
+      new Field[TypoUUID, SalesorderdetailRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.of("uuid"),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, SalesorderdetailRow] = {
+      new Field[TypoLocalDateTime, SalesorderdetailRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, SalesorderdetailRow]] = java.util.List.of(this.salesorderid, this.salesorderdetailid, this.carriertrackingnumber, this.orderqty, this.productid, this.specialofferid, this.unitprice, this.unitpricediscount, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[SalesorderdetailFields, SalesorderdetailRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[SalesorderdetailFields, SalesorderdetailRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

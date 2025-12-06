@@ -10,35 +10,42 @@ import adventureworks.customtypes.TypoUUID
 import adventureworks.public.Name
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface AddresstypeFields {
+interface AddresstypeFields : FieldsExpr<AddresstypeRow> {
   fun addresstypeid(): IdField<AddresstypeId, AddresstypeRow>
+
+  override fun columns(): List<FieldLike<*, AddresstypeRow>>
 
   fun modifieddate(): Field<TypoLocalDateTime, AddresstypeRow>
 
   fun name(): Field<Name, AddresstypeRow>
 
+  override fun rowParser(): RowParser<AddresstypeRow> = AddresstypeRow._rowParser
+
   fun rowguid(): Field<TypoUUID, AddresstypeRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<AddresstypeFields, AddresstypeRow>(path) {
-      override fun fields(): AddresstypeFields = object : AddresstypeFields {
-        override fun addresstypeid(): IdField<AddresstypeId, AddresstypeRow> = IdField<AddresstypeId, AddresstypeRow>(_path, "addresstypeid", AddresstypeRow::addresstypeid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(addresstypeid = value) }, AddresstypeId.pgType)
-        override fun name(): Field<Name, AddresstypeRow> = Field<Name, AddresstypeRow>(_path, "name", AddresstypeRow::name, Optional.empty(), Optional.of("varchar"), { row, value -> row.copy(name = value) }, Name.pgType)
-        override fun rowguid(): Field<TypoUUID, AddresstypeRow> = Field<TypoUUID, AddresstypeRow>(_path, "rowguid", AddresstypeRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, AddresstypeRow> = Field<TypoLocalDateTime, AddresstypeRow>(_path, "modifieddate", AddresstypeRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : AddresstypeFields, Relation<AddresstypeFields, AddresstypeRow> {
+      override fun addresstypeid(): IdField<AddresstypeId, AddresstypeRow> = IdField<AddresstypeId, AddresstypeRow>(_path, "addresstypeid", AddresstypeRow::addresstypeid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(addresstypeid = value) }, AddresstypeId.pgType)
 
-      override fun columns(): List<FieldLike<*, AddresstypeRow>> = listOf(this.fields().addresstypeid(), this.fields().name(), this.fields().rowguid(), this.fields().modifieddate())
+      override fun name(): Field<Name, AddresstypeRow> = Field<Name, AddresstypeRow>(_path, "name", AddresstypeRow::name, Optional.empty(), Optional.of("varchar"), { row, value -> row.copy(name = value) }, Name.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun rowguid(): Field<TypoUUID, AddresstypeRow> = Field<TypoUUID, AddresstypeRow>(_path, "rowguid", AddresstypeRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, AddresstypeRow> = Field<TypoLocalDateTime, AddresstypeRow>(_path, "modifieddate", AddresstypeRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, AddresstypeRow>> = listOf(this.addresstypeid(), this.name(), this.rowguid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<AddresstypeFields, AddresstypeRow> = Impl(_path)
     }
 
-    val structure: Relation<AddresstypeFields, AddresstypeRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

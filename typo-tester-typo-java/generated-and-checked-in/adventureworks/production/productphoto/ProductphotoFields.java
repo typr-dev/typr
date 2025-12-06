@@ -9,6 +9,7 @@ import adventureworks.customtypes.TypoBytea;
 import adventureworks.customtypes.TypoLocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
@@ -16,55 +17,52 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface ProductphotoFields {
-  final class Impl extends Relation<ProductphotoFields, ProductphotoRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface ProductphotoFields extends FieldsExpr<ProductphotoRow> {
+  record Impl(List<Path> _path) implements ProductphotoFields, Relation<ProductphotoFields, ProductphotoRow> {
+    @Override
+    public IdField<ProductphotoId, ProductphotoRow> productphotoid() {
+      return new IdField<ProductphotoId, ProductphotoRow>(_path, "productphotoid", ProductphotoRow::productphotoid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductphotoid(value), ProductphotoId.pgType);
+    };
 
     @Override
-    public ProductphotoFields fields() {
-      return new ProductphotoFields() {
-               @Override
-               public IdField<ProductphotoId, ProductphotoRow> productphotoid() {
-                 return new IdField<ProductphotoId, ProductphotoRow>(_path, "productphotoid", ProductphotoRow::productphotoid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductphotoid(value), ProductphotoId.pgType);
-               };
-               @Override
-               public OptField<TypoBytea, ProductphotoRow> thumbnailphoto() {
-                 return new OptField<TypoBytea, ProductphotoRow>(_path, "thumbnailphoto", ProductphotoRow::thumbnailphoto, Optional.empty(), Optional.of("bytea"), (row, value) -> row.withThumbnailphoto(value), TypoBytea.pgType);
-               };
-               @Override
-               public OptField</* max 50 chars */ String, ProductphotoRow> thumbnailphotofilename() {
-                 return new OptField</* max 50 chars */ String, ProductphotoRow>(_path, "thumbnailphotofilename", ProductphotoRow::thumbnailphotofilename, Optional.empty(), Optional.empty(), (row, value) -> row.withThumbnailphotofilename(value), PgTypes.text);
-               };
-               @Override
-               public OptField<TypoBytea, ProductphotoRow> largephoto() {
-                 return new OptField<TypoBytea, ProductphotoRow>(_path, "largephoto", ProductphotoRow::largephoto, Optional.empty(), Optional.of("bytea"), (row, value) -> row.withLargephoto(value), TypoBytea.pgType);
-               };
-               @Override
-               public OptField</* max 50 chars */ String, ProductphotoRow> largephotofilename() {
-                 return new OptField</* max 50 chars */ String, ProductphotoRow>(_path, "largephotofilename", ProductphotoRow::largephotofilename, Optional.empty(), Optional.empty(), (row, value) -> row.withLargephotofilename(value), PgTypes.text);
-               };
-               @Override
-               public Field<TypoLocalDateTime, ProductphotoRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, ProductphotoRow>(_path, "modifieddate", ProductphotoRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public OptField<TypoBytea, ProductphotoRow> thumbnailphoto() {
+      return new OptField<TypoBytea, ProductphotoRow>(_path, "thumbnailphoto", ProductphotoRow::thumbnailphoto, Optional.empty(), Optional.of("bytea"), (row, value) -> row.withThumbnailphoto(value), TypoBytea.pgType);
+    };
+
+    @Override
+    public OptField</* max 50 chars */ String, ProductphotoRow> thumbnailphotofilename() {
+      return new OptField</* max 50 chars */ String, ProductphotoRow>(_path, "thumbnailphotofilename", ProductphotoRow::thumbnailphotofilename, Optional.empty(), Optional.empty(), (row, value) -> row.withThumbnailphotofilename(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField<TypoBytea, ProductphotoRow> largephoto() {
+      return new OptField<TypoBytea, ProductphotoRow>(_path, "largephoto", ProductphotoRow::largephoto, Optional.empty(), Optional.of("bytea"), (row, value) -> row.withLargephoto(value), TypoBytea.pgType);
+    };
+
+    @Override
+    public OptField</* max 50 chars */ String, ProductphotoRow> largephotofilename() {
+      return new OptField</* max 50 chars */ String, ProductphotoRow>(_path, "largephotofilename", ProductphotoRow::largephotofilename, Optional.empty(), Optional.empty(), (row, value) -> row.withLargephotofilename(value), PgTypes.text);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, ProductphotoRow> modifieddate() {
+      return new Field<TypoLocalDateTime, ProductphotoRow>(_path, "modifieddate", ProductphotoRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, ProductphotoRow>> columns() {
-      return List.of(this.fields().productphotoid(), this.fields().thumbnailphoto(), this.fields().thumbnailphotofilename(), this.fields().largephoto(), this.fields().largephotofilename(), this.fields().modifieddate());
+      return List.of(this.productphotoid(), this.thumbnailphoto(), this.thumbnailphotofilename(), this.largephoto(), this.largephotofilename(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<ProductphotoFields, ProductphotoRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<ProductphotoFields, ProductphotoRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -79,4 +77,12 @@ public interface ProductphotoFields {
   OptField</* max 50 chars */ String, ProductphotoRow> largephotofilename();
 
   Field<TypoLocalDateTime, ProductphotoRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, ProductphotoRow>> columns();
+
+  @Override
+  default RowParser<ProductphotoRow> rowParser() {
+    return ProductphotoRow._rowParser;
+  };
 }

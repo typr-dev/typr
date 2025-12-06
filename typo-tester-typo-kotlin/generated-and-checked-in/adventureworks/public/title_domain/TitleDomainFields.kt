@@ -7,25 +7,29 @@ package adventureworks.public.title_domain
 
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface TitleDomainFields {
+interface TitleDomainFields : FieldsExpr<TitleDomainRow> {
   fun code(): IdField<TitleDomainId, TitleDomainRow>
 
+  override fun columns(): List<FieldLike<*, TitleDomainRow>>
+
+  override fun rowParser(): RowParser<TitleDomainRow> = TitleDomainRow._rowParser
+
   companion object {
-    private class Impl(path: List<Path>) : Relation<TitleDomainFields, TitleDomainRow>(path) {
-      override fun fields(): TitleDomainFields = object : TitleDomainFields {
-        override fun code(): IdField<TitleDomainId, TitleDomainRow> = IdField<TitleDomainId, TitleDomainRow>(_path, "code", TitleDomainRow::code, Optional.empty(), Optional.of("text"), { row, value -> row.copy(code = value) }, TitleDomainId.pgType)
-      }
+    data class Impl(val _path: List<Path>) : TitleDomainFields, Relation<TitleDomainFields, TitleDomainRow> {
+      override fun code(): IdField<TitleDomainId, TitleDomainRow> = IdField<TitleDomainId, TitleDomainRow>(_path, "code", TitleDomainRow::code, Optional.empty(), Optional.of("text"), { row, value -> row.copy(code = value) }, TitleDomainId.pgType)
 
-      override fun columns(): List<FieldLike<*, TitleDomainRow>> = listOf(this.fields().code())
+      override fun columns(): List<FieldLike<*, TitleDomainRow>> = listOf(this.code())
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun copy(_path: List<Path>): Relation<TitleDomainFields, TitleDomainRow> = Impl(_path)
     }
 
-    val structure: Relation<TitleDomainFields, TitleDomainRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

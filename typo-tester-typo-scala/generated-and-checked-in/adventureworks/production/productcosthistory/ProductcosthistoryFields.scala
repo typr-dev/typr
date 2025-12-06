@@ -10,6 +10,7 @@ import adventureworks.production.product.ProductFields
 import adventureworks.production.product.ProductId
 import adventureworks.production.product.ProductRow
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -21,8 +22,9 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait ProductcosthistoryFields {
+trait ProductcosthistoryFields extends FieldsExpr[ProductcosthistoryRow] {
   def productid: IdField[ProductId, ProductcosthistoryRow]
 
   def startdate: IdField[TypoLocalDateTime, ProductcosthistoryRow]
@@ -38,75 +40,79 @@ trait ProductcosthistoryFields {
   def compositeIdIs(compositeId: ProductcosthistoryId): SqlExpr[java.lang.Boolean] = SqlExpr.all(productid.isEqual(compositeId.productid), startdate.isEqual(compositeId.startdate))
 
   def compositeIdIn(compositeIds: java.util.List[ProductcosthistoryId]): SqlExpr[java.lang.Boolean] = new CompositeIn(java.util.List.of(new Part[ProductId, ProductcosthistoryId, ProductcosthistoryRow](productid, _.productid, ProductId.pgType), new Part[TypoLocalDateTime, ProductcosthistoryId, ProductcosthistoryRow](startdate, _.startdate, TypoLocalDateTime.pgType)), compositeIds)
+
+  override def columns: java.util.List[FieldLike[?, ProductcosthistoryRow]]
+
+  override def rowParser: RowParser[ProductcosthistoryRow] = ProductcosthistoryRow._rowParser
 }
 
 object ProductcosthistoryFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[ProductcosthistoryFields, ProductcosthistoryRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends ProductcosthistoryFields with Relation[ProductcosthistoryFields, ProductcosthistoryRow] {
 
-    override lazy val fields: ProductcosthistoryFields = {
-      new ProductcosthistoryFields {
-        override def productid: IdField[ProductId, ProductcosthistoryRow] = {
-          new IdField[ProductId, ProductcosthistoryRow](
-            _path,
-            "productid",
-            _.productid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(productid = value),
-            ProductId.pgType
-          )
-        }
-        override def startdate: IdField[TypoLocalDateTime, ProductcosthistoryRow] = {
-          new IdField[TypoLocalDateTime, ProductcosthistoryRow](
-            _path,
-            "startdate",
-            _.startdate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(startdate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def enddate: OptField[TypoLocalDateTime, ProductcosthistoryRow] = {
-          new OptField[TypoLocalDateTime, ProductcosthistoryRow](
-            _path,
-            "enddate",
-            _.enddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(enddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def standardcost: Field[java.math.BigDecimal, ProductcosthistoryRow] = {
-          new Field[java.math.BigDecimal, ProductcosthistoryRow](
-            _path,
-            "standardcost",
-            _.standardcost,
-            Optional.empty(),
-            Optional.of("numeric"),
-            (row, value) => row.copy(standardcost = value),
-            PgTypes.numeric
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, ProductcosthistoryRow] = {
-          new Field[TypoLocalDateTime, ProductcosthistoryRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def productid: IdField[ProductId, ProductcosthistoryRow] = {
+      new IdField[ProductId, ProductcosthistoryRow](
+        _path,
+        "productid",
+        _.productid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(productid = value),
+        ProductId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, ProductcosthistoryRow]] = java.util.List.of(this.fields.productid, this.fields.startdate, this.fields.enddate, this.fields.standardcost, this.fields.modifieddate)
+    override def startdate: IdField[TypoLocalDateTime, ProductcosthistoryRow] = {
+      new IdField[TypoLocalDateTime, ProductcosthistoryRow](
+        _path,
+        "startdate",
+        _.startdate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(startdate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def enddate: OptField[TypoLocalDateTime, ProductcosthistoryRow] = {
+      new OptField[TypoLocalDateTime, ProductcosthistoryRow](
+        _path,
+        "enddate",
+        _.enddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(enddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def standardcost: Field[java.math.BigDecimal, ProductcosthistoryRow] = {
+      new Field[java.math.BigDecimal, ProductcosthistoryRow](
+        _path,
+        "standardcost",
+        _.standardcost,
+        Optional.empty(),
+        Optional.of("numeric"),
+        (row, value) => row.copy(standardcost = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, ProductcosthistoryRow] = {
+      new Field[TypoLocalDateTime, ProductcosthistoryRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, ProductcosthistoryRow]] = java.util.List.of(this.productid, this.startdate, this.enddate, this.standardcost, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[ProductcosthistoryFields, ProductcosthistoryRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[ProductcosthistoryFields, ProductcosthistoryRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

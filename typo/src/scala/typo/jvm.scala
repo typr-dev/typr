@@ -399,6 +399,15 @@ object jvm {
       members: List[ClassMember]
   ) extends ClassMember
 
+  /** Nested record for inner record definitions. Java: `record Name(params) implements Interface { ... }` */
+  case class NestedRecord(
+      isPrivate: Boolean,
+      name: Ident,
+      params: List[Param[Type]],
+      implements: List[Type],
+      members: List[ClassMember]
+  ) extends ClassMember
+
   case class Value(
       annotations: List[Annotation],
       name: Ident,
@@ -482,6 +491,7 @@ object jvm {
       val Dialect = Qualified("typo.dsl.Dialect")
       val Field = Qualified("typo.dsl.SqlExpr.Field")
       val FieldLikeNoHkt = Qualified("typo.dsl.SqlExpr.FieldLike")
+      val FieldsExpr = Qualified("typo.dsl.FieldsExpr")
       val ForeignKey = Qualified("typo.dsl.ForeignKey")
       val IdField = Qualified("typo.dsl.SqlExpr.IdField")
       val OptField = Qualified("typo.dsl.SqlExpr.OptField")
@@ -494,6 +504,10 @@ object jvm {
       val UpdateBuilder = Qualified("typo.dsl.UpdateBuilder")
       val UpdateBuilderMock = Qualified("typo.dsl.UpdateBuilder.UpdateBuilderMock")
       val UpdateParams = Qualified("typo.dsl.UpdateParams")
+    }
+
+    object runtime {
+      val RowParser = Qualified("typo.runtime.RowParser")
     }
 
     // todo: represent this fact better.

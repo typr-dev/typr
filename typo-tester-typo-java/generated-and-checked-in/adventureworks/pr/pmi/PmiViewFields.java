@@ -10,47 +10,42 @@ import adventureworks.production.illustration.IllustrationId;
 import adventureworks.production.productmodel.ProductmodelId;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface PmiViewFields {
-  final class Impl extends Relation<PmiViewFields, PmiViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PmiViewFields extends FieldsExpr<PmiViewRow> {
+  record Impl(List<Path> _path) implements PmiViewFields, Relation<PmiViewFields, PmiViewRow> {
+    @Override
+    public Field<ProductmodelId, PmiViewRow> productmodelid() {
+      return new Field<ProductmodelId, PmiViewRow>(_path, "productmodelid", PmiViewRow::productmodelid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductmodelid(value), ProductmodelId.pgType);
+    };
 
     @Override
-    public PmiViewFields fields() {
-      return new PmiViewFields() {
-               @Override
-               public Field<ProductmodelId, PmiViewRow> productmodelid() {
-                 return new Field<ProductmodelId, PmiViewRow>(_path, "productmodelid", PmiViewRow::productmodelid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductmodelid(value), ProductmodelId.pgType);
-               };
-               @Override
-               public Field<IllustrationId, PmiViewRow> illustrationid() {
-                 return new Field<IllustrationId, PmiViewRow>(_path, "illustrationid", PmiViewRow::illustrationid, Optional.empty(), Optional.empty(), (row, value) -> row.withIllustrationid(value), IllustrationId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PmiViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, PmiViewRow>(_path, "modifieddate", PmiViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<IllustrationId, PmiViewRow> illustrationid() {
+      return new Field<IllustrationId, PmiViewRow>(_path, "illustrationid", PmiViewRow::illustrationid, Optional.empty(), Optional.empty(), (row, value) -> row.withIllustrationid(value), IllustrationId.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PmiViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, PmiViewRow>(_path, "modifieddate", PmiViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, PmiViewRow>> columns() {
-      return List.of(this.fields().productmodelid(), this.fields().illustrationid(), this.fields().modifieddate());
+      return List.of(this.productmodelid(), this.illustrationid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PmiViewFields, PmiViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PmiViewFields, PmiViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -59,4 +54,12 @@ public interface PmiViewFields {
   Field<IllustrationId, PmiViewRow> illustrationid();
 
   Field<TypoLocalDateTime, PmiViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, PmiViewRow>> columns();
+
+  @Override
+  default RowParser<PmiViewRow> rowParser() {
+    return PmiViewRow._rowParser;
+  };
 }

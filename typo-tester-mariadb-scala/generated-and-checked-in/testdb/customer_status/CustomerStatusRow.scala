@@ -31,7 +31,7 @@ case class CustomerStatusRow(
 }
 
 object CustomerStatusRow {
-  val `_rowParser`: RowParser[CustomerStatusRow] = RowParsers.of(CustomerStatusId.pgType, MariaTypes.varchar, MariaTypes.bool, CustomerStatusRow.apply, row => Array(row.statusCode, row.description, row.isActive))
+  val `_rowParser`: RowParser[CustomerStatusRow] = RowParsers.of(CustomerStatusId.pgType, MariaTypes.varchar, MariaTypes.bool, CustomerStatusRow.apply, row => Array[Object](row.statusCode.asInstanceOf[Object], row.description.asInstanceOf[Object], row.isActive.asInstanceOf[Object]))
 
   given mariaText: MariaText[CustomerStatusRow] = MariaText.from(`_rowParser`)
 }

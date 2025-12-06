@@ -12,6 +12,7 @@ import adventureworks.person.stateprovince.StateprovinceFields
 import adventureworks.person.stateprovince.StateprovinceId
 import adventureworks.person.stateprovince.StateprovinceRow
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -20,8 +21,9 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait AddressFields {
+trait AddressFields extends FieldsExpr[AddressRow] {
   def addressid: IdField[AddressId, AddressRow]
 
   def addressline1: Field[/* max 60 chars */ String, AddressRow]
@@ -41,119 +43,127 @@ trait AddressFields {
   def modifieddate: Field[TypoLocalDateTime, AddressRow]
 
   def fkStateprovince: ForeignKey[StateprovinceFields, StateprovinceRow] = ForeignKey.of[StateprovinceFields, StateprovinceRow]("person.FK_Address_StateProvince_StateProvinceID").withColumnPair(stateprovinceid, _.stateprovinceid)
+
+  override def columns: java.util.List[FieldLike[?, AddressRow]]
+
+  override def rowParser: RowParser[AddressRow] = AddressRow._rowParser
 }
 
 object AddressFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[AddressFields, AddressRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends AddressFields with Relation[AddressFields, AddressRow] {
 
-    override lazy val fields: AddressFields = {
-      new AddressFields {
-        override def addressid: IdField[AddressId, AddressRow] = {
-          new IdField[AddressId, AddressRow](
-            _path,
-            "addressid",
-            _.addressid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(addressid = value),
-            AddressId.pgType
-          )
-        }
-        override def addressline1: Field[/* max 60 chars */ String, AddressRow] = {
-          new Field[/* max 60 chars */ String, AddressRow](
-            _path,
-            "addressline1",
-            _.addressline1,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(addressline1 = value),
-            PgTypes.text
-          )
-        }
-        override def addressline2: OptField[/* max 60 chars */ String, AddressRow] = {
-          new OptField[/* max 60 chars */ String, AddressRow](
-            _path,
-            "addressline2",
-            _.addressline2,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(addressline2 = value),
-            PgTypes.text
-          )
-        }
-        override def city: Field[/* max 30 chars */ String, AddressRow] = {
-          new Field[/* max 30 chars */ String, AddressRow](
-            _path,
-            "city",
-            _.city,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(city = value),
-            PgTypes.text
-          )
-        }
-        override def stateprovinceid: Field[StateprovinceId, AddressRow] = {
-          new Field[StateprovinceId, AddressRow](
-            _path,
-            "stateprovinceid",
-            _.stateprovinceid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(stateprovinceid = value),
-            StateprovinceId.pgType
-          )
-        }
-        override def postalcode: Field[/* max 15 chars */ String, AddressRow] = {
-          new Field[/* max 15 chars */ String, AddressRow](
-            _path,
-            "postalcode",
-            _.postalcode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(postalcode = value),
-            PgTypes.text
-          )
-        }
-        override def spatiallocation: OptField[TypoBytea, AddressRow] = {
-          new OptField[TypoBytea, AddressRow](
-            _path,
-            "spatiallocation",
-            _.spatiallocation,
-            Optional.empty(),
-            Optional.of("bytea"),
-            (row, value) => row.copy(spatiallocation = value),
-            TypoBytea.pgType
-          )
-        }
-        override def rowguid: Field[TypoUUID, AddressRow] = {
-          new Field[TypoUUID, AddressRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.of("uuid"),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, AddressRow] = {
-          new Field[TypoLocalDateTime, AddressRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def addressid: IdField[AddressId, AddressRow] = {
+      new IdField[AddressId, AddressRow](
+        _path,
+        "addressid",
+        _.addressid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(addressid = value),
+        AddressId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, AddressRow]] = java.util.List.of(this.fields.addressid, this.fields.addressline1, this.fields.addressline2, this.fields.city, this.fields.stateprovinceid, this.fields.postalcode, this.fields.spatiallocation, this.fields.rowguid, this.fields.modifieddate)
+    override def addressline1: Field[/* max 60 chars */ String, AddressRow] = {
+      new Field[/* max 60 chars */ String, AddressRow](
+        _path,
+        "addressline1",
+        _.addressline1,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(addressline1 = value),
+        PgTypes.text
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def addressline2: OptField[/* max 60 chars */ String, AddressRow] = {
+      new OptField[/* max 60 chars */ String, AddressRow](
+        _path,
+        "addressline2",
+        _.addressline2,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(addressline2 = value),
+        PgTypes.text
+      )
+    }
+
+    override def city: Field[/* max 30 chars */ String, AddressRow] = {
+      new Field[/* max 30 chars */ String, AddressRow](
+        _path,
+        "city",
+        _.city,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(city = value),
+        PgTypes.text
+      )
+    }
+
+    override def stateprovinceid: Field[StateprovinceId, AddressRow] = {
+      new Field[StateprovinceId, AddressRow](
+        _path,
+        "stateprovinceid",
+        _.stateprovinceid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(stateprovinceid = value),
+        StateprovinceId.pgType
+      )
+    }
+
+    override def postalcode: Field[/* max 15 chars */ String, AddressRow] = {
+      new Field[/* max 15 chars */ String, AddressRow](
+        _path,
+        "postalcode",
+        _.postalcode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(postalcode = value),
+        PgTypes.text
+      )
+    }
+
+    override def spatiallocation: OptField[TypoBytea, AddressRow] = {
+      new OptField[TypoBytea, AddressRow](
+        _path,
+        "spatiallocation",
+        _.spatiallocation,
+        Optional.empty(),
+        Optional.of("bytea"),
+        (row, value) => row.copy(spatiallocation = value),
+        TypoBytea.pgType
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, AddressRow] = {
+      new Field[TypoUUID, AddressRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.of("uuid"),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, AddressRow] = {
+      new Field[TypoLocalDateTime, AddressRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, AddressRow]] = java.util.List.of(this.addressid, this.addressline1, this.addressline2, this.city, this.stateprovinceid, this.postalcode, this.spatiallocation, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[AddressFields, AddressRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[AddressFields, AddressRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

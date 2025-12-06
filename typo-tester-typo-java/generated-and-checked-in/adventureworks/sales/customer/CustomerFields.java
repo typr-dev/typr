@@ -17,6 +17,7 @@ import adventureworks.sales.store.StoreFields;
 import adventureworks.sales.store.StoreRow;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
@@ -24,55 +25,52 @@ import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface CustomerFields {
-  final class Impl extends Relation<CustomerFields, CustomerRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface CustomerFields extends FieldsExpr<CustomerRow> {
+  record Impl(List<Path> _path) implements CustomerFields, Relation<CustomerFields, CustomerRow> {
+    @Override
+    public IdField<CustomerId, CustomerRow> customerid() {
+      return new IdField<CustomerId, CustomerRow>(_path, "customerid", CustomerRow::customerid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withCustomerid(value), CustomerId.pgType);
+    };
 
     @Override
-    public CustomerFields fields() {
-      return new CustomerFields() {
-               @Override
-               public IdField<CustomerId, CustomerRow> customerid() {
-                 return new IdField<CustomerId, CustomerRow>(_path, "customerid", CustomerRow::customerid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withCustomerid(value), CustomerId.pgType);
-               };
-               @Override
-               public OptField<BusinessentityId, CustomerRow> personid() {
-                 return new OptField<BusinessentityId, CustomerRow>(_path, "personid", CustomerRow::personid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withPersonid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public OptField<BusinessentityId, CustomerRow> storeid() {
-                 return new OptField<BusinessentityId, CustomerRow>(_path, "storeid", CustomerRow::storeid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withStoreid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public OptField<SalesterritoryId, CustomerRow> territoryid() {
-                 return new OptField<SalesterritoryId, CustomerRow>(_path, "territoryid", CustomerRow::territoryid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withTerritoryid(value), SalesterritoryId.pgType);
-               };
-               @Override
-               public Field<TypoUUID, CustomerRow> rowguid() {
-                 return new Field<TypoUUID, CustomerRow>(_path, "rowguid", CustomerRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, CustomerRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, CustomerRow>(_path, "modifieddate", CustomerRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public OptField<BusinessentityId, CustomerRow> personid() {
+      return new OptField<BusinessentityId, CustomerRow>(_path, "personid", CustomerRow::personid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withPersonid(value), BusinessentityId.pgType);
+    };
+
+    @Override
+    public OptField<BusinessentityId, CustomerRow> storeid() {
+      return new OptField<BusinessentityId, CustomerRow>(_path, "storeid", CustomerRow::storeid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withStoreid(value), BusinessentityId.pgType);
+    };
+
+    @Override
+    public OptField<SalesterritoryId, CustomerRow> territoryid() {
+      return new OptField<SalesterritoryId, CustomerRow>(_path, "territoryid", CustomerRow::territoryid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withTerritoryid(value), SalesterritoryId.pgType);
+    };
+
+    @Override
+    public Field<TypoUUID, CustomerRow> rowguid() {
+      return new Field<TypoUUID, CustomerRow>(_path, "rowguid", CustomerRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, CustomerRow> modifieddate() {
+      return new Field<TypoLocalDateTime, CustomerRow>(_path, "modifieddate", CustomerRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, CustomerRow>> columns() {
-      return List.of(this.fields().customerid(), this.fields().personid(), this.fields().storeid(), this.fields().territoryid(), this.fields().rowguid(), this.fields().modifieddate());
+      return List.of(this.customerid(), this.personid(), this.storeid(), this.territoryid(), this.rowguid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<CustomerFields, CustomerRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<CustomerFields, CustomerRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -98,5 +96,13 @@ public interface CustomerFields {
 
   default ForeignKey<StoreFields, StoreRow> fkStore() {
     return ForeignKey.<StoreFields, StoreRow>of("sales.FK_Customer_Store_StoreID").withColumnPair(storeid(), StoreFields::businessentityid);
+  };
+
+  @Override
+  List<FieldLike<?, CustomerRow>> columns();
+
+  @Override
+  default RowParser<CustomerRow> rowParser() {
+    return CustomerRow._rowParser;
   };
 }

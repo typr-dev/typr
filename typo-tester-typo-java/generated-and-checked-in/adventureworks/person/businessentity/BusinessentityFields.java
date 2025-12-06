@@ -9,48 +9,43 @@ import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.customtypes.TypoUUID;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface BusinessentityFields {
-  final class Impl extends Relation<BusinessentityFields, BusinessentityRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface BusinessentityFields extends FieldsExpr<BusinessentityRow> {
+  record Impl(List<Path> _path) implements BusinessentityFields, Relation<BusinessentityFields, BusinessentityRow> {
+    @Override
+    public IdField<BusinessentityId, BusinessentityRow> businessentityid() {
+      return new IdField<BusinessentityId, BusinessentityRow>(_path, "businessentityid", BusinessentityRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
+    };
 
     @Override
-    public BusinessentityFields fields() {
-      return new BusinessentityFields() {
-               @Override
-               public IdField<BusinessentityId, BusinessentityRow> businessentityid() {
-                 return new IdField<BusinessentityId, BusinessentityRow>(_path, "businessentityid", BusinessentityRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<TypoUUID, BusinessentityRow> rowguid() {
-                 return new Field<TypoUUID, BusinessentityRow>(_path, "rowguid", BusinessentityRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, BusinessentityRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, BusinessentityRow>(_path, "modifieddate", BusinessentityRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<TypoUUID, BusinessentityRow> rowguid() {
+      return new Field<TypoUUID, BusinessentityRow>(_path, "rowguid", BusinessentityRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, BusinessentityRow> modifieddate() {
+      return new Field<TypoLocalDateTime, BusinessentityRow>(_path, "modifieddate", BusinessentityRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, BusinessentityRow>> columns() {
-      return List.of(this.fields().businessentityid(), this.fields().rowguid(), this.fields().modifieddate());
+      return List.of(this.businessentityid(), this.rowguid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<BusinessentityFields, BusinessentityRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<BusinessentityFields, BusinessentityRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -59,4 +54,12 @@ public interface BusinessentityFields {
   Field<TypoUUID, BusinessentityRow> rowguid();
 
   Field<TypoLocalDateTime, BusinessentityRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, BusinessentityRow>> columns();
+
+  @Override
+  default RowParser<BusinessentityRow> rowParser() {
+    return BusinessentityRow._rowParser;
+  };
 }

@@ -68,5 +68,5 @@ case class VProductCatalogViewRow(
 )
 
 object VProductCatalogViewRow {
-  val `_rowParser`: RowParser[VProductCatalogViewRow] = RowParsers.of(ProductsId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.opt(), MariaTypes.decimal, MariaTypes.text, MariaTypes.set.opt(), MariaTypes.varchar.opt(), MariaTypes.decimal, MariaTypes.decimal, MariaTypes.bigint, VProductCatalogViewRow.apply, row => Array(row.productId, row.sku, row.name, row.shortDescription, row.basePrice, row.status, row.tags, row.brandName, row.availableQuantity, row.avgRating, row.reviewCount))
+  val `_rowParser`: RowParser[VProductCatalogViewRow] = RowParsers.of(ProductsId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.opt(), MariaTypes.decimal, MariaTypes.text, MariaTypes.set.opt(), MariaTypes.varchar.opt(), MariaTypes.decimal, MariaTypes.decimal, MariaTypes.bigint, VProductCatalogViewRow.apply, row => Array[Object](row.productId.asInstanceOf[Object], row.sku.asInstanceOf[Object], row.name.asInstanceOf[Object], row.shortDescription.asInstanceOf[Object], row.basePrice.asInstanceOf[Object], row.status.asInstanceOf[Object], row.tags.asInstanceOf[Object], row.brandName.asInstanceOf[Object], row.availableQuantity.asInstanceOf[Object], row.avgRating.asInstanceOf[Object], row.reviewCount.asInstanceOf[Object]))
 }

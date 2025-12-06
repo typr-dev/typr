@@ -29,5 +29,5 @@ case class BecViewRow(
 )
 
 object BecViewRow {
-  val `_rowParser`: RowParser[BecViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, BusinessentityId.pgType, ContacttypeId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BecViewRow.apply, row => Array(row.id, row.businessentityid, row.personid, row.contacttypeid, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[BecViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, BusinessentityId.pgType, ContacttypeId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BecViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.businessentityid.asInstanceOf[Object], row.personid.asInstanceOf[Object], row.contacttypeid.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

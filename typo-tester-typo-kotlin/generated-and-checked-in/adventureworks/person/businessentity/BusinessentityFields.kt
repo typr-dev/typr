@@ -9,32 +9,38 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoUUID
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface BusinessentityFields {
+interface BusinessentityFields : FieldsExpr<BusinessentityRow> {
   fun businessentityid(): IdField<BusinessentityId, BusinessentityRow>
 
+  override fun columns(): List<FieldLike<*, BusinessentityRow>>
+
   fun modifieddate(): Field<TypoLocalDateTime, BusinessentityRow>
+
+  override fun rowParser(): RowParser<BusinessentityRow> = BusinessentityRow._rowParser
 
   fun rowguid(): Field<TypoUUID, BusinessentityRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<BusinessentityFields, BusinessentityRow>(path) {
-      override fun fields(): BusinessentityFields = object : BusinessentityFields {
-        override fun businessentityid(): IdField<BusinessentityId, BusinessentityRow> = IdField<BusinessentityId, BusinessentityRow>(_path, "businessentityid", BusinessentityRow::businessentityid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
-        override fun rowguid(): Field<TypoUUID, BusinessentityRow> = Field<TypoUUID, BusinessentityRow>(_path, "rowguid", BusinessentityRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, BusinessentityRow> = Field<TypoLocalDateTime, BusinessentityRow>(_path, "modifieddate", BusinessentityRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : BusinessentityFields, Relation<BusinessentityFields, BusinessentityRow> {
+      override fun businessentityid(): IdField<BusinessentityId, BusinessentityRow> = IdField<BusinessentityId, BusinessentityRow>(_path, "businessentityid", BusinessentityRow::businessentityid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
 
-      override fun columns(): List<FieldLike<*, BusinessentityRow>> = listOf(this.fields().businessentityid(), this.fields().rowguid(), this.fields().modifieddate())
+      override fun rowguid(): Field<TypoUUID, BusinessentityRow> = Field<TypoUUID, BusinessentityRow>(_path, "rowguid", BusinessentityRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun modifieddate(): Field<TypoLocalDateTime, BusinessentityRow> = Field<TypoLocalDateTime, BusinessentityRow>(_path, "modifieddate", BusinessentityRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, BusinessentityRow>> = listOf(this.businessentityid(), this.rowguid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<BusinessentityFields, BusinessentityRow> = Impl(_path)
     }
 
-    val structure: Relation<BusinessentityFields, BusinessentityRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

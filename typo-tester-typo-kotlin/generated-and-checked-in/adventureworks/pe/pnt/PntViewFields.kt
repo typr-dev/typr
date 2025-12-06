@@ -10,12 +10,16 @@ import adventureworks.person.phonenumbertype.PhonenumbertypeId
 import adventureworks.public.Name
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface PntViewFields {
+interface PntViewFields : FieldsExpr<PntViewRow> {
+  override fun columns(): List<FieldLike<*, PntViewRow>>
+
   fun id(): Field<PhonenumbertypeId, PntViewRow>
 
   fun modifieddate(): Field<TypoLocalDateTime, PntViewRow>
@@ -24,20 +28,23 @@ interface PntViewFields {
 
   fun phonenumbertypeid(): Field<PhonenumbertypeId, PntViewRow>
 
+  override fun rowParser(): RowParser<PntViewRow> = PntViewRow._rowParser
+
   companion object {
-    private class Impl(path: List<Path>) : Relation<PntViewFields, PntViewRow>(path) {
-      override fun fields(): PntViewFields = object : PntViewFields {
-        override fun id(): Field<PhonenumbertypeId, PntViewRow> = Field<PhonenumbertypeId, PntViewRow>(_path, "id", PntViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, PhonenumbertypeId.pgType)
-        override fun phonenumbertypeid(): Field<PhonenumbertypeId, PntViewRow> = Field<PhonenumbertypeId, PntViewRow>(_path, "phonenumbertypeid", PntViewRow::phonenumbertypeid, Optional.empty(), Optional.empty(), { row, value -> row.copy(phonenumbertypeid = value) }, PhonenumbertypeId.pgType)
-        override fun name(): Field<Name, PntViewRow> = Field<Name, PntViewRow>(_path, "name", PntViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, PntViewRow> = Field<TypoLocalDateTime, PntViewRow>(_path, "modifieddate", PntViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : PntViewFields, Relation<PntViewFields, PntViewRow> {
+      override fun id(): Field<PhonenumbertypeId, PntViewRow> = Field<PhonenumbertypeId, PntViewRow>(_path, "id", PntViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, PhonenumbertypeId.pgType)
 
-      override fun columns(): List<FieldLike<*, PntViewRow>> = listOf(this.fields().id(), this.fields().phonenumbertypeid(), this.fields().name(), this.fields().modifieddate())
+      override fun phonenumbertypeid(): Field<PhonenumbertypeId, PntViewRow> = Field<PhonenumbertypeId, PntViewRow>(_path, "phonenumbertypeid", PntViewRow::phonenumbertypeid, Optional.empty(), Optional.empty(), { row, value -> row.copy(phonenumbertypeid = value) }, PhonenumbertypeId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun name(): Field<Name, PntViewRow> = Field<Name, PntViewRow>(_path, "name", PntViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, PntViewRow> = Field<TypoLocalDateTime, PntViewRow>(_path, "modifieddate", PntViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, PntViewRow>> = listOf(this.id(), this.phonenumbertypeid(), this.name(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<PntViewFields, PntViewRow> = Impl(_path)
     }
 
-    val structure: Relation<PntViewFields, PntViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

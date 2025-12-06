@@ -10,14 +10,16 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.public.Name
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface VstorewithdemographicsViewFields {
+interface VstorewithdemographicsViewFields : FieldsExpr<VstorewithdemographicsViewRow> {
   fun annualRevenue(): OptField<TypoMoney, VstorewithdemographicsViewRow>
 
   fun annualSales(): OptField<TypoMoney, VstorewithdemographicsViewRow>
@@ -30,11 +32,15 @@ interface VstorewithdemographicsViewFields {
 
   fun businessentityid(): Field<BusinessentityId, VstorewithdemographicsViewRow>
 
+  override fun columns(): List<FieldLike<*, VstorewithdemographicsViewRow>>
+
   fun internet(): OptField</* max 30 chars */ String, VstorewithdemographicsViewRow>
 
   fun name(): Field<Name, VstorewithdemographicsViewRow>
 
   fun numberEmployees(): OptField<Int, VstorewithdemographicsViewRow>
+
+  override fun rowParser(): RowParser<VstorewithdemographicsViewRow> = VstorewithdemographicsViewRow._rowParser
 
   fun specialty(): OptField</* max 50 chars */ String, VstorewithdemographicsViewRow>
 
@@ -43,27 +49,36 @@ interface VstorewithdemographicsViewFields {
   fun yearOpened(): OptField<Int, VstorewithdemographicsViewRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<VstorewithdemographicsViewFields, VstorewithdemographicsViewRow>(path) {
-      override fun fields(): VstorewithdemographicsViewFields = object : VstorewithdemographicsViewFields {
-        override fun businessentityid(): Field<BusinessentityId, VstorewithdemographicsViewRow> = Field<BusinessentityId, VstorewithdemographicsViewRow>(_path, "businessentityid", VstorewithdemographicsViewRow::businessentityid, Optional.empty(), Optional.empty(), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
-        override fun name(): Field<Name, VstorewithdemographicsViewRow> = Field<Name, VstorewithdemographicsViewRow>(_path, "name", VstorewithdemographicsViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
-        override fun annualSales(): OptField<TypoMoney, VstorewithdemographicsViewRow> = OptField<TypoMoney, VstorewithdemographicsViewRow>(_path, "AnnualSales", VstorewithdemographicsViewRow::annualSales, Optional.of("numeric"), Optional.empty(), { row, value -> row.copy(annualSales = value) }, TypoMoney.pgType)
-        override fun annualRevenue(): OptField<TypoMoney, VstorewithdemographicsViewRow> = OptField<TypoMoney, VstorewithdemographicsViewRow>(_path, "AnnualRevenue", VstorewithdemographicsViewRow::annualRevenue, Optional.of("numeric"), Optional.empty(), { row, value -> row.copy(annualRevenue = value) }, TypoMoney.pgType)
-        override fun bankName(): OptField</* max 50 chars */ String, VstorewithdemographicsViewRow> = OptField</* max 50 chars */ String, VstorewithdemographicsViewRow>(_path, "BankName", VstorewithdemographicsViewRow::bankName, Optional.empty(), Optional.empty(), { row, value -> row.copy(bankName = value) }, PgTypes.text)
-        override fun businessType(): OptField</* max 5 chars */ String, VstorewithdemographicsViewRow> = OptField</* max 5 chars */ String, VstorewithdemographicsViewRow>(_path, "BusinessType", VstorewithdemographicsViewRow::businessType, Optional.empty(), Optional.empty(), { row, value -> row.copy(businessType = value) }, PgTypes.text)
-        override fun yearOpened(): OptField<Int, VstorewithdemographicsViewRow> = OptField<Int, VstorewithdemographicsViewRow>(_path, "YearOpened", VstorewithdemographicsViewRow::yearOpened, Optional.empty(), Optional.empty(), { row, value -> row.copy(yearOpened = value) }, PgTypes.int4)
-        override fun specialty(): OptField</* max 50 chars */ String, VstorewithdemographicsViewRow> = OptField</* max 50 chars */ String, VstorewithdemographicsViewRow>(_path, "Specialty", VstorewithdemographicsViewRow::specialty, Optional.empty(), Optional.empty(), { row, value -> row.copy(specialty = value) }, PgTypes.text)
-        override fun squareFeet(): OptField<Int, VstorewithdemographicsViewRow> = OptField<Int, VstorewithdemographicsViewRow>(_path, "SquareFeet", VstorewithdemographicsViewRow::squareFeet, Optional.empty(), Optional.empty(), { row, value -> row.copy(squareFeet = value) }, PgTypes.int4)
-        override fun brands(): OptField</* max 30 chars */ String, VstorewithdemographicsViewRow> = OptField</* max 30 chars */ String, VstorewithdemographicsViewRow>(_path, "Brands", VstorewithdemographicsViewRow::brands, Optional.empty(), Optional.empty(), { row, value -> row.copy(brands = value) }, PgTypes.text)
-        override fun internet(): OptField</* max 30 chars */ String, VstorewithdemographicsViewRow> = OptField</* max 30 chars */ String, VstorewithdemographicsViewRow>(_path, "Internet", VstorewithdemographicsViewRow::internet, Optional.empty(), Optional.empty(), { row, value -> row.copy(internet = value) }, PgTypes.text)
-        override fun numberEmployees(): OptField<Int, VstorewithdemographicsViewRow> = OptField<Int, VstorewithdemographicsViewRow>(_path, "NumberEmployees", VstorewithdemographicsViewRow::numberEmployees, Optional.empty(), Optional.empty(), { row, value -> row.copy(numberEmployees = value) }, PgTypes.int4)
-      }
+    data class Impl(val _path: List<Path>) : VstorewithdemographicsViewFields, Relation<VstorewithdemographicsViewFields, VstorewithdemographicsViewRow> {
+      override fun businessentityid(): Field<BusinessentityId, VstorewithdemographicsViewRow> = Field<BusinessentityId, VstorewithdemographicsViewRow>(_path, "businessentityid", VstorewithdemographicsViewRow::businessentityid, Optional.empty(), Optional.empty(), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
 
-      override fun columns(): List<FieldLike<*, VstorewithdemographicsViewRow>> = listOf(this.fields().businessentityid(), this.fields().name(), this.fields().annualSales(), this.fields().annualRevenue(), this.fields().bankName(), this.fields().businessType(), this.fields().yearOpened(), this.fields().specialty(), this.fields().squareFeet(), this.fields().brands(), this.fields().internet(), this.fields().numberEmployees())
+      override fun name(): Field<Name, VstorewithdemographicsViewRow> = Field<Name, VstorewithdemographicsViewRow>(_path, "name", VstorewithdemographicsViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun annualSales(): OptField<TypoMoney, VstorewithdemographicsViewRow> = OptField<TypoMoney, VstorewithdemographicsViewRow>(_path, "AnnualSales", VstorewithdemographicsViewRow::annualSales, Optional.of("numeric"), Optional.empty(), { row, value -> row.copy(annualSales = value) }, TypoMoney.pgType)
+
+      override fun annualRevenue(): OptField<TypoMoney, VstorewithdemographicsViewRow> = OptField<TypoMoney, VstorewithdemographicsViewRow>(_path, "AnnualRevenue", VstorewithdemographicsViewRow::annualRevenue, Optional.of("numeric"), Optional.empty(), { row, value -> row.copy(annualRevenue = value) }, TypoMoney.pgType)
+
+      override fun bankName(): OptField</* max 50 chars */ String, VstorewithdemographicsViewRow> = OptField</* max 50 chars */ String, VstorewithdemographicsViewRow>(_path, "BankName", VstorewithdemographicsViewRow::bankName, Optional.empty(), Optional.empty(), { row, value -> row.copy(bankName = value) }, PgTypes.text)
+
+      override fun businessType(): OptField</* max 5 chars */ String, VstorewithdemographicsViewRow> = OptField</* max 5 chars */ String, VstorewithdemographicsViewRow>(_path, "BusinessType", VstorewithdemographicsViewRow::businessType, Optional.empty(), Optional.empty(), { row, value -> row.copy(businessType = value) }, PgTypes.text)
+
+      override fun yearOpened(): OptField<Int, VstorewithdemographicsViewRow> = OptField<Int, VstorewithdemographicsViewRow>(_path, "YearOpened", VstorewithdemographicsViewRow::yearOpened, Optional.empty(), Optional.empty(), { row, value -> row.copy(yearOpened = value) }, PgTypes.int4)
+
+      override fun specialty(): OptField</* max 50 chars */ String, VstorewithdemographicsViewRow> = OptField</* max 50 chars */ String, VstorewithdemographicsViewRow>(_path, "Specialty", VstorewithdemographicsViewRow::specialty, Optional.empty(), Optional.empty(), { row, value -> row.copy(specialty = value) }, PgTypes.text)
+
+      override fun squareFeet(): OptField<Int, VstorewithdemographicsViewRow> = OptField<Int, VstorewithdemographicsViewRow>(_path, "SquareFeet", VstorewithdemographicsViewRow::squareFeet, Optional.empty(), Optional.empty(), { row, value -> row.copy(squareFeet = value) }, PgTypes.int4)
+
+      override fun brands(): OptField</* max 30 chars */ String, VstorewithdemographicsViewRow> = OptField</* max 30 chars */ String, VstorewithdemographicsViewRow>(_path, "Brands", VstorewithdemographicsViewRow::brands, Optional.empty(), Optional.empty(), { row, value -> row.copy(brands = value) }, PgTypes.text)
+
+      override fun internet(): OptField</* max 30 chars */ String, VstorewithdemographicsViewRow> = OptField</* max 30 chars */ String, VstorewithdemographicsViewRow>(_path, "Internet", VstorewithdemographicsViewRow::internet, Optional.empty(), Optional.empty(), { row, value -> row.copy(internet = value) }, PgTypes.text)
+
+      override fun numberEmployees(): OptField<Int, VstorewithdemographicsViewRow> = OptField<Int, VstorewithdemographicsViewRow>(_path, "NumberEmployees", VstorewithdemographicsViewRow::numberEmployees, Optional.empty(), Optional.empty(), { row, value -> row.copy(numberEmployees = value) }, PgTypes.int4)
+
+      override fun columns(): List<FieldLike<*, VstorewithdemographicsViewRow>> = listOf(this.businessentityid(), this.name(), this.annualSales(), this.annualRevenue(), this.bankName(), this.businessType(), this.yearOpened(), this.specialty(), this.squareFeet(), this.brands(), this.internet(), this.numberEmployees())
+
+      override fun copy(_path: List<Path>): Relation<VstorewithdemographicsViewFields, VstorewithdemographicsViewRow> = Impl(_path)
     }
 
-    val structure: Relation<VstorewithdemographicsViewFields, VstorewithdemographicsViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

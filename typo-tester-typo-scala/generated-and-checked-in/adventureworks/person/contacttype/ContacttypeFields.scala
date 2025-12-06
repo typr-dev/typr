@@ -8,65 +8,69 @@ package adventureworks.person.contacttype
 import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.public.Name
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait ContacttypeFields {
+trait ContacttypeFields extends FieldsExpr[ContacttypeRow] {
   def contacttypeid: IdField[ContacttypeId, ContacttypeRow]
 
   def name: Field[Name, ContacttypeRow]
 
   def modifieddate: Field[TypoLocalDateTime, ContacttypeRow]
+
+  override def columns: java.util.List[FieldLike[?, ContacttypeRow]]
+
+  override def rowParser: RowParser[ContacttypeRow] = ContacttypeRow._rowParser
 }
 
 object ContacttypeFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[ContacttypeFields, ContacttypeRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends ContacttypeFields with Relation[ContacttypeFields, ContacttypeRow] {
 
-    override lazy val fields: ContacttypeFields = {
-      new ContacttypeFields {
-        override def contacttypeid: IdField[ContacttypeId, ContacttypeRow] = {
-          new IdField[ContacttypeId, ContacttypeRow](
-            _path,
-            "contacttypeid",
-            _.contacttypeid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(contacttypeid = value),
-            ContacttypeId.pgType
-          )
-        }
-        override def name: Field[Name, ContacttypeRow] = {
-          new Field[Name, ContacttypeRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.of("varchar"),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, ContacttypeRow] = {
-          new Field[TypoLocalDateTime, ContacttypeRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def contacttypeid: IdField[ContacttypeId, ContacttypeRow] = {
+      new IdField[ContacttypeId, ContacttypeRow](
+        _path,
+        "contacttypeid",
+        _.contacttypeid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(contacttypeid = value),
+        ContacttypeId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, ContacttypeRow]] = java.util.List.of(this.fields.contacttypeid, this.fields.name, this.fields.modifieddate)
+    override def name: Field[Name, ContacttypeRow] = {
+      new Field[Name, ContacttypeRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.of("varchar"),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def modifieddate: Field[TypoLocalDateTime, ContacttypeRow] = {
+      new Field[TypoLocalDateTime, ContacttypeRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, ContacttypeRow]] = java.util.List.of(this.contacttypeid, this.name, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[ContacttypeFields, ContacttypeRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[ContacttypeFields, ContacttypeRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

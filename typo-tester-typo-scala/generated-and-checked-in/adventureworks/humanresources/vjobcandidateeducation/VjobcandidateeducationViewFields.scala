@@ -8,14 +8,16 @@ package adventureworks.humanresources.vjobcandidateeducation
 import adventureworks.customtypes.TypoLocalDate
 import adventureworks.humanresources.jobcandidate.JobcandidateId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait VjobcandidateeducationViewFields {
+trait VjobcandidateeducationViewFields extends FieldsExpr[VjobcandidateeducationViewRow] {
   def jobcandidateid: Field[JobcandidateId, VjobcandidateeducationViewRow]
 
   def eduLevel: OptField[/* max 50 chars */ String, VjobcandidateeducationViewRow]
@@ -41,163 +43,175 @@ trait VjobcandidateeducationViewFields {
   def eduLocState: OptField[/* max 100 chars */ String, VjobcandidateeducationViewRow]
 
   def eduLocCity: OptField[/* max 100 chars */ String, VjobcandidateeducationViewRow]
+
+  override def columns: java.util.List[FieldLike[?, VjobcandidateeducationViewRow]]
+
+  override def rowParser: RowParser[VjobcandidateeducationViewRow] = VjobcandidateeducationViewRow._rowParser
 }
 
 object VjobcandidateeducationViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[VjobcandidateeducationViewFields, VjobcandidateeducationViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends VjobcandidateeducationViewFields with Relation[VjobcandidateeducationViewFields, VjobcandidateeducationViewRow] {
 
-    override lazy val fields: VjobcandidateeducationViewFields = {
-      new VjobcandidateeducationViewFields {
-        override def jobcandidateid: Field[JobcandidateId, VjobcandidateeducationViewRow] = {
-          new Field[JobcandidateId, VjobcandidateeducationViewRow](
-            _path,
-            "jobcandidateid",
-            _.jobcandidateid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(jobcandidateid = value),
-            JobcandidateId.pgType
-          )
-        }
-        override def eduLevel: OptField[/* max 50 chars */ String, VjobcandidateeducationViewRow] = {
-          new OptField[/* max 50 chars */ String, VjobcandidateeducationViewRow](
-            _path,
-            "Edu.Level",
-            _.eduLevel,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(eduLevel = value),
-            PgTypes.text
-          )
-        }
-        override def eduStartDate: OptField[TypoLocalDate, VjobcandidateeducationViewRow] = {
-          new OptField[TypoLocalDate, VjobcandidateeducationViewRow](
-            _path,
-            "Edu.StartDate",
-            _.eduStartDate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(eduStartDate = value),
-            TypoLocalDate.pgType
-          )
-        }
-        override def eduEndDate: OptField[TypoLocalDate, VjobcandidateeducationViewRow] = {
-          new OptField[TypoLocalDate, VjobcandidateeducationViewRow](
-            _path,
-            "Edu.EndDate",
-            _.eduEndDate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(eduEndDate = value),
-            TypoLocalDate.pgType
-          )
-        }
-        override def eduDegree: OptField[/* max 50 chars */ String, VjobcandidateeducationViewRow] = {
-          new OptField[/* max 50 chars */ String, VjobcandidateeducationViewRow](
-            _path,
-            "Edu.Degree",
-            _.eduDegree,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(eduDegree = value),
-            PgTypes.text
-          )
-        }
-        override def eduMajor: OptField[/* max 50 chars */ String, VjobcandidateeducationViewRow] = {
-          new OptField[/* max 50 chars */ String, VjobcandidateeducationViewRow](
-            _path,
-            "Edu.Major",
-            _.eduMajor,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(eduMajor = value),
-            PgTypes.text
-          )
-        }
-        override def eduMinor: OptField[/* max 50 chars */ String, VjobcandidateeducationViewRow] = {
-          new OptField[/* max 50 chars */ String, VjobcandidateeducationViewRow](
-            _path,
-            "Edu.Minor",
-            _.eduMinor,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(eduMinor = value),
-            PgTypes.text
-          )
-        }
-        override def eduGPA: OptField[/* max 5 chars */ String, VjobcandidateeducationViewRow] = {
-          new OptField[/* max 5 chars */ String, VjobcandidateeducationViewRow](
-            _path,
-            "Edu.GPA",
-            _.eduGPA,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(eduGPA = value),
-            PgTypes.text
-          )
-        }
-        override def eduGPAScale: OptField[/* max 5 chars */ String, VjobcandidateeducationViewRow] = {
-          new OptField[/* max 5 chars */ String, VjobcandidateeducationViewRow](
-            _path,
-            "Edu.GPAScale",
-            _.eduGPAScale,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(eduGPAScale = value),
-            PgTypes.text
-          )
-        }
-        override def eduSchool: OptField[/* max 100 chars */ String, VjobcandidateeducationViewRow] = {
-          new OptField[/* max 100 chars */ String, VjobcandidateeducationViewRow](
-            _path,
-            "Edu.School",
-            _.eduSchool,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(eduSchool = value),
-            PgTypes.text
-          )
-        }
-        override def eduLocCountryRegion: OptField[/* max 100 chars */ String, VjobcandidateeducationViewRow] = {
-          new OptField[/* max 100 chars */ String, VjobcandidateeducationViewRow](
-            _path,
-            "Edu.Loc.CountryRegion",
-            _.eduLocCountryRegion,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(eduLocCountryRegion = value),
-            PgTypes.text
-          )
-        }
-        override def eduLocState: OptField[/* max 100 chars */ String, VjobcandidateeducationViewRow] = {
-          new OptField[/* max 100 chars */ String, VjobcandidateeducationViewRow](
-            _path,
-            "Edu.Loc.State",
-            _.eduLocState,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(eduLocState = value),
-            PgTypes.text
-          )
-        }
-        override def eduLocCity: OptField[/* max 100 chars */ String, VjobcandidateeducationViewRow] = {
-          new OptField[/* max 100 chars */ String, VjobcandidateeducationViewRow](
-            _path,
-            "Edu.Loc.City",
-            _.eduLocCity,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(eduLocCity = value),
-            PgTypes.text
-          )
-        }
-      }
+    override def jobcandidateid: Field[JobcandidateId, VjobcandidateeducationViewRow] = {
+      new Field[JobcandidateId, VjobcandidateeducationViewRow](
+        _path,
+        "jobcandidateid",
+        _.jobcandidateid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(jobcandidateid = value),
+        JobcandidateId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, VjobcandidateeducationViewRow]] = java.util.List.of(this.fields.jobcandidateid, this.fields.eduLevel, this.fields.eduStartDate, this.fields.eduEndDate, this.fields.eduDegree, this.fields.eduMajor, this.fields.eduMinor, this.fields.eduGPA, this.fields.eduGPAScale, this.fields.eduSchool, this.fields.eduLocCountryRegion, this.fields.eduLocState, this.fields.eduLocCity)
+    override def eduLevel: OptField[/* max 50 chars */ String, VjobcandidateeducationViewRow] = {
+      new OptField[/* max 50 chars */ String, VjobcandidateeducationViewRow](
+        _path,
+        "Edu.Level",
+        _.eduLevel,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(eduLevel = value),
+        PgTypes.text
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def eduStartDate: OptField[TypoLocalDate, VjobcandidateeducationViewRow] = {
+      new OptField[TypoLocalDate, VjobcandidateeducationViewRow](
+        _path,
+        "Edu.StartDate",
+        _.eduStartDate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(eduStartDate = value),
+        TypoLocalDate.pgType
+      )
+    }
+
+    override def eduEndDate: OptField[TypoLocalDate, VjobcandidateeducationViewRow] = {
+      new OptField[TypoLocalDate, VjobcandidateeducationViewRow](
+        _path,
+        "Edu.EndDate",
+        _.eduEndDate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(eduEndDate = value),
+        TypoLocalDate.pgType
+      )
+    }
+
+    override def eduDegree: OptField[/* max 50 chars */ String, VjobcandidateeducationViewRow] = {
+      new OptField[/* max 50 chars */ String, VjobcandidateeducationViewRow](
+        _path,
+        "Edu.Degree",
+        _.eduDegree,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(eduDegree = value),
+        PgTypes.text
+      )
+    }
+
+    override def eduMajor: OptField[/* max 50 chars */ String, VjobcandidateeducationViewRow] = {
+      new OptField[/* max 50 chars */ String, VjobcandidateeducationViewRow](
+        _path,
+        "Edu.Major",
+        _.eduMajor,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(eduMajor = value),
+        PgTypes.text
+      )
+    }
+
+    override def eduMinor: OptField[/* max 50 chars */ String, VjobcandidateeducationViewRow] = {
+      new OptField[/* max 50 chars */ String, VjobcandidateeducationViewRow](
+        _path,
+        "Edu.Minor",
+        _.eduMinor,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(eduMinor = value),
+        PgTypes.text
+      )
+    }
+
+    override def eduGPA: OptField[/* max 5 chars */ String, VjobcandidateeducationViewRow] = {
+      new OptField[/* max 5 chars */ String, VjobcandidateeducationViewRow](
+        _path,
+        "Edu.GPA",
+        _.eduGPA,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(eduGPA = value),
+        PgTypes.text
+      )
+    }
+
+    override def eduGPAScale: OptField[/* max 5 chars */ String, VjobcandidateeducationViewRow] = {
+      new OptField[/* max 5 chars */ String, VjobcandidateeducationViewRow](
+        _path,
+        "Edu.GPAScale",
+        _.eduGPAScale,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(eduGPAScale = value),
+        PgTypes.text
+      )
+    }
+
+    override def eduSchool: OptField[/* max 100 chars */ String, VjobcandidateeducationViewRow] = {
+      new OptField[/* max 100 chars */ String, VjobcandidateeducationViewRow](
+        _path,
+        "Edu.School",
+        _.eduSchool,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(eduSchool = value),
+        PgTypes.text
+      )
+    }
+
+    override def eduLocCountryRegion: OptField[/* max 100 chars */ String, VjobcandidateeducationViewRow] = {
+      new OptField[/* max 100 chars */ String, VjobcandidateeducationViewRow](
+        _path,
+        "Edu.Loc.CountryRegion",
+        _.eduLocCountryRegion,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(eduLocCountryRegion = value),
+        PgTypes.text
+      )
+    }
+
+    override def eduLocState: OptField[/* max 100 chars */ String, VjobcandidateeducationViewRow] = {
+      new OptField[/* max 100 chars */ String, VjobcandidateeducationViewRow](
+        _path,
+        "Edu.Loc.State",
+        _.eduLocState,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(eduLocState = value),
+        PgTypes.text
+      )
+    }
+
+    override def eduLocCity: OptField[/* max 100 chars */ String, VjobcandidateeducationViewRow] = {
+      new OptField[/* max 100 chars */ String, VjobcandidateeducationViewRow](
+        _path,
+        "Edu.Loc.City",
+        _.eduLocCity,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(eduLocCity = value),
+        PgTypes.text
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, VjobcandidateeducationViewRow]] = java.util.List.of(this.jobcandidateid, this.eduLevel, this.eduStartDate, this.eduEndDate, this.eduDegree, this.eduMajor, this.eduMinor, this.eduGPA, this.eduGPAScale, this.eduSchool, this.eduLocCountryRegion, this.eduLocState, this.eduLocCity)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[VjobcandidateeducationViewFields, VjobcandidateeducationViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[VjobcandidateeducationViewFields, VjobcandidateeducationViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

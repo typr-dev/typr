@@ -19,6 +19,7 @@ import adventureworks.sales.specialofferproduct.SpecialofferproductRow
 import java.math.BigDecimal
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -30,9 +31,12 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface SalesorderdetailFields {
+interface SalesorderdetailFields : FieldsExpr<SalesorderdetailRow> {
   fun carriertrackingnumber(): OptField</* max 25 chars */ String, SalesorderdetailRow>
+
+  override fun columns(): List<FieldLike<*, SalesorderdetailRow>>
 
   fun compositeIdIn(compositeIds: List<SalesorderdetailId>): SqlExpr<Boolean> = CompositeIn(listOf(Part<SalesorderheaderId, SalesorderdetailId, SalesorderdetailRow>(salesorderid(), SalesorderdetailId::salesorderid, SalesorderheaderId.pgType), Part<Int, SalesorderdetailId, SalesorderdetailRow>(salesorderdetailid(), SalesorderdetailId::salesorderdetailid, PgTypes.int4)), compositeIds)
 
@@ -53,6 +57,8 @@ interface SalesorderdetailFields {
 
   fun productid(): Field<ProductId, SalesorderdetailRow>
 
+  override fun rowParser(): RowParser<SalesorderdetailRow> = SalesorderdetailRow._rowParser
+
   fun rowguid(): Field<TypoUUID, SalesorderdetailRow>
 
   fun salesorderdetailid(): IdField<Int, SalesorderdetailRow>
@@ -66,25 +72,32 @@ interface SalesorderdetailFields {
   fun unitpricediscount(): Field<BigDecimal, SalesorderdetailRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<SalesorderdetailFields, SalesorderdetailRow>(path) {
-      override fun fields(): SalesorderdetailFields = object : SalesorderdetailFields {
-        override fun salesorderid(): IdField<SalesorderheaderId, SalesorderdetailRow> = IdField<SalesorderheaderId, SalesorderdetailRow>(_path, "salesorderid", SalesorderdetailRow::salesorderid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(salesorderid = value) }, SalesorderheaderId.pgType)
-        override fun salesorderdetailid(): IdField<Int, SalesorderdetailRow> = IdField<Int, SalesorderdetailRow>(_path, "salesorderdetailid", SalesorderdetailRow::salesorderdetailid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(salesorderdetailid = value) }, PgTypes.int4)
-        override fun carriertrackingnumber(): OptField</* max 25 chars */ String, SalesorderdetailRow> = OptField</* max 25 chars */ String, SalesorderdetailRow>(_path, "carriertrackingnumber", SalesorderdetailRow::carriertrackingnumber, Optional.empty(), Optional.empty(), { row, value -> row.copy(carriertrackingnumber = value) }, PgTypes.text)
-        override fun orderqty(): Field<TypoShort, SalesorderdetailRow> = Field<TypoShort, SalesorderdetailRow>(_path, "orderqty", SalesorderdetailRow::orderqty, Optional.empty(), Optional.of("int2"), { row, value -> row.copy(orderqty = value) }, TypoShort.pgType)
-        override fun productid(): Field<ProductId, SalesorderdetailRow> = Field<ProductId, SalesorderdetailRow>(_path, "productid", SalesorderdetailRow::productid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(productid = value) }, ProductId.pgType)
-        override fun specialofferid(): Field<SpecialofferId, SalesorderdetailRow> = Field<SpecialofferId, SalesorderdetailRow>(_path, "specialofferid", SalesorderdetailRow::specialofferid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(specialofferid = value) }, SpecialofferId.pgType)
-        override fun unitprice(): Field<BigDecimal, SalesorderdetailRow> = Field<BigDecimal, SalesorderdetailRow>(_path, "unitprice", SalesorderdetailRow::unitprice, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(unitprice = value) }, PgTypes.numeric)
-        override fun unitpricediscount(): Field<BigDecimal, SalesorderdetailRow> = Field<BigDecimal, SalesorderdetailRow>(_path, "unitpricediscount", SalesorderdetailRow::unitpricediscount, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(unitpricediscount = value) }, PgTypes.numeric)
-        override fun rowguid(): Field<TypoUUID, SalesorderdetailRow> = Field<TypoUUID, SalesorderdetailRow>(_path, "rowguid", SalesorderdetailRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, SalesorderdetailRow> = Field<TypoLocalDateTime, SalesorderdetailRow>(_path, "modifieddate", SalesorderdetailRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : SalesorderdetailFields, Relation<SalesorderdetailFields, SalesorderdetailRow> {
+      override fun salesorderid(): IdField<SalesorderheaderId, SalesorderdetailRow> = IdField<SalesorderheaderId, SalesorderdetailRow>(_path, "salesorderid", SalesorderdetailRow::salesorderid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(salesorderid = value) }, SalesorderheaderId.pgType)
 
-      override fun columns(): List<FieldLike<*, SalesorderdetailRow>> = listOf(this.fields().salesorderid(), this.fields().salesorderdetailid(), this.fields().carriertrackingnumber(), this.fields().orderqty(), this.fields().productid(), this.fields().specialofferid(), this.fields().unitprice(), this.fields().unitpricediscount(), this.fields().rowguid(), this.fields().modifieddate())
+      override fun salesorderdetailid(): IdField<Int, SalesorderdetailRow> = IdField<Int, SalesorderdetailRow>(_path, "salesorderdetailid", SalesorderdetailRow::salesorderdetailid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(salesorderdetailid = value) }, PgTypes.int4)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun carriertrackingnumber(): OptField</* max 25 chars */ String, SalesorderdetailRow> = OptField</* max 25 chars */ String, SalesorderdetailRow>(_path, "carriertrackingnumber", SalesorderdetailRow::carriertrackingnumber, Optional.empty(), Optional.empty(), { row, value -> row.copy(carriertrackingnumber = value) }, PgTypes.text)
+
+      override fun orderqty(): Field<TypoShort, SalesorderdetailRow> = Field<TypoShort, SalesorderdetailRow>(_path, "orderqty", SalesorderdetailRow::orderqty, Optional.empty(), Optional.of("int2"), { row, value -> row.copy(orderqty = value) }, TypoShort.pgType)
+
+      override fun productid(): Field<ProductId, SalesorderdetailRow> = Field<ProductId, SalesorderdetailRow>(_path, "productid", SalesorderdetailRow::productid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(productid = value) }, ProductId.pgType)
+
+      override fun specialofferid(): Field<SpecialofferId, SalesorderdetailRow> = Field<SpecialofferId, SalesorderdetailRow>(_path, "specialofferid", SalesorderdetailRow::specialofferid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(specialofferid = value) }, SpecialofferId.pgType)
+
+      override fun unitprice(): Field<BigDecimal, SalesorderdetailRow> = Field<BigDecimal, SalesorderdetailRow>(_path, "unitprice", SalesorderdetailRow::unitprice, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(unitprice = value) }, PgTypes.numeric)
+
+      override fun unitpricediscount(): Field<BigDecimal, SalesorderdetailRow> = Field<BigDecimal, SalesorderdetailRow>(_path, "unitpricediscount", SalesorderdetailRow::unitpricediscount, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(unitpricediscount = value) }, PgTypes.numeric)
+
+      override fun rowguid(): Field<TypoUUID, SalesorderdetailRow> = Field<TypoUUID, SalesorderdetailRow>(_path, "rowguid", SalesorderdetailRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, SalesorderdetailRow> = Field<TypoLocalDateTime, SalesorderdetailRow>(_path, "modifieddate", SalesorderdetailRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, SalesorderdetailRow>> = listOf(this.salesorderid(), this.salesorderdetailid(), this.carriertrackingnumber(), this.orderqty(), this.productid(), this.specialofferid(), this.unitprice(), this.unitpricediscount(), this.rowguid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<SalesorderdetailFields, SalesorderdetailRow> = Impl(_path)
     }
 
-    val structure: Relation<SalesorderdetailFields, SalesorderdetailRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

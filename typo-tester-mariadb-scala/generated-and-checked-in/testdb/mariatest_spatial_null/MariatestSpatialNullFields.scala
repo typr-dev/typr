@@ -14,14 +14,16 @@ import org.mariadb.jdbc.`type`.MultiPoint
 import org.mariadb.jdbc.`type`.MultiPolygon
 import org.mariadb.jdbc.`type`.Point
 import org.mariadb.jdbc.`type`.Polygon
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-trait MariatestSpatialNullFields {
+trait MariatestSpatialNullFields extends FieldsExpr[MariatestSpatialNullRow] {
   def id: IdField[MariatestSpatialNullId, MariatestSpatialNullRow]
 
   def geometryCol: OptField[Geometry, MariatestSpatialNullRow]
@@ -39,119 +41,127 @@ trait MariatestSpatialNullFields {
   def multipolygonCol: OptField[MultiPolygon, MariatestSpatialNullRow]
 
   def geometrycollectionCol: OptField[GeometryCollection, MariatestSpatialNullRow]
+
+  override def columns: java.util.List[FieldLike[?, MariatestSpatialNullRow]]
+
+  override def rowParser: RowParser[MariatestSpatialNullRow] = MariatestSpatialNullRow._rowParser
 }
 
 object MariatestSpatialNullFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[MariatestSpatialNullFields, MariatestSpatialNullRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends MariatestSpatialNullFields with Relation[MariatestSpatialNullFields, MariatestSpatialNullRow] {
 
-    override lazy val fields: MariatestSpatialNullFields = {
-      new MariatestSpatialNullFields {
-        override def id: IdField[MariatestSpatialNullId, MariatestSpatialNullRow] = {
-          new IdField[MariatestSpatialNullId, MariatestSpatialNullRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            MariatestSpatialNullId.pgType
-          )
-        }
-        override def geometryCol: OptField[Geometry, MariatestSpatialNullRow] = {
-          new OptField[Geometry, MariatestSpatialNullRow](
-            _path,
-            "geometry_col",
-            _.geometryCol,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(geometryCol = value),
-            MariaTypes.geometry
-          )
-        }
-        override def pointCol: OptField[Point, MariatestSpatialNullRow] = {
-          new OptField[Point, MariatestSpatialNullRow](
-            _path,
-            "point_col",
-            _.pointCol,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(pointCol = value),
-            MariaTypes.point
-          )
-        }
-        override def linestringCol: OptField[LineString, MariatestSpatialNullRow] = {
-          new OptField[LineString, MariatestSpatialNullRow](
-            _path,
-            "linestring_col",
-            _.linestringCol,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(linestringCol = value),
-            MariaTypes.linestring
-          )
-        }
-        override def polygonCol: OptField[Polygon, MariatestSpatialNullRow] = {
-          new OptField[Polygon, MariatestSpatialNullRow](
-            _path,
-            "polygon_col",
-            _.polygonCol,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(polygonCol = value),
-            MariaTypes.polygon
-          )
-        }
-        override def multipointCol: OptField[MultiPoint, MariatestSpatialNullRow] = {
-          new OptField[MultiPoint, MariatestSpatialNullRow](
-            _path,
-            "multipoint_col",
-            _.multipointCol,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(multipointCol = value),
-            MariaTypes.multipoint
-          )
-        }
-        override def multilinestringCol: OptField[MultiLineString, MariatestSpatialNullRow] = {
-          new OptField[MultiLineString, MariatestSpatialNullRow](
-            _path,
-            "multilinestring_col",
-            _.multilinestringCol,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(multilinestringCol = value),
-            MariaTypes.multilinestring
-          )
-        }
-        override def multipolygonCol: OptField[MultiPolygon, MariatestSpatialNullRow] = {
-          new OptField[MultiPolygon, MariatestSpatialNullRow](
-            _path,
-            "multipolygon_col",
-            _.multipolygonCol,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(multipolygonCol = value),
-            MariaTypes.multipolygon
-          )
-        }
-        override def geometrycollectionCol: OptField[GeometryCollection, MariatestSpatialNullRow] = {
-          new OptField[GeometryCollection, MariatestSpatialNullRow](
-            _path,
-            "geometrycollection_col",
-            _.geometrycollectionCol,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(geometrycollectionCol = value),
-            MariaTypes.geometrycollection
-          )
-        }
-      }
+    override def id: IdField[MariatestSpatialNullId, MariatestSpatialNullRow] = {
+      new IdField[MariatestSpatialNullId, MariatestSpatialNullRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        MariatestSpatialNullId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, MariatestSpatialNullRow]] = java.util.List.of(this.fields.id, this.fields.geometryCol, this.fields.pointCol, this.fields.linestringCol, this.fields.polygonCol, this.fields.multipointCol, this.fields.multilinestringCol, this.fields.multipolygonCol, this.fields.geometrycollectionCol)
+    override def geometryCol: OptField[Geometry, MariatestSpatialNullRow] = {
+      new OptField[Geometry, MariatestSpatialNullRow](
+        _path,
+        "geometry_col",
+        _.geometryCol,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(geometryCol = value),
+        MariaTypes.geometry
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def pointCol: OptField[Point, MariatestSpatialNullRow] = {
+      new OptField[Point, MariatestSpatialNullRow](
+        _path,
+        "point_col",
+        _.pointCol,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(pointCol = value),
+        MariaTypes.point
+      )
+    }
+
+    override def linestringCol: OptField[LineString, MariatestSpatialNullRow] = {
+      new OptField[LineString, MariatestSpatialNullRow](
+        _path,
+        "linestring_col",
+        _.linestringCol,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(linestringCol = value),
+        MariaTypes.linestring
+      )
+    }
+
+    override def polygonCol: OptField[Polygon, MariatestSpatialNullRow] = {
+      new OptField[Polygon, MariatestSpatialNullRow](
+        _path,
+        "polygon_col",
+        _.polygonCol,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(polygonCol = value),
+        MariaTypes.polygon
+      )
+    }
+
+    override def multipointCol: OptField[MultiPoint, MariatestSpatialNullRow] = {
+      new OptField[MultiPoint, MariatestSpatialNullRow](
+        _path,
+        "multipoint_col",
+        _.multipointCol,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(multipointCol = value),
+        MariaTypes.multipoint
+      )
+    }
+
+    override def multilinestringCol: OptField[MultiLineString, MariatestSpatialNullRow] = {
+      new OptField[MultiLineString, MariatestSpatialNullRow](
+        _path,
+        "multilinestring_col",
+        _.multilinestringCol,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(multilinestringCol = value),
+        MariaTypes.multilinestring
+      )
+    }
+
+    override def multipolygonCol: OptField[MultiPolygon, MariatestSpatialNullRow] = {
+      new OptField[MultiPolygon, MariatestSpatialNullRow](
+        _path,
+        "multipolygon_col",
+        _.multipolygonCol,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(multipolygonCol = value),
+        MariaTypes.multipolygon
+      )
+    }
+
+    override def geometrycollectionCol: OptField[GeometryCollection, MariatestSpatialNullRow] = {
+      new OptField[GeometryCollection, MariatestSpatialNullRow](
+        _path,
+        "geometrycollection_col",
+        _.geometrycollectionCol,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(geometrycollectionCol = value),
+        MariaTypes.geometrycollection
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, MariatestSpatialNullRow]] = java.util.List.of(this.id, this.geometryCol, this.pointCol, this.linestringCol, this.polygonCol, this.multipointCol, this.multilinestringCol, this.multipolygonCol, this.geometrycollectionCol)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[MariatestSpatialNullFields, MariatestSpatialNullRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[MariatestSpatialNullFields, MariatestSpatialNullRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

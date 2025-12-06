@@ -10,56 +10,53 @@ import adventureworks.production.product.ProductId;
 import adventureworks.public_.Name;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface VproductanddescriptionMVFields {
-  final class Impl extends Relation<VproductanddescriptionMVFields, VproductanddescriptionMVRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface VproductanddescriptionMVFields extends FieldsExpr<VproductanddescriptionMVRow> {
+  record Impl(List<Path> _path) implements VproductanddescriptionMVFields, Relation<VproductanddescriptionMVFields, VproductanddescriptionMVRow> {
+    @Override
+    public Field<ProductId, VproductanddescriptionMVRow> productid() {
+      return new Field<ProductId, VproductanddescriptionMVRow>(_path, "productid", VproductanddescriptionMVRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
+    };
 
     @Override
-    public VproductanddescriptionMVFields fields() {
-      return new VproductanddescriptionMVFields() {
-               @Override
-               public Field<ProductId, VproductanddescriptionMVRow> productid() {
-                 return new Field<ProductId, VproductanddescriptionMVRow>(_path, "productid", VproductanddescriptionMVRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
-               };
-               @Override
-               public Field<Name, VproductanddescriptionMVRow> name() {
-                 return new Field<Name, VproductanddescriptionMVRow>(_path, "name", VproductanddescriptionMVRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<Name, VproductanddescriptionMVRow> productmodel() {
-                 return new Field<Name, VproductanddescriptionMVRow>(_path, "productmodel", VproductanddescriptionMVRow::productmodel, Optional.empty(), Optional.empty(), (row, value) -> row.withProductmodel(value), Name.pgType);
-               };
-               @Override
-               public Field<CultureId, VproductanddescriptionMVRow> cultureid() {
-                 return new Field<CultureId, VproductanddescriptionMVRow>(_path, "cultureid", VproductanddescriptionMVRow::cultureid, Optional.empty(), Optional.empty(), (row, value) -> row.withCultureid(value), CultureId.pgType);
-               };
-               @Override
-               public Field</* max 400 chars */ String, VproductanddescriptionMVRow> description() {
-                 return new Field</* max 400 chars */ String, VproductanddescriptionMVRow>(_path, "description", VproductanddescriptionMVRow::description, Optional.empty(), Optional.empty(), (row, value) -> row.withDescription(value), PgTypes.text);
-               };
-             };
+    public Field<Name, VproductanddescriptionMVRow> name() {
+      return new Field<Name, VproductanddescriptionMVRow>(_path, "name", VproductanddescriptionMVRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<Name, VproductanddescriptionMVRow> productmodel() {
+      return new Field<Name, VproductanddescriptionMVRow>(_path, "productmodel", VproductanddescriptionMVRow::productmodel, Optional.empty(), Optional.empty(), (row, value) -> row.withProductmodel(value), Name.pgType);
+    };
+
+    @Override
+    public Field<CultureId, VproductanddescriptionMVRow> cultureid() {
+      return new Field<CultureId, VproductanddescriptionMVRow>(_path, "cultureid", VproductanddescriptionMVRow::cultureid, Optional.empty(), Optional.empty(), (row, value) -> row.withCultureid(value), CultureId.pgType);
+    };
+
+    @Override
+    public Field</* max 400 chars */ String, VproductanddescriptionMVRow> description() {
+      return new Field</* max 400 chars */ String, VproductanddescriptionMVRow>(_path, "description", VproductanddescriptionMVRow::description, Optional.empty(), Optional.empty(), (row, value) -> row.withDescription(value), PgTypes.text);
     };
 
     @Override
     public List<FieldLike<?, VproductanddescriptionMVRow>> columns() {
-      return List.of(this.fields().productid(), this.fields().name(), this.fields().productmodel(), this.fields().cultureid(), this.fields().description());
+      return List.of(this.productid(), this.name(), this.productmodel(), this.cultureid(), this.description());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<VproductanddescriptionMVFields, VproductanddescriptionMVRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<VproductanddescriptionMVFields, VproductanddescriptionMVRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -72,4 +69,12 @@ public interface VproductanddescriptionMVFields {
   Field<CultureId, VproductanddescriptionMVRow> cultureid();
 
   Field</* max 400 chars */ String, VproductanddescriptionMVRow> description();
+
+  @Override
+  List<FieldLike<?, VproductanddescriptionMVRow>> columns();
+
+  @Override
+  default RowParser<VproductanddescriptionMVRow> rowParser() {
+    return VproductanddescriptionMVRow._rowParser;
+  };
 }

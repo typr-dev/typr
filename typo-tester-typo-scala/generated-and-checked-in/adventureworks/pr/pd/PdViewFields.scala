@@ -9,13 +9,15 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoUUID
 import adventureworks.production.productdescription.ProductdescriptionId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait PdViewFields {
+trait PdViewFields extends FieldsExpr[PdViewRow] {
   def id: Field[ProductdescriptionId, PdViewRow]
 
   def productdescriptionid: Field[ProductdescriptionId, PdViewRow]
@@ -25,75 +27,79 @@ trait PdViewFields {
   def rowguid: Field[TypoUUID, PdViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, PdViewRow]
+
+  override def columns: java.util.List[FieldLike[?, PdViewRow]]
+
+  override def rowParser: RowParser[PdViewRow] = PdViewRow._rowParser
 }
 
 object PdViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[PdViewFields, PdViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends PdViewFields with Relation[PdViewFields, PdViewRow] {
 
-    override lazy val fields: PdViewFields = {
-      new PdViewFields {
-        override def id: Field[ProductdescriptionId, PdViewRow] = {
-          new Field[ProductdescriptionId, PdViewRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            ProductdescriptionId.pgType
-          )
-        }
-        override def productdescriptionid: Field[ProductdescriptionId, PdViewRow] = {
-          new Field[ProductdescriptionId, PdViewRow](
-            _path,
-            "productdescriptionid",
-            _.productdescriptionid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(productdescriptionid = value),
-            ProductdescriptionId.pgType
-          )
-        }
-        override def description: Field[/* max 400 chars */ String, PdViewRow] = {
-          new Field[/* max 400 chars */ String, PdViewRow](
-            _path,
-            "description",
-            _.description,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(description = value),
-            PgTypes.text
-          )
-        }
-        override def rowguid: Field[TypoUUID, PdViewRow] = {
-          new Field[TypoUUID, PdViewRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, PdViewRow] = {
-          new Field[TypoLocalDateTime, PdViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def id: Field[ProductdescriptionId, PdViewRow] = {
+      new Field[ProductdescriptionId, PdViewRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        ProductdescriptionId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, PdViewRow]] = java.util.List.of(this.fields.id, this.fields.productdescriptionid, this.fields.description, this.fields.rowguid, this.fields.modifieddate)
+    override def productdescriptionid: Field[ProductdescriptionId, PdViewRow] = {
+      new Field[ProductdescriptionId, PdViewRow](
+        _path,
+        "productdescriptionid",
+        _.productdescriptionid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(productdescriptionid = value),
+        ProductdescriptionId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def description: Field[/* max 400 chars */ String, PdViewRow] = {
+      new Field[/* max 400 chars */ String, PdViewRow](
+        _path,
+        "description",
+        _.description,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(description = value),
+        PgTypes.text
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, PdViewRow] = {
+      new Field[TypoUUID, PdViewRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, PdViewRow] = {
+      new Field[TypoLocalDateTime, PdViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, PdViewRow]] = java.util.List.of(this.id, this.productdescriptionid, this.description, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[PdViewFields, PdViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[PdViewFields, PdViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

@@ -6,14 +6,16 @@
 package testdb.price_tiers
 
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-trait PriceTiersFields {
+trait PriceTiersFields extends FieldsExpr[PriceTiersRow] {
   def tierId: IdField[PriceTiersId, PriceTiersRow]
 
   def name: Field[String, PriceTiersRow]
@@ -23,75 +25,79 @@ trait PriceTiersFields {
   def discountType: Field[String, PriceTiersRow]
 
   def discountValue: Field[java.math.BigDecimal, PriceTiersRow]
+
+  override def columns: java.util.List[FieldLike[?, PriceTiersRow]]
+
+  override def rowParser: RowParser[PriceTiersRow] = PriceTiersRow._rowParser
 }
 
 object PriceTiersFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[PriceTiersFields, PriceTiersRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends PriceTiersFields with Relation[PriceTiersFields, PriceTiersRow] {
 
-    override lazy val fields: PriceTiersFields = {
-      new PriceTiersFields {
-        override def tierId: IdField[PriceTiersId, PriceTiersRow] = {
-          new IdField[PriceTiersId, PriceTiersRow](
-            _path,
-            "tier_id",
-            _.tierId,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(tierId = value),
-            PriceTiersId.pgType
-          )
-        }
-        override def name: Field[String, PriceTiersRow] = {
-          new Field[String, PriceTiersRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(name = value),
-            MariaTypes.varchar
-          )
-        }
-        override def minQuantity: Field[java.lang.Long, PriceTiersRow] = {
-          new Field[java.lang.Long, PriceTiersRow](
-            _path,
-            "min_quantity",
-            _.minQuantity,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(minQuantity = value),
-            MariaTypes.intUnsigned
-          )
-        }
-        override def discountType: Field[String, PriceTiersRow] = {
-          new Field[String, PriceTiersRow](
-            _path,
-            "discount_type",
-            _.discountType,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(discountType = value),
-            MariaTypes.text
-          )
-        }
-        override def discountValue: Field[java.math.BigDecimal, PriceTiersRow] = {
-          new Field[java.math.BigDecimal, PriceTiersRow](
-            _path,
-            "discount_value",
-            _.discountValue,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(discountValue = value),
-            MariaTypes.decimal
-          )
-        }
-      }
+    override def tierId: IdField[PriceTiersId, PriceTiersRow] = {
+      new IdField[PriceTiersId, PriceTiersRow](
+        _path,
+        "tier_id",
+        _.tierId,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(tierId = value),
+        PriceTiersId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, PriceTiersRow]] = java.util.List.of(this.fields.tierId, this.fields.name, this.fields.minQuantity, this.fields.discountType, this.fields.discountValue)
+    override def name: Field[String, PriceTiersRow] = {
+      new Field[String, PriceTiersRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(name = value),
+        MariaTypes.varchar
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def minQuantity: Field[java.lang.Long, PriceTiersRow] = {
+      new Field[java.lang.Long, PriceTiersRow](
+        _path,
+        "min_quantity",
+        _.minQuantity,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(minQuantity = value),
+        MariaTypes.intUnsigned
+      )
+    }
+
+    override def discountType: Field[String, PriceTiersRow] = {
+      new Field[String, PriceTiersRow](
+        _path,
+        "discount_type",
+        _.discountType,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(discountType = value),
+        MariaTypes.text
+      )
+    }
+
+    override def discountValue: Field[java.math.BigDecimal, PriceTiersRow] = {
+      new Field[java.math.BigDecimal, PriceTiersRow](
+        _path,
+        "discount_value",
+        _.discountValue,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(discountValue = value),
+        MariaTypes.decimal
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, PriceTiersRow]] = java.util.List.of(this.tierId, this.name, this.minQuantity, this.discountType, this.discountValue)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[PriceTiersFields, PriceTiersRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[PriceTiersFields, PriceTiersRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

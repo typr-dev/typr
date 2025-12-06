@@ -14,6 +14,7 @@ import adventureworks.production.product.ProductId;
 import adventureworks.production.product.ProductRow;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr;
@@ -23,43 +24,37 @@ import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface ProductdocumentFields {
-  final class Impl extends Relation<ProductdocumentFields, ProductdocumentRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface ProductdocumentFields extends FieldsExpr<ProductdocumentRow> {
+  record Impl(List<Path> _path) implements ProductdocumentFields, Relation<ProductdocumentFields, ProductdocumentRow> {
+    @Override
+    public IdField<ProductId, ProductdocumentRow> productid() {
+      return new IdField<ProductId, ProductdocumentRow>(_path, "productid", ProductdocumentRow::productid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductid(value), ProductId.pgType);
+    };
 
     @Override
-    public ProductdocumentFields fields() {
-      return new ProductdocumentFields() {
-               @Override
-               public IdField<ProductId, ProductdocumentRow> productid() {
-                 return new IdField<ProductId, ProductdocumentRow>(_path, "productid", ProductdocumentRow::productid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductid(value), ProductId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, ProductdocumentRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, ProductdocumentRow>(_path, "modifieddate", ProductdocumentRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public IdField<DocumentId, ProductdocumentRow> documentnode() {
-                 return new IdField<DocumentId, ProductdocumentRow>(_path, "documentnode", ProductdocumentRow::documentnode, Optional.empty(), Optional.empty(), (row, value) -> row.withDocumentnode(value), DocumentId.pgType);
-               };
-             };
+    public Field<TypoLocalDateTime, ProductdocumentRow> modifieddate() {
+      return new Field<TypoLocalDateTime, ProductdocumentRow>(_path, "modifieddate", ProductdocumentRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public IdField<DocumentId, ProductdocumentRow> documentnode() {
+      return new IdField<DocumentId, ProductdocumentRow>(_path, "documentnode", ProductdocumentRow::documentnode, Optional.empty(), Optional.empty(), (row, value) -> row.withDocumentnode(value), DocumentId.pgType);
     };
 
     @Override
     public List<FieldLike<?, ProductdocumentRow>> columns() {
-      return List.of(this.fields().productid(), this.fields().modifieddate(), this.fields().documentnode());
+      return List.of(this.productid(), this.modifieddate(), this.documentnode());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<ProductdocumentFields, ProductdocumentRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<ProductdocumentFields, ProductdocumentRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -83,5 +78,13 @@ public interface ProductdocumentFields {
 
   default SqlExpr<Boolean> compositeIdIn(List<ProductdocumentId> compositeIds) {
     return new CompositeIn(List.of(new Part<ProductId, ProductdocumentId, ProductdocumentRow>(productid(), ProductdocumentId::productid, ProductId.pgType), new Part<DocumentId, ProductdocumentId, ProductdocumentRow>(documentnode(), ProductdocumentId::documentnode, DocumentId.pgType)), compositeIds);
+  };
+
+  @Override
+  List<FieldLike<?, ProductdocumentRow>> columns();
+
+  @Override
+  default RowParser<ProductdocumentRow> rowParser() {
+    return ProductdocumentRow._rowParser;
   };
 }

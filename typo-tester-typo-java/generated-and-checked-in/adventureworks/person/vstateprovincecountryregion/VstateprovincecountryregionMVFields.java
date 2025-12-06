@@ -12,64 +12,63 @@ import adventureworks.public_.Name;
 import adventureworks.sales.salesterritory.SalesterritoryId;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface VstateprovincecountryregionMVFields {
-  final class Impl extends Relation<VstateprovincecountryregionMVFields, VstateprovincecountryregionMVRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface VstateprovincecountryregionMVFields extends FieldsExpr<VstateprovincecountryregionMVRow> {
+  record Impl(List<Path> _path) implements VstateprovincecountryregionMVFields, Relation<VstateprovincecountryregionMVFields, VstateprovincecountryregionMVRow> {
+    @Override
+    public Field<StateprovinceId, VstateprovincecountryregionMVRow> stateprovinceid() {
+      return new Field<StateprovinceId, VstateprovincecountryregionMVRow>(_path, "stateprovinceid", VstateprovincecountryregionMVRow::stateprovinceid, Optional.empty(), Optional.empty(), (row, value) -> row.withStateprovinceid(value), StateprovinceId.pgType);
+    };
 
     @Override
-    public VstateprovincecountryregionMVFields fields() {
-      return new VstateprovincecountryregionMVFields() {
-               @Override
-               public Field<StateprovinceId, VstateprovincecountryregionMVRow> stateprovinceid() {
-                 return new Field<StateprovinceId, VstateprovincecountryregionMVRow>(_path, "stateprovinceid", VstateprovincecountryregionMVRow::stateprovinceid, Optional.empty(), Optional.empty(), (row, value) -> row.withStateprovinceid(value), StateprovinceId.pgType);
-               };
-               @Override
-               public Field</* bpchar, max 3 chars */ String, VstateprovincecountryregionMVRow> stateprovincecode() {
-                 return new Field</* bpchar, max 3 chars */ String, VstateprovincecountryregionMVRow>(_path, "stateprovincecode", VstateprovincecountryregionMVRow::stateprovincecode, Optional.empty(), Optional.empty(), (row, value) -> row.withStateprovincecode(value), PgTypes.bpchar);
-               };
-               @Override
-               public Field<Flag, VstateprovincecountryregionMVRow> isonlystateprovinceflag() {
-                 return new Field<Flag, VstateprovincecountryregionMVRow>(_path, "isonlystateprovinceflag", VstateprovincecountryregionMVRow::isonlystateprovinceflag, Optional.empty(), Optional.empty(), (row, value) -> row.withIsonlystateprovinceflag(value), Flag.pgType);
-               };
-               @Override
-               public Field<Name, VstateprovincecountryregionMVRow> stateprovincename() {
-                 return new Field<Name, VstateprovincecountryregionMVRow>(_path, "stateprovincename", VstateprovincecountryregionMVRow::stateprovincename, Optional.empty(), Optional.empty(), (row, value) -> row.withStateprovincename(value), Name.pgType);
-               };
-               @Override
-               public Field<SalesterritoryId, VstateprovincecountryregionMVRow> territoryid() {
-                 return new Field<SalesterritoryId, VstateprovincecountryregionMVRow>(_path, "territoryid", VstateprovincecountryregionMVRow::territoryid, Optional.empty(), Optional.empty(), (row, value) -> row.withTerritoryid(value), SalesterritoryId.pgType);
-               };
-               @Override
-               public Field<CountryregionId, VstateprovincecountryregionMVRow> countryregioncode() {
-                 return new Field<CountryregionId, VstateprovincecountryregionMVRow>(_path, "countryregioncode", VstateprovincecountryregionMVRow::countryregioncode, Optional.empty(), Optional.empty(), (row, value) -> row.withCountryregioncode(value), CountryregionId.pgType);
-               };
-               @Override
-               public Field<Name, VstateprovincecountryregionMVRow> countryregionname() {
-                 return new Field<Name, VstateprovincecountryregionMVRow>(_path, "countryregionname", VstateprovincecountryregionMVRow::countryregionname, Optional.empty(), Optional.empty(), (row, value) -> row.withCountryregionname(value), Name.pgType);
-               };
-             };
+    public Field</* bpchar, max 3 chars */ String, VstateprovincecountryregionMVRow> stateprovincecode() {
+      return new Field</* bpchar, max 3 chars */ String, VstateprovincecountryregionMVRow>(_path, "stateprovincecode", VstateprovincecountryregionMVRow::stateprovincecode, Optional.empty(), Optional.empty(), (row, value) -> row.withStateprovincecode(value), PgTypes.bpchar);
+    };
+
+    @Override
+    public Field<Flag, VstateprovincecountryregionMVRow> isonlystateprovinceflag() {
+      return new Field<Flag, VstateprovincecountryregionMVRow>(_path, "isonlystateprovinceflag", VstateprovincecountryregionMVRow::isonlystateprovinceflag, Optional.empty(), Optional.empty(), (row, value) -> row.withIsonlystateprovinceflag(value), Flag.pgType);
+    };
+
+    @Override
+    public Field<Name, VstateprovincecountryregionMVRow> stateprovincename() {
+      return new Field<Name, VstateprovincecountryregionMVRow>(_path, "stateprovincename", VstateprovincecountryregionMVRow::stateprovincename, Optional.empty(), Optional.empty(), (row, value) -> row.withStateprovincename(value), Name.pgType);
+    };
+
+    @Override
+    public Field<SalesterritoryId, VstateprovincecountryregionMVRow> territoryid() {
+      return new Field<SalesterritoryId, VstateprovincecountryregionMVRow>(_path, "territoryid", VstateprovincecountryregionMVRow::territoryid, Optional.empty(), Optional.empty(), (row, value) -> row.withTerritoryid(value), SalesterritoryId.pgType);
+    };
+
+    @Override
+    public Field<CountryregionId, VstateprovincecountryregionMVRow> countryregioncode() {
+      return new Field<CountryregionId, VstateprovincecountryregionMVRow>(_path, "countryregioncode", VstateprovincecountryregionMVRow::countryregioncode, Optional.empty(), Optional.empty(), (row, value) -> row.withCountryregioncode(value), CountryregionId.pgType);
+    };
+
+    @Override
+    public Field<Name, VstateprovincecountryregionMVRow> countryregionname() {
+      return new Field<Name, VstateprovincecountryregionMVRow>(_path, "countryregionname", VstateprovincecountryregionMVRow::countryregionname, Optional.empty(), Optional.empty(), (row, value) -> row.withCountryregionname(value), Name.pgType);
     };
 
     @Override
     public List<FieldLike<?, VstateprovincecountryregionMVRow>> columns() {
-      return List.of(this.fields().stateprovinceid(), this.fields().stateprovincecode(), this.fields().isonlystateprovinceflag(), this.fields().stateprovincename(), this.fields().territoryid(), this.fields().countryregioncode(), this.fields().countryregionname());
+      return List.of(this.stateprovinceid(), this.stateprovincecode(), this.isonlystateprovinceflag(), this.stateprovincename(), this.territoryid(), this.countryregioncode(), this.countryregionname());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<VstateprovincecountryregionMVFields, VstateprovincecountryregionMVRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<VstateprovincecountryregionMVFields, VstateprovincecountryregionMVRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -86,4 +85,12 @@ public interface VstateprovincecountryregionMVFields {
   Field<CountryregionId, VstateprovincecountryregionMVRow> countryregioncode();
 
   Field<Name, VstateprovincecountryregionMVRow> countryregionname();
+
+  @Override
+  List<FieldLike<?, VstateprovincecountryregionMVRow>> columns();
+
+  @Override
+  default RowParser<VstateprovincecountryregionMVRow> rowParser() {
+    return VstateprovincecountryregionMVRow._rowParser;
+  };
 }

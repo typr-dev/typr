@@ -10,12 +10,16 @@ import adventureworks.public.Name
 import adventureworks.sales.salesreason.SalesreasonId
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface SrViewFields {
+interface SrViewFields : FieldsExpr<SrViewRow> {
+  override fun columns(): List<FieldLike<*, SrViewRow>>
+
   fun id(): Field<SalesreasonId, SrViewRow>
 
   fun modifieddate(): Field<TypoLocalDateTime, SrViewRow>
@@ -24,23 +28,27 @@ interface SrViewFields {
 
   fun reasontype(): Field<Name, SrViewRow>
 
+  override fun rowParser(): RowParser<SrViewRow> = SrViewRow._rowParser
+
   fun salesreasonid(): Field<SalesreasonId, SrViewRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<SrViewFields, SrViewRow>(path) {
-      override fun fields(): SrViewFields = object : SrViewFields {
-        override fun id(): Field<SalesreasonId, SrViewRow> = Field<SalesreasonId, SrViewRow>(_path, "id", SrViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, SalesreasonId.pgType)
-        override fun salesreasonid(): Field<SalesreasonId, SrViewRow> = Field<SalesreasonId, SrViewRow>(_path, "salesreasonid", SrViewRow::salesreasonid, Optional.empty(), Optional.empty(), { row, value -> row.copy(salesreasonid = value) }, SalesreasonId.pgType)
-        override fun name(): Field<Name, SrViewRow> = Field<Name, SrViewRow>(_path, "name", SrViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
-        override fun reasontype(): Field<Name, SrViewRow> = Field<Name, SrViewRow>(_path, "reasontype", SrViewRow::reasontype, Optional.empty(), Optional.empty(), { row, value -> row.copy(reasontype = value) }, Name.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, SrViewRow> = Field<TypoLocalDateTime, SrViewRow>(_path, "modifieddate", SrViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : SrViewFields, Relation<SrViewFields, SrViewRow> {
+      override fun id(): Field<SalesreasonId, SrViewRow> = Field<SalesreasonId, SrViewRow>(_path, "id", SrViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, SalesreasonId.pgType)
 
-      override fun columns(): List<FieldLike<*, SrViewRow>> = listOf(this.fields().id(), this.fields().salesreasonid(), this.fields().name(), this.fields().reasontype(), this.fields().modifieddate())
+      override fun salesreasonid(): Field<SalesreasonId, SrViewRow> = Field<SalesreasonId, SrViewRow>(_path, "salesreasonid", SrViewRow::salesreasonid, Optional.empty(), Optional.empty(), { row, value -> row.copy(salesreasonid = value) }, SalesreasonId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun name(): Field<Name, SrViewRow> = Field<Name, SrViewRow>(_path, "name", SrViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
+
+      override fun reasontype(): Field<Name, SrViewRow> = Field<Name, SrViewRow>(_path, "reasontype", SrViewRow::reasontype, Optional.empty(), Optional.empty(), { row, value -> row.copy(reasontype = value) }, Name.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, SrViewRow> = Field<TypoLocalDateTime, SrViewRow>(_path, "modifieddate", SrViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, SrViewRow>> = listOf(this.id(), this.salesreasonid(), this.name(), this.reasontype(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<SrViewFields, SrViewRow> = Impl(_path)
     }
 
-    val structure: Relation<SrViewFields, SrViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

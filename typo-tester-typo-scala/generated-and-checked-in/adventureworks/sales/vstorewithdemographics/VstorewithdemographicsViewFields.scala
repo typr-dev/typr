@@ -9,14 +9,16 @@ import adventureworks.customtypes.TypoMoney
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.public.Name
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait VstorewithdemographicsViewFields {
+trait VstorewithdemographicsViewFields extends FieldsExpr[VstorewithdemographicsViewRow] {
   def businessentityid: Field[BusinessentityId, VstorewithdemographicsViewRow]
 
   def name: Field[Name, VstorewithdemographicsViewRow]
@@ -40,152 +42,163 @@ trait VstorewithdemographicsViewFields {
   def internet: OptField[/* max 30 chars */ String, VstorewithdemographicsViewRow]
 
   def numberEmployees: OptField[Integer, VstorewithdemographicsViewRow]
+
+  override def columns: java.util.List[FieldLike[?, VstorewithdemographicsViewRow]]
+
+  override def rowParser: RowParser[VstorewithdemographicsViewRow] = VstorewithdemographicsViewRow._rowParser
 }
 
 object VstorewithdemographicsViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[VstorewithdemographicsViewFields, VstorewithdemographicsViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends VstorewithdemographicsViewFields with Relation[VstorewithdemographicsViewFields, VstorewithdemographicsViewRow] {
 
-    override lazy val fields: VstorewithdemographicsViewFields = {
-      new VstorewithdemographicsViewFields {
-        override def businessentityid: Field[BusinessentityId, VstorewithdemographicsViewRow] = {
-          new Field[BusinessentityId, VstorewithdemographicsViewRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def name: Field[Name, VstorewithdemographicsViewRow] = {
-          new Field[Name, VstorewithdemographicsViewRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def annualSales: OptField[TypoMoney, VstorewithdemographicsViewRow] = {
-          new OptField[TypoMoney, VstorewithdemographicsViewRow](
-            _path,
-            "AnnualSales",
-            _.annualSales,
-            Optional.of("numeric"),
-            Optional.empty(),
-            (row, value) => row.copy(annualSales = value),
-            TypoMoney.pgType
-          )
-        }
-        override def annualRevenue: OptField[TypoMoney, VstorewithdemographicsViewRow] = {
-          new OptField[TypoMoney, VstorewithdemographicsViewRow](
-            _path,
-            "AnnualRevenue",
-            _.annualRevenue,
-            Optional.of("numeric"),
-            Optional.empty(),
-            (row, value) => row.copy(annualRevenue = value),
-            TypoMoney.pgType
-          )
-        }
-        override def bankName: OptField[/* max 50 chars */ String, VstorewithdemographicsViewRow] = {
-          new OptField[/* max 50 chars */ String, VstorewithdemographicsViewRow](
-            _path,
-            "BankName",
-            _.bankName,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(bankName = value),
-            PgTypes.text
-          )
-        }
-        override def businessType: OptField[/* max 5 chars */ String, VstorewithdemographicsViewRow] = {
-          new OptField[/* max 5 chars */ String, VstorewithdemographicsViewRow](
-            _path,
-            "BusinessType",
-            _.businessType,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(businessType = value),
-            PgTypes.text
-          )
-        }
-        override def yearOpened: OptField[Integer, VstorewithdemographicsViewRow] = {
-          new OptField[Integer, VstorewithdemographicsViewRow](
-            _path,
-            "YearOpened",
-            _.yearOpened,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(yearOpened = value),
-            PgTypes.int4
-          )
-        }
-        override def specialty: OptField[/* max 50 chars */ String, VstorewithdemographicsViewRow] = {
-          new OptField[/* max 50 chars */ String, VstorewithdemographicsViewRow](
-            _path,
-            "Specialty",
-            _.specialty,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(specialty = value),
-            PgTypes.text
-          )
-        }
-        override def squareFeet: OptField[Integer, VstorewithdemographicsViewRow] = {
-          new OptField[Integer, VstorewithdemographicsViewRow](
-            _path,
-            "SquareFeet",
-            _.squareFeet,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(squareFeet = value),
-            PgTypes.int4
-          )
-        }
-        override def brands: OptField[/* max 30 chars */ String, VstorewithdemographicsViewRow] = {
-          new OptField[/* max 30 chars */ String, VstorewithdemographicsViewRow](
-            _path,
-            "Brands",
-            _.brands,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(brands = value),
-            PgTypes.text
-          )
-        }
-        override def internet: OptField[/* max 30 chars */ String, VstorewithdemographicsViewRow] = {
-          new OptField[/* max 30 chars */ String, VstorewithdemographicsViewRow](
-            _path,
-            "Internet",
-            _.internet,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(internet = value),
-            PgTypes.text
-          )
-        }
-        override def numberEmployees: OptField[Integer, VstorewithdemographicsViewRow] = {
-          new OptField[Integer, VstorewithdemographicsViewRow](
-            _path,
-            "NumberEmployees",
-            _.numberEmployees,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(numberEmployees = value),
-            PgTypes.int4
-          )
-        }
-      }
+    override def businessentityid: Field[BusinessentityId, VstorewithdemographicsViewRow] = {
+      new Field[BusinessentityId, VstorewithdemographicsViewRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, VstorewithdemographicsViewRow]] = java.util.List.of(this.fields.businessentityid, this.fields.name, this.fields.annualSales, this.fields.annualRevenue, this.fields.bankName, this.fields.businessType, this.fields.yearOpened, this.fields.specialty, this.fields.squareFeet, this.fields.brands, this.fields.internet, this.fields.numberEmployees)
+    override def name: Field[Name, VstorewithdemographicsViewRow] = {
+      new Field[Name, VstorewithdemographicsViewRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def annualSales: OptField[TypoMoney, VstorewithdemographicsViewRow] = {
+      new OptField[TypoMoney, VstorewithdemographicsViewRow](
+        _path,
+        "AnnualSales",
+        _.annualSales,
+        Optional.of("numeric"),
+        Optional.empty(),
+        (row, value) => row.copy(annualSales = value),
+        TypoMoney.pgType
+      )
+    }
+
+    override def annualRevenue: OptField[TypoMoney, VstorewithdemographicsViewRow] = {
+      new OptField[TypoMoney, VstorewithdemographicsViewRow](
+        _path,
+        "AnnualRevenue",
+        _.annualRevenue,
+        Optional.of("numeric"),
+        Optional.empty(),
+        (row, value) => row.copy(annualRevenue = value),
+        TypoMoney.pgType
+      )
+    }
+
+    override def bankName: OptField[/* max 50 chars */ String, VstorewithdemographicsViewRow] = {
+      new OptField[/* max 50 chars */ String, VstorewithdemographicsViewRow](
+        _path,
+        "BankName",
+        _.bankName,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(bankName = value),
+        PgTypes.text
+      )
+    }
+
+    override def businessType: OptField[/* max 5 chars */ String, VstorewithdemographicsViewRow] = {
+      new OptField[/* max 5 chars */ String, VstorewithdemographicsViewRow](
+        _path,
+        "BusinessType",
+        _.businessType,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(businessType = value),
+        PgTypes.text
+      )
+    }
+
+    override def yearOpened: OptField[Integer, VstorewithdemographicsViewRow] = {
+      new OptField[Integer, VstorewithdemographicsViewRow](
+        _path,
+        "YearOpened",
+        _.yearOpened,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(yearOpened = value),
+        PgTypes.int4
+      )
+    }
+
+    override def specialty: OptField[/* max 50 chars */ String, VstorewithdemographicsViewRow] = {
+      new OptField[/* max 50 chars */ String, VstorewithdemographicsViewRow](
+        _path,
+        "Specialty",
+        _.specialty,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(specialty = value),
+        PgTypes.text
+      )
+    }
+
+    override def squareFeet: OptField[Integer, VstorewithdemographicsViewRow] = {
+      new OptField[Integer, VstorewithdemographicsViewRow](
+        _path,
+        "SquareFeet",
+        _.squareFeet,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(squareFeet = value),
+        PgTypes.int4
+      )
+    }
+
+    override def brands: OptField[/* max 30 chars */ String, VstorewithdemographicsViewRow] = {
+      new OptField[/* max 30 chars */ String, VstorewithdemographicsViewRow](
+        _path,
+        "Brands",
+        _.brands,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(brands = value),
+        PgTypes.text
+      )
+    }
+
+    override def internet: OptField[/* max 30 chars */ String, VstorewithdemographicsViewRow] = {
+      new OptField[/* max 30 chars */ String, VstorewithdemographicsViewRow](
+        _path,
+        "Internet",
+        _.internet,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(internet = value),
+        PgTypes.text
+      )
+    }
+
+    override def numberEmployees: OptField[Integer, VstorewithdemographicsViewRow] = {
+      new OptField[Integer, VstorewithdemographicsViewRow](
+        _path,
+        "NumberEmployees",
+        _.numberEmployees,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(numberEmployees = value),
+        PgTypes.int4
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, VstorewithdemographicsViewRow]] = java.util.List.of(this.businessentityid, this.name, this.annualSales, this.annualRevenue, this.bankName, this.businessType, this.yearOpened, this.specialty, this.squareFeet, this.brands, this.internet, this.numberEmployees)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[VstorewithdemographicsViewFields, VstorewithdemographicsViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[VstorewithdemographicsViewFields, VstorewithdemographicsViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

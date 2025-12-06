@@ -6,66 +6,70 @@
 package adventureworks.public.identity_test
 
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait IdentityTestFields {
+trait IdentityTestFields extends FieldsExpr[IdentityTestRow] {
   def alwaysGenerated: Field[Integer, IdentityTestRow]
 
   def defaultGenerated: Field[Integer, IdentityTestRow]
 
   def name: IdField[IdentityTestId, IdentityTestRow]
+
+  override def columns: java.util.List[FieldLike[?, IdentityTestRow]]
+
+  override def rowParser: RowParser[IdentityTestRow] = IdentityTestRow._rowParser
 }
 
 object IdentityTestFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[IdentityTestFields, IdentityTestRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends IdentityTestFields with Relation[IdentityTestFields, IdentityTestRow] {
 
-    override lazy val fields: IdentityTestFields = {
-      new IdentityTestFields {
-        override def alwaysGenerated: Field[Integer, IdentityTestRow] = {
-          new Field[Integer, IdentityTestRow](
-            _path,
-            "always_generated",
-            _.alwaysGenerated,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(alwaysGenerated = value),
-            PgTypes.int4
-          )
-        }
-        override def defaultGenerated: Field[Integer, IdentityTestRow] = {
-          new Field[Integer, IdentityTestRow](
-            _path,
-            "default_generated",
-            _.defaultGenerated,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(defaultGenerated = value),
-            PgTypes.int4
-          )
-        }
-        override def name: IdField[IdentityTestId, IdentityTestRow] = {
-          new IdField[IdentityTestId, IdentityTestRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(name = value),
-            IdentityTestId.pgType
-          )
-        }
-      }
+    override def alwaysGenerated: Field[Integer, IdentityTestRow] = {
+      new Field[Integer, IdentityTestRow](
+        _path,
+        "always_generated",
+        _.alwaysGenerated,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(alwaysGenerated = value),
+        PgTypes.int4
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, IdentityTestRow]] = java.util.List.of(this.fields.alwaysGenerated, this.fields.defaultGenerated, this.fields.name)
+    override def defaultGenerated: Field[Integer, IdentityTestRow] = {
+      new Field[Integer, IdentityTestRow](
+        _path,
+        "default_generated",
+        _.defaultGenerated,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(defaultGenerated = value),
+        PgTypes.int4
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def name: IdField[IdentityTestId, IdentityTestRow] = {
+      new IdField[IdentityTestId, IdentityTestRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(name = value),
+        IdentityTestId.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, IdentityTestRow]] = java.util.List.of(this.alwaysGenerated, this.defaultGenerated, this.name)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[IdentityTestFields, IdentityTestRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[IdentityTestFields, IdentityTestRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

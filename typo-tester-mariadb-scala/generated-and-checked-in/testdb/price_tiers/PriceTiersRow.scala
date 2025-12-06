@@ -44,7 +44,7 @@ case class PriceTiersRow(
 }
 
 object PriceTiersRow {
-  val `_rowParser`: RowParser[PriceTiersRow] = RowParsers.of(PriceTiersId.pgType, MariaTypes.varchar, MariaTypes.intUnsigned, MariaTypes.text, MariaTypes.decimal, PriceTiersRow.apply, row => Array(row.tierId, row.name, row.minQuantity, row.discountType, row.discountValue))
+  val `_rowParser`: RowParser[PriceTiersRow] = RowParsers.of(PriceTiersId.pgType, MariaTypes.varchar, MariaTypes.intUnsigned, MariaTypes.text, MariaTypes.decimal, PriceTiersRow.apply, row => Array[Object](row.tierId.asInstanceOf[Object], row.name.asInstanceOf[Object], row.minQuantity.asInstanceOf[Object], row.discountType.asInstanceOf[Object], row.discountValue.asInstanceOf[Object]))
 
   given mariaText: MariaText[PriceTiersRow] = MariaText.from(`_rowParser`)
 }

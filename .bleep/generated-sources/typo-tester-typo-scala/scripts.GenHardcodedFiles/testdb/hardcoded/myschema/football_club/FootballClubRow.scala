@@ -20,7 +20,7 @@ case class FootballClubRow(
 )
 
 object FootballClubRow {
-  val `_rowParser`: RowParser[FootballClubRow] = RowParsers.of(FootballClubId.pgType, PgTypes.text, FootballClubRow.apply, row => Array(row.id, row.name))
+  val `_rowParser`: RowParser[FootballClubRow] = RowParsers.of(FootballClubId.pgType, PgTypes.text, FootballClubRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.name.asInstanceOf[Object]))
 
   given pgText: PgText[FootballClubRow] = PgText.from(`_rowParser`)
 }

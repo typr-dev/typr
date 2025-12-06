@@ -11,14 +11,18 @@ import adventureworks.person.businessentity.BusinessentityId
 import java.math.BigDecimal
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface EphViewFields {
+interface EphViewFields : FieldsExpr<EphViewRow> {
   fun businessentityid(): Field<BusinessentityId, EphViewRow>
+
+  override fun columns(): List<FieldLike<*, EphViewRow>>
 
   fun id(): Field<BusinessentityId, EphViewRow>
 
@@ -30,22 +34,27 @@ interface EphViewFields {
 
   fun ratechangedate(): Field<TypoLocalDateTime, EphViewRow>
 
+  override fun rowParser(): RowParser<EphViewRow> = EphViewRow._rowParser
+
   companion object {
-    private class Impl(path: List<Path>) : Relation<EphViewFields, EphViewRow>(path) {
-      override fun fields(): EphViewFields = object : EphViewFields {
-        override fun id(): Field<BusinessentityId, EphViewRow> = Field<BusinessentityId, EphViewRow>(_path, "id", EphViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, BusinessentityId.pgType)
-        override fun businessentityid(): Field<BusinessentityId, EphViewRow> = Field<BusinessentityId, EphViewRow>(_path, "businessentityid", EphViewRow::businessentityid, Optional.empty(), Optional.empty(), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
-        override fun ratechangedate(): Field<TypoLocalDateTime, EphViewRow> = Field<TypoLocalDateTime, EphViewRow>(_path, "ratechangedate", EphViewRow::ratechangedate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(ratechangedate = value) }, TypoLocalDateTime.pgType)
-        override fun rate(): Field<BigDecimal, EphViewRow> = Field<BigDecimal, EphViewRow>(_path, "rate", EphViewRow::rate, Optional.empty(), Optional.empty(), { row, value -> row.copy(rate = value) }, PgTypes.numeric)
-        override fun payfrequency(): Field<TypoShort, EphViewRow> = Field<TypoShort, EphViewRow>(_path, "payfrequency", EphViewRow::payfrequency, Optional.empty(), Optional.empty(), { row, value -> row.copy(payfrequency = value) }, TypoShort.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, EphViewRow> = Field<TypoLocalDateTime, EphViewRow>(_path, "modifieddate", EphViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : EphViewFields, Relation<EphViewFields, EphViewRow> {
+      override fun id(): Field<BusinessentityId, EphViewRow> = Field<BusinessentityId, EphViewRow>(_path, "id", EphViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, BusinessentityId.pgType)
 
-      override fun columns(): List<FieldLike<*, EphViewRow>> = listOf(this.fields().id(), this.fields().businessentityid(), this.fields().ratechangedate(), this.fields().rate(), this.fields().payfrequency(), this.fields().modifieddate())
+      override fun businessentityid(): Field<BusinessentityId, EphViewRow> = Field<BusinessentityId, EphViewRow>(_path, "businessentityid", EphViewRow::businessentityid, Optional.empty(), Optional.empty(), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun ratechangedate(): Field<TypoLocalDateTime, EphViewRow> = Field<TypoLocalDateTime, EphViewRow>(_path, "ratechangedate", EphViewRow::ratechangedate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(ratechangedate = value) }, TypoLocalDateTime.pgType)
+
+      override fun rate(): Field<BigDecimal, EphViewRow> = Field<BigDecimal, EphViewRow>(_path, "rate", EphViewRow::rate, Optional.empty(), Optional.empty(), { row, value -> row.copy(rate = value) }, PgTypes.numeric)
+
+      override fun payfrequency(): Field<TypoShort, EphViewRow> = Field<TypoShort, EphViewRow>(_path, "payfrequency", EphViewRow::payfrequency, Optional.empty(), Optional.empty(), { row, value -> row.copy(payfrequency = value) }, TypoShort.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, EphViewRow> = Field<TypoLocalDateTime, EphViewRow>(_path, "modifieddate", EphViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, EphViewRow>> = listOf(this.id(), this.businessentityid(), this.ratechangedate(), this.rate(), this.payfrequency(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<EphViewFields, EphViewRow> = Impl(_path)
     }
 
-    val structure: Relation<EphViewFields, EphViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

@@ -8,65 +8,69 @@ package adventureworks.production.scrapreason
 import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.public.Name
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait ScrapreasonFields {
+trait ScrapreasonFields extends FieldsExpr[ScrapreasonRow] {
   def scrapreasonid: IdField[ScrapreasonId, ScrapreasonRow]
 
   def name: Field[Name, ScrapreasonRow]
 
   def modifieddate: Field[TypoLocalDateTime, ScrapreasonRow]
+
+  override def columns: java.util.List[FieldLike[?, ScrapreasonRow]]
+
+  override def rowParser: RowParser[ScrapreasonRow] = ScrapreasonRow._rowParser
 }
 
 object ScrapreasonFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[ScrapreasonFields, ScrapreasonRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends ScrapreasonFields with Relation[ScrapreasonFields, ScrapreasonRow] {
 
-    override lazy val fields: ScrapreasonFields = {
-      new ScrapreasonFields {
-        override def scrapreasonid: IdField[ScrapreasonId, ScrapreasonRow] = {
-          new IdField[ScrapreasonId, ScrapreasonRow](
-            _path,
-            "scrapreasonid",
-            _.scrapreasonid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(scrapreasonid = value),
-            ScrapreasonId.pgType
-          )
-        }
-        override def name: Field[Name, ScrapreasonRow] = {
-          new Field[Name, ScrapreasonRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.of("varchar"),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, ScrapreasonRow] = {
-          new Field[TypoLocalDateTime, ScrapreasonRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def scrapreasonid: IdField[ScrapreasonId, ScrapreasonRow] = {
+      new IdField[ScrapreasonId, ScrapreasonRow](
+        _path,
+        "scrapreasonid",
+        _.scrapreasonid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(scrapreasonid = value),
+        ScrapreasonId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, ScrapreasonRow]] = java.util.List.of(this.fields.scrapreasonid, this.fields.name, this.fields.modifieddate)
+    override def name: Field[Name, ScrapreasonRow] = {
+      new Field[Name, ScrapreasonRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.of("varchar"),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def modifieddate: Field[TypoLocalDateTime, ScrapreasonRow] = {
+      new Field[TypoLocalDateTime, ScrapreasonRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, ScrapreasonRow]] = java.util.List.of(this.scrapreasonid, this.name, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[ScrapreasonFields, ScrapreasonRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[ScrapreasonFields, ScrapreasonRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

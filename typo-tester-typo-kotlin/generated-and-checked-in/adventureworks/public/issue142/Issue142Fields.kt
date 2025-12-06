@@ -7,25 +7,29 @@ package adventureworks.public.issue142
 
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface Issue142Fields {
+interface Issue142Fields : FieldsExpr<Issue142Row> {
+  override fun columns(): List<FieldLike<*, Issue142Row>>
+
+  override fun rowParser(): RowParser<Issue142Row> = Issue142Row._rowParser
+
   fun tabellkode(): IdField<Issue142Id, Issue142Row>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<Issue142Fields, Issue142Row>(path) {
-      override fun fields(): Issue142Fields = object : Issue142Fields {
-        override fun tabellkode(): IdField<Issue142Id, Issue142Row> = IdField<Issue142Id, Issue142Row>(_path, "tabellkode", Issue142Row::tabellkode, Optional.empty(), Optional.empty(), { row, value -> row.copy(tabellkode = value) }, Issue142Id.pgType)
-      }
+    data class Impl(val _path: List<Path>) : Issue142Fields, Relation<Issue142Fields, Issue142Row> {
+      override fun tabellkode(): IdField<Issue142Id, Issue142Row> = IdField<Issue142Id, Issue142Row>(_path, "tabellkode", Issue142Row::tabellkode, Optional.empty(), Optional.empty(), { row, value -> row.copy(tabellkode = value) }, Issue142Id.pgType)
 
-      override fun columns(): List<FieldLike<*, Issue142Row>> = listOf(this.fields().tabellkode())
+      override fun columns(): List<FieldLike<*, Issue142Row>> = listOf(this.tabellkode())
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun copy(_path: List<Path>): Relation<Issue142Fields, Issue142Row> = Impl(_path)
     }
 
-    val structure: Relation<Issue142Fields, Issue142Row> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

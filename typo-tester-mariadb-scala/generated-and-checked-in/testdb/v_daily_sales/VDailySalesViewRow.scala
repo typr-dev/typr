@@ -59,5 +59,5 @@ case class VDailySalesViewRow(
 )
 
 object VDailySalesViewRow {
-  val `_rowParser`: RowParser[VDailySalesViewRow] = RowParsers.of(MariaTypes.date.opt(), MariaTypes.bigint, MariaTypes.bigint, MariaTypes.decimal.opt(), MariaTypes.decimal.opt(), MariaTypes.decimal.opt(), MariaTypes.decimal.opt(), MariaTypes.decimal.opt(), MariaTypes.decimal.opt(), MariaTypes.decimal.opt(), VDailySalesViewRow.apply, row => Array(row.orderDate, row.orderCount, row.uniqueCustomers, row.itemsSold, row.grossSales, row.totalDiscounts, row.totalShipping, row.totalTax, row.netSales, row.avgOrderValue))
+  val `_rowParser`: RowParser[VDailySalesViewRow] = RowParsers.of(MariaTypes.date.opt(), MariaTypes.bigint, MariaTypes.bigint, MariaTypes.decimal.opt(), MariaTypes.decimal.opt(), MariaTypes.decimal.opt(), MariaTypes.decimal.opt(), MariaTypes.decimal.opt(), MariaTypes.decimal.opt(), MariaTypes.decimal.opt(), VDailySalesViewRow.apply, row => Array[Object](row.orderDate.asInstanceOf[Object], row.orderCount.asInstanceOf[Object], row.uniqueCustomers.asInstanceOf[Object], row.itemsSold.asInstanceOf[Object], row.grossSales.asInstanceOf[Object], row.totalDiscounts.asInstanceOf[Object], row.totalShipping.asInstanceOf[Object], row.totalTax.asInstanceOf[Object], row.netSales.asInstanceOf[Object], row.avgOrderValue.asInstanceOf[Object]))
 }

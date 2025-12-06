@@ -6,6 +6,7 @@
 package adventureworks.public.only_pk_columns
 
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr
 import typo.dsl.SqlExpr.CompositeIn
@@ -14,8 +15,9 @@ import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait OnlyPkColumnsFields {
+trait OnlyPkColumnsFields extends FieldsExpr[OnlyPkColumnsRow] {
   def keyColumn1: IdField[String, OnlyPkColumnsRow]
 
   def keyColumn2: IdField[Integer, OnlyPkColumnsRow]
@@ -23,42 +25,43 @@ trait OnlyPkColumnsFields {
   def compositeIdIs(compositeId: OnlyPkColumnsId): SqlExpr[java.lang.Boolean] = SqlExpr.all(keyColumn1.isEqual(compositeId.keyColumn1), keyColumn2.isEqual(compositeId.keyColumn2))
 
   def compositeIdIn(compositeIds: java.util.List[OnlyPkColumnsId]): SqlExpr[java.lang.Boolean] = new CompositeIn(java.util.List.of(new Part[String, OnlyPkColumnsId, OnlyPkColumnsRow](keyColumn1, _.keyColumn1, PgTypes.text), new Part[Integer, OnlyPkColumnsId, OnlyPkColumnsRow](keyColumn2, _.keyColumn2, PgTypes.int4)), compositeIds)
+
+  override def columns: java.util.List[FieldLike[?, OnlyPkColumnsRow]]
+
+  override def rowParser: RowParser[OnlyPkColumnsRow] = OnlyPkColumnsRow._rowParser
 }
 
 object OnlyPkColumnsFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[OnlyPkColumnsFields, OnlyPkColumnsRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends OnlyPkColumnsFields with Relation[OnlyPkColumnsFields, OnlyPkColumnsRow] {
 
-    override lazy val fields: OnlyPkColumnsFields = {
-      new OnlyPkColumnsFields {
-        override def keyColumn1: IdField[String, OnlyPkColumnsRow] = {
-          new IdField[String, OnlyPkColumnsRow](
-            _path,
-            "key_column_1",
-            _.keyColumn1,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(keyColumn1 = value),
-            PgTypes.text
-          )
-        }
-        override def keyColumn2: IdField[Integer, OnlyPkColumnsRow] = {
-          new IdField[Integer, OnlyPkColumnsRow](
-            _path,
-            "key_column_2",
-            _.keyColumn2,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(keyColumn2 = value),
-            PgTypes.int4
-          )
-        }
-      }
+    override def keyColumn1: IdField[String, OnlyPkColumnsRow] = {
+      new IdField[String, OnlyPkColumnsRow](
+        _path,
+        "key_column_1",
+        _.keyColumn1,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(keyColumn1 = value),
+        PgTypes.text
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, OnlyPkColumnsRow]] = java.util.List.of(this.fields.keyColumn1, this.fields.keyColumn2)
+    override def keyColumn2: IdField[Integer, OnlyPkColumnsRow] = {
+      new IdField[Integer, OnlyPkColumnsRow](
+        _path,
+        "key_column_2",
+        _.keyColumn2,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(keyColumn2 = value),
+        PgTypes.int4
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def columns: java.util.List[FieldLike[?, OnlyPkColumnsRow]] = java.util.List.of(this.keyColumn1, this.keyColumn2)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[OnlyPkColumnsFields, OnlyPkColumnsRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[OnlyPkColumnsFields, OnlyPkColumnsRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

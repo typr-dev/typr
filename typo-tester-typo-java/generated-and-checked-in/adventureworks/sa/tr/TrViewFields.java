@@ -14,68 +14,68 @@ import adventureworks.sales.salestaxrate.SalestaxrateId;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface TrViewFields {
-  final class Impl extends Relation<TrViewFields, TrViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface TrViewFields extends FieldsExpr<TrViewRow> {
+  record Impl(List<Path> _path) implements TrViewFields, Relation<TrViewFields, TrViewRow> {
+    @Override
+    public Field<SalestaxrateId, TrViewRow> id() {
+      return new Field<SalestaxrateId, TrViewRow>(_path, "id", TrViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), SalestaxrateId.pgType);
+    };
 
     @Override
-    public TrViewFields fields() {
-      return new TrViewFields() {
-               @Override
-               public Field<SalestaxrateId, TrViewRow> id() {
-                 return new Field<SalestaxrateId, TrViewRow>(_path, "id", TrViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), SalestaxrateId.pgType);
-               };
-               @Override
-               public Field<SalestaxrateId, TrViewRow> salestaxrateid() {
-                 return new Field<SalestaxrateId, TrViewRow>(_path, "salestaxrateid", TrViewRow::salestaxrateid, Optional.empty(), Optional.empty(), (row, value) -> row.withSalestaxrateid(value), SalestaxrateId.pgType);
-               };
-               @Override
-               public Field<StateprovinceId, TrViewRow> stateprovinceid() {
-                 return new Field<StateprovinceId, TrViewRow>(_path, "stateprovinceid", TrViewRow::stateprovinceid, Optional.empty(), Optional.empty(), (row, value) -> row.withStateprovinceid(value), StateprovinceId.pgType);
-               };
-               @Override
-               public Field<TypoShort, TrViewRow> taxtype() {
-                 return new Field<TypoShort, TrViewRow>(_path, "taxtype", TrViewRow::taxtype, Optional.empty(), Optional.empty(), (row, value) -> row.withTaxtype(value), TypoShort.pgType);
-               };
-               @Override
-               public Field<BigDecimal, TrViewRow> taxrate() {
-                 return new Field<BigDecimal, TrViewRow>(_path, "taxrate", TrViewRow::taxrate, Optional.empty(), Optional.empty(), (row, value) -> row.withTaxrate(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<Name, TrViewRow> name() {
-                 return new Field<Name, TrViewRow>(_path, "name", TrViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<TypoUUID, TrViewRow> rowguid() {
-                 return new Field<TypoUUID, TrViewRow>(_path, "rowguid", TrViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, TrViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, TrViewRow>(_path, "modifieddate", TrViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<SalestaxrateId, TrViewRow> salestaxrateid() {
+      return new Field<SalestaxrateId, TrViewRow>(_path, "salestaxrateid", TrViewRow::salestaxrateid, Optional.empty(), Optional.empty(), (row, value) -> row.withSalestaxrateid(value), SalestaxrateId.pgType);
+    };
+
+    @Override
+    public Field<StateprovinceId, TrViewRow> stateprovinceid() {
+      return new Field<StateprovinceId, TrViewRow>(_path, "stateprovinceid", TrViewRow::stateprovinceid, Optional.empty(), Optional.empty(), (row, value) -> row.withStateprovinceid(value), StateprovinceId.pgType);
+    };
+
+    @Override
+    public Field<TypoShort, TrViewRow> taxtype() {
+      return new Field<TypoShort, TrViewRow>(_path, "taxtype", TrViewRow::taxtype, Optional.empty(), Optional.empty(), (row, value) -> row.withTaxtype(value), TypoShort.pgType);
+    };
+
+    @Override
+    public Field<BigDecimal, TrViewRow> taxrate() {
+      return new Field<BigDecimal, TrViewRow>(_path, "taxrate", TrViewRow::taxrate, Optional.empty(), Optional.empty(), (row, value) -> row.withTaxrate(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<Name, TrViewRow> name() {
+      return new Field<Name, TrViewRow>(_path, "name", TrViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<TypoUUID, TrViewRow> rowguid() {
+      return new Field<TypoUUID, TrViewRow>(_path, "rowguid", TrViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, TrViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, TrViewRow>(_path, "modifieddate", TrViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, TrViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().salestaxrateid(), this.fields().stateprovinceid(), this.fields().taxtype(), this.fields().taxrate(), this.fields().name(), this.fields().rowguid(), this.fields().modifieddate());
+      return List.of(this.id(), this.salestaxrateid(), this.stateprovinceid(), this.taxtype(), this.taxrate(), this.name(), this.rowguid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<TrViewFields, TrViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<TrViewFields, TrViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -94,4 +94,12 @@ public interface TrViewFields {
   Field<TypoUUID, TrViewRow> rowguid();
 
   Field<TypoLocalDateTime, TrViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, TrViewRow>> columns();
+
+  @Override
+  default RowParser<TrViewRow> rowParser() {
+    return TrViewRow._rowParser;
+  };
 }

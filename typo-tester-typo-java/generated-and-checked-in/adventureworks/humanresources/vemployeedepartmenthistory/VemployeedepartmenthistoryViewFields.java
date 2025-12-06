@@ -11,81 +11,84 @@ import adventureworks.public_.Name;
 import adventureworks.userdefined.FirstName;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface VemployeedepartmenthistoryViewFields {
-  final class Impl extends Relation<VemployeedepartmenthistoryViewFields, VemployeedepartmenthistoryViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface VemployeedepartmenthistoryViewFields extends FieldsExpr<VemployeedepartmenthistoryViewRow> {
+  record Impl(List<Path> _path) implements VemployeedepartmenthistoryViewFields, Relation<VemployeedepartmenthistoryViewFields, VemployeedepartmenthistoryViewRow> {
+    @Override
+    public Field<BusinessentityId, VemployeedepartmenthistoryViewRow> businessentityid() {
+      return new Field<BusinessentityId, VemployeedepartmenthistoryViewRow>(_path, "businessentityid", VemployeedepartmenthistoryViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
+    };
 
     @Override
-    public VemployeedepartmenthistoryViewFields fields() {
-      return new VemployeedepartmenthistoryViewFields() {
-               @Override
-               public Field<BusinessentityId, VemployeedepartmenthistoryViewRow> businessentityid() {
-                 return new Field<BusinessentityId, VemployeedepartmenthistoryViewRow>(_path, "businessentityid", VemployeedepartmenthistoryViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public OptField</* max 8 chars */ String, VemployeedepartmenthistoryViewRow> title() {
-                 return new OptField</* max 8 chars */ String, VemployeedepartmenthistoryViewRow>(_path, "title", VemployeedepartmenthistoryViewRow::title, Optional.empty(), Optional.empty(), (row, value) -> row.withTitle(value), PgTypes.text);
-               };
-               @Override
-               public Field</* user-picked */ FirstName, VemployeedepartmenthistoryViewRow> firstname() {
-                 return new Field</* user-picked */ FirstName, VemployeedepartmenthistoryViewRow>(_path, "firstname", VemployeedepartmenthistoryViewRow::firstname, Optional.empty(), Optional.empty(), (row, value) -> row.withFirstname(value), FirstName.pgType);
-               };
-               @Override
-               public OptField<Name, VemployeedepartmenthistoryViewRow> middlename() {
-                 return new OptField<Name, VemployeedepartmenthistoryViewRow>(_path, "middlename", VemployeedepartmenthistoryViewRow::middlename, Optional.empty(), Optional.empty(), (row, value) -> row.withMiddlename(value), Name.pgType);
-               };
-               @Override
-               public Field<Name, VemployeedepartmenthistoryViewRow> lastname() {
-                 return new Field<Name, VemployeedepartmenthistoryViewRow>(_path, "lastname", VemployeedepartmenthistoryViewRow::lastname, Optional.empty(), Optional.empty(), (row, value) -> row.withLastname(value), Name.pgType);
-               };
-               @Override
-               public OptField</* max 10 chars */ String, VemployeedepartmenthistoryViewRow> suffix() {
-                 return new OptField</* max 10 chars */ String, VemployeedepartmenthistoryViewRow>(_path, "suffix", VemployeedepartmenthistoryViewRow::suffix, Optional.empty(), Optional.empty(), (row, value) -> row.withSuffix(value), PgTypes.text);
-               };
-               @Override
-               public Field<Name, VemployeedepartmenthistoryViewRow> shift() {
-                 return new Field<Name, VemployeedepartmenthistoryViewRow>(_path, "shift", VemployeedepartmenthistoryViewRow::shift, Optional.empty(), Optional.empty(), (row, value) -> row.withShift(value), Name.pgType);
-               };
-               @Override
-               public Field<Name, VemployeedepartmenthistoryViewRow> department() {
-                 return new Field<Name, VemployeedepartmenthistoryViewRow>(_path, "department", VemployeedepartmenthistoryViewRow::department, Optional.empty(), Optional.empty(), (row, value) -> row.withDepartment(value), Name.pgType);
-               };
-               @Override
-               public Field<Name, VemployeedepartmenthistoryViewRow> groupname() {
-                 return new Field<Name, VemployeedepartmenthistoryViewRow>(_path, "groupname", VemployeedepartmenthistoryViewRow::groupname, Optional.empty(), Optional.empty(), (row, value) -> row.withGroupname(value), Name.pgType);
-               };
-               @Override
-               public Field<TypoLocalDate, VemployeedepartmenthistoryViewRow> startdate() {
-                 return new Field<TypoLocalDate, VemployeedepartmenthistoryViewRow>(_path, "startdate", VemployeedepartmenthistoryViewRow::startdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withStartdate(value), TypoLocalDate.pgType);
-               };
-               @Override
-               public OptField<TypoLocalDate, VemployeedepartmenthistoryViewRow> enddate() {
-                 return new OptField<TypoLocalDate, VemployeedepartmenthistoryViewRow>(_path, "enddate", VemployeedepartmenthistoryViewRow::enddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withEnddate(value), TypoLocalDate.pgType);
-               };
-             };
+    public OptField</* max 8 chars */ String, VemployeedepartmenthistoryViewRow> title() {
+      return new OptField</* max 8 chars */ String, VemployeedepartmenthistoryViewRow>(_path, "title", VemployeedepartmenthistoryViewRow::title, Optional.empty(), Optional.empty(), (row, value) -> row.withTitle(value), PgTypes.text);
+    };
+
+    @Override
+    public Field</* user-picked */ FirstName, VemployeedepartmenthistoryViewRow> firstname() {
+      return new Field</* user-picked */ FirstName, VemployeedepartmenthistoryViewRow>(_path, "firstname", VemployeedepartmenthistoryViewRow::firstname, Optional.empty(), Optional.empty(), (row, value) -> row.withFirstname(value), FirstName.pgType);
+    };
+
+    @Override
+    public OptField<Name, VemployeedepartmenthistoryViewRow> middlename() {
+      return new OptField<Name, VemployeedepartmenthistoryViewRow>(_path, "middlename", VemployeedepartmenthistoryViewRow::middlename, Optional.empty(), Optional.empty(), (row, value) -> row.withMiddlename(value), Name.pgType);
+    };
+
+    @Override
+    public Field<Name, VemployeedepartmenthistoryViewRow> lastname() {
+      return new Field<Name, VemployeedepartmenthistoryViewRow>(_path, "lastname", VemployeedepartmenthistoryViewRow::lastname, Optional.empty(), Optional.empty(), (row, value) -> row.withLastname(value), Name.pgType);
+    };
+
+    @Override
+    public OptField</* max 10 chars */ String, VemployeedepartmenthistoryViewRow> suffix() {
+      return new OptField</* max 10 chars */ String, VemployeedepartmenthistoryViewRow>(_path, "suffix", VemployeedepartmenthistoryViewRow::suffix, Optional.empty(), Optional.empty(), (row, value) -> row.withSuffix(value), PgTypes.text);
+    };
+
+    @Override
+    public Field<Name, VemployeedepartmenthistoryViewRow> shift() {
+      return new Field<Name, VemployeedepartmenthistoryViewRow>(_path, "shift", VemployeedepartmenthistoryViewRow::shift, Optional.empty(), Optional.empty(), (row, value) -> row.withShift(value), Name.pgType);
+    };
+
+    @Override
+    public Field<Name, VemployeedepartmenthistoryViewRow> department() {
+      return new Field<Name, VemployeedepartmenthistoryViewRow>(_path, "department", VemployeedepartmenthistoryViewRow::department, Optional.empty(), Optional.empty(), (row, value) -> row.withDepartment(value), Name.pgType);
+    };
+
+    @Override
+    public Field<Name, VemployeedepartmenthistoryViewRow> groupname() {
+      return new Field<Name, VemployeedepartmenthistoryViewRow>(_path, "groupname", VemployeedepartmenthistoryViewRow::groupname, Optional.empty(), Optional.empty(), (row, value) -> row.withGroupname(value), Name.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDate, VemployeedepartmenthistoryViewRow> startdate() {
+      return new Field<TypoLocalDate, VemployeedepartmenthistoryViewRow>(_path, "startdate", VemployeedepartmenthistoryViewRow::startdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withStartdate(value), TypoLocalDate.pgType);
+    };
+
+    @Override
+    public OptField<TypoLocalDate, VemployeedepartmenthistoryViewRow> enddate() {
+      return new OptField<TypoLocalDate, VemployeedepartmenthistoryViewRow>(_path, "enddate", VemployeedepartmenthistoryViewRow::enddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withEnddate(value), TypoLocalDate.pgType);
     };
 
     @Override
     public List<FieldLike<?, VemployeedepartmenthistoryViewRow>> columns() {
-      return List.of(this.fields().businessentityid(), this.fields().title(), this.fields().firstname(), this.fields().middlename(), this.fields().lastname(), this.fields().suffix(), this.fields().shift(), this.fields().department(), this.fields().groupname(), this.fields().startdate(), this.fields().enddate());
+      return List.of(this.businessentityid(), this.title(), this.firstname(), this.middlename(), this.lastname(), this.suffix(), this.shift(), this.department(), this.groupname(), this.startdate(), this.enddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<VemployeedepartmenthistoryViewFields, VemployeedepartmenthistoryViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<VemployeedepartmenthistoryViewFields, VemployeedepartmenthistoryViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -110,4 +113,12 @@ public interface VemployeedepartmenthistoryViewFields {
   Field<TypoLocalDate, VemployeedepartmenthistoryViewRow> startdate();
 
   OptField<TypoLocalDate, VemployeedepartmenthistoryViewRow> enddate();
+
+  @Override
+  List<FieldLike<?, VemployeedepartmenthistoryViewRow>> columns();
+
+  @Override
+  default RowParser<VemployeedepartmenthistoryViewRow> rowParser() {
+    return VemployeedepartmenthistoryViewRow._rowParser;
+  };
 }

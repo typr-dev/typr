@@ -33,5 +33,5 @@ case class EdhViewRow(
 )
 
 object EdhViewRow {
-  val `_rowParser`: RowParser[EdhViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, DepartmentId.pgType, ShiftId.pgType, TypoLocalDate.pgType, TypoLocalDate.pgType.opt(), TypoLocalDateTime.pgType, EdhViewRow.apply, row => Array(row.id, row.businessentityid, row.departmentid, row.shiftid, row.startdate, row.enddate, row.modifieddate))
+  val `_rowParser`: RowParser[EdhViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, DepartmentId.pgType, ShiftId.pgType, TypoLocalDate.pgType, TypoLocalDate.pgType.opt(), TypoLocalDateTime.pgType, EdhViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.businessentityid.asInstanceOf[Object], row.departmentid.asInstanceOf[Object], row.shiftid.asInstanceOf[Object], row.startdate.asInstanceOf[Object], row.enddate.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

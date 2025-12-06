@@ -72,7 +72,7 @@ case class OrderHistoryRow(
 }
 
 object OrderHistoryRow {
-  val `_rowParser`: RowParser[OrderHistoryRow] = RowParsers.of(OrderHistoryId.pgType, OrdersId.pgType, MariaTypes.text.opt(), MariaTypes.text, MariaTypes.varchar.opt(), MariaTypes.varchar.opt(), MariaTypes.longtext.opt(), MariaTypes.datetime, OrderHistoryRow.apply, row => Array(row.historyId, row.orderId, row.previousStatus, row.newStatus, row.changedBy, row.changeReason, row.metadata, row.createdAt))
+  val `_rowParser`: RowParser[OrderHistoryRow] = RowParsers.of(OrderHistoryId.pgType, OrdersId.pgType, MariaTypes.text.opt(), MariaTypes.text, MariaTypes.varchar.opt(), MariaTypes.varchar.opt(), MariaTypes.longtext.opt(), MariaTypes.datetime, OrderHistoryRow.apply, row => Array[Object](row.historyId.asInstanceOf[Object], row.orderId.asInstanceOf[Object], row.previousStatus.asInstanceOf[Object], row.newStatus.asInstanceOf[Object], row.changedBy.asInstanceOf[Object], row.changeReason.asInstanceOf[Object], row.metadata.asInstanceOf[Object], row.createdAt.asInstanceOf[Object]))
 
   given mariaText: MariaText[OrderHistoryRow] = MariaText.from(`_rowParser`)
 }

@@ -8,57 +8,54 @@ package testdb.price_tiers;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.MariaTypes;
+import typo.runtime.RowParser;
 
-public interface PriceTiersFields {
-  final class Impl extends Relation<PriceTiersFields, PriceTiersRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PriceTiersFields extends FieldsExpr<PriceTiersRow> {
+  record Impl(List<Path> _path) implements PriceTiersFields, Relation<PriceTiersFields, PriceTiersRow> {
+    @Override
+    public IdField<PriceTiersId, PriceTiersRow> tierId() {
+      return new IdField<PriceTiersId, PriceTiersRow>(_path, "tier_id", PriceTiersRow::tierId, Optional.empty(), Optional.empty(), (row, value) -> row.withTierId(value), PriceTiersId.pgType);
+    };
 
     @Override
-    public PriceTiersFields fields() {
-      return new PriceTiersFields() {
-               @Override
-               public IdField<PriceTiersId, PriceTiersRow> tierId() {
-                 return new IdField<PriceTiersId, PriceTiersRow>(_path, "tier_id", PriceTiersRow::tierId, Optional.empty(), Optional.empty(), (row, value) -> row.withTierId(value), PriceTiersId.pgType);
-               };
-               @Override
-               public Field<String, PriceTiersRow> name() {
-                 return new Field<String, PriceTiersRow>(_path, "name", PriceTiersRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), MariaTypes.varchar);
-               };
-               @Override
-               public Field<Long, PriceTiersRow> minQuantity() {
-                 return new Field<Long, PriceTiersRow>(_path, "min_quantity", PriceTiersRow::minQuantity, Optional.empty(), Optional.empty(), (row, value) -> row.withMinQuantity(value), MariaTypes.intUnsigned);
-               };
-               @Override
-               public Field<String, PriceTiersRow> discountType() {
-                 return new Field<String, PriceTiersRow>(_path, "discount_type", PriceTiersRow::discountType, Optional.empty(), Optional.empty(), (row, value) -> row.withDiscountType(value), MariaTypes.text);
-               };
-               @Override
-               public Field<BigDecimal, PriceTiersRow> discountValue() {
-                 return new Field<BigDecimal, PriceTiersRow>(_path, "discount_value", PriceTiersRow::discountValue, Optional.empty(), Optional.empty(), (row, value) -> row.withDiscountValue(value), MariaTypes.decimal);
-               };
-             };
+    public Field<String, PriceTiersRow> name() {
+      return new Field<String, PriceTiersRow>(_path, "name", PriceTiersRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public Field<Long, PriceTiersRow> minQuantity() {
+      return new Field<Long, PriceTiersRow>(_path, "min_quantity", PriceTiersRow::minQuantity, Optional.empty(), Optional.empty(), (row, value) -> row.withMinQuantity(value), MariaTypes.intUnsigned);
+    };
+
+    @Override
+    public Field<String, PriceTiersRow> discountType() {
+      return new Field<String, PriceTiersRow>(_path, "discount_type", PriceTiersRow::discountType, Optional.empty(), Optional.empty(), (row, value) -> row.withDiscountType(value), MariaTypes.text);
+    };
+
+    @Override
+    public Field<BigDecimal, PriceTiersRow> discountValue() {
+      return new Field<BigDecimal, PriceTiersRow>(_path, "discount_value", PriceTiersRow::discountValue, Optional.empty(), Optional.empty(), (row, value) -> row.withDiscountValue(value), MariaTypes.decimal);
     };
 
     @Override
     public List<FieldLike<?, PriceTiersRow>> columns() {
-      return List.of(this.fields().tierId(), this.fields().name(), this.fields().minQuantity(), this.fields().discountType(), this.fields().discountValue());
+      return List.of(this.tierId(), this.name(), this.minQuantity(), this.discountType(), this.discountValue());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PriceTiersFields, PriceTiersRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PriceTiersFields, PriceTiersRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -71,4 +68,12 @@ public interface PriceTiersFields {
   Field<String, PriceTiersRow> discountType();
 
   Field<BigDecimal, PriceTiersRow> discountValue();
+
+  @Override
+  List<FieldLike<?, PriceTiersRow>> columns();
+
+  @Override
+  default RowParser<PriceTiersRow> rowParser() {
+    return PriceTiersRow._rowParser;
+  };
 }

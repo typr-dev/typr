@@ -37,7 +37,7 @@ case class SalesorderheadersalesreasonRow(
 }
 
 object SalesorderheadersalesreasonRow {
-  val `_rowParser`: RowParser[SalesorderheadersalesreasonRow] = RowParsers.of(SalesorderheaderId.pgType, SalesreasonId.pgType, TypoLocalDateTime.pgType, SalesorderheadersalesreasonRow.apply, row => Array(row.salesorderid, row.salesreasonid, row.modifieddate))
+  val `_rowParser`: RowParser[SalesorderheadersalesreasonRow] = RowParsers.of(SalesorderheaderId.pgType, SalesreasonId.pgType, TypoLocalDateTime.pgType, SalesorderheadersalesreasonRow.apply, row => Array[Object](row.salesorderid.asInstanceOf[Object], row.salesreasonid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   def apply(
     compositeId: SalesorderheadersalesreasonId,

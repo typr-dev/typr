@@ -14,6 +14,7 @@ import adventureworks.person.phonenumbertype.PhonenumbertypeId
 import adventureworks.person.phonenumbertype.PhonenumbertypeRow
 import adventureworks.public.Phone
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -23,8 +24,9 @@ import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait PersonphoneFields {
+trait PersonphoneFields extends FieldsExpr[PersonphoneRow] {
   def businessentityid: IdField[BusinessentityId, PersonphoneRow]
 
   def phonenumber: IdField[Phone, PersonphoneRow]
@@ -40,64 +42,67 @@ trait PersonphoneFields {
   def compositeIdIs(compositeId: PersonphoneId): SqlExpr[java.lang.Boolean] = SqlExpr.all(businessentityid.isEqual(compositeId.businessentityid), phonenumber.isEqual(compositeId.phonenumber), phonenumbertypeid.isEqual(compositeId.phonenumbertypeid))
 
   def compositeIdIn(compositeIds: java.util.List[PersonphoneId]): SqlExpr[java.lang.Boolean] = new CompositeIn(java.util.List.of(new Part[BusinessentityId, PersonphoneId, PersonphoneRow](businessentityid, _.businessentityid, BusinessentityId.pgType), new Part[Phone, PersonphoneId, PersonphoneRow](phonenumber, _.phonenumber, Phone.pgType), new Part[PhonenumbertypeId, PersonphoneId, PersonphoneRow](phonenumbertypeid, _.phonenumbertypeid, PhonenumbertypeId.pgType)), compositeIds)
+
+  override def columns: java.util.List[FieldLike[?, PersonphoneRow]]
+
+  override def rowParser: RowParser[PersonphoneRow] = PersonphoneRow._rowParser
 }
 
 object PersonphoneFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[PersonphoneFields, PersonphoneRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends PersonphoneFields with Relation[PersonphoneFields, PersonphoneRow] {
 
-    override lazy val fields: PersonphoneFields = {
-      new PersonphoneFields {
-        override def businessentityid: IdField[BusinessentityId, PersonphoneRow] = {
-          new IdField[BusinessentityId, PersonphoneRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def phonenumber: IdField[Phone, PersonphoneRow] = {
-          new IdField[Phone, PersonphoneRow](
-            _path,
-            "phonenumber",
-            _.phonenumber,
-            Optional.empty(),
-            Optional.of("varchar"),
-            (row, value) => row.copy(phonenumber = value),
-            Phone.pgType
-          )
-        }
-        override def phonenumbertypeid: IdField[PhonenumbertypeId, PersonphoneRow] = {
-          new IdField[PhonenumbertypeId, PersonphoneRow](
-            _path,
-            "phonenumbertypeid",
-            _.phonenumbertypeid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(phonenumbertypeid = value),
-            PhonenumbertypeId.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, PersonphoneRow] = {
-          new Field[TypoLocalDateTime, PersonphoneRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def businessentityid: IdField[BusinessentityId, PersonphoneRow] = {
+      new IdField[BusinessentityId, PersonphoneRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, PersonphoneRow]] = java.util.List.of(this.fields.businessentityid, this.fields.phonenumber, this.fields.phonenumbertypeid, this.fields.modifieddate)
+    override def phonenumber: IdField[Phone, PersonphoneRow] = {
+      new IdField[Phone, PersonphoneRow](
+        _path,
+        "phonenumber",
+        _.phonenumber,
+        Optional.empty(),
+        Optional.of("varchar"),
+        (row, value) => row.copy(phonenumber = value),
+        Phone.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def phonenumbertypeid: IdField[PhonenumbertypeId, PersonphoneRow] = {
+      new IdField[PhonenumbertypeId, PersonphoneRow](
+        _path,
+        "phonenumbertypeid",
+        _.phonenumbertypeid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(phonenumbertypeid = value),
+        PhonenumbertypeId.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, PersonphoneRow] = {
+      new Field[TypoLocalDateTime, PersonphoneRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, PersonphoneRow]] = java.util.List.of(this.businessentityid, this.phonenumber, this.phonenumbertypeid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[PersonphoneFields, PersonphoneRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[PersonphoneFields, PersonphoneRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

@@ -36,7 +36,7 @@ case class IllustrationRow(
 }
 
 object IllustrationRow {
-  val `_rowParser`: RowParser[IllustrationRow] = RowParsers.of(IllustrationId.pgType, TypoXml.pgType.opt(), TypoLocalDateTime.pgType, IllustrationRow.apply, row => Array(row.illustrationid, row.diagram, row.modifieddate))
+  val `_rowParser`: RowParser[IllustrationRow] = RowParsers.of(IllustrationId.pgType, TypoXml.pgType.opt(), TypoLocalDateTime.pgType, IllustrationRow.apply, row => Array[Object](row.illustrationid.asInstanceOf[Object], row.diagram.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   given pgText: PgText[IllustrationRow] = PgText.from(`_rowParser`)
 }

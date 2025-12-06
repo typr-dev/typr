@@ -9,6 +9,7 @@ import java.util.Optional
 import testdb.products.ProductsFields
 import testdb.products.ProductsId
 import testdb.products.ProductsRow
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -17,8 +18,9 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-trait ProductImagesFields {
+trait ProductImagesFields extends FieldsExpr[ProductImagesRow] {
   def imageId: IdField[ProductImagesId, ProductImagesRow]
 
   def productId: Field[ProductsId, ProductImagesRow]
@@ -36,108 +38,115 @@ trait ProductImagesFields {
   def imageData: OptField[Array[Byte], ProductImagesRow]
 
   def fkProducts: ForeignKey[ProductsFields, ProductsRow] = ForeignKey.of[ProductsFields, ProductsRow]("fk_pi_product").withColumnPair(productId, _.productId)
+
+  override def columns: java.util.List[FieldLike[?, ProductImagesRow]]
+
+  override def rowParser: RowParser[ProductImagesRow] = ProductImagesRow._rowParser
 }
 
 object ProductImagesFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[ProductImagesFields, ProductImagesRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends ProductImagesFields with Relation[ProductImagesFields, ProductImagesRow] {
 
-    override lazy val fields: ProductImagesFields = {
-      new ProductImagesFields {
-        override def imageId: IdField[ProductImagesId, ProductImagesRow] = {
-          new IdField[ProductImagesId, ProductImagesRow](
-            _path,
-            "image_id",
-            _.imageId,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(imageId = value),
-            ProductImagesId.pgType
-          )
-        }
-        override def productId: Field[ProductsId, ProductImagesRow] = {
-          new Field[ProductsId, ProductImagesRow](
-            _path,
-            "product_id",
-            _.productId,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(productId = value),
-            ProductsId.pgType
-          )
-        }
-        override def imageUrl: Field[String, ProductImagesRow] = {
-          new Field[String, ProductImagesRow](
-            _path,
-            "image_url",
-            _.imageUrl,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(imageUrl = value),
-            MariaTypes.varchar
-          )
-        }
-        override def thumbnailUrl: OptField[String, ProductImagesRow] = {
-          new OptField[String, ProductImagesRow](
-            _path,
-            "thumbnail_url",
-            _.thumbnailUrl,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(thumbnailUrl = value),
-            MariaTypes.varchar
-          )
-        }
-        override def altText: OptField[String, ProductImagesRow] = {
-          new OptField[String, ProductImagesRow](
-            _path,
-            "alt_text",
-            _.altText,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(altText = value),
-            MariaTypes.varchar
-          )
-        }
-        override def sortOrder: Field[java.lang.Short, ProductImagesRow] = {
-          new Field[java.lang.Short, ProductImagesRow](
-            _path,
-            "sort_order",
-            _.sortOrder,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(sortOrder = value),
-            MariaTypes.tinyintUnsigned
-          )
-        }
-        override def isPrimary: Field[java.lang.Boolean, ProductImagesRow] = {
-          new Field[java.lang.Boolean, ProductImagesRow](
-            _path,
-            "is_primary",
-            _.isPrimary,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(isPrimary = value),
-            MariaTypes.bool
-          )
-        }
-        override def imageData: OptField[Array[Byte], ProductImagesRow] = {
-          new OptField[Array[Byte], ProductImagesRow](
-            _path,
-            "image_data",
-            _.imageData,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(imageData = value),
-            MariaTypes.longblob
-          )
-        }
-      }
+    override def imageId: IdField[ProductImagesId, ProductImagesRow] = {
+      new IdField[ProductImagesId, ProductImagesRow](
+        _path,
+        "image_id",
+        _.imageId,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(imageId = value),
+        ProductImagesId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, ProductImagesRow]] = java.util.List.of(this.fields.imageId, this.fields.productId, this.fields.imageUrl, this.fields.thumbnailUrl, this.fields.altText, this.fields.sortOrder, this.fields.isPrimary, this.fields.imageData)
+    override def productId: Field[ProductsId, ProductImagesRow] = {
+      new Field[ProductsId, ProductImagesRow](
+        _path,
+        "product_id",
+        _.productId,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(productId = value),
+        ProductsId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def imageUrl: Field[String, ProductImagesRow] = {
+      new Field[String, ProductImagesRow](
+        _path,
+        "image_url",
+        _.imageUrl,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(imageUrl = value),
+        MariaTypes.varchar
+      )
+    }
+
+    override def thumbnailUrl: OptField[String, ProductImagesRow] = {
+      new OptField[String, ProductImagesRow](
+        _path,
+        "thumbnail_url",
+        _.thumbnailUrl,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(thumbnailUrl = value),
+        MariaTypes.varchar
+      )
+    }
+
+    override def altText: OptField[String, ProductImagesRow] = {
+      new OptField[String, ProductImagesRow](
+        _path,
+        "alt_text",
+        _.altText,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(altText = value),
+        MariaTypes.varchar
+      )
+    }
+
+    override def sortOrder: Field[java.lang.Short, ProductImagesRow] = {
+      new Field[java.lang.Short, ProductImagesRow](
+        _path,
+        "sort_order",
+        _.sortOrder,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(sortOrder = value),
+        MariaTypes.tinyintUnsigned
+      )
+    }
+
+    override def isPrimary: Field[java.lang.Boolean, ProductImagesRow] = {
+      new Field[java.lang.Boolean, ProductImagesRow](
+        _path,
+        "is_primary",
+        _.isPrimary,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(isPrimary = value),
+        MariaTypes.bool
+      )
+    }
+
+    override def imageData: OptField[Array[Byte], ProductImagesRow] = {
+      new OptField[Array[Byte], ProductImagesRow](
+        _path,
+        "image_data",
+        _.imageData,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(imageData = value),
+        MariaTypes.longblob
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, ProductImagesRow]] = java.util.List.of(this.imageId, this.productId, this.imageUrl, this.thumbnailUrl, this.altText, this.sortOrder, this.isPrimary, this.imageData)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[ProductImagesFields, ProductImagesRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[ProductImagesFields, ProductImagesRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

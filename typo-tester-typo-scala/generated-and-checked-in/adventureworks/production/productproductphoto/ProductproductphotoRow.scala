@@ -52,7 +52,7 @@ case class ProductproductphotoRow(
 }
 
 object ProductproductphotoRow {
-  val `_rowParser`: RowParser[ProductproductphotoRow] = RowParsers.of(ProductId.pgType, ProductphotoId.pgType, Flag.pgType, TypoLocalDateTime.pgType, ProductproductphotoRow.apply, row => Array(row.productid, row.productphotoid, row.primary, row.modifieddate))
+  val `_rowParser`: RowParser[ProductproductphotoRow] = RowParsers.of(ProductId.pgType, ProductphotoId.pgType, Flag.pgType, TypoLocalDateTime.pgType, ProductproductphotoRow.apply, row => Array[Object](row.productid.asInstanceOf[Object], row.productphotoid.asInstanceOf[Object], row.primary.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   def apply(
     compositeId: ProductproductphotoId,

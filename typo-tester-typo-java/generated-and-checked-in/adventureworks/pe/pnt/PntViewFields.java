@@ -10,51 +10,47 @@ import adventureworks.person.phonenumbertype.PhonenumbertypeId;
 import adventureworks.public_.Name;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface PntViewFields {
-  final class Impl extends Relation<PntViewFields, PntViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PntViewFields extends FieldsExpr<PntViewRow> {
+  record Impl(List<Path> _path) implements PntViewFields, Relation<PntViewFields, PntViewRow> {
+    @Override
+    public Field<PhonenumbertypeId, PntViewRow> id() {
+      return new Field<PhonenumbertypeId, PntViewRow>(_path, "id", PntViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), PhonenumbertypeId.pgType);
+    };
 
     @Override
-    public PntViewFields fields() {
-      return new PntViewFields() {
-               @Override
-               public Field<PhonenumbertypeId, PntViewRow> id() {
-                 return new Field<PhonenumbertypeId, PntViewRow>(_path, "id", PntViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), PhonenumbertypeId.pgType);
-               };
-               @Override
-               public Field<PhonenumbertypeId, PntViewRow> phonenumbertypeid() {
-                 return new Field<PhonenumbertypeId, PntViewRow>(_path, "phonenumbertypeid", PntViewRow::phonenumbertypeid, Optional.empty(), Optional.empty(), (row, value) -> row.withPhonenumbertypeid(value), PhonenumbertypeId.pgType);
-               };
-               @Override
-               public Field<Name, PntViewRow> name() {
-                 return new Field<Name, PntViewRow>(_path, "name", PntViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PntViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, PntViewRow>(_path, "modifieddate", PntViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<PhonenumbertypeId, PntViewRow> phonenumbertypeid() {
+      return new Field<PhonenumbertypeId, PntViewRow>(_path, "phonenumbertypeid", PntViewRow::phonenumbertypeid, Optional.empty(), Optional.empty(), (row, value) -> row.withPhonenumbertypeid(value), PhonenumbertypeId.pgType);
+    };
+
+    @Override
+    public Field<Name, PntViewRow> name() {
+      return new Field<Name, PntViewRow>(_path, "name", PntViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PntViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, PntViewRow>(_path, "modifieddate", PntViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, PntViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().phonenumbertypeid(), this.fields().name(), this.fields().modifieddate());
+      return List.of(this.id(), this.phonenumbertypeid(), this.name(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PntViewFields, PntViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PntViewFields, PntViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -65,4 +61,12 @@ public interface PntViewFields {
   Field<Name, PntViewRow> name();
 
   Field<TypoLocalDateTime, PntViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, PntViewRow>> columns();
+
+  @Override
+  default RowParser<PntViewRow> rowParser() {
+    return PntViewRow._rowParser;
+  };
 }

@@ -10,34 +10,41 @@ import adventureworks.production.scrapreason.ScrapreasonId
 import adventureworks.public.Name
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface SrViewFields {
+interface SrViewFields : FieldsExpr<SrViewRow> {
+  override fun columns(): List<FieldLike<*, SrViewRow>>
+
   fun id(): Field<ScrapreasonId, SrViewRow>
 
   fun modifieddate(): Field<TypoLocalDateTime, SrViewRow>
 
   fun name(): Field<Name, SrViewRow>
 
+  override fun rowParser(): RowParser<SrViewRow> = SrViewRow._rowParser
+
   fun scrapreasonid(): Field<ScrapreasonId, SrViewRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<SrViewFields, SrViewRow>(path) {
-      override fun fields(): SrViewFields = object : SrViewFields {
-        override fun id(): Field<ScrapreasonId, SrViewRow> = Field<ScrapreasonId, SrViewRow>(_path, "id", SrViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, ScrapreasonId.pgType)
-        override fun scrapreasonid(): Field<ScrapreasonId, SrViewRow> = Field<ScrapreasonId, SrViewRow>(_path, "scrapreasonid", SrViewRow::scrapreasonid, Optional.empty(), Optional.empty(), { row, value -> row.copy(scrapreasonid = value) }, ScrapreasonId.pgType)
-        override fun name(): Field<Name, SrViewRow> = Field<Name, SrViewRow>(_path, "name", SrViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, SrViewRow> = Field<TypoLocalDateTime, SrViewRow>(_path, "modifieddate", SrViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : SrViewFields, Relation<SrViewFields, SrViewRow> {
+      override fun id(): Field<ScrapreasonId, SrViewRow> = Field<ScrapreasonId, SrViewRow>(_path, "id", SrViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, ScrapreasonId.pgType)
 
-      override fun columns(): List<FieldLike<*, SrViewRow>> = listOf(this.fields().id(), this.fields().scrapreasonid(), this.fields().name(), this.fields().modifieddate())
+      override fun scrapreasonid(): Field<ScrapreasonId, SrViewRow> = Field<ScrapreasonId, SrViewRow>(_path, "scrapreasonid", SrViewRow::scrapreasonid, Optional.empty(), Optional.empty(), { row, value -> row.copy(scrapreasonid = value) }, ScrapreasonId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun name(): Field<Name, SrViewRow> = Field<Name, SrViewRow>(_path, "name", SrViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, SrViewRow> = Field<TypoLocalDateTime, SrViewRow>(_path, "modifieddate", SrViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, SrViewRow>> = listOf(this.id(), this.scrapreasonid(), this.name(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<SrViewFields, SrViewRow> = Impl(_path)
     }
 
-    val structure: Relation<SrViewFields, SrViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

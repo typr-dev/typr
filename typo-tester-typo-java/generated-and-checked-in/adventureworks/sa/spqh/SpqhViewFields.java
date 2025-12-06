@@ -11,60 +11,58 @@ import adventureworks.person.businessentity.BusinessentityId;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface SpqhViewFields {
-  final class Impl extends Relation<SpqhViewFields, SpqhViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface SpqhViewFields extends FieldsExpr<SpqhViewRow> {
+  record Impl(List<Path> _path) implements SpqhViewFields, Relation<SpqhViewFields, SpqhViewRow> {
+    @Override
+    public Field<BusinessentityId, SpqhViewRow> id() {
+      return new Field<BusinessentityId, SpqhViewRow>(_path, "id", SpqhViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
+    };
 
     @Override
-    public SpqhViewFields fields() {
-      return new SpqhViewFields() {
-               @Override
-               public Field<BusinessentityId, SpqhViewRow> id() {
-                 return new Field<BusinessentityId, SpqhViewRow>(_path, "id", SpqhViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<BusinessentityId, SpqhViewRow> businessentityid() {
-                 return new Field<BusinessentityId, SpqhViewRow>(_path, "businessentityid", SpqhViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, SpqhViewRow> quotadate() {
-                 return new Field<TypoLocalDateTime, SpqhViewRow>(_path, "quotadate", SpqhViewRow::quotadate, Optional.of("text"), Optional.empty(), (row, value) -> row.withQuotadate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public Field<BigDecimal, SpqhViewRow> salesquota() {
-                 return new Field<BigDecimal, SpqhViewRow>(_path, "salesquota", SpqhViewRow::salesquota, Optional.empty(), Optional.empty(), (row, value) -> row.withSalesquota(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<TypoUUID, SpqhViewRow> rowguid() {
-                 return new Field<TypoUUID, SpqhViewRow>(_path, "rowguid", SpqhViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, SpqhViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, SpqhViewRow>(_path, "modifieddate", SpqhViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<BusinessentityId, SpqhViewRow> businessentityid() {
+      return new Field<BusinessentityId, SpqhViewRow>(_path, "businessentityid", SpqhViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, SpqhViewRow> quotadate() {
+      return new Field<TypoLocalDateTime, SpqhViewRow>(_path, "quotadate", SpqhViewRow::quotadate, Optional.of("text"), Optional.empty(), (row, value) -> row.withQuotadate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public Field<BigDecimal, SpqhViewRow> salesquota() {
+      return new Field<BigDecimal, SpqhViewRow>(_path, "salesquota", SpqhViewRow::salesquota, Optional.empty(), Optional.empty(), (row, value) -> row.withSalesquota(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<TypoUUID, SpqhViewRow> rowguid() {
+      return new Field<TypoUUID, SpqhViewRow>(_path, "rowguid", SpqhViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, SpqhViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, SpqhViewRow>(_path, "modifieddate", SpqhViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, SpqhViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().businessentityid(), this.fields().quotadate(), this.fields().salesquota(), this.fields().rowguid(), this.fields().modifieddate());
+      return List.of(this.id(), this.businessentityid(), this.quotadate(), this.salesquota(), this.rowguid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<SpqhViewFields, SpqhViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<SpqhViewFields, SpqhViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -79,4 +77,12 @@ public interface SpqhViewFields {
   Field<TypoUUID, SpqhViewRow> rowguid();
 
   Field<TypoLocalDateTime, SpqhViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, SpqhViewRow>> columns();
+
+  @Override
+  default RowParser<SpqhViewRow> rowParser() {
+    return SpqhViewRow._rowParser;
+  };
 }

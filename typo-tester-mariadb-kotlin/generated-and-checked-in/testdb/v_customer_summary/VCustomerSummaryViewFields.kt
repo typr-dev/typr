@@ -11,14 +11,18 @@ import java.util.Optional
 import kotlin.collections.List
 import testdb.customer_status.CustomerStatusId
 import testdb.customers.CustomersId
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-interface VCustomerSummaryViewFields {
+interface VCustomerSummaryViewFields : FieldsExpr<VCustomerSummaryViewRow> {
+  override fun columns(): List<FieldLike<*, VCustomerSummaryViewRow>>
+
   fun createdAt(): Field<LocalDateTime, VCustomerSummaryViewRow>
 
   fun customerId(): Field<CustomersId, VCustomerSummaryViewRow>
@@ -33,6 +37,8 @@ interface VCustomerSummaryViewFields {
 
   fun lifetimeValue(): Field<BigDecimal, VCustomerSummaryViewRow>
 
+  override fun rowParser(): RowParser<VCustomerSummaryViewRow> = VCustomerSummaryViewRow._rowParser
+
   fun status(): Field<CustomerStatusId, VCustomerSummaryViewRow>
 
   fun tier(): Field<String, VCustomerSummaryViewRow>
@@ -40,25 +46,32 @@ interface VCustomerSummaryViewFields {
   fun totalOrders(): Field<Long, VCustomerSummaryViewRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<VCustomerSummaryViewFields, VCustomerSummaryViewRow>(path) {
-      override fun fields(): VCustomerSummaryViewFields = object : VCustomerSummaryViewFields {
-        override fun customerId(): Field<CustomersId, VCustomerSummaryViewRow> = Field<CustomersId, VCustomerSummaryViewRow>(_path, "customer_id", VCustomerSummaryViewRow::customerId, Optional.empty(), Optional.empty(), { row, value -> row.copy(customerId = value) }, CustomersId.pgType)
-        override fun email(): Field<String, VCustomerSummaryViewRow> = Field<String, VCustomerSummaryViewRow>(_path, "email", VCustomerSummaryViewRow::email, Optional.empty(), Optional.empty(), { row, value -> row.copy(email = value) }, MariaTypes.varchar)
-        override fun fullName(): OptField<String, VCustomerSummaryViewRow> = OptField<String, VCustomerSummaryViewRow>(_path, "full_name", VCustomerSummaryViewRow::fullName, Optional.empty(), Optional.empty(), { row, value -> row.copy(fullName = value) }, MariaTypes.varchar)
-        override fun tier(): Field<String, VCustomerSummaryViewRow> = Field<String, VCustomerSummaryViewRow>(_path, "tier", VCustomerSummaryViewRow::tier, Optional.empty(), Optional.empty(), { row, value -> row.copy(tier = value) }, MariaTypes.text)
-        override fun status(): Field<CustomerStatusId, VCustomerSummaryViewRow> = Field<CustomerStatusId, VCustomerSummaryViewRow>(_path, "status", VCustomerSummaryViewRow::status, Optional.empty(), Optional.empty(), { row, value -> row.copy(status = value) }, CustomerStatusId.pgType)
-        override fun createdAt(): Field<LocalDateTime, VCustomerSummaryViewRow> = Field<LocalDateTime, VCustomerSummaryViewRow>(_path, "created_at", VCustomerSummaryViewRow::createdAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(createdAt = value) }, MariaTypes.datetime)
-        override fun lastLoginAt(): OptField<LocalDateTime, VCustomerSummaryViewRow> = OptField<LocalDateTime, VCustomerSummaryViewRow>(_path, "last_login_at", VCustomerSummaryViewRow::lastLoginAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(lastLoginAt = value) }, MariaTypes.datetime)
-        override fun totalOrders(): Field<Long, VCustomerSummaryViewRow> = Field<Long, VCustomerSummaryViewRow>(_path, "total_orders", VCustomerSummaryViewRow::totalOrders, Optional.empty(), Optional.empty(), { row, value -> row.copy(totalOrders = value) }, MariaTypes.bigint)
-        override fun lifetimeValue(): Field<BigDecimal, VCustomerSummaryViewRow> = Field<BigDecimal, VCustomerSummaryViewRow>(_path, "lifetime_value", VCustomerSummaryViewRow::lifetimeValue, Optional.empty(), Optional.empty(), { row, value -> row.copy(lifetimeValue = value) }, MariaTypes.decimal)
-        override fun lastOrderDate(): OptField<LocalDateTime, VCustomerSummaryViewRow> = OptField<LocalDateTime, VCustomerSummaryViewRow>(_path, "last_order_date", VCustomerSummaryViewRow::lastOrderDate, Optional.empty(), Optional.empty(), { row, value -> row.copy(lastOrderDate = value) }, MariaTypes.datetime)
-      }
+    data class Impl(val _path: List<Path>) : VCustomerSummaryViewFields, Relation<VCustomerSummaryViewFields, VCustomerSummaryViewRow> {
+      override fun customerId(): Field<CustomersId, VCustomerSummaryViewRow> = Field<CustomersId, VCustomerSummaryViewRow>(_path, "customer_id", VCustomerSummaryViewRow::customerId, Optional.empty(), Optional.empty(), { row, value -> row.copy(customerId = value) }, CustomersId.pgType)
 
-      override fun columns(): List<FieldLike<*, VCustomerSummaryViewRow>> = listOf(this.fields().customerId(), this.fields().email(), this.fields().fullName(), this.fields().tier(), this.fields().status(), this.fields().createdAt(), this.fields().lastLoginAt(), this.fields().totalOrders(), this.fields().lifetimeValue(), this.fields().lastOrderDate())
+      override fun email(): Field<String, VCustomerSummaryViewRow> = Field<String, VCustomerSummaryViewRow>(_path, "email", VCustomerSummaryViewRow::email, Optional.empty(), Optional.empty(), { row, value -> row.copy(email = value) }, MariaTypes.varchar)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun fullName(): OptField<String, VCustomerSummaryViewRow> = OptField<String, VCustomerSummaryViewRow>(_path, "full_name", VCustomerSummaryViewRow::fullName, Optional.empty(), Optional.empty(), { row, value -> row.copy(fullName = value) }, MariaTypes.varchar)
+
+      override fun tier(): Field<String, VCustomerSummaryViewRow> = Field<String, VCustomerSummaryViewRow>(_path, "tier", VCustomerSummaryViewRow::tier, Optional.empty(), Optional.empty(), { row, value -> row.copy(tier = value) }, MariaTypes.text)
+
+      override fun status(): Field<CustomerStatusId, VCustomerSummaryViewRow> = Field<CustomerStatusId, VCustomerSummaryViewRow>(_path, "status", VCustomerSummaryViewRow::status, Optional.empty(), Optional.empty(), { row, value -> row.copy(status = value) }, CustomerStatusId.pgType)
+
+      override fun createdAt(): Field<LocalDateTime, VCustomerSummaryViewRow> = Field<LocalDateTime, VCustomerSummaryViewRow>(_path, "created_at", VCustomerSummaryViewRow::createdAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(createdAt = value) }, MariaTypes.datetime)
+
+      override fun lastLoginAt(): OptField<LocalDateTime, VCustomerSummaryViewRow> = OptField<LocalDateTime, VCustomerSummaryViewRow>(_path, "last_login_at", VCustomerSummaryViewRow::lastLoginAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(lastLoginAt = value) }, MariaTypes.datetime)
+
+      override fun totalOrders(): Field<Long, VCustomerSummaryViewRow> = Field<Long, VCustomerSummaryViewRow>(_path, "total_orders", VCustomerSummaryViewRow::totalOrders, Optional.empty(), Optional.empty(), { row, value -> row.copy(totalOrders = value) }, MariaTypes.bigint)
+
+      override fun lifetimeValue(): Field<BigDecimal, VCustomerSummaryViewRow> = Field<BigDecimal, VCustomerSummaryViewRow>(_path, "lifetime_value", VCustomerSummaryViewRow::lifetimeValue, Optional.empty(), Optional.empty(), { row, value -> row.copy(lifetimeValue = value) }, MariaTypes.decimal)
+
+      override fun lastOrderDate(): OptField<LocalDateTime, VCustomerSummaryViewRow> = OptField<LocalDateTime, VCustomerSummaryViewRow>(_path, "last_order_date", VCustomerSummaryViewRow::lastOrderDate, Optional.empty(), Optional.empty(), { row, value -> row.copy(lastOrderDate = value) }, MariaTypes.datetime)
+
+      override fun columns(): List<FieldLike<*, VCustomerSummaryViewRow>> = listOf(this.customerId(), this.email(), this.fullName(), this.tier(), this.status(), this.createdAt(), this.lastLoginAt(), this.totalOrders(), this.lifetimeValue(), this.lastOrderDate())
+
+      override fun copy(_path: List<Path>): Relation<VCustomerSummaryViewFields, VCustomerSummaryViewRow> = Impl(_path)
     }
 
-    val structure: Relation<VCustomerSummaryViewFields, VCustomerSummaryViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

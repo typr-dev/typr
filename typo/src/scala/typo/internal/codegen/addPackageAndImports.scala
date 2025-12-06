@@ -360,6 +360,14 @@ object addPackageAndImports {
           superArgs = cls.superArgs.map(shortenNamesArg(_, typeImport, staticImport)),
           members = cls.members.map(shortenNamesClassMember(_, typeImport, staticImport))
         )
+      case rec: jvm.NestedRecord =>
+        jvm.NestedRecord(
+          isPrivate = rec.isPrivate,
+          name = rec.name,
+          params = rec.params.map(shortenNamesParam(_, typeImport, staticImport)),
+          implements = rec.implements.map(shortenNamesType(_, typeImport)),
+          members = rec.members.map(shortenNamesClassMember(_, typeImport, staticImport))
+        )
     }
 
   def shortenNamesStaticMember(cm: jvm.StaticMember, typeImport: jvm.Type.Qualified => jvm.Type.Qualified, staticImport: jvm.Type.Qualified => jvm.Type.Qualified): jvm.StaticMember =

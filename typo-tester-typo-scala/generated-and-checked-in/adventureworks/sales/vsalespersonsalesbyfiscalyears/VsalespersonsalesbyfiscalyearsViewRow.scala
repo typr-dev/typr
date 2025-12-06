@@ -23,5 +23,5 @@ case class VsalespersonsalesbyfiscalyearsViewRow(
 )
 
 object VsalespersonsalesbyfiscalyearsViewRow {
-  val `_rowParser`: RowParser[VsalespersonsalesbyfiscalyearsViewRow] = RowParsers.of(PgTypes.int4.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.numeric.opt(), PgTypes.numeric.opt(), PgTypes.numeric.opt(), VsalespersonsalesbyfiscalyearsViewRow.apply, row => Array(row.salesPersonID, row.fullName, row.jobTitle, row.salesTerritory, row.`2012`, row.`2013`, row.`2014`))
+  val `_rowParser`: RowParser[VsalespersonsalesbyfiscalyearsViewRow] = RowParsers.of(PgTypes.int4.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.numeric.opt(), PgTypes.numeric.opt(), PgTypes.numeric.opt(), VsalespersonsalesbyfiscalyearsViewRow.apply, row => Array[Object](row.salesPersonID.asInstanceOf[Object], row.fullName.asInstanceOf[Object], row.jobTitle.asInstanceOf[Object], row.salesTerritory.asInstanceOf[Object], row.`2012`.asInstanceOf[Object], row.`2013`.asInstanceOf[Object], row.`2014`.asInstanceOf[Object]))
 }

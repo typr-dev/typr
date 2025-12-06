@@ -39,5 +39,5 @@ case class PersonDetailSqlRow(
 )
 
 object PersonDetailSqlRow {
-  val `_rowParser`: RowParser[PersonDetailSqlRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), TypoUUID.pgType.opt(), PersonDetailSqlRow.apply, row => Array(row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.jobtitle, row.addressline1, row.city, row.postalcode, row.rowguid))
+  val `_rowParser`: RowParser[PersonDetailSqlRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), TypoUUID.pgType.opt(), PersonDetailSqlRow.apply, row => Array[Object](row.businessentityid.asInstanceOf[Object], row.title.asInstanceOf[Object], row.firstname.asInstanceOf[Object], row.middlename.asInstanceOf[Object], row.lastname.asInstanceOf[Object], row.jobtitle.asInstanceOf[Object], row.addressline1.asInstanceOf[Object], row.city.asInstanceOf[Object], row.postalcode.asInstanceOf[Object], row.rowguid.asInstanceOf[Object]))
 }

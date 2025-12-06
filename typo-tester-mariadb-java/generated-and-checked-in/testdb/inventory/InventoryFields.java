@@ -14,6 +14,7 @@ import testdb.products.ProductsRow;
 import testdb.warehouses.WarehousesFields;
 import testdb.warehouses.WarehousesId;
 import testdb.warehouses.WarehousesRow;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
@@ -22,75 +23,77 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.MariaTypes;
+import typo.runtime.RowParser;
 
-public interface InventoryFields {
-  final class Impl extends Relation<InventoryFields, InventoryRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface InventoryFields extends FieldsExpr<InventoryRow> {
+  record Impl(List<Path> _path) implements InventoryFields, Relation<InventoryFields, InventoryRow> {
+    @Override
+    public IdField<InventoryId, InventoryRow> inventoryId() {
+      return new IdField<InventoryId, InventoryRow>(_path, "inventory_id", InventoryRow::inventoryId, Optional.empty(), Optional.empty(), (row, value) -> row.withInventoryId(value), InventoryId.pgType);
+    };
 
     @Override
-    public InventoryFields fields() {
-      return new InventoryFields() {
-               @Override
-               public IdField<InventoryId, InventoryRow> inventoryId() {
-                 return new IdField<InventoryId, InventoryRow>(_path, "inventory_id", InventoryRow::inventoryId, Optional.empty(), Optional.empty(), (row, value) -> row.withInventoryId(value), InventoryId.pgType);
-               };
-               @Override
-               public Field<ProductsId, InventoryRow> productId() {
-                 return new Field<ProductsId, InventoryRow>(_path, "product_id", InventoryRow::productId, Optional.empty(), Optional.empty(), (row, value) -> row.withProductId(value), ProductsId.pgType);
-               };
-               @Override
-               public Field<WarehousesId, InventoryRow> warehouseId() {
-                 return new Field<WarehousesId, InventoryRow>(_path, "warehouse_id", InventoryRow::warehouseId, Optional.empty(), Optional.empty(), (row, value) -> row.withWarehouseId(value), WarehousesId.pgType);
-               };
-               @Override
-               public Field<Integer, InventoryRow> quantityOnHand() {
-                 return new Field<Integer, InventoryRow>(_path, "quantity_on_hand", InventoryRow::quantityOnHand, Optional.empty(), Optional.empty(), (row, value) -> row.withQuantityOnHand(value), MariaTypes.int_);
-               };
-               @Override
-               public Field<Integer, InventoryRow> quantityReserved() {
-                 return new Field<Integer, InventoryRow>(_path, "quantity_reserved", InventoryRow::quantityReserved, Optional.empty(), Optional.empty(), (row, value) -> row.withQuantityReserved(value), MariaTypes.int_);
-               };
-               @Override
-               public Field<Integer, InventoryRow> quantityOnOrder() {
-                 return new Field<Integer, InventoryRow>(_path, "quantity_on_order", InventoryRow::quantityOnOrder, Optional.empty(), Optional.empty(), (row, value) -> row.withQuantityOnOrder(value), MariaTypes.int_);
-               };
-               @Override
-               public Field<Integer, InventoryRow> reorderPoint() {
-                 return new Field<Integer, InventoryRow>(_path, "reorder_point", InventoryRow::reorderPoint, Optional.empty(), Optional.empty(), (row, value) -> row.withReorderPoint(value), MariaTypes.int_);
-               };
-               @Override
-               public Field<Integer, InventoryRow> reorderQuantity() {
-                 return new Field<Integer, InventoryRow>(_path, "reorder_quantity", InventoryRow::reorderQuantity, Optional.empty(), Optional.empty(), (row, value) -> row.withReorderQuantity(value), MariaTypes.int_);
-               };
-               @Override
-               public OptField<String, InventoryRow> binLocation() {
-                 return new OptField<String, InventoryRow>(_path, "bin_location", InventoryRow::binLocation, Optional.empty(), Optional.empty(), (row, value) -> row.withBinLocation(value), MariaTypes.varchar);
-               };
-               @Override
-               public OptField<LocalDateTime, InventoryRow> lastCountedAt() {
-                 return new OptField<LocalDateTime, InventoryRow>(_path, "last_counted_at", InventoryRow::lastCountedAt, Optional.empty(), Optional.empty(), (row, value) -> row.withLastCountedAt(value), MariaTypes.datetime);
-               };
-               @Override
-               public Field<LocalDateTime, InventoryRow> updatedAt() {
-                 return new Field<LocalDateTime, InventoryRow>(_path, "updated_at", InventoryRow::updatedAt, Optional.empty(), Optional.empty(), (row, value) -> row.withUpdatedAt(value), MariaTypes.datetime);
-               };
-             };
+    public Field<ProductsId, InventoryRow> productId() {
+      return new Field<ProductsId, InventoryRow>(_path, "product_id", InventoryRow::productId, Optional.empty(), Optional.empty(), (row, value) -> row.withProductId(value), ProductsId.pgType);
+    };
+
+    @Override
+    public Field<WarehousesId, InventoryRow> warehouseId() {
+      return new Field<WarehousesId, InventoryRow>(_path, "warehouse_id", InventoryRow::warehouseId, Optional.empty(), Optional.empty(), (row, value) -> row.withWarehouseId(value), WarehousesId.pgType);
+    };
+
+    @Override
+    public Field<Integer, InventoryRow> quantityOnHand() {
+      return new Field<Integer, InventoryRow>(_path, "quantity_on_hand", InventoryRow::quantityOnHand, Optional.empty(), Optional.empty(), (row, value) -> row.withQuantityOnHand(value), MariaTypes.int_);
+    };
+
+    @Override
+    public Field<Integer, InventoryRow> quantityReserved() {
+      return new Field<Integer, InventoryRow>(_path, "quantity_reserved", InventoryRow::quantityReserved, Optional.empty(), Optional.empty(), (row, value) -> row.withQuantityReserved(value), MariaTypes.int_);
+    };
+
+    @Override
+    public Field<Integer, InventoryRow> quantityOnOrder() {
+      return new Field<Integer, InventoryRow>(_path, "quantity_on_order", InventoryRow::quantityOnOrder, Optional.empty(), Optional.empty(), (row, value) -> row.withQuantityOnOrder(value), MariaTypes.int_);
+    };
+
+    @Override
+    public Field<Integer, InventoryRow> reorderPoint() {
+      return new Field<Integer, InventoryRow>(_path, "reorder_point", InventoryRow::reorderPoint, Optional.empty(), Optional.empty(), (row, value) -> row.withReorderPoint(value), MariaTypes.int_);
+    };
+
+    @Override
+    public Field<Integer, InventoryRow> reorderQuantity() {
+      return new Field<Integer, InventoryRow>(_path, "reorder_quantity", InventoryRow::reorderQuantity, Optional.empty(), Optional.empty(), (row, value) -> row.withReorderQuantity(value), MariaTypes.int_);
+    };
+
+    @Override
+    public OptField<String, InventoryRow> binLocation() {
+      return new OptField<String, InventoryRow>(_path, "bin_location", InventoryRow::binLocation, Optional.empty(), Optional.empty(), (row, value) -> row.withBinLocation(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public OptField<LocalDateTime, InventoryRow> lastCountedAt() {
+      return new OptField<LocalDateTime, InventoryRow>(_path, "last_counted_at", InventoryRow::lastCountedAt, Optional.empty(), Optional.empty(), (row, value) -> row.withLastCountedAt(value), MariaTypes.datetime);
+    };
+
+    @Override
+    public Field<LocalDateTime, InventoryRow> updatedAt() {
+      return new Field<LocalDateTime, InventoryRow>(_path, "updated_at", InventoryRow::updatedAt, Optional.empty(), Optional.empty(), (row, value) -> row.withUpdatedAt(value), MariaTypes.datetime);
     };
 
     @Override
     public List<FieldLike<?, InventoryRow>> columns() {
-      return List.of(this.fields().inventoryId(), this.fields().productId(), this.fields().warehouseId(), this.fields().quantityOnHand(), this.fields().quantityReserved(), this.fields().quantityOnOrder(), this.fields().reorderPoint(), this.fields().reorderQuantity(), this.fields().binLocation(), this.fields().lastCountedAt(), this.fields().updatedAt());
+      return List.of(this.inventoryId(), this.productId(), this.warehouseId(), this.quantityOnHand(), this.quantityReserved(), this.quantityOnOrder(), this.reorderPoint(), this.reorderQuantity(), this.binLocation(), this.lastCountedAt(), this.updatedAt());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<InventoryFields, InventoryRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<InventoryFields, InventoryRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -122,5 +125,13 @@ public interface InventoryFields {
 
   default ForeignKey<WarehousesFields, WarehousesRow> fkWarehouses() {
     return ForeignKey.<WarehousesFields, WarehousesRow>of("fk_inventory_warehouse").withColumnPair(warehouseId(), WarehousesFields::warehouseId);
+  };
+
+  @Override
+  List<FieldLike<?, InventoryRow>> columns();
+
+  @Override
+  default RowParser<InventoryRow> rowParser() {
+    return InventoryRow._rowParser;
   };
 }

@@ -87,7 +87,7 @@ case class WorkorderroutingRow(
 }
 
 object WorkorderroutingRow {
-  val `_rowParser`: RowParser[WorkorderroutingRow] = RowParsers.of(WorkorderId.pgType, PgTypes.int4, TypoShort.pgType, LocationId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoLocalDateTime.pgType.opt(), PgTypes.numeric.opt(), PgTypes.numeric, PgTypes.numeric.opt(), TypoLocalDateTime.pgType, WorkorderroutingRow.apply, row => Array(row.workorderid, row.productid, row.operationsequence, row.locationid, row.scheduledstartdate, row.scheduledenddate, row.actualstartdate, row.actualenddate, row.actualresourcehrs, row.plannedcost, row.actualcost, row.modifieddate))
+  val `_rowParser`: RowParser[WorkorderroutingRow] = RowParsers.of(WorkorderId.pgType, PgTypes.int4, TypoShort.pgType, LocationId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoLocalDateTime.pgType.opt(), PgTypes.numeric.opt(), PgTypes.numeric, PgTypes.numeric.opt(), TypoLocalDateTime.pgType, WorkorderroutingRow.apply, row => Array[Object](row.workorderid.asInstanceOf[Object], row.productid.asInstanceOf[Object], row.operationsequence.asInstanceOf[Object], row.locationid.asInstanceOf[Object], row.scheduledstartdate.asInstanceOf[Object], row.scheduledenddate.asInstanceOf[Object], row.actualstartdate.asInstanceOf[Object], row.actualenddate.asInstanceOf[Object], row.actualresourcehrs.asInstanceOf[Object], row.plannedcost.asInstanceOf[Object], row.actualcost.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   def apply(
     compositeId: WorkorderroutingId,

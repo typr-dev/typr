@@ -15,6 +15,7 @@ import testdb.price_tiers.PriceTiersRow
 import testdb.products.ProductsFields
 import testdb.products.ProductsId
 import testdb.products.ProductsRow
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -23,8 +24,11 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-interface ProductPricesFields {
+interface ProductPricesFields : FieldsExpr<ProductPricesRow> {
+  override fun columns(): List<FieldLike<*, ProductPricesRow>>
+
   fun currencyCode(): Field<String, ProductPricesRow>
 
   fun fkPriceTiers(): ForeignKey<PriceTiersFields, PriceTiersRow> = ForeignKey.of<PriceTiersFields, PriceTiersRow>("fk_pp_tier").withColumnPair(tierId(), PriceTiersFields::tierId)
@@ -37,6 +41,8 @@ interface ProductPricesFields {
 
   fun productId(): Field<ProductsId, ProductPricesRow>
 
+  override fun rowParser(): RowParser<ProductPricesRow> = ProductPricesRow._rowParser
+
   fun tierId(): OptField<PriceTiersId, ProductPricesRow>
 
   fun validFrom(): Field<LocalDate, ProductPricesRow>
@@ -44,22 +50,26 @@ interface ProductPricesFields {
   fun validTo(): OptField<LocalDate, ProductPricesRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<ProductPricesFields, ProductPricesRow>(path) {
-      override fun fields(): ProductPricesFields = object : ProductPricesFields {
-        override fun priceId(): IdField<ProductPricesId, ProductPricesRow> = IdField<ProductPricesId, ProductPricesRow>(_path, "price_id", ProductPricesRow::priceId, Optional.empty(), Optional.empty(), { row, value -> row.copy(priceId = value) }, ProductPricesId.pgType)
-        override fun productId(): Field<ProductsId, ProductPricesRow> = Field<ProductsId, ProductPricesRow>(_path, "product_id", ProductPricesRow::productId, Optional.empty(), Optional.empty(), { row, value -> row.copy(productId = value) }, ProductsId.pgType)
-        override fun tierId(): OptField<PriceTiersId, ProductPricesRow> = OptField<PriceTiersId, ProductPricesRow>(_path, "tier_id", ProductPricesRow::tierId, Optional.empty(), Optional.empty(), { row, value -> row.copy(tierId = value) }, PriceTiersId.pgType)
-        override fun price(): Field<BigDecimal, ProductPricesRow> = Field<BigDecimal, ProductPricesRow>(_path, "price", ProductPricesRow::price, Optional.empty(), Optional.empty(), { row, value -> row.copy(price = value) }, MariaTypes.decimal)
-        override fun currencyCode(): Field<String, ProductPricesRow> = Field<String, ProductPricesRow>(_path, "currency_code", ProductPricesRow::currencyCode, Optional.empty(), Optional.empty(), { row, value -> row.copy(currencyCode = value) }, MariaTypes.char_)
-        override fun validFrom(): Field<LocalDate, ProductPricesRow> = Field<LocalDate, ProductPricesRow>(_path, "valid_from", ProductPricesRow::validFrom, Optional.empty(), Optional.empty(), { row, value -> row.copy(validFrom = value) }, MariaTypes.date)
-        override fun validTo(): OptField<LocalDate, ProductPricesRow> = OptField<LocalDate, ProductPricesRow>(_path, "valid_to", ProductPricesRow::validTo, Optional.empty(), Optional.empty(), { row, value -> row.copy(validTo = value) }, MariaTypes.date)
-      }
+    data class Impl(val _path: List<Path>) : ProductPricesFields, Relation<ProductPricesFields, ProductPricesRow> {
+      override fun priceId(): IdField<ProductPricesId, ProductPricesRow> = IdField<ProductPricesId, ProductPricesRow>(_path, "price_id", ProductPricesRow::priceId, Optional.empty(), Optional.empty(), { row, value -> row.copy(priceId = value) }, ProductPricesId.pgType)
 
-      override fun columns(): List<FieldLike<*, ProductPricesRow>> = listOf(this.fields().priceId(), this.fields().productId(), this.fields().tierId(), this.fields().price(), this.fields().currencyCode(), this.fields().validFrom(), this.fields().validTo())
+      override fun productId(): Field<ProductsId, ProductPricesRow> = Field<ProductsId, ProductPricesRow>(_path, "product_id", ProductPricesRow::productId, Optional.empty(), Optional.empty(), { row, value -> row.copy(productId = value) }, ProductsId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun tierId(): OptField<PriceTiersId, ProductPricesRow> = OptField<PriceTiersId, ProductPricesRow>(_path, "tier_id", ProductPricesRow::tierId, Optional.empty(), Optional.empty(), { row, value -> row.copy(tierId = value) }, PriceTiersId.pgType)
+
+      override fun price(): Field<BigDecimal, ProductPricesRow> = Field<BigDecimal, ProductPricesRow>(_path, "price", ProductPricesRow::price, Optional.empty(), Optional.empty(), { row, value -> row.copy(price = value) }, MariaTypes.decimal)
+
+      override fun currencyCode(): Field<String, ProductPricesRow> = Field<String, ProductPricesRow>(_path, "currency_code", ProductPricesRow::currencyCode, Optional.empty(), Optional.empty(), { row, value -> row.copy(currencyCode = value) }, MariaTypes.char_)
+
+      override fun validFrom(): Field<LocalDate, ProductPricesRow> = Field<LocalDate, ProductPricesRow>(_path, "valid_from", ProductPricesRow::validFrom, Optional.empty(), Optional.empty(), { row, value -> row.copy(validFrom = value) }, MariaTypes.date)
+
+      override fun validTo(): OptField<LocalDate, ProductPricesRow> = OptField<LocalDate, ProductPricesRow>(_path, "valid_to", ProductPricesRow::validTo, Optional.empty(), Optional.empty(), { row, value -> row.copy(validTo = value) }, MariaTypes.date)
+
+      override fun columns(): List<FieldLike<*, ProductPricesRow>> = listOf(this.priceId(), this.productId(), this.tierId(), this.price(), this.currencyCode(), this.validFrom(), this.validTo())
+
+      override fun copy(_path: List<Path>): Relation<ProductPricesFields, ProductPricesRow> = Impl(_path)
     }
 
-    val structure: Relation<ProductPricesFields, ProductPricesRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

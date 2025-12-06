@@ -7,49 +7,44 @@ package testdb.hardcoded.compositepk.person;
 
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface PersonFields {
-  final class Impl extends Relation<PersonFields, PersonRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PersonFields extends FieldsExpr<PersonRow> {
+  record Impl(List<Path> _path) implements PersonFields, Relation<PersonFields, PersonRow> {
+    @Override
+    public IdField<Long, PersonRow> one() {
+      return new IdField<Long, PersonRow>(_path, "one", PersonRow::one, Optional.empty(), Optional.of("int8"), (row, value) -> row.withOne(value), PgTypes.int8);
+    };
 
     @Override
-    public PersonFields fields() {
-      return new PersonFields() {
-               @Override
-               public IdField<Long, PersonRow> one() {
-                 return new IdField<Long, PersonRow>(_path, "one", PersonRow::one, Optional.empty(), Optional.of("int8"), (row, value) -> row.withOne(value), PgTypes.int8);
-               };
-               @Override
-               public IdField<Optional<String>, PersonRow> two() {
-                 return new IdField<Optional<String>, PersonRow>(_path, "two", PersonRow::two, Optional.empty(), Optional.empty(), (row, value) -> row.withTwo(value), PgTypes.text.opt());
-               };
-               @Override
-               public OptField<String, PersonRow> name() {
-                 return new OptField<String, PersonRow>(_path, "name", PersonRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), PgTypes.text);
-               };
-             };
+    public IdField<Optional<String>, PersonRow> two() {
+      return new IdField<Optional<String>, PersonRow>(_path, "two", PersonRow::two, Optional.empty(), Optional.empty(), (row, value) -> row.withTwo(value), PgTypes.text.opt());
+    };
+
+    @Override
+    public OptField<String, PersonRow> name() {
+      return new OptField<String, PersonRow>(_path, "name", PersonRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), PgTypes.text);
     };
 
     @Override
     public List<FieldLike<?, PersonRow>> columns() {
-      return List.of(this.fields().one(), this.fields().two(), this.fields().name());
+      return List.of(this.one(), this.two(), this.name());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PersonFields, PersonRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PersonFields, PersonRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -58,4 +53,12 @@ public interface PersonFields {
   IdField<Optional<String>, PersonRow> two();
 
   OptField<String, PersonRow> name();
+
+  @Override
+  List<FieldLike<?, PersonRow>> columns();
+
+  @Override
+  default RowParser<PersonRow> rowParser() {
+    return PersonRow._rowParser;
+  };
 }

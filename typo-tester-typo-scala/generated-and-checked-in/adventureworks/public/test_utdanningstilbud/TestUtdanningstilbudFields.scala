@@ -9,6 +9,7 @@ import adventureworks.public.test_organisasjon.TestOrganisasjonFields
 import adventureworks.public.test_organisasjon.TestOrganisasjonId
 import adventureworks.public.test_organisasjon.TestOrganisasjonRow
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -18,8 +19,9 @@ import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait TestUtdanningstilbudFields {
+trait TestUtdanningstilbudFields extends FieldsExpr[TestUtdanningstilbudRow] {
   def organisasjonskode: IdField[TestOrganisasjonId, TestUtdanningstilbudRow]
 
   def utdanningsmulighetKode: IdField[String, TestUtdanningstilbudRow]
@@ -29,42 +31,43 @@ trait TestUtdanningstilbudFields {
   def compositeIdIs(compositeId: TestUtdanningstilbudId): SqlExpr[java.lang.Boolean] = SqlExpr.all(organisasjonskode.isEqual(compositeId.organisasjonskode), utdanningsmulighetKode.isEqual(compositeId.utdanningsmulighetKode))
 
   def compositeIdIn(compositeIds: java.util.List[TestUtdanningstilbudId]): SqlExpr[java.lang.Boolean] = new CompositeIn(java.util.List.of(new Part[TestOrganisasjonId, TestUtdanningstilbudId, TestUtdanningstilbudRow](organisasjonskode, _.organisasjonskode, TestOrganisasjonId.pgType), new Part[String, TestUtdanningstilbudId, TestUtdanningstilbudRow](utdanningsmulighetKode, _.utdanningsmulighetKode, PgTypes.text)), compositeIds)
+
+  override def columns: java.util.List[FieldLike[?, TestUtdanningstilbudRow]]
+
+  override def rowParser: RowParser[TestUtdanningstilbudRow] = TestUtdanningstilbudRow._rowParser
 }
 
 object TestUtdanningstilbudFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[TestUtdanningstilbudFields, TestUtdanningstilbudRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends TestUtdanningstilbudFields with Relation[TestUtdanningstilbudFields, TestUtdanningstilbudRow] {
 
-    override lazy val fields: TestUtdanningstilbudFields = {
-      new TestUtdanningstilbudFields {
-        override def organisasjonskode: IdField[TestOrganisasjonId, TestUtdanningstilbudRow] = {
-          new IdField[TestOrganisasjonId, TestUtdanningstilbudRow](
-            _path,
-            "organisasjonskode",
-            _.organisasjonskode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(organisasjonskode = value),
-            TestOrganisasjonId.pgType
-          )
-        }
-        override def utdanningsmulighetKode: IdField[String, TestUtdanningstilbudRow] = {
-          new IdField[String, TestUtdanningstilbudRow](
-            _path,
-            "utdanningsmulighet_kode",
-            _.utdanningsmulighetKode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(utdanningsmulighetKode = value),
-            PgTypes.text
-          )
-        }
-      }
+    override def organisasjonskode: IdField[TestOrganisasjonId, TestUtdanningstilbudRow] = {
+      new IdField[TestOrganisasjonId, TestUtdanningstilbudRow](
+        _path,
+        "organisasjonskode",
+        _.organisasjonskode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(organisasjonskode = value),
+        TestOrganisasjonId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, TestUtdanningstilbudRow]] = java.util.List.of(this.fields.organisasjonskode, this.fields.utdanningsmulighetKode)
+    override def utdanningsmulighetKode: IdField[String, TestUtdanningstilbudRow] = {
+      new IdField[String, TestUtdanningstilbudRow](
+        _path,
+        "utdanningsmulighet_kode",
+        _.utdanningsmulighetKode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(utdanningsmulighetKode = value),
+        PgTypes.text
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def columns: java.util.List[FieldLike[?, TestUtdanningstilbudRow]] = java.util.List.of(this.organisasjonskode, this.utdanningsmulighetKode)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[TestUtdanningstilbudFields, TestUtdanningstilbudRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

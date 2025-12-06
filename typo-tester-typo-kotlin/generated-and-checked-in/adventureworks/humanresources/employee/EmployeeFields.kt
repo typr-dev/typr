@@ -15,6 +15,7 @@ import adventureworks.person.person.PersonRow
 import adventureworks.public.Flag
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -23,11 +24,14 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface EmployeeFields {
+interface EmployeeFields : FieldsExpr<EmployeeRow> {
   fun birthdate(): Field<TypoLocalDate, EmployeeRow>
 
   fun businessentityid(): IdField<BusinessentityId, EmployeeRow>
+
+  override fun columns(): List<FieldLike<*, EmployeeRow>>
 
   fun currentflag(): Field<Flag, EmployeeRow>
 
@@ -49,6 +53,8 @@ interface EmployeeFields {
 
   fun organizationnode(): OptField<String, EmployeeRow>
 
+  override fun rowParser(): RowParser<EmployeeRow> = EmployeeRow._rowParser
+
   fun rowguid(): Field<TypoUUID, EmployeeRow>
 
   fun salariedflag(): Field<Flag, EmployeeRow>
@@ -58,30 +64,42 @@ interface EmployeeFields {
   fun vacationhours(): Field<TypoShort, EmployeeRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<EmployeeFields, EmployeeRow>(path) {
-      override fun fields(): EmployeeFields = object : EmployeeFields {
-        override fun businessentityid(): IdField<BusinessentityId, EmployeeRow> = IdField<BusinessentityId, EmployeeRow>(_path, "businessentityid", EmployeeRow::businessentityid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
-        override fun nationalidnumber(): Field</* max 15 chars */ String, EmployeeRow> = Field</* max 15 chars */ String, EmployeeRow>(_path, "nationalidnumber", EmployeeRow::nationalidnumber, Optional.empty(), Optional.empty(), { row, value -> row.copy(nationalidnumber = value) }, PgTypes.text)
-        override fun loginid(): Field</* max 256 chars */ String, EmployeeRow> = Field</* max 256 chars */ String, EmployeeRow>(_path, "loginid", EmployeeRow::loginid, Optional.empty(), Optional.empty(), { row, value -> row.copy(loginid = value) }, PgTypes.text)
-        override fun jobtitle(): Field</* max 50 chars */ String, EmployeeRow> = Field</* max 50 chars */ String, EmployeeRow>(_path, "jobtitle", EmployeeRow::jobtitle, Optional.empty(), Optional.empty(), { row, value -> row.copy(jobtitle = value) }, PgTypes.text)
-        override fun birthdate(): Field<TypoLocalDate, EmployeeRow> = Field<TypoLocalDate, EmployeeRow>(_path, "birthdate", EmployeeRow::birthdate, Optional.of("text"), Optional.of("date"), { row, value -> row.copy(birthdate = value) }, TypoLocalDate.pgType)
-        override fun maritalstatus(): Field</* bpchar, max 1 chars */ String, EmployeeRow> = Field</* bpchar, max 1 chars */ String, EmployeeRow>(_path, "maritalstatus", EmployeeRow::maritalstatus, Optional.empty(), Optional.of("bpchar"), { row, value -> row.copy(maritalstatus = value) }, PgTypes.bpchar)
-        override fun gender(): Field</* bpchar, max 1 chars */ String, EmployeeRow> = Field</* bpchar, max 1 chars */ String, EmployeeRow>(_path, "gender", EmployeeRow::gender, Optional.empty(), Optional.of("bpchar"), { row, value -> row.copy(gender = value) }, PgTypes.bpchar)
-        override fun hiredate(): Field<TypoLocalDate, EmployeeRow> = Field<TypoLocalDate, EmployeeRow>(_path, "hiredate", EmployeeRow::hiredate, Optional.of("text"), Optional.of("date"), { row, value -> row.copy(hiredate = value) }, TypoLocalDate.pgType)
-        override fun salariedflag(): Field<Flag, EmployeeRow> = Field<Flag, EmployeeRow>(_path, "salariedflag", EmployeeRow::salariedflag, Optional.empty(), Optional.of("bool"), { row, value -> row.copy(salariedflag = value) }, Flag.pgType)
-        override fun vacationhours(): Field<TypoShort, EmployeeRow> = Field<TypoShort, EmployeeRow>(_path, "vacationhours", EmployeeRow::vacationhours, Optional.empty(), Optional.of("int2"), { row, value -> row.copy(vacationhours = value) }, TypoShort.pgType)
-        override fun sickleavehours(): Field<TypoShort, EmployeeRow> = Field<TypoShort, EmployeeRow>(_path, "sickleavehours", EmployeeRow::sickleavehours, Optional.empty(), Optional.of("int2"), { row, value -> row.copy(sickleavehours = value) }, TypoShort.pgType)
-        override fun currentflag(): Field<Flag, EmployeeRow> = Field<Flag, EmployeeRow>(_path, "currentflag", EmployeeRow::currentflag, Optional.empty(), Optional.of("bool"), { row, value -> row.copy(currentflag = value) }, Flag.pgType)
-        override fun rowguid(): Field<TypoUUID, EmployeeRow> = Field<TypoUUID, EmployeeRow>(_path, "rowguid", EmployeeRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, EmployeeRow> = Field<TypoLocalDateTime, EmployeeRow>(_path, "modifieddate", EmployeeRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-        override fun organizationnode(): OptField<String, EmployeeRow> = OptField<String, EmployeeRow>(_path, "organizationnode", EmployeeRow::organizationnode, Optional.empty(), Optional.empty(), { row, value -> row.copy(organizationnode = value) }, PgTypes.text)
-      }
+    data class Impl(val _path: List<Path>) : EmployeeFields, Relation<EmployeeFields, EmployeeRow> {
+      override fun businessentityid(): IdField<BusinessentityId, EmployeeRow> = IdField<BusinessentityId, EmployeeRow>(_path, "businessentityid", EmployeeRow::businessentityid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
 
-      override fun columns(): List<FieldLike<*, EmployeeRow>> = listOf(this.fields().businessentityid(), this.fields().nationalidnumber(), this.fields().loginid(), this.fields().jobtitle(), this.fields().birthdate(), this.fields().maritalstatus(), this.fields().gender(), this.fields().hiredate(), this.fields().salariedflag(), this.fields().vacationhours(), this.fields().sickleavehours(), this.fields().currentflag(), this.fields().rowguid(), this.fields().modifieddate(), this.fields().organizationnode())
+      override fun nationalidnumber(): Field</* max 15 chars */ String, EmployeeRow> = Field</* max 15 chars */ String, EmployeeRow>(_path, "nationalidnumber", EmployeeRow::nationalidnumber, Optional.empty(), Optional.empty(), { row, value -> row.copy(nationalidnumber = value) }, PgTypes.text)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun loginid(): Field</* max 256 chars */ String, EmployeeRow> = Field</* max 256 chars */ String, EmployeeRow>(_path, "loginid", EmployeeRow::loginid, Optional.empty(), Optional.empty(), { row, value -> row.copy(loginid = value) }, PgTypes.text)
+
+      override fun jobtitle(): Field</* max 50 chars */ String, EmployeeRow> = Field</* max 50 chars */ String, EmployeeRow>(_path, "jobtitle", EmployeeRow::jobtitle, Optional.empty(), Optional.empty(), { row, value -> row.copy(jobtitle = value) }, PgTypes.text)
+
+      override fun birthdate(): Field<TypoLocalDate, EmployeeRow> = Field<TypoLocalDate, EmployeeRow>(_path, "birthdate", EmployeeRow::birthdate, Optional.of("text"), Optional.of("date"), { row, value -> row.copy(birthdate = value) }, TypoLocalDate.pgType)
+
+      override fun maritalstatus(): Field</* bpchar, max 1 chars */ String, EmployeeRow> = Field</* bpchar, max 1 chars */ String, EmployeeRow>(_path, "maritalstatus", EmployeeRow::maritalstatus, Optional.empty(), Optional.of("bpchar"), { row, value -> row.copy(maritalstatus = value) }, PgTypes.bpchar)
+
+      override fun gender(): Field</* bpchar, max 1 chars */ String, EmployeeRow> = Field</* bpchar, max 1 chars */ String, EmployeeRow>(_path, "gender", EmployeeRow::gender, Optional.empty(), Optional.of("bpchar"), { row, value -> row.copy(gender = value) }, PgTypes.bpchar)
+
+      override fun hiredate(): Field<TypoLocalDate, EmployeeRow> = Field<TypoLocalDate, EmployeeRow>(_path, "hiredate", EmployeeRow::hiredate, Optional.of("text"), Optional.of("date"), { row, value -> row.copy(hiredate = value) }, TypoLocalDate.pgType)
+
+      override fun salariedflag(): Field<Flag, EmployeeRow> = Field<Flag, EmployeeRow>(_path, "salariedflag", EmployeeRow::salariedflag, Optional.empty(), Optional.of("bool"), { row, value -> row.copy(salariedflag = value) }, Flag.pgType)
+
+      override fun vacationhours(): Field<TypoShort, EmployeeRow> = Field<TypoShort, EmployeeRow>(_path, "vacationhours", EmployeeRow::vacationhours, Optional.empty(), Optional.of("int2"), { row, value -> row.copy(vacationhours = value) }, TypoShort.pgType)
+
+      override fun sickleavehours(): Field<TypoShort, EmployeeRow> = Field<TypoShort, EmployeeRow>(_path, "sickleavehours", EmployeeRow::sickleavehours, Optional.empty(), Optional.of("int2"), { row, value -> row.copy(sickleavehours = value) }, TypoShort.pgType)
+
+      override fun currentflag(): Field<Flag, EmployeeRow> = Field<Flag, EmployeeRow>(_path, "currentflag", EmployeeRow::currentflag, Optional.empty(), Optional.of("bool"), { row, value -> row.copy(currentflag = value) }, Flag.pgType)
+
+      override fun rowguid(): Field<TypoUUID, EmployeeRow> = Field<TypoUUID, EmployeeRow>(_path, "rowguid", EmployeeRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, EmployeeRow> = Field<TypoLocalDateTime, EmployeeRow>(_path, "modifieddate", EmployeeRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun organizationnode(): OptField<String, EmployeeRow> = OptField<String, EmployeeRow>(_path, "organizationnode", EmployeeRow::organizationnode, Optional.empty(), Optional.empty(), { row, value -> row.copy(organizationnode = value) }, PgTypes.text)
+
+      override fun columns(): List<FieldLike<*, EmployeeRow>> = listOf(this.businessentityid(), this.nationalidnumber(), this.loginid(), this.jobtitle(), this.birthdate(), this.maritalstatus(), this.gender(), this.hiredate(), this.salariedflag(), this.vacationhours(), this.sickleavehours(), this.currentflag(), this.rowguid(), this.modifieddate(), this.organizationnode())
+
+      override fun copy(_path: List<Path>): Relation<EmployeeFields, EmployeeRow> = Impl(_path)
     }
 
-    val structure: Relation<EmployeeFields, EmployeeRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

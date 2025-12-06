@@ -9,48 +9,43 @@ import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.public_.Name;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface PhonenumbertypeFields {
-  final class Impl extends Relation<PhonenumbertypeFields, PhonenumbertypeRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PhonenumbertypeFields extends FieldsExpr<PhonenumbertypeRow> {
+  record Impl(List<Path> _path) implements PhonenumbertypeFields, Relation<PhonenumbertypeFields, PhonenumbertypeRow> {
+    @Override
+    public IdField<PhonenumbertypeId, PhonenumbertypeRow> phonenumbertypeid() {
+      return new IdField<PhonenumbertypeId, PhonenumbertypeRow>(_path, "phonenumbertypeid", PhonenumbertypeRow::phonenumbertypeid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withPhonenumbertypeid(value), PhonenumbertypeId.pgType);
+    };
 
     @Override
-    public PhonenumbertypeFields fields() {
-      return new PhonenumbertypeFields() {
-               @Override
-               public IdField<PhonenumbertypeId, PhonenumbertypeRow> phonenumbertypeid() {
-                 return new IdField<PhonenumbertypeId, PhonenumbertypeRow>(_path, "phonenumbertypeid", PhonenumbertypeRow::phonenumbertypeid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withPhonenumbertypeid(value), PhonenumbertypeId.pgType);
-               };
-               @Override
-               public Field<Name, PhonenumbertypeRow> name() {
-                 return new Field<Name, PhonenumbertypeRow>(_path, "name", PhonenumbertypeRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PhonenumbertypeRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, PhonenumbertypeRow>(_path, "modifieddate", PhonenumbertypeRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<Name, PhonenumbertypeRow> name() {
+      return new Field<Name, PhonenumbertypeRow>(_path, "name", PhonenumbertypeRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PhonenumbertypeRow> modifieddate() {
+      return new Field<TypoLocalDateTime, PhonenumbertypeRow>(_path, "modifieddate", PhonenumbertypeRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, PhonenumbertypeRow>> columns() {
-      return List.of(this.fields().phonenumbertypeid(), this.fields().name(), this.fields().modifieddate());
+      return List.of(this.phonenumbertypeid(), this.name(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PhonenumbertypeFields, PhonenumbertypeRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PhonenumbertypeFields, PhonenumbertypeRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -59,4 +54,12 @@ public interface PhonenumbertypeFields {
   Field<Name, PhonenumbertypeRow> name();
 
   Field<TypoLocalDateTime, PhonenumbertypeRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, PhonenumbertypeRow>> columns();
+
+  @Override
+  default RowParser<PhonenumbertypeRow> rowParser() {
+    return PhonenumbertypeRow._rowParser;
+  };
 }

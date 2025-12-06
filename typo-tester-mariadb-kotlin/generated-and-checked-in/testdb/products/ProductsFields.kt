@@ -13,6 +13,7 @@ import testdb.brands.BrandsFields
 import testdb.brands.BrandsId
 import testdb.brands.BrandsRow
 import typo.data.maria.MariaSet
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -21,13 +22,16 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-interface ProductsFields {
+interface ProductsFields : FieldsExpr<ProductsRow> {
   fun attributes(): OptField<String, ProductsRow>
 
   fun basePrice(): Field<BigDecimal, ProductsRow>
 
   fun brandId(): OptField<BrandsId, ProductsRow>
+
+  override fun columns(): List<FieldLike<*, ProductsRow>>
 
   fun costPrice(): OptField<BigDecimal, ProductsRow>
 
@@ -44,6 +48,8 @@ interface ProductsFields {
   fun productId(): IdField<ProductsId, ProductsRow>
 
   fun publishedAt(): OptField<LocalDateTime, ProductsRow>
+
+  override fun rowParser(): RowParser<ProductsRow> = ProductsRow._rowParser
 
   fun seoMetadata(): OptField<String, ProductsRow>
 
@@ -62,33 +68,48 @@ interface ProductsFields {
   fun weightKg(): OptField<BigDecimal, ProductsRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<ProductsFields, ProductsRow>(path) {
-      override fun fields(): ProductsFields = object : ProductsFields {
-        override fun productId(): IdField<ProductsId, ProductsRow> = IdField<ProductsId, ProductsRow>(_path, "product_id", ProductsRow::productId, Optional.empty(), Optional.empty(), { row, value -> row.copy(productId = value) }, ProductsId.pgType)
-        override fun sku(): Field<String, ProductsRow> = Field<String, ProductsRow>(_path, "sku", ProductsRow::sku, Optional.empty(), Optional.empty(), { row, value -> row.copy(sku = value) }, MariaTypes.varchar)
-        override fun brandId(): OptField<BrandsId, ProductsRow> = OptField<BrandsId, ProductsRow>(_path, "brand_id", ProductsRow::brandId, Optional.empty(), Optional.empty(), { row, value -> row.copy(brandId = value) }, BrandsId.pgType)
-        override fun name(): Field<String, ProductsRow> = Field<String, ProductsRow>(_path, "name", ProductsRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, MariaTypes.varchar)
-        override fun shortDescription(): OptField<String, ProductsRow> = OptField<String, ProductsRow>(_path, "short_description", ProductsRow::shortDescription, Optional.empty(), Optional.empty(), { row, value -> row.copy(shortDescription = value) }, MariaTypes.varchar)
-        override fun fullDescription(): OptField<String, ProductsRow> = OptField<String, ProductsRow>(_path, "full_description", ProductsRow::fullDescription, Optional.empty(), Optional.empty(), { row, value -> row.copy(fullDescription = value) }, MariaTypes.longtext)
-        override fun basePrice(): Field<BigDecimal, ProductsRow> = Field<BigDecimal, ProductsRow>(_path, "base_price", ProductsRow::basePrice, Optional.empty(), Optional.empty(), { row, value -> row.copy(basePrice = value) }, MariaTypes.decimal)
-        override fun costPrice(): OptField<BigDecimal, ProductsRow> = OptField<BigDecimal, ProductsRow>(_path, "cost_price", ProductsRow::costPrice, Optional.empty(), Optional.empty(), { row, value -> row.copy(costPrice = value) }, MariaTypes.decimal)
-        override fun weightKg(): OptField<BigDecimal, ProductsRow> = OptField<BigDecimal, ProductsRow>(_path, "weight_kg", ProductsRow::weightKg, Optional.empty(), Optional.empty(), { row, value -> row.copy(weightKg = value) }, MariaTypes.decimal)
-        override fun dimensionsJson(): OptField<String, ProductsRow> = OptField<String, ProductsRow>(_path, "dimensions_json", ProductsRow::dimensionsJson, Optional.empty(), Optional.empty(), { row, value -> row.copy(dimensionsJson = value) }, MariaTypes.longtext)
-        override fun status(): Field<String, ProductsRow> = Field<String, ProductsRow>(_path, "status", ProductsRow::status, Optional.empty(), Optional.empty(), { row, value -> row.copy(status = value) }, MariaTypes.text)
-        override fun taxClass(): Field<String, ProductsRow> = Field<String, ProductsRow>(_path, "tax_class", ProductsRow::taxClass, Optional.empty(), Optional.empty(), { row, value -> row.copy(taxClass = value) }, MariaTypes.text)
-        override fun tags(): OptField<MariaSet, ProductsRow> = OptField<MariaSet, ProductsRow>(_path, "tags", ProductsRow::tags, Optional.empty(), Optional.empty(), { row, value -> row.copy(tags = value) }, MariaTypes.set)
-        override fun attributes(): OptField<String, ProductsRow> = OptField<String, ProductsRow>(_path, "attributes", ProductsRow::attributes, Optional.empty(), Optional.empty(), { row, value -> row.copy(attributes = value) }, MariaTypes.longtext)
-        override fun seoMetadata(): OptField<String, ProductsRow> = OptField<String, ProductsRow>(_path, "seo_metadata", ProductsRow::seoMetadata, Optional.empty(), Optional.empty(), { row, value -> row.copy(seoMetadata = value) }, MariaTypes.longtext)
-        override fun createdAt(): Field<LocalDateTime, ProductsRow> = Field<LocalDateTime, ProductsRow>(_path, "created_at", ProductsRow::createdAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(createdAt = value) }, MariaTypes.datetime)
-        override fun updatedAt(): Field<LocalDateTime, ProductsRow> = Field<LocalDateTime, ProductsRow>(_path, "updated_at", ProductsRow::updatedAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(updatedAt = value) }, MariaTypes.datetime)
-        override fun publishedAt(): OptField<LocalDateTime, ProductsRow> = OptField<LocalDateTime, ProductsRow>(_path, "published_at", ProductsRow::publishedAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(publishedAt = value) }, MariaTypes.datetime)
-      }
+    data class Impl(val _path: List<Path>) : ProductsFields, Relation<ProductsFields, ProductsRow> {
+      override fun productId(): IdField<ProductsId, ProductsRow> = IdField<ProductsId, ProductsRow>(_path, "product_id", ProductsRow::productId, Optional.empty(), Optional.empty(), { row, value -> row.copy(productId = value) }, ProductsId.pgType)
 
-      override fun columns(): List<FieldLike<*, ProductsRow>> = listOf(this.fields().productId(), this.fields().sku(), this.fields().brandId(), this.fields().name(), this.fields().shortDescription(), this.fields().fullDescription(), this.fields().basePrice(), this.fields().costPrice(), this.fields().weightKg(), this.fields().dimensionsJson(), this.fields().status(), this.fields().taxClass(), this.fields().tags(), this.fields().attributes(), this.fields().seoMetadata(), this.fields().createdAt(), this.fields().updatedAt(), this.fields().publishedAt())
+      override fun sku(): Field<String, ProductsRow> = Field<String, ProductsRow>(_path, "sku", ProductsRow::sku, Optional.empty(), Optional.empty(), { row, value -> row.copy(sku = value) }, MariaTypes.varchar)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun brandId(): OptField<BrandsId, ProductsRow> = OptField<BrandsId, ProductsRow>(_path, "brand_id", ProductsRow::brandId, Optional.empty(), Optional.empty(), { row, value -> row.copy(brandId = value) }, BrandsId.pgType)
+
+      override fun name(): Field<String, ProductsRow> = Field<String, ProductsRow>(_path, "name", ProductsRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, MariaTypes.varchar)
+
+      override fun shortDescription(): OptField<String, ProductsRow> = OptField<String, ProductsRow>(_path, "short_description", ProductsRow::shortDescription, Optional.empty(), Optional.empty(), { row, value -> row.copy(shortDescription = value) }, MariaTypes.varchar)
+
+      override fun fullDescription(): OptField<String, ProductsRow> = OptField<String, ProductsRow>(_path, "full_description", ProductsRow::fullDescription, Optional.empty(), Optional.empty(), { row, value -> row.copy(fullDescription = value) }, MariaTypes.longtext)
+
+      override fun basePrice(): Field<BigDecimal, ProductsRow> = Field<BigDecimal, ProductsRow>(_path, "base_price", ProductsRow::basePrice, Optional.empty(), Optional.empty(), { row, value -> row.copy(basePrice = value) }, MariaTypes.decimal)
+
+      override fun costPrice(): OptField<BigDecimal, ProductsRow> = OptField<BigDecimal, ProductsRow>(_path, "cost_price", ProductsRow::costPrice, Optional.empty(), Optional.empty(), { row, value -> row.copy(costPrice = value) }, MariaTypes.decimal)
+
+      override fun weightKg(): OptField<BigDecimal, ProductsRow> = OptField<BigDecimal, ProductsRow>(_path, "weight_kg", ProductsRow::weightKg, Optional.empty(), Optional.empty(), { row, value -> row.copy(weightKg = value) }, MariaTypes.decimal)
+
+      override fun dimensionsJson(): OptField<String, ProductsRow> = OptField<String, ProductsRow>(_path, "dimensions_json", ProductsRow::dimensionsJson, Optional.empty(), Optional.empty(), { row, value -> row.copy(dimensionsJson = value) }, MariaTypes.longtext)
+
+      override fun status(): Field<String, ProductsRow> = Field<String, ProductsRow>(_path, "status", ProductsRow::status, Optional.empty(), Optional.empty(), { row, value -> row.copy(status = value) }, MariaTypes.text)
+
+      override fun taxClass(): Field<String, ProductsRow> = Field<String, ProductsRow>(_path, "tax_class", ProductsRow::taxClass, Optional.empty(), Optional.empty(), { row, value -> row.copy(taxClass = value) }, MariaTypes.text)
+
+      override fun tags(): OptField<MariaSet, ProductsRow> = OptField<MariaSet, ProductsRow>(_path, "tags", ProductsRow::tags, Optional.empty(), Optional.empty(), { row, value -> row.copy(tags = value) }, MariaTypes.set)
+
+      override fun attributes(): OptField<String, ProductsRow> = OptField<String, ProductsRow>(_path, "attributes", ProductsRow::attributes, Optional.empty(), Optional.empty(), { row, value -> row.copy(attributes = value) }, MariaTypes.longtext)
+
+      override fun seoMetadata(): OptField<String, ProductsRow> = OptField<String, ProductsRow>(_path, "seo_metadata", ProductsRow::seoMetadata, Optional.empty(), Optional.empty(), { row, value -> row.copy(seoMetadata = value) }, MariaTypes.longtext)
+
+      override fun createdAt(): Field<LocalDateTime, ProductsRow> = Field<LocalDateTime, ProductsRow>(_path, "created_at", ProductsRow::createdAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(createdAt = value) }, MariaTypes.datetime)
+
+      override fun updatedAt(): Field<LocalDateTime, ProductsRow> = Field<LocalDateTime, ProductsRow>(_path, "updated_at", ProductsRow::updatedAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(updatedAt = value) }, MariaTypes.datetime)
+
+      override fun publishedAt(): OptField<LocalDateTime, ProductsRow> = OptField<LocalDateTime, ProductsRow>(_path, "published_at", ProductsRow::publishedAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(publishedAt = value) }, MariaTypes.datetime)
+
+      override fun columns(): List<FieldLike<*, ProductsRow>> = listOf(this.productId(), this.sku(), this.brandId(), this.name(), this.shortDescription(), this.fullDescription(), this.basePrice(), this.costPrice(), this.weightKg(), this.dimensionsJson(), this.status(), this.taxClass(), this.tags(), this.attributes(), this.seoMetadata(), this.createdAt(), this.updatedAt(), this.publishedAt())
+
+      override fun copy(_path: List<Path>): Relation<ProductsFields, ProductsRow> = Impl(_path)
     }
 
-    val structure: Relation<ProductsFields, ProductsRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

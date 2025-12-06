@@ -5,13 +5,10 @@
  *
  * (If you're developing `typo` and want to change it: run `bleep generate-sources`)
  */
-package typo
-package generated
-package custom
-package enums
+package typo.generated.custom.enums
 
 import java.sql.Connection
 
 trait EnumsSqlRepo {
-  def apply()(implicit c: Connection): List[EnumsSqlRow]
+  def apply(implicit c: Connection): List[EnumsSqlRow]
 }

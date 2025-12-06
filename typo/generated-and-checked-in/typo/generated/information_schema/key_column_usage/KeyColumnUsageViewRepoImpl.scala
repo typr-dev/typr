@@ -5,18 +5,15 @@
  *
  * (If you're developing `typo` and want to change it: run `bleep generate-sources`)
  */
-package typo
-package generated
-package information_schema
-package key_column_usage
+package typo.generated.information_schema.key_column_usage
 
-import anorm.SqlStringInterpolation
 import java.sql.Connection
+import anorm.SqlStringInterpolation
 
 class KeyColumnUsageViewRepoImpl extends KeyColumnUsageViewRepo {
   override def selectAll(implicit c: Connection): List[KeyColumnUsageViewRow] = {
     SQL"""select "constraint_catalog", "constraint_schema", "constraint_name", "table_catalog", "table_schema", "table_name", "column_name", "ordinal_position", "position_in_unique_constraint"
-          from "information_schema"."key_column_usage"
-       """.as(KeyColumnUsageViewRow.rowParser(1).*)
+    from "information_schema"."key_column_usage"
+    """.as(KeyColumnUsageViewRow.rowParser(1).*)
   }
 }

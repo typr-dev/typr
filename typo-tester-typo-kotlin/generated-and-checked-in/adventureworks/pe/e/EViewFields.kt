@@ -10,15 +10,19 @@ import adventureworks.customtypes.TypoUUID
 import adventureworks.person.businessentity.BusinessentityId
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface EViewFields {
+interface EViewFields : FieldsExpr<EViewRow> {
   fun businessentityid(): Field<BusinessentityId, EViewRow>
+
+  override fun columns(): List<FieldLike<*, EViewRow>>
 
   fun emailaddress(): OptField</* max 50 chars */ String, EViewRow>
 
@@ -28,24 +32,29 @@ interface EViewFields {
 
   fun modifieddate(): Field<TypoLocalDateTime, EViewRow>
 
+  override fun rowParser(): RowParser<EViewRow> = EViewRow._rowParser
+
   fun rowguid(): Field<TypoUUID, EViewRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<EViewFields, EViewRow>(path) {
-      override fun fields(): EViewFields = object : EViewFields {
-        override fun id(): Field<Int, EViewRow> = Field<Int, EViewRow>(_path, "id", EViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, PgTypes.int4)
-        override fun businessentityid(): Field<BusinessentityId, EViewRow> = Field<BusinessentityId, EViewRow>(_path, "businessentityid", EViewRow::businessentityid, Optional.empty(), Optional.empty(), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
-        override fun emailaddressid(): Field<Int, EViewRow> = Field<Int, EViewRow>(_path, "emailaddressid", EViewRow::emailaddressid, Optional.empty(), Optional.empty(), { row, value -> row.copy(emailaddressid = value) }, PgTypes.int4)
-        override fun emailaddress(): OptField</* max 50 chars */ String, EViewRow> = OptField</* max 50 chars */ String, EViewRow>(_path, "emailaddress", EViewRow::emailaddress, Optional.empty(), Optional.empty(), { row, value -> row.copy(emailaddress = value) }, PgTypes.text)
-        override fun rowguid(): Field<TypoUUID, EViewRow> = Field<TypoUUID, EViewRow>(_path, "rowguid", EViewRow::rowguid, Optional.empty(), Optional.empty(), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, EViewRow> = Field<TypoLocalDateTime, EViewRow>(_path, "modifieddate", EViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : EViewFields, Relation<EViewFields, EViewRow> {
+      override fun id(): Field<Int, EViewRow> = Field<Int, EViewRow>(_path, "id", EViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, PgTypes.int4)
 
-      override fun columns(): List<FieldLike<*, EViewRow>> = listOf(this.fields().id(), this.fields().businessentityid(), this.fields().emailaddressid(), this.fields().emailaddress(), this.fields().rowguid(), this.fields().modifieddate())
+      override fun businessentityid(): Field<BusinessentityId, EViewRow> = Field<BusinessentityId, EViewRow>(_path, "businessentityid", EViewRow::businessentityid, Optional.empty(), Optional.empty(), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun emailaddressid(): Field<Int, EViewRow> = Field<Int, EViewRow>(_path, "emailaddressid", EViewRow::emailaddressid, Optional.empty(), Optional.empty(), { row, value -> row.copy(emailaddressid = value) }, PgTypes.int4)
+
+      override fun emailaddress(): OptField</* max 50 chars */ String, EViewRow> = OptField</* max 50 chars */ String, EViewRow>(_path, "emailaddress", EViewRow::emailaddress, Optional.empty(), Optional.empty(), { row, value -> row.copy(emailaddress = value) }, PgTypes.text)
+
+      override fun rowguid(): Field<TypoUUID, EViewRow> = Field<TypoUUID, EViewRow>(_path, "rowguid", EViewRow::rowguid, Optional.empty(), Optional.empty(), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, EViewRow> = Field<TypoLocalDateTime, EViewRow>(_path, "modifieddate", EViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, EViewRow>> = listOf(this.id(), this.businessentityid(), this.emailaddressid(), this.emailaddress(), this.rowguid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<EViewFields, EViewRow> = Impl(_path)
     }
 
-    val structure: Relation<EViewFields, EViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

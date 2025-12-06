@@ -7,41 +7,42 @@ package testdb.hardcoded.myschema.marital_status;
 
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface MaritalStatusFields {
-  final class Impl extends Relation<MaritalStatusFields, MaritalStatusRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
-
+public interface MaritalStatusFields extends FieldsExpr<MaritalStatusRow> {
+  record Impl(List<Path> _path) implements MaritalStatusFields, Relation<MaritalStatusFields, MaritalStatusRow> {
     @Override
-    public MaritalStatusFields fields() {
-      return new MaritalStatusFields() {
-               @Override
-               public IdField<MaritalStatusId, MaritalStatusRow> id() {
-                 return new IdField<MaritalStatusId, MaritalStatusRow>(_path, "id", MaritalStatusRow::id, Optional.empty(), Optional.of("int8"), (row, value) -> row.withId(value), MaritalStatusId.pgType);
-               };
-             };
+    public IdField<MaritalStatusId, MaritalStatusRow> id() {
+      return new IdField<MaritalStatusId, MaritalStatusRow>(_path, "id", MaritalStatusRow::id, Optional.empty(), Optional.of("int8"), (row, value) -> row.withId(value), MaritalStatusId.pgType);
     };
 
     @Override
     public List<FieldLike<?, MaritalStatusRow>> columns() {
-      return List.of(this.fields().id());
+      return List.of(this.id());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<MaritalStatusFields, MaritalStatusRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<MaritalStatusFields, MaritalStatusRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
   IdField<MaritalStatusId, MaritalStatusRow> id();
+
+  @Override
+  List<FieldLike<?, MaritalStatusRow>> columns();
+
+  @Override
+  default RowParser<MaritalStatusRow> rowParser() {
+    return MaritalStatusRow._rowParser;
+  };
 }

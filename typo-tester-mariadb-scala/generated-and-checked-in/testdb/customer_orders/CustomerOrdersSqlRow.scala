@@ -39,5 +39,5 @@ case class CustomerOrdersSqlRow(
 )
 
 object CustomerOrdersSqlRow {
-  val `_rowParser`: RowParser[CustomerOrdersSqlRow] = RowParsers.of(CustomersId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, OrdersId.pgType.opt(), MariaTypes.varchar.opt(), MariaTypes.text.opt(), MariaTypes.decimal.opt(), MariaTypes.datetime.opt(), CustomerOrdersSqlRow.apply, row => Array(row.customerId, row.email, row.firstName, row.lastName, row.tier, row.orderId, row.orderNumber, row.orderStatus, row.totalAmount, row.orderedAt))
+  val `_rowParser`: RowParser[CustomerOrdersSqlRow] = RowParsers.of(CustomersId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, OrdersId.pgType.opt(), MariaTypes.varchar.opt(), MariaTypes.text.opt(), MariaTypes.decimal.opt(), MariaTypes.datetime.opt(), CustomerOrdersSqlRow.apply, row => Array[Object](row.customerId.asInstanceOf[Object], row.email.asInstanceOf[Object], row.firstName.asInstanceOf[Object], row.lastName.asInstanceOf[Object], row.tier.asInstanceOf[Object], row.orderId.asInstanceOf[Object], row.orderNumber.asInstanceOf[Object], row.orderStatus.asInstanceOf[Object], row.totalAmount.asInstanceOf[Object], row.orderedAt.asInstanceOf[Object]))
 }

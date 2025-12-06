@@ -9,6 +9,7 @@ import adventureworks.customtypes.TypoInstant
 import adventureworks.customtypes.TypoUnknownCitext
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
@@ -16,8 +17,11 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface UsersFields {
+interface UsersFields : FieldsExpr<UsersRow> {
+  override fun columns(): List<FieldLike<*, UsersRow>>
+
   fun createdAt(): Field<TypoInstant, UsersRow>
 
   fun email(): Field<TypoUnknownCitext, UsersRow>
@@ -28,27 +32,33 @@ interface UsersFields {
 
   fun password(): Field<String, UsersRow>
 
+  override fun rowParser(): RowParser<UsersRow> = UsersRow._rowParser
+
   fun userId(): IdField<UsersId, UsersRow>
 
   fun verifiedOn(): OptField<TypoInstant, UsersRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<UsersFields, UsersRow>(path) {
-      override fun fields(): UsersFields = object : UsersFields {
-        override fun userId(): IdField<UsersId, UsersRow> = IdField<UsersId, UsersRow>(_path, "user_id", UsersRow::userId, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(userId = value) }, UsersId.pgType)
-        override fun name(): Field<String, UsersRow> = Field<String, UsersRow>(_path, "name", UsersRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, PgTypes.text)
-        override fun lastName(): OptField<String, UsersRow> = OptField<String, UsersRow>(_path, "last_name", UsersRow::lastName, Optional.empty(), Optional.empty(), { row, value -> row.copy(lastName = value) }, PgTypes.text)
-        override fun email(): Field<TypoUnknownCitext, UsersRow> = Field<TypoUnknownCitext, UsersRow>(_path, "email", UsersRow::email, Optional.of("text"), Optional.of("citext"), { row, value -> row.copy(email = value) }, TypoUnknownCitext.pgType)
-        override fun password(): Field<String, UsersRow> = Field<String, UsersRow>(_path, "password", UsersRow::password, Optional.empty(), Optional.empty(), { row, value -> row.copy(password = value) }, PgTypes.text)
-        override fun createdAt(): Field<TypoInstant, UsersRow> = Field<TypoInstant, UsersRow>(_path, "created_at", UsersRow::createdAt, Optional.of("text"), Optional.of("timestamptz"), { row, value -> row.copy(createdAt = value) }, TypoInstant.pgType)
-        override fun verifiedOn(): OptField<TypoInstant, UsersRow> = OptField<TypoInstant, UsersRow>(_path, "verified_on", UsersRow::verifiedOn, Optional.of("text"), Optional.of("timestamptz"), { row, value -> row.copy(verifiedOn = value) }, TypoInstant.pgType)
-      }
+    data class Impl(val _path: List<Path>) : UsersFields, Relation<UsersFields, UsersRow> {
+      override fun userId(): IdField<UsersId, UsersRow> = IdField<UsersId, UsersRow>(_path, "user_id", UsersRow::userId, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(userId = value) }, UsersId.pgType)
 
-      override fun columns(): List<FieldLike<*, UsersRow>> = listOf(this.fields().userId(), this.fields().name(), this.fields().lastName(), this.fields().email(), this.fields().password(), this.fields().createdAt(), this.fields().verifiedOn())
+      override fun name(): Field<String, UsersRow> = Field<String, UsersRow>(_path, "name", UsersRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, PgTypes.text)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun lastName(): OptField<String, UsersRow> = OptField<String, UsersRow>(_path, "last_name", UsersRow::lastName, Optional.empty(), Optional.empty(), { row, value -> row.copy(lastName = value) }, PgTypes.text)
+
+      override fun email(): Field<TypoUnknownCitext, UsersRow> = Field<TypoUnknownCitext, UsersRow>(_path, "email", UsersRow::email, Optional.of("text"), Optional.of("citext"), { row, value -> row.copy(email = value) }, TypoUnknownCitext.pgType)
+
+      override fun password(): Field<String, UsersRow> = Field<String, UsersRow>(_path, "password", UsersRow::password, Optional.empty(), Optional.empty(), { row, value -> row.copy(password = value) }, PgTypes.text)
+
+      override fun createdAt(): Field<TypoInstant, UsersRow> = Field<TypoInstant, UsersRow>(_path, "created_at", UsersRow::createdAt, Optional.of("text"), Optional.of("timestamptz"), { row, value -> row.copy(createdAt = value) }, TypoInstant.pgType)
+
+      override fun verifiedOn(): OptField<TypoInstant, UsersRow> = OptField<TypoInstant, UsersRow>(_path, "verified_on", UsersRow::verifiedOn, Optional.of("text"), Optional.of("timestamptz"), { row, value -> row.copy(verifiedOn = value) }, TypoInstant.pgType)
+
+      override fun columns(): List<FieldLike<*, UsersRow>> = listOf(this.userId(), this.name(), this.lastName(), this.email(), this.password(), this.createdAt(), this.verifiedOn())
+
+      override fun copy(_path: List<Path>): Relation<UsersFields, UsersRow> = Impl(_path)
     }
 
-    val structure: Relation<UsersFields, UsersRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

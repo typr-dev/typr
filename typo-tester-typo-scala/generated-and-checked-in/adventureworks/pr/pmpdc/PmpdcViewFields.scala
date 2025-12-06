@@ -10,12 +10,14 @@ import adventureworks.production.culture.CultureId
 import adventureworks.production.productdescription.ProductdescriptionId
 import adventureworks.production.productmodel.ProductmodelId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait PmpdcViewFields {
+trait PmpdcViewFields extends FieldsExpr[PmpdcViewRow] {
   def productmodelid: Field[ProductmodelId, PmpdcViewRow]
 
   def productdescriptionid: Field[ProductdescriptionId, PmpdcViewRow]
@@ -23,64 +25,67 @@ trait PmpdcViewFields {
   def cultureid: Field[CultureId, PmpdcViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, PmpdcViewRow]
+
+  override def columns: java.util.List[FieldLike[?, PmpdcViewRow]]
+
+  override def rowParser: RowParser[PmpdcViewRow] = PmpdcViewRow._rowParser
 }
 
 object PmpdcViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[PmpdcViewFields, PmpdcViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends PmpdcViewFields with Relation[PmpdcViewFields, PmpdcViewRow] {
 
-    override lazy val fields: PmpdcViewFields = {
-      new PmpdcViewFields {
-        override def productmodelid: Field[ProductmodelId, PmpdcViewRow] = {
-          new Field[ProductmodelId, PmpdcViewRow](
-            _path,
-            "productmodelid",
-            _.productmodelid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(productmodelid = value),
-            ProductmodelId.pgType
-          )
-        }
-        override def productdescriptionid: Field[ProductdescriptionId, PmpdcViewRow] = {
-          new Field[ProductdescriptionId, PmpdcViewRow](
-            _path,
-            "productdescriptionid",
-            _.productdescriptionid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(productdescriptionid = value),
-            ProductdescriptionId.pgType
-          )
-        }
-        override def cultureid: Field[CultureId, PmpdcViewRow] = {
-          new Field[CultureId, PmpdcViewRow](
-            _path,
-            "cultureid",
-            _.cultureid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(cultureid = value),
-            CultureId.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, PmpdcViewRow] = {
-          new Field[TypoLocalDateTime, PmpdcViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def productmodelid: Field[ProductmodelId, PmpdcViewRow] = {
+      new Field[ProductmodelId, PmpdcViewRow](
+        _path,
+        "productmodelid",
+        _.productmodelid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(productmodelid = value),
+        ProductmodelId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, PmpdcViewRow]] = java.util.List.of(this.fields.productmodelid, this.fields.productdescriptionid, this.fields.cultureid, this.fields.modifieddate)
+    override def productdescriptionid: Field[ProductdescriptionId, PmpdcViewRow] = {
+      new Field[ProductdescriptionId, PmpdcViewRow](
+        _path,
+        "productdescriptionid",
+        _.productdescriptionid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(productdescriptionid = value),
+        ProductdescriptionId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def cultureid: Field[CultureId, PmpdcViewRow] = {
+      new Field[CultureId, PmpdcViewRow](
+        _path,
+        "cultureid",
+        _.cultureid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(cultureid = value),
+        CultureId.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, PmpdcViewRow] = {
+      new Field[TypoLocalDateTime, PmpdcViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, PmpdcViewRow]] = java.util.List.of(this.productmodelid, this.productdescriptionid, this.cultureid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[PmpdcViewFields, PmpdcViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[PmpdcViewFields, PmpdcViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

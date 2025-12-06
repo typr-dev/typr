@@ -13,89 +13,94 @@ import adventureworks.purchasing.shipmethod.ShipmethodId;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface PohViewFields {
-  final class Impl extends Relation<PohViewFields, PohViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PohViewFields extends FieldsExpr<PohViewRow> {
+  record Impl(List<Path> _path) implements PohViewFields, Relation<PohViewFields, PohViewRow> {
+    @Override
+    public Field<PurchaseorderheaderId, PohViewRow> id() {
+      return new Field<PurchaseorderheaderId, PohViewRow>(_path, "id", PohViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), PurchaseorderheaderId.pgType);
+    };
 
     @Override
-    public PohViewFields fields() {
-      return new PohViewFields() {
-               @Override
-               public Field<PurchaseorderheaderId, PohViewRow> id() {
-                 return new Field<PurchaseorderheaderId, PohViewRow>(_path, "id", PohViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), PurchaseorderheaderId.pgType);
-               };
-               @Override
-               public Field<PurchaseorderheaderId, PohViewRow> purchaseorderid() {
-                 return new Field<PurchaseorderheaderId, PohViewRow>(_path, "purchaseorderid", PohViewRow::purchaseorderid, Optional.empty(), Optional.empty(), (row, value) -> row.withPurchaseorderid(value), PurchaseorderheaderId.pgType);
-               };
-               @Override
-               public Field<TypoShort, PohViewRow> revisionnumber() {
-                 return new Field<TypoShort, PohViewRow>(_path, "revisionnumber", PohViewRow::revisionnumber, Optional.empty(), Optional.empty(), (row, value) -> row.withRevisionnumber(value), TypoShort.pgType);
-               };
-               @Override
-               public Field<TypoShort, PohViewRow> status() {
-                 return new Field<TypoShort, PohViewRow>(_path, "status", PohViewRow::status, Optional.empty(), Optional.empty(), (row, value) -> row.withStatus(value), TypoShort.pgType);
-               };
-               @Override
-               public Field<BusinessentityId, PohViewRow> employeeid() {
-                 return new Field<BusinessentityId, PohViewRow>(_path, "employeeid", PohViewRow::employeeid, Optional.empty(), Optional.empty(), (row, value) -> row.withEmployeeid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<BusinessentityId, PohViewRow> vendorid() {
-                 return new Field<BusinessentityId, PohViewRow>(_path, "vendorid", PohViewRow::vendorid, Optional.empty(), Optional.empty(), (row, value) -> row.withVendorid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<ShipmethodId, PohViewRow> shipmethodid() {
-                 return new Field<ShipmethodId, PohViewRow>(_path, "shipmethodid", PohViewRow::shipmethodid, Optional.empty(), Optional.empty(), (row, value) -> row.withShipmethodid(value), ShipmethodId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PohViewRow> orderdate() {
-                 return new Field<TypoLocalDateTime, PohViewRow>(_path, "orderdate", PohViewRow::orderdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withOrderdate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public OptField<TypoLocalDateTime, PohViewRow> shipdate() {
-                 return new OptField<TypoLocalDateTime, PohViewRow>(_path, "shipdate", PohViewRow::shipdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withShipdate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public Field<BigDecimal, PohViewRow> subtotal() {
-                 return new Field<BigDecimal, PohViewRow>(_path, "subtotal", PohViewRow::subtotal, Optional.empty(), Optional.empty(), (row, value) -> row.withSubtotal(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<BigDecimal, PohViewRow> taxamt() {
-                 return new Field<BigDecimal, PohViewRow>(_path, "taxamt", PohViewRow::taxamt, Optional.empty(), Optional.empty(), (row, value) -> row.withTaxamt(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<BigDecimal, PohViewRow> freight() {
-                 return new Field<BigDecimal, PohViewRow>(_path, "freight", PohViewRow::freight, Optional.empty(), Optional.empty(), (row, value) -> row.withFreight(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PohViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, PohViewRow>(_path, "modifieddate", PohViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<PurchaseorderheaderId, PohViewRow> purchaseorderid() {
+      return new Field<PurchaseorderheaderId, PohViewRow>(_path, "purchaseorderid", PohViewRow::purchaseorderid, Optional.empty(), Optional.empty(), (row, value) -> row.withPurchaseorderid(value), PurchaseorderheaderId.pgType);
+    };
+
+    @Override
+    public Field<TypoShort, PohViewRow> revisionnumber() {
+      return new Field<TypoShort, PohViewRow>(_path, "revisionnumber", PohViewRow::revisionnumber, Optional.empty(), Optional.empty(), (row, value) -> row.withRevisionnumber(value), TypoShort.pgType);
+    };
+
+    @Override
+    public Field<TypoShort, PohViewRow> status() {
+      return new Field<TypoShort, PohViewRow>(_path, "status", PohViewRow::status, Optional.empty(), Optional.empty(), (row, value) -> row.withStatus(value), TypoShort.pgType);
+    };
+
+    @Override
+    public Field<BusinessentityId, PohViewRow> employeeid() {
+      return new Field<BusinessentityId, PohViewRow>(_path, "employeeid", PohViewRow::employeeid, Optional.empty(), Optional.empty(), (row, value) -> row.withEmployeeid(value), BusinessentityId.pgType);
+    };
+
+    @Override
+    public Field<BusinessentityId, PohViewRow> vendorid() {
+      return new Field<BusinessentityId, PohViewRow>(_path, "vendorid", PohViewRow::vendorid, Optional.empty(), Optional.empty(), (row, value) -> row.withVendorid(value), BusinessentityId.pgType);
+    };
+
+    @Override
+    public Field<ShipmethodId, PohViewRow> shipmethodid() {
+      return new Field<ShipmethodId, PohViewRow>(_path, "shipmethodid", PohViewRow::shipmethodid, Optional.empty(), Optional.empty(), (row, value) -> row.withShipmethodid(value), ShipmethodId.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PohViewRow> orderdate() {
+      return new Field<TypoLocalDateTime, PohViewRow>(_path, "orderdate", PohViewRow::orderdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withOrderdate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public OptField<TypoLocalDateTime, PohViewRow> shipdate() {
+      return new OptField<TypoLocalDateTime, PohViewRow>(_path, "shipdate", PohViewRow::shipdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withShipdate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public Field<BigDecimal, PohViewRow> subtotal() {
+      return new Field<BigDecimal, PohViewRow>(_path, "subtotal", PohViewRow::subtotal, Optional.empty(), Optional.empty(), (row, value) -> row.withSubtotal(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<BigDecimal, PohViewRow> taxamt() {
+      return new Field<BigDecimal, PohViewRow>(_path, "taxamt", PohViewRow::taxamt, Optional.empty(), Optional.empty(), (row, value) -> row.withTaxamt(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<BigDecimal, PohViewRow> freight() {
+      return new Field<BigDecimal, PohViewRow>(_path, "freight", PohViewRow::freight, Optional.empty(), Optional.empty(), (row, value) -> row.withFreight(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PohViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, PohViewRow>(_path, "modifieddate", PohViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, PohViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().purchaseorderid(), this.fields().revisionnumber(), this.fields().status(), this.fields().employeeid(), this.fields().vendorid(), this.fields().shipmethodid(), this.fields().orderdate(), this.fields().shipdate(), this.fields().subtotal(), this.fields().taxamt(), this.fields().freight(), this.fields().modifieddate());
+      return List.of(this.id(), this.purchaseorderid(), this.revisionnumber(), this.status(), this.employeeid(), this.vendorid(), this.shipmethodid(), this.orderdate(), this.shipdate(), this.subtotal(), this.taxamt(), this.freight(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PohViewFields, PohViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PohViewFields, PohViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -124,4 +129,12 @@ public interface PohViewFields {
   Field<BigDecimal, PohViewRow> freight();
 
   Field<TypoLocalDateTime, PohViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, PohViewRow>> columns();
+
+  @Override
+  default RowParser<PohViewRow> rowParser() {
+    return PohViewRow._rowParser;
+  };
 }

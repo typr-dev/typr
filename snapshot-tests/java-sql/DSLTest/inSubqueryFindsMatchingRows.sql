@@ -1,0 +1,3 @@
+select personperson0."businessentityid", personperson0."persontype", personperson0."namestyle", personperson0."title", personperson0."firstname", personperson0."middlename", personperson0."lastname", personperson0."suffix", personperson0."emailpromotion", personperson0."additionalcontactinfo", personperson0."demographics", personperson0."rowguid", personperson0."modifieddate"::text
+from (select * from "person"."person" personperson0 where ((((personperson0)."businessentityid"  = ?::int4) OR ((personperson0)."businessentityid"  = ?::int4)) AND ((personperson0)."businessentityid"  IN (select personemailaddress0."businessentityid" 
+from "person"."emailaddress" personemailaddress0)))) personperson0

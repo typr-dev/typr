@@ -17,6 +17,7 @@ import adventureworks.sales.salesterritory.SalesterritoryId
 import adventureworks.sales.salesterritory.SalesterritoryRow
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -24,8 +25,11 @@ import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface StateprovinceFields {
+interface StateprovinceFields : FieldsExpr<StateprovinceRow> {
+  override fun columns(): List<FieldLike<*, StateprovinceRow>>
+
   fun countryregioncode(): Field<CountryregionId, StateprovinceRow>
 
   fun fkCountryregion(): ForeignKey<CountryregionFields, CountryregionRow> = ForeignKey.of<CountryregionFields, CountryregionRow>("person.FK_StateProvince_CountryRegion_CountryRegionCode").withColumnPair(countryregioncode(), CountryregionFields::countryregioncode)
@@ -38,6 +42,8 @@ interface StateprovinceFields {
 
   fun name(): Field<Name, StateprovinceRow>
 
+  override fun rowParser(): RowParser<StateprovinceRow> = StateprovinceRow._rowParser
+
   fun rowguid(): Field<TypoUUID, StateprovinceRow>
 
   fun stateprovincecode(): Field</* bpchar, max 3 chars */ String, StateprovinceRow>
@@ -47,23 +53,28 @@ interface StateprovinceFields {
   fun territoryid(): Field<SalesterritoryId, StateprovinceRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<StateprovinceFields, StateprovinceRow>(path) {
-      override fun fields(): StateprovinceFields = object : StateprovinceFields {
-        override fun stateprovinceid(): IdField<StateprovinceId, StateprovinceRow> = IdField<StateprovinceId, StateprovinceRow>(_path, "stateprovinceid", StateprovinceRow::stateprovinceid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(stateprovinceid = value) }, StateprovinceId.pgType)
-        override fun stateprovincecode(): Field</* bpchar, max 3 chars */ String, StateprovinceRow> = Field</* bpchar, max 3 chars */ String, StateprovinceRow>(_path, "stateprovincecode", StateprovinceRow::stateprovincecode, Optional.empty(), Optional.of("bpchar"), { row, value -> row.copy(stateprovincecode = value) }, PgTypes.bpchar)
-        override fun countryregioncode(): Field<CountryregionId, StateprovinceRow> = Field<CountryregionId, StateprovinceRow>(_path, "countryregioncode", StateprovinceRow::countryregioncode, Optional.empty(), Optional.empty(), { row, value -> row.copy(countryregioncode = value) }, CountryregionId.pgType)
-        override fun isonlystateprovinceflag(): Field<Flag, StateprovinceRow> = Field<Flag, StateprovinceRow>(_path, "isonlystateprovinceflag", StateprovinceRow::isonlystateprovinceflag, Optional.empty(), Optional.of("bool"), { row, value -> row.copy(isonlystateprovinceflag = value) }, Flag.pgType)
-        override fun name(): Field<Name, StateprovinceRow> = Field<Name, StateprovinceRow>(_path, "name", StateprovinceRow::name, Optional.empty(), Optional.of("varchar"), { row, value -> row.copy(name = value) }, Name.pgType)
-        override fun territoryid(): Field<SalesterritoryId, StateprovinceRow> = Field<SalesterritoryId, StateprovinceRow>(_path, "territoryid", StateprovinceRow::territoryid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(territoryid = value) }, SalesterritoryId.pgType)
-        override fun rowguid(): Field<TypoUUID, StateprovinceRow> = Field<TypoUUID, StateprovinceRow>(_path, "rowguid", StateprovinceRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, StateprovinceRow> = Field<TypoLocalDateTime, StateprovinceRow>(_path, "modifieddate", StateprovinceRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : StateprovinceFields, Relation<StateprovinceFields, StateprovinceRow> {
+      override fun stateprovinceid(): IdField<StateprovinceId, StateprovinceRow> = IdField<StateprovinceId, StateprovinceRow>(_path, "stateprovinceid", StateprovinceRow::stateprovinceid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(stateprovinceid = value) }, StateprovinceId.pgType)
 
-      override fun columns(): List<FieldLike<*, StateprovinceRow>> = listOf(this.fields().stateprovinceid(), this.fields().stateprovincecode(), this.fields().countryregioncode(), this.fields().isonlystateprovinceflag(), this.fields().name(), this.fields().territoryid(), this.fields().rowguid(), this.fields().modifieddate())
+      override fun stateprovincecode(): Field</* bpchar, max 3 chars */ String, StateprovinceRow> = Field</* bpchar, max 3 chars */ String, StateprovinceRow>(_path, "stateprovincecode", StateprovinceRow::stateprovincecode, Optional.empty(), Optional.of("bpchar"), { row, value -> row.copy(stateprovincecode = value) }, PgTypes.bpchar)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun countryregioncode(): Field<CountryregionId, StateprovinceRow> = Field<CountryregionId, StateprovinceRow>(_path, "countryregioncode", StateprovinceRow::countryregioncode, Optional.empty(), Optional.empty(), { row, value -> row.copy(countryregioncode = value) }, CountryregionId.pgType)
+
+      override fun isonlystateprovinceflag(): Field<Flag, StateprovinceRow> = Field<Flag, StateprovinceRow>(_path, "isonlystateprovinceflag", StateprovinceRow::isonlystateprovinceflag, Optional.empty(), Optional.of("bool"), { row, value -> row.copy(isonlystateprovinceflag = value) }, Flag.pgType)
+
+      override fun name(): Field<Name, StateprovinceRow> = Field<Name, StateprovinceRow>(_path, "name", StateprovinceRow::name, Optional.empty(), Optional.of("varchar"), { row, value -> row.copy(name = value) }, Name.pgType)
+
+      override fun territoryid(): Field<SalesterritoryId, StateprovinceRow> = Field<SalesterritoryId, StateprovinceRow>(_path, "territoryid", StateprovinceRow::territoryid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(territoryid = value) }, SalesterritoryId.pgType)
+
+      override fun rowguid(): Field<TypoUUID, StateprovinceRow> = Field<TypoUUID, StateprovinceRow>(_path, "rowguid", StateprovinceRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, StateprovinceRow> = Field<TypoLocalDateTime, StateprovinceRow>(_path, "modifieddate", StateprovinceRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, StateprovinceRow>> = listOf(this.stateprovinceid(), this.stateprovincecode(), this.countryregioncode(), this.isonlystateprovinceflag(), this.name(), this.territoryid(), this.rowguid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<StateprovinceFields, StateprovinceRow> = Impl(_path)
     }
 
-    val structure: Relation<StateprovinceFields, StateprovinceRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

@@ -10,12 +10,16 @@ import adventureworks.production.culture.CultureId
 import adventureworks.public.Name
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface CViewFields {
+interface CViewFields : FieldsExpr<CViewRow> {
+  override fun columns(): List<FieldLike<*, CViewRow>>
+
   fun cultureid(): Field<CultureId, CViewRow>
 
   fun id(): Field<CultureId, CViewRow>
@@ -24,20 +28,23 @@ interface CViewFields {
 
   fun name(): Field<Name, CViewRow>
 
+  override fun rowParser(): RowParser<CViewRow> = CViewRow._rowParser
+
   companion object {
-    private class Impl(path: List<Path>) : Relation<CViewFields, CViewRow>(path) {
-      override fun fields(): CViewFields = object : CViewFields {
-        override fun id(): Field<CultureId, CViewRow> = Field<CultureId, CViewRow>(_path, "id", CViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, CultureId.pgType)
-        override fun cultureid(): Field<CultureId, CViewRow> = Field<CultureId, CViewRow>(_path, "cultureid", CViewRow::cultureid, Optional.empty(), Optional.empty(), { row, value -> row.copy(cultureid = value) }, CultureId.pgType)
-        override fun name(): Field<Name, CViewRow> = Field<Name, CViewRow>(_path, "name", CViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, CViewRow> = Field<TypoLocalDateTime, CViewRow>(_path, "modifieddate", CViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : CViewFields, Relation<CViewFields, CViewRow> {
+      override fun id(): Field<CultureId, CViewRow> = Field<CultureId, CViewRow>(_path, "id", CViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, CultureId.pgType)
 
-      override fun columns(): List<FieldLike<*, CViewRow>> = listOf(this.fields().id(), this.fields().cultureid(), this.fields().name(), this.fields().modifieddate())
+      override fun cultureid(): Field<CultureId, CViewRow> = Field<CultureId, CViewRow>(_path, "cultureid", CViewRow::cultureid, Optional.empty(), Optional.empty(), { row, value -> row.copy(cultureid = value) }, CultureId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun name(): Field<Name, CViewRow> = Field<Name, CViewRow>(_path, "name", CViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, CViewRow> = Field<TypoLocalDateTime, CViewRow>(_path, "modifieddate", CViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, CViewRow>> = listOf(this.id(), this.cultureid(), this.name(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<CViewFields, CViewRow> = Impl(_path)
     }
 
-    val structure: Relation<CViewFields, CViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

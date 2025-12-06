@@ -215,6 +215,9 @@ case object LangKotlin extends Lang {
   override def notEquals(left: jvm.Code, right: jvm.Code): jvm.Code =
     code"($left != $right)"
 
+  override def castFromObject(targetType: jvm.Type, expr: jvm.Code): jvm.Code =
+    code"($expr as $targetType)"
+
   val Quote = '"'.toString
   val TripleQuote = Quote * 3
 
@@ -706,6 +709,22 @@ case object LangKotlin extends Lang {
                |  ${cls.members.map(m => renderTree(m, memberCtx)).mkCode("\n\n")}
                |""".stripMargin
         code"$privateMod$classKeyword ${cls.name}$paramsCode$extendsClause {$membersCode}"
+
+      // Nested record: in Kotlin, becomes data class Name(params) : Interface { ... }
+      case rec: jvm.NestedRecord =>
+        val memberCtx = Ctx.Empty
+        val paramsCode = renderDataClassParams(rec.params, memberCtx, addVal = true)
+        val implementsClause = rec.implements match {
+          case Nil      => jvm.Code.Empty
+          case nonEmpty => code" : ${nonEmpty.map(renderTree(_, memberCtx)).mkCode(", ")}"
+        }
+        val membersCode =
+          if (rec.members.isEmpty) jvm.Code.Empty
+          else
+            code"""|
+               |  ${rec.members.map(m => renderTree(m, memberCtx)).mkCode("\n\n")}
+               |""".stripMargin
+        code"data class ${rec.name}$paramsCode$implementsClause {$membersCode}"
 
       // By-name becomes lambda in Kotlin
       case jvm.ByName(body) =>

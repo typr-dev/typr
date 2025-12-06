@@ -102,7 +102,7 @@ case class CustomersRow(
 }
 
 object CustomersRow {
-  val `_rowParser`: RowParser[CustomersRow] = RowParsers.of(CustomersId.pgType, MariaTypes.varchar, MariaTypes.binary, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.opt(), CustomerStatusId.pgType, MariaTypes.text, MariaTypes.longtext.opt(), MariaTypes.set.opt(), MariaTypes.text.opt(), MariaTypes.datetime, MariaTypes.datetime, MariaTypes.datetime.opt(), CustomersRow.apply, row => Array(row.customerId, row.email, row.passwordHash, row.firstName, row.lastName, row.phone, row.status, row.tier, row.preferences, row.marketingFlags, row.notes, row.createdAt, row.updatedAt, row.lastLoginAt))
+  val `_rowParser`: RowParser[CustomersRow] = RowParsers.of(CustomersId.pgType, MariaTypes.varchar, MariaTypes.binary, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.opt(), CustomerStatusId.pgType, MariaTypes.text, MariaTypes.longtext.opt(), MariaTypes.set.opt(), MariaTypes.text.opt(), MariaTypes.datetime, MariaTypes.datetime, MariaTypes.datetime.opt(), CustomersRow.apply, row => Array[Object](row.customerId.asInstanceOf[Object], row.email.asInstanceOf[Object], row.passwordHash.asInstanceOf[Object], row.firstName.asInstanceOf[Object], row.lastName.asInstanceOf[Object], row.phone.asInstanceOf[Object], row.status.asInstanceOf[Object], row.tier.asInstanceOf[Object], row.preferences.asInstanceOf[Object], row.marketingFlags.asInstanceOf[Object], row.notes.asInstanceOf[Object], row.createdAt.asInstanceOf[Object], row.updatedAt.asInstanceOf[Object], row.lastLoginAt.asInstanceOf[Object]))
 
   given mariaText: MariaText[CustomersRow] = MariaText.from(`_rowParser`)
 }

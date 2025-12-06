@@ -5,10 +5,7 @@
  *
  * (If you're developing `typo` and want to change it: run `bleep generate-sources`)
  */
-package typo
-package generated
-package custom
-package domains
+package typo.generated.custom.domains
 
 import anorm.Column
 import anorm.RowParser
@@ -24,71 +21,86 @@ import scala.util.Try
 
 /** SQL file: custom/domains.sql */
 case class DomainsSqlRow(
-  /** Points to [[pg_catalog.pg_namespace.PgNamespaceRow.nspname]]
-      debug: {"baseColumnName":"nspname","baseRelationName":"pg_catalog.pg_namespace","columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"schema","originalName":"schema?","nullability":"Nullable"},"columnName":"schema?","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NoNulls","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0,"tableName":"pg_namespace"} */
+  /** Points to [[typo.generated.pg_catalog.pg_namespace.PgNamespaceRow.nspname]]
+   * debug: {"baseColumnName":"nspname","baseRelationName":"pg_catalog.pg_namespace","columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"schema","originalName":"schema?","nullability":"Nullable"},"columnName":"schema?","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NoNulls","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0,"tableName":"pg_namespace"}
+   */
   schema: Option[String],
-  /** Points to [[pg_catalog.pg_type.PgTypeRow.typname]]
-      debug: {"baseColumnName":"typname","baseRelationName":"pg_catalog.pg_type","columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"name","originalName":"name"},"columnName":"name","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NoNulls","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0,"tableName":"pg_type"} */
+  /** Points to [[typo.generated.pg_catalog.pg_type.PgTypeRow.typname]]
+   * debug: {"baseColumnName":"typname","baseRelationName":"pg_catalog.pg_type","columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"name","originalName":"name"},"columnName":"name","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NoNulls","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0,"tableName":"pg_type"}
+   */
   name: String,
-  /** Points to [[pg_catalog.pg_type.PgTypeRow.typname]]
-      debug: {"baseColumnName":"typname","baseRelationName":"pg_catalog.pg_type","columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"type","originalName":"type"},"columnName":"type","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NoNulls","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0,"tableName":"pg_type"} */
+  /** Points to [[typo.generated.pg_catalog.pg_type.PgTypeRow.typname]]
+   * debug: {"baseColumnName":"typname","baseRelationName":"pg_catalog.pg_type","columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"type","originalName":"type"},"columnName":"type","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NoNulls","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0,"tableName":"pg_type"}
+   */
   `type`: String,
-  /** Points to [[pg_catalog.pg_collation.PgCollationRow.collname]]
-      debug: {"baseColumnName":"collname","baseRelationName":"pg_catalog.pg_collation","columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"collation","originalName":"collation"},"columnName":"collation","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NoNulls","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0,"tableName":"pg_collation"} */
+  /** Points to [[typo.generated.pg_catalog.pg_collation.PgCollationRow.collname]]
+   * debug: {"baseColumnName":"collname","baseRelationName":"pg_catalog.pg_collation","columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"collation","originalName":"collation"},"columnName":"collation","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NoNulls","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0,"tableName":"pg_collation"}
+   */
   collation: Option[String],
-  /** Points to [[pg_catalog.pg_type.PgTypeRow.typnotnull]]
-      debug: {"baseColumnName":"typnotnull","baseRelationName":"pg_catalog.pg_type","columnClassName":"java.lang.Boolean","columnDisplaySize":1,"parsedColumnName":{"name":"isNotNull","originalName":"isNotNull"},"columnName":"isNotNull","columnType":"Bit","columnTypeName":"bool","format":0,"isAutoIncrement":false,"isCaseSensitive":false,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NoNulls","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":1,"scale":0,"tableName":"pg_type"} */
+  /** Points to [[typo.generated.pg_catalog.pg_type.PgTypeRow.typnotnull]]
+   * debug: {"baseColumnName":"typnotnull","baseRelationName":"pg_catalog.pg_type","columnClassName":"java.lang.Boolean","columnDisplaySize":1,"parsedColumnName":{"name":"isNotNull","originalName":"isNotNull"},"columnName":"isNotNull","columnType":"Bit","columnTypeName":"bool","format":0,"isAutoIncrement":false,"isCaseSensitive":false,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NoNulls","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":1,"scale":0,"tableName":"pg_type"}
+   */
   isNotNull: Boolean,
-  /** Points to [[pg_catalog.pg_type.PgTypeRow.typdefault]]
-      debug: {"baseColumnName":"typdefault","baseRelationName":"pg_catalog.pg_type","columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"default","originalName":"default"},"columnName":"default","columnType":"VarChar","columnTypeName":"text","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"Nullable","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0,"tableName":"pg_type"} */
+  /** Points to [[typo.generated.pg_catalog.pg_type.PgTypeRow.typdefault]]
+   * debug: {"baseColumnName":"typdefault","baseRelationName":"pg_catalog.pg_type","columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"default","originalName":"default"},"columnName":"default","columnType":"VarChar","columnTypeName":"text","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"Nullable","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0,"tableName":"pg_type"}
+   */
   default: Option[String],
-  /** Points to [[pg_catalog.pg_constraint.PgConstraintRow.conname]]
-      debug: {"baseColumnName":"conname","baseRelationName":"pg_catalog.pg_constraint","columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"constraintName","originalName":"constraintName"},"columnName":"constraintName","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NoNulls","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0,"tableName":"pg_constraint"} */
+  /** Points to [[typo.generated.pg_catalog.pg_constraint.PgConstraintRow.conname]]
+   * debug: {"baseColumnName":"conname","baseRelationName":"pg_catalog.pg_constraint","columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"constraintName","originalName":"constraintName"},"columnName":"constraintName","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NoNulls","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0,"tableName":"pg_constraint"}
+   */
   constraintName: Option[String],
   /** debug: {"columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"constraintDefinition","originalName":"constraintDefinition"},"columnName":"constraintDefinition","columnType":"VarChar","columnTypeName":"text","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0} */
   constraintDefinition: /* nullability unknown */ Option[String]
 )
 
 object DomainsSqlRow {
-  implicit lazy val reads: Reads[DomainsSqlRow] = Reads[DomainsSqlRow](json => JsResult.fromTry(
-      Try(
-        DomainsSqlRow(
-          schema = json.\("schema").toOption.map(_.as(Reads.StringReads)),
-          name = json.\("name").as(Reads.StringReads),
-          `type` = json.\("type").as(Reads.StringReads),
-          collation = json.\("collation").toOption.map(_.as(Reads.StringReads)),
-          isNotNull = json.\("isNotNull").as(Reads.BooleanReads),
-          default = json.\("default").toOption.map(_.as(Reads.StringReads)),
-          constraintName = json.\("constraintName").toOption.map(_.as(Reads.StringReads)),
-          constraintDefinition = json.\("constraintDefinition").toOption.map(_.as(Reads.StringReads))
+  implicit lazy val reads: Reads[DomainsSqlRow] = {
+    Reads[DomainsSqlRow](json => JsResult.fromTry(
+        Try(
+          DomainsSqlRow(
+            schema = json.\("schema").toOption.map(_.as(Reads.StringReads)),
+            name = json.\("name").as(Reads.StringReads),
+            `type` = json.\("type").as(Reads.StringReads),
+            collation = json.\("collation").toOption.map(_.as(Reads.StringReads)),
+            isNotNull = json.\("isNotNull").as(Reads.BooleanReads),
+            default = json.\("default").toOption.map(_.as(Reads.StringReads)),
+            constraintName = json.\("constraintName").toOption.map(_.as(Reads.StringReads)),
+            constraintDefinition = json.\("constraintDefinition").toOption.map(_.as(Reads.StringReads))
+          )
         )
-      )
-    ),
-  )
-  def rowParser(idx: Int): RowParser[DomainsSqlRow] = RowParser[DomainsSqlRow] { row =>
-    Success(
-      DomainsSqlRow(
-        schema = row(idx + 0)(Column.columnToOption(Column.columnToString)),
-        name = row(idx + 1)(Column.columnToString),
-        `type` = row(idx + 2)(Column.columnToString),
-        collation = row(idx + 3)(Column.columnToOption(Column.columnToString)),
-        isNotNull = row(idx + 4)(Column.columnToBoolean),
-        default = row(idx + 5)(Column.columnToOption(Column.columnToString)),
-        constraintName = row(idx + 6)(Column.columnToOption(Column.columnToString)),
-        constraintDefinition = row(idx + 7)(Column.columnToOption(Column.columnToString))
-      )
+      ),
     )
   }
-  implicit lazy val writes: OWrites[DomainsSqlRow] = OWrites[DomainsSqlRow](o =>
-    new JsObject(ListMap[String, JsValue](
-      "schema" -> Writes.OptionWrites(Writes.StringWrites).writes(o.schema),
-      "name" -> Writes.StringWrites.writes(o.name),
-      "type" -> Writes.StringWrites.writes(o.`type`),
-      "collation" -> Writes.OptionWrites(Writes.StringWrites).writes(o.collation),
-      "isNotNull" -> Writes.BooleanWrites.writes(o.isNotNull),
-      "default" -> Writes.OptionWrites(Writes.StringWrites).writes(o.default),
-      "constraintName" -> Writes.OptionWrites(Writes.StringWrites).writes(o.constraintName),
-      "constraintDefinition" -> Writes.OptionWrites(Writes.StringWrites).writes(o.constraintDefinition)
-    ))
-  )
+
+  def rowParser(idx: Int): RowParser[DomainsSqlRow] = {
+    RowParser[DomainsSqlRow] { row =>
+      Success(
+        DomainsSqlRow(
+          schema = row(idx + 0)(Column.columnToOption(Column.columnToString)),
+          name = row(idx + 1)(Column.columnToString),
+          `type` = row(idx + 2)(Column.columnToString),
+          collation = row(idx + 3)(Column.columnToOption(Column.columnToString)),
+          isNotNull = row(idx + 4)(Column.columnToBoolean),
+          default = row(idx + 5)(Column.columnToOption(Column.columnToString)),
+          constraintName = row(idx + 6)(Column.columnToOption(Column.columnToString)),
+          constraintDefinition = row(idx + 7)(Column.columnToOption(Column.columnToString))
+        )
+      )
+    }
+  }
+
+  implicit lazy val writes: OWrites[DomainsSqlRow] = {
+    OWrites[DomainsSqlRow](o =>
+      new JsObject(ListMap[String, JsValue](
+        "schema" -> Writes.OptionWrites(Writes.StringWrites).writes(o.schema),
+        "name" -> Writes.StringWrites.writes(o.name),
+        "type" -> Writes.StringWrites.writes(o.`type`),
+        "collation" -> Writes.OptionWrites(Writes.StringWrites).writes(o.collation),
+        "isNotNull" -> Writes.BooleanWrites.writes(o.isNotNull),
+        "default" -> Writes.OptionWrites(Writes.StringWrites).writes(o.default),
+        "constraintName" -> Writes.OptionWrites(Writes.StringWrites).writes(o.constraintName),
+        "constraintDefinition" -> Writes.OptionWrites(Writes.StringWrites).writes(o.constraintDefinition)
+      ))
+    )
+  }
 }

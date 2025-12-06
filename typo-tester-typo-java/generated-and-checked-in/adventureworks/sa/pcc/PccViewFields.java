@@ -10,51 +10,47 @@ import adventureworks.person.businessentity.BusinessentityId;
 import adventureworks.userdefined.CustomCreditcardId;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface PccViewFields {
-  final class Impl extends Relation<PccViewFields, PccViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PccViewFields extends FieldsExpr<PccViewRow> {
+  record Impl(List<Path> _path) implements PccViewFields, Relation<PccViewFields, PccViewRow> {
+    @Override
+    public Field<BusinessentityId, PccViewRow> id() {
+      return new Field<BusinessentityId, PccViewRow>(_path, "id", PccViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
+    };
 
     @Override
-    public PccViewFields fields() {
-      return new PccViewFields() {
-               @Override
-               public Field<BusinessentityId, PccViewRow> id() {
-                 return new Field<BusinessentityId, PccViewRow>(_path, "id", PccViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<BusinessentityId, PccViewRow> businessentityid() {
-                 return new Field<BusinessentityId, PccViewRow>(_path, "businessentityid", PccViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field</* user-picked */ CustomCreditcardId, PccViewRow> creditcardid() {
-                 return new Field</* user-picked */ CustomCreditcardId, PccViewRow>(_path, "creditcardid", PccViewRow::creditcardid, Optional.empty(), Optional.empty(), (row, value) -> row.withCreditcardid(value), CustomCreditcardId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PccViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, PccViewRow>(_path, "modifieddate", PccViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<BusinessentityId, PccViewRow> businessentityid() {
+      return new Field<BusinessentityId, PccViewRow>(_path, "businessentityid", PccViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
+    };
+
+    @Override
+    public Field</* user-picked */ CustomCreditcardId, PccViewRow> creditcardid() {
+      return new Field</* user-picked */ CustomCreditcardId, PccViewRow>(_path, "creditcardid", PccViewRow::creditcardid, Optional.empty(), Optional.empty(), (row, value) -> row.withCreditcardid(value), CustomCreditcardId.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PccViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, PccViewRow>(_path, "modifieddate", PccViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, PccViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().businessentityid(), this.fields().creditcardid(), this.fields().modifieddate());
+      return List.of(this.id(), this.businessentityid(), this.creditcardid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PccViewFields, PccViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PccViewFields, PccViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -65,4 +61,12 @@ public interface PccViewFields {
   Field</* user-picked */ CustomCreditcardId, PccViewRow> creditcardid();
 
   Field<TypoLocalDateTime, PccViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, PccViewRow>> columns();
+
+  @Override
+  default RowParser<PccViewRow> rowParser() {
+    return PccViewRow._rowParser;
+  };
 }

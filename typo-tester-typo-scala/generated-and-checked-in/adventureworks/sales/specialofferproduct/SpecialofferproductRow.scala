@@ -50,7 +50,7 @@ case class SpecialofferproductRow(
 }
 
 object SpecialofferproductRow {
-  val `_rowParser`: RowParser[SpecialofferproductRow] = RowParsers.of(SpecialofferId.pgType, ProductId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, SpecialofferproductRow.apply, row => Array(row.specialofferid, row.productid, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[SpecialofferproductRow] = RowParsers.of(SpecialofferId.pgType, ProductId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, SpecialofferproductRow.apply, row => Array[Object](row.specialofferid.asInstanceOf[Object], row.productid.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   def apply(
     compositeId: SpecialofferproductId,

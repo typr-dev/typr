@@ -6,38 +6,40 @@
 package adventureworks.public.test_organisasjon
 
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait TestOrganisasjonFields {
+trait TestOrganisasjonFields extends FieldsExpr[TestOrganisasjonRow] {
   def organisasjonskode: IdField[TestOrganisasjonId, TestOrganisasjonRow]
+
+  override def columns: java.util.List[FieldLike[?, TestOrganisasjonRow]]
+
+  override def rowParser: RowParser[TestOrganisasjonRow] = TestOrganisasjonRow._rowParser
 }
 
 object TestOrganisasjonFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[TestOrganisasjonFields, TestOrganisasjonRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends TestOrganisasjonFields with Relation[TestOrganisasjonFields, TestOrganisasjonRow] {
 
-    override lazy val fields: TestOrganisasjonFields = {
-      new TestOrganisasjonFields {
-        override def organisasjonskode: IdField[TestOrganisasjonId, TestOrganisasjonRow] = {
-          new IdField[TestOrganisasjonId, TestOrganisasjonRow](
-            _path,
-            "organisasjonskode",
-            _.organisasjonskode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(organisasjonskode = value),
-            TestOrganisasjonId.pgType
-          )
-        }
-      }
+    override def organisasjonskode: IdField[TestOrganisasjonId, TestOrganisasjonRow] = {
+      new IdField[TestOrganisasjonId, TestOrganisasjonRow](
+        _path,
+        "organisasjonskode",
+        _.organisasjonskode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(organisasjonskode = value),
+        TestOrganisasjonId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, TestOrganisasjonRow]] = java.util.List.of(this.fields.organisasjonskode)
+    override def columns: java.util.List[FieldLike[?, TestOrganisasjonRow]] = java.util.List.of(this.organisasjonskode)
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(`_path`: java.util.List[Path]): Relation[TestOrganisasjonFields, TestOrganisasjonRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[TestOrganisasjonFields, TestOrganisasjonRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

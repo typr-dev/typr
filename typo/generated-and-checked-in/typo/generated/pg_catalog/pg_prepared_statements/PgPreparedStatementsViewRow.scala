@@ -5,10 +5,7 @@
  *
  * (If you're developing `typo` and want to change it: run `bleep generate-sources`)
  */
-package typo
-package generated
-package pg_catalog
-package pg_prepared_statements
+package typo.generated.pg_catalog.pg_prepared_statements
 
 import anorm.Column
 import anorm.RowParser
@@ -34,41 +31,64 @@ case class PgPreparedStatementsViewRow(
   prepareTime: /* nullability unknown */ Option[TypoInstant],
   /** debug: {"columnClassName":"java.sql.Array","columnDisplaySize":2147483647,"parsedColumnName":{"name":"parameter_types","originalName":"parameter_types"},"columnName":"parameter_types","columnType":"Array","columnTypeName":"_regtype","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0} */
   parameterTypes: /* nullability unknown */ Option[Array[TypoRegtype]],
+  /** debug: {"columnClassName":"java.sql.Array","columnDisplaySize":2147483647,"parsedColumnName":{"name":"result_types","originalName":"result_types"},"columnName":"result_types","columnType":"Array","columnTypeName":"_regtype","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0} */
+  resultTypes: /* nullability unknown */ Option[Array[TypoRegtype]],
   /** debug: {"columnClassName":"java.lang.Boolean","columnDisplaySize":1,"parsedColumnName":{"name":"from_sql","originalName":"from_sql"},"columnName":"from_sql","columnType":"Bit","columnTypeName":"bool","format":0,"isAutoIncrement":false,"isCaseSensitive":false,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":1,"scale":0} */
-  fromSql: /* nullability unknown */ Option[Boolean]
+  fromSql: /* nullability unknown */ Option[Boolean],
+  /** debug: {"columnClassName":"java.lang.Long","columnDisplaySize":20,"parsedColumnName":{"name":"generic_plans","originalName":"generic_plans"},"columnName":"generic_plans","columnType":"BigInt","columnTypeName":"int8","format":0,"isAutoIncrement":false,"isCaseSensitive":false,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":true,"isWritable":true,"precision":19,"scale":0} */
+  genericPlans: /* nullability unknown */ Option[Long],
+  /** debug: {"columnClassName":"java.lang.Long","columnDisplaySize":20,"parsedColumnName":{"name":"custom_plans","originalName":"custom_plans"},"columnName":"custom_plans","columnType":"BigInt","columnTypeName":"int8","format":0,"isAutoIncrement":false,"isCaseSensitive":false,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":true,"isWritable":true,"precision":19,"scale":0} */
+  customPlans: /* nullability unknown */ Option[Long]
 )
 
 object PgPreparedStatementsViewRow {
-  implicit lazy val reads: Reads[PgPreparedStatementsViewRow] = Reads[PgPreparedStatementsViewRow](json => JsResult.fromTry(
-      Try(
-        PgPreparedStatementsViewRow(
-          name = json.\("name").toOption.map(_.as(Reads.StringReads)),
-          statement = json.\("statement").toOption.map(_.as(Reads.StringReads)),
-          prepareTime = json.\("prepare_time").toOption.map(_.as(TypoInstant.reads)),
-          parameterTypes = json.\("parameter_types").toOption.map(_.as(Reads.ArrayReads[TypoRegtype](using TypoRegtype.reads, implicitly))),
-          fromSql = json.\("from_sql").toOption.map(_.as(Reads.BooleanReads))
+  implicit lazy val reads: Reads[PgPreparedStatementsViewRow] = {
+    Reads[PgPreparedStatementsViewRow](json => JsResult.fromTry(
+        Try(
+          PgPreparedStatementsViewRow(
+            name = json.\("name").toOption.map(_.as(Reads.StringReads)),
+            statement = json.\("statement").toOption.map(_.as(Reads.StringReads)),
+            prepareTime = json.\("prepare_time").toOption.map(_.as(TypoInstant.reads)),
+            parameterTypes = json.\("parameter_types").toOption.map(_.as(Reads.ArrayReads[TypoRegtype](TypoRegtype.reads, implicitly))),
+            resultTypes = json.\("result_types").toOption.map(_.as(Reads.ArrayReads[TypoRegtype](TypoRegtype.reads, implicitly))),
+            fromSql = json.\("from_sql").toOption.map(_.as(Reads.BooleanReads)),
+            genericPlans = json.\("generic_plans").toOption.map(_.as(Reads.LongReads)),
+            customPlans = json.\("custom_plans").toOption.map(_.as(Reads.LongReads))
+          )
         )
-      )
-    ),
-  )
-  def rowParser(idx: Int): RowParser[PgPreparedStatementsViewRow] = RowParser[PgPreparedStatementsViewRow] { row =>
-    Success(
-      PgPreparedStatementsViewRow(
-        name = row(idx + 0)(Column.columnToOption(Column.columnToString)),
-        statement = row(idx + 1)(Column.columnToOption(Column.columnToString)),
-        prepareTime = row(idx + 2)(Column.columnToOption(TypoInstant.column)),
-        parameterTypes = row(idx + 3)(Column.columnToOption(TypoRegtype.arrayColumn)),
-        fromSql = row(idx + 4)(Column.columnToOption(Column.columnToBoolean))
-      )
+      ),
     )
   }
-  implicit lazy val writes: OWrites[PgPreparedStatementsViewRow] = OWrites[PgPreparedStatementsViewRow](o =>
-    new JsObject(ListMap[String, JsValue](
-      "name" -> Writes.OptionWrites(Writes.StringWrites).writes(o.name),
-      "statement" -> Writes.OptionWrites(Writes.StringWrites).writes(o.statement),
-      "prepare_time" -> Writes.OptionWrites(TypoInstant.writes).writes(o.prepareTime),
-      "parameter_types" -> Writes.OptionWrites(Writes.arrayWrites[TypoRegtype](using implicitly, TypoRegtype.writes)).writes(o.parameterTypes),
-      "from_sql" -> Writes.OptionWrites(Writes.BooleanWrites).writes(o.fromSql)
-    ))
-  )
+
+  def rowParser(idx: Int): RowParser[PgPreparedStatementsViewRow] = {
+    RowParser[PgPreparedStatementsViewRow] { row =>
+      Success(
+        PgPreparedStatementsViewRow(
+          name = row(idx + 0)(Column.columnToOption(Column.columnToString)),
+          statement = row(idx + 1)(Column.columnToOption(Column.columnToString)),
+          prepareTime = row(idx + 2)(Column.columnToOption(TypoInstant.column)),
+          parameterTypes = row(idx + 3)(Column.columnToOption(TypoRegtype.arrayColumn)),
+          resultTypes = row(idx + 4)(Column.columnToOption(TypoRegtype.arrayColumn)),
+          fromSql = row(idx + 5)(Column.columnToOption(Column.columnToBoolean)),
+          genericPlans = row(idx + 6)(Column.columnToOption(Column.columnToLong)),
+          customPlans = row(idx + 7)(Column.columnToOption(Column.columnToLong))
+        )
+      )
+    }
+  }
+
+  implicit lazy val writes: OWrites[PgPreparedStatementsViewRow] = {
+    OWrites[PgPreparedStatementsViewRow](o =>
+      new JsObject(ListMap[String, JsValue](
+        "name" -> Writes.OptionWrites(Writes.StringWrites).writes(o.name),
+        "statement" -> Writes.OptionWrites(Writes.StringWrites).writes(o.statement),
+        "prepare_time" -> Writes.OptionWrites(TypoInstant.writes).writes(o.prepareTime),
+        "parameter_types" -> Writes.OptionWrites(Writes.arrayWrites[TypoRegtype](implicitly, TypoRegtype.writes)).writes(o.parameterTypes),
+        "result_types" -> Writes.OptionWrites(Writes.arrayWrites[TypoRegtype](implicitly, TypoRegtype.writes)).writes(o.resultTypes),
+        "from_sql" -> Writes.OptionWrites(Writes.BooleanWrites).writes(o.fromSql),
+        "generic_plans" -> Writes.OptionWrites(Writes.LongWrites).writes(o.genericPlans),
+        "custom_plans" -> Writes.OptionWrites(Writes.LongWrites).writes(o.customPlans)
+      ))
+    )
+  }
 }

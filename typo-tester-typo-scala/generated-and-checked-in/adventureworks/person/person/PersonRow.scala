@@ -87,7 +87,7 @@ case class PersonRow(
 }
 
 object PersonRow {
-  val `_rowParser`: RowParser[PersonRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.bpchar, NameStyle.pgType, PgTypes.text.opt(), FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text.opt(), PgTypes.int4, TypoXml.pgType.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, PersonRow.apply, row => Array(row.businessentityid, row.persontype, row.namestyle, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.emailpromotion, row.additionalcontactinfo, row.demographics, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[PersonRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.bpchar, NameStyle.pgType, PgTypes.text.opt(), FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text.opt(), PgTypes.int4, TypoXml.pgType.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, PersonRow.apply, row => Array[Object](row.businessentityid.asInstanceOf[Object], row.persontype.asInstanceOf[Object], row.namestyle.asInstanceOf[Object], row.title.asInstanceOf[Object], row.firstname.asInstanceOf[Object], row.middlename.asInstanceOf[Object], row.lastname.asInstanceOf[Object], row.suffix.asInstanceOf[Object], row.emailpromotion.asInstanceOf[Object], row.additionalcontactinfo.asInstanceOf[Object], row.demographics.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   given pgText: PgText[PersonRow] = PgText.from(`_rowParser`)
 }

@@ -40,7 +40,7 @@ case class FlaffRow(
 }
 
 object FlaffRow {
-  val `_rowParser`: RowParser[FlaffRow] = RowParsers.of(ShortText.pgType, PgTypes.text, PgTypes.int4, ShortText.pgType, ShortText.pgType.opt(), FlaffRow.apply, row => Array(row.code, row.anotherCode, row.someNumber, row.specifier, row.parentspecifier))
+  val `_rowParser`: RowParser[FlaffRow] = RowParsers.of(ShortText.pgType, PgTypes.text, PgTypes.int4, ShortText.pgType, ShortText.pgType.opt(), FlaffRow.apply, row => Array[Object](row.code.asInstanceOf[Object], row.anotherCode.asInstanceOf[Object], row.someNumber.asInstanceOf[Object], row.specifier.asInstanceOf[Object], row.parentspecifier.asInstanceOf[Object]))
 
   def apply(
     compositeId: FlaffId,

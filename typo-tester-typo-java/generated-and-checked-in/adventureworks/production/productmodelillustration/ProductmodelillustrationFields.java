@@ -14,6 +14,7 @@ import adventureworks.production.productmodel.ProductmodelId;
 import adventureworks.production.productmodel.ProductmodelRow;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr;
@@ -23,43 +24,37 @@ import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface ProductmodelillustrationFields {
-  final class Impl extends Relation<ProductmodelillustrationFields, ProductmodelillustrationRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface ProductmodelillustrationFields extends FieldsExpr<ProductmodelillustrationRow> {
+  record Impl(List<Path> _path) implements ProductmodelillustrationFields, Relation<ProductmodelillustrationFields, ProductmodelillustrationRow> {
+    @Override
+    public IdField<ProductmodelId, ProductmodelillustrationRow> productmodelid() {
+      return new IdField<ProductmodelId, ProductmodelillustrationRow>(_path, "productmodelid", ProductmodelillustrationRow::productmodelid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductmodelid(value), ProductmodelId.pgType);
+    };
 
     @Override
-    public ProductmodelillustrationFields fields() {
-      return new ProductmodelillustrationFields() {
-               @Override
-               public IdField<ProductmodelId, ProductmodelillustrationRow> productmodelid() {
-                 return new IdField<ProductmodelId, ProductmodelillustrationRow>(_path, "productmodelid", ProductmodelillustrationRow::productmodelid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductmodelid(value), ProductmodelId.pgType);
-               };
-               @Override
-               public IdField<IllustrationId, ProductmodelillustrationRow> illustrationid() {
-                 return new IdField<IllustrationId, ProductmodelillustrationRow>(_path, "illustrationid", ProductmodelillustrationRow::illustrationid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withIllustrationid(value), IllustrationId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, ProductmodelillustrationRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, ProductmodelillustrationRow>(_path, "modifieddate", ProductmodelillustrationRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public IdField<IllustrationId, ProductmodelillustrationRow> illustrationid() {
+      return new IdField<IllustrationId, ProductmodelillustrationRow>(_path, "illustrationid", ProductmodelillustrationRow::illustrationid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withIllustrationid(value), IllustrationId.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, ProductmodelillustrationRow> modifieddate() {
+      return new Field<TypoLocalDateTime, ProductmodelillustrationRow>(_path, "modifieddate", ProductmodelillustrationRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, ProductmodelillustrationRow>> columns() {
-      return List.of(this.fields().productmodelid(), this.fields().illustrationid(), this.fields().modifieddate());
+      return List.of(this.productmodelid(), this.illustrationid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<ProductmodelillustrationFields, ProductmodelillustrationRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<ProductmodelillustrationFields, ProductmodelillustrationRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -83,5 +78,13 @@ public interface ProductmodelillustrationFields {
 
   default SqlExpr<Boolean> compositeIdIn(List<ProductmodelillustrationId> compositeIds) {
     return new CompositeIn(List.of(new Part<ProductmodelId, ProductmodelillustrationId, ProductmodelillustrationRow>(productmodelid(), ProductmodelillustrationId::productmodelid, ProductmodelId.pgType), new Part<IllustrationId, ProductmodelillustrationId, ProductmodelillustrationRow>(illustrationid(), ProductmodelillustrationId::illustrationid, IllustrationId.pgType)), compositeIds);
+  };
+
+  @Override
+  List<FieldLike<?, ProductmodelillustrationRow>> columns();
+
+  @Override
+  default RowParser<ProductmodelillustrationRow> rowParser() {
+    return ProductmodelillustrationRow._rowParser;
   };
 }

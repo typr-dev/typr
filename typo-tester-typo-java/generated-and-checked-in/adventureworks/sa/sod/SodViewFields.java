@@ -14,81 +14,84 @@ import adventureworks.sales.specialoffer.SpecialofferId;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface SodViewFields {
-  final class Impl extends Relation<SodViewFields, SodViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface SodViewFields extends FieldsExpr<SodViewRow> {
+  record Impl(List<Path> _path) implements SodViewFields, Relation<SodViewFields, SodViewRow> {
+    @Override
+    public Field<Integer, SodViewRow> id() {
+      return new Field<Integer, SodViewRow>(_path, "id", SodViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), PgTypes.int4);
+    };
 
     @Override
-    public SodViewFields fields() {
-      return new SodViewFields() {
-               @Override
-               public Field<Integer, SodViewRow> id() {
-                 return new Field<Integer, SodViewRow>(_path, "id", SodViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), PgTypes.int4);
-               };
-               @Override
-               public Field<SalesorderheaderId, SodViewRow> salesorderid() {
-                 return new Field<SalesorderheaderId, SodViewRow>(_path, "salesorderid", SodViewRow::salesorderid, Optional.empty(), Optional.empty(), (row, value) -> row.withSalesorderid(value), SalesorderheaderId.pgType);
-               };
-               @Override
-               public Field<Integer, SodViewRow> salesorderdetailid() {
-                 return new Field<Integer, SodViewRow>(_path, "salesorderdetailid", SodViewRow::salesorderdetailid, Optional.empty(), Optional.empty(), (row, value) -> row.withSalesorderdetailid(value), PgTypes.int4);
-               };
-               @Override
-               public OptField</* max 25 chars */ String, SodViewRow> carriertrackingnumber() {
-                 return new OptField</* max 25 chars */ String, SodViewRow>(_path, "carriertrackingnumber", SodViewRow::carriertrackingnumber, Optional.empty(), Optional.empty(), (row, value) -> row.withCarriertrackingnumber(value), PgTypes.text);
-               };
-               @Override
-               public Field<TypoShort, SodViewRow> orderqty() {
-                 return new Field<TypoShort, SodViewRow>(_path, "orderqty", SodViewRow::orderqty, Optional.empty(), Optional.empty(), (row, value) -> row.withOrderqty(value), TypoShort.pgType);
-               };
-               @Override
-               public Field<ProductId, SodViewRow> productid() {
-                 return new Field<ProductId, SodViewRow>(_path, "productid", SodViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
-               };
-               @Override
-               public Field<SpecialofferId, SodViewRow> specialofferid() {
-                 return new Field<SpecialofferId, SodViewRow>(_path, "specialofferid", SodViewRow::specialofferid, Optional.empty(), Optional.empty(), (row, value) -> row.withSpecialofferid(value), SpecialofferId.pgType);
-               };
-               @Override
-               public Field<BigDecimal, SodViewRow> unitprice() {
-                 return new Field<BigDecimal, SodViewRow>(_path, "unitprice", SodViewRow::unitprice, Optional.empty(), Optional.empty(), (row, value) -> row.withUnitprice(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<BigDecimal, SodViewRow> unitpricediscount() {
-                 return new Field<BigDecimal, SodViewRow>(_path, "unitpricediscount", SodViewRow::unitpricediscount, Optional.empty(), Optional.empty(), (row, value) -> row.withUnitpricediscount(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<TypoUUID, SodViewRow> rowguid() {
-                 return new Field<TypoUUID, SodViewRow>(_path, "rowguid", SodViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, SodViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, SodViewRow>(_path, "modifieddate", SodViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<SalesorderheaderId, SodViewRow> salesorderid() {
+      return new Field<SalesorderheaderId, SodViewRow>(_path, "salesorderid", SodViewRow::salesorderid, Optional.empty(), Optional.empty(), (row, value) -> row.withSalesorderid(value), SalesorderheaderId.pgType);
+    };
+
+    @Override
+    public Field<Integer, SodViewRow> salesorderdetailid() {
+      return new Field<Integer, SodViewRow>(_path, "salesorderdetailid", SodViewRow::salesorderdetailid, Optional.empty(), Optional.empty(), (row, value) -> row.withSalesorderdetailid(value), PgTypes.int4);
+    };
+
+    @Override
+    public OptField</* max 25 chars */ String, SodViewRow> carriertrackingnumber() {
+      return new OptField</* max 25 chars */ String, SodViewRow>(_path, "carriertrackingnumber", SodViewRow::carriertrackingnumber, Optional.empty(), Optional.empty(), (row, value) -> row.withCarriertrackingnumber(value), PgTypes.text);
+    };
+
+    @Override
+    public Field<TypoShort, SodViewRow> orderqty() {
+      return new Field<TypoShort, SodViewRow>(_path, "orderqty", SodViewRow::orderqty, Optional.empty(), Optional.empty(), (row, value) -> row.withOrderqty(value), TypoShort.pgType);
+    };
+
+    @Override
+    public Field<ProductId, SodViewRow> productid() {
+      return new Field<ProductId, SodViewRow>(_path, "productid", SodViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
+    };
+
+    @Override
+    public Field<SpecialofferId, SodViewRow> specialofferid() {
+      return new Field<SpecialofferId, SodViewRow>(_path, "specialofferid", SodViewRow::specialofferid, Optional.empty(), Optional.empty(), (row, value) -> row.withSpecialofferid(value), SpecialofferId.pgType);
+    };
+
+    @Override
+    public Field<BigDecimal, SodViewRow> unitprice() {
+      return new Field<BigDecimal, SodViewRow>(_path, "unitprice", SodViewRow::unitprice, Optional.empty(), Optional.empty(), (row, value) -> row.withUnitprice(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<BigDecimal, SodViewRow> unitpricediscount() {
+      return new Field<BigDecimal, SodViewRow>(_path, "unitpricediscount", SodViewRow::unitpricediscount, Optional.empty(), Optional.empty(), (row, value) -> row.withUnitpricediscount(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<TypoUUID, SodViewRow> rowguid() {
+      return new Field<TypoUUID, SodViewRow>(_path, "rowguid", SodViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, SodViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, SodViewRow>(_path, "modifieddate", SodViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, SodViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().salesorderid(), this.fields().salesorderdetailid(), this.fields().carriertrackingnumber(), this.fields().orderqty(), this.fields().productid(), this.fields().specialofferid(), this.fields().unitprice(), this.fields().unitpricediscount(), this.fields().rowguid(), this.fields().modifieddate());
+      return List.of(this.id(), this.salesorderid(), this.salesorderdetailid(), this.carriertrackingnumber(), this.orderqty(), this.productid(), this.specialofferid(), this.unitprice(), this.unitpricediscount(), this.rowguid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<SodViewFields, SodViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<SodViewFields, SodViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -113,4 +116,12 @@ public interface SodViewFields {
   Field<TypoUUID, SodViewRow> rowguid();
 
   Field<TypoLocalDateTime, SodViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, SodViewRow>> columns();
+
+  @Override
+  default RowParser<SodViewRow> rowParser() {
+    return SodViewRow._rowParser;
+  };
 }

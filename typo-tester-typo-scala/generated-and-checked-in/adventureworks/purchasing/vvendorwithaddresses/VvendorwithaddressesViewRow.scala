@@ -35,5 +35,5 @@ case class VvendorwithaddressesViewRow(
 )
 
 object VvendorwithaddressesViewRow {
-  val `_rowParser`: RowParser[VvendorwithaddressesViewRow] = RowParsers.of(BusinessentityId.pgType, Name.pgType, Name.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text, Name.pgType, PgTypes.text, Name.pgType, VvendorwithaddressesViewRow.apply, row => Array(row.businessentityid, row.name, row.addresstype, row.addressline1, row.addressline2, row.city, row.stateprovincename, row.postalcode, row.countryregionname))
+  val `_rowParser`: RowParser[VvendorwithaddressesViewRow] = RowParsers.of(BusinessentityId.pgType, Name.pgType, Name.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text, Name.pgType, PgTypes.text, Name.pgType, VvendorwithaddressesViewRow.apply, row => Array[Object](row.businessentityid.asInstanceOf[Object], row.name.asInstanceOf[Object], row.addresstype.asInstanceOf[Object], row.addressline1.asInstanceOf[Object], row.addressline2.asInstanceOf[Object], row.city.asInstanceOf[Object], row.stateprovincename.asInstanceOf[Object], row.postalcode.asInstanceOf[Object], row.countryregionname.asInstanceOf[Object]))
 }

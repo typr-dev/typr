@@ -8,65 +8,69 @@ package adventureworks.production.unitmeasure
 import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.public.Name
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait UnitmeasureFields {
+trait UnitmeasureFields extends FieldsExpr[UnitmeasureRow] {
   def unitmeasurecode: IdField[UnitmeasureId, UnitmeasureRow]
 
   def name: Field[Name, UnitmeasureRow]
 
   def modifieddate: Field[TypoLocalDateTime, UnitmeasureRow]
+
+  override def columns: java.util.List[FieldLike[?, UnitmeasureRow]]
+
+  override def rowParser: RowParser[UnitmeasureRow] = UnitmeasureRow._rowParser
 }
 
 object UnitmeasureFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[UnitmeasureFields, UnitmeasureRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends UnitmeasureFields with Relation[UnitmeasureFields, UnitmeasureRow] {
 
-    override lazy val fields: UnitmeasureFields = {
-      new UnitmeasureFields {
-        override def unitmeasurecode: IdField[UnitmeasureId, UnitmeasureRow] = {
-          new IdField[UnitmeasureId, UnitmeasureRow](
-            _path,
-            "unitmeasurecode",
-            _.unitmeasurecode,
-            Optional.empty(),
-            Optional.of("bpchar"),
-            (row, value) => row.copy(unitmeasurecode = value),
-            UnitmeasureId.pgType
-          )
-        }
-        override def name: Field[Name, UnitmeasureRow] = {
-          new Field[Name, UnitmeasureRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.of("varchar"),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, UnitmeasureRow] = {
-          new Field[TypoLocalDateTime, UnitmeasureRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def unitmeasurecode: IdField[UnitmeasureId, UnitmeasureRow] = {
+      new IdField[UnitmeasureId, UnitmeasureRow](
+        _path,
+        "unitmeasurecode",
+        _.unitmeasurecode,
+        Optional.empty(),
+        Optional.of("bpchar"),
+        (row, value) => row.copy(unitmeasurecode = value),
+        UnitmeasureId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, UnitmeasureRow]] = java.util.List.of(this.fields.unitmeasurecode, this.fields.name, this.fields.modifieddate)
+    override def name: Field[Name, UnitmeasureRow] = {
+      new Field[Name, UnitmeasureRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.of("varchar"),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def modifieddate: Field[TypoLocalDateTime, UnitmeasureRow] = {
+      new Field[TypoLocalDateTime, UnitmeasureRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, UnitmeasureRow]] = java.util.List.of(this.unitmeasurecode, this.name, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[UnitmeasureFields, UnitmeasureRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[UnitmeasureFields, UnitmeasureRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

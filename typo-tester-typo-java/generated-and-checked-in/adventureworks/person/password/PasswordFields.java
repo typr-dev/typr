@@ -12,6 +12,7 @@ import adventureworks.person.person.PersonFields;
 import adventureworks.person.person.PersonRow;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
@@ -19,51 +20,47 @@ import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface PasswordFields {
-  final class Impl extends Relation<PasswordFields, PasswordRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PasswordFields extends FieldsExpr<PasswordRow> {
+  record Impl(List<Path> _path) implements PasswordFields, Relation<PasswordFields, PasswordRow> {
+    @Override
+    public IdField<BusinessentityId, PasswordRow> businessentityid() {
+      return new IdField<BusinessentityId, PasswordRow>(_path, "businessentityid", PasswordRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
+    };
 
     @Override
-    public PasswordFields fields() {
-      return new PasswordFields() {
-               @Override
-               public IdField<BusinessentityId, PasswordRow> businessentityid() {
-                 return new IdField<BusinessentityId, PasswordRow>(_path, "businessentityid", PasswordRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field</* max 128 chars */ String, PasswordRow> passwordhash() {
-                 return new Field</* max 128 chars */ String, PasswordRow>(_path, "passwordhash", PasswordRow::passwordhash, Optional.empty(), Optional.empty(), (row, value) -> row.withPasswordhash(value), PgTypes.text);
-               };
-               @Override
-               public Field</* max 10 chars */ String, PasswordRow> passwordsalt() {
-                 return new Field</* max 10 chars */ String, PasswordRow>(_path, "passwordsalt", PasswordRow::passwordsalt, Optional.empty(), Optional.empty(), (row, value) -> row.withPasswordsalt(value), PgTypes.text);
-               };
-               @Override
-               public Field<TypoUUID, PasswordRow> rowguid() {
-                 return new Field<TypoUUID, PasswordRow>(_path, "rowguid", PasswordRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PasswordRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, PasswordRow>(_path, "modifieddate", PasswordRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field</* max 128 chars */ String, PasswordRow> passwordhash() {
+      return new Field</* max 128 chars */ String, PasswordRow>(_path, "passwordhash", PasswordRow::passwordhash, Optional.empty(), Optional.empty(), (row, value) -> row.withPasswordhash(value), PgTypes.text);
+    };
+
+    @Override
+    public Field</* max 10 chars */ String, PasswordRow> passwordsalt() {
+      return new Field</* max 10 chars */ String, PasswordRow>(_path, "passwordsalt", PasswordRow::passwordsalt, Optional.empty(), Optional.empty(), (row, value) -> row.withPasswordsalt(value), PgTypes.text);
+    };
+
+    @Override
+    public Field<TypoUUID, PasswordRow> rowguid() {
+      return new Field<TypoUUID, PasswordRow>(_path, "rowguid", PasswordRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PasswordRow> modifieddate() {
+      return new Field<TypoLocalDateTime, PasswordRow>(_path, "modifieddate", PasswordRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, PasswordRow>> columns() {
-      return List.of(this.fields().businessentityid(), this.fields().passwordhash(), this.fields().passwordsalt(), this.fields().rowguid(), this.fields().modifieddate());
+      return List.of(this.businessentityid(), this.passwordhash(), this.passwordsalt(), this.rowguid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PasswordFields, PasswordRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PasswordFields, PasswordRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -79,5 +76,13 @@ public interface PasswordFields {
 
   default ForeignKey<PersonFields, PersonRow> fkPerson() {
     return ForeignKey.<PersonFields, PersonRow>of("person.FK_Password_Person_BusinessEntityID").withColumnPair(businessentityid(), PersonFields::businessentityid);
+  };
+
+  @Override
+  List<FieldLike<?, PasswordRow>> columns();
+
+  @Override
+  default RowParser<PasswordRow> rowParser() {
+    return PasswordRow._rowParser;
   };
 }

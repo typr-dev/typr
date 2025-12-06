@@ -13,6 +13,7 @@ import testdb.brands.BrandsFields;
 import testdb.brands.BrandsId;
 import testdb.brands.BrandsRow;
 import typo.data.maria.MariaSet;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
@@ -21,103 +22,112 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.MariaTypes;
+import typo.runtime.RowParser;
 
-public interface ProductsFields {
-  final class Impl extends Relation<ProductsFields, ProductsRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface ProductsFields extends FieldsExpr<ProductsRow> {
+  record Impl(List<Path> _path) implements ProductsFields, Relation<ProductsFields, ProductsRow> {
+    @Override
+    public IdField<ProductsId, ProductsRow> productId() {
+      return new IdField<ProductsId, ProductsRow>(_path, "product_id", ProductsRow::productId, Optional.empty(), Optional.empty(), (row, value) -> row.withProductId(value), ProductsId.pgType);
+    };
 
     @Override
-    public ProductsFields fields() {
-      return new ProductsFields() {
-               @Override
-               public IdField<ProductsId, ProductsRow> productId() {
-                 return new IdField<ProductsId, ProductsRow>(_path, "product_id", ProductsRow::productId, Optional.empty(), Optional.empty(), (row, value) -> row.withProductId(value), ProductsId.pgType);
-               };
-               @Override
-               public Field<String, ProductsRow> sku() {
-                 return new Field<String, ProductsRow>(_path, "sku", ProductsRow::sku, Optional.empty(), Optional.empty(), (row, value) -> row.withSku(value), MariaTypes.varchar);
-               };
-               @Override
-               public OptField<BrandsId, ProductsRow> brandId() {
-                 return new OptField<BrandsId, ProductsRow>(_path, "brand_id", ProductsRow::brandId, Optional.empty(), Optional.empty(), (row, value) -> row.withBrandId(value), BrandsId.pgType);
-               };
-               @Override
-               public Field<String, ProductsRow> name() {
-                 return new Field<String, ProductsRow>(_path, "name", ProductsRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), MariaTypes.varchar);
-               };
-               @Override
-               public OptField<String, ProductsRow> shortDescription() {
-                 return new OptField<String, ProductsRow>(_path, "short_description", ProductsRow::shortDescription, Optional.empty(), Optional.empty(), (row, value) -> row.withShortDescription(value), MariaTypes.varchar);
-               };
-               @Override
-               public OptField<String, ProductsRow> fullDescription() {
-                 return new OptField<String, ProductsRow>(_path, "full_description", ProductsRow::fullDescription, Optional.empty(), Optional.empty(), (row, value) -> row.withFullDescription(value), MariaTypes.longtext);
-               };
-               @Override
-               public Field<BigDecimal, ProductsRow> basePrice() {
-                 return new Field<BigDecimal, ProductsRow>(_path, "base_price", ProductsRow::basePrice, Optional.empty(), Optional.empty(), (row, value) -> row.withBasePrice(value), MariaTypes.decimal);
-               };
-               @Override
-               public OptField<BigDecimal, ProductsRow> costPrice() {
-                 return new OptField<BigDecimal, ProductsRow>(_path, "cost_price", ProductsRow::costPrice, Optional.empty(), Optional.empty(), (row, value) -> row.withCostPrice(value), MariaTypes.decimal);
-               };
-               @Override
-               public OptField<BigDecimal, ProductsRow> weightKg() {
-                 return new OptField<BigDecimal, ProductsRow>(_path, "weight_kg", ProductsRow::weightKg, Optional.empty(), Optional.empty(), (row, value) -> row.withWeightKg(value), MariaTypes.decimal);
-               };
-               @Override
-               public OptField<String, ProductsRow> dimensionsJson() {
-                 return new OptField<String, ProductsRow>(_path, "dimensions_json", ProductsRow::dimensionsJson, Optional.empty(), Optional.empty(), (row, value) -> row.withDimensionsJson(value), MariaTypes.longtext);
-               };
-               @Override
-               public Field<String, ProductsRow> status() {
-                 return new Field<String, ProductsRow>(_path, "status", ProductsRow::status, Optional.empty(), Optional.empty(), (row, value) -> row.withStatus(value), MariaTypes.text);
-               };
-               @Override
-               public Field<String, ProductsRow> taxClass() {
-                 return new Field<String, ProductsRow>(_path, "tax_class", ProductsRow::taxClass, Optional.empty(), Optional.empty(), (row, value) -> row.withTaxClass(value), MariaTypes.text);
-               };
-               @Override
-               public OptField<MariaSet, ProductsRow> tags() {
-                 return new OptField<MariaSet, ProductsRow>(_path, "tags", ProductsRow::tags, Optional.empty(), Optional.empty(), (row, value) -> row.withTags(value), MariaTypes.set);
-               };
-               @Override
-               public OptField<String, ProductsRow> attributes() {
-                 return new OptField<String, ProductsRow>(_path, "attributes", ProductsRow::attributes, Optional.empty(), Optional.empty(), (row, value) -> row.withAttributes(value), MariaTypes.longtext);
-               };
-               @Override
-               public OptField<String, ProductsRow> seoMetadata() {
-                 return new OptField<String, ProductsRow>(_path, "seo_metadata", ProductsRow::seoMetadata, Optional.empty(), Optional.empty(), (row, value) -> row.withSeoMetadata(value), MariaTypes.longtext);
-               };
-               @Override
-               public Field<LocalDateTime, ProductsRow> createdAt() {
-                 return new Field<LocalDateTime, ProductsRow>(_path, "created_at", ProductsRow::createdAt, Optional.empty(), Optional.empty(), (row, value) -> row.withCreatedAt(value), MariaTypes.datetime);
-               };
-               @Override
-               public Field<LocalDateTime, ProductsRow> updatedAt() {
-                 return new Field<LocalDateTime, ProductsRow>(_path, "updated_at", ProductsRow::updatedAt, Optional.empty(), Optional.empty(), (row, value) -> row.withUpdatedAt(value), MariaTypes.datetime);
-               };
-               @Override
-               public OptField<LocalDateTime, ProductsRow> publishedAt() {
-                 return new OptField<LocalDateTime, ProductsRow>(_path, "published_at", ProductsRow::publishedAt, Optional.empty(), Optional.empty(), (row, value) -> row.withPublishedAt(value), MariaTypes.datetime);
-               };
-             };
+    public Field<String, ProductsRow> sku() {
+      return new Field<String, ProductsRow>(_path, "sku", ProductsRow::sku, Optional.empty(), Optional.empty(), (row, value) -> row.withSku(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public OptField<BrandsId, ProductsRow> brandId() {
+      return new OptField<BrandsId, ProductsRow>(_path, "brand_id", ProductsRow::brandId, Optional.empty(), Optional.empty(), (row, value) -> row.withBrandId(value), BrandsId.pgType);
+    };
+
+    @Override
+    public Field<String, ProductsRow> name() {
+      return new Field<String, ProductsRow>(_path, "name", ProductsRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public OptField<String, ProductsRow> shortDescription() {
+      return new OptField<String, ProductsRow>(_path, "short_description", ProductsRow::shortDescription, Optional.empty(), Optional.empty(), (row, value) -> row.withShortDescription(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public OptField<String, ProductsRow> fullDescription() {
+      return new OptField<String, ProductsRow>(_path, "full_description", ProductsRow::fullDescription, Optional.empty(), Optional.empty(), (row, value) -> row.withFullDescription(value), MariaTypes.longtext);
+    };
+
+    @Override
+    public Field<BigDecimal, ProductsRow> basePrice() {
+      return new Field<BigDecimal, ProductsRow>(_path, "base_price", ProductsRow::basePrice, Optional.empty(), Optional.empty(), (row, value) -> row.withBasePrice(value), MariaTypes.decimal);
+    };
+
+    @Override
+    public OptField<BigDecimal, ProductsRow> costPrice() {
+      return new OptField<BigDecimal, ProductsRow>(_path, "cost_price", ProductsRow::costPrice, Optional.empty(), Optional.empty(), (row, value) -> row.withCostPrice(value), MariaTypes.decimal);
+    };
+
+    @Override
+    public OptField<BigDecimal, ProductsRow> weightKg() {
+      return new OptField<BigDecimal, ProductsRow>(_path, "weight_kg", ProductsRow::weightKg, Optional.empty(), Optional.empty(), (row, value) -> row.withWeightKg(value), MariaTypes.decimal);
+    };
+
+    @Override
+    public OptField<String, ProductsRow> dimensionsJson() {
+      return new OptField<String, ProductsRow>(_path, "dimensions_json", ProductsRow::dimensionsJson, Optional.empty(), Optional.empty(), (row, value) -> row.withDimensionsJson(value), MariaTypes.longtext);
+    };
+
+    @Override
+    public Field<String, ProductsRow> status() {
+      return new Field<String, ProductsRow>(_path, "status", ProductsRow::status, Optional.empty(), Optional.empty(), (row, value) -> row.withStatus(value), MariaTypes.text);
+    };
+
+    @Override
+    public Field<String, ProductsRow> taxClass() {
+      return new Field<String, ProductsRow>(_path, "tax_class", ProductsRow::taxClass, Optional.empty(), Optional.empty(), (row, value) -> row.withTaxClass(value), MariaTypes.text);
+    };
+
+    @Override
+    public OptField<MariaSet, ProductsRow> tags() {
+      return new OptField<MariaSet, ProductsRow>(_path, "tags", ProductsRow::tags, Optional.empty(), Optional.empty(), (row, value) -> row.withTags(value), MariaTypes.set);
+    };
+
+    @Override
+    public OptField<String, ProductsRow> attributes() {
+      return new OptField<String, ProductsRow>(_path, "attributes", ProductsRow::attributes, Optional.empty(), Optional.empty(), (row, value) -> row.withAttributes(value), MariaTypes.longtext);
+    };
+
+    @Override
+    public OptField<String, ProductsRow> seoMetadata() {
+      return new OptField<String, ProductsRow>(_path, "seo_metadata", ProductsRow::seoMetadata, Optional.empty(), Optional.empty(), (row, value) -> row.withSeoMetadata(value), MariaTypes.longtext);
+    };
+
+    @Override
+    public Field<LocalDateTime, ProductsRow> createdAt() {
+      return new Field<LocalDateTime, ProductsRow>(_path, "created_at", ProductsRow::createdAt, Optional.empty(), Optional.empty(), (row, value) -> row.withCreatedAt(value), MariaTypes.datetime);
+    };
+
+    @Override
+    public Field<LocalDateTime, ProductsRow> updatedAt() {
+      return new Field<LocalDateTime, ProductsRow>(_path, "updated_at", ProductsRow::updatedAt, Optional.empty(), Optional.empty(), (row, value) -> row.withUpdatedAt(value), MariaTypes.datetime);
+    };
+
+    @Override
+    public OptField<LocalDateTime, ProductsRow> publishedAt() {
+      return new OptField<LocalDateTime, ProductsRow>(_path, "published_at", ProductsRow::publishedAt, Optional.empty(), Optional.empty(), (row, value) -> row.withPublishedAt(value), MariaTypes.datetime);
     };
 
     @Override
     public List<FieldLike<?, ProductsRow>> columns() {
-      return List.of(this.fields().productId(), this.fields().sku(), this.fields().brandId(), this.fields().name(), this.fields().shortDescription(), this.fields().fullDescription(), this.fields().basePrice(), this.fields().costPrice(), this.fields().weightKg(), this.fields().dimensionsJson(), this.fields().status(), this.fields().taxClass(), this.fields().tags(), this.fields().attributes(), this.fields().seoMetadata(), this.fields().createdAt(), this.fields().updatedAt(), this.fields().publishedAt());
+      return List.of(this.productId(), this.sku(), this.brandId(), this.name(), this.shortDescription(), this.fullDescription(), this.basePrice(), this.costPrice(), this.weightKg(), this.dimensionsJson(), this.status(), this.taxClass(), this.tags(), this.attributes(), this.seoMetadata(), this.createdAt(), this.updatedAt(), this.publishedAt());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<ProductsFields, ProductsRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<ProductsFields, ProductsRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -159,5 +169,13 @@ public interface ProductsFields {
 
   default ForeignKey<BrandsFields, BrandsRow> fkBrands() {
     return ForeignKey.<BrandsFields, BrandsRow>of("fk_product_brand").withColumnPair(brandId(), BrandsFields::brandId);
+  };
+
+  @Override
+  List<FieldLike<?, ProductsRow>> columns();
+
+  @Override
+  default RowParser<ProductsRow> rowParser() {
+    return ProductsRow._rowParser;
   };
 }

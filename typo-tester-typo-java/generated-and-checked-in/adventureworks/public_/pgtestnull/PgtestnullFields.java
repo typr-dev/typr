@@ -34,316 +34,378 @@ import adventureworks.public_.Myenum;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface PgtestnullFields {
-  final class Impl extends Relation<PgtestnullFields, PgtestnullRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PgtestnullFields extends FieldsExpr<PgtestnullRow> {
+  record Impl(List<Path> _path) implements PgtestnullFields, Relation<PgtestnullFields, PgtestnullRow> {
+    @Override
+    public OptField<Boolean, PgtestnullRow> bool() {
+      return new OptField<Boolean, PgtestnullRow>(_path, "bool", PgtestnullRow::bool, Optional.empty(), Optional.empty(), (row, value) -> row.withBool(value), PgTypes.bool);
+    };
 
     @Override
-    public PgtestnullFields fields() {
-      return new PgtestnullFields() {
-               @Override
-               public OptField<Boolean, PgtestnullRow> bool() {
-                 return new OptField<Boolean, PgtestnullRow>(_path, "bool", PgtestnullRow::bool, Optional.empty(), Optional.empty(), (row, value) -> row.withBool(value), PgTypes.bool);
-               };
-               @Override
-               public OptField<TypoBox, PgtestnullRow> box() {
-                 return new OptField<TypoBox, PgtestnullRow>(_path, "box", PgtestnullRow::box, Optional.empty(), Optional.of("box"), (row, value) -> row.withBox(value), TypoBox.pgType);
-               };
-               @Override
-               public OptField</* bpchar, max 3 chars */ String, PgtestnullRow> bpchar() {
-                 return new OptField</* bpchar, max 3 chars */ String, PgtestnullRow>(_path, "bpchar", PgtestnullRow::bpchar, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withBpchar(value), PgTypes.bpchar);
-               };
-               @Override
-               public OptField<TypoBytea, PgtestnullRow> bytea() {
-                 return new OptField<TypoBytea, PgtestnullRow>(_path, "bytea", PgtestnullRow::bytea, Optional.empty(), Optional.of("bytea"), (row, value) -> row.withBytea(value), TypoBytea.pgType);
-               };
-               @Override
-               public OptField</* bpchar, max 1 chars */ String, PgtestnullRow> char_() {
-                 return new OptField</* bpchar, max 1 chars */ String, PgtestnullRow>(_path, "char", PgtestnullRow::char_, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withChar(value), PgTypes.bpchar);
-               };
-               @Override
-               public OptField<TypoCircle, PgtestnullRow> circle() {
-                 return new OptField<TypoCircle, PgtestnullRow>(_path, "circle", PgtestnullRow::circle, Optional.empty(), Optional.of("circle"), (row, value) -> row.withCircle(value), TypoCircle.pgType);
-               };
-               @Override
-               public OptField<TypoLocalDate, PgtestnullRow> date() {
-                 return new OptField<TypoLocalDate, PgtestnullRow>(_path, "date", PgtestnullRow::date, Optional.of("text"), Optional.of("date"), (row, value) -> row.withDate(value), TypoLocalDate.pgType);
-               };
-               @Override
-               public OptField<Float, PgtestnullRow> float4() {
-                 return new OptField<Float, PgtestnullRow>(_path, "float4", PgtestnullRow::float4, Optional.empty(), Optional.of("float4"), (row, value) -> row.withFloat4(value), PgTypes.float4);
-               };
-               @Override
-               public OptField<Double, PgtestnullRow> float8() {
-                 return new OptField<Double, PgtestnullRow>(_path, "float8", PgtestnullRow::float8, Optional.empty(), Optional.of("float8"), (row, value) -> row.withFloat8(value), PgTypes.float8);
-               };
-               @Override
-               public OptField<TypoHStore, PgtestnullRow> hstore() {
-                 return new OptField<TypoHStore, PgtestnullRow>(_path, "hstore", PgtestnullRow::hstore, Optional.empty(), Optional.of("hstore"), (row, value) -> row.withHstore(value), TypoHStore.pgType);
-               };
-               @Override
-               public OptField<TypoInet, PgtestnullRow> inet() {
-                 return new OptField<TypoInet, PgtestnullRow>(_path, "inet", PgtestnullRow::inet, Optional.empty(), Optional.of("inet"), (row, value) -> row.withInet(value), TypoInet.pgType);
-               };
-               @Override
-               public OptField<TypoShort, PgtestnullRow> int2() {
-                 return new OptField<TypoShort, PgtestnullRow>(_path, "int2", PgtestnullRow::int2, Optional.empty(), Optional.of("int2"), (row, value) -> row.withInt2(value), TypoShort.pgType);
-               };
-               @Override
-               public OptField<TypoInt2Vector, PgtestnullRow> int2vector() {
-                 return new OptField<TypoInt2Vector, PgtestnullRow>(_path, "int2vector", PgtestnullRow::int2vector, Optional.empty(), Optional.of("int2vector"), (row, value) -> row.withInt2vector(value), TypoInt2Vector.pgType);
-               };
-               @Override
-               public OptField<Integer, PgtestnullRow> int4() {
-                 return new OptField<Integer, PgtestnullRow>(_path, "int4", PgtestnullRow::int4, Optional.empty(), Optional.of("int4"), (row, value) -> row.withInt4(value), PgTypes.int4);
-               };
-               @Override
-               public OptField<Long, PgtestnullRow> int8() {
-                 return new OptField<Long, PgtestnullRow>(_path, "int8", PgtestnullRow::int8, Optional.empty(), Optional.of("int8"), (row, value) -> row.withInt8(value), PgTypes.int8);
-               };
-               @Override
-               public OptField<TypoInterval, PgtestnullRow> interval() {
-                 return new OptField<TypoInterval, PgtestnullRow>(_path, "interval", PgtestnullRow::interval, Optional.empty(), Optional.of("interval"), (row, value) -> row.withInterval(value), TypoInterval.pgType);
-               };
-               @Override
-               public OptField<TypoJson, PgtestnullRow> json() {
-                 return new OptField<TypoJson, PgtestnullRow>(_path, "json", PgtestnullRow::json, Optional.empty(), Optional.of("json"), (row, value) -> row.withJson(value), TypoJson.pgType);
-               };
-               @Override
-               public OptField<TypoJsonb, PgtestnullRow> jsonb() {
-                 return new OptField<TypoJsonb, PgtestnullRow>(_path, "jsonb", PgtestnullRow::jsonb, Optional.empty(), Optional.of("jsonb"), (row, value) -> row.withJsonb(value), TypoJsonb.pgType);
-               };
-               @Override
-               public OptField<TypoLine, PgtestnullRow> line() {
-                 return new OptField<TypoLine, PgtestnullRow>(_path, "line", PgtestnullRow::line, Optional.empty(), Optional.of("line"), (row, value) -> row.withLine(value), TypoLine.pgType);
-               };
-               @Override
-               public OptField<TypoLineSegment, PgtestnullRow> lseg() {
-                 return new OptField<TypoLineSegment, PgtestnullRow>(_path, "lseg", PgtestnullRow::lseg, Optional.empty(), Optional.of("lseg"), (row, value) -> row.withLseg(value), TypoLineSegment.pgType);
-               };
-               @Override
-               public OptField<TypoMoney, PgtestnullRow> money() {
-                 return new OptField<TypoMoney, PgtestnullRow>(_path, "money", PgtestnullRow::money, Optional.of("numeric"), Optional.of("money"), (row, value) -> row.withMoney(value), TypoMoney.pgType);
-               };
-               @Override
-               public OptField<Mydomain, PgtestnullRow> mydomain() {
-                 return new OptField<Mydomain, PgtestnullRow>(_path, "mydomain", PgtestnullRow::mydomain, Optional.empty(), Optional.of("text"), (row, value) -> row.withMydomain(value), Mydomain.pgType);
-               };
-               @Override
-               public OptField<Myenum, PgtestnullRow> myenum() {
-                 return new OptField<Myenum, PgtestnullRow>(_path, "myenum", PgtestnullRow::myenum, Optional.empty(), Optional.of("public.myenum"), (row, value) -> row.withMyenum(value), Myenum.pgType);
-               };
-               @Override
-               public OptField<String, PgtestnullRow> name() {
-                 return new OptField<String, PgtestnullRow>(_path, "name", PgtestnullRow::name, Optional.empty(), Optional.of("name"), (row, value) -> row.withName(value), PgTypes.name);
-               };
-               @Override
-               public OptField<BigDecimal, PgtestnullRow> numeric() {
-                 return new OptField<BigDecimal, PgtestnullRow>(_path, "numeric", PgtestnullRow::numeric, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withNumeric(value), PgTypes.numeric);
-               };
-               @Override
-               public OptField<TypoPath, PgtestnullRow> path() {
-                 return new OptField<TypoPath, PgtestnullRow>(_path, "path", PgtestnullRow::path, Optional.empty(), Optional.of("path"), (row, value) -> row.withPath(value), TypoPath.pgType);
-               };
-               @Override
-               public OptField<TypoPoint, PgtestnullRow> point() {
-                 return new OptField<TypoPoint, PgtestnullRow>(_path, "point", PgtestnullRow::point, Optional.empty(), Optional.of("point"), (row, value) -> row.withPoint(value), TypoPoint.pgType);
-               };
-               @Override
-               public OptField<TypoPolygon, PgtestnullRow> polygon() {
-                 return new OptField<TypoPolygon, PgtestnullRow>(_path, "polygon", PgtestnullRow::polygon, Optional.empty(), Optional.of("polygon"), (row, value) -> row.withPolygon(value), TypoPolygon.pgType);
-               };
-               @Override
-               public OptField<String, PgtestnullRow> text() {
-                 return new OptField<String, PgtestnullRow>(_path, "text", PgtestnullRow::text, Optional.empty(), Optional.empty(), (row, value) -> row.withText(value), PgTypes.text);
-               };
-               @Override
-               public OptField<TypoLocalTime, PgtestnullRow> time() {
-                 return new OptField<TypoLocalTime, PgtestnullRow>(_path, "time", PgtestnullRow::time, Optional.of("text"), Optional.of("time"), (row, value) -> row.withTime(value), TypoLocalTime.pgType);
-               };
-               @Override
-               public OptField<TypoLocalDateTime, PgtestnullRow> timestamp() {
-                 return new OptField<TypoLocalDateTime, PgtestnullRow>(_path, "timestamp", PgtestnullRow::timestamp, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withTimestamp(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public OptField<TypoInstant, PgtestnullRow> timestampz() {
-                 return new OptField<TypoInstant, PgtestnullRow>(_path, "timestampz", PgtestnullRow::timestampz, Optional.of("text"), Optional.of("timestamptz"), (row, value) -> row.withTimestampz(value), TypoInstant.pgType);
-               };
-               @Override
-               public OptField<TypoOffsetTime, PgtestnullRow> timez() {
-                 return new OptField<TypoOffsetTime, PgtestnullRow>(_path, "timez", PgtestnullRow::timez, Optional.of("text"), Optional.of("timetz"), (row, value) -> row.withTimez(value), TypoOffsetTime.pgType);
-               };
-               @Override
-               public OptField<TypoUUID, PgtestnullRow> uuid() {
-                 return new OptField<TypoUUID, PgtestnullRow>(_path, "uuid", PgtestnullRow::uuid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withUuid(value), TypoUUID.pgType);
-               };
-               @Override
-               public OptField<String, PgtestnullRow> varchar() {
-                 return new OptField<String, PgtestnullRow>(_path, "varchar", PgtestnullRow::varchar, Optional.empty(), Optional.empty(), (row, value) -> row.withVarchar(value), PgTypes.text);
-               };
-               @Override
-               public OptField<TypoVector, PgtestnullRow> vector() {
-                 return new OptField<TypoVector, PgtestnullRow>(_path, "vector", PgtestnullRow::vector, Optional.of("float4[]"), Optional.of("vector"), (row, value) -> row.withVector(value), TypoVector.pgType);
-               };
-               @Override
-               public OptField<TypoXml, PgtestnullRow> xml() {
-                 return new OptField<TypoXml, PgtestnullRow>(_path, "xml", PgtestnullRow::xml, Optional.empty(), Optional.of("xml"), (row, value) -> row.withXml(value), TypoXml.pgType);
-               };
-               @Override
-               public OptField<TypoBox[], PgtestnullRow> boxes() {
-                 return new OptField<TypoBox[], PgtestnullRow>(_path, "boxes", PgtestnullRow::boxes, Optional.empty(), Optional.of("box[]"), (row, value) -> row.withBoxes(value), TypoBox.pgTypeArray);
-               };
-               @Override
-               public OptField</* bpchar */ String[], PgtestnullRow> bpchares() {
-                 return new OptField</* bpchar */ String[], PgtestnullRow>(_path, "bpchares", PgtestnullRow::bpchares, Optional.empty(), Optional.of("bpchar[]"), (row, value) -> row.withBpchares(value), PgTypes.bpcharArray);
-               };
-               @Override
-               public OptField</* bpchar */ String[], PgtestnullRow> chares() {
-                 return new OptField</* bpchar */ String[], PgtestnullRow>(_path, "chares", PgtestnullRow::chares, Optional.empty(), Optional.of("bpchar[]"), (row, value) -> row.withChares(value), PgTypes.bpcharArray);
-               };
-               @Override
-               public OptField<TypoCircle[], PgtestnullRow> circlees() {
-                 return new OptField<TypoCircle[], PgtestnullRow>(_path, "circlees", PgtestnullRow::circlees, Optional.empty(), Optional.of("circle[]"), (row, value) -> row.withCirclees(value), TypoCircle.pgTypeArray);
-               };
-               @Override
-               public OptField<TypoLocalDate[], PgtestnullRow> datees() {
-                 return new OptField<TypoLocalDate[], PgtestnullRow>(_path, "datees", PgtestnullRow::datees, Optional.of("text[]"), Optional.of("date[]"), (row, value) -> row.withDatees(value), TypoLocalDate.pgTypeArray);
-               };
-               @Override
-               public OptField<Float[], PgtestnullRow> float4es() {
-                 return new OptField<Float[], PgtestnullRow>(_path, "float4es", PgtestnullRow::float4es, Optional.empty(), Optional.of("float4[]"), (row, value) -> row.withFloat4es(value), PgTypes.float4Array);
-               };
-               @Override
-               public OptField<Double[], PgtestnullRow> float8es() {
-                 return new OptField<Double[], PgtestnullRow>(_path, "float8es", PgtestnullRow::float8es, Optional.empty(), Optional.of("float8[]"), (row, value) -> row.withFloat8es(value), PgTypes.float8Array);
-               };
-               @Override
-               public OptField<TypoInet[], PgtestnullRow> inetes() {
-                 return new OptField<TypoInet[], PgtestnullRow>(_path, "inetes", PgtestnullRow::inetes, Optional.empty(), Optional.of("inet[]"), (row, value) -> row.withInetes(value), TypoInet.pgTypeArray);
-               };
-               @Override
-               public OptField<TypoShort[], PgtestnullRow> int2es() {
-                 return new OptField<TypoShort[], PgtestnullRow>(_path, "int2es", PgtestnullRow::int2es, Optional.empty(), Optional.of("int2[]"), (row, value) -> row.withInt2es(value), TypoShort.pgTypeArray);
-               };
-               @Override
-               public OptField<TypoInt2Vector[], PgtestnullRow> int2vectores() {
-                 return new OptField<TypoInt2Vector[], PgtestnullRow>(_path, "int2vectores", PgtestnullRow::int2vectores, Optional.empty(), Optional.of("int2vector[]"), (row, value) -> row.withInt2vectores(value), TypoInt2Vector.pgTypeArray);
-               };
-               @Override
-               public OptField<Integer[], PgtestnullRow> int4es() {
-                 return new OptField<Integer[], PgtestnullRow>(_path, "int4es", PgtestnullRow::int4es, Optional.empty(), Optional.of("int4[]"), (row, value) -> row.withInt4es(value), PgTypes.int4Array);
-               };
-               @Override
-               public OptField<Long[], PgtestnullRow> int8es() {
-                 return new OptField<Long[], PgtestnullRow>(_path, "int8es", PgtestnullRow::int8es, Optional.empty(), Optional.of("int8[]"), (row, value) -> row.withInt8es(value), PgTypes.int8Array);
-               };
-               @Override
-               public OptField<TypoInterval[], PgtestnullRow> intervales() {
-                 return new OptField<TypoInterval[], PgtestnullRow>(_path, "intervales", PgtestnullRow::intervales, Optional.empty(), Optional.of("interval[]"), (row, value) -> row.withIntervales(value), TypoInterval.pgTypeArray);
-               };
-               @Override
-               public OptField<TypoJson[], PgtestnullRow> jsones() {
-                 return new OptField<TypoJson[], PgtestnullRow>(_path, "jsones", PgtestnullRow::jsones, Optional.empty(), Optional.of("json[]"), (row, value) -> row.withJsones(value), TypoJson.pgTypeArray);
-               };
-               @Override
-               public OptField<TypoJsonb[], PgtestnullRow> jsonbes() {
-                 return new OptField<TypoJsonb[], PgtestnullRow>(_path, "jsonbes", PgtestnullRow::jsonbes, Optional.empty(), Optional.of("jsonb[]"), (row, value) -> row.withJsonbes(value), TypoJsonb.pgTypeArray);
-               };
-               @Override
-               public OptField<TypoLine[], PgtestnullRow> linees() {
-                 return new OptField<TypoLine[], PgtestnullRow>(_path, "linees", PgtestnullRow::linees, Optional.empty(), Optional.of("line[]"), (row, value) -> row.withLinees(value), TypoLine.pgTypeArray);
-               };
-               @Override
-               public OptField<TypoLineSegment[], PgtestnullRow> lseges() {
-                 return new OptField<TypoLineSegment[], PgtestnullRow>(_path, "lseges", PgtestnullRow::lseges, Optional.empty(), Optional.of("lseg[]"), (row, value) -> row.withLseges(value), TypoLineSegment.pgTypeArray);
-               };
-               @Override
-               public OptField<TypoMoney[], PgtestnullRow> moneyes() {
-                 return new OptField<TypoMoney[], PgtestnullRow>(_path, "moneyes", PgtestnullRow::moneyes, Optional.of("numeric[]"), Optional.of("money[]"), (row, value) -> row.withMoneyes(value), TypoMoney.pgTypeArray);
-               };
-               @Override
-               public OptField<Mydomain[], PgtestnullRow> mydomaines() {
-                 return new OptField<Mydomain[], PgtestnullRow>(_path, "mydomaines", PgtestnullRow::mydomaines, Optional.of("text[]"), Optional.of("mydomain[]"), (row, value) -> row.withMydomaines(value), Mydomain.pgTypeArray);
-               };
-               @Override
-               public OptField<Myenum[], PgtestnullRow> myenumes() {
-                 return new OptField<Myenum[], PgtestnullRow>(_path, "myenumes", PgtestnullRow::myenumes, Optional.empty(), Optional.of("myenum[]"), (row, value) -> row.withMyenumes(value), Myenum.pgTypeArray);
-               };
-               @Override
-               public OptField<String[], PgtestnullRow> namees() {
-                 return new OptField<String[], PgtestnullRow>(_path, "namees", PgtestnullRow::namees, Optional.empty(), Optional.of("name[]"), (row, value) -> row.withNamees(value), PgTypes.nameArray);
-               };
-               @Override
-               public OptField<BigDecimal[], PgtestnullRow> numerices() {
-                 return new OptField<BigDecimal[], PgtestnullRow>(_path, "numerices", PgtestnullRow::numerices, Optional.empty(), Optional.of("numeric[]"), (row, value) -> row.withNumerices(value), PgTypes.numericArray);
-               };
-               @Override
-               public OptField<TypoPath[], PgtestnullRow> pathes() {
-                 return new OptField<TypoPath[], PgtestnullRow>(_path, "pathes", PgtestnullRow::pathes, Optional.empty(), Optional.of("path[]"), (row, value) -> row.withPathes(value), TypoPath.pgTypeArray);
-               };
-               @Override
-               public OptField<TypoPoint[], PgtestnullRow> pointes() {
-                 return new OptField<TypoPoint[], PgtestnullRow>(_path, "pointes", PgtestnullRow::pointes, Optional.empty(), Optional.of("point[]"), (row, value) -> row.withPointes(value), TypoPoint.pgTypeArray);
-               };
-               @Override
-               public OptField<TypoPolygon[], PgtestnullRow> polygones() {
-                 return new OptField<TypoPolygon[], PgtestnullRow>(_path, "polygones", PgtestnullRow::polygones, Optional.empty(), Optional.of("polygon[]"), (row, value) -> row.withPolygones(value), TypoPolygon.pgTypeArray);
-               };
-               @Override
-               public OptField<String[], PgtestnullRow> textes() {
-                 return new OptField<String[], PgtestnullRow>(_path, "textes", PgtestnullRow::textes, Optional.empty(), Optional.of("text[]"), (row, value) -> row.withTextes(value), PgTypes.textArray);
-               };
-               @Override
-               public OptField<TypoLocalTime[], PgtestnullRow> timees() {
-                 return new OptField<TypoLocalTime[], PgtestnullRow>(_path, "timees", PgtestnullRow::timees, Optional.of("text[]"), Optional.of("time[]"), (row, value) -> row.withTimees(value), TypoLocalTime.pgTypeArray);
-               };
-               @Override
-               public OptField<TypoLocalDateTime[], PgtestnullRow> timestampes() {
-                 return new OptField<TypoLocalDateTime[], PgtestnullRow>(_path, "timestampes", PgtestnullRow::timestampes, Optional.of("text[]"), Optional.of("timestamp[]"), (row, value) -> row.withTimestampes(value), TypoLocalDateTime.pgTypeArray);
-               };
-               @Override
-               public OptField<TypoInstant[], PgtestnullRow> timestampzes() {
-                 return new OptField<TypoInstant[], PgtestnullRow>(_path, "timestampzes", PgtestnullRow::timestampzes, Optional.of("text[]"), Optional.of("timestamptz[]"), (row, value) -> row.withTimestampzes(value), TypoInstant.pgTypeArray);
-               };
-               @Override
-               public OptField<TypoOffsetTime[], PgtestnullRow> timezes() {
-                 return new OptField<TypoOffsetTime[], PgtestnullRow>(_path, "timezes", PgtestnullRow::timezes, Optional.of("text[]"), Optional.of("timetz[]"), (row, value) -> row.withTimezes(value), TypoOffsetTime.pgTypeArray);
-               };
-               @Override
-               public OptField<TypoUUID[], PgtestnullRow> uuides() {
-                 return new OptField<TypoUUID[], PgtestnullRow>(_path, "uuides", PgtestnullRow::uuides, Optional.empty(), Optional.of("uuid[]"), (row, value) -> row.withUuides(value), TypoUUID.pgTypeArray);
-               };
-               @Override
-               public OptField<String[], PgtestnullRow> varchares() {
-                 return new OptField<String[], PgtestnullRow>(_path, "varchares", PgtestnullRow::varchares, Optional.empty(), Optional.of("varchar[]"), (row, value) -> row.withVarchares(value), PgTypes.textArray);
-               };
-               @Override
-               public OptField<TypoXml[], PgtestnullRow> xmles() {
-                 return new OptField<TypoXml[], PgtestnullRow>(_path, "xmles", PgtestnullRow::xmles, Optional.empty(), Optional.of("xml[]"), (row, value) -> row.withXmles(value), TypoXml.pgTypeArray);
-               };
-             };
+    public OptField<TypoBox, PgtestnullRow> box() {
+      return new OptField<TypoBox, PgtestnullRow>(_path, "box", PgtestnullRow::box, Optional.empty(), Optional.of("box"), (row, value) -> row.withBox(value), TypoBox.pgType);
+    };
+
+    @Override
+    public OptField</* bpchar, max 3 chars */ String, PgtestnullRow> bpchar() {
+      return new OptField</* bpchar, max 3 chars */ String, PgtestnullRow>(_path, "bpchar", PgtestnullRow::bpchar, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withBpchar(value), PgTypes.bpchar);
+    };
+
+    @Override
+    public OptField<TypoBytea, PgtestnullRow> bytea() {
+      return new OptField<TypoBytea, PgtestnullRow>(_path, "bytea", PgtestnullRow::bytea, Optional.empty(), Optional.of("bytea"), (row, value) -> row.withBytea(value), TypoBytea.pgType);
+    };
+
+    @Override
+    public OptField</* bpchar, max 1 chars */ String, PgtestnullRow> char_() {
+      return new OptField</* bpchar, max 1 chars */ String, PgtestnullRow>(_path, "char", PgtestnullRow::char_, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withChar(value), PgTypes.bpchar);
+    };
+
+    @Override
+    public OptField<TypoCircle, PgtestnullRow> circle() {
+      return new OptField<TypoCircle, PgtestnullRow>(_path, "circle", PgtestnullRow::circle, Optional.empty(), Optional.of("circle"), (row, value) -> row.withCircle(value), TypoCircle.pgType);
+    };
+
+    @Override
+    public OptField<TypoLocalDate, PgtestnullRow> date() {
+      return new OptField<TypoLocalDate, PgtestnullRow>(_path, "date", PgtestnullRow::date, Optional.of("text"), Optional.of("date"), (row, value) -> row.withDate(value), TypoLocalDate.pgType);
+    };
+
+    @Override
+    public OptField<Float, PgtestnullRow> float4() {
+      return new OptField<Float, PgtestnullRow>(_path, "float4", PgtestnullRow::float4, Optional.empty(), Optional.of("float4"), (row, value) -> row.withFloat4(value), PgTypes.float4);
+    };
+
+    @Override
+    public OptField<Double, PgtestnullRow> float8() {
+      return new OptField<Double, PgtestnullRow>(_path, "float8", PgtestnullRow::float8, Optional.empty(), Optional.of("float8"), (row, value) -> row.withFloat8(value), PgTypes.float8);
+    };
+
+    @Override
+    public OptField<TypoHStore, PgtestnullRow> hstore() {
+      return new OptField<TypoHStore, PgtestnullRow>(_path, "hstore", PgtestnullRow::hstore, Optional.empty(), Optional.of("hstore"), (row, value) -> row.withHstore(value), TypoHStore.pgType);
+    };
+
+    @Override
+    public OptField<TypoInet, PgtestnullRow> inet() {
+      return new OptField<TypoInet, PgtestnullRow>(_path, "inet", PgtestnullRow::inet, Optional.empty(), Optional.of("inet"), (row, value) -> row.withInet(value), TypoInet.pgType);
+    };
+
+    @Override
+    public OptField<TypoShort, PgtestnullRow> int2() {
+      return new OptField<TypoShort, PgtestnullRow>(_path, "int2", PgtestnullRow::int2, Optional.empty(), Optional.of("int2"), (row, value) -> row.withInt2(value), TypoShort.pgType);
+    };
+
+    @Override
+    public OptField<TypoInt2Vector, PgtestnullRow> int2vector() {
+      return new OptField<TypoInt2Vector, PgtestnullRow>(_path, "int2vector", PgtestnullRow::int2vector, Optional.empty(), Optional.of("int2vector"), (row, value) -> row.withInt2vector(value), TypoInt2Vector.pgType);
+    };
+
+    @Override
+    public OptField<Integer, PgtestnullRow> int4() {
+      return new OptField<Integer, PgtestnullRow>(_path, "int4", PgtestnullRow::int4, Optional.empty(), Optional.of("int4"), (row, value) -> row.withInt4(value), PgTypes.int4);
+    };
+
+    @Override
+    public OptField<Long, PgtestnullRow> int8() {
+      return new OptField<Long, PgtestnullRow>(_path, "int8", PgtestnullRow::int8, Optional.empty(), Optional.of("int8"), (row, value) -> row.withInt8(value), PgTypes.int8);
+    };
+
+    @Override
+    public OptField<TypoInterval, PgtestnullRow> interval() {
+      return new OptField<TypoInterval, PgtestnullRow>(_path, "interval", PgtestnullRow::interval, Optional.empty(), Optional.of("interval"), (row, value) -> row.withInterval(value), TypoInterval.pgType);
+    };
+
+    @Override
+    public OptField<TypoJson, PgtestnullRow> json() {
+      return new OptField<TypoJson, PgtestnullRow>(_path, "json", PgtestnullRow::json, Optional.empty(), Optional.of("json"), (row, value) -> row.withJson(value), TypoJson.pgType);
+    };
+
+    @Override
+    public OptField<TypoJsonb, PgtestnullRow> jsonb() {
+      return new OptField<TypoJsonb, PgtestnullRow>(_path, "jsonb", PgtestnullRow::jsonb, Optional.empty(), Optional.of("jsonb"), (row, value) -> row.withJsonb(value), TypoJsonb.pgType);
+    };
+
+    @Override
+    public OptField<TypoLine, PgtestnullRow> line() {
+      return new OptField<TypoLine, PgtestnullRow>(_path, "line", PgtestnullRow::line, Optional.empty(), Optional.of("line"), (row, value) -> row.withLine(value), TypoLine.pgType);
+    };
+
+    @Override
+    public OptField<TypoLineSegment, PgtestnullRow> lseg() {
+      return new OptField<TypoLineSegment, PgtestnullRow>(_path, "lseg", PgtestnullRow::lseg, Optional.empty(), Optional.of("lseg"), (row, value) -> row.withLseg(value), TypoLineSegment.pgType);
+    };
+
+    @Override
+    public OptField<TypoMoney, PgtestnullRow> money() {
+      return new OptField<TypoMoney, PgtestnullRow>(_path, "money", PgtestnullRow::money, Optional.of("numeric"), Optional.of("money"), (row, value) -> row.withMoney(value), TypoMoney.pgType);
+    };
+
+    @Override
+    public OptField<Mydomain, PgtestnullRow> mydomain() {
+      return new OptField<Mydomain, PgtestnullRow>(_path, "mydomain", PgtestnullRow::mydomain, Optional.empty(), Optional.of("text"), (row, value) -> row.withMydomain(value), Mydomain.pgType);
+    };
+
+    @Override
+    public OptField<Myenum, PgtestnullRow> myenum() {
+      return new OptField<Myenum, PgtestnullRow>(_path, "myenum", PgtestnullRow::myenum, Optional.empty(), Optional.of("public.myenum"), (row, value) -> row.withMyenum(value), Myenum.pgType);
+    };
+
+    @Override
+    public OptField<String, PgtestnullRow> name() {
+      return new OptField<String, PgtestnullRow>(_path, "name", PgtestnullRow::name, Optional.empty(), Optional.of("name"), (row, value) -> row.withName(value), PgTypes.name);
+    };
+
+    @Override
+    public OptField<BigDecimal, PgtestnullRow> numeric() {
+      return new OptField<BigDecimal, PgtestnullRow>(_path, "numeric", PgtestnullRow::numeric, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withNumeric(value), PgTypes.numeric);
+    };
+
+    @Override
+    public OptField<TypoPath, PgtestnullRow> path() {
+      return new OptField<TypoPath, PgtestnullRow>(_path, "path", PgtestnullRow::path, Optional.empty(), Optional.of("path"), (row, value) -> row.withPath(value), TypoPath.pgType);
+    };
+
+    @Override
+    public OptField<TypoPoint, PgtestnullRow> point() {
+      return new OptField<TypoPoint, PgtestnullRow>(_path, "point", PgtestnullRow::point, Optional.empty(), Optional.of("point"), (row, value) -> row.withPoint(value), TypoPoint.pgType);
+    };
+
+    @Override
+    public OptField<TypoPolygon, PgtestnullRow> polygon() {
+      return new OptField<TypoPolygon, PgtestnullRow>(_path, "polygon", PgtestnullRow::polygon, Optional.empty(), Optional.of("polygon"), (row, value) -> row.withPolygon(value), TypoPolygon.pgType);
+    };
+
+    @Override
+    public OptField<String, PgtestnullRow> text() {
+      return new OptField<String, PgtestnullRow>(_path, "text", PgtestnullRow::text, Optional.empty(), Optional.empty(), (row, value) -> row.withText(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField<TypoLocalTime, PgtestnullRow> time() {
+      return new OptField<TypoLocalTime, PgtestnullRow>(_path, "time", PgtestnullRow::time, Optional.of("text"), Optional.of("time"), (row, value) -> row.withTime(value), TypoLocalTime.pgType);
+    };
+
+    @Override
+    public OptField<TypoLocalDateTime, PgtestnullRow> timestamp() {
+      return new OptField<TypoLocalDateTime, PgtestnullRow>(_path, "timestamp", PgtestnullRow::timestamp, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withTimestamp(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public OptField<TypoInstant, PgtestnullRow> timestampz() {
+      return new OptField<TypoInstant, PgtestnullRow>(_path, "timestampz", PgtestnullRow::timestampz, Optional.of("text"), Optional.of("timestamptz"), (row, value) -> row.withTimestampz(value), TypoInstant.pgType);
+    };
+
+    @Override
+    public OptField<TypoOffsetTime, PgtestnullRow> timez() {
+      return new OptField<TypoOffsetTime, PgtestnullRow>(_path, "timez", PgtestnullRow::timez, Optional.of("text"), Optional.of("timetz"), (row, value) -> row.withTimez(value), TypoOffsetTime.pgType);
+    };
+
+    @Override
+    public OptField<TypoUUID, PgtestnullRow> uuid() {
+      return new OptField<TypoUUID, PgtestnullRow>(_path, "uuid", PgtestnullRow::uuid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withUuid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public OptField<String, PgtestnullRow> varchar() {
+      return new OptField<String, PgtestnullRow>(_path, "varchar", PgtestnullRow::varchar, Optional.empty(), Optional.empty(), (row, value) -> row.withVarchar(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField<TypoVector, PgtestnullRow> vector() {
+      return new OptField<TypoVector, PgtestnullRow>(_path, "vector", PgtestnullRow::vector, Optional.of("float4[]"), Optional.of("vector"), (row, value) -> row.withVector(value), TypoVector.pgType);
+    };
+
+    @Override
+    public OptField<TypoXml, PgtestnullRow> xml() {
+      return new OptField<TypoXml, PgtestnullRow>(_path, "xml", PgtestnullRow::xml, Optional.empty(), Optional.of("xml"), (row, value) -> row.withXml(value), TypoXml.pgType);
+    };
+
+    @Override
+    public OptField<TypoBox[], PgtestnullRow> boxes() {
+      return new OptField<TypoBox[], PgtestnullRow>(_path, "boxes", PgtestnullRow::boxes, Optional.empty(), Optional.of("box[]"), (row, value) -> row.withBoxes(value), TypoBox.pgTypeArray);
+    };
+
+    @Override
+    public OptField</* bpchar */ String[], PgtestnullRow> bpchares() {
+      return new OptField</* bpchar */ String[], PgtestnullRow>(_path, "bpchares", PgtestnullRow::bpchares, Optional.empty(), Optional.of("bpchar[]"), (row, value) -> row.withBpchares(value), PgTypes.bpcharArray);
+    };
+
+    @Override
+    public OptField</* bpchar */ String[], PgtestnullRow> chares() {
+      return new OptField</* bpchar */ String[], PgtestnullRow>(_path, "chares", PgtestnullRow::chares, Optional.empty(), Optional.of("bpchar[]"), (row, value) -> row.withChares(value), PgTypes.bpcharArray);
+    };
+
+    @Override
+    public OptField<TypoCircle[], PgtestnullRow> circlees() {
+      return new OptField<TypoCircle[], PgtestnullRow>(_path, "circlees", PgtestnullRow::circlees, Optional.empty(), Optional.of("circle[]"), (row, value) -> row.withCirclees(value), TypoCircle.pgTypeArray);
+    };
+
+    @Override
+    public OptField<TypoLocalDate[], PgtestnullRow> datees() {
+      return new OptField<TypoLocalDate[], PgtestnullRow>(_path, "datees", PgtestnullRow::datees, Optional.of("text[]"), Optional.of("date[]"), (row, value) -> row.withDatees(value), TypoLocalDate.pgTypeArray);
+    };
+
+    @Override
+    public OptField<Float[], PgtestnullRow> float4es() {
+      return new OptField<Float[], PgtestnullRow>(_path, "float4es", PgtestnullRow::float4es, Optional.empty(), Optional.of("float4[]"), (row, value) -> row.withFloat4es(value), PgTypes.float4Array);
+    };
+
+    @Override
+    public OptField<Double[], PgtestnullRow> float8es() {
+      return new OptField<Double[], PgtestnullRow>(_path, "float8es", PgtestnullRow::float8es, Optional.empty(), Optional.of("float8[]"), (row, value) -> row.withFloat8es(value), PgTypes.float8Array);
+    };
+
+    @Override
+    public OptField<TypoInet[], PgtestnullRow> inetes() {
+      return new OptField<TypoInet[], PgtestnullRow>(_path, "inetes", PgtestnullRow::inetes, Optional.empty(), Optional.of("inet[]"), (row, value) -> row.withInetes(value), TypoInet.pgTypeArray);
+    };
+
+    @Override
+    public OptField<TypoShort[], PgtestnullRow> int2es() {
+      return new OptField<TypoShort[], PgtestnullRow>(_path, "int2es", PgtestnullRow::int2es, Optional.empty(), Optional.of("int2[]"), (row, value) -> row.withInt2es(value), TypoShort.pgTypeArray);
+    };
+
+    @Override
+    public OptField<TypoInt2Vector[], PgtestnullRow> int2vectores() {
+      return new OptField<TypoInt2Vector[], PgtestnullRow>(_path, "int2vectores", PgtestnullRow::int2vectores, Optional.empty(), Optional.of("int2vector[]"), (row, value) -> row.withInt2vectores(value), TypoInt2Vector.pgTypeArray);
+    };
+
+    @Override
+    public OptField<Integer[], PgtestnullRow> int4es() {
+      return new OptField<Integer[], PgtestnullRow>(_path, "int4es", PgtestnullRow::int4es, Optional.empty(), Optional.of("int4[]"), (row, value) -> row.withInt4es(value), PgTypes.int4Array);
+    };
+
+    @Override
+    public OptField<Long[], PgtestnullRow> int8es() {
+      return new OptField<Long[], PgtestnullRow>(_path, "int8es", PgtestnullRow::int8es, Optional.empty(), Optional.of("int8[]"), (row, value) -> row.withInt8es(value), PgTypes.int8Array);
+    };
+
+    @Override
+    public OptField<TypoInterval[], PgtestnullRow> intervales() {
+      return new OptField<TypoInterval[], PgtestnullRow>(_path, "intervales", PgtestnullRow::intervales, Optional.empty(), Optional.of("interval[]"), (row, value) -> row.withIntervales(value), TypoInterval.pgTypeArray);
+    };
+
+    @Override
+    public OptField<TypoJson[], PgtestnullRow> jsones() {
+      return new OptField<TypoJson[], PgtestnullRow>(_path, "jsones", PgtestnullRow::jsones, Optional.empty(), Optional.of("json[]"), (row, value) -> row.withJsones(value), TypoJson.pgTypeArray);
+    };
+
+    @Override
+    public OptField<TypoJsonb[], PgtestnullRow> jsonbes() {
+      return new OptField<TypoJsonb[], PgtestnullRow>(_path, "jsonbes", PgtestnullRow::jsonbes, Optional.empty(), Optional.of("jsonb[]"), (row, value) -> row.withJsonbes(value), TypoJsonb.pgTypeArray);
+    };
+
+    @Override
+    public OptField<TypoLine[], PgtestnullRow> linees() {
+      return new OptField<TypoLine[], PgtestnullRow>(_path, "linees", PgtestnullRow::linees, Optional.empty(), Optional.of("line[]"), (row, value) -> row.withLinees(value), TypoLine.pgTypeArray);
+    };
+
+    @Override
+    public OptField<TypoLineSegment[], PgtestnullRow> lseges() {
+      return new OptField<TypoLineSegment[], PgtestnullRow>(_path, "lseges", PgtestnullRow::lseges, Optional.empty(), Optional.of("lseg[]"), (row, value) -> row.withLseges(value), TypoLineSegment.pgTypeArray);
+    };
+
+    @Override
+    public OptField<TypoMoney[], PgtestnullRow> moneyes() {
+      return new OptField<TypoMoney[], PgtestnullRow>(_path, "moneyes", PgtestnullRow::moneyes, Optional.of("numeric[]"), Optional.of("money[]"), (row, value) -> row.withMoneyes(value), TypoMoney.pgTypeArray);
+    };
+
+    @Override
+    public OptField<Mydomain[], PgtestnullRow> mydomaines() {
+      return new OptField<Mydomain[], PgtestnullRow>(_path, "mydomaines", PgtestnullRow::mydomaines, Optional.of("text[]"), Optional.of("mydomain[]"), (row, value) -> row.withMydomaines(value), Mydomain.pgTypeArray);
+    };
+
+    @Override
+    public OptField<Myenum[], PgtestnullRow> myenumes() {
+      return new OptField<Myenum[], PgtestnullRow>(_path, "myenumes", PgtestnullRow::myenumes, Optional.empty(), Optional.of("myenum[]"), (row, value) -> row.withMyenumes(value), Myenum.pgTypeArray);
+    };
+
+    @Override
+    public OptField<String[], PgtestnullRow> namees() {
+      return new OptField<String[], PgtestnullRow>(_path, "namees", PgtestnullRow::namees, Optional.empty(), Optional.of("name[]"), (row, value) -> row.withNamees(value), PgTypes.nameArray);
+    };
+
+    @Override
+    public OptField<BigDecimal[], PgtestnullRow> numerices() {
+      return new OptField<BigDecimal[], PgtestnullRow>(_path, "numerices", PgtestnullRow::numerices, Optional.empty(), Optional.of("numeric[]"), (row, value) -> row.withNumerices(value), PgTypes.numericArray);
+    };
+
+    @Override
+    public OptField<TypoPath[], PgtestnullRow> pathes() {
+      return new OptField<TypoPath[], PgtestnullRow>(_path, "pathes", PgtestnullRow::pathes, Optional.empty(), Optional.of("path[]"), (row, value) -> row.withPathes(value), TypoPath.pgTypeArray);
+    };
+
+    @Override
+    public OptField<TypoPoint[], PgtestnullRow> pointes() {
+      return new OptField<TypoPoint[], PgtestnullRow>(_path, "pointes", PgtestnullRow::pointes, Optional.empty(), Optional.of("point[]"), (row, value) -> row.withPointes(value), TypoPoint.pgTypeArray);
+    };
+
+    @Override
+    public OptField<TypoPolygon[], PgtestnullRow> polygones() {
+      return new OptField<TypoPolygon[], PgtestnullRow>(_path, "polygones", PgtestnullRow::polygones, Optional.empty(), Optional.of("polygon[]"), (row, value) -> row.withPolygones(value), TypoPolygon.pgTypeArray);
+    };
+
+    @Override
+    public OptField<String[], PgtestnullRow> textes() {
+      return new OptField<String[], PgtestnullRow>(_path, "textes", PgtestnullRow::textes, Optional.empty(), Optional.of("text[]"), (row, value) -> row.withTextes(value), PgTypes.textArray);
+    };
+
+    @Override
+    public OptField<TypoLocalTime[], PgtestnullRow> timees() {
+      return new OptField<TypoLocalTime[], PgtestnullRow>(_path, "timees", PgtestnullRow::timees, Optional.of("text[]"), Optional.of("time[]"), (row, value) -> row.withTimees(value), TypoLocalTime.pgTypeArray);
+    };
+
+    @Override
+    public OptField<TypoLocalDateTime[], PgtestnullRow> timestampes() {
+      return new OptField<TypoLocalDateTime[], PgtestnullRow>(_path, "timestampes", PgtestnullRow::timestampes, Optional.of("text[]"), Optional.of("timestamp[]"), (row, value) -> row.withTimestampes(value), TypoLocalDateTime.pgTypeArray);
+    };
+
+    @Override
+    public OptField<TypoInstant[], PgtestnullRow> timestampzes() {
+      return new OptField<TypoInstant[], PgtestnullRow>(_path, "timestampzes", PgtestnullRow::timestampzes, Optional.of("text[]"), Optional.of("timestamptz[]"), (row, value) -> row.withTimestampzes(value), TypoInstant.pgTypeArray);
+    };
+
+    @Override
+    public OptField<TypoOffsetTime[], PgtestnullRow> timezes() {
+      return new OptField<TypoOffsetTime[], PgtestnullRow>(_path, "timezes", PgtestnullRow::timezes, Optional.of("text[]"), Optional.of("timetz[]"), (row, value) -> row.withTimezes(value), TypoOffsetTime.pgTypeArray);
+    };
+
+    @Override
+    public OptField<TypoUUID[], PgtestnullRow> uuides() {
+      return new OptField<TypoUUID[], PgtestnullRow>(_path, "uuides", PgtestnullRow::uuides, Optional.empty(), Optional.of("uuid[]"), (row, value) -> row.withUuides(value), TypoUUID.pgTypeArray);
+    };
+
+    @Override
+    public OptField<String[], PgtestnullRow> varchares() {
+      return new OptField<String[], PgtestnullRow>(_path, "varchares", PgtestnullRow::varchares, Optional.empty(), Optional.of("varchar[]"), (row, value) -> row.withVarchares(value), PgTypes.textArray);
+    };
+
+    @Override
+    public OptField<TypoXml[], PgtestnullRow> xmles() {
+      return new OptField<TypoXml[], PgtestnullRow>(_path, "xmles", PgtestnullRow::xmles, Optional.empty(), Optional.of("xml[]"), (row, value) -> row.withXmles(value), TypoXml.pgTypeArray);
     };
 
     @Override
     public List<FieldLike<?, PgtestnullRow>> columns() {
-      return List.of(this.fields().bool(), this.fields().box(), this.fields().bpchar(), this.fields().bytea(), this.fields().char_(), this.fields().circle(), this.fields().date(), this.fields().float4(), this.fields().float8(), this.fields().hstore(), this.fields().inet(), this.fields().int2(), this.fields().int2vector(), this.fields().int4(), this.fields().int8(), this.fields().interval(), this.fields().json(), this.fields().jsonb(), this.fields().line(), this.fields().lseg(), this.fields().money(), this.fields().mydomain(), this.fields().myenum(), this.fields().name(), this.fields().numeric(), this.fields().path(), this.fields().point(), this.fields().polygon(), this.fields().text(), this.fields().time(), this.fields().timestamp(), this.fields().timestampz(), this.fields().timez(), this.fields().uuid(), this.fields().varchar(), this.fields().vector(), this.fields().xml(), this.fields().boxes(), this.fields().bpchares(), this.fields().chares(), this.fields().circlees(), this.fields().datees(), this.fields().float4es(), this.fields().float8es(), this.fields().inetes(), this.fields().int2es(), this.fields().int2vectores(), this.fields().int4es(), this.fields().int8es(), this.fields().intervales(), this.fields().jsones(), this.fields().jsonbes(), this.fields().linees(), this.fields().lseges(), this.fields().moneyes(), this.fields().mydomaines(), this.fields().myenumes(), this.fields().namees(), this.fields().numerices(), this.fields().pathes(), this.fields().pointes(), this.fields().polygones(), this.fields().textes(), this.fields().timees(), this.fields().timestampes(), this.fields().timestampzes(), this.fields().timezes(), this.fields().uuides(), this.fields().varchares(), this.fields().xmles());
+      return List.of(this.bool(), this.box(), this.bpchar(), this.bytea(), this.char_(), this.circle(), this.date(), this.float4(), this.float8(), this.hstore(), this.inet(), this.int2(), this.int2vector(), this.int4(), this.int8(), this.interval(), this.json(), this.jsonb(), this.line(), this.lseg(), this.money(), this.mydomain(), this.myenum(), this.name(), this.numeric(), this.path(), this.point(), this.polygon(), this.text(), this.time(), this.timestamp(), this.timestampz(), this.timez(), this.uuid(), this.varchar(), this.vector(), this.xml(), this.boxes(), this.bpchares(), this.chares(), this.circlees(), this.datees(), this.float4es(), this.float8es(), this.inetes(), this.int2es(), this.int2vectores(), this.int4es(), this.int8es(), this.intervales(), this.jsones(), this.jsonbes(), this.linees(), this.lseges(), this.moneyes(), this.mydomaines(), this.myenumes(), this.namees(), this.numerices(), this.pathes(), this.pointes(), this.polygones(), this.textes(), this.timees(), this.timestampes(), this.timestampzes(), this.timezes(), this.uuides(), this.varchares(), this.xmles());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PgtestnullFields, PgtestnullRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PgtestnullFields, PgtestnullRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -486,4 +548,12 @@ public interface PgtestnullFields {
   OptField<String[], PgtestnullRow> varchares();
 
   OptField<TypoXml[], PgtestnullRow> xmles();
+
+  @Override
+  List<FieldLike<?, PgtestnullRow>> columns();
+
+  @Override
+  default RowParser<PgtestnullRow> rowParser() {
+    return PgtestnullRow._rowParser;
+  };
 }

@@ -34,6 +34,49 @@ public interface Dialect {
     String columnRef(String alias, String quotedColumn);
 
     /**
+     * Quote a table name for SQL, handling schema.table format and special characters.
+     * Each part is quoted if it contains special characters or is not already quoted.
+     */
+    default String quoteTableName(String tableName) {
+        String[] parts = tableName.split("\\.");
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < parts.length; i++) {
+            if (i > 0) result.append(".");
+            String part = parts[i];
+            if (isAlreadyQuoted(part)) {
+                result.append(part);
+            } else if (needsQuoting(part)) {
+                result.append(quoteIdent(escapeIdent(part)));
+            } else {
+                result.append(part);
+            }
+        }
+        return result.toString();
+    }
+
+    /**
+     * Check if an identifier is already quoted with double quotes or backticks.
+     */
+    private static boolean isAlreadyQuoted(String identifier) {
+        if (identifier.length() < 2) return false;
+        char first = identifier.charAt(0);
+        char last = identifier.charAt(identifier.length() - 1);
+        return (first == '"' && last == '"') || (first == '`' && last == '`');
+    }
+
+    /**
+     * Check if an identifier needs quoting (contains non-alphanumeric, non-underscore characters).
+     */
+    private static boolean needsQuoting(String identifier) {
+        for (char c : identifier.toCharArray()) {
+            if (!Character.isLetterOrDigit(c) && c != '_') {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * PostgreSQL dialect - uses double quotes for identifiers and :: for casts.
      */
     Dialect POSTGRESQL = new Dialect() {

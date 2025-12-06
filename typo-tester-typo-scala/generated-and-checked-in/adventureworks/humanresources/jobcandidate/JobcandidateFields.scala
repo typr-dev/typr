@@ -11,6 +11,7 @@ import adventureworks.humanresources.employee.EmployeeFields
 import adventureworks.humanresources.employee.EmployeeRow
 import adventureworks.person.businessentity.BusinessentityId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -18,8 +19,9 @@ import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait JobcandidateFields {
+trait JobcandidateFields extends FieldsExpr[JobcandidateRow] {
   def jobcandidateid: IdField[JobcandidateId, JobcandidateRow]
 
   def businessentityid: OptField[BusinessentityId, JobcandidateRow]
@@ -29,64 +31,67 @@ trait JobcandidateFields {
   def modifieddate: Field[TypoLocalDateTime, JobcandidateRow]
 
   def fkEmployee: ForeignKey[EmployeeFields, EmployeeRow] = ForeignKey.of[EmployeeFields, EmployeeRow]("humanresources.FK_JobCandidate_Employee_BusinessEntityID").withColumnPair(businessentityid, _.businessentityid)
+
+  override def columns: java.util.List[FieldLike[?, JobcandidateRow]]
+
+  override def rowParser: RowParser[JobcandidateRow] = JobcandidateRow._rowParser
 }
 
 object JobcandidateFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[JobcandidateFields, JobcandidateRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends JobcandidateFields with Relation[JobcandidateFields, JobcandidateRow] {
 
-    override lazy val fields: JobcandidateFields = {
-      new JobcandidateFields {
-        override def jobcandidateid: IdField[JobcandidateId, JobcandidateRow] = {
-          new IdField[JobcandidateId, JobcandidateRow](
-            _path,
-            "jobcandidateid",
-            _.jobcandidateid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(jobcandidateid = value),
-            JobcandidateId.pgType
-          )
-        }
-        override def businessentityid: OptField[BusinessentityId, JobcandidateRow] = {
-          new OptField[BusinessentityId, JobcandidateRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def resume: OptField[TypoXml, JobcandidateRow] = {
-          new OptField[TypoXml, JobcandidateRow](
-            _path,
-            "resume",
-            _.resume,
-            Optional.empty(),
-            Optional.of("xml"),
-            (row, value) => row.copy(resume = value),
-            TypoXml.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, JobcandidateRow] = {
-          new Field[TypoLocalDateTime, JobcandidateRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def jobcandidateid: IdField[JobcandidateId, JobcandidateRow] = {
+      new IdField[JobcandidateId, JobcandidateRow](
+        _path,
+        "jobcandidateid",
+        _.jobcandidateid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(jobcandidateid = value),
+        JobcandidateId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, JobcandidateRow]] = java.util.List.of(this.fields.jobcandidateid, this.fields.businessentityid, this.fields.resume, this.fields.modifieddate)
+    override def businessentityid: OptField[BusinessentityId, JobcandidateRow] = {
+      new OptField[BusinessentityId, JobcandidateRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def resume: OptField[TypoXml, JobcandidateRow] = {
+      new OptField[TypoXml, JobcandidateRow](
+        _path,
+        "resume",
+        _.resume,
+        Optional.empty(),
+        Optional.of("xml"),
+        (row, value) => row.copy(resume = value),
+        TypoXml.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, JobcandidateRow] = {
+      new Field[TypoLocalDateTime, JobcandidateRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, JobcandidateRow]] = java.util.List.of(this.jobcandidateid, this.businessentityid, this.resume, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[JobcandidateFields, JobcandidateRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[JobcandidateFields, JobcandidateRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

@@ -14,6 +14,7 @@ import adventureworks.sales.creditcard.CreditcardRow
 import adventureworks.userdefined.CustomCreditcardId
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -23,9 +24,12 @@ import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface PersoncreditcardFields {
+interface PersoncreditcardFields : FieldsExpr<PersoncreditcardRow> {
   fun businessentityid(): IdField<BusinessentityId, PersoncreditcardRow>
+
+  override fun columns(): List<FieldLike<*, PersoncreditcardRow>>
 
   fun compositeIdIn(compositeIds: List<PersoncreditcardId>): SqlExpr<Boolean> = CompositeIn(listOf(Part<BusinessentityId, PersoncreditcardId, PersoncreditcardRow>(businessentityid(), PersoncreditcardId::businessentityid, BusinessentityId.pgType), Part</* user-picked */ CustomCreditcardId, PersoncreditcardId, PersoncreditcardRow>(creditcardid(), PersoncreditcardId::creditcardid, CustomCreditcardId.pgType)), compositeIds)
 
@@ -39,19 +43,21 @@ interface PersoncreditcardFields {
 
   fun modifieddate(): Field<TypoLocalDateTime, PersoncreditcardRow>
 
+  override fun rowParser(): RowParser<PersoncreditcardRow> = PersoncreditcardRow._rowParser
+
   companion object {
-    private class Impl(path: List<Path>) : Relation<PersoncreditcardFields, PersoncreditcardRow>(path) {
-      override fun fields(): PersoncreditcardFields = object : PersoncreditcardFields {
-        override fun businessentityid(): IdField<BusinessentityId, PersoncreditcardRow> = IdField<BusinessentityId, PersoncreditcardRow>(_path, "businessentityid", PersoncreditcardRow::businessentityid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
-        override fun creditcardid(): IdField</* user-picked */ CustomCreditcardId, PersoncreditcardRow> = IdField</* user-picked */ CustomCreditcardId, PersoncreditcardRow>(_path, "creditcardid", PersoncreditcardRow::creditcardid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(creditcardid = value) }, CustomCreditcardId.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, PersoncreditcardRow> = Field<TypoLocalDateTime, PersoncreditcardRow>(_path, "modifieddate", PersoncreditcardRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : PersoncreditcardFields, Relation<PersoncreditcardFields, PersoncreditcardRow> {
+      override fun businessentityid(): IdField<BusinessentityId, PersoncreditcardRow> = IdField<BusinessentityId, PersoncreditcardRow>(_path, "businessentityid", PersoncreditcardRow::businessentityid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
 
-      override fun columns(): List<FieldLike<*, PersoncreditcardRow>> = listOf(this.fields().businessentityid(), this.fields().creditcardid(), this.fields().modifieddate())
+      override fun creditcardid(): IdField</* user-picked */ CustomCreditcardId, PersoncreditcardRow> = IdField</* user-picked */ CustomCreditcardId, PersoncreditcardRow>(_path, "creditcardid", PersoncreditcardRow::creditcardid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(creditcardid = value) }, CustomCreditcardId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun modifieddate(): Field<TypoLocalDateTime, PersoncreditcardRow> = Field<TypoLocalDateTime, PersoncreditcardRow>(_path, "modifieddate", PersoncreditcardRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, PersoncreditcardRow>> = listOf(this.businessentityid(), this.creditcardid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<PersoncreditcardFields, PersoncreditcardRow> = Impl(_path)
     }
 
-    val structure: Relation<PersoncreditcardFields, PersoncreditcardRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

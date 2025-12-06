@@ -9,13 +9,15 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoUUID
 import adventureworks.person.businessentity.BusinessentityId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait PaViewFields {
+trait PaViewFields extends FieldsExpr[PaViewRow] {
   def id: Field[BusinessentityId, PaViewRow]
 
   def businessentityid: Field[BusinessentityId, PaViewRow]
@@ -27,86 +29,91 @@ trait PaViewFields {
   def rowguid: Field[TypoUUID, PaViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, PaViewRow]
+
+  override def columns: java.util.List[FieldLike[?, PaViewRow]]
+
+  override def rowParser: RowParser[PaViewRow] = PaViewRow._rowParser
 }
 
 object PaViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[PaViewFields, PaViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends PaViewFields with Relation[PaViewFields, PaViewRow] {
 
-    override lazy val fields: PaViewFields = {
-      new PaViewFields {
-        override def id: Field[BusinessentityId, PaViewRow] = {
-          new Field[BusinessentityId, PaViewRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def businessentityid: Field[BusinessentityId, PaViewRow] = {
-          new Field[BusinessentityId, PaViewRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def passwordhash: Field[/* max 128 chars */ String, PaViewRow] = {
-          new Field[/* max 128 chars */ String, PaViewRow](
-            _path,
-            "passwordhash",
-            _.passwordhash,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(passwordhash = value),
-            PgTypes.text
-          )
-        }
-        override def passwordsalt: Field[/* max 10 chars */ String, PaViewRow] = {
-          new Field[/* max 10 chars */ String, PaViewRow](
-            _path,
-            "passwordsalt",
-            _.passwordsalt,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(passwordsalt = value),
-            PgTypes.text
-          )
-        }
-        override def rowguid: Field[TypoUUID, PaViewRow] = {
-          new Field[TypoUUID, PaViewRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, PaViewRow] = {
-          new Field[TypoLocalDateTime, PaViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def id: Field[BusinessentityId, PaViewRow] = {
+      new Field[BusinessentityId, PaViewRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        BusinessentityId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, PaViewRow]] = java.util.List.of(this.fields.id, this.fields.businessentityid, this.fields.passwordhash, this.fields.passwordsalt, this.fields.rowguid, this.fields.modifieddate)
+    override def businessentityid: Field[BusinessentityId, PaViewRow] = {
+      new Field[BusinessentityId, PaViewRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def passwordhash: Field[/* max 128 chars */ String, PaViewRow] = {
+      new Field[/* max 128 chars */ String, PaViewRow](
+        _path,
+        "passwordhash",
+        _.passwordhash,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(passwordhash = value),
+        PgTypes.text
+      )
+    }
+
+    override def passwordsalt: Field[/* max 10 chars */ String, PaViewRow] = {
+      new Field[/* max 10 chars */ String, PaViewRow](
+        _path,
+        "passwordsalt",
+        _.passwordsalt,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(passwordsalt = value),
+        PgTypes.text
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, PaViewRow] = {
+      new Field[TypoUUID, PaViewRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, PaViewRow] = {
+      new Field[TypoLocalDateTime, PaViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, PaViewRow]] = java.util.List.of(this.id, this.businessentityid, this.passwordhash, this.passwordsalt, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[PaViewFields, PaViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[PaViewFields, PaViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

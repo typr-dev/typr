@@ -93,7 +93,7 @@ case class InventoryRow(
 }
 
 object InventoryRow {
-  val `_rowParser`: RowParser[InventoryRow] = RowParsers.of(InventoryId.pgType, ProductsId.pgType, WarehousesId.pgType, MariaTypes.int_, MariaTypes.int_, MariaTypes.int_, MariaTypes.int_, MariaTypes.int_, MariaTypes.varchar.opt(), MariaTypes.datetime.opt(), MariaTypes.datetime, InventoryRow.apply, row => Array(row.inventoryId, row.productId, row.warehouseId, row.quantityOnHand, row.quantityReserved, row.quantityOnOrder, row.reorderPoint, row.reorderQuantity, row.binLocation, row.lastCountedAt, row.updatedAt))
+  val `_rowParser`: RowParser[InventoryRow] = RowParsers.of(InventoryId.pgType, ProductsId.pgType, WarehousesId.pgType, MariaTypes.int_, MariaTypes.int_, MariaTypes.int_, MariaTypes.int_, MariaTypes.int_, MariaTypes.varchar.opt(), MariaTypes.datetime.opt(), MariaTypes.datetime, InventoryRow.apply, row => Array[Object](row.inventoryId.asInstanceOf[Object], row.productId.asInstanceOf[Object], row.warehouseId.asInstanceOf[Object], row.quantityOnHand.asInstanceOf[Object], row.quantityReserved.asInstanceOf[Object], row.quantityOnOrder.asInstanceOf[Object], row.reorderPoint.asInstanceOf[Object], row.reorderQuantity.asInstanceOf[Object], row.binLocation.asInstanceOf[Object], row.lastCountedAt.asInstanceOf[Object], row.updatedAt.asInstanceOf[Object]))
 
   given mariaText: MariaText[InventoryRow] = MariaText.from(`_rowParser`)
 }

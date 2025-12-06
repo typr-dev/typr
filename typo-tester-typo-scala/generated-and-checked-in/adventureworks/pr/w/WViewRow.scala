@@ -40,5 +40,5 @@ case class WViewRow(
 )
 
 object WViewRow {
-  val `_rowParser`: RowParser[WViewRow] = RowParsers.of(WorkorderId.pgType, WorkorderId.pgType, ProductId.pgType, PgTypes.int4, TypoShort.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoLocalDateTime.pgType, ScrapreasonId.pgType.opt(), TypoLocalDateTime.pgType, WViewRow.apply, row => Array(row.id, row.workorderid, row.productid, row.orderqty, row.scrappedqty, row.startdate, row.enddate, row.duedate, row.scrapreasonid, row.modifieddate))
+  val `_rowParser`: RowParser[WViewRow] = RowParsers.of(WorkorderId.pgType, WorkorderId.pgType, ProductId.pgType, PgTypes.int4, TypoShort.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoLocalDateTime.pgType, ScrapreasonId.pgType.opt(), TypoLocalDateTime.pgType, WViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.workorderid.asInstanceOf[Object], row.productid.asInstanceOf[Object], row.orderqty.asInstanceOf[Object], row.scrappedqty.asInstanceOf[Object], row.startdate.asInstanceOf[Object], row.enddate.asInstanceOf[Object], row.duedate.asInstanceOf[Object], row.scrapreasonid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

@@ -43,5 +43,5 @@ case class SodViewRow(
 )
 
 object SodViewRow {
-  val `_rowParser`: RowParser[SodViewRow] = RowParsers.of(PgTypes.int4, SalesorderheaderId.pgType, PgTypes.int4, PgTypes.text.opt(), TypoShort.pgType, ProductId.pgType, SpecialofferId.pgType, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SodViewRow.apply, row => Array(row.id, row.salesorderid, row.salesorderdetailid, row.carriertrackingnumber, row.orderqty, row.productid, row.specialofferid, row.unitprice, row.unitpricediscount, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[SodViewRow] = RowParsers.of(PgTypes.int4, SalesorderheaderId.pgType, PgTypes.int4, PgTypes.text.opt(), TypoShort.pgType, ProductId.pgType, SpecialofferId.pgType, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SodViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.salesorderid.asInstanceOf[Object], row.salesorderdetailid.asInstanceOf[Object], row.carriertrackingnumber.asInstanceOf[Object], row.orderqty.asInstanceOf[Object], row.productid.asInstanceOf[Object], row.specialofferid.asInstanceOf[Object], row.unitprice.asInstanceOf[Object], row.unitpricediscount.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

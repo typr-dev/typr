@@ -10,14 +10,16 @@ import adventureworks.customtypes.TypoUUID
 import adventureworks.production.productmodel.ProductmodelId
 import adventureworks.public.Name
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait VproductmodelcatalogdescriptionViewFields {
+trait VproductmodelcatalogdescriptionViewFields extends FieldsExpr[VproductmodelcatalogdescriptionViewRow] {
   def productmodelid: Field[ProductmodelId, VproductmodelcatalogdescriptionViewRow]
 
   def name: Field[Name, VproductmodelcatalogdescriptionViewRow]
@@ -67,295 +69,319 @@ trait VproductmodelcatalogdescriptionViewFields {
   def rowguid: Field[TypoUUID, VproductmodelcatalogdescriptionViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, VproductmodelcatalogdescriptionViewRow]
+
+  override def columns: java.util.List[FieldLike[?, VproductmodelcatalogdescriptionViewRow]]
+
+  override def rowParser: RowParser[VproductmodelcatalogdescriptionViewRow] = VproductmodelcatalogdescriptionViewRow._rowParser
 }
 
 object VproductmodelcatalogdescriptionViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[VproductmodelcatalogdescriptionViewFields, VproductmodelcatalogdescriptionViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends VproductmodelcatalogdescriptionViewFields with Relation[VproductmodelcatalogdescriptionViewFields, VproductmodelcatalogdescriptionViewRow] {
 
-    override lazy val fields: VproductmodelcatalogdescriptionViewFields = {
-      new VproductmodelcatalogdescriptionViewFields {
-        override def productmodelid: Field[ProductmodelId, VproductmodelcatalogdescriptionViewRow] = {
-          new Field[ProductmodelId, VproductmodelcatalogdescriptionViewRow](
-            _path,
-            "productmodelid",
-            _.productmodelid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(productmodelid = value),
-            ProductmodelId.pgType
-          )
-        }
-        override def name: Field[Name, VproductmodelcatalogdescriptionViewRow] = {
-          new Field[Name, VproductmodelcatalogdescriptionViewRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def summary: OptField[String, VproductmodelcatalogdescriptionViewRow] = {
-          new OptField[String, VproductmodelcatalogdescriptionViewRow](
-            _path,
-            "Summary",
-            _.summary,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(summary = value),
-            PgTypes.text
-          )
-        }
-        override def manufacturer: OptField[String, VproductmodelcatalogdescriptionViewRow] = {
-          new OptField[String, VproductmodelcatalogdescriptionViewRow](
-            _path,
-            "manufacturer",
-            _.manufacturer,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(manufacturer = value),
-            PgTypes.text
-          )
-        }
-        override def copyright: OptField[/* max 30 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
-          new OptField[/* max 30 chars */ String, VproductmodelcatalogdescriptionViewRow](
-            _path,
-            "copyright",
-            _.copyright,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(copyright = value),
-            PgTypes.text
-          )
-        }
-        override def producturl: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
-          new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
-            _path,
-            "producturl",
-            _.producturl,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(producturl = value),
-            PgTypes.text
-          )
-        }
-        override def warrantyperiod: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
-          new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
-            _path,
-            "warrantyperiod",
-            _.warrantyperiod,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(warrantyperiod = value),
-            PgTypes.text
-          )
-        }
-        override def warrantydescription: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
-          new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
-            _path,
-            "warrantydescription",
-            _.warrantydescription,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(warrantydescription = value),
-            PgTypes.text
-          )
-        }
-        override def noofyears: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
-          new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
-            _path,
-            "noofyears",
-            _.noofyears,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(noofyears = value),
-            PgTypes.text
-          )
-        }
-        override def maintenancedescription: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
-          new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
-            _path,
-            "maintenancedescription",
-            _.maintenancedescription,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(maintenancedescription = value),
-            PgTypes.text
-          )
-        }
-        override def wheel: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
-          new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
-            _path,
-            "wheel",
-            _.wheel,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(wheel = value),
-            PgTypes.text
-          )
-        }
-        override def saddle: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
-          new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
-            _path,
-            "saddle",
-            _.saddle,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(saddle = value),
-            PgTypes.text
-          )
-        }
-        override def pedal: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
-          new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
-            _path,
-            "pedal",
-            _.pedal,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(pedal = value),
-            PgTypes.text
-          )
-        }
-        override def bikeframe: OptField[String, VproductmodelcatalogdescriptionViewRow] = {
-          new OptField[String, VproductmodelcatalogdescriptionViewRow](
-            _path,
-            "bikeframe",
-            _.bikeframe,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(bikeframe = value),
-            PgTypes.text
-          )
-        }
-        override def crankset: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
-          new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
-            _path,
-            "crankset",
-            _.crankset,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(crankset = value),
-            PgTypes.text
-          )
-        }
-        override def pictureangle: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
-          new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
-            _path,
-            "pictureangle",
-            _.pictureangle,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(pictureangle = value),
-            PgTypes.text
-          )
-        }
-        override def picturesize: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
-          new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
-            _path,
-            "picturesize",
-            _.picturesize,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(picturesize = value),
-            PgTypes.text
-          )
-        }
-        override def productphotoid: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
-          new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
-            _path,
-            "productphotoid",
-            _.productphotoid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(productphotoid = value),
-            PgTypes.text
-          )
-        }
-        override def material: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
-          new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
-            _path,
-            "material",
-            _.material,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(material = value),
-            PgTypes.text
-          )
-        }
-        override def color: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
-          new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
-            _path,
-            "color",
-            _.color,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(color = value),
-            PgTypes.text
-          )
-        }
-        override def productline: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
-          new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
-            _path,
-            "productline",
-            _.productline,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(productline = value),
-            PgTypes.text
-          )
-        }
-        override def style: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
-          new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
-            _path,
-            "style",
-            _.style,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(style = value),
-            PgTypes.text
-          )
-        }
-        override def riderexperience: OptField[/* max 1024 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
-          new OptField[/* max 1024 chars */ String, VproductmodelcatalogdescriptionViewRow](
-            _path,
-            "riderexperience",
-            _.riderexperience,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(riderexperience = value),
-            PgTypes.text
-          )
-        }
-        override def rowguid: Field[TypoUUID, VproductmodelcatalogdescriptionViewRow] = {
-          new Field[TypoUUID, VproductmodelcatalogdescriptionViewRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, VproductmodelcatalogdescriptionViewRow] = {
-          new Field[TypoLocalDateTime, VproductmodelcatalogdescriptionViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def productmodelid: Field[ProductmodelId, VproductmodelcatalogdescriptionViewRow] = {
+      new Field[ProductmodelId, VproductmodelcatalogdescriptionViewRow](
+        _path,
+        "productmodelid",
+        _.productmodelid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(productmodelid = value),
+        ProductmodelId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, VproductmodelcatalogdescriptionViewRow]] = java.util.List.of(this.fields.productmodelid, this.fields.name, this.fields.summary, this.fields.manufacturer, this.fields.copyright, this.fields.producturl, this.fields.warrantyperiod, this.fields.warrantydescription, this.fields.noofyears, this.fields.maintenancedescription, this.fields.wheel, this.fields.saddle, this.fields.pedal, this.fields.bikeframe, this.fields.crankset, this.fields.pictureangle, this.fields.picturesize, this.fields.productphotoid, this.fields.material, this.fields.color, this.fields.productline, this.fields.style, this.fields.riderexperience, this.fields.rowguid, this.fields.modifieddate)
+    override def name: Field[Name, VproductmodelcatalogdescriptionViewRow] = {
+      new Field[Name, VproductmodelcatalogdescriptionViewRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def summary: OptField[String, VproductmodelcatalogdescriptionViewRow] = {
+      new OptField[String, VproductmodelcatalogdescriptionViewRow](
+        _path,
+        "Summary",
+        _.summary,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(summary = value),
+        PgTypes.text
+      )
+    }
+
+    override def manufacturer: OptField[String, VproductmodelcatalogdescriptionViewRow] = {
+      new OptField[String, VproductmodelcatalogdescriptionViewRow](
+        _path,
+        "manufacturer",
+        _.manufacturer,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(manufacturer = value),
+        PgTypes.text
+      )
+    }
+
+    override def copyright: OptField[/* max 30 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
+      new OptField[/* max 30 chars */ String, VproductmodelcatalogdescriptionViewRow](
+        _path,
+        "copyright",
+        _.copyright,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(copyright = value),
+        PgTypes.text
+      )
+    }
+
+    override def producturl: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
+      new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
+        _path,
+        "producturl",
+        _.producturl,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(producturl = value),
+        PgTypes.text
+      )
+    }
+
+    override def warrantyperiod: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
+      new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
+        _path,
+        "warrantyperiod",
+        _.warrantyperiod,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(warrantyperiod = value),
+        PgTypes.text
+      )
+    }
+
+    override def warrantydescription: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
+      new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
+        _path,
+        "warrantydescription",
+        _.warrantydescription,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(warrantydescription = value),
+        PgTypes.text
+      )
+    }
+
+    override def noofyears: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
+      new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
+        _path,
+        "noofyears",
+        _.noofyears,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(noofyears = value),
+        PgTypes.text
+      )
+    }
+
+    override def maintenancedescription: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
+      new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
+        _path,
+        "maintenancedescription",
+        _.maintenancedescription,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(maintenancedescription = value),
+        PgTypes.text
+      )
+    }
+
+    override def wheel: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
+      new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
+        _path,
+        "wheel",
+        _.wheel,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(wheel = value),
+        PgTypes.text
+      )
+    }
+
+    override def saddle: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
+      new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
+        _path,
+        "saddle",
+        _.saddle,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(saddle = value),
+        PgTypes.text
+      )
+    }
+
+    override def pedal: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
+      new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
+        _path,
+        "pedal",
+        _.pedal,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(pedal = value),
+        PgTypes.text
+      )
+    }
+
+    override def bikeframe: OptField[String, VproductmodelcatalogdescriptionViewRow] = {
+      new OptField[String, VproductmodelcatalogdescriptionViewRow](
+        _path,
+        "bikeframe",
+        _.bikeframe,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(bikeframe = value),
+        PgTypes.text
+      )
+    }
+
+    override def crankset: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
+      new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
+        _path,
+        "crankset",
+        _.crankset,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(crankset = value),
+        PgTypes.text
+      )
+    }
+
+    override def pictureangle: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
+      new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
+        _path,
+        "pictureangle",
+        _.pictureangle,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(pictureangle = value),
+        PgTypes.text
+      )
+    }
+
+    override def picturesize: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
+      new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
+        _path,
+        "picturesize",
+        _.picturesize,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(picturesize = value),
+        PgTypes.text
+      )
+    }
+
+    override def productphotoid: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
+      new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
+        _path,
+        "productphotoid",
+        _.productphotoid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(productphotoid = value),
+        PgTypes.text
+      )
+    }
+
+    override def material: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
+      new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
+        _path,
+        "material",
+        _.material,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(material = value),
+        PgTypes.text
+      )
+    }
+
+    override def color: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
+      new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
+        _path,
+        "color",
+        _.color,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(color = value),
+        PgTypes.text
+      )
+    }
+
+    override def productline: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
+      new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
+        _path,
+        "productline",
+        _.productline,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(productline = value),
+        PgTypes.text
+      )
+    }
+
+    override def style: OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
+      new OptField[/* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow](
+        _path,
+        "style",
+        _.style,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(style = value),
+        PgTypes.text
+      )
+    }
+
+    override def riderexperience: OptField[/* max 1024 chars */ String, VproductmodelcatalogdescriptionViewRow] = {
+      new OptField[/* max 1024 chars */ String, VproductmodelcatalogdescriptionViewRow](
+        _path,
+        "riderexperience",
+        _.riderexperience,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(riderexperience = value),
+        PgTypes.text
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, VproductmodelcatalogdescriptionViewRow] = {
+      new Field[TypoUUID, VproductmodelcatalogdescriptionViewRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, VproductmodelcatalogdescriptionViewRow] = {
+      new Field[TypoLocalDateTime, VproductmodelcatalogdescriptionViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, VproductmodelcatalogdescriptionViewRow]] = java.util.List.of(this.productmodelid, this.name, this.summary, this.manufacturer, this.copyright, this.producturl, this.warrantyperiod, this.warrantydescription, this.noofyears, this.maintenancedescription, this.wheel, this.saddle, this.pedal, this.bikeframe, this.crankset, this.pictureangle, this.picturesize, this.productphotoid, this.material, this.color, this.productline, this.style, this.riderexperience, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[VproductmodelcatalogdescriptionViewFields, VproductmodelcatalogdescriptionViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[VproductmodelcatalogdescriptionViewFields, VproductmodelcatalogdescriptionViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

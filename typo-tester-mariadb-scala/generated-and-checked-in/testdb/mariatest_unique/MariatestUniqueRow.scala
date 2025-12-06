@@ -29,7 +29,7 @@ case class MariatestUniqueRow(
 }
 
 object MariatestUniqueRow {
-  val `_rowParser`: RowParser[MariatestUniqueRow] = RowParsers.of(MariatestUniqueId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar, MariatestUniqueRow.apply, row => Array(row.id, row.email, row.code, row.category))
+  val `_rowParser`: RowParser[MariatestUniqueRow] = RowParsers.of(MariatestUniqueId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar, MariatestUniqueRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.email.asInstanceOf[Object], row.code.asInstanceOf[Object], row.category.asInstanceOf[Object]))
 
   given mariaText: MariaText[MariatestUniqueRow] = MariaText.from(`_rowParser`)
 }

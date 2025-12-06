@@ -10,52 +10,48 @@ import adventureworks.customtypes.TypoUUID;
 import adventureworks.public_.Name;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface AddresstypeFields {
-  final class Impl extends Relation<AddresstypeFields, AddresstypeRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface AddresstypeFields extends FieldsExpr<AddresstypeRow> {
+  record Impl(List<Path> _path) implements AddresstypeFields, Relation<AddresstypeFields, AddresstypeRow> {
+    @Override
+    public IdField<AddresstypeId, AddresstypeRow> addresstypeid() {
+      return new IdField<AddresstypeId, AddresstypeRow>(_path, "addresstypeid", AddresstypeRow::addresstypeid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withAddresstypeid(value), AddresstypeId.pgType);
+    };
 
     @Override
-    public AddresstypeFields fields() {
-      return new AddresstypeFields() {
-               @Override
-               public IdField<AddresstypeId, AddresstypeRow> addresstypeid() {
-                 return new IdField<AddresstypeId, AddresstypeRow>(_path, "addresstypeid", AddresstypeRow::addresstypeid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withAddresstypeid(value), AddresstypeId.pgType);
-               };
-               @Override
-               public Field<Name, AddresstypeRow> name() {
-                 return new Field<Name, AddresstypeRow>(_path, "name", AddresstypeRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<TypoUUID, AddresstypeRow> rowguid() {
-                 return new Field<TypoUUID, AddresstypeRow>(_path, "rowguid", AddresstypeRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, AddresstypeRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, AddresstypeRow>(_path, "modifieddate", AddresstypeRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<Name, AddresstypeRow> name() {
+      return new Field<Name, AddresstypeRow>(_path, "name", AddresstypeRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<TypoUUID, AddresstypeRow> rowguid() {
+      return new Field<TypoUUID, AddresstypeRow>(_path, "rowguid", AddresstypeRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, AddresstypeRow> modifieddate() {
+      return new Field<TypoLocalDateTime, AddresstypeRow>(_path, "modifieddate", AddresstypeRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, AddresstypeRow>> columns() {
-      return List.of(this.fields().addresstypeid(), this.fields().name(), this.fields().rowguid(), this.fields().modifieddate());
+      return List.of(this.addresstypeid(), this.name(), this.rowguid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<AddresstypeFields, AddresstypeRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<AddresstypeFields, AddresstypeRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -66,4 +62,12 @@ public interface AddresstypeFields {
   Field<TypoUUID, AddresstypeRow> rowguid();
 
   Field<TypoLocalDateTime, AddresstypeRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, AddresstypeRow>> columns();
+
+  @Override
+  default RowParser<AddresstypeRow> rowParser() {
+    return AddresstypeRow._rowParser;
+  };
 }

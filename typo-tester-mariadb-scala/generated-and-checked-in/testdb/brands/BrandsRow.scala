@@ -62,7 +62,7 @@ case class BrandsRow(
 }
 
 object BrandsRow {
-  val `_rowParser`: RowParser[BrandsRow] = RowParsers.of(BrandsId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.mediumblob.opt(), MariaTypes.varchar.opt(), MariaTypes.char_.opt(), MariaTypes.bool, BrandsRow.apply, row => Array(row.brandId, row.name, row.slug, row.logoBlob, row.websiteUrl, row.countryOfOrigin, row.isActive))
+  val `_rowParser`: RowParser[BrandsRow] = RowParsers.of(BrandsId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.mediumblob.opt(), MariaTypes.varchar.opt(), MariaTypes.char_.opt(), MariaTypes.bool, BrandsRow.apply, row => Array[Object](row.brandId.asInstanceOf[Object], row.name.asInstanceOf[Object], row.slug.asInstanceOf[Object], row.logoBlob.asInstanceOf[Object], row.websiteUrl.asInstanceOf[Object], row.countryOfOrigin.asInstanceOf[Object], row.isActive.asInstanceOf[Object]))
 
   given mariaText: MariaText[BrandsRow] = MariaText.from(`_rowParser`)
 }

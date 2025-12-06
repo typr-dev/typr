@@ -12,14 +12,18 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.public.Name
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface SViewFields {
+interface SViewFields : FieldsExpr<SViewRow> {
   fun businessentityid(): Field<BusinessentityId, SViewRow>
+
+  override fun columns(): List<FieldLike<*, SViewRow>>
 
   fun demographics(): OptField<TypoXml, SViewRow>
 
@@ -29,27 +33,33 @@ interface SViewFields {
 
   fun name(): Field<Name, SViewRow>
 
+  override fun rowParser(): RowParser<SViewRow> = SViewRow._rowParser
+
   fun rowguid(): Field<TypoUUID, SViewRow>
 
   fun salespersonid(): OptField<BusinessentityId, SViewRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<SViewFields, SViewRow>(path) {
-      override fun fields(): SViewFields = object : SViewFields {
-        override fun id(): Field<BusinessentityId, SViewRow> = Field<BusinessentityId, SViewRow>(_path, "id", SViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, BusinessentityId.pgType)
-        override fun businessentityid(): Field<BusinessentityId, SViewRow> = Field<BusinessentityId, SViewRow>(_path, "businessentityid", SViewRow::businessentityid, Optional.empty(), Optional.empty(), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
-        override fun name(): Field<Name, SViewRow> = Field<Name, SViewRow>(_path, "name", SViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
-        override fun salespersonid(): OptField<BusinessentityId, SViewRow> = OptField<BusinessentityId, SViewRow>(_path, "salespersonid", SViewRow::salespersonid, Optional.empty(), Optional.empty(), { row, value -> row.copy(salespersonid = value) }, BusinessentityId.pgType)
-        override fun demographics(): OptField<TypoXml, SViewRow> = OptField<TypoXml, SViewRow>(_path, "demographics", SViewRow::demographics, Optional.empty(), Optional.empty(), { row, value -> row.copy(demographics = value) }, TypoXml.pgType)
-        override fun rowguid(): Field<TypoUUID, SViewRow> = Field<TypoUUID, SViewRow>(_path, "rowguid", SViewRow::rowguid, Optional.empty(), Optional.empty(), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, SViewRow> = Field<TypoLocalDateTime, SViewRow>(_path, "modifieddate", SViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : SViewFields, Relation<SViewFields, SViewRow> {
+      override fun id(): Field<BusinessentityId, SViewRow> = Field<BusinessentityId, SViewRow>(_path, "id", SViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, BusinessentityId.pgType)
 
-      override fun columns(): List<FieldLike<*, SViewRow>> = listOf(this.fields().id(), this.fields().businessentityid(), this.fields().name(), this.fields().salespersonid(), this.fields().demographics(), this.fields().rowguid(), this.fields().modifieddate())
+      override fun businessentityid(): Field<BusinessentityId, SViewRow> = Field<BusinessentityId, SViewRow>(_path, "businessentityid", SViewRow::businessentityid, Optional.empty(), Optional.empty(), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun name(): Field<Name, SViewRow> = Field<Name, SViewRow>(_path, "name", SViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
+
+      override fun salespersonid(): OptField<BusinessentityId, SViewRow> = OptField<BusinessentityId, SViewRow>(_path, "salespersonid", SViewRow::salespersonid, Optional.empty(), Optional.empty(), { row, value -> row.copy(salespersonid = value) }, BusinessentityId.pgType)
+
+      override fun demographics(): OptField<TypoXml, SViewRow> = OptField<TypoXml, SViewRow>(_path, "demographics", SViewRow::demographics, Optional.empty(), Optional.empty(), { row, value -> row.copy(demographics = value) }, TypoXml.pgType)
+
+      override fun rowguid(): Field<TypoUUID, SViewRow> = Field<TypoUUID, SViewRow>(_path, "rowguid", SViewRow::rowguid, Optional.empty(), Optional.empty(), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, SViewRow> = Field<TypoLocalDateTime, SViewRow>(_path, "modifieddate", SViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, SViewRow>> = listOf(this.id(), this.businessentityid(), this.name(), this.salespersonid(), this.demographics(), this.rowguid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<SViewFields, SViewRow> = Impl(_path)
     }
 
-    val structure: Relation<SViewFields, SViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

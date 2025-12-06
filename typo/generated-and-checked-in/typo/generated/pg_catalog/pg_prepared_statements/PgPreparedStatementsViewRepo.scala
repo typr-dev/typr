@@ -5,10 +5,7 @@
  *
  * (If you're developing `typo` and want to change it: run `bleep generate-sources`)
  */
-package typo
-package generated
-package pg_catalog
-package pg_prepared_statements
+package typo.generated.pg_catalog.pg_prepared_statements
 
 import java.sql.Connection
 

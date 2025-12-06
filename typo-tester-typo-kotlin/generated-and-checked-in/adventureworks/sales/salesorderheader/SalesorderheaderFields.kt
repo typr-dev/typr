@@ -35,6 +35,7 @@ import adventureworks.userdefined.CustomCreditcardId
 import java.math.BigDecimal
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -43,11 +44,14 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface SalesorderheaderFields {
+interface SalesorderheaderFields : FieldsExpr<SalesorderheaderRow> {
   fun accountnumber(): OptField<AccountNumber, SalesorderheaderRow>
 
   fun billtoaddressid(): Field<AddressId, SalesorderheaderRow>
+
+  override fun columns(): List<FieldLike<*, SalesorderheaderRow>>
 
   fun comment(): OptField</* max 128 chars */ String, SalesorderheaderRow>
 
@@ -89,6 +93,8 @@ interface SalesorderheaderFields {
 
   fun revisionnumber(): Field<TypoShort, SalesorderheaderRow>
 
+  override fun rowParser(): RowParser<SalesorderheaderRow> = SalesorderheaderRow._rowParser
+
   fun rowguid(): Field<TypoUUID, SalesorderheaderRow>
 
   fun salesorderid(): IdField<SalesorderheaderId, SalesorderheaderRow>
@@ -112,40 +118,62 @@ interface SalesorderheaderFields {
   fun totaldue(): OptField<BigDecimal, SalesorderheaderRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<SalesorderheaderFields, SalesorderheaderRow>(path) {
-      override fun fields(): SalesorderheaderFields = object : SalesorderheaderFields {
-        override fun salesorderid(): IdField<SalesorderheaderId, SalesorderheaderRow> = IdField<SalesorderheaderId, SalesorderheaderRow>(_path, "salesorderid", SalesorderheaderRow::salesorderid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(salesorderid = value) }, SalesorderheaderId.pgType)
-        override fun revisionnumber(): Field<TypoShort, SalesorderheaderRow> = Field<TypoShort, SalesorderheaderRow>(_path, "revisionnumber", SalesorderheaderRow::revisionnumber, Optional.empty(), Optional.of("int2"), { row, value -> row.copy(revisionnumber = value) }, TypoShort.pgType)
-        override fun orderdate(): Field<TypoLocalDateTime, SalesorderheaderRow> = Field<TypoLocalDateTime, SalesorderheaderRow>(_path, "orderdate", SalesorderheaderRow::orderdate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(orderdate = value) }, TypoLocalDateTime.pgType)
-        override fun duedate(): Field<TypoLocalDateTime, SalesorderheaderRow> = Field<TypoLocalDateTime, SalesorderheaderRow>(_path, "duedate", SalesorderheaderRow::duedate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(duedate = value) }, TypoLocalDateTime.pgType)
-        override fun shipdate(): OptField<TypoLocalDateTime, SalesorderheaderRow> = OptField<TypoLocalDateTime, SalesorderheaderRow>(_path, "shipdate", SalesorderheaderRow::shipdate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(shipdate = value) }, TypoLocalDateTime.pgType)
-        override fun status(): Field<TypoShort, SalesorderheaderRow> = Field<TypoShort, SalesorderheaderRow>(_path, "status", SalesorderheaderRow::status, Optional.empty(), Optional.of("int2"), { row, value -> row.copy(status = value) }, TypoShort.pgType)
-        override fun onlineorderflag(): Field<Flag, SalesorderheaderRow> = Field<Flag, SalesorderheaderRow>(_path, "onlineorderflag", SalesorderheaderRow::onlineorderflag, Optional.empty(), Optional.of("bool"), { row, value -> row.copy(onlineorderflag = value) }, Flag.pgType)
-        override fun purchaseordernumber(): OptField<OrderNumber, SalesorderheaderRow> = OptField<OrderNumber, SalesorderheaderRow>(_path, "purchaseordernumber", SalesorderheaderRow::purchaseordernumber, Optional.empty(), Optional.of("varchar"), { row, value -> row.copy(purchaseordernumber = value) }, OrderNumber.pgType)
-        override fun accountnumber(): OptField<AccountNumber, SalesorderheaderRow> = OptField<AccountNumber, SalesorderheaderRow>(_path, "accountnumber", SalesorderheaderRow::accountnumber, Optional.empty(), Optional.of("varchar"), { row, value -> row.copy(accountnumber = value) }, AccountNumber.pgType)
-        override fun customerid(): Field<CustomerId, SalesorderheaderRow> = Field<CustomerId, SalesorderheaderRow>(_path, "customerid", SalesorderheaderRow::customerid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(customerid = value) }, CustomerId.pgType)
-        override fun salespersonid(): OptField<BusinessentityId, SalesorderheaderRow> = OptField<BusinessentityId, SalesorderheaderRow>(_path, "salespersonid", SalesorderheaderRow::salespersonid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(salespersonid = value) }, BusinessentityId.pgType)
-        override fun territoryid(): OptField<SalesterritoryId, SalesorderheaderRow> = OptField<SalesterritoryId, SalesorderheaderRow>(_path, "territoryid", SalesorderheaderRow::territoryid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(territoryid = value) }, SalesterritoryId.pgType)
-        override fun billtoaddressid(): Field<AddressId, SalesorderheaderRow> = Field<AddressId, SalesorderheaderRow>(_path, "billtoaddressid", SalesorderheaderRow::billtoaddressid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(billtoaddressid = value) }, AddressId.pgType)
-        override fun shiptoaddressid(): Field<AddressId, SalesorderheaderRow> = Field<AddressId, SalesorderheaderRow>(_path, "shiptoaddressid", SalesorderheaderRow::shiptoaddressid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(shiptoaddressid = value) }, AddressId.pgType)
-        override fun shipmethodid(): Field<ShipmethodId, SalesorderheaderRow> = Field<ShipmethodId, SalesorderheaderRow>(_path, "shipmethodid", SalesorderheaderRow::shipmethodid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(shipmethodid = value) }, ShipmethodId.pgType)
-        override fun creditcardid(): OptField</* user-picked */ CustomCreditcardId, SalesorderheaderRow> = OptField</* user-picked */ CustomCreditcardId, SalesorderheaderRow>(_path, "creditcardid", SalesorderheaderRow::creditcardid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(creditcardid = value) }, CustomCreditcardId.pgType)
-        override fun creditcardapprovalcode(): OptField</* max 15 chars */ String, SalesorderheaderRow> = OptField</* max 15 chars */ String, SalesorderheaderRow>(_path, "creditcardapprovalcode", SalesorderheaderRow::creditcardapprovalcode, Optional.empty(), Optional.empty(), { row, value -> row.copy(creditcardapprovalcode = value) }, PgTypes.text)
-        override fun currencyrateid(): OptField<CurrencyrateId, SalesorderheaderRow> = OptField<CurrencyrateId, SalesorderheaderRow>(_path, "currencyrateid", SalesorderheaderRow::currencyrateid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(currencyrateid = value) }, CurrencyrateId.pgType)
-        override fun subtotal(): Field<BigDecimal, SalesorderheaderRow> = Field<BigDecimal, SalesorderheaderRow>(_path, "subtotal", SalesorderheaderRow::subtotal, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(subtotal = value) }, PgTypes.numeric)
-        override fun taxamt(): Field<BigDecimal, SalesorderheaderRow> = Field<BigDecimal, SalesorderheaderRow>(_path, "taxamt", SalesorderheaderRow::taxamt, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(taxamt = value) }, PgTypes.numeric)
-        override fun freight(): Field<BigDecimal, SalesorderheaderRow> = Field<BigDecimal, SalesorderheaderRow>(_path, "freight", SalesorderheaderRow::freight, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(freight = value) }, PgTypes.numeric)
-        override fun totaldue(): OptField<BigDecimal, SalesorderheaderRow> = OptField<BigDecimal, SalesorderheaderRow>(_path, "totaldue", SalesorderheaderRow::totaldue, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(totaldue = value) }, PgTypes.numeric)
-        override fun comment(): OptField</* max 128 chars */ String, SalesorderheaderRow> = OptField</* max 128 chars */ String, SalesorderheaderRow>(_path, "comment", SalesorderheaderRow::comment, Optional.empty(), Optional.empty(), { row, value -> row.copy(comment = value) }, PgTypes.text)
-        override fun rowguid(): Field<TypoUUID, SalesorderheaderRow> = Field<TypoUUID, SalesorderheaderRow>(_path, "rowguid", SalesorderheaderRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, SalesorderheaderRow> = Field<TypoLocalDateTime, SalesorderheaderRow>(_path, "modifieddate", SalesorderheaderRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : SalesorderheaderFields, Relation<SalesorderheaderFields, SalesorderheaderRow> {
+      override fun salesorderid(): IdField<SalesorderheaderId, SalesorderheaderRow> = IdField<SalesorderheaderId, SalesorderheaderRow>(_path, "salesorderid", SalesorderheaderRow::salesorderid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(salesorderid = value) }, SalesorderheaderId.pgType)
 
-      override fun columns(): List<FieldLike<*, SalesorderheaderRow>> = listOf(this.fields().salesorderid(), this.fields().revisionnumber(), this.fields().orderdate(), this.fields().duedate(), this.fields().shipdate(), this.fields().status(), this.fields().onlineorderflag(), this.fields().purchaseordernumber(), this.fields().accountnumber(), this.fields().customerid(), this.fields().salespersonid(), this.fields().territoryid(), this.fields().billtoaddressid(), this.fields().shiptoaddressid(), this.fields().shipmethodid(), this.fields().creditcardid(), this.fields().creditcardapprovalcode(), this.fields().currencyrateid(), this.fields().subtotal(), this.fields().taxamt(), this.fields().freight(), this.fields().totaldue(), this.fields().comment(), this.fields().rowguid(), this.fields().modifieddate())
+      override fun revisionnumber(): Field<TypoShort, SalesorderheaderRow> = Field<TypoShort, SalesorderheaderRow>(_path, "revisionnumber", SalesorderheaderRow::revisionnumber, Optional.empty(), Optional.of("int2"), { row, value -> row.copy(revisionnumber = value) }, TypoShort.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun orderdate(): Field<TypoLocalDateTime, SalesorderheaderRow> = Field<TypoLocalDateTime, SalesorderheaderRow>(_path, "orderdate", SalesorderheaderRow::orderdate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(orderdate = value) }, TypoLocalDateTime.pgType)
+
+      override fun duedate(): Field<TypoLocalDateTime, SalesorderheaderRow> = Field<TypoLocalDateTime, SalesorderheaderRow>(_path, "duedate", SalesorderheaderRow::duedate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(duedate = value) }, TypoLocalDateTime.pgType)
+
+      override fun shipdate(): OptField<TypoLocalDateTime, SalesorderheaderRow> = OptField<TypoLocalDateTime, SalesorderheaderRow>(_path, "shipdate", SalesorderheaderRow::shipdate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(shipdate = value) }, TypoLocalDateTime.pgType)
+
+      override fun status(): Field<TypoShort, SalesorderheaderRow> = Field<TypoShort, SalesorderheaderRow>(_path, "status", SalesorderheaderRow::status, Optional.empty(), Optional.of("int2"), { row, value -> row.copy(status = value) }, TypoShort.pgType)
+
+      override fun onlineorderflag(): Field<Flag, SalesorderheaderRow> = Field<Flag, SalesorderheaderRow>(_path, "onlineorderflag", SalesorderheaderRow::onlineorderflag, Optional.empty(), Optional.of("bool"), { row, value -> row.copy(onlineorderflag = value) }, Flag.pgType)
+
+      override fun purchaseordernumber(): OptField<OrderNumber, SalesorderheaderRow> = OptField<OrderNumber, SalesorderheaderRow>(_path, "purchaseordernumber", SalesorderheaderRow::purchaseordernumber, Optional.empty(), Optional.of("varchar"), { row, value -> row.copy(purchaseordernumber = value) }, OrderNumber.pgType)
+
+      override fun accountnumber(): OptField<AccountNumber, SalesorderheaderRow> = OptField<AccountNumber, SalesorderheaderRow>(_path, "accountnumber", SalesorderheaderRow::accountnumber, Optional.empty(), Optional.of("varchar"), { row, value -> row.copy(accountnumber = value) }, AccountNumber.pgType)
+
+      override fun customerid(): Field<CustomerId, SalesorderheaderRow> = Field<CustomerId, SalesorderheaderRow>(_path, "customerid", SalesorderheaderRow::customerid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(customerid = value) }, CustomerId.pgType)
+
+      override fun salespersonid(): OptField<BusinessentityId, SalesorderheaderRow> = OptField<BusinessentityId, SalesorderheaderRow>(_path, "salespersonid", SalesorderheaderRow::salespersonid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(salespersonid = value) }, BusinessentityId.pgType)
+
+      override fun territoryid(): OptField<SalesterritoryId, SalesorderheaderRow> = OptField<SalesterritoryId, SalesorderheaderRow>(_path, "territoryid", SalesorderheaderRow::territoryid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(territoryid = value) }, SalesterritoryId.pgType)
+
+      override fun billtoaddressid(): Field<AddressId, SalesorderheaderRow> = Field<AddressId, SalesorderheaderRow>(_path, "billtoaddressid", SalesorderheaderRow::billtoaddressid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(billtoaddressid = value) }, AddressId.pgType)
+
+      override fun shiptoaddressid(): Field<AddressId, SalesorderheaderRow> = Field<AddressId, SalesorderheaderRow>(_path, "shiptoaddressid", SalesorderheaderRow::shiptoaddressid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(shiptoaddressid = value) }, AddressId.pgType)
+
+      override fun shipmethodid(): Field<ShipmethodId, SalesorderheaderRow> = Field<ShipmethodId, SalesorderheaderRow>(_path, "shipmethodid", SalesorderheaderRow::shipmethodid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(shipmethodid = value) }, ShipmethodId.pgType)
+
+      override fun creditcardid(): OptField</* user-picked */ CustomCreditcardId, SalesorderheaderRow> = OptField</* user-picked */ CustomCreditcardId, SalesorderheaderRow>(_path, "creditcardid", SalesorderheaderRow::creditcardid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(creditcardid = value) }, CustomCreditcardId.pgType)
+
+      override fun creditcardapprovalcode(): OptField</* max 15 chars */ String, SalesorderheaderRow> = OptField</* max 15 chars */ String, SalesorderheaderRow>(_path, "creditcardapprovalcode", SalesorderheaderRow::creditcardapprovalcode, Optional.empty(), Optional.empty(), { row, value -> row.copy(creditcardapprovalcode = value) }, PgTypes.text)
+
+      override fun currencyrateid(): OptField<CurrencyrateId, SalesorderheaderRow> = OptField<CurrencyrateId, SalesorderheaderRow>(_path, "currencyrateid", SalesorderheaderRow::currencyrateid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(currencyrateid = value) }, CurrencyrateId.pgType)
+
+      override fun subtotal(): Field<BigDecimal, SalesorderheaderRow> = Field<BigDecimal, SalesorderheaderRow>(_path, "subtotal", SalesorderheaderRow::subtotal, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(subtotal = value) }, PgTypes.numeric)
+
+      override fun taxamt(): Field<BigDecimal, SalesorderheaderRow> = Field<BigDecimal, SalesorderheaderRow>(_path, "taxamt", SalesorderheaderRow::taxamt, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(taxamt = value) }, PgTypes.numeric)
+
+      override fun freight(): Field<BigDecimal, SalesorderheaderRow> = Field<BigDecimal, SalesorderheaderRow>(_path, "freight", SalesorderheaderRow::freight, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(freight = value) }, PgTypes.numeric)
+
+      override fun totaldue(): OptField<BigDecimal, SalesorderheaderRow> = OptField<BigDecimal, SalesorderheaderRow>(_path, "totaldue", SalesorderheaderRow::totaldue, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(totaldue = value) }, PgTypes.numeric)
+
+      override fun comment(): OptField</* max 128 chars */ String, SalesorderheaderRow> = OptField</* max 128 chars */ String, SalesorderheaderRow>(_path, "comment", SalesorderheaderRow::comment, Optional.empty(), Optional.empty(), { row, value -> row.copy(comment = value) }, PgTypes.text)
+
+      override fun rowguid(): Field<TypoUUID, SalesorderheaderRow> = Field<TypoUUID, SalesorderheaderRow>(_path, "rowguid", SalesorderheaderRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, SalesorderheaderRow> = Field<TypoLocalDateTime, SalesorderheaderRow>(_path, "modifieddate", SalesorderheaderRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, SalesorderheaderRow>> = listOf(this.salesorderid(), this.revisionnumber(), this.orderdate(), this.duedate(), this.shipdate(), this.status(), this.onlineorderflag(), this.purchaseordernumber(), this.accountnumber(), this.customerid(), this.salespersonid(), this.territoryid(), this.billtoaddressid(), this.shiptoaddressid(), this.shipmethodid(), this.creditcardid(), this.creditcardapprovalcode(), this.currencyrateid(), this.subtotal(), this.taxamt(), this.freight(), this.totaldue(), this.comment(), this.rowguid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<SalesorderheaderFields, SalesorderheaderRow> = Impl(_path)
     }
 
-    val structure: Relation<SalesorderheaderFields, SalesorderheaderRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

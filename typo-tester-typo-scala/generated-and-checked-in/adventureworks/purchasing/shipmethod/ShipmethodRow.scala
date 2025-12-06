@@ -61,7 +61,7 @@ case class ShipmethodRow(
 }
 
 object ShipmethodRow {
-  val `_rowParser`: RowParser[ShipmethodRow] = RowParsers.of(ShipmethodId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, ShipmethodRow.apply, row => Array(row.shipmethodid, row.name, row.shipbase, row.shiprate, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[ShipmethodRow] = RowParsers.of(ShipmethodId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, ShipmethodRow.apply, row => Array[Object](row.shipmethodid.asInstanceOf[Object], row.name.asInstanceOf[Object], row.shipbase.asInstanceOf[Object], row.shiprate.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   given pgText: PgText[ShipmethodRow] = PgText.from(`_rowParser`)
 }

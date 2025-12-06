@@ -48,7 +48,7 @@ case class ShiftRow(
 }
 
 object ShiftRow {
-  val `_rowParser`: RowParser[ShiftRow] = RowParsers.of(ShiftId.pgType, Name.pgType, TypoLocalTime.pgType, TypoLocalTime.pgType, TypoLocalDateTime.pgType, ShiftRow.apply, row => Array(row.shiftid, row.name, row.starttime, row.endtime, row.modifieddate))
+  val `_rowParser`: RowParser[ShiftRow] = RowParsers.of(ShiftId.pgType, Name.pgType, TypoLocalTime.pgType, TypoLocalTime.pgType, TypoLocalDateTime.pgType, ShiftRow.apply, row => Array[Object](row.shiftid.asInstanceOf[Object], row.name.asInstanceOf[Object], row.starttime.asInstanceOf[Object], row.endtime.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   given pgText: PgText[ShiftRow] = PgText.from(`_rowParser`)
 }

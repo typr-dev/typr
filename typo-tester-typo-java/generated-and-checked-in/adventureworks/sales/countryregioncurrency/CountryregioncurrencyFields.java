@@ -14,6 +14,7 @@ import adventureworks.sales.currency.CurrencyId;
 import adventureworks.sales.currency.CurrencyRow;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr;
@@ -23,43 +24,37 @@ import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface CountryregioncurrencyFields {
-  final class Impl extends Relation<CountryregioncurrencyFields, CountryregioncurrencyRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface CountryregioncurrencyFields extends FieldsExpr<CountryregioncurrencyRow> {
+  record Impl(List<Path> _path) implements CountryregioncurrencyFields, Relation<CountryregioncurrencyFields, CountryregioncurrencyRow> {
+    @Override
+    public IdField<CountryregionId, CountryregioncurrencyRow> countryregioncode() {
+      return new IdField<CountryregionId, CountryregioncurrencyRow>(_path, "countryregioncode", CountryregioncurrencyRow::countryregioncode, Optional.empty(), Optional.empty(), (row, value) -> row.withCountryregioncode(value), CountryregionId.pgType);
+    };
 
     @Override
-    public CountryregioncurrencyFields fields() {
-      return new CountryregioncurrencyFields() {
-               @Override
-               public IdField<CountryregionId, CountryregioncurrencyRow> countryregioncode() {
-                 return new IdField<CountryregionId, CountryregioncurrencyRow>(_path, "countryregioncode", CountryregioncurrencyRow::countryregioncode, Optional.empty(), Optional.empty(), (row, value) -> row.withCountryregioncode(value), CountryregionId.pgType);
-               };
-               @Override
-               public IdField<CurrencyId, CountryregioncurrencyRow> currencycode() {
-                 return new IdField<CurrencyId, CountryregioncurrencyRow>(_path, "currencycode", CountryregioncurrencyRow::currencycode, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withCurrencycode(value), CurrencyId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, CountryregioncurrencyRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, CountryregioncurrencyRow>(_path, "modifieddate", CountryregioncurrencyRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public IdField<CurrencyId, CountryregioncurrencyRow> currencycode() {
+      return new IdField<CurrencyId, CountryregioncurrencyRow>(_path, "currencycode", CountryregioncurrencyRow::currencycode, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withCurrencycode(value), CurrencyId.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, CountryregioncurrencyRow> modifieddate() {
+      return new Field<TypoLocalDateTime, CountryregioncurrencyRow>(_path, "modifieddate", CountryregioncurrencyRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, CountryregioncurrencyRow>> columns() {
-      return List.of(this.fields().countryregioncode(), this.fields().currencycode(), this.fields().modifieddate());
+      return List.of(this.countryregioncode(), this.currencycode(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<CountryregioncurrencyFields, CountryregioncurrencyRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<CountryregioncurrencyFields, CountryregioncurrencyRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -83,5 +78,13 @@ public interface CountryregioncurrencyFields {
 
   default SqlExpr<Boolean> compositeIdIn(List<CountryregioncurrencyId> compositeIds) {
     return new CompositeIn(List.of(new Part<CountryregionId, CountryregioncurrencyId, CountryregioncurrencyRow>(countryregioncode(), CountryregioncurrencyId::countryregioncode, CountryregionId.pgType), new Part<CurrencyId, CountryregioncurrencyId, CountryregioncurrencyRow>(currencycode(), CountryregioncurrencyId::currencycode, CurrencyId.pgType)), compositeIds);
+  };
+
+  @Override
+  List<FieldLike<?, CountryregioncurrencyRow>> columns();
+
+  @Override
+  default RowParser<CountryregioncurrencyRow> rowParser() {
+    return CountryregioncurrencyRow._rowParser;
   };
 }

@@ -52,7 +52,7 @@ case class ProductphotoRow(
 }
 
 object ProductphotoRow {
-  val `_rowParser`: RowParser[ProductphotoRow] = RowParsers.of(ProductphotoId.pgType, TypoBytea.pgType.opt(), PgTypes.text.opt(), TypoBytea.pgType.opt(), PgTypes.text.opt(), TypoLocalDateTime.pgType, ProductphotoRow.apply, row => Array(row.productphotoid, row.thumbnailphoto, row.thumbnailphotofilename, row.largephoto, row.largephotofilename, row.modifieddate))
+  val `_rowParser`: RowParser[ProductphotoRow] = RowParsers.of(ProductphotoId.pgType, TypoBytea.pgType.opt(), PgTypes.text.opt(), TypoBytea.pgType.opt(), PgTypes.text.opt(), TypoLocalDateTime.pgType, ProductphotoRow.apply, row => Array[Object](row.productphotoid.asInstanceOf[Object], row.thumbnailphoto.asInstanceOf[Object], row.thumbnailphotofilename.asInstanceOf[Object], row.largephoto.asInstanceOf[Object], row.largephotofilename.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   given pgText: PgText[ProductphotoRow] = PgText.from(`_rowParser`)
 }

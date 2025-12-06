@@ -12,6 +12,7 @@ import adventureworks.humanresources.employee.EmployeeRow
 import adventureworks.person.businessentity.BusinessentityId
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -19,9 +20,12 @@ import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface JobcandidateFields {
+interface JobcandidateFields : FieldsExpr<JobcandidateRow> {
   fun businessentityid(): OptField<BusinessentityId, JobcandidateRow>
+
+  override fun columns(): List<FieldLike<*, JobcandidateRow>>
 
   fun fkEmployee(): ForeignKey<EmployeeFields, EmployeeRow> = ForeignKey.of<EmployeeFields, EmployeeRow>("humanresources.FK_JobCandidate_Employee_BusinessEntityID").withColumnPair(businessentityid(), EmployeeFields::businessentityid)
 
@@ -31,20 +35,23 @@ interface JobcandidateFields {
 
   fun resume(): OptField<TypoXml, JobcandidateRow>
 
+  override fun rowParser(): RowParser<JobcandidateRow> = JobcandidateRow._rowParser
+
   companion object {
-    private class Impl(path: List<Path>) : Relation<JobcandidateFields, JobcandidateRow>(path) {
-      override fun fields(): JobcandidateFields = object : JobcandidateFields {
-        override fun jobcandidateid(): IdField<JobcandidateId, JobcandidateRow> = IdField<JobcandidateId, JobcandidateRow>(_path, "jobcandidateid", JobcandidateRow::jobcandidateid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(jobcandidateid = value) }, JobcandidateId.pgType)
-        override fun businessentityid(): OptField<BusinessentityId, JobcandidateRow> = OptField<BusinessentityId, JobcandidateRow>(_path, "businessentityid", JobcandidateRow::businessentityid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
-        override fun resume(): OptField<TypoXml, JobcandidateRow> = OptField<TypoXml, JobcandidateRow>(_path, "resume", JobcandidateRow::resume, Optional.empty(), Optional.of("xml"), { row, value -> row.copy(resume = value) }, TypoXml.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, JobcandidateRow> = Field<TypoLocalDateTime, JobcandidateRow>(_path, "modifieddate", JobcandidateRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : JobcandidateFields, Relation<JobcandidateFields, JobcandidateRow> {
+      override fun jobcandidateid(): IdField<JobcandidateId, JobcandidateRow> = IdField<JobcandidateId, JobcandidateRow>(_path, "jobcandidateid", JobcandidateRow::jobcandidateid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(jobcandidateid = value) }, JobcandidateId.pgType)
 
-      override fun columns(): List<FieldLike<*, JobcandidateRow>> = listOf(this.fields().jobcandidateid(), this.fields().businessentityid(), this.fields().resume(), this.fields().modifieddate())
+      override fun businessentityid(): OptField<BusinessentityId, JobcandidateRow> = OptField<BusinessentityId, JobcandidateRow>(_path, "businessentityid", JobcandidateRow::businessentityid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun resume(): OptField<TypoXml, JobcandidateRow> = OptField<TypoXml, JobcandidateRow>(_path, "resume", JobcandidateRow::resume, Optional.empty(), Optional.of("xml"), { row, value -> row.copy(resume = value) }, TypoXml.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, JobcandidateRow> = Field<TypoLocalDateTime, JobcandidateRow>(_path, "modifieddate", JobcandidateRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, JobcandidateRow>> = listOf(this.jobcandidateid(), this.businessentityid(), this.resume(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<JobcandidateFields, JobcandidateRow> = Impl(_path)
     }
 
-    val structure: Relation<JobcandidateFields, JobcandidateRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

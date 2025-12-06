@@ -10,14 +10,16 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.public.Name
 import adventureworks.userdefined.FirstName
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait VemployeedepartmentViewFields {
+trait VemployeedepartmentViewFields extends FieldsExpr[VemployeedepartmentViewRow] {
   def businessentityid: Field[BusinessentityId, VemployeedepartmentViewRow]
 
   def title: OptField[/* max 8 chars */ String, VemployeedepartmentViewRow]
@@ -37,130 +39,139 @@ trait VemployeedepartmentViewFields {
   def groupname: Field[Name, VemployeedepartmentViewRow]
 
   def startdate: Field[TypoLocalDate, VemployeedepartmentViewRow]
+
+  override def columns: java.util.List[FieldLike[?, VemployeedepartmentViewRow]]
+
+  override def rowParser: RowParser[VemployeedepartmentViewRow] = VemployeedepartmentViewRow._rowParser
 }
 
 object VemployeedepartmentViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[VemployeedepartmentViewFields, VemployeedepartmentViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends VemployeedepartmentViewFields with Relation[VemployeedepartmentViewFields, VemployeedepartmentViewRow] {
 
-    override lazy val fields: VemployeedepartmentViewFields = {
-      new VemployeedepartmentViewFields {
-        override def businessentityid: Field[BusinessentityId, VemployeedepartmentViewRow] = {
-          new Field[BusinessentityId, VemployeedepartmentViewRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def title: OptField[/* max 8 chars */ String, VemployeedepartmentViewRow] = {
-          new OptField[/* max 8 chars */ String, VemployeedepartmentViewRow](
-            _path,
-            "title",
-            _.title,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(title = value),
-            PgTypes.text
-          )
-        }
-        override def firstname: Field[/* user-picked */ FirstName, VemployeedepartmentViewRow] = {
-          new Field[/* user-picked */ FirstName, VemployeedepartmentViewRow](
-            _path,
-            "firstname",
-            _.firstname,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(firstname = value),
-            FirstName.pgType
-          )
-        }
-        override def middlename: OptField[Name, VemployeedepartmentViewRow] = {
-          new OptField[Name, VemployeedepartmentViewRow](
-            _path,
-            "middlename",
-            _.middlename,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(middlename = value),
-            Name.pgType
-          )
-        }
-        override def lastname: Field[Name, VemployeedepartmentViewRow] = {
-          new Field[Name, VemployeedepartmentViewRow](
-            _path,
-            "lastname",
-            _.lastname,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(lastname = value),
-            Name.pgType
-          )
-        }
-        override def suffix: OptField[/* max 10 chars */ String, VemployeedepartmentViewRow] = {
-          new OptField[/* max 10 chars */ String, VemployeedepartmentViewRow](
-            _path,
-            "suffix",
-            _.suffix,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(suffix = value),
-            PgTypes.text
-          )
-        }
-        override def jobtitle: Field[/* max 50 chars */ String, VemployeedepartmentViewRow] = {
-          new Field[/* max 50 chars */ String, VemployeedepartmentViewRow](
-            _path,
-            "jobtitle",
-            _.jobtitle,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(jobtitle = value),
-            PgTypes.text
-          )
-        }
-        override def department: Field[Name, VemployeedepartmentViewRow] = {
-          new Field[Name, VemployeedepartmentViewRow](
-            _path,
-            "department",
-            _.department,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(department = value),
-            Name.pgType
-          )
-        }
-        override def groupname: Field[Name, VemployeedepartmentViewRow] = {
-          new Field[Name, VemployeedepartmentViewRow](
-            _path,
-            "groupname",
-            _.groupname,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(groupname = value),
-            Name.pgType
-          )
-        }
-        override def startdate: Field[TypoLocalDate, VemployeedepartmentViewRow] = {
-          new Field[TypoLocalDate, VemployeedepartmentViewRow](
-            _path,
-            "startdate",
-            _.startdate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(startdate = value),
-            TypoLocalDate.pgType
-          )
-        }
-      }
+    override def businessentityid: Field[BusinessentityId, VemployeedepartmentViewRow] = {
+      new Field[BusinessentityId, VemployeedepartmentViewRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, VemployeedepartmentViewRow]] = java.util.List.of(this.fields.businessentityid, this.fields.title, this.fields.firstname, this.fields.middlename, this.fields.lastname, this.fields.suffix, this.fields.jobtitle, this.fields.department, this.fields.groupname, this.fields.startdate)
+    override def title: OptField[/* max 8 chars */ String, VemployeedepartmentViewRow] = {
+      new OptField[/* max 8 chars */ String, VemployeedepartmentViewRow](
+        _path,
+        "title",
+        _.title,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(title = value),
+        PgTypes.text
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def firstname: Field[/* user-picked */ FirstName, VemployeedepartmentViewRow] = {
+      new Field[/* user-picked */ FirstName, VemployeedepartmentViewRow](
+        _path,
+        "firstname",
+        _.firstname,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(firstname = value),
+        FirstName.pgType
+      )
+    }
+
+    override def middlename: OptField[Name, VemployeedepartmentViewRow] = {
+      new OptField[Name, VemployeedepartmentViewRow](
+        _path,
+        "middlename",
+        _.middlename,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(middlename = value),
+        Name.pgType
+      )
+    }
+
+    override def lastname: Field[Name, VemployeedepartmentViewRow] = {
+      new Field[Name, VemployeedepartmentViewRow](
+        _path,
+        "lastname",
+        _.lastname,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(lastname = value),
+        Name.pgType
+      )
+    }
+
+    override def suffix: OptField[/* max 10 chars */ String, VemployeedepartmentViewRow] = {
+      new OptField[/* max 10 chars */ String, VemployeedepartmentViewRow](
+        _path,
+        "suffix",
+        _.suffix,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(suffix = value),
+        PgTypes.text
+      )
+    }
+
+    override def jobtitle: Field[/* max 50 chars */ String, VemployeedepartmentViewRow] = {
+      new Field[/* max 50 chars */ String, VemployeedepartmentViewRow](
+        _path,
+        "jobtitle",
+        _.jobtitle,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(jobtitle = value),
+        PgTypes.text
+      )
+    }
+
+    override def department: Field[Name, VemployeedepartmentViewRow] = {
+      new Field[Name, VemployeedepartmentViewRow](
+        _path,
+        "department",
+        _.department,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(department = value),
+        Name.pgType
+      )
+    }
+
+    override def groupname: Field[Name, VemployeedepartmentViewRow] = {
+      new Field[Name, VemployeedepartmentViewRow](
+        _path,
+        "groupname",
+        _.groupname,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(groupname = value),
+        Name.pgType
+      )
+    }
+
+    override def startdate: Field[TypoLocalDate, VemployeedepartmentViewRow] = {
+      new Field[TypoLocalDate, VemployeedepartmentViewRow](
+        _path,
+        "startdate",
+        _.startdate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(startdate = value),
+        TypoLocalDate.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, VemployeedepartmentViewRow]] = java.util.List.of(this.businessentityid, this.title, this.firstname, this.middlename, this.lastname, this.suffix, this.jobtitle, this.department, this.groupname, this.startdate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[VemployeedepartmentViewFields, VemployeedepartmentViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[VemployeedepartmentViewFields, VemployeedepartmentViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

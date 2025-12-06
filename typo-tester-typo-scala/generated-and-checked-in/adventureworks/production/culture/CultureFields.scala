@@ -8,65 +8,69 @@ package adventureworks.production.culture
 import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.public.Name
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait CultureFields {
+trait CultureFields extends FieldsExpr[CultureRow] {
   def cultureid: IdField[CultureId, CultureRow]
 
   def name: Field[Name, CultureRow]
 
   def modifieddate: Field[TypoLocalDateTime, CultureRow]
+
+  override def columns: java.util.List[FieldLike[?, CultureRow]]
+
+  override def rowParser: RowParser[CultureRow] = CultureRow._rowParser
 }
 
 object CultureFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[CultureFields, CultureRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends CultureFields with Relation[CultureFields, CultureRow] {
 
-    override lazy val fields: CultureFields = {
-      new CultureFields {
-        override def cultureid: IdField[CultureId, CultureRow] = {
-          new IdField[CultureId, CultureRow](
-            _path,
-            "cultureid",
-            _.cultureid,
-            Optional.empty(),
-            Optional.of("bpchar"),
-            (row, value) => row.copy(cultureid = value),
-            CultureId.pgType
-          )
-        }
-        override def name: Field[Name, CultureRow] = {
-          new Field[Name, CultureRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.of("varchar"),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, CultureRow] = {
-          new Field[TypoLocalDateTime, CultureRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def cultureid: IdField[CultureId, CultureRow] = {
+      new IdField[CultureId, CultureRow](
+        _path,
+        "cultureid",
+        _.cultureid,
+        Optional.empty(),
+        Optional.of("bpchar"),
+        (row, value) => row.copy(cultureid = value),
+        CultureId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, CultureRow]] = java.util.List.of(this.fields.cultureid, this.fields.name, this.fields.modifieddate)
+    override def name: Field[Name, CultureRow] = {
+      new Field[Name, CultureRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.of("varchar"),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def modifieddate: Field[TypoLocalDateTime, CultureRow] = {
+      new Field[TypoLocalDateTime, CultureRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, CultureRow]] = java.util.List.of(this.cultureid, this.name, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[CultureFields, CultureRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[CultureFields, CultureRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

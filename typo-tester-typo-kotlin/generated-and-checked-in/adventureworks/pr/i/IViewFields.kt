@@ -10,13 +10,17 @@ import adventureworks.customtypes.TypoXml
 import adventureworks.production.illustration.IllustrationId
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface IViewFields {
+interface IViewFields : FieldsExpr<IViewRow> {
+  override fun columns(): List<FieldLike<*, IViewRow>>
+
   fun diagram(): OptField<TypoXml, IViewRow>
 
   fun id(): Field<IllustrationId, IViewRow>
@@ -25,20 +29,23 @@ interface IViewFields {
 
   fun modifieddate(): Field<TypoLocalDateTime, IViewRow>
 
+  override fun rowParser(): RowParser<IViewRow> = IViewRow._rowParser
+
   companion object {
-    private class Impl(path: List<Path>) : Relation<IViewFields, IViewRow>(path) {
-      override fun fields(): IViewFields = object : IViewFields {
-        override fun id(): Field<IllustrationId, IViewRow> = Field<IllustrationId, IViewRow>(_path, "id", IViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, IllustrationId.pgType)
-        override fun illustrationid(): Field<IllustrationId, IViewRow> = Field<IllustrationId, IViewRow>(_path, "illustrationid", IViewRow::illustrationid, Optional.empty(), Optional.empty(), { row, value -> row.copy(illustrationid = value) }, IllustrationId.pgType)
-        override fun diagram(): OptField<TypoXml, IViewRow> = OptField<TypoXml, IViewRow>(_path, "diagram", IViewRow::diagram, Optional.empty(), Optional.empty(), { row, value -> row.copy(diagram = value) }, TypoXml.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, IViewRow> = Field<TypoLocalDateTime, IViewRow>(_path, "modifieddate", IViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : IViewFields, Relation<IViewFields, IViewRow> {
+      override fun id(): Field<IllustrationId, IViewRow> = Field<IllustrationId, IViewRow>(_path, "id", IViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, IllustrationId.pgType)
 
-      override fun columns(): List<FieldLike<*, IViewRow>> = listOf(this.fields().id(), this.fields().illustrationid(), this.fields().diagram(), this.fields().modifieddate())
+      override fun illustrationid(): Field<IllustrationId, IViewRow> = Field<IllustrationId, IViewRow>(_path, "illustrationid", IViewRow::illustrationid, Optional.empty(), Optional.empty(), { row, value -> row.copy(illustrationid = value) }, IllustrationId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun diagram(): OptField<TypoXml, IViewRow> = OptField<TypoXml, IViewRow>(_path, "diagram", IViewRow::diagram, Optional.empty(), Optional.empty(), { row, value -> row.copy(diagram = value) }, TypoXml.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, IViewRow> = Field<TypoLocalDateTime, IViewRow>(_path, "modifieddate", IViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, IViewRow>> = listOf(this.id(), this.illustrationid(), this.diagram(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<IViewFields, IViewRow> = Impl(_path)
     }
 
-    val structure: Relation<IViewFields, IViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

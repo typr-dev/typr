@@ -12,14 +12,16 @@ import adventureworks.production.workorder.WorkorderId
 import java.math.BigDecimal
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface WrViewFields {
+interface WrViewFields : FieldsExpr<WrViewRow> {
   fun actualcost(): OptField<BigDecimal, WrViewRow>
 
   fun actualenddate(): OptField<TypoLocalDateTime, WrViewRow>
@@ -27,6 +29,8 @@ interface WrViewFields {
   fun actualresourcehrs(): OptField<BigDecimal, WrViewRow>
 
   fun actualstartdate(): OptField<TypoLocalDateTime, WrViewRow>
+
+  override fun columns(): List<FieldLike<*, WrViewRow>>
 
   fun id(): Field<WorkorderId, WrViewRow>
 
@@ -40,6 +44,8 @@ interface WrViewFields {
 
   fun productid(): Field<Int, WrViewRow>
 
+  override fun rowParser(): RowParser<WrViewRow> = WrViewRow._rowParser
+
   fun scheduledenddate(): Field<TypoLocalDateTime, WrViewRow>
 
   fun scheduledstartdate(): Field<TypoLocalDateTime, WrViewRow>
@@ -47,28 +53,38 @@ interface WrViewFields {
   fun workorderid(): Field<WorkorderId, WrViewRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<WrViewFields, WrViewRow>(path) {
-      override fun fields(): WrViewFields = object : WrViewFields {
-        override fun id(): Field<WorkorderId, WrViewRow> = Field<WorkorderId, WrViewRow>(_path, "id", WrViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, WorkorderId.pgType)
-        override fun workorderid(): Field<WorkorderId, WrViewRow> = Field<WorkorderId, WrViewRow>(_path, "workorderid", WrViewRow::workorderid, Optional.empty(), Optional.empty(), { row, value -> row.copy(workorderid = value) }, WorkorderId.pgType)
-        override fun productid(): Field<Int, WrViewRow> = Field<Int, WrViewRow>(_path, "productid", WrViewRow::productid, Optional.empty(), Optional.empty(), { row, value -> row.copy(productid = value) }, PgTypes.int4)
-        override fun operationsequence(): Field<TypoShort, WrViewRow> = Field<TypoShort, WrViewRow>(_path, "operationsequence", WrViewRow::operationsequence, Optional.empty(), Optional.empty(), { row, value -> row.copy(operationsequence = value) }, TypoShort.pgType)
-        override fun locationid(): Field<LocationId, WrViewRow> = Field<LocationId, WrViewRow>(_path, "locationid", WrViewRow::locationid, Optional.empty(), Optional.empty(), { row, value -> row.copy(locationid = value) }, LocationId.pgType)
-        override fun scheduledstartdate(): Field<TypoLocalDateTime, WrViewRow> = Field<TypoLocalDateTime, WrViewRow>(_path, "scheduledstartdate", WrViewRow::scheduledstartdate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(scheduledstartdate = value) }, TypoLocalDateTime.pgType)
-        override fun scheduledenddate(): Field<TypoLocalDateTime, WrViewRow> = Field<TypoLocalDateTime, WrViewRow>(_path, "scheduledenddate", WrViewRow::scheduledenddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(scheduledenddate = value) }, TypoLocalDateTime.pgType)
-        override fun actualstartdate(): OptField<TypoLocalDateTime, WrViewRow> = OptField<TypoLocalDateTime, WrViewRow>(_path, "actualstartdate", WrViewRow::actualstartdate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(actualstartdate = value) }, TypoLocalDateTime.pgType)
-        override fun actualenddate(): OptField<TypoLocalDateTime, WrViewRow> = OptField<TypoLocalDateTime, WrViewRow>(_path, "actualenddate", WrViewRow::actualenddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(actualenddate = value) }, TypoLocalDateTime.pgType)
-        override fun actualresourcehrs(): OptField<BigDecimal, WrViewRow> = OptField<BigDecimal, WrViewRow>(_path, "actualresourcehrs", WrViewRow::actualresourcehrs, Optional.empty(), Optional.empty(), { row, value -> row.copy(actualresourcehrs = value) }, PgTypes.numeric)
-        override fun plannedcost(): Field<BigDecimal, WrViewRow> = Field<BigDecimal, WrViewRow>(_path, "plannedcost", WrViewRow::plannedcost, Optional.empty(), Optional.empty(), { row, value -> row.copy(plannedcost = value) }, PgTypes.numeric)
-        override fun actualcost(): OptField<BigDecimal, WrViewRow> = OptField<BigDecimal, WrViewRow>(_path, "actualcost", WrViewRow::actualcost, Optional.empty(), Optional.empty(), { row, value -> row.copy(actualcost = value) }, PgTypes.numeric)
-        override fun modifieddate(): Field<TypoLocalDateTime, WrViewRow> = Field<TypoLocalDateTime, WrViewRow>(_path, "modifieddate", WrViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : WrViewFields, Relation<WrViewFields, WrViewRow> {
+      override fun id(): Field<WorkorderId, WrViewRow> = Field<WorkorderId, WrViewRow>(_path, "id", WrViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, WorkorderId.pgType)
 
-      override fun columns(): List<FieldLike<*, WrViewRow>> = listOf(this.fields().id(), this.fields().workorderid(), this.fields().productid(), this.fields().operationsequence(), this.fields().locationid(), this.fields().scheduledstartdate(), this.fields().scheduledenddate(), this.fields().actualstartdate(), this.fields().actualenddate(), this.fields().actualresourcehrs(), this.fields().plannedcost(), this.fields().actualcost(), this.fields().modifieddate())
+      override fun workorderid(): Field<WorkorderId, WrViewRow> = Field<WorkorderId, WrViewRow>(_path, "workorderid", WrViewRow::workorderid, Optional.empty(), Optional.empty(), { row, value -> row.copy(workorderid = value) }, WorkorderId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun productid(): Field<Int, WrViewRow> = Field<Int, WrViewRow>(_path, "productid", WrViewRow::productid, Optional.empty(), Optional.empty(), { row, value -> row.copy(productid = value) }, PgTypes.int4)
+
+      override fun operationsequence(): Field<TypoShort, WrViewRow> = Field<TypoShort, WrViewRow>(_path, "operationsequence", WrViewRow::operationsequence, Optional.empty(), Optional.empty(), { row, value -> row.copy(operationsequence = value) }, TypoShort.pgType)
+
+      override fun locationid(): Field<LocationId, WrViewRow> = Field<LocationId, WrViewRow>(_path, "locationid", WrViewRow::locationid, Optional.empty(), Optional.empty(), { row, value -> row.copy(locationid = value) }, LocationId.pgType)
+
+      override fun scheduledstartdate(): Field<TypoLocalDateTime, WrViewRow> = Field<TypoLocalDateTime, WrViewRow>(_path, "scheduledstartdate", WrViewRow::scheduledstartdate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(scheduledstartdate = value) }, TypoLocalDateTime.pgType)
+
+      override fun scheduledenddate(): Field<TypoLocalDateTime, WrViewRow> = Field<TypoLocalDateTime, WrViewRow>(_path, "scheduledenddate", WrViewRow::scheduledenddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(scheduledenddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun actualstartdate(): OptField<TypoLocalDateTime, WrViewRow> = OptField<TypoLocalDateTime, WrViewRow>(_path, "actualstartdate", WrViewRow::actualstartdate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(actualstartdate = value) }, TypoLocalDateTime.pgType)
+
+      override fun actualenddate(): OptField<TypoLocalDateTime, WrViewRow> = OptField<TypoLocalDateTime, WrViewRow>(_path, "actualenddate", WrViewRow::actualenddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(actualenddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun actualresourcehrs(): OptField<BigDecimal, WrViewRow> = OptField<BigDecimal, WrViewRow>(_path, "actualresourcehrs", WrViewRow::actualresourcehrs, Optional.empty(), Optional.empty(), { row, value -> row.copy(actualresourcehrs = value) }, PgTypes.numeric)
+
+      override fun plannedcost(): Field<BigDecimal, WrViewRow> = Field<BigDecimal, WrViewRow>(_path, "plannedcost", WrViewRow::plannedcost, Optional.empty(), Optional.empty(), { row, value -> row.copy(plannedcost = value) }, PgTypes.numeric)
+
+      override fun actualcost(): OptField<BigDecimal, WrViewRow> = OptField<BigDecimal, WrViewRow>(_path, "actualcost", WrViewRow::actualcost, Optional.empty(), Optional.empty(), { row, value -> row.copy(actualcost = value) }, PgTypes.numeric)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, WrViewRow> = Field<TypoLocalDateTime, WrViewRow>(_path, "modifieddate", WrViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, WrViewRow>> = listOf(this.id(), this.workorderid(), this.productid(), this.operationsequence(), this.locationid(), this.scheduledstartdate(), this.scheduledenddate(), this.actualstartdate(), this.actualenddate(), this.actualresourcehrs(), this.plannedcost(), this.actualcost(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<WrViewFields, WrViewRow> = Impl(_path)
     }
 
-    val structure: Relation<WrViewFields, WrViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

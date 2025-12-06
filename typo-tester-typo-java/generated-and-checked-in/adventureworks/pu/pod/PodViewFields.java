@@ -12,76 +12,78 @@ import adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderId;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface PodViewFields {
-  final class Impl extends Relation<PodViewFields, PodViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PodViewFields extends FieldsExpr<PodViewRow> {
+  record Impl(List<Path> _path) implements PodViewFields, Relation<PodViewFields, PodViewRow> {
+    @Override
+    public Field<Integer, PodViewRow> id() {
+      return new Field<Integer, PodViewRow>(_path, "id", PodViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), PgTypes.int4);
+    };
 
     @Override
-    public PodViewFields fields() {
-      return new PodViewFields() {
-               @Override
-               public Field<Integer, PodViewRow> id() {
-                 return new Field<Integer, PodViewRow>(_path, "id", PodViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), PgTypes.int4);
-               };
-               @Override
-               public Field<PurchaseorderheaderId, PodViewRow> purchaseorderid() {
-                 return new Field<PurchaseorderheaderId, PodViewRow>(_path, "purchaseorderid", PodViewRow::purchaseorderid, Optional.empty(), Optional.empty(), (row, value) -> row.withPurchaseorderid(value), PurchaseorderheaderId.pgType);
-               };
-               @Override
-               public Field<Integer, PodViewRow> purchaseorderdetailid() {
-                 return new Field<Integer, PodViewRow>(_path, "purchaseorderdetailid", PodViewRow::purchaseorderdetailid, Optional.empty(), Optional.empty(), (row, value) -> row.withPurchaseorderdetailid(value), PgTypes.int4);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PodViewRow> duedate() {
-                 return new Field<TypoLocalDateTime, PodViewRow>(_path, "duedate", PodViewRow::duedate, Optional.of("text"), Optional.empty(), (row, value) -> row.withDuedate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public Field<TypoShort, PodViewRow> orderqty() {
-                 return new Field<TypoShort, PodViewRow>(_path, "orderqty", PodViewRow::orderqty, Optional.empty(), Optional.empty(), (row, value) -> row.withOrderqty(value), TypoShort.pgType);
-               };
-               @Override
-               public Field<ProductId, PodViewRow> productid() {
-                 return new Field<ProductId, PodViewRow>(_path, "productid", PodViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
-               };
-               @Override
-               public Field<BigDecimal, PodViewRow> unitprice() {
-                 return new Field<BigDecimal, PodViewRow>(_path, "unitprice", PodViewRow::unitprice, Optional.empty(), Optional.empty(), (row, value) -> row.withUnitprice(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<BigDecimal, PodViewRow> receivedqty() {
-                 return new Field<BigDecimal, PodViewRow>(_path, "receivedqty", PodViewRow::receivedqty, Optional.empty(), Optional.empty(), (row, value) -> row.withReceivedqty(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<BigDecimal, PodViewRow> rejectedqty() {
-                 return new Field<BigDecimal, PodViewRow>(_path, "rejectedqty", PodViewRow::rejectedqty, Optional.empty(), Optional.empty(), (row, value) -> row.withRejectedqty(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PodViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, PodViewRow>(_path, "modifieddate", PodViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<PurchaseorderheaderId, PodViewRow> purchaseorderid() {
+      return new Field<PurchaseorderheaderId, PodViewRow>(_path, "purchaseorderid", PodViewRow::purchaseorderid, Optional.empty(), Optional.empty(), (row, value) -> row.withPurchaseorderid(value), PurchaseorderheaderId.pgType);
+    };
+
+    @Override
+    public Field<Integer, PodViewRow> purchaseorderdetailid() {
+      return new Field<Integer, PodViewRow>(_path, "purchaseorderdetailid", PodViewRow::purchaseorderdetailid, Optional.empty(), Optional.empty(), (row, value) -> row.withPurchaseorderdetailid(value), PgTypes.int4);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PodViewRow> duedate() {
+      return new Field<TypoLocalDateTime, PodViewRow>(_path, "duedate", PodViewRow::duedate, Optional.of("text"), Optional.empty(), (row, value) -> row.withDuedate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public Field<TypoShort, PodViewRow> orderqty() {
+      return new Field<TypoShort, PodViewRow>(_path, "orderqty", PodViewRow::orderqty, Optional.empty(), Optional.empty(), (row, value) -> row.withOrderqty(value), TypoShort.pgType);
+    };
+
+    @Override
+    public Field<ProductId, PodViewRow> productid() {
+      return new Field<ProductId, PodViewRow>(_path, "productid", PodViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
+    };
+
+    @Override
+    public Field<BigDecimal, PodViewRow> unitprice() {
+      return new Field<BigDecimal, PodViewRow>(_path, "unitprice", PodViewRow::unitprice, Optional.empty(), Optional.empty(), (row, value) -> row.withUnitprice(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<BigDecimal, PodViewRow> receivedqty() {
+      return new Field<BigDecimal, PodViewRow>(_path, "receivedqty", PodViewRow::receivedqty, Optional.empty(), Optional.empty(), (row, value) -> row.withReceivedqty(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<BigDecimal, PodViewRow> rejectedqty() {
+      return new Field<BigDecimal, PodViewRow>(_path, "rejectedqty", PodViewRow::rejectedqty, Optional.empty(), Optional.empty(), (row, value) -> row.withRejectedqty(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PodViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, PodViewRow>(_path, "modifieddate", PodViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, PodViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().purchaseorderid(), this.fields().purchaseorderdetailid(), this.fields().duedate(), this.fields().orderqty(), this.fields().productid(), this.fields().unitprice(), this.fields().receivedqty(), this.fields().rejectedqty(), this.fields().modifieddate());
+      return List.of(this.id(), this.purchaseorderid(), this.purchaseorderdetailid(), this.duedate(), this.orderqty(), this.productid(), this.unitprice(), this.receivedqty(), this.rejectedqty(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PodViewFields, PodViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PodViewFields, PodViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -104,4 +106,12 @@ public interface PodViewFields {
   Field<BigDecimal, PodViewRow> rejectedqty();
 
   Field<TypoLocalDateTime, PodViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, PodViewRow>> columns();
+
+  @Override
+  default RowParser<PodViewRow> rowParser() {
+    return PodViewRow._rowParser;
+  };
 }

@@ -33,5 +33,5 @@ case class PmViewRow(
 )
 
 object PmViewRow {
-  val `_rowParser`: RowParser[PmViewRow] = RowParsers.of(ProductmodelId.pgType, ProductmodelId.pgType, Name.pgType, TypoXml.pgType.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, PmViewRow.apply, row => Array(row.id, row.productmodelid, row.name, row.catalogdescription, row.instructions, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[PmViewRow] = RowParsers.of(ProductmodelId.pgType, ProductmodelId.pgType, Name.pgType, TypoXml.pgType.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, PmViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.productmodelid.asInstanceOf[Object], row.name.asInstanceOf[Object], row.catalogdescription.asInstanceOf[Object], row.instructions.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

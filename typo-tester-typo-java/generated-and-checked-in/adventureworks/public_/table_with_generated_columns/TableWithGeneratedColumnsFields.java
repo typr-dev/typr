@@ -7,49 +7,51 @@ package adventureworks.public_.table_with_generated_columns;
 
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface TableWithGeneratedColumnsFields {
-  final class Impl extends Relation<TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface TableWithGeneratedColumnsFields extends FieldsExpr<TableWithGeneratedColumnsRow> {
+  record Impl(List<Path> _path) implements TableWithGeneratedColumnsFields, Relation<TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow> {
+    @Override
+    public IdField<TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow> name() {
+      return new IdField<TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow>(_path, "name", TableWithGeneratedColumnsRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), TableWithGeneratedColumnsId.pgType);
+    };
 
     @Override
-    public TableWithGeneratedColumnsFields fields() {
-      return new TableWithGeneratedColumnsFields() {
-               @Override
-               public IdField<TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow> name() {
-                 return new IdField<TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow>(_path, "name", TableWithGeneratedColumnsRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), TableWithGeneratedColumnsId.pgType);
-               };
-               @Override
-               public Field<String, TableWithGeneratedColumnsRow> nameTypeAlways() {
-                 return new Field<String, TableWithGeneratedColumnsRow>(_path, "name-type-always", TableWithGeneratedColumnsRow::nameTypeAlways, Optional.empty(), Optional.empty(), (row, value) -> row.withNameTypeAlways(value), PgTypes.text);
-               };
-             };
+    public Field<String, TableWithGeneratedColumnsRow> nameTypeAlways() {
+      return new Field<String, TableWithGeneratedColumnsRow>(_path, "name-type-always", TableWithGeneratedColumnsRow::nameTypeAlways, Optional.empty(), Optional.empty(), (row, value) -> row.withNameTypeAlways(value), PgTypes.text);
     };
 
     @Override
     public List<FieldLike<?, TableWithGeneratedColumnsRow>> columns() {
-      return List.of(this.fields().name(), this.fields().nameTypeAlways());
+      return List.of(this.name(), this.nameTypeAlways());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
   IdField<TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow> name();
 
   Field<String, TableWithGeneratedColumnsRow> nameTypeAlways();
+
+  @Override
+  List<FieldLike<?, TableWithGeneratedColumnsRow>> columns();
+
+  @Override
+  default RowParser<TableWithGeneratedColumnsRow> rowParser() {
+    return TableWithGeneratedColumnsRow._rowParser;
+  };
 }
