@@ -23,38 +23,38 @@ case class PersonRowUnsaved(
   /** Primary key for Person records.
    * Points to [[adventureworks.person.businessentity.BusinessentityRow.businessentityid]]
    */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Primary type of person: SC = Store Contact, IN = Individual (retail) customer, SP = Sales person, EM = Employee (non-sales), VC = Vendor contact, GC = General contact
    * Constraint CK_Person_PersonType affecting columns persontype:  (((persontype IS NULL) OR (upper((persontype)::text) = ANY (ARRAY['SC'::text, 'VC'::text, 'IN'::text, 'EM'::text, 'SP'::text, 'GC'::text]))))
    */
-persontype: /* bpchar, max 2 chars */ String,
+  persontype: /* bpchar, max 2 chars */ String,
   /** A courtesy title. For example, Mr. or Ms. */
-title: Optional[/* max 8 chars */ String] = Optional.empty(),
+  title: Optional[/* max 8 chars */ String] = Optional.empty(),
   /** First name of the person. */
-firstname: /* user-picked */ FirstName,
+  firstname: /* user-picked */ FirstName,
   /** Middle name or middle initial of the person. */
-middlename: Optional[Name] = Optional.empty(),
+  middlename: Optional[Name] = Optional.empty(),
   /** Last name of the person. */
-lastname: Name,
+  lastname: Name,
   /** Surname suffix. For example, Sr. or Jr. */
-suffix: Optional[/* max 10 chars */ String] = Optional.empty(),
+  suffix: Optional[/* max 10 chars */ String] = Optional.empty(),
   /** Additional contact information about the person stored in xml format. */
-additionalcontactinfo: Optional[TypoXml] = Optional.empty(),
+  additionalcontactinfo: Optional[TypoXml] = Optional.empty(),
   /** Personal information such as hobbies, and income collected from online shoppers. Used for sales analysis. */
-demographics: Optional[TypoXml] = Optional.empty(),
+  demographics: Optional[TypoXml] = Optional.empty(),
   /** Default: false
    * 0 = The data in FirstName and LastName are stored in western style (first name, last name) order.  1 = Eastern style (last name, first name) order.
    */
-namestyle: Defaulted[NameStyle] = new UseDefault(),
+  namestyle: Defaulted[NameStyle] = new UseDefault(),
   /** Default: 0
    * 0 = Contact does not wish to receive e-mail promotions, 1 = Contact does wish to receive e-mail promotions from AdventureWorks, 2 = Contact does wish to receive e-mail promotions from AdventureWorks and selected partners.
    * Constraint CK_Person_EmailPromotion affecting columns emailpromotion:  (((emailpromotion >= 0) AND (emailpromotion <= 2)))
    */
-emailpromotion: Defaulted[Integer] = new UseDefault(),
+  emailpromotion: Defaulted[Integer] = new UseDefault(),
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     namestyleDefault: => NameStyle,

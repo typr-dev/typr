@@ -17,9 +17,9 @@ import typo.runtime.RowParsers
 /** View: humanresources.vjobcandidate */
 case class VjobcandidateViewRow(
   /** Points to [[adventureworks.humanresources.jobcandidate.JobcandidateRow.jobcandidateid]] */
-jobcandidateid: JobcandidateId,
+  jobcandidateid: JobcandidateId,
   /** Points to [[adventureworks.humanresources.jobcandidate.JobcandidateRow.businessentityid]] */
-businessentityid: Optional[BusinessentityId],
+  businessentityid: Optional[BusinessentityId],
   @JsonProperty("Name.Prefix") namePrefix: /* nullability unknown */ Optional[/* max 30 chars */ String],
   @JsonProperty("Name.First") nameFirst: /* nullability unknown */ Optional[/* max 30 chars */ String],
   @JsonProperty("Name.Middle") nameMiddle: /* nullability unknown */ Optional[/* max 30 chars */ String],
@@ -34,7 +34,7 @@ businessentityid: Optional[BusinessentityId],
   @JsonProperty("EMail") eMail: /* nullability unknown */ Optional[String],
   @JsonProperty("WebSite") webSite: /* nullability unknown */ Optional[String],
   /** Points to [[adventureworks.humanresources.jobcandidate.JobcandidateRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object VjobcandidateViewRow {

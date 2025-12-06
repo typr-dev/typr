@@ -24,17 +24,17 @@ case class ProductmodelRow(
   /** Primary key for ProductModel records.
    * Default: nextval('production.productmodel_productmodelid_seq'::regclass)
    */
-productmodelid: ProductmodelId,
+  productmodelid: ProductmodelId,
   /** Product model description. */
-name: Name,
+  name: Name,
   /** Detailed product catalog information in xml format. */
-catalogdescription: Option[TypoXml],
+  catalogdescription: Option[TypoXml],
   /** Manufacturing instructions in xml format. */
-instructions: Option[TypoXml],
+  instructions: Option[TypoXml],
   /** Default: uuid_generate_v1() */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: ProductmodelId = productmodelid
 

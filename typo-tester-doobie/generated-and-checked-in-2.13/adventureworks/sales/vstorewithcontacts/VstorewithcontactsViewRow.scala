@@ -17,29 +17,29 @@ import io.circe.Encoder
 /** View: sales.vstorewithcontacts */
 case class VstorewithcontactsViewRow(
   /** Points to [[adventureworks.sales.store.StoreRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.sales.store.StoreRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.person.contacttype.ContacttypeRow.name]] */
-contacttype: Name,
+  contacttype: Name,
   /** Points to [[adventureworks.person.person.PersonRow.title]] */
-title: Option[/* max 8 chars */ String],
+  title: Option[/* max 8 chars */ String],
   /** Points to [[adventureworks.person.person.PersonRow.firstname]] */
-firstname: /* user-picked */ FirstName,
+  firstname: /* user-picked */ FirstName,
   /** Points to [[adventureworks.person.person.PersonRow.middlename]] */
-middlename: Option[Name],
+  middlename: Option[Name],
   /** Points to [[adventureworks.person.person.PersonRow.lastname]] */
-lastname: Name,
+  lastname: Name,
   /** Points to [[adventureworks.person.person.PersonRow.suffix]] */
-suffix: Option[/* max 10 chars */ String],
+  suffix: Option[/* max 10 chars */ String],
   /** Points to [[adventureworks.person.personphone.PersonphoneRow.phonenumber]] */
-phonenumber: Option[Phone],
+  phonenumber: Option[Phone],
   /** Points to [[adventureworks.person.phonenumbertype.PhonenumbertypeRow.name]] */
-phonenumbertype: Option[Name],
+  phonenumbertype: Option[Name],
   /** Points to [[adventureworks.person.emailaddress.EmailaddressRow.emailaddress]] */
-emailaddress: Option[/* max 50 chars */ String],
+  emailaddress: Option[/* max 50 chars */ String],
   /** Points to [[adventureworks.person.person.PersonRow.emailpromotion]] */
-emailpromotion: Int
+  emailpromotion: Int
 )
 
 object VstorewithcontactsViewRow {

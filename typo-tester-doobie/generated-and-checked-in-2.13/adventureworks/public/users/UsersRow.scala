@@ -25,7 +25,7 @@ case class UsersRow(
   email: TypoUnknownCitext,
   password: String,
   /** Default: now() */
-createdAt: TypoInstant,
+  createdAt: TypoInstant,
   verifiedOn: Option[TypoInstant]
 ) {
   def id: UsersId = userId

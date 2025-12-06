@@ -25,14 +25,14 @@ case class ProductdocumentRow(
   /** Product identification number. Foreign key to Product.ProductID.
    * Points to [[adventureworks.production.product.ProductRow.productid]]
    */
-productid: ProductId,
+  productid: ProductId,
   /** Default: now() */
-modifieddate: TypoLocalDateTime,
+  modifieddate: TypoLocalDateTime,
   /** Document identification number. Foreign key to Document.DocumentNode.
    * Default: '/'::character varying
    * Points to [[adventureworks.production.document.DocumentRow.documentnode]]
    */
-documentnode: DocumentId
+  documentnode: DocumentId
 ) {
   def compositeId: ProductdocumentId = new ProductdocumentId(productid, documentnode)
 

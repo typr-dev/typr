@@ -18,15 +18,15 @@ import zio.json.internal.Write
 /** View: hr.d */
 case class DViewRow(
   /** Points to [[adventureworks.humanresources.department.DepartmentRow.departmentid]] */
-id: DepartmentId,
+  id: DepartmentId,
   /** Points to [[adventureworks.humanresources.department.DepartmentRow.departmentid]] */
-departmentid: DepartmentId,
+  departmentid: DepartmentId,
   /** Points to [[adventureworks.humanresources.department.DepartmentRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.humanresources.department.DepartmentRow.groupname]] */
-groupname: Name,
+  groupname: Name,
   /** Points to [[adventureworks.humanresources.department.DepartmentRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object DViewRow {

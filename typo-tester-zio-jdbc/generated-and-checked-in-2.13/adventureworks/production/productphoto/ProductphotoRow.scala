@@ -24,17 +24,17 @@ case class ProductphotoRow(
   /** Primary key for ProductPhoto records.
    * Default: nextval('production.productphoto_productphotoid_seq'::regclass)
    */
-productphotoid: ProductphotoId,
+  productphotoid: ProductphotoId,
   /** Small image of the product. */
-thumbnailphoto: Option[TypoBytea],
+  thumbnailphoto: Option[TypoBytea],
   /** Small image file name. */
-thumbnailphotofilename: Option[/* max 50 chars */ String],
+  thumbnailphotofilename: Option[/* max 50 chars */ String],
   /** Large image of the product. */
-largephoto: Option[TypoBytea],
+  largephoto: Option[TypoBytea],
   /** Large image file name. */
-largephotofilename: Option[/* max 50 chars */ String],
+  largephotofilename: Option[/* max 50 chars */ String],
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: ProductphotoId = productphotoid
 

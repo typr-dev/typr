@@ -25,17 +25,17 @@ case class SalespersonquotahistoryRow(
   /** Sales person identification number. Foreign key to SalesPerson.BusinessEntityID.
    * Points to [[adventureworks.sales.salesperson.SalespersonRow.businessentityid]]
    */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Sales quota date. */
-quotadate: TypoLocalDateTime,
+  quotadate: TypoLocalDateTime,
   /** Sales quota amount.
    * Constraint CK_SalesPersonQuotaHistory_SalesQuota affecting columns salesquota: ((salesquota > 0.00))
    */
-salesquota: BigDecimal,
+  salesquota: BigDecimal,
   /** Default: uuid_generate_v1() */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def compositeId: SalespersonquotahistoryId = new SalespersonquotahistoryId(businessentityid, quotadate)
 

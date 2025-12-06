@@ -18,15 +18,15 @@ import zio.json.internal.Write
 /** This class corresponds to a row in table `production.productdescription` which has not been persisted yet */
 case class ProductdescriptionRowUnsaved(
   /** Description of the product. */
-description: /* max 400 chars */ String,
+  description: /* max 400 chars */ String,
   /** Default: nextval('production.productdescription_productdescriptionid_seq'::regclass)
    * Primary key for ProductDescription records.
    */
-productdescriptionid: Defaulted[ProductdescriptionId] = new UseDefault(),
+  productdescriptionid: Defaulted[ProductdescriptionId] = new UseDefault(),
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     productdescriptionidDefault: => ProductdescriptionId,

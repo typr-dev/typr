@@ -20,35 +20,35 @@ case class WorkorderRowUnsaved(
   /** Product identification number. Foreign key to Product.ProductID.
    * Points to [[adventureworks.production.product.ProductRow.productid]]
    */
-productid: ProductId,
+  productid: ProductId,
   /** Product quantity to build.
    * Constraint CK_WorkOrder_OrderQty affecting columns orderqty:  ((orderqty > 0))
    */
-orderqty: Int,
+  orderqty: Int,
   /** Quantity that failed inspection.
    * Constraint CK_WorkOrder_ScrappedQty affecting columns scrappedqty:  ((scrappedqty >= 0))
    */
-scrappedqty: TypoShort,
+  scrappedqty: TypoShort,
   /** Work order start date.
    * Constraint CK_WorkOrder_EndDate affecting columns enddate, startdate:  (((enddate >= startdate) OR (enddate IS NULL)))
    */
-startdate: TypoLocalDateTime,
+  startdate: TypoLocalDateTime,
   /** Work order end date.
    * Constraint CK_WorkOrder_EndDate affecting columns enddate, startdate:  (((enddate >= startdate) OR (enddate IS NULL)))
    */
-enddate: Option[TypoLocalDateTime] = None,
+  enddate: Option[TypoLocalDateTime] = None,
   /** Work order due date. */
-duedate: TypoLocalDateTime,
+  duedate: TypoLocalDateTime,
   /** Reason for inspection failure.
    * Points to [[adventureworks.production.scrapreason.ScrapreasonRow.scrapreasonid]]
    */
-scrapreasonid: Option[ScrapreasonId] = None,
+  scrapreasonid: Option[ScrapreasonId] = None,
   /** Default: nextval('production.workorder_workorderid_seq'::regclass)
    * Primary key for WorkOrder records.
    */
-workorderid: Defaulted[WorkorderId] = new UseDefault(),
+  workorderid: Defaulted[WorkorderId] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     workorderidDefault: => WorkorderId,

@@ -24,13 +24,13 @@ case class SalesreasonRow(
   /** Primary key for SalesReason records.
    * Default: nextval('sales.salesreason_salesreasonid_seq'::regclass)
    */
-salesreasonid: SalesreasonId,
+  salesreasonid: SalesreasonId,
   /** Sales reason description. */
-name: Name,
+  name: Name,
   /** Category the sales reason belongs to. */
-reasontype: Name,
+  reasontype: Name,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: SalesreasonId = salesreasonid
 

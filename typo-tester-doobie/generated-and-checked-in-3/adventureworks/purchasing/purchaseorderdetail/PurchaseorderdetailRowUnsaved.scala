@@ -20,35 +20,35 @@ case class PurchaseorderdetailRowUnsaved(
   /** Primary key. Foreign key to PurchaseOrderHeader.PurchaseOrderID.
    * Points to [[adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderRow.purchaseorderid]]
    */
-purchaseorderid: PurchaseorderheaderId,
+  purchaseorderid: PurchaseorderheaderId,
   /** Date the product is expected to be received. */
-duedate: TypoLocalDateTime,
+  duedate: TypoLocalDateTime,
   /** Quantity ordered.
    * Constraint CK_PurchaseOrderDetail_OrderQty affecting columns orderqty:  ((orderqty > 0))
    */
-orderqty: TypoShort,
+  orderqty: TypoShort,
   /** Product identification number. Foreign key to Product.ProductID.
    * Points to [[adventureworks.production.product.ProductRow.productid]]
    */
-productid: ProductId,
+  productid: ProductId,
   /** Vendor's selling price of a single product.
    * Constraint CK_PurchaseOrderDetail_UnitPrice affecting columns unitprice:  ((unitprice >= 0.00))
    */
-unitprice: BigDecimal,
+  unitprice: BigDecimal,
   /** Quantity actually received from the vendor.
    * Constraint CK_PurchaseOrderDetail_ReceivedQty affecting columns receivedqty:  ((receivedqty >= 0.00))
    */
-receivedqty: BigDecimal,
+  receivedqty: BigDecimal,
   /** Quantity rejected during inspection.
    * Constraint CK_PurchaseOrderDetail_RejectedQty affecting columns rejectedqty:  ((rejectedqty >= 0.00))
    */
-rejectedqty: BigDecimal,
+  rejectedqty: BigDecimal,
   /** Default: nextval('purchasing.purchaseorderdetail_purchaseorderdetailid_seq'::regclass)
    * Primary key. One line number per purchased product.
    */
-purchaseorderdetailid: Defaulted[Int] = new UseDefault(),
+  purchaseorderdetailid: Defaulted[Int] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     purchaseorderdetailidDefault: => Int,

@@ -21,23 +21,23 @@ case class CurrencyrateRow(
   /** Primary key for CurrencyRate records.
    * Default: nextval('sales.currencyrate_currencyrateid_seq'::regclass)
    */
-currencyrateid: CurrencyrateId,
+  currencyrateid: CurrencyrateId,
   /** Date and time the exchange rate was obtained. */
-currencyratedate: TypoLocalDateTime,
+  currencyratedate: TypoLocalDateTime,
   /** Exchange rate was converted from this currency code.
    * Points to [[adventureworks.sales.currency.CurrencyRow.currencycode]]
    */
-fromcurrencycode: CurrencyId,
+  fromcurrencycode: CurrencyId,
   /** Exchange rate was converted to this currency code.
    * Points to [[adventureworks.sales.currency.CurrencyRow.currencycode]]
    */
-tocurrencycode: CurrencyId,
+  tocurrencycode: CurrencyId,
   /** Average exchange rate for the day. */
-averagerate: java.math.BigDecimal,
+  averagerate: java.math.BigDecimal,
   /** Final exchange rate for the day. */
-endofdayrate: java.math.BigDecimal,
+  endofdayrate: java.math.BigDecimal,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: CurrencyrateId = currencyrateid
 

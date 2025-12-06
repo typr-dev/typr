@@ -20,43 +20,43 @@ import typo.runtime.PgTypes
 /** This class corresponds to a row in table `production.document` which has not been persisted yet */
 case class DocumentRowUnsaved(
   /** Title of the document. */
-title: /* max 50 chars */ String,
+  title: /* max 50 chars */ String,
   /** Employee who controls the document.  Foreign key to Employee.BusinessEntityID
    * Points to [[adventureworks.humanresources.employee.EmployeeRow.businessentityid]]
    */
-owner: BusinessentityId,
+  owner: BusinessentityId,
   /** File name of the document */
-filename: /* max 400 chars */ String,
+  filename: /* max 400 chars */ String,
   /** File extension indicating the document type. For example, .doc or .txt. */
-fileextension: Optional[/* max 8 chars */ String] = Optional.empty(),
+  fileextension: Optional[/* max 8 chars */ String] = Optional.empty(),
   /** Revision number of the document. */
-revision: /* bpchar, max 5 chars */ String,
+  revision: /* bpchar, max 5 chars */ String,
   /** 1 = Pending approval, 2 = Approved, 3 = Obsolete
    * Constraint CK_Document_Status affecting columns status:  (((status >= 1) AND (status <= 3)))
    */
-status: TypoShort,
+  status: TypoShort,
   /** Document abstract. */
-documentsummary: Optional[String] = Optional.empty(),
+  documentsummary: Optional[String] = Optional.empty(),
   /** Complete document. */
-document: Optional[TypoBytea] = Optional.empty(),
+  document: Optional[TypoBytea] = Optional.empty(),
   /** Default: false
    * 0 = This is a folder, 1 = This is a document.
    */
-folderflag: Defaulted[Flag] = new UseDefault(),
+  folderflag: Defaulted[Flag] = new UseDefault(),
   /** Default: 0
    * Engineering change approval number.
    */
-changenumber: Defaulted[Integer] = new UseDefault(),
+  changenumber: Defaulted[Integer] = new UseDefault(),
   /** Default: uuid_generate_v1()
    * ROWGUIDCOL number uniquely identifying the record. Required for FileStream.
    */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault(),
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault(),
   /** Default: '/'::character varying
    * Primary key for Document records.
    */
-documentnode: Defaulted[DocumentId] = new UseDefault()
+  documentnode: Defaulted[DocumentId] = new UseDefault()
 ) {
   def toRow(
     folderflagDefault: => Flag,

@@ -16,29 +16,29 @@ import typo.runtime.RowParsers
 /** View: sa.so */
 case class SoViewRow(
   /** Points to [[adventureworks.sales.specialoffer.SpecialofferRow.specialofferid]] */
-id: SpecialofferId,
+  id: SpecialofferId,
   /** Points to [[adventureworks.sales.specialoffer.SpecialofferRow.specialofferid]] */
-specialofferid: SpecialofferId,
+  specialofferid: SpecialofferId,
   /** Points to [[adventureworks.sales.specialoffer.SpecialofferRow.description]] */
-description: /* max 255 chars */ String,
+  description: /* max 255 chars */ String,
   /** Points to [[adventureworks.sales.specialoffer.SpecialofferRow.discountpct]] */
-discountpct: java.math.BigDecimal,
+  discountpct: java.math.BigDecimal,
   /** Points to [[adventureworks.sales.specialoffer.SpecialofferRow.type]] */
-`type`: /* max 50 chars */ String,
+  `type`: /* max 50 chars */ String,
   /** Points to [[adventureworks.sales.specialoffer.SpecialofferRow.category]] */
-category: /* max 50 chars */ String,
+  category: /* max 50 chars */ String,
   /** Points to [[adventureworks.sales.specialoffer.SpecialofferRow.startdate]] */
-startdate: TypoLocalDateTime,
+  startdate: TypoLocalDateTime,
   /** Points to [[adventureworks.sales.specialoffer.SpecialofferRow.enddate]] */
-enddate: TypoLocalDateTime,
+  enddate: TypoLocalDateTime,
   /** Points to [[adventureworks.sales.specialoffer.SpecialofferRow.minqty]] */
-minqty: Integer,
+  minqty: Integer,
   /** Points to [[adventureworks.sales.specialoffer.SpecialofferRow.maxqty]] */
-maxqty: Optional[Integer],
+  maxqty: Optional[Integer],
   /** Points to [[adventureworks.sales.specialoffer.SpecialofferRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.sales.specialoffer.SpecialofferRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object SoViewRow {

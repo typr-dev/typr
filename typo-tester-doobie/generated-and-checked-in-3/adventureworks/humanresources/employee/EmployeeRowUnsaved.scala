@@ -22,55 +22,55 @@ case class EmployeeRowUnsaved(
   /** Primary key for Employee records.  Foreign key to BusinessEntity.BusinessEntityID.
    * Points to [[adventureworks.person.person.PersonRow.businessentityid]]
    */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Unique national identification number such as a social security number. */
-nationalidnumber: /* max 15 chars */ String,
+  nationalidnumber: /* max 15 chars */ String,
   /** Network login. */
-loginid: /* max 256 chars */ String,
+  loginid: /* max 256 chars */ String,
   /** Work title such as Buyer or Sales Representative. */
-jobtitle: /* max 50 chars */ String,
+  jobtitle: /* max 50 chars */ String,
   /** Date of birth.
    * Constraint CK_Employee_BirthDate affecting columns birthdate:  (((birthdate >= '1930-01-01'::date) AND (birthdate <= (now() - '18 years'::interval))))
    */
-birthdate: TypoLocalDate,
+  birthdate: TypoLocalDate,
   /** M = Married, S = Single
    * Constraint CK_Employee_MaritalStatus affecting columns maritalstatus:  ((upper((maritalstatus)::text) = ANY (ARRAY['M'::text, 'S'::text])))
    */
-maritalstatus: /* bpchar, max 1 chars */ String,
+  maritalstatus: /* bpchar, max 1 chars */ String,
   /** M = Male, F = Female
    * Constraint CK_Employee_Gender affecting columns gender:  ((upper((gender)::text) = ANY (ARRAY['M'::text, 'F'::text])))
    */
-gender: /* bpchar, max 1 chars */ String,
+  gender: /* bpchar, max 1 chars */ String,
   /** Employee hired on this date.
    * Constraint CK_Employee_HireDate affecting columns hiredate:  (((hiredate >= '1996-07-01'::date) AND (hiredate <= (now() + '1 day'::interval))))
    */
-hiredate: TypoLocalDate,
+  hiredate: TypoLocalDate,
   /** Default: true
    * Job classification. 0 = Hourly, not exempt from collective bargaining. 1 = Salaried, exempt from collective bargaining.
    */
-salariedflag: Defaulted[Flag] = new UseDefault(),
+  salariedflag: Defaulted[Flag] = new UseDefault(),
   /** Default: 0
    * Number of available vacation hours.
    * Constraint CK_Employee_VacationHours affecting columns vacationhours:  (((vacationhours >= '-40'::integer) AND (vacationhours <= 240)))
    */
-vacationhours: Defaulted[TypoShort] = new UseDefault(),
+  vacationhours: Defaulted[TypoShort] = new UseDefault(),
   /** Default: 0
    * Number of available sick leave hours.
    * Constraint CK_Employee_SickLeaveHours affecting columns sickleavehours:  (((sickleavehours >= 0) AND (sickleavehours <= 120)))
    */
-sickleavehours: Defaulted[TypoShort] = new UseDefault(),
+  sickleavehours: Defaulted[TypoShort] = new UseDefault(),
   /** Default: true
    * 0 = Inactive, 1 = Active
    */
-currentflag: Defaulted[Flag] = new UseDefault(),
+  currentflag: Defaulted[Flag] = new UseDefault(),
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault(),
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault(),
   /** Default: '/'::character varying
    * Where the employee is located in corporate hierarchy.
    */
-organizationnode: Defaulted[Option[String]] = new UseDefault()
+  organizationnode: Defaulted[Option[String]] = new UseDefault()
 ) {
   def toRow(
     salariedflagDefault: => Flag,

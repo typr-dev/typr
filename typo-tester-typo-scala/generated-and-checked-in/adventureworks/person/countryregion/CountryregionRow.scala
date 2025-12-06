@@ -18,11 +18,11 @@ import typo.runtime.RowParsers
  */
 case class CountryregionRow(
   /** ISO standard code for countries and regions. */
-countryregioncode: CountryregionId,
+  countryregioncode: CountryregionId,
   /** Country or region name. */
-name: Name,
+  name: Name,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: CountryregionId = countryregioncode
 

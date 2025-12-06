@@ -31,43 +31,43 @@ case class BillofmaterialsRow(
   /** Primary key for BillOfMaterials records.
    * Default: nextval('production.billofmaterials_billofmaterialsid_seq'::regclass)
    */
-billofmaterialsid: Int,
+  billofmaterialsid: Int,
   /** Parent product identification number. Foreign key to Product.ProductID.
    * Points to [[adventureworks.production.product.ProductRow.productid]]
    * Constraint CK_BillOfMaterials_BOMLevel affecting columns bomlevel, perassemblyqty, productassemblyid: ((((productassemblyid IS NULL) AND (bomlevel = 0) AND (perassemblyqty = 1.00)) OR ((productassemblyid IS NOT NULL) AND (bomlevel >= 1))))
    * Constraint CK_BillOfMaterials_ProductAssemblyID affecting columns componentid, productassemblyid: ((productassemblyid <> componentid))
    */
-productassemblyid: Option[ProductId],
+  productassemblyid: Option[ProductId],
   /** Component identification number. Foreign key to Product.ProductID.
    * Points to [[adventureworks.production.product.ProductRow.productid]]
    * Constraint CK_BillOfMaterials_ProductAssemblyID affecting columns componentid, productassemblyid: ((productassemblyid <> componentid))
    */
-componentid: ProductId,
+  componentid: ProductId,
   /** Date the component started being used in the assembly item.
    * Default: now()
    * Constraint CK_BillOfMaterials_EndDate affecting columns enddate, startdate: (((enddate > startdate) OR (enddate IS NULL)))
    */
-startdate: TypoLocalDateTime,
+  startdate: TypoLocalDateTime,
   /** Date the component stopped being used in the assembly item.
    * Constraint CK_BillOfMaterials_EndDate affecting columns enddate, startdate: (((enddate > startdate) OR (enddate IS NULL)))
    */
-enddate: Option[TypoLocalDateTime],
+  enddate: Option[TypoLocalDateTime],
   /** Standard code identifying the unit of measure for the quantity.
    * Points to [[adventureworks.production.unitmeasure.UnitmeasureRow.unitmeasurecode]]
    */
-unitmeasurecode: UnitmeasureId,
+  unitmeasurecode: UnitmeasureId,
   /** Indicates the depth the component is from its parent (AssemblyID).
    * Constraint CK_BillOfMaterials_BOMLevel affecting columns bomlevel, perassemblyqty, productassemblyid: ((((productassemblyid IS NULL) AND (bomlevel = 0) AND (perassemblyqty = 1.00)) OR ((productassemblyid IS NOT NULL) AND (bomlevel >= 1))))
    */
-bomlevel: TypoShort,
+  bomlevel: TypoShort,
   /** Quantity of the component needed to create the assembly.
    * Default: 1.00
    * Constraint CK_BillOfMaterials_BOMLevel affecting columns bomlevel, perassemblyqty, productassemblyid: ((((productassemblyid IS NULL) AND (bomlevel = 0) AND (perassemblyqty = 1.00)) OR ((productassemblyid IS NOT NULL) AND (bomlevel >= 1))))
    * Constraint CK_BillOfMaterials_PerAssemblyQty affecting columns perassemblyqty: ((perassemblyqty >= 1.00))
    */
-perassemblyqty: BigDecimal,
+  perassemblyqty: BigDecimal,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: Int = billofmaterialsid
 

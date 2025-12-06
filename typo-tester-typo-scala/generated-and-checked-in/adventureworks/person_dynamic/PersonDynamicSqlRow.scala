@@ -15,13 +15,13 @@ import typo.runtime.RowParsers
 /** SQL file: person_dynamic.sql */
 case class PersonDynamicSqlRow(
   /** Points to [[adventureworks.person.person.PersonRow.title]] */
-title: Optional[/* max 8 chars */ String],
+  title: Optional[/* max 8 chars */ String],
   /** Points to [[adventureworks.person.person.PersonRow.firstname]] */
-firstname: /* user-picked */ FirstName,
+  firstname: /* user-picked */ FirstName,
   /** Points to [[adventureworks.person.person.PersonRow.middlename]] */
-middlename: Optional[Name],
+  middlename: Optional[Name],
   /** Points to [[adventureworks.person.person.PersonRow.lastname]] */
-lastname: Name
+  lastname: Name
 )
 
 object PersonDynamicSqlRow {

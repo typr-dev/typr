@@ -22,15 +22,15 @@ import scala.util.Try
 /** View: sa.sop */
 case class SopViewRow(
   /** Points to [[adventureworks.sales.specialofferproduct.SpecialofferproductRow.specialofferid]] */
-id: SpecialofferId,
+  id: SpecialofferId,
   /** Points to [[adventureworks.sales.specialofferproduct.SpecialofferproductRow.specialofferid]] */
-specialofferid: SpecialofferId,
+  specialofferid: SpecialofferId,
   /** Points to [[adventureworks.sales.specialofferproduct.SpecialofferproductRow.productid]] */
-productid: ProductId,
+  productid: ProductId,
   /** Points to [[adventureworks.sales.specialofferproduct.SpecialofferproductRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.sales.specialofferproduct.SpecialofferproductRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object SopViewRow {

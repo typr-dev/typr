@@ -16,15 +16,15 @@ import typo.runtime.RowParsers
 /** View: hr.jc */
 case class JcViewRow(
   /** Points to [[adventureworks.humanresources.jobcandidate.JobcandidateRow.jobcandidateid]] */
-id: JobcandidateId,
+  id: JobcandidateId,
   /** Points to [[adventureworks.humanresources.jobcandidate.JobcandidateRow.jobcandidateid]] */
-jobcandidateid: JobcandidateId,
+  jobcandidateid: JobcandidateId,
   /** Points to [[adventureworks.humanresources.jobcandidate.JobcandidateRow.businessentityid]] */
-businessentityid: Optional[BusinessentityId],
+  businessentityid: Optional[BusinessentityId],
   /** Points to [[adventureworks.humanresources.jobcandidate.JobcandidateRow.resume]] */
-resume: Optional[TypoXml],
+  resume: Optional[TypoXml],
   /** Points to [[adventureworks.humanresources.jobcandidate.JobcandidateRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object JcViewRow {

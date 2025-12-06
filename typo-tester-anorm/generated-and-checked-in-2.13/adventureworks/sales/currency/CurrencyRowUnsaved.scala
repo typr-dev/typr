@@ -21,11 +21,11 @@ import scala.util.Try
 /** This class corresponds to a row in table `sales.currency` which has not been persisted yet */
 case class CurrencyRowUnsaved(
   /** The ISO code for the Currency. */
-currencycode: CurrencyId,
+  currencycode: CurrencyId,
   /** Currency name. */
-name: Name,
+  name: Name,
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(modifieddateDefault: => TypoLocalDateTime): CurrencyRow = new CurrencyRow(currencycode = currencycode, name = name, modifieddate = modifieddate.getOrElse(modifieddateDefault))
 }

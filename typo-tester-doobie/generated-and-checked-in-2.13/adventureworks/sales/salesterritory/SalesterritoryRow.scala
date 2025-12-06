@@ -25,39 +25,39 @@ case class SalesterritoryRow(
   /** Primary key for SalesTerritory records.
    * Default: nextval('sales.salesterritory_territoryid_seq'::regclass)
    */
-territoryid: SalesterritoryId,
+  territoryid: SalesterritoryId,
   /** Sales territory description */
-name: Name,
+  name: Name,
   /** ISO standard country or region code. Foreign key to CountryRegion.CountryRegionCode.
    * Points to [[adventureworks.person.countryregion.CountryregionRow.countryregioncode]]
    */
-countryregioncode: CountryregionId,
+  countryregioncode: CountryregionId,
   /** Geographic area to which the sales territory belong. */
-group: /* max 50 chars */ String,
+  group: /* max 50 chars */ String,
   /** Sales in the territory year to date.
    * Default: 0.00
    * Constraint CK_SalesTerritory_SalesYTD affecting columns salesytd: ((salesytd >= 0.00))
    */
-salesytd: BigDecimal,
+  salesytd: BigDecimal,
   /** Sales in the territory the previous year.
    * Default: 0.00
    * Constraint CK_SalesTerritory_SalesLastYear affecting columns saleslastyear: ((saleslastyear >= 0.00))
    */
-saleslastyear: BigDecimal,
+  saleslastyear: BigDecimal,
   /** Business costs in the territory year to date.
    * Default: 0.00
    * Constraint CK_SalesTerritory_CostYTD affecting columns costytd: ((costytd >= 0.00))
    */
-costytd: BigDecimal,
+  costytd: BigDecimal,
   /** Business costs in the territory the previous year.
    * Default: 0.00
    * Constraint CK_SalesTerritory_CostLastYear affecting columns costlastyear: ((costlastyear >= 0.00))
    */
-costlastyear: BigDecimal,
+  costlastyear: BigDecimal,
   /** Default: uuid_generate_v1() */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: SalesterritoryId = territoryid
 

@@ -21,11 +21,11 @@ case class IllustrationRow(
   /** Primary key for Illustration records.
    * Default: nextval('production.illustration_illustrationid_seq'::regclass)
    */
-illustrationid: IllustrationId,
+  illustrationid: IllustrationId,
   /** Illustrations used in manufacturing instructions. Stored as XML. */
-diagram: Optional[TypoXml],
+  diagram: Optional[TypoXml],
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: IllustrationId = illustrationid
 

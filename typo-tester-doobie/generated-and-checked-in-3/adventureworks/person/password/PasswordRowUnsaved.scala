@@ -17,15 +17,15 @@ import io.circe.Encoder
 /** This class corresponds to a row in table `person.password` which has not been persisted yet */
 case class PasswordRowUnsaved(
   /** Points to [[adventureworks.person.person.PersonRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Password for the e-mail account. */
-passwordhash: /* max 128 chars */ String,
+  passwordhash: /* max 128 chars */ String,
   /** Random value concatenated with the password string before the password is hashed. */
-passwordsalt: /* max 10 chars */ String,
+  passwordsalt: /* max 10 chars */ String,
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     rowguidDefault: => TypoUUID,

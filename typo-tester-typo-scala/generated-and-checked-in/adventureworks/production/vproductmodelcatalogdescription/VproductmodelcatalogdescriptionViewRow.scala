@@ -18,9 +18,9 @@ import typo.runtime.RowParsers
 /** View: production.vproductmodelcatalogdescription */
 case class VproductmodelcatalogdescriptionViewRow(
   /** Points to [[adventureworks.production.productmodel.ProductmodelRow.productmodelid]] */
-productmodelid: ProductmodelId,
+  productmodelid: ProductmodelId,
   /** Points to [[adventureworks.production.productmodel.ProductmodelRow.name]] */
-name: Name,
+  name: Name,
   @JsonProperty("Summary") summary: /* nullability unknown */ Optional[String],
   manufacturer: /* nullability unknown */ Optional[String],
   copyright: /* nullability unknown */ Optional[/* max 30 chars */ String],
@@ -43,9 +43,9 @@ name: Name,
   style: /* nullability unknown */ Optional[/* max 256 chars */ String],
   riderexperience: /* nullability unknown */ Optional[/* max 1024 chars */ String],
   /** Points to [[adventureworks.production.productmodel.ProductmodelRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.production.productmodel.ProductmodelRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object VproductmodelcatalogdescriptionViewRow {

@@ -19,9 +19,9 @@ import typo.runtime.RowParsers
 case class TestSakSoknadsalternativRow(
   @JsonProperty("organisasjonskode_saksbehandler") organisasjonskodeSaksbehandler: String,
   /** Points to [[adventureworks.public.test_utdanningstilbud.TestUtdanningstilbudRow.utdanningsmulighetKode]] */
-@JsonProperty("utdanningsmulighet_kode") utdanningsmulighetKode: String,
+  @JsonProperty("utdanningsmulighet_kode") utdanningsmulighetKode: String,
   /** Points to [[adventureworks.public.test_utdanningstilbud.TestUtdanningstilbudRow.organisasjonskode]] */
-@JsonProperty("organisasjonskode_tilbyder") organisasjonskodeTilbyder: TestOrganisasjonId
+  @JsonProperty("organisasjonskode_tilbyder") organisasjonskodeTilbyder: TestOrganisasjonId
 ) {
   def compositeId: TestSakSoknadsalternativId = new TestSakSoknadsalternativId(organisasjonskodeSaksbehandler, utdanningsmulighetKode)
 

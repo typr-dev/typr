@@ -17,25 +17,25 @@ import typo.runtime.RowParsers
 /** View: sa.sp */
 case class SpViewRow(
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.businessentityid]] */
-id: BusinessentityId,
+  id: BusinessentityId,
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.territoryid]] */
-territoryid: Optional[SalesterritoryId],
+  territoryid: Optional[SalesterritoryId],
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.salesquota]] */
-salesquota: Optional[java.math.BigDecimal],
+  salesquota: Optional[java.math.BigDecimal],
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.bonus]] */
-bonus: java.math.BigDecimal,
+  bonus: java.math.BigDecimal,
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.commissionpct]] */
-commissionpct: java.math.BigDecimal,
+  commissionpct: java.math.BigDecimal,
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.salesytd]] */
-salesytd: java.math.BigDecimal,
+  salesytd: java.math.BigDecimal,
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.saleslastyear]] */
-saleslastyear: java.math.BigDecimal,
+  saleslastyear: java.math.BigDecimal,
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object SpViewRow {

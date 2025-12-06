@@ -22,7 +22,7 @@ import scala.util.Try
 /** SQL file: person_row_join.sql */
 case class PersonRowJoinSqlRow(
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   email: /* nullability unknown */ Option[Array[TypoRecord]],
   emails: /* nullability unknown */ Option[Array[TypoRecord]]
 )

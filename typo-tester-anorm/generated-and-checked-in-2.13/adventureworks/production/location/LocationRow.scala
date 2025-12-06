@@ -29,21 +29,21 @@ case class LocationRow(
   /** Primary key for Location records.
    * Default: nextval('production.location_locationid_seq'::regclass)
    */
-locationid: LocationId,
+  locationid: LocationId,
   /** Location description. */
-name: Name,
+  name: Name,
   /** Standard hourly cost of the manufacturing location.
    * Default: 0.00
    * Constraint CK_Location_CostRate affecting columns costrate: ((costrate >= 0.00))
    */
-costrate: BigDecimal,
+  costrate: BigDecimal,
   /** Work capacity (in hours) of the manufacturing location.
    * Default: 0.00
    * Constraint CK_Location_Availability affecting columns availability: ((availability >= 0.00))
    */
-availability: BigDecimal,
+  availability: BigDecimal,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: LocationId = locationid
 

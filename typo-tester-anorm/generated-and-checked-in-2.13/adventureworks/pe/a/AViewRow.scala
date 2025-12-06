@@ -25,25 +25,25 @@ import scala.util.Try
 /** View: pe.a */
 case class AViewRow(
   /** Points to [[adventureworks.person.address.AddressRow.addressid]] */
-id: AddressId,
+  id: AddressId,
   /** Points to [[adventureworks.person.address.AddressRow.addressid]] */
-addressid: AddressId,
+  addressid: AddressId,
   /** Points to [[adventureworks.person.address.AddressRow.addressline1]] */
-addressline1: /* max 60 chars */ String,
+  addressline1: /* max 60 chars */ String,
   /** Points to [[adventureworks.person.address.AddressRow.addressline2]] */
-addressline2: Option[/* max 60 chars */ String],
+  addressline2: Option[/* max 60 chars */ String],
   /** Points to [[adventureworks.person.address.AddressRow.city]] */
-city: /* max 30 chars */ String,
+  city: /* max 30 chars */ String,
   /** Points to [[adventureworks.person.address.AddressRow.stateprovinceid]] */
-stateprovinceid: StateprovinceId,
+  stateprovinceid: StateprovinceId,
   /** Points to [[adventureworks.person.address.AddressRow.postalcode]] */
-postalcode: /* max 15 chars */ String,
+  postalcode: /* max 15 chars */ String,
   /** Points to [[adventureworks.person.address.AddressRow.spatiallocation]] */
-spatiallocation: Option[TypoBytea],
+  spatiallocation: Option[TypoBytea],
   /** Points to [[adventureworks.person.address.AddressRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.person.address.AddressRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object AViewRow {

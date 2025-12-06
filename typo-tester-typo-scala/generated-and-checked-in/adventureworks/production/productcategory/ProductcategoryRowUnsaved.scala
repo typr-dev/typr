@@ -15,15 +15,15 @@ import typo.runtime.PgText
 /** This class corresponds to a row in table `production.productcategory` which has not been persisted yet */
 case class ProductcategoryRowUnsaved(
   /** Category description. */
-name: Name,
+  name: Name,
   /** Default: nextval('production.productcategory_productcategoryid_seq'::regclass)
    * Primary key for ProductCategory records.
    */
-productcategoryid: Defaulted[ProductcategoryId] = new UseDefault(),
+  productcategoryid: Defaulted[ProductcategoryId] = new UseDefault(),
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     productcategoryidDefault: => ProductcategoryId,

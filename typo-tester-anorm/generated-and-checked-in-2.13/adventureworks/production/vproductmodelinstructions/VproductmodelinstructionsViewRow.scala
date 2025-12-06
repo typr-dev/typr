@@ -24,9 +24,9 @@ import scala.util.Try
 /** View: production.vproductmodelinstructions */
 case class VproductmodelinstructionsViewRow(
   /** Points to [[adventureworks.production.productmodel.ProductmodelRow.productmodelid]] */
-productmodelid: ProductmodelId,
+  productmodelid: ProductmodelId,
   /** Points to [[adventureworks.production.productmodel.ProductmodelRow.name]] */
-name: Name,
+  name: Name,
   instructions: /* nullability unknown */ Option[String],
   locationID: /* nullability unknown */ Option[Int],
   setupHours: /* nullability unknown */ Option[BigDecimal],
@@ -35,9 +35,9 @@ name: Name,
   lotSize: /* nullability unknown */ Option[Int],
   step: /* nullability unknown */ Option[/* max 1024 chars */ String],
   /** Points to [[adventureworks.production.productmodel.ProductmodelRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.production.productmodel.ProductmodelRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object VproductmodelinstructionsViewRow {

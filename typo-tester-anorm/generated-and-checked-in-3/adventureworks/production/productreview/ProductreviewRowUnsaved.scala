@@ -25,27 +25,27 @@ case class ProductreviewRowUnsaved(
   /** Product identification number. Foreign key to Product.ProductID.
    * Points to [[adventureworks.production.product.ProductRow.productid]]
    */
-productid: ProductId,
+  productid: ProductId,
   /** Name of the reviewer. */
-reviewername: Name,
+  reviewername: Name,
   /** Reviewer's e-mail address. */
-emailaddress: /* max 50 chars */ String,
+  emailaddress: /* max 50 chars */ String,
   /** Product rating given by the reviewer. Scale is 1 to 5 with 5 as the highest rating.
    * Constraint CK_ProductReview_Rating affecting columns rating:  (((rating >= 1) AND (rating <= 5)))
    */
-rating: Int,
+  rating: Int,
   /** Reviewer's comments */
-comments: Option[/* max 3850 chars */ String] = None,
+  comments: Option[/* max 3850 chars */ String] = None,
   /** Default: nextval('production.productreview_productreviewid_seq'::regclass)
    * Primary key for ProductReview records.
    */
-productreviewid: Defaulted[ProductreviewId] = new UseDefault(),
+  productreviewid: Defaulted[ProductreviewId] = new UseDefault(),
   /** Default: now()
    * Date review was submitted.
    */
-reviewdate: Defaulted[TypoLocalDateTime] = new UseDefault(),
+  reviewdate: Defaulted[TypoLocalDateTime] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     productreviewidDefault: => ProductreviewId,

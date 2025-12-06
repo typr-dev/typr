@@ -17,19 +17,19 @@ import typo.runtime.RowParsers
 /** Materialized View: person.vstateprovincecountryregion */
 case class VstateprovincecountryregionMVRow(
   /** Points to [[adventureworks.person.stateprovince.StateprovinceRow.stateprovinceid]] */
-stateprovinceid: StateprovinceId,
+  stateprovinceid: StateprovinceId,
   /** Points to [[adventureworks.person.stateprovince.StateprovinceRow.stateprovincecode]] */
-stateprovincecode: /* bpchar, max 3 chars */ String,
+  stateprovincecode: /* bpchar, max 3 chars */ String,
   /** Points to [[adventureworks.person.stateprovince.StateprovinceRow.isonlystateprovinceflag]] */
-isonlystateprovinceflag: Flag,
+  isonlystateprovinceflag: Flag,
   /** Points to [[adventureworks.person.stateprovince.StateprovinceRow.name]] */
-stateprovincename: Name,
+  stateprovincename: Name,
   /** Points to [[adventureworks.person.stateprovince.StateprovinceRow.territoryid]] */
-territoryid: SalesterritoryId,
+  territoryid: SalesterritoryId,
   /** Points to [[adventureworks.person.countryregion.CountryregionRow.countryregioncode]] */
-countryregioncode: CountryregionId,
+  countryregioncode: CountryregionId,
   /** Points to [[adventureworks.person.countryregion.CountryregionRow.name]] */
-countryregionname: Name
+  countryregionname: Name
 )
 
 object VstateprovincecountryregionMVRow {

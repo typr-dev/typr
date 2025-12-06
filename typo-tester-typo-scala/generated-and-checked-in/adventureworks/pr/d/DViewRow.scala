@@ -20,31 +20,31 @@ import typo.runtime.RowParsers
 /** View: pr.d */
 case class DViewRow(
   /** Points to [[adventureworks.production.document.DocumentRow.title]] */
-title: /* max 50 chars */ String,
+  title: /* max 50 chars */ String,
   /** Points to [[adventureworks.production.document.DocumentRow.owner]] */
-owner: BusinessentityId,
+  owner: BusinessentityId,
   /** Points to [[adventureworks.production.document.DocumentRow.folderflag]] */
-folderflag: Flag,
+  folderflag: Flag,
   /** Points to [[adventureworks.production.document.DocumentRow.filename]] */
-filename: /* max 400 chars */ String,
+  filename: /* max 400 chars */ String,
   /** Points to [[adventureworks.production.document.DocumentRow.fileextension]] */
-fileextension: Optional[/* max 8 chars */ String],
+  fileextension: Optional[/* max 8 chars */ String],
   /** Points to [[adventureworks.production.document.DocumentRow.revision]] */
-revision: /* bpchar, max 5 chars */ String,
+  revision: /* bpchar, max 5 chars */ String,
   /** Points to [[adventureworks.production.document.DocumentRow.changenumber]] */
-changenumber: Integer,
+  changenumber: Integer,
   /** Points to [[adventureworks.production.document.DocumentRow.status]] */
-status: TypoShort,
+  status: TypoShort,
   /** Points to [[adventureworks.production.document.DocumentRow.documentsummary]] */
-documentsummary: Optional[String],
+  documentsummary: Optional[String],
   /** Points to [[adventureworks.production.document.DocumentRow.document]] */
-document: Optional[TypoBytea],
+  document: Optional[TypoBytea],
   /** Points to [[adventureworks.production.document.DocumentRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.production.document.DocumentRow.modifieddate]] */
-modifieddate: TypoLocalDateTime,
+  modifieddate: TypoLocalDateTime,
   /** Points to [[adventureworks.production.document.DocumentRow.documentnode]] */
-documentnode: DocumentId
+  documentnode: DocumentId
 )
 
 object DViewRow {

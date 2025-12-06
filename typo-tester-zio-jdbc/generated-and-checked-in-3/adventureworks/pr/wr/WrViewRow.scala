@@ -19,31 +19,31 @@ import zio.json.internal.Write
 /** View: pr.wr */
 case class WrViewRow(
   /** Points to [[adventureworks.production.workorderrouting.WorkorderroutingRow.workorderid]] */
-id: WorkorderId,
+  id: WorkorderId,
   /** Points to [[adventureworks.production.workorderrouting.WorkorderroutingRow.workorderid]] */
-workorderid: WorkorderId,
+  workorderid: WorkorderId,
   /** Points to [[adventureworks.production.workorderrouting.WorkorderroutingRow.productid]] */
-productid: Int,
+  productid: Int,
   /** Points to [[adventureworks.production.workorderrouting.WorkorderroutingRow.operationsequence]] */
-operationsequence: TypoShort,
+  operationsequence: TypoShort,
   /** Points to [[adventureworks.production.workorderrouting.WorkorderroutingRow.locationid]] */
-locationid: LocationId,
+  locationid: LocationId,
   /** Points to [[adventureworks.production.workorderrouting.WorkorderroutingRow.scheduledstartdate]] */
-scheduledstartdate: TypoLocalDateTime,
+  scheduledstartdate: TypoLocalDateTime,
   /** Points to [[adventureworks.production.workorderrouting.WorkorderroutingRow.scheduledenddate]] */
-scheduledenddate: TypoLocalDateTime,
+  scheduledenddate: TypoLocalDateTime,
   /** Points to [[adventureworks.production.workorderrouting.WorkorderroutingRow.actualstartdate]] */
-actualstartdate: Option[TypoLocalDateTime],
+  actualstartdate: Option[TypoLocalDateTime],
   /** Points to [[adventureworks.production.workorderrouting.WorkorderroutingRow.actualenddate]] */
-actualenddate: Option[TypoLocalDateTime],
+  actualenddate: Option[TypoLocalDateTime],
   /** Points to [[adventureworks.production.workorderrouting.WorkorderroutingRow.actualresourcehrs]] */
-actualresourcehrs: Option[BigDecimal],
+  actualresourcehrs: Option[BigDecimal],
   /** Points to [[adventureworks.production.workorderrouting.WorkorderroutingRow.plannedcost]] */
-plannedcost: BigDecimal,
+  plannedcost: BigDecimal,
   /** Points to [[adventureworks.production.workorderrouting.WorkorderroutingRow.actualcost]] */
-actualcost: Option[BigDecimal],
+  actualcost: Option[BigDecimal],
   /** Points to [[adventureworks.production.workorderrouting.WorkorderroutingRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object WrViewRow {

@@ -29,38 +29,38 @@ case class PersonRow(
   /** Primary key for Person records.
    * Points to [[adventureworks.person.businessentity.BusinessentityRow.businessentityid]]
    */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Primary type of person: SC = Store Contact, IN = Individual (retail) customer, SP = Sales person, EM = Employee (non-sales), VC = Vendor contact, GC = General contact
    * Constraint CK_Person_PersonType affecting columns persontype: (((persontype IS NULL) OR (upper((persontype)::text) = ANY (ARRAY['SC'::text, 'VC'::text, 'IN'::text, 'EM'::text, 'SP'::text, 'GC'::text]))))
    */
-persontype: /* bpchar, max 2 chars */ String,
+  persontype: /* bpchar, max 2 chars */ String,
   /** 0 = The data in FirstName and LastName are stored in western style (first name, last name) order.  1 = Eastern style (last name, first name) order.
    * Default: false
    */
-namestyle: NameStyle,
+  namestyle: NameStyle,
   /** A courtesy title. For example, Mr. or Ms. */
-title: Option[/* max 8 chars */ String],
+  title: Option[/* max 8 chars */ String],
   /** First name of the person. */
-firstname: /* user-picked */ FirstName,
+  firstname: /* user-picked */ FirstName,
   /** Middle name or middle initial of the person. */
-middlename: Option[Name],
+  middlename: Option[Name],
   /** Last name of the person. */
-lastname: Name,
+  lastname: Name,
   /** Surname suffix. For example, Sr. or Jr. */
-suffix: Option[/* max 10 chars */ String],
+  suffix: Option[/* max 10 chars */ String],
   /** 0 = Contact does not wish to receive e-mail promotions, 1 = Contact does wish to receive e-mail promotions from AdventureWorks, 2 = Contact does wish to receive e-mail promotions from AdventureWorks and selected partners.
    * Default: 0
    * Constraint CK_Person_EmailPromotion affecting columns emailpromotion: (((emailpromotion >= 0) AND (emailpromotion <= 2)))
    */
-emailpromotion: Int,
+  emailpromotion: Int,
   /** Additional contact information about the person stored in xml format. */
-additionalcontactinfo: Option[TypoXml],
+  additionalcontactinfo: Option[TypoXml],
   /** Personal information such as hobbies, and income collected from online shoppers. Used for sales analysis. */
-demographics: Option[TypoXml],
+  demographics: Option[TypoXml],
   /** Default: uuid_generate_v1() */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: BusinessentityId = businessentityid
 

@@ -20,29 +20,29 @@ import io.circe.Encoder
 /** This class corresponds to a row in table `person.stateprovince` which has not been persisted yet */
 case class StateprovinceRowUnsaved(
   /** ISO standard state or province code. */
-stateprovincecode: /* bpchar, max 3 chars */ String,
+  stateprovincecode: /* bpchar, max 3 chars */ String,
   /** ISO standard country or region code. Foreign key to CountryRegion.CountryRegionCode.
    * Points to [[adventureworks.person.countryregion.CountryregionRow.countryregioncode]]
    */
-countryregioncode: CountryregionId,
+  countryregioncode: CountryregionId,
   /** State or province description. */
-name: Name,
+  name: Name,
   /** ID of the territory in which the state or province is located. Foreign key to SalesTerritory.SalesTerritoryID.
    * Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.territoryid]]
    */
-territoryid: SalesterritoryId,
+  territoryid: SalesterritoryId,
   /** Default: nextval('person.stateprovince_stateprovinceid_seq'::regclass)
    * Primary key for StateProvince records.
    */
-stateprovinceid: Defaulted[StateprovinceId] = new UseDefault(),
+  stateprovinceid: Defaulted[StateprovinceId] = new UseDefault(),
   /** Default: true
    * 0 = StateProvinceCode exists. 1 = StateProvinceCode unavailable, using CountryRegionCode.
    */
-isonlystateprovinceflag: Defaulted[Flag] = new UseDefault(),
+  isonlystateprovinceflag: Defaulted[Flag] = new UseDefault(),
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     stateprovinceidDefault: => StateprovinceId,

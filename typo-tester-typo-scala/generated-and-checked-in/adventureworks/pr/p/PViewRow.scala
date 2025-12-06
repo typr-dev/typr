@@ -22,57 +22,57 @@ import typo.runtime.RowParsers
 /** View: pr.p */
 case class PViewRow(
   /** Points to [[adventureworks.production.product.ProductRow.productid]] */
-id: ProductId,
+  id: ProductId,
   /** Points to [[adventureworks.production.product.ProductRow.productid]] */
-productid: ProductId,
+  productid: ProductId,
   /** Points to [[adventureworks.production.product.ProductRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.production.product.ProductRow.productnumber]] */
-productnumber: /* max 25 chars */ String,
+  productnumber: /* max 25 chars */ String,
   /** Points to [[adventureworks.production.product.ProductRow.makeflag]] */
-makeflag: Flag,
+  makeflag: Flag,
   /** Points to [[adventureworks.production.product.ProductRow.finishedgoodsflag]] */
-finishedgoodsflag: Flag,
+  finishedgoodsflag: Flag,
   /** Points to [[adventureworks.production.product.ProductRow.color]] */
-color: Optional[/* max 15 chars */ String],
+  color: Optional[/* max 15 chars */ String],
   /** Points to [[adventureworks.production.product.ProductRow.safetystocklevel]] */
-safetystocklevel: TypoShort,
+  safetystocklevel: TypoShort,
   /** Points to [[adventureworks.production.product.ProductRow.reorderpoint]] */
-reorderpoint: TypoShort,
+  reorderpoint: TypoShort,
   /** Points to [[adventureworks.production.product.ProductRow.standardcost]] */
-standardcost: java.math.BigDecimal,
+  standardcost: java.math.BigDecimal,
   /** Points to [[adventureworks.production.product.ProductRow.listprice]] */
-listprice: java.math.BigDecimal,
+  listprice: java.math.BigDecimal,
   /** Points to [[adventureworks.production.product.ProductRow.size]] */
-size: Optional[/* max 5 chars */ String],
+  size: Optional[/* max 5 chars */ String],
   /** Points to [[adventureworks.production.product.ProductRow.sizeunitmeasurecode]] */
-sizeunitmeasurecode: Optional[UnitmeasureId],
+  sizeunitmeasurecode: Optional[UnitmeasureId],
   /** Points to [[adventureworks.production.product.ProductRow.weightunitmeasurecode]] */
-weightunitmeasurecode: Optional[UnitmeasureId],
+  weightunitmeasurecode: Optional[UnitmeasureId],
   /** Points to [[adventureworks.production.product.ProductRow.weight]] */
-weight: Optional[java.math.BigDecimal],
+  weight: Optional[java.math.BigDecimal],
   /** Points to [[adventureworks.production.product.ProductRow.daystomanufacture]] */
-daystomanufacture: Integer,
+  daystomanufacture: Integer,
   /** Points to [[adventureworks.production.product.ProductRow.productline]] */
-productline: Optional[/* bpchar, max 2 chars */ String],
+  productline: Optional[/* bpchar, max 2 chars */ String],
   /** Points to [[adventureworks.production.product.ProductRow.class]] */
-`class`: Optional[/* bpchar, max 2 chars */ String],
+  `class`: Optional[/* bpchar, max 2 chars */ String],
   /** Points to [[adventureworks.production.product.ProductRow.style]] */
-style: Optional[/* bpchar, max 2 chars */ String],
+  style: Optional[/* bpchar, max 2 chars */ String],
   /** Points to [[adventureworks.production.product.ProductRow.productsubcategoryid]] */
-productsubcategoryid: Optional[ProductsubcategoryId],
+  productsubcategoryid: Optional[ProductsubcategoryId],
   /** Points to [[adventureworks.production.product.ProductRow.productmodelid]] */
-productmodelid: Optional[ProductmodelId],
+  productmodelid: Optional[ProductmodelId],
   /** Points to [[adventureworks.production.product.ProductRow.sellstartdate]] */
-sellstartdate: TypoLocalDateTime,
+  sellstartdate: TypoLocalDateTime,
   /** Points to [[adventureworks.production.product.ProductRow.sellenddate]] */
-sellenddate: Optional[TypoLocalDateTime],
+  sellenddate: Optional[TypoLocalDateTime],
   /** Points to [[adventureworks.production.product.ProductRow.discontinueddate]] */
-discontinueddate: Optional[TypoLocalDateTime],
+  discontinueddate: Optional[TypoLocalDateTime],
   /** Points to [[adventureworks.production.product.ProductRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.production.product.ProductRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object PViewRow {

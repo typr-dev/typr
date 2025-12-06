@@ -18,26 +18,26 @@ import zio.json.internal.Write
 /** This class corresponds to a row in table `sales.shoppingcartitem` which has not been persisted yet */
 case class ShoppingcartitemRowUnsaved(
   /** Shopping cart identification number. */
-shoppingcartid: /* max 50 chars */ String,
+  shoppingcartid: /* max 50 chars */ String,
   /** Product ordered. Foreign key to Product.ProductID.
    * Points to [[adventureworks.production.product.ProductRow.productid]]
    */
-productid: ProductId,
+  productid: ProductId,
   /** Default: nextval('sales.shoppingcartitem_shoppingcartitemid_seq'::regclass)
    * Primary key for ShoppingCartItem records.
    */
-shoppingcartitemid: Defaulted[ShoppingcartitemId] = new UseDefault(),
+  shoppingcartitemid: Defaulted[ShoppingcartitemId] = new UseDefault(),
   /** Default: 1
    * Product quantity ordered.
    * Constraint CK_ShoppingCartItem_Quantity affecting columns quantity:  ((quantity >= 1))
    */
-quantity: Defaulted[Int] = new UseDefault(),
+  quantity: Defaulted[Int] = new UseDefault(),
   /** Default: now()
    * Date the time the record was created.
    */
-datecreated: Defaulted[TypoLocalDateTime] = new UseDefault(),
+  datecreated: Defaulted[TypoLocalDateTime] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     shoppingcartitemidDefault: => ShoppingcartitemId,

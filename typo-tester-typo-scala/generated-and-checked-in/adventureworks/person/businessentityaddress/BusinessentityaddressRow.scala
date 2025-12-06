@@ -23,19 +23,19 @@ case class BusinessentityaddressRow(
   /** Primary key. Foreign key to BusinessEntity.BusinessEntityID.
    * Points to [[adventureworks.person.businessentity.BusinessentityRow.businessentityid]]
    */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Primary key. Foreign key to Address.AddressID.
    * Points to [[adventureworks.person.address.AddressRow.addressid]]
    */
-addressid: AddressId,
+  addressid: AddressId,
   /** Primary key. Foreign key to AddressType.AddressTypeID.
    * Points to [[adventureworks.person.addresstype.AddresstypeRow.addresstypeid]]
    */
-addresstypeid: AddresstypeId,
+  addresstypeid: AddresstypeId,
   /** Default: uuid_generate_v1() */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def compositeId: BusinessentityaddressId = new BusinessentityaddressId(businessentityid, addressid, addresstypeid)
 

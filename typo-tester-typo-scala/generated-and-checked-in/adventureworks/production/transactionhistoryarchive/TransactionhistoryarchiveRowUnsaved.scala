@@ -14,29 +14,29 @@ import typo.runtime.PgTypes
 /** This class corresponds to a row in table `production.transactionhistoryarchive` which has not been persisted yet */
 case class TransactionhistoryarchiveRowUnsaved(
   /** Primary key for TransactionHistoryArchive records. */
-transactionid: TransactionhistoryarchiveId,
+  transactionid: TransactionhistoryarchiveId,
   /** Product identification number. Foreign key to Product.ProductID. */
-productid: Integer,
+  productid: Integer,
   /** Purchase order, sales order, or work order identification number. */
-referenceorderid: Integer,
+  referenceorderid: Integer,
   /** W = Work Order, S = Sales Order, P = Purchase Order
    * Constraint CK_TransactionHistoryArchive_TransactionType affecting columns transactiontype:  ((upper((transactiontype)::text) = ANY (ARRAY['W'::text, 'S'::text, 'P'::text])))
    */
-transactiontype: /* bpchar, max 1 chars */ String,
+  transactiontype: /* bpchar, max 1 chars */ String,
   /** Product quantity. */
-quantity: Integer,
+  quantity: Integer,
   /** Product cost. */
-actualcost: java.math.BigDecimal,
+  actualcost: java.math.BigDecimal,
   /** Default: 0
    * Line number associated with the purchase order, sales order, or work order.
    */
-referenceorderlineid: Defaulted[Integer] = new UseDefault(),
+  referenceorderlineid: Defaulted[Integer] = new UseDefault(),
   /** Default: now()
    * Date and time of the transaction.
    */
-transactiondate: Defaulted[TypoLocalDateTime] = new UseDefault(),
+  transactiondate: Defaulted[TypoLocalDateTime] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     referenceorderlineidDefault: => Integer,

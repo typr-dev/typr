@@ -25,19 +25,19 @@ case class StoreRow(
   /** Primary key. Foreign key to Customer.BusinessEntityID.
    * Points to [[adventureworks.person.businessentity.BusinessentityRow.businessentityid]]
    */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Name of the store. */
-name: Name,
+  name: Name,
   /** ID of the sales person assigned to the customer. Foreign key to SalesPerson.BusinessEntityID.
    * Points to [[adventureworks.sales.salesperson.SalespersonRow.businessentityid]]
    */
-salespersonid: Option[BusinessentityId],
+  salespersonid: Option[BusinessentityId],
   /** Demographic informationg about the store such as the number of employees, annual sales and store type. */
-demographics: Option[TypoXml],
+  demographics: Option[TypoXml],
   /** Default: uuid_generate_v1() */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: BusinessentityId = businessentityid
 

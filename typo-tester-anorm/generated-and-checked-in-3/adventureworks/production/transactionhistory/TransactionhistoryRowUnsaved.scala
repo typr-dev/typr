@@ -24,31 +24,31 @@ case class TransactionhistoryRowUnsaved(
   /** Product identification number. Foreign key to Product.ProductID.
    * Points to [[adventureworks.production.product.ProductRow.productid]]
    */
-productid: ProductId,
+  productid: ProductId,
   /** Purchase order, sales order, or work order identification number. */
-referenceorderid: Int,
+  referenceorderid: Int,
   /** W = WorkOrder, S = SalesOrder, P = PurchaseOrder
    * Constraint CK_TransactionHistory_TransactionType affecting columns transactiontype:  ((upper((transactiontype)::text) = ANY (ARRAY['W'::text, 'S'::text, 'P'::text])))
    */
-transactiontype: /* bpchar, max 1 chars */ String,
+  transactiontype: /* bpchar, max 1 chars */ String,
   /** Product quantity. */
-quantity: Int,
+  quantity: Int,
   /** Product cost. */
-actualcost: BigDecimal,
+  actualcost: BigDecimal,
   /** Default: nextval('production.transactionhistory_transactionid_seq'::regclass)
    * Primary key for TransactionHistory records.
    */
-transactionid: Defaulted[TransactionhistoryId] = new UseDefault(),
+  transactionid: Defaulted[TransactionhistoryId] = new UseDefault(),
   /** Default: 0
    * Line number associated with the purchase order, sales order, or work order.
    */
-referenceorderlineid: Defaulted[Int] = new UseDefault(),
+  referenceorderlineid: Defaulted[Int] = new UseDefault(),
   /** Default: now()
    * Date and time of the transaction.
    */
-transactiondate: Defaulted[TypoLocalDateTime] = new UseDefault(),
+  transactiondate: Defaulted[TypoLocalDateTime] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     transactionidDefault: => TransactionhistoryId,

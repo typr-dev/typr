@@ -18,14 +18,14 @@ import io.circe.Encoder
  */
 case class FlaffRow(
   /** Points to [[adventureworks.public.flaff.FlaffRow.code]] */
-code: ShortText,
+  code: ShortText,
   /** Points to [[adventureworks.public.flaff.FlaffRow.anotherCode]] */
-anotherCode: /* max 20 chars */ String,
+  anotherCode: /* max 20 chars */ String,
   /** Points to [[adventureworks.public.flaff.FlaffRow.someNumber]] */
-someNumber: Int,
+  someNumber: Int,
   specifier: ShortText,
   /** Points to [[adventureworks.public.flaff.FlaffRow.specifier]] */
-parentspecifier: Option[ShortText]
+  parentspecifier: Option[ShortText]
 ) {
   def compositeId: FlaffId = {
     new FlaffId(

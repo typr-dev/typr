@@ -14,13 +14,13 @@ import typo.runtime.RowParsers
 /** View: pr.sr */
 case class SrViewRow(
   /** Points to [[adventureworks.production.scrapreason.ScrapreasonRow.scrapreasonid]] */
-id: ScrapreasonId,
+  id: ScrapreasonId,
   /** Points to [[adventureworks.production.scrapreason.ScrapreasonRow.scrapreasonid]] */
-scrapreasonid: ScrapreasonId,
+  scrapreasonid: ScrapreasonId,
   /** Points to [[adventureworks.production.scrapreason.ScrapreasonRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.production.scrapreason.ScrapreasonRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object SrViewRow {

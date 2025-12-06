@@ -27,57 +27,57 @@ import typo.runtime.RowParsers
 /** View: sa.soh */
 case class SohViewRow(
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.salesorderid]] */
-id: SalesorderheaderId,
+  id: SalesorderheaderId,
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.salesorderid]] */
-salesorderid: SalesorderheaderId,
+  salesorderid: SalesorderheaderId,
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.revisionnumber]] */
-revisionnumber: TypoShort,
+  revisionnumber: TypoShort,
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.orderdate]] */
-orderdate: TypoLocalDateTime,
+  orderdate: TypoLocalDateTime,
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.duedate]] */
-duedate: TypoLocalDateTime,
+  duedate: TypoLocalDateTime,
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.shipdate]] */
-shipdate: Optional[TypoLocalDateTime],
+  shipdate: Optional[TypoLocalDateTime],
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.status]] */
-status: TypoShort,
+  status: TypoShort,
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.onlineorderflag]] */
-onlineorderflag: Flag,
+  onlineorderflag: Flag,
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.purchaseordernumber]] */
-purchaseordernumber: Optional[OrderNumber],
+  purchaseordernumber: Optional[OrderNumber],
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.accountnumber]] */
-accountnumber: Optional[AccountNumber],
+  accountnumber: Optional[AccountNumber],
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.customerid]] */
-customerid: CustomerId,
+  customerid: CustomerId,
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.salespersonid]] */
-salespersonid: Optional[BusinessentityId],
+  salespersonid: Optional[BusinessentityId],
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.territoryid]] */
-territoryid: Optional[SalesterritoryId],
+  territoryid: Optional[SalesterritoryId],
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.billtoaddressid]] */
-billtoaddressid: AddressId,
+  billtoaddressid: AddressId,
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.shiptoaddressid]] */
-shiptoaddressid: AddressId,
+  shiptoaddressid: AddressId,
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.shipmethodid]] */
-shipmethodid: ShipmethodId,
+  shipmethodid: ShipmethodId,
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.creditcardid]] */
-creditcardid: Optional[/* user-picked */ CustomCreditcardId],
+  creditcardid: Optional[/* user-picked */ CustomCreditcardId],
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.creditcardapprovalcode]] */
-creditcardapprovalcode: Optional[/* max 15 chars */ String],
+  creditcardapprovalcode: Optional[/* max 15 chars */ String],
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.currencyrateid]] */
-currencyrateid: Optional[CurrencyrateId],
+  currencyrateid: Optional[CurrencyrateId],
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.subtotal]] */
-subtotal: java.math.BigDecimal,
+  subtotal: java.math.BigDecimal,
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.taxamt]] */
-taxamt: java.math.BigDecimal,
+  taxamt: java.math.BigDecimal,
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.freight]] */
-freight: java.math.BigDecimal,
+  freight: java.math.BigDecimal,
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.totaldue]] */
-totaldue: Optional[java.math.BigDecimal],
+  totaldue: Optional[java.math.BigDecimal],
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.comment]] */
-comment: Optional[/* max 128 chars */ String],
+  comment: Optional[/* max 128 chars */ String],
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object SohViewRow {

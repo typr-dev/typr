@@ -20,9 +20,9 @@ import scala.util.Try
 /** SQL file: update_person_returning.sql */
 case class UpdatePersonReturningSqlRow(
   /** Points to [[adventureworks.person.person.PersonRow.firstname]] */
-firstname: /* user-picked */ FirstName,
+  firstname: /* user-picked */ FirstName,
   /** Points to [[adventureworks.person.person.PersonRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object UpdatePersonReturningSqlRow {

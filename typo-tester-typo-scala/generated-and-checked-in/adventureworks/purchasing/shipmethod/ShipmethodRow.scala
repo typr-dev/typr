@@ -22,23 +22,23 @@ case class ShipmethodRow(
   /** Primary key for ShipMethod records.
    * Default: nextval('purchasing.shipmethod_shipmethodid_seq'::regclass)
    */
-shipmethodid: ShipmethodId,
+  shipmethodid: ShipmethodId,
   /** Shipping company name. */
-name: Name,
+  name: Name,
   /** Minimum shipping charge.
    * Default: 0.00
    * Constraint CK_ShipMethod_ShipBase affecting columns shipbase: ((shipbase > 0.00))
    */
-shipbase: java.math.BigDecimal,
+  shipbase: java.math.BigDecimal,
   /** Shipping charge per pound.
    * Default: 0.00
    * Constraint CK_ShipMethod_ShipRate affecting columns shiprate: ((shiprate > 0.00))
    */
-shiprate: java.math.BigDecimal,
+  shiprate: java.math.BigDecimal,
   /** Default: uuid_generate_v1() */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: ShipmethodId = shipmethodid
 

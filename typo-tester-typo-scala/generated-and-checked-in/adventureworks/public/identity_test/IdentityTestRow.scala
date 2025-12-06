@@ -17,9 +17,9 @@ import typo.runtime.RowParsers
  */
 case class IdentityTestRow(
   /** Identity ALWAYS, identityStart: 1, identityIncrement: 1, identityMaximum: 2147483647, identityMinimum: 1 */
-@JsonProperty("always_generated") alwaysGenerated: Integer,
+  @JsonProperty("always_generated") alwaysGenerated: Integer,
   /** Identity BY DEFAULT, identityStart: 1, identityIncrement: 1, identityMaximum: 2147483647, identityMinimum: 1 */
-@JsonProperty("default_generated") defaultGenerated: Integer,
+  @JsonProperty("default_generated") defaultGenerated: Integer,
   name: IdentityTestId
 ) {
   def id: IdentityTestId = name

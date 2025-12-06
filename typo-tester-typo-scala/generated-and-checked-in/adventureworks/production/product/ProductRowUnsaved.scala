@@ -22,91 +22,91 @@ import typo.runtime.PgTypes
 /** This class corresponds to a row in table `production.product` which has not been persisted yet */
 case class ProductRowUnsaved(
   /** Name of the product. */
-name: Name,
+  name: Name,
   /** Unique product identification number. */
-productnumber: /* max 25 chars */ String,
+  productnumber: /* max 25 chars */ String,
   /** Product color. */
-color: Optional[/* max 15 chars */ String] = Optional.empty(),
+  color: Optional[/* max 15 chars */ String] = Optional.empty(),
   /** Minimum inventory quantity.
    * Constraint CK_Product_SafetyStockLevel affecting columns safetystocklevel:  ((safetystocklevel > 0))
    */
-safetystocklevel: TypoShort,
+  safetystocklevel: TypoShort,
   /** Inventory level that triggers a purchase order or work order.
    * Constraint CK_Product_ReorderPoint affecting columns reorderpoint:  ((reorderpoint > 0))
    */
-reorderpoint: TypoShort,
+  reorderpoint: TypoShort,
   /** Standard cost of the product.
    * Constraint CK_Product_StandardCost affecting columns standardcost:  ((standardcost >= 0.00))
    */
-standardcost: java.math.BigDecimal,
+  standardcost: java.math.BigDecimal,
   /** Selling price.
    * Constraint CK_Product_ListPrice affecting columns listprice:  ((listprice >= 0.00))
    */
-listprice: java.math.BigDecimal,
+  listprice: java.math.BigDecimal,
   /** Product size. */
-size: Optional[/* max 5 chars */ String] = Optional.empty(),
+  size: Optional[/* max 5 chars */ String] = Optional.empty(),
   /** Unit of measure for Size column.
    * Points to [[adventureworks.production.unitmeasure.UnitmeasureRow.unitmeasurecode]]
    */
-sizeunitmeasurecode: Optional[UnitmeasureId] = Optional.empty(),
+  sizeunitmeasurecode: Optional[UnitmeasureId] = Optional.empty(),
   /** Unit of measure for Weight column.
    * Points to [[adventureworks.production.unitmeasure.UnitmeasureRow.unitmeasurecode]]
    */
-weightunitmeasurecode: Optional[UnitmeasureId] = Optional.empty(),
+  weightunitmeasurecode: Optional[UnitmeasureId] = Optional.empty(),
   /** Product weight.
    * Constraint CK_Product_Weight affecting columns weight:  ((weight > 0.00))
    */
-weight: Optional[java.math.BigDecimal] = Optional.empty(),
+  weight: Optional[java.math.BigDecimal] = Optional.empty(),
   /** Number of days required to manufacture the product.
    * Constraint CK_Product_DaysToManufacture affecting columns daystomanufacture:  ((daystomanufacture >= 0))
    */
-daystomanufacture: Integer,
+  daystomanufacture: Integer,
   /** R = Road, M = Mountain, T = Touring, S = Standard
    * Constraint CK_Product_ProductLine affecting columns productline:  (((upper((productline)::text) = ANY (ARRAY['S'::text, 'T'::text, 'M'::text, 'R'::text])) OR (productline IS NULL)))
    */
-productline: Optional[/* bpchar, max 2 chars */ String] = Optional.empty(),
+  productline: Optional[/* bpchar, max 2 chars */ String] = Optional.empty(),
   /** H = High, M = Medium, L = Low
    * Constraint CK_Product_Class affecting columns class:  (((upper((class)::text) = ANY (ARRAY['L'::text, 'M'::text, 'H'::text])) OR (class IS NULL)))
    */
-`class`: Optional[/* bpchar, max 2 chars */ String] = Optional.empty(),
+  `class`: Optional[/* bpchar, max 2 chars */ String] = Optional.empty(),
   /** W = Womens, M = Mens, U = Universal
    * Constraint CK_Product_Style affecting columns style:  (((upper((style)::text) = ANY (ARRAY['W'::text, 'M'::text, 'U'::text])) OR (style IS NULL)))
    */
-style: Optional[/* bpchar, max 2 chars */ String] = Optional.empty(),
+  style: Optional[/* bpchar, max 2 chars */ String] = Optional.empty(),
   /** Product is a member of this product subcategory. Foreign key to ProductSubCategory.ProductSubCategoryID.
    * Points to [[adventureworks.production.productsubcategory.ProductsubcategoryRow.productsubcategoryid]]
    */
-productsubcategoryid: Optional[ProductsubcategoryId] = Optional.empty(),
+  productsubcategoryid: Optional[ProductsubcategoryId] = Optional.empty(),
   /** Product is a member of this product model. Foreign key to ProductModel.ProductModelID.
    * Points to [[adventureworks.production.productmodel.ProductmodelRow.productmodelid]]
    */
-productmodelid: Optional[ProductmodelId] = Optional.empty(),
+  productmodelid: Optional[ProductmodelId] = Optional.empty(),
   /** Date the product was available for sale.
    * Constraint CK_Product_SellEndDate affecting columns sellenddate, sellstartdate:  (((sellenddate >= sellstartdate) OR (sellenddate IS NULL)))
    */
-sellstartdate: TypoLocalDateTime,
+  sellstartdate: TypoLocalDateTime,
   /** Date the product was no longer available for sale.
    * Constraint CK_Product_SellEndDate affecting columns sellenddate, sellstartdate:  (((sellenddate >= sellstartdate) OR (sellenddate IS NULL)))
    */
-sellenddate: Optional[TypoLocalDateTime] = Optional.empty(),
+  sellenddate: Optional[TypoLocalDateTime] = Optional.empty(),
   /** Date the product was discontinued. */
-discontinueddate: Optional[TypoLocalDateTime] = Optional.empty(),
+  discontinueddate: Optional[TypoLocalDateTime] = Optional.empty(),
   /** Default: nextval('production.product_productid_seq'::regclass)
    * Primary key for Product records.
    */
-productid: Defaulted[ProductId] = new UseDefault(),
+  productid: Defaulted[ProductId] = new UseDefault(),
   /** Default: true
    * 0 = Product is purchased, 1 = Product is manufactured in-house.
    */
-makeflag: Defaulted[Flag] = new UseDefault(),
+  makeflag: Defaulted[Flag] = new UseDefault(),
   /** Default: true
    * 0 = Product is not a salable item. 1 = Product is salable.
    */
-finishedgoodsflag: Defaulted[Flag] = new UseDefault(),
+  finishedgoodsflag: Defaulted[Flag] = new UseDefault(),
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     productidDefault: => ProductId,

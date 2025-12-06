@@ -16,9 +16,9 @@ import io.circe.Encoder
 /** View: humanresources.vjobcandidate */
 case class VjobcandidateViewRow(
   /** Points to [[adventureworks.humanresources.jobcandidate.JobcandidateRow.jobcandidateid]] */
-jobcandidateid: JobcandidateId,
+  jobcandidateid: JobcandidateId,
   /** Points to [[adventureworks.humanresources.jobcandidate.JobcandidateRow.businessentityid]] */
-businessentityid: Option[BusinessentityId],
+  businessentityid: Option[BusinessentityId],
   namePrefix: /* nullability unknown */ Option[/* max 30 chars */ String],
   nameFirst: /* nullability unknown */ Option[/* max 30 chars */ String],
   nameMiddle: /* nullability unknown */ Option[/* max 30 chars */ String],
@@ -33,7 +33,7 @@ businessentityid: Option[BusinessentityId],
   eMail: /* nullability unknown */ Option[String],
   webSite: /* nullability unknown */ Option[String],
   /** Points to [[adventureworks.humanresources.jobcandidate.JobcandidateRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object VjobcandidateViewRow {

@@ -18,19 +18,19 @@ import zio.json.internal.Write
 /** View: pr.pp */
 case class PpViewRow(
   /** Points to [[adventureworks.production.productphoto.ProductphotoRow.productphotoid]] */
-id: ProductphotoId,
+  id: ProductphotoId,
   /** Points to [[adventureworks.production.productphoto.ProductphotoRow.productphotoid]] */
-productphotoid: ProductphotoId,
+  productphotoid: ProductphotoId,
   /** Points to [[adventureworks.production.productphoto.ProductphotoRow.thumbnailphoto]] */
-thumbnailphoto: Option[TypoBytea],
+  thumbnailphoto: Option[TypoBytea],
   /** Points to [[adventureworks.production.productphoto.ProductphotoRow.thumbnailphotofilename]] */
-thumbnailphotofilename: Option[/* max 50 chars */ String],
+  thumbnailphotofilename: Option[/* max 50 chars */ String],
   /** Points to [[adventureworks.production.productphoto.ProductphotoRow.largephoto]] */
-largephoto: Option[TypoBytea],
+  largephoto: Option[TypoBytea],
   /** Points to [[adventureworks.production.productphoto.ProductphotoRow.largephotofilename]] */
-largephotofilename: Option[/* max 50 chars */ String],
+  largephotofilename: Option[/* max 50 chars */ String],
   /** Points to [[adventureworks.production.productphoto.ProductphotoRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object PpViewRow {

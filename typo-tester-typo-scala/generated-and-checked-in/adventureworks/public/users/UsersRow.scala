@@ -25,7 +25,7 @@ case class UsersRow(
   email: TypoUnknownCitext,
   password: String,
   /** Default: now() */
-@JsonProperty("created_at") createdAt: TypoInstant,
+  @JsonProperty("created_at") createdAt: TypoInstant,
   @JsonProperty("verified_on") verifiedOn: Optional[TypoInstant]
 ) {
   def id: UsersId = userId

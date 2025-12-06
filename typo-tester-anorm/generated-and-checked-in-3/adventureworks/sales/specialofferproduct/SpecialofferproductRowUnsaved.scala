@@ -25,15 +25,15 @@ case class SpecialofferproductRowUnsaved(
   /** Primary key for SpecialOfferProduct records.
    * Points to [[adventureworks.sales.specialoffer.SpecialofferRow.specialofferid]]
    */
-specialofferid: SpecialofferId,
+  specialofferid: SpecialofferId,
   /** Product identification number. Foreign key to Product.ProductID.
    * Points to [[adventureworks.production.product.ProductRow.productid]]
    */
-productid: ProductId,
+  productid: ProductId,
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     rowguidDefault: => TypoUUID,

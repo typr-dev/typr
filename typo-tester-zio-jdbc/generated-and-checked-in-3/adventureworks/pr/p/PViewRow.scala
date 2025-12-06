@@ -24,57 +24,57 @@ import zio.json.internal.Write
 /** View: pr.p */
 case class PViewRow(
   /** Points to [[adventureworks.production.product.ProductRow.productid]] */
-id: ProductId,
+  id: ProductId,
   /** Points to [[adventureworks.production.product.ProductRow.productid]] */
-productid: ProductId,
+  productid: ProductId,
   /** Points to [[adventureworks.production.product.ProductRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.production.product.ProductRow.productnumber]] */
-productnumber: /* max 25 chars */ String,
+  productnumber: /* max 25 chars */ String,
   /** Points to [[adventureworks.production.product.ProductRow.makeflag]] */
-makeflag: Flag,
+  makeflag: Flag,
   /** Points to [[adventureworks.production.product.ProductRow.finishedgoodsflag]] */
-finishedgoodsflag: Flag,
+  finishedgoodsflag: Flag,
   /** Points to [[adventureworks.production.product.ProductRow.color]] */
-color: Option[/* max 15 chars */ String],
+  color: Option[/* max 15 chars */ String],
   /** Points to [[adventureworks.production.product.ProductRow.safetystocklevel]] */
-safetystocklevel: TypoShort,
+  safetystocklevel: TypoShort,
   /** Points to [[adventureworks.production.product.ProductRow.reorderpoint]] */
-reorderpoint: TypoShort,
+  reorderpoint: TypoShort,
   /** Points to [[adventureworks.production.product.ProductRow.standardcost]] */
-standardcost: BigDecimal,
+  standardcost: BigDecimal,
   /** Points to [[adventureworks.production.product.ProductRow.listprice]] */
-listprice: BigDecimal,
+  listprice: BigDecimal,
   /** Points to [[adventureworks.production.product.ProductRow.size]] */
-size: Option[/* max 5 chars */ String],
+  size: Option[/* max 5 chars */ String],
   /** Points to [[adventureworks.production.product.ProductRow.sizeunitmeasurecode]] */
-sizeunitmeasurecode: Option[UnitmeasureId],
+  sizeunitmeasurecode: Option[UnitmeasureId],
   /** Points to [[adventureworks.production.product.ProductRow.weightunitmeasurecode]] */
-weightunitmeasurecode: Option[UnitmeasureId],
+  weightunitmeasurecode: Option[UnitmeasureId],
   /** Points to [[adventureworks.production.product.ProductRow.weight]] */
-weight: Option[BigDecimal],
+  weight: Option[BigDecimal],
   /** Points to [[adventureworks.production.product.ProductRow.daystomanufacture]] */
-daystomanufacture: Int,
+  daystomanufacture: Int,
   /** Points to [[adventureworks.production.product.ProductRow.productline]] */
-productline: Option[/* bpchar, max 2 chars */ String],
+  productline: Option[/* bpchar, max 2 chars */ String],
   /** Points to [[adventureworks.production.product.ProductRow.class]] */
-`class`: Option[/* bpchar, max 2 chars */ String],
+  `class`: Option[/* bpchar, max 2 chars */ String],
   /** Points to [[adventureworks.production.product.ProductRow.style]] */
-style: Option[/* bpchar, max 2 chars */ String],
+  style: Option[/* bpchar, max 2 chars */ String],
   /** Points to [[adventureworks.production.product.ProductRow.productsubcategoryid]] */
-productsubcategoryid: Option[ProductsubcategoryId],
+  productsubcategoryid: Option[ProductsubcategoryId],
   /** Points to [[adventureworks.production.product.ProductRow.productmodelid]] */
-productmodelid: Option[ProductmodelId],
+  productmodelid: Option[ProductmodelId],
   /** Points to [[adventureworks.production.product.ProductRow.sellstartdate]] */
-sellstartdate: TypoLocalDateTime,
+  sellstartdate: TypoLocalDateTime,
   /** Points to [[adventureworks.production.product.ProductRow.sellenddate]] */
-sellenddate: Option[TypoLocalDateTime],
+  sellenddate: Option[TypoLocalDateTime],
   /** Points to [[adventureworks.production.product.ProductRow.discontinueddate]] */
-discontinueddate: Option[TypoLocalDateTime],
+  discontinueddate: Option[TypoLocalDateTime],
   /** Points to [[adventureworks.production.product.ProductRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.production.product.ProductRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object PViewRow {

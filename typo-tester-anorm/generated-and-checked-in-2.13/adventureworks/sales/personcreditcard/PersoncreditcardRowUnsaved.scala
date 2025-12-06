@@ -24,13 +24,13 @@ case class PersoncreditcardRowUnsaved(
   /** Business entity identification number. Foreign key to Person.BusinessEntityID.
    * Points to [[adventureworks.person.person.PersonRow.businessentityid]]
    */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Credit card identification number. Foreign key to CreditCard.CreditCardID.
    * Points to [[adventureworks.sales.creditcard.CreditcardRow.creditcardid]]
    */
-creditcardid: /* user-picked */ CustomCreditcardId,
+  creditcardid: /* user-picked */ CustomCreditcardId,
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(modifieddateDefault: => TypoLocalDateTime): PersoncreditcardRow = new PersoncreditcardRow(businessentityid = businessentityid, creditcardid = creditcardid, modifieddate = modifieddate.getOrElse(modifieddateDefault))
 }

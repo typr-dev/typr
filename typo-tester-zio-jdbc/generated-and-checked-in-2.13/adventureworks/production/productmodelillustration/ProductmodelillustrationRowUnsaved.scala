@@ -21,13 +21,13 @@ case class ProductmodelillustrationRowUnsaved(
   /** Primary key. Foreign key to ProductModel.ProductModelID.
    * Points to [[adventureworks.production.productmodel.ProductmodelRow.productmodelid]]
    */
-productmodelid: ProductmodelId,
+  productmodelid: ProductmodelId,
   /** Primary key. Foreign key to Illustration.IllustrationID.
    * Points to [[adventureworks.production.illustration.IllustrationRow.illustrationid]]
    */
-illustrationid: IllustrationId,
+  illustrationid: IllustrationId,
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(modifieddateDefault: => TypoLocalDateTime): ProductmodelillustrationRow = new ProductmodelillustrationRow(productmodelid = productmodelid, illustrationid = illustrationid, modifieddate = modifieddate.getOrElse(modifieddateDefault))
 }

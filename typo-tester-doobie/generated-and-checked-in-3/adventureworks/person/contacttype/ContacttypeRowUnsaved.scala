@@ -16,13 +16,13 @@ import io.circe.Encoder
 /** This class corresponds to a row in table `person.contacttype` which has not been persisted yet */
 case class ContacttypeRowUnsaved(
   /** Contact type description. */
-name: Name,
+  name: Name,
   /** Default: nextval('person.contacttype_contacttypeid_seq'::regclass)
    * Primary key for ContactType records.
    */
-contacttypeid: Defaulted[ContacttypeId] = new UseDefault(),
+  contacttypeid: Defaulted[ContacttypeId] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     contacttypeidDefault: => ContacttypeId,

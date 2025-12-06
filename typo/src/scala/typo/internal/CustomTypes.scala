@@ -1032,7 +1032,8 @@ class CustomTypes(pkg: jvm.QIdent, lang: Lang) {
         ),
         forbidArray = true,
         toText =
-          CustomType.Text.string(expr => code""""[" + ${TypesJava.Arrays}.stream(${prop(expr, "value")}).map(${TypesJava.String}::valueOf).collect(${TypesJava.Collectors}.joining(",")) + "]"""")
+          // In Kotlin, use joinToString with explicit lambda instead of Java method references
+          CustomType.Text.string(expr => code""""[" + ${prop(expr, "value")}.joinToString(",") { it.toString() } + "]"""")
       )
     case _: LangScala =>
       CustomType(

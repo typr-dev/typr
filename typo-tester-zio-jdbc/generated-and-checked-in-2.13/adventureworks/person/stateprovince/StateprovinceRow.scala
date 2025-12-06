@@ -28,27 +28,27 @@ case class StateprovinceRow(
   /** Primary key for StateProvince records.
    * Default: nextval('person.stateprovince_stateprovinceid_seq'::regclass)
    */
-stateprovinceid: StateprovinceId,
+  stateprovinceid: StateprovinceId,
   /** ISO standard state or province code. */
-stateprovincecode: /* bpchar, max 3 chars */ String,
+  stateprovincecode: /* bpchar, max 3 chars */ String,
   /** ISO standard country or region code. Foreign key to CountryRegion.CountryRegionCode.
    * Points to [[adventureworks.person.countryregion.CountryregionRow.countryregioncode]]
    */
-countryregioncode: CountryregionId,
+  countryregioncode: CountryregionId,
   /** 0 = StateProvinceCode exists. 1 = StateProvinceCode unavailable, using CountryRegionCode.
    * Default: true
    */
-isonlystateprovinceflag: Flag,
+  isonlystateprovinceflag: Flag,
   /** State or province description. */
-name: Name,
+  name: Name,
   /** ID of the territory in which the state or province is located. Foreign key to SalesTerritory.SalesTerritoryID.
    * Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.territoryid]]
    */
-territoryid: SalesterritoryId,
+  territoryid: SalesterritoryId,
   /** Default: uuid_generate_v1() */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: StateprovinceId = stateprovinceid
 

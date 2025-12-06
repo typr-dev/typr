@@ -16,15 +16,15 @@ import io.circe.Encoder
 /** View: pe.at */
 case class AtViewRow(
   /** Points to [[adventureworks.person.addresstype.AddresstypeRow.addresstypeid]] */
-id: AddresstypeId,
+  id: AddresstypeId,
   /** Points to [[adventureworks.person.addresstype.AddresstypeRow.addresstypeid]] */
-addresstypeid: AddresstypeId,
+  addresstypeid: AddresstypeId,
   /** Points to [[adventureworks.person.addresstype.AddresstypeRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.person.addresstype.AddresstypeRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.person.addresstype.AddresstypeRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object AtViewRow {

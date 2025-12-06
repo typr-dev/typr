@@ -19,25 +19,25 @@ import zio.json.internal.Write
 /** View: sa.sp */
 case class SpViewRow(
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.businessentityid]] */
-id: BusinessentityId,
+  id: BusinessentityId,
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.territoryid]] */
-territoryid: Option[SalesterritoryId],
+  territoryid: Option[SalesterritoryId],
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.salesquota]] */
-salesquota: Option[BigDecimal],
+  salesquota: Option[BigDecimal],
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.bonus]] */
-bonus: BigDecimal,
+  bonus: BigDecimal,
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.commissionpct]] */
-commissionpct: BigDecimal,
+  commissionpct: BigDecimal,
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.salesytd]] */
-salesytd: BigDecimal,
+  salesytd: BigDecimal,
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.saleslastyear]] */
-saleslastyear: BigDecimal,
+  saleslastyear: BigDecimal,
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object SpViewRow {

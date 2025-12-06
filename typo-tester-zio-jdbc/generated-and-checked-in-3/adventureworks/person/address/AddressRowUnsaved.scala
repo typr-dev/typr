@@ -20,27 +20,27 @@ import zio.json.internal.Write
 /** This class corresponds to a row in table `person.address` which has not been persisted yet */
 case class AddressRowUnsaved(
   /** First street address line. */
-addressline1: /* max 60 chars */ String,
+  addressline1: /* max 60 chars */ String,
   /** Second street address line. */
-addressline2: Option[/* max 60 chars */ String] = None,
+  addressline2: Option[/* max 60 chars */ String] = None,
   /** Name of the city. */
-city: /* max 30 chars */ String,
+  city: /* max 30 chars */ String,
   /** Unique identification number for the state or province. Foreign key to StateProvince table.
    * Points to [[adventureworks.person.stateprovince.StateprovinceRow.stateprovinceid]]
    */
-stateprovinceid: StateprovinceId,
+  stateprovinceid: StateprovinceId,
   /** Postal code for the street address. */
-postalcode: /* max 15 chars */ String,
+  postalcode: /* max 15 chars */ String,
   /** Latitude and longitude of this address. */
-spatiallocation: Option[TypoBytea] = None,
+  spatiallocation: Option[TypoBytea] = None,
   /** Default: nextval('person.address_addressid_seq'::regclass)
    * Primary key for Address records.
    */
-addressid: Defaulted[AddressId] = new UseDefault(),
+  addressid: Defaulted[AddressId] = new UseDefault(),
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     addressidDefault: => AddressId,

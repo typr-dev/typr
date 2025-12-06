@@ -23,7 +23,7 @@ case class UsersRowUnsaved(
   password: String,
   @JsonProperty("verified_on") verifiedOn: Optional[TypoInstant] = Optional.empty(),
   /** Default: now() */
-@JsonProperty("created_at") createdAt: Defaulted[TypoInstant] = new UseDefault()
+  @JsonProperty("created_at") createdAt: Defaulted[TypoInstant] = new UseDefault()
 ) {
   def toRow(createdAtDefault: => TypoInstant): UsersRow = {
     new UsersRow(

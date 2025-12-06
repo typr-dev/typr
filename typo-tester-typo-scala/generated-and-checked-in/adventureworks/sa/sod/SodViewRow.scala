@@ -19,27 +19,27 @@ import typo.runtime.RowParsers
 /** View: sa.sod */
 case class SodViewRow(
   /** Points to [[adventureworks.sales.salesorderdetail.SalesorderdetailRow.salesorderdetailid]] */
-id: Integer,
+  id: Integer,
   /** Points to [[adventureworks.sales.salesorderdetail.SalesorderdetailRow.salesorderid]] */
-salesorderid: SalesorderheaderId,
+  salesorderid: SalesorderheaderId,
   /** Points to [[adventureworks.sales.salesorderdetail.SalesorderdetailRow.salesorderdetailid]] */
-salesorderdetailid: Integer,
+  salesorderdetailid: Integer,
   /** Points to [[adventureworks.sales.salesorderdetail.SalesorderdetailRow.carriertrackingnumber]] */
-carriertrackingnumber: Optional[/* max 25 chars */ String],
+  carriertrackingnumber: Optional[/* max 25 chars */ String],
   /** Points to [[adventureworks.sales.salesorderdetail.SalesorderdetailRow.orderqty]] */
-orderqty: TypoShort,
+  orderqty: TypoShort,
   /** Points to [[adventureworks.sales.salesorderdetail.SalesorderdetailRow.productid]] */
-productid: ProductId,
+  productid: ProductId,
   /** Points to [[adventureworks.sales.salesorderdetail.SalesorderdetailRow.specialofferid]] */
-specialofferid: SpecialofferId,
+  specialofferid: SpecialofferId,
   /** Points to [[adventureworks.sales.salesorderdetail.SalesorderdetailRow.unitprice]] */
-unitprice: java.math.BigDecimal,
+  unitprice: java.math.BigDecimal,
   /** Points to [[adventureworks.sales.salesorderdetail.SalesorderdetailRow.unitpricediscount]] */
-unitpricediscount: java.math.BigDecimal,
+  unitpricediscount: java.math.BigDecimal,
   /** Points to [[adventureworks.sales.salesorderdetail.SalesorderdetailRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.sales.salesorderdetail.SalesorderdetailRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object SodViewRow {

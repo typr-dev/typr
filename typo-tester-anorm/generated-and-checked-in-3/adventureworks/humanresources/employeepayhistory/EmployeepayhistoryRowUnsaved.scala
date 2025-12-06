@@ -25,19 +25,19 @@ case class EmployeepayhistoryRowUnsaved(
   /** Employee identification number. Foreign key to Employee.BusinessEntityID.
    * Points to [[adventureworks.humanresources.employee.EmployeeRow.businessentityid]]
    */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Date the change in pay is effective */
-ratechangedate: TypoLocalDateTime,
+  ratechangedate: TypoLocalDateTime,
   /** Salary hourly rate.
    * Constraint CK_EmployeePayHistory_Rate affecting columns rate:  (((rate >= 6.50) AND (rate <= 200.00)))
    */
-rate: BigDecimal,
+  rate: BigDecimal,
   /** 1 = Salary received monthly, 2 = Salary received biweekly
    * Constraint CK_EmployeePayHistory_PayFrequency affecting columns payfrequency:  ((payfrequency = ANY (ARRAY[1, 2])))
    */
-payfrequency: TypoShort,
+  payfrequency: TypoShort,
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(modifieddateDefault: => TypoLocalDateTime): EmployeepayhistoryRow = {
     new EmployeepayhistoryRow(

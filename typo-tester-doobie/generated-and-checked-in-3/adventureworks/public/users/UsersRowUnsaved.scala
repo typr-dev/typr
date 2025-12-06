@@ -22,7 +22,7 @@ case class UsersRowUnsaved(
   password: String,
   verifiedOn: Option[TypoInstant] = None,
   /** Default: now() */
-createdAt: Defaulted[TypoInstant] = new UseDefault()
+  createdAt: Defaulted[TypoInstant] = new UseDefault()
 ) {
   def toRow(createdAtDefault: => TypoInstant): UsersRow = {
     new UsersRow(

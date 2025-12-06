@@ -17,7 +17,7 @@ import zio.json.internal.Write
 case class IdentityTestRowUnsaved(
   name: IdentityTestId,
   /** Identity BY DEFAULT, identityStart: 1, identityIncrement: 1, identityMaximum: 2147483647, identityMinimum: 1 */
-defaultGenerated: Defaulted[Int] = new UseDefault()
+  defaultGenerated: Defaulted[Int] = new UseDefault()
 ) {
   def toRow(
     defaultGeneratedDefault: => Int,

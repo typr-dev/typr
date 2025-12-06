@@ -30,17 +30,17 @@ case class EmailaddressRow(
   /** Primary key. Person associated with this email address.  Foreign key to Person.BusinessEntityID
    * Points to [[adventureworks.person.person.PersonRow.businessentityid]]
    */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Primary key. ID of this email address.
    * Default: nextval('person.emailaddress_emailaddressid_seq'::regclass)
    */
-emailaddressid: Int,
+  emailaddressid: Int,
   /** E-mail address for the person. */
-emailaddress: Option[/* max 50 chars */ String],
+  emailaddress: Option[/* max 50 chars */ String],
   /** Default: uuid_generate_v1() */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def compositeId: EmailaddressId = new EmailaddressId(businessentityid, emailaddressid)
 

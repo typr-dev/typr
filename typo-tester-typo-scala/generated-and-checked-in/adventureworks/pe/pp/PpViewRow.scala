@@ -15,15 +15,15 @@ import typo.runtime.RowParsers
 /** View: pe.pp */
 case class PpViewRow(
   /** Points to [[adventureworks.person.personphone.PersonphoneRow.businessentityid]] */
-id: BusinessentityId,
+  id: BusinessentityId,
   /** Points to [[adventureworks.person.personphone.PersonphoneRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.person.personphone.PersonphoneRow.phonenumber]] */
-phonenumber: Phone,
+  phonenumber: Phone,
   /** Points to [[adventureworks.person.personphone.PersonphoneRow.phonenumbertypeid]] */
-phonenumbertypeid: PhonenumbertypeId,
+  phonenumbertypeid: PhonenumbertypeId,
   /** Points to [[adventureworks.person.personphone.PersonphoneRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object PpViewRow {

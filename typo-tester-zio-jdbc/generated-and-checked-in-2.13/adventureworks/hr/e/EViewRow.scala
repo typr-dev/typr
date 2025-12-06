@@ -21,37 +21,37 @@ import zio.json.internal.Write
 /** View: hr.e */
 case class EViewRow(
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.businessentityid]] */
-id: BusinessentityId,
+  id: BusinessentityId,
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.nationalidnumber]] */
-nationalidnumber: /* max 15 chars */ String,
+  nationalidnumber: /* max 15 chars */ String,
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.loginid]] */
-loginid: /* max 256 chars */ String,
+  loginid: /* max 256 chars */ String,
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.jobtitle]] */
-jobtitle: /* max 50 chars */ String,
+  jobtitle: /* max 50 chars */ String,
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.birthdate]] */
-birthdate: TypoLocalDate,
+  birthdate: TypoLocalDate,
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.maritalstatus]] */
-maritalstatus: /* bpchar, max 1 chars */ String,
+  maritalstatus: /* bpchar, max 1 chars */ String,
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.gender]] */
-gender: /* bpchar, max 1 chars */ String,
+  gender: /* bpchar, max 1 chars */ String,
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.hiredate]] */
-hiredate: TypoLocalDate,
+  hiredate: TypoLocalDate,
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.salariedflag]] */
-salariedflag: Flag,
+  salariedflag: Flag,
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.vacationhours]] */
-vacationhours: TypoShort,
+  vacationhours: TypoShort,
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.sickleavehours]] */
-sickleavehours: TypoShort,
+  sickleavehours: TypoShort,
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.currentflag]] */
-currentflag: Flag,
+  currentflag: Flag,
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.modifieddate]] */
-modifieddate: TypoLocalDateTime,
+  modifieddate: TypoLocalDateTime,
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.organizationnode]] */
-organizationnode: Option[String]
+  organizationnode: Option[String]
 )
 
 object EViewRow {

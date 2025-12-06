@@ -31,23 +31,23 @@ case class SalesterritoryhistoryRow(
   /** Primary key. The sales rep.  Foreign key to SalesPerson.BusinessEntityID.
    * Points to [[adventureworks.sales.salesperson.SalespersonRow.businessentityid]]
    */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Primary key. Territory identification number. Foreign key to SalesTerritory.SalesTerritoryID.
    * Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.territoryid]]
    */
-territoryid: SalesterritoryId,
+  territoryid: SalesterritoryId,
   /** Primary key. Date the sales representive started work in the territory.
    * Constraint CK_SalesTerritoryHistory_EndDate affecting columns enddate, startdate: (((enddate >= startdate) OR (enddate IS NULL)))
    */
-startdate: TypoLocalDateTime,
+  startdate: TypoLocalDateTime,
   /** Date the sales representative left work in the territory.
    * Constraint CK_SalesTerritoryHistory_EndDate affecting columns enddate, startdate: (((enddate >= startdate) OR (enddate IS NULL)))
    */
-enddate: Option[TypoLocalDateTime],
+  enddate: Option[TypoLocalDateTime],
   /** Default: uuid_generate_v1() */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def compositeId: SalesterritoryhistoryId = new SalesterritoryhistoryId(businessentityid, startdate, territoryid)
 

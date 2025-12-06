@@ -16,15 +16,15 @@ import io.circe.Encoder
 /** This class corresponds to a row in table `sales.salesreason` which has not been persisted yet */
 case class SalesreasonRowUnsaved(
   /** Sales reason description. */
-name: Name,
+  name: Name,
   /** Category the sales reason belongs to. */
-reasontype: Name,
+  reasontype: Name,
   /** Default: nextval('sales.salesreason_salesreasonid_seq'::regclass)
    * Primary key for SalesReason records.
    */
-salesreasonid: Defaulted[SalesreasonId] = new UseDefault(),
+  salesreasonid: Defaulted[SalesreasonId] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     salesreasonidDefault: => SalesreasonId,

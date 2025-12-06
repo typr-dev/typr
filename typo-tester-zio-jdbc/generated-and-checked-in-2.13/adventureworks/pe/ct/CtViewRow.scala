@@ -18,13 +18,13 @@ import zio.json.internal.Write
 /** View: pe.ct */
 case class CtViewRow(
   /** Points to [[adventureworks.person.contacttype.ContacttypeRow.contacttypeid]] */
-id: ContacttypeId,
+  id: ContacttypeId,
   /** Points to [[adventureworks.person.contacttype.ContacttypeRow.contacttypeid]] */
-contacttypeid: ContacttypeId,
+  contacttypeid: ContacttypeId,
   /** Points to [[adventureworks.person.contacttype.ContacttypeRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.person.contacttype.ContacttypeRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object CtViewRow {

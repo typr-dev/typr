@@ -23,9 +23,9 @@ import scala.util.Try
 /** Table: public.titledperson */
 case class TitledpersonRow(
   /** Points to [[adventureworks.public.title_domain.TitleDomainRow.code]] */
-titleShort: TitleDomainId,
+  titleShort: TitleDomainId,
   /** Points to [[adventureworks.public.title.TitleRow.code]] */
-title: TitleId,
+  title: TitleId,
   name: String
 )
 

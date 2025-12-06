@@ -24,19 +24,19 @@ import scala.util.Try
 /** View: pu.sm */
 case class SmViewRow(
   /** Points to [[adventureworks.purchasing.shipmethod.ShipmethodRow.shipmethodid]] */
-id: ShipmethodId,
+  id: ShipmethodId,
   /** Points to [[adventureworks.purchasing.shipmethod.ShipmethodRow.shipmethodid]] */
-shipmethodid: ShipmethodId,
+  shipmethodid: ShipmethodId,
   /** Points to [[adventureworks.purchasing.shipmethod.ShipmethodRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.purchasing.shipmethod.ShipmethodRow.shipbase]] */
-shipbase: BigDecimal,
+  shipbase: BigDecimal,
   /** Points to [[adventureworks.purchasing.shipmethod.ShipmethodRow.shiprate]] */
-shiprate: BigDecimal,
+  shiprate: BigDecimal,
   /** Points to [[adventureworks.purchasing.shipmethod.ShipmethodRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.purchasing.shipmethod.ShipmethodRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object SmViewRow {

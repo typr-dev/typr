@@ -19,7 +19,7 @@ import zio.json.internal.Write
  */
 case class TestUtdanningstilbudRow(
   /** Points to [[adventureworks.public.test_organisasjon.TestOrganisasjonRow.organisasjonskode]] */
-organisasjonskode: TestOrganisasjonId,
+  organisasjonskode: TestOrganisasjonId,
   utdanningsmulighetKode: String
 ) {
   def compositeId: TestUtdanningstilbudId = new TestUtdanningstilbudId(organisasjonskode, utdanningsmulighetKode)

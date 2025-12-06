@@ -15,19 +15,19 @@ import typo.runtime.RowParsers
 /** View: sa.cr */
 case class CrViewRow(
   /** Points to [[adventureworks.sales.currencyrate.CurrencyrateRow.currencyrateid]] */
-currencyrateid: CurrencyrateId,
+  currencyrateid: CurrencyrateId,
   /** Points to [[adventureworks.sales.currencyrate.CurrencyrateRow.currencyratedate]] */
-currencyratedate: TypoLocalDateTime,
+  currencyratedate: TypoLocalDateTime,
   /** Points to [[adventureworks.sales.currencyrate.CurrencyrateRow.fromcurrencycode]] */
-fromcurrencycode: CurrencyId,
+  fromcurrencycode: CurrencyId,
   /** Points to [[adventureworks.sales.currencyrate.CurrencyrateRow.tocurrencycode]] */
-tocurrencycode: CurrencyId,
+  tocurrencycode: CurrencyId,
   /** Points to [[adventureworks.sales.currencyrate.CurrencyrateRow.averagerate]] */
-averagerate: java.math.BigDecimal,
+  averagerate: java.math.BigDecimal,
   /** Points to [[adventureworks.sales.currencyrate.CurrencyrateRow.endofdayrate]] */
-endofdayrate: java.math.BigDecimal,
+  endofdayrate: java.math.BigDecimal,
   /** Points to [[adventureworks.sales.currencyrate.CurrencyrateRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object CrViewRow {

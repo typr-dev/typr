@@ -19,23 +19,23 @@ import io.circe.Encoder
 /** View: pu.v */
 case class VViewRow(
   /** Points to [[adventureworks.purchasing.vendor.VendorRow.businessentityid]] */
-id: BusinessentityId,
+  id: BusinessentityId,
   /** Points to [[adventureworks.purchasing.vendor.VendorRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.purchasing.vendor.VendorRow.accountnumber]] */
-accountnumber: AccountNumber,
+  accountnumber: AccountNumber,
   /** Points to [[adventureworks.purchasing.vendor.VendorRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.purchasing.vendor.VendorRow.creditrating]] */
-creditrating: TypoShort,
+  creditrating: TypoShort,
   /** Points to [[adventureworks.purchasing.vendor.VendorRow.preferredvendorstatus]] */
-preferredvendorstatus: Flag,
+  preferredvendorstatus: Flag,
   /** Points to [[adventureworks.purchasing.vendor.VendorRow.activeflag]] */
-activeflag: Flag,
+  activeflag: Flag,
   /** Points to [[adventureworks.purchasing.vendor.VendorRow.purchasingwebserviceurl]] */
-purchasingwebserviceurl: Option[/* max 1024 chars */ String],
+  purchasingwebserviceurl: Option[/* max 1024 chars */ String],
   /** Points to [[adventureworks.purchasing.vendor.VendorRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object VViewRow {

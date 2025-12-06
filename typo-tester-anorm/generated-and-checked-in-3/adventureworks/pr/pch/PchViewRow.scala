@@ -22,17 +22,17 @@ import scala.util.Try
 /** View: pr.pch */
 case class PchViewRow(
   /** Points to [[adventureworks.production.productcosthistory.ProductcosthistoryRow.productid]] */
-id: ProductId,
+  id: ProductId,
   /** Points to [[adventureworks.production.productcosthistory.ProductcosthistoryRow.productid]] */
-productid: ProductId,
+  productid: ProductId,
   /** Points to [[adventureworks.production.productcosthistory.ProductcosthistoryRow.startdate]] */
-startdate: TypoLocalDateTime,
+  startdate: TypoLocalDateTime,
   /** Points to [[adventureworks.production.productcosthistory.ProductcosthistoryRow.enddate]] */
-enddate: Option[TypoLocalDateTime],
+  enddate: Option[TypoLocalDateTime],
   /** Points to [[adventureworks.production.productcosthistory.ProductcosthistoryRow.standardcost]] */
-standardcost: BigDecimal,
+  standardcost: BigDecimal,
   /** Points to [[adventureworks.production.productcosthistory.ProductcosthistoryRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object PchViewRow {

@@ -18,13 +18,13 @@ import zio.json.internal.Write
 /** This class corresponds to a row in table `production.illustration` which has not been persisted yet */
 case class IllustrationRowUnsaved(
   /** Illustrations used in manufacturing instructions. Stored as XML. */
-diagram: Option[TypoXml] = None,
+  diagram: Option[TypoXml] = None,
   /** Default: nextval('production.illustration_illustrationid_seq'::regclass)
    * Primary key for Illustration records.
    */
-illustrationid: Defaulted[IllustrationId] = new UseDefault(),
+  illustrationid: Defaulted[IllustrationId] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     illustrationidDefault: => IllustrationId,

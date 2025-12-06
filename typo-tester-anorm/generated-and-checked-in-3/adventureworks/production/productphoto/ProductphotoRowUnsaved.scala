@@ -22,19 +22,19 @@ import scala.util.Try
 /** This class corresponds to a row in table `production.productphoto` which has not been persisted yet */
 case class ProductphotoRowUnsaved(
   /** Small image of the product. */
-thumbnailphoto: Option[TypoBytea] = None,
+  thumbnailphoto: Option[TypoBytea] = None,
   /** Small image file name. */
-thumbnailphotofilename: Option[/* max 50 chars */ String] = None,
+  thumbnailphotofilename: Option[/* max 50 chars */ String] = None,
   /** Large image of the product. */
-largephoto: Option[TypoBytea] = None,
+  largephoto: Option[TypoBytea] = None,
   /** Large image file name. */
-largephotofilename: Option[/* max 50 chars */ String] = None,
+  largephotofilename: Option[/* max 50 chars */ String] = None,
   /** Default: nextval('production.productphoto_productphotoid_seq'::regclass)
    * Primary key for ProductPhoto records.
    */
-productphotoid: Defaulted[ProductphotoId] = new UseDefault(),
+  productphotoid: Defaulted[ProductphotoId] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     productphotoidDefault: => ProductphotoId,

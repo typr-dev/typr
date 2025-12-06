@@ -24,11 +24,11 @@ case class PhonenumbertypeRow(
   /** Primary key for telephone number type records.
    * Default: nextval('person.phonenumbertype_phonenumbertypeid_seq'::regclass)
    */
-phonenumbertypeid: PhonenumbertypeId,
+  phonenumbertypeid: PhonenumbertypeId,
   /** Name of the telephone number type */
-name: Name,
+  name: Name,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: PhonenumbertypeId = phonenumbertypeid
 

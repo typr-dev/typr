@@ -19,17 +19,17 @@ import zio.json.internal.Write
 /** View: hr.s */
 case class SViewRow(
   /** Points to [[adventureworks.humanresources.shift.ShiftRow.shiftid]] */
-id: ShiftId,
+  id: ShiftId,
   /** Points to [[adventureworks.humanresources.shift.ShiftRow.shiftid]] */
-shiftid: ShiftId,
+  shiftid: ShiftId,
   /** Points to [[adventureworks.humanresources.shift.ShiftRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.humanresources.shift.ShiftRow.starttime]] */
-starttime: TypoLocalTime,
+  starttime: TypoLocalTime,
   /** Points to [[adventureworks.humanresources.shift.ShiftRow.endtime]] */
-endtime: TypoLocalTime,
+  endtime: TypoLocalTime,
   /** Points to [[adventureworks.humanresources.shift.ShiftRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object SViewRow {

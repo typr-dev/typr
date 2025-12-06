@@ -18,15 +18,15 @@ import zio.json.internal.Write
 /** This class corresponds to a row in table `humanresources.department` which has not been persisted yet */
 case class DepartmentRowUnsaved(
   /** Name of the department. */
-name: Name,
+  name: Name,
   /** Name of the group to which the department belongs. */
-groupname: Name,
+  groupname: Name,
   /** Default: nextval('humanresources.department_departmentid_seq'::regclass)
    * Primary key for Department records.
    */
-departmentid: Defaulted[DepartmentId] = new UseDefault(),
+  departmentid: Defaulted[DepartmentId] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     departmentidDefault: => DepartmentId,

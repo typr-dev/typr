@@ -15,13 +15,13 @@ import typo.runtime.RowParsers
 /** View: pr.i */
 case class IViewRow(
   /** Points to [[adventureworks.production.illustration.IllustrationRow.illustrationid]] */
-id: IllustrationId,
+  id: IllustrationId,
   /** Points to [[adventureworks.production.illustration.IllustrationRow.illustrationid]] */
-illustrationid: IllustrationId,
+  illustrationid: IllustrationId,
   /** Points to [[adventureworks.production.illustration.IllustrationRow.diagram]] */
-diagram: Optional[TypoXml],
+  diagram: Optional[TypoXml],
   /** Points to [[adventureworks.production.illustration.IllustrationRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object IViewRow {

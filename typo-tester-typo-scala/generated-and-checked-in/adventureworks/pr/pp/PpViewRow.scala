@@ -16,19 +16,19 @@ import typo.runtime.RowParsers
 /** View: pr.pp */
 case class PpViewRow(
   /** Points to [[adventureworks.production.productphoto.ProductphotoRow.productphotoid]] */
-id: ProductphotoId,
+  id: ProductphotoId,
   /** Points to [[adventureworks.production.productphoto.ProductphotoRow.productphotoid]] */
-productphotoid: ProductphotoId,
+  productphotoid: ProductphotoId,
   /** Points to [[adventureworks.production.productphoto.ProductphotoRow.thumbnailphoto]] */
-thumbnailphoto: Optional[TypoBytea],
+  thumbnailphoto: Optional[TypoBytea],
   /** Points to [[adventureworks.production.productphoto.ProductphotoRow.thumbnailphotofilename]] */
-thumbnailphotofilename: Optional[/* max 50 chars */ String],
+  thumbnailphotofilename: Optional[/* max 50 chars */ String],
   /** Points to [[adventureworks.production.productphoto.ProductphotoRow.largephoto]] */
-largephoto: Optional[TypoBytea],
+  largephoto: Optional[TypoBytea],
   /** Points to [[adventureworks.production.productphoto.ProductphotoRow.largephotofilename]] */
-largephotofilename: Optional[/* max 50 chars */ String],
+  largephotofilename: Optional[/* max 50 chars */ String],
   /** Points to [[adventureworks.production.productphoto.ProductphotoRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object PpViewRow {

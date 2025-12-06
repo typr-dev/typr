@@ -27,25 +27,25 @@ case class ProductinventoryRowUnsaved(
   /** Product identification number. Foreign key to Product.ProductID.
    * Points to [[adventureworks.production.product.ProductRow.productid]]
    */
-productid: ProductId,
+  productid: ProductId,
   /** Inventory location identification number. Foreign key to Location.LocationID.
    * Points to [[adventureworks.production.location.LocationRow.locationid]]
    */
-locationid: LocationId,
+  locationid: LocationId,
   /** Storage compartment within an inventory location. */
-shelf: /* max 10 chars */ String,
+  shelf: /* max 10 chars */ String,
   /** Storage container on a shelf in an inventory location.
    * Constraint CK_ProductInventory_Bin affecting columns bin:  (((bin >= 0) AND (bin <= 100)))
    */
-bin: TypoShort,
+  bin: TypoShort,
   /** Default: 0
    * Quantity of products in the inventory location.
    */
-quantity: Defaulted[TypoShort] = new UseDefault(),
+  quantity: Defaulted[TypoShort] = new UseDefault(),
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     quantityDefault: => TypoShort,

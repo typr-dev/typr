@@ -22,17 +22,17 @@ case class ProductsubcategoryRowUnsaved(
   /** Product category identification number. Foreign key to ProductCategory.ProductCategoryID.
    * Points to [[adventureworks.production.productcategory.ProductcategoryRow.productcategoryid]]
    */
-productcategoryid: ProductcategoryId,
+  productcategoryid: ProductcategoryId,
   /** Subcategory description. */
-name: Name,
+  name: Name,
   /** Default: nextval('production.productsubcategory_productsubcategoryid_seq'::regclass)
    * Primary key for ProductSubcategory records.
    */
-productsubcategoryid: Defaulted[ProductsubcategoryId] = new UseDefault(),
+  productsubcategoryid: Defaulted[ProductsubcategoryId] = new UseDefault(),
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     productsubcategoryidDefault: => ProductsubcategoryId,

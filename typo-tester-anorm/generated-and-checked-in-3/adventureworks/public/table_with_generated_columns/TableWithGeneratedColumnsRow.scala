@@ -29,7 +29,7 @@ case class TableWithGeneratedColumnsRow(
       WHEN (name = 'a'::text) THEN 'a-name'::text
       ELSE 'some-name'::text
   END */
-nameTypeAlways: String
+  nameTypeAlways: String
 ) {
   def id: TableWithGeneratedColumnsId = name
 

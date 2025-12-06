@@ -22,17 +22,17 @@ import scala.util.Try
 /** This class corresponds to a row in table `humanresources.shift` which has not been persisted yet */
 case class ShiftRowUnsaved(
   /** Shift description. */
-name: Name,
+  name: Name,
   /** Shift start time. */
-starttime: TypoLocalTime,
+  starttime: TypoLocalTime,
   /** Shift end time. */
-endtime: TypoLocalTime,
+  endtime: TypoLocalTime,
   /** Default: nextval('humanresources.shift_shiftid_seq'::regclass)
    * Primary key for Shift records.
    */
-shiftid: Defaulted[ShiftId] = new UseDefault(),
+  shiftid: Defaulted[ShiftId] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     shiftidDefault: => ShiftId,

@@ -19,14 +19,14 @@ case class ProductdocumentRowUnsaved(
   /** Product identification number. Foreign key to Product.ProductID.
    * Points to [[adventureworks.production.product.ProductRow.productid]]
    */
-productid: ProductId,
+  productid: ProductId,
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault(),
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault(),
   /** Default: '/'::character varying
    * Document identification number. Foreign key to Document.DocumentNode.
    * Points to [[adventureworks.production.document.DocumentRow.documentnode]]
    */
-documentnode: Defaulted[DocumentId] = new UseDefault()
+  documentnode: Defaulted[DocumentId] = new UseDefault()
 ) {
   def toRow(
     modifieddateDefault: => TypoLocalDateTime,

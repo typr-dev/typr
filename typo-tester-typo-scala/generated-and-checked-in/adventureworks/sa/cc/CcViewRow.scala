@@ -15,19 +15,19 @@ import typo.runtime.RowParsers
 /** View: sa.cc */
 case class CcViewRow(
   /** Points to [[adventureworks.sales.creditcard.CreditcardRow.creditcardid]] */
-id: /* user-picked */ CustomCreditcardId,
+  id: /* user-picked */ CustomCreditcardId,
   /** Points to [[adventureworks.sales.creditcard.CreditcardRow.creditcardid]] */
-creditcardid: /* user-picked */ CustomCreditcardId,
+  creditcardid: /* user-picked */ CustomCreditcardId,
   /** Points to [[adventureworks.sales.creditcard.CreditcardRow.cardtype]] */
-cardtype: /* max 50 chars */ String,
+  cardtype: /* max 50 chars */ String,
   /** Points to [[adventureworks.sales.creditcard.CreditcardRow.cardnumber]] */
-cardnumber: /* max 25 chars */ String,
+  cardnumber: /* max 25 chars */ String,
   /** Points to [[adventureworks.sales.creditcard.CreditcardRow.expmonth]] */
-expmonth: TypoShort,
+  expmonth: TypoShort,
   /** Points to [[adventureworks.sales.creditcard.CreditcardRow.expyear]] */
-expyear: TypoShort,
+  expyear: TypoShort,
   /** Points to [[adventureworks.sales.creditcard.CreditcardRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object CcViewRow {

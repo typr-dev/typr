@@ -15,13 +15,13 @@ import io.circe.Encoder
 /** View: pr.pdoc */
 case class PdocViewRow(
   /** Points to [[adventureworks.production.productdocument.ProductdocumentRow.productid]] */
-id: ProductId,
+  id: ProductId,
   /** Points to [[adventureworks.production.productdocument.ProductdocumentRow.productid]] */
-productid: ProductId,
+  productid: ProductId,
   /** Points to [[adventureworks.production.productdocument.ProductdocumentRow.modifieddate]] */
-modifieddate: TypoLocalDateTime,
+  modifieddate: TypoLocalDateTime,
   /** Points to [[adventureworks.production.productdocument.ProductdocumentRow.documentnode]] */
-documentnode: DocumentId
+  documentnode: DocumentId
 )
 
 object PdocViewRow {

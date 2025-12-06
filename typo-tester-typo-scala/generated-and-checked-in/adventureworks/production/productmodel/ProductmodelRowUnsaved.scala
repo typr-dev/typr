@@ -17,19 +17,19 @@ import typo.runtime.PgText
 /** This class corresponds to a row in table `production.productmodel` which has not been persisted yet */
 case class ProductmodelRowUnsaved(
   /** Product model description. */
-name: Name,
+  name: Name,
   /** Detailed product catalog information in xml format. */
-catalogdescription: Optional[TypoXml] = Optional.empty(),
+  catalogdescription: Optional[TypoXml] = Optional.empty(),
   /** Manufacturing instructions in xml format. */
-instructions: Optional[TypoXml] = Optional.empty(),
+  instructions: Optional[TypoXml] = Optional.empty(),
   /** Default: nextval('production.productmodel_productmodelid_seq'::regclass)
    * Primary key for ProductModel records.
    */
-productmodelid: Defaulted[ProductmodelId] = new UseDefault(),
+  productmodelid: Defaulted[ProductmodelId] = new UseDefault(),
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     productmodelidDefault: => ProductmodelId,

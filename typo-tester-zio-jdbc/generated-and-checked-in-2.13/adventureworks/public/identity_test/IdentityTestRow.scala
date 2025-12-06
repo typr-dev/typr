@@ -19,9 +19,9 @@ import zio.json.internal.Write
  */
 case class IdentityTestRow(
   /** Identity ALWAYS, identityStart: 1, identityIncrement: 1, identityMaximum: 2147483647, identityMinimum: 1 */
-alwaysGenerated: Int,
+  alwaysGenerated: Int,
   /** Identity BY DEFAULT, identityStart: 1, identityIncrement: 1, identityMaximum: 2147483647, identityMinimum: 1 */
-defaultGenerated: Int,
+  defaultGenerated: Int,
   name: IdentityTestId
 ) {
   def id: IdentityTestId = name

@@ -22,11 +22,11 @@ case class ScrapreasonRow(
   /** Primary key for ScrapReason records.
    * Default: nextval('production.scrapreason_scrapreasonid_seq'::regclass)
    */
-scrapreasonid: ScrapreasonId,
+  scrapreasonid: ScrapreasonId,
   /** Failure description. */
-name: Name,
+  name: Name,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: ScrapreasonId = scrapreasonid
 

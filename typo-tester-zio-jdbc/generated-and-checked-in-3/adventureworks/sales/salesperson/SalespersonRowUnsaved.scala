@@ -22,39 +22,39 @@ case class SalespersonRowUnsaved(
   /** Primary key for SalesPerson records. Foreign key to Employee.BusinessEntityID
    * Points to [[adventureworks.humanresources.employee.EmployeeRow.businessentityid]]
    */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Territory currently assigned to. Foreign key to SalesTerritory.SalesTerritoryID.
    * Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.territoryid]]
    */
-territoryid: Option[SalesterritoryId] = None,
+  territoryid: Option[SalesterritoryId] = None,
   /** Projected yearly sales.
    * Constraint CK_SalesPerson_SalesQuota affecting columns salesquota:  ((salesquota > 0.00))
    */
-salesquota: Option[BigDecimal] = None,
+  salesquota: Option[BigDecimal] = None,
   /** Default: 0.00
    * Bonus due if quota is met.
    * Constraint CK_SalesPerson_Bonus affecting columns bonus:  ((bonus >= 0.00))
    */
-bonus: Defaulted[BigDecimal] = new UseDefault(),
+  bonus: Defaulted[BigDecimal] = new UseDefault(),
   /** Default: 0.00
    * Commision percent received per sale.
    * Constraint CK_SalesPerson_CommissionPct affecting columns commissionpct:  ((commissionpct >= 0.00))
    */
-commissionpct: Defaulted[BigDecimal] = new UseDefault(),
+  commissionpct: Defaulted[BigDecimal] = new UseDefault(),
   /** Default: 0.00
    * Sales total year to date.
    * Constraint CK_SalesPerson_SalesYTD affecting columns salesytd:  ((salesytd >= 0.00))
    */
-salesytd: Defaulted[BigDecimal] = new UseDefault(),
+  salesytd: Defaulted[BigDecimal] = new UseDefault(),
   /** Default: 0.00
    * Sales total of previous year.
    * Constraint CK_SalesPerson_SalesLastYear affecting columns saleslastyear:  ((saleslastyear >= 0.00))
    */
-saleslastyear: Defaulted[BigDecimal] = new UseDefault(),
+  saleslastyear: Defaulted[BigDecimal] = new UseDefault(),
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     bonusDefault: => BigDecimal,

@@ -17,19 +17,19 @@ import io.circe.Encoder
 /** View: sa.c */
 case class CViewRow(
   /** Points to [[adventureworks.sales.customer.CustomerRow.customerid]] */
-id: CustomerId,
+  id: CustomerId,
   /** Points to [[adventureworks.sales.customer.CustomerRow.customerid]] */
-customerid: CustomerId,
+  customerid: CustomerId,
   /** Points to [[adventureworks.sales.customer.CustomerRow.personid]] */
-personid: Option[BusinessentityId],
+  personid: Option[BusinessentityId],
   /** Points to [[adventureworks.sales.customer.CustomerRow.storeid]] */
-storeid: Option[BusinessentityId],
+  storeid: Option[BusinessentityId],
   /** Points to [[adventureworks.sales.customer.CustomerRow.territoryid]] */
-territoryid: Option[SalesterritoryId],
+  territoryid: Option[SalesterritoryId],
   /** Points to [[adventureworks.sales.customer.CustomerRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.sales.customer.CustomerRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object CViewRow {

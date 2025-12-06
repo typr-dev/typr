@@ -24,17 +24,17 @@ case class ProductsubcategoryRow(
   /** Primary key for ProductSubcategory records.
    * Default: nextval('production.productsubcategory_productsubcategoryid_seq'::regclass)
    */
-productsubcategoryid: ProductsubcategoryId,
+  productsubcategoryid: ProductsubcategoryId,
   /** Product category identification number. Foreign key to ProductCategory.ProductCategoryID.
    * Points to [[adventureworks.production.productcategory.ProductcategoryRow.productcategoryid]]
    */
-productcategoryid: ProductcategoryId,
+  productcategoryid: ProductcategoryId,
   /** Subcategory description. */
-name: Name,
+  name: Name,
   /** Default: uuid_generate_v1() */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: ProductsubcategoryId = productsubcategoryid
 

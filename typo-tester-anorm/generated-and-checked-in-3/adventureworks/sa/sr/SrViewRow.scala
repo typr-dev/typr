@@ -21,15 +21,15 @@ import scala.util.Try
 /** View: sa.sr */
 case class SrViewRow(
   /** Points to [[adventureworks.sales.salesreason.SalesreasonRow.salesreasonid]] */
-id: SalesreasonId,
+  id: SalesreasonId,
   /** Points to [[adventureworks.sales.salesreason.SalesreasonRow.salesreasonid]] */
-salesreasonid: SalesreasonId,
+  salesreasonid: SalesreasonId,
   /** Points to [[adventureworks.sales.salesreason.SalesreasonRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.sales.salesreason.SalesreasonRow.reasontype]] */
-reasontype: Name,
+  reasontype: Name,
   /** Points to [[adventureworks.sales.salesreason.SalesreasonRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object SrViewRow {

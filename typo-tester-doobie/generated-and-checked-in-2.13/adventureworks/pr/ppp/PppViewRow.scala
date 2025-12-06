@@ -16,13 +16,13 @@ import io.circe.Encoder
 /** View: pr.ppp */
 case class PppViewRow(
   /** Points to [[adventureworks.production.productproductphoto.ProductproductphotoRow.productid]] */
-productid: ProductId,
+  productid: ProductId,
   /** Points to [[adventureworks.production.productproductphoto.ProductproductphotoRow.productphotoid]] */
-productphotoid: ProductphotoId,
+  productphotoid: ProductphotoId,
   /** Points to [[adventureworks.production.productproductphoto.ProductproductphotoRow.primary]] */
-primary: Flag,
+  primary: Flag,
   /** Points to [[adventureworks.production.productproductphoto.ProductproductphotoRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object PppViewRow {

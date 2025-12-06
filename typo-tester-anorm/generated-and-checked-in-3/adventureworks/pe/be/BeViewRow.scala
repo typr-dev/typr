@@ -21,13 +21,13 @@ import scala.util.Try
 /** View: pe.be */
 case class BeViewRow(
   /** Points to [[adventureworks.person.businessentity.BusinessentityRow.businessentityid]] */
-id: BusinessentityId,
+  id: BusinessentityId,
   /** Points to [[adventureworks.person.businessentity.BusinessentityRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.person.businessentity.BusinessentityRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.person.businessentity.BusinessentityRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object BeViewRow {

@@ -14,13 +14,13 @@ import typo.runtime.RowParsers
 /** View: sa.cu */
 case class CuViewRow(
   /** Points to [[adventureworks.sales.currency.CurrencyRow.currencycode]] */
-id: CurrencyId,
+  id: CurrencyId,
   /** Points to [[adventureworks.sales.currency.CurrencyRow.currencycode]] */
-currencycode: CurrencyId,
+  currencycode: CurrencyId,
   /** Points to [[adventureworks.sales.currency.CurrencyRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.sales.currency.CurrencyRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object CuViewRow {

@@ -26,13 +26,13 @@ import scala.util.Try
 /** View: person.vadditionalcontactinfo */
 case class VadditionalcontactinfoViewRow(
   /** Points to [[adventureworks.person.person.PersonRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.person.person.PersonRow.firstname]] */
-firstname: /* user-picked */ FirstName,
+  firstname: /* user-picked */ FirstName,
   /** Points to [[adventureworks.person.person.PersonRow.middlename]] */
-middlename: Option[Name],
+  middlename: Option[Name],
   /** Points to [[adventureworks.person.person.PersonRow.lastname]] */
-lastname: Name,
+  lastname: Name,
   telephonenumber: /* nullability unknown */ Option[TypoXml],
   telephonespecialinstructions: /* nullability unknown */ Option[String],
   street: /* nullability unknown */ Option[TypoXml],
@@ -45,9 +45,9 @@ lastname: Name,
   emailspecialinstructions: /* nullability unknown */ Option[String],
   emailtelephonenumber: /* nullability unknown */ Option[TypoXml],
   /** Points to [[adventureworks.person.person.PersonRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.person.person.PersonRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object VadditionalcontactinfoViewRow {

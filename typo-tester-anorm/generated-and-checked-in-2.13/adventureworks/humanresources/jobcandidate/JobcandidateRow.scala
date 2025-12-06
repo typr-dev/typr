@@ -30,15 +30,15 @@ case class JobcandidateRow(
   /** Primary key for JobCandidate records.
    * Default: nextval('humanresources.jobcandidate_jobcandidateid_seq'::regclass)
    */
-jobcandidateid: JobcandidateId,
+  jobcandidateid: JobcandidateId,
   /** Employee identification number if applicant was hired. Foreign key to Employee.BusinessEntityID.
    * Points to [[adventureworks.humanresources.employee.EmployeeRow.businessentityid]]
    */
-businessentityid: Option[BusinessentityId],
+  businessentityid: Option[BusinessentityId],
   /** RÃ©sumÃ© in XML format. */
-resume: Option[TypoXml],
+  resume: Option[TypoXml],
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: JobcandidateId = jobcandidateid
 

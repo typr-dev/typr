@@ -21,13 +21,13 @@ case class PersoncreditcardRow(
   /** Business entity identification number. Foreign key to Person.BusinessEntityID.
    * Points to [[adventureworks.person.person.PersonRow.businessentityid]]
    */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Credit card identification number. Foreign key to CreditCard.CreditCardID.
    * Points to [[adventureworks.sales.creditcard.CreditcardRow.creditcardid]]
    */
-creditcardid: /* user-picked */ CustomCreditcardId,
+  creditcardid: /* user-picked */ CustomCreditcardId,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def compositeId: PersoncreditcardId = new PersoncreditcardId(businessentityid, creditcardid)
 

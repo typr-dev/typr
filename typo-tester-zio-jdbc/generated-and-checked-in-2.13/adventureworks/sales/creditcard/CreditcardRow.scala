@@ -25,17 +25,17 @@ case class CreditcardRow(
   /** Primary key for CreditCard records.
    * Default: nextval('sales.creditcard_creditcardid_seq'::regclass)
    */
-creditcardid: /* user-picked */ CustomCreditcardId,
+  creditcardid: /* user-picked */ CustomCreditcardId,
   /** Credit card name. */
-cardtype: /* max 50 chars */ String,
+  cardtype: /* max 50 chars */ String,
   /** Credit card number. */
-cardnumber: /* max 25 chars */ String,
+  cardnumber: /* max 25 chars */ String,
   /** Credit card expiration month. */
-expmonth: TypoShort,
+  expmonth: TypoShort,
   /** Credit card expiration year. */
-expyear: TypoShort,
+  expyear: TypoShort,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: /* user-picked */ CustomCreditcardId = creditcardid
 

@@ -20,11 +20,11 @@ import io.circe.Encoder
  */
 case class UnitmeasureRow(
   /** Primary key. */
-unitmeasurecode: UnitmeasureId,
+  unitmeasurecode: UnitmeasureId,
   /** Unit of measure description. */
-name: Name,
+  name: Name,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: UnitmeasureId = unitmeasurecode
 

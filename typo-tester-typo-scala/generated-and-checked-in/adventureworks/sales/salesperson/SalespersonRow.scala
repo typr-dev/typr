@@ -24,39 +24,39 @@ case class SalespersonRow(
   /** Primary key for SalesPerson records. Foreign key to Employee.BusinessEntityID
    * Points to [[adventureworks.humanresources.employee.EmployeeRow.businessentityid]]
    */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Territory currently assigned to. Foreign key to SalesTerritory.SalesTerritoryID.
    * Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.territoryid]]
    */
-territoryid: Optional[SalesterritoryId],
+  territoryid: Optional[SalesterritoryId],
   /** Projected yearly sales.
    * Constraint CK_SalesPerson_SalesQuota affecting columns salesquota: ((salesquota > 0.00))
    */
-salesquota: Optional[java.math.BigDecimal],
+  salesquota: Optional[java.math.BigDecimal],
   /** Bonus due if quota is met.
    * Default: 0.00
    * Constraint CK_SalesPerson_Bonus affecting columns bonus: ((bonus >= 0.00))
    */
-bonus: java.math.BigDecimal,
+  bonus: java.math.BigDecimal,
   /** Commision percent received per sale.
    * Default: 0.00
    * Constraint CK_SalesPerson_CommissionPct affecting columns commissionpct: ((commissionpct >= 0.00))
    */
-commissionpct: java.math.BigDecimal,
+  commissionpct: java.math.BigDecimal,
   /** Sales total year to date.
    * Default: 0.00
    * Constraint CK_SalesPerson_SalesYTD affecting columns salesytd: ((salesytd >= 0.00))
    */
-salesytd: java.math.BigDecimal,
+  salesytd: java.math.BigDecimal,
   /** Sales total of previous year.
    * Default: 0.00
    * Constraint CK_SalesPerson_SalesLastYear affecting columns saleslastyear: ((saleslastyear >= 0.00))
    */
-saleslastyear: java.math.BigDecimal,
+  saleslastyear: java.math.BigDecimal,
   /** Default: uuid_generate_v1() */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: BusinessentityId = businessentityid
 

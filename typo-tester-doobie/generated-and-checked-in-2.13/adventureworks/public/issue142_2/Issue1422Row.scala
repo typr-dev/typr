@@ -17,7 +17,7 @@ import io.circe.Encoder
  */
 case class Issue1422Row(
   /** Points to [[adventureworks.public.issue142.Issue142Row.tabellkode]] */
-tabellkode: Issue142Id
+  tabellkode: Issue142Id
 ) {
   def id: Issue142Id = tabellkode
 }

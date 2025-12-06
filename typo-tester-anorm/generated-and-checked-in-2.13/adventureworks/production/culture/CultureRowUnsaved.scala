@@ -21,11 +21,11 @@ import scala.util.Try
 /** This class corresponds to a row in table `production.culture` which has not been persisted yet */
 case class CultureRowUnsaved(
   /** Primary key for Culture records. */
-cultureid: CultureId,
+  cultureid: CultureId,
   /** Culture description. */
-name: Name,
+  name: Name,
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(modifieddateDefault: => TypoLocalDateTime): CultureRow = new CultureRow(cultureid = cultureid, name = name, modifieddate = modifieddate.getOrElse(modifieddateDefault))
 }

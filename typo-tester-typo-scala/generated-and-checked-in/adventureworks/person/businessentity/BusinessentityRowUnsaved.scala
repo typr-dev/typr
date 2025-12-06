@@ -16,11 +16,11 @@ case class BusinessentityRowUnsaved(
   /** Default: nextval('person.businessentity_businessentityid_seq'::regclass)
    * Primary key for all customers, vendors, and employees.
    */
-businessentityid: Defaulted[BusinessentityId] = new UseDefault(),
+  businessentityid: Defaulted[BusinessentityId] = new UseDefault(),
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     businessentityidDefault: => BusinessentityId,

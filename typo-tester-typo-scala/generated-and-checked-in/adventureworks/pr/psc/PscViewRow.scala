@@ -16,17 +16,17 @@ import typo.runtime.RowParsers
 /** View: pr.psc */
 case class PscViewRow(
   /** Points to [[adventureworks.production.productsubcategory.ProductsubcategoryRow.productsubcategoryid]] */
-id: ProductsubcategoryId,
+  id: ProductsubcategoryId,
   /** Points to [[adventureworks.production.productsubcategory.ProductsubcategoryRow.productsubcategoryid]] */
-productsubcategoryid: ProductsubcategoryId,
+  productsubcategoryid: ProductsubcategoryId,
   /** Points to [[adventureworks.production.productsubcategory.ProductsubcategoryRow.productcategoryid]] */
-productcategoryid: ProductcategoryId,
+  productcategoryid: ProductcategoryId,
   /** Points to [[adventureworks.production.productsubcategory.ProductsubcategoryRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.production.productsubcategory.ProductsubcategoryRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.production.productsubcategory.ProductsubcategoryRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object PscViewRow {

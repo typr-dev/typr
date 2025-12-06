@@ -21,13 +21,13 @@ import scala.util.Try
 /** View: pr.um */
 case class UmViewRow(
   /** Points to [[adventureworks.production.unitmeasure.UnitmeasureRow.unitmeasurecode]] */
-id: UnitmeasureId,
+  id: UnitmeasureId,
   /** Points to [[adventureworks.production.unitmeasure.UnitmeasureRow.unitmeasurecode]] */
-unitmeasurecode: UnitmeasureId,
+  unitmeasurecode: UnitmeasureId,
   /** Points to [[adventureworks.production.unitmeasure.UnitmeasureRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.production.unitmeasure.UnitmeasureRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object UmViewRow {

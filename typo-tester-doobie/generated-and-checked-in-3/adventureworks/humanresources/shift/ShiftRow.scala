@@ -23,15 +23,15 @@ case class ShiftRow(
   /** Primary key for Shift records.
    * Default: nextval('humanresources.shift_shiftid_seq'::regclass)
    */
-shiftid: ShiftId,
+  shiftid: ShiftId,
   /** Shift description. */
-name: Name,
+  name: Name,
   /** Shift start time. */
-starttime: TypoLocalTime,
+  starttime: TypoLocalTime,
   /** Shift end time. */
-endtime: TypoLocalTime,
+  endtime: TypoLocalTime,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: ShiftId = shiftid
 

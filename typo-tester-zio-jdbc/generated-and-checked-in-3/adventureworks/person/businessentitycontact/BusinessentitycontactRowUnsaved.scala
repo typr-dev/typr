@@ -22,19 +22,19 @@ case class BusinessentitycontactRowUnsaved(
   /** Primary key. Foreign key to BusinessEntity.BusinessEntityID.
    * Points to [[adventureworks.person.businessentity.BusinessentityRow.businessentityid]]
    */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Primary key. Foreign key to Person.BusinessEntityID.
    * Points to [[adventureworks.person.person.PersonRow.businessentityid]]
    */
-personid: BusinessentityId,
+  personid: BusinessentityId,
   /** Primary key.  Foreign key to ContactType.ContactTypeID.
    * Points to [[adventureworks.person.contacttype.ContacttypeRow.contacttypeid]]
    */
-contacttypeid: ContacttypeId,
+  contacttypeid: ContacttypeId,
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     rowguidDefault: => TypoUUID,

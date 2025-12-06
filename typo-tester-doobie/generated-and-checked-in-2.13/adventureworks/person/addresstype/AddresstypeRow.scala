@@ -23,13 +23,13 @@ case class AddresstypeRow(
   /** Primary key for AddressType records.
    * Default: nextval('person.addresstype_addresstypeid_seq'::regclass)
    */
-addresstypeid: AddresstypeId,
+  addresstypeid: AddresstypeId,
   /** Address type description. For example, Billing, Home, or Shipping. */
-name: Name,
+  name: Name,
   /** Default: uuid_generate_v1() */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: AddresstypeId = addresstypeid
 

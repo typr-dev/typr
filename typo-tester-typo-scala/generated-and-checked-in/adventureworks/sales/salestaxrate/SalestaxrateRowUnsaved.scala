@@ -20,25 +20,25 @@ case class SalestaxrateRowUnsaved(
   /** State, province, or country/region the sales tax applies to.
    * Points to [[adventureworks.person.stateprovince.StateprovinceRow.stateprovinceid]]
    */
-stateprovinceid: StateprovinceId,
+  stateprovinceid: StateprovinceId,
   /** 1 = Tax applied to retail transactions, 2 = Tax applied to wholesale transactions, 3 = Tax applied to all sales (retail and wholesale) transactions.
    * Constraint CK_SalesTaxRate_TaxType affecting columns taxtype:  (((taxtype >= 1) AND (taxtype <= 3)))
    */
-taxtype: TypoShort,
+  taxtype: TypoShort,
   /** Tax rate description. */
-name: Name,
+  name: Name,
   /** Default: nextval('sales.salestaxrate_salestaxrateid_seq'::regclass)
    * Primary key for SalesTaxRate records.
    */
-salestaxrateid: Defaulted[SalestaxrateId] = new UseDefault(),
+  salestaxrateid: Defaulted[SalestaxrateId] = new UseDefault(),
   /** Default: 0.00
    * Tax rate amount.
    */
-taxrate: Defaulted[java.math.BigDecimal] = new UseDefault(),
+  taxrate: Defaulted[java.math.BigDecimal] = new UseDefault(),
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     salestaxrateidDefault: => SalestaxrateId,

@@ -17,21 +17,21 @@ import typo.runtime.RowParsers
 /** View: pr.pi */
 case class PiViewRow(
   /** Points to [[adventureworks.production.productinventory.ProductinventoryRow.productid]] */
-id: ProductId,
+  id: ProductId,
   /** Points to [[adventureworks.production.productinventory.ProductinventoryRow.productid]] */
-productid: ProductId,
+  productid: ProductId,
   /** Points to [[adventureworks.production.productinventory.ProductinventoryRow.locationid]] */
-locationid: LocationId,
+  locationid: LocationId,
   /** Points to [[adventureworks.production.productinventory.ProductinventoryRow.shelf]] */
-shelf: /* max 10 chars */ String,
+  shelf: /* max 10 chars */ String,
   /** Points to [[adventureworks.production.productinventory.ProductinventoryRow.bin]] */
-bin: TypoShort,
+  bin: TypoShort,
   /** Points to [[adventureworks.production.productinventory.ProductinventoryRow.quantity]] */
-quantity: TypoShort,
+  quantity: TypoShort,
   /** Points to [[adventureworks.production.productinventory.ProductinventoryRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.production.productinventory.ProductinventoryRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object PiViewRow {

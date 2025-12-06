@@ -25,54 +25,54 @@ case class PurchaseorderheaderRow(
   /** Primary key.
    * Default: nextval('purchasing.purchaseorderheader_purchaseorderid_seq'::regclass)
    */
-purchaseorderid: PurchaseorderheaderId,
+  purchaseorderid: PurchaseorderheaderId,
   /** Incremental number to track changes to the purchase order over time.
    * Default: 0
    */
-revisionnumber: TypoShort,
+  revisionnumber: TypoShort,
   /** Order current status. 1 = Pending; 2 = Approved; 3 = Rejected; 4 = Complete
    * Default: 1
    * Constraint CK_PurchaseOrderHeader_Status affecting columns status: (((status >= 1) AND (status <= 4)))
    */
-status: TypoShort,
+  status: TypoShort,
   /** Employee who created the purchase order. Foreign key to Employee.BusinessEntityID.
    * Points to [[adventureworks.humanresources.employee.EmployeeRow.businessentityid]]
    */
-employeeid: BusinessentityId,
+  employeeid: BusinessentityId,
   /** Vendor with whom the purchase order is placed. Foreign key to Vendor.BusinessEntityID.
    * Points to [[adventureworks.purchasing.vendor.VendorRow.businessentityid]]
    */
-vendorid: BusinessentityId,
+  vendorid: BusinessentityId,
   /** Shipping method. Foreign key to ShipMethod.ShipMethodID.
    * Points to [[adventureworks.purchasing.shipmethod.ShipmethodRow.shipmethodid]]
    */
-shipmethodid: ShipmethodId,
+  shipmethodid: ShipmethodId,
   /** Purchase order creation date.
    * Default: now()
    * Constraint CK_PurchaseOrderHeader_ShipDate affecting columns orderdate, shipdate: (((shipdate >= orderdate) OR (shipdate IS NULL)))
    */
-orderdate: TypoLocalDateTime,
+  orderdate: TypoLocalDateTime,
   /** Estimated shipment date from the vendor.
    * Constraint CK_PurchaseOrderHeader_ShipDate affecting columns orderdate, shipdate: (((shipdate >= orderdate) OR (shipdate IS NULL)))
    */
-shipdate: Option[TypoLocalDateTime],
+  shipdate: Option[TypoLocalDateTime],
   /** Purchase order subtotal. Computed as SUM(PurchaseOrderDetail.LineTotal)for the appropriate PurchaseOrderID.
    * Default: 0.00
    * Constraint CK_PurchaseOrderHeader_SubTotal affecting columns subtotal: ((subtotal >= 0.00))
    */
-subtotal: BigDecimal,
+  subtotal: BigDecimal,
   /** Tax amount.
    * Default: 0.00
    * Constraint CK_PurchaseOrderHeader_TaxAmt affecting columns taxamt: ((taxamt >= 0.00))
    */
-taxamt: BigDecimal,
+  taxamt: BigDecimal,
   /** Shipping cost.
    * Default: 0.00
    * Constraint CK_PurchaseOrderHeader_Freight affecting columns freight: ((freight >= 0.00))
    */
-freight: BigDecimal,
+  freight: BigDecimal,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: PurchaseorderheaderId = purchaseorderid
 

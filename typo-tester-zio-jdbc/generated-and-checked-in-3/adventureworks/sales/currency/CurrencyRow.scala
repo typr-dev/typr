@@ -22,11 +22,11 @@ import zio.json.internal.Write
  */
 case class CurrencyRow(
   /** The ISO code for the Currency. */
-currencycode: CurrencyId,
+  currencycode: CurrencyId,
   /** Currency name. */
-name: Name,
+  name: Name,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: CurrencyId = currencycode
 

@@ -22,11 +22,11 @@ case class BusinessentityRow(
   /** Primary key for all customers, vendors, and employees.
    * Default: nextval('person.businessentity_businessentityid_seq'::regclass)
    */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Default: uuid_generate_v1() */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: BusinessentityId = businessentityid
 

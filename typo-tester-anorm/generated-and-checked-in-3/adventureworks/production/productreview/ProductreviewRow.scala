@@ -30,27 +30,27 @@ case class ProductreviewRow(
   /** Primary key for ProductReview records.
    * Default: nextval('production.productreview_productreviewid_seq'::regclass)
    */
-productreviewid: ProductreviewId,
+  productreviewid: ProductreviewId,
   /** Product identification number. Foreign key to Product.ProductID.
    * Points to [[adventureworks.production.product.ProductRow.productid]]
    */
-productid: ProductId,
+  productid: ProductId,
   /** Name of the reviewer. */
-reviewername: Name,
+  reviewername: Name,
   /** Date review was submitted.
    * Default: now()
    */
-reviewdate: TypoLocalDateTime,
+  reviewdate: TypoLocalDateTime,
   /** Reviewer's e-mail address. */
-emailaddress: /* max 50 chars */ String,
+  emailaddress: /* max 50 chars */ String,
   /** Product rating given by the reviewer. Scale is 1 to 5 with 5 as the highest rating.
    * Constraint CK_ProductReview_Rating affecting columns rating: (((rating >= 1) AND (rating <= 5)))
    */
-rating: Int,
+  rating: Int,
   /** Reviewer's comments */
-comments: Option[/* max 3850 chars */ String],
+  comments: Option[/* max 3850 chars */ String],
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: ProductreviewId = productreviewid
 

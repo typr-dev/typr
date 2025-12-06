@@ -20,54 +20,54 @@ case class PurchaseorderheaderRowUnsaved(
   /** Employee who created the purchase order. Foreign key to Employee.BusinessEntityID.
    * Points to [[adventureworks.humanresources.employee.EmployeeRow.businessentityid]]
    */
-employeeid: BusinessentityId,
+  employeeid: BusinessentityId,
   /** Vendor with whom the purchase order is placed. Foreign key to Vendor.BusinessEntityID.
    * Points to [[adventureworks.purchasing.vendor.VendorRow.businessentityid]]
    */
-vendorid: BusinessentityId,
+  vendorid: BusinessentityId,
   /** Shipping method. Foreign key to ShipMethod.ShipMethodID.
    * Points to [[adventureworks.purchasing.shipmethod.ShipmethodRow.shipmethodid]]
    */
-shipmethodid: ShipmethodId,
+  shipmethodid: ShipmethodId,
   /** Estimated shipment date from the vendor.
    * Constraint CK_PurchaseOrderHeader_ShipDate affecting columns orderdate, shipdate:  (((shipdate >= orderdate) OR (shipdate IS NULL)))
    */
-shipdate: Optional[TypoLocalDateTime] = Optional.empty(),
+  shipdate: Optional[TypoLocalDateTime] = Optional.empty(),
   /** Default: nextval('purchasing.purchaseorderheader_purchaseorderid_seq'::regclass)
    * Primary key.
    */
-purchaseorderid: Defaulted[PurchaseorderheaderId] = new UseDefault(),
+  purchaseorderid: Defaulted[PurchaseorderheaderId] = new UseDefault(),
   /** Default: 0
    * Incremental number to track changes to the purchase order over time.
    */
-revisionnumber: Defaulted[TypoShort] = new UseDefault(),
+  revisionnumber: Defaulted[TypoShort] = new UseDefault(),
   /** Default: 1
    * Order current status. 1 = Pending; 2 = Approved; 3 = Rejected; 4 = Complete
    * Constraint CK_PurchaseOrderHeader_Status affecting columns status:  (((status >= 1) AND (status <= 4)))
    */
-status: Defaulted[TypoShort] = new UseDefault(),
+  status: Defaulted[TypoShort] = new UseDefault(),
   /** Default: now()
    * Purchase order creation date.
    * Constraint CK_PurchaseOrderHeader_ShipDate affecting columns orderdate, shipdate:  (((shipdate >= orderdate) OR (shipdate IS NULL)))
    */
-orderdate: Defaulted[TypoLocalDateTime] = new UseDefault(),
+  orderdate: Defaulted[TypoLocalDateTime] = new UseDefault(),
   /** Default: 0.00
    * Purchase order subtotal. Computed as SUM(PurchaseOrderDetail.LineTotal)for the appropriate PurchaseOrderID.
    * Constraint CK_PurchaseOrderHeader_SubTotal affecting columns subtotal:  ((subtotal >= 0.00))
    */
-subtotal: Defaulted[java.math.BigDecimal] = new UseDefault(),
+  subtotal: Defaulted[java.math.BigDecimal] = new UseDefault(),
   /** Default: 0.00
    * Tax amount.
    * Constraint CK_PurchaseOrderHeader_TaxAmt affecting columns taxamt:  ((taxamt >= 0.00))
    */
-taxamt: Defaulted[java.math.BigDecimal] = new UseDefault(),
+  taxamt: Defaulted[java.math.BigDecimal] = new UseDefault(),
   /** Default: 0.00
    * Shipping cost.
    * Constraint CK_PurchaseOrderHeader_Freight affecting columns freight:  ((freight >= 0.00))
    */
-freight: Defaulted[java.math.BigDecimal] = new UseDefault(),
+  freight: Defaulted[java.math.BigDecimal] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     purchaseorderidDefault: => PurchaseorderheaderId,

@@ -22,15 +22,15 @@ case class PersonphoneRow(
   /** Business entity identification number. Foreign key to Person.BusinessEntityID.
    * Points to [[adventureworks.person.person.PersonRow.businessentityid]]
    */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Telephone number identification number. */
-phonenumber: Phone,
+  phonenumber: Phone,
   /** Kind of phone number. Foreign key to PhoneNumberType.PhoneNumberTypeID.
    * Points to [[adventureworks.person.phonenumbertype.PhonenumbertypeRow.phonenumbertypeid]]
    */
-phonenumbertypeid: PhonenumbertypeId,
+  phonenumbertypeid: PhonenumbertypeId,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def compositeId: PersonphoneId = new PersonphoneId(businessentityid, phonenumber, phonenumbertypeid)
 

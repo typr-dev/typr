@@ -22,43 +22,43 @@ case class ProductvendorRowUnsaved(
   /** Primary key. Foreign key to Product.ProductID.
    * Points to [[adventureworks.production.product.ProductRow.productid]]
    */
-productid: ProductId,
+  productid: ProductId,
   /** Primary key. Foreign key to Vendor.BusinessEntityID.
    * Points to [[adventureworks.purchasing.vendor.VendorRow.businessentityid]]
    */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** The average span of time (in days) between placing an order with the vendor and receiving the purchased product.
    * Constraint CK_ProductVendor_AverageLeadTime affecting columns averageleadtime:  ((averageleadtime >= 1))
    */
-averageleadtime: Int,
+  averageleadtime: Int,
   /** The vendor's usual selling price.
    * Constraint CK_ProductVendor_StandardPrice affecting columns standardprice:  ((standardprice > 0.00))
    */
-standardprice: BigDecimal,
+  standardprice: BigDecimal,
   /** The selling price when last purchased.
    * Constraint CK_ProductVendor_LastReceiptCost affecting columns lastreceiptcost:  ((lastreceiptcost > 0.00))
    */
-lastreceiptcost: Option[BigDecimal] = None,
+  lastreceiptcost: Option[BigDecimal] = None,
   /** Date the product was last received by the vendor. */
-lastreceiptdate: Option[TypoLocalDateTime] = None,
+  lastreceiptdate: Option[TypoLocalDateTime] = None,
   /** The maximum quantity that should be ordered.
    * Constraint CK_ProductVendor_MinOrderQty affecting columns minorderqty:  ((minorderqty >= 1))
    */
-minorderqty: Int,
+  minorderqty: Int,
   /** The minimum quantity that should be ordered.
    * Constraint CK_ProductVendor_MaxOrderQty affecting columns maxorderqty:  ((maxorderqty >= 1))
    */
-maxorderqty: Int,
+  maxorderqty: Int,
   /** The quantity currently on order.
    * Constraint CK_ProductVendor_OnOrderQty affecting columns onorderqty:  ((onorderqty >= 0))
    */
-onorderqty: Option[Int] = None,
+  onorderqty: Option[Int] = None,
   /** The product's unit of measure.
    * Points to [[adventureworks.production.unitmeasure.UnitmeasureRow.unitmeasurecode]]
    */
-unitmeasurecode: UnitmeasureId,
+  unitmeasurecode: UnitmeasureId,
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(modifieddateDefault: => TypoLocalDateTime): ProductvendorRow = {
     new ProductvendorRow(

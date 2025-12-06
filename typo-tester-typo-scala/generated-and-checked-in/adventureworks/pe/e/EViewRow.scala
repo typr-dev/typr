@@ -16,17 +16,17 @@ import typo.runtime.RowParsers
 /** View: pe.e */
 case class EViewRow(
   /** Points to [[adventureworks.person.emailaddress.EmailaddressRow.emailaddressid]] */
-id: Integer,
+  id: Integer,
   /** Points to [[adventureworks.person.emailaddress.EmailaddressRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.person.emailaddress.EmailaddressRow.emailaddressid]] */
-emailaddressid: Integer,
+  emailaddressid: Integer,
   /** Points to [[adventureworks.person.emailaddress.EmailaddressRow.emailaddress]] */
-emailaddress: Optional[/* max 50 chars */ String],
+  emailaddress: Optional[/* max 50 chars */ String],
   /** Points to [[adventureworks.person.emailaddress.EmailaddressRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.person.emailaddress.EmailaddressRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object EViewRow {

@@ -21,31 +21,31 @@ case class TransactionhistoryRow(
   /** Primary key for TransactionHistory records.
    * Default: nextval('production.transactionhistory_transactionid_seq'::regclass)
    */
-transactionid: TransactionhistoryId,
+  transactionid: TransactionhistoryId,
   /** Product identification number. Foreign key to Product.ProductID.
    * Points to [[adventureworks.production.product.ProductRow.productid]]
    */
-productid: ProductId,
+  productid: ProductId,
   /** Purchase order, sales order, or work order identification number. */
-referenceorderid: Integer,
+  referenceorderid: Integer,
   /** Line number associated with the purchase order, sales order, or work order.
    * Default: 0
    */
-referenceorderlineid: Integer,
+  referenceorderlineid: Integer,
   /** Date and time of the transaction.
    * Default: now()
    */
-transactiondate: TypoLocalDateTime,
+  transactiondate: TypoLocalDateTime,
   /** W = WorkOrder, S = SalesOrder, P = PurchaseOrder
    * Constraint CK_TransactionHistory_TransactionType affecting columns transactiontype: ((upper((transactiontype)::text) = ANY (ARRAY['W'::text, 'S'::text, 'P'::text])))
    */
-transactiontype: /* bpchar, max 1 chars */ String,
+  transactiontype: /* bpchar, max 1 chars */ String,
   /** Product quantity. */
-quantity: Integer,
+  quantity: Integer,
   /** Product cost. */
-actualcost: java.math.BigDecimal,
+  actualcost: java.math.BigDecimal,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: TransactionhistoryId = transactionid
 

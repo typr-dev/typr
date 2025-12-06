@@ -22,13 +22,13 @@ import scala.util.Try
 /** SQL file: person_dynamic.sql */
 case class PersonDynamicSqlRow(
   /** Points to [[adventureworks.person.person.PersonRow.title]] */
-title: Option[/* max 8 chars */ String],
+  title: Option[/* max 8 chars */ String],
   /** Points to [[adventureworks.person.person.PersonRow.firstname]] */
-firstname: /* user-picked */ FirstName,
+  firstname: /* user-picked */ FirstName,
   /** Points to [[adventureworks.person.person.PersonRow.middlename]] */
-middlename: Option[Name],
+  middlename: Option[Name],
   /** Points to [[adventureworks.person.person.PersonRow.lastname]] */
-lastname: Name
+  lastname: Name
 )
 
 object PersonDynamicSqlRow {

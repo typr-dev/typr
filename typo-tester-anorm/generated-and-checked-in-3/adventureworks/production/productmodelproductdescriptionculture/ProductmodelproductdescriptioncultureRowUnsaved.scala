@@ -25,17 +25,17 @@ case class ProductmodelproductdescriptioncultureRowUnsaved(
   /** Primary key. Foreign key to ProductModel.ProductModelID.
    * Points to [[adventureworks.production.productmodel.ProductmodelRow.productmodelid]]
    */
-productmodelid: ProductmodelId,
+  productmodelid: ProductmodelId,
   /** Primary key. Foreign key to ProductDescription.ProductDescriptionID.
    * Points to [[adventureworks.production.productdescription.ProductdescriptionRow.productdescriptionid]]
    */
-productdescriptionid: ProductdescriptionId,
+  productdescriptionid: ProductdescriptionId,
   /** Culture identification number. Foreign key to Culture.CultureID.
    * Points to [[adventureworks.production.culture.CultureRow.cultureid]]
    */
-cultureid: CultureId,
+  cultureid: CultureId,
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(modifieddateDefault: => TypoLocalDateTime): ProductmodelproductdescriptioncultureRow = {
     new ProductmodelproductdescriptioncultureRow(

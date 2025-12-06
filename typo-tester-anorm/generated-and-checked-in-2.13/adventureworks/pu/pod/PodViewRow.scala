@@ -24,25 +24,25 @@ import scala.util.Try
 /** View: pu.pod */
 case class PodViewRow(
   /** Points to [[adventureworks.purchasing.purchaseorderdetail.PurchaseorderdetailRow.purchaseorderdetailid]] */
-id: Int,
+  id: Int,
   /** Points to [[adventureworks.purchasing.purchaseorderdetail.PurchaseorderdetailRow.purchaseorderid]] */
-purchaseorderid: PurchaseorderheaderId,
+  purchaseorderid: PurchaseorderheaderId,
   /** Points to [[adventureworks.purchasing.purchaseorderdetail.PurchaseorderdetailRow.purchaseorderdetailid]] */
-purchaseorderdetailid: Int,
+  purchaseorderdetailid: Int,
   /** Points to [[adventureworks.purchasing.purchaseorderdetail.PurchaseorderdetailRow.duedate]] */
-duedate: TypoLocalDateTime,
+  duedate: TypoLocalDateTime,
   /** Points to [[adventureworks.purchasing.purchaseorderdetail.PurchaseorderdetailRow.orderqty]] */
-orderqty: TypoShort,
+  orderqty: TypoShort,
   /** Points to [[adventureworks.purchasing.purchaseorderdetail.PurchaseorderdetailRow.productid]] */
-productid: ProductId,
+  productid: ProductId,
   /** Points to [[adventureworks.purchasing.purchaseorderdetail.PurchaseorderdetailRow.unitprice]] */
-unitprice: BigDecimal,
+  unitprice: BigDecimal,
   /** Points to [[adventureworks.purchasing.purchaseorderdetail.PurchaseorderdetailRow.receivedqty]] */
-receivedqty: BigDecimal,
+  receivedqty: BigDecimal,
   /** Points to [[adventureworks.purchasing.purchaseorderdetail.PurchaseorderdetailRow.rejectedqty]] */
-rejectedqty: BigDecimal,
+  rejectedqty: BigDecimal,
   /** Points to [[adventureworks.purchasing.purchaseorderdetail.PurchaseorderdetailRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object PodViewRow {

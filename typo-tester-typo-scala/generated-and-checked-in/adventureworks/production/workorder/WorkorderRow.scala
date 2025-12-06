@@ -24,35 +24,35 @@ case class WorkorderRow(
   /** Primary key for WorkOrder records.
    * Default: nextval('production.workorder_workorderid_seq'::regclass)
    */
-workorderid: WorkorderId,
+  workorderid: WorkorderId,
   /** Product identification number. Foreign key to Product.ProductID.
    * Points to [[adventureworks.production.product.ProductRow.productid]]
    */
-productid: ProductId,
+  productid: ProductId,
   /** Product quantity to build.
    * Constraint CK_WorkOrder_OrderQty affecting columns orderqty: ((orderqty > 0))
    */
-orderqty: Integer,
+  orderqty: Integer,
   /** Quantity that failed inspection.
    * Constraint CK_WorkOrder_ScrappedQty affecting columns scrappedqty: ((scrappedqty >= 0))
    */
-scrappedqty: TypoShort,
+  scrappedqty: TypoShort,
   /** Work order start date.
    * Constraint CK_WorkOrder_EndDate affecting columns enddate, startdate: (((enddate >= startdate) OR (enddate IS NULL)))
    */
-startdate: TypoLocalDateTime,
+  startdate: TypoLocalDateTime,
   /** Work order end date.
    * Constraint CK_WorkOrder_EndDate affecting columns enddate, startdate: (((enddate >= startdate) OR (enddate IS NULL)))
    */
-enddate: Optional[TypoLocalDateTime],
+  enddate: Optional[TypoLocalDateTime],
   /** Work order due date. */
-duedate: TypoLocalDateTime,
+  duedate: TypoLocalDateTime,
   /** Reason for inspection failure.
    * Points to [[adventureworks.production.scrapreason.ScrapreasonRow.scrapreasonid]]
    */
-scrapreasonid: Optional[ScrapreasonId],
+  scrapreasonid: Optional[ScrapreasonId],
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: WorkorderId = workorderid
 

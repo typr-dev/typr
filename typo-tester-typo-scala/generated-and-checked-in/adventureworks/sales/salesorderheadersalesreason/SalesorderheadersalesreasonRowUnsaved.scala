@@ -17,13 +17,13 @@ case class SalesorderheadersalesreasonRowUnsaved(
   /** Primary key. Foreign key to SalesOrderHeader.SalesOrderID.
    * Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.salesorderid]]
    */
-salesorderid: SalesorderheaderId,
+  salesorderid: SalesorderheaderId,
   /** Primary key. Foreign key to SalesReason.SalesReasonID.
    * Points to [[adventureworks.sales.salesreason.SalesreasonRow.salesreasonid]]
    */
-salesreasonid: SalesreasonId,
+  salesreasonid: SalesreasonId,
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(modifieddateDefault: => TypoLocalDateTime): SalesorderheadersalesreasonRow = new SalesorderheadersalesreasonRow(salesorderid = salesorderid, salesreasonid = salesreasonid, modifieddate = modifieddate.getOrElse(modifieddateDefault))
 }

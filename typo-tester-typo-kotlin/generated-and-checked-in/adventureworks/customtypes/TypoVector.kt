@@ -6,8 +6,6 @@
 package adventureworks.customtypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import java.util.Arrays
-import java.util.stream.Collectors
 import org.postgresql.jdbc.PgArray
 import typo.dsl.Bijection
 import typo.runtime.PgRead
@@ -22,7 +20,7 @@ data class TypoVector(@JsonValue val value: Array<Float>) {
       Bijection.of(TypoVector::value, ::TypoVector)
 
     val pgText: PgText<TypoVector> =
-      PgText.textString.contramap({ v -> "[" + Arrays.stream(v.value).map(String::valueOf).collect(Collectors.joining(",")) + "]" })
+      PgText.textString.contramap({ v -> "[" + v.value.joinToString(",") { it.toString() } + "]" })
 
     val pgType: PgType<TypoVector> =
       PgType.of<TypoVector>(

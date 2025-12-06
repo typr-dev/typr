@@ -23,19 +23,19 @@ case class BusinessentityaddressRowUnsaved(
   /** Primary key. Foreign key to BusinessEntity.BusinessEntityID.
    * Points to [[adventureworks.person.businessentity.BusinessentityRow.businessentityid]]
    */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Primary key. Foreign key to Address.AddressID.
    * Points to [[adventureworks.person.address.AddressRow.addressid]]
    */
-addressid: AddressId,
+  addressid: AddressId,
   /** Primary key. Foreign key to AddressType.AddressTypeID.
    * Points to [[adventureworks.person.addresstype.AddresstypeRow.addresstypeid]]
    */
-addresstypeid: AddresstypeId,
+  addresstypeid: AddresstypeId,
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     rowguidDefault: => TypoUUID,

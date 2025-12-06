@@ -20,23 +20,23 @@ case class CustomerRowUnsaved(
   /** Foreign key to Person.BusinessEntityID
    * Points to [[adventureworks.person.person.PersonRow.businessentityid]]
    */
-personid: Option[BusinessentityId] = None,
+  personid: Option[BusinessentityId] = None,
   /** Foreign key to Store.BusinessEntityID
    * Points to [[adventureworks.sales.store.StoreRow.businessentityid]]
    */
-storeid: Option[BusinessentityId] = None,
+  storeid: Option[BusinessentityId] = None,
   /** ID of the territory in which the customer is located. Foreign key to SalesTerritory.SalesTerritoryID.
    * Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.territoryid]]
    */
-territoryid: Option[SalesterritoryId] = None,
+  territoryid: Option[SalesterritoryId] = None,
   /** Default: nextval('sales.customer_customerid_seq'::regclass)
    * Primary key.
    */
-customerid: Defaulted[CustomerId] = new UseDefault(),
+  customerid: Defaulted[CustomerId] = new UseDefault(),
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     customeridDefault: => CustomerId,

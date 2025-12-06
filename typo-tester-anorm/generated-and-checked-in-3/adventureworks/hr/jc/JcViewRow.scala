@@ -24,15 +24,15 @@ import scala.util.Try
 /** View: hr.jc */
 case class JcViewRow(
   /** Points to [[adventureworks.humanresources.jobcandidate.JobcandidateRow.jobcandidateid]] */
-id: JobcandidateId,
+  id: JobcandidateId,
   /** Points to [[adventureworks.humanresources.jobcandidate.JobcandidateRow.jobcandidateid]] */
-jobcandidateid: JobcandidateId,
+  jobcandidateid: JobcandidateId,
   /** Points to [[adventureworks.humanresources.jobcandidate.JobcandidateRow.businessentityid]] */
-businessentityid: Option[BusinessentityId],
+  businessentityid: Option[BusinessentityId],
   /** Points to [[adventureworks.humanresources.jobcandidate.JobcandidateRow.resume]] */
-resume: Option[TypoXml],
+  resume: Option[TypoXml],
   /** Points to [[adventureworks.humanresources.jobcandidate.JobcandidateRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object JcViewRow {

@@ -24,13 +24,13 @@ case class CountryregioncurrencyRowUnsaved(
   /** ISO code for countries and regions. Foreign key to CountryRegion.CountryRegionCode.
    * Points to [[adventureworks.person.countryregion.CountryregionRow.countryregioncode]]
    */
-countryregioncode: CountryregionId,
+  countryregioncode: CountryregionId,
   /** ISO standard currency code. Foreign key to Currency.CurrencyCode.
    * Points to [[adventureworks.sales.currency.CurrencyRow.currencycode]]
    */
-currencycode: CurrencyId,
+  currencycode: CurrencyId,
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(modifieddateDefault: => TypoLocalDateTime): CountryregioncurrencyRow = new CountryregioncurrencyRow(countryregioncode = countryregioncode, currencycode = currencycode, modifieddate = modifieddate.getOrElse(modifieddateDefault))
 }

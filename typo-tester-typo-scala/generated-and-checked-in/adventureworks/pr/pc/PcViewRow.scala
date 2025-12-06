@@ -15,15 +15,15 @@ import typo.runtime.RowParsers
 /** View: pr.pc */
 case class PcViewRow(
   /** Points to [[adventureworks.production.productcategory.ProductcategoryRow.productcategoryid]] */
-id: ProductcategoryId,
+  id: ProductcategoryId,
   /** Points to [[adventureworks.production.productcategory.ProductcategoryRow.productcategoryid]] */
-productcategoryid: ProductcategoryId,
+  productcategoryid: ProductcategoryId,
   /** Points to [[adventureworks.production.productcategory.ProductcategoryRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.production.productcategory.ProductcategoryRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.production.productcategory.ProductcategoryRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object PcViewRow {

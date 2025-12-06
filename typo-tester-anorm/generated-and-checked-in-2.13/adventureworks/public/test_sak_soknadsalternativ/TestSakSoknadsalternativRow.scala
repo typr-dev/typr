@@ -26,9 +26,9 @@ import scala.util.Try
 case class TestSakSoknadsalternativRow(
   organisasjonskodeSaksbehandler: String,
   /** Points to [[adventureworks.public.test_utdanningstilbud.TestUtdanningstilbudRow.utdanningsmulighetKode]] */
-utdanningsmulighetKode: String,
+  utdanningsmulighetKode: String,
   /** Points to [[adventureworks.public.test_utdanningstilbud.TestUtdanningstilbudRow.organisasjonskode]] */
-organisasjonskodeTilbyder: TestOrganisasjonId
+  organisasjonskodeTilbyder: TestOrganisasjonId
 ) {
   def compositeId: TestSakSoknadsalternativId = new TestSakSoknadsalternativId(organisasjonskodeSaksbehandler, utdanningsmulighetKode)
 

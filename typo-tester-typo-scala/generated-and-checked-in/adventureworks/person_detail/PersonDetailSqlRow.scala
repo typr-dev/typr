@@ -16,25 +16,25 @@ import typo.runtime.RowParsers
 /** SQL file: person_detail.sql */
 case class PersonDetailSqlRow(
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.person.person.PersonRow.title]] */
-title: Optional[/* max 8 chars */ String],
+  title: Optional[/* max 8 chars */ String],
   /** Points to [[adventureworks.person.person.PersonRow.firstname]] */
-firstname: /* user-picked */ FirstName,
+  firstname: /* user-picked */ FirstName,
   /** Points to [[adventureworks.person.person.PersonRow.middlename]] */
-middlename: Optional[Name],
+  middlename: Optional[Name],
   /** Points to [[adventureworks.person.person.PersonRow.lastname]] */
-lastname: Name,
+  lastname: Name,
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.jobtitle]] */
-jobtitle: /* max 50 chars */ String,
+  jobtitle: /* max 50 chars */ String,
   /** Points to [[adventureworks.person.address.AddressRow.addressline1]] */
-addressline1: Optional[/* max 60 chars */ String],
+  addressline1: Optional[/* max 60 chars */ String],
   /** Points to [[adventureworks.person.address.AddressRow.city]] */
-city: Optional[/* max 30 chars */ String],
+  city: Optional[/* max 30 chars */ String],
   /** Points to [[adventureworks.person.address.AddressRow.postalcode]] */
-postalcode: Optional[/* max 15 chars */ String],
+  postalcode: Optional[/* max 15 chars */ String],
   /** Points to [[adventureworks.person.address.AddressRow.rowguid]] */
-rowguid: /* user-picked */ String
+  rowguid: /* user-picked */ String
 )
 
 object PersonDetailSqlRow {

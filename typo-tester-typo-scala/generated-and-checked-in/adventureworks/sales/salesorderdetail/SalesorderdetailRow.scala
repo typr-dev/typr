@@ -27,38 +27,38 @@ case class SalesorderdetailRow(
   /** Primary key. Foreign key to SalesOrderHeader.SalesOrderID.
    * Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.salesorderid]]
    */
-salesorderid: SalesorderheaderId,
+  salesorderid: SalesorderheaderId,
   /** Primary key. One incremental unique number per product sold.
    * Default: nextval('sales.salesorderdetail_salesorderdetailid_seq'::regclass)
    */
-salesorderdetailid: Integer,
+  salesorderdetailid: Integer,
   /** Shipment tracking number supplied by the shipper. */
-carriertrackingnumber: Optional[/* max 25 chars */ String],
+  carriertrackingnumber: Optional[/* max 25 chars */ String],
   /** Quantity ordered per product.
    * Constraint CK_SalesOrderDetail_OrderQty affecting columns orderqty: ((orderqty > 0))
    */
-orderqty: TypoShort,
+  orderqty: TypoShort,
   /** Product sold to customer. Foreign key to Product.ProductID.
    * Points to [[adventureworks.sales.specialofferproduct.SpecialofferproductRow.productid]]
    */
-productid: ProductId,
+  productid: ProductId,
   /** Promotional code. Foreign key to SpecialOffer.SpecialOfferID.
    * Points to [[adventureworks.sales.specialofferproduct.SpecialofferproductRow.specialofferid]]
    */
-specialofferid: SpecialofferId,
+  specialofferid: SpecialofferId,
   /** Selling price of a single product.
    * Constraint CK_SalesOrderDetail_UnitPrice affecting columns unitprice: ((unitprice >= 0.00))
    */
-unitprice: java.math.BigDecimal,
+  unitprice: java.math.BigDecimal,
   /** Discount amount.
    * Default: 0.0
    * Constraint CK_SalesOrderDetail_UnitPriceDiscount affecting columns unitpricediscount: ((unitpricediscount >= 0.00))
    */
-unitpricediscount: java.math.BigDecimal,
+  unitpricediscount: java.math.BigDecimal,
   /** Default: uuid_generate_v1() */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def compositeId: SalesorderdetailId = new SalesorderdetailId(salesorderid, salesorderdetailid)
 

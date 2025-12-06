@@ -15,17 +15,17 @@ import io.circe.Encoder
 /** View: pr.plph */
 case class PlphViewRow(
   /** Points to [[adventureworks.production.productlistpricehistory.ProductlistpricehistoryRow.productid]] */
-id: ProductId,
+  id: ProductId,
   /** Points to [[adventureworks.production.productlistpricehistory.ProductlistpricehistoryRow.productid]] */
-productid: ProductId,
+  productid: ProductId,
   /** Points to [[adventureworks.production.productlistpricehistory.ProductlistpricehistoryRow.startdate]] */
-startdate: TypoLocalDateTime,
+  startdate: TypoLocalDateTime,
   /** Points to [[adventureworks.production.productlistpricehistory.ProductlistpricehistoryRow.enddate]] */
-enddate: Option[TypoLocalDateTime],
+  enddate: Option[TypoLocalDateTime],
   /** Points to [[adventureworks.production.productlistpricehistory.ProductlistpricehistoryRow.listprice]] */
-listprice: BigDecimal,
+  listprice: BigDecimal,
   /** Points to [[adventureworks.production.productlistpricehistory.ProductlistpricehistoryRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object PlphViewRow {

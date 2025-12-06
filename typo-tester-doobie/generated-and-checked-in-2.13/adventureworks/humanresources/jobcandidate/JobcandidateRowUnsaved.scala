@@ -19,15 +19,15 @@ case class JobcandidateRowUnsaved(
   /** Employee identification number if applicant was hired. Foreign key to Employee.BusinessEntityID.
    * Points to [[adventureworks.humanresources.employee.EmployeeRow.businessentityid]]
    */
-businessentityid: Option[BusinessentityId] = None,
+  businessentityid: Option[BusinessentityId] = None,
   /** RÃ©sumÃ© in XML format. */
-resume: Option[TypoXml] = None,
+  resume: Option[TypoXml] = None,
   /** Default: nextval('humanresources.jobcandidate_jobcandidateid_seq'::regclass)
    * Primary key for JobCandidate records.
    */
-jobcandidateid: Defaulted[JobcandidateId] = new UseDefault(),
+  jobcandidateid: Defaulted[JobcandidateId] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     jobcandidateidDefault: => JobcandidateId,

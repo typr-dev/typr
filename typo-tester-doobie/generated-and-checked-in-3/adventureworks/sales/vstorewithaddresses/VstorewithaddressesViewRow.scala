@@ -15,23 +15,23 @@ import io.circe.Encoder
 /** View: sales.vstorewithaddresses */
 case class VstorewithaddressesViewRow(
   /** Points to [[adventureworks.sales.store.StoreRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.sales.store.StoreRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.person.addresstype.AddresstypeRow.name]] */
-addresstype: Name,
+  addresstype: Name,
   /** Points to [[adventureworks.person.address.AddressRow.addressline1]] */
-addressline1: /* max 60 chars */ String,
+  addressline1: /* max 60 chars */ String,
   /** Points to [[adventureworks.person.address.AddressRow.addressline2]] */
-addressline2: Option[/* max 60 chars */ String],
+  addressline2: Option[/* max 60 chars */ String],
   /** Points to [[adventureworks.person.address.AddressRow.city]] */
-city: /* max 30 chars */ String,
+  city: /* max 30 chars */ String,
   /** Points to [[adventureworks.person.stateprovince.StateprovinceRow.name]] */
-stateprovincename: Name,
+  stateprovincename: Name,
   /** Points to [[adventureworks.person.address.AddressRow.postalcode]] */
-postalcode: /* max 15 chars */ String,
+  postalcode: /* max 15 chars */ String,
   /** Points to [[adventureworks.person.countryregion.CountryregionRow.name]] */
-countryregionname: Name
+  countryregionname: Name
 )
 
 object VstorewithaddressesViewRow {

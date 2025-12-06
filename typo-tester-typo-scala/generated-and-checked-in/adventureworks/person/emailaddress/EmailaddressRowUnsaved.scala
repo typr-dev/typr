@@ -19,17 +19,17 @@ case class EmailaddressRowUnsaved(
   /** Primary key. Person associated with this email address.  Foreign key to Person.BusinessEntityID
    * Points to [[adventureworks.person.person.PersonRow.businessentityid]]
    */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** E-mail address for the person. */
-emailaddress: Optional[/* max 50 chars */ String] = Optional.empty(),
+  emailaddress: Optional[/* max 50 chars */ String] = Optional.empty(),
   /** Default: nextval('person.emailaddress_emailaddressid_seq'::regclass)
    * Primary key. ID of this email address.
    */
-emailaddressid: Defaulted[Integer] = new UseDefault(),
+  emailaddressid: Defaulted[Integer] = new UseDefault(),
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     emailaddressidDefault: => Integer,

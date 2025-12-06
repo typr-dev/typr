@@ -18,31 +18,31 @@ import typo.runtime.RowParsers
 /** View: pu.poh */
 case class PohViewRow(
   /** Points to [[adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderRow.purchaseorderid]] */
-id: PurchaseorderheaderId,
+  id: PurchaseorderheaderId,
   /** Points to [[adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderRow.purchaseorderid]] */
-purchaseorderid: PurchaseorderheaderId,
+  purchaseorderid: PurchaseorderheaderId,
   /** Points to [[adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderRow.revisionnumber]] */
-revisionnumber: TypoShort,
+  revisionnumber: TypoShort,
   /** Points to [[adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderRow.status]] */
-status: TypoShort,
+  status: TypoShort,
   /** Points to [[adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderRow.employeeid]] */
-employeeid: BusinessentityId,
+  employeeid: BusinessentityId,
   /** Points to [[adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderRow.vendorid]] */
-vendorid: BusinessentityId,
+  vendorid: BusinessentityId,
   /** Points to [[adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderRow.shipmethodid]] */
-shipmethodid: ShipmethodId,
+  shipmethodid: ShipmethodId,
   /** Points to [[adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderRow.orderdate]] */
-orderdate: TypoLocalDateTime,
+  orderdate: TypoLocalDateTime,
   /** Points to [[adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderRow.shipdate]] */
-shipdate: Optional[TypoLocalDateTime],
+  shipdate: Optional[TypoLocalDateTime],
   /** Points to [[adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderRow.subtotal]] */
-subtotal: java.math.BigDecimal,
+  subtotal: java.math.BigDecimal,
   /** Points to [[adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderRow.taxamt]] */
-taxamt: java.math.BigDecimal,
+  taxamt: java.math.BigDecimal,
   /** Points to [[adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderRow.freight]] */
-freight: java.math.BigDecimal,
+  freight: java.math.BigDecimal,
   /** Points to [[adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object PohViewRow {

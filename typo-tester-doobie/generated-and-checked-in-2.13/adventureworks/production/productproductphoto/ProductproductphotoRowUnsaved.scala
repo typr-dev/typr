@@ -20,17 +20,17 @@ case class ProductproductphotoRowUnsaved(
   /** Product identification number. Foreign key to Product.ProductID.
    * Points to [[adventureworks.production.product.ProductRow.productid]]
    */
-productid: ProductId,
+  productid: ProductId,
   /** Product photo identification number. Foreign key to ProductPhoto.ProductPhotoID.
    * Points to [[adventureworks.production.productphoto.ProductphotoRow.productphotoid]]
    */
-productphotoid: ProductphotoId,
+  productphotoid: ProductphotoId,
   /** Default: false
    * 0 = Photo is not the principal image. 1 = Photo is the principal image.
    */
-primary: Defaulted[Flag] = new UseDefault(),
+  primary: Defaulted[Flag] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     primaryDefault: => Flag,

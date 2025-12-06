@@ -15,17 +15,17 @@ import typo.runtime.RowParsers
 /** View: sa.spqh */
 case class SpqhViewRow(
   /** Points to [[adventureworks.sales.salespersonquotahistory.SalespersonquotahistoryRow.businessentityid]] */
-id: BusinessentityId,
+  id: BusinessentityId,
   /** Points to [[adventureworks.sales.salespersonquotahistory.SalespersonquotahistoryRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.sales.salespersonquotahistory.SalespersonquotahistoryRow.quotadate]] */
-quotadate: TypoLocalDateTime,
+  quotadate: TypoLocalDateTime,
   /** Points to [[adventureworks.sales.salespersonquotahistory.SalespersonquotahistoryRow.salesquota]] */
-salesquota: java.math.BigDecimal,
+  salesquota: java.math.BigDecimal,
   /** Points to [[adventureworks.sales.salespersonquotahistory.SalespersonquotahistoryRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.sales.salespersonquotahistory.SalespersonquotahistoryRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object SpqhViewRow {

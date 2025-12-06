@@ -33,95 +33,95 @@ case class SalesorderheaderRowUnsaved(
   /** Date the order is due to the customer.
    * Constraint CK_SalesOrderHeader_DueDate affecting columns duedate, orderdate:  ((duedate >= orderdate))
    */
-duedate: TypoLocalDateTime,
+  duedate: TypoLocalDateTime,
   /** Date the order was shipped to the customer.
    * Constraint CK_SalesOrderHeader_ShipDate affecting columns orderdate, shipdate:  (((shipdate >= orderdate) OR (shipdate IS NULL)))
    */
-shipdate: Option[TypoLocalDateTime] = None,
+  shipdate: Option[TypoLocalDateTime] = None,
   /** Customer purchase order number reference. */
-purchaseordernumber: Option[OrderNumber] = None,
+  purchaseordernumber: Option[OrderNumber] = None,
   /** Financial accounting number reference. */
-accountnumber: Option[AccountNumber] = None,
+  accountnumber: Option[AccountNumber] = None,
   /** Customer identification number. Foreign key to Customer.BusinessEntityID.
    * Points to [[adventureworks.sales.customer.CustomerRow.customerid]]
    */
-customerid: CustomerId,
+  customerid: CustomerId,
   /** Sales person who created the sales order. Foreign key to SalesPerson.BusinessEntityID.
    * Points to [[adventureworks.sales.salesperson.SalespersonRow.businessentityid]]
    */
-salespersonid: Option[BusinessentityId] = None,
+  salespersonid: Option[BusinessentityId] = None,
   /** Territory in which the sale was made. Foreign key to SalesTerritory.SalesTerritoryID.
    * Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.territoryid]]
    */
-territoryid: Option[SalesterritoryId] = None,
+  territoryid: Option[SalesterritoryId] = None,
   /** Customer billing address. Foreign key to Address.AddressID.
    * Points to [[adventureworks.person.address.AddressRow.addressid]]
    */
-billtoaddressid: AddressId,
+  billtoaddressid: AddressId,
   /** Customer shipping address. Foreign key to Address.AddressID.
    * Points to [[adventureworks.person.address.AddressRow.addressid]]
    */
-shiptoaddressid: AddressId,
+  shiptoaddressid: AddressId,
   /** Shipping method. Foreign key to ShipMethod.ShipMethodID.
    * Points to [[adventureworks.purchasing.shipmethod.ShipmethodRow.shipmethodid]]
    */
-shipmethodid: ShipmethodId,
+  shipmethodid: ShipmethodId,
   /** Credit card identification number. Foreign key to CreditCard.CreditCardID.
    * Points to [[adventureworks.sales.creditcard.CreditcardRow.creditcardid]]
    */
-creditcardid: Option[/* user-picked */ CustomCreditcardId] = None,
+  creditcardid: Option[/* user-picked */ CustomCreditcardId] = None,
   /** Approval code provided by the credit card company. */
-creditcardapprovalcode: Option[/* max 15 chars */ String] = None,
+  creditcardapprovalcode: Option[/* max 15 chars */ String] = None,
   /** Currency exchange rate used. Foreign key to CurrencyRate.CurrencyRateID.
    * Points to [[adventureworks.sales.currencyrate.CurrencyrateRow.currencyrateid]]
    */
-currencyrateid: Option[CurrencyrateId] = None,
+  currencyrateid: Option[CurrencyrateId] = None,
   /** Total due from customer. Computed as Subtotal + TaxAmt + Freight. */
-totaldue: Option[BigDecimal] = None,
+  totaldue: Option[BigDecimal] = None,
   /** Sales representative comments. */
-comment: Option[/* max 128 chars */ String] = None,
+  comment: Option[/* max 128 chars */ String] = None,
   /** Default: nextval('sales.salesorderheader_salesorderid_seq'::regclass)
    * Primary key.
    */
-salesorderid: Defaulted[SalesorderheaderId] = new UseDefault(),
+  salesorderid: Defaulted[SalesorderheaderId] = new UseDefault(),
   /** Default: 0
    * Incremental number to track changes to the sales order over time.
    */
-revisionnumber: Defaulted[TypoShort] = new UseDefault(),
+  revisionnumber: Defaulted[TypoShort] = new UseDefault(),
   /** Default: now()
    * Dates the sales order was created.
    * Constraint CK_SalesOrderHeader_DueDate affecting columns duedate, orderdate:  ((duedate >= orderdate))
    * Constraint CK_SalesOrderHeader_ShipDate affecting columns orderdate, shipdate:  (((shipdate >= orderdate) OR (shipdate IS NULL)))
    */
-orderdate: Defaulted[TypoLocalDateTime] = new UseDefault(),
+  orderdate: Defaulted[TypoLocalDateTime] = new UseDefault(),
   /** Default: 1
    * Order current status. 1 = In process; 2 = Approved; 3 = Backordered; 4 = Rejected; 5 = Shipped; 6 = Cancelled
    * Constraint CK_SalesOrderHeader_Status affecting columns status:  (((status >= 0) AND (status <= 8)))
    */
-status: Defaulted[TypoShort] = new UseDefault(),
+  status: Defaulted[TypoShort] = new UseDefault(),
   /** Default: true
    * 0 = Order placed by sales person. 1 = Order placed online by customer.
    */
-onlineorderflag: Defaulted[Flag] = new UseDefault(),
+  onlineorderflag: Defaulted[Flag] = new UseDefault(),
   /** Default: 0.00
    * Sales subtotal. Computed as SUM(SalesOrderDetail.LineTotal)for the appropriate SalesOrderID.
    * Constraint CK_SalesOrderHeader_SubTotal affecting columns subtotal:  ((subtotal >= 0.00))
    */
-subtotal: Defaulted[BigDecimal] = new UseDefault(),
+  subtotal: Defaulted[BigDecimal] = new UseDefault(),
   /** Default: 0.00
    * Tax amount.
    * Constraint CK_SalesOrderHeader_TaxAmt affecting columns taxamt:  ((taxamt >= 0.00))
    */
-taxamt: Defaulted[BigDecimal] = new UseDefault(),
+  taxamt: Defaulted[BigDecimal] = new UseDefault(),
   /** Default: 0.00
    * Shipping cost.
    * Constraint CK_SalesOrderHeader_Freight affecting columns freight:  ((freight >= 0.00))
    */
-freight: Defaulted[BigDecimal] = new UseDefault(),
+  freight: Defaulted[BigDecimal] = new UseDefault(),
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     salesorderidDefault: => SalesorderheaderId,

@@ -23,19 +23,19 @@ import scala.util.Try
 /** View: sa.sci */
 case class SciViewRow(
   /** Points to [[adventureworks.sales.shoppingcartitem.ShoppingcartitemRow.shoppingcartitemid]] */
-id: ShoppingcartitemId,
+  id: ShoppingcartitemId,
   /** Points to [[adventureworks.sales.shoppingcartitem.ShoppingcartitemRow.shoppingcartitemid]] */
-shoppingcartitemid: ShoppingcartitemId,
+  shoppingcartitemid: ShoppingcartitemId,
   /** Points to [[adventureworks.sales.shoppingcartitem.ShoppingcartitemRow.shoppingcartid]] */
-shoppingcartid: /* max 50 chars */ String,
+  shoppingcartid: /* max 50 chars */ String,
   /** Points to [[adventureworks.sales.shoppingcartitem.ShoppingcartitemRow.quantity]] */
-quantity: Int,
+  quantity: Int,
   /** Points to [[adventureworks.sales.shoppingcartitem.ShoppingcartitemRow.productid]] */
-productid: ProductId,
+  productid: ProductId,
   /** Points to [[adventureworks.sales.shoppingcartitem.ShoppingcartitemRow.datecreated]] */
-datecreated: TypoLocalDateTime,
+  datecreated: TypoLocalDateTime,
   /** Points to [[adventureworks.sales.shoppingcartitem.ShoppingcartitemRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object SciViewRow {

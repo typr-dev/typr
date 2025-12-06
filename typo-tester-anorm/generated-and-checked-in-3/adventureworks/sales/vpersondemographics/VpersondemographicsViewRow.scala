@@ -23,7 +23,7 @@ import scala.util.Try
 /** View: sales.vpersondemographics */
 case class VpersondemographicsViewRow(
   /** Points to [[adventureworks.person.person.PersonRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   totalpurchaseytd: /* nullability unknown */ Option[TypoMoney],
   datefirstpurchase: /* nullability unknown */ Option[TypoLocalDate],
   birthdate: /* nullability unknown */ Option[TypoLocalDate],

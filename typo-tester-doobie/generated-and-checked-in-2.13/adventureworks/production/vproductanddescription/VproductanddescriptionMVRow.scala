@@ -16,15 +16,15 @@ import io.circe.Encoder
 /** Materialized View: production.vproductanddescription */
 case class VproductanddescriptionMVRow(
   /** Points to [[adventureworks.production.product.ProductRow.productid]] */
-productid: ProductId,
+  productid: ProductId,
   /** Points to [[adventureworks.production.product.ProductRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.production.productmodel.ProductmodelRow.name]] */
-productmodel: Name,
+  productmodel: Name,
   /** Points to [[adventureworks.production.productmodelproductdescriptionculture.ProductmodelproductdescriptioncultureRow.cultureid]] */
-cultureid: CultureId,
+  cultureid: CultureId,
   /** Points to [[adventureworks.production.productdescription.ProductdescriptionRow.description]] */
-description: /* max 400 chars */ String
+  description: /* max 400 chars */ String
 )
 
 object VproductanddescriptionMVRow {

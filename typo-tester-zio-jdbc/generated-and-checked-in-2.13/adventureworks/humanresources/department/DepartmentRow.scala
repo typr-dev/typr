@@ -24,13 +24,13 @@ case class DepartmentRow(
   /** Primary key for Department records.
    * Default: nextval('humanresources.department_departmentid_seq'::regclass)
    */
-departmentid: DepartmentId,
+  departmentid: DepartmentId,
   /** Name of the department. */
-name: Name,
+  name: Name,
   /** Name of the group to which the department belongs. */
-groupname: Name,
+  groupname: Name,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: DepartmentId = departmentid
 

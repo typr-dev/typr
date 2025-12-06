@@ -18,29 +18,29 @@ import typo.runtime.RowParsers
  */
 case class TransactionhistoryarchiveRow(
   /** Primary key for TransactionHistoryArchive records. */
-transactionid: TransactionhistoryarchiveId,
+  transactionid: TransactionhistoryarchiveId,
   /** Product identification number. Foreign key to Product.ProductID. */
-productid: Integer,
+  productid: Integer,
   /** Purchase order, sales order, or work order identification number. */
-referenceorderid: Integer,
+  referenceorderid: Integer,
   /** Line number associated with the purchase order, sales order, or work order.
    * Default: 0
    */
-referenceorderlineid: Integer,
+  referenceorderlineid: Integer,
   /** Date and time of the transaction.
    * Default: now()
    */
-transactiondate: TypoLocalDateTime,
+  transactiondate: TypoLocalDateTime,
   /** W = Work Order, S = Sales Order, P = Purchase Order
    * Constraint CK_TransactionHistoryArchive_TransactionType affecting columns transactiontype: ((upper((transactiontype)::text) = ANY (ARRAY['W'::text, 'S'::text, 'P'::text])))
    */
-transactiontype: /* bpchar, max 1 chars */ String,
+  transactiontype: /* bpchar, max 1 chars */ String,
   /** Product quantity. */
-quantity: Integer,
+  quantity: Integer,
   /** Product cost. */
-actualcost: java.math.BigDecimal,
+  actualcost: java.math.BigDecimal,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: TransactionhistoryarchiveId = transactionid
 

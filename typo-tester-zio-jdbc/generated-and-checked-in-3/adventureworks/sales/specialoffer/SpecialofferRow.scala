@@ -24,39 +24,39 @@ case class SpecialofferRow(
   /** Primary key for SpecialOffer records.
    * Default: nextval('sales.specialoffer_specialofferid_seq'::regclass)
    */
-specialofferid: SpecialofferId,
+  specialofferid: SpecialofferId,
   /** Discount description. */
-description: /* max 255 chars */ String,
+  description: /* max 255 chars */ String,
   /** Discount precentage.
    * Default: 0.00
    * Constraint CK_SpecialOffer_DiscountPct affecting columns discountpct: ((discountpct >= 0.00))
    */
-discountpct: BigDecimal,
+  discountpct: BigDecimal,
   /** Discount type category. */
-`type`: /* max 50 chars */ String,
+  `type`: /* max 50 chars */ String,
   /** Group the discount applies to such as Reseller or Customer. */
-category: /* max 50 chars */ String,
+  category: /* max 50 chars */ String,
   /** Discount start date.
    * Constraint CK_SpecialOffer_EndDate affecting columns enddate, startdate: ((enddate >= startdate))
    */
-startdate: TypoLocalDateTime,
+  startdate: TypoLocalDateTime,
   /** Discount end date.
    * Constraint CK_SpecialOffer_EndDate affecting columns enddate, startdate: ((enddate >= startdate))
    */
-enddate: TypoLocalDateTime,
+  enddate: TypoLocalDateTime,
   /** Minimum discount percent allowed.
    * Default: 0
    * Constraint CK_SpecialOffer_MinQty affecting columns minqty: ((minqty >= 0))
    */
-minqty: Int,
+  minqty: Int,
   /** Maximum discount percent allowed.
    * Constraint CK_SpecialOffer_MaxQty affecting columns maxqty: ((maxqty >= 0))
    */
-maxqty: Option[Int],
+  maxqty: Option[Int],
   /** Default: uuid_generate_v1() */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: SpecialofferId = specialofferid
 

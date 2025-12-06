@@ -26,29 +26,29 @@ import scala.util.Try
  */
 case class TransactionhistoryarchiveRow(
   /** Primary key for TransactionHistoryArchive records. */
-transactionid: TransactionhistoryarchiveId,
+  transactionid: TransactionhistoryarchiveId,
   /** Product identification number. Foreign key to Product.ProductID. */
-productid: Int,
+  productid: Int,
   /** Purchase order, sales order, or work order identification number. */
-referenceorderid: Int,
+  referenceorderid: Int,
   /** Line number associated with the purchase order, sales order, or work order.
    * Default: 0
    */
-referenceorderlineid: Int,
+  referenceorderlineid: Int,
   /** Date and time of the transaction.
    * Default: now()
    */
-transactiondate: TypoLocalDateTime,
+  transactiondate: TypoLocalDateTime,
   /** W = Work Order, S = Sales Order, P = Purchase Order
    * Constraint CK_TransactionHistoryArchive_TransactionType affecting columns transactiontype: ((upper((transactiontype)::text) = ANY (ARRAY['W'::text, 'S'::text, 'P'::text])))
    */
-transactiontype: /* bpchar, max 1 chars */ String,
+  transactiontype: /* bpchar, max 1 chars */ String,
   /** Product quantity. */
-quantity: Int,
+  quantity: Int,
   /** Product cost. */
-actualcost: BigDecimal,
+  actualcost: BigDecimal,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: TransactionhistoryarchiveId = transactionid
 

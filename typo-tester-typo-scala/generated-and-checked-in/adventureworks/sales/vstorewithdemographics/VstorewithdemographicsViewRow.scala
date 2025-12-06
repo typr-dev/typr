@@ -17,9 +17,9 @@ import typo.runtime.RowParsers
 /** View: sales.vstorewithdemographics */
 case class VstorewithdemographicsViewRow(
   /** Points to [[adventureworks.sales.store.StoreRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.sales.store.StoreRow.name]] */
-name: Name,
+  name: Name,
   @JsonProperty("AnnualSales") annualSales: /* nullability unknown */ Optional[TypoMoney],
   @JsonProperty("AnnualRevenue") annualRevenue: /* nullability unknown */ Optional[TypoMoney],
   @JsonProperty("BankName") bankName: /* nullability unknown */ Optional[/* max 50 chars */ String],

@@ -17,29 +17,29 @@ import typo.runtime.RowParsers
 /** View: pu.pv */
 case class PvViewRow(
   /** Points to [[adventureworks.purchasing.productvendor.ProductvendorRow.productid]] */
-id: ProductId,
+  id: ProductId,
   /** Points to [[adventureworks.purchasing.productvendor.ProductvendorRow.productid]] */
-productid: ProductId,
+  productid: ProductId,
   /** Points to [[adventureworks.purchasing.productvendor.ProductvendorRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.purchasing.productvendor.ProductvendorRow.averageleadtime]] */
-averageleadtime: Integer,
+  averageleadtime: Integer,
   /** Points to [[adventureworks.purchasing.productvendor.ProductvendorRow.standardprice]] */
-standardprice: java.math.BigDecimal,
+  standardprice: java.math.BigDecimal,
   /** Points to [[adventureworks.purchasing.productvendor.ProductvendorRow.lastreceiptcost]] */
-lastreceiptcost: Optional[java.math.BigDecimal],
+  lastreceiptcost: Optional[java.math.BigDecimal],
   /** Points to [[adventureworks.purchasing.productvendor.ProductvendorRow.lastreceiptdate]] */
-lastreceiptdate: Optional[TypoLocalDateTime],
+  lastreceiptdate: Optional[TypoLocalDateTime],
   /** Points to [[adventureworks.purchasing.productvendor.ProductvendorRow.minorderqty]] */
-minorderqty: Integer,
+  minorderqty: Integer,
   /** Points to [[adventureworks.purchasing.productvendor.ProductvendorRow.maxorderqty]] */
-maxorderqty: Integer,
+  maxorderqty: Integer,
   /** Points to [[adventureworks.purchasing.productvendor.ProductvendorRow.onorderqty]] */
-onorderqty: Optional[Integer],
+  onorderqty: Optional[Integer],
   /** Points to [[adventureworks.purchasing.productvendor.ProductvendorRow.unitmeasurecode]] */
-unitmeasurecode: UnitmeasureId,
+  unitmeasurecode: UnitmeasureId,
   /** Points to [[adventureworks.purchasing.productvendor.ProductvendorRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object PvViewRow {

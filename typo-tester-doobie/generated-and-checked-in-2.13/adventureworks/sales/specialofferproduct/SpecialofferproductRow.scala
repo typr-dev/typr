@@ -24,15 +24,15 @@ case class SpecialofferproductRow(
   /** Primary key for SpecialOfferProduct records.
    * Points to [[adventureworks.sales.specialoffer.SpecialofferRow.specialofferid]]
    */
-specialofferid: SpecialofferId,
+  specialofferid: SpecialofferId,
   /** Product identification number. Foreign key to Product.ProductID.
    * Points to [[adventureworks.production.product.ProductRow.productid]]
    */
-productid: ProductId,
+  productid: ProductId,
   /** Default: uuid_generate_v1() */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def compositeId: SpecialofferproductId = new SpecialofferproductId(specialofferid, productid)
 

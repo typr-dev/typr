@@ -19,25 +19,25 @@ import zio.json.internal.Write
 /** View: pr.bom */
 case class BomViewRow(
   /** Points to [[adventureworks.production.billofmaterials.BillofmaterialsRow.billofmaterialsid]] */
-id: Int,
+  id: Int,
   /** Points to [[adventureworks.production.billofmaterials.BillofmaterialsRow.billofmaterialsid]] */
-billofmaterialsid: Int,
+  billofmaterialsid: Int,
   /** Points to [[adventureworks.production.billofmaterials.BillofmaterialsRow.productassemblyid]] */
-productassemblyid: Option[ProductId],
+  productassemblyid: Option[ProductId],
   /** Points to [[adventureworks.production.billofmaterials.BillofmaterialsRow.componentid]] */
-componentid: ProductId,
+  componentid: ProductId,
   /** Points to [[adventureworks.production.billofmaterials.BillofmaterialsRow.startdate]] */
-startdate: TypoLocalDateTime,
+  startdate: TypoLocalDateTime,
   /** Points to [[adventureworks.production.billofmaterials.BillofmaterialsRow.enddate]] */
-enddate: Option[TypoLocalDateTime],
+  enddate: Option[TypoLocalDateTime],
   /** Points to [[adventureworks.production.billofmaterials.BillofmaterialsRow.unitmeasurecode]] */
-unitmeasurecode: UnitmeasureId,
+  unitmeasurecode: UnitmeasureId,
   /** Points to [[adventureworks.production.billofmaterials.BillofmaterialsRow.bomlevel]] */
-bomlevel: TypoShort,
+  bomlevel: TypoShort,
   /** Points to [[adventureworks.production.billofmaterials.BillofmaterialsRow.perassemblyqty]] */
-perassemblyqty: BigDecimal,
+  perassemblyqty: BigDecimal,
   /** Points to [[adventureworks.production.billofmaterials.BillofmaterialsRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object BomViewRow {

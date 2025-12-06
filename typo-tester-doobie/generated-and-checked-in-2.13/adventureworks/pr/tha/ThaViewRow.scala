@@ -15,25 +15,25 @@ import io.circe.Encoder
 /** View: pr.tha */
 case class ThaViewRow(
   /** Points to [[adventureworks.production.transactionhistoryarchive.TransactionhistoryarchiveRow.transactionid]] */
-id: TransactionhistoryarchiveId,
+  id: TransactionhistoryarchiveId,
   /** Points to [[adventureworks.production.transactionhistoryarchive.TransactionhistoryarchiveRow.transactionid]] */
-transactionid: TransactionhistoryarchiveId,
+  transactionid: TransactionhistoryarchiveId,
   /** Points to [[adventureworks.production.transactionhistoryarchive.TransactionhistoryarchiveRow.productid]] */
-productid: Int,
+  productid: Int,
   /** Points to [[adventureworks.production.transactionhistoryarchive.TransactionhistoryarchiveRow.referenceorderid]] */
-referenceorderid: Int,
+  referenceorderid: Int,
   /** Points to [[adventureworks.production.transactionhistoryarchive.TransactionhistoryarchiveRow.referenceorderlineid]] */
-referenceorderlineid: Int,
+  referenceorderlineid: Int,
   /** Points to [[adventureworks.production.transactionhistoryarchive.TransactionhistoryarchiveRow.transactiondate]] */
-transactiondate: TypoLocalDateTime,
+  transactiondate: TypoLocalDateTime,
   /** Points to [[adventureworks.production.transactionhistoryarchive.TransactionhistoryarchiveRow.transactiontype]] */
-transactiontype: /* bpchar, max 1 chars */ String,
+  transactiontype: /* bpchar, max 1 chars */ String,
   /** Points to [[adventureworks.production.transactionhistoryarchive.TransactionhistoryarchiveRow.quantity]] */
-quantity: Int,
+  quantity: Int,
   /** Points to [[adventureworks.production.transactionhistoryarchive.TransactionhistoryarchiveRow.actualcost]] */
-actualcost: BigDecimal,
+  actualcost: BigDecimal,
   /** Points to [[adventureworks.production.transactionhistoryarchive.TransactionhistoryarchiveRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object ThaViewRow {

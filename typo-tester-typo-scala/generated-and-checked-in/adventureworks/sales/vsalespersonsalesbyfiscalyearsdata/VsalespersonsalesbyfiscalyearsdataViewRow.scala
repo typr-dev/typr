@@ -15,12 +15,12 @@ import typo.runtime.RowParsers
 /** View: sales.vsalespersonsalesbyfiscalyearsdata */
 case class VsalespersonsalesbyfiscalyearsdataViewRow(
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.salespersonid]] */
-salespersonid: Optional[BusinessentityId],
+  salespersonid: Optional[BusinessentityId],
   fullname: /* nullability unknown */ Optional[String],
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.jobtitle]] */
-jobtitle: /* max 50 chars */ String,
+  jobtitle: /* max 50 chars */ String,
   /** Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.name]] */
-salesterritory: Name,
+  salesterritory: Name,
   salestotal: /* nullability unknown */ Optional[java.math.BigDecimal],
   fiscalyear: /* nullability unknown */ Optional[java.math.BigDecimal]
 )

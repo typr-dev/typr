@@ -27,27 +27,27 @@ case class VendorRow(
   /** Primary key for Vendor records.  Foreign key to BusinessEntity.BusinessEntityID
    * Points to [[adventureworks.person.businessentity.BusinessentityRow.businessentityid]]
    */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Vendor account (identification) number. */
-accountnumber: AccountNumber,
+  accountnumber: AccountNumber,
   /** Company name. */
-name: Name,
+  name: Name,
   /** 1 = Superior, 2 = Excellent, 3 = Above average, 4 = Average, 5 = Below average
    * Constraint CK_Vendor_CreditRating affecting columns creditrating: (((creditrating >= 1) AND (creditrating <= 5)))
    */
-creditrating: TypoShort,
+  creditrating: TypoShort,
   /** 0 = Do not use if another vendor is available. 1 = Preferred over other vendors supplying the same product.
    * Default: true
    */
-preferredvendorstatus: Flag,
+  preferredvendorstatus: Flag,
   /** 0 = Vendor no longer used. 1 = Vendor is actively used.
    * Default: true
    */
-activeflag: Flag,
+  activeflag: Flag,
   /** Vendor URL. */
-purchasingwebserviceurl: Option[/* max 1024 chars */ String],
+  purchasingwebserviceurl: Option[/* max 1024 chars */ String],
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: BusinessentityId = businessentityid
 

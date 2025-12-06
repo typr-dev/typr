@@ -15,17 +15,17 @@ import typo.runtime.RowParsers
 /** View: hr.eph */
 case class EphViewRow(
   /** Points to [[adventureworks.humanresources.employeepayhistory.EmployeepayhistoryRow.businessentityid]] */
-id: BusinessentityId,
+  id: BusinessentityId,
   /** Points to [[adventureworks.humanresources.employeepayhistory.EmployeepayhistoryRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.humanresources.employeepayhistory.EmployeepayhistoryRow.ratechangedate]] */
-ratechangedate: TypoLocalDateTime,
+  ratechangedate: TypoLocalDateTime,
   /** Points to [[adventureworks.humanresources.employeepayhistory.EmployeepayhistoryRow.rate]] */
-rate: java.math.BigDecimal,
+  rate: java.math.BigDecimal,
   /** Points to [[adventureworks.humanresources.employeepayhistory.EmployeepayhistoryRow.payfrequency]] */
-payfrequency: TypoShort,
+  payfrequency: TypoShort,
   /** Points to [[adventureworks.humanresources.employeepayhistory.EmployeepayhistoryRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object EphViewRow {

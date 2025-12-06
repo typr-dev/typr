@@ -22,12 +22,12 @@ import scala.util.Try
 /** View: sales.vsalespersonsalesbyfiscalyearsdata */
 case class VsalespersonsalesbyfiscalyearsdataViewRow(
   /** Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.salespersonid]] */
-salespersonid: Option[BusinessentityId],
+  salespersonid: Option[BusinessentityId],
   fullname: /* nullability unknown */ Option[String],
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.jobtitle]] */
-jobtitle: /* max 50 chars */ String,
+  jobtitle: /* max 50 chars */ String,
   /** Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.name]] */
-salesterritory: Name,
+  salesterritory: Name,
   salestotal: /* nullability unknown */ Option[BigDecimal],
   fiscalyear: /* nullability unknown */ Option[BigDecimal]
 )

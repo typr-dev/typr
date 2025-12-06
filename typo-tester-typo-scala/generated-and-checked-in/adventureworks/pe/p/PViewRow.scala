@@ -20,33 +20,33 @@ import typo.runtime.RowParsers
 /** View: pe.p */
 case class PViewRow(
   /** Points to [[adventureworks.person.person.PersonRow.businessentityid]] */
-id: BusinessentityId,
+  id: BusinessentityId,
   /** Points to [[adventureworks.person.person.PersonRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.person.person.PersonRow.persontype]] */
-persontype: /* bpchar, max 2 chars */ String,
+  persontype: /* bpchar, max 2 chars */ String,
   /** Points to [[adventureworks.person.person.PersonRow.namestyle]] */
-namestyle: NameStyle,
+  namestyle: NameStyle,
   /** Points to [[adventureworks.person.person.PersonRow.title]] */
-title: Optional[/* max 8 chars */ String],
+  title: Optional[/* max 8 chars */ String],
   /** Points to [[adventureworks.person.person.PersonRow.firstname]] */
-firstname: /* user-picked */ FirstName,
+  firstname: /* user-picked */ FirstName,
   /** Points to [[adventureworks.person.person.PersonRow.middlename]] */
-middlename: Optional[Name],
+  middlename: Optional[Name],
   /** Points to [[adventureworks.person.person.PersonRow.lastname]] */
-lastname: Name,
+  lastname: Name,
   /** Points to [[adventureworks.person.person.PersonRow.suffix]] */
-suffix: Optional[/* max 10 chars */ String],
+  suffix: Optional[/* max 10 chars */ String],
   /** Points to [[adventureworks.person.person.PersonRow.emailpromotion]] */
-emailpromotion: Integer,
+  emailpromotion: Integer,
   /** Points to [[adventureworks.person.person.PersonRow.additionalcontactinfo]] */
-additionalcontactinfo: Optional[TypoXml],
+  additionalcontactinfo: Optional[TypoXml],
   /** Points to [[adventureworks.person.person.PersonRow.demographics]] */
-demographics: Optional[TypoXml],
+  demographics: Optional[TypoXml],
   /** Points to [[adventureworks.person.person.PersonRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.person.person.PersonRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object PViewRow {

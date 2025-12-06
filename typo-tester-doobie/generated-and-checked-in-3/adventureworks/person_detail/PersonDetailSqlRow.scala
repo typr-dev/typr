@@ -16,25 +16,25 @@ import io.circe.Encoder
 /** SQL file: person_detail.sql */
 case class PersonDetailSqlRow(
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.person.person.PersonRow.title]] */
-title: Option[/* max 8 chars */ String],
+  title: Option[/* max 8 chars */ String],
   /** Points to [[adventureworks.person.person.PersonRow.firstname]] */
-firstname: /* user-picked */ FirstName,
+  firstname: /* user-picked */ FirstName,
   /** Points to [[adventureworks.person.person.PersonRow.middlename]] */
-middlename: Option[Name],
+  middlename: Option[Name],
   /** Points to [[adventureworks.person.person.PersonRow.lastname]] */
-lastname: Name,
+  lastname: Name,
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.jobtitle]] */
-jobtitle: /* max 50 chars */ String,
+  jobtitle: /* max 50 chars */ String,
   /** Points to [[adventureworks.person.address.AddressRow.addressline1]] */
-addressline1: Option[/* max 60 chars */ String],
+  addressline1: Option[/* max 60 chars */ String],
   /** Points to [[adventureworks.person.address.AddressRow.city]] */
-city: Option[/* max 30 chars */ String],
+  city: Option[/* max 30 chars */ String],
   /** Points to [[adventureworks.person.address.AddressRow.postalcode]] */
-postalcode: Option[/* max 15 chars */ String],
+  postalcode: Option[/* max 15 chars */ String],
   /** Points to [[adventureworks.person.address.AddressRow.rowguid]] */
-rowguid: /* user-picked */ String
+  rowguid: /* user-picked */ String
 )
 
 object PersonDetailSqlRow {

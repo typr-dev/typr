@@ -21,13 +21,13 @@ import scala.util.Try
 /** View: pr.c */
 case class CViewRow(
   /** Points to [[adventureworks.production.culture.CultureRow.cultureid]] */
-id: CultureId,
+  id: CultureId,
   /** Points to [[adventureworks.production.culture.CultureRow.cultureid]] */
-cultureid: CultureId,
+  cultureid: CultureId,
   /** Points to [[adventureworks.production.culture.CultureRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.production.culture.CultureRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object CViewRow {

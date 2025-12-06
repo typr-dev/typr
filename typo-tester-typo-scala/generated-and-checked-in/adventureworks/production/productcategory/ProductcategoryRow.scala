@@ -21,13 +21,13 @@ case class ProductcategoryRow(
   /** Primary key for ProductCategory records.
    * Default: nextval('production.productcategory_productcategoryid_seq'::regclass)
    */
-productcategoryid: ProductcategoryId,
+  productcategoryid: ProductcategoryId,
   /** Category description. */
-name: Name,
+  name: Name,
   /** Default: uuid_generate_v1() */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: ProductcategoryId = productcategoryid
 

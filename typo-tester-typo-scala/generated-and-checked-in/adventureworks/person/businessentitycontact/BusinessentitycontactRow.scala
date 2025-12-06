@@ -22,19 +22,19 @@ case class BusinessentitycontactRow(
   /** Primary key. Foreign key to BusinessEntity.BusinessEntityID.
    * Points to [[adventureworks.person.businessentity.BusinessentityRow.businessentityid]]
    */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Primary key. Foreign key to Person.BusinessEntityID.
    * Points to [[adventureworks.person.person.PersonRow.businessentityid]]
    */
-personid: BusinessentityId,
+  personid: BusinessentityId,
   /** Primary key.  Foreign key to ContactType.ContactTypeID.
    * Points to [[adventureworks.person.contacttype.ContacttypeRow.contacttypeid]]
    */
-contacttypeid: ContacttypeId,
+  contacttypeid: ContacttypeId,
   /** Default: uuid_generate_v1() */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def compositeId: BusinessentitycontactId = new BusinessentitycontactId(businessentityid, personid, contacttypeid)
 

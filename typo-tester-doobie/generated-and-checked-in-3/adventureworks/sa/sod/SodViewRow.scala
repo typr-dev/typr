@@ -19,27 +19,27 @@ import io.circe.Encoder
 /** View: sa.sod */
 case class SodViewRow(
   /** Points to [[adventureworks.sales.salesorderdetail.SalesorderdetailRow.salesorderdetailid]] */
-id: Int,
+  id: Int,
   /** Points to [[adventureworks.sales.salesorderdetail.SalesorderdetailRow.salesorderid]] */
-salesorderid: SalesorderheaderId,
+  salesorderid: SalesorderheaderId,
   /** Points to [[adventureworks.sales.salesorderdetail.SalesorderdetailRow.salesorderdetailid]] */
-salesorderdetailid: Int,
+  salesorderdetailid: Int,
   /** Points to [[adventureworks.sales.salesorderdetail.SalesorderdetailRow.carriertrackingnumber]] */
-carriertrackingnumber: Option[/* max 25 chars */ String],
+  carriertrackingnumber: Option[/* max 25 chars */ String],
   /** Points to [[adventureworks.sales.salesorderdetail.SalesorderdetailRow.orderqty]] */
-orderqty: TypoShort,
+  orderqty: TypoShort,
   /** Points to [[adventureworks.sales.salesorderdetail.SalesorderdetailRow.productid]] */
-productid: ProductId,
+  productid: ProductId,
   /** Points to [[adventureworks.sales.salesorderdetail.SalesorderdetailRow.specialofferid]] */
-specialofferid: SpecialofferId,
+  specialofferid: SpecialofferId,
   /** Points to [[adventureworks.sales.salesorderdetail.SalesorderdetailRow.unitprice]] */
-unitprice: BigDecimal,
+  unitprice: BigDecimal,
   /** Points to [[adventureworks.sales.salesorderdetail.SalesorderdetailRow.unitpricediscount]] */
-unitpricediscount: BigDecimal,
+  unitpricediscount: BigDecimal,
   /** Points to [[adventureworks.sales.salesorderdetail.SalesorderdetailRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.sales.salesorderdetail.SalesorderdetailRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object SodViewRow {

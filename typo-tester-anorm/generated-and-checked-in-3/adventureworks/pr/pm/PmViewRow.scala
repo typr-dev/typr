@@ -25,19 +25,19 @@ import scala.util.Try
 /** View: pr.pm */
 case class PmViewRow(
   /** Points to [[adventureworks.production.productmodel.ProductmodelRow.productmodelid]] */
-id: ProductmodelId,
+  id: ProductmodelId,
   /** Points to [[adventureworks.production.productmodel.ProductmodelRow.productmodelid]] */
-productmodelid: ProductmodelId,
+  productmodelid: ProductmodelId,
   /** Points to [[adventureworks.production.productmodel.ProductmodelRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.production.productmodel.ProductmodelRow.catalogdescription]] */
-catalogdescription: Option[TypoXml],
+  catalogdescription: Option[TypoXml],
   /** Points to [[adventureworks.production.productmodel.ProductmodelRow.instructions]] */
-instructions: Option[TypoXml],
+  instructions: Option[TypoXml],
   /** Points to [[adventureworks.production.productmodel.ProductmodelRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.production.productmodel.ProductmodelRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object PmViewRow {

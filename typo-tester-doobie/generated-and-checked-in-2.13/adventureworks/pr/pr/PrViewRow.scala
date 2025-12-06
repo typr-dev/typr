@@ -17,23 +17,23 @@ import io.circe.Encoder
 /** View: pr.pr */
 case class PrViewRow(
   /** Points to [[adventureworks.production.productreview.ProductreviewRow.productreviewid]] */
-id: ProductreviewId,
+  id: ProductreviewId,
   /** Points to [[adventureworks.production.productreview.ProductreviewRow.productreviewid]] */
-productreviewid: ProductreviewId,
+  productreviewid: ProductreviewId,
   /** Points to [[adventureworks.production.productreview.ProductreviewRow.productid]] */
-productid: ProductId,
+  productid: ProductId,
   /** Points to [[adventureworks.production.productreview.ProductreviewRow.reviewername]] */
-reviewername: Name,
+  reviewername: Name,
   /** Points to [[adventureworks.production.productreview.ProductreviewRow.reviewdate]] */
-reviewdate: TypoLocalDateTime,
+  reviewdate: TypoLocalDateTime,
   /** Points to [[adventureworks.production.productreview.ProductreviewRow.emailaddress]] */
-emailaddress: /* max 50 chars */ String,
+  emailaddress: /* max 50 chars */ String,
   /** Points to [[adventureworks.production.productreview.ProductreviewRow.rating]] */
-rating: Int,
+  rating: Int,
   /** Points to [[adventureworks.production.productreview.ProductreviewRow.comments]] */
-comments: Option[/* max 3850 chars */ String],
+  comments: Option[/* max 3850 chars */ String],
   /** Points to [[adventureworks.production.productreview.ProductreviewRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object PrViewRow {

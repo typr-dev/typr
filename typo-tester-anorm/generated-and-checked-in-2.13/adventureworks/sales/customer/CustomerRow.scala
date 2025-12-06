@@ -31,23 +31,23 @@ case class CustomerRow(
   /** Primary key.
    * Default: nextval('sales.customer_customerid_seq'::regclass)
    */
-customerid: CustomerId,
+  customerid: CustomerId,
   /** Foreign key to Person.BusinessEntityID
    * Points to [[adventureworks.person.person.PersonRow.businessentityid]]
    */
-personid: Option[BusinessentityId],
+  personid: Option[BusinessentityId],
   /** Foreign key to Store.BusinessEntityID
    * Points to [[adventureworks.sales.store.StoreRow.businessentityid]]
    */
-storeid: Option[BusinessentityId],
+  storeid: Option[BusinessentityId],
   /** ID of the territory in which the customer is located. Foreign key to SalesTerritory.SalesTerritoryID.
    * Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.territoryid]]
    */
-territoryid: Option[SalesterritoryId],
+  territoryid: Option[SalesterritoryId],
   /** Default: uuid_generate_v1() */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: CustomerId = customerid
 

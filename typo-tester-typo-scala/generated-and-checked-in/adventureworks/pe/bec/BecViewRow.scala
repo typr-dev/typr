@@ -15,17 +15,17 @@ import typo.runtime.RowParsers
 /** View: pe.bec */
 case class BecViewRow(
   /** Points to [[adventureworks.person.businessentitycontact.BusinessentitycontactRow.businessentityid]] */
-id: BusinessentityId,
+  id: BusinessentityId,
   /** Points to [[adventureworks.person.businessentitycontact.BusinessentitycontactRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.person.businessentitycontact.BusinessentitycontactRow.personid]] */
-personid: BusinessentityId,
+  personid: BusinessentityId,
   /** Points to [[adventureworks.person.businessentitycontact.BusinessentitycontactRow.contacttypeid]] */
-contacttypeid: ContacttypeId,
+  contacttypeid: ContacttypeId,
   /** Points to [[adventureworks.person.businessentitycontact.BusinessentitycontactRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.person.businessentitycontact.BusinessentitycontactRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object BecViewRow {

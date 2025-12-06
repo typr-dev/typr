@@ -27,23 +27,23 @@ import scala.util.Try
 /** View: pe.sp */
 case class SpViewRow(
   /** Points to [[adventureworks.person.stateprovince.StateprovinceRow.stateprovinceid]] */
-id: StateprovinceId,
+  id: StateprovinceId,
   /** Points to [[adventureworks.person.stateprovince.StateprovinceRow.stateprovinceid]] */
-stateprovinceid: StateprovinceId,
+  stateprovinceid: StateprovinceId,
   /** Points to [[adventureworks.person.stateprovince.StateprovinceRow.stateprovincecode]] */
-stateprovincecode: /* bpchar, max 3 chars */ String,
+  stateprovincecode: /* bpchar, max 3 chars */ String,
   /** Points to [[adventureworks.person.stateprovince.StateprovinceRow.countryregioncode]] */
-countryregioncode: CountryregionId,
+  countryregioncode: CountryregionId,
   /** Points to [[adventureworks.person.stateprovince.StateprovinceRow.isonlystateprovinceflag]] */
-isonlystateprovinceflag: Flag,
+  isonlystateprovinceflag: Flag,
   /** Points to [[adventureworks.person.stateprovince.StateprovinceRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.person.stateprovince.StateprovinceRow.territoryid]] */
-territoryid: SalesterritoryId,
+  territoryid: SalesterritoryId,
   /** Points to [[adventureworks.person.stateprovince.StateprovinceRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.person.stateprovince.StateprovinceRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object SpViewRow {

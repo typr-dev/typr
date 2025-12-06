@@ -17,19 +17,19 @@ import io.circe.Encoder
 /** View: hr.edh */
 case class EdhViewRow(
   /** Points to [[adventureworks.humanresources.employeedepartmenthistory.EmployeedepartmenthistoryRow.businessentityid]] */
-id: BusinessentityId,
+  id: BusinessentityId,
   /** Points to [[adventureworks.humanresources.employeedepartmenthistory.EmployeedepartmenthistoryRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.humanresources.employeedepartmenthistory.EmployeedepartmenthistoryRow.departmentid]] */
-departmentid: DepartmentId,
+  departmentid: DepartmentId,
   /** Points to [[adventureworks.humanresources.employeedepartmenthistory.EmployeedepartmenthistoryRow.shiftid]] */
-shiftid: ShiftId,
+  shiftid: ShiftId,
   /** Points to [[adventureworks.humanresources.employeedepartmenthistory.EmployeedepartmenthistoryRow.startdate]] */
-startdate: TypoLocalDate,
+  startdate: TypoLocalDate,
   /** Points to [[adventureworks.humanresources.employeedepartmenthistory.EmployeedepartmenthistoryRow.enddate]] */
-enddate: Option[TypoLocalDate],
+  enddate: Option[TypoLocalDate],
   /** Points to [[adventureworks.humanresources.employeedepartmenthistory.EmployeedepartmenthistoryRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object EdhViewRow {

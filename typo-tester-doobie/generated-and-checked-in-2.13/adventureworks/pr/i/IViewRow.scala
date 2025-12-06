@@ -15,13 +15,13 @@ import io.circe.Encoder
 /** View: pr.i */
 case class IViewRow(
   /** Points to [[adventureworks.production.illustration.IllustrationRow.illustrationid]] */
-id: IllustrationId,
+  id: IllustrationId,
   /** Points to [[adventureworks.production.illustration.IllustrationRow.illustrationid]] */
-illustrationid: IllustrationId,
+  illustrationid: IllustrationId,
   /** Points to [[adventureworks.production.illustration.IllustrationRow.diagram]] */
-diagram: Option[TypoXml],
+  diagram: Option[TypoXml],
   /** Points to [[adventureworks.production.illustration.IllustrationRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object IViewRow {

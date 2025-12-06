@@ -14,11 +14,11 @@ import typo.runtime.RowParsers
 /** View: sa.sohsr */
 case class SohsrViewRow(
   /** Points to [[adventureworks.sales.salesorderheadersalesreason.SalesorderheadersalesreasonRow.salesorderid]] */
-salesorderid: SalesorderheaderId,
+  salesorderid: SalesorderheaderId,
   /** Points to [[adventureworks.sales.salesorderheadersalesreason.SalesorderheadersalesreasonRow.salesreasonid]] */
-salesreasonid: SalesreasonId,
+  salesreasonid: SalesreasonId,
   /** Points to [[adventureworks.sales.salesorderheadersalesreason.SalesorderheadersalesreasonRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object SohsrViewRow {

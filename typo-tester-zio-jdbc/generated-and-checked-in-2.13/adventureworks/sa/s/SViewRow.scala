@@ -20,19 +20,19 @@ import zio.json.internal.Write
 /** View: sa.s */
 case class SViewRow(
   /** Points to [[adventureworks.sales.store.StoreRow.businessentityid]] */
-id: BusinessentityId,
+  id: BusinessentityId,
   /** Points to [[adventureworks.sales.store.StoreRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.sales.store.StoreRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.sales.store.StoreRow.salespersonid]] */
-salespersonid: Option[BusinessentityId],
+  salespersonid: Option[BusinessentityId],
   /** Points to [[adventureworks.sales.store.StoreRow.demographics]] */
-demographics: Option[TypoXml],
+  demographics: Option[TypoXml],
   /** Points to [[adventureworks.sales.store.StoreRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.sales.store.StoreRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object SViewRow {

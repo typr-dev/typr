@@ -18,9 +18,9 @@ import typo.runtime.RowParsers
 /** View: production.vproductmodelinstructions */
 case class VproductmodelinstructionsViewRow(
   /** Points to [[adventureworks.production.productmodel.ProductmodelRow.productmodelid]] */
-productmodelid: ProductmodelId,
+  productmodelid: ProductmodelId,
   /** Points to [[adventureworks.production.productmodel.ProductmodelRow.name]] */
-name: Name,
+  name: Name,
   instructions: /* nullability unknown */ Optional[String],
   @JsonProperty("LocationID") locationID: /* nullability unknown */ Optional[Integer],
   @JsonProperty("SetupHours") setupHours: /* nullability unknown */ Optional[java.math.BigDecimal],
@@ -29,9 +29,9 @@ name: Name,
   @JsonProperty("LotSize") lotSize: /* nullability unknown */ Optional[Integer],
   @JsonProperty("Step") step: /* nullability unknown */ Optional[/* max 1024 chars */ String],
   /** Points to [[adventureworks.production.productmodel.ProductmodelRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.production.productmodel.ProductmodelRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object VproductmodelinstructionsViewRow {

@@ -29,95 +29,95 @@ case class SalesorderheaderRowUnsaved(
   /** Date the order is due to the customer.
    * Constraint CK_SalesOrderHeader_DueDate affecting columns duedate, orderdate:  ((duedate >= orderdate))
    */
-duedate: TypoLocalDateTime,
+  duedate: TypoLocalDateTime,
   /** Date the order was shipped to the customer.
    * Constraint CK_SalesOrderHeader_ShipDate affecting columns orderdate, shipdate:  (((shipdate >= orderdate) OR (shipdate IS NULL)))
    */
-shipdate: Optional[TypoLocalDateTime] = Optional.empty(),
+  shipdate: Optional[TypoLocalDateTime] = Optional.empty(),
   /** Customer purchase order number reference. */
-purchaseordernumber: Optional[OrderNumber] = Optional.empty(),
+  purchaseordernumber: Optional[OrderNumber] = Optional.empty(),
   /** Financial accounting number reference. */
-accountnumber: Optional[AccountNumber] = Optional.empty(),
+  accountnumber: Optional[AccountNumber] = Optional.empty(),
   /** Customer identification number. Foreign key to Customer.BusinessEntityID.
    * Points to [[adventureworks.sales.customer.CustomerRow.customerid]]
    */
-customerid: CustomerId,
+  customerid: CustomerId,
   /** Sales person who created the sales order. Foreign key to SalesPerson.BusinessEntityID.
    * Points to [[adventureworks.sales.salesperson.SalespersonRow.businessentityid]]
    */
-salespersonid: Optional[BusinessentityId] = Optional.empty(),
+  salespersonid: Optional[BusinessentityId] = Optional.empty(),
   /** Territory in which the sale was made. Foreign key to SalesTerritory.SalesTerritoryID.
    * Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.territoryid]]
    */
-territoryid: Optional[SalesterritoryId] = Optional.empty(),
+  territoryid: Optional[SalesterritoryId] = Optional.empty(),
   /** Customer billing address. Foreign key to Address.AddressID.
    * Points to [[adventureworks.person.address.AddressRow.addressid]]
    */
-billtoaddressid: AddressId,
+  billtoaddressid: AddressId,
   /** Customer shipping address. Foreign key to Address.AddressID.
    * Points to [[adventureworks.person.address.AddressRow.addressid]]
    */
-shiptoaddressid: AddressId,
+  shiptoaddressid: AddressId,
   /** Shipping method. Foreign key to ShipMethod.ShipMethodID.
    * Points to [[adventureworks.purchasing.shipmethod.ShipmethodRow.shipmethodid]]
    */
-shipmethodid: ShipmethodId,
+  shipmethodid: ShipmethodId,
   /** Credit card identification number. Foreign key to CreditCard.CreditCardID.
    * Points to [[adventureworks.sales.creditcard.CreditcardRow.creditcardid]]
    */
-creditcardid: Optional[/* user-picked */ CustomCreditcardId] = Optional.empty(),
+  creditcardid: Optional[/* user-picked */ CustomCreditcardId] = Optional.empty(),
   /** Approval code provided by the credit card company. */
-creditcardapprovalcode: Optional[/* max 15 chars */ String] = Optional.empty(),
+  creditcardapprovalcode: Optional[/* max 15 chars */ String] = Optional.empty(),
   /** Currency exchange rate used. Foreign key to CurrencyRate.CurrencyRateID.
    * Points to [[adventureworks.sales.currencyrate.CurrencyrateRow.currencyrateid]]
    */
-currencyrateid: Optional[CurrencyrateId] = Optional.empty(),
+  currencyrateid: Optional[CurrencyrateId] = Optional.empty(),
   /** Total due from customer. Computed as Subtotal + TaxAmt + Freight. */
-totaldue: Optional[java.math.BigDecimal] = Optional.empty(),
+  totaldue: Optional[java.math.BigDecimal] = Optional.empty(),
   /** Sales representative comments. */
-comment: Optional[/* max 128 chars */ String] = Optional.empty(),
+  comment: Optional[/* max 128 chars */ String] = Optional.empty(),
   /** Default: nextval('sales.salesorderheader_salesorderid_seq'::regclass)
    * Primary key.
    */
-salesorderid: Defaulted[SalesorderheaderId] = new UseDefault(),
+  salesorderid: Defaulted[SalesorderheaderId] = new UseDefault(),
   /** Default: 0
    * Incremental number to track changes to the sales order over time.
    */
-revisionnumber: Defaulted[TypoShort] = new UseDefault(),
+  revisionnumber: Defaulted[TypoShort] = new UseDefault(),
   /** Default: now()
    * Dates the sales order was created.
    * Constraint CK_SalesOrderHeader_DueDate affecting columns duedate, orderdate:  ((duedate >= orderdate))
    * Constraint CK_SalesOrderHeader_ShipDate affecting columns orderdate, shipdate:  (((shipdate >= orderdate) OR (shipdate IS NULL)))
    */
-orderdate: Defaulted[TypoLocalDateTime] = new UseDefault(),
+  orderdate: Defaulted[TypoLocalDateTime] = new UseDefault(),
   /** Default: 1
    * Order current status. 1 = In process; 2 = Approved; 3 = Backordered; 4 = Rejected; 5 = Shipped; 6 = Cancelled
    * Constraint CK_SalesOrderHeader_Status affecting columns status:  (((status >= 0) AND (status <= 8)))
    */
-status: Defaulted[TypoShort] = new UseDefault(),
+  status: Defaulted[TypoShort] = new UseDefault(),
   /** Default: true
    * 0 = Order placed by sales person. 1 = Order placed online by customer.
    */
-onlineorderflag: Defaulted[Flag] = new UseDefault(),
+  onlineorderflag: Defaulted[Flag] = new UseDefault(),
   /** Default: 0.00
    * Sales subtotal. Computed as SUM(SalesOrderDetail.LineTotal)for the appropriate SalesOrderID.
    * Constraint CK_SalesOrderHeader_SubTotal affecting columns subtotal:  ((subtotal >= 0.00))
    */
-subtotal: Defaulted[java.math.BigDecimal] = new UseDefault(),
+  subtotal: Defaulted[java.math.BigDecimal] = new UseDefault(),
   /** Default: 0.00
    * Tax amount.
    * Constraint CK_SalesOrderHeader_TaxAmt affecting columns taxamt:  ((taxamt >= 0.00))
    */
-taxamt: Defaulted[java.math.BigDecimal] = new UseDefault(),
+  taxamt: Defaulted[java.math.BigDecimal] = new UseDefault(),
   /** Default: 0.00
    * Shipping cost.
    * Constraint CK_SalesOrderHeader_Freight affecting columns freight:  ((freight >= 0.00))
    */
-freight: Defaulted[java.math.BigDecimal] = new UseDefault(),
+  freight: Defaulted[java.math.BigDecimal] = new UseDefault(),
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     salesorderidDefault: => SalesorderheaderId,

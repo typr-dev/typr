@@ -18,41 +18,41 @@ import typo.runtime.RowParsers
 /** View: humanresources.vemployee */
 case class VemployeeViewRow(
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.person.person.PersonRow.title]] */
-title: Optional[/* max 8 chars */ String],
+  title: Optional[/* max 8 chars */ String],
   /** Points to [[adventureworks.person.person.PersonRow.firstname]] */
-firstname: /* user-picked */ FirstName,
+  firstname: /* user-picked */ FirstName,
   /** Points to [[adventureworks.person.person.PersonRow.middlename]] */
-middlename: Optional[Name],
+  middlename: Optional[Name],
   /** Points to [[adventureworks.person.person.PersonRow.lastname]] */
-lastname: Name,
+  lastname: Name,
   /** Points to [[adventureworks.person.person.PersonRow.suffix]] */
-suffix: Optional[/* max 10 chars */ String],
+  suffix: Optional[/* max 10 chars */ String],
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.jobtitle]] */
-jobtitle: /* max 50 chars */ String,
+  jobtitle: /* max 50 chars */ String,
   /** Points to [[adventureworks.person.personphone.PersonphoneRow.phonenumber]] */
-phonenumber: Optional[Phone],
+  phonenumber: Optional[Phone],
   /** Points to [[adventureworks.person.phonenumbertype.PhonenumbertypeRow.name]] */
-phonenumbertype: Optional[Name],
+  phonenumbertype: Optional[Name],
   /** Points to [[adventureworks.person.emailaddress.EmailaddressRow.emailaddress]] */
-emailaddress: Optional[/* max 50 chars */ String],
+  emailaddress: Optional[/* max 50 chars */ String],
   /** Points to [[adventureworks.person.person.PersonRow.emailpromotion]] */
-emailpromotion: Integer,
+  emailpromotion: Integer,
   /** Points to [[adventureworks.person.address.AddressRow.addressline1]] */
-addressline1: /* max 60 chars */ String,
+  addressline1: /* max 60 chars */ String,
   /** Points to [[adventureworks.person.address.AddressRow.addressline2]] */
-addressline2: Optional[/* max 60 chars */ String],
+  addressline2: Optional[/* max 60 chars */ String],
   /** Points to [[adventureworks.person.address.AddressRow.city]] */
-city: /* max 30 chars */ String,
+  city: /* max 30 chars */ String,
   /** Points to [[adventureworks.person.stateprovince.StateprovinceRow.name]] */
-stateprovincename: Name,
+  stateprovincename: Name,
   /** Points to [[adventureworks.person.address.AddressRow.postalcode]] */
-postalcode: /* max 15 chars */ String,
+  postalcode: /* max 15 chars */ String,
   /** Points to [[adventureworks.person.countryregion.CountryregionRow.name]] */
-countryregionname: Name,
+  countryregionname: Name,
   /** Points to [[adventureworks.person.person.PersonRow.additionalcontactinfo]] */
-additionalcontactinfo: Optional[TypoXml]
+  additionalcontactinfo: Optional[TypoXml]
 )
 
 object VemployeeViewRow {

@@ -18,13 +18,13 @@ import zio.json.internal.Write
 /** View: pe.pnt */
 case class PntViewRow(
   /** Points to [[adventureworks.person.phonenumbertype.PhonenumbertypeRow.phonenumbertypeid]] */
-id: PhonenumbertypeId,
+  id: PhonenumbertypeId,
   /** Points to [[adventureworks.person.phonenumbertype.PhonenumbertypeRow.phonenumbertypeid]] */
-phonenumbertypeid: PhonenumbertypeId,
+  phonenumbertypeid: PhonenumbertypeId,
   /** Points to [[adventureworks.person.phonenumbertype.PhonenumbertypeRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.person.phonenumbertype.PhonenumbertypeRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object PntViewRow {

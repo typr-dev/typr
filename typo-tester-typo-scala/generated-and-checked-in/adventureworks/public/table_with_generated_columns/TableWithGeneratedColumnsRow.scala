@@ -22,7 +22,7 @@ case class TableWithGeneratedColumnsRow(
       WHEN (name = 'a'::text) THEN 'a-name'::text
       ELSE 'some-name'::text
   END */
-@JsonProperty("name-type-always") nameTypeAlways: String
+  @JsonProperty("name-type-always") nameTypeAlways: String
 ) {
   def id: TableWithGeneratedColumnsId = name
 

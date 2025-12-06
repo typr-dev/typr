@@ -15,23 +15,23 @@ import typo.runtime.PgTypes
 /** This class corresponds to a row in table `production.location` which has not been persisted yet */
 case class LocationRowUnsaved(
   /** Location description. */
-name: Name,
+  name: Name,
   /** Default: nextval('production.location_locationid_seq'::regclass)
    * Primary key for Location records.
    */
-locationid: Defaulted[LocationId] = new UseDefault(),
+  locationid: Defaulted[LocationId] = new UseDefault(),
   /** Default: 0.00
    * Standard hourly cost of the manufacturing location.
    * Constraint CK_Location_CostRate affecting columns costrate:  ((costrate >= 0.00))
    */
-costrate: Defaulted[java.math.BigDecimal] = new UseDefault(),
+  costrate: Defaulted[java.math.BigDecimal] = new UseDefault(),
   /** Default: 0.00
    * Work capacity (in hours) of the manufacturing location.
    * Constraint CK_Location_Availability affecting columns availability:  ((availability >= 0.00))
    */
-availability: Defaulted[java.math.BigDecimal] = new UseDefault(),
+  availability: Defaulted[java.math.BigDecimal] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     locationidDefault: => LocationId,

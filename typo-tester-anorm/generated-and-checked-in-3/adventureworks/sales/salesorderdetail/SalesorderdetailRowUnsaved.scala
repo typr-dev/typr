@@ -28,38 +28,38 @@ case class SalesorderdetailRowUnsaved(
   /** Primary key. Foreign key to SalesOrderHeader.SalesOrderID.
    * Points to [[adventureworks.sales.salesorderheader.SalesorderheaderRow.salesorderid]]
    */
-salesorderid: SalesorderheaderId,
+  salesorderid: SalesorderheaderId,
   /** Shipment tracking number supplied by the shipper. */
-carriertrackingnumber: Option[/* max 25 chars */ String] = None,
+  carriertrackingnumber: Option[/* max 25 chars */ String] = None,
   /** Quantity ordered per product.
    * Constraint CK_SalesOrderDetail_OrderQty affecting columns orderqty:  ((orderqty > 0))
    */
-orderqty: TypoShort,
+  orderqty: TypoShort,
   /** Product sold to customer. Foreign key to Product.ProductID.
    * Points to [[adventureworks.sales.specialofferproduct.SpecialofferproductRow.productid]]
    */
-productid: ProductId,
+  productid: ProductId,
   /** Promotional code. Foreign key to SpecialOffer.SpecialOfferID.
    * Points to [[adventureworks.sales.specialofferproduct.SpecialofferproductRow.specialofferid]]
    */
-specialofferid: SpecialofferId,
+  specialofferid: SpecialofferId,
   /** Selling price of a single product.
    * Constraint CK_SalesOrderDetail_UnitPrice affecting columns unitprice:  ((unitprice >= 0.00))
    */
-unitprice: BigDecimal,
+  unitprice: BigDecimal,
   /** Default: nextval('sales.salesorderdetail_salesorderdetailid_seq'::regclass)
    * Primary key. One incremental unique number per product sold.
    */
-salesorderdetailid: Defaulted[Int] = new UseDefault(),
+  salesorderdetailid: Defaulted[Int] = new UseDefault(),
   /** Default: 0.0
    * Discount amount.
    * Constraint CK_SalesOrderDetail_UnitPriceDiscount affecting columns unitpricediscount:  ((unitpricediscount >= 0.00))
    */
-unitpricediscount: Defaulted[BigDecimal] = new UseDefault(),
+  unitpricediscount: Defaulted[BigDecimal] = new UseDefault(),
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     salesorderdetailidDefault: => Int,

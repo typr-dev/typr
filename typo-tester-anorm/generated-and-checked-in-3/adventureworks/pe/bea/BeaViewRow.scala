@@ -23,17 +23,17 @@ import scala.util.Try
 /** View: pe.bea */
 case class BeaViewRow(
   /** Points to [[adventureworks.person.businessentityaddress.BusinessentityaddressRow.businessentityid]] */
-id: BusinessentityId,
+  id: BusinessentityId,
   /** Points to [[adventureworks.person.businessentityaddress.BusinessentityaddressRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.person.businessentityaddress.BusinessentityaddressRow.addressid]] */
-addressid: AddressId,
+  addressid: AddressId,
   /** Points to [[adventureworks.person.businessentityaddress.BusinessentityaddressRow.addresstypeid]] */
-addresstypeid: AddresstypeId,
+  addresstypeid: AddresstypeId,
   /** Points to [[adventureworks.person.businessentityaddress.BusinessentityaddressRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.person.businessentityaddress.BusinessentityaddressRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object BeaViewRow {

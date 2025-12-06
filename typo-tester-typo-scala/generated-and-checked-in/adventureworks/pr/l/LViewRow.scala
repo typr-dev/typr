@@ -15,17 +15,17 @@ import typo.runtime.RowParsers
 /** View: pr.l */
 case class LViewRow(
   /** Points to [[adventureworks.production.location.LocationRow.locationid]] */
-id: LocationId,
+  id: LocationId,
   /** Points to [[adventureworks.production.location.LocationRow.locationid]] */
-locationid: LocationId,
+  locationid: LocationId,
   /** Points to [[adventureworks.production.location.LocationRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.production.location.LocationRow.costrate]] */
-costrate: java.math.BigDecimal,
+  costrate: java.math.BigDecimal,
   /** Points to [[adventureworks.production.location.LocationRow.availability]] */
-availability: java.math.BigDecimal,
+  availability: java.math.BigDecimal,
   /** Points to [[adventureworks.production.location.LocationRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object LViewRow {

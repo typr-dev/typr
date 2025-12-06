@@ -22,21 +22,21 @@ case class ProductlistpricehistoryRow(
   /** Product identification number. Foreign key to Product.ProductID
    * Points to [[adventureworks.production.product.ProductRow.productid]]
    */
-productid: ProductId,
+  productid: ProductId,
   /** List price start date.
    * Constraint CK_ProductListPriceHistory_EndDate affecting columns enddate, startdate: (((enddate >= startdate) OR (enddate IS NULL)))
    */
-startdate: TypoLocalDateTime,
+  startdate: TypoLocalDateTime,
   /** List price end date
    * Constraint CK_ProductListPriceHistory_EndDate affecting columns enddate, startdate: (((enddate >= startdate) OR (enddate IS NULL)))
    */
-enddate: Optional[TypoLocalDateTime],
+  enddate: Optional[TypoLocalDateTime],
   /** Product list price.
    * Constraint CK_ProductListPriceHistory_ListPrice affecting columns listprice: ((listprice > 0.00))
    */
-listprice: java.math.BigDecimal,
+  listprice: java.math.BigDecimal,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def compositeId: ProductlistpricehistoryId = new ProductlistpricehistoryId(productid, startdate)
 

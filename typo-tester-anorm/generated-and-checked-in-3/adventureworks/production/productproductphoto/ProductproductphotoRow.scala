@@ -29,17 +29,17 @@ case class ProductproductphotoRow(
   /** Product identification number. Foreign key to Product.ProductID.
    * Points to [[adventureworks.production.product.ProductRow.productid]]
    */
-productid: ProductId,
+  productid: ProductId,
   /** Product photo identification number. Foreign key to ProductPhoto.ProductPhotoID.
    * Points to [[adventureworks.production.productphoto.ProductphotoRow.productphotoid]]
    */
-productphotoid: ProductphotoId,
+  productphotoid: ProductphotoId,
   /** 0 = Photo is not the principal image. 1 = Photo is the principal image.
    * Default: false
    */
-primary: Flag,
+  primary: Flag,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def compositeId: ProductproductphotoId = new ProductproductphotoId(productid, productphotoid)
 

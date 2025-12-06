@@ -21,11 +21,11 @@ import scala.util.Try
 /** This class corresponds to a row in table `production.unitmeasure` which has not been persisted yet */
 case class UnitmeasureRowUnsaved(
   /** Primary key. */
-unitmeasurecode: UnitmeasureId,
+  unitmeasurecode: UnitmeasureId,
   /** Unit of measure description. */
-name: Name,
+  name: Name,
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(modifieddateDefault: => TypoLocalDateTime): UnitmeasureRow = new UnitmeasureRow(unitmeasurecode = unitmeasurecode, name = name, modifieddate = modifieddate.getOrElse(modifieddateDefault))
 }

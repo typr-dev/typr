@@ -25,13 +25,13 @@ case class ProductmodelillustrationRow(
   /** Primary key. Foreign key to ProductModel.ProductModelID.
    * Points to [[adventureworks.production.productmodel.ProductmodelRow.productmodelid]]
    */
-productmodelid: ProductmodelId,
+  productmodelid: ProductmodelId,
   /** Primary key. Foreign key to Illustration.IllustrationID.
    * Points to [[adventureworks.production.illustration.IllustrationRow.illustrationid]]
    */
-illustrationid: IllustrationId,
+  illustrationid: IllustrationId,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def compositeId: ProductmodelillustrationId = new ProductmodelillustrationId(productmodelid, illustrationid)
 

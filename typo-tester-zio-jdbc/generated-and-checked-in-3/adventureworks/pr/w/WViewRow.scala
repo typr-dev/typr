@@ -20,25 +20,25 @@ import zio.json.internal.Write
 /** View: pr.w */
 case class WViewRow(
   /** Points to [[adventureworks.production.workorder.WorkorderRow.workorderid]] */
-id: WorkorderId,
+  id: WorkorderId,
   /** Points to [[adventureworks.production.workorder.WorkorderRow.workorderid]] */
-workorderid: WorkorderId,
+  workorderid: WorkorderId,
   /** Points to [[adventureworks.production.workorder.WorkorderRow.productid]] */
-productid: ProductId,
+  productid: ProductId,
   /** Points to [[adventureworks.production.workorder.WorkorderRow.orderqty]] */
-orderqty: Int,
+  orderqty: Int,
   /** Points to [[adventureworks.production.workorder.WorkorderRow.scrappedqty]] */
-scrappedqty: TypoShort,
+  scrappedqty: TypoShort,
   /** Points to [[adventureworks.production.workorder.WorkorderRow.startdate]] */
-startdate: TypoLocalDateTime,
+  startdate: TypoLocalDateTime,
   /** Points to [[adventureworks.production.workorder.WorkorderRow.enddate]] */
-enddate: Option[TypoLocalDateTime],
+  enddate: Option[TypoLocalDateTime],
   /** Points to [[adventureworks.production.workorder.WorkorderRow.duedate]] */
-duedate: TypoLocalDateTime,
+  duedate: TypoLocalDateTime,
   /** Points to [[adventureworks.production.workorder.WorkorderRow.scrapreasonid]] */
-scrapreasonid: Option[ScrapreasonId],
+  scrapreasonid: Option[ScrapreasonId],
   /** Points to [[adventureworks.production.workorder.WorkorderRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object WViewRow {

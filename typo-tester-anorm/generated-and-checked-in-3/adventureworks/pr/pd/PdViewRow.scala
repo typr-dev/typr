@@ -23,15 +23,15 @@ import scala.util.Try
 /** View: pr.pd */
 case class PdViewRow(
   /** Points to [[adventureworks.production.productdescription.ProductdescriptionRow.productdescriptionid]] */
-id: ProductdescriptionId,
+  id: ProductdescriptionId,
   /** Points to [[adventureworks.production.productdescription.ProductdescriptionRow.productdescriptionid]] */
-productdescriptionid: ProductdescriptionId,
+  productdescriptionid: ProductdescriptionId,
   /** Points to [[adventureworks.production.productdescription.ProductdescriptionRow.description]] */
-description: /* max 400 chars */ String,
+  description: /* max 400 chars */ String,
   /** Points to [[adventureworks.production.productdescription.ProductdescriptionRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.production.productdescription.ProductdescriptionRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object PdViewRow {

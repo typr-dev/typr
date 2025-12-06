@@ -28,13 +28,13 @@ case class CountryregioncurrencyRow(
   /** ISO code for countries and regions. Foreign key to CountryRegion.CountryRegionCode.
    * Points to [[adventureworks.person.countryregion.CountryregionRow.countryregioncode]]
    */
-countryregioncode: CountryregionId,
+  countryregioncode: CountryregionId,
   /** ISO standard currency code. Foreign key to Currency.CurrencyCode.
    * Points to [[adventureworks.sales.currency.CurrencyRow.currencycode]]
    */
-currencycode: CurrencyId,
+  currencycode: CurrencyId,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def compositeId: CountryregioncurrencyId = new CountryregioncurrencyId(countryregioncode, currencycode)
 

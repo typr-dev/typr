@@ -22,25 +22,25 @@ import scala.util.Try
 /** This class corresponds to a row in table `sales.currencyrate` which has not been persisted yet */
 case class CurrencyrateRowUnsaved(
   /** Date and time the exchange rate was obtained. */
-currencyratedate: TypoLocalDateTime,
+  currencyratedate: TypoLocalDateTime,
   /** Exchange rate was converted from this currency code.
    * Points to [[adventureworks.sales.currency.CurrencyRow.currencycode]]
    */
-fromcurrencycode: CurrencyId,
+  fromcurrencycode: CurrencyId,
   /** Exchange rate was converted to this currency code.
    * Points to [[adventureworks.sales.currency.CurrencyRow.currencycode]]
    */
-tocurrencycode: CurrencyId,
+  tocurrencycode: CurrencyId,
   /** Average exchange rate for the day. */
-averagerate: BigDecimal,
+  averagerate: BigDecimal,
   /** Final exchange rate for the day. */
-endofdayrate: BigDecimal,
+  endofdayrate: BigDecimal,
   /** Default: nextval('sales.currencyrate_currencyrateid_seq'::regclass)
    * Primary key for CurrencyRate records.
    */
-currencyrateid: Defaulted[CurrencyrateId] = new UseDefault(),
+  currencyrateid: Defaulted[CurrencyrateId] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     currencyrateidDefault: => CurrencyrateId,

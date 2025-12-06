@@ -16,19 +16,19 @@ import typo.runtime.RowParsers
 /** View: pu.sm */
 case class SmViewRow(
   /** Points to [[adventureworks.purchasing.shipmethod.ShipmethodRow.shipmethodid]] */
-id: ShipmethodId,
+  id: ShipmethodId,
   /** Points to [[adventureworks.purchasing.shipmethod.ShipmethodRow.shipmethodid]] */
-shipmethodid: ShipmethodId,
+  shipmethodid: ShipmethodId,
   /** Points to [[adventureworks.purchasing.shipmethod.ShipmethodRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.purchasing.shipmethod.ShipmethodRow.shipbase]] */
-shipbase: java.math.BigDecimal,
+  shipbase: java.math.BigDecimal,
   /** Points to [[adventureworks.purchasing.shipmethod.ShipmethodRow.shiprate]] */
-shiprate: java.math.BigDecimal,
+  shiprate: java.math.BigDecimal,
   /** Points to [[adventureworks.purchasing.shipmethod.ShipmethodRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.purchasing.shipmethod.ShipmethodRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object SmViewRow {

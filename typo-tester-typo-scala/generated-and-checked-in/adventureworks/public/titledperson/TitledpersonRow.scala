@@ -16,9 +16,9 @@ import typo.runtime.RowParsers
 /** Table: public.titledperson */
 case class TitledpersonRow(
   /** Points to [[adventureworks.public.title_domain.TitleDomainRow.code]] */
-@JsonProperty("title_short") titleShort: TitleDomainId,
+  @JsonProperty("title_short") titleShort: TitleDomainId,
   /** Points to [[adventureworks.public.title.TitleRow.code]] */
-title: TitleId,
+  title: TitleId,
   name: String
 )
 

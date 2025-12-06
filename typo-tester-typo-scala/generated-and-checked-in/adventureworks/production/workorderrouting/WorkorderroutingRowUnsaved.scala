@@ -20,45 +20,45 @@ case class WorkorderroutingRowUnsaved(
   /** Primary key. Foreign key to WorkOrder.WorkOrderID.
    * Points to [[adventureworks.production.workorder.WorkorderRow.workorderid]]
    */
-workorderid: WorkorderId,
+  workorderid: WorkorderId,
   /** Primary key. Foreign key to Product.ProductID. */
-productid: Integer,
+  productid: Integer,
   /** Primary key. Indicates the manufacturing process sequence. */
-operationsequence: TypoShort,
+  operationsequence: TypoShort,
   /** Manufacturing location where the part is processed. Foreign key to Location.LocationID.
    * Points to [[adventureworks.production.location.LocationRow.locationid]]
    */
-locationid: LocationId,
+  locationid: LocationId,
   /** Planned manufacturing start date.
    * Constraint CK_WorkOrderRouting_ScheduledEndDate affecting columns scheduledenddate, scheduledstartdate:  ((scheduledenddate >= scheduledstartdate))
    */
-scheduledstartdate: TypoLocalDateTime,
+  scheduledstartdate: TypoLocalDateTime,
   /** Planned manufacturing end date.
    * Constraint CK_WorkOrderRouting_ScheduledEndDate affecting columns scheduledenddate, scheduledstartdate:  ((scheduledenddate >= scheduledstartdate))
    */
-scheduledenddate: TypoLocalDateTime,
+  scheduledenddate: TypoLocalDateTime,
   /** Actual start date.
    * Constraint CK_WorkOrderRouting_ActualEndDate affecting columns actualenddate, actualstartdate:  (((actualenddate >= actualstartdate) OR (actualenddate IS NULL) OR (actualstartdate IS NULL)))
    */
-actualstartdate: Optional[TypoLocalDateTime] = Optional.empty(),
+  actualstartdate: Optional[TypoLocalDateTime] = Optional.empty(),
   /** Actual end date.
    * Constraint CK_WorkOrderRouting_ActualEndDate affecting columns actualenddate, actualstartdate:  (((actualenddate >= actualstartdate) OR (actualenddate IS NULL) OR (actualstartdate IS NULL)))
    */
-actualenddate: Optional[TypoLocalDateTime] = Optional.empty(),
+  actualenddate: Optional[TypoLocalDateTime] = Optional.empty(),
   /** Number of manufacturing hours used.
    * Constraint CK_WorkOrderRouting_ActualResourceHrs affecting columns actualresourcehrs:  ((actualresourcehrs >= 0.0000))
    */
-actualresourcehrs: Optional[java.math.BigDecimal] = Optional.empty(),
+  actualresourcehrs: Optional[java.math.BigDecimal] = Optional.empty(),
   /** Estimated manufacturing cost.
    * Constraint CK_WorkOrderRouting_PlannedCost affecting columns plannedcost:  ((plannedcost > 0.00))
    */
-plannedcost: java.math.BigDecimal,
+  plannedcost: java.math.BigDecimal,
   /** Actual manufacturing cost.
    * Constraint CK_WorkOrderRouting_ActualCost affecting columns actualcost:  ((actualcost > 0.00))
    */
-actualcost: Optional[java.math.BigDecimal] = Optional.empty(),
+  actualcost: Optional[java.math.BigDecimal] = Optional.empty(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(modifieddateDefault: => TypoLocalDateTime): WorkorderroutingRow = {
     new WorkorderroutingRow(

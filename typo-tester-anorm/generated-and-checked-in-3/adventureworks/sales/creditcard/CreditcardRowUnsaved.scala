@@ -23,19 +23,19 @@ import scala.util.Try
 /** This class corresponds to a row in table `sales.creditcard` which has not been persisted yet */
 case class CreditcardRowUnsaved(
   /** Credit card name. */
-cardtype: /* max 50 chars */ String,
+  cardtype: /* max 50 chars */ String,
   /** Credit card number. */
-cardnumber: /* max 25 chars */ String,
+  cardnumber: /* max 25 chars */ String,
   /** Credit card expiration month. */
-expmonth: TypoShort,
+  expmonth: TypoShort,
   /** Credit card expiration year. */
-expyear: TypoShort,
+  expyear: TypoShort,
   /** Default: nextval('sales.creditcard_creditcardid_seq'::regclass)
    * Primary key for CreditCard records.
    */
-creditcardid: Defaulted[/* user-picked */ CustomCreditcardId] = new UseDefault(),
+  creditcardid: Defaulted[/* user-picked */ CustomCreditcardId] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     creditcardidDefault: => /* user-picked */ CustomCreditcardId,

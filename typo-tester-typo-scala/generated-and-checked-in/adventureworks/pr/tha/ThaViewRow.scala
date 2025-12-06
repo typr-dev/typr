@@ -14,25 +14,25 @@ import typo.runtime.RowParsers
 /** View: pr.tha */
 case class ThaViewRow(
   /** Points to [[adventureworks.production.transactionhistoryarchive.TransactionhistoryarchiveRow.transactionid]] */
-id: TransactionhistoryarchiveId,
+  id: TransactionhistoryarchiveId,
   /** Points to [[adventureworks.production.transactionhistoryarchive.TransactionhistoryarchiveRow.transactionid]] */
-transactionid: TransactionhistoryarchiveId,
+  transactionid: TransactionhistoryarchiveId,
   /** Points to [[adventureworks.production.transactionhistoryarchive.TransactionhistoryarchiveRow.productid]] */
-productid: Integer,
+  productid: Integer,
   /** Points to [[adventureworks.production.transactionhistoryarchive.TransactionhistoryarchiveRow.referenceorderid]] */
-referenceorderid: Integer,
+  referenceorderid: Integer,
   /** Points to [[adventureworks.production.transactionhistoryarchive.TransactionhistoryarchiveRow.referenceorderlineid]] */
-referenceorderlineid: Integer,
+  referenceorderlineid: Integer,
   /** Points to [[adventureworks.production.transactionhistoryarchive.TransactionhistoryarchiveRow.transactiondate]] */
-transactiondate: TypoLocalDateTime,
+  transactiondate: TypoLocalDateTime,
   /** Points to [[adventureworks.production.transactionhistoryarchive.TransactionhistoryarchiveRow.transactiontype]] */
-transactiontype: /* bpchar, max 1 chars */ String,
+  transactiontype: /* bpchar, max 1 chars */ String,
   /** Points to [[adventureworks.production.transactionhistoryarchive.TransactionhistoryarchiveRow.quantity]] */
-quantity: Integer,
+  quantity: Integer,
   /** Points to [[adventureworks.production.transactionhistoryarchive.TransactionhistoryarchiveRow.actualcost]] */
-actualcost: java.math.BigDecimal,
+  actualcost: java.math.BigDecimal,
   /** Points to [[adventureworks.production.transactionhistoryarchive.TransactionhistoryarchiveRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object ThaViewRow {

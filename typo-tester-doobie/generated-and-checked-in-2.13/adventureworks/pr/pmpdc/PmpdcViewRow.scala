@@ -16,13 +16,13 @@ import io.circe.Encoder
 /** View: pr.pmpdc */
 case class PmpdcViewRow(
   /** Points to [[adventureworks.production.productmodelproductdescriptionculture.ProductmodelproductdescriptioncultureRow.productmodelid]] */
-productmodelid: ProductmodelId,
+  productmodelid: ProductmodelId,
   /** Points to [[adventureworks.production.productmodelproductdescriptionculture.ProductmodelproductdescriptioncultureRow.productdescriptionid]] */
-productdescriptionid: ProductdescriptionId,
+  productdescriptionid: ProductdescriptionId,
   /** Points to [[adventureworks.production.productmodelproductdescriptionculture.ProductmodelproductdescriptioncultureRow.cultureid]] */
-cultureid: CultureId,
+  cultureid: CultureId,
   /** Points to [[adventureworks.production.productmodelproductdescriptionculture.ProductmodelproductdescriptioncultureRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object PmpdcViewRow {

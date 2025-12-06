@@ -16,7 +16,7 @@ import typo.runtime.RowParsers
 /** View: humanresources.vjobcandidateemployment */
 case class VjobcandidateemploymentViewRow(
   /** Points to [[adventureworks.humanresources.jobcandidate.JobcandidateRow.jobcandidateid]] */
-jobcandidateid: JobcandidateId,
+  jobcandidateid: JobcandidateId,
   @JsonProperty("Emp.StartDate") empStartDate: /* nullability unknown */ Optional[TypoLocalDate],
   @JsonProperty("Emp.EndDate") empEndDate: /* nullability unknown */ Optional[TypoLocalDate],
   @JsonProperty("Emp.OrgName") empOrgName: /* nullability unknown */ Optional[/* max 100 chars */ String],

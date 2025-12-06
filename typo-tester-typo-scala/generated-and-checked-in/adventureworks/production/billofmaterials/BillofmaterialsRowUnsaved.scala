@@ -22,41 +22,41 @@ case class BillofmaterialsRowUnsaved(
    * Constraint CK_BillOfMaterials_BOMLevel affecting columns bomlevel, perassemblyqty, productassemblyid:  ((((productassemblyid IS NULL) AND (bomlevel = 0) AND (perassemblyqty = 1.00)) OR ((productassemblyid IS NOT NULL) AND (bomlevel >= 1))))
    * Constraint CK_BillOfMaterials_ProductAssemblyID affecting columns componentid, productassemblyid:  ((productassemblyid <> componentid))
    */
-productassemblyid: Optional[ProductId] = Optional.empty(),
+  productassemblyid: Optional[ProductId] = Optional.empty(),
   /** Component identification number. Foreign key to Product.ProductID.
    * Points to [[adventureworks.production.product.ProductRow.productid]]
    * Constraint CK_BillOfMaterials_ProductAssemblyID affecting columns componentid, productassemblyid:  ((productassemblyid <> componentid))
    */
-componentid: ProductId,
+  componentid: ProductId,
   /** Date the component stopped being used in the assembly item.
    * Constraint CK_BillOfMaterials_EndDate affecting columns enddate, startdate:  (((enddate > startdate) OR (enddate IS NULL)))
    */
-enddate: Optional[TypoLocalDateTime] = Optional.empty(),
+  enddate: Optional[TypoLocalDateTime] = Optional.empty(),
   /** Standard code identifying the unit of measure for the quantity.
    * Points to [[adventureworks.production.unitmeasure.UnitmeasureRow.unitmeasurecode]]
    */
-unitmeasurecode: UnitmeasureId,
+  unitmeasurecode: UnitmeasureId,
   /** Indicates the depth the component is from its parent (AssemblyID).
    * Constraint CK_BillOfMaterials_BOMLevel affecting columns bomlevel, perassemblyqty, productassemblyid:  ((((productassemblyid IS NULL) AND (bomlevel = 0) AND (perassemblyqty = 1.00)) OR ((productassemblyid IS NOT NULL) AND (bomlevel >= 1))))
    */
-bomlevel: TypoShort,
+  bomlevel: TypoShort,
   /** Default: nextval('production.billofmaterials_billofmaterialsid_seq'::regclass)
    * Primary key for BillOfMaterials records.
    */
-billofmaterialsid: Defaulted[Integer] = new UseDefault(),
+  billofmaterialsid: Defaulted[Integer] = new UseDefault(),
   /** Default: now()
    * Date the component started being used in the assembly item.
    * Constraint CK_BillOfMaterials_EndDate affecting columns enddate, startdate:  (((enddate > startdate) OR (enddate IS NULL)))
    */
-startdate: Defaulted[TypoLocalDateTime] = new UseDefault(),
+  startdate: Defaulted[TypoLocalDateTime] = new UseDefault(),
   /** Default: 1.00
    * Quantity of the component needed to create the assembly.
    * Constraint CK_BillOfMaterials_BOMLevel affecting columns bomlevel, perassemblyqty, productassemblyid:  ((((productassemblyid IS NULL) AND (bomlevel = 0) AND (perassemblyqty = 1.00)) OR ((productassemblyid IS NOT NULL) AND (bomlevel >= 1))))
    * Constraint CK_BillOfMaterials_PerAssemblyQty affecting columns perassemblyqty:  ((perassemblyqty >= 1.00))
    */
-perassemblyqty: Defaulted[java.math.BigDecimal] = new UseDefault(),
+  perassemblyqty: Defaulted[java.math.BigDecimal] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     billofmaterialsidDefault: => Integer,

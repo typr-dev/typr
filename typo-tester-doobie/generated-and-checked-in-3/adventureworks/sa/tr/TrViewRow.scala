@@ -19,21 +19,21 @@ import io.circe.Encoder
 /** View: sa.tr */
 case class TrViewRow(
   /** Points to [[adventureworks.sales.salestaxrate.SalestaxrateRow.salestaxrateid]] */
-id: SalestaxrateId,
+  id: SalestaxrateId,
   /** Points to [[adventureworks.sales.salestaxrate.SalestaxrateRow.salestaxrateid]] */
-salestaxrateid: SalestaxrateId,
+  salestaxrateid: SalestaxrateId,
   /** Points to [[adventureworks.sales.salestaxrate.SalestaxrateRow.stateprovinceid]] */
-stateprovinceid: StateprovinceId,
+  stateprovinceid: StateprovinceId,
   /** Points to [[adventureworks.sales.salestaxrate.SalestaxrateRow.taxtype]] */
-taxtype: TypoShort,
+  taxtype: TypoShort,
   /** Points to [[adventureworks.sales.salestaxrate.SalestaxrateRow.taxrate]] */
-taxrate: BigDecimal,
+  taxrate: BigDecimal,
   /** Points to [[adventureworks.sales.salestaxrate.SalestaxrateRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.sales.salestaxrate.SalestaxrateRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.sales.salestaxrate.SalestaxrateRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object TrViewRow {

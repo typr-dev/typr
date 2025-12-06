@@ -22,15 +22,15 @@ import scala.util.Try
 /** This class corresponds to a row in table `person.addresstype` which has not been persisted yet */
 case class AddresstypeRowUnsaved(
   /** Address type description. For example, Billing, Home, or Shipping. */
-name: Name,
+  name: Name,
   /** Default: nextval('person.addresstype_addresstypeid_seq'::regclass)
    * Primary key for AddressType records.
    */
-addresstypeid: Defaulted[AddresstypeId] = new UseDefault(),
+  addresstypeid: Defaulted[AddresstypeId] = new UseDefault(),
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     addresstypeidDefault: => AddresstypeId,

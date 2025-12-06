@@ -15,23 +15,23 @@ import typo.runtime.RowParsers
 /** View: purchasing.vvendorwithaddresses */
 case class VvendorwithaddressesViewRow(
   /** Points to [[adventureworks.purchasing.vendor.VendorRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.purchasing.vendor.VendorRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.person.addresstype.AddresstypeRow.name]] */
-addresstype: Name,
+  addresstype: Name,
   /** Points to [[adventureworks.person.address.AddressRow.addressline1]] */
-addressline1: /* max 60 chars */ String,
+  addressline1: /* max 60 chars */ String,
   /** Points to [[adventureworks.person.address.AddressRow.addressline2]] */
-addressline2: Optional[/* max 60 chars */ String],
+  addressline2: Optional[/* max 60 chars */ String],
   /** Points to [[adventureworks.person.address.AddressRow.city]] */
-city: /* max 30 chars */ String,
+  city: /* max 30 chars */ String,
   /** Points to [[adventureworks.person.stateprovince.StateprovinceRow.name]] */
-stateprovincename: Name,
+  stateprovincename: Name,
   /** Points to [[adventureworks.person.address.AddressRow.postalcode]] */
-postalcode: /* max 15 chars */ String,
+  postalcode: /* max 15 chars */ String,
   /** Points to [[adventureworks.person.countryregion.CountryregionRow.name]] */
-countryregionname: Name
+  countryregionname: Name
 )
 
 object VvendorwithaddressesViewRow {

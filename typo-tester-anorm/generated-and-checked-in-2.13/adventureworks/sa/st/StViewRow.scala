@@ -25,27 +25,27 @@ import scala.util.Try
 /** View: sa.st */
 case class StViewRow(
   /** Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.territoryid]] */
-id: SalesterritoryId,
+  id: SalesterritoryId,
   /** Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.territoryid]] */
-territoryid: SalesterritoryId,
+  territoryid: SalesterritoryId,
   /** Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.countryregioncode]] */
-countryregioncode: CountryregionId,
+  countryregioncode: CountryregionId,
   /** Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.group]] */
-group: /* max 50 chars */ String,
+  group: /* max 50 chars */ String,
   /** Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.salesytd]] */
-salesytd: BigDecimal,
+  salesytd: BigDecimal,
   /** Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.saleslastyear]] */
-saleslastyear: BigDecimal,
+  saleslastyear: BigDecimal,
   /** Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.costytd]] */
-costytd: BigDecimal,
+  costytd: BigDecimal,
   /** Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.costlastyear]] */
-costlastyear: BigDecimal,
+  costlastyear: BigDecimal,
   /** Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object StViewRow {

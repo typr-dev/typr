@@ -15,7 +15,7 @@ import io.circe.Encoder
 /** View: humanresources.vjobcandidateeducation */
 case class VjobcandidateeducationViewRow(
   /** Points to [[adventureworks.humanresources.jobcandidate.JobcandidateRow.jobcandidateid]] */
-jobcandidateid: JobcandidateId,
+  jobcandidateid: JobcandidateId,
   eduLevel: /* nullability unknown */ Option[/* max 50 chars */ String],
   eduStartDate: /* nullability unknown */ Option[TypoLocalDate],
   eduEndDate: /* nullability unknown */ Option[TypoLocalDate],

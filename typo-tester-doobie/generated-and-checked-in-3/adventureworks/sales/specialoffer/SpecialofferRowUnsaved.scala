@@ -16,41 +16,41 @@ import io.circe.Encoder
 /** This class corresponds to a row in table `sales.specialoffer` which has not been persisted yet */
 case class SpecialofferRowUnsaved(
   /** Discount description. */
-description: /* max 255 chars */ String,
+  description: /* max 255 chars */ String,
   /** Discount type category. */
-`type`: /* max 50 chars */ String,
+  `type`: /* max 50 chars */ String,
   /** Group the discount applies to such as Reseller or Customer. */
-category: /* max 50 chars */ String,
+  category: /* max 50 chars */ String,
   /** Discount start date.
    * Constraint CK_SpecialOffer_EndDate affecting columns enddate, startdate:  ((enddate >= startdate))
    */
-startdate: TypoLocalDateTime,
+  startdate: TypoLocalDateTime,
   /** Discount end date.
    * Constraint CK_SpecialOffer_EndDate affecting columns enddate, startdate:  ((enddate >= startdate))
    */
-enddate: TypoLocalDateTime,
+  enddate: TypoLocalDateTime,
   /** Maximum discount percent allowed.
    * Constraint CK_SpecialOffer_MaxQty affecting columns maxqty:  ((maxqty >= 0))
    */
-maxqty: Option[Int] = None,
+  maxqty: Option[Int] = None,
   /** Default: nextval('sales.specialoffer_specialofferid_seq'::regclass)
    * Primary key for SpecialOffer records.
    */
-specialofferid: Defaulted[SpecialofferId] = new UseDefault(),
+  specialofferid: Defaulted[SpecialofferId] = new UseDefault(),
   /** Default: 0.00
    * Discount precentage.
    * Constraint CK_SpecialOffer_DiscountPct affecting columns discountpct:  ((discountpct >= 0.00))
    */
-discountpct: Defaulted[BigDecimal] = new UseDefault(),
+  discountpct: Defaulted[BigDecimal] = new UseDefault(),
   /** Default: 0
    * Minimum discount percent allowed.
    * Constraint CK_SpecialOffer_MinQty affecting columns minqty:  ((minqty >= 0))
    */
-minqty: Defaulted[Int] = new UseDefault(),
+  minqty: Defaulted[Int] = new UseDefault(),
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     specialofferidDefault: => SpecialofferId,

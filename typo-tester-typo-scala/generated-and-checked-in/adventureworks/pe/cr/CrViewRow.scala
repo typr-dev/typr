@@ -14,11 +14,11 @@ import typo.runtime.RowParsers
 /** View: pe.cr */
 case class CrViewRow(
   /** Points to [[adventureworks.person.countryregion.CountryregionRow.countryregioncode]] */
-countryregioncode: CountryregionId,
+  countryregioncode: CountryregionId,
   /** Points to [[adventureworks.person.countryregion.CountryregionRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.person.countryregion.CountryregionRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object CrViewRow {

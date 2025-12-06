@@ -16,25 +16,25 @@ import typo.runtime.PgTypes
 /** This class corresponds to a row in table `purchasing.shipmethod` which has not been persisted yet */
 case class ShipmethodRowUnsaved(
   /** Shipping company name. */
-name: Name,
+  name: Name,
   /** Default: nextval('purchasing.shipmethod_shipmethodid_seq'::regclass)
    * Primary key for ShipMethod records.
    */
-shipmethodid: Defaulted[ShipmethodId] = new UseDefault(),
+  shipmethodid: Defaulted[ShipmethodId] = new UseDefault(),
   /** Default: 0.00
    * Minimum shipping charge.
    * Constraint CK_ShipMethod_ShipBase affecting columns shipbase:  ((shipbase > 0.00))
    */
-shipbase: Defaulted[java.math.BigDecimal] = new UseDefault(),
+  shipbase: Defaulted[java.math.BigDecimal] = new UseDefault(),
   /** Default: 0.00
    * Shipping charge per pound.
    * Constraint CK_ShipMethod_ShipRate affecting columns shiprate:  ((shiprate > 0.00))
    */
-shiprate: Defaulted[java.math.BigDecimal] = new UseDefault(),
+  shiprate: Defaulted[java.math.BigDecimal] = new UseDefault(),
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     shipmethodidDefault: => ShipmethodId,

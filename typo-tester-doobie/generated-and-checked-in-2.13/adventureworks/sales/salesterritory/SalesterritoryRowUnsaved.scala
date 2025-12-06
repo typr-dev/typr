@@ -18,41 +18,41 @@ import io.circe.Encoder
 /** This class corresponds to a row in table `sales.salesterritory` which has not been persisted yet */
 case class SalesterritoryRowUnsaved(
   /** Sales territory description */
-name: Name,
+  name: Name,
   /** ISO standard country or region code. Foreign key to CountryRegion.CountryRegionCode.
    * Points to [[adventureworks.person.countryregion.CountryregionRow.countryregioncode]]
    */
-countryregioncode: CountryregionId,
+  countryregioncode: CountryregionId,
   /** Geographic area to which the sales territory belong. */
-group: /* max 50 chars */ String,
+  group: /* max 50 chars */ String,
   /** Default: nextval('sales.salesterritory_territoryid_seq'::regclass)
    * Primary key for SalesTerritory records.
    */
-territoryid: Defaulted[SalesterritoryId] = new UseDefault(),
+  territoryid: Defaulted[SalesterritoryId] = new UseDefault(),
   /** Default: 0.00
    * Sales in the territory year to date.
    * Constraint CK_SalesTerritory_SalesYTD affecting columns salesytd:  ((salesytd >= 0.00))
    */
-salesytd: Defaulted[BigDecimal] = new UseDefault(),
+  salesytd: Defaulted[BigDecimal] = new UseDefault(),
   /** Default: 0.00
    * Sales in the territory the previous year.
    * Constraint CK_SalesTerritory_SalesLastYear affecting columns saleslastyear:  ((saleslastyear >= 0.00))
    */
-saleslastyear: Defaulted[BigDecimal] = new UseDefault(),
+  saleslastyear: Defaulted[BigDecimal] = new UseDefault(),
   /** Default: 0.00
    * Business costs in the territory year to date.
    * Constraint CK_SalesTerritory_CostYTD affecting columns costytd:  ((costytd >= 0.00))
    */
-costytd: Defaulted[BigDecimal] = new UseDefault(),
+  costytd: Defaulted[BigDecimal] = new UseDefault(),
   /** Default: 0.00
    * Business costs in the territory the previous year.
    * Constraint CK_SalesTerritory_CostLastYear affecting columns costlastyear:  ((costlastyear >= 0.00))
    */
-costlastyear: Defaulted[BigDecimal] = new UseDefault(),
+  costlastyear: Defaulted[BigDecimal] = new UseDefault(),
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     territoryidDefault: => SalesterritoryId,

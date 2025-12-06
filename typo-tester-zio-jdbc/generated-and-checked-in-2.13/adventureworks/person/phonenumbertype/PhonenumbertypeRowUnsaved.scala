@@ -18,13 +18,13 @@ import zio.json.internal.Write
 /** This class corresponds to a row in table `person.phonenumbertype` which has not been persisted yet */
 case class PhonenumbertypeRowUnsaved(
   /** Name of the telephone number type */
-name: Name,
+  name: Name,
   /** Default: nextval('person.phonenumbertype_phonenumbertypeid_seq'::regclass)
    * Primary key for telephone number type records.
    */
-phonenumbertypeid: Defaulted[PhonenumbertypeId] = new UseDefault(),
+  phonenumbertypeid: Defaulted[PhonenumbertypeId] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     phonenumbertypeidDefault: => PhonenumbertypeId,

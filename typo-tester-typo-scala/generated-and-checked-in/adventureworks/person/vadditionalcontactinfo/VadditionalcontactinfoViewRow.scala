@@ -19,13 +19,13 @@ import typo.runtime.RowParsers
 /** View: person.vadditionalcontactinfo */
 case class VadditionalcontactinfoViewRow(
   /** Points to [[adventureworks.person.person.PersonRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.person.person.PersonRow.firstname]] */
-firstname: /* user-picked */ FirstName,
+  firstname: /* user-picked */ FirstName,
   /** Points to [[adventureworks.person.person.PersonRow.middlename]] */
-middlename: Optional[Name],
+  middlename: Optional[Name],
   /** Points to [[adventureworks.person.person.PersonRow.lastname]] */
-lastname: Name,
+  lastname: Name,
   telephonenumber: /* nullability unknown */ Optional[TypoXml],
   telephonespecialinstructions: /* nullability unknown */ Optional[String],
   street: /* nullability unknown */ Optional[TypoXml],
@@ -38,9 +38,9 @@ lastname: Name,
   emailspecialinstructions: /* nullability unknown */ Optional[String],
   emailtelephonenumber: /* nullability unknown */ Optional[TypoXml],
   /** Points to [[adventureworks.person.person.PersonRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.person.person.PersonRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object VadditionalcontactinfoViewRow {

@@ -16,19 +16,19 @@ import typo.runtime.RowParsers
 /** View: sa.sth */
 case class SthViewRow(
   /** Points to [[adventureworks.sales.salesterritoryhistory.SalesterritoryhistoryRow.territoryid]] */
-id: SalesterritoryId,
+  id: SalesterritoryId,
   /** Points to [[adventureworks.sales.salesterritoryhistory.SalesterritoryhistoryRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.sales.salesterritoryhistory.SalesterritoryhistoryRow.territoryid]] */
-territoryid: SalesterritoryId,
+  territoryid: SalesterritoryId,
   /** Points to [[adventureworks.sales.salesterritoryhistory.SalesterritoryhistoryRow.startdate]] */
-startdate: TypoLocalDateTime,
+  startdate: TypoLocalDateTime,
   /** Points to [[adventureworks.sales.salesterritoryhistory.SalesterritoryhistoryRow.enddate]] */
-enddate: Optional[TypoLocalDateTime],
+  enddate: Optional[TypoLocalDateTime],
   /** Points to [[adventureworks.sales.salesterritoryhistory.SalesterritoryhistoryRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.sales.salesterritoryhistory.SalesterritoryhistoryRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object SthViewRow {

@@ -17,27 +17,27 @@ import typo.runtime.RowParsers
 /** View: sa.st */
 case class StViewRow(
   /** Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.territoryid]] */
-id: SalesterritoryId,
+  id: SalesterritoryId,
   /** Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.territoryid]] */
-territoryid: SalesterritoryId,
+  territoryid: SalesterritoryId,
   /** Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.name]] */
-name: Name,
+  name: Name,
   /** Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.countryregioncode]] */
-countryregioncode: CountryregionId,
+  countryregioncode: CountryregionId,
   /** Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.group]] */
-group: /* max 50 chars */ String,
+  group: /* max 50 chars */ String,
   /** Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.salesytd]] */
-salesytd: java.math.BigDecimal,
+  salesytd: java.math.BigDecimal,
   /** Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.saleslastyear]] */
-saleslastyear: java.math.BigDecimal,
+  saleslastyear: java.math.BigDecimal,
   /** Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.costytd]] */
-costytd: java.math.BigDecimal,
+  costytd: java.math.BigDecimal,
   /** Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.costlastyear]] */
-costlastyear: java.math.BigDecimal,
+  costlastyear: java.math.BigDecimal,
   /** Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.rowguid]] */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object StViewRow {

@@ -16,25 +16,25 @@ import typo.runtime.RowParsers
 /** View: pu.pod */
 case class PodViewRow(
   /** Points to [[adventureworks.purchasing.purchaseorderdetail.PurchaseorderdetailRow.purchaseorderdetailid]] */
-id: Integer,
+  id: Integer,
   /** Points to [[adventureworks.purchasing.purchaseorderdetail.PurchaseorderdetailRow.purchaseorderid]] */
-purchaseorderid: PurchaseorderheaderId,
+  purchaseorderid: PurchaseorderheaderId,
   /** Points to [[adventureworks.purchasing.purchaseorderdetail.PurchaseorderdetailRow.purchaseorderdetailid]] */
-purchaseorderdetailid: Integer,
+  purchaseorderdetailid: Integer,
   /** Points to [[adventureworks.purchasing.purchaseorderdetail.PurchaseorderdetailRow.duedate]] */
-duedate: TypoLocalDateTime,
+  duedate: TypoLocalDateTime,
   /** Points to [[adventureworks.purchasing.purchaseorderdetail.PurchaseorderdetailRow.orderqty]] */
-orderqty: TypoShort,
+  orderqty: TypoShort,
   /** Points to [[adventureworks.purchasing.purchaseorderdetail.PurchaseorderdetailRow.productid]] */
-productid: ProductId,
+  productid: ProductId,
   /** Points to [[adventureworks.purchasing.purchaseorderdetail.PurchaseorderdetailRow.unitprice]] */
-unitprice: java.math.BigDecimal,
+  unitprice: java.math.BigDecimal,
   /** Points to [[adventureworks.purchasing.purchaseorderdetail.PurchaseorderdetailRow.receivedqty]] */
-receivedqty: java.math.BigDecimal,
+  receivedqty: java.math.BigDecimal,
   /** Points to [[adventureworks.purchasing.purchaseorderdetail.PurchaseorderdetailRow.rejectedqty]] */
-rejectedqty: java.math.BigDecimal,
+  rejectedqty: java.math.BigDecimal,
   /** Points to [[adventureworks.purchasing.purchaseorderdetail.PurchaseorderdetailRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object PodViewRow {

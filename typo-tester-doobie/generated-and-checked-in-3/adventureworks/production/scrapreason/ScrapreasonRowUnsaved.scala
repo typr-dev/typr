@@ -16,13 +16,13 @@ import io.circe.Encoder
 /** This class corresponds to a row in table `production.scrapreason` which has not been persisted yet */
 case class ScrapreasonRowUnsaved(
   /** Failure description. */
-name: Name,
+  name: Name,
   /** Default: nextval('production.scrapreason_scrapreasonid_seq'::regclass)
    * Primary key for ScrapReason records.
    */
-scrapreasonid: Defaulted[ScrapreasonId] = new UseDefault(),
+  scrapreasonid: Defaulted[ScrapreasonId] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     scrapreasonidDefault: => ScrapreasonId,

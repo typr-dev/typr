@@ -17,49 +17,49 @@ import io.circe.Encoder
 /** View: sales.vsalesperson */
 case class VsalespersonViewRow(
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.person.person.PersonRow.title]] */
-title: Option[/* max 8 chars */ String],
+  title: Option[/* max 8 chars */ String],
   /** Points to [[adventureworks.person.person.PersonRow.firstname]] */
-firstname: /* user-picked */ FirstName,
+  firstname: /* user-picked */ FirstName,
   /** Points to [[adventureworks.person.person.PersonRow.middlename]] */
-middlename: Option[Name],
+  middlename: Option[Name],
   /** Points to [[adventureworks.person.person.PersonRow.lastname]] */
-lastname: Name,
+  lastname: Name,
   /** Points to [[adventureworks.person.person.PersonRow.suffix]] */
-suffix: Option[/* max 10 chars */ String],
+  suffix: Option[/* max 10 chars */ String],
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.jobtitle]] */
-jobtitle: /* max 50 chars */ String,
+  jobtitle: /* max 50 chars */ String,
   /** Points to [[adventureworks.person.personphone.PersonphoneRow.phonenumber]] */
-phonenumber: Option[Phone],
+  phonenumber: Option[Phone],
   /** Points to [[adventureworks.person.phonenumbertype.PhonenumbertypeRow.name]] */
-phonenumbertype: Option[Name],
+  phonenumbertype: Option[Name],
   /** Points to [[adventureworks.person.emailaddress.EmailaddressRow.emailaddress]] */
-emailaddress: Option[/* max 50 chars */ String],
+  emailaddress: Option[/* max 50 chars */ String],
   /** Points to [[adventureworks.person.person.PersonRow.emailpromotion]] */
-emailpromotion: Int,
+  emailpromotion: Int,
   /** Points to [[adventureworks.person.address.AddressRow.addressline1]] */
-addressline1: /* max 60 chars */ String,
+  addressline1: /* max 60 chars */ String,
   /** Points to [[adventureworks.person.address.AddressRow.addressline2]] */
-addressline2: Option[/* max 60 chars */ String],
+  addressline2: Option[/* max 60 chars */ String],
   /** Points to [[adventureworks.person.address.AddressRow.city]] */
-city: /* max 30 chars */ String,
+  city: /* max 30 chars */ String,
   /** Points to [[adventureworks.person.stateprovince.StateprovinceRow.name]] */
-stateprovincename: Name,
+  stateprovincename: Name,
   /** Points to [[adventureworks.person.address.AddressRow.postalcode]] */
-postalcode: /* max 15 chars */ String,
+  postalcode: /* max 15 chars */ String,
   /** Points to [[adventureworks.person.countryregion.CountryregionRow.name]] */
-countryregionname: Name,
+  countryregionname: Name,
   /** Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.name]] */
-territoryname: Option[Name],
+  territoryname: Option[Name],
   /** Points to [[adventureworks.sales.salesterritory.SalesterritoryRow.group]] */
-territorygroup: Option[/* max 50 chars */ String],
+  territorygroup: Option[/* max 50 chars */ String],
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.salesquota]] */
-salesquota: Option[BigDecimal],
+  salesquota: Option[BigDecimal],
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.salesytd]] */
-salesytd: BigDecimal,
+  salesytd: BigDecimal,
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.saleslastyear]] */
-saleslastyear: BigDecimal
+  saleslastyear: BigDecimal
 )
 
 object VsalespersonViewRow {

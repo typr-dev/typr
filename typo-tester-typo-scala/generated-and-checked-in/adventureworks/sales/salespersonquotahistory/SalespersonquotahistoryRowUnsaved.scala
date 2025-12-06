@@ -18,17 +18,17 @@ case class SalespersonquotahistoryRowUnsaved(
   /** Sales person identification number. Foreign key to SalesPerson.BusinessEntityID.
    * Points to [[adventureworks.sales.salesperson.SalespersonRow.businessentityid]]
    */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Sales quota date. */
-quotadate: TypoLocalDateTime,
+  quotadate: TypoLocalDateTime,
   /** Sales quota amount.
    * Constraint CK_SalesPersonQuotaHistory_SalesQuota affecting columns salesquota:  ((salesquota > 0.00))
    */
-salesquota: java.math.BigDecimal,
+  salesquota: java.math.BigDecimal,
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     rowguidDefault: => TypoUUID,

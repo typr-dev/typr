@@ -20,19 +20,19 @@ case class StoreRowUnsaved(
   /** Primary key. Foreign key to Customer.BusinessEntityID.
    * Points to [[adventureworks.person.businessentity.BusinessentityRow.businessentityid]]
    */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Name of the store. */
-name: Name,
+  name: Name,
   /** ID of the sales person assigned to the customer. Foreign key to SalesPerson.BusinessEntityID.
    * Points to [[adventureworks.sales.salesperson.SalespersonRow.businessentityid]]
    */
-salespersonid: Optional[BusinessentityId] = Optional.empty(),
+  salespersonid: Optional[BusinessentityId] = Optional.empty(),
   /** Demographic informationg about the store such as the number of employees, annual sales and store type. */
-demographics: Optional[TypoXml] = Optional.empty(),
+  demographics: Optional[TypoXml] = Optional.empty(),
   /** Default: uuid_generate_v1() */
-rowguid: Defaulted[TypoUUID] = new UseDefault(),
+  rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     rowguidDefault: => TypoUUID,

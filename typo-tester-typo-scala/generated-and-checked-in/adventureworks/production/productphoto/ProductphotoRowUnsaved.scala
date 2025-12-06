@@ -16,19 +16,19 @@ import typo.runtime.PgTypes
 /** This class corresponds to a row in table `production.productphoto` which has not been persisted yet */
 case class ProductphotoRowUnsaved(
   /** Small image of the product. */
-thumbnailphoto: Optional[TypoBytea] = Optional.empty(),
+  thumbnailphoto: Optional[TypoBytea] = Optional.empty(),
   /** Small image file name. */
-thumbnailphotofilename: Optional[/* max 50 chars */ String] = Optional.empty(),
+  thumbnailphotofilename: Optional[/* max 50 chars */ String] = Optional.empty(),
   /** Large image of the product. */
-largephoto: Optional[TypoBytea] = Optional.empty(),
+  largephoto: Optional[TypoBytea] = Optional.empty(),
   /** Large image file name. */
-largephotofilename: Optional[/* max 50 chars */ String] = Optional.empty(),
+  largephotofilename: Optional[/* max 50 chars */ String] = Optional.empty(),
   /** Default: nextval('production.productphoto_productphotoid_seq'::regclass)
    * Primary key for ProductPhoto records.
    */
-productphotoid: Defaulted[ProductphotoId] = new UseDefault(),
+  productphotoid: Defaulted[ProductphotoId] = new UseDefault(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(
     productphotoidDefault: => ProductphotoId,

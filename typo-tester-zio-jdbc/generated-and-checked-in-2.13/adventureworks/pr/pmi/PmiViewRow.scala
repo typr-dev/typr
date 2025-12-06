@@ -18,11 +18,11 @@ import zio.json.internal.Write
 /** View: pr.pmi */
 case class PmiViewRow(
   /** Points to [[adventureworks.production.productmodelillustration.ProductmodelillustrationRow.productmodelid]] */
-productmodelid: ProductmodelId,
+  productmodelid: ProductmodelId,
   /** Points to [[adventureworks.production.productmodelillustration.ProductmodelillustrationRow.illustrationid]] */
-illustrationid: IllustrationId,
+  illustrationid: IllustrationId,
   /** Points to [[adventureworks.production.productmodelillustration.ProductmodelillustrationRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object PmiViewRow {

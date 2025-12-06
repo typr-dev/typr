@@ -23,13 +23,13 @@ case class ProductdescriptionRow(
   /** Primary key for ProductDescription records.
    * Default: nextval('production.productdescription_productdescriptionid_seq'::regclass)
    */
-productdescriptionid: ProductdescriptionId,
+  productdescriptionid: ProductdescriptionId,
   /** Description of the product. */
-description: /* max 400 chars */ String,
+  description: /* max 400 chars */ String,
   /** Default: uuid_generate_v1() */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: ProductdescriptionId = productdescriptionid
 

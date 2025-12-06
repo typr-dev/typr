@@ -26,25 +26,25 @@ case class SalestaxrateRow(
   /** Primary key for SalesTaxRate records.
    * Default: nextval('sales.salestaxrate_salestaxrateid_seq'::regclass)
    */
-salestaxrateid: SalestaxrateId,
+  salestaxrateid: SalestaxrateId,
   /** State, province, or country/region the sales tax applies to.
    * Points to [[adventureworks.person.stateprovince.StateprovinceRow.stateprovinceid]]
    */
-stateprovinceid: StateprovinceId,
+  stateprovinceid: StateprovinceId,
   /** 1 = Tax applied to retail transactions, 2 = Tax applied to wholesale transactions, 3 = Tax applied to all sales (retail and wholesale) transactions.
    * Constraint CK_SalesTaxRate_TaxType affecting columns taxtype: (((taxtype >= 1) AND (taxtype <= 3)))
    */
-taxtype: TypoShort,
+  taxtype: TypoShort,
   /** Tax rate amount.
    * Default: 0.00
    */
-taxrate: BigDecimal,
+  taxrate: BigDecimal,
   /** Tax rate description. */
-name: Name,
+  name: Name,
   /** Default: uuid_generate_v1() */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: SalestaxrateId = salestaxrateid
 

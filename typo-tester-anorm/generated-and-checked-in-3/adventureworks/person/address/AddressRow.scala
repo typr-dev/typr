@@ -31,25 +31,25 @@ case class AddressRow(
   /** Primary key for Address records.
    * Default: nextval('person.address_addressid_seq'::regclass)
    */
-addressid: AddressId,
+  addressid: AddressId,
   /** First street address line. */
-addressline1: /* max 60 chars */ String,
+  addressline1: /* max 60 chars */ String,
   /** Second street address line. */
-addressline2: Option[/* max 60 chars */ String],
+  addressline2: Option[/* max 60 chars */ String],
   /** Name of the city. */
-city: /* max 30 chars */ String,
+  city: /* max 30 chars */ String,
   /** Unique identification number for the state or province. Foreign key to StateProvince table.
    * Points to [[adventureworks.person.stateprovince.StateprovinceRow.stateprovinceid]]
    */
-stateprovinceid: StateprovinceId,
+  stateprovinceid: StateprovinceId,
   /** Postal code for the street address. */
-postalcode: /* max 15 chars */ String,
+  postalcode: /* max 15 chars */ String,
   /** Latitude and longitude of this address. */
-spatiallocation: Option[TypoBytea],
+  spatiallocation: Option[TypoBytea],
   /** Default: uuid_generate_v1() */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: AddressId = addressid
 

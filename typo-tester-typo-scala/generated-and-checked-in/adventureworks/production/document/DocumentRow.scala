@@ -24,43 +24,43 @@ import typo.runtime.RowParsers
  */
 case class DocumentRow(
   /** Title of the document. */
-title: /* max 50 chars */ String,
+  title: /* max 50 chars */ String,
   /** Employee who controls the document.  Foreign key to Employee.BusinessEntityID
    * Points to [[adventureworks.humanresources.employee.EmployeeRow.businessentityid]]
    */
-owner: BusinessentityId,
+  owner: BusinessentityId,
   /** 0 = This is a folder, 1 = This is a document.
    * Default: false
    */
-folderflag: Flag,
+  folderflag: Flag,
   /** File name of the document */
-filename: /* max 400 chars */ String,
+  filename: /* max 400 chars */ String,
   /** File extension indicating the document type. For example, .doc or .txt. */
-fileextension: Optional[/* max 8 chars */ String],
+  fileextension: Optional[/* max 8 chars */ String],
   /** Revision number of the document. */
-revision: /* bpchar, max 5 chars */ String,
+  revision: /* bpchar, max 5 chars */ String,
   /** Engineering change approval number.
    * Default: 0
    */
-changenumber: Integer,
+  changenumber: Integer,
   /** 1 = Pending approval, 2 = Approved, 3 = Obsolete
    * Constraint CK_Document_Status affecting columns status: (((status >= 1) AND (status <= 3)))
    */
-status: TypoShort,
+  status: TypoShort,
   /** Document abstract. */
-documentsummary: Optional[String],
+  documentsummary: Optional[String],
   /** Complete document. */
-document: Optional[TypoBytea],
+  document: Optional[TypoBytea],
   /** ROWGUIDCOL number uniquely identifying the record. Required for FileStream.
    * Default: uuid_generate_v1()
    */
-rowguid: TypoUUID,
+  rowguid: TypoUUID,
   /** Default: now() */
-modifieddate: TypoLocalDateTime,
+  modifieddate: TypoLocalDateTime,
   /** Primary key for Document records.
    * Default: '/'::character varying
    */
-documentnode: DocumentId
+  documentnode: DocumentId
 ) {
   def id: DocumentId = documentnode
 

@@ -18,14 +18,14 @@ import typo.runtime.RowParsers
  */
 case class FlaffRow(
   /** Points to [[adventureworks.public.flaff.FlaffRow.code]] */
-code: ShortText,
+  code: ShortText,
   /** Points to [[adventureworks.public.flaff.FlaffRow.anotherCode]] */
-@JsonProperty("another_code") anotherCode: /* max 20 chars */ String,
+  @JsonProperty("another_code") anotherCode: /* max 20 chars */ String,
   /** Points to [[adventureworks.public.flaff.FlaffRow.someNumber]] */
-@JsonProperty("some_number") someNumber: Integer,
+  @JsonProperty("some_number") someNumber: Integer,
   specifier: ShortText,
   /** Points to [[adventureworks.public.flaff.FlaffRow.specifier]] */
-parentspecifier: Optional[ShortText]
+  parentspecifier: Optional[ShortText]
 ) {
   def compositeId: FlaffId = {
     new FlaffId(

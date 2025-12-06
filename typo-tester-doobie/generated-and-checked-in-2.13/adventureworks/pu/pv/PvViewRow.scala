@@ -17,29 +17,29 @@ import io.circe.Encoder
 /** View: pu.pv */
 case class PvViewRow(
   /** Points to [[adventureworks.purchasing.productvendor.ProductvendorRow.productid]] */
-id: ProductId,
+  id: ProductId,
   /** Points to [[adventureworks.purchasing.productvendor.ProductvendorRow.productid]] */
-productid: ProductId,
+  productid: ProductId,
   /** Points to [[adventureworks.purchasing.productvendor.ProductvendorRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.purchasing.productvendor.ProductvendorRow.averageleadtime]] */
-averageleadtime: Int,
+  averageleadtime: Int,
   /** Points to [[adventureworks.purchasing.productvendor.ProductvendorRow.standardprice]] */
-standardprice: BigDecimal,
+  standardprice: BigDecimal,
   /** Points to [[adventureworks.purchasing.productvendor.ProductvendorRow.lastreceiptcost]] */
-lastreceiptcost: Option[BigDecimal],
+  lastreceiptcost: Option[BigDecimal],
   /** Points to [[adventureworks.purchasing.productvendor.ProductvendorRow.lastreceiptdate]] */
-lastreceiptdate: Option[TypoLocalDateTime],
+  lastreceiptdate: Option[TypoLocalDateTime],
   /** Points to [[adventureworks.purchasing.productvendor.ProductvendorRow.minorderqty]] */
-minorderqty: Int,
+  minorderqty: Int,
   /** Points to [[adventureworks.purchasing.productvendor.ProductvendorRow.maxorderqty]] */
-maxorderqty: Int,
+  maxorderqty: Int,
   /** Points to [[adventureworks.purchasing.productvendor.ProductvendorRow.onorderqty]] */
-onorderqty: Option[Int],
+  onorderqty: Option[Int],
   /** Points to [[adventureworks.purchasing.productvendor.ProductvendorRow.unitmeasurecode]] */
-unitmeasurecode: UnitmeasureId,
+  unitmeasurecode: UnitmeasureId,
   /** Points to [[adventureworks.purchasing.productvendor.ProductvendorRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object PvViewRow {

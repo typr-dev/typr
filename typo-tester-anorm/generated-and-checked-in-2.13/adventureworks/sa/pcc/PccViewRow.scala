@@ -21,13 +21,13 @@ import scala.util.Try
 /** View: sa.pcc */
 case class PccViewRow(
   /** Points to [[adventureworks.sales.personcreditcard.PersoncreditcardRow.businessentityid]] */
-id: BusinessentityId,
+  id: BusinessentityId,
   /** Points to [[adventureworks.sales.personcreditcard.PersoncreditcardRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.sales.personcreditcard.PersoncreditcardRow.creditcardid]] */
-creditcardid: /* user-picked */ CustomCreditcardId,
+  creditcardid: /* user-picked */ CustomCreditcardId,
   /** Points to [[adventureworks.sales.personcreditcard.PersoncreditcardRow.modifieddate]] */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 )
 
 object PccViewRow {

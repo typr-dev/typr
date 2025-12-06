@@ -14,7 +14,7 @@ import typo.runtime.RowParsers
 /** SQL file: person_row_join.sql */
 case class PersonRowJoinSqlRow(
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   email: /* nullability unknown */ Optional[Array[TypoRecord]],
   emails: /* nullability unknown */ Optional[Array[TypoRecord]]
 )

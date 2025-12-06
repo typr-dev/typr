@@ -20,25 +20,25 @@ case class EmployeedepartmenthistoryRowUnsaved(
   /** Employee identification number. Foreign key to Employee.BusinessEntityID.
    * Points to [[adventureworks.humanresources.employee.EmployeeRow.businessentityid]]
    */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Department in which the employee worked including currently. Foreign key to Department.DepartmentID.
    * Points to [[adventureworks.humanresources.department.DepartmentRow.departmentid]]
    */
-departmentid: DepartmentId,
+  departmentid: DepartmentId,
   /** Identifies which 8-hour shift the employee works. Foreign key to Shift.Shift.ID.
    * Points to [[adventureworks.humanresources.shift.ShiftRow.shiftid]]
    */
-shiftid: ShiftId,
+  shiftid: ShiftId,
   /** Date the employee started work in the department.
    * Constraint CK_EmployeeDepartmentHistory_EndDate affecting columns enddate, startdate:  (((enddate >= startdate) OR (enddate IS NULL)))
    */
-startdate: TypoLocalDate,
+  startdate: TypoLocalDate,
   /** Date the employee left the department. NULL = Current department.
    * Constraint CK_EmployeeDepartmentHistory_EndDate affecting columns enddate, startdate:  (((enddate >= startdate) OR (enddate IS NULL)))
    */
-enddate: Optional[TypoLocalDate] = Optional.empty(),
+  enddate: Optional[TypoLocalDate] = Optional.empty(),
   /** Default: now() */
-modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
+  modifieddate: Defaulted[TypoLocalDateTime] = new UseDefault()
 ) {
   def toRow(modifieddateDefault: => TypoLocalDateTime): EmployeedepartmenthistoryRow = {
     new EmployeedepartmenthistoryRow(

@@ -22,11 +22,11 @@ import zio.json.internal.Write
  */
 case class CultureRow(
   /** Primary key for Culture records. */
-cultureid: CultureId,
+  cultureid: CultureId,
   /** Culture description. */
-name: Name,
+  name: Name,
   /** Default: now() */
-modifieddate: TypoLocalDateTime
+  modifieddate: TypoLocalDateTime
 ) {
   def id: CultureId = cultureid
 

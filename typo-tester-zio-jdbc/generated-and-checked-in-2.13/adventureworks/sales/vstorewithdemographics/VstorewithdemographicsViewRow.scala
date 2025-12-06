@@ -18,9 +18,9 @@ import zio.json.internal.Write
 /** View: sales.vstorewithdemographics */
 case class VstorewithdemographicsViewRow(
   /** Points to [[adventureworks.sales.store.StoreRow.businessentityid]] */
-businessentityid: BusinessentityId,
+  businessentityid: BusinessentityId,
   /** Points to [[adventureworks.sales.store.StoreRow.name]] */
-name: Name,
+  name: Name,
   annualSales: /* nullability unknown */ Option[TypoMoney],
   annualRevenue: /* nullability unknown */ Option[TypoMoney],
   bankName: /* nullability unknown */ Option[/* max 50 chars */ String],
